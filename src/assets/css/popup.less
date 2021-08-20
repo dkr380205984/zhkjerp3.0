@@ -1,0 +1,189 @@
+// 正常居中弹出框
+.popup{
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0,0,0,0.6);
+  z-index: 999;
+  color: @font85;
+  font-size: @fontMiddle;
+  .main{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 500px;
+    background-color: #FFF;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 8px;
+    .titleCtn{
+      height: 50px;
+      padding: 0 16px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #E9E9E9;
+      align-items: center;
+      .text{
+        font-size: @fontBig;
+        font-weight: bold;
+      }
+      .closeCtn{
+        cursor: pointer;
+        width: 20px;
+        height: 20px;
+        color: #fff;
+        line-height: 20px;
+        text-align: center;
+        border-radius: 50%;
+        background: @black;
+        &:hover{
+          background: #737375;
+        }
+      }
+    }
+    .contentCtn{
+      min-height: 200px;
+      max-height: 500px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      box-sizing: border-box;
+      padding: 0 40px;
+      flex-direction: column;
+      .explainCtn{
+        padding: 12px;
+        background: #F0F2F5;
+        color: @font65;
+        font-size: @fontSmall;
+        margin: 12px;
+        border-radius: 4px;
+      }
+      .row{
+        min-height: 32px;
+        display: flex;
+        margin: 12px 0;
+        position: relative;
+        .label{
+          width: 7em;
+          text-align: right;
+          line-height: 32px;
+          color: @font85;
+          font-size: @fontMiddle;
+          &.isMust::before{
+            content: '*';
+            color: red;
+            margin-right: 4px;
+          }
+        }
+        .info{
+          flex: 1;
+          position: relative;
+          height: 32px;
+          &.text{
+            color: @font65;
+            line-height: 32px;
+            font-size: @fontMiddle;
+          }
+          .info_btn{
+            position: absolute;
+            top: 50%;
+            right: -4px;
+            transform: translate(100%,-50%);
+            cursor: pointer;
+          }
+        }
+      }
+    }
+    .oprCtn{
+      height: 50px;
+      border-top: 1px solid @borderColor;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      .btn{
+        margin-right: 24px;
+      }
+    }
+  }
+}
+
+@keyframes slideFromRight {
+  0%   {right: -520px;}
+  50%  {right: -260px;}
+  100% {right: 0;}
+}
+// 侧边弹出框——带动画
+.sidePopup{
+  z-index: 199;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(64,64,64,0.6);
+  .main{
+    position: absolute;
+    top:0;
+    bottom: 0;
+    right: 0;
+    width: 520px;
+    background: #fff;
+    animation: slideFromRight 0.3s;
+    .titleCtn{
+      height: 50px;
+      padding: 0 16px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #E9E9E9;
+      align-items: center;
+      .text{
+        font-size: @fontBig;
+        font-weight: bold;
+      }
+      .closeCtn{
+        cursor: pointer;
+        width: 20px;
+        height: 20px;
+        color: #fff;
+        line-height: 20px;
+        text-align: center;
+        border-radius: 50%;
+        background: @black;
+        &:hover{
+          background: #737375;
+        }
+      }
+    }
+    .contentCtn{
+      margin: 0;
+      padding: 24px 24px 56px 24px;
+      border-top: 1px solid #E9E9E9;
+      border-bottom: 1px solid #E9E9E9;
+      height: calc(100% - 50px);
+      box-sizing: border-box;
+      overflow: auto;
+    }
+    .oprCtn{
+      position: absolute;
+      bottom: 0;
+      height: 56px;
+      left: 0;
+      right: 0;
+      display: flex;
+      background: #fff;
+      align-items: center;
+      z-index: 1;
+      box-shadow: -6px 0px 16px -8px rgba(0, 0, 0, 0.08), -9px 0px 28px 0px rgba(0, 0, 0, 0.05), -12px 0px 48px 16px rgba(0, 0, 0, 0.03);;
+      justify-content: flex-end;
+      padding: 0 16px;
+      .btn{
+        margin-left: 22px;
+      }
+    }
+  }
+}

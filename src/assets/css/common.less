@@ -1,0 +1,220 @@
+@blue:#1A95FF;
+@hoverBlue:#51ADFD;
+@red:#F5222D;
+@hoverRed:#FD5B63;
+@orange:#FA9036;
+@hoverOrange:#FCB171;
+@green:#01B48C;
+@hoverGreen:#03D0A2;
+@black:#2E394F;
+@font85:rgba(0,0,0,0.85);
+@font65:rgba(0,0,0,0.65);
+@font45:rgba(0,0,0,0.45);
+@font25:rgba(0,0,0,0.25);
+@borderColor:#e9e9e9;
+@fontTitle:20px;
+@fontBig:16px;
+@fontMiddle:14px;
+@fontSmall:12px;
+@font-face {
+  font-family: 'zhkj_icon';  /* project id 1928040 */
+  src: url('//at.alicdn.com/t/font_1928040_6d02f6bfuzl.eot?t=1621565649887'); /* IE9 */
+  src: url('//at.alicdn.com/t/font_1928040_6d02f6bfuzl.eot?t=1621565649887#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('//at.alicdn.com/t/font_1928040_6d02f6bfuzl.woff2?t=1621565649887') format('woff2'),
+       url('//at.alicdn.com/t/font_1928040_6d02f6bfuzl.woff?t=1621565649887') format('woff'),
+       url('//at.alicdn.com/t/font_1928040_6d02f6bfuzl.ttf?t=1621565649887') format('truetype'),
+       url('//at.alicdn.com/t/font_1928040_6d02f6bfuzl.svg?t=1621565649887#font_family') format('svg');
+}
+.clearfix{
+  &::after{
+    content: '';
+    display: block;
+    clear: both;
+  }
+}
+.fl{
+  float: left;
+}
+.fr{
+  float: right;
+}
+.blue{
+  color:@blue;
+}
+.hoverBlue{
+  color:@blue;
+  &:hover{
+    color: @hoverBlue;
+  }
+}
+.red{
+  color:@red;
+}
+.hoverRed{
+  color:@red;
+  &:hover{
+    color: @hoverRed;
+  }
+}
+.orange{
+  color:@orange;
+}
+.hoverOrange{
+  color:@orange;
+  &:hover{
+    color: @hoverOrange;
+  }
+}
+.green{
+  color:@green;
+}
+.hoverGreen{
+  color:@green;
+  &:hover{
+    color: @hoverGreen;
+  }
+}
+.black{
+  color: @font85;
+}
+.gray{
+  color: @font25;
+}
+.fontNormal{
+  color: @font65;
+}
+.backBlue{
+  color: #fff;
+  background: @blue;
+}
+.backHoverBlue{
+  color: #fff;
+  background: @blue;
+  &:hover{
+    background: @hoverBlue;
+  }
+}
+.backRed{
+  color: #fff;
+  background: @red;
+}
+.backHoverRed{
+  color: #fff;
+  background: @red;
+  &:hover{
+    background: @hoverRed;
+  }
+}
+.backGreen{
+  color: #fff;
+  background: @green;
+}
+.backHoverGreen{
+  color: #fff;
+  background: @green;
+  &:hover{
+    background: @hoverGreen;
+  }
+}
+.backOrange{
+  color: #fff;
+  background: @orange;
+}
+.backHoverOrange{
+  color: #fff;
+  background: @orange;
+  &:hover{
+    background: @hoverOrange;
+  }
+}
+.spaceBetween{
+  display: flex;
+  justify-content: space-between;
+}
+// 通用子页面父级容器
+.bodyContainer{
+  margin: 32px auto 56px auto;
+  .module{
+    width: 100%;
+    background: #fff;
+    margin-bottom: 24px;
+    .titleCtn{
+      height: 55px;
+      line-height: 55px;
+      padding: 0 32px;
+      border-bottom: 1px solid @borderColor;
+      &.flexBetween{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .title{
+        font-size: @fontBig;
+        color:@font85;
+        font-weight: bold;
+        position: relative;
+      }
+    }
+  }
+}
+// 通用按钮
+.btn{
+  line-height: 32px;
+  cursor: pointer;
+  display: inline-block;
+  padding: 0 24px;
+  border-radius: 4px;
+}
+.borderBtn{
+  line-height: 30px;
+  border:1px solid @borderColor;
+  cursor: pointer;
+  color: @font45;
+  display: inline-block;
+  padding: 0 24px;
+  border-radius: 4px;
+  &:hover{
+    color: #888888;
+  }
+}
+// 通用操作行
+.oprRow{
+  line-height: 30px;
+  border: 1px dashed @borderColor;
+  text-align: center;
+  margin-top: 12px;
+  color: @font65;
+  font-size: @fontMiddle;
+  cursor: pointer;
+  display: flex;
+  .once{
+    flex:1;
+    text-align: center;
+    border-right: 1px dashed #D9D9D9;
+    &:nth-last-child(1){
+      border-right: 0;
+    }
+    &.ok{
+      color:#fff;
+      background: @green;
+      &:hover{
+        background: @green;
+      }
+    }
+    &.cancle{
+      color: #fff;
+      background: @orange;
+      &:hover{
+        background: @orange;
+      }
+    }
+    &.normal{
+      color: #fff;
+      background: @blue;
+    }
+    &:hover{
+      color:#fff;
+      background: @blue;
+    }
+  }
+}

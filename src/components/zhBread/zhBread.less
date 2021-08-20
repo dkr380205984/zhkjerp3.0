@@ -1,0 +1,45 @@
+.zh-bread{
+  display: flex;
+  height: 100%;
+  align-items: center;
+  flex-wrap: wrap;
+  .zh-bread-once{
+    display: flex;
+    align-items: center;
+    transition: color .3s cubic-bezier(.645,.045,.355,1);
+    margin-right: 12px;
+    &.active{
+      .el-icon-close{
+        color: #fff;
+        background: #1a95ff;
+      }
+      .zh-bread-label{
+        color: rgba(0,0,0,.85);
+      }
+    }
+    &:hover{
+      .el-icon-close{
+        color: #fff;
+        background: #1a95ff;
+      }
+      .zh-bread-label{
+        color: rgba(0,0,0,.85);
+      }
+    }
+    .zh-bread-label{
+      color: rgba(0,0,0,.45);
+      font-size: 16px;
+      margin-right: 4px;
+      cursor: pointer;
+    }
+    .el-icon-close{
+      font-size: 14px;
+      color: #1a95ff;
+      background: transparent;
+      border: 1px solid #1a95ff;
+      border-radius: 50%;
+      cursor: pointer;
+      text-align: center;
+    }
+  }
+}

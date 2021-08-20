@@ -1,0 +1,44 @@
+.fixedTableCtn{
+  position: relative;
+  .original{
+    overflow: auto;
+  }
+  .cover{
+    .fixedLeft{
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: #fff;
+      box-shadow: 3px 0px 6px rgba(0, 0, 0, 0.16);
+    }
+    .fixedRight{
+      position: absolute;
+      right: 0;
+      top: 0;
+      background: #fff;
+      box-shadow: -3px 0px 6px rgba(0, 0, 0, 0.16);
+    }
+  }
+  .row{
+    display: flex;
+    height: 55px;
+    width: 100%;
+    &.title{
+      .column{
+        background: #FAFAFA;
+        color: @font85;
+      }
+    }
+    .column{
+      font-size: @fontMiddle;
+      display: flex;
+      align-items: center;
+      padding:0 12px;
+      flex: 1;
+      min-width: 120px;
+      max-width: 120px;
+      color: @font65;
+      border-bottom: 1px solid @borderColor;
+    }
+  }
+}

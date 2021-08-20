@@ -1,0 +1,64 @@
+.editCtn{
+  padding: 20px 32px;
+  .row{
+    display: flex;
+    margin-right: 1px;
+    margin-bottom: 8px;
+    &:nth-last-child(1){
+      margin-bottom: 0;
+    }
+    .col{
+      flex: 1;
+      margin-right: 72px;
+      &.flex2{
+        max-width: 579px;
+      }
+      &.flex3{
+        max-width: 361px;
+      }
+      &.flex4{
+        max-width: 253.5px;
+      }
+      .label{
+        display: block;
+        height: 38px;
+        line-height: 38px;
+        font-size: @fontMiddle;
+        .text{
+          color: @font85;
+        }
+        .explanation{
+          margin-left: 5px;
+          color: @font25;
+        }
+      }
+      .info{
+        display: block;
+        min-height:32px;
+      }
+      .spaceBetween{
+        display: flex;
+        justify-content: space-between;
+        .once{
+          flex:1;
+          margin-right: 12px;
+          &:nth-last-child(1){
+            margin-right: 0;
+          }
+        }
+      }
+    }
+    .opr{
+      position: relative;
+      width: 0;
+      white-space: nowrap;
+      cursor: pointer;
+      transform: translate(-60px,100%);
+      font-size: @fontMiddle;
+      top:-26px;
+    }
+  }
+  .oprRow{
+    margin-right: 72px;
+  }
+}

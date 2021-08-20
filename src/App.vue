@@ -1,32 +1,55 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
-<style>
+<style lang="less">
+@import '~@/assets/css/element.less';
+html,
+body {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  font-family: Source Han Sans CN;
+}
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+  height: 100%;
+  width: 100%;
+}
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar {
+  width: 6px;
+  height: 8px;
+  background-color: rgba(0, 0, 0, 0);
+}
+/*定义滚动条轨道 内阴影+圆角*/
+::-webkit-scrollbar-track {
+  border-radius: 4px;
+  background-color: transparent;
+}
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb {
+  height: 4px;
+  border-radius: 2px;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
-#nav {
-  padding: 30px;
+// 统一placeholder
+::-webkit-input-placeholder {
+  /* Chrome/Opera/Safari */
+  color: rgba(0, 0, 0, 0.25) !important;
 }
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+::-moz-placeholder {
+  /* Firefox 19+ */
+  color: rgba(0, 0, 0, 0.25) !important;
 }
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+:-ms-input-placeholder {
+  /* IE 10+ */
+  color: rgba(0, 0, 0, 0.25) !important;
+}
+:-moz-placeholder {
+  /* Firefox 18- */
+  color: rgba(0, 0, 0, 0.25) !important;
 }
 </style>

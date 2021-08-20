@@ -1,0 +1,145 @@
+// 底部操作栏
+.bottomFixBar{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 56px;
+  display: flex;
+  background: #fff;
+  align-items: center;
+  z-index: 128;
+  box-shadow:0px -1px 2px rgba(0,0,0,0.03);
+  .main{
+    width: 1366px;
+    height: 100%;
+    margin: auto;
+    .btnCtn{
+      float: right;
+      display: flex;
+      align-items: center;
+      height: 100%;
+      .btn{
+        margin-left: 22px;
+      }
+      .borderBtn{
+        margin-left: 22px;
+      }
+      .btnList{
+        position: relative;
+        display: inline-block;
+        margin-left: 22px;
+        .showButton{
+          height: 32px;
+          line-height: 32px;
+          border:1px solid #d9d9d9;
+          border-radius: 4px;
+          cursor: pointer;
+          padding: 0 23px;
+          line-height: 32px;
+          color: @blue;
+          .el-icon-s-grid{
+            font-size: 18px;
+          }
+          .text{
+            margin-left: 8px;
+          }
+        }
+        &:hover{
+          border-color:@blue;
+          .showButton{
+            background: @blue;
+            color: #fff;
+          }
+          .otherInfoCtn{
+            display: block;
+          }
+        }
+        .otherInfoCtn{
+          position: absolute;
+          bottom: 33px;
+          right: 0;
+          display: none;
+          .otherInfo{
+            padding: 24px 24px 12px 24px;
+            margin-bottom: 6px;
+            background: #fff;
+            border:1px solid #d9d9d9;
+            border-radius: 4px;
+            width: 260px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            .button{
+              height: 32px;
+              line-height: 32px;
+              border:1px solid #d9d9d9;
+              border-radius: 4px;
+              cursor: pointer;
+              width: 120px;
+              text-align: center;
+              line-height: 32px;
+              font-size: 16px;
+              margin-bottom: 12px;
+              .icon{
+                width: 18px;
+                height: 18px;
+                display: inline-block;
+                background: #fff;
+                vertical-align: middle;
+              }
+              .iconfont{
+                font-size: 18px;
+                vertical-align: middle;
+              }
+              .text{
+                vertical-align: middle;
+                margin-left: 8px;
+              }
+            }
+          }
+        }
+      }
+    }
+    .buttonList{
+      position: relative;
+      display: inline-block;
+      &:hover{
+        .otherInfoCtn{
+          display: block;
+        }
+      }
+      .text{
+        margin-left: 8px;
+      }
+      .otherInfoCtn{
+        position: absolute;
+        bottom: 32px;
+        right: 0;
+        display: none;
+        .otherInfo{
+          padding-bottom: 12px;
+          margin-bottom: 6px;
+          background: #fff;
+          border:1px solid #d9d9d9;
+          border-radius: 4px;
+          width: 315px;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          .btn{
+            margin: 12px 12px 0 12px;
+            display: inline-block;
+            .icon{
+              width: 18px;
+              height: 18px;
+              display: inline-block;
+              background: #fff;
+              vertical-align: middle;
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+.zhOverflowText{
+  width: 100%;
+  .oneLine{
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    &:hover{
+      color: #1a95ff;
+    }
+  }
+  .twoLine{
+    width: 100%;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2; /* 这里是超出几行省略 */
+    overflow: hidden;
+    cursor: pointer;
+    &:hover{
+      color: #1a95ff;
+    }
+  }
+}

@@ -1,0 +1,109 @@
+// 列表页公共样式
+.listCtn{
+  padding: 20px 32px;
+  .filterCtn{
+    margin-bottom: 20px;
+    .btn{
+      margin-left: 16px;
+    }
+    .elCtn{
+      margin-right: 16px;
+    }
+  }
+  .list{
+    font-size: @fontMiddle;
+    text-align: left;
+    min-height: 605px;
+    .row{
+      height: 55px;
+      border-bottom: 1px solid #E8E8E8;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      padding: 5px 0;
+      color: @font65;
+      &.title{
+        background: #FAFAFA;
+        color: @font85;
+      }
+      &:hover{
+        background: rgba(26,149,255,0.25);
+      }
+    }
+    .col{
+      flex:1;
+      text-align: left;
+      flex-wrap: wrap;
+      padding: 0 10px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      word-break: break-all;
+      .imageCtn{
+        height: 44px;
+        width: 44px;
+      }
+      &.ellipsis{
+        overflow : hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+      }
+      .stateCtn{
+        margin-right: 8px;
+        display: flex;
+        flex-direction: column;
+        .state{
+          width:6px;
+          height:6px;
+          border-radius: 50%;
+          background: #ccc;
+          margin:5px auto;
+        }
+      }
+    }
+  }
+  // 鉴于某些列表需要用到fixedTable作滚动展示，把opr拿出来方便使用
+  .opr{
+    margin: 0 8px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(0,0,0,0);
+    position: relative;
+    &::after{
+      content: '';
+      height: 15px;
+      background: @borderColor;
+      width: 1px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      right: -8px;
+    }
+    &:hover{
+      border-bottom: 1px solid;
+    }
+    &:nth-last-child(1){
+      &::after{
+        content: '';
+        height: 15px;
+        background: transparent;
+        width: 1px;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        right: -8px;
+      }
+    }
+    &:nth-child(1){
+      margin-left: 0;
+    }
+  }
+  .pageCtn{
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
