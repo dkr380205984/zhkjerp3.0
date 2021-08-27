@@ -176,7 +176,52 @@
   &:hover{
     color: #888888;
   }
+  &.blue{
+    border-color: @blue;
+    color: @blue;
+    &:hover{
+      border-color: @hoverBlue;
+      color: @hoverBlue;
+    }
+  }
 }
+  // 表格内通用操作
+  .opr{
+    margin: 0 8px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(0,0,0,0);
+    position: relative;
+    &::after{
+      content: '';
+      height: 15px;
+      background: @borderColor;
+      width: 1px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      right: -8px;
+    }
+    &:hover{
+      border-bottom: 1px solid;
+    }
+    &:nth-last-child(1){
+      &::after{
+        content: '';
+        height: 15px;
+        background: transparent;
+        width: 1px;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        right: -8px;
+      }
+    }
+    &:nth-child(1){
+      margin-left: 0;
+    }
+  }
 // 通用操作行
 .oprRow{
   line-height: 30px;

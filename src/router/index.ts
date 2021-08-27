@@ -41,13 +41,25 @@ const routes: Array<RouteConfig> = [
       name: '添加公司',
       component: () => import('../views/client/create.vue')
     }, {
-      path: '/sample/list',
+      path: '/sampleOrder/list',
       name: '样单列表',
-      component: () => import('../views/sample/list.vue')
+      component: () => import('../views/sampleOrder/list.vue')
     }, {
-      path: '/sample/create',
+      path: '/sampleOrder/create',
       name: '样单添加',
-      component: () => import('../views/sample/create.vue')
+      component: () => import('../views/sampleOrder/create.vue')
+    }, {
+      path: '/sampleOrder/detail',
+      name: '样单详情',
+      component: () => import('../views/sampleOrder/detail.vue')
+    }, {
+      path: '/sampleOrder/update',
+      name: '样单修改',
+      component: () => import('../views/sampleOrder/update.vue')
+    }, {
+      path: '/sampleOrder/again',
+      name: '继续打样',
+      component: () => import('../views/sampleOrder/again.vue')
     }]
   }
 ]

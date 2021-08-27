@@ -39,7 +39,7 @@ declare module 'vue/types/vue' {
     $flatten(data: any[]): any[]
     $formCheck(
       data: any,
-      checkArr: Array<{ key: string, errMsg?: string, regExp?: RegExp, regNormal?: 'isNum' | 'isEmail' | 'isPhone' | 'isNull' }>
+      checkArr: Array<{ key: string, errMsg?: string, regExp?: RegExp, regNormal?: 'isNum' | 'isEmail' | 'isPhone' | 'isNull' | 'checkArr' }>
     ): boolean
   }
 }

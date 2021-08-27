@@ -1,9 +1,9 @@
 <template>
-  <div id="quotedPriceList"
+  <div id="sampleOrderList"
     class="bodyContainer">
     <div class="module">
       <div class="titleCtn">
-        <div class="title">报价单列表</div>
+        <div class="title">样单列表</div>
       </div>
       <div class="listCtn">
         <div class="filterCtn">
@@ -16,7 +16,7 @@
         </div>
         <div class="filterCtn clearfix">
           <div class="btn backHoverBlue fr"
-            @click="$router.push('/quotedPrice/create')">添加报价单</div>
+            @click="$router.push('/sampleOrder/create')">添加样单</div>
           <div class="btn backHoverOrange fr"
             @click="showSetting=true">列表设置</div>
         </div>
@@ -39,7 +39,7 @@
                 v-show="itemKey.ifShow">{{item[itemKey.key]}}</div>
               <div class="column w130">
                 <div class="opr hoverBlue"
-                  @click="$router.push('/quotedPrice/detail?id=' + item.id)">详情</div>
+                  @click="$router.push('/sampleOrder/detail?id=' + item.id)">详情</div>
                 <div class="opr hoverOrange">修改</div>
                 <div class="opr hoverRed">删除</div>
               </div>
@@ -73,7 +73,7 @@
                 :key="item.list">
                 <div class="column w130">
                   <div class="opr hoverBlue"
-                    @click="$router.push('/quotedPrice/detail?id=' + item.id)">详情</div>
+                    @click="$router.push('/sampleOrder/detail?id=' + item.id)">详情</div>
                   <div class="opr hoverOrange">修改</div>
                   <div class="opr hoverRed">删除</div>
                 </div>
@@ -105,44 +105,39 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { quotedPrice, listSetting } from '@/assets/js/api'
-import { ListSetting } from '@/types/list'
-import { QuotedPriceInfo } from '@/types/quotedPrice'
-interface QuotedPriceInfoList extends QuotedPriceInfo {
-  image_data: string[]
-  product_info: string
-}
+import { sample, sampleOrder, listSetting } from '@/assets/js/api'
+import { SampleOrderInfo } from '@/types/sampleOrder'
 export default Vue.extend({
   data(): {
-    originalSetting: ListSetting[]
-    list: QuotedPriceInfoList[]
-    [propName: string]: any
+    list: SampleOrderInfo[]
+    [porpName: string]: any
   } {
     return {
-      loading: true,
+      loading: false,
       list: [],
-      page: 1,
       total: 1,
+      page: 1,
+      showSetting: false,
       listSettingId: null,
       listKey: [],
       originalSetting: [
         {
           key: 'code',
-          name: '报价单号',
+          name: '样单号',
           ifShow: true,
           ifLock: true,
           index: 0
         },
         {
-          key: 'title',
-          name: '报价标题',
+          key: 'client_name',
+          name: '下单公司',
           ifShow: true,
           ifLock: true,
           index: 1
         },
         {
-          key: 'client_name',
-          name: '询价公司',
+          key: 'contact_name',
+          name: '公司联系人',
           ifShow: true,
           ifLock: false,
           index: 2
@@ -169,15 +164,15 @@ export default Vue.extend({
           index: 5
         },
         {
-          key: 'system_total_price',
-          name: '系统合计报价',
+          key: 'total_number',
+          name: '下单总数',
           ifShow: true,
           ifLock: false,
           index: 6
         },
         {
-          key: 'real_quote_price',
-          name: '客户实际报价',
+          key: 'total_price',
+          name: '下单总额',
           ifShow: true,
           ifLock: false,
           index: 7
@@ -210,8 +205,40 @@ export default Vue.extend({
           ifLock: false,
           index: 11
         }
-      ],
-      showSetting: false
+      ]
+    }
+  },
+  methods: {
+    getFilters() {
+      const query = this.$route.query
+      this.page = Number(query.page)
+    },
+    changeRouter() {
+      this.$router.push('/sampleOrder/list?page=' + this.page)
+    },
+    getList() {
+      sampleOrder
+        .list({
+          limit: 5,
+          page: this.page,
+          order_type: 2
+        })
+        .then((res) => {
+          this.list = res.data.data.items
+          this.total = res.data.data.total
+          console.log(this.list)
+        })
+    },
+    getListSetting() {
+      this.listKey = []
+      listSetting
+        .detail({
+          type: 2
+        })
+        .then((res) => {
+          this.listSettingId = res.data.data ? res.data.data.id : null
+          this.listKey = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting)
+        })
     }
   },
   watch: {
@@ -220,46 +247,7 @@ export default Vue.extend({
       this.getList()
     }
   },
-  methods: {
-    changeRouter() {
-      this.$router.push('/quotedPrice/list?page=' + this.page)
-    },
-    getFilters() {
-      const query = this.$route.query
-      this.page = Number(query.page)
-    },
-    getList() {
-      this.loading = true
-      quotedPrice
-        .list({
-          page: this.page,
-          limit: 5
-        })
-        .then((res) => {
-          // 产品信息需要在列表里展示，配合列表设置要把产品信息拿到最外层
-          this.list = res.data.data.items
-          // this.list.forEach((item) => {
-          //   item.product_data.forEach((itemChild) => {
-          //     item.image_data = item.image_data.concat(itemChild.image_data as string[])
-          //   })
-          // })
-          this.total = res.data.data.total
-          this.loading = false
-        })
-    },
-    getListSetting() {
-      this.listKey = []
-      listSetting
-        .detail({
-          type: 1
-        })
-        .then((res) => {
-          this.listSettingId = res.data.data ? res.data.data.id : null
-          this.listKey = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting)
-        })
-    }
-  },
-  created() {
+  mounted() {
     this.getFilters()
     this.getList()
     this.getListSetting()
@@ -268,5 +256,5 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import '~@/assets/css/quotedPrice/list.less';
+@import '~@/assets/css/sampleOrder/list.less';
 </style>

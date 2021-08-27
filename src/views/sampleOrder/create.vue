@@ -1,0 +1,681 @@
+<template>
+  <div id="sampleOrderCreate"
+    class="bodyContainer">
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">基本信息</div>
+      </div>
+      <div class="editCtn">
+        <div class="row">
+          <div class="col">
+            <div class="label">
+              <span class="text">样单号</span>
+              <span class="explanation">(必填)</span>
+            </div>
+            <div class="info elCtn">
+              <el-input placeholder="请输入样单号"
+                v-model="sampleOrderInfo.code"></el-input>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">
+              <span class="text">样单类型</span>
+              <span class="explanation">(必选)</span>
+            </div>
+            <div class="info elCtn">
+              <el-select placeholder="请选择样单类型"
+                v-model="sampleOrderInfo.time_data.order_type_id">
+                <el-option v-for="item in sampleOrderTypeList"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.name"></el-option>
+              </el-select>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">
+              <span class="text">下单日期</span>
+              <span class="explanation">(必选)</span>
+            </div>
+            <div class="info elCtn">
+              <el-date-picker placeholder="请选择下单日期"
+                v-model="sampleOrderInfo.time_data.order_time"
+                value-format="yyyy-MM-dd"></el-date-picker>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="label">
+              <span class="text">打样公司</span>
+              <span class="explanation">(必选)</span>
+            </div>
+            <div class="info elCtn">
+              <el-cascader placeholder="请选择打样公司"
+                v-model="sampleOrderInfo.client_id"
+                :options="clientList"
+                @change="getContacts">
+              </el-cascader>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">
+              <span class="text">公司联系人</span>
+              <span class="explanation">(必选)</span>
+            </div>
+            <div class="info elCtn">
+              <el-select placeholder="请选择公司联系人"
+                v-model="sampleOrderInfo.contacts_id"
+                no-data-text="请先选择报价公司">
+                <el-option v-for="item in contactsList"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.name"></el-option>
+              </el-select>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">
+              <span class="text">负责小组/人</span>
+              <span class="explanation">(必选)</span>
+            </div>
+            <div class="info elCtn">
+              <el-select placeholder="请选择负责小组/人"
+                v-model="sampleOrderInfo.group_id">
+                <el-option v-for="item in groupList"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.name"></el-option>
+              </el-select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module">
+      <div class="titleCtn flexBetween">
+        <div class="title">添加样品</div>
+        <div class="btn backHoverBlue"
+          @click="addSampleFlag = true">添加新样品</div>
+      </div>
+      <div class="noDate"
+        v-show="sampleList.length === 0">暂无样品信息</div>
+      <div class="checkList"
+        v-show="sampleList.length>0">
+        <div class="label">已选样品：</div>
+        <div class="once"
+          v-for="(item,index) in sampleList"
+          :key="item.id">
+          <span class="text">{{item.system_code}}</span>
+          <span class="el-icon-view detailIcon hoverBlue"
+            @click="getSampleDetail(item)"></span>
+          <span class="el-icon-delete deleteIcon hoverRed"
+            @click="$deleteItem(sampleList,index)"></span>
+        </div>
+      </div>
+    </div>
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">打样数量及交期</div>
+      </div>
+      <div class="editCtn">
+        <div class="tableCtn">
+          <div class="thead">
+            <div class="trow">
+              <div class="tcol">样品编号</div>
+              <div class="tcol noPad"
+                style="flex:4">
+                <div class="trow">
+                  <div class="tcol">尺码颜色</div>
+                  <div class="tcol">打样单价</div>
+                  <div class="tcol">打样数量</div>
+                  <div class="tcol">操作</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tbody">
+            <div class="trow"
+              v-for="(item,index) in sampleOrderInfo.time_data.batch_data[0].product_data"
+              :key="index">
+              <div class="tcol">
+                <div class="elCtn">
+                  <el-select v-model="item.product_id"
+                    placeholder="选择样品"
+                    @change="getColour($event,item)"
+                    no-data-text="请先添加/导入样品">
+                    <el-option v-for="item in sampleList"
+                      :key="item.id"
+                      :value="item.id"
+                      :label="item.system_code + '/' + item.name"></el-option>
+                  </el-select>
+                </div>
+              </div>
+              <div class="tcol noPad"
+                style="flex:4">
+                <div class="trow"
+                  v-for="(itemChild,indexChild) in item.product_info"
+                  :key="indexChild">
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-select v-model="itemChild.size_color"
+                        placeholder="尺码颜色"
+                        no-data-text="请先选择产品">
+                        <el-option v-for="item in item.size_color_list"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-input v-model="itemChild.price"
+                        placeholder="打样单价">
+                        <template slot="append">元</template>
+                      </el-input>
+                    </div>
+                  </div>
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-input v-model="itemChild.number"
+                        placeholder="打样数量">
+                      </el-input>
+                    </div>
+                  </div>
+                  <div class="tcol oprCtn">
+                    <div class="opr hoverBlue"
+                      @click="$addItem(item.product_info,{
+                        size_color: [], // 用于下拉框选择尺码颜色
+                        size_id: '',
+                        color_id: '',
+                        number: '',
+                        price: ''
+                      })">新增尺码</div>
+                    <div class="opr hoverRed"
+                      @click="item.product_info.length>1?$deleteItem(item.product_info,indexChild):$deleteItem(sampleOrderInfo.product_data,index)">删除</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="oprRow"
+            style="margin-right:0">
+            <div class="once"
+              @click="$addItem(sampleOrderInfo.time_data.batch_data[0].product_data, {
+                product_id: '',
+                size_color_list: [],
+                product_info: [
+                  {
+                    size_color: [], 
+                    size_id: '',
+                    color_id: '',
+                    number: '',
+                    price: ''
+                  }
+                ]
+              })">新增样品
+              <i class="el-icon-plus"></i>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col flex3">
+            <div class="label">
+              <span class="text">计划完成时间</span>
+              <span class="explanation">(必选)</span>
+            </div>
+            <div class="info elCtn">
+              <el-date-picker placeholder="请选择计划完成时间"
+                v-model="sampleOrderInfo.time_data.complete_time"
+                value-format="yyyy-MM-dd"></el-date-picker>
+            </div>
+          </div>
+          <div class="col flex3">
+            <div class="label">
+              <span class="text">是否加急打样</span>
+              <span class="explanation">(必选)</span>
+            </div>
+            <div class="info elCtn">
+              <el-radio-group v-model="sampleOrderInfo.time_data.is_urgent">
+                <el-radio :label="1">是</el-radio>
+                <el-radio :label="2">否</el-radio>
+              </el-radio-group>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="label">
+              <span class="text">打样款数</span>
+              <span class="explanation">(自动计算))</span>
+            </div>
+            <div class="info elCtn">
+              <el-input placeholder="请输入打样总数"
+                v-model="totalStyle"
+                disabled></el-input>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">
+              <span class="text">打样总数</span>
+              <span class="explanation">(自动计算)</span>
+            </div>
+            <div class="info elCtn">
+              <el-input placeholder="请输入打样总数"
+                v-model="totalNumber"
+                disabled></el-input>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">
+              <span class="text">打样总费用</span>
+              <span class="explanation">(自动计算)</span>
+            </div>
+            <div class="info elCtn">
+              <el-input placeholder="请输入打样总费用"
+                v-model="totalPrice"
+                disabled></el-input>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="label">
+              <span class="text">文件信息</span>
+            </div>
+            <div class="info">
+              <el-upload class="upload"
+                action="https://upload.qiniup.com/"
+                accept="image/jpeg,image/gif,image/png,image/bmp"
+                :before-upload="beforeAvatarUpload"
+                :data="postData"
+                :on-remove="removeFile"
+                :on-success="successFile"
+                ref="uploada"
+                list-type="picture">
+                <div class="uploadBtn">
+                  <i class="el-icon-upload"></i>
+                  <span>上传图片</span>
+                </div>
+                <div slot="tip"
+                  class="el-upload__tip">只能上传一张jpg/png图片文件，且不超过10M</div>
+              </el-upload>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="label">
+              <span class="text">备注信息</span>
+            </div>
+            <div class="info elCtn">
+              <el-input placeholder="请输入备注信息"
+                v-model="sampleOrderInfo.desc"></el-input>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottomFixBar">
+      <div class="main">
+        <div class="btnCtn">
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
+          <div class="btn backHoverOrange"
+            @click="saveSampleOrder(true)">保存为草稿</div>
+          <div class="btn backHoverBlue"
+            @click="saveSampleOrder(false)">提交</div>
+        </div>
+      </div>
+    </div>
+    <sample-edit :show="addSampleFlag"
+      @close="addSampleFlag = false"
+      @afterSave="getNewSample"></sample-edit>
+    <sample-detail :data="sampleDetail"
+      :show="sampleShow"
+      @close="sampleShow = false"></sample-detail>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue'
+import { SampleInfo } from '@/types/sample'
+import { SampleOrderInfo, SampleOrderTime } from '@/types/sampleOrder'
+import { sample, client, sampleOrder } from '@/assets/js/api'
+interface SampleOrderCreate extends SampleOrderInfo {
+  time_data: SampleOrderTime
+}
+export default Vue.extend({
+  data(): {
+    sampleOrderInfo: SampleOrderCreate
+    sampleDetail: SampleInfo
+    sampleList: SampleInfo[]
+    [propName: string]: any
+  } {
+    return {
+      sampleShow: false,
+      sampleDetail: {
+        product_type: 2,
+        name: '',
+        product_code: '',
+        style_code: '', // 客户款号
+        unit: '',
+        category: '',
+        type: '',
+        image_data: [],
+        desc: '',
+        style_data: [], // 款式
+        component_data: [
+          {
+            component_id: '',
+            number: '' // 成分信息
+          }
+        ],
+        size_data: [
+          {
+            size_id: '',
+            size_info: '',
+            weight: ''
+          }
+        ], // 尺码组
+        color_data: [], // 配色组
+        // 配件信息
+        part_data: [
+          {
+            name: '',
+            unit: '',
+            part_size_data: [
+              {
+                size_id: '',
+                size_info: '',
+                weight: ''
+              }
+            ],
+            part_component_data: [
+              {
+                component_id: '',
+                number: '' // 成分信息
+              }
+            ]
+          }
+        ]
+      },
+      testValue: '',
+      addSampleFlag: false,
+      total: 1,
+      page: 1,
+      sampleList: [],
+      sampleOrderInfo: {
+        id: null,
+        client_id: '',
+        group_id: '',
+        contacts_id: '',
+        public_files: [],
+        private_files: [],
+        settle_tax: '', // 订单用无用字段
+        settle_unit: '', // 订单用无用字段
+        order_type: 2,
+        code: '',
+        desc: '',
+        time_data: {
+          id: '',
+          order_time: '',
+          order_type_id: '',
+          complete_time: '',
+          is_draft: 2,
+          total_style: '',
+          total_number: '',
+          total_price: '',
+          is_urgent: 2,
+          batch_data: [
+            {
+              id: '',
+              batch_number: 1,
+              batch_title: '',
+              batch_type: '',
+              delivery_time: '',
+              is_urgent: 2,
+              is_draft: 2,
+              total_style: '',
+              total_number: '',
+              total_price: '',
+              desc: '',
+              product_data: [
+                {
+                  product_id: '',
+                  size_color_list: [], // 用于下拉框选择尺码颜色
+                  product_info: [
+                    {
+                      size_color: '', // 用于下拉框选择尺码颜色
+                      size_id: '',
+                      color_id: '',
+                      number: '',
+                      price: ''
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      contactsList: [],
+      postData: {
+        key: '',
+        token: ''
+      }
+    }
+  },
+  computed: {
+    token(): string {
+      return this.$store.state.status.token
+    },
+    clientList(): any[] {
+      return this.$store.state.api.clientType.arr.filter((item: { type: any }) => Number(item.type) === 1)
+    },
+    sampleOrderTypeList(): any[] {
+      return this.$store.state.api.sampleOrderType.arr
+    },
+    groupList(): any[] {
+      return this.$store.state.api.group.arr
+    },
+    totalStyle(): number {
+      return this.sampleOrderInfo.time_data.batch_data[0].product_data.length
+    },
+    totalPrice(): number {
+      return this.sampleOrderInfo.time_data.batch_data[0].product_data.reduce((total, current) => {
+        return (
+          total +
+          current.product_info.reduce((totalChild, itemChild) => {
+            return totalChild + Number(itemChild.price) * Number(itemChild.number)
+          }, 0)
+        )
+      }, 0)
+    },
+    totalNumber(): number {
+      return this.sampleOrderInfo.time_data.batch_data[0].product_data.reduce((total, current) => {
+        return (
+          total +
+          current.product_info.reduce((totalChild, itemChild) => {
+            return totalChild + Number(itemChild.number)
+          }, 0)
+        )
+      }, 0)
+    }
+  },
+  methods: {
+    getColour(ev: number, info: any) {
+      info.size_color_list = []
+      const product: SampleInfo = this.sampleList.find((item) => item.id === ev) as SampleInfo
+      product.size_data.forEach((itemSize: any) => {
+        product.color_data.forEach((itemColor: any) => {
+          info.size_color_list.push({
+            label: itemSize.name + '/' + itemColor.name,
+            value: itemSize.id + '/' + itemColor.id
+          })
+        })
+      })
+    },
+    getContacts(ev: string[]) {
+      client
+        .detail({
+          id: ev[2]
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.contactsList = res.data.data.contacts_data
+          }
+        })
+    },
+    getSampleDetail(sample: SampleInfo) {
+      this.sampleShow = true
+      this.sampleDetail = sample
+    },
+    getNewSample(sample: SampleInfo) {
+      console.log(sample)
+      this.sampleList.push(sample)
+    },
+    beforeAvatarUpload(file: any) {
+      const fileName = file.name.lastIndexOf('.') // 取到文件名开始到最后一个点的长度
+      const fileNameLength = file.name.length // 取到文件名长度
+      const fileFormat = file.name.substring(fileName + 1, fileNameLength) // 截
+      this.postData.token = this.token
+      this.postData.key = Date.parse(new Date() + '') + '.' + fileFormat
+      const isJPG = file.type === 'image/jpeg'
+      const isPNG = file.type === 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 10
+      if (!isJPG && !isPNG) {
+        this.$message.error('图片只能是 JPG/PNG 格式!')
+        return false
+      }
+      if (!isLt2M) {
+        this.$message.error('图片大小不能超过 10MB!')
+        return false
+      }
+    },
+    successFile(response: { hash: string; key: string }) {
+      this.sampleOrderInfo.public_files.push('https://file.zwyknit.com/' + response.key)
+    },
+    removeFile(file: { response: { hash: string; key: string } }) {
+      this.$deleteItem(
+        this.sampleOrderInfo.public_files,
+        this.sampleOrderInfo.public_files.indexOf('https://file.zwyknit.com/' + file.response.key)
+      )
+    },
+    // 把通过计算属性得到的价格以及通过级联选择器选到的id赋给表单数据
+    getCmpData() {
+      this.sampleOrderInfo.client_id = (this.sampleOrderInfo.client_id as string[])[2]
+      this.sampleOrderInfo.time_data.total_style = this.totalStyle
+      this.sampleOrderInfo.time_data.total_number = this.totalNumber
+      this.sampleOrderInfo.time_data.total_price = this.totalPrice
+      this.sampleOrderInfo.time_data.batch_data[0].product_data.forEach((item) => {
+        item.product_info.forEach((itemChild) => {
+          itemChild.size_id = itemChild.size_color!.split('/')[0]
+          itemChild.color_id = itemChild.size_color!.split('/')[1]
+        })
+      })
+    },
+    saveSampleOrder(ifCaogao: boolean) {
+      console.log(this.sampleOrderInfo)
+      if (!ifCaogao) {
+        const formCheck =
+          this.$formCheck(this.sampleOrderInfo, [
+            {
+              key: 'client_id',
+              errMsg: '请选择打样公司',
+              regNormal: 'checkArr'
+            },
+            {
+              key: 'contacts_id',
+              errMsg: '请选择联系人'
+            },
+            {
+              key: 'group_id',
+              errMsg: '请选择负责小组'
+            }
+          ]) ||
+          this.$formCheck(this.sampleOrderInfo.time_data, [
+            {
+              key: 'order_type_id',
+              errMsg: '请选择样单类型'
+            },
+            {
+              key: 'order_time',
+              errMsg: '请选择下单时间'
+            },
+            {
+              key: 'complete_time',
+              errMsg: '请选择计划完成时间'
+            }
+          ]) ||
+          this.sampleOrderInfo.time_data.batch_data[0].product_data.some((item) => {
+            return (
+              this.$formCheck(item, [
+                {
+                  key: 'product_id',
+                  errMsg: '请选择样品'
+                }
+              ]) ||
+              item.product_info.some((itemChild) => {
+                return this.$formCheck(itemChild, [
+                  {
+                    key: 'size_color',
+                    errMsg: '请选择尺码颜色'
+                  },
+                  {
+                    key: 'price',
+                    errMsg: '请输入打样单价'
+                  },
+                  {
+                    key: 'number',
+                    errMsg: '请输入打样数量'
+                  }
+                ])
+              })
+            )
+          })
+        if (!formCheck) {
+          this.getCmpData()
+          sampleOrder.create(this.sampleOrderInfo).then((res) => {
+            if (res.data.status) {
+              this.$message.success('添加成功')
+            }
+          })
+        }
+      } else {
+      }
+    }
+  },
+  mounted() {
+    // 这个页面调用了添加样品组件，已经拿过token了
+    this.$checkCommonInfo([
+      {
+        checkWhich: 'api/group',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getGroupAsync'
+      },
+      {
+        checkWhich: 'api/clientType',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getClientTypeAsync'
+      },
+      {
+        checkWhich: 'api/sampleOrderType',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getSampleOrderTypeAsync'
+      }
+    ])
+  }
+})
+</script>
+
+<style lang="less" scoped>
+@import '~@/assets/css/sampleOrder/create.less';
+</style>
+<style lang="less">
+.el-date-editor.el-input,
+.el-date-editor.el-input__inner {
+  width: 100%;
+}
+</style>

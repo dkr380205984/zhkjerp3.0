@@ -128,7 +128,7 @@ export default Vue.extend({
           name: '样单管理',
           id: 1,
           icon: 'sample',
-          url: '/sample/list?page=1'
+          url: '/sampleOrder/list?page=1'
         },
         {
           name: '订单管理',
@@ -178,7 +178,7 @@ export default Vue.extend({
   },
   mounted() {
     // console.log(window.sessionStorage.getItem('module_id'))
-    console.log(this.moduleArr)
+    // console.log(this.moduleArr)
   }
 })
 </script>

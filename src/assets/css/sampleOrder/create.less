@@ -1,0 +1,55 @@
+@import '../common.less';
+@import '../edit.less';
+@import '../list.less';
+@import '../bottomBar.less';
+@import '../popup.less';
+@import '../table.less';
+#sampleOrderCreate{
+  .noDate{
+    line-height: 55px;
+    font-size: @fontBig;
+    color: @font45;
+    text-align: center;
+  }
+  .checkList{
+    padding: 20px 32px;
+    .label{
+      color: @font65;
+      font-size: @fontMiddle;
+      margin-bottom: 12px;
+    }
+    .once{
+      width: 360px;
+      margin-right: 72px;
+      display: inline-block;
+      line-height: 30px;
+      border: 1px solid @borderColor;
+      border-radius: 4px;
+      padding: 0 15px;
+      box-sizing: border-box;
+      font-size: @fontMiddle;
+      color: @font65;
+      background: #F8F8F8;
+      margin-bottom: 12px;
+      position: relative;
+      .detailIcon{
+        position: absolute;
+        line-height: 30px;
+        right: -28px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      .deleteIcon{
+        position: absolute;
+        line-height: 30px;
+        right: -56px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+    }
+  }
+  .tableCtn{
+    padding: 0;
+    margin: 20px 0;
+  }
+}

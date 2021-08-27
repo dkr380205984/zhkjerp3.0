@@ -307,13 +307,15 @@ const plugin = {
           }
         } else {
           if (item.regNormal === 'isNum') {
-            console.log(data[item.key])
             msg = /^(-?\d+)(\.\d+)?$/.test(data[item.key]) ? msg : (item.errMsg || '请输入数字')
           } else if (item.regNormal === 'isEmail') {
             msg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/
               .test(data[item.key]) ? msg : (item.errMsg || '请输入正确邮箱')
           } else if (item.regNormal === 'isPhone') {
             msg = /^(13[0-9]|14[01456879]|15[0-3,5-9]|16[2567]|17[0-8]|18[0-9]|19[0-3,5-9])\d{8}$/.test(data[item.key]) ? msg : (item.errMsg || '请输入正确手机号')
+          } else if (item.regNormal === 'checkArr') {
+            // checkArr一般用于校验多选框，级联框的数据是否存在，就是校验数据长度
+            msg = (Array.isArray(data[item.key]) && data[item.key].length > 0) ? msg : (item.errMsg || '请选择')
           }
         }
       } else {

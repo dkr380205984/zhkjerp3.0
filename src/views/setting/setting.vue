@@ -2686,7 +2686,7 @@ export default Vue.extend({
         orderType.create(this.sampleOrderTypeInfo).then((res) => {
           if (res.data.status) {
             this.$message.success({
-              message: '添加订单类型成功'
+              message: '添加样单类型成功'
             })
             this.sampleOrderTypeInfo = {
               order_type: 2,

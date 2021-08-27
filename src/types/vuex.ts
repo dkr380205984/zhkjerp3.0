@@ -38,6 +38,7 @@ export interface SelfState {
 export interface CascaderInfo {
   label: string
   value: null | number | string
+  size?: Array<{ name: string; id: number }>
   type?: string | number
   children?: CascaderInfo[] | undefined
   unit?: string

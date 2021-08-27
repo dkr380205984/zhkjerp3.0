@@ -85,9 +85,9 @@ import { OrderType } from '@/types/orderSetting'
 const orderType = {
   list: (params: {
     order_type: 1 | 2
-  }) => http.get(`${baseUrl}/order/type/list`, params),
-  create: (params: OrderType) => http.post(`${baseUrl}/order/type/save`, params, 'application/json'),
-  delete: (params: DeleteParams) => http.post(`${baseUrl}/order/type/delete `, params, 'application/json')
+  }) => http.get(`${baseUrlScarf}/order/type/lists`, params),
+  create: (params: OrderType) => http.post(`${baseUrlScarf}/order/type/save`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/order/type/delete `, params, 'application/json')
 }
 
 import { ProcessInfo } from '@/types/processSetting'
@@ -196,10 +196,27 @@ const quotedPrice = {
   detail: (params: DetailParams) => http.get(`${baseUrlScarf}/quote/detail`, params)
 }
 
-// 列表设置信息 type 1:报价单列表
+// 列表设置信息 type 1:报价单列表 , 2:样单列表
 const listSetting = {
   create: (params: { id: number | null, type: number, value: string }) => http.post(`${baseUrlScarf}/list/setting/save`, params, 'application/json'),
   detail: (params: { type: number }) => http.get(`${baseUrlScarf}/list/setting`, params)
+}
+
+// 样品
+import { SampleInfo } from '@/types/sample'
+const sample = {
+  create: (params: SampleInfo) => http.post(`${baseUrlScarf}/product/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrlScarf}/product/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/product/detail`, params)
+}
+
+// 样单
+import { SampleOrderInfo, SampleOrderTime } from '@/types/sampleOrder'
+const sampleOrder = {
+  again: (params: SampleOrderTime) => http.post(`${baseUrlScarf}/order/time/save`, params, 'application/json'),
+  create: (params: SampleOrderInfo) => http.post(`${baseUrlScarf}/order/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrlScarf}/order/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/order/detail`, params)
 }
 export {
   login,
@@ -227,5 +244,7 @@ export {
   packMaterial,
   group,
   quotedPrice,
-  listSetting
+  listSetting,
+  sample,
+  sampleOrder
 }

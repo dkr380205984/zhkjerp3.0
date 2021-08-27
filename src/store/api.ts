@@ -7,9 +7,18 @@ import { ProcessInfo } from '@/types/processSetting'
 import { ClientTypeInfo } from '@/types/client'
 import { GroupInfo } from '@/types/factoryInfoSetting'
 import { StyleInfo, IngredientInfo, ColourInfo } from '@/types/productSetting'
-import { productType, yarnType, clientType, decorateMaterial, packMaterial, process, group, style, colour } from '@/assets/js/api'
+import { productType, yarnType, clientType, decorateMaterial, packMaterial, process, group, style, colour, ingredient, orderType } from '@/assets/js/api'
+import { OrderType } from '@/types/orderSetting'
 
 const apiState: ApiState = {
+  orderType: {
+    status: false,
+    arr: []
+  },
+  sampleOrderType: {
+    status: false,
+    arr: []
+  },
   productStyle: {
     status: false,
     arr: []
@@ -108,6 +117,14 @@ const apiMutations = {
   getGroup(state: ApiState, groupSelf: GroupInfo[]) {
     state.group.status = true
     state.group.arr = groupSelf
+  },
+  getOrderType(state: ApiState, orderTypeSelf: OrderType[]) {
+    state.orderType.status = true
+    state.orderType.arr = orderTypeSelf
+  },
+  getSampleOrderType(state: ApiState, sampleOrderTypeSelf: OrderType[]) {
+    state.sampleOrderType.status = true
+    state.sampleOrderType.arr = sampleOrderTypeSelf
   }
 }
 
@@ -126,15 +143,23 @@ const apiActions = {
       }
     })
   },
+  getIngredientAsync(content: ActionContext<ApiState, any>) {
+    ingredient.list().then((res) => {
+      if (res.data.status) {
+        content.commit('getIngredient', res.data.data)
+      }
+    })
+  },
   getProductTypeAsync(content: ActionContext<ApiState, any>) {
     productType.list().then((res) => {
       if (res.data.status) {
         // 直接把数据处理成级联选择器需要的数据
-        const cascaderData: CascaderInfo = res.data.data.items.map((item: { id: any; name: any; unit: any; child_info: any[] }) => {
+        const cascaderData: CascaderInfo = res.data.data.items.map((item: { id: any; name: any; unit: any; child_info: any[], size: any[] }) => {
           return {
             value: item.id,
             label: item.name,
             unit: item.unit,
+            size: item.size,
             children: item.child_info.map((itemChild) => {
               return {
                 value: itemChild.id,
@@ -268,6 +293,20 @@ const apiActions = {
       if (res.data.status) {
         content.commit('getGroup', res.data.data)
       }
+    })
+  },
+  getOrderTypeAsync(content: ActionContext<ApiState, any>) {
+    orderType.list({
+      order_type: 1
+    }).then((res) => {
+      content.commit('getOrderType', res.data.data)
+    })
+  },
+  getSampleOrderTypeAsync(content: ActionContext<ApiState, any>) {
+    orderType.list({
+      order_type: 2
+    }).then((res) => {
+      content.commit('getSampleOrderType', res.data.data)
     })
   }
 }

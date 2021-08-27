@@ -1,0 +1,136 @@
+@import '../../assets/css/common.less';
+@import '../../assets/css/popup.less';
+@import '../../assets/css/table.less';
+@import '../../assets/css/detail.less';
+.sampleDetail{
+  .main{
+    width: 1000px;
+    .contentCtn{
+      padding: 0;
+      .tableCtn{
+        .tbody{
+          border-top: 1px solid @borderColor;
+        }
+      }
+      .rectCtn{
+        display: flex;
+        margin: 12px 0;
+        .rect{
+          width: 222px;
+          border:1px solid #E8E8E8;
+          box-shadow:0px 3px 8px rgba(0,0,0,0.09);
+          margin-right: 12px;
+          position: relative;
+          .tab{
+            position: absolute;
+            right: 24px;
+            top: 0px;
+            line-height: 24px;
+            .circle{
+              width: 5px;
+              height: 5px;
+              display: inline-block;
+              border-radius: 50%;
+              background: @font25;
+              margin-left: 6px;
+              cursor: pointer;
+              &.active{
+                background: @blue;
+              }
+            }
+          }
+          .rectMain{
+            padding: 16px;
+            display: flex;
+            height: 120px;
+            width: 100%;
+            box-sizing: border-box;
+            .icon{
+              width: 18px;
+              height: 18px;
+              padding:4px;
+              border-radius: 50%;
+              margin-right: 16px;
+              &.gray{
+                background: #999999;
+              }
+              &.yellow{
+                 background: @orange;
+              }
+              &.blue{
+                background: @blue;
+              }
+              &.green{
+                background: @green;
+              }
+              img{
+                width: 18px;
+                height: 18px;
+              }
+            }
+            .rectContent{
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+              justify-content: flex-start;
+              overflow: hidden;
+              .text{
+                font-size: @fontSmall;
+                margin-bottom: 12px;
+                min-height: 20px;
+                line-height: 20px;
+                color: @font45;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                &.title{
+                  font-size: @fontMiddle;
+                  color: @font85;
+                  line-height: 24px;
+                }
+              }
+            }
+          }
+          .menu{
+            height:32px;
+            line-height: 32px;
+            display: flex;
+            background: #F7F9FA;
+            justify-content: space-around;
+            align-items: center;
+            .opration{
+              color: @blue;
+              border-right: 1px solid #E8E8E8;
+              font-size: @fontMiddle;
+              height: 16px;
+              line-height: 16px;
+              text-align: center;
+              flex: 1;
+              cursor: pointer;
+              &:nth-last-child(1){
+                border-right: 0;
+              }
+            }
+          }
+        }
+      }
+      .detailCtn{
+        padding: 8px;
+        .row{
+          margin:0;
+        }
+        .col{
+          height: 32px;
+          margin-right: 12px;
+          .label{
+            line-height: 32px;
+            width: 5em;
+          }
+          .text{
+            line-height: 32px;
+          }
+        }
+      }
+    }
+  }
+}

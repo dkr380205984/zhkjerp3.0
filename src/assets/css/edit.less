@@ -2,7 +2,6 @@
   padding: 20px 32px;
   .row{
     display: flex;
-    margin-right: 1px;
     margin-bottom: 8px;
     &:nth-last-child(1){
       margin-bottom: 0;
@@ -31,6 +30,10 @@
           margin-left: 5px;
           color: @font25;
         }
+        // 右浮动一般为操作按钮
+        .fr{
+          cursor: pointer;
+        }
       }
       .info{
         display: block;
@@ -56,6 +59,7 @@
       transform: translate(-60px,100%);
       font-size: @fontMiddle;
       top:-26px;
+      margin: 0;
     }
   }
   .oprRow{

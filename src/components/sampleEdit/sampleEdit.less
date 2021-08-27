@@ -1,0 +1,52 @@
+@import '../../assets/css/common.less';
+@import '../../assets/css/popup.less';
+@import '../../assets/css/list.less';
+@import '../../assets/css/edit.less';
+.sampleEdit{
+  &.sidePopup{
+    .main{
+      background:#EEE;
+      .titleCtn{
+        background: #fff;
+      }
+      .contentCtn{
+        padding:0;
+        padding-bottom: 56px;
+        .module{
+          background: #fff;
+          margin-top: 24px;
+          .editCtn{
+            .opr{
+              transform: translate(-25px,100%);
+            }
+            .col{
+              margin-right: 32px;
+            }
+            .mark{
+              border-radius: 50%;
+              background: @orange;
+              width: 18px;
+              height: 18px;
+              display: inline-block;
+              color: #fff;
+              line-height: 18px;
+              text-align: center;
+              margin-right: 4px;
+            }
+          }
+          .partCtn{
+            padding-bottom: 24px;
+            &:nth-last-child(1){
+              padding-bottom: 0;
+            }
+          }
+          .noData{
+            color: @font45;
+            line-height: 32px;
+            font-size: @fontMiddle;
+          }
+        }
+      }
+    }
+  }
+}

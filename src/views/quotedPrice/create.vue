@@ -101,89 +101,87 @@
       </div>
     </div>
     <div class="module">
-      <el-tabs type="border-card">
-        <el-tab-pane label="添加产品描述">
-          <div v-for="(item,index) in quotedPriceInfo.product_data"
-            :key="index">
-            <div class="lineInfo">
-              <div class="text">产品{{index+1}}</div>
-              <div class="deleteIcon"
-                @click="$deleteItem(quotedPriceInfo.product_data,index)">删除</div>
+      <div class="titleCtn">
+        <div class="title">添加产品描述</div>
+      </div>
+      <div v-for="(item,index) in quotedPriceInfo.product_data"
+        :key="index">
+        <div class="lineInfo">
+          <div class="text">产品{{index+1}}</div>
+          <div class="deleteIcon"
+            @click="$deleteItem(quotedPriceInfo.product_data,index)">删除</div>
+        </div>
+        <div class="editCtn">
+          <div class="row">
+            <div class="col">
+              <div class="label">
+                <span class="text">产品品类</span>
+                <span class="explanation">(必选)</span>
+              </div>
+              <div class="info elCtn">
+                <el-cascader placeholder="请选择品类"
+                  v-model="item.type"
+                  :options="productTypeList"></el-cascader>
+              </div>
             </div>
-            <div class="editCtn">
-              <div class="row">
-                <div class="col">
-                  <div class="label">
-                    <span class="text">产品品类</span>
-                    <span class="explanation">(必选)</span>
-                  </div>
-                  <div class="info elCtn">
-                    <el-cascader placeholder="请选择品类"
-                      v-model="item.type"
-                      :options="productTypeList"></el-cascader>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="label"> 客户目标价格</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="请输入客户目标价格"
-                      v-model="item.client_target_price">
-                      <template slot="append">元</template>
-                    </el-input>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="label">客户最低起订量</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="请输入客户最低起订量"
-                      v-model="item.start_order_number"></el-input>
-                  </div>
-                </div>
+            <div class="col">
+              <div class="label"> 客户目标价格</div>
+              <div class="info elCtn">
+                <el-input placeholder="请输入客户目标价格"
+                  v-model="item.client_target_price">
+                  <template slot="append">元</template>
+                </el-input>
               </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">产品描述</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="请输入产品描述"
-                      v-model="item.desc"></el-input>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">产品图片</div>
-                  <div class="info">
-                    <el-upload class="upload"
-                      action="https://upload.qiniup.com/"
-                      accept="image/jpeg,image/gif,image/png,image/bmp"
-                      :before-upload="beforeAvatarUpload"
-                      :data="postData"
-                      :on-remove="function(file){return removeFile(file, index)}"
-                      :on-success="function(response){return successFile(response, index)}"
-                      ref="uploada"
-                      list-type="picture">
-                      <div class="uploadBtn">
-                        <i class="el-icon-upload"></i>
-                        <span>上传图片</span>
-                      </div>
-                      <div slot="tip"
-                        class="el-upload__tip">只能上传一张jpg/png图片文件，且不超过10M</div>
-                    </el-upload>
-                  </div>
-                </div>
-              </div>
-              <div v-if="index===quotedPriceInfo.product_data.length-1"
-                class="oprRow">
-                <div class="once"
-                  @click="addPro">新增产品描述
-                  <i class="el-icon-plus"></i>
-                </div>
+            </div>
+            <div class="col">
+              <div class="label">客户最低起订量</div>
+              <div class="info elCtn">
+                <el-input placeholder="请输入客户最低起订量"
+                  v-model="item.start_order_number"></el-input>
               </div>
             </div>
           </div>
-        </el-tab-pane>
-        <el-tab-pane label="选择已有产品">选择已有产品</el-tab-pane>
-      </el-tabs>
+          <div class="row">
+            <div class="col">
+              <div class="label">产品描述</div>
+              <div class="info elCtn">
+                <el-input placeholder="请输入产品描述"
+                  v-model="item.desc"></el-input>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="label">产品图片</div>
+              <div class="info">
+                <el-upload class="upload"
+                  action="https://upload.qiniup.com/"
+                  accept="image/jpeg,image/gif,image/png,image/bmp"
+                  :before-upload="beforeAvatarUpload"
+                  :data="postData"
+                  :on-remove="function(file){return removeFile(file, index)}"
+                  :on-success="function(response){return successFile(response, index)}"
+                  ref="uploada"
+                  list-type="picture">
+                  <div class="uploadBtn">
+                    <i class="el-icon-upload"></i>
+                    <span>上传图片</span>
+                  </div>
+                  <div slot="tip"
+                    class="el-upload__tip">只能上传一张jpg/png图片文件，且不超过10M</div>
+                </el-upload>
+              </div>
+            </div>
+          </div>
+          <div v-if="index===quotedPriceInfo.product_data.length-1"
+            class="oprRow">
+            <div class="once"
+              @click="addPro">新增产品描述
+              <i class="el-icon-plus"></i>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="module">
       <el-tabs type="border-card">
@@ -791,12 +789,13 @@ export default Vue.extend({
     quotedPriceInfo: QuotedPriceInfo
   } {
     return {
+      value: '',
       unitArr: moneyArr,
       postData: {
         key: '',
         token: ''
       },
-      value: '',
+
       productIndex: 0, // 目前选中的产品
       quotedPriceInfo: {
         id: null,
@@ -1089,7 +1088,6 @@ export default Vue.extend({
           id: ev[2]
         })
         .then((res) => {
-          console.log(res)
           if (res.data.status) {
             this.quotedPriceInfo.contacts_id = ''
             this.contactsList = res.data.data.contacts_data
@@ -1149,7 +1147,7 @@ export default Vue.extend({
           this.$formCheck(this.quotedPriceInfo, [
             {
               key: 'title',
-              errMsg: '请请输入报价单标题'
+              errMsg: '请输入报价单标题'
             },
             {
               key: 'client_id',
