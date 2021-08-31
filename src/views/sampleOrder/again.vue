@@ -77,12 +77,13 @@
             <div class="tcol">{{item.size_data.map((item)=>item.name).join('/')}}</div>
             <div class="tcol">{{item.color_data.map((item)=>item.name).join('/')}}</div>
             <div class="tcol">
-              <span class="orange">待确认</span>
+              <span :class="item.status===2?'green':'orange'">{{item.status===2?'已确认':'待确认'}}</span>
             </div>
             <div class="tcol oprCtn">
               <div class="opr hoverBlue"
                 @click="getSampleDetail(item.product_id)">详情</div>
-              <div class="opr hoverGreen">确认</div>
+              <div class="opr hoverGreen"
+                @click="confirmSample(item.id,item.status===2?1:2)">{{item.status===2?'待定':'确认'}}</div>
               <div class="opr hoverOrange"
                 @click="getSampleUpdate(item.product_id)">修改</div>
             </div>
@@ -300,7 +301,7 @@
 import Vue from 'vue'
 import { SampleInfo } from '@/types/sample'
 import { SampleOrderInfo, SampleOrderTime } from '@/types/sampleOrder'
-import { sampleOrder } from '@/assets/js/api'
+import { sampleOrder, sample } from '@/assets/js/api'
 interface SampleInfoExtend extends SampleInfo {
   product_id: number
 }
@@ -401,6 +402,7 @@ export default Vue.extend({
             desc: '',
             product_data: [
               {
+                status: 1,
                 product_id: '',
                 size_color_list: [], // 用于下拉框选择尺码颜色
                 product_info: [
@@ -459,6 +461,38 @@ export default Vue.extend({
     getSampleUpdate(sampleId: number) {
       this.editSampleShow = true
       this.sampleId = sampleId
+    },
+    confirmSample(sampleId: number, status: 1 | 2) {
+      this.$confirm('是否修改样品状态?', '提示', {
+        confirmButtonText: '确认修改',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          sample
+            .confirm({
+              id: sampleId,
+              status: status
+            })
+            .then((res) => {
+              if (res.data.status) {
+                if (status === 2) {
+                  this.$message.success('该样品已确认完成')
+                } else {
+                  this.$message.success('该样品已重新待定')
+                }
+                ;(this.sampleOrderInfo.time_data as SampleOrderTime[])[
+                  this.sampleOrderIndex
+                ].batch_data[0].product_data.find((item) => item.id === sampleId)!.status = status
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        })
     },
     getColour(ev: number, info: any) {
       info.size_color_list = []
@@ -549,6 +583,14 @@ export default Vue.extend({
               })
             )
           })
+        if (
+          this.$ifRepeatArray(
+            this.sampleOrderTime.batch_data[0].product_data.map((item) => item.product_id) as string[]
+          )
+        ) {
+          this.$message.error('相同样品请不要分多次添加')
+          return false
+        }
         if (!formCheck) {
           this.getCmpData()
           sampleOrder.again(this.sampleOrderTime).then((res) => {

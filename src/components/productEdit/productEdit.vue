@@ -1,10 +1,10 @@
 <template>
-  <div class="sampleEdit sidePopup"
+  <div class="productEdit sidePopup"
     v-show="show">
     <div class="main"
       v-loading="loading">
       <div class="titleCtn">
-        <span class="text">添加新样品</span>
+        <span class="text">添加新产品</span>
         <div class="closeCtn"
           @click="close">
           <span class="el-icon-close"></span>
@@ -14,7 +14,7 @@
         <div class="module">
           <div class="titleCtn">
             <div class="title"
-              style="display: flex;align-items: center;">导入已有样品
+              style="display: flex;align-items: center;">导入已有产品
               <el-switch style="margin-left:8px"
                 v-model="need_import">
               </el-switch>
@@ -24,24 +24,24 @@
             v-show="need_import">
             <div class="row">
               <div class="col">
-                <div class="label">搜索样品号查询</div>
+                <div class="label">搜索产品号查询</div>
                 <div class="info elCtn">
                   <el-input placeholder="输入ABC查询有数据"
-                    v-model="searchSampleCode"
-                    @keydown.enter.native="searchSample">
+                    v-model="searchProductCode"
+                    @keydown.enter.native="searchProduct">
                     <el-button slot="append"
                       icon="el-icon-search"
-                      @click="searchSample"></el-button>
+                      @click="searchProduct"></el-button>
                   </el-input>
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="col">
-                <div class="label">搜索样单号查询</div>
+                <div class="label">搜索订单号查询</div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入样单号查询"
-                    v-model="searchSampleOrderCode">
+                  <el-input placeholder="请输入订单号查询"
+                    v-model="searchOrderCode">
                     <el-button slot="append"
                       icon="el-icon-search"
                       @click="$message.error('没做')"></el-button>
@@ -56,7 +56,7 @@
                   v-if="searchList.length===0">暂无查询结果</div>
                 <div class="searchCtn">
                   <div class="once">
-                    <el-radio-group v-model="sampleId"
+                    <el-radio-group v-model="productId"
                       @change="getImport">
                       <el-radio v-for="item in searchList"
                         :key="item.id"
@@ -76,12 +76,12 @@
             <div class="row">
               <div class="col">
                 <div class="label">
-                  <span class="text">样品编号</span>
+                  <span class="text">产品编号</span>
                   <span class="explanation">(不填由系统生成)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入样品编号"
-                    v-model="sampleInfo.product_code"></el-input>
+                  <el-input placeholder="请输入产品编号"
+                    v-model="productInfo.product_code"></el-input>
                 </div>
               </div>
               <div class="col">
@@ -90,28 +90,28 @@
                 </div>
                 <div class="info elCtn">
                   <el-input placeholder="请输入客户款号"
-                    v-model="sampleInfo.style_code"></el-input>
+                    v-model="productInfo.style_code"></el-input>
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="col">
                 <div class="label">
-                  <span class="text">样品名称</span>
+                  <span class="text">产品名称</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入样品名称"
-                    v-model="sampleInfo.name"></el-input>
+                  <el-input placeholder="请输入产品名称"
+                    v-model="productInfo.name"></el-input>
                 </div>
               </div>
               <div class="col">
                 <div class="label">
-                  <span class="text">样品品类</span>
+                  <span class="text">产品品类</span>
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
                   <el-cascader placeholder="请选择品类"
-                    v-model="sampleInfo.type"
+                    v-model="productInfo.type"
                     :options="productTypeList"
                     @change="getUnit"></el-cascader>
                 </div>
@@ -125,19 +125,19 @@
                 </div>
                 <div class="info elCtn">
                   <el-input placeholder="选择品类后生成"
-                    v-model="sampleInfo.unit"
+                    v-model="productInfo.unit"
                     disabled>
                   </el-input>
                 </div>
               </div>
               <div class="col">
                 <div class="label">
-                  <span class="text">样品款式</span>
+                  <span class="text">产品款式</span>
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-select placeholder="请选择样品款式"
-                    v-model="sampleInfo.style_data"
+                  <el-select placeholder="请选择产品款式"
+                    v-model="productInfo.style_data"
                     multiple>
                     <el-option v-for="item in productStyleList"
                       :key="item.id"
@@ -150,14 +150,14 @@
             <div class="row">
               <div class="col">
                 <div class="label">
-                  <span class="text">样品配色组</span>
+                  <span class="text">产品配色组</span>
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-select placeholder="请选择样品配色组"
+                  <el-select placeholder="请选择产品配色组"
                     multiple
                     filterable
-                    v-model="sampleInfo.color_data">
+                    v-model="productInfo.color_data">
                     <el-option v-for="item in colourList"
                       :key="item.id"
                       :label="item.name"
@@ -172,9 +172,9 @@
             <div class="row">
               <div class="col">
                 <div class="label">
-                  <span class="text">样品图片</span>
+                  <span class="text">产品图片</span>
                 </div>
-                <div class="info">
+                <div class="fileCtn">
                   <el-upload class="upload"
                     action="https://upload.qiniup.com/"
                     accept="image/jpeg,image/gif,image/png,image/bmp"
@@ -197,11 +197,11 @@
             <div class="row">
               <div class="col">
                 <div class="label">
-                  <span class="text">样品其它描述或备注</span>
+                  <span class="text">产品其它描述或备注</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input v-model="sampleInfo.desc"
-                    placeholder="请输入样品其它描述或备注"></el-input>
+                  <el-input v-model="productInfo.desc"
+                    placeholder="请输入产品其它描述或备注"></el-input>
                 </div>
               </div>
             </div>
@@ -213,7 +213,7 @@
           </div>
           <div class="editCtn">
             <div class="row"
-              v-for="(item,index) in sampleInfo.component_data"
+              v-for="(item,index) in productInfo.component_data"
               :key="'Component' + index">
               <div class="col">
                 <div class="label"
@@ -245,13 +245,13 @@
               </div>
               <div class="opr hoverBlue"
                 v-if="index===0"
-                @click="$addItem(sampleInfo.component_data,{component_id:'',number:''})">添加</div>
+                @click="$addItem(productInfo.component_data,{component_id:'',number:''})">添加</div>
               <div class="opr hoverRed"
                 v-if="index>0"
-                @click="$deleteItem(sampleInfo.component_data,index)">删除</div>
+                @click="$deleteItem(productInfo.component_data,index)">删除</div>
             </div>
             <div class="row"
-              v-for="(item,index) in sampleInfo.size_data"
+              v-for="(item,index) in productInfo.size_data"
               :key="'Size' + index">
               <div class="col">
                 <div class="label"
@@ -319,16 +319,16 @@
           <div class="editCtn"
             v-show="have_part">
             <div class="partCtn"
-              v-for="(item,index) in sampleInfo.part_data"
+              v-for="(item,index) in productInfo.part_data"
               :key="index">
               <div class="row">
                 <div class="col">
                   <div class="label">
                     <span class="text"><span class="mark"
-                        v-if="sampleInfo.part_data.length>1">{{index+1}}</span>配件名称</span>
+                        v-if="productInfo.part_data.length>1">{{index+1}}</span>配件名称</span>
                     <span class="explanation">(必填)</span>
                     <span class="fr hoverRed"
-                      @click="$deleteItem(sampleInfo.part_data,index)">删除此配件</span>
+                      @click="$deleteItem(productInfo.part_data,index)">删除此配件</span>
                   </div>
                   <div class="info elCtn">
                     <el-input placeholder="请输入配件名称"
@@ -384,7 +384,7 @@
                   @click="$deleteItem(item.part_component_data,index)">删除</div>
               </div>
               <div class="row"
-                v-for="index in sampleInfo.size_data.length"
+                v-for="index in productInfo.size_data.length"
                 :key="'Size' + index">
                 <div class="col">
                   <div class="label"
@@ -393,7 +393,7 @@
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select v-model="sampleInfo.size_data[index-1].size_id"
+                    <el-select v-model="productInfo.size_data[index-1].size_id"
                       placeholder="同大身尺码"
                       no-data-text="请先选择品类"
                       disabled>
@@ -440,7 +440,7 @@
           @click="close">取消</span>
         <span class="btn"
           :class="{'backHoverBlue':!id&&!data,'backHoverOrange':id||data}"
-          @click="saveSample">{{!id&&!data?'确认添加':'确认修改'}}</span>
+          @click="saveProduct">{{!id&&!data?'确认添加':'确认修改'}}</span>
       </div>
     </div>
   </div>
@@ -448,9 +448,9 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { SampleInfo } from '@/types/sample'
+import { ProductInfo } from '@/types/product'
 import { CascaderInfo } from '@/types/vuex'
-import { sample } from '@/assets/js/api'
+import { product } from '@/assets/js/api'
 export default Vue.extend({
   props: {
     show: {
@@ -463,43 +463,37 @@ export default Vue.extend({
       required: false,
       default: true
     },
-    // 修改样品用
+    // 修改产品用
     id: {
       type: [Number, String],
       required: false
     },
-    // 修改样品用
+    // 修改产品用
     data: {
-      required: false
-    },
-    // 注意：修改样品有两种情况，一种是继续打样，表面修改，实际新增，一种就是普通的修改样品
-    ifUpdate: {
-      type: Boolean,
-      default: false,
       required: false
     }
   },
   data(): {
-    searchList: SampleInfo[]
-    sampleInfo: SampleInfo
+    searchList: ProductInfo[]
+    productInfo: ProductInfo
     [propName: string]: any
   } {
     return {
       loading: false,
       have_part: true,
       need_import: false,
-      searchSampleOrderCode: '', // 搜样单编号导入
-      searchSampleCode: '', // 搜样品编号导入
+      searchOrderCode: '', // 搜产单编号导入
+      searchProductCode: '', // 搜产品编号导入
       searchList: [],
-      sampleId: '',
+      productId: '',
       sizeList: [],
       postData: {
         key: '',
         token: ''
       },
-      sampleInfo: {
+      productInfo: {
         id: null,
-        product_type: 2,
+        product_type: 1,
         name: '',
         product_code: '',
         style_code: '', // 客户款号
@@ -565,11 +559,11 @@ export default Vue.extend({
     }
   },
   watch: {
-    // 打开样品详情窗口之前需要获取样品详情
+    // 打开产品详情窗口之前需要获取产品详情
     show(val) {
       if (val) {
         if (this.data) {
-          this.sampleInfo = this.data as SampleInfo
+          this.productInfo = this.data as ProductInfo
         } else {
           if (this.id) {
             this.getImport(Number(this.id))
@@ -579,15 +573,15 @@ export default Vue.extend({
     }
   },
   methods: {
-    searchSample() {
-      if (this.searchSampleCode) {
+    searchProduct() {
+      if (this.searchProductCode) {
         this.loading = true
-        sample
+        product
           .list({
             limit: 99,
             page: 1,
             product_type: 2,
-            product_code: this.searchSampleCode
+            product_code: this.searchProductCode
           })
           .then((res) => {
             if (res.data.status) {
@@ -599,14 +593,14 @@ export default Vue.extend({
     },
     getImport(ev: number) {
       this.loading = true
-      sample
+      product
         .detail({
           id: ev
         })
         .then((res) => {
           const data = res.data.data
-          this.sampleInfo = {
-            product_type: 2,
+          this.productInfo = {
+            product_type: 1,
             name: data.name,
             product_code: data.product_code,
             style_code: data.style_code,
@@ -657,31 +651,31 @@ export default Vue.extend({
         })
     },
     close() {
-      this.$emit('close', this.sampleInfo)
+      this.$emit('close', this.productInfo)
     },
     getUnit(ev: number[]) {
       const finded = this.productTypeList.find((item) => item.value === ev[0])
       this.sizeList = finded!.size
-      this.sampleInfo.unit = finded!.unit!
+      this.productInfo.unit = finded!.unit!
     },
     // 尺码的逻辑包含大身+配件尺码的添加&删除
     addSize() {
-      this.$addItem(this.sampleInfo.size_data, { size_id: '', weight: '', size_info: '' })
-      this.sampleInfo.part_data.forEach((item) => {
+      this.$addItem(this.productInfo.size_data, { size_id: '', weight: '', size_info: '' })
+      this.productInfo.part_data.forEach((item) => {
         this.$addItem(item.part_size_data, { size_id: '', weight: '', size_info: '' })
       })
     },
     deleteSize(index: number) {
-      this.$deleteItem(this.sampleInfo.size_data, index)
-      this.sampleInfo.part_data.forEach((item) => {
+      this.$deleteItem(this.productInfo.size_data, index)
+      this.productInfo.part_data.forEach((item) => {
         this.$deleteItem(item.part_size_data, index)
       })
     },
     addPart() {
-      this.$addItem(this.sampleInfo.part_data, {
+      this.$addItem(this.productInfo.part_data, {
         name: '',
         unit: '',
-        part_size_data: this.sampleInfo.size_data.map(() => {
+        part_size_data: this.productInfo.size_data.map(() => {
           return {
             size_id: '',
             size_info: '',
@@ -715,62 +709,61 @@ export default Vue.extend({
       }
     },
     successFile(response: { hash: string; key: string }) {
-      this.sampleInfo.image_data.push('https://file.zwyknit.com/' + response.key)
+      this.productInfo.image_data.push('https://file.zwyknit.com/' + response.key)
     },
     removeFile(file: { response: { hash: string; key: string } }) {
       this.$deleteItem(
-        this.sampleInfo.image_data,
-        this.sampleInfo.image_data.indexOf('https://file.zwyknit.com/' + file.response.key)
+        this.productInfo.image_data,
+        this.productInfo.image_data.indexOf('https://file.zwyknit.com/' + file.response.key)
       )
     },
     getCmpData() {
-      // 注意继续打样修改是新增样品
-      if ((this.id || this.data) && this.ifUpdate) {
-        this.sampleInfo.id = this.id || (this.data as SampleInfo).id
+      if (this.id || this.data) {
+        this.productInfo.id = this.id || (this.data as ProductInfo).id
       } else {
-        this.sampleInfo.id = null
+        this.productInfo.id = null
       }
-      this.sampleInfo.category_id = this.sampleInfo.type![0]
-      this.sampleInfo.type_id = this.sampleInfo.type![1]
+      this.productInfo.category_id = this.productInfo.type![0]
+      this.productInfo.type_id = this.productInfo.type![1]
       if (this.have_part) {
-        this.sampleInfo.part_data.forEach((item) => {
+        this.productInfo.part_data.forEach((item) => {
           item.part_size_data.forEach((itemChild, indexChild) => {
-            itemChild.size_id = this.sampleInfo.size_data[indexChild].size_id
+            itemChild.size_id = this.productInfo.size_data[indexChild].size_id
           })
         })
       } else {
-        this.sampleInfo.part_data = []
+        this.productInfo.part_data = []
       }
     },
-    saveSample() {
-      this.$emit('beforeSave', this.sampleInfo)
+    saveProduct() {
+      this.$emit('beforeSave', this.productInfo)
       const formCheck =
-        this.$formCheck(this.sampleInfo, [
+        this.$formCheck(this.productInfo, [
           {
             key: 'style_code',
             errMsg: '请输入客户款号'
           },
           {
             key: 'name',
-            errMsg: '请输入样品名称'
+            errMsg: '请输入产品名称'
           },
           {
             key: 'type',
-            errMsg: '请选择样品品类',
+            errMsg: '请选择产品品类',
             regNormal: 'checkArr'
           },
           {
             key: 'style_data',
-            errMsg: '请选择样品款式',
+            errMsg: '请选择产品款式',
             regNormal: 'checkArr'
           },
           {
             key: 'color_data',
-            errMsg: '请选择样品配色',
+            errMsg: '请选择产品配色',
             regNormal: 'checkArr'
           }
         ]) ||
-        this.sampleInfo.component_data.some((item) => {
+        this.productInfo.component_data.some((item) => {
           return this.$formCheck(item, [
             {
               key: 'component_id',
@@ -782,7 +775,7 @@ export default Vue.extend({
             }
           ])
         }) ||
-        this.sampleInfo.size_data.some((item) => {
+        this.productInfo.size_data.some((item) => {
           return this.$formCheck(item, [
             {
               key: 'size_id',
@@ -800,7 +793,7 @@ export default Vue.extend({
         })
       let partFormCheck: boolean = false
       if (this.have_part && !formCheck) {
-        partFormCheck = this.sampleInfo.part_data.some((item) => {
+        partFormCheck = this.productInfo.part_data.some((item) => {
           return (
             this.$formCheck(item, [
               {
@@ -842,7 +835,7 @@ export default Vue.extend({
       this.getCmpData()
       if (!formCheck && !partFormCheck) {
         this.loading = true
-        sample.create(this.sampleInfo).then((res) => {
+        product.create(this.productInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
             this.$emit('afterSave', res.data.data)
@@ -857,8 +850,8 @@ export default Vue.extend({
     reset() {
       this.need_import = false
       this.searchList = []
-      this.sampleInfo = {
-        product_type: 2,
+      this.productInfo = {
+        product_type: 1,
         name: '',
         product_code: '',
         style_code: '', // 客户款号
@@ -939,5 +932,5 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import './sampleEdit.less';
+@import './productEdit.less';
 </style>

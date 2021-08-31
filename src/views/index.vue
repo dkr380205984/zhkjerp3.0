@@ -134,7 +134,7 @@ export default Vue.extend({
           name: '订单管理',
           id: 3,
           icon: 'product',
-          url: '/quotedPrice/list'
+          url: '/order/list?page=1'
         },
         {
           name: '财务统计',

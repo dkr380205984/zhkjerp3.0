@@ -3,7 +3,8 @@ export interface SampleOrderBatch {
   id?: number | null | string
   batch_number: number // 第几批
   batch_title: string
-  batch_type: string | number
+  batch_type_id?: string | number
+  batch_type?: string | number
   delivery_time: string // 发货时间
   is_urgent: 1 | 2 // 1.紧急 2.不紧急
   is_draft: 1 | 2  // 1.草稿 2.非草稿
@@ -12,6 +13,8 @@ export interface SampleOrderBatch {
   total_price: string
   desc: string
   product_data: Array<{
+    id?: number
+    status?: 1 | 2 // 1.待定 2.已确认
     image_data?: string[]
     color_data?: any[]
     size_data?: any[]

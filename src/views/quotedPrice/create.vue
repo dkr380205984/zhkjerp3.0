@@ -101,7 +101,8 @@
       </div>
     </div>
     <div class="module">
-      <div class="titleCtn">
+      <div class="titleCtn"
+        style="border-bottom:0">
         <div class="title">添加产品描述</div>
       </div>
       <div v-for="(item,index) in quotedPriceInfo.product_data"
@@ -109,7 +110,7 @@
         <div class="lineInfo">
           <div class="text">产品{{index+1}}</div>
           <div class="deleteIcon"
-            @click="$deleteItem(quotedPriceInfo.product_data,index)">删除</div>
+            @click="quotedPriceInfo.product_data.length>1?$deleteItem(quotedPriceInfo.product_data,index):$message.error('至少有一项产品描述')">删除</div>
         </div>
         <div class="editCtn">
           <div class="row">

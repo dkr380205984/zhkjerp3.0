@@ -7,7 +7,7 @@ import { ProcessInfo } from '@/types/processSetting'
 import { ClientTypeInfo } from '@/types/client'
 import { GroupInfo } from '@/types/factoryInfoSetting'
 import { StyleInfo, IngredientInfo, ColourInfo } from '@/types/productSetting'
-import { productType, yarnType, clientType, decorateMaterial, packMaterial, process, group, style, colour, ingredient, orderType } from '@/assets/js/api'
+import { productType, yarnType, clientType, decorateMaterial, packMaterial, process, group, style, colour, ingredient, orderType, yarnColor } from '@/assets/js/api'
 import { OrderType } from '@/types/orderSetting'
 
 const apiState: ApiState = {
@@ -36,6 +36,10 @@ const apiState: ApiState = {
     arr: []
   },
   yarnType: {
+    status: false,
+    arr: []
+  },
+  yarnColor: {
     status: false,
     arr: []
   },
@@ -89,6 +93,10 @@ const apiMutations = {
   getYarnType(state: ApiState, yarnSelf: CascaderInfo[]) {
     state.yarnType.status = true
     state.yarnType.arr = yarnSelf
+  },
+  getYarnColor(state: ApiState, yarnColorSelf: CascaderInfo[]) {
+    state.yarnColor.status = true
+    state.yarnColor.arr = yarnColorSelf
   },
   getclientType(state: ApiState, clientTypeSelf: CascaderInfo[]) {
     state.clientType.status = true
@@ -225,6 +233,13 @@ const apiActions = {
         })
       }]
       content.commit('getYarnType', cascaderData)
+    })
+  },
+  getYarnColorAsync(content: ActionContext<ApiState, any>) {
+    yarnColor.list().then((res) => {
+      if (res.data.status) {
+        content.commit('getYarnColor', res.data.data)
+      }
     })
   },
   getClientTypeAsync(content: ActionContext<ApiState, any>) {

@@ -407,6 +407,10 @@ const toFixedAuto = (num: number, precision: number = 2): number => {
   }
 }
 
+// 数组查重，有重复return true
+const ifRepeatArray = (arr: string[]): boolean => {
+  return Array.from(new Set(arr)).length !== arr.length
+}
 export default {
   install: (Vue: any) => {
     Vue.prototype.$getHash = plugin.getHash
@@ -429,5 +433,6 @@ export default {
     Vue.prototype.$toFixed = toFixedAuto
     Vue.prototype.$openUrl = (url: string) => window.open(url)
     Vue.prototype.$downLoadFile = plugin.downLoadFile
+    Vue.prototype.$ifRepeatArray = ifRepeatArray
   }
 }

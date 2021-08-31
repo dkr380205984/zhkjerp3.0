@@ -1,9 +1,9 @@
 <template>
-  <div id="sampleOrderList"
+  <div id="orderList"
     class="bodyContainer">
     <div class="module">
       <div class="titleCtn">
-        <div class="title">样单列表</div>
+        <div class="title">订单列表</div>
       </div>
       <div class="listCtn">
         <div class="filterCtn">
@@ -16,7 +16,7 @@
         </div>
         <div class="filterCtn clearfix">
           <div class="btn backHoverBlue fr"
-            @click="$router.push('/sampleOrder/create')">添加样单</div>
+            @click="$router.push('/order/create')">添加订单</div>
           <div class="btn backHoverOrange fr"
             @click="showSetting=true">列表设置</div>
         </div>
@@ -39,7 +39,7 @@
                 v-show="itemKey.ifShow">{{item[itemKey.key]}}</div>
               <div class="column w130">
                 <div class="opr hoverBlue"
-                  @click="$router.push('/sampleOrder/detail?id=' + item.id)">详情</div>
+                  @click="$router.push('/order/detail?id=' + item.id)">详情</div>
                 <div class="opr hoverOrange">修改</div>
                 <div class="opr hoverRed">删除</div>
               </div>
@@ -97,7 +97,7 @@
       @afterSave="getListSetting"
       :show="showSetting"
       :id="listSettingId"
-      :type="2"
+      :type="3"
       :data.sync="listKey"
       :originalData="originalSetting"></zh-list-setting>
   </div>
@@ -105,11 +105,11 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { sample, sampleOrder, listSetting } from '@/assets/js/api'
-import { SampleOrderInfo } from '@/types/sampleOrder'
+import { order, listSetting } from '@/assets/js/api'
+import { OrderInfo } from '@/types/order'
 export default Vue.extend({
   data(): {
-    list: SampleOrderInfo[]
+    list: OrderInfo[]
     [porpName: string]: any
   } {
     return {
@@ -217,11 +217,11 @@ export default Vue.extend({
       this.$router.push('/sampleOrder/list?page=' + this.page)
     },
     getList() {
-      sampleOrder
+      order
         .list({
           limit: 5,
           page: this.page,
-          order_type: 2
+          order_type: 1
         })
         .then((res) => {
           this.list = res.data.data.items
@@ -233,7 +233,7 @@ export default Vue.extend({
       this.listKey = []
       listSetting
         .detail({
-          type: 2
+          type: 3
         })
         .then((res) => {
           this.listSettingId = res.data.data ? res.data.data.id : null
@@ -256,5 +256,5 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import '~@/assets/css/sampleOrder/list.less';
+@import '~@/assets/css/order/list.less';
 </style>

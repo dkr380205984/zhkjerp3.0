@@ -113,10 +113,12 @@ const craftSetting = {
 // 纱线颜色
 import { YarnColorInfo } from '@/types/craftSetting'
 const yarnColor = {
-  create: (params: { data: YarnColorInfo[] }) => http.post(`${baseUrl}/yarn/color/save`, params, 'application/json'),
-  delete: (params: DeleteParams) => http.post(`${baseUrl}/yarn/color/delete`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrl}/yarn/color/list`, params)
+  create: (params: { data: YarnColorInfo[] }) => http.post(`${baseUrlScarf}/yarn/color/save`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/yarn/color/delete`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrlScarf}/yarn/color/lists`, params)
 }
+// 潘通色号
+const pantongList = (params: { keyword?: string }) => http.get(`${baseUrl}/pan/color/list`, { params })
 
 // 单证设置
 import { ClientEN, BankEN } from '@/types/billDocumentSetting'
@@ -207,7 +209,9 @@ import { SampleInfo } from '@/types/sample'
 const sample = {
   create: (params: SampleInfo) => http.post(`${baseUrlScarf}/product/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrlScarf}/product/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/product/detail`, params)
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/product/detail`, params),
+  // 1.待定 2.确认
+  confirm: (params: { id: string | number, status: 1 | 2 }) => http.post(`${baseUrlScarf}/order/product/confirm`, params, 'application/json')
 }
 
 // 样单
@@ -217,6 +221,21 @@ const sampleOrder = {
   create: (params: SampleOrderInfo) => http.post(`${baseUrlScarf}/order/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrlScarf}/order/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrlScarf}/order/detail`, params)
+}
+
+// 产品 产品和样品的接口是同一个，前端方便区分
+import { ProductInfo } from '@/types/product'
+const product = {
+  create: (params: ProductInfo) => http.post(`${baseUrlScarf}/product/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrlScarf}/product/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/product/detail`, params),
+}
+
+// 订单 
+import { OrderInfo } from '@/types/order'
+const order = {
+  create: (params: OrderInfo) => http.post(`${baseUrlScarf}/order/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrlScarf}/order/lists`, params),
 }
 export {
   login,
@@ -235,6 +254,7 @@ export {
   process,
   craftSetting,
   yarnColor,
+  pantongList,
   billDocumentSetting,
   yarnType,
   yarn,
@@ -246,5 +266,7 @@ export {
   quotedPrice,
   listSetting,
   sample,
-  sampleOrder
+  sampleOrder,
+  product,
+  order
 }

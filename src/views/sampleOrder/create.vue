@@ -420,7 +420,7 @@ export default Vue.extend({
         desc: '',
         time_data: {
           id: '',
-          order_time: '',
+          order_time: this.$getDate(new Date()),
           order_type_id: '',
           complete_time: '',
           is_draft: 2,
@@ -533,7 +533,6 @@ export default Vue.extend({
       this.sampleDetail = sample
     },
     getNewSample(sample: SampleInfo) {
-      console.log(sample)
       this.sampleList.push(sample)
     },
     beforeAvatarUpload(file: any) {
@@ -635,6 +634,14 @@ export default Vue.extend({
               })
             )
           })
+        if (
+          this.$ifRepeatArray(
+            this.sampleOrderInfo.time_data.batch_data[0].product_data.map((item) => item.product_id) as string[]
+          )
+        ) {
+          this.$message.error('相同样品请不要分多次添加')
+          return
+        }
         if (!formCheck) {
           this.getCmpData()
           sampleOrder.create(this.sampleOrderInfo).then((res) => {

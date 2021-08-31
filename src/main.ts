@@ -41,6 +41,7 @@ declare module 'vue/types/vue' {
       data: any,
       checkArr: Array<{ key: string, errMsg?: string, regExp?: RegExp, regNormal?: 'isNum' | 'isEmail' | 'isPhone' | 'isNull' | 'checkArr' }>
     ): boolean
+    $ifRepeatArray(arr: string[]): boolean
   }
 }
 

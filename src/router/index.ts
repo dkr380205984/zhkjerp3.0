@@ -60,6 +60,30 @@ const routes: Array<RouteConfig> = [
       path: '/sampleOrder/again',
       name: '继续打样',
       component: () => import('../views/sampleOrder/again.vue')
+    }, {
+      path: '/order/list',
+      name: '订单列表',
+      component: () => import('../views/order/list.vue')
+    }, {
+      path: '/order/create',
+      name: '订单添加',
+      component: () => import('../views/order/create.vue')
+    }, {
+      path: '/order/detail',
+      name: '订单详情',
+      component: () => import('../views/order/detail.vue')
+    }, {
+      path: '/order/update',
+      name: '订单修改',
+      component: () => import('../views/order/update.vue')
+    }, {
+      path: '/craft/create',
+      name: '创建工艺单',
+      component: () => import('../views/craft/create.vue')
+    }, {
+      path: '/craft/update',
+      name: '修改工艺单',
+      component: () => import('../views/craft/update.vue')
     }]
   }
 ]

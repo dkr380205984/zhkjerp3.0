@@ -108,7 +108,7 @@
             <div class="tcol">样品编号</div>
             <div class="tcol">样品名称</div>
             <div class="tcol">样品图片</div>
-            <div class="tcol"
+            <div class="tcol noPad"
               style="flex:3">
               <div class="trow">
                 <div class="tcol">尺码颜色</div>
@@ -127,7 +127,7 @@
             :key="index">
             <div class="tcol">
               <span>{{item.product_code||'无编号'}}</span>
-              <span class="gray">({{item.category_name}}/{{item.type_name}})</span>
+              <span class="gray">({{item.category}}/{{item.type}})</span>
             </div>
             <div class="tcol">{{item.product_name}}</div>
             <div class="tcol">
@@ -143,7 +143,7 @@
                 </el-image> -->
               </div>
             </div>
-            <div class="tcol"
+            <div class="tcol noPad"
               style="flex:3">
               <div class="trow"
                 v-for="(itemChild,indexChild) in item.product_info"
@@ -153,7 +153,17 @@
                 <div class="tcol">{{itemChild.number}}</div>
               </div>
             </div>
-            <div class="tcol">样品单据状态</div>
+            <div class="tcol stateCtn">
+              <div class="state"
+                @click="$router.push('/craft/create?productId=' + item.product_id)">
+                <div class="circle backGray"></div>
+                <div class="text gray">工艺单</div>
+              </div>
+              <div class="state">
+                <div class="circle backBlue"></div>
+                <div class="text blue">配料单</div>
+              </div>
+            </div>
             <div class="tcol">样品描述</div>
             <div class="tcol">修改意见</div>
           </div>
