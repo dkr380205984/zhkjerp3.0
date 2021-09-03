@@ -1,0 +1,118 @@
+@import '../common.less';
+@import '../detail.less';
+@import '../table.less';
+@import '../bottomBar.less';
+#ingredientCreate{
+  .tableCtn{
+    padding-top: 0;
+  }
+  .btnList{
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    .button{
+      line-height: 30px;
+      padding: 0 12px;
+      border:1px solid #dcdfe6;
+      display: inline-block;
+      color: @font65;
+      border-left: 0;
+      cursor: pointer;
+      font-size: @fontMiddle;
+      &.active{
+        background: @blue;
+        color: #fff;
+      }
+      &:nth-child(1){
+        border-left: 1px solid #dcdfe6;
+      }
+    }
+  }
+  .selectBtnList{
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    justify-content: flex-start;
+    max-width: 1057px;
+    flex-wrap: wrap;
+    .selectButton{
+      line-height: 30px;
+      border:1px solid #dcdfe6;
+      display: inline-block;
+      color: @font65;
+      cursor: pointer;
+      margin-right: 16px;
+      margin-bottom: 16px;
+      position: relative;
+      border-radius: 2px;
+      padding: 0 30px 0 12px;
+      &.selected{
+        border-color: @blue;
+        background: rgba(26,148,255,0.1);
+        &::before{
+          content:'';
+          position: absolute;
+          right: 0;
+          top: 0;
+          width: 0;
+          height: 0;
+          border: 15px solid transparent;
+          border-top: 15px solid @blue;
+          border-right: 15px solid @blue;
+        }
+        &::after{
+          content: '\e78c';
+          font-family: element-icons!important;
+          color: #fff;
+          position: absolute;
+          right: 1px;
+          top: -6px;
+        }
+      }
+      &.success{
+        border-color: @green;
+        &::before{
+          content:'';
+          position: absolute;
+          right: 0;
+          top: 0;
+          width: 0;
+          height: 0;
+          border: 15px solid transparent;
+          border-top: 15px solid @green;
+          border-right: 15px solid @green;
+        }
+        &::after{
+          content: '\E6DA';
+          font-family: element-icons!important;
+          color: #fff;
+          position: absolute;
+          right: 1px;
+          top: -6px;
+        }
+      }
+      &.error{
+        border-color: @orange;
+        &::before{
+          content:'';
+          position: absolute;
+          right: 0;
+          top: 0;
+          width: 0;
+          height: 0;
+          border: 15px solid transparent;
+          border-top: 15px solid @orange;
+          border-right: 15px solid @orange;
+        }
+        &::after{
+          content: '\e6db';
+          font-family: element-icons!important;
+          color: #fff;
+          position: absolute;
+          right: 1px;
+          top: -6px;
+        }
+      }
+    }
+  }
+}

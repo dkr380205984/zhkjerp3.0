@@ -6,6 +6,7 @@ import sampleEdit from './sampleEdit/sampleEdit.vue'
 import productEdit from './productEdit/productEdit.vue'
 import sampleDetail from './sampleDetail/sampleDetail.vue'
 import colorPicker from './colorPicker/colorPicker.vue'
+import orderDetail from './orderDetail/orderDetail.vue'
 export default {
   install: (Vue: any) => {
     Vue.component('zhNav', zhNav)
@@ -16,5 +17,6 @@ export default {
     Vue.component('sampleDetail', sampleDetail)
     Vue.component('productEdit', productEdit)
     Vue.component('zhColorPicker', colorPicker) //和elment-ui区分
+    Vue.component('orderDetail', orderDetail)
   }
 }

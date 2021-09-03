@@ -155,11 +155,12 @@
             </div>
             <div class="tcol stateCtn">
               <div class="state"
-                @click="$router.push('/craft/create?productId=' + item.product_id)">
+                @click="$router.push('/craft/create?id=' + item.product_id)">
                 <div class="circle backGray"></div>
                 <div class="text gray">工艺单</div>
               </div>
-              <div class="state">
+              <div class="state"
+                @click="$router.push('/ingredient/create?id=' + item.product_id)">
                 <div class="circle backBlue"></div>
                 <div class="text blue">配料单</div>
               </div>

@@ -2907,8 +2907,8 @@ export default Vue.extend({
         })
     },
     getSide() {
-      craftSetting.list().then((res) => {
-        this.sideList = res.data.data.side
+      craftSetting.listSide().then((res) => {
+        this.sideList = res.data.data
         this.sideTotal = this.sideList.length
       })
     },
@@ -2965,8 +2965,8 @@ export default Vue.extend({
         })
     },
     getMachine() {
-      craftSetting.list().then((res) => {
-        this.machineList = res.data.data.type
+      craftSetting.listMachine().then((res) => {
+        this.machineList = res.data.data
         this.machineTotal = this.machineList.length
       })
     },
@@ -3023,8 +3023,8 @@ export default Vue.extend({
         })
     },
     getMethods() {
-      craftSetting.list().then((res) => {
-        this.methodsList = res.data.data.method
+      craftSetting.listMethods().then((res) => {
+        this.methodsList = res.data.data
         this.methodsTotal = this.methodsList.length
       })
     },

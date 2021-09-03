@@ -7,7 +7,7 @@ import { ProcessInfo } from '@/types/processSetting'
 import { ClientTypeInfo } from '@/types/client'
 import { GroupInfo } from '@/types/factoryInfoSetting'
 import { StyleInfo, IngredientInfo, ColourInfo } from '@/types/productSetting'
-import { productType, yarnType, clientType, decorateMaterial, packMaterial, process, group, style, colour, ingredient, orderType, yarnColor } from '@/assets/js/api'
+import { productType, yarnType, clientType, decorateMaterial, packMaterial, process, group, style, colour, ingredient, orderType, yarnColor, yarn } from '@/assets/js/api'
 import { OrderType } from '@/types/orderSetting'
 
 const apiState: ApiState = {
@@ -71,9 +71,17 @@ const apiState: ApiState = {
   group: {
     status: false,
     arr: []
+  },
+  material: {
+    status: false,
+    arr: []
   }
 }
 const apiMutations = {
+  getMaterail(state: ApiState, materialSelf: StyleInfo[]) {
+    state.material.status = true
+    state.material.arr = materialSelf
+  },
   getProductStyle(state: ApiState, productStyleSelf: StyleInfo[]) {
     state.productStyle.status = true
     state.productStyle.arr = productStyleSelf
@@ -137,6 +145,13 @@ const apiMutations = {
 }
 
 const apiActions = {
+  getMaterialAsync(content: ActionContext<ApiState, any>) {
+    yarn.list().then((res) => {
+      if (res.data.status) {
+        content.commit('getMaterail', res.data.data)
+      }
+    })
+  },
   getProductStyleAsync(content: ActionContext<ApiState, any>) {
     style.list().then((res) => {
       if (res.data.status) {

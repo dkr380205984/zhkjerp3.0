@@ -73,7 +73,7 @@
                 :key="item.list">
                 <div class="column w130">
                   <div class="opr hoverBlue"
-                    @click="$router.push('/sampleOrder/detail?id=' + item.id)">详情</div>
+                    @click="$router.push('/order/detail?id=' + item.id)">详情</div>
                   <div class="opr hoverOrange">修改</div>
                   <div class="opr hoverRed">删除</div>
                 </div>

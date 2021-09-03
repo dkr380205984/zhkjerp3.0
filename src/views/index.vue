@@ -143,10 +143,22 @@ export default Vue.extend({
           url: '/newfinancialStatistics/orderStatistics'
         },
         {
-          name: '其它管理',
+          name: '仓库管理',
+          id: 1,
+          icon: 'financial',
+          url: '/store/list?page=1'
+        },
+        {
+          name: '工厂管理',
           id: null,
           icon: 'other',
-          url: '/client/create?type=1'
+          url: '/client/list?page=1&type=1'
+        },
+        {
+          name: '物料计划',
+          id: null,
+          icon: 'other',
+          url: '/client/list?page=1&type=1'
         }
       ]
     }

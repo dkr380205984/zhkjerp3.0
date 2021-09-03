@@ -1,4 +1,35 @@
 // 列表页公共样式
+.topTagCtn{
+  display: flex;
+  height: 100px;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  .tag{
+    background: #fff;
+    display: flex;
+    flex: 1;
+    align-items: center;
+    margin-right: 24px;
+    flex-direction: column;
+    justify-content: center;
+    cursor: pointer;
+    color: @font85;
+    &:nth-last-child(1){
+      margin-right: 0;
+    }
+    .text{
+      font-size: @fontBig;
+    }
+    &:hover{
+      background-color: #e6f7ff;
+      color: @blue;
+    }
+    &.active{
+      background-color: #e6f7ff;
+      color: @blue;
+    }
+  }
+}
 .listCtn{
   padding: 20px 32px;
   .filterCtn{

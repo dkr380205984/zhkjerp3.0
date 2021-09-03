@@ -127,12 +127,12 @@
             </div>
             <div class="col">
               <div class="opr hoverRed"
-                @click="$deleteItem(clientInfo.contactInfo,index)">删除</div>
+                @click="$deleteItem(clientInfo.contacts_data,index)">删除</div>
             </div>
           </div>
           <div class="oprRow">
             <div class="once"
-              @click="$addItem(clientInfo.contactInfo,{ name: '',phone: '',email: '',station: '' })">新增联系人
+              @click="$addItem(clientInfo.contacts_data,{ name: '',phone: '',email: '',station: '' })">新增联系人
               <i class="el-icon-plus"></i>
             </div>
           </div>

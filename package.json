@@ -18,7 +18,9 @@
     "echarts": "^5.0.0",
     "element-ui": "^2.13.2",
     "vuex": "^3.4.0",
-    "xlsx": "^0.14.1"
+    "xlsx": "^0.14.1",
+    "@handsontable/vue": "^4.0.0",
+    "handsontable": "^7.0.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

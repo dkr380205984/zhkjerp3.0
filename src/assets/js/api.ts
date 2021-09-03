@@ -101,13 +101,15 @@ const process = {
 // 工艺单设置
 import { SideInfo, MachineInfo, MethodsInfo } from '@/types/craftSetting'
 const craftSetting = {
-  list: () => http.get(`${baseUrl}/production/edit/list`, {}),
-  createSide: (params: { data: SideInfo[] }) => http.post(`${baseUrl}/production/side/save`, params, 'application/json'),
-  deleteSide: (params: DeleteParams) => http.post(`${baseUrl}/production/side/delete`, params, 'application/json'),
-  createMachine: (params: { data: MachineInfo[] }) => http.post(`${baseUrl}/production/type/save`, params, 'application/json'),
-  deleteMachine: (params: DeleteParams) => http.post(`${baseUrl}/production/type/delete`, params, 'application/json'),
-  createMethods: (params: { data: MethodsInfo[] }) => http.post(`${baseUrl}/production/method/save`, params, 'application/json'),
-  deleteMethods: (params: DeleteParams) => http.post(`${baseUrl}/production/method/delete`, params, 'application/json')
+  listSide: () => http.get(`${baseUrlScarf}/craft/side/type/lists`, {}),
+  createSide: (params: { data: SideInfo[] }) => http.post(`${baseUrlScarf}/craft/side/type/save`, params, 'application/json'),
+  deleteSide: (params: DeleteParams) => http.post(`${baseUrlScarf}/craft/side/delete`, params, 'application/json'),
+  listMachine: () => http.get(`${baseUrlScarf}/craft/machine/type/lists`, {}),
+  createMachine: (params: { data: MachineInfo[] }) => http.post(`${baseUrlScarf}/craft/machine/type/save`, params, 'application/json'),
+  deleteMachine: (params: DeleteParams) => http.post(`${baseUrlScarf}/craft/machine/type/delete`, params, 'application/json'),
+  listMethods: () => http.get(`${baseUrlScarf}/craft/organization/method/lists`, {}),
+  createMethods: (params: { data: MethodsInfo[] }) => http.post(`${baseUrlScarf}/craft/organization/method/save`, params, 'application/json'),
+  deleteMethods: (params: DeleteParams) => http.post(`${baseUrlScarf}/craft/organization/method/delete`, params, 'application/json')
 }
 
 // 纱线颜色
@@ -147,7 +149,7 @@ interface YarnListParams extends ListParams {
 }
 const yarn = {
   create: (params: YarnInfo) => http.post(`${baseUrlScarf}/yarn/save`, params, 'application/json'),
-  list: (params: YarnListParams) => http.get(`${baseUrlScarf}/yarn/lists`, params),
+  list: (params?: YarnListParams) => http.get(`${baseUrlScarf}/yarn/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/yarn/delete`, params, 'application/json')
 }
 
@@ -171,7 +173,8 @@ const packMaterial = {
 import { ClientInfo } from '@/types/client'
 const client = {
   create: (params: ClientInfo) => http.post(`${baseUrlScarf}/client/save`, params, 'application/json'),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/client/detail`, params)
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/client/detail`, params),
+  list: (params?: ListParams) => http.get(`${baseUrlScarf}/client/lists`, params)
 }
 
 // 公司类型
@@ -236,6 +239,7 @@ import { OrderInfo } from '@/types/order'
 const order = {
   create: (params: OrderInfo) => http.post(`${baseUrlScarf}/order/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrlScarf}/order/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/order/detail`, params)
 }
 export {
   login,

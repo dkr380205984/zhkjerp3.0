@@ -37,8 +37,12 @@ const routes: Array<RouteConfig> = [
       name: '报价单详情',
       component: () => import('../views/quotedPrice/detail.vue')
     }, {
+      path: '/client/list',
+      name: '客户/单位列表',
+      component: () => import('../views/client/list.vue')
+    }, {
       path: '/client/create',
-      name: '添加公司',
+      name: '添加客户/单位',
       component: () => import('../views/client/create.vue')
     }, {
       path: '/sampleOrder/list',
@@ -84,6 +88,26 @@ const routes: Array<RouteConfig> = [
       path: '/craft/update',
       name: '修改工艺单',
       component: () => import('../views/craft/update.vue')
+    }, {
+      path: '/ingredient/create',
+      name: '创建配料单',
+      component: () => import('../views/ingredient/create.vue')
+    }, {
+      path: '/ingredient/update',
+      name: '修改配料单',
+      component: () => import('../views/ingredient/update.vue')
+    }, {
+      path: '/store/list',
+      name: '仓库列表',
+      component: () => import('../views/store/list.vue')
+    }, {
+      path: '/store/create',
+      name: '添加仓库',
+      component: () => import('../views/store/create.vue')
+    }, {
+      path: '/store/detail',
+      name: '仓库详情',
+      component: () => import('../views/store/detail.vue')
     }]
   }
 ]
