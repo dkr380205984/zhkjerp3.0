@@ -107,8 +107,8 @@
             <div class="tcol">
               <div class="imageCtn">
                 <el-image style="width:100%;height:100%"
-                  :src="item.image_data.length>0?item.image_data[0].image_url:''"
-                  :preview-src-list="item.image_data.map((item)=>item.image_url)">
+                  :src="item.image_data.length>0?item.image_data[0]:''"
+                  :preview-src-list="item.image_data">
                   <div slot="error"
                     class="image-slot">
                     <i class="el-icon-picture-outline"
@@ -306,7 +306,8 @@
             </div>
             <div class="otherInfoCtn">
               <div class="otherInfo">
-                <div class="btn backHoverOrange">
+                <div class="btn backHoverOrange"
+                  @click="$router.push('/quotedPrice/update?id='+$route.query.id)">
                   <i class="iconfont">&#xe63b;</i>
                   <span class="text">修改报价</span>
                 </div>
@@ -314,7 +315,8 @@
                   <i class="iconfont">&#xe63b;</i>
                   <span class="text">审核报价</span>
                 </div>
-                <div class="btn backHoverRed">
+                <div class="btn backHoverRed"
+                  @click="deleteQuotedPrice">
                   <i class="iconfont">&#xe63b;</i>
                   <span class="text">删除报价</span>
                 </div>
@@ -330,7 +332,8 @@
                   <i class="iconfont">&#xe63b;</i>
                   <span class="text">邮件分享</span>
                 </div>
-                <div class="btn backHoverGreen">
+                <div class="btn backHoverGreen"
+                  @click="$router.push('/sampleOrder/create?quotedPriceId='+ $route.query.id)">
                   <i class="iconfont">&#xe63b;</i>
                   <span class="text">生成样单</span>
                 </div>
@@ -366,7 +369,8 @@ export default Vue.extend({
         id: null,
         is_draft: 1,
         title: '',
-        client_id: [],
+        client_id: '',
+        tree_data: '',
         client_name: '',
         contacts_id: '',
         contacts_name: '',
@@ -457,6 +461,36 @@ export default Vue.extend({
           }
         ]
       }
+    }
+  },
+  methods: {
+    deleteQuotedPrice() {
+      this.$confirm('是否删除报价单?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          quotedPrice
+            .delete({
+              id: Number(this.$route.query.id)
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.$router.push('/quotedPrice/list?page=1&keyword=&client_id=&user_id=&status=0&date=')
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     }
   },
   mounted() {

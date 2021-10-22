@@ -120,45 +120,27 @@ export default Vue.extend({
       newNavData: [
         {
           name: '报价管理',
-          id: 2,
+          id: 1,
           icon: 'price',
-          url: '/quotedPrice/list?page=1'
+          url: '/quotedPrice/list?page=1&keyword=&client_id=&user_id=&status=0&date='
         },
         {
           name: '样单管理',
-          id: 1,
+          id: 2,
           icon: 'sample',
-          url: '/sampleOrder/list?page=1'
+          url: '/sampleOrder/list?page=1&keyword=&client_id=&user_id=&status=0&date='
         },
         {
           name: '订单管理',
           id: 3,
           icon: 'product',
-          url: '/order/list?page=1'
+          url: '/order/list?page=1&keyword=&client_id=&user_id=&status=0&date='
         },
         {
-          name: '财务统计',
-          id: 16,
-          icon: 'financial',
-          url: '/newfinancialStatistics/orderStatistics'
-        },
-        {
-          name: '仓库管理',
-          id: 1,
-          icon: 'financial',
-          url: '/store/list?page=1'
-        },
-        {
-          name: '工厂管理',
+          name: '其它管理',
           id: null,
           icon: 'other',
-          url: '/client/list?page=1&type=1'
-        },
-        {
-          name: '物料计划',
-          id: null,
-          icon: 'other',
-          url: '/client/list?page=1&type=1'
+          url: '/menu'
         }
       ]
     }

@@ -32,7 +32,7 @@
       margin-bottom: 12px;
     }
     .jia{
-      width: 60px;
+      width: 80px;
       margin-left: 12px;
       height: 32px!important;
       margin-bottom: 12px;
@@ -72,6 +72,346 @@
     }
     .btn{
       margin-left: 12px;
+    }
+  }
+  .GLCtn{
+    color: @font65;
+    overflow:hidden;
+    margin-top: 16px;
+    position: relative;
+    .deltaCtn {
+      width: 250px;
+      height: 125px;
+      display: flex;
+      align-items: center;
+      color: #666;
+      margin-bottom: 16px;
+      margin-right: 16px;
+      float: left;
+      .leftCtn {
+        height: 125px;
+        margin-right: 20px;
+        position: relative;
+        &::after {
+          content: "";
+          position: absolute;
+          width: 20px;
+          height: 1px;
+          background: #ccc;
+          left: 23px;
+          top: 24px;
+          transform: rotate(-45deg);
+        }
+        &::before {
+          content: "";
+          position: absolute;
+          width: 20px;
+          height: 1px;
+          background: #ccc;
+          left: 23px;
+          bottom: 24px;
+          transform: rotate(45deg);
+        }
+        span {
+          display: inline-block;
+          width: 22px;
+          height: 22px;
+          border: 1px solid #ddd;
+          border-radius: 50%;
+          line-height: 23px;
+          text-align: center;
+          margin: 50px 0;
+          position: relative;
+          // cursor: pointer;
+          // &.⚫{
+          //   background: #111;
+          //   color:#fff;
+          //   border-color:#111;
+          // }
+          // &.⬛{
+          //   background: #111;
+          //   border-radius: 0;
+          //   color:#fff;
+          //   border-color:#111;
+          // }
+          // &.🔷{
+          //   background: #111;
+          //   border-radius: 0;
+          //   color:#111;
+          //   transform:rotate(45deg);
+          //   border-color:#111;
+          //   &::after{
+          //     content: attr(content);
+          //     color: #fff;
+          //     position: absolute;
+          //     left: 0;
+          //     top: 0;
+          //     line-height: 22px;
+          //     bottom: 0;
+          //     right: 0;
+          //     transform:rotate(-45deg);
+          //   }
+          // }
+        }
+        .copyBtn{
+          position: absolute;
+          line-height: 24px;
+          top:73px;
+          left: 0;
+          cursor: pointer;
+          font-size: @fontSmall;
+        }
+      }
+      .rightCtn {
+        height: 125px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        .hehe{
+          display: flex;
+          align-items: center;
+          .el-input{
+            width: 160px;
+          }
+          .normal{
+            width: 28px;
+            height: 28px;
+            border:1px solid #ccc;
+            font-size: 12px;
+            margin-left: 6px;
+            border-radius: 2px;
+            text-align: center;
+            line-height: 28px;
+            color: #ccc;
+            cursor: pointer;
+            &.⚫{
+              background: #111;
+              color:#fff;
+              border-color:#111;
+              border-radius: 50%;
+            }
+            &.⬛{
+              background: #111;
+              color:#fff;
+              border-color:#111;
+            }
+            &.🔷{
+              background: #111;
+              border-radius: 0;
+              color:#111;
+              transform:rotate(45deg);
+              height: 24px;
+              width: 24px;
+              margin-left: 8px;
+              border-color:#111;
+              &::after{
+                content: attr(content);
+                color: #fff;
+                position: absolute;
+                left: 0;
+                top: 0;
+                line-height: 22px;
+                bottom: 0;
+                right: 0;
+                transform:rotate(-45deg);
+              }
+            }
+          }
+        }
+      }
+    }
+    .position{
+      float: left;
+      text-align: center;
+      margin-top: 45px;
+      &.borderBtn{
+        padding: 0 8px;
+        margin-right: 12px;
+      }
+    }
+    .mark{
+      width: 2em;
+      height: 125px;
+      line-height: 125px;
+      margin: auto;
+      float: left;
+      color: @font65;
+      text-align: center;
+      span{
+        position: absolute;
+        font-size: @fontSmall;
+        top:1.4em;
+        text-align: center;
+        left:0;
+      }
+    }
+  }
+  .treeCtn{
+    color: @font65;
+    font-size: @fontMiddle;
+    margin-top: 12px;
+    .node{
+      position: relative;
+      .numbers{
+        position: absolute;
+        line-height: 22px;
+        top: 5px;
+        left:44px;
+        font-size: 16px;
+        width: 22px;
+        height: 22px;
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        text-align: center;
+      }
+      .deleteBtn{
+        position: absolute;
+        line-height: 26px;
+        padding: 0 5px;
+        background: @red;
+        cursor: pointer;
+        color: #fff;
+        top: 4px;
+        left: 0px;
+        font-size: 12px;
+        border-radius: 2px;
+      }
+      .nodeChild{
+        margin-left: 75px;
+      }
+      .nodeBox{
+        width: 718px;
+        box-sizing: border-box;
+        border:1px solid #E6E6E6;
+        display: inline-flex;
+        margin-bottom: 16px;
+        vertical-align: text-top;
+        border-radius: 2px;
+        position: relative;
+        margin-left: 78px;
+        .deleteBtn{
+          border:0;
+          background:@red;
+          color:#fff;
+          height:26px;
+          line-height:26px;
+          width:26px;
+          position:absolute;
+          left: -33px;
+          top: 0;
+          bottom: 0;
+          margin: auto;
+          &:hover{
+            color: #fff;
+          }
+        }
+        .lineRow{
+          height: 1px;
+          position: absolute;
+          width: 30px;
+          background: #e6e6e6;
+          left: -48px;
+          top: 0;
+          bottom: 0;
+          margin: auto;
+        }
+        .box1{
+          width: 120px;
+          border-right: 1px solid #E6E6E6;
+          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+        }
+        .box2{
+          flex: 1;
+          .lines{
+            display: flex;
+            line-height: 32px;
+            border-bottom: 1px solid #E6E6E6;
+            position: relative;
+            &:nth-last-child(1){
+              border-bottom: 0;
+            }
+            .line1{
+              flex: 1;
+              padding: 0 5px;
+              position: relative;
+            }
+            .line2{
+              width: 120px;
+              border-left: 1px solid #E6E6E6;
+              text-align: center;
+              position: relative;
+            }
+            .oprText{
+              position: absolute;
+              right: -4em;
+              font-size: @fontSmall;
+              cursor: pointer;
+              &.add{
+                color: @blue;
+              }
+              &.delete{
+                color: @red;
+              }
+            }
+          }
+        }
+        .unit{
+          font-style: normal;
+          color:#909399;
+          font-size: @fontSmall;
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          margin: auto;
+          line-height: 32px;
+          z-index: 1;
+          height: 32px;
+          &.right{
+            right: 5px;
+          }
+          &.left{
+            left:5px;
+          }
+        }
+      }
+      .nodeBtn{
+        height: 32px;
+        width:32px;
+        line-height: 30px;
+        border-radius: 2px;
+        margin-left: 16px;
+        padding: 0;
+        text-align: center;
+        cursor: pointer;
+        color: #909399;
+        border:1px solid #E6E6E6;
+        display: inline-block;
+        vertical-align: text-top;
+        &:hover{
+          color: @blue;
+          border-color: @blue;
+        }
+        span{
+          font-size: 16px;
+          &:nth-child(2){
+            margin-left: 5px;
+            font-size: 20px;
+            vertical-align: -1px;;
+          }
+        }
+      }
+      .lineCol{
+        position: absolute;
+        width: 1px;
+        left:105px;
+        top: 32px;
+        bottom: 32px;
+        background: #e6e6e6;
+      }
     }
   }
 }

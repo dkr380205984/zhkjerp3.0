@@ -1,6 +1,9 @@
 .detailCtn{
   padding: 20px 32px;
   position: relative;
+  &.noPad{
+    padding: 0;
+  }
   .checkCtn{
     position: absolute;
     border-radius: 50%;
@@ -50,6 +53,31 @@
           height: 116px;
           vertical-align: text-top;
           margin-right: 16px;
+        }
+      }
+      .fileCtn{
+        display: flex;
+        .once{
+          height: 40px;
+          display: flex;
+          align-items: center;
+          margin-right: 12px;
+          .fileIcon{
+            width: 28px;
+            height: 28px;
+            background: @blue;
+            color: #fff;
+          }
+          .name{
+            font-size: @fontMiddle;
+            color: @font65;
+            margin-left: 6px;
+          }
+          .opr{
+            font-size: @fontMiddle;
+            text-decoration:none;
+            color: @blue;
+          }
         }
       }
     }

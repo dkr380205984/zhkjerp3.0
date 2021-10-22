@@ -122,6 +122,14 @@ const yarnColor = {
 // 潘通色号
 const pantongList = (params: { keyword?: string }) => http.get(`${baseUrl}/pan/color/list`, { params })
 
+// 工艺单
+import { CraftInfo } from '@/types/craft'
+const craft = {
+  create: (params: CraftInfo) => http.post(`${baseUrlScarf}/craft/save`, params, 'application/json'),
+  detail: (params: DeleteParams) => http.get(`${baseUrlScarf}/craft/detail`, params),
+  list: (params?: ListParams) => http.get(`${baseUrlScarf}/craft/lists`, params)
+}
+
 // 单证设置
 import { ClientEN, BankEN } from '@/types/billDocumentSetting'
 interface HScodeListParams extends ListParams {
@@ -193,12 +201,21 @@ const group = {
   delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/user/group/delete`, params, 'application/json')
 }
 
+// 用户
+import { UserInfo } from '@/types/user'
+const user = {
+  create: (params: UserInfo) => http.post(`${baseUrl}/company/member/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/company/member/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/company/member/delete`, params, 'application/json')
+}
+
 // 报价单
 import { QuotedPriceInfo } from '@/types/quotedPrice'
 const quotedPrice = {
   create: (params: QuotedPriceInfo) => http.post(`${baseUrlScarf}/quote/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrlScarf}/quote/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/quote/detail`, params)
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/quote/detail`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/quote/delete`, params, 'application/json')
 }
 
 // 列表设置信息 type 1:报价单列表 , 2:样单列表
@@ -207,14 +224,19 @@ const listSetting = {
   detail: (params: { type: number }) => http.get(`${baseUrlScarf}/list/setting`, params)
 }
 
+// 仓库
+import { StoreInfo } from '@/types/store'
+const store = {
+  create: (params: StoreInfo) => http.post(`${baseUrlScarf}/store/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrlScarf}/store/lists`, params)
+}
+
 // 样品
 import { SampleInfo } from '@/types/sample'
 const sample = {
   create: (params: SampleInfo) => http.post(`${baseUrlScarf}/product/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrlScarf}/product/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/product/detail`, params),
-  // 1.待定 2.确认
-  confirm: (params: { id: string | number, status: 1 | 2 }) => http.post(`${baseUrlScarf}/order/product/confirm`, params, 'application/json')
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/product/detail`, params)
 }
 
 // 样单
@@ -223,7 +245,10 @@ const sampleOrder = {
   again: (params: SampleOrderTime) => http.post(`${baseUrlScarf}/order/time/save`, params, 'application/json'),
   create: (params: SampleOrderInfo) => http.post(`${baseUrlScarf}/order/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrlScarf}/order/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/order/detail`, params)
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/order/detail`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/order/delete`, params, 'application/json'),
+  confirm: (params: { id: string | number, status: 1 | 2 | 3 }) => http.post(`${baseUrlScarf}/order/product/confirm`, params, 'application/json'),
+  confirmList: (params: { order_id: number }) => http.get(`${baseUrlScarf}/order/confirm/product/lists`, params)
 }
 
 // 产品 产品和样品的接口是同一个，前端方便区分
@@ -239,7 +264,79 @@ import { OrderInfo } from '@/types/order'
 const order = {
   create: (params: OrderInfo) => http.post(`${baseUrlScarf}/order/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrlScarf}/order/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/order/detail`, params)
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/order/detail`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/order/delete`, params, 'application/json')
+}
+
+// 物料计划单
+import { MaterialPlanInfo } from '@/types/materialPlan'
+const materialPlan = {
+  create: (params: MaterialPlanInfo) => http.post(`${baseUrlScarf}/material/plan/save`, params, 'application/json'),
+  list: (params: {
+    plan_id?: string | number
+    order_id?: string | number
+    client_id?: string | number
+    limit?: number
+    page?: number
+  }) => http.get(`${baseUrlScarf}/material/plan/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/material/plan/detail`, params)
+}
+// 物料订购
+import { MaterialOrderInfo } from '@/types/materialOrder'
+const materialOrder = {
+  create: (params: { data: MaterialOrderInfo[] }) => http.post(`${baseUrlScarf}/material/order/save`, params, 'application/json'),
+  list: (params: {
+    plan_id?: string | number
+    order_id?: string | number
+    client_id?: string | number
+  }) => http.get(`${baseUrlScarf}/material/order/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/material/order/detail`, params)
+}
+
+// 物料加工
+import { MaterialProcessInfo } from '@/types/materialProcess'
+const materialProcess = {
+  create: (params: { data: MaterialProcessInfo[] }) => http.post(`${baseUrlScarf}/material/process/save`, params, 'application/json'),
+  list: (params: {
+    plan_id?: string | number
+    order_id?: string | number
+    client_id?: string | number
+  }) => http.get(`${baseUrlScarf}/material/process/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/material/process/detail`, params)
+}
+
+// 物料出入库
+import { MaterialStockInfo } from '@/types/materialStock'
+const mateiralStock = {
+  create: (params: MaterialStockInfo) => http.post(`${baseUrlScarf}/store/log/save`, params, 'application/json'),
+  list: (params: {
+    plan_id?: string | number
+    order_id?: string | number
+    client_id?: string | number
+  }) => http.get(`${baseUrlScarf}/store/log/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/store/log/delete`, params, 'application/json')
+}
+
+// 生产计划
+import { ProductionPlanInfo } from '@/types/productionPlan'
+const productionPlan = {
+  create: (params: { data: ProductionPlanInfo[] }) => http.post(`${baseUrlScarf}/weave/plan/save`, params, 'application/json'),
+  list: (params: {
+    plan_id?: string | number
+    order_id?: string | number
+    client_id?: string | number
+  }) => http.get(`${baseUrlScarf}/weave/plan/lists`, params),
+}
+
+import { InspectionInfo } from '@/types/inspection'
+const inspection = {
+  create: (params: { data: InspectionInfo[] }) => http.post(`${baseUrlScarf}/inspection/save`, params, 'application/json'),
+  list: (params: {
+    plan_id?: string | number
+    order_id?: string | number
+    client_id?: string | number
+    type: 1 | 2 | null
+  }) => http.get(`${baseUrlScarf}/inspection/lists`, params),
 }
 export {
   login,
@@ -258,6 +355,7 @@ export {
   process,
   craftSetting,
   yarnColor,
+  craft,
   pantongList,
   billDocumentSetting,
   yarnType,
@@ -267,10 +365,18 @@ export {
   decorateMaterial,
   packMaterial,
   group,
+  user,
   quotedPrice,
   listSetting,
+  store,
   sample,
   sampleOrder,
   product,
-  order
+  order,
+  materialPlan,
+  materialOrder,
+  materialProcess,
+  mateiralStock,
+  productionPlan,
+  inspection
 }

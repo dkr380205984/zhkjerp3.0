@@ -336,6 +336,17 @@ const plugin = {
     aLink.download = url
     aLink.click()
     aLink.remove()
+  },
+  // 对象数组查找id对应的name，一般用于下拉框的值查找对应的名称
+  findId<T, K extends keyof T>(jsonArr: T[], id: number | string, returnKey: K, findKey: K): T[K] | string {
+    const finded = jsonArr.find((item) => {
+      return Number(item[findKey]) === Number(id)
+    })
+    if (finded) {
+      return finded![returnKey]
+    } else {
+      return '无匹配值'
+    }
   }
 }
 const submitLock = () => {
@@ -434,5 +445,6 @@ export default {
     Vue.prototype.$openUrl = (url: string) => window.open(url)
     Vue.prototype.$downLoadFile = plugin.downLoadFile
     Vue.prototype.$ifRepeatArray = ifRepeatArray
+    Vue.prototype.$findId = plugin.findId
   }
 }

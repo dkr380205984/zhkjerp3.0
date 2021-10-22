@@ -68,9 +68,22 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { store } from '@/assets/js/api'
 export default Vue.extend({
   methods: {
-    getList() {}
+    getList() {
+      store
+        .list({
+          page: 1,
+          limit: 5
+        })
+        .then((res) => {
+          console.log(res)
+        })
+    }
+  },
+  mounted() {
+    this.getList()
   }
 })
 </script>

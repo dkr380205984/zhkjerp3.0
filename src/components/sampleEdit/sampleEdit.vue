@@ -180,6 +180,7 @@
                     accept="image/jpeg,image/gif,image/png,image/bmp"
                     :before-upload="beforeAvatarUpload"
                     :data="postData"
+                    :file-list="sampleInfo.file_list"
                     :on-remove="removeFile"
                     :on-success="successFile"
                     ref="uploada"
@@ -314,7 +315,8 @@
               </el-switch>
             </div>
             <div class="btn borderBtn blue"
-              @click="addPart">新增配件</div>
+              @click="addPart"
+              v-show="have_part">新增配件</div>
           </div>
           <div class="editCtn"
             v-show="have_part">
@@ -463,6 +465,15 @@ export default Vue.extend({
       required: false,
       default: true
     },
+    // 修改样品状态，并新增一个新的样品用
+    pid: {
+      type: [Number, String],
+      required: false
+    },
+    pid_status: {
+      type: [Number],
+      required: false
+    },
     // 修改样品用
     id: {
       type: [Number, String],
@@ -470,6 +481,15 @@ export default Vue.extend({
     },
     // 修改样品用
     data: {
+      required: false
+    },
+    // 报价单初始化样品用,该参数和修改样品的参数互斥
+    quote_rel_product_id: {
+      type: [Number, String],
+      required: false
+    },
+    // 报价单描述信息
+    quote_rel_product_data: {
       required: false
     },
     // 注意：修改样品有两种情况，一种是继续打样，表面修改，实际新增，一种就是普通的修改样品
@@ -499,6 +519,9 @@ export default Vue.extend({
       },
       sampleInfo: {
         id: null,
+        pid: null,
+        pid_status: null,
+        quote_rel_product_id: '',
         product_type: 2,
         name: '',
         product_code: '',
@@ -508,6 +531,7 @@ export default Vue.extend({
         type_id: '',
         type: [], // 品类下拉框
         image_data: [],
+        file_list: [],
         desc: '',
         style_data: [], // 款式
         component_data: [
@@ -568,11 +592,30 @@ export default Vue.extend({
     // 打开样品详情窗口之前需要获取样品详情
     show(val) {
       if (val) {
-        if (this.data) {
-          this.sampleInfo = this.data as SampleInfo
+        // 修改样单里的样品需要新建样品，并修改原样品的状态
+        if (this.quote_rel_product_id) {
+          this.sampleInfo.quote_rel_product_id = this.quote_rel_product_id
+          const quotedPriceProductInfo = this.quote_rel_product_data as SampleInfo
+          this.sampleInfo.type = [
+            quotedPriceProductInfo.category_id as number,
+            quotedPriceProductInfo.type_id as number
+          ]
+          this.getUnit(this.sampleInfo.type)
+          this.sampleInfo.desc = quotedPriceProductInfo.desc
+          this.sampleInfo.file_list = quotedPriceProductInfo.image_data.map((item, index) => {
+            return {
+              id: index,
+              url: item
+            }
+          })
+          this.sampleInfo.image_data = []
         } else {
-          if (this.id) {
-            this.getImport(Number(this.id))
+          if (this.data) {
+            this.changeDetailToEdit(this.data as SampleInfo)
+          } else {
+            if (this.id) {
+              this.getImport(Number(this.id))
+            }
           }
         }
       }
@@ -605,59 +648,13 @@ export default Vue.extend({
         })
         .then((res) => {
           const data = res.data.data
-          this.sampleInfo = {
-            product_type: 2,
-            name: data.name,
-            product_code: data.product_code,
-            style_code: data.style_code,
-            unit: data.unit,
-            category_id: data.category_id,
-            type_id: data.type_id,
-            type: [data.category_id, data.type_id],
-            image_data: data.image_data.map((item: any) => item.image_url),
-            desc: data.desc,
-            style_data: data.style_data.map((item: any) => item.id),
-            component_data: data.component_data.map((item: any) => {
-              return {
-                component_id: item.id,
-                number: item.number
-              }
-            }),
-            size_data: data.size_data.map((item: any) => {
-              return {
-                size_id: item.id,
-                size_info: item.size_info,
-                weight: item.weight
-              }
-            }), // 尺码组
-            color_data: data.color_data.map((item: any) => item.id), // 配色组
-            // 配件信息
-            part_data: data.part_data.map((item: any) => {
-              return {
-                name: item.name,
-                unit: item.unit,
-                part_size_data: item.part_size_data.map((item: any) => {
-                  return {
-                    size_id: item.id,
-                    size_info: item.size_info,
-                    weight: item.weight
-                  }
-                }),
-                part_component_data: item.part_component_data.map((item: any) => {
-                  return {
-                    component_id: item.id,
-                    number: item.number
-                  }
-                })
-              }
-            })
-          }
-          this.getUnit([data.category_id, data.type_id])
+          this.changeDetailToEdit(data)
           this.loading = false
         })
     },
     close() {
       this.$emit('close', this.sampleInfo)
+      this.reset()
     },
     getUnit(ev: number[]) {
       const finded = this.productTypeList.find((item) => item.value === ev[0])
@@ -717,11 +714,18 @@ export default Vue.extend({
     successFile(response: { hash: string; key: string }) {
       this.sampleInfo.image_data.push('https://file.zwyknit.com/' + response.key)
     },
-    removeFile(file: { response: { hash: string; key: string } }) {
-      this.$deleteItem(
-        this.sampleInfo.image_data,
-        this.sampleInfo.image_data.indexOf('https://file.zwyknit.com/' + file.response.key)
-      )
+    removeFile(file: { response: { hash: string; key: string }; url: string }) {
+      if (this.sampleInfo.file_list!.find((item) => item.url === file.url)) {
+        this.$deleteItem(
+          this.sampleInfo.file_list!,
+          this.sampleInfo.file_list!.map((item) => item.url).indexOf(file.url)
+        )
+      } else {
+        this.$deleteItem(
+          this.sampleInfo.image_data,
+          this.sampleInfo.image_data.indexOf('https://file.zwyknit.com/' + file.response.key)
+        )
+      }
     },
     getCmpData() {
       // 注意继续打样修改是新增样品
@@ -732,6 +736,7 @@ export default Vue.extend({
       }
       this.sampleInfo.category_id = this.sampleInfo.type![0]
       this.sampleInfo.type_id = this.sampleInfo.type![1]
+      this.sampleInfo.image_data = this.sampleInfo.image_data.concat(this.sampleInfo.file_list!.map((item) => item.url)) // 新旧图拼接
       if (this.have_part) {
         this.sampleInfo.part_data.forEach((item) => {
           item.part_size_data.forEach((itemChild, indexChild) => {
@@ -858,6 +863,10 @@ export default Vue.extend({
       this.need_import = false
       this.searchList = []
       this.sampleInfo = {
+        id: null,
+        pid: null,
+        pid_status: null,
+        quote_rel_product_id: '',
         product_type: 2,
         name: '',
         product_code: '',
@@ -867,6 +876,7 @@ export default Vue.extend({
         type_id: '',
         type: [], // 品类下拉框
         image_data: [],
+        file_list: [],
         desc: '',
         style_data: [], // 款式
         component_data: [
@@ -904,6 +914,66 @@ export default Vue.extend({
           }
         ]
       }
+    },
+    changeDetailToEdit(data: any) {
+      this.sampleInfo = {
+        id: this.pid ? null : this.id, // 打样的时候id用于查询样品，还得新建产品
+        pid: this.pid,
+        pid_status: this.pid ? this.pid_status : null,
+        product_type: 2,
+        name: data.name,
+        product_code: data.product_code,
+        style_code: data.style_code,
+        unit: data.unit,
+        category_id: data.category_id,
+        type_id: data.type_id,
+        type: [data.category_id as number, data.type_id as number],
+        image_data: [],
+        file_list: data.image_data.map((item: any, index: number) => {
+          return {
+            id: index,
+            url: item
+          }
+        }),
+        desc: data.desc,
+        style_data: data.style_data.map((item: any) => item.id),
+        component_data: data.component_data.map((item: any) => {
+          return {
+            component_id: item.id,
+            number: item.number
+          }
+        }),
+        size_data: data.size_data.map((item: any) => {
+          return {
+            size_id: item.id,
+            size_info: item.size_info,
+            weight: item.weight
+          }
+        }), // 尺码组
+        color_data: data.color_data.map((item: any) => item.id), // 配色组
+        // 配件信息
+        part_data: data.part_data.map((item: any) => {
+          return {
+            name: item.name,
+            unit: item.unit,
+            part_size_data: item.part_size_data.map((item: any) => {
+              return {
+                size_id: item.id,
+                size_info: item.size_info,
+                weight: item.weight
+              }
+            }),
+            part_component_data: item.part_component_data.map((item: any) => {
+              return {
+                component_id: item.id,
+                number: item.number
+              }
+            })
+          }
+        })
+      }
+      this.have_part = this.sampleInfo.part_data.length > 0
+      this.getUnit([data.category_id as number, data.type_id as number])
     }
   },
   mounted() {

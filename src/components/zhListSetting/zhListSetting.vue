@@ -10,6 +10,7 @@
         </div>
       </div>
       <div class="contentCtn">
+        <div class="explainCtn">注：特殊元素以及图片信息只能排序，不可移除，也不能锁定在左侧！重置以及恢复系统设置均需要<span class="blue">保存显示方案</span>才能生效！</div>
         <div class="listCtn">
           <div class="filterCtn clearfix">
             <div class="btn backHoverOrange fr"
@@ -30,11 +31,13 @@
               :class="{'lock':item.ifLock}">
               <div class="col">{{item.name}}</div>
               <div class="col">
-                <el-checkbox v-model="item.ifShow">{{item.ifShow?'显示':'不显示'}}</el-checkbox>
+                <el-checkbox v-model="item.ifShow"
+                  :disabled="item.ifImage||(!!item.from)">{{item.ifShow?'显示':'不显示'}}</el-checkbox>
               </div>
               <div class="col">
                 <el-checkbox v-model="item.ifLock"
-                  @change="changeIndex(item.index,3)">{{item.ifLock?'锁定':'不锁定'}}</el-checkbox>
+                  @change="changeIndex(item.index,3)"
+                  :disabled="item.ifImage||(!!item.from)">{{item.ifLock?'锁定':'不锁定'}}</el-checkbox>
               </div>
               <div class="col">
                 <div class="opr"

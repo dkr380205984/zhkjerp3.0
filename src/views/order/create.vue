@@ -1,6 +1,7 @@
 <template>
   <div id="orderCreate"
-    class="bodyContainer">
+    class="bodyContainer"
+    v-loading="loading">
     <div class="module">
       <div class="titleCtn">
         <div class="title">基本信息</div>
@@ -24,7 +25,7 @@
             </div>
             <div class="info elCtn">
               <el-cascader placeholder="请选择下单公司"
-                v-model="orderInfo.client_id"
+                v-model="orderInfo.tree_data"
                 :options="clientList"
                 @change="getContacts">
               </el-cascader>
@@ -117,11 +118,80 @@
         </div>
       </div>
     </div>
+    <div class="module"
+      v-if="confirmSampleInfo.length>0">
+      <div class="titleCtn">
+        <div class="title">已确认样品信息</div>
+      </div>
+      <div class="notes">已确认的样品需要通过<span class="blue">转产品</span>按钮转换成产品后，才能下单。
+        在确认产品信息的时候，可以对其中的信息进行修改，这不会影响样单里的样品信息。
+        注意：样品在转产品之后工艺单信息需要重新添加，通过<span class="blue">快捷导入</span>按钮可以快速导入相关工艺单。</div>
+      <div class="tableCtn">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol">样品编号</div>
+            <div class="tcol">样品名称</div>
+            <div class="tcol">样品图片</div>
+            <div class="tcol noPad"
+              style="flex:2">
+              <div class="trow">
+                <div class="tcol">尺码颜色</div>
+                <div class="tcol">单价</div>
+                <div class="tcol">数量</div>
+              </div>
+            </div>
+            <div class="tcol">转换状态</div>
+            <div class="tcol">样品描述</div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow"
+            v-for="(item,index) in confirmSampleInfo"
+            :key="index">
+            <div class="tcol">
+              <span>{{item.product_code||item.system_code}}</span>
+              <span class="gray">({{item.category}}/{{item.type}})</span>
+            </div>
+            <div class="tcol">{{item.name}}</div>
+            <div class="tcol">
+              <div class="imageCtn">
+                <el-image style="width:100%;height:100%"
+                  :src="item.image_data.length>0?item.image_data[0]:''"
+                  :preview-src-list="item.image_data">
+                  <div slot="error"
+                    class="image-slot">
+                    <i class="el-icon-picture-outline"
+                      style="font-size:42px"></i>
+                  </div>
+                </el-image>
+              </div>
+            </div>
+            <div class="tcol noPad"
+              style="flex:2">
+              <div class="trow"
+                v-for="(itemChild,indexChild) in item.product_info"
+                :key="indexChild">
+                <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
+                <div class="tcol">{{itemChild.price}}元</div>
+                <div class="tcol">{{itemChild.number}}</div>
+              </div>
+            </div>
+            <div class="tcol"> <span :class="item.status|productStatusClassFilter">{{item.status|productStatusFilter}}</span></div>
+            <div class="tcol">{{item.desc}}</div>
+            <div class="tcol oprCtn">
+              <div class="opr blue"
+                @click="changeToPro(item.product_id)">样品转产品</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="module">
       <div class="titleCtn flexBetween">
         <div class="title">添加产品</div>
         <div class="btn backHoverBlue"
-          @click="addProductFlag = true">添加新产品</div>
+          @click="proId=null;pid=null;pid_status=null;addProductFlag = true;">添加新产品</div>
       </div>
       <div class="noDate"
         v-show="productList.length === 0">暂无产品信息</div>
@@ -453,36 +523,48 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverOrange"
-            @click="saveOrder(true)">保存为草稿</div>
           <div class="btn backHoverBlue"
-            @click="saveOrder(false)">提交</div>
+            @click="saveOrder">提交</div>
         </div>
       </div>
     </div>
-    <product-edit :show="addProductFlag"
+    <product-edit :pid="pid"
+      :pid_status="pid_status"
+      :id="proId"
+      :show="addProductFlag"
       @close="addProductFlag = false"
       @afterSave="getNewProduct"></product-edit>
+    <product-detail :data="productDetail"
+      :show="productShow"
+      @close="productShow = false"></product-detail>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import { OrderInfo, OrderTime } from '@/types/order'
+import { SampleOrderInfo, SampleOrderTime } from '@/types/sampleOrder'
 import { moneyArr } from '@/assets/js/dictionary'
 import { ProductInfo } from '@/types/product'
-import { client, order } from '@/assets/js/api'
+import { client, order, sampleOrder } from '@/assets/js/api'
+import { SampleInfo } from '@/types/sample'
 interface OrderCreate extends OrderInfo {
   time_data: OrderTime
+}
+interface SampleOrderDetail extends SampleOrderInfo {
+  time_data: SampleOrderTime[]
 }
 export default Vue.extend({
   data(): {
     productDetail: ProductInfo
+    changeToProDetail: ProductInfo
     productList: ProductInfo[]
     orderInfo: OrderCreate
+    confirmSampleInfo: SampleInfo[]
     [propName: string]: any
   } {
     return {
+      loading: false,
       unitArr: moneyArr,
       orderInfo: {
         id: null,
@@ -592,10 +674,62 @@ export default Vue.extend({
           }
         ]
       },
+      changeToProDetail: {
+        id: null,
+        product_type: 1,
+        name: '',
+        product_code: '',
+        style_code: '', // 客户款号
+        unit: '',
+        category_id: '',
+        type_id: '',
+        type: [], // 品类下拉框
+        image_data: [],
+        desc: '',
+        style_data: [], // 款式
+        component_data: [
+          {
+            component_id: '',
+            number: '' // 成分信息
+          }
+        ],
+        size_data: [
+          {
+            size_id: '',
+            size_info: '',
+            weight: ''
+          }
+        ], // 尺码组
+        color_data: [], // 配色组
+        // 配件信息
+        part_data: [
+          {
+            name: '',
+            unit: '',
+            part_size_data: [
+              {
+                size_id: '',
+                size_info: '',
+                weight: ''
+              }
+            ],
+            part_component_data: [
+              {
+                component_id: '',
+                number: '' // 成分信息
+              }
+            ]
+          }
+        ]
+      },
+      pid: null,
+      pid_status: null,
+      proId: null,
       postData: {
         key: '',
         token: ''
-      }
+      },
+      confirmSampleInfo: [] // 已经确认的样品信息
     }
   },
   computed: {
@@ -648,6 +782,13 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 样品转产品
+    changeToPro(id: number) {
+      this.pid = id
+      this.pid_status = 4
+      this.proId = id
+      this.addProductFlag = true
+    },
     getColour(ev: number, info: any) {
       info.size_color_list = []
       const product: ProductInfo = this.productList.find((item) => item.id === ev) as ProductInfo
@@ -660,24 +801,29 @@ export default Vue.extend({
         })
       })
     },
-    getContacts(ev: string[]) {
+    getContacts(ev: number[]) {
       client
         .detail({
           id: ev[2]
         })
         .then((res) => {
           if (res.data.status) {
+            this.orderInfo.contacts_id = ''
             this.contactsList = res.data.data.contacts_data
           }
         })
     },
     getNewProduct(product: ProductInfo) {
-      console.log(product)
+      const finded = this.confirmSampleInfo.find((item) => item.product_id === product.id)
+      if (finded) {
+        finded.status = 4
+      }
       this.productList.push(product)
     },
     getProductDetail(product: ProductInfo) {
       this.productShow = true
       this.productDetail = product
+      console.log(product)
     },
     beforeAvatarUpload(file: any) {
       const fileName = file.name.lastIndexOf('.') // 取到文件名开始到最后一个点的长度
@@ -707,99 +853,98 @@ export default Vue.extend({
       )
     },
     getCmpData() {
-      this.orderInfo.client_id = (this.orderInfo.client_id as string[])[2]
+      this.orderInfo.client_id = (this.orderInfo.tree_data as number[])[2]
+      this.orderInfo.tree_data = (this.orderInfo.tree_data as number[]).join(',')
       this.orderInfo.time_data.total_style = this.totalStyle
       this.orderInfo.time_data.total_number = this.totalNumber
       this.orderInfo.time_data.total_price = this.totalPrice
-      this.orderInfo.time_data.batch_data[0].product_data.forEach((item) => {
-        item.product_info.forEach((itemChild) => {
-          itemChild.size_id = itemChild.size_color!.split('/')[0]
-          itemChild.color_id = itemChild.size_color!.split('/')[1]
+      this.orderInfo.time_data.batch_data.forEach((itemBatch) => {
+        itemBatch.product_data.forEach((item) => {
+          item.product_info.forEach((itemChild) => {
+            itemChild.size_id = itemChild.size_color!.split('/')[0]
+            itemChild.color_id = itemChild.size_color!.split('/')[1]
+          })
         })
       })
     },
-    saveOrder(ifCaogao: boolean) {
-      if (!ifCaogao) {
-        const formCheck =
-          this.$formCheck(this.orderInfo, [
-            {
-              key: 'client_id',
-              errMsg: '请选择下单公司',
-              regNormal: 'checkArr'
-            },
-            {
-              key: 'contacts_id',
-              errMsg: '请选择联系人'
-            },
-            {
-              key: 'group_id',
-              errMsg: '请选择负责小组'
-            }
-          ]) ||
-          this.$formCheck(this.orderInfo.time_data, [
-            {
-              key: 'order_time',
-              errMsg: '请选择下单时间'
-            }
-          ]) ||
-          this.orderInfo.time_data.batch_data.some((item) => {
-            return (
-              this.$formCheck(item, [
-                {
-                  key: 'delivery_time',
-                  errMsg: '请选择发货日期'
-                },
-                {
-                  key: 'batch_type_id',
-                  errMsg: '请选择批次类型'
-                }
-              ]) ||
-              item.product_data.some((itemChild) => {
-                return (
-                  this.$formCheck(itemChild, [
+    saveOrder() {
+      const formCheck =
+        this.$formCheck(this.orderInfo, [
+          {
+            key: 'tree_data',
+            errMsg: '请选择下单公司',
+            regNormal: 'checkArr'
+          },
+          {
+            key: 'contacts_id',
+            errMsg: '请选择联系人'
+          },
+          {
+            key: 'group_id',
+            errMsg: '请选择负责小组'
+          }
+        ]) ||
+        this.$formCheck(this.orderInfo.time_data, [
+          {
+            key: 'order_time',
+            errMsg: '请选择下单时间'
+          }
+        ]) ||
+        this.orderInfo.time_data.batch_data.some((item) => {
+          return (
+            this.$formCheck(item, [
+              {
+                key: 'delivery_time',
+                errMsg: '请选择发货日期'
+              },
+              {
+                key: 'batch_type_id',
+                errMsg: '请选择批次类型'
+              }
+            ]) ||
+            item.product_data.some((itemChild) => {
+              return (
+                this.$formCheck(itemChild, [
+                  {
+                    key: 'product_id',
+                    errMsg: '请选择产品'
+                  }
+                ]) ||
+                itemChild.product_info.some((itemPro) => {
+                  return this.$formCheck(itemPro, [
                     {
-                      key: 'product_id',
-                      errMsg: '请选择产品'
+                      key: 'size_color',
+                      errMsg: '请选择尺码颜色'
+                    },
+                    {
+                      key: 'price',
+                      errMsg: '请输入下单单价'
+                    },
+                    {
+                      key: 'number',
+                      errMsg: '请输入下单数量'
                     }
-                  ]) ||
-                  itemChild.product_info.some((itemPro) => {
-                    return this.$formCheck(itemPro, [
-                      {
-                        key: 'size_color',
-                        errMsg: '请选择尺码颜色'
-                      },
-                      {
-                        key: 'price',
-                        errMsg: '请输入下单单价'
-                      },
-                      {
-                        key: 'number',
-                        errMsg: '请输入下单数量'
-                      }
-                    ])
-                  })
-                )
-              })
-            )
-          })
-        if (
-          this.orderInfo.time_data.batch_data.some((item) => {
-            this.$ifRepeatArray(item.product_data.map((itemChild) => itemChild.product_id) as string[])
-          })
-        ) {
-          this.$message.error('相同样品请不要分多次添加')
-          return
-        }
-        if (!formCheck) {
-          this.getCmpData()
-          console.log(this.orderInfo)
-          order.create(this.orderInfo).then((res) => {
-            if (res.data.status) {
-              this.$message.success('添加成功')
-            }
-          })
-        }
-      } else {
+                  ])
+                })
+              )
+            })
+          )
+        })
+      if (
+        this.orderInfo.time_data.batch_data.some((item) => {
+          this.$ifRepeatArray(item.product_data.map((itemChild) => itemChild.product_id) as string[])
+        })
+      ) {
+        this.$message.error('相同样品请不要分多次添加')
+        return
+      }
+      if (!formCheck) {
+        this.getCmpData()
+        order.create(this.orderInfo).then((res) => {
+          if (res.data.status) {
+            this.$message.success('添加成功')
+          }
+        })
       }
     }
   },
@@ -822,6 +967,26 @@ export default Vue.extend({
         getInfoApi: 'getOrderTypeAsync'
       }
     ])
+    // 是否样单转订单
+    if (this.$route.query.sampleOrderId) {
+      this.loading = true
+      Promise.all([
+        sampleOrder.detail({
+          id: Number(this.$route.query.sampleOrderId)
+        }),
+        sampleOrder.confirmList({
+          order_id: Number(this.$route.query.sampleOrderId)
+        })
+      ]).then((res) => {
+        const sampleOrderInfo: SampleOrderDetail = res[0].data.data
+        // this.orderInfo.tree_data = (sampleOrderInfo.tree_data as string).split(',').map((item) => Number(item))
+        // this.getContacts(this.orderInfo.tree_data)
+        // this.orderInfo.contacts_id = sampleOrderInfo.contacts_id
+        this.orderInfo.group_id = sampleOrderInfo.group_id
+        this.confirmSampleInfo = res[1].data.data
+        this.loading = false
+      })
+    }
   }
 })
 </script>

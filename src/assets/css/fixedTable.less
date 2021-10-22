@@ -39,6 +39,91 @@
       max-width: 120px;
       color: @font65;
       border-bottom: 1px solid @borderColor;
+      &.w130{
+        min-width: 130px;
+      }
+      .mark{
+        display: block;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 24px;
+        margin-right: 4px;
+      }
+      .overText{
+        width: 8em;
+        overflow: hidden;
+        text-overflow:ellipsis; 
+        white-space: nowrap;
+      }
+      .sortCtn{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 4px;
+        justify-content: center;
+        height: 100%;
+        color: @borderColor;
+        .number{
+          color: @font45;
+          font-size: @fontSmall;
+          border-left: 1px solid @borderColor;
+          border-right: 1px solid @borderColor;
+          border-radius: 50%;
+          padding: 4px 2px;
+        }
+        .el-icon-caret-top{
+          position: relative;
+          top: 5px;
+          cursor: pointer;
+          background: #fff;
+          &:hover{
+            color: @blue;
+          }
+        }
+        .el-icon-caret-bottom{
+          position: relative;
+          bottom: 5px;
+          cursor: pointer;
+          background: #fff;
+          &:hover{
+            color: @blue;
+          }
+        }
+      }
+      .imageCtn{
+        height: 44px;
+        .el-image{
+          height: 44px;
+        }
+      }
     }
+  }
+  ::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width : 16px;  /*高宽分别对应横竖滚动条的尺寸*/
+    height: 16px;
+  }
+  ::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius   : 10px;
+    background-color: @blue;
+    background-image: -webkit-linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.1) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0.1) 75%,
+        transparent 75%,
+        transparent
+    );
+    }
+  ::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+    background: #ededed;
+    border-radius: 8px;
   }
 }

@@ -75,6 +75,10 @@ const apiState: ApiState = {
   material: {
     status: false,
     arr: []
+  },
+  user: {
+    status: false,
+    arr: []
   }
 }
 const apiMutations = {
@@ -141,6 +145,10 @@ const apiMutations = {
   getSampleOrderType(state: ApiState, sampleOrderTypeSelf: OrderType[]) {
     state.sampleOrderType.status = true
     state.sampleOrderType.arr = sampleOrderTypeSelf
+  },
+  getUser(state: ApiState, userSelf: CascaderInfo[]) {
+    state.user.status = true
+    state.user.arr = userSelf
   }
 }
 
@@ -309,6 +317,15 @@ const apiActions = {
       }
     })
   },
+  getMaterialProcessAsync(content: ActionContext<ApiState, any>) {
+    process.list({
+      type: 1
+    }).then((res) => {
+      if (res.data.status) {
+        content.commit('getMaterialProcess', res.data.data)
+      }
+    })
+  },
   getHalfProcessAsync(content: ActionContext<ApiState, any>) {
     process.list({
       type: 2
@@ -338,6 +355,11 @@ const apiActions = {
     }).then((res) => {
       content.commit('getSampleOrderType', res.data.data)
     })
+  },
+  getUserAsync(content: ActionContext<ApiState, any>) {
+    setTimeout(() => {
+      content.commit('getUser', [])
+    }, 200)
   }
 }
 export default {

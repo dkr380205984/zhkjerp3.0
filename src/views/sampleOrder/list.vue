@@ -8,79 +8,79 @@
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input placeholder="筛选"></el-input>
+            <el-input v-model="keyword"
+              placeholder="筛选报价/产品/样品编号"
+              @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
-            <el-input placeholder="筛选"></el-input>
+            <el-cascader @change="changeRouter"
+              placeholder="筛选下单公司"
+              v-model="client_id"
+              :options="clientList"
+              clearable>
+            </el-cascader>
           </div>
+          <div class="elCtn">
+            <el-select @change="changeRouter"
+              v-model="user_id"
+              placeholder="筛选创建人"
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-select @change="changeRouter"
+              v-model="status"
+              placeholder="筛选报价单状态">
+              <el-option value="0"
+                label="全部"></el-option>
+              <el-option value="1"
+                label="已审核"></el-option>
+              <el-option value="2"
+                label="待审核"></el-option>
+            </el-select>
+          </div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
         </div>
-        <div class="filterCtn clearfix">
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-select @change="changeRouter"
+              v-model="group_id"
+              placeholder="筛选负责小组">
+              <el-option v-for="item in groupList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-date-picker v-model="date"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+              @change="changeRouter"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </div>
           <div class="btn backHoverBlue fr"
             @click="$router.push('/sampleOrder/create')">添加样单</div>
           <div class="btn backHoverOrange fr"
             @click="showSetting=true">列表设置</div>
+          <div class="btn backHoverGreen fr"
+            @click="getFilters();getList()">刷新列表</div>
         </div>
-        <div class="fixedTableCtn"
-          v-loading="loading">
-          <div class="original">
-            <div class="row title">
-              <div class="column"
-                v-for="itemKey in listKey"
-                :key="itemKey.index"
-                v-show="itemKey.ifShow">{{itemKey.name}}</div>
-              <div class="column w130">操作</div>
-            </div>
-            <div class="row"
-              v-for="item in list"
-              :key="item.list">
-              <div class="column"
-                v-for="itemKey in listKey"
-                :key="itemKey.index"
-                v-show="itemKey.ifShow">{{item[itemKey.key]}}</div>
-              <div class="column w130">
-                <div class="opr hoverBlue"
-                  @click="$router.push('/sampleOrder/detail?id=' + item.id)">详情</div>
-                <div class="opr hoverOrange">修改</div>
-                <div class="opr hoverRed">删除</div>
-              </div>
-            </div>
-          </div>
-          <div class="cover">
-            <div class="fixedLeft">
-              <div class="row title">
-                <div class="column"
-                  v-for="itemKey in listKey"
-                  :key="itemKey.index"
-                  v-show="itemKey.ifShow && itemKey.ifLock">{{itemKey.name}}</div>
-              </div>
-              <div class="row"
-                v-for="item in list"
-                :key="item.list">
-                <div class="column"
-                  v-for="itemKey in listKey"
-                  :key="itemKey.index"
-                  v-show="itemKey.ifShow && itemKey.ifLock">{{item[itemKey.key]}}</div>
-              </div>
-            </div>
-          </div>
-          <div class="cover">
-            <div class="fixedRight">
-              <div class="row title">
-                <div class="column w130">操作</div>
-              </div>
-              <div class="row"
-                v-for="item in list"
-                :key="item.list">
-                <div class="column w130">
-                  <div class="opr hoverBlue"
-                    @click="$router.push('/sampleOrder/detail?id=' + item.id)">详情</div>
-                  <div class="opr hoverOrange">修改</div>
-                  <div class="opr hoverRed">删除</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <zh-list :list="list"
+          :listKey="listKey"
+          :loading="loading"
+          :oprList="oprList"></zh-list>
         <div class="pageCtn">
           <el-pagination background
             :page-size="5"
@@ -105,7 +105,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { sample, sampleOrder, listSetting } from '@/assets/js/api'
+import { sampleOrder, listSetting } from '@/assets/js/api'
 import { SampleOrderInfo } from '@/types/sampleOrder'
 export default Vue.extend({
   data(): {
@@ -117,6 +117,12 @@ export default Vue.extend({
       list: [],
       total: 1,
       page: 1,
+      keyword: '',
+      client_id: [],
+      user_id: '',
+      group_id: '',
+      status: '0',
+      date: [],
       showSetting: false,
       listSettingId: null,
       listKey: [],
@@ -143,90 +149,232 @@ export default Vue.extend({
           index: 2
         },
         {
-          key: 'contact_name',
-          name: '公司联系人',
-          ifShow: true,
-          ifLock: false,
-          index: 3
-        },
-        {
           key: 'product_info',
           name: '产品信息',
           ifShow: true,
           ifLock: false,
-          index: 4
+          index: 3
         },
         {
           key: 'image_data',
           name: '产品图片',
           ifShow: true,
           ifLock: false,
-          index: 5
+          index: 4
         },
         {
           key: 'total_number',
           name: '下单总数',
           ifShow: true,
           ifLock: false,
-          index: 6
+          index: 5
         },
         {
           key: 'total_price',
           name: '下单总额',
           ifShow: true,
           ifLock: false,
-          index: 7
+          index: 6
         },
         {
           key: 'status',
           name: '审核状态',
           ifShow: true,
           ifLock: false,
-          index: 8
+          index: 7
         },
         {
           key: 'group_name',
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 9
+          index: 8
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 10
+          index: 9
         },
         {
           key: 'settle_unit',
           name: '结算单位',
           ifShow: true,
           ifLock: false,
-          index: 11
+          index: 10
+        }
+      ],
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }
+        ]
+      },
+      oprList: [
+        {
+          name: '详情',
+          class: 'hoverBlue',
+          fn: (item: any) => {
+            this.$router.push('/sampleOrder/detail?id=' + item.id)
+          }
+        },
+        {
+          name: '修改',
+          class: 'hoverOrange',
+          fn: (item: any) => {
+            this.$router.push('/sampleOrder/update?id=' + item.id)
+          }
+        },
+        {
+          name: '删除',
+          class: 'hoverRed',
+          fn: (item: any) => {
+            this.$confirm('是否删除样单?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            })
+              .then(() => {
+                sampleOrder
+                  .delete({
+                    id: item.id
+                  })
+                  .then((res) => {
+                    if (res.data.status) {
+                      this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                      })
+                      // @ts-ignore
+                      this.getList()
+                    }
+                  })
+              })
+              .catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '已取消删除'
+                })
+              })
+          }
         }
       ]
+    }
+  },
+  watch: {
+    $route() {
+      this.getFilters()
+      this.getList()
+    }
+  },
+  computed: {
+    clientList() {
+      return this.$store.state.api.clientType.arr.filter((item: { type: any }) => Number(item.type) === 1)
+    },
+    userList() {
+      return this.$store.state.api.user.arr
+    },
+    groupList(): any[] {
+      return this.$store.state.api.group.arr
     }
   },
   methods: {
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)
+      this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
+      this.keyword = query.keyword || ''
+      this.status = query.status || '0'
+      this.user_id = Number(query.user_id) || ''
+      this.group_id = Number(query.gourp_id) || ''
+      this.date = query.date ? (query.date as string).split(',') : []
     },
     changeRouter() {
-      this.$router.push('/sampleOrder/list?page=' + this.page)
+      this.$router.push(
+        '/sampleOrder/list?page=' +
+          this.page +
+          '&keyword=' +
+          this.keyword +
+          '&client_id=' +
+          this.client_id +
+          '&user_id=' +
+          this.user_id +
+          '&group_id=' +
+          this.group_id +
+          '&status=' +
+          this.status +
+          '&date=' +
+          this.date
+      )
+    },
+    reset() {
+      this.$confirm('是否重置所有筛选条件?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.client_id = []
+          this.keyword = ''
+          this.user_id = ''
+          this.date = []
+          this.status = '0'
+          this.changeRouter()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消重置'
+          })
+        })
     },
     getList() {
+      this.loading = true
       sampleOrder
         .list({
-          limit: 5,
+          keyword: this.keyword,
+          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           page: this.page,
+          limit: 5,
+          is_check: this.status,
+          start_time: this.date.length > 0 ? this.date[0] : '',
+          end_time: this.date.length > 0 ? this.date[1] : '',
+          user_id: this.user_id,
+          group_id: this.group_id,
           order_type: 2
         })
         .then((res) => {
-          this.list = res.data.data.items
-          this.total = res.data.data.total
-          console.log(this.list)
+          if (res.data.status) {
+            this.list = res.data.data.items
+            this.total = res.data.data.total
+          }
+          this.loading = false
         })
     },
     getListSetting() {
@@ -241,16 +389,27 @@ export default Vue.extend({
         })
     }
   },
-  watch: {
-    $route() {
-      this.getFilters()
-      this.getList()
-    }
-  },
-  mounted() {
+  created() {
     this.getFilters()
     this.getList()
     this.getListSetting()
+    this.$checkCommonInfo([
+      {
+        checkWhich: 'api/group',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getGroupAsync'
+      },
+      {
+        checkWhich: 'api/clientType',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getClientTypeAsync'
+      },
+      {
+        checkWhich: 'api/user',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getUserAsync'
+      }
+    ])
   }
 })
 </script>

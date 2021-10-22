@@ -5,7 +5,8 @@ export interface QuotedPriceInfo {
   is_draft: 1 | 2 // 2草稿
   title: string
   client_name?: string
-  client_id: number | string | string[]
+  client_id: number | string  // 这个字段提交client_id给后台
+  tree_data: number[] | string // 这个数据提交client_id的所有信息，一级分类二级分类和client_id
   contacts_id: number | string
   contacts_name?: string
   group_id: number | string
@@ -28,17 +29,22 @@ export interface QuotedPriceInfo {
   product_data: Array<{
     total_price: number | string // 统计产品的价格信息
     product_id?: string | number // 有id传id，无id传下面
-    type?: string[] // 品类下拉框
+    type?: number[] // 品类下拉框
     category_id?: string | number
     type_id?: string | number
-    image_data?: string[]
+    image_data: string[]
+    file_list?: Array<{
+      id: number
+      url: string
+    }>
     client_target_price?: number | string //客户目标价
     start_order_number?: number | string //起订量
     desc?: string
     transport_fee_desc?: string // 运费
     transport_fee?: string
     material_data: Array<{
-      material_id?: number | string | string[]
+      material_id?: number | string
+      tree_data?: number[] | string
       material_name?: string
       weight: number | string
       loss: number | string

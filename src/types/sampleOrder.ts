@@ -55,7 +55,8 @@ export interface SampleOrderInfo {
   order_type: 2
   code: string
   desc: string
-  client_id: number | string | string[]
+  client_id: number | string
+  tree_data: number[] | string
   group_id: number | string
   contacts_id: number | string
   public_files: string[]

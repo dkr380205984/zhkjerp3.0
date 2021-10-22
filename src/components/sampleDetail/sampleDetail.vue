@@ -15,9 +15,9 @@
           <div class="tbody">
             <div class="trow">
               <div class="tcol">
-                <div style="width:">
-                  <el-image :src="sampleInfo.image_data.length>0?sampleInfo.image_data[0].image_url:require('@/assets/image/common/noPic.png')"
-                    :preview-src-list="sampleInfo.image_data.map((item)=>item.image_url)">
+                <div>
+                  <el-image :src="sampleInfo.image_data.length>0?sampleInfo.image_data[0]:require('@/assets/image/common/noPic.png')"
+                    :preview-src-list="sampleInfo.image_data">
                   </el-image>
                 </div>
                 <div style="text-align:center">{{sampleInfo.product_code}}</div>

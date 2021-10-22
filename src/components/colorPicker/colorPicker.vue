@@ -69,6 +69,7 @@ export default Vue.extend({
     }
   },
   watch: {
+    // 颜色数据更新或初始化页面拿不到colorArr的时候需要监听父级传过来的值
     colorArr(newVal) {
       this.oldColorArr = newVal
       this.colorArray = newVal
@@ -89,6 +90,11 @@ export default Vue.extend({
             .concat(res.data.data)
         })
       }
+    },
+    // 监听父级传过来的值,并修改background-color
+    value(val) {
+      this.color = val.color
+      this.tips = val.name
     }
   },
   methods: {
@@ -120,6 +126,10 @@ export default Vue.extend({
         name: this.tips
       })
     }
+  },
+  mounted() {
+    this.oldColorArr = this.colorArr
+    this.colorArray = this.colorArr
   }
 })
 </script>

@@ -1,6 +1,7 @@
 <template>
   <div id="sampleOrderAgain"
-    class="bodyContainer">
+    class="bodyContainer"
+    v-loading="loading">
     <div class="module">
       <div class="titleCtn">
         <div class="title">基本信息</div>
@@ -37,9 +38,9 @@
     </div>
     <div class="module">
       <div class="titleCtn">
-        <div class="title">样品确认</div>
+        <div class="title">修改样品</div>
       </div>
-      <div class="notes">凡是需要修改样品的克重、尺寸、图片、工艺、原料、辅料、配色等，请选择不确认进行修改。</div>
+      <div class="notes">已确认的样品不会出现在表格中，表格中的样品被修改后需要重新填写工艺信息。</div>
       <div class="tableCtn">
         <div class="thead">
           <div class="trow">
@@ -48,24 +49,24 @@
             <div class="tcol">样品图片</div>
             <div class="tcol">样品尺码</div>
             <div class="tcol">样品配色</div>
-            <div class="tcol">确认状态</div>
+            <div class="tcol">修改状态</div>
             <div class="tcol">操作</div>
           </div>
         </div>
         <div class="tbody">
           <div class="trow"
-            v-for="(item,index) in sampleOrderInfo.time_data[sampleOrderIndex].batch_data[0].product_data"
+            v-for="(item,index) in sampleList"
             :key="index">
             <div class="tcol">
-              <span>{{item.system_code}}</span>
+              <span>{{item.product_code || item.system_code}}</span>
               <span class="gray">({{item.category}}/{{item.type}})</span>
             </div>
-            <div class="tcol">{{item.product_name}}</div>
+            <div class="tcol">{{item.name}}</div>
             <div class="tcol">
               <div class="imageCtn">
                 <el-image style="width:100%;height:100%"
-                  :src="item.image_data.length>0?item.image_data[0].image_url:''"
-                  :preview-src-list="item.image_data.map((item)=>item.image_url)">
+                  :src="item.image_data.length>0?item.image_data[0]:''"
+                  :preview-src-list="item.image_data">
                   <div slot="error"
                     class="image-slot">
                     <i class="el-icon-picture-outline"
@@ -76,14 +77,11 @@
             </div>
             <div class="tcol">{{item.size_data.map((item)=>item.name).join('/')}}</div>
             <div class="tcol">{{item.color_data.map((item)=>item.name).join('/')}}</div>
-            <div class="tcol">
-              <span :class="item.status===2?'green':'orange'">{{item.status===2?'已确认':'待确认'}}</span>
-            </div>
+            <div class="tcol"
+              :class="item.ifUpadate?'green':'orange'">{{item.if_update?'已修改':'待修改'}}</div>
             <div class="tcol oprCtn">
               <div class="opr hoverBlue"
                 @click="getSampleDetail(item.product_id)">详情</div>
-              <div class="opr hoverGreen"
-                @click="confirmSample(item.id,item.status===2?1:2)">{{item.status===2?'待定':'确认'}}</div>
               <div class="opr hoverOrange"
                 @click="getSampleUpdate(item.product_id)">修改</div>
             </div>
@@ -272,6 +270,17 @@
             </div>
           </div>
         </div>
+        <div class="row">
+          <div class="col">
+            <div class="label">
+              <span class="text">备注信息</span>
+            </div>
+            <div class="info elCtn">
+              <el-input placeholder="请输入备注信息"
+                v-model="sampleOrderTime.batch_data[0].desc"></el-input>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="bottomFixBar">
@@ -279,10 +288,8 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverOrange"
-            @click="saveSampleOrder(true)">保存为草稿</div>
           <div class="btn backHoverBlue"
-            @click="saveSampleOrder(false)">提交</div>
+            @click="saveSampleOrder">提交</div>
         </div>
       </div>
     </div>
@@ -290,7 +297,8 @@
       :show="sampleShow"
       :noOpr="true"
       @close="sampleShow = false"></sample-detail>
-    <sample-edit :id="sampleId"
+    <sample-edit :pid="sampleId"
+      :id="sampleId"
       :show="editSampleShow"
       @close="editSampleShow = false"
       @afterSave="getNewSample"></sample-edit>
@@ -304,6 +312,7 @@ import { SampleOrderInfo, SampleOrderTime } from '@/types/sampleOrder'
 import { sampleOrder, sample } from '@/assets/js/api'
 interface SampleInfoExtend extends SampleInfo {
   product_id: number
+  if_update?: boolean
 }
 export default Vue.extend({
   data(): {
@@ -313,6 +322,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      loading: true,
       editSampleShow: false,
       sampleId: '',
       sampleShow: false,
@@ -320,6 +330,7 @@ export default Vue.extend({
       sampleOrderInfo: {
         id: null,
         client_id: '',
+        tree_data: [],
         group_id: '',
         contacts_id: '',
         public_files: [],
@@ -454,45 +465,13 @@ export default Vue.extend({
     }
   },
   methods: {
-    getSampleDetail(sampleId: number) {
+    getSampleDetail(id: number) {
       this.sampleShow = true
-      this.sampleId = sampleId
+      this.sampleId = id
     },
-    getSampleUpdate(sampleId: number) {
+    getSampleUpdate(id: number) {
       this.editSampleShow = true
-      this.sampleId = sampleId
-    },
-    confirmSample(sampleId: number, status: 1 | 2) {
-      this.$confirm('是否修改样品状态?', '提示', {
-        confirmButtonText: '确认修改',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          sample
-            .confirm({
-              id: sampleId,
-              status: status
-            })
-            .then((res) => {
-              if (res.data.status) {
-                if (status === 2) {
-                  this.$message.success('该样品已确认完成')
-                } else {
-                  this.$message.success('该样品已重新待定')
-                }
-                ;(this.sampleOrderInfo.time_data as SampleOrderTime[])[
-                  this.sampleOrderIndex
-                ].batch_data[0].product_data.find((item) => item.id === sampleId)!.status = status
-              }
-            })
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消'
-          })
-        })
+      this.sampleId = id
     },
     getColour(ev: number, info: any) {
       info.size_color_list = []
@@ -529,6 +508,9 @@ export default Vue.extend({
       const index = this.sampleList.map((item) => item.product_id).indexOf(this.sampleId)
       sample.product_id = sample.id as number
       this.sampleList[index] = sample
+      this.sampleList[index].if_update = true
+      // 关闭修改窗口
+      this.editSampleShow = false
     },
     // 把通过计算属性得到的价格以及通过级联选择器选到的id赋给表单数据
     getCmpData() {
@@ -544,62 +526,57 @@ export default Vue.extend({
         })
       })
     },
-    saveSampleOrder(ifCaogao: boolean) {
-      if (!ifCaogao) {
-        const formCheck =
-          this.$formCheck(this.sampleOrderTime, [
-            {
-              key: 'order_type_id',
-              errMsg: '请选择样单类型'
-            },
-            {
-              key: 'complete_time',
-              errMsg: '请选择计划完成时间'
-            }
-          ]) ||
-          this.sampleOrderTime.batch_data[0].product_data.some((item) => {
-            return (
-              this.$formCheck(item, [
+    saveSampleOrder() {
+      const formCheck =
+        this.$formCheck(this.sampleOrderTime, [
+          {
+            key: 'order_type_id',
+            errMsg: '请选择样单类型'
+          },
+          {
+            key: 'complete_time',
+            errMsg: '请选择计划完成时间'
+          }
+        ]) ||
+        this.sampleOrderTime.batch_data[0].product_data.some((item) => {
+          return (
+            this.$formCheck(item, [
+              {
+                key: 'product_id',
+                errMsg: '请选择样品'
+              }
+            ]) ||
+            item.product_info.some((itemChild) => {
+              return this.$formCheck(itemChild, [
                 {
-                  key: 'product_id',
-                  errMsg: '请选择样品'
+                  key: 'size_color',
+                  errMsg: '请选择尺码颜色'
+                },
+                {
+                  key: 'price',
+                  errMsg: '请输入打样单价'
+                },
+                {
+                  key: 'number',
+                  errMsg: '请输入打样数量'
                 }
-              ]) ||
-              item.product_info.some((itemChild) => {
-                return this.$formCheck(itemChild, [
-                  {
-                    key: 'size_color',
-                    errMsg: '请选择尺码颜色'
-                  },
-                  {
-                    key: 'price',
-                    errMsg: '请输入打样单价'
-                  },
-                  {
-                    key: 'number',
-                    errMsg: '请输入打样数量'
-                  }
-                ])
-              })
-            )
-          })
-        if (
-          this.$ifRepeatArray(
-            this.sampleOrderTime.batch_data[0].product_data.map((item) => item.product_id) as string[]
+              ])
+            })
           )
-        ) {
-          this.$message.error('相同样品请不要分多次添加')
-          return false
-        }
-        if (!formCheck) {
-          this.getCmpData()
-          sampleOrder.again(this.sampleOrderTime).then((res) => {
-            if (res.data.status) {
-              this.$message.success('保存成功')
-            }
-          })
-        }
-      } else {
+        })
+      if (
+        this.$ifRepeatArray(this.sampleOrderTime.batch_data[0].product_data.map((item) => item.product_id) as string[])
+      ) {
+        this.$message.error('相同样品请不要分多次添加')
+        return false
+      }
+      if (!formCheck) {
+        this.getCmpData()
+        sampleOrder.again(this.sampleOrderTime).then((res) => {
+          if (res.data.status) {
+            this.$message.success('保存成功')
+          }
+        })
       }
     }
   },
@@ -620,9 +597,11 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.sampleOrderInfo = res.data.data
-          this.sampleList = (this.sampleOrderInfo.time_data as any[])[this.sampleOrderIndex].batch_data[0]
-            .product_data as SampleInfoExtend[]
+          this.sampleList = (this.sampleOrderInfo.time_data as any[])[
+            this.sampleOrderIndex
+          ].batch_data[0].product_data.filter((item: { status: number }) => item.status === 1) as SampleInfoExtend[]
         }
+        this.loading = false
       })
   }
 })

@@ -1,6 +1,7 @@
 <template>
   <div id="sampleOrderCreate"
-    class="bodyContainer">
+    class="bodyContainer"
+    v-loading="loading">
     <div class="module">
       <div class="titleCtn">
         <div class="title">基本信息</div>
@@ -52,7 +53,7 @@
             </div>
             <div class="info elCtn">
               <el-cascader placeholder="请选择打样公司"
-                v-model="sampleOrderInfo.client_id"
+                v-model="sampleOrderInfo.tree_data"
                 :options="clientList"
                 @change="getContacts">
               </el-cascader>
@@ -92,6 +93,51 @@
         </div>
       </div>
     </div>
+    <div class="module"
+      v-if="quotedPriceProductList.length>0">
+      <div class="titleCtn">
+        <div class="title">报价样品表</div>
+      </div>
+      <div class="tableCtn">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol">序号</div>
+            <div class="tcol">样品品类</div>
+            <div class="tcol">样品图片</div>
+            <div class="tcol">实际报价</div>
+            <div class="tcol">样品描述</div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow"
+            v-for="(item,index) in quotedPriceProductList"
+            :key="item.id">
+            <div class="tcol">{{index+1}}</div>
+            <div class="tcol">{{item.category_name}}/{{item.type_name}}</div>
+            <div class="tcol">
+              <div class="imageCtn">
+                <el-image style="width:100%;height:100%"
+                  :src="item.image_data.length>0?item.image_data[0]:''"
+                  :preview-src-list="item.image_data">
+                  <div slot="error"
+                    class="image-slot">
+                    <i class="el-icon-picture-outline"
+                      style="font-size:42px"></i>
+                  </div>
+                </el-image>
+              </div>
+            </div>
+            <div class="tcol">{{item.client_target_price}}元</div>
+            <div class="tcol">{{item.desc}}</div>
+            <div class="tcol oprCtn">
+              <div class="opr hoverBlue"
+                @click="supplementInfo(item)">补充信息</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="module">
       <div class="titleCtn flexBetween">
         <div class="title">添加样品</div>
@@ -106,7 +152,7 @@
         <div class="once"
           v-for="(item,index) in sampleList"
           :key="item.id">
-          <span class="text">{{item.system_code}}</span>
+          <span class="text">{{item.product_code || item.system_code}}</span>
           <span class="el-icon-view detailIcon hoverBlue"
             @click="getSampleDetail(item)"></span>
           <span class="el-icon-delete deleteIcon hoverRed"
@@ -193,7 +239,7 @@
                         price: ''
                       })">新增尺码</div>
                     <div class="opr hoverRed"
-                      @click="item.product_info.length>1?$deleteItem(item.product_info,indexChild):$deleteItem(sampleOrderInfo.product_data,index)">删除</div>
+                      @click="item.product_info.length>1?$deleteItem(item.product_info,indexChild):$deleteItem(sampleOrderInfo.time_data.batch_data[0].product_data,index)">删除</div>
                   </div>
                 </div>
               </div>
@@ -287,19 +333,17 @@
             <div class="info">
               <el-upload class="upload"
                 action="https://upload.qiniup.com/"
-                accept="image/jpeg,image/gif,image/png,image/bmp"
                 :before-upload="beforeAvatarUpload"
                 :data="postData"
                 :on-remove="removeFile"
                 :on-success="successFile"
-                ref="uploada"
-                list-type="picture">
+                ref="uploada">
                 <div class="uploadBtn">
                   <i class="el-icon-upload"></i>
-                  <span>上传图片</span>
+                  <span>上传文件</span>
                 </div>
                 <div slot="tip"
-                  class="el-upload__tip">只能上传一张jpg/png图片文件，且不超过10M</div>
+                  class="el-upload__tip">可上传文档/图片信息，文件大小不能超过10M</div>
               </el-upload>
             </div>
           </div>
@@ -322,14 +366,14 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverOrange"
-            @click="saveSampleOrder(true)">保存为草稿</div>
           <div class="btn backHoverBlue"
             @click="saveSampleOrder(false)">提交</div>
         </div>
       </div>
     </div>
     <sample-edit :show="addSampleFlag"
+      :quote_rel_product_id="quotedPriceProductInfo.id"
+      :quote_rel_product_data="quotedPriceProductInfo"
       @close="addSampleFlag = false"
       @afterSave="getNewSample"></sample-edit>
     <sample-detail :data="sampleDetail"
@@ -341,8 +385,9 @@
 <script lang="ts">
 import Vue from 'vue'
 import { SampleInfo } from '@/types/sample'
+import { QuotedPriceInfo } from '@/types/quotedPrice'
 import { SampleOrderInfo, SampleOrderTime } from '@/types/sampleOrder'
-import { sample, client, sampleOrder } from '@/assets/js/api'
+import { client, sampleOrder, quotedPrice } from '@/assets/js/api'
 interface SampleOrderCreate extends SampleOrderInfo {
   time_data: SampleOrderTime
 }
@@ -354,6 +399,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      loading: false, // 报价单转样单需要loading报价单详情
       sampleShow: false,
       sampleDetail: {
         product_type: 2,
@@ -401,14 +447,12 @@ export default Vue.extend({
           }
         ]
       },
-      testValue: '',
       addSampleFlag: false,
-      total: 1,
-      page: 1,
       sampleList: [],
       sampleOrderInfo: {
         id: null,
         client_id: '',
+        tree_data: [],
         group_id: '',
         contacts_id: '',
         public_files: [],
@@ -433,7 +477,7 @@ export default Vue.extend({
               id: '',
               batch_number: 1,
               batch_title: '',
-              batch_type: '',
+              batch_type_id: '',
               delivery_time: '',
               is_urgent: 2,
               is_draft: 2,
@@ -464,7 +508,13 @@ export default Vue.extend({
       postData: {
         key: '',
         token: ''
-      }
+      },
+      quotedPriceProductInfo: {
+        id: '',
+        category_id: '',
+        type_id: ''
+      },
+      quotedPriceProductList: [] // 报价单转过来的产品信息
     }
   },
   computed: {
@@ -505,6 +555,27 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 报价单转样单逻辑
+    getQuotedPrice() {
+      if (this.$route.query.quotedPriceId) {
+        this.loading = true
+        quotedPrice
+          .detail({
+            id: Number(this.$route.query.quotedPriceId)
+          })
+          .then((res) => {
+            const quotedPriceInfo: QuotedPriceInfo = res.data.data
+            this.sampleOrderInfo.tree_data = (quotedPriceInfo.tree_data as string)
+              .split(',')
+              .map((item) => Number(item))
+            this.sampleOrderInfo.contacts_id = quotedPriceInfo.contacts_id
+            this.sampleOrderInfo.group_id = quotedPriceInfo.group_id
+            this.getContacts(this.sampleOrderInfo.tree_data)
+            this.quotedPriceProductList = quotedPriceInfo.product_data
+            this.loading = false
+          })
+      }
+    },
     getColour(ev: number, info: any) {
       info.size_color_list = []
       const product: SampleInfo = this.sampleList.find((item) => item.id === ev) as SampleInfo
@@ -517,7 +588,7 @@ export default Vue.extend({
         })
       })
     },
-    getContacts(ev: string[]) {
+    getContacts(ev: number[]) {
       client
         .detail({
           id: ev[2]
@@ -541,13 +612,9 @@ export default Vue.extend({
       const fileFormat = file.name.substring(fileName + 1, fileNameLength) // 截
       this.postData.token = this.token
       this.postData.key = Date.parse(new Date() + '') + '.' + fileFormat
-      const isJPG = file.type === 'image/jpeg'
-      const isPNG = file.type === 'image/png'
+      // const isJPG = file.type === 'image/jpeg'
+      // const isPNG = file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 10
-      if (!isJPG && !isPNG) {
-        this.$message.error('图片只能是 JPG/PNG 格式!')
-        return false
-      }
       if (!isLt2M) {
         this.$message.error('图片大小不能超过 10MB!')
         return false
@@ -563,8 +630,10 @@ export default Vue.extend({
       )
     },
     // 把通过计算属性得到的价格以及通过级联选择器选到的id赋给表单数据
-    getCmpData() {
-      this.sampleOrderInfo.client_id = (this.sampleOrderInfo.client_id as string[])[2]
+    getCmpData(is_draft: 1 | 2) {
+      this.sampleOrderInfo.time_data.is_draft = is_draft
+      this.sampleOrderInfo.client_id = (this.sampleOrderInfo.tree_data as number[])[2] || ''
+      this.sampleOrderInfo.tree_data = (this.sampleOrderInfo.tree_data as number[]).join(',')
       this.sampleOrderInfo.time_data.total_style = this.totalStyle
       this.sampleOrderInfo.time_data.total_number = this.totalNumber
       this.sampleOrderInfo.time_data.total_price = this.totalPrice
@@ -576,12 +645,11 @@ export default Vue.extend({
       })
     },
     saveSampleOrder(ifCaogao: boolean) {
-      console.log(this.sampleOrderInfo)
       if (!ifCaogao) {
         const formCheck =
           this.$formCheck(this.sampleOrderInfo, [
             {
-              key: 'client_id',
+              key: 'tree_data',
               errMsg: '请选择打样公司',
               regNormal: 'checkArr'
             },
@@ -643,15 +711,44 @@ export default Vue.extend({
           return
         }
         if (!formCheck) {
-          this.getCmpData()
+          this.getCmpData(2)
+          this.loading = true
           sampleOrder.create(this.sampleOrderInfo).then((res) => {
             if (res.data.status) {
               this.$message.success('添加成功')
+              this.$router.push('/sampleOrder/list?page=1&keyword=&client_id=&user_id=&status=0&date=')
             }
+            this.loading = false
           })
         }
       } else {
+        const formCheck = this.$formCheck(this.sampleOrderInfo, [
+          {
+            key: 'code',
+            errMsg: '草稿必填样单号/样单名称用于标识'
+          },
+          {
+            key: 'tree_data',
+            errMsg: '请选择打样公司',
+            regNormal: 'checkArr'
+          }
+        ])
+        if (!formCheck) {
+          this.getCmpData(1)
+          this.loading = true
+          sampleOrder.create(this.sampleOrderInfo).then((res) => {
+            if (res.data.status) {
+              this.$message.success('已保存第一次打样为草稿信息,请在详情页及时完善信息')
+              this.$router.push('/sampleOrder/list?page=1&keyword=&client_id=&user_id=&status=0&date=')
+            }
+            this.loading = false
+          })
+        }
       }
+    },
+    supplementInfo(sampleInfo: SampleInfo) {
+      this.addSampleFlag = true
+      this.quotedPriceProductInfo = sampleInfo
     }
   },
   mounted() {
@@ -673,6 +770,7 @@ export default Vue.extend({
         getInfoApi: 'getSampleOrderTypeAsync'
       }
     ])
+    this.getQuotedPrice()
   }
 })
 </script>

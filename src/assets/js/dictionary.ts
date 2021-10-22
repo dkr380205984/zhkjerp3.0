@@ -1,3 +1,29 @@
+import { CascaderInfo } from '@/types/vuex'
+const yarnAttributeArr: CascaderInfo[] = [{
+  label: '筒纱',
+  value: '筒纱'
+}, {
+  label: '绞纱',
+  value: '绞纱'
+}]
+
+const yarnProcessArr: CascaderInfo[] = [{
+  label: '染色',
+  value: '染色'
+}, {
+  label: '倒纱',
+  value: '倒纱'
+}, {
+  label: '并线',
+  value: '并线'
+}, {
+  label: '膨纱',
+  value: '膨纱'
+}, {
+  label: '切割',
+  value: '切割'
+}]
+
 const moneyArr = [{
   name: '元',
   short: '人民币',
@@ -12,6 +38,51 @@ const moneyArr = [{
   sign: 'US$',
   default: '670',
   tax_prop: '0'
+}]
+
+// 出入库类型
+const stockType = [{
+  name: '中转入库', // 采购单半成品原料入库
+  value: 1
+}, {
+  name: '客供入库',
+  value: 2
+}, {
+  name: '中转出库', // 物料加工出库
+  value: 3
+}, {
+  name: '最终入库', // 采购单，以4为准统计入库值
+  value: 4
+}, {
+  name: '单据生产出库', // 织造半成品单位出库
+  value: 5
+}, {
+  name: '订单结余入库',
+  value: 6
+}]
+
+// 仓库类型
+const storeType = [{
+  name: '本厂仓库',
+  value: 1
+}, {
+  name: '加工厂仓库',
+  value: 2
+}, {
+  name: '供货商仓库',
+  value: 3
+}]
+
+// 生产类型
+const productionType = [{
+  name: '机织计划',
+  value: 1
+}, {
+  name: '半成品加工计划',
+  value: 2
+}, {
+  name: '成品加工计划',
+  value: 3
 }]
 
 // handsontable 汉化包
@@ -112,5 +183,10 @@ const languages: {
 }
 export {
   moneyArr,
-  languages
+  languages,
+  yarnAttributeArr,
+  yarnProcessArr,
+  stockType,
+  storeType,
+  productionType
 }

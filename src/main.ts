@@ -21,6 +21,34 @@ Vue.filter('checkFilter', (val: 0 | 1 | 2 | null) => {
   ]
   return imgArr[index]
 })
+// 样品转产品过程中的状态转换
+Vue.filter('productStatusFilter', (val: 1 | 2 | 3 | 4) => {
+  const statusArr = ['未知', '待确认', '已确认', '已修改', '已转产品']
+  return statusArr[val]
+})
+
+// 样品转产品过程中的状态转换 class
+Vue.filter('productStatusClassFilter', (val: 1 | 2 | 3 | 4) => {
+  const statusArr = ['', 'orange', 'green', 'orange', 'blue']
+  return statusArr[val]
+})
+
+
+import { stockType } from '@/assets/js/dictionary'
+// 出入库状态转换
+Vue.filter('materialStockTypeFilter', (val: 1 | 2 | 3 | 4 | 5 | 6) => {
+  return stockType.find((item) => item.value === val)?.name
+})
+
+// 出入库状态转换 class
+Vue.filter('materialStockTypeClassFilter', (val: 1 | 2 | 3 | 4 | 5 | 6) => {
+  if (val === 3 || val === 5) {
+    return 'green'
+  } else {
+    return 'blue'
+  }
+})
+
 
 import { CheckCommonInfo } from '@/types/vuex'
 declare module 'vue/types/vue' {
@@ -28,7 +56,7 @@ declare module 'vue/types/vue' {
     $getHash: any
     $getDataType: any
     $mergeData: any
-    $clone<T extends any[]>(data: T): T
+    $clone<T>(data: T): T
     $diffDate(date: DateConstructor): string
     $diffByDate(date: DateConstructor): string | number
     $getDate(date?: Date, connector?: string): string
@@ -42,11 +70,14 @@ declare module 'vue/types/vue' {
       checkArr: Array<{ key: string, errMsg?: string, regExp?: RegExp, regNormal?: 'isNum' | 'isEmail' | 'isPhone' | 'isNull' | 'checkArr' }>
     ): boolean
     $ifRepeatArray(arr: string[]): boolean
+    findId<T, K extends keyof T>(jsonArr: T[], id: number | string, returnKey: K, findKey: K): T[K]
   }
 }
-
 new Vue({
   router,
   store,
   render: h => h(App)
 }).$mount('#app')
+
+
+

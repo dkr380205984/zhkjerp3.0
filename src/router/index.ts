@@ -21,6 +21,10 @@ const routes: Array<RouteConfig> = [
     name: 'index',
     component: () => import('../views/index.vue'),
     children: [{
+      path: '/menu',
+      name: '其他管理',
+      component: () => import('../views/menu.vue')
+    }, {
       path: '/setting',
       name: '系统设置',
       component: () => import('../views/setting/setting.vue')
@@ -36,6 +40,10 @@ const routes: Array<RouteConfig> = [
       path: '/quotedPrice/detail',
       name: '报价单详情',
       component: () => import('../views/quotedPrice/detail.vue')
+    }, {
+      path: '/quotedPrice/update',
+      name: '修改报价单',
+      component: () => import('../views/quotedPrice/update.vue')
     }, {
       path: '/client/list',
       name: '客户/单位列表',
@@ -89,6 +97,10 @@ const routes: Array<RouteConfig> = [
       name: '修改工艺单',
       component: () => import('../views/craft/update.vue')
     }, {
+      path: '/craft/detail',
+      name: '工艺单详情',
+      component: () => import('../views/craft/detail.vue')
+    }, {
       path: '/ingredient/create',
       name: '创建配料单',
       component: () => import('../views/ingredient/create.vue')
@@ -108,6 +120,50 @@ const routes: Array<RouteConfig> = [
       path: '/store/detail',
       name: '仓库详情',
       component: () => import('../views/store/detail.vue')
+    }, {
+      path: '/materialPlan/create',
+      name: '物料计划添加',
+      component: () => import('../views/materialPlan/create.vue')
+    }, {
+      path: '/materialPlan/list',
+      name: '物料计划列表',
+      component: () => import('../views/materialPlan/list.vue')
+    }, {
+      path: '/materialPlan/detail',
+      name: '物料计划详情',
+      component: () => import('../views/materialPlan/detail.vue')
+    }, {
+      path: '/materialManage/list',
+      name: '物料管理列表',
+      component: () => import('../views/materialManage/list.vue')
+    }, {
+      path: '/materialManage/detail',
+      name: '物料管理详情',
+      component: () => import('../views/materialManage/detail.vue')
+    }, {
+      path: '/materialStock/detail',
+      name: '物料出入库详情',
+      component: () => import('../views/materialStock/detail.vue')
+    }, {
+      path: '/materialStock/list',
+      name: '物料出入库列表',
+      component: () => import('../views/materialStock/list.vue')
+    }, {
+      path: '/productionPlan/list',
+      name: '生产计划列表',
+      component: () => import('../views/productionPlan/list.vue')
+    }, {
+      path: '/productionPlan/detail',
+      name: '生产计划详情',
+      component: () => import('../views/productionPlan/detail.vue')
+    }, {
+      path: '/inspection/detail',
+      name: '检验收发详情',
+      component: () => import('../views/inspection/detail.vue')
+    }, {
+      path: '/inspection/list',
+      name: '检验收发列表',
+      component: () => import('../views/inspection/list.vue')
     }]
   }
 ]

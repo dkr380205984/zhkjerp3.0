@@ -24,7 +24,7 @@
             </div>
             <div class="info elCtn">
               <el-cascader placeholder="请选择报价公司"
-                v-model="quotedPriceInfo.client_id"
+                v-model="quotedPriceInfo.tree_data"
                 :options="clientList"
                 @change="getContacts">
               </el-cascader>
@@ -204,7 +204,7 @@
                 <div class="info elCtn">
                   <div class="info elCtn">
                     <el-cascader placeholder="请选择原料"
-                      v-model="itemYarn.material_id"
+                      v-model="itemYarn.tree_data"
                       :options="yarnTypeList"
                       clearable></el-cascader>
                   </div>
@@ -258,7 +258,8 @@
               <div class="opr hoverBlue"
                 v-if="indexYarn===0"
                 @click="$addItem(item.material_data,{
-                  material_id: [],
+                  tree_data:[],
+                  material_id: '',
                   weight: '',
                   loss: '',
                   price: '',
@@ -802,7 +803,8 @@ export default Vue.extend({
         id: null,
         is_draft: 1,
         title: '',
-        client_id: [],
+        client_id: '',
+        tree_data: [],
         contacts_id: '',
         group_id: '',
         settle_unit: '元',
@@ -833,7 +835,8 @@ export default Vue.extend({
             transport_fee: '',
             material_data: [
               {
-                material_id: [],
+                tree_data: [],
+                material_id: '',
                 material_name: '',
                 weight: '',
                 loss: '',
@@ -994,13 +997,14 @@ export default Vue.extend({
         transport_fee: '',
         material_data: [
           {
-            material_id: [],
+            tree_data: [],
+            material_id: '',
             material_name: '',
             weight: '',
             loss: '',
             price: '',
             total_price: '',
-            unit: ''
+            unit: 'kg'
           }
         ],
         assist_material_data: [
@@ -1072,12 +1076,12 @@ export default Vue.extend({
       }
     },
     successFile(response: { hash: string; key: string }, index: number) {
-      this.quotedPriceInfo.product_data[index].image_data!.push('https://file.zwyknit.com/' + response.key)
+      this.quotedPriceInfo.product_data[index].image_data.push('https://file.zwyknit.com/' + response.key)
     },
     removeFile(file: { response: { hash: string; key: string } }, index: number) {
       this.$deleteItem(
-        this.quotedPriceInfo.product_data[index].image_data as string[],
-        this.quotedPriceInfo.product_data[index].image_data!.indexOf('https://file.zwyknit.com/' + file.response.key)
+        this.quotedPriceInfo.product_data[index].image_data,
+        this.quotedPriceInfo.product_data[index].image_data.indexOf('https://file.zwyknit.com/' + file.response.key)
       )
     },
     getUnit(ev: string, info: DecorateMaterialInfo) {
@@ -1109,12 +1113,15 @@ export default Vue.extend({
       this.quotedPriceInfo.profit_price = this.profitPrice
       this.quotedPriceInfo.total_cost_price = this.totalPrice
       this.quotedPriceInfo.system_total_price = this.realTotalPrice
-      this.quotedPriceInfo.client_id = this.quotedPriceInfo.client_id && (this.quotedPriceInfo.client_id as string[])[2]
+      this.quotedPriceInfo.client_id = this.quotedPriceInfo.tree_data && (this.quotedPriceInfo.tree_data as number[])[2]
+      this.quotedPriceInfo.tree_data =
+        this.quotedPriceInfo.tree_data && (this.quotedPriceInfo.tree_data as number[]).join(',') // 保存公司原始数据包含一级二级分类
       this.quotedPriceInfo.product_data.forEach((item) => {
         item.category_id = item.type && item.type[0]
         item.type_id = item.type && item.type[1]
         item.material_data.forEach((itemChild) => {
-          itemChild.material_id = itemChild.material_id && (itemChild.material_id as string[])[2]
+          itemChild.material_id = itemChild.tree_data && (itemChild.tree_data as number[])[2]
+          itemChild.tree_data = itemChild.tree_data && (itemChild.tree_data as number[]).join(',')
         })
         item.total_price =
           Number(item.transport_fee) +
@@ -1143,6 +1150,7 @@ export default Vue.extend({
     },
     saveQuotedPrice(ifCaogao: boolean) {
       this.quotedPriceInfo.is_draft = ifCaogao ? 2 : 1
+      console.log(this.quotedPriceInfo)
       if (!ifCaogao) {
         const formCheck =
           this.$formCheck(this.quotedPriceInfo, [
@@ -1151,8 +1159,9 @@ export default Vue.extend({
               errMsg: '请输入报价单标题'
             },
             {
-              key: 'client_id',
-              errMsg: '请选择报价公司'
+              key: 'tree_data',
+              errMsg: '请选择报价公司',
+              regNormal: 'checkArr'
             },
             {
               key: 'group_id',
@@ -1202,11 +1211,12 @@ export default Vue.extend({
                 ]) ||
                 item.material_data.some((itemChild) => {
                   return (
-                    itemChild.material_id &&
+                    itemChild.tree_data &&
                     this.$formCheck(itemChild, [
                       {
-                        key: 'material_id',
-                        errMsg: '请选择产品原料'
+                        key: 'tree_data',
+                        errMsg: '请选择产品原料',
+                        regNormal: 'checkArr'
                       },
                       {
                         key: 'weight',
@@ -1335,13 +1345,19 @@ export default Vue.extend({
         if (!formCheck) {
           this.getCmpData()
           quotedPrice.create(this.quotedPriceInfo).then((res) => {
-            console.log(res)
             if (res.data.status) {
               this.$message.success('创建成功')
+              this.$router.push('/quotedPrice/list?page=1&keyword=&client_id=&user_id=&status=0&date=')
             }
           })
         }
       } else {
+        this.getCmpData()
+        quotedPrice.create(this.quotedPriceInfo).then((res) => {
+          if (res.data.status) {
+            this.$message.success('草稿保存成功')
+          }
+        })
       }
     }
   },

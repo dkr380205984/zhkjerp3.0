@@ -1,7 +1,12 @@
 export interface SampleInfo {
+  quote_rel_product_id?: number | string // 绑报价单产品id，通常用于报价转样单
   system_code?: string
+  product_id?: string | number
   product_type: 2 // 1：产品 2：样品
+  pid?: number | null | string
+  pid_status?: number | null // 1：待确认 2.已确认 3.已修改 4.转产品
   id?: number | null | string
+  status?: 1 | 2 | 3 | 4 | null // 1：待确认 2.已确认 3.已修改 4.转产品
   name: string
   product_code: string
   style_code: string // 客户款号
@@ -9,8 +14,12 @@ export interface SampleInfo {
   category?: string
   category_id?: string | number
   type_id?: string | number
-  type?: string | string[] // 品类下拉框
+  type?: string | number[] // 品类下拉框
   image_data: string[]
+  file_list?: Array<{
+    id: number
+    url: string
+  }>
   desc: string
   style_data: string[] // 款式
   component_data: Array<{

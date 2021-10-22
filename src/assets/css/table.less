@@ -3,6 +3,9 @@
   font-size: @fontMiddle;
   position: relative;
   padding: 20px 32px;
+  &.noPad{
+    padding: 0;
+  }
   .thead {
     background: #F4F4F4;
     height: 46px;
@@ -66,18 +69,18 @@
       flex-direction: row;
       align-items: center;
       justify-content: space-around;
-      padding-top: 12px;
-      padding-bottom: 12px;
       .state{
         display: flex;
         align-items: center;
         flex-direction: column;
         .circle{
-          width: 18px;
-          height: 18px;
+          width: 25px;
+          height: 25px;
           border-radius: 50%;
-          margin-bottom: 8px;
           cursor: pointer;
+          color: #fff;
+          text-align: center;
+          line-height: 25px;
         }
       }
     }

@@ -1,0 +1,88 @@
+import { PartInfo } from "./product";
+import { CraftMaterialInfo } from "./craft";
+export interface MaterialPlanInfo {
+  id?: number
+  order_id: string | number
+  type: '1' | '2' | 1 | 2 // 1:按尺码颜色 2:按产品
+  desc: string
+  is_draft: 1 | 2
+  production_plan_data: Array<{
+    product_code?: string
+    product_name?: string
+    category?: string
+    type?: string
+    product_id: string | number
+    part_data?: PartInfo[]
+    process_data?: Array<{
+      process_id: number
+      process_name: string
+    }>
+    product_data: Array<{
+      material_info: CraftMaterialInfo[]
+      size_color?: string[] // 尺码颜色下拉框选择项
+      color_id: string | number
+      color_name?: string
+      size_id: string | number
+      size_name?: string
+      add_percent: string | number
+      order_number: number | string
+      info_data: Array<{
+        id?: string
+        unit?: string
+        name?: string
+        part_id: string | number
+        number: string | number
+      }>
+    }>
+  }>
+  material_plan_data: MaterailPlanData[]
+  material_plan_gather_data: MaterialPlanGatherData[]
+}
+
+export interface MaterialPlanGatherData {
+  check?: boolean // 前端用字段
+  material_name?: string
+  material_id: string | number
+  material_type: string | number
+  material_color: string
+  need_number: string | number
+  loss: string | number
+  final_number: string | number
+}
+
+export interface MaterailPlanData {
+  check?: boolean // 前端用
+  product_code?: string
+  product_name?: string
+  category?: string
+  type?: string
+  part_id: string | number
+  part_name?: string
+  size_color?: string[] // 尺码颜色下拉框选择项
+  color_id: string | number
+  color_name?: string
+  size_id: string | number
+  size_name?: string
+  number?: string | number // 计划生产数量
+  order_number?: string | number // 下单数量
+  product_id: string | number // 	按产品填写时传
+  loss: string | number
+  processList?: Array<{
+    name: string
+    id: string | number
+  }> // 优化产品是否有工艺单后道工序
+  info_data: Array<{
+    process_id: string | number
+    material_id_arr?: string[]
+    material_id: string | number
+    material_name?: string
+    material_type: string | number
+    material_color: string
+    assist_material_number: string | number
+    need_number: string | number
+    production_number: string | number
+    loss: string | number
+    final_number: string | number
+    has_plan?: boolean
+  }>
+}

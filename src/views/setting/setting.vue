@@ -1011,6 +1011,45 @@
               </div>
             </div>
           </template>
+          <template v-if="cName==='系统账户管理'">
+            <div class="listCtn">
+              <div class="filterCtn clearfix">
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup=true">添加帐号</div>
+              </div>
+              <div class="list">
+                <div class="row title">
+                  <div class="col">姓名</div>
+                  <div class="col">用户名</div>
+                  <div class="col">手机号</div>
+                  <div class="col">岗位</div>
+                  <div class="col">角色</div>
+                  <div class="col">操作</div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in userArr"
+                  :key="index">
+                  <div class="col">{{item.name}}</div>
+                  <div class="col">用户名</div>
+                  <div class="col">手机号</div>
+                  <div class="col">岗位</div>
+                  <div class="col">角色</div>
+                  <div class="col">
+                    <span class="opr hoverRed"
+                      @click="deleteUser(item.id)">删除</span>
+                  </div>
+                </div>
+              </div>
+              <div class="pageCtn">
+                <el-pagination background
+                  :page-size="5"
+                  layout="prev, pager, next"
+                  :total="groupTotal"
+                  :current-page.sync="groupPage">
+                </el-pagination>
+              </div>
+            </div>
+          </template>
         </div>
       </div>
     </div>
@@ -1685,6 +1724,60 @@
           </div>
         </div>
       </template>
+      <template v-if="cName==='系统账户管理'">
+        <div class="main">
+          <div class="titleCtn">
+            <div class="text">新增用户</div>
+            <div class="closeCtn"
+              @click="showPopup=false">
+              <i class="el-icon-close"></i>
+            </div>
+          </div>
+          <div class="contentCtn">
+            <div class="row">
+              <div class="label">姓名：</div>
+              <div class="info">
+                <el-input placeholder="请输入姓名"
+                  v-model="userInfo.name"></el-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">用户名：</div>
+              <div class="info">
+                <el-input placeholder="请输入用户名"
+                  v-model="userInfo.user_name"></el-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">密码：</div>
+              <div class="info">
+                <el-input placeholder="请输入密码"
+                  v-model="userInfo.password"></el-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">手机号：</div>
+              <div class="info">
+                <el-input placeholder="请输入手机号"
+                  v-model="userInfo.phone"></el-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">岗位：</div>
+              <div class="info">
+                <el-input placeholder="请输入岗位"
+                  v-model="userInfo.station"></el-input>
+              </div>
+            </div>
+          </div>
+          <div class="oprCtn">
+            <div class="btn borderBtn"
+              @click="showPopup=false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveUser">确定</div>
+          </div>
+        </div>
+      </template>
     </div>
     <!-- 删除尺码 -->
     <div class="popup"
@@ -1732,6 +1825,7 @@ import { YarnInfo, YarnTypeInfo } from '@/types/yarnSetting'
 import { ClientEN, BankEN } from '@/types/billDocumentSetting'
 import { PackMaterialInfo, DecorateMaterialInfo } from '@/types/materialSetting'
 import { GroupInfo } from '@/types/factoryInfoSetting'
+import { UserInfo } from '@/types/user'
 interface YarnTypeInfoHasCheck extends YarnTypeInfo {
   check: boolean
 }
@@ -1750,7 +1844,8 @@ import {
   yarn,
   decorateMaterial,
   packMaterial,
-  group
+  group,
+  user
 } from '@/assets/js/api'
 export default Vue.extend({
   data(): {
@@ -2034,7 +2129,19 @@ export default Vue.extend({
       },
       groupInfoList: [],
       groupTotal: 1,
-      groupPage: 1
+      groupPage: 1,
+      userInfo: {
+        name: '',
+        user_name: '',
+        password: '',
+        phone: '',
+        is_admin: 2, // 1：超管 2：普通用户
+        module_info: [],
+        station: '' // 岗位
+      },
+      userList: [],
+      userTotal: 1,
+      userPage: 1
     }
   },
   methods: {
@@ -2126,6 +2233,8 @@ export default Vue.extend({
         this.getPackMaterial()
       } else if (this.cName === '负责小组/人') {
         this.getGroup()
+      } else if (this.cName === '系统账户管理') {
+        this.getUser()
       }
     },
     downLoadTemplete(type: string) {
@@ -3523,7 +3632,31 @@ export default Vue.extend({
         })
       }
     },
-    deleteGroup(id: number) {}
+    deleteGroup(id: number) {},
+    getUser() {
+      user.list().then((res) => {
+        if (res.data.status) {
+          this.userList = res.data.data
+          this.userTotal = res.data.data.length
+        }
+      })
+    },
+    saveUser() {
+      const formCheck = this.$formCheck(this.userInfo, [
+        {
+          key: 'phone',
+          errMsg: '请填写手机号'
+        }
+      ])
+      if (!formCheck) {
+        user.create(this.userInfo).then((res) => {
+          if (res.data.status) {
+            this.getUser()
+          }
+        })
+      }
+    },
+    deleteUser(id: number) {}
   },
   computed: {
     styleArr(): StyleInfo[] {
@@ -3573,6 +3706,9 @@ export default Vue.extend({
     },
     groupArr(): GroupInfo[] {
       return this.groupInfoList.slice((this.groupPage - 1) * 5, this.groupPage * 5)
+    },
+    userArr(): UserInfo[] {
+      return this.userList.slice((this.userPage - 1) * 5, this.userPage * 5)
     }
   },
   watch: {

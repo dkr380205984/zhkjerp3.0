@@ -1,3 +1,5 @@
+import { PartInfo } from "./product";
+import { CraftMaterialInfo } from "./craft";
 // 批次
 export interface OrderBatch {
   id?: number | null | string
@@ -15,18 +17,31 @@ export interface OrderBatch {
   product_data: Array<{
     id?: number
     status?: 1 | 2 // 1.待定 2.已确认
+    name?: string
+    system_code?: string
     image_data?: string[]
     color_data?: any[]
     size_data?: any[]
     product_id: string | number
+    product_code?: string
+    category?: string
+    type?: string
     size_color_list: Array<{
       label: string
       value: string
     }>
+    part_data?: PartInfo[]
+    process_data?: Array<{
+      process_id: number
+      process_name: string
+    }>
     product_info: Array<{
+      material_info?: CraftMaterialInfo[] //有工艺单就有物料信息
       size_color?: string // 前端使用
       size_id: string | number
       color_id: string | number
+      color_name?: string
+      size_name?: string
       number: string | number
       price: string | number
     }>
@@ -55,7 +70,8 @@ export interface OrderInfo {
   order_type: 1
   code: string
   desc: string
-  client_id: number | string | string[]
+  client_id: number | string
+  tree_data?: string | number[]
   group_id: number | string
   contacts_id: number | string
   public_files: string[]
@@ -63,4 +79,41 @@ export interface OrderInfo {
   settle_tax: string // 结算税率
   settle_unit: string // 结算单位
   time_data: OrderTime | OrderTime[]
+}
+
+// 从订单里面处理出来的产品表格信息——展平
+export interface OrderProductFlatten {
+  material_info: CraftMaterialInfo[]
+  color_id: string | number
+  color_name?: string
+  size_id: string | number
+  size_name?: string
+  order_number: string | number
+  price: string | number
+  product_code?: string
+  product_id: string | number
+  category?: string
+  type?: string
+  part_data?: PartInfo[]
+  process_data?: Array<{
+    process_id: number
+    process_name: string
+  }>
+}
+// 从订单里面处理出来的产品表格信息——合并
+export interface OrderProductMerge {
+  info_data: { color_id: string | number; color_name?: string | undefined; size_id: string | number; size_name?: string | undefined; number: string | number; price: string | number; }[];
+  product_code?: string
+  product_id: string | number
+  category?: string
+  type?: string
+  part_data: PartInfo[]
+  childrenMergeInfo: Array<{
+    color_id: string | number
+    color_name?: string
+    size_id: string | number
+    size_name?: string
+    number: string | number
+    price: string | number
+  }>
 }

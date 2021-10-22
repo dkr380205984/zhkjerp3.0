@@ -1,0 +1,52 @@
+.flattenTableCtn{
+  display: block;
+  font-size: @fontMiddle;
+  position: relative;
+  padding: 20px 32px;
+  .thead {
+    background: #F4F4F4;
+    height: 46px;
+    color: @font85;
+    border: 1px solid @borderColor;
+  }
+  .tbody {
+    background: #fff;
+    color: @font65;
+  }
+  .trowCtn{
+    border-bottom: 1px solid @borderColor;
+    .childrenCtn{
+      margin-top: 24px;
+      padding-bottom: 24px;
+      .trow{
+        background: #F4F4F4;
+        &:nth-child(1){
+          color: @font85;
+        }
+      }
+    }
+  }
+  .trow {
+    width: 100%;
+    min-height: 46px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    text-align: center;
+  }
+  .tcol {
+    min-height: 46px;
+    justify-content: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    text-align: left;
+    padding:0 10px;
+    &.oprCtn{
+      flex-direction: row;
+      align-items: center;
+      justify-content: start;
+    }
+  }
+}

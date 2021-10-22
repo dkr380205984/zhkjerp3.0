@@ -1,0 +1,71 @@
+@import '../common.less';
+@import '../detail.less';
+@import '../edit.less';
+@import '../bottomBar.less';
+@import '../table.less';
+@import '../popup.less';
+#materialStockDetail{
+  .popup{
+    .main{
+      width: 1200px;
+      .label{
+        line-height: 38px;
+        font-size: 14px;
+        width: auto;
+        text-align: left;
+      }
+      .editCtn{
+        background:#F0F0F0 ;
+        margin: 16px 0;
+        .col{
+          margin-right: 30px;
+        }
+        .opr{
+          transform: translate(-20px, 100%);
+        }
+      }
+    }
+  }
+  .buttonList{
+    position: relative;
+    float: right;
+    margin-right: 32px;
+    margin-bottom: 20px;
+    &:hover{
+      .otherInfoCtn{
+        display: block;
+      }
+    }
+    .text{
+      margin-left: 8px;
+    }
+    .otherInfoCtn{
+      position: absolute;
+      bottom: 32px;
+      right: 0;
+      display: none;
+      .otherInfo{
+        padding-bottom: 12px;
+        margin-bottom: 6px;
+        background: #fff;
+        border:1px solid #d9d9d9;
+        border-radius: 4px;
+        width: 315px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        .btn{
+          margin: 12px 12px 0 12px;
+          display: inline-block;
+          .icon{
+            width: 18px;
+            height: 18px;
+            display: inline-block;
+            background: #fff;
+            vertical-align: middle;
+          }
+        }
+      }
+    }
+  }
+}

@@ -24,7 +24,7 @@
           </div>
           <div class="col">
             <div class="label">创建时间：</div>
-            <div class="text"></div>
+            <div class="text">{{orderInfo.create_time}}</div>
           </div>
         </div>
         <div class="row">
@@ -58,47 +58,76 @@
           </div>
           <div class="col flex3">
             <div class="label">下单时间：</div>
-            <div class="text"></div>
+            <div class="text">{{orderInfo.time_data[0].order_time}}</div>
           </div>
         </div>
         <div class="row">
           <div class="col">
             <div class="label">下单款数：</div>
-            <div class="text"></div>
+            <div class="text">{{orderInfo.time_data[0].total_style}}款</div>
           </div>
           <div class="col">
             <div class="label">下单总数：</div>
-            <div class="text"></div>
+            <div class="text">{{orderInfo.time_data[0].total_number}}</div>
           </div>
           <div class="col">
             <div class="label">下单总额：</div>
-            <div class="text"></div>
+            <div class="text">{{orderInfo.time_data[0].total_price}}</div>
           </div>
         </div>
         <div class="row">
           <div class="col">
             <div class="label">产前样寄送：</div>
-            <div class="text"></div>
+            <div class="text"
+              :class="orderInfo.time_data[0].is_send===1?'green':'gray'">{{orderInfo.time_data[0].is_send===1?'是':'否'}}</div>
           </div>
           <div class="col">
             <div class="label">产前确认：</div>
-            <div class="text"></div>
+            <div class="text"
+              :class="orderInfo.time_data[0].is_before_confirm===1?'green':'gray'">{{orderInfo.time_data[0].is_before_confirm?'是':'否'}}</div>
           </div>
           <div class="col">
             <div class="label">是否加急：</div>
-            <div class="text"></div>
+            <div class="text"
+              :class="orderInfo.time_data[0].is_urgent===1?'green':'gray'">{{orderInfo.time_data[0].is_urgent?'是':'否'}}</div>
           </div>
         </div>
         <div class="row">
           <div class="col">
             <div class="label">相关文件：</div>
-            <div class="text"></div>
+            <div class="fileCtn">
+              <div class="once"
+                v-for="(item,index) in orderInfo.time_data[0].public_files"
+                :key="index">
+                <div class="fileIcon">
+                  <i class="el-icon-platform-eleme"></i>
+                </div>
+                <div class="name">文件{{index+1}}</div>
+                <a class="opr hoverBlue"
+                  :href="item">点击下载</a>
+              </div>
+              <div class="once">
+                <div class="fileIcon">
+                  <i class="el-icon-platform-eleme"></i>
+                </div>
+                <div class="name">示例</div>
+                <div class="opr">下载不了</div>
+              </div>
+              <div class="once">
+                <div class="fileIcon">
+                  <i class="el-icon-picture-outline"></i>
+                </div>
+                <div class="name">文件名称左边是根据文件后缀给图标类型</div>
+                <div class="opr">下载</div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="row">
           <div class="col">
             <div class="label">备注信息：</div>
-            <div class="text">{{orderInfo.desc}}</div>
+            <div class="text"
+              :class="orderInfo.desc?'':'gray'">{{orderInfo.desc || '无备注信息'}}</div>
           </div>
         </div>
       </div>

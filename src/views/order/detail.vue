@@ -1,6 +1,7 @@
 <template>
   <div id="orderDetail"
-    class="bodyContainer">
+    class="bodyContainer"
+    v-loading="loading">
     <order-detail :data="orderInfo"></order-detail>
     <div class="module">
       <div class="titleCtn">
@@ -33,12 +34,12 @@
               <span>{{item.product_code||'无编号'}}</span>
               <span class="gray">({{item.category}}/{{item.type}})</span>
             </div>
-            <div class="tcol">{{item.product_name}}</div>
+            <div class="tcol">{{item.name}}</div>
             <div class="tcol">
               <div class="imageCtn">
                 <el-image style="width:100%;height:100%"
-                  :src="item.image_data.length>0?item.image_data[0].image_url:''"
-                  :preview-src-list="item.image_data.map((item)=>item.image_url)">
+                  :src="item.image_data.length>0?item.image_data[0]:''"
+                  :preview-src-list="item.image_data">
                   <div slot="error"
                     class="image-slot">
                     <i class="el-icon-picture-outline"
@@ -59,14 +60,9 @@
             </div>
             <div class="tcol stateCtn">
               <div class="state"
-                @click="$router.push('/craft/create?productId=' + item.product_id)">
-                <div class="circle backGray"></div>
-                <div class="text gray">工艺单</div>
-              </div>
-              <div class="state"
-                @click="$router.push('/ingredient/create?productId=' + item.product_id)">
-                <div class="circle backBlue"></div>
-                <div class="text blue">配料单</div>
+                @click="item.craft_list_id?$router.push('/craft/detail?id='+item.craft_list_id):$router.push('/craft/create?id=' + item.product_id)">
+                <div class="circle"
+                  :class="{'backGray':!item.craft_list_id,'backBlue':item.craft_list_id}">工</div>
               </div>
             </div>
             <div class="tcol">样品描述</div>
@@ -132,7 +128,7 @@
                 <span>{{itemPro.product_code||'无编号'}}</span>
                 <span class="gray">({{itemPro.category}}/{{itemPro.type}})</span>
               </div>
-              <div class="tcol">{{itemPro.product_name}}</div>
+              <div class="tcol">{{itemPro.name}}</div>
               <div class="tcol noPad"
                 style="flex:5">
                 <div class="trow"
@@ -146,6 +142,54 @@
                 </div>
               </div>
               <div class="tcol">批次状态</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottomFixBar">
+      <div class="main">
+        <div class="btnCtn">
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
+          <div class="buttonList"
+            style="margin-left:12px">
+            <div class="btn backHoverBlue">
+              <i class="el-icon-s-grid"></i>
+              <span class="text">订单操作</span>
+            </div>
+            <div class="otherInfoCtn">
+              <div class="otherInfo">
+                <div class="btn backHoverOrange">
+                  <i class="iconfont">&#xe63b;</i>
+                  <span class="text">修改订单</span>
+                </div>
+                <div class="btn backHoverOrange">
+                  <i class="iconfont">&#xe63b;</i>
+                  <span class="text">审核订单</span>
+                </div>
+                <div class="btn backHoverRed">
+                  <i class="iconfont">&#xe63b;</i>
+                  <span class="text">删除订单</span>
+                </div>
+                <div class="btn backHoverBlue"
+                  @click="$router.push('/materialPlan/create?id=' + $route.query.id)">
+                  <i class="iconfont">&#xe63b;</i>
+                  <span class="text">物料计划</span>
+                </div>
+                <div class="btn backHoverBlue">
+                  <i class="iconfont">&#xe63b;</i>
+                  <span class="text">打印订单</span>
+                </div>
+                <div class="btn backHoverBlue">
+                  <i class="iconfont">&#xe63b;</i>
+                  <span class="text">邮件分享</span>
+                </div>
+                <div class="btn backHoverBlue">
+                  <i class="iconfont">&#xe63b;</i>
+                  <span class="text">操作记录</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -167,6 +211,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      loading: true,
       orderInfo: {
         id: null,
         client_id: '',
@@ -241,6 +286,7 @@ export default Vue.extend({
               this.productList = this.productList.concat(itemBatch.product_data)
             })
           })
+          this.loading = false
         }
       })
   }
