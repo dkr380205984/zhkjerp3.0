@@ -159,8 +159,10 @@ export default Vue.extend({
           index: 2
         },
         {
-          key: 'has_plan',
+          key: 'has_material_plan',
           name: '物料计划状态',
+          filterArr: ['', '已创建', '待添加'],
+          classArr: ['', 'blue', 'orange'],
           ifShow: true,
           ifLock: false,
           index: 3
@@ -256,11 +258,13 @@ export default Vue.extend({
       oprList: [
         {
           name: (item: any) => {
-            return item.has_plan === 1 ? '详情' : '添加'
+            return item.has_material_plan === 1 ? '详情' : '添加'
           },
-          class: 'hoverBlue',
+          class: (item: any) => {
+            return item.has_material_plan === 1 ? 'hoverBlue' : 'hoverOrange'
+          },
           fn: (item: any) => {
-            if (item.has_plan === 1) {
+            if (item.has_material_plan === 1) {
               this.$router.push('/materialPlan/detail?id=' + item.id)
             } else {
               this.$router.push('/materialPlan/create?id=' + item.id)
@@ -375,7 +379,7 @@ export default Vue.extend({
       return this.$store.state.api.group.arr
     }
   },
-  mounted() {
+  created() {
     this.getFilters()
     this.getList()
     this.getListSetting()

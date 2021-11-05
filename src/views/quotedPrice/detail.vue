@@ -12,7 +12,7 @@
             effect="dark"
             content="点击查看审核日志"
             placement="bottom">
-            <img :src="null|checkFilter" />
+            <img :src="quotedPriceInfo.is_check|checkFilter" />
           </el-tooltip>
         </div>
         <div class="row">
@@ -311,7 +311,8 @@
                   <i class="iconfont">&#xe63b;</i>
                   <span class="text">修改报价</span>
                 </div>
-                <div class="btn backHoverOrange">
+                <div class="btn backHoverOrange"
+                  @click="checkFlag=true">
                   <i class="iconfont">&#xe63b;</i>
                   <span class="text">审核报价</span>
                 </div>
@@ -322,28 +323,17 @@
                 </div>
                 <div class="btn backHoverBlue">
                   <i class="iconfont">&#xe63b;</i>
-                  <span class="text">再次报价</span>
-                </div>
-                <div class="btn backHoverBlue">
-                  <i class="iconfont">&#xe63b;</i>
                   <span class="text">打印报价</span>
-                </div>
-                <div class="btn backHoverBlue">
-                  <i class="iconfont">&#xe63b;</i>
-                  <span class="text">邮件分享</span>
                 </div>
                 <div class="btn backHoverGreen"
                   @click="$router.push('/sampleOrder/create?quotedPriceId='+ $route.query.id)">
                   <i class="iconfont">&#xe63b;</i>
                   <span class="text">生成样单</span>
                 </div>
-                <div class="btn backHoverGreen">
+                <div class="btn backHoverGreen"
+                  @click="$router.push('/order/create?quotedPriceId='+ $route.query.id)">
                   <i class="iconfont">&#xe63b;</i>
                   <span class="text">生成订单</span>
-                </div>
-                <div class="btn backHoverBlue">
-                  <i class="iconfont">&#xe63b;</i>
-                  <span class="text">操作记录</span>
                 </div>
               </div>
             </div>
@@ -351,6 +341,11 @@
         </div>
       </div>
     </div>
+    <zh-check @close="checkFlag=false"
+      :show="checkFlag"
+      :pid="$route.query.id"
+      :check_type="5"
+      :reason="['驳回理由1','驳回理由2','驳回理由3','驳回理由4','驳回理由5']"></zh-check>
   </div>
 </template>
 
@@ -358,13 +353,16 @@
 import Vue from 'vue'
 import { QuotedPriceInfo } from '@/types/quotedPrice'
 import { quotedPrice } from '@/assets/js/api'
+import zhCheck from '@/components/zhCheck/zhCheck.vue'
 export default Vue.extend({
+  components: { zhCheck },
   data(): {
     [propName: string]: any
     quotedPriceInfo: QuotedPriceInfo
   } {
     return {
       loading: true,
+      checkFlag: false,
       quotedPriceInfo: {
         id: null,
         is_draft: 1,

@@ -1,0 +1,69 @@
+@import './common.less';
+@import './table.less';
+.printContainer{
+  color: #000;
+  .pmain{
+    page-break-after: always;
+    padding: 30px 50px;
+    height: auto;
+    min-height: 1490px;
+    width: 982px;
+    display: flex;
+    flex-direction: column;
+    font-size: 20px;
+    .phead{
+      display: block;
+      .ptitle{
+        font-size: 31px;
+        line-height: 46px;
+      }
+      .prow{
+        display: flex;
+        line-height: 28px;
+        .pcol{
+          margin-right: 24px;
+          width: 300px;
+          display: flex;
+        }
+      }
+      .pImage{
+        min-width: 120px;
+        min-height: 120px;
+        background: chartreuse;
+      }
+      .fr{
+        display: flex;
+        align-items: center;
+        max-width: 320px;
+      }
+    }
+    .pbody{
+      .tableCtn{
+        padding: 0;
+        border-color:#707070;
+        margin-top: 32px;
+        &.hasTop{
+          border-top: 1px solid;
+        }
+        .thead{
+          border-color: #707070;
+        }
+        .tbody{
+          border-color: #707070;
+        }
+        .trow{
+          border-color: #707070;
+          .tcol{
+            border-color: #707070;
+          }
+        }
+      }
+    }
+    .bgWhite{
+      background: #fff;
+    }
+    .bgGray{
+      background: #F4F4F4;
+    }
+  }
+}

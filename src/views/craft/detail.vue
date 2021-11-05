@@ -20,12 +20,61 @@
                 <div class="colorBox"
                   v-for="(itemColor,indexColor) in item.color_scheme"
                   :key="indexColor">
-                  <span class="colorText"
-                    :style="{'background':itemColor.color}">{{filterIndex(indexColor)}}</span>
-                  <span class="name">{{itemColor.name}}</span>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="filterColorWeigth(itemColor)"
+                    placement="top">
+                    <div>
+                      <span class="colorText"
+                        :style="{'background':itemColor.color}">{{filterIndex(indexColor)}}</span>
+                      <span class="name">{{itemColor.name}}</span>
+                    </div>
+                  </el-tooltip>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+        <div class="row"
+          v-for="(item,index) in craftInfo.warp_data.material_data"
+          :key="index">
+          <div class="col">
+            <span class="label">{{index===0?'主要':'次要'}}原料：</span>
+            <div class="text">
+              <span>{{item.material_name}}</span>
+              <div class="colorBox"
+                v-for="(itemApply,indexApply) in item.apply"
+                :key="indexApply">
+                <span class="colorText">{{filterIndex(itemApply)}}</span>
+                <span class="name">{{cmpIndexWeight(itemApply, craftInfo.warp_data.color_data[index].color_scheme,1)}}g</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <template v-if="craftInfo.warp_data.assist_material.length>0&&craftInfo.warp_data.assist_material[0].material_id">
+          <div class="row"
+            v-for="(item,index) in craftInfo.warp_data.assist_material"
+            :key="index">
+            <div class="col">
+              <span class="label">辅助原料：</span>
+              <div class="text">
+                <span>{{item.material_name}}</span>
+                <div class="colorBox"
+                  v-for="(itemApply,indexApply) in item.apply"
+                  :key="indexApply">
+                  <span class="colorText">{{filterIndex(itemApply)}}</span>
+                  <span class="name">{{cmpIndexWeight(itemApply, craftInfo.warp_data.color_data[index].color_scheme,2)}}g</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+        <div class="row">
+          <div class="col">
+            <span class="label">经向信息：</span>
+            <hot-table :settings="tableData.warp"
+              ref="warp">
+            </hot-table>
           </div>
         </div>
       </div>
@@ -42,18 +91,27 @@
     </div>
   </div>
 </template>
-
+<script src="https://cdn.jsdelivr.net/npm/handsontable@7.3.0/dist/handsontable.full.min.js"></script>
 <script lang="ts">
 import Vue from 'vue'
 import { craft } from '@/assets/js/api'
 import { CraftInfo } from '@/types/craft'
+import { languages } from '@/assets/js/dictionary'
+import { HotTable } from '@handsontable/vue'
+import Handsontable from 'handsontable'
+import 'handsontable/dist/handsontable.full.css'
+Handsontable.languages.registerLanguageDictionary(languages as any) // 注册中文字典
 export default Vue.extend({
+  components: {
+    HotTable
+  },
   data(): {
     craftInfo: CraftInfo
     [propName: string]: any
   } {
     return {
       loading: true,
+      tableData: { warp: {}, warpBack: {}, weft: {}, weftBack: {} },
       craftInfo: {
         id: '',
         product_id: '',
@@ -232,6 +290,70 @@ export default Vue.extend({
       } else {
         return '夹' + index
       }
+    },
+    // 用配色表已经算好的克重计算主夹克重
+    cmpIndexWeight(applyIndex: number, colorScheme: any[], material_type: 1 | 2) {
+      return colorScheme[applyIndex].material_weight
+        ? colorScheme[applyIndex].material_weight
+            .filter((item: any) => item.material_type === material_type)
+            .reduce((total: number, current: any) => {
+              return total + Number(current.weight)
+            }, 0)
+        : 0
+    },
+    filterColorWeigth(itemColor: any) {
+      return itemColor.material_weight
+        ? itemColor.material_weight.map((item: any) => item.material_name + ':' + item.weight + 'g').join(';')
+        : ''
+    }
+  },
+  created() {
+    this.tableData.warp = {
+      data: [[1], [null], [null], [null], [null], [null], [null]],
+      rowHeaders: (index: any) => {
+        let headerArr = ['序号', '主/夹', '根数', '合并项', '合并项', '合并项', '穿综法']
+        return `<div style="height:38px;line-height:38px;color:rgba(0,0,0,0.65);display:table-row">${headerArr[index]}</div>`
+      },
+      rowHeaderWidth: 80,
+      minCols: 1,
+      autoColumnSize: true, // 自适应宽度
+      cells: (row: any, col: any, prop: any) => {
+        let cellProperties: any = {}
+        cellProperties.readOnly = true
+        cellProperties.renderer = function (
+          instance: any,
+          td: any,
+          row: any,
+          col: any,
+          prop: any,
+          value: any,
+          cellProperties: any
+        ) {
+          // 清空节点并重新渲染
+          Handsontable.dom.empty(td)
+          let node = document.createElement('DIV')
+          let CSS = td.style
+          node.innerText = value
+          td.appendChild(node)
+          // 设置样式
+          CSS.color = 'rgba(0,0,0,0.65)'
+          CSS.width = '38px'
+          CSS.height = '38px'
+          CSS.lineHeight = '38px'
+          CSS.textAlign = 'center'
+          if (row === 0) {
+            CSS.background = '#E9E9E9'
+          }
+          return td
+        }
+        return cellProperties
+      },
+      contextMenu: false,
+      className: 'handsontable',
+      number: 1,
+      licenseKey: 'non-commercial-and-evaluation', // 申明非商业用途
+      width: '100%',
+      height: 280
     }
   },
   mounted() {
@@ -240,9 +362,16 @@ export default Vue.extend({
         id: Number(this.$route.query.id)
       })
       .then((res) => {
-        console.log(res)
         if (res.data.status) {
           this.craftInfo = res.data.data
+          this.tableData.warp.data = this.craftInfo.warp_data.warp_rank.map((item: any, index) => {
+            return index !== 1
+              ? item
+              : item.map((itemJia: number) => {
+                  return this.filterIndex(itemJia)
+                })
+          })
+          this.tableData.warp.mergeCells = this.craftInfo.warp_data.merge_data
           this.loading = false
         }
       })

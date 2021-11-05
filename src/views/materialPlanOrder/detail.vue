@@ -1,0 +1,976 @@
+<template>
+  <div id="materialPlanOrderDetail"
+    class="bodyContainer"
+    v-loading="loading">
+    <div class="module">
+      <div class="titleCtn flexBetween">
+        <div class="title">物料预订购详情</div>
+        <div class="btn backHoverBlue"
+          @click="materialPlanOrderFlag=true">添加物料订购</div>
+      </div>
+      <div class="detailCtn">
+        <div class="row">
+          <div class="col">
+            <div class="label">订购公司：</div>
+            <div class="text">{{materialPlanOrderDetail.client_name}}</div>
+          </div>
+          <div class="col">
+            <div class="label">订购年份：</div>
+            <div class="text">{{materialPlanOrderDetail.year}}</div>
+          </div>
+          <div class="col">
+            <div class="label">预订购数量：</div>
+            <div class="text">{{materialPlanOrderDetail.total_number}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">订购日志</div>
+      </div>
+      <div class="listCtn">
+        <div class="tableCtn noPad">
+          <div class="thead">
+            <div class="trow">
+              <div class="tcol">单据编号</div>
+              <div class="tcol noPad"
+                style="flex:5">
+                <div class="trow">
+                  <div class="tcol">纱线名称</div>
+                  <div class="tcol">颜色/属性</div>
+                  <div class="tcol">批号/缸号</div>
+                  <div class="tcol">色号</div>
+                  <div class="tcol">数量</div>
+                </div>
+              </div>
+              <div class="tcol">日期</div>
+              <div class="tcol">备注信息</div>
+              <div class="tcol">操作</div>
+            </div>
+          </div>
+          <div class="tbody">
+            <div class="trow"
+              v-for="item in materialOrderList"
+              :key="item.id">
+              <div class="tcol">{{item.code}}</div>
+              <div class="tcol noPad"
+                style="flex:5">
+                <div class="trow"
+                  v-for="itemChild in item.info_data"
+                  :key="itemChild.id">
+                  <div class="tcol">{{itemChild.material_name}}</div>
+                  <div class="tcol">{{itemChild.material_color}}/{{itemChild.attribute}}</div>
+                  <div class="tcol"
+                    :class="itemChild.batch_code||itemChild.vat_code?'':'gray'">{{itemChild.batch_code||'无'}}/{{itemChild.vat_code||'无'}}</div>
+                  <div class="tcol"
+                    :class="itemChild.color_code?'':'gray'">{{itemChild.color_code||'无'}}</div>
+                  <div class="tcol">{{itemChild.number}}kg</div>
+                </div>
+              </div>
+              <div class="tcol">{{item.complete_time}}</div>
+              <div class="tcol">{{item.desc}}</div>
+              <div class="tcol oprCtn">
+                <div class="opr hoverBlue"
+                  @click="goStock([item])">入库</div>
+                <div class="opr hoverRed"
+                  @click="deleteMaterialOrder(item.id)">删除</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="pageCtn">
+          <el-pagination background
+            :page-size="5"
+            layout="prev, pager, next"
+            :total="storeTotal"
+            :current-page.sync="storePage">
+          </el-pagination>
+        </div> -->
+      </div>
+    </div>
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">入库日志</div>
+      </div>
+      <div class="tableCtn">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol">单据编号</div>
+            <div class="tcol">入库仓库</div>
+            <div class="tcol"
+              style="flex:6">
+              <div class="trow">
+                <div class="tcol">原料名称</div>
+                <div class="tcol">调取颜色</div>
+                <div class="tcol">调取属性</div>
+                <div class="tcol">批号/缸号/色号</div>
+                <div class="tcol">调取数量</div>
+                <div class="tcol">调取单价</div>
+              </div>
+            </div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow"
+            v-for="(item,index) in materialStockList"
+            :key="index">
+            <div class="tcol">{{item.code}}</div>
+            <div class="tcol">{{item.store}}/{{item.secondary_store}}</div>
+            <div class="tcol"
+              style="flex:6">
+              <div class="trow"
+                v-for="(itemChild,indexChild) in item.info_data"
+                :key="indexChild">
+                <div class="tcol">{{itemChild.material_name}}</div>
+                <div class="tcol">{{itemChild.material_color}}</div>
+                <div class="tcol">{{itemChild.attribute}}</div>
+                <div class="tcol">{{itemChild.batch_code}}/{{itemChild.vat_code}}/{{itemChild.color_code}}</div>
+                <div class="tcol">{{itemChild.number}}kg</div>
+                <div class="tcol">{{itemChild.price||0}}元</div>
+              </div>
+            </div>
+            <div class="tcol oprCtn">
+              <div class="opr hoverRed"
+                @click="deleteMaterialStock(item.id)">删除</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">入库统计</div>
+      </div>
+      <div class="listCtn">
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-date-picker @change="getMatSts"
+              v-model="date"
+              format="yyyy-MM"
+              type="month"
+              placeholder="选择月">
+            </el-date-picker>
+          </div>
+        </div>
+        <div class="tableCtn noPad">
+          <div class="thead">
+            <div class="trow">
+              <div class="tcol">物料名称</div>
+              <div class="tcol">物料颜色</div>
+              <div class="tcol">物料属性</div>
+              <div class="tcol">单价</div>
+              <div class="tcol">数量</div>
+            </div>
+          </div>
+          <div class="tbody">
+            <div class="trow"
+              v-for="item in materialStsList"
+              :key="item.id">
+              <div class="tcol">{{item.material_name}}</div>
+              <div class="tcol">{{item.material_color}}</div>
+              <div class="tcol">{{item.attribute}}</div>
+              <div class="tcol">{{item.price}}元</div>
+              <div class="tcol">{{item.number}}kg</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottomFixBar">
+      <div class="main">
+        <div class="btnCtn">
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
+        </div>
+      </div>
+    </div>
+    <div class="popup"
+      v-show="materialPlanOrderFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">订购物料</span>
+          <div class="closeCtn"
+            @click="closeAll">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <template v-if="step===1">
+            <div class="editCtn">
+              <div class="row">
+                <div class="col">
+                  <div class="label">
+                    <span class="text">订购单位</span>
+                    <span class="explanation">(默认)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="materialPlanOrderInfo.client_name"
+                      disabled></el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
+                    <span class="text">订购时间</span>
+                    <span class="explanation">(必选)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-date-picker style="width:100%"
+                      placeholder="请选择时间"
+                      type="month"
+                      value-format="yyyy-MM"
+                      v-model="materialPlanOrderInfo.order_time"></el-date-picker>
+                  </div>
+                </div>
+                <div class="col">
+                  <!-- 占位 -->
+                </div>
+              </div>
+              <div class="row"
+                v-for="(itemMat,indexMat) in materialPlanOrderInfo.info_data"
+                :key="'mat' + indexMat">
+                <div class="col">
+                  <div class="label"
+                    v-if="indexMat===0">
+                    <span class="text">物料名称</span>
+                    <span class="explanation">(必选)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-cascader placeholder="物料名称"
+                      :show-all-levels="false"
+                      v-model="itemMat.tree_data"
+                      :options="yarnTypeList"
+                      @change="(ev)=>{itemMat.material_id=ev[2]}"
+                      clearable>
+                    </el-cascader>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label spaceBetween"
+                    v-if="indexMat===0">
+                    <div class="once">
+                      <span class="text">订购属性</span>
+                      <span class="explanation">(必选)</span>
+                    </div>
+                    <div class="once">
+                      <span class="text">订购颜色</span>
+                      <span class="explanation">(必选)</span>
+                    </div>
+                  </div>
+                  <div class="info elCtn spaceBetween">
+                    <el-select class="once"
+                      placeholder="属性"
+                      v-model="itemMat.attribute">
+                      <el-option v-for="item in yarnAttributeList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"></el-option>
+                    </el-select>
+                    <template>
+                      <el-input class="once"
+                        placeholder="白胚"
+                        disabled
+                        v-if="itemMat.material_color==='白胚'"></el-input>
+                      <el-select v-else
+                        class="once"
+                        placeholder="颜色"
+                        v-model="itemMat.material_color">
+                        <el-option v-for="item in yarnColorList"
+                          :key="item.name"
+                          :value="item.name"
+                          :label="item.name"></el-option>
+                      </el-select>
+                    </template>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label spaceBetween"
+                    v-if="indexMat===0">
+                    <div class="once">
+                      <span class="text">订购单价</span>
+                      <span class="explanation">(必填)</span>
+                    </div>
+                    <div class="once">
+                      <span class="text">订购数量</span>
+                      <span class="explanation">(必填)</span>
+                    </div>
+                  </div>
+                  <div class="info elCtn spaceBetween">
+                    <el-input class="once"
+                      placeholder="单价"
+                      v-model="itemMat.price">
+                      <template slot="append">元</template>
+                    </el-input>
+                    <el-input class="once"
+                      placeholder="数量"
+                      v-model="itemMat.number">
+                      <template slot="append">kg</template>
+                    </el-input>
+                  </div>
+                </div>
+                <div class="opr hoverBlue"
+                  v-if="indexMat===0"
+                  @click="$addItem(materialPlanOrderInfo.info_data,{
+                  material_id: '',
+                  material_name: '',
+                  material_color_id: itemMat.material_color_id===0?0:'',
+                  attribute: '',
+                  price: '',
+                  number: '',
+                  unit: 'kg'
+                })">添加</div>
+                <div class="opr hoverRed"
+                  v-if="indexMat>0"
+                  @click="$deleteItem(materialPlanOrderInfo.info_data,indexMat)">删除</div>
+              </div>
+              <div class="row"
+                v-for="(itemOther,indexOther) in materialPlanOrderInfo.others_fee_data"
+                :key="'other'+indexOther">
+                <div class="col">
+                  <div class="label"
+                    v-if="indexOther===0">
+                    <span class="text">额外费用名称</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input placeholder="请输入额外费用名称"
+                      v-model="itemOther.name"></el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label"
+                    v-if="indexOther===0">
+                    <span class="text">额外费用金额</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input placeholder="请输入额外费用金额"
+                      v-model="itemOther.price">
+                      <template slot="append">元</template>
+                    </el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label"
+                    v-if="indexOther===0">
+                    <span class="text">额外费用备注</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input placeholder="请输入额外费用备注"
+                      v-model="itemOther.desc"></el-input>
+                  </div>
+                </div>
+                <div class="opr hoverBlue"
+                  v-if="indexOther===0"
+                  @click="$addItem(materialPlanOrderInfo.others_fee_data,{
+                  desc: '',
+                  name: '',
+                  price: ''
+                })">添加</div>
+                <div class="opr hoverRed"
+                  v-if="indexOther>0"
+                  @click="$deleteItem(materialPlanOrderInfo.others_fee_data,indexOther)">删除</div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">
+                    <span class="text">订购备注信息</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input placeholder="请输入订购备注信息"
+                      v-model="materialPlanOrderInfo.desc"></el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
+                    <span class="text">订购总价</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input placeholder="自动计算"
+                      v-model="totalOrderPrice"
+                      disabled>
+                      <template slot="append">元</template>
+                    </el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
+                    <span class="text">订购总数</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input placeholder="自动计算"
+                      v-model="totalOrderNumber"
+                      disabled>
+                      <template slot="append">kg</template>
+                    </el-input>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+          <template v-if="step===2">
+            <div class="editCtn">
+              <div class="row">
+                <div class="col">
+                  <div class="label">
+                    <span class="text">入库仓库</span>
+                    <span class="explanation">(必选)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-cascader v-model="materialStockInfo.tree_data"
+                      :options="storeList"
+                      placeholder="请选择仓库"
+                      @change="(ev)=>{materialStockInfo.store_id=ev[0];materialStockInfo.secondary_store_id=ev[1]}"></el-cascader>
+                  </div>
+                </div>
+                <div class="col">
+                </div>
+                <div class="col">
+                </div>
+              </div>
+              <div class="row"
+                v-for="(item,index) in materialStockInfo.info_data"
+                :key="index">
+                <div class="col">
+                  <div class="label"
+                    v-if="index===0">
+                    <span class="text">单据物料</span>
+                    <span class="explanation">(必选)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-select placeholder="单据物料"
+                      v-model="item.rel_doc_info_id"
+                      @change="getMatId($event,item)">
+                      <el-option v-for="item in materialStockInfo.selectList"
+                        :key="item.value"
+                        :label="item.name"
+                        :value="item.value"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="spaceBetween">
+                    <div class="once">
+                      <div class="label"
+                        v-if="index===0">
+                        <span class="text">批号</span>
+                      </div>
+                      <div class="info elCtn">
+                        <el-input placeholder="批号"
+                          v-model="item.batch_code"></el-input>
+                      </div>
+                    </div>
+                    <div class="once">
+                      <div class="label"
+                        v-if="index===0">
+                        <span class="text">缸号</span>
+                      </div>
+                      <div class="info elCtn">
+                        <el-input placeholder="缸号"
+                          v-model="item.vat_code"></el-input>
+                      </div>
+                    </div>
+                    <div class="once">
+                      <div class="label"
+                        v-if="index===0">
+                        <span class="text">色号</span>
+                      </div>
+                      <div class="info elCtn">
+                        <el-input placeholder="色号"
+                          v-model="item.color_code"></el-input>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="spaceBetween">
+                    <div class="once">
+                      <div class="label"
+                        v-if="index===0">
+                        <span class="text">数量</span>
+                        <span class="explanation">(必填)</span>
+                      </div>
+                      <div class="info elCtn">
+                        <el-input placeholder="数量"
+                          v-model="item.number">
+                          <template slot="append">kg</template>
+                        </el-input>
+                      </div>
+                    </div>
+                    <div class="once">
+                      <div class="label"
+                        v-if="index===0">
+                        <span class="text">件数</span>
+                      </div>
+                      <div class="info elCtn">
+                        <el-input placeholder="数量"
+                          v-model="item.item">
+                          <template slot="append">件</template>
+                        </el-input>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="opr hoverBlue"
+                  v-if="index===0"
+                  @click="$addItem(materialStockInfo.info_data,{
+                  material_id: '',
+                  material_color: '',
+                  color_code: '',
+                  batch_code: '',
+                  vat_code: '',
+                  attribute: '',
+                  number: '',
+                  item: '', // 件数
+                  rel_doc_info_id: '' // 采购单调取单加工单子项id
+                })">添加</div>
+                <div class="opr hoverRed"
+                  v-if="index>0"
+                  @click="$deleteItem(materialStockInfo.info_data,index)">删除</div>
+              </div>
+              <div class="row">
+                <div class="col"
+                  style="max-width:322px">
+                  <div class="label">
+                    <span class="text">入库日期</span>
+                    <span class="explanation">(必选)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-date-picker style="width:100%"
+                      class="once"
+                      placeholder="入库日期"
+                      value-format="yyyy-MM-dd"
+                      v-model="materialStockInfo.complete_time"></el-date-picker>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
+                    <span class="text">备注信息</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="materialStockInfo.desc"
+                      placeholder="备注信息"></el-input>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="closeAll">取消</span>
+          <span class="btn backHoverBlue"
+            @click="saveMaterialOrderPlan(false)"
+            v-if="step===1">完成订购</span>
+          <span class="btn backHoverGreen"
+            @click="saveMaterialOrderPlan(true)"
+            v-if="step===1">订购并入库</span>
+          <span class="btn backHoverBlue"
+            @click="saveMaterialStock"
+            v-if="step===2">确认入库</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue'
+import { materialPlanOrder, materialOrder, materialStock, store } from '@/assets/js/api'
+import { MaterialStockInfo, MaterialStockLog } from '@/types/materialStock'
+import { MaterialOrderInfo } from '@/types/materialOrder'
+import { MaterialPlanOrderClient } from '@/types/materialPlanOrder'
+import { yarnAttributeArr } from '@/assets/js/dictionary'
+import { CascaderInfo } from '@/types/vuex'
+export default Vue.extend({
+  data(): {
+    storeList: CascaderInfo[]
+    materialPlanOrderDetail: MaterialPlanOrderClient
+    materialPlanOrderInfo: MaterialOrderInfo
+    materialStockInfo: MaterialStockInfo
+    materialStockList: MaterialStockInfo[]
+    [propName: string]: any
+  } {
+    return {
+      loading: true,
+      step: 1,
+      yarnAttributeList: yarnAttributeArr,
+      storeList: [],
+      materialPlanOrderFlag: false,
+      materialPlanOrderDetail: {
+        year: '',
+        material_type: '',
+        client_id: '',
+        tree_data: [],
+        total_number: '',
+        desc: ''
+      },
+      materialOrderList: [],
+      materialPlanOrderInfo: {
+        order_id: '',
+        plan_id: '',
+        reserve_id: '',
+        client_name: '',
+        client_id: '',
+        client_id_arr: [],
+        order_time: this.$getDate(new Date()),
+        delivery_time: '',
+        others_fee_data: [
+          {
+            desc: '', // 额外费用备注
+            name: '',
+            price: ''
+          }
+        ],
+        desc: '',
+        info_data: [
+          {
+            material_id: '',
+            material_name: '',
+            material_color: '',
+            attribute: '',
+            price: '',
+            number: '',
+            unit: 'kg'
+          }
+        ]
+      },
+      materialStockInfo: {
+        action_type: 4, // 采购单最终入库
+        rel_doc_type: '',
+        rel_doc_id: '',
+        rel_doc_code: '',
+        complete_time: this.$getDate(new Date()),
+        client_id: '',
+        desc: '',
+        store_id: '',
+        secondary_store_id: '',
+        tree_data: [], //仓库下拉框
+        selectList: [],
+        info_data: [
+          {
+            material_id: '',
+            material_color: '',
+            color_code: '',
+            batch_code: '',
+            vat_code: '',
+            attribute: '',
+            number: '',
+            item: '', // 件数
+            rel_doc_info_id: '' // 采购单调取单加工单子项id
+          }
+        ]
+      },
+      materialStockList: [],
+      materialStsList: [],
+      date: ''
+    }
+  },
+  computed: {
+    yarnTypeList(): CascaderInfo[] {
+      return this.$store.state.api.yarnType.arr.filter(
+        (item: any) => item.value === this.materialPlanOrderDetail.material_type
+      )
+    },
+    totalOrderPrice(): number {
+      return (
+        this.materialPlanOrderInfo.info_data.reduce((total, current) => {
+          return total + Number(current.number) * Number(current.price)
+        }, 0) +
+        this.materialPlanOrderInfo.others_fee_data.reduce((total, current) => {
+          return total + Number(current.price)
+        }, 0)
+      )
+    },
+    totalOrderNumber(): number {
+      return this.materialPlanOrderInfo.info_data.reduce((total, current) => {
+        return total + Number(current.number)
+      }, 0)
+    },
+    yarnColorList(): CascaderInfo[] {
+      return this.$store.state.api.yarnColor.arr
+    }
+  },
+  methods: {
+    init() {
+      this.loading = true
+      Promise.all([
+        materialOrder.list({
+          reserve_id: Number(this.$route.query.id)
+        }),
+        materialStock.list({
+          reserve_id: Number(this.$route.query.id)
+        }),
+        materialPlanOrder.stockSts({
+          year: new Date().getFullYear(),
+          month: new Date().getMonth() + 1,
+          reserve_id: Number(this.$route.query.id)
+        })
+      ]).then((res) => {
+        this.materialOrderList = res[0].data.data
+        this.materialStockList = res[1].data.data
+        this.materialStsList = res[2].data.data
+        this.loading = false
+      })
+    },
+    getMatSts() {
+      materialPlanOrder
+        .stockSts({
+          year: this.date.split('-')[0],
+          month: this.date.split('-')[1],
+          reserve_id: Number(this.$route.query.id)
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.materialStsList = res.data.data
+          }
+        })
+    },
+    saveMaterialOrderPlan(ifStock: boolean) {
+      const formCheck = this.materialPlanOrderInfo.info_data.some((itemChild) => {
+        return this.$formCheck(itemChild, [
+          {
+            key: 'material_id',
+            errMsg: '请选择物料名称'
+          },
+          {
+            key: 'attribute',
+            errMsg: '请选择物料属性'
+          },
+          {
+            key: 'material_color',
+            errMsg: '请选择物料颜色'
+          },
+          {
+            key: 'price',
+            errMsg: '请输入订购单价'
+          },
+          {
+            key: 'number',
+            errMsg: '请输入订购数量'
+          }
+        ])
+      })
+      if (!formCheck) {
+        this.loading = true
+        materialOrder.create({ data: [this.materialPlanOrderInfo] }).then((res) => {
+          if (res.data.status) {
+            this.$message.success('物料订购成功')
+            if (ifStock) {
+              this.goStock(res.data.data)
+            } else {
+              this.step = 1
+              this.resetAll()
+              this.materialPlanOrderFlag = false
+            }
+          }
+        })
+      }
+    },
+    goStock(materialOrderList: MaterialOrderInfo[]) {
+      // 其实只有一条订购信息，这个函数是订单物料出入库页面复制粘贴拿来的
+      materialOrderList.forEach((item) => {
+        this.materialStockInfo.rel_doc_code = item.code
+        this.materialStockInfo.rel_doc_id = item.id as number
+        item.info_data.forEach((itemChild) => {
+          this.materialStockInfo.selectList!.push({
+            value: itemChild.id as number,
+            name: itemChild.material_name + '/' + itemChild.material_color + '/' + itemChild.attribute,
+            material_color: itemChild.material_color,
+            material_id: itemChild.material_id,
+            attribute: itemChild.attribute,
+            number: itemChild.number
+          })
+        })
+      })
+      this.materialStockInfo.info_data = this.materialStockInfo.selectList!.map((item: any) => {
+        return {
+          material_id: item.material_id,
+          material_color: item.material_color,
+          color_code: '',
+          batch_code: '',
+          vat_code: '',
+          attribute: item.attribute,
+          number: item.number,
+          item: '', // 件数
+          rel_doc_info_id: item.value // 采购单调取单加工单子项id
+        }
+      })
+      this.step = 2
+      this.materialPlanOrderFlag = true
+    },
+    // 入库选采购单的时候给material_id赋值
+    getMatId(id: number, info: MaterialStockLog) {
+      const finded = this.materialStockInfo.selectList!.find((itemFind: any) => itemFind.value === id)
+      info.material_id = finded!.material_id as number
+      info.material_color = finded!.material_color as string
+      info.attribute = finded!.attribute as string
+    },
+    saveMaterialStock() {
+      const formCheck = this.materialStockInfo.info_data.some((item) => {
+        return this.$formCheck(item, [
+          {
+            key: 'rel_doc_info_id',
+            errMsg: '请选择单据物料'
+          },
+          {
+            key: 'material_id',
+            errMsg: '请选择物料'
+          }
+        ])
+      })
+      if (!formCheck) {
+        materialStock.create(this.materialStockInfo).then((res) => {
+          if (res.data.status) {
+            this.$message.success('添加成功')
+            this.step = 1
+            this.resetAll()
+            this.materialPlanOrderFlag = false
+          }
+        })
+      }
+    },
+    resetAll() {
+      this.materialPlanOrderInfo.info_data = [
+        {
+          material_id: '',
+          material_name: '',
+          material_color: '',
+          attribute: '',
+          price: '',
+          number: '',
+          unit: 'kg'
+        }
+      ]
+      this.materialStockInfo.selectList = []
+      this.materialStockInfo.info_data = [
+        {
+          material_id: '',
+          material_color: '',
+          color_code: '',
+          batch_code: '',
+          vat_code: '',
+          attribute: '',
+          number: '',
+          item: '', // 件数
+          rel_doc_info_id: '' // 采购单调取单加工单子项id
+        }
+      ]
+    },
+    closeAll() {
+      this.$confirm('是否关闭窗口?', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.resetAll()
+          this.materialPlanOrderFlag = false
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    deleteMaterialOrder(id: number) {
+      this.$confirm('是否删除该订购单?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          materialOrder.delete({ id }).then((res) => {
+            if (res.data.status) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+              this.init()
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    deleteMaterialStock(id: number) {
+      this.$confirm('是否删除该调取单?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          materialStock.delete({ id }).then((res) => {
+            if (res.data.status) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+              this.init()
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    }
+  },
+  mounted() {
+    this.date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1)
+    materialPlanOrder
+      .detail({
+        id: Number(this.$route.query.id)
+      })
+      .then((res) => {
+        if (res.data.status) {
+          this.materialPlanOrderDetail = res.data.data
+          this.materialPlanOrderInfo.client_id = this.materialPlanOrderDetail.client_id
+          this.materialPlanOrderInfo.client_name = this.materialPlanOrderDetail.client_name
+          this.materialPlanOrderInfo.reserve_id = Number(this.$route.query.id)
+          this.materialStockInfo.client_id = this.materialPlanOrderDetail.client_id
+        }
+        this.loading = false
+      })
+    store.list().then((res) => {
+      if (res.data.status) {
+        this.storeList = res.data.data.map((item: any) => {
+          return {
+            label: item.name,
+            value: item.id,
+            children: item.secondary_store.map((itemChild: any) => {
+              return {
+                label: itemChild.name,
+                value: itemChild.id
+              }
+            })
+          }
+        })
+      }
+    })
+    this.init()
+    this.$checkCommonInfo([
+      {
+        checkWhich: 'api/yarnType',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getYarnTypeAsync'
+      },
+      {
+        checkWhich: 'api/yarnColor',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getYarnColorAsync'
+      }
+    ])
+  }
+})
+</script>
+
+<style lang="less" scoped>
+@import '~@/assets/css/materialPlanOrder/detail.less';
+</style>

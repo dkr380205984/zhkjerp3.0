@@ -1149,8 +1149,7 @@ export default Vue.extend({
       })
     },
     saveQuotedPrice(ifCaogao: boolean) {
-      this.quotedPriceInfo.is_draft = ifCaogao ? 2 : 1
-      console.log(this.quotedPriceInfo)
+      this.quotedPriceInfo.is_draft = ifCaogao ? 1 : 2
       if (!ifCaogao) {
         const formCheck =
           this.$formCheck(this.quotedPriceInfo, [

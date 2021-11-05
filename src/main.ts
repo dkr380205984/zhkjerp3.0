@@ -41,11 +41,11 @@ Vue.filter('materialStockTypeFilter', (val: 1 | 2 | 3 | 4 | 5 | 6) => {
 })
 
 // 出入库状态转换 class
-Vue.filter('materialStockTypeClassFilter', (val: 1 | 2 | 3 | 4 | 5 | 6) => {
-  if (val === 3 || val === 5) {
-    return 'green'
+Vue.filter('materialStockTypeClassFilter', (val: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10) => {
+  if (val === 3 || val === 5 || val === 7 || val === 10) {
+    return 'orange'
   } else {
-    return 'blue'
+    return 'green'
   }
 })
 

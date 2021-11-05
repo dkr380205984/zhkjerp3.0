@@ -3,7 +3,7 @@
     class="bodyContainer">
     <div class="module">
       <div class="titleCtn">
-        <div class="title">单据列表（这个页面实际上是订单样单列表，要根据order_id查询物料采购，物料加工，半成品加工的信息）</div>
+        <div class="title">单据列表</div>
       </div>
       <div class="listCtn">
         <div class="filterCtn">
@@ -278,7 +278,7 @@ export default Vue.extend({
     },
     changeRouter() {
       this.$router.push(
-        '/materialPlan/list?page=' +
+        '/materialStock/list?page=' +
           this.page +
           '&keyword=' +
           this.keyword +
@@ -369,7 +369,7 @@ export default Vue.extend({
       return this.$store.state.api.group.arr
     }
   },
-  mounted() {
+  created() {
     this.getFilters()
     this.getList()
     this.getListSetting()

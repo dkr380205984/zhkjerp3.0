@@ -1,11 +1,8 @@
 <template>
   <div id="inspectionDetail"
-    class="bodyContainer">
-    <div class="module">
-      <div class="titleCtn">
-        <div class="title">订单组件</div>
-      </div>
-    </div>
+    class="bodyContainer"
+    v-loading="loading">
+    <order-detail :data="orderInfo"></order-detail>
     <div class="module">
       <el-tabs type="border-card"
         v-model="productionPlanIndex">
@@ -50,20 +47,21 @@
                   <span :class="$diffByDate(itemChild.end_time)>0?'green':'red'">({{$diffByDate(itemChild.end_time)>0?'还剩'+$diffByDate(itemChild.end_time)+'天':'逾期'+Math.abs($diffByDate(itemChild.end_time))+'天'}})</span>
                 </div>
                 <div class="tcol noPad"
-                  style="flex:5"
-                  v-for="(itemPro,indexPro) in itemChild.product_info_data"
-                  :key="indexPro">
-                  <div class="trow">
+                  style="flex:5">
+                  <div class="trow"
+                    v-for="(itemPro,indexPro) in itemChild.product_info_data"
+                    :key="indexPro">
                     <div class="tcol">
                       <el-checkbox v-model="itemPro.check"
-                        @change="$forceUpdate()">
+                        @change="$forceUpdate()"
+                        style="display: flex;align-items: center;">
                         <div style="display:flex;flex-direction:column">
                           <span>{{itemPro.product_code}}</span>
                           <span>{{itemPro.category_name}}/{{itemPro.type_name}}</span>
                         </div>
                       </el-checkbox>
                     </div>
-                    <div class="tcol">{{itemPro.size_name}}/{{itemPro.color_name}}</div>
+                    <div class="tcol">{{itemPro.size_name+'/'+itemPro.color_name}}</div>
                     <div class="tcol">
                       <span>{{itemPro.part_name}}</span>
                       <span>{{itemPro.number}}</span>
@@ -97,6 +95,46 @@
           </div>
         </el-tab-pane>
       </el-tabs>
+    </div>
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">收发检验日志</div>
+      </div>
+      <div class="listCtn">
+        <div class="list">
+          <div class="row title">
+            <div class="col">单据编号</div>
+            <div class="col">检验单位</div>
+            <div class="col">入库时间</div>
+            <div class="col">产品编号</div>
+            <div class="col">产品部位</div>
+            <div class="col">尺码颜色</div>
+            <div class="col">检验数量</div>
+            <div class="col">次品数量</div>
+            <div class="col">次品原因</div>
+            <div class="col">操作</div>
+          </div>
+          <div class="row"
+            v-for="item in inspectionList"
+            :key="item.id">
+            <div class="col">{{item.doc_code}}</div>
+            <div class="col">{{item.client_name}}</div>
+            <div class="col">{{item.complete_time}}</div>
+            <div class="col">{{item.product_code}}</div>
+            <div class="col">产品部位</div>
+            <div class="col">{{item.color_name}}/{{item.size_name}}</div>
+            <div class="col">{{item.number}}</div>
+            <div class="col">{{item.shoddy_number}}</div>
+            <div class="col">{{item.shoddy_reason}}</div>
+            <div class="col">
+              <div class="oprCtn">
+                <span class="opr hoverRed"
+                  @click="deleteInspection(item.id)">删除</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="popup"
       v-show="inspectionFlag">
@@ -231,6 +269,14 @@
         </div>
       </div>
     </div>
+    <div class="bottomFixBar">
+      <div class="main">
+        <div class="btnCtn">
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -258,9 +304,69 @@ export default Vue.extend({
     productionPlanMergeList: ProductionPlanInfoMerge[]
     productionPlanList: ProductionPlanInfo[]
     inspectionInfo: InspectionInfoMerge[]
+    inspectionList: InspectionInfo[]
     [propName: string]: any
   } {
     return {
+      loading: true,
+      orderInfo: {
+        id: null,
+        client_id: '',
+        group_id: '',
+        contacts_id: '',
+        public_files: [],
+        private_files: [],
+        settle_tax: '',
+        settle_unit: '',
+        order_type: 1,
+        code: '',
+        desc: '',
+        time_data: [
+          {
+            id: '',
+            order_time: this.$getDate(new Date()),
+            order_type_id: '',
+            complete_time: '',
+            is_draft: 2,
+            total_style: '',
+            total_number: '',
+            total_price: '',
+            is_urgent: 2,
+            is_before_confirm: 2,
+            is_send: 2,
+            batch_data: [
+              {
+                id: '',
+                batch_number: 1,
+                batch_title: '',
+                batch_type_id: '',
+                delivery_time: '',
+                is_urgent: 2,
+                is_draft: 2,
+                total_style: '',
+                total_number: '',
+                total_price: '',
+                desc: '',
+                product_data: [
+                  {
+                    product_id: '',
+                    size_color_list: [],
+                    product_info: [
+                      {
+                        size_color: '',
+                        size_id: '',
+                        color_id: '',
+                        number: '',
+                        price: ''
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
       productionPlanMergeList: [],
       productionPlanList: [],
       productionPlanIndex: '0',
@@ -268,6 +374,7 @@ export default Vue.extend({
       order_id: 0,
       inspectionFlag: false,
       inspectionInfo: [],
+      inspectionList: [],
       shoddy_reason: [
         {
           value: '原因1',
@@ -309,6 +416,32 @@ export default Vue.extend({
     }
   },
   methods: {
+    init() {
+      this.loading = true
+      Promise.all([
+        productionPlan.list({
+          order_id: this.order_id
+        }),
+        inspection.list({
+          order_id: this.order_id,
+          type: null
+        })
+      ]).then((res) => {
+        this.productionPlanList = res[0].data.data
+        if (this.productionPlanList.length > 0) {
+          this.productionPlanMergeList = this.$mergeData(this.productionPlanList, {
+            mainRule: ['process_name', 'process_id']
+          })
+          this.productionPlanIndex = this.productionPlanMergeList[0].process_id.toString()
+        } else {
+          this.$message.warning('该订单还未创建生产计划信息，请先填写生产计划')
+          this.$router.push('/productionPlan/detail?id=' + this.$route.query.id)
+        }
+        this.inspectionList = res[1].data.data
+        console.log(this.inspectionList)
+        this.loading = false
+      })
+    },
     goInspection(type: 1 | 2) {
       if (this.checkList.length === 0) {
         this.$message.error('请选择产品信息进行检验操作')
@@ -328,9 +461,9 @@ export default Vue.extend({
                 '/' +
                 itemChild.part_name +
                 '/' +
-                itemChild.color_name +
+                (itemChild.color_name || '无配色') +
                 '/' +
-                itemChild.size_name,
+                (itemChild.size_name || '无尺码'),
               doc_info_id: itemChild.id,
               production_number: itemChild.number,
               number: '',
@@ -358,10 +491,36 @@ export default Vue.extend({
       const formData: InspectionInfo[] = this.$flatten(this.$flatten(this.inspectionInfo))
       inspection.create({ data: formData }).then((res) => {
         if (res.data.status) {
-          this.$message.success('添加成功')
+          this.$message.success('检验成功')
           this.closeInspection()
+          this.init()
         }
       })
+    },
+    deleteInspection(id: number) {
+      this.$confirm('是否删除该检验日志?', '提示', {
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          inspection
+            .delete({
+              id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message.success('删除成功')
+                this.init()
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     }
   },
   mounted() {
@@ -371,35 +530,8 @@ export default Vue.extend({
       })
       .then((res) => {
         this.order_id = res.data.data.time_data[this.orderIndex].id
-        productionPlan
-          .list({
-            order_id: this.order_id
-          })
-          .then((res) => {
-            if (res.data.status) {
-              this.productionPlanList = res.data.data
-              if (this.productionPlanList.length > 0) {
-                this.productionPlanMergeList = this.$mergeData(this.productionPlanList, {
-                  mainRule: ['process_name', 'process_id']
-                })
-                this.productionPlanIndex = this.productionPlanMergeList[0].process_id.toString()
-              } else {
-                this.$message.warning('该订单还未创建生产计划信息，请先填写生产计划')
-                this.$router.push('/productionPlan/detail?id=' + this.$route.query.id)
-              }
-              console.log(this.productionPlanMergeList)
-            }
-          })
-        inspection
-          .list({
-            order_id: this.order_id,
-            type: null
-          })
-          .then((res) => {
-            if (res.data.status) {
-              console.log(res)
-            }
-          })
+        this.orderInfo = res.data.data
+        this.init()
       })
   }
 })

@@ -17,6 +17,14 @@ const routes: Array<RouteConfig> = [
     name: '登录',
     component: () => import('@/views/login.vue')
   }, {
+    path: '/commonPrint/printEasy',
+    name: '普通打印页',
+    component: () => import('../views/commonPrint/printEasy.vue')
+  }, {
+    path: '/commonPrint/printMenu',
+    name: '菜单打印页',
+    component: () => import('../views/commonPrint/printMenu.vue')
+  }, {
     path: '/index',
     name: 'index',
     component: () => import('../views/index.vue'),
@@ -117,9 +125,13 @@ const routes: Array<RouteConfig> = [
       name: '添加仓库',
       component: () => import('../views/store/create.vue')
     }, {
-      path: '/store/detail',
-      name: '仓库详情',
-      component: () => import('../views/store/detail.vue')
+      path: '/store/materialDetail',
+      name: '物料仓库详情',
+      component: () => import('../views/store/materialDetail.vue')
+    }, {
+      path: '/store/productDetail',
+      name: '产品仓库详情',
+      component: () => import('../views/store/productDetail.vue')
     }, {
       path: '/materialPlan/create',
       name: '物料计划添加',
@@ -132,6 +144,10 @@ const routes: Array<RouteConfig> = [
       path: '/materialPlan/detail',
       name: '物料计划详情',
       component: () => import('../views/materialPlan/detail.vue')
+    }, {
+      path: '/materialPlan/update',
+      name: '物料计划修改',
+      component: () => import('../views/materialPlan/update.vue')
     }, {
       path: '/materialManage/list',
       name: '物料管理列表',
@@ -164,6 +180,14 @@ const routes: Array<RouteConfig> = [
       path: '/inspection/list',
       name: '检验收发列表',
       component: () => import('../views/inspection/list.vue')
+    }, {
+      path: '/materialPlanOrder/list',
+      name: '物料预订购列表',
+      component: () => import('../views/materialPlanOrder/list.vue')
+    }, {
+      path: '/materialPlanOrder/detail',
+      name: '物料预订购详情',
+      component: () => import('../views/materialPlanOrder/detail.vue')
     }]
   }
 ]

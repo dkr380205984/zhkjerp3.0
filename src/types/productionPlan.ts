@@ -3,10 +3,12 @@ export interface ProductionPlanInfo {
   code?: string
   type: null | 1 | 2 | 3 //  1机织计划 2 半成品加工计划 3 成品加工计
   process_id: number | string
+  process_name?: string
   order_id: number | string
   plan_id?: number | string // 计划单id
   client_id_arr?: number[] // 前端选公司用
   client_id: number | string
+  client_name?: string
   start_time: string
   end_time: string
   desc: string
@@ -29,6 +31,8 @@ export interface ProductionPlanInfo {
     select_arr?: string // 前端用，下拉框选择一个产品尺码配色信息
   }>
   material_info_data: Array<{
+    id?: number | string
+    check?: boolean // 前端用
     material_id: number | string
     material_name: string
     material_color: string

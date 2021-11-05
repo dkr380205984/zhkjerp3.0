@@ -9,7 +9,7 @@
         <div class="filterCtn">
           <div class="elCtn">
             <el-input v-model="keyword"
-              placeholder="筛选报价/产品/样品编号"
+              placeholder="筛选样单/产品/样品编号"
               @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">

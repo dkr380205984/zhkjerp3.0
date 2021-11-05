@@ -26,9 +26,9 @@
               placeholder="筛选创建人"
               clearable>
               <el-option v-for="item in userList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"></el-option>
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
@@ -139,6 +139,7 @@ export default Vue.extend({
           name: '报价单号',
           ifShow: true,
           ifLock: true,
+          ifCaogao: 'is_draft',
           index: 0
         },
         {
@@ -225,6 +226,13 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 11
+        },
+        {
+          key: 'created_at',
+          name: '创建日期',
+          ifShow: true,
+          ifLock: false,
+          index: 12
         }
       ],
       pickerOptions: {
@@ -265,9 +273,9 @@ export default Vue.extend({
           fn: (item: any) => {
             // 判断是否为草稿
             if (item.is_draft === 1) {
-              this.$router.push('/quotedPrice/detail?id=' + item.id)
-            } else {
               this.$router.push('/quotedPrice/update?id=' + item.id)
+            } else {
+              this.$router.push('/quotedPrice/detail?id=' + item.id)
             }
           }
         },
@@ -358,7 +366,7 @@ export default Vue.extend({
       this.keyword = query.keyword || ''
       this.status = query.status || '0'
       this.user_id = Number(query.user_id) || ''
-      this.group_id = Number(query.gourp_id) || ''
+      this.group_id = Number(query.group_id) || ''
       this.date = query.date ? (query.date as string).split(',') : []
     },
     reset() {

@@ -9,6 +9,7 @@ import sampleDetail from './sampleDetail/sampleDetail.vue'
 import colorPicker from './colorPicker/colorPicker.vue'
 import orderDetail from './orderDetail/orderDetail.vue'
 import zhList from './zhList/zhList.vue'
+import zhCheck from './zhCheck/zhCheck.vue'
 export default {
   install: (Vue: any) => {
     Vue.component('zhNav', zhNav)
@@ -22,5 +23,6 @@ export default {
     Vue.component('zhColorPicker', colorPicker) //和elment-ui区分
     Vue.component('orderDetail', orderDetail)
     Vue.component('zhList', zhList)
+    Vue.component('zhCheck', zhCheck)
   }
 }

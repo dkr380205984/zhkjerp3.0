@@ -35,7 +35,7 @@
         </div>
       </div>
     </div>
-    <div class="module">
+    <!-- <div class="module">
       <div class="titleCtn">
         <div class="title">财务管理</div>
       </div>
@@ -51,7 +51,7 @@
           <p class="name">{{item.name}}</p>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -110,13 +110,31 @@ export default Vue.extend({
             name: '仓库管理',
             id: 11,
             icon: 'financial',
-            url: '/store/list?page=1'
+            url: '/store/list?page=1&keyword=&user_id=&store_type=1'
           },
           {
             name: '工厂管理',
             id: 12,
             icon: 'other',
             url: '/client/list?page=1&type=1'
+          },
+          {
+            name: '物料预订购',
+            id: 13,
+            icon: 'other',
+            url: '/materialPlanOrder/list?page=1&type=1'
+          },
+          {
+            name: '普通打印页',
+            id: 14,
+            icon: 'other',
+            url: '/commonPrint/printEasy'
+          },
+          {
+            name: '菜单打印页',
+            id: 15,
+            icon: 'other',
+            url: '/commonPrint/printMenu'
           }
         ],
         finance: []

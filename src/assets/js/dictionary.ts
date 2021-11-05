@@ -59,6 +59,18 @@ const stockType = [{
 }, {
   name: '订单结余入库',
   value: 6
+}, {
+  name: '移库出库',
+  value: 7
+}, {
+  name: '移库入库',
+  value: 8
+}, {
+  name: '仓库入库',
+  value: 9
+}, {
+  name: '仓库出库',
+  value: 10
 }]
 
 // 仓库类型

@@ -1132,7 +1132,9 @@ export default Vue.extend({
         item.category_id = item.type && item.type[0]
         item.type_id = item.type && item.type[1]
         item.material_data.forEach((itemChild) => {
-          itemChild.material_id = itemChild.tree_data && (itemChild.tree_data as number[])[2]
+          console.log(itemChild.tree_data)
+          itemChild.material_id =
+            itemChild.tree_data!.length > 0 ? itemChild.tree_data && (itemChild.tree_data as number[])[2] : ''
           itemChild.tree_data = itemChild.tree_data && (itemChild.tree_data as number[]).join(',')
         })
         item.total_price =
@@ -1161,7 +1163,7 @@ export default Vue.extend({
       })
     },
     saveQuotedPrice(ifCaogao: boolean) {
-      this.quotedPriceInfo.is_draft = ifCaogao ? 2 : 1
+      this.quotedPriceInfo.is_draft = ifCaogao ? 1 : 2
       if (!ifCaogao) {
         const formCheck =
           this.$formCheck(this.quotedPriceInfo, [
@@ -1373,8 +1375,13 @@ export default Vue.extend({
       }
     },
     getUpdateInfo() {
-      this.quotedPriceInfo.tree_data = (this.quotedPriceInfo.tree_data as string).split(',').map((item) => Number(item))
-      this.getContacts(this.quotedPriceInfo.tree_data, true) //标记一下是初始化
+      this.quotedPriceInfo.tree_data = this.quotedPriceInfo.tree_data
+        ? (this.quotedPriceInfo.tree_data as string).split(',').map((item) => Number(item))
+        : []
+      if (this.quotedPriceInfo.tree_data.length > 0) {
+        this.getContacts(this.quotedPriceInfo.tree_data, true) //标记一下是初始化
+      }
+
       this.quotedPriceInfo.product_data.forEach((item) => {
         item.file_list = item.image_data.map((itemImage, index) => {
           return {

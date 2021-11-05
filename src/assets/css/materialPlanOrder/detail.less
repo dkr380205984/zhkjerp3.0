@@ -1,0 +1,52 @@
+@import '../common.less';
+@import '../detail.less';
+@import '../edit.less';
+@import '../list.less';
+@import '../table.less';
+@import '../popup.less';
+@import '../bottomBar.less';
+#materialPlanOrderDetail{
+  .popup{
+    .main{
+      width: 1200px;
+      .label{
+        line-height: 38px;
+        font-size: 14px;
+        width: auto;
+        text-align: left;
+      }
+      .description{
+        padding: 18px;
+        background: #F0F0F0;
+        color: @font85;
+        margin: 24px 0;
+        font-size: @fontBig;
+        font-weight: bold;
+      }
+      .editCtn{
+        background:#F0F0F0 ;
+        margin: 16px 0;
+        .deleteIcon{
+          cursor: pointer;
+          width: 20px;
+          height: 20px;
+          color: #fff;
+          line-height: 20px;
+          text-align: center;
+          border-radius: 50%;
+          background: @red;
+          float: right;
+          &:hover{
+            background: @hoverRed;
+          }
+        }
+        .col{
+          margin-right: 30px;
+        }
+        .opr{
+          transform: translate(-20px, 100%);
+        }
+      }
+    }
+  }
+}

@@ -7,7 +7,7 @@ import { ProcessInfo } from '@/types/processSetting'
 import { ClientTypeInfo } from '@/types/client'
 import { GroupInfo } from '@/types/factoryInfoSetting'
 import { StyleInfo, IngredientInfo, ColourInfo } from '@/types/productSetting'
-import { productType, yarnType, clientType, decorateMaterial, packMaterial, process, group, style, colour, ingredient, orderType, yarnColor, yarn } from '@/assets/js/api'
+import { productType, yarnType, clientType, decorateMaterial, packMaterial, process, group, style, colour, ingredient, orderType, yarnColor, yarn, user } from '@/assets/js/api'
 import { OrderType } from '@/types/orderSetting'
 
 const apiState: ApiState = {
@@ -357,9 +357,9 @@ const apiActions = {
     })
   },
   getUserAsync(content: ActionContext<ApiState, any>) {
-    setTimeout(() => {
-      content.commit('getUser', [])
-    }, 200)
+    user.list().then((res) => {
+      content.commit('getUser', res.data.data)
+    })
   }
 }
 export default {

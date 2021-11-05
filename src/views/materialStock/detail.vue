@@ -1,11 +1,8 @@
 <template>
   <div id="materialStockDetail"
-    class="bodyContainer">
-    <div class="module">
-      <div class="titleCtn">
-        <div class="title">订单组件</div>
-      </div>
-    </div>
+    class="bodyContainer"
+    v-loading="loading">
+    <order-detail :id="$route.query.id"></order-detail>
     <div class="module clearfix">
       <div class="titleCtn">
         <div class="title">物料采购单</div>
@@ -162,9 +159,78 @@
         </div>
       </div>
     </div>
-    <div class="module">
+    <div class="module clearfix">
       <div class="titleCtn">
         <div class="title">半成品加工单</div>
+      </div>
+      <div class="tableCtn">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol">加工单号</div>
+            <div class="tcol">加工单位</div>
+            <div class="tcol noPad"
+              style="flex:5">
+              <div class="trow">
+                <div class="tcol">纱线名称</div>
+                <div class="tcol">纱线颜色</div>
+                <div class="tcol">所需数量</div>
+                <div class="tcol">出库数量</div>
+                <div class="tcol">操作</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow"
+            v-for="item in productionPlanList"
+            :key="item.id">
+            <div class="tcol">
+              <el-checkbox v-model="item.checkAll"
+                @change="getAllCheck($event,item)">{{item.code}}</el-checkbox>
+            </div>
+            <div class="tcol">
+              <span>{{item.client_name}}</span>
+              <span class="green">({{item.process_name}})</span>
+            </div>
+            <div class="tcol noPad"
+              style="flex:5">
+              <template v-if="item.material_info_data.length===0">
+                <span class="gray"
+                  style="text-align:center">不需要物料</span>
+              </template>
+              <div class="trow"
+                v-for="(itemMat,indexMat) in item.material_info_data"
+                :key="indexMat">
+                <div class="tcol">
+                  <el-checkbox v-model="itemMat.check"
+                    @change="$forceUpdate()">{{itemMat.material_name}}
+                  </el-checkbox>
+                </div>
+                <div class="tcol">{{itemMat.material_color}}</div>
+                <div class="tcol">{{itemMat.number}}kg</div>
+                <div class="tcol">出库数量</div>
+                <div class="tcol oprCtn">
+                  <div class="opr hoverBlue">出库</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="buttonList">
+        <div class="btn backHoverBlue">
+          <i class="el-icon-s-grid"></i>
+          <span class="text">加工单操作</span>
+        </div>
+        <div class="otherInfoCtn">
+          <div class="otherInfo">
+            <div class="btn backHoverBlue"
+              @click="goStock(5)">
+              <i class="iconfont">&#xe63b;</i>
+              <span class="text">生产出库</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="module">
@@ -503,6 +569,14 @@
         </div>
       </div>
     </div>
+    <div class="bottomFixBar">
+      <div class="main">
+        <div class="btnCtn">
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -510,8 +584,9 @@
 import Vue from 'vue'
 import { MaterialOrderInfo } from '@/types/materialOrder'
 import { MaterialStockInfo, MaterialStockLog } from '@/types/materialStock'
+import { ProductionPlanInfo } from '@/types/productionPlan'
 import { MaterialProcessInfo } from '@/types/materialProcess'
-import { materialOrder, store, mateiralStock } from '@/assets/js/api'
+import { materialOrder, store, materialStock, productionPlan, order } from '@/assets/js/api'
 import { stockType } from '@/assets/js/dictionary'
 export default Vue.extend({
   data(): {
@@ -519,10 +594,11 @@ export default Vue.extend({
     materialOrderList: MaterialOrderInfo[]
     materialStockInfo: MaterialStockInfo
     materialStockList: MaterialOrderInfo[]
+    productionPlanList: ProductionPlanInfo[]
     [propName: string]: any
   } {
     return {
-      testValue: '',
+      loading: true,
       materialOrderList: [],
       materialProcessList: [],
       stockTypeList: stockType,
@@ -553,12 +629,54 @@ export default Vue.extend({
         selectList: []
       },
       materialStockList: [],
+      productionPlanList: [],
       storeInList: []
     }
   },
   methods: {
-    getAllCheck(ev: boolean, info: MaterialOrderInfo) {
-      info.info_data.forEach((item) => (item.check = ev))
+    init() {
+      this.loading = true
+      Promise.all([
+        materialOrder.list({
+          top_order_id: Number(this.$route.query.id)
+        }),
+        materialStock.list({
+          top_order_id: Number(this.$route.query.id)
+        }),
+        productionPlan.list({
+          top_order_id: Number(this.$route.query.id)
+        })
+      ]).then((res) => {
+        this.materialOrderList = res[0].data.data
+        this.materialProcessList = []
+        res[0].data.data.forEach((item: any) => {
+          this.materialProcessList = this.materialProcessList.concat(item.process_info)
+        })
+        this.materialStockList = res[1].data.data
+        // 统计入库日志用于出库
+        const flattenStock = this.$flatten(this.$flatten(this.materialStockList)).filter(
+          (item) => item.action_type !== 3 && item.action_type !== 5
+        )
+        this.storeInList = this.$mergeData(flattenStock, {
+          mainRule: [
+            'material_name',
+            'material_color',
+            'attribute',
+            'batch_code',
+            'vat_code',
+            'color_code',
+            'material_id'
+          ],
+          otherRule: [{ name: 'number', type: 'add' }]
+        })
+        this.productionPlanList = res[2].data.data
+        this.loading = false
+      })
+    },
+    getAllCheck(ev: boolean, info: any) {
+      info.info_data
+        ? info.info_data.forEach((item: any) => (item.check = ev))
+        : info.material_info_data.forEach((item: any) => (item.check = ev))
     },
     goStock(type: number) {
       const tipsArr = [
@@ -581,6 +699,8 @@ export default Vue.extend({
             this.getOrderInfo(type)
           } else if (type === 3) {
             this.getProcessInfo(type)
+          } else if (type === 5) {
+            this.getInspectionInfo()
           }
         })
         .catch(() => {
@@ -708,6 +828,53 @@ export default Vue.extend({
       console.log(this.materialStockInfo.info_data)
       this.materialStockFlag = true
     },
+    // 半成品加工出库
+    getInspectionInfo() {
+      const checkLength = this.productionPlanList.filter((item) => {
+        return item.material_info_data.some((itemChild) => itemChild.check)
+      }).length
+      if (checkLength === 0) {
+        this.$message.error('请选择加工单进行出库操作')
+        return
+      }
+      if (checkLength > 1) {
+        this.$message.error('只能选择一张加工单进行出库操作')
+        return
+      }
+      this.materialStockInfo.action_type = 5
+      this.materialStockInfo.selectList = []
+      this.productionPlanList.forEach((item) => {
+        item.material_info_data.forEach((itemChild) => {
+          if (itemChild.check) {
+            this.materialStockInfo.rel_doc_code = item.code
+            this.materialStockInfo.rel_doc_id = item.id as number
+            this.materialStockInfo.selectList!.push({
+              value: itemChild.id as number,
+              name: itemChild.material_name + '/' + (itemChild.material_color || '未知颜色'),
+              material_color: itemChild.material_color,
+              material_id: itemChild.material_id,
+              attribute: '无属性',
+              number: itemChild.number
+            })
+          }
+        })
+      })
+      this.materialStockInfo.info_data = this.materialStockInfo.selectList.map((item) => {
+        return {
+          stockInList: this.storeInList.filter((itemFind: any) => itemFind.material_id === item.material_id),
+          material_id: '',
+          material_color: '',
+          color_code: '',
+          batch_code: '',
+          vat_code: '',
+          attribute: '',
+          number: item.number as string,
+          item: '', // 件数
+          rel_doc_info_id: item.value // 采购单调取单加工单子项id
+        }
+      })
+      this.materialStockFlag = true
+    },
     getCmpData() {
       this.materialStockInfo.info_data.forEach((item) => {
         item.batch_code = item.batch_code || '无'
@@ -716,12 +883,26 @@ export default Vue.extend({
       })
     },
     saveMaterialStock() {
-      this.getCmpData()
-      mateiralStock.create(this.materialStockInfo).then((res) => {
-        if (res.data.status) {
-          this.$message.success('添加成功')
-        }
+      const formCheck = this.materialStockInfo.info_data.some((item) => {
+        return this.$formCheck(item, [
+          {
+            key: 'rel_doc_info_id',
+            errMsg: '请选择单据物料'
+          },
+          {
+            key: 'material_id',
+            errMsg: '请选择物料'
+          }
+        ])
       })
+      if (!formCheck) {
+        this.getCmpData()
+        materialStock.create(this.materialStockInfo).then((res) => {
+          if (res.data.status) {
+            this.$message.success('添加成功')
+          }
+        })
+      }
     },
     closeStock() {
       this.materialStockFlag = false
@@ -733,7 +914,7 @@ export default Vue.extend({
         type: 'warning'
       })
         .then(() => {
-          mateiralStock
+          materialStock
             .delete({
               id
             })
@@ -752,44 +933,7 @@ export default Vue.extend({
     }
   },
   mounted() {
-    materialOrder
-      .list({
-        order_id: Number(this.$route.query.id)
-      })
-      .then((res) => {
-        const data = res.data.data
-        this.materialOrderList = data
-        this.materialProcessList = []
-        data.forEach((item: any) => {
-          this.materialProcessList = this.materialProcessList.concat(item.process_info)
-        })
-      })
-    mateiralStock
-      .list({
-        order_id: Number(this.$route.query.id)
-      })
-      .then((res) => {
-        console.log(res)
-        if (res.data.status) {
-          this.materialStockList = res.data.data
-          // 统计入库日志用于出库
-          const flattenStock = this.$flatten(this.$flatten(this.materialStockList)).filter(
-            (item) => item.action_type !== 3 && item.action_type !== 5
-          )
-          this.storeInList = this.$mergeData(flattenStock, {
-            mainRule: [
-              'material_name',
-              'material_color',
-              'attribute',
-              'batch_code',
-              'vat_code',
-              'color_code',
-              'material_id'
-            ],
-            otherRule: [{ name: 'number', type: 'add' }]
-          })
-        }
-      })
+    this.init()
   }
 })
 </script>

@@ -1,11 +1,8 @@
 <template>
   <div id="productionPlanDetail"
-    class="bodyContainer">
-    <div class="module">
-      <div class="titleCtn">
-        <div class="title">订单组件</div>
-      </div>
-    </div>
+    class="bodyContainer"
+    v-loading="loading">
+    <order-detail :data="orderInfo"></order-detail>
     <div class="module">
       <el-tabs type="border-card"
         v-model="materialPlanIndex">
@@ -29,7 +26,6 @@
                   <div class="tcol">尺码颜色</div>
                   <div class="tcol">下单数量</div>
                   <div class="tcol">计划生产数量</div>
-                  <div class="tcol">产品部位</div>
                 </div>
               </div>
               <div class="tbody">
@@ -43,7 +39,6 @@
                   <div class="tcol">{{itemPro.size_name}}/{{itemPro.color_name}}</div>
                   <div class="tcol">{{itemPro.order_number}}</div>
                   <div class="tcol">{{itemPro.number}}</div>
-                  <div class="tcol">产品部位</div>
                 </div>
               </div>
             </div>
@@ -98,7 +93,8 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <div class="module">
+    <div class="module"
+      v-if="productionPlanList.length>0">
       <el-tabs type="border-card"
         v-model="productionPlanIndex">
         <el-tab-pane v-for="(item,index) in productionPlanList"
@@ -112,29 +108,97 @@
             <div class="row">
               <div class="col">
                 <div class="label">加工单号：</div>
-                <div class="text blue">{{item.code}}</div>
+                <div class="text">{{item.code}}</div>
               </div>
               <div class="col">
                 <div class="label">加工单位：</div>
                 <div class="text">{{item.client_name}}</div>
               </div>
               <div class="col">
-                <div class="label">订购日期：</div>
-                <div class="text">{{item.code}}</div>
+                <div class="label">加工日期：</div>
+                <div class="text">{{item.start_time}}</div>
               </div>
             </div>
             <div class="row">
               <div class="col">
-                <div class="label">加工单号：</div>
-                <div class="text blue">{{item.code}}</div>
+                <div class="label">加工类型：</div>
+                <div class="text">{{productionTypeList[item.type-1].name}}</div>
               </div>
               <div class="col">
-                <div class="label">加工单位：</div>
-                <div class="text">{{item.code}}</div>
+                <div class="label">加工工序：</div>
+                <div class="text">{{item.process_name}}</div>
               </div>
               <div class="col">
-                <div class="label">订购日期：</div>
-                <div class="text">{{item.code}}</div>
+                <div class="label">交货日期：</div>
+                <div class="text">{{item.end_time}}</div>
+              </div>
+            </div>
+          </div>
+          <div class="tableCtn"
+            style="padding-top:0">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol">序号</div>
+                <div class="tcol">产品信息</div>
+                <div class="tcol">尺码颜色</div>
+                <div class="tcol">加工数量</div>
+                <div class="tcol">加工单价</div>
+                <div class="tcol">加工总价</div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div class="trow"
+                v-for="(itemPro,indexPro) in item.product_info_data"
+                :key="indexPro">
+                <div class="tcol">{{indexPro+1}}</div>
+                <div class="tcol">
+                  <span>{{itemPro.product_code||itemPro.system_code}}</span>
+                  <span>{{itemPro.category_name}}/{{itemPro.type_name}}</span>
+                </div>
+                <div class="tcol">{{itemPro.size_name?itemPro.size_name + '/' + itemPro.color_name:'未选择尺码颜色'}}</div>
+                <div class="tcol">{{itemPro.number}}</div>
+                <div class="tcol">{{itemPro.price}}元</div>
+                <div class="tcol">{{itemPro.price*itemPro.number}}元</div>
+              </div>
+            </div>
+          </div>
+          <div class="tableCtn"
+            v-if="item.material_info_data.length>0">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol">序号</div>
+                <div class="tcol">物料名称</div>
+                <div class="tcol">物料颜色</div>
+                <div class="tcol">分配数量</div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div class="trow"
+                v-for="(itemMat,indexMat) in item.material_info_data"
+                :key="indexMat">
+                <div class="tcol">{{indexMat+1}}</div>
+                <div class="tcol">{{itemMat.material_name}}</div>
+                <div class="tcol">{{itemMat.material_color}}</div>
+                <div class="tcol">{{itemMat.number}}kg</div>
+              </div>
+            </div>
+          </div>
+          <div class="buttonList">
+            <div class="btn backHoverBlue">
+              <i class="el-icon-s-grid"></i>
+              <span class="text">加工单操作</span>
+            </div>
+            <div class="otherInfoCtn">
+              <div class="otherInfo">
+                <div class="btn backHoverOrange">
+                  <i class="iconfont">&#xe63b;</i>
+                  <span class="text">修改单据</span>
+                </div>
+                <div class="btn backHoverRed"
+                  @click="deleteProductionPlan(item.id)">
+                  <i class="iconfont">&#xe63b;</i>
+                  <span class="text">删除单据</span>
+                </div>
               </div>
             </div>
           </div>
@@ -146,7 +210,8 @@
       <div class="main">
         <div class="titleCtn">
           <span class="text">生产计划单填写</span>
-          <div class="closeCtn">
+          <div class="closeCtn"
+            @click="productionPlanFlag = false">
             <span class="el-icon-close"></span>
           </div>
         </div>
@@ -178,7 +243,7 @@
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-cascader placeholder="请选择订购单位"
+                    <el-cascader placeholder="请选择加工单位"
                       v-model="item.client_id_arr"
                       :options="processClientList"
                       @change="(ev)=>{item.client_id=ev[2]}"></el-cascader>
@@ -258,7 +323,8 @@
                   </div>
                   <div class="info elCtn">
                     <el-select placeholder="请选择产品信息"
-                      v-model="itemPro.select_arr">
+                      v-model="itemPro.select_arr"
+                      @change="getProInfo($event,itemPro)">
                       <el-option v-for="(item,index) in checkList"
                         :key="index"
                         :value="item.product_id+'/'+ item.part_id+'/'+item.size_id+'/'+ item.color_id"
@@ -290,6 +356,7 @@
                       </div>
                       <div class="info elCtn">
                         <el-input v-model="itemPro.number"
+                          :disabled="materialPlanList.find((item) => Number(item.id) === Number(materialPlanIndex))&&materialPlanList.find((item) => Number(item.id) === Number(materialPlanIndex)).type===2"
                           @input="(ev)=>{itemPro.total_price=Number(ev)*Number(itemPro.price)}"
                           placeholder="请输入数量">
                         </el-input>
@@ -398,8 +465,10 @@
                 </div>
               </div>
             </div>
+            <!-- 物料计划单按照尺码颜色填才能分给多家单位 -->
             <div class="btn backHoverBlue"
-              style="margin-bottom:16px">添加加工单位</div>
+              style="margin-bottom:16px"
+              v-if="materialPlanList.find((item) => Number(item.id) === Number(materialPlanIndex))&&materialPlanList.find((item) => Number(item.id) === Number(materialPlanIndex)).type===1">添加加工单位</div>
           </template>
           <template v-else>
             <div class="tableCtn">
@@ -420,9 +489,18 @@
                 <div class="trow"
                   v-for="(item,index) in productionPlanInfo"
                   :key="index">
-                  <div class="tcol">{{item.client_id}}</div>
+                  <div class="tcol">
+                    <span>{{item.client_name||'未选择单位'}}</span>
+                    <span class="green">({{item.process_name}})</span>
+                  </div>
                   <div class="tcol noPad"
                     style="flex:4">
+                    <div class="gray trow"
+                      v-if="item.material_info_data.length===0">
+                      <div class="tcol">
+                        <span class="gray">该工序未分配任何物料</span>
+                      </div>
+                    </div>
                     <div class="trow"
                       v-for="(itemMat,indexMat) in item.material_info_data"
                       :key="indexMat">
@@ -437,11 +515,20 @@
           </template>
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn">取消</span>
+          <span class="btn borderBtn"
+            @click="productionPlanFlag = false">取消</span>
           <span class="btn backHoverOrange"
-            @click="getMaterialInfo">查看物料分配</span>
+            @click="materialPlanFlag?materialPlanFlag=false:getMaterialInfo(true)">{{materialPlanFlag?'查看排产信息':'查看物料分配'}}</span>
           <span class="btn backHoverBlue"
             @click="saveProductionPlan">确认</span>
+        </div>
+      </div>
+    </div>
+    <div class="bottomFixBar">
+      <div class="main">
+        <div class="btnCtn">
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
         </div>
       </div>
     </div>
@@ -463,8 +550,67 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      loading: true,
       order_id: 0,
       orderIndex: '0',
+      orderInfo: {
+        id: null,
+        client_id: '',
+        group_id: '',
+        contacts_id: '',
+        public_files: [],
+        private_files: [],
+        settle_tax: '',
+        settle_unit: '',
+        order_type: 1,
+        code: '',
+        desc: '',
+        time_data: [
+          {
+            id: '',
+            order_time: this.$getDate(new Date()),
+            order_type_id: '',
+            complete_time: '',
+            is_draft: 2,
+            total_style: '',
+            total_number: '',
+            total_price: '',
+            is_urgent: 2,
+            is_before_confirm: 2,
+            is_send: 2,
+            batch_data: [
+              {
+                id: '',
+                batch_number: 1,
+                batch_title: '',
+                batch_type_id: '',
+                delivery_time: '',
+                is_urgent: 2,
+                is_draft: 2,
+                total_style: '',
+                total_number: '',
+                total_price: '',
+                desc: '',
+                product_data: [
+                  {
+                    product_id: '',
+                    size_color_list: [],
+                    product_info: [
+                      {
+                        size_color: '',
+                        size_id: '',
+                        color_id: '',
+                        number: '',
+                        price: ''
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
       materialPlanList: [],
       materialPlanIndex: '0',
       productionPlanFlag: false,
@@ -553,6 +699,37 @@ export default Vue.extend({
     }
   },
   methods: {
+    init() {
+      this.loading = true
+      Promise.all([
+        materialPlan.list({
+          order_id: this.order_id
+        }),
+        productionPlan.list({
+          order_id: this.order_id
+        })
+      ]).then((res) => {
+        this.loading = false
+        this.materialPlanList = res[0].data.data
+        if (this.materialPlanList.length > 0) {
+          this.materialPlanIndex = this.materialPlanList[0].id?.toString()
+        } else {
+          this.$message.warning('该订单还未创建物料计划单,请填写计划单信息')
+          this.$router.push('/materialPlan/create?id=' + this.$route.query.id)
+        }
+        this.productionPlanList = res[1].data.data
+        if (this.productionPlanList.length > 0) {
+          this.productionPlanIndex = this.productionPlanList[0].id?.toString()
+        }
+      })
+    },
+    getProInfo(ev: string, info: any) {
+      const idArr = ev.split(',')
+      info.product_id = Number(idArr[0])
+      info.part_id = Number(idArr[1])
+      info.size_id = Number(idArr[2])
+      info.color_id = Number(idArr[3])
+    },
     getProductionPlan() {
       const checkLength = this.checkList.length
       if (checkLength === 0) {
@@ -578,6 +755,20 @@ export default Vue.extend({
       // 填写方式
       const edit_type = this.materialPlanList.find((item) => Number(item.id) === Number(this.materialPlanIndex))?.type
       this.productionPlanInfo.forEach((item) => {
+        // 获取单位名称————展示用
+        this.processClientList.forEach((item1) => {
+          item1.children?.forEach((item2) => {
+            item2.children?.forEach((item3) => {
+              if (item3.value === item.client_id) {
+                item.client_name = item3.label
+              }
+            })
+          })
+        })
+        // 获取工序名称————展示用
+        item.process_name = item.process_id
+          ? this.halfProcessList.find((itemFind: any) => itemFind.id === item.process_id).name
+          : '未选择工序'
         item.material_info_data = []
         item.product_info_data.forEach((itemChild) => {
           const matList = this.checkMaterialFlattenList.filter((itemFind) => {
@@ -627,26 +818,132 @@ export default Vue.extend({
       this.materialPlanFlag = ifShow
     },
     getCmpData() {
+      const finded = this.materialPlanList.find((item) => Number(item.id) === Number(this.materialPlanIndex))
+      const edit_type = finded!.type
       this.productionPlanInfo.forEach((item, index) => {
         item.plan_id = this.materialPlanIndex
         item.order_id = this.order_id
         item.total_price = this.totalPlanPriceList[index]
         item.total_number = this.totalPlanNumberList[index]
-        item.product_info_data.forEach((itemChild) => {})
+        // 按产品款式填的自动补充所有尺码配色
+        if (edit_type === 2) {
+          let colorSizeInfo: any[] = []
+          item.product_info_data.forEach((itemPro) => {
+            const findPlanPro = finded!.production_plan_data.find(
+              (itemFind) => itemFind.product_id === itemPro.product_id
+            )
+            // 这一步单纯是为了展开函数不能有两个number，把后台给的无用number给去掉
+            findPlanPro!.product_data.forEach((itemChild) => {
+              delete itemChild.number
+            })
+            // 把计划单信息按照尺码配色全部展开
+            const allColorSizeInfo = this.$flatten(this.$flatten(findPlanPro!.product_data))
+            colorSizeInfo = colorSizeInfo.concat(
+              allColorSizeInfo
+                .filter((item) => item.part_id === itemPro.part_id)
+                .map((itemReal) => {
+                  return {
+                    product_id: itemPro.product_id,
+                    size_id: itemReal.size_id,
+                    color_id: itemReal.color_id,
+                    part_id: itemPro.part_id,
+                    number: itemReal.number,
+                    price: itemPro.price,
+                    total_price: itemPro.total_price,
+                    select_arr: itemPro.select_arr
+                  }
+                })
+            )
+          })
+          item.product_info_data = colorSizeInfo
+        }
       })
     },
     saveProductionPlan() {
-      // 获取物料信息
-      this.getMaterialInfo()
-      this.getCmpData()
-      productionPlan
-        .create({
-          data: this.productionPlanInfo
+      const formcheck = this.productionPlanInfo.some((item) => {
+        return (
+          this.$formCheck(item, [
+            {
+              key: 'client_id',
+              errMsg: '请选择加工单位'
+            },
+            {
+              key: 'type',
+              errMsg: '请选择加工类型'
+            },
+            {
+              key: 'process_id',
+              errMsg: '请选择加工工序'
+            },
+            {
+              key: 'start_time',
+              errMsg: '请选择订购日期'
+            },
+            {
+              key: 'end_time',
+              errMsg: '请选择交货日期'
+            }
+          ]) ||
+          item.product_info_data.some((itemChild) => {
+            return this.$formCheck(itemChild, [
+              {
+                key: 'select_arr',
+                errMsg: '请选择产品信息'
+              },
+              {
+                key: 'price',
+                errMsg: '请输入加工单价'
+              },
+              {
+                key: 'number',
+                errMsg: '请输入加工数量'
+              }
+            ])
+          })
+        )
+      })
+      if (!formcheck) {
+        // 获取物料信息
+        this.getMaterialInfo()
+        this.getCmpData()
+        this.loading = true
+        productionPlan
+          .create({
+            data: this.productionPlanInfo
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.$message.success('添加成功')
+              this.productionPlanFlag = false
+              this.loading = false
+              this.init()
+            }
+          })
+      }
+    },
+    deleteProductionPlan(id: number) {
+      this.$confirm('是否删除该加工单据?', '提示', {
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          productionPlan
+            .delete({
+              id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message.success('删除成功')
+                this.init()
+              }
+            })
         })
-        .then((res) => {
-          if (res.data.status) {
-            this.$$message.success('添加成功')
-          }
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
         })
     }
   },
@@ -657,35 +954,8 @@ export default Vue.extend({
       })
       .then((res) => {
         this.order_id = res.data.data.time_data[this.orderIndex].id
-        materialPlan
-          .list({
-            order_id: this.order_id
-          })
-          .then((res) => {
-            if (res.data.status) {
-              this.materialPlanList = res.data.data
-              if (this.materialPlanList.length > 0) {
-                this.materialPlanIndex = this.materialPlanList[0].id?.toString()
-              } else {
-                this.$message.warning('该订单还未创建物料计划单,请填写计划单信息')
-                this.$router.push('/materialPlan/create?id=' + this.$route.query.id)
-              }
-              console.log(this.materialPlanList)
-            }
-          })
-        productionPlan
-          .list({
-            order_id: this.order_id
-          })
-          .then((res) => {
-            // console.log(res)
-            if (res.data.status) {
-              this.productionPlanList = res.data.data
-              if (this.productionPlanList.length > 0) {
-                this.productionPlanIndex = this.productionPlanList[0].id?.toString()
-              }
-            }
-          })
+        this.orderInfo = res.data.data
+        this.init()
       })
     this.$checkCommonInfo([
       {

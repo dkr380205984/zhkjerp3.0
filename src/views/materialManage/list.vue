@@ -3,11 +3,13 @@
     class="bodyContainer">
     <div class="topTagCtn">
       <div class="tag"
+        :class="type===1?'active':''"
         @click="type=1;changeRouter()">
         <i class="icon">图标</i>
         <span class="text">原料管理</span>
       </div>
       <div class="tag"
+        :class="type===2?'active':''"
         @click="type=2;changeRouter()">
         <i class="icon">图标</i>
         <span class="text">辅料管理</span>
@@ -17,82 +19,51 @@
       <div class="titleCtn">
         <div class="title">物料管理列表</div>
       </div>
-      <div class="listCtn">
+      <div class="listCtn"
+        v-loading="loading">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input placeholder="筛选"></el-input>
+            <el-input placeholder="搜索计划单号"
+              v-model="code"></el-input>
           </div>
           <div class="elCtn">
-            <el-input placeholder="筛选"></el-input>
+            <el-input placeholder="搜索订单号"
+              v-model="order_code"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-date-picker v-model="date"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+              @change="changeRouter"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
           </div>
         </div>
-        <div class="filterCtn clearfix">
-          <div class="btn backHoverOrange fr"
-            @click="showSetting=true">列表设置</div>
-        </div>
-        <div class="fixedTableCtn"
-          v-loading="loading">
-          <div class="original">
-            <div class="row title">
-              <div class="column"
-                v-for="itemKey in listKey"
-                :key="itemKey.index"
-                v-show="itemKey.ifShow">{{itemKey.name}}</div>
-              <div class="column w130">操作</div>
-            </div>
-            <div class="row"
-              v-for="item in list"
-              :key="item.list">
-              <div class="column"
-                v-for="itemKey in listKey"
-                :key="itemKey.index"
-                v-show="itemKey.ifShow">
-                <template v-if="itemKey.index === 0">
-                  <span class="mark backBlue">样</span>
-                </template>
-                {{item[itemKey.key]}}
-              </div>
-              <div class="column w130">
-                <!-- 操作占位符 -->
-              </div>
-            </div>
+        <div class="list">
+          <div class="row title">
+            <div class="col">计划单号</div>
+            <div class="col">关联订单</div>
+            <div class="col">创建人</div>
+            <div class="col">创建日期</div>
+            <div class="col">状态</div>
+            <div class="col">操作</div>
           </div>
-          <div class="cover">
-            <div class="fixedLeft">
-              <div class="row title">
-                <div class="column"
-                  v-for="itemKey in listKey"
-                  :key="itemKey.index"
-                  v-show="itemKey.ifShow && itemKey.ifLock">{{itemKey.name}}</div>
-              </div>
-              <div class="row"
-                v-for="item in list"
-                :key="item.list">
-                <div class="column"
-                  v-for="itemKey in listKey"
-                  :key="itemKey.index"
-                  v-show="itemKey.ifShow && itemKey.ifLock">
-                  <template v-if="itemKey.index === 0">
-                    <span class="mark backBlue">样</span>
-                    <span class="overText">{{item[itemKey.key]}}</span>
-                  </template>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="cover">
-            <div class="fixedRight">
-              <div class="row title">
-                <div class="column w130">操作</div>
-              </div>
-              <div class="row"
-                v-for="item in list"
-                :key="item.list">
-                <div class="column w130">
-                  <div class="opr hoverBlue"
-                    @click="$router.push('/materialManage/detail?id='+item.id + '&type=' + type)">订购加工</div>
-                </div>
-              </div>
+          <div class="row"
+            v-for="(item,index) in list"
+            :key="index">
+            <div class="col">{{item.code}}</div>
+            <div class="col">没数据</div>
+            <div class="col">{{item.user_name}}</div>
+            <div class="col">{{item.created_at.slice(0,10)}}</div>
+            <div class="col">没数据</div>
+            <div class="col">
+              <span class="opr hoverBlue"
+                @click="$router.push('/materialManage/detail?id='+item.id)">订购加工</span>
             </div>
           </div>
         </div>
@@ -107,14 +78,6 @@
         </div>
       </div>
     </div>
-    <!-- 列表设置 -->
-    <zh-list-setting @close="showSetting=false"
-      @afterSave="getListSetting"
-      :show="showSetting"
-      :id="listSettingId"
-      :type="5"
-      :data.sync="listKey"
-      :originalData="originalSetting"></zh-list-setting>
   </div>
 </template>
 
@@ -132,40 +95,41 @@ export default Vue.extend({
       list: [],
       total: 1,
       page: 1,
-      showSetting: false,
-      listSettingId: null,
       type: 1,
-      listKey: [],
-      originalSetting: [
-        {
-          key: 'code',
-          name: '计划单编号',
-          ifShow: true,
-          ifLock: true,
-          index: 0
-        },
-        {
-          key: 'client_name',
-          name: '下单公司',
-          ifShow: true,
-          ifLock: true,
-          index: 1
-        },
-        {
-          key: 'contact_name',
-          name: '公司联系人',
-          ifShow: true,
-          ifLock: false,
-          index: 3
-        },
-        {
-          key: 'user_name',
-          name: '创建人',
-          ifShow: true,
-          ifLock: false,
-          index: 4
-        }
-      ]
+      code: '',
+      order_code: '',
+      date: [],
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }
+        ]
+      }
     }
   },
   methods: {
@@ -178,6 +142,7 @@ export default Vue.extend({
       this.$router.push('/materialManage/list?page=' + this.page + '&type=' + this.type)
     },
     getList() {
+      this.loading = true
       materialPlan
         .list({
           limit: 5,
@@ -186,6 +151,7 @@ export default Vue.extend({
         .then((res) => {
           this.list = res.data.data.items
           this.total = res.data.data.total
+          this.loading = false
         })
     },
     getListSetting() {
@@ -206,7 +172,7 @@ export default Vue.extend({
       this.getList()
     }
   },
-  mounted() {
+  created() {
     this.getFilters()
     this.getList()
     this.getListSetting()

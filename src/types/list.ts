@@ -3,6 +3,7 @@ export interface ListSetting {
   name: string
   ifShow: boolean
   ifLock: boolean
+  ifCaogao?: string // 标记草稿
   ifImage?: boolean // 是否是图片特殊格式
   from?: string // 隶属于某数组对象，常用于一个订单有多个产品
   mark?: boolean // 在有数组对象的时候标记哪个字段需要箭头

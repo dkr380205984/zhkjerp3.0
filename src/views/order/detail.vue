@@ -277,7 +277,6 @@ export default Vue.extend({
         id: Number(this.$route.query.id)
       })
       .then((res) => {
-        console.log(res)
         if (res.data.status) {
           this.orderInfo = res.data.data
           // 整理产品信息

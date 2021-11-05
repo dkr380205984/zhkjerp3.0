@@ -3,6 +3,7 @@
 @import '../detail.less';
 @import '../table.less';
 @import '../popup.less';
+@import '../list.less';
 @import '../bottomBar.less';
 #materialManageDetail{
   .noPad{
@@ -25,14 +26,114 @@
         width: auto;
         text-align: left;
       }
+      .description{
+        padding: 18px;
+        background: #F0F0F0;
+        color: @font85;
+        margin: 24px 0;
+        font-size: @fontBig;
+        font-weight: bold;
+      }
+      .stepCtn{
+        display: flex;
+        align-items: center;
+        height: 70px;
+        margin: 12px 0;
+        justify-content: space-around;
+        position: relative;
+        .step{
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          .circle{
+            text-align: center;
+            line-height: 40px;
+            width: 40px;
+            color: @blue;
+            border-radius: 50%;
+            border:1px solid @blue;
+            background: #fff;
+          }
+          .name{
+            margin-top: 10px;
+            color: @blue;
+          }
+          &.active{
+            .circle{
+              background: @blue;
+              color: #fff;
+            }
+          }
+        }
+        &::after{
+          content:'';
+          position: absolute;
+          height: 1px;
+          left: 0;
+          right: 0;
+          top: 21px;
+          background: #ccc;
+          z-index: -1;
+        }
+      }
       .editCtn{
         background:#F0F0F0 ;
         margin: 16px 0;
+        .deleteIcon{
+          cursor: pointer;
+          width: 20px;
+          height: 20px;
+          color: #fff;
+          line-height: 20px;
+          text-align: center;
+          border-radius: 50%;
+          background: @red;
+          float: right;
+          &:hover{
+            background: @hoverRed;
+          }
+        }
         .col{
           margin-right: 30px;
         }
         .opr{
           transform: translate(-20px, 100%);
+        }
+      }
+      .listCtn{
+        padding: 0;
+       .list{
+         min-height: 220px;
+         .row{
+           height: 46px;
+           margin: 6px 0;
+         }
+       }
+        .elCtn{
+          width: 140px;
+        }
+      }
+      .selectCtn{
+        margin-bottom: 12px;
+        .label{
+          display: block;
+          font-size: @fontBig;
+        }
+        .boxCtn{
+          display: flex;
+          .box{
+            line-height: 32px;
+            padding:0 12px;
+            background: #F5F7FA;
+            color: #C0C4CC;
+            border-radius: 4px;
+            margin-right: 12px;
+            .closeIcon{
+              cursor: pointer;
+              font-size: @fontBig;
+              margin-left: 6px;
+            }
+          }
         }
       }
     }

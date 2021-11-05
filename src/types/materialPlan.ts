@@ -1,12 +1,14 @@
 import { PartInfo } from "./product";
 import { CraftMaterialInfo } from "./craft";
+import { ProductInfo } from "./product";
 export interface MaterialPlanInfo {
   id?: number
   order_id: string | number
-  type: '1' | '2' | 1 | 2 // 1:按尺码颜色 2:按产品
+  type: string | number // 1:按尺码颜色 2:按产品
   desc: string
   is_draft: 1 | 2
   production_plan_data: Array<{
+    product_detail?: ProductInfo // product_detail的数据在外面一层也有是为了保持源数据结构不变
     product_code?: string
     product_name?: string
     category?: string
@@ -26,6 +28,7 @@ export interface MaterialPlanInfo {
       size_name?: string
       add_percent: string | number
       order_number: number | string
+      number?: number | string | null // 后台给的不知道有什么软用
       info_data: Array<{
         id?: string
         unit?: string
@@ -40,6 +43,7 @@ export interface MaterialPlanInfo {
 }
 
 export interface MaterialPlanGatherData {
+  id?: number
   check?: boolean // 前端用字段
   material_name?: string
   material_id: string | number
@@ -73,7 +77,7 @@ export interface MaterailPlanData {
   }> // 优化产品是否有工艺单后道工序
   info_data: Array<{
     process_id: string | number
-    material_id_arr?: string[]
+    tree_data?: string[]
     material_id: string | number
     material_name?: string
     material_type: string | number

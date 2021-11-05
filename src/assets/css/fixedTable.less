@@ -35,10 +35,20 @@
       align-items: center;
       padding:0 12px;
       flex: 1;
-      min-width: 120px;
       max-width: 120px;
+      min-width: 120px;
       color: @font65;
       border-bottom: 1px solid @borderColor;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      span{
+        width: 100%;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
       &.w130{
         min-width: 130px;
       }
@@ -65,13 +75,14 @@
         justify-content: center;
         height: 100%;
         color: @borderColor;
+        text-align: center;
         .number{
           color: @font45;
           font-size: @fontSmall;
           border-left: 1px solid @borderColor;
           border-right: 1px solid @borderColor;
           border-radius: 50%;
-          padding: 4px 2px;
+          padding: 4px 1px;
         }
         .el-icon-caret-top{
           position: relative;

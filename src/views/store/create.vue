@@ -24,7 +24,8 @@
             </div>
             <div class="info elCtn">
               <el-select placeholder="请选择仓库类型"
-                v-model="storeInfo.type">
+                v-model="storeInfo.type"
+                @change="(ev)=>{storeInfo.tree_data=[]}">
                 <el-option v-for="item in storeTypeList"
                   :key="item.value"
                   :value="item.value"
@@ -35,10 +36,14 @@
           <div class="col">
             <div class="label">
               <span class="text">关联单位</span>
+              <span class="explanation">(本厂仓库不能选择关联单位)</span>
             </div>
             <div class="info elCtn">
-              <el-select placeholder="请选择关联单位"
-                v-model="storeInfo.client_id"></el-select>
+              <el-cascader placeholder="请选择关联单位"
+                v-model="storeInfo.tree_data"
+                :options="clientList"
+                @change="(ev)=>{storeInfo.client_id=ev[1]}"
+                :disabled="storeInfo.type===1"></el-cascader>
             </div>
           </div>
         </div>
@@ -115,17 +120,25 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
-      testValue: '',
       storeInfo: {
         name: '',
         type: 1,
         client_id: '',
         manager_id: '',
+        tree_data: [],
         desc: '',
+        store_type: Number(this.$route.query.store_type) as 1 | 2 | 3 | 4 | 5 | 6,
         secondary_store: ['']
       },
       storeTypeList: storeType,
       userList: []
+    }
+  },
+  computed: {
+    clientList() {
+      return this.$store.state.api.clientType.arr.filter((item: { type: any }) =>
+        this.storeInfo.type === 2 ? Number(item.type) === 2 : Number(item.type) === 1
+      )
     }
   },
   methods: {
@@ -143,6 +156,13 @@ export default Vue.extend({
         this.userList = res.data.data
       }
     })
+    this.$checkCommonInfo([
+      {
+        checkWhich: 'api/clientType',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getClientTypeAsync'
+      }
+    ])
   }
 })
 </script>

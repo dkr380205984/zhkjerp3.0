@@ -41,6 +41,19 @@ const getAuthorization = () => http.post(`${baseUrl}/auth/info`, {}, 'applicatio
 // token
 const getToken = () => http.get(`${baseUrl}/upload/token`)
 
+
+// 单据审核
+// 单据类型 1订单 2物料订购 3无聊加工 4制造计划 5报价 6原料出入库 7原料预订购 8产品出入库 9物料计划单
+const check = {
+  create: (params:
+    {
+      pid: number | string
+      check_type: number
+      check_desc: string | string[]
+      is_check: 1 | 2 // 1通过 2没通过
+      desc: string
+    }) => http.post(`${baseUrlScarf}/doc/check`, params, 'application/json'),
+}
 // 产品款式
 import { StyleInfo } from '@/types/productSetting'
 const style = {
@@ -228,7 +241,14 @@ const listSetting = {
 import { StoreInfo } from '@/types/store'
 const store = {
   create: (params: StoreInfo) => http.post(`${baseUrlScarf}/store/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/store/lists`, params)
+  list: (params?: ListParams) => http.get(`${baseUrlScarf}/store/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/store/detail`, params),
+  searchMat: (params: {
+    material_id?: string | number
+    store_id?: string | number
+    secondary_id?: string | number
+    keyword?: string
+  }) => http.get(`${baseUrlScarf}/store/total/lists`, params),
 }
 
 // 样品
@@ -273,13 +293,14 @@ import { MaterialPlanInfo } from '@/types/materialPlan'
 const materialPlan = {
   create: (params: MaterialPlanInfo) => http.post(`${baseUrlScarf}/material/plan/save`, params, 'application/json'),
   list: (params: {
+    top_order_id?: string | number // 最外层order_id
     plan_id?: string | number
-    order_id?: string | number
+    order_id?: string | number // time_data里的
     client_id?: string | number
     limit?: number
     page?: number
   }) => http.get(`${baseUrlScarf}/material/plan/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/material/plan/detail`, params)
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/material/plan/detail`, params),
 }
 // 物料订购
 import { MaterialOrderInfo } from '@/types/materialOrder'
@@ -289,8 +310,24 @@ const materialOrder = {
     plan_id?: string | number
     order_id?: string | number
     client_id?: string | number
+    reserve_id?: string | number // 预订购单
+    top_order_id?: string | number // 最外层order_id
   }) => http.get(`${baseUrlScarf}/material/order/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/material/order/detail`, params)
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/material/order/detail`, params),
+  delete: (params: DetailParams) => http.post(`${baseUrlScarf}/material/order/delete`, params, 'application/json')
+}
+
+// 物料预订购
+import { MaterialPlanOrderClient } from '@/types/materialPlanOrder'
+const materialPlanOrder = {
+  create: (params: MaterialPlanOrderClient) => http.post(`${baseUrlScarf}/material/reserve/order/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrlScarf}/material/reserve/order/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/material/reserve/order/detail`, params),
+  stockSts: (params: {
+    reserve_id: number | string
+    year: string | number
+    month: string | number
+  }) => http.get(`${baseUrlScarf}/material/reserve/store/count`, params)
 }
 
 // 物料加工
@@ -302,17 +339,21 @@ const materialProcess = {
     order_id?: string | number
     client_id?: string | number
   }) => http.get(`${baseUrlScarf}/material/process/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/material/process/detail`, params)
+  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/material/process/detail`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/material/process/delete`, params, 'application/json')
 }
 
 // 物料出入库
 import { MaterialStockInfo } from '@/types/materialStock'
-const mateiralStock = {
+const materialStock = {
   create: (params: MaterialStockInfo) => http.post(`${baseUrlScarf}/store/log/save`, params, 'application/json'),
   list: (params: {
+    action_type?: number // 搜调取单的时候用，一般是出库单10
     plan_id?: string | number
     order_id?: string | number
     client_id?: string | number
+    reserve_id?: string | number // 预订购单
+    top_order_id?: string | number // 最外层order_id
   }) => http.get(`${baseUrlScarf}/store/log/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/store/log/delete`, params, 'application/json')
 }
@@ -325,7 +366,9 @@ const productionPlan = {
     plan_id?: string | number
     order_id?: string | number
     client_id?: string | number
+    top_order_id?: string | number // 最外层order_id
   }) => http.get(`${baseUrlScarf}/weave/plan/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/weave/plan/delete`, params, 'application/json')
 }
 
 import { InspectionInfo } from '@/types/inspection'
@@ -337,6 +380,7 @@ const inspection = {
     client_id?: string | number
     type: 1 | 2 | null
   }) => http.get(`${baseUrlScarf}/inspection/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/inspection/delete`, params, 'application/json')
 }
 export {
   login,
@@ -345,6 +389,7 @@ export {
   forgetPassword,
   getAuthorization,
   getToken,
+  check,
   style,
   ingredient,
   getCoder,
@@ -375,8 +420,9 @@ export {
   order,
   materialPlan,
   materialOrder,
+  materialPlanOrder,
   materialProcess,
-  mateiralStock,
+  materialStock,
   productionPlan,
   inspection
 }

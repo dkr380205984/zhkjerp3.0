@@ -2,11 +2,7 @@
   <div id="materialPlanCreate"
     class="bodyContainer"
     v-loading="loading">
-    <div class="module">
-      <div class="titleCtn">
-        <div class="title">订单组件</div>
-      </div>
-    </div>
+    <order-detail :data="orderInfo"></order-detail>
     <div class="module">
       <div class="titleCtn flexBetween">
         <div class="title">生产计划单</div>
@@ -181,7 +177,7 @@
                         v-if="!itemChild.has_plan">
                         <el-cascader placeholder="物料名称"
                           :show-all-levels="false"
-                          v-model="itemChild.material_id_arr"
+                          v-model="itemChild.tree_data"
                           :options="yarnTypeList"
                           @change="getMatId($event,itemChild)"
                           clearable>
@@ -203,7 +199,8 @@
                         </el-select>
                       </div>
                     </div>
-                    <div class="tcol">{{itemChild.has_plan?(itemChild.production_number + 'g'):'无计划值'}}</div>
+                    <div class="tcol"
+                      :class="itemChild.has_plan?'blue':'gray'">{{itemChild.has_plan?(itemChild.production_number + 'g'):'无计划值'}}</div>
                     <div class="tcol">{{itemChild.need_number}}kg</div>
                     <div class="tcol">
                       <div class="elCtn">
@@ -227,7 +224,7 @@
                         <span class="opr blue"
                           @click="$addItem(item.info_data,{
                           process_id: '',
-                          material_id_arr: [],
+                          tree_data: [],
                           material_id: '',
                           material_type: '',
                           material_color: '',
@@ -306,7 +303,7 @@
                         v-if="!itemChild.has_plan">
                         <el-cascader placeholder="物料名称"
                           :show-all-levels="false"
-                          v-model="itemChild.material_id_arr"
+                          v-model="itemChild.tree_data"
                           :options="yarnTypeList"
                           @change="getMatId($event,itemChild)"
                           clearable>
@@ -350,7 +347,7 @@
                         <span class="opr blue"
                           @click="$addItem(item.info_data,{
                           process_id: '',
-                          material_id_arr: [],
+                          tree_data: [],
                           material_id: '',
                           material_type: '',
                           material_color: '',
@@ -437,10 +434,8 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverOrange"
-            @click="saveMeterialPlan(true)">保存为草稿</div>
           <div class="btn backHoverBlue"
-            @click="saveMeterialPlan(false)">提交</div>
+            @click="saveMeterialPlan">提交</div>
         </div>
       </div>
     </div>
@@ -584,10 +579,10 @@ export default Vue.extend({
         })
         materailPlanData.forEach((item) => {
           item.info_data.forEach((itemChild) => {
-            if (itemChild.material_id || itemChild.material_id_arr!.length > 0) {
+            if (itemChild.material_id || itemChild.tree_data!.length > 0) {
               const finded = this.materialPlanInfo.material_plan_gather_data.find(
                 (item) =>
-                  item.material_id === (itemChild.material_id || itemChild.material_id_arr![2]) &&
+                  item.material_id === (itemChild.material_id || itemChild.tree_data![2]) &&
                   item.material_color === itemChild.material_color
               )
               if (finded) {
@@ -597,9 +592,8 @@ export default Vue.extend({
               } else {
                 this.materialPlanInfo.material_plan_gather_data.push({
                   material_name:
-                    itemChild.material_name ||
-                    this.$findId(flattenYarnList, itemChild.material_id_arr![2], 'label', 'value'),
-                  material_id: itemChild.material_id || itemChild.material_id_arr![2],
+                    itemChild.material_name || this.$findId(flattenYarnList, itemChild.tree_data![2], 'label', 'value'),
+                  material_id: itemChild.material_id || itemChild.tree_data![2],
                   material_type: 1, // 目前只有原料
                   material_color: itemChild.material_color,
                   need_number: Number(itemChild.need_number),
@@ -706,6 +700,24 @@ export default Vue.extend({
       })
       return mergeArr
     },
+    getProductionData() {
+      this.materialPlanInfo.production_plan_data = this.getOrderProduct(this.orderInfo).map((item) => {
+        const cloneItem: any = this.$clone(item)
+        cloneItem.product_data = item.childrenMergeInfo.map((itemChild) => {
+          // @ts-ignore
+          itemChild.info_data = item.part_data.map((itemPart) => {
+            return {
+              unit: itemPart.unit,
+              name: itemPart.name,
+              part_id: itemPart.id, // 下拉框选id用
+              number: ''
+            }
+          })
+          return itemChild
+        })
+        return cloneItem
+      })
+    },
     // 计算所需物料--按尺码颜色
     getMaterialPlanDetail(partId?: number, number?: number, proInfo?: any) {
       if (partId || partId === 0) {
@@ -781,7 +793,7 @@ export default Vue.extend({
                       ? itemChild.material_info.map((itemMat) => {
                           return {
                             process_id: '',
-                            material_id_arr: [],
+                            tree_data: [],
                             material_id: itemMat.material_id,
                             material_name: itemMat.material_name,
                             material_type: itemMat.material_type,
@@ -797,7 +809,7 @@ export default Vue.extend({
                       : [
                           {
                             process_id: '',
-                            material_id_arr: [],
+                            tree_data: [],
                             material_id: '',
                             material_type: '',
                             material_color: '',
@@ -840,7 +852,7 @@ export default Vue.extend({
                       } else {
                         finded.info_data.push({
                           process_id: '',
-                          material_id_arr: [],
+                          tree_data: [],
                           material_id: itemMat.material_id,
                           material_name: itemMat.material_name,
                           material_type: itemMat.material_type,
@@ -875,7 +887,7 @@ export default Vue.extend({
                         ? itemChild.material_info.map((itemMat) => {
                             return {
                               process_id: '',
-                              material_id_arr: [],
+                              tree_data: [],
                               material_id: itemMat.material_id,
                               material_name: itemMat.material_name,
                               material_type: itemMat.material_type,
@@ -891,7 +903,7 @@ export default Vue.extend({
                         : [
                             {
                               process_id: '',
-                              material_id_arr: [],
+                              tree_data: [],
                               material_id: '',
                               material_type: '',
                               material_color: '',
@@ -921,14 +933,57 @@ export default Vue.extend({
     },
     getCmpData() {
       this.materialPlanInfo.order_id = Number(this.orderInfo.time_data[this.orderIndex].id)
-    },
-    saveMeterialPlan(ifCaogao: boolean) {
-      this.getCmpData()
-      materialPlan.create(this.materialPlanInfo).then((res) => {
-        if (res.data.status) {
-          this.$message.success('添加成功')
-        }
+      this.materialPlanInfo.material_plan_data.forEach((item) => {
+        item.info_data.forEach((itemChild) => {
+          // @ts-ignore
+          itemChild.tree_data = itemChild.tree_data.join(',')
+        })
       })
+    },
+    saveMeterialPlan() {
+      const formCheck =
+        this.materialPlanInfo.production_plan_data.some((item) => {
+          return item.product_data.some((itemChild) => {
+            return itemChild.info_data.some((itemPart) => {
+              return this.$formCheck(itemPart, [
+                {
+                  key: 'number',
+                  errMsg: '请输入计划生产数量'
+                }
+              ])
+            })
+          })
+        }) ||
+        this.materialPlanInfo.material_plan_data.some((item) => {
+          return item.info_data.some((itemChild) => {
+            return this.$formCheck(itemChild, [
+              {
+                key: 'process_id',
+                errMsg: '检测到有未选择工序信息，请补充'
+              },
+              {
+                key: 'material_id',
+                errMsg: '检测到有未选择的物料名称，请补充'
+              },
+              {
+                key: 'material_color',
+                errMsg: '检测到有未选择的物料颜色，请补充'
+              },
+              {
+                key: 'final_number',
+                errMsg: '检测到有未填写的物料最终数量，请补充'
+              }
+            ])
+          })
+        })
+      if (!formCheck) {
+        this.getCmpData()
+        materialPlan.create(this.materialPlanInfo).then((res) => {
+          if (res.data.status) {
+            this.$message.success('添加成功')
+          }
+        })
+      }
     }
   },
   mounted() {
@@ -961,24 +1016,11 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.orderInfo = res.data.data
-          // @ts-ignore
-          this.materialPlanInfo.production_plan_data = this.getOrderProduct(this.orderInfo).map((item) => {
-            const cloneItem: any = this.$clone(item)
-            cloneItem.product_data = item.childrenMergeInfo.map((itemChild) => {
-              // @ts-ignore
-              itemChild.info_data = item.part_data.map((itemPart) => {
-                return {
-                  unit: itemPart.unit,
-                  name: itemPart.name,
-                  part_id: itemPart.id, // 下拉框选id用
-                  number: ''
-                }
-              })
-              return itemChild
-            })
-            return cloneItem
-          })
-          console.log(this.materialPlanInfo.production_plan_data)
+          if (this.orderInfo.time_data.length > 1) {
+            this.$message.warning('多张样单操作没设计')
+          } else {
+            this.getProductionData()
+          }
           this.loading = false
         }
       })

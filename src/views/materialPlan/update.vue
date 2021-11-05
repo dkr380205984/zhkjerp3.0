@@ -1,0 +1,920 @@
+<template>
+  <div id="materialPlanCreate"
+    class="bodyContainer"
+    v-loading="loading">
+    <div class="module">
+      <div class="titleCtn flexBetween">
+        <div class="title">生产计划单</div>
+        <div class="btn"
+          :class="{'backHoverBlue':confirmFlag===1,'backHoverOrange':confirmFlag===2}"
+          @click="confirmPlanNum">{{confirmFlag===1?'确认生产数量':'重置生产数量'}}</div>
+      </div>
+      <div class="tableCtn">
+        <div class="description">
+          <span>请输入产品各部位需要原料生产的数量，填写完成后点击
+            <span class="blue">确认生产数量</span>
+            按钮开始填写产品物料信息。
+            <span class="red">注意：</span>
+            未填写计划生产数量的部位，或者填写值为0的产品部位将不计入物料填写。
+          </span>
+        </div>
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol">产品品类</div>
+            <div class="tcol noPad"
+              style="flex:7">
+              <div class="trow">
+                <div class="tcol">尺码颜色</div>
+                <div class="tcol">下单数量</div>
+                <div class="tcol">已计划数量</div>
+                <div class="tcol">总数量百分比</div>
+                <div class="tcol noPad"
+                  style="flex:3">
+                  <div class="trow">
+                    <div class="tcol">产品部位</div>
+                    <div class="tcol">计划生产数量</div>
+                    <div class="tcol">操作</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow"
+            v-for="item in materialPlanInfo.production_plan_data"
+            :key="item.product_id">
+            <div class="tcol">
+              <span>{{item.product_code}}</span>
+              <span>{{item.category}}/{{item.type}}</span>
+            </div>
+            <div class="tcol noPad"
+              style="flex:7">
+              <div class="trow"
+                v-for="(itemChild,indexChild) in item.product_data"
+                :key="indexChild">
+                <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
+                <div class="tcol">{{itemChild.order_number}}</div>
+                <div class="tcol">已计划数量</div>
+                <div class="tcol">
+                  <div class="elCtn">
+                    <el-input placeholder="百分比"
+                      v-model="itemChild.add_percent"
+                      @input="getPlanNum($event,itemChild)">
+                      <template slot="append">%</template>
+                    </el-input>
+                  </div>
+                </div>
+                <div class="tcol noPad"
+                  style="flex:3">
+                  <div class="trow"
+                    v-for="(itemPart,indexPart) in itemChild.info_data"
+                    :key="indexPart">
+                    <div class="tcol">
+                      <div class="elCtn">
+                        <el-select v-model="itemPart.part_id">
+                          <el-option v-for="item in item.part_data"
+                            :key="item.id"
+                            :value="item.id"
+                            :label="item.name"></el-option>
+                        </el-select>
+                      </div>
+                    </div>
+                    <div class="tcol">
+                      <div class="elCtn">
+                        <el-input v-model="itemPart.number"
+                          placeholder="计划生产数量"
+                          @change="getMaterialPlanDetail(itemPart.part_id,itemPart.number,itemChild)"></el-input>
+                      </div>
+                    </div>
+                    <div class="tcol oprCtn">
+                      <div class="gray"
+                        v-if="item.part_data.length===1">无配件信息</div>
+                      <div class="opr hoverBlue"
+                        v-if="itemChild.info_data.length<item.part_data.length"
+                        @click="$addItem(itemChild.info_data,{
+                          unit: '',
+                          name: '',
+                          part_id: '', // 下拉框选id用
+                          number: ''
+                        })">添加</div>
+                      <div class="opr hoverRed"
+                        v-if="itemChild.info_data.length>1"
+                        @click="$deleteItem(itemChild.info_data,indexPart)">删除</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module">
+      <el-tabs type="border-card"
+        v-model="materialPlanInfo.type"
+        @tab-click="changeMaterialPlanType">
+        <el-tab-pane label="按尺码配色"
+          name="1">
+          <div class="description">
+            <span>如果您的产品不同尺码、色组将<span class="green">由多个单位生产</span>，我们建议您按<span class="green">尺码颜色</span>进行填写。</span>
+          </div>
+          <div class="flattenTableCtn noPad">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol">产品品类</div>
+                <div class="tcol">尺码颜色</div>
+                <div class="tcol">产品部位</div>
+                <div class="tcol">下单数量</div>
+                <div class="tcol">计划生产数量</div>
+                <div class="tcol">原料损耗</div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div class="trowCtn"
+                v-for="(item,index) in materialPlanInfo.material_plan_data"
+                :key="index">
+                <div class="trow">
+                  <div class="tcol">
+                    <span>{{item.product_code}}</span>
+                    <span>{{item.category}}/{{item.type}}</span>
+                  </div>
+                  <div class="tcol">{{item.size_name}}/{{item.color_name}}</div>
+                  <div class="tcol">{{item.part_name}}</div>
+                  <div class="tcol">{{item.order_number}}</div>
+                  <div class="tcol">{{item.number}}</div>
+                  <div class="tcol">原料损耗</div>
+                </div>
+                <div class="childrenCtn">
+                  <div class="trow">
+                    <div class="tcol">计划工序</div>
+                    <div class="tcol">原料名称</div>
+                    <div class="tcol">原料颜色</div>
+                    <div class="tcol">单个数量</div>
+                    <div class="tcol">所需数量</div>
+                    <div class="tcol">原料损耗</div>
+                    <div class="tcol">最终数量</div>
+                    <div class="tcol">操作</div>
+                  </div>
+                  <div class="trow"
+                    v-for="(itemChild,indexChild) in item.info_data"
+                    :key="indexChild">
+                    <div class="tcol">
+                      <div class="elCtn">
+                        <el-select v-model="itemChild.process_id"
+                          placeholder="选择工序">
+                          <el-option v-for="item in item.processList&&item.processList.length>0?item.processList:halfProcessList"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id"></el-option>
+                        </el-select>
+                      </div>
+                    </div>
+                    <div class="tcol">
+                      <div class="elCtn"
+                        v-if="!itemChild.has_plan">
+                        <el-cascader placeholder="物料名称"
+                          :show-all-levels="false"
+                          v-model="itemChild.tree_data"
+                          :options="yarnTypeList"
+                          @change="getMatId($event,itemChild)"
+                          clearable>
+                        </el-cascader>
+                      </div>
+                      <span class="text"
+                        v-else>{{itemChild.material_name}}</span>
+                    </div>
+                    <div class="tcol">
+                      <div class="elCtn">
+                        <el-select filterable
+                          placeholder="物料颜色"
+                          v-model="itemChild.material_color">
+                          <el-option v-for="item in yarnColorList"
+                            :key="item.name"
+                            :label="item.name"
+                            :value="item.name">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+                    <div class="tcol"
+                      :class="itemChild.has_plan?'blue':'gray'">{{itemChild.has_plan?(itemChild.production_number + 'g'):'无计划值'}}</div>
+                    <div class="tcol">{{itemChild.need_number}}kg</div>
+                    <div class="tcol">
+                      <div class="elCtn">
+                        <el-input v-model="itemChild.loss"
+                          placeholder="损耗"
+                          @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number)">
+                          <template slot="append">%</template>
+                        </el-input>
+                      </div>
+                    </div>
+                    <div class="tcol">
+                      <div class="elCtn">
+                        <el-input v-model="itemChild.final_number"
+                          placeholder="数量">
+                          <template slot="append">kg</template>
+                        </el-input>
+                      </div>
+                    </div>
+                    <div class="tcol">
+                      <div class="oprCtn">
+                        <span class="opr blue"
+                          @click="$addItem(item.info_data,{
+                          process_id: '',
+                          tree_data: [],
+                          material_id: '',
+                          material_type: '',
+                          material_color: '',
+                          assist_material_number: '',
+                          need_number: '',
+                          production_number: '',
+                          loss: '',
+                          final_number: ''
+                        })">添加</span>
+                        <span class="opr red"
+                          @click="item.info_data.length>1?$deleteItem(item.info_data,indexChild):$message.error('至少有一项，可以不填')">删除</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="按产品款式"
+          name="2">
+          <div class="description">
+            <span>如果您的产品不同尺码、色组将<span class="green">由一个单位生产</span>，我们建议您按<span class="green">相同产品</span>进行填写。</span>
+          </div>
+          <div class="flattenTableCtn noPad">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol">产品品类</div>
+                <div class="tcol">产品部位</div>
+                <div class="tcol">下单数量</div>
+                <div class="tcol">计划生产数量</div>
+                <div class="tcol">原料损耗</div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div class="trowCtn"
+                v-for="(item,index) in materialPlanInfo.material_plan_data"
+                :key="index">
+                <div class="trow">
+                  <div class="tcol">
+                    <span>{{item.product_code}}</span>
+                    <span>{{item.category}}/{{item.type}}</span>
+                  </div>
+                  <div class="tcol">{{item.part_name}}</div>
+                  <div class="tcol">{{item.order_number}}</div>
+                  <div class="tcol">{{item.number}}</div>
+                  <div class="tcol">原料损耗</div>
+                </div>
+                <div class="childrenCtn">
+                  <div class="trow">
+                    <div class="tcol">计划工序</div>
+                    <div class="tcol">原料名称</div>
+                    <div class="tcol">原料颜色</div>
+                    <div class="tcol">单个数量</div>
+                    <div class="tcol">所需数量</div>
+                    <div class="tcol">原料损耗</div>
+                    <div class="tcol">最终数量</div>
+                    <div class="tcol">操作</div>
+                  </div>
+                  <div class="trow"
+                    v-for="(itemChild,indexChild) in item.info_data"
+                    :key="indexChild">
+                    <div class="tcol">
+                      <div class="elCtn">
+                        <el-select v-model="itemChild.process_id"
+                          placeholder="选择工序">
+                          <el-option v-for="item in item.processList&&item.processList.length>0?item.processList:halfProcessList"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id"></el-option>
+                        </el-select>
+                      </div>
+                    </div>
+                    <div class="tcol">
+                      <div class="elCtn"
+                        v-if="!itemChild.has_plan">
+                        <el-cascader placeholder="物料名称"
+                          :show-all-levels="false"
+                          v-model="itemChild.tree_data"
+                          :options="yarnTypeList"
+                          @change="getMatId($event,itemChild)"
+                          clearable>
+                        </el-cascader>
+                      </div>
+                      <span class="text"
+                        v-else>{{itemChild.material_name}}</span>
+                    </div>
+                    <div class="tcol">
+                      <div class="elCtn">
+                        <el-select filterable
+                          placeholder="物料颜色"
+                          v-model="itemChild.material_color">
+                          <el-option v-for="item in yarnColorList"
+                            :key="item.name"
+                            :label="item.name"
+                            :value="item.name">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+                    <div class="tcol">{{itemChild.has_plan?(itemChild.production_number + 'g'):'无计划值'}}</div>
+                    <div class="tcol">{{itemChild.need_number}}kg</div>
+                    <div class="tcol">
+                      <div class="elCtn">
+                        <el-input v-model="itemChild.loss"
+                          placeholder="损耗"
+                          @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number)">
+                          <template slot="append">%</template>
+                        </el-input>
+                      </div>
+                    </div>
+                    <div class="tcol">
+                      <div class="elCtn">
+                        <el-input v-model="itemChild.final_number"
+                          placeholder="数量"></el-input>
+                      </div>
+                    </div>
+                    <div class="tcol">
+                      <div class="oprCtn">
+                        <span class="opr blue"
+                          @click="$addItem(item.info_data,{
+                          process_id: '',
+                          tree_data: [],
+                          material_id: '',
+                          material_type: '',
+                          material_color: '',
+                          assist_material_number: '',
+                          need_number: '',
+                          production_number: '',
+                          loss: '',
+                          final_number: ''
+                        })">添加</span>
+                        <span class="opr red"
+                          @click="item.info_data.length>1?$deleteItem(item.info_data,indexChild):$message.error('至少有一项，可以不填')">删除</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">所需原料预览</div>
+      </div>
+      <div class="tableCtn">
+        <div class="description">
+          <span>表格信息由物料计划自动生成，请填写物料计划。</span>
+        </div>
+        <div class="thead"
+          v-if="materialPlanInfo.material_plan_gather_data.length>0">
+          <div class="trow">
+            <div class="tcol">序号</div>
+            <div class="tcol">原料名称</div>
+            <div class="tcol">原料颜色</div>
+            <div class="tcol">所需数量</div>
+            <div class="tcol">原料损耗</div>
+            <div class="tcol">最终数量</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow"
+            v-for="(item,index) in materialPlanInfo.material_plan_gather_data"
+            :key="index">
+            <div class="tcol">{{index+1}}</div>
+            <div class="tcol">{{item.material_name}}</div>
+            <div class="tcol">{{item.material_color}}</div>
+            <div class="tcol">{{item.need_number}}kg</div>
+            <div class="tcol">
+              <div class="elCtn">
+                <el-input v-model="item.loss"
+                  placeholder="原料损耗"
+                  @input="getMaterialFinalNum($event,item)">
+                  <template slot="append">%</template>
+                </el-input>
+              </div>
+            </div>
+            <div class="tcol">
+              <div class="elCtn">
+                <el-input v-model="item.final_number"
+                  placeholder="最终数量">
+                  <template slot="append">kg</template>
+                </el-input>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="editCtn">
+        <div class="row">
+          <div class="col">
+            <div class="label">备注信息</div>
+            <div class="info elCtn">
+              <el-input placeholder="请输入备注信息"
+                v-model="materialPlanInfo.desc"></el-input>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottomFixBar">
+      <div class="main">
+        <div class="btnCtn">
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
+          <div class="btn backHoverBlue"
+            @click="saveMeterialPlan">修改</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue'
+import { materialPlan } from '@/assets/js/api'
+import { MaterialPlanInfo, MaterailPlanData } from '@/types/materialPlan'
+import { CascaderInfo } from '@/types/vuex'
+export default Vue.extend({
+  data(): {
+    materialPlanInfo: MaterialPlanInfo
+    [propName: string]: any
+  } {
+    return {
+      loading: true,
+      testValue: '',
+      confirmFlag: 1,
+      settingMethod: 2, // 数字取整方式
+      orderIndex: 0, // 多张订单/样单
+      materialPlanInfo: {
+        order_id: '',
+        type: '1', // 1、按颜色尺码 2.按产品
+        desc: '',
+        is_draft: 2,
+        production_plan_data: [
+          {
+            product_id: '',
+            part_data: [],
+            product_data: [
+              {
+                material_info: [],
+                size_color: [],
+                color_id: '',
+                size_id: '',
+                add_percent: '',
+                order_number: '',
+                info_data: [
+                  {
+                    part_id: '',
+                    number: ''
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        material_plan_data: [],
+        material_plan_gather_data: []
+      }
+    }
+  },
+  computed: {
+    halfProcessList() {
+      return this.$store.state.api.halfProcess.arr
+    },
+    yarnTypeList(): CascaderInfo[] {
+      return this.$store.state.api.yarnType.arr
+    },
+    yarnColorList() {
+      return this.$store.state.api.yarnColor.arr
+    }
+  },
+  watch: {
+    // 监听物料计划表的变化，来计算所需物料概览
+    'materialPlanInfo.material_plan_data': {
+      handler: function (materailPlanData: MaterailPlanData[]) {
+        this.materialPlanInfo.material_plan_gather_data = []
+        const flattenYarnList: CascaderInfo[] = []
+        this.yarnTypeList.forEach((item) => {
+          item.children!.forEach((itemChild) => {
+            itemChild.children!.forEach((itemSon) => {
+              flattenYarnList.push(itemSon)
+            })
+          })
+        })
+        materailPlanData.forEach((item) => {
+          item.info_data.forEach((itemChild) => {
+            if (itemChild.material_id || itemChild.tree_data!.length > 0) {
+              const finded = this.materialPlanInfo.material_plan_gather_data.find(
+                (item) =>
+                  item.material_id === (itemChild.material_id || itemChild.tree_data![2]) &&
+                  item.material_color === itemChild.material_color
+              )
+              if (finded) {
+                finded.need_number = Number(itemChild.need_number) + Number(finded.need_number)
+                finded.final_number = Number(itemChild.final_number) + Number(finded.final_number)
+                this.numberAutoMethod(100 * (Number(finded.final_number) / Number(finded.need_number) - 1))
+              } else {
+                this.materialPlanInfo.material_plan_gather_data.push({
+                  material_name:
+                    itemChild.material_name || this.$findId(flattenYarnList, itemChild.tree_data![2], 'label', 'value'),
+                  material_id: itemChild.material_id || itemChild.tree_data![2],
+                  material_type: 1, // 目前只有原料
+                  material_color: itemChild.material_color,
+                  need_number: Number(itemChild.need_number),
+                  loss: itemChild.need_number
+                    ? this.numberAutoMethod(100 * (Number(itemChild.final_number) / Number(itemChild.need_number) - 1))
+                    : 0,
+                  final_number: Number(itemChild.final_number)
+                })
+              }
+            }
+          })
+        })
+      },
+      deep: true
+    }
+  },
+  methods: {
+    // 小数点处理方式
+    numberAutoMethod(num: number | string) {
+      const number = Number(num)
+      if (number || number === 0) {
+        if (+this.settingMethod === 1) {
+          // 向上取整
+          return Math.ceil(number)
+        } else if (+this.settingMethod === 2) {
+          // 四舍五入
+          return Math.round(number)
+        } else if (+this.settingMethod === 3) {
+          // @ts-ignore 向下取整
+          return parseInt(number)
+        } else {
+          return this.$toFixed(number)
+        }
+      } else if (isNaN(num as number)) {
+        return ''
+      } else {
+        throw new TypeError('“' + num + '”is not a number')
+      }
+    },
+    // 计划生产数量 = 下单数量*(数量百分比+1)
+    getPlanNum(rate: number, productInfo: any) {
+      productInfo.info_data.forEach((item: any) => {
+        // 只能确定大身数量，配件数量不计算
+        if (item.part_id === 0) {
+          item.number = this.numberAutoMethod(productInfo.order_number * (rate / 100 + 1))
+          this.getMaterialPlanDetail(0, item.number, productInfo)
+        }
+      })
+    },
+    // 数量百分比 = 计划生产数量/下单数量 - 1
+    // 物料最终数量 = 物料计划数量*(原料损耗百分比+1)
+    getMaterialFinalNum(rate: number, materail: any) {
+      materail.final_number = this.numberAutoMethod(materail.need_number * (rate / 100 + 1))
+    },
+    // 计算所需物料--按尺码颜色
+    getMaterialPlanDetail(partId?: number, number?: number, proInfo?: any) {
+      if (partId || partId === 0) {
+        const finded = this.materialPlanInfo.material_plan_data.find(
+          (itemFind) =>
+            itemFind.part_id === partId &&
+            itemFind.color_id === proInfo.color_id &&
+            itemFind.size_id === proInfo.size_id
+        )
+        if (finded) {
+          finded.number = number
+        } else {
+        }
+      }
+    },
+    confirmPlanNum() {
+      if (this.confirmFlag === 1) {
+        this.initMaterialPlan()
+      } else {
+        this.$confirm('此操作会重置物料填写信息，是否重置产品数量?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            this.materialPlanInfo.material_plan_data = []
+            this.initMaterialPlan()
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消重置'
+            })
+          })
+      }
+    },
+    // 初始化material_plan_data
+    initMaterialPlan() {
+      // 计算所需物料--1.按尺码颜色 2.按照产品
+      if (this.materialPlanInfo.type === '1') {
+        this.materialPlanInfo.production_plan_data.forEach((item) => {
+          item.product_data.forEach((itemChild) => {
+            itemChild.info_data.forEach((itemPart) => {
+              // 过滤掉空值和0
+              itemPart.number = itemPart.number || 0
+              if (itemPart.number) {
+                this.materialPlanInfo.material_plan_data.push({
+                  product_code: item.product_code,
+                  category: item.category,
+                  type: item.type,
+                  part_id: itemPart.part_id,
+                  part_name: itemPart.name,
+                  color_name: itemChild.color_name,
+                  color_id: itemChild.color_id,
+                  size_id: itemChild.size_id,
+                  size_name: itemChild.size_name,
+                  product_id: item.product_id,
+                  number: itemPart.number || 0,
+                  order_number: itemChild.order_number,
+                  loss: '',
+                  processList:
+                    item.process_data!.length > 0
+                      ? item.process_data!.map((itemProcess) => {
+                          return {
+                            id: itemProcess.process_id,
+                            name: itemProcess.process_name
+                          }
+                        })
+                      : [],
+                  // 只有大身有工艺单
+                  info_data:
+                    itemPart.part_id === 0 && itemChild.material_info.length > 0
+                      ? itemChild.material_info.map((itemMat) => {
+                          return {
+                            process_id: '',
+                            tree_data: [],
+                            material_id: itemMat.material_id,
+                            material_name: itemMat.material_name,
+                            material_type: itemMat.material_type,
+                            material_color: itemMat.material_color,
+                            assist_material_number: '',
+                            need_number: this.numberAutoMethod((itemMat.number * Number(itemPart.number)) / 1000),
+                            production_number: itemMat.number,
+                            loss: '',
+                            final_number: '',
+                            has_plan: true
+                          }
+                        })
+                      : [
+                          {
+                            process_id: '',
+                            tree_data: [],
+                            material_id: '',
+                            material_type: '',
+                            material_color: '',
+                            assist_material_number: '',
+                            need_number: '',
+                            production_number: '',
+                            loss: '',
+                            final_number: ''
+                          }
+                        ]
+                })
+              }
+            })
+          })
+        })
+      } else {
+        this.materialPlanInfo.production_plan_data.forEach((item) => {
+          item.product_data.forEach((itemChild) => {
+            itemChild.info_data.forEach((itemPart) => {
+              // 过滤掉空值和0
+              itemPart.number = itemPart.number || 0
+              if (itemPart.number) {
+                const finded = this.materialPlanInfo.material_plan_data.find(
+                  (itemFind) => itemFind.product_id === item.product_id && itemFind.part_id === itemPart.part_id
+                )
+                if (finded) {
+                  // 计划数量加一加
+                  finded.number = Number(finded.number) + Number(itemPart.number)
+                  finded.order_number = Number(finded.order_number) + Number(itemChild.order_number)
+                  // 物料重复的加一加，没有重复的拼一拼
+                  if (itemPart.part_id === 0) {
+                    itemChild.material_info.forEach((itemMat) => {
+                      const findMat = finded.info_data.find(
+                        (itemFindMat) =>
+                          itemFindMat.material_name === itemMat.material_name &&
+                          itemFindMat.material_color === itemMat.material_color
+                      )
+                      if (findMat) {
+                        findMat.need_number += this.numberAutoMethod((itemMat.number * Number(itemPart.number)) / 1000)
+                      } else {
+                        finded.info_data.push({
+                          process_id: '',
+                          tree_data: [],
+                          material_id: itemMat.material_id,
+                          material_name: itemMat.material_name,
+                          material_type: itemMat.material_type,
+                          material_color: itemMat.material_color,
+                          assist_material_number: '',
+                          need_number: this.numberAutoMethod((itemMat.number * Number(itemPart.number)) / 1000),
+                          production_number: itemMat.number,
+                          loss: '',
+                          final_number: '',
+                          has_plan: true
+                        })
+                      }
+                    })
+                  }
+                } else {
+                  this.materialPlanInfo.material_plan_data.push({
+                    product_code: item.product_code,
+                    category: item.category,
+                    type: item.type,
+                    part_id: itemPart.part_id,
+                    part_name: itemPart.name,
+                    color_name: '',
+                    color_id: '',
+                    size_id: '',
+                    size_name: '',
+                    product_id: item.product_id,
+                    number: itemPart.number || 0,
+                    order_number: itemChild.order_number,
+                    loss: '',
+                    info_data:
+                      itemChild.material_info.length > 0
+                        ? itemChild.material_info.map((itemMat) => {
+                            return {
+                              process_id: '',
+                              tree_data: [],
+                              material_id: itemMat.material_id,
+                              material_name: itemMat.material_name,
+                              material_type: itemMat.material_type,
+                              material_color: itemMat.material_color,
+                              assist_material_number: '',
+                              need_number: this.numberAutoMethod((itemMat.number * Number(itemPart.number)) / 1000),
+                              production_number: itemMat.number,
+                              loss: '',
+                              final_number: '',
+                              has_plan: true
+                            }
+                          })
+                        : [
+                            {
+                              process_id: '',
+                              tree_data: [],
+                              material_id: '',
+                              material_type: '',
+                              material_color: '',
+                              assist_material_number: '',
+                              need_number: '',
+                              production_number: '',
+                              loss: '',
+                              final_number: ''
+                            }
+                          ]
+                  })
+                }
+              }
+            })
+          })
+        })
+      }
+      this.confirmFlag = 2
+    },
+    changeMaterialPlanType() {
+      this.materialPlanInfo.material_plan_data = []
+      this.initMaterialPlan()
+      this.$message.success('已切换填写方式')
+    },
+    getMatId(ev: number[], info: { material_id: number }) {
+      info.material_id = ev![2]
+    },
+    getCmpData() {
+      this.materialPlanInfo.material_plan_data.forEach((item) => {
+        item.info_data.forEach((itemChild) => {
+          // @ts-ignore
+          itemChild.tree_data = itemChild.tree_data.join(',')
+        })
+      })
+    },
+    saveMeterialPlan() {
+      const formCheck =
+        this.materialPlanInfo.production_plan_data.some((item) => {
+          return item.product_data.some((itemChild) => {
+            return itemChild.info_data.some((itemPart) => {
+              return this.$formCheck(itemChild, [
+                {
+                  key: 'number',
+                  errMsg: '请输入计划生产数量'
+                }
+              ])
+            })
+          })
+        }) ||
+        this.materialPlanInfo.material_plan_data.some((item) => {
+          return item.info_data.some((itemChild) => {
+            return this.$formCheck(itemChild, [
+              {
+                key: 'process_id',
+                errMsg: '检测到有未选择工序信息，请补充'
+              },
+              {
+                key: 'material_id',
+                errMsg: '检测到有未选择的物料名称，请补充'
+              },
+              {
+                key: 'material_color',
+                errMsg: '检测到有未选择的物料颜色，请补充'
+              },
+              {
+                key: 'final_number',
+                errMsg: '检测到有未填写的物料最终数量，请补充'
+              }
+            ])
+          })
+        })
+      if (!formCheck) {
+        this.loading = true
+        this.getCmpData()
+        materialPlan.create(this.materialPlanInfo).then((res) => {
+          if (res.data.status) {
+            this.$message.success('修改成功')
+          }
+          this.loading = false
+        })
+      }
+    },
+    getUpdateData() {
+      this.materialPlanInfo.material_plan_data.forEach((item) => {
+        item.info_data.forEach((itemChild) => {
+          // @ts-ignore
+          itemChild.tree_data = itemChild.tree_data && itemChild.tree_data.split(',').map((item) => Number(item))
+        })
+      })
+      this.materialPlanInfo.production_plan_data.forEach((item) => {
+        item.part_data = [
+          {
+            name: '大身',
+            id: 0, // 大身给零，接口写的
+            unit: '件'
+          }
+        ].concat(
+          // @ts-ignore
+          item.product_detail!.part_data
+        )
+      })
+    }
+  },
+  mounted() {
+    this.$checkCommonInfo([
+      {
+        checkWhich: 'status/token',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getTokenAsync'
+      },
+      {
+        checkWhich: 'api/halfProcess',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getHalfProcessAsync'
+      },
+      {
+        checkWhich: 'api/yarnType',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getYarnTypeAsync'
+      },
+      {
+        checkWhich: 'api/yarnColor',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getYarnColorAsync'
+      }
+    ])
+    materialPlan
+      .detail({
+        id: this.$route.query.id
+      })
+      .then((res) => {
+        this.materialPlanInfo = res.data.data
+        this.materialPlanInfo.type = this.materialPlanInfo.type.toString()
+        this.getUpdateData()
+        this.loading = false
+      })
+  }
+})
+</script>
+
+<style lang="less" scoped>
+@import '~@/assets/css/materialPlan/create.less';
+</style>
+<style lang="less">
+#materialPlanCreate {
+  .el-tabs__content {
+    padding: 20px 32px;
+  }
+}
+</style>
