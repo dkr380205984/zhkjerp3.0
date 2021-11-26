@@ -8,12 +8,13 @@
       </div>
       <div class="detailCtn">
         <div class="checkCtn">
-          <el-tooltip class="item"
+          <!-- <el-tooltip class="item"
             effect="dark"
             content="点击查看审核日志"
             placement="bottom">
             <img :src="quotedPriceInfo.is_check|checkFilter" />
-          </el-tooltip>
+          </el-tooltip> -->
+          <img :src="quotedPriceInfo.is_check|checkFilter" />
         </div>
         <div class="row">
           <div class="col">
@@ -27,7 +28,7 @@
             <div class="text">{{quotedPriceInfo.title}}</div>
           </div>
           <div class="col">
-            <div class="label">报价公司：</div>
+            <div class="label">询价客户：</div>
             <div class="text">{{quotedPriceInfo.client_name}}</div>
           </div>
           <div class="col">
@@ -41,7 +42,7 @@
             <div class="text">{{quotedPriceInfo.group_name}}</div>
           </div>
           <div class="col">
-            <div class="label">结算单位：</div>
+            <div class="label">报价币种：</div>
             <div class="text">{{quotedPriceInfo.settle_unit}}</div>
           </div>
           <div class="col">
@@ -50,17 +51,13 @@
           </div>
         </div>
         <div class="row">
-          <div class="col">
+          <div class="col flex3">
             <div class="label">创建人：</div>
             <div class="text">{{quotedPriceInfo.user_name}}</div>
           </div>
-          <div class="col">
+          <div class="col flex3">
             <div class="label">更新时间：</div>
             <div class="text">{{quotedPriceInfo.created_at.slice(0,10)}}</div>
-          </div>
-          <div class="col">
-            <div class="label">审核状态：</div>
-            <div class="text">暂无字段</div>
           </div>
         </div>
         <div class="row">
@@ -69,7 +66,7 @@
             <div class="text">{{quotedPriceInfo.system_total_price}}元</div>
           </div>
           <div class="col">
-            <div class="label">实际报价：</div>
+            <div class="label">最终报价：</div>
             <div class="text">{{quotedPriceInfo.total_cost_price}}元</div>
           </div>
           <div class="col">
@@ -79,7 +76,7 @@
         </div>
         <div class="row">
           <div class="col">
-            <div class="label">备注信息：</div>
+            <div class="label">其它说明与备注：</div>
             <div class="text">{{quotedPriceInfo.desc}}</div>
           </div>
         </div>
@@ -103,7 +100,7 @@
           <div class="trow"
             v-for="item in quotedPriceInfo.product_data"
             :key="item.id">
-            <div class="tcol">{{item.category_name}}/{{item.type_name}}</div>
+            <div class="tcol">{{item.category_name}}/{{item.secondary_category}}</div>
             <div class="tcol">
               <div class="imageCtn">
                 <el-image style="width:100%;height:100%"
@@ -187,65 +184,80 @@
                 v-for="(itemWeave,indexWeave) in item.weave_data"
                 :key="'Weave'+indexWeave">
                 <div class="col">
-                  <div class="circle backHoverBlue">织</div>{{itemWeave.name}}
+                  <div class="circle"
+                    :class="{'backHoverBlue':itemWeave.name,'backGray':!itemWeave.name}">织</div>{{itemWeave.name || '无'}}
                 </div>
-                <div class="col">{{itemWeave.desc}}</div>
+                <div class="col">{{itemWeave.desc||'无'}}</div>
                 <div class="col"></div>
                 <div class="col"></div>
-                <div class="col">{{itemWeave.total_price}}元</div>
+                <div class="col">{{itemWeave.total_price||0}}元</div>
               </div>
               <div class="row"
                 v-for="(itemHalfProcess,indexHalfProcess) in item.semi_product_data"
                 :key="'HalfProcess' + indexHalfProcess">
                 <div class="col">
-                  <div class="circle backHoverBlue">半</div>{{itemHalfProcess.process_name}}
+                  <div class="circle"
+                    :class="{'backHoverBlue':itemHalfProcess.process_name,'backGray':!itemHalfProcess.process_name}">半</div>{{itemHalfProcess.process_name || '无'}}
                 </div>
-                <div class="col">{{itemHalfProcess.desc}}</div>
+                <div class="col">{{itemHalfProcess.desc||'无'}}</div>
                 <div class="col"></div>
                 <div class="col"></div>
-                <div class="col">{{itemHalfProcess.total_price}}元</div>
+                <div class="col">{{itemHalfProcess.total_price||0}}元</div>
               </div>
               <div class="row"
                 v-for="(itemFinishedProcess,indexFinishedProcess) in item.production_data"
                 :key="'FinishedProcess' + indexFinishedProcess">
                 <div class="col">
-                  <div class="circle backHoverBlue">成</div>{{itemFinishedProcess.name}}
+                  <div class="circle"
+                    :class="{'backHoverBlue':itemFinishedProcess.name,'backGray':!itemFinishedProcess.name}">成</div>{{itemFinishedProcess.name || '无'}}
                 </div>
-                <div class="col">{{itemFinishedProcess.desc}}</div>
+                <div class="col">{{itemFinishedProcess.desc||'无'}}</div>
                 <div class="col"></div>
                 <div class="col"></div>
-                <div class="col">{{itemFinishedProcess.total_price}}元</div>
+                <div class="col">{{itemFinishedProcess.total_price||0}}元</div>
               </div>
               <div class="row"
                 v-for="(itemPackMaterial,indexPackMaterial) in item.pack_material_data"
                 :key="'PackMaterial' + indexPackMaterial">
                 <div class="col">
-                  <div class="circle backHoverBlue">包</div>{{itemPackMaterial.material_name}}
+                  <div class="circle"
+                    :class="{'backHoverBlue':itemPackMaterial.material_name,'backGray':!itemPackMaterial.material_name}">包</div>{{itemPackMaterial.material_name || '无'}}
                 </div>
-                <div class="col">{{itemPackMaterial.desc}}</div>
+                <div class="col">{{itemPackMaterial.desc||'无'}}</div>
                 <div class="col"></div>
                 <div class="col"></div>
-                <div class="col">{{itemPackMaterial.total_price}}元</div>
+                <div class="col">{{itemPackMaterial.total_price||0}}元</div>
               </div>
               <div class="row"
                 v-for="(itemOther,indexOther) in item.other_fee_data"
                 :key="'Other' + indexOther">
                 <div class="col">
-                  <div class="circle backHoverBlue">其</div>{{itemOther.name}}
+                  <div class="circle"
+                    :class="{'backHoverBlue':itemOther.name,'backGray':!itemOther.name}">其</div>{{itemOther.name || '无'}}
                 </div>
-                <div class="col">{{itemOther.desc}}</div>
+                <div class="col">{{itemOther.desc||'无'}}</div>
                 <div class="col"></div>
                 <div class="col"></div>
-                <div class="col">{{itemOther.total_price}}元</div>
+                <div class="col">{{itemOther.total_price||0}}元</div>
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="circle backHoverBlue">运</div>运输费用
+                  <div class="circle"
+                    :class="{'backHoverBlue':item.transport_fee,'backGray':!item.transport_fee}">运</div>{{item.transport_fee?'运输费用':'无'}}
                 </div>
-                <div class="col">{{item.transport_fee_desc}}</div>
+                <div class="col">{{item.transport_fee_desc||'无'}}</div>
                 <div class="col"></div>
                 <div class="col"></div>
-                <div class="col">{{item.transport_fee}}元</div>
+                <div class="col">{{item.transport_fee||0}}元</div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="circle backHoverGreen">合</div>产品合计费用
+                </div>
+                <div class="col"></div>
+                <div class="col"></div>
+                <div class="col"></div>
+                <div class="col">{{productTotalPrice[index]}}元</div>
               </div>
             </div>
           </div>
@@ -293,7 +305,7 @@
       <div class="main">
         <div class="fl"
           style="line-height:56px">
-          合计：<span class="blue">0元</span>
+          合计：<span class="blue">{{realTotalPrice}}元<span v-if="quotedPriceInfo.settle_unit!=='元'">{{'/'+realTotalPriceChange+quotedPriceInfo.settle_unit}}</span></span>
         </div>
         <div class="btnCtn">
           <div class="borderBtn"
@@ -308,31 +320,49 @@
               <div class="otherInfo">
                 <div class="btn backHoverOrange"
                   @click="$router.push('/quotedPrice/update?id='+$route.query.id)">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
                   <span class="text">修改报价</span>
                 </div>
                 <div class="btn backHoverOrange"
                   @click="checkFlag=true">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-shenhedingdan"></use>
+                  </svg>
                   <span class="text">审核报价</span>
                 </div>
                 <div class="btn backHoverRed"
                   @click="deleteQuotedPrice">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-shanchudingdan"></use>
+                  </svg>
                   <span class="text">删除报价</span>
                 </div>
                 <div class="btn backHoverBlue">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-dayindingdan"></use>
+                  </svg>
                   <span class="text">打印报价</span>
                 </div>
                 <div class="btn backHoverGreen"
-                  @click="$router.push('/sampleOrder/create?quotedPriceId='+ $route.query.id)">
-                  <i class="iconfont">&#xe63b;</i>
+                  @click="quotedPriceInfo.is_check===2?$message.error('该报价单审核未通过'):$router.push('/sampleOrder/create?quotedPriceId='+ $route.query.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-wuliaojihua1"></use>
+                  </svg>
                   <span class="text">生成样单</span>
                 </div>
                 <div class="btn backHoverGreen"
-                  @click="$router.push('/order/create?quotedPriceId='+ $route.query.id)">
-                  <i class="iconfont">&#xe63b;</i>
+                  @click="quotedPriceInfo.is_check===2?$message.error('该报价单审核未通过'):$router.push('/order/create?quotedPriceId='+ $route.query.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-wuliaojihua1"></use>
+                  </svg>
                   <span class="text">生成订单</span>
                 </div>
               </div>
@@ -342,6 +372,7 @@
       </div>
     </div>
     <zh-check @close="checkFlag=false"
+      @afterCheck="(ev)=>{quotedPriceInfo.is_check=ev;$forceUpdate()}"
       :show="checkFlag"
       :pid="$route.query.id"
       :check_type="5"
@@ -394,7 +425,8 @@ export default Vue.extend({
             product_id: '',
             type: [],
             category_id: '',
-            type_id: '',
+            secondary_category_id: '',
+            secondary_category: '',
             image_data: [],
             client_target_price: '',
             start_order_number: '',
@@ -459,6 +491,51 @@ export default Vue.extend({
           }
         ]
       }
+    }
+  },
+  computed: {
+    // 总合计，按照汇率转换后
+    realTotalPriceChange(): string {
+      return ((Number(this.realTotalPrice) / Number(this.quotedPriceInfo.exchange_rate)) * 100).toFixed(2)
+    },
+    // 总合计——含各种税 quotedPriceInfo.system_total_price
+    realTotalPrice(): string {
+      return (
+        Number(this.quotedPriceInfo.total_cost_price) *
+        (1 -
+          (Number(this.quotedPriceInfo.commission_percentage) / 100 || 0) +
+          (Number(this.quotedPriceInfo.profit_percentage) / 100 || 0) +
+          Number(this.quotedPriceInfo.rate_taxation) / 100 || 0)
+      ).toFixed(2)
+    },
+    // 产品项总价
+    productTotalPrice(): string[] {
+      return this.quotedPriceInfo.product_data.map((item) => {
+        return (
+          Number(item.transport_fee) +
+          item.material_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
+          }, 0) +
+          item.assist_material_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
+          }, 0) +
+          item.weave_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
+          }, 0) +
+          item.semi_product_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
+          }, 0) +
+          item.production_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
+          }, 0) +
+          item.pack_material_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
+          }, 0) +
+          item.other_fee_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
+          }, 0)
+        ).toFixed(2)
+      })
     }
   },
   methods: {

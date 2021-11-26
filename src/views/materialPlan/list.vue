@@ -32,22 +32,6 @@
             </el-select>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter"
-              v-model="status"
-              placeholder="筛选报价单状态">
-              <el-option value="0"
-                label="全部"></el-option>
-              <el-option value="1"
-                label="已审核"></el-option>
-              <el-option value="2"
-                label="待审核"></el-option>
-            </el-select>
-          </div>
-          <div class="btn borderBtn"
-            @click="reset">重置</div>
-        </div>
-        <div class="filterCtn">
-          <div class="elCtn">
             <el-select v-model="order_type"
               @change="changeRouter">
               <el-option label="所有单据"
@@ -58,6 +42,10 @@
                 :value="2"></el-option>
             </el-select>
           </div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
+        </div>
+        <div class="filterCtn">
           <div class="elCtn">
             <el-select @change="changeRouter"
               v-model="group_id"
@@ -142,6 +130,8 @@ export default Vue.extend({
           name: '单据编号',
           ifShow: true,
           ifLock: true,
+          ifCaogao: 'order_type',
+          caogaoArr: ['订', '样'],
           index: 0
         },
         {
@@ -152,7 +142,7 @@ export default Vue.extend({
           index: 1
         },
         {
-          key: 'contact_name',
+          key: 'contacts_name',
           name: '公司联系人',
           ifShow: true,
           ifLock: false,
@@ -168,18 +158,23 @@ export default Vue.extend({
           index: 3
         },
         {
-          key: 'product_info',
-          name: '产品信息',
+          key: 'product_code',
+          otherkey: 'system_code',
+          name: '产品编号',
           ifShow: true,
           ifLock: false,
-          index: 4
+          index: 4,
+          from: 'product_data',
+          mark: true
         },
         {
           key: 'image_data',
           name: '产品图片',
           ifShow: true,
           ifLock: false,
-          index: 5
+          ifImage: true,
+          index: 5,
+          from: 'product_data'
         },
         {
           key: 'total_number',
@@ -196,32 +191,18 @@ export default Vue.extend({
           index: 7
         },
         {
-          key: 'status',
-          name: '审核状态',
-          ifShow: true,
-          ifLock: false,
-          index: 8
-        },
-        {
           key: 'group_name',
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 9
+          index: 8
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 10
-        },
-        {
-          key: 'settle_unit',
-          name: '结算单位',
-          ifShow: true,
-          ifLock: false,
-          index: 11
+          index: 9
         }
       ],
       pickerOptions: {
@@ -298,8 +279,8 @@ export default Vue.extend({
           this.user_id +
           '&group_id=' +
           this.group_id +
-          '&status=' +
-          this.status +
+          '&order_type=' +
+          this.order_type +
           '&date=' +
           this.date
       )

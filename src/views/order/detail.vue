@@ -31,8 +31,10 @@
             v-for="(item,index) in productList"
             :key="index">
             <div class="tcol">
-              <span>{{item.product_code||'无编号'}}</span>
-              <span class="gray">({{item.category}}/{{item.type}})</span>
+              <span class="blue"
+                style="cursor:pointer"
+                @click="productDetail=item;productShow=true">{{item.product_code||item.system_code}}</span>
+              <span class="gray">({{item.category}}/{{item.secondary_category}})</span>
             </div>
             <div class="tcol">{{item.name}}</div>
             <div class="tcol">
@@ -65,8 +67,8 @@
                   :class="{'backGray':!item.craft_list_id,'backBlue':item.craft_list_id}">工</div>
               </div>
             </div>
-            <div class="tcol">样品描述</div>
-            <div class="tcol">修改意见</div>
+            <div class="tcol">{{item.desc||'无'}}</div>
+            <div class="tcol">{{item.client_edit_idea||'无'}}</div>
           </div>
         </div>
       </div>
@@ -126,7 +128,7 @@
             <div class="trow">
               <div class="tcol">
                 <span>{{itemPro.product_code||'无编号'}}</span>
-                <span class="gray">({{itemPro.category}}/{{itemPro.type}})</span>
+                <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
               </div>
               <div class="tcol">{{itemPro.name}}</div>
               <div class="tcol noPad"
@@ -137,11 +139,11 @@
                   <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
                   <div class="tcol">{{itemChild.number}}</div>
                   <div class="tcol">{{itemChild.price}}元</div>
-                  <div class="tcol">总价</div>
-                  <div class="tcol">实际发货数量</div>
+                  <div class="tcol">{{itemChild.number*itemChild.price}}元</div>
+                  <div class="tcol">0</div>
                 </div>
               </div>
-              <div class="tcol">批次状态</div>
+              <div class="tcol">暂无</div>
             </div>
           </div>
         </div>
@@ -160,33 +162,57 @@
             </div>
             <div class="otherInfoCtn">
               <div class="otherInfo">
-                <div class="btn backHoverOrange">
-                  <i class="iconfont">&#xe63b;</i>
+                <div class="btn backHoverOrange"
+                  @click="$router.push('/order/update?id=' + $route.query.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
                   <span class="text">修改订单</span>
                 </div>
-                <div class="btn backHoverOrange">
-                  <i class="iconfont">&#xe63b;</i>
+                <div class="btn backHoverOrange"
+                  @click="checkFlag=true">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-shenhedingdan"></use>
+                  </svg>
                   <span class="text">审核订单</span>
                 </div>
-                <div class="btn backHoverRed">
-                  <i class="iconfont">&#xe63b;</i>
+                <div class="btn backHoverRed"
+                  @click="deleteOrder">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-shanchudingdan"></use>
+                  </svg>
                   <span class="text">删除订单</span>
                 </div>
                 <div class="btn backHoverBlue"
                   @click="$router.push('/materialPlan/create?id=' + $route.query.id)">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-wuliaojihua1"></use>
+                  </svg>
                   <span class="text">物料计划</span>
                 </div>
                 <div class="btn backHoverBlue">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-dayindingdan"></use>
+                  </svg>
                   <span class="text">打印订单</span>
                 </div>
                 <div class="btn backHoverBlue">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-youjianfenxiang"></use>
+                  </svg>
                   <span class="text">邮件分享</span>
                 </div>
                 <div class="btn backHoverBlue">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-caozuojilu"></use>
+                  </svg>
                   <span class="text">操作记录</span>
                 </div>
               </div>
@@ -195,6 +221,15 @@
         </div>
       </div>
     </div>
+    <product-detail :data="productDetail"
+      :show="productShow"
+      @close="productShow = false"></product-detail>
+    <zh-check @close="checkFlag=false"
+      @afterCheck="(ev)=>{orderInfo.time_data[0].is_check=ev;$forceUpdate()}"
+      :show="checkFlag"
+      :pid="orderInfo.time_data[0].id"
+      :check_type="1"
+      :reason="['驳回理由1','驳回理由2','驳回理由3','驳回理由4','驳回理由5']"></zh-check>
   </div>
 </template>
 
@@ -212,6 +247,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      checkFlag: false,
       orderInfo: {
         id: null,
         client_id: '',
@@ -268,7 +304,84 @@ export default Vue.extend({
           }
         ]
       },
-      productList: []
+      productList: [],
+      productDetail: {
+        product_type: 1,
+        name: '',
+        product_code: '',
+        style_code: '', // 客户款号
+        unit: '',
+        category: '',
+        type: '',
+        image_data: [],
+        desc: '',
+        style_data: [], // 款式
+        component_data: [
+          {
+            component_id: '',
+            number: '' // 成分信息
+          }
+        ],
+        size_data: [
+          {
+            size_id: '',
+            size_info: '',
+            weight: ''
+          }
+        ], // 尺码组
+        color_data: [], // 配色组
+        // 配件信息
+        part_data: [
+          {
+            name: '',
+            unit: '',
+            part_size_data: [
+              {
+                size_id: '',
+                size_info: '',
+                weight: ''
+              }
+            ],
+            part_component_data: [
+              {
+                component_id: '',
+                number: '' // 成分信息
+              }
+            ]
+          }
+        ]
+      },
+      productShow: false
+    }
+  },
+  methods: {
+    deleteOrder() {
+      this.$confirm('是否删除该订单?', '提示', {
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          order
+            .delete({
+              id: Number(this.$route.query.id)
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.$router.push('/order/list?page=1&keyword=&client_id=&user_id=&status=null0&date=')
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     }
   },
   mounted() {

@@ -3,6 +3,7 @@
 @import '../table.less';
 @import '../bottomBar.less';
 @import '../flattenTable.less';
+@import '../popup.less';
 #materialPlanCreate{
   .description{
     padding: 18px;
@@ -14,5 +15,15 @@
   }
   .noPad{
     padding: 0;
+  }
+  .popup{
+    .tag{
+      padding: 4px 16px;
+      border:1px solid @borderColor;
+      margin: 16px 12px;
+      display: inline-block;
+      cursor: pointer;
+      border-radius: 4px;
+    }
   }
 }

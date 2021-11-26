@@ -44,7 +44,7 @@
                     v-model="searchOrderCode">
                     <el-button slot="append"
                       icon="el-icon-search"
-                      @click="$message.error('没做')"></el-button>
+                      @click="searchProduct"></el-button>
                   </el-input>
                 </div>
               </div>
@@ -147,27 +147,28 @@
                 </div>
               </div>
             </div>
-            <div class="row">
+            <div class="row"
+              v-for="(item,index) in productInfo.color_data"
+              :key="index">
               <div class="col">
-                <div class="label">
+                <div class="label"
+                  v-if="index===0">
                   <span class="text">产品配色组</span>
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-select placeholder="请选择产品配色组"
-                    multiple
-                    filterable
-                    v-model="productInfo.color_data">
-                    <el-option v-for="item in colourList"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"></el-option>
-                  </el-select>
+                  <el-autocomplete class="inline-input"
+                    v-model="productInfo.color_data[index]"
+                    :fetch-suggestions="searchColour"
+                    placeholder="请输入样品配色"></el-autocomplete>
                 </div>
               </div>
-              <div class="col">
-                <!-- 占位 -->
-              </div>
+              <div class="opr hoverBlue"
+                v-if="index===0"
+                @click="$addItem(productInfo.color_data)">添加</div>
+              <div class="opr hoverRed"
+                v-if="index>0"
+                @click="$deleteItem(productInfo.color_data,index)">删除</div>
             </div>
             <div class="row">
               <div class="col">
@@ -190,7 +191,7 @@
                       <span>上传图片</span>
                     </div>
                     <div slot="tip"
-                      class="el-upload__tip">只能上传一张jpg/png图片文件，且不超过10M</div>
+                      class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M</div>
                   </el-upload>
                 </div>
               </div>
@@ -481,6 +482,15 @@ export default Vue.extend({
     // 修改产品用
     data: {
       required: false
+    },
+    // 报价单初始化样品用,该参数和修改样品的参数互斥
+    quote_rel_product_id: {
+      type: [Number, String],
+      required: false
+    },
+    // 报价单描述信息
+    quote_rel_product_data: {
+      required: false
     }
   },
   data(): {
@@ -490,7 +500,7 @@ export default Vue.extend({
   } {
     return {
       loading: false,
-      have_part: true,
+      have_part: false,
       need_import: false,
       searchOrderCode: '', // 搜产单编号导入
       searchProductCode: '', // 搜产品编号导入
@@ -509,7 +519,7 @@ export default Vue.extend({
         style_code: '', // 客户款号
         unit: '',
         category_id: '',
-        type_id: '',
+        secondary_category_id: '',
         type: [], // 品类下拉框
         image_data: [],
         file_list: [],
@@ -528,7 +538,7 @@ export default Vue.extend({
             weight: ''
           }
         ], // 尺码组
-        color_data: [], // 配色组
+        color_data: [''], // 配色组
         // 配件信息
         part_data: [
           {
@@ -562,8 +572,13 @@ export default Vue.extend({
     ingredientList(): Array<{ name: string; id: number }> {
       return this.$store.state.api.ingredient.arr
     },
-    colourList(): Array<{ name: string; id: number }> {
-      return this.$store.state.api.colour.arr
+    colourList(): Array<{ value: string; label: string }> {
+      return this.$store.state.api.colour.arr.map((item: { name: any }) => {
+        return {
+          value: item.name,
+          label: item.name
+        }
+      })
     },
     productStyleList(): Array<{ name: string; id: number }> {
       return this.$store.state.api.productStyle.arr
@@ -573,17 +588,45 @@ export default Vue.extend({
     // 打开产品详情窗口之前需要获取产品详情
     show(val) {
       if (val) {
-        if (this.data) {
-          this.changeDetailToEdit(this.data)
+        if (this.quote_rel_product_id) {
+          this.productInfo.quote_rel_product_id = this.quote_rel_product_id
+          const quotedPriceProductInfo = this.quote_rel_product_data as ProductInfo
+          this.productInfo.type = [
+            quotedPriceProductInfo.category_id as number,
+            quotedPriceProductInfo.secondary_category_id as number
+          ]
+          this.getUnit(this.productInfo.type)
+          this.productInfo.desc = quotedPriceProductInfo.desc
+          this.productInfo.file_list = quotedPriceProductInfo.image_data.map((item, index) => {
+            return {
+              id: index,
+              url: item
+            }
+          })
+          this.productInfo.image_data = []
         } else {
-          if (this.id) {
-            this.getImport(Number(this.id))
+          if (this.data) {
+            this.changeDetailToEdit(this.data)
+          } else {
+            if (this.id) {
+              this.getImport(Number(this.id))
+            }
           }
         }
       }
     }
   },
   methods: {
+    searchColour(str: string, cb: any) {
+      let results = str ? this.colourList.filter(this.createFilter(str)) : this.colourList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    createFilter(queryString: string) {
+      return (restaurant: any) => {
+        return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+      }
+    },
     searchProduct() {
       if (this.searchProductCode) {
         this.loading = true
@@ -591,8 +634,9 @@ export default Vue.extend({
           .list({
             limit: 99,
             page: 1,
-            product_type: 2,
-            product_code: this.searchProductCode
+            product_type: 1,
+            product_code: this.searchProductCode,
+            order_code: this.searchOrderCode
           })
           .then((res) => {
             if (res.data.status) {
@@ -696,7 +740,7 @@ export default Vue.extend({
         this.productInfo.id = null
       }
       this.productInfo.category_id = this.productInfo.type![0]
-      this.productInfo.type_id = this.productInfo.type![1]
+      this.productInfo.secondary_category_id = this.productInfo.type![1]
       if (this.have_part) {
         this.productInfo.part_data.forEach((item) => {
           item.part_size_data!.forEach((itemChild, indexChild) => {
@@ -830,7 +874,7 @@ export default Vue.extend({
         style_code: '', // 客户款号
         unit: '',
         category_id: '',
-        type_id: '',
+        secondary_category_id: '',
         type: [], // 品类下拉框
         image_data: [],
         file_list: [],
@@ -849,7 +893,7 @@ export default Vue.extend({
             weight: ''
           }
         ], // 尺码组
-        color_data: [], // 配色组
+        color_data: [''], // 配色组
         // 配件信息
         part_data: [
           {
@@ -883,8 +927,8 @@ export default Vue.extend({
         style_code: data.style_code,
         unit: data.unit,
         category_id: data.category_id,
-        type_id: data.type_id,
-        type: [data.category_id, data.type_id],
+        secondary_category_id: data.secondary_category_id,
+        type: [data.category_id, data.secondary_category_id],
         image_data: [],
         file_list: data.image_data.map((item: any, index: number) => {
           return {
@@ -930,7 +974,7 @@ export default Vue.extend({
         })
       }
       this.have_part = this.productInfo.part_data.length > 0
-      this.getUnit([data.category_id as number, data.type_id as number])
+      this.getUnit([data.category_id as number, data.secondary_category_id as number])
     }
   },
   mounted() {

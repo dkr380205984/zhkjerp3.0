@@ -8,37 +8,54 @@
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input placeholder="筛选"></el-input>
-          </div>
-          <div class="elCtn">
-            <el-input placeholder="筛选"></el-input>
+            <el-cascader placeholder="请选择订购供货商"
+              v-model="search_client_id"
+              :options="orderClientList"
+              @change="changeRouter"
+              clearable>
+            </el-cascader>
           </div>
           <div class="btn backHoverBlue fr"
-            @click="addFlag = true">添加订购商</div>
+            @click="addFlag = true">添加预订购</div>
         </div>
         <div class="list"
           v-loading="loading">
           <div class="row title">
-            <div class="col">公司名称</div>
-            <div class="col">原料类型</div>
             <div class="col">年份</div>
-            <div class="col">预定总数</div>
+            <div class="col">类型</div>
+            <div class="col">公司名称</div>
+            <div class="col">预定数量</div>
+            <div class="col">入库物料</div>
+            <div class="col">入库数量</div>
             <div class="col">备注信息</div>
             <div class="col">操作</div>
           </div>
           <div class="row"
             v-for="item in list"
             :key="item.id">
-            <div class="col">{{item.client_name}}</div>
-            <div class="col">{{item.material_type}}</div>
             <div class="col">{{item.year}}</div>
+            <div class="col">{{item.material_type|filterMaterialType}}</div>
+            <div class="col">{{item.client_name}}</div>
             <div class="col">{{item.total_number}}</div>
-            <div class="col">{{item.desc}}</div>
+            <div class="col">没数据</div>
+            <div class="col">没数据</div>
+            <div class="col">{{item.desc||'无'}}</div>
             <div class="col oprCtn">
               <div class="opr hoverBlue"
                 @click="$router.push('/materialPlanOrder/detail?id='+item.id)">详情</div>
+              <div class="opr hoverRed"
+                @click="deleteMaterialPlanOrder(item.id)">删除</div>
             </div>
           </div>
+        </div>
+        <div class="pageCtn">
+          <el-pagination background
+            :page-size="5"
+            layout="prev, pager, next"
+            :total="total"
+            :current-page.sync="page"
+            @current-change="changeRouter">
+          </el-pagination>
         </div>
       </div>
     </div>
@@ -118,7 +135,7 @@
 import Vue from 'vue'
 import { MaterialPlanOrderClient } from '@/types/materialPlanOrder'
 import { CascaderInfo } from '@/types/vuex'
-import { materialPlanOrder } from '@/assets/js/api'
+import { materialOrder, materialPlanOrder } from '@/assets/js/api'
 export default Vue.extend({
   data(): {
     materialPlanOrderClient: MaterialPlanOrderClient
@@ -128,6 +145,7 @@ export default Vue.extend({
       addFlag: false,
       list: [],
       keyword: '',
+      search_client_id: [],
       client_id: [],
       date: [],
       total: 1,
@@ -142,22 +160,34 @@ export default Vue.extend({
       }
     }
   },
+  filters: {
+    filterMaterialType(type: 1 | 2 | 3) {
+      const typeArr = ['', '纱线', '面料', '毛料']
+      return typeArr[type]
+    }
+  },
+  watch: {
+    $route() {
+      this.getFilters()
+      this.getList()
+    }
+  },
   methods: {
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)
-      this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
+      this.search_client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.keyword = query.keyword || ''
       this.date = query.date ? (query.date as string).split(',') : []
     },
     changeRouter() {
       this.$router.push(
-        '/order/list?page=' +
+        '/materialPlanOrder/list?page=' +
           this.page +
           '&keyword=' +
           this.keyword +
           '&client_id=' +
-          this.client_id +
+          this.search_client_id +
           '&date=' +
           this.date
       )
@@ -169,7 +199,7 @@ export default Vue.extend({
         type: 'warning'
       })
         .then(() => {
-          this.client_id = []
+          this.search_client_id = []
           this.keyword = ''
           this.date = []
           this.changeRouter()
@@ -187,7 +217,7 @@ export default Vue.extend({
         .list({
           order_type: 1,
           keyword: this.keyword,
-          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
+          client_id: this.search_client_id.length > 0 ? this.search_client_id[2] : '',
           page: this.page,
           limit: 5,
           start_time: this.date.length > 0 ? this.date[0] : '',
@@ -227,6 +257,27 @@ export default Vue.extend({
           }
         })
       }
+    },
+    deleteMaterialPlanOrder(id: number) {
+      this.$confirm('是否删除该预订购单?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          materialPlanOrder.delete({ id }).then((res) => {
+            if (res.data.status) {
+              this.$message.success('删除成功')
+              this.getList()
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消重置'
+          })
+        })
     }
   },
   computed: {

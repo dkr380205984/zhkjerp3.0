@@ -79,12 +79,18 @@
             <div class="otherInfoCtn">
               <div class="otherInfo">
                 <div class="btn backHoverBlue">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
                   <span class="text">加工计划</span>
                 </div>
                 <div class="btn backHoverOrange"
                   @click="getProductionPlan">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
                   <span class="text">内部派单</span>
                 </div>
               </div>
@@ -191,12 +197,18 @@
             <div class="otherInfoCtn">
               <div class="otherInfo">
                 <div class="btn backHoverOrange">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
                   <span class="text">修改单据</span>
                 </div>
                 <div class="btn backHoverRed"
                   @click="deleteProductionPlan(item.id)">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
                   <span class="text">删除单据</span>
                 </div>
               </div>

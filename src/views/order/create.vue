@@ -39,7 +39,7 @@
             <div class="info elCtn">
               <el-select placeholder="请选择公司联系人"
                 v-model="orderInfo.contacts_id"
-                no-data-text="请先选择报价公司">
+                no-data-text="请先选择下单公司">
                 <el-option v-for="item in contactsList"
                   :key="item.id"
                   :value="item.id"
@@ -66,11 +66,11 @@
           </div>
           <div class="col">
             <div class="label">
-              <span class="text">结算单位</span>
+              <span class="text">下单币种</span>
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-select placeholder="请选择结算单位"
+              <el-select placeholder="请选择下单币种"
                 v-model="orderInfo.settle_unit">
                 <el-option v-for="item in unitArr"
                   :key="item.name"
@@ -85,7 +85,7 @@
           </div>
           <div class="col">
             <div class="label">
-              <span class="text">结算汇率
+              <span class="text">币种汇率
                 <el-tooltip class="item"
                   effect="dark"
                   content="点击查看实时汇率"
@@ -151,7 +151,7 @@
             :key="index">
             <div class="tcol">
               <span>{{item.product_code||item.system_code}}</span>
-              <span class="gray">({{item.category}}/{{item.type}})</span>
+              <span class="gray">({{item.category}}/{{item.secondary_category}})</span>
             </div>
             <div class="tcol">{{item.name}}</div>
             <div class="tcol">
@@ -206,6 +206,51 @@
             @click="getProductDetail(item)"></span>
           <span class="el-icon-delete deleteIcon hoverRed"
             @click="$deleteItem(productList,index)"></span>
+        </div>
+      </div>
+    </div>
+    <div class="module"
+      v-if="quotedPriceProductList.length>0">
+      <div class="titleCtn">
+        <div class="title">报价样品表</div>
+      </div>
+      <div class="tableCtn">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol">序号</div>
+            <div class="tcol">样品品类</div>
+            <div class="tcol">样品图片</div>
+            <div class="tcol">实际报价</div>
+            <div class="tcol">样品描述</div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow"
+            v-for="(item,index) in quotedPriceProductList"
+            :key="item.id">
+            <div class="tcol">{{index+1}}</div>
+            <div class="tcol">{{item.category_name}}/{{item.secondary_category}}</div>
+            <div class="tcol">
+              <div class="imageCtn">
+                <el-image style="width:100%;height:100%"
+                  :src="item.image_data.length>0?item.image_data[0]:''"
+                  :preview-src-list="item.image_data">
+                  <div slot="error"
+                    class="image-slot">
+                    <i class="el-icon-picture-outline"
+                      style="font-size:42px"></i>
+                  </div>
+                </el-image>
+              </div>
+            </div>
+            <div class="tcol">{{item.client_target_price}}元</div>
+            <div class="tcol">{{item.desc}}</div>
+            <div class="tcol oprCtn">
+              <div class="opr hoverBlue"
+                @click="supplementInfo(item)">补充信息</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -500,7 +545,7 @@
                   <span>上传图片</span>
                 </div>
                 <div slot="tip"
-                  class="el-upload__tip">只能上传一张jpg/png图片文件，且不超过10M</div>
+                  class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M</div>
               </el-upload>
             </div>
           </div>
@@ -533,7 +578,9 @@
       :id="proId"
       :show="addProductFlag"
       @close="addProductFlag = false"
-      @afterSave="getNewProduct"></product-edit>
+      @afterSave="getNewProduct"
+      :quote_rel_product_id="quotedPriceProductInfo.id"
+      :quote_rel_product_data="quotedPriceProductInfo"></product-edit>
     <product-detail :data="productDetail"
       :show="productShow"
       @close="productShow = false"></product-detail>
@@ -544,9 +591,10 @@
 import Vue from 'vue'
 import { OrderInfo, OrderTime } from '@/types/order'
 import { SampleOrderInfo, SampleOrderTime } from '@/types/sampleOrder'
+import { QuotedPriceInfo } from '@/types/quotedPrice'
 import { moneyArr } from '@/assets/js/dictionary'
 import { ProductInfo } from '@/types/product'
-import { client, order, sampleOrder } from '@/assets/js/api'
+import { client, order, sampleOrder, quotedPrice } from '@/assets/js/api'
 import { SampleInfo } from '@/types/sample'
 interface OrderCreate extends OrderInfo {
   time_data: OrderTime
@@ -566,6 +614,12 @@ export default Vue.extend({
     return {
       loading: false,
       unitArr: moneyArr,
+      quotedPriceProductInfo: {
+        id: '',
+        category_id: '',
+        secondary_category_id: ''
+      },
+      quotedPriceProductList: [], // 报价单的产品描述
       orderInfo: {
         id: null,
         client_id: '',
@@ -634,7 +688,7 @@ export default Vue.extend({
         style_code: '', // 客户款号
         unit: '',
         category_id: '',
-        type_id: '',
+        secondary_category_id: '',
         type: [], // 品类下拉框
         image_data: [],
         desc: '',
@@ -682,7 +736,7 @@ export default Vue.extend({
         style_code: '', // 客户款号
         unit: '',
         category_id: '',
-        type_id: '',
+        secondary_category_id: '',
         type: [], // 品类下拉框
         image_data: [],
         desc: '',
@@ -782,6 +836,30 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 报价单转样单逻辑
+    getQuotedPrice() {
+      if (this.$route.query.quotedPriceId) {
+        this.loading = true
+        quotedPrice
+          .detail({
+            id: Number(this.$route.query.quotedPriceId)
+          })
+          .then((res) => {
+            const quotedPriceInfo: QuotedPriceInfo = res.data.data
+            this.orderInfo.tree_data = (quotedPriceInfo.tree_data as string).split(',').map((item) => Number(item))
+            this.getContacts(this.orderInfo.tree_data as number[])
+            this.orderInfo.contacts_id = quotedPriceInfo.contacts_id
+            this.orderInfo.group_id = quotedPriceInfo.group_id
+            this.quotedPriceProductList = quotedPriceInfo.product_data
+            this.loading = false
+          })
+      }
+    },
+    supplementInfo(productInfo: ProductInfo) {
+      this.addProductFlag = true
+      this.quotedPriceProductInfo = productInfo
+      console.log(this.quotedPriceProductInfo)
+    },
     // 样品转产品
     changeToPro(id: number) {
       this.pid = id
@@ -800,15 +878,24 @@ export default Vue.extend({
           })
         })
       })
+      info.product_info = info.size_color_list.map((item: any) => {
+        return {
+          size_color: item.value,
+          size_id: item.size_color.split('/')[0],
+          color_id: item.size_color.split('/')[1],
+          number: '',
+          price: 0
+        }
+      })
     },
     getContacts(ev: number[]) {
+      this.orderInfo.contacts_id = ''
       client
         .detail({
           id: ev[2]
         })
         .then((res) => {
           if (res.data.status) {
-            this.orderInfo.contacts_id = ''
             this.contactsList = res.data.data.contacts_data
           }
         })
@@ -943,6 +1030,7 @@ export default Vue.extend({
         order.create(this.orderInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
+            this.$router.push('/order/list?page=1&keyword=&client_id=&user_id=&status=null&date=')
           }
         })
       }
@@ -967,6 +1055,8 @@ export default Vue.extend({
         getInfoApi: 'getOrderTypeAsync'
       }
     ])
+    // 报价单转订单
+    this.getQuotedPrice()
     // 是否样单转订单
     if (this.$route.query.sampleOrderId) {
       this.loading = true
@@ -979,9 +1069,9 @@ export default Vue.extend({
         })
       ]).then((res) => {
         const sampleOrderInfo: SampleOrderDetail = res[0].data.data
-        // this.orderInfo.tree_data = (sampleOrderInfo.tree_data as string).split(',').map((item) => Number(item))
-        // this.getContacts(this.orderInfo.tree_data)
-        // this.orderInfo.contacts_id = sampleOrderInfo.contacts_id
+        this.orderInfo.tree_data = sampleOrderInfo.tree_data
+        this.getContacts(this.orderInfo.tree_data as number[])
+        this.orderInfo.contacts_id = sampleOrderInfo.contacts_id
         this.orderInfo.group_id = sampleOrderInfo.group_id
         this.confirmSampleInfo = res[1].data.data
         this.loading = false

@@ -2,6 +2,8 @@
 @import '../popup.less';
 @import '../list.less';
 @import '../fixedTable.less';
+@import '../table.less';
+@import '../edit.less';
 #setting{
  .settingCtn{
     display: flex;
@@ -168,6 +170,54 @@
       &.hasMargin{
         margin-right: 12px;
       }
+    }
+  }
+  .editCtn{
+    padding: 0;
+    .label{
+      text-align: left;
+    }
+    .col{
+      margin-right: 12px;
+    }
+    .opr{
+      transform: translate(0px, 100%);
+      top: -28px;
+    }
+  }
+  .tableCtn{
+    padding: 0;
+    padding-bottom: 12px;
+  }
+  .companySetting{
+    padding: 20px;
+    overflow: auto;
+    .row{
+      display: flex;
+      margin-bottom: 16px;
+      .label{
+        width: 6em;
+        font-size: @fontMiddle;
+        color: @font65;
+        line-height: 32px;
+      }
+      .content{
+        min-height: 32px;
+        .input-item{
+          width: 600px;
+        }
+      }
+      .prompt{
+        font-size: @fontSmall;
+        color: @font45;
+      }
+    }
+    .btnCtn{
+      margin-top: 32px;
+      display: flex;
+      flex-direction: row;
+      width: 682px;
+      justify-content: flex-end;
     }
   }
 }

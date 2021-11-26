@@ -48,6 +48,7 @@ export interface MaterialStockLog {
 }
 export interface MaterialStockInfo {
   id?: number
+  order_id?: string | number
   action_type: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
   rel_doc_type?: string
   rel_doc_id: string | number

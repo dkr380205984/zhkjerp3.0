@@ -14,21 +14,21 @@
           </div>
           <div class="col">
             <div class="label">打样公司：</div>
-            <div class="text">{{sampleOrderInfo.code}}</div>
+            <div class="text">{{sampleOrderInfo.client_name}}</div>
           </div>
           <div class="col">
             <div class="label">联系人：</div>
-            <div class="text">{{sampleOrderInfo.code}}</div>
+            <div class="text">{{sampleOrderInfo.contacts_name}}</div>
           </div>
         </div>
         <div class="row">
           <div class="col">
             <div class="label">负责小组：</div>
-            <div class="text">{{sampleOrderInfo.code}}</div>
+            <div class="text">{{sampleOrderInfo.group_name}}</div>
           </div>
           <div class="col">
             <div class="label">备注信息：</div>
-            <div class="text">{{sampleOrderInfo.code}}</div>
+            <div class="text">{{sampleOrderInfo.desc}}</div>
           </div>
           <div class="col">
             <!-- 占位符 -->
@@ -59,7 +59,7 @@
             :key="index">
             <div class="tcol">
               <span>{{item.product_code || item.system_code}}</span>
-              <span class="gray">({{item.category}}/{{item.type}})</span>
+              <span class="gray">({{item.category}}/{{item.secondary_category}})</span>
             </div>
             <div class="tcol">{{item.name}}</div>
             <div class="tcol">
@@ -83,7 +83,7 @@
               <div class="opr hoverBlue"
                 @click="getSampleDetail(item.product_id)">详情</div>
               <div class="opr hoverOrange"
-                @click="getSampleUpdate(item.product_id)">修改</div>
+                @click="getSampleUpdate(item.product_id)">新增修改意见</div>
             </div>
           </div>
         </div>
@@ -118,8 +118,8 @@
                   <el-select v-model="item.product_id"
                     placeholder="选择样品"
                     @change="getColour($event,item)"
-                    no-data-text="请先添加/导入样品">
-                    <el-option v-for="item in sampleList"
+                    no-data-text="请先添加修改意见">
+                    <el-option v-for="item in sampleUpdateList"
                       :key="item.product_id"
                       :value="item.product_id"
                       :label="item.system_code + '/' + item.name"></el-option>
@@ -299,6 +299,7 @@
       @close="sampleShow = false"></sample-detail>
     <sample-edit :pid="sampleId"
       :id="sampleId"
+      :ifIdea="true"
       :show="editSampleShow"
       @close="editSampleShow = false"
       @afterSave="getNewSample"></sample-edit>
@@ -326,7 +327,7 @@ export default Vue.extend({
       editSampleShow: false,
       sampleId: '',
       sampleShow: false,
-      sampleOrderIndex: 0,
+      sampleUpdateList: [],
       sampleOrderInfo: {
         id: null,
         client_id: '',
@@ -484,6 +485,15 @@ export default Vue.extend({
           })
         })
       })
+      info.product_info = info.size_color_list.map((item: any) => {
+        return {
+          size_color: item.value,
+          size_id: item.value.split('/')[0],
+          color_id: item.value.split('/')[1],
+          number: '',
+          price: 0
+        }
+      })
     },
     // 样品修改保存后，把原先跟旧样品相关的信息替换成新的样品
     getNewSample(sample: SampleInfoExtend) {
@@ -509,6 +519,7 @@ export default Vue.extend({
       sample.product_id = sample.id as number
       this.sampleList[index] = sample
       this.sampleList[index].if_update = true
+      this.sampleUpdateList = this.sampleList.filter((item) => item.if_update)
       // 关闭修改窗口
       this.editSampleShow = false
     },
@@ -520,6 +531,7 @@ export default Vue.extend({
       this.sampleOrderTime.total_number = this.totalNumber
       this.sampleOrderTime.total_price = this.totalPrice
       this.sampleOrderTime.batch_data[0].product_data.forEach((item) => {
+        item.pid_status = 3
         item.product_info.forEach((itemChild) => {
           itemChild.size_id = itemChild.size_color!.split('/')[0]
           itemChild.color_id = itemChild.size_color!.split('/')[1]
@@ -528,6 +540,14 @@ export default Vue.extend({
     },
     saveSampleOrder() {
       const formCheck =
+        this.sampleList.some((item) => {
+          return this.$formCheck(item, [
+            {
+              key: 'if_update',
+              errMsg: '请对客户确认修改样品进行修改或给出修改意见后提交'
+            }
+          ])
+        }) ||
         this.$formCheck(this.sampleOrderTime, [
           {
             key: 'order_type_id',
@@ -552,10 +572,10 @@ export default Vue.extend({
                   key: 'size_color',
                   errMsg: '请选择尺码颜色'
                 },
-                {
-                  key: 'price',
-                  errMsg: '请输入打样单价'
-                },
+                // {
+                //   key: 'price',
+                //   errMsg: '请输入打样单价'
+                // },
                 {
                   key: 'number',
                   errMsg: '请输入打样数量'
@@ -575,6 +595,7 @@ export default Vue.extend({
         sampleOrder.again(this.sampleOrderTime).then((res) => {
           if (res.data.status) {
             this.$message.success('保存成功')
+            this.$router.push('/sampleOrder/detail?id=' + this.$route.query.id)
           }
         })
       }
@@ -588,21 +609,19 @@ export default Vue.extend({
         getInfoApi: 'getSampleOrderTypeAsync'
       }
     ])
-    // sampleOrderIndex标记是从哪一次打样进来继续打样的
-    this.sampleOrderIndex = this.$route.query.sampleOrderIndex
-    sampleOrder
-      .detail({
+    Promise.all([
+      sampleOrder.detail({
         id: Number(this.$route.query.id)
+      }),
+      sampleOrder.confirmList({
+        order_id: Number(this.$route.query.id),
+        status: [6]
       })
-      .then((res) => {
-        if (res.data.status) {
-          this.sampleOrderInfo = res.data.data
-          this.sampleList = (this.sampleOrderInfo.time_data as any[])[
-            this.sampleOrderIndex
-          ].batch_data[0].product_data.filter((item: { status: number }) => item.status === 1) as SampleInfoExtend[]
-        }
-        this.loading = false
-      })
+    ]).then((res) => {
+      this.sampleOrderInfo = res[0].data.data
+      this.sampleList = res[1].data.data as SampleInfoExtend[]
+      this.loading = false
+    })
   }
 })
 </script>

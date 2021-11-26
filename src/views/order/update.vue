@@ -66,11 +66,11 @@
           </div>
           <div class="col">
             <div class="label">
-              <span class="text">结算单位</span>
+              <span class="text">报价币种</span>
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-select placeholder="请选择结算单位"
+              <el-select placeholder="请选择报价币种"
                 v-model="orderInfo.settle_unit">
                 <el-option v-for="item in unitArr"
                   :key="item.name"
@@ -432,7 +432,7 @@
                   <span>上传图片</span>
                 </div>
                 <div slot="tip"
-                  class="el-upload__tip">只能上传一张jpg/png图片文件，且不超过10M</div>
+                  class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M</div>
               </el-upload>
             </div>
           </div>
@@ -559,7 +559,7 @@ export default Vue.extend({
         style_code: '', // 客户款号
         unit: '',
         category_id: '',
-        type_id: '',
+        secondary_category_id: '',
         type: [], // 品类下拉框
         image_data: [],
         desc: '',
@@ -670,7 +670,7 @@ export default Vue.extend({
             name: itemPro.name as string,
             product_code: itemPro.product_code,
             category: itemPro.category,
-            type: itemPro.type,
+            secondary_category: itemPro.secondary_category,
             size_data: itemPro.size_data!,
             color_data: itemPro.color_data!,
             part_data: [],
@@ -836,6 +836,7 @@ export default Vue.extend({
         order.create(this.orderInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('修改成功')
+            this.$router.push('/order/detail?id=' + this.$route.query.id)
           }
         })
       }

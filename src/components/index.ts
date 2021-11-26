@@ -10,6 +10,7 @@ import colorPicker from './colorPicker/colorPicker.vue'
 import orderDetail from './orderDetail/orderDetail.vue'
 import zhList from './zhList/zhList.vue'
 import zhCheck from './zhCheck/zhCheck.vue'
+import othersFeeData from './othersFeeData/othersFeeData.vue'
 export default {
   install: (Vue: any) => {
     Vue.component('zhNav', zhNav)
@@ -24,5 +25,6 @@ export default {
     Vue.component('orderDetail', orderDetail)
     Vue.component('zhList', zhList)
     Vue.component('zhCheck', zhCheck)
+    Vue.component('othersFeeData', othersFeeData)
   }
 }

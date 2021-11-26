@@ -46,7 +46,6 @@
           <div class="col">
             <div class="label">
               <span class="text">公司联系人</span>
-              <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
               <el-select placeholder="请选择公司联系人"
@@ -62,7 +61,6 @@
           <div class="col">
             <div class="label">
               <span class="text">负责小组/人</span>
-              <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
               <el-select placeholder="请选择负责小组/人"
@@ -222,6 +220,7 @@ export default Vue.extend({
   },
   methods: {
     getContacts(ev: number[]) {
+      this.sampleOrderInfo.contacts_id = ''
       client
         .detail({
           id: ev[2]
@@ -232,11 +231,12 @@ export default Vue.extend({
           }
         })
     },
-    saveSampleOrder(ifCaogao: boolean) {
+    saveSampleOrder() {
       // 新旧图拼接
       this.sampleOrderInfo.public_files = this.sampleOrderInfo.public_files.concat(
         this.file_list.map((item: any) => item.url)
       )
+      this.sampleOrderInfo.client_id = this.sampleOrderInfo.tree_data[2]
       // @ts-ignore
       this.sampleOrderInfo.time_data = null
       this.loading = true
@@ -304,9 +304,10 @@ export default Vue.extend({
         id: Number(this.$route.query.id)
       })
       .then((res) => {
-        this.sampleOrderInfo = res.data.data
+        this.sampleOrderInfo = this.$clone(res.data.data)
         this.sampleOrderInfo.time_data = res.data.data.time_data[0]
         this.getContacts(this.sampleOrderInfo.tree_data as number[])
+        this.sampleOrderInfo.contacts_id = res.data.data.contacts_id
         // 把public_files的东西放到file_list里，因为后台给的文件和upload组件需要的数据结构不同
         this.file_list = res.data.data.public_files.map((item: any, index: number) => {
           return {

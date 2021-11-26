@@ -285,6 +285,14 @@ export default Vue.extend({
         client.create(this.clientInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
+            // 更新缓存
+            this.$checkCommonInfo([
+              {
+                checkWhich: 'api/clientType',
+                getInfoMethed: 'dispatch',
+                getInfoApi: 'getClientTypeAsync'
+              }
+            ])
           }
         })
       }

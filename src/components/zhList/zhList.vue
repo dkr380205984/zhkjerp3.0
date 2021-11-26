@@ -23,7 +23,7 @@
               v-if="itemKey.ifCaogao"
               :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?'是':'否'}}</span>
             <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')">
-              {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] || '未填写'}}{{itemKey.unit}}</span>
+              {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unit}}</span>
           </template>
           <!-- 图片元素 -->
           <template v-if="!itemKey.from && itemKey.ifImage">
@@ -42,7 +42,7 @@
               <i class="el-icon-caret-bottom"
                 @click="changeIndex(2,item[itemKey.from].length,item)"></i>
             </div>
-            {{item[itemKey.from][item.whichIndex||0][itemKey.key] || '未填写'}}
+            {{item[itemKey.from][item.whichIndex||0][itemKey.key] || item[itemKey.from][item.whichIndex||0][itemKey.otherkey] || (itemKey.errVal||'未填写')}}
           </template>
           <template v-if="itemKey.from && itemKey.ifImage">
             <div class="imageCtn">
@@ -76,9 +76,9 @@
             <template v-if="!itemKey.from && !item.ifImage">
               <span class="circle"
                 v-if="itemKey.ifCaogao"
-                :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?'草':'整'}}</span>
+                :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?itemKey.caogaoArr[0]:itemKey.caogaoArr[1]}}</span>
               <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')">
-                {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] || '未填写'}}{{itemKey.unit}}</span>
+                {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] || item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unit}}</span>
             </template>
           </div>
         </div>
@@ -134,6 +134,7 @@ export default Vue.extend({
       if (length === 1) {
         return
       }
+      item.whichIndex = item.whichIndex || 0
       if (type === 1) {
         if (item.whichIndex < length - 1) {
           item.whichIndex++

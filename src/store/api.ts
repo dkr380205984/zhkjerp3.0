@@ -7,7 +7,7 @@ import { ProcessInfo } from '@/types/processSetting'
 import { ClientTypeInfo } from '@/types/client'
 import { GroupInfo } from '@/types/factoryInfoSetting'
 import { StyleInfo, IngredientInfo, ColourInfo } from '@/types/productSetting'
-import { productType, yarnType, clientType, decorateMaterial, packMaterial, process, group, style, colour, ingredient, orderType, yarnColor, yarn, user } from '@/assets/js/api'
+import { category, yarnType, clientType, decorateMaterial, packMaterial, process, group, style, colour, ingredient, orderType, yarnColor, yarn, user } from '@/assets/js/api'
 import { OrderType } from '@/types/orderSetting'
 
 const apiState: ApiState = {
@@ -182,16 +182,16 @@ const apiActions = {
     })
   },
   getProductTypeAsync(content: ActionContext<ApiState, any>) {
-    productType.list().then((res) => {
+    category.list().then((res) => {
       if (res.data.status) {
         // 直接把数据处理成级联选择器需要的数据
-        const cascaderData: CascaderInfo = res.data.data.items.map((item: { id: any; name: any; unit: any; child_info: any[], size: any[] }) => {
+        const cascaderData: CascaderInfo = res.data.data.map((item: { id: any; name: any; unit: any; secondary_category: any[], size: any[] }) => {
           return {
             value: item.id,
             label: item.name,
             unit: item.unit,
             size: item.size,
-            children: item.child_info.map((itemChild) => {
+            children: item.secondary_category.map((itemChild) => {
               return {
                 value: itemChild.id,
                 label: itemChild.name

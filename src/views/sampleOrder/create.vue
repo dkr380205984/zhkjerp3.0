@@ -62,12 +62,12 @@
           <div class="col">
             <div class="label">
               <span class="text">公司联系人</span>
-              <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
               <el-select placeholder="请选择公司联系人"
                 v-model="sampleOrderInfo.contacts_id"
-                no-data-text="请先选择报价公司">
+                no-data-text="请先选择下单公司"
+                clearable>
                 <el-option v-for="item in contactsList"
                   :key="item.id"
                   :value="item.id"
@@ -78,11 +78,11 @@
           <div class="col">
             <div class="label">
               <span class="text">负责小组/人</span>
-              <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
               <el-select placeholder="请选择负责小组/人"
-                v-model="sampleOrderInfo.group_id">
+                v-model="sampleOrderInfo.group_id"
+                clearable>
                 <el-option v-for="item in groupList"
                   :key="item.id"
                   :value="item.id"
@@ -114,7 +114,7 @@
             v-for="(item,index) in quotedPriceProductList"
             :key="item.id">
             <div class="tcol">{{index+1}}</div>
-            <div class="tcol">{{item.category_name}}/{{item.type_name}}</div>
+            <div class="tcol">{{item.category_name}}/{{item.secondary_category}}</div>
             <div class="tcol">
               <div class="imageCtn">
                 <el-image style="width:100%;height:100%"
@@ -152,7 +152,7 @@
         <div class="once"
           v-for="(item,index) in sampleList"
           :key="item.id">
-          <span class="text">{{item.product_code || item.system_code}}</span>
+          <span class="text">{{item.product_code || item.system_code}}/({{item.category}}/{{item.secondary_category}})</span>
           <span class="el-icon-view detailIcon hoverBlue"
             @click="getSampleDetail(item)"></span>
           <span class="el-icon-delete deleteIcon hoverRed"
@@ -193,7 +193,7 @@
                     <el-option v-for="item in sampleList"
                       :key="item.id"
                       :value="item.id"
-                      :label="item.system_code + '/' + item.name"></el-option>
+                      :label="item.system_code + '/' + (item.name ||'无样品名称')"></el-option>
                   </el-select>
                 </div>
               </div>
@@ -408,7 +408,7 @@ export default Vue.extend({
         style_code: '', // 客户款号
         unit: '',
         category: '',
-        type: '',
+        secondary_category: '',
         image_data: [],
         desc: '',
         style_data: [], // 款式
@@ -587,8 +587,18 @@ export default Vue.extend({
           })
         })
       })
+      info.product_info = info.size_color_list.map((item: any) => {
+        return {
+          size_color: item.value,
+          size_id: item.value.split('/')[0],
+          color_id: item.value.split('/')[1],
+          number: '',
+          price: 0
+        }
+      })
     },
     getContacts(ev: number[]) {
+      this.sampleOrderInfo.contacts_id = ''
       client
         .detail({
           id: ev[2]
@@ -652,14 +662,6 @@ export default Vue.extend({
               key: 'tree_data',
               errMsg: '请选择打样公司',
               regNormal: 'checkArr'
-            },
-            {
-              key: 'contacts_id',
-              errMsg: '请选择联系人'
-            },
-            {
-              key: 'group_id',
-              errMsg: '请选择负责小组'
             }
           ]) ||
           this.$formCheck(this.sampleOrderInfo.time_data, [
@@ -690,10 +692,10 @@ export default Vue.extend({
                     key: 'size_color',
                     errMsg: '请选择尺码颜色'
                   },
-                  {
-                    key: 'price',
-                    errMsg: '请输入打样单价'
-                  },
+                  // {
+                  //   key: 'price',
+                  //   errMsg: '请输入打样单价'
+                  // },
                   {
                     key: 'number',
                     errMsg: '请输入打样数量'
@@ -739,7 +741,7 @@ export default Vue.extend({
           sampleOrder.create(this.sampleOrderInfo).then((res) => {
             if (res.data.status) {
               this.$message.success('已保存第一次打样为草稿信息,请在详情页及时完善信息')
-              this.$router.push('/sampleOrder/list?page=1&keyword=&client_id=&user_id=&status=0&date=')
+              this.$router.push('/sampleOrder/list?page=1&keyword=&client_id=&user_id=&status=null0&date=')
             }
             this.loading = false
           })

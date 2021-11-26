@@ -26,7 +26,7 @@
               <div class="col">
                 <div class="label">搜索样品号查询</div>
                 <div class="info elCtn">
-                  <el-input placeholder="输入ABC查询有数据"
+                  <el-input placeholder="输入样品号查询"
                     v-model="searchSampleCode"
                     @keydown.enter.native="searchSample">
                     <el-button slot="append"
@@ -44,7 +44,7 @@
                     v-model="searchSampleOrderCode">
                     <el-button slot="append"
                       icon="el-icon-search"
-                      @click="$message.error('没做')"></el-button>
+                      @click="searchSample"></el-button>
                   </el-input>
                 </div>
               </div>
@@ -147,27 +147,28 @@
                 </div>
               </div>
             </div>
-            <div class="row">
+            <div class="row"
+              v-for="(item,index) in sampleInfo.color_data"
+              :key="index">
               <div class="col">
-                <div class="label">
+                <div class="label"
+                  v-if="index===0">
                   <span class="text">样品配色组</span>
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-select placeholder="请选择样品配色组"
-                    multiple
-                    filterable
-                    v-model="sampleInfo.color_data">
-                    <el-option v-for="item in colourList"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"></el-option>
-                  </el-select>
+                  <el-autocomplete class="inline-input"
+                    v-model="sampleInfo.color_data[index]"
+                    :fetch-suggestions="searchColour"
+                    placeholder="请输入样品配色"></el-autocomplete>
                 </div>
               </div>
-              <div class="col">
-                <!-- 占位 -->
-              </div>
+              <div class="opr hoverBlue"
+                v-if="index===0"
+                @click="$addItem(sampleInfo.color_data)">添加</div>
+              <div class="opr hoverRed"
+                v-if="index>0"
+                @click="$deleteItem(sampleInfo.color_data,index)">删除</div>
             </div>
             <div class="row">
               <div class="col">
@@ -190,7 +191,7 @@
                       <span>上传图片</span>
                     </div>
                     <div slot="tip"
-                      class="el-upload__tip">只能上传一张jpg/png图片文件，且不超过10M</div>
+                      class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M</div>
                   </el-upload>
                 </div>
               </div>
@@ -203,6 +204,18 @@
                 <div class="info elCtn">
                   <el-input v-model="sampleInfo.desc"
                     placeholder="请输入样品其它描述或备注"></el-input>
+                </div>
+              </div>
+            </div>
+            <div class="row"
+              v-if="ifIdea">
+              <div class="col">
+                <div class="label">
+                  <span class="text">修改意见</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input v-model="sampleInfo.client_edit_idea"
+                    placeholder="请输入修改意见"></el-input>
                 </div>
               </div>
             </div>
@@ -497,6 +510,12 @@ export default Vue.extend({
       type: Boolean,
       default: false,
       required: false
+    },
+    // 是否有修改意见
+    ifIdea: {
+      type: Boolean,
+      default: false,
+      required: false
     }
   },
   data(): {
@@ -506,7 +525,7 @@ export default Vue.extend({
   } {
     return {
       loading: false,
-      have_part: true,
+      have_part: false,
       need_import: false,
       searchSampleOrderCode: '', // 搜样单编号导入
       searchSampleCode: '', // 搜样品编号导入
@@ -528,7 +547,7 @@ export default Vue.extend({
         style_code: '', // 客户款号
         unit: '',
         category_id: '',
-        type_id: '',
+        secondary_category_id: '',
         type: [], // 品类下拉框
         image_data: [],
         file_list: [],
@@ -547,7 +566,7 @@ export default Vue.extend({
             weight: ''
           }
         ], // 尺码组
-        color_data: [], // 配色组
+        color_data: [''], // 配色组
         // 配件信息
         part_data: [
           {
@@ -567,7 +586,8 @@ export default Vue.extend({
               }
             ]
           }
-        ]
+        ],
+        client_edit_idea: ''
       }
     }
   },
@@ -581,8 +601,13 @@ export default Vue.extend({
     ingredientList(): Array<{ name: string; id: number }> {
       return this.$store.state.api.ingredient.arr
     },
-    colourList(): Array<{ name: string; id: number }> {
-      return this.$store.state.api.colour.arr
+    colourList(): Array<{ value: string; label: string }> {
+      return this.$store.state.api.colour.arr.map((item: { name: any }) => {
+        return {
+          value: item.name,
+          label: item.name
+        }
+      })
     },
     productStyleList(): Array<{ name: string; id: number }> {
       return this.$store.state.api.productStyle.arr
@@ -598,7 +623,7 @@ export default Vue.extend({
           const quotedPriceProductInfo = this.quote_rel_product_data as SampleInfo
           this.sampleInfo.type = [
             quotedPriceProductInfo.category_id as number,
-            quotedPriceProductInfo.type_id as number
+            quotedPriceProductInfo.secondary_category_id as number
           ]
           this.getUnit(this.sampleInfo.type)
           this.sampleInfo.desc = quotedPriceProductInfo.desc
@@ -622,6 +647,16 @@ export default Vue.extend({
     }
   },
   methods: {
+    searchColour(str: string, cb: any) {
+      let results = str ? this.colourList.filter(this.createFilter(str)) : this.colourList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    createFilter(queryString: string) {
+      return (restaurant: any) => {
+        return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+      }
+    },
     searchSample() {
       if (this.searchSampleCode) {
         this.loading = true
@@ -630,7 +665,8 @@ export default Vue.extend({
             limit: 99,
             page: 1,
             product_type: 2,
-            product_code: this.searchSampleCode
+            product_code: this.searchSampleCode,
+            order_code: this.searchSampleOrderCode
           })
           .then((res) => {
             if (res.data.status) {
@@ -735,7 +771,7 @@ export default Vue.extend({
         this.sampleInfo.id = null
       }
       this.sampleInfo.category_id = this.sampleInfo.type![0]
-      this.sampleInfo.type_id = this.sampleInfo.type![1]
+      this.sampleInfo.secondary_category_id = this.sampleInfo.type![1]
       this.sampleInfo.image_data = this.sampleInfo.image_data.concat(this.sampleInfo.file_list!.map((item) => item.url)) // 新旧图拼接
       if (this.have_part) {
         this.sampleInfo.part_data.forEach((item) => {
@@ -751,14 +787,10 @@ export default Vue.extend({
       this.$emit('beforeSave', this.sampleInfo)
       const formCheck =
         this.$formCheck(this.sampleInfo, [
-          {
-            key: 'style_code',
-            errMsg: '请输入客户款号'
-          },
-          {
-            key: 'name',
-            errMsg: '请输入样品名称'
-          },
+          // {
+          //   key: 'name',
+          //   errMsg: '请输入样品名称'
+          // },
           {
             key: 'type',
             errMsg: '请选择样品品类',
@@ -873,7 +905,7 @@ export default Vue.extend({
         style_code: '', // 客户款号
         unit: '',
         category_id: '',
-        type_id: '',
+        secondary_category_id: '',
         type: [], // 品类下拉框
         image_data: [],
         file_list: [],
@@ -892,7 +924,7 @@ export default Vue.extend({
             weight: ''
           }
         ], // 尺码组
-        color_data: [], // 配色组
+        color_data: [''], // 配色组
         // 配件信息
         part_data: [
           {
@@ -926,8 +958,8 @@ export default Vue.extend({
         style_code: data.style_code,
         unit: data.unit,
         category_id: data.category_id,
-        type_id: data.type_id,
-        type: [data.category_id as number, data.type_id as number],
+        secondary_category_id: data.secondary_category_id,
+        type: [data.category_id as number, data.secondary_category_id as number],
         image_data: [],
         file_list: data.image_data.map((item: any, index: number) => {
           return {
@@ -950,7 +982,7 @@ export default Vue.extend({
             weight: item.weight
           }
         }), // 尺码组
-        color_data: data.color_data.map((item: any) => item.id), // 配色组
+        color_data: data.color_data.map((item: any) => item.name), // 配色组
         // 配件信息
         part_data: data.part_data.map((item: any) => {
           return {
@@ -973,7 +1005,7 @@ export default Vue.extend({
         })
       }
       this.have_part = this.sampleInfo.part_data.length > 0
-      this.getUnit([data.category_id as number, data.type_id as number])
+      this.getUnit([data.category_id as number, data.secondary_category_id as number])
     }
   },
   mounted() {

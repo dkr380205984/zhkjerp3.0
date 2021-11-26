@@ -9,6 +9,7 @@ export interface MaterialOrderInfo {
   client_name?: string
   order_time: string
   delivery_time: string
+  material_type: 1 | 2 // 1原料2辅料
   others_fee_data: Array<{
     desc: string // 额外费用备注
     name: string

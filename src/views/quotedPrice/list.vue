@@ -14,7 +14,7 @@
           </div>
           <div class="elCtn">
             <el-cascader @change="changeRouter"
-              placeholder="筛选报价公司"
+              placeholder="筛选询价客户"
               v-model="client_id"
               :options="clientList"
               clearable>
@@ -35,12 +35,14 @@
             <el-select @change="changeRouter"
               v-model="status"
               placeholder="筛选报价单状态">
-              <el-option value="0"
+              <el-option :value="null"
                 label="全部"></el-option>
+              <el-option value="0"
+                label="待审核"></el-option>
               <el-option value="1"
                 label="已审核"></el-option>
               <el-option value="2"
-                label="待审核"></el-option>
+                label="已驳回"></el-option>
             </el-select>
           </div>
           <div class="btn borderBtn"
@@ -129,7 +131,7 @@ export default Vue.extend({
       client_id: [],
       user_id: '',
       group_id: '',
-      status: '0',
+      status: null,
       listSettingId: null,
       listKey: [],
       date: [],
@@ -140,6 +142,7 @@ export default Vue.extend({
           ifShow: true,
           ifLock: true,
           ifCaogao: 'is_draft',
+          caogaoArr: ['稿', '整'],
           index: 0
         },
         {
@@ -157,20 +160,11 @@ export default Vue.extend({
           index: 2
         },
         {
-          key: 'contact_name',
+          key: 'contacts_name',
           name: '公司联系人',
           ifShow: true,
           ifLock: false,
           index: 3
-        },
-        {
-          key: 'product_code',
-          name: '产品编号',
-          ifShow: true,
-          ifLock: false,
-          index: 4,
-          from: 'product_data',
-          mark: true
         },
         {
           key: 'image',
@@ -178,7 +172,7 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           ifImage: true,
-          index: 5,
+          index: 4,
           from: 'product_data'
         },
         {
@@ -186,7 +180,8 @@ export default Vue.extend({
           name: '系统合计报价',
           ifShow: true,
           ifLock: false,
-          index: 6,
+          index: 5,
+          errVal: '0',
           unit: '元'
         },
         {
@@ -194,16 +189,17 @@ export default Vue.extend({
           name: '客户实际报价',
           ifShow: true,
           ifLock: false,
-          index: 7,
+          index: 6,
+          errVal: '0',
           unit: '元'
         },
         {
-          key: 'status',
+          key: 'is_check',
           name: '审核状态',
           ifShow: true,
           ifLock: false,
-          index: 8,
-          filterArr: ['待审核', '已审核', '未通过'],
+          index: 7,
+          filterArr: ['待审核', '已审核', '已驳回'],
           classArr: ['orange', 'blue', 'red']
         },
         {
@@ -211,28 +207,28 @@ export default Vue.extend({
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 9
+          index: 8
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 10
+          index: 9
         },
         {
           key: 'settle_unit',
-          name: '结算单位',
+          name: '报价币种',
           ifShow: true,
           ifLock: false,
-          index: 11
+          index: 10
         },
         {
           key: 'created_at',
           name: '创建日期',
           ifShow: true,
           ifLock: false,
-          index: 12
+          index: 11
         }
       ],
       pickerOptions: {
@@ -364,7 +360,7 @@ export default Vue.extend({
       this.page = Number(query.page)
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.keyword = query.keyword || ''
-      this.status = query.status || '0'
+      this.status = query.status === 'null' ? null : query.status
       this.user_id = Number(query.user_id) || ''
       this.group_id = Number(query.group_id) || ''
       this.date = query.date ? (query.date as string).split(',') : []
@@ -381,7 +377,7 @@ export default Vue.extend({
           this.user_id = ''
           this.group_id = ''
           this.date = []
-          this.status = '0'
+          this.status = null
           this.changeRouter()
         })
         .catch(() => {

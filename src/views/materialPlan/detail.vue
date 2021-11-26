@@ -34,7 +34,7 @@
               </div>
               <div class="col">
                 <div class="label">采购状态：</div>
-                <div class="text">没有</div>
+                <div class="text">暂无</div>
               </div>
               <div class="col">
                 <div class="label">备注信息：</div>
@@ -72,7 +72,7 @@
                 :key="item.product_id">
                 <div class="tcol">
                   <span>{{item.product_code}}</span>
-                  <span>{{item.category}}/{{item.type}}</span>
+                  <span>{{item.category}}/{{item.secondary_category}}</span>
                 </div>
                 <div class="tcol noPad"
                   style="flex:7">
@@ -127,9 +127,9 @@
                   :key="index">
                   <div class="tcol">
                     <span>{{item.product_code||item.system_code}}</span>
-                    <span>{{item.category}}/{{item.type}}</span>
+                    <span>{{item.category}}/{{item.secondary_category}}</span>
                   </div>
-                  <div class="tcol">{{item.color_name}}/{{item.size_name}}</div>
+                  <div class="tcol">{{item.size_name}}/{{item.color_name}}</div>
                   <div class="tcol">{{item.part_name}}</div>
                   <div class="tcol">{{item.order_number}}</div>
                   <div class="tcol noPad"
@@ -175,7 +175,7 @@
                   :key="index">
                   <div class="tcol">
                     <span>{{item.product_code||item.system_code}}</span>
-                    <span>{{item.category}}/{{item.type}}</span>
+                    <span>{{item.category}}/{{item.secondary_category}}</span>
                   </div>
                   <div class="tcol">{{item.part_name}}</div>
                   <div class="tcol">{{item.order_number}}</div>
@@ -233,6 +233,36 @@
             @click="$router.go(-1)">返回</div>
           <div class="btn backHoverOrange"
             @click="goUpdate">修改</div>
+          <div class="btn backHoverBlue"
+            @click="$router.push('/materialPlan/create?id=' + $route.query.id)">继续添加</div>
+          <div class="btn backHoverGreen"
+            @click="$openUrl('/materialPlan/print?id=' + materialPlanIndex)">打印</div>
+        </div>
+      </div>
+    </div>
+    <div class="popup"
+      v-show="chooseIndexFlag">
+      <div class="main"
+        style=" width: 500px;">
+        <div class="titleCtn">
+          <div class="text">选择打样次数</div>
+          <div class="closeCtn"
+            @click="init();chooseIndexFlag=false">
+            <i class="el-icon-close"></i>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="tag"
+            v-for="(item,index) in orderInfo.time_data"
+            :key="index"
+            :class="{'backHoverBlue':index===orderIndex}"
+            @click="orderIndex=index">第{{index+1}}次打样</div>
+        </div>
+        <div class="oprCtn">
+          <div class="btn borderBtn"
+            @click="init();chooseIndexFlag=false">取消</div>
+          <div class="btn backHoverBlue"
+            @click="init();orderIndex=index;chooseIndexFlag=false">确定</div>
         </div>
       </div>
     </div>
@@ -241,7 +271,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { materialPlan } from '@/assets/js/api'
+import { materialPlan, order } from '@/assets/js/api'
 import { MaterialPlanInfo } from '@/types/materialPlan'
 export default Vue.extend({
   data(): {
@@ -250,6 +280,66 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      orderIndex: 0,
+      chooseIndexFlag: false,
+      orderInfo: {
+        id: null,
+        client_id: '',
+        group_id: '',
+        contacts_id: '',
+        public_files: [],
+        private_files: [],
+        settle_tax: '',
+        settle_unit: '',
+        order_type: 1,
+        code: '',
+        desc: '',
+        time_data: [
+          {
+            id: '',
+            order_time: this.$getDate(new Date()),
+            order_type_id: '',
+            complete_time: '',
+            is_draft: 2,
+            total_style: '',
+            total_number: '',
+            total_price: '',
+            is_urgent: 2,
+            is_before_confirm: 2,
+            is_send: 2,
+            batch_data: [
+              {
+                id: '',
+                batch_number: 1,
+                batch_title: '',
+                batch_type_id: '',
+                delivery_time: '',
+                is_urgent: 2,
+                is_draft: 2,
+                total_style: '',
+                total_number: '',
+                total_price: '',
+                desc: '',
+                product_data: [
+                  {
+                    product_id: '',
+                    size_color_list: [],
+                    product_info: [
+                      {
+                        size_color: '',
+                        size_id: '',
+                        color_id: '',
+                        number: '',
+                        price: ''
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
       materialPlanIndex: '0',
       materialPlanInfo: []
     }
@@ -257,19 +347,36 @@ export default Vue.extend({
   methods: {
     goUpdate() {
       this.$router.push('/materialPlan/update?id=' + this.materialPlanIndex)
+    },
+    init() {
+      materialPlan
+        .list({
+          order_id: this.orderInfo.time_data[this.orderIndex].id
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.materialPlanInfo = res.data.data
+            this.materialPlanIndex = this.materialPlanInfo[0].id?.toString()
+          }
+          this.loading = false
+        })
     }
   },
   mounted() {
-    materialPlan
-      .list({
-        top_order_id: Number(this.$route.query.id)
+    order
+      .detail({
+        id: Number(this.$route.query.id)
       })
       .then((res) => {
         if (res.data.status) {
-          this.materialPlanInfo = res.data.data
-          this.materialPlanIndex = this.materialPlanInfo[0].id?.toString()
+          this.orderInfo = res.data.data
+          if (this.orderInfo.time_data.length > 1) {
+            this.chooseIndexFlag = true
+            this.loading = false
+          } else {
+            this.init()
+          }
         }
-        this.loading = false
       })
   }
 })

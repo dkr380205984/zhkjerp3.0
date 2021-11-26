@@ -103,6 +103,8 @@ export default Vue.extend({
       check.create(this.checkInfo).then((res) => {
         if (res.data.status) {
           this.$message.success('审核成功')
+          this.$emit('close')
+          this.$emit('afterCheck', this.checkInfo.is_check)
           this.checkInfo = {
             pid: '',
             check_type: 0,
@@ -110,8 +112,6 @@ export default Vue.extend({
             is_check: 1,
             desc: ''
           }
-          this.$emit('close')
-          this.$emit('afterCheck')
         }
       })
     }

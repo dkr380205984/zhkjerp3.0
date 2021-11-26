@@ -4,69 +4,6 @@
     v-loading="loading">
     <div class="module">
       <div class="titleCtn">
-        <div class="title">基本信息</div>
-      </div>
-      <div class="detailCtn">
-        <div class="checkCtn">
-          <el-tooltip class="item"
-            effect="dark"
-            content="点击查看审核日志"
-            placement="bottom">
-            <img :src="null|checkFilter" />
-          </el-tooltip>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="label">产品编号：</div>
-            <div class="text blue"></div>
-          </div>
-          <div class="col">
-            <div class="label">产品名称：</div>
-            <div class="text blue"></div>
-          </div>
-          <div class="col">
-            <div class="label">产品品类：</div>
-            <div class="text blue"></div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="label">产品编号：</div>
-            <div class="text blue"></div>
-          </div>
-          <div class="col">
-            <div class="label">产品名称：</div>
-            <div class="text blue"></div>
-          </div>
-          <div class="col">
-            <div class="label">产品品类：</div>
-            <div class="text blue"></div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="label">产品成分：</div>
-            <div class="text blue"></div>
-          </div>
-          <div class="col">
-            <div class="label">产品配色：</div>
-            <div class="text blue"></div>
-          </div>
-          <div class="col">
-            <div class="label">产品规格：</div>
-            <div class="text blue"></div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="label">备注信息：</div>
-            <div class="text blue"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="module">
-      <div class="titleCtn">
         <div class="title">原料经向</div>
       </div>
       <div class="editCtn">
@@ -191,10 +128,10 @@
                 v-model="itemMat.material_id"
                 @change="cmpYarnCoefficient"
                 clearable>
-                <el-option v-for="item in materialList"
-                  :key="item.id"
-                  :value="item.id"
-                  :label="item.name"></el-option>
+                <el-option v-for="item in assistMaterialList"
+                  :key="item.value"
+                  :value="item.value"
+                  :label="item.label"></el-option>
               </el-select>
               <span class="btn hoverBlue"
                 @click="$addItem(craftInfo.warp_data.assist_material,{material_id: '',apply: [],number: ''})">添加原料</span>
@@ -999,10 +936,10 @@
                 v-model="itemMat.material_id"
                 @change="cmpYarnCoefficient"
                 clearable>
-                <el-option v-for="item in materialList"
-                  :key="item.id"
-                  :value="item.id"
-                  :label="item.name"></el-option>
+                <el-option v-for="item in assistMaterialList"
+                  :key="item.value"
+                  :value="item.value"
+                  :label="item.label"></el-option>
               </el-select>
               <span class="btn hoverBlue"
                 @click="$addItem(craftInfo.weft_data.assist_material,{material_id: '',apply: [],number: ''})">添加原料</span>
@@ -1299,6 +1236,16 @@ export default Vue.extend({
       testValue: '',
       loading: false,
       searchCraftKey: '',
+      assistMaterialList: [
+        {
+          label: '金丝',
+          value: -1
+        },
+        {
+          label: '银丝',
+          value: -2
+        }
+      ],
       searchList: [],
       sideList: [],
       searchLoading: false,
@@ -1636,6 +1583,7 @@ export default Vue.extend({
     syncWarpInfo() {
       this.craftInfo.weft_data.color_data = this.$clone(this.craftInfo.warp_data.color_data)
       this.craftInfo.weft_data.material_data = this.$clone(this.craftInfo.warp_data.material_data)
+      this.craftInfo.warp_data.assist_material = this.$clone(this.craftInfo.warp_data.assist_material)
       this.$forceUpdate()
     },
     // 匹配主/夹名称
@@ -2057,7 +2005,12 @@ export default Vue.extend({
           ? idArr.map((id) => {
               return {
                 id: id,
-                name: this.materialList.find((item: any) => item.id === id).name,
+                name:
+                  id !== -1 && id !== -2
+                    ? this.materialList.find((item: any) => item.id === id).name
+                    : id === -1
+                    ? '金丝'
+                    : '银丝',
                 value: '',
                 chuankou: ''
               }
@@ -2473,14 +2426,132 @@ export default Vue.extend({
       })
     },
     saveCraft(ifCaogao: boolean) {
-      this.getCmpData()
-      this.getMaterialData()
-      this.getMaterialDataTotal()
-      craft.create(this.craftInfo).then((res) => {
-        if (res.data.status) {
-          this.$message.success('添加成功')
+      if (ifCaogao) {
+        this.getCmpData()
+        this.craftInfo.is_draft = 1
+        craft.create(this.craftInfo).then((res) => {
+          if (res.data.status) {
+            this.$message.success('添加成功')
+            this.$router.push('/craft/detail?id=' + res.data.data)
+          }
+        })
+      } else {
+        this.craftInfo.is_draft = 2
+        let formCheck =
+          this.$formCheck(this.craftInfo, [
+            {
+              key: 'title',
+              errMsg: '请输入工艺单名称'
+            },
+            {
+              key: 'product_time',
+              errMsg: '请选择下机时间'
+            }
+          ]) ||
+          this.craftInfo.warp_data.color_data.some((item) => {
+            return (
+              this.$formCheck(item, [
+                {
+                  key: 'color_id',
+                  errMsg: '请选择经向产品配色'
+                }
+              ]) ||
+              item.color_scheme.some((itemColor) => {
+                return this.$formCheck(itemColor, [
+                  {
+                    key: 'color',
+                    errMsg: '请选择经向色组颜色'
+                  }
+                ])
+              })
+            )
+          }) ||
+          this.craftInfo.weft_data.color_data.some((item) => {
+            return (
+              this.$formCheck(item, [
+                {
+                  key: 'color_id',
+                  errMsg: '请选择纬向产品配色'
+                }
+              ]) ||
+              item.color_scheme.some((itemColor) => {
+                return this.$formCheck(itemColor, [
+                  {
+                    key: 'color',
+                    errMsg: '请选择纬向色组颜色'
+                  }
+                ])
+              })
+            )
+          }) ||
+          this.$formCheck(this.craftInfo.warp_data.material_data[0], [
+            {
+              key: 'material_id',
+              errMsg: '请选择经向主要原料'
+            }
+          ]) ||
+          this.$formCheck(this.craftInfo.weft_data.material_data[0], [
+            {
+              key: 'material_id',
+              errMsg: '请选择纬向主要原料'
+            }
+          ]) ||
+          this.$formCheck(this.craftInfo.warp_data, [
+            {
+              key: 'reed_width',
+              errMsg: '请填写筘幅说明'
+            }
+          ]) ||
+          this.$formCheck(this.craftInfo.weft_data, [
+            {
+              key: 'rangwei',
+              errMsg: '请输入让位信息'
+            }
+          ]) ||
+          this.craftInfo.yarn_coefficient.some((item) => {
+            return this.$formCheck(item, [
+              {
+                key: 'value',
+                errMsg: '请输入物料系数'
+              }
+            ])
+          })
+        if (formCheck) {
+          return
         }
-      })
+        formCheck = this.tableData.warp.data.some((item: any[], index: number) => {
+          if (index === 1 || index === 2) {
+            return item.some((itemChild) => {
+              return !itemChild
+            })
+          } else {
+            return false
+          }
+        })
+        formCheck = this.tableData.weft.data.some((item: any[], index: number) => {
+          if (index === 1 || index === 2) {
+            return item.some((itemChild) => {
+              return !itemChild
+            })
+          } else {
+            return false
+          }
+        })
+        if (formCheck) {
+          this.$message.error('请完善经纬项信息')
+        }
+        if (!formCheck) {
+          this.getCmpData()
+          this.getMaterialData()
+          this.getMaterialDataTotal()
+          craft.create(this.craftInfo).then((res) => {
+            if (res.data.status) {
+              this.$message.success('添加成功')
+              this.$router.push('/craft/detail?id=' + res.data.data)
+            }
+          })
+        }
+      }
     }
   },
   created() {
@@ -2569,7 +2640,7 @@ export default Vue.extend({
       licenseKey: 'non-commercial-and-evaluation', // 申明非商业用途
       mergeCells: true,
       width: '100%',
-      height: 280
+      height: 300
     }
     this.tableData.warpBack = {
       data: [[1], [null], [null], [null], [null], [null], [null]],
@@ -2655,7 +2726,7 @@ export default Vue.extend({
       licenseKey: 'non-commercial-and-evaluation', // 申明非商业用途
       mergeCells: true,
       width: '100%',
-      height: 280
+      height: 300
     }
     this.tableData.weft = {
       data: [[1], [null], [null], [null], [null], [null], [null]],
@@ -2726,7 +2797,7 @@ export default Vue.extend({
       afterCreateCol: (index: any, amount: any) => {
         this.tableData.weft.number++
         for (let i = 0; i < this.tableData.weft.number; i++) {
-          this.tableData.warp.data[0][i] = i + 1
+          this.tableData.weft.data[0][i] = i + 1
         }
       },
       afterRemoveCol: (index: any, amount: any) => {
@@ -2741,7 +2812,7 @@ export default Vue.extend({
       licenseKey: 'non-commercial-and-evaluation', // 申明非商业用途
       mergeCells: true,
       width: '100%',
-      height: 280
+      height: 300
     }
     this.tableData.weftBack = {
       data: [[1], [null], [null], [null], [null], [null], [null]],
@@ -2812,7 +2883,7 @@ export default Vue.extend({
       afterCreateCol: (index: any, amount: any) => {
         this.tableData.weftBack.number++
         for (let i = 0; i < this.tableData.weftBack.number; i++) {
-          this.tableData.warp.data[0][i] = i + 1
+          this.tableData.weft.data[0][i] = i + 1
         }
       },
       afterRemoveCol: (index: any, amount: any) => {
@@ -2827,7 +2898,7 @@ export default Vue.extend({
       licenseKey: 'non-commercial-and-evaluation', // 申明非商业用途
       mergeCells: true,
       width: '100%',
-      height: 280
+      height: 300
     }
   },
   mounted() {

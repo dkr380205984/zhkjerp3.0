@@ -40,8 +40,8 @@
                           <div class="text">{{productInfo.style_code}}</div>
                         </div>
                         <div class="col">
-                          <div class="label">产品款式：</div>
-                          <div class="text">{{productInfo.style_data.map((item)=>item.name).join(',')}}</div>
+                          <div class="label">产品款式（没给）：</div>
+                          <!-- <div class="text">{{productInfo.style_data.map((item)=>item.name).join(',')}}</div> -->
                         </div>
                       </div>
                       <div class="row">
@@ -138,34 +138,20 @@
                     <div class="rectCtn">
                       <div class="rect">
                         <div class="rectMain">
-                          <div class="icon yellow">
+                          <div class="icon"
+                            :class="productInfo.craft_list_id?'yellow':'gray'">
                             <img :src="require('@/assets/image/common/craft_icon.png')" />
                           </div>
                           <div class="rectContent">
                             <div class="text title">工艺单</div>
-                            <div class="text">隔壁老王</div>
-                            <div class="text">2019-08-23</div>
+                            <div class="text">创建人没给</div>
+                            <div class="text">创建时间没给</div>
                           </div>
                         </div>
                         <div class="menu">
                           <span class="opration">打印</span>
-                          <span class="opration">详情</span>
-                        </div>
-                      </div>
-                      <div class="rect">
-                        <div class="rectMain">
-                          <div class="icon green">
-                            <img :src="require('@/assets/image/common/price_icon.png')" />
-                          </div>
-                          <div class="rectContent">
-                            <div class="text title">关联订单</div>
-                            <div class="text">隔壁老王</div>
-                            <div class="text">2019-08-23</div>
-                          </div>
-                        </div>
-                        <div class="menu">
-                          <span class="opration">打印</span>
-                          <span class="opration">详情</span>
+                          <span class="opration"
+                            @click="productInfo.craft_list_id?$openUrl('/craft/detail?id='+productInfo.product_id):$openUrl('/craft/create?id='+productInfo.product_id)">{{productInfo.craft_list_id?'详情':'添加'}}</span>
                         </div>
                       </div>
                     </div>
@@ -176,13 +162,11 @@
           </div>
         </div>
       </div>
-      <div class="oprCtn"
+      <!-- <div class="oprCtn"
         v-show="!noOpr">
         <span class="btn borderBtn"
           @click="close">取消</span>
-        <span class="btn backHoverOrange">修改</span>
-        <span class="btn backHoverRed">删除</span>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

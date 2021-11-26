@@ -1,10 +1,13 @@
 export interface ListSetting {
   key: string
+  otherkey?: string // 如不显示产品编号就显示系统编号
   name: string
   ifShow: boolean
   ifLock: boolean
   ifCaogao?: string // 标记草稿
+  caogaoArr?: string[] // 标记字符
   ifImage?: boolean // 是否是图片特殊格式
+  errVal?: string // 数据为空时显示信息
   from?: string // 隶属于某数组对象，常用于一个订单有多个产品
   mark?: boolean // 在有数组对象的时候标记哪个字段需要箭头
   index: number

@@ -4,14 +4,13 @@
     v-loading="loading">
     <div class="module">
       <div class="titleCtn">
-        <div class="title">添加报价单</div>
+        <div class="title">修改报价单</div>
       </div>
       <div class="editCtn">
         <div class="row">
           <div class="col">
             <div class="label">
               <span class="text">报价单标题</span>
-              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-input placeholder="请输入报价单标题"
@@ -20,14 +19,15 @@
           </div>
           <div class="col">
             <div class="label">
-              <span class="text">报价公司</span>
+              <span class="text">询价客户</span>
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-cascader placeholder="请选择报价公司"
+              <el-cascader placeholder="请选择询价客户"
                 v-model="quotedPriceInfo.tree_data"
                 :options="clientList"
-                @change="getContacts">
+                @change="getContacts"
+                clearable>
               </el-cascader>
             </div>
           </div>
@@ -36,7 +36,8 @@
             <div class="info elCtn">
               <el-select placeholder="请选择公司联系人"
                 v-model="quotedPriceInfo.contacts_id"
-                no-data-text="请先选择报价公司">
+                no-data-text="请先选择询价客户"
+                clearable>
                 <el-option v-for="item in contactsList"
                   :key="item.id"
                   :value="item.id"
@@ -49,11 +50,11 @@
           <div class="col">
             <div class="label">
               <span class="text">负责小组/人</span>
-              <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
               <el-select placeholder="请选择负责小组/人"
-                v-model="quotedPriceInfo.group_id">
+                v-model="quotedPriceInfo.group_id"
+                clearable>
                 <el-option v-for="item in groupList"
                   :key="item.id"
                   :value="item.id"
@@ -63,11 +64,11 @@
           </div>
           <div class="col">
             <div class="label">
-              <span class="text">结算单位</span>
+              <span class="text">报价币种</span>
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-select placeholder="请选择结算单位"
+              <el-select placeholder="请选择报价币种"
                 v-model="quotedPriceInfo.settle_unit">
                 <el-option v-for="item in unitArr"
                   :key="item.name"
@@ -82,10 +83,10 @@
           </div>
           <div class="col">
             <div class="label">
-              <span class="text">汇率
+              <span class="text">币种汇率
                 <el-tooltip class="item"
                   effect="dark"
-                  content="点击查看实时汇率"
+                  content="点击查看实时币种汇率"
                   placement="top-start">
                   <em class="el-icon-question"
                     @click="$openUrl('http://forex.hexun.com/rmbhl/#zkRate')"></em>
@@ -94,7 +95,7 @@
               <span class="explanation">(必填,例：100人民币=600美元,填入"600"。)</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入汇率"
+              <el-input placeholder="请输入币种汇率"
                 v-model="quotedPriceInfo.exchange_rate"></el-input>
             </div>
           </div>
@@ -147,7 +148,7 @@
             <div class="col">
               <div class="label">产品描述</div>
               <div class="info elCtn">
-                <el-input placeholder="请输入产品描述"
+                <el-input placeholder="请输入产品描述，如产品的尺寸、克重、成分、工艺、配料等信息"
                   v-model="item.desc"></el-input>
               </div>
             </div>
@@ -171,7 +172,7 @@
                     <span>上传图片</span>
                   </div>
                   <div slot="tip"
-                    class="el-upload__tip">只能上传一张jpg/png图片文件，且不超过10M</div>
+                    class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M</div>
                 </el-upload>
               </div>
             </div>
@@ -222,17 +223,20 @@
                   <el-input class="once unitAppend"
                     v-model="itemYarn.weight"
                     placeholder="数量"
-                    @change="cmpTotalPrice(itemYarn)">
+                    @change="cmpTotalPrice(itemYarn)"
+                    :disabled="itemYarn.tree_data.length===0">
                     <template slot="append">
                       <input class="unit"
                         v-model="itemYarn.unit"
-                        placeholder="单位" />
+                        placeholder="单位"
+                        :disabled="itemYarn.tree_data.length===0" />
                     </template>
                   </el-input>
                   <el-input class="once"
                     v-model="itemYarn.loss"
                     placeholder="损耗"
-                    @change="cmpTotalPrice(itemYarn)">
+                    @change="cmpTotalPrice(itemYarn)"
+                    :disabled="itemYarn.tree_data.length===0">
                     <template slot="append">%</template>
                   </el-input>
                 </div>
@@ -241,18 +245,20 @@
                 <div class="label spaceBetween"
                   v-if="indexYarn===0">
                   <div class="once">单价</div>
-                  <div class="once">总价</div>
+                  <div class="once">小计</div>
                 </div>
                 <div class="info elCtn spaceBetween">
                   <el-input class="once"
                     v-model="itemYarn.price"
                     placeholder="单价"
-                    @change="cmpTotalPrice(itemYarn)">
+                    @change="cmpTotalPrice(itemYarn)"
+                    :disabled="itemYarn.tree_data.length===0">
                     <template slot="append">元/{{itemYarn.unit || '单位'}}</template>
                   </el-input>
                   <el-input class="once"
                     v-model="itemYarn.total_price"
-                    placeholder="总价">
+                    placeholder="小计"
+                    :disabled="itemYarn.tree_data.length===0">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -302,17 +308,20 @@
                   <el-input class="once unitAppend"
                     v-model="itemDecorateMaterial.number"
                     placeholder="数量"
-                    @change="cmpTotalPrice(itemDecorateMaterial)">
+                    @change="cmpTotalPrice(itemDecorateMaterial)"
+                    :disabled="!itemDecorateMaterial.material_id">
                     <template slot="append">
                       <input class="unit"
                         v-model="itemDecorateMaterial.unit"
-                        placeholder="单位" />
+                        placeholder="单位"
+                        :disabled="!itemDecorateMaterial.material_id" />
                     </template>
                   </el-input>
                   <el-input class="once"
                     v-model="itemDecorateMaterial.loss"
                     placeholder="损耗"
-                    @change="cmpTotalPrice(itemDecorateMaterial)">
+                    @change="cmpTotalPrice(itemDecorateMaterial)"
+                    :disabled="!itemDecorateMaterial.material_id">
                     <template slot="append">%</template>
                   </el-input>
                 </div>
@@ -321,18 +330,20 @@
                 <div class="label spaceBetween"
                   v-if="indexDecorateMaterial===0">
                   <div class="once">单价</div>
-                  <div class="once">总价</div>
+                  <div class="once">小计</div>
                 </div>
                 <div class="info elCtn spaceBetween">
                   <el-input class="once"
                     v-model="itemDecorateMaterial.price"
                     placeholder="单价"
-                    @change="cmpTotalPrice(itemDecorateMaterial)">
+                    @change="cmpTotalPrice(itemDecorateMaterial)"
+                    :disabled="!itemDecorateMaterial.material_id">
                     <template slot="append">元/{{itemDecorateMaterial.unit||'单位'}}</template>
                   </el-input>
                   <el-input class="once"
                     v-model="itemDecorateMaterial.total_price"
-                    placeholder="总价">
+                    placeholder="小计"
+                    :disabled="!itemDecorateMaterial.material_id">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -376,18 +387,20 @@
                 </div>
                 <div class="info elCtn">
                   <el-input v-model="itemWeave.desc"
-                    placeholder="织造说明">
+                    placeholder="织造说明"
+                    :disabled="!itemWeave.name">
                   </el-input>
                 </div>
               </div>
               <div class="col">
                 <div class="label"
                   v-if="indexWeave===0">
-                  <span class="text">总价</span>
+                  <span class="text">小计</span>
                 </div>
                 <div class="info elCtn">
                   <el-input v-model="itemWeave.total_price"
-                    placeholder="总价">
+                    placeholder="小计"
+                    :disabled="!itemWeave.name">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -429,18 +442,20 @@
                 </div>
                 <div class="info elCtn">
                   <el-input v-model="itemHalfProcess.desc"
-                    placeholder="加工说明">
+                    placeholder="加工说明"
+                    :disabled="!itemHalfProcess.process_id">
                   </el-input>
                 </div>
               </div>
               <div class="col">
                 <div class="label"
                   v-if="indexHalfProcess===0">
-                  <span class="text">总价</span>
+                  <span class="text">小计</span>
                 </div>
                 <div class="info elCtn">
                   <el-input v-model="itemHalfProcess.total_price"
-                    placeholder="总价">
+                    placeholder="小计"
+                    :disabled="!itemHalfProcess.process_id">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -482,18 +497,20 @@
                 </div>
                 <div class="info elCtn">
                   <el-input v-model="itemFinishedProcess.desc"
-                    placeholder="加工说明">
+                    placeholder="加工说明"
+                    :disabled="!itemFinishedProcess.name">
                   </el-input>
                 </div>
               </div>
               <div class="col">
                 <div class="label"
                   v-if="indexFinishedProcess===0">
-                  <span class="text">总价</span>
+                  <span class="text">小计</span>
                 </div>
                 <div class="info elCtn">
                   <el-input v-model="itemFinishedProcess.total_price"
-                    placeholder="总价">
+                    placeholder="小计"
+                    :disabled="!itemFinishedProcess.name">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -535,18 +552,20 @@
                 </div>
                 <div class="info elCtn">
                   <el-input v-model="itemPackMaterial.desc"
-                    placeholder="辅料说明">
+                    placeholder="辅料说明"
+                    :disabled="!itemPackMaterial.material_id">
                   </el-input>
                 </div>
               </div>
               <div class="col">
                 <div class="label"
                   v-if="indexPackMaterial===0">
-                  <span class="text">总价</span>
+                  <span class="text">小计</span>
                 </div>
                 <div class="info elCtn">
                   <el-input v-model="itemPackMaterial.total_price"
-                    placeholder="总价">
+                    placeholder="小计"
+                    :disabled="!itemPackMaterial.material_id">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -582,18 +601,20 @@
                 </div>
                 <div class="info elCtn">
                   <el-input v-model="itemOther.desc"
-                    placeholder="费用说明">
+                    placeholder="费用说明"
+                    :disabled="!itemOther.name">
                   </el-input>
                 </div>
               </div>
               <div class="col">
                 <div class="label"
                   v-if="indexOther===0">
-                  <span class="text">总价</span>
+                  <span class="text">小计</span>
                 </div>
                 <div class="info elCtn">
                   <el-input v-model="itemOther.total_price"
-                    placeholder="总价">
+                    placeholder="小计"
+                    :disabled="!itemOther.name">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -742,7 +763,6 @@
           <div class="col flex3">
             <div class="label">
               <span class="text">其它说明与备注</span>
-              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-input v-model="quotedPriceInfo.desc"
@@ -766,7 +786,7 @@
       <div class="main">
         <div class="fl"
           style="line-height:56px">
-          合计：<span class="blue">{{realTotalPrice}}元</span>
+          合计：<span class="blue">{{realTotalPrice}}元<span v-if="quotedPriceInfo.settle_unit!=='元'">{{'/'+realTotalPriceChange+quotedPriceInfo.settle_unit}}</span></span>
         </div>
         <div class="btnCtn">
           <div class="borderBtn"
@@ -827,7 +847,7 @@ export default Vue.extend({
             product_id: '',
             type: [],
             category_id: '',
-            type_id: '',
+            secondary_category_id: '',
             image_data: [],
             client_target_price: '',
             start_order_number: '',
@@ -945,6 +965,10 @@ export default Vue.extend({
           Number(this.quotedPriceInfo.rate_taxation) / 100 || 0)
       ).toFixed(2)
     },
+    // 总合计，按照汇率转换后
+    realTotalPriceChange(): string {
+      return ((Number(this.realTotalPrice) / Number(this.quotedPriceInfo.exchange_rate)) * 100).toFixed(2)
+    },
     // quotedPriceInfo.commission_price
     commissionPrice(): string {
       return (Number(this.totalPrice) * (Number(this.quotedPriceInfo.commission_percentage) / 100 || 0)).toFixed(2)
@@ -989,7 +1013,7 @@ export default Vue.extend({
         product_id: '',
         type: [],
         category_id: '',
-        type_id: '',
+        secondary_category_id: '',
         image_data: [],
         client_target_price: '',
         start_order_number: '',
@@ -1109,7 +1133,7 @@ export default Vue.extend({
           }
         })
     },
-    // 辅助计算产品原料和装饰辅料的总价，总价本身可直接修改
+    // 辅助计算产品原料和装饰辅料的小计，小计本身可直接修改
     cmpTotalPrice(info: { total_price: number; weight: number; loss: any; price: number; number: number }) {
       info.total_price = this.$toFixed(
         (Number(info.weight || info.number) || 0) * (1 + (Number(info.loss) || 0) / 100) * (Number(info.price) || 0)
@@ -1130,7 +1154,7 @@ export default Vue.extend({
       this.quotedPriceInfo.product_data.forEach((item) => {
         item.image_data = item.image_data.concat(item.file_list!.map((item) => item.url)) // 新旧图拼接
         item.category_id = item.type && item.type[0]
-        item.type_id = item.type && item.type[1]
+        item.secondary_category_id = item.type && item.type[1]
         item.material_data.forEach((itemChild) => {
           console.log(itemChild.tree_data)
           itemChild.material_id =
@@ -1168,17 +1192,9 @@ export default Vue.extend({
         const formCheck =
           this.$formCheck(this.quotedPriceInfo, [
             {
-              key: 'title',
-              errMsg: '请输入报价单标题'
-            },
-            {
               key: 'tree_data',
-              errMsg: '请选择报价公司',
+              errMsg: '请选择询价客户',
               regNormal: 'checkArr'
-            },
-            {
-              key: 'group_id',
-              errMsg: '请选择负责小组/人'
             },
             {
               key: 'commission_percentage',
@@ -1240,10 +1256,6 @@ export default Vue.extend({
                         errMsg: '请输入产品原料数量单位'
                       },
                       {
-                        key: 'loss',
-                        errMsg: '请输入产品原料预计损耗'
-                      },
-                      {
                         key: 'price',
                         errMsg: '请输入产品原料单价'
                       }
@@ -1267,10 +1279,6 @@ export default Vue.extend({
                         errMsg: '请输入装饰辅料数量单位'
                       },
                       {
-                        key: 'loss',
-                        errMsg: '请输入装饰辅料预计损耗'
-                      },
-                      {
                         key: 'price',
                         errMsg: '请输入装饰辅料单价'
                       }
@@ -1287,7 +1295,7 @@ export default Vue.extend({
                       },
                       {
                         key: 'total_price',
-                        errMsg: '请输入织造总价'
+                        errMsg: '请输入织造小计'
                       }
                     ])
                   )
@@ -1302,7 +1310,7 @@ export default Vue.extend({
                       },
                       {
                         key: 'total_price',
-                        errMsg: '请输入半成品加工总价'
+                        errMsg: '请输入半成品加工小计'
                       }
                     ])
                   )
@@ -1317,7 +1325,7 @@ export default Vue.extend({
                       },
                       {
                         key: 'total_price',
-                        errMsg: '请输入成品加工总价'
+                        errMsg: '请输入成品加工小计'
                       }
                     ])
                   )
@@ -1332,7 +1340,7 @@ export default Vue.extend({
                       },
                       {
                         key: 'total_price',
-                        errMsg: '请输入包装辅料总价'
+                        errMsg: '请输入包装辅料小计'
                       }
                     ])
                   )
@@ -1347,7 +1355,7 @@ export default Vue.extend({
                       },
                       {
                         key: 'total_price',
-                        errMsg: '请输入其他费用总价'
+                        errMsg: '请输入其他费用小计'
                       }
                     ])
                   )
@@ -1361,6 +1369,16 @@ export default Vue.extend({
             if (res.data.status) {
               this.$message.success('修改成功')
               this.$router.push('/quotedPrice/list?page=1&keyword=&client_id=&user_id=&status=0&date=')
+            } else {
+              // 提交不成功把tree_data反复横跳改来改去
+              // @ts-ignore
+              this.quotedPriceInfo.tree_data = this.quotedPriceInfo.tree_data.split(',')
+              this.quotedPriceInfo.product_data.forEach((item) => {
+                item.material_data.forEach((itemChild) => {
+                  // @ts-ignore
+                  itemChild.tree_data = itemChild.tree_data.split(',')
+                })
+              })
             }
           })
         }
@@ -1390,7 +1408,7 @@ export default Vue.extend({
           }
         })
         item.image_data = [] // 清空image_data数据，用于存储新的url字符串，提交的时候拼接file_list剩下的就行
-        item.type = item.category_id ? [item.category_id as number, item.type_id as number] : []
+        item.type = item.category_id ? [item.category_id as number, item.secondary_category_id as number] : []
         item.material_data.forEach((itemMat) => {
           itemMat.tree_data = itemMat.tree_data
             ? (itemMat.tree_data as string).split(',').map((item) => Number(item))

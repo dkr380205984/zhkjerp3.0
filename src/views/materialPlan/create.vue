@@ -47,7 +47,7 @@
             :key="item.product_id">
             <div class="tcol">
               <span>{{item.product_code}}</span>
-              <span>{{item.category}}/{{item.type}}</span>
+              <span>{{item.category}}/{{item.secondary_category}}</span>
             </div>
             <div class="tcol noPad"
               style="flex:7">
@@ -139,7 +139,7 @@
                 <div class="trow">
                   <div class="tcol">
                     <span>{{item.product_code}}</span>
-                    <span>{{item.category}}/{{item.type}}</span>
+                    <span>{{item.category}}/{{item.secondary_category}}</span>
                   </div>
                   <div class="tcol">{{item.size_name}}/{{item.color_name}}</div>
                   <div class="tcol">{{item.part_name}}</div>
@@ -180,23 +180,19 @@
                           v-model="itemChild.tree_data"
                           :options="yarnTypeList"
                           @change="getMatId($event,itemChild)"
+                          filterable
                           clearable>
                         </el-cascader>
                       </div>
                       <span class="text"
-                        v-else>{{itemChild.material_name}}</span>
+                        v-else>{{itemChild.material_name||(item.material_id===-1?'金丝':'银丝')}}</span>
                     </div>
                     <div class="tcol">
                       <div class="elCtn">
-                        <el-select filterable
-                          placeholder="物料颜色"
-                          v-model="itemChild.material_color">
-                          <el-option v-for="item in yarnColorList"
-                            :key="item.name"
-                            :label="item.name"
-                            :value="item.name">
-                          </el-option>
-                        </el-select>
+                        <el-autocomplete class="inline-input"
+                          v-model="itemChild.material_color"
+                          :fetch-suggestions="searchColor"
+                          placeholder="物料颜色"></el-autocomplete>
                       </div>
                     </div>
                     <div class="tcol"
@@ -213,9 +209,13 @@
                     </div>
                     <div class="tcol">
                       <div class="elCtn">
-                        <el-input v-model="itemChild.final_number"
+                        <el-input class="UnitCtn"
+                          v-model="itemChild.final_number"
                           placeholder="数量">
-                          <template slot="append">kg</template>
+                          <template slot="append">
+                            <el-input v-model="itemChild.unit"
+                              placeholder="单位"></el-input>
+                          </template>
                         </el-input>
                       </div>
                     </div>
@@ -223,17 +223,20 @@
                       <div class="oprCtn">
                         <span class="opr blue"
                           @click="$addItem(item.info_data,{
-                          process_id: '',
-                          tree_data: [],
-                          material_id: '',
-                          material_type: '',
-                          material_color: '',
-                          assist_material_number: '',
-                          need_number: '',
-                          production_number: '',
-                          loss: '',
-                          final_number: ''
+                            process_id: '',
+                            tree_data: [],
+                            material_id: '',
+                            material_type: '',
+                            material_color: '',
+                            assist_material_number: '',
+                            need_number: '',
+                            production_number: '',
+                            loss: '',
+                            final_number: '',
+                            unit: 'kg'
                         })">添加</span>
+                        <span class="opr orange"
+                          @click="$addItem(item.info_data,$clone(itemChild))">复制</span>
                         <span class="opr red"
                           @click="item.info_data.length>1?$deleteItem(item.info_data,indexChild):$message.error('至少有一项，可以不填')">删除</span>
                       </div>
@@ -266,7 +269,7 @@
                 <div class="trow">
                   <div class="tcol">
                     <span>{{item.product_code}}</span>
-                    <span>{{item.category}}/{{item.type}}</span>
+                    <span>{{item.category}}/{{item.secondary_category}}</span>
                   </div>
                   <div class="tcol">{{item.part_name}}</div>
                   <div class="tcol">{{item.order_number}}</div>
@@ -305,24 +308,20 @@
                           :show-all-levels="false"
                           v-model="itemChild.tree_data"
                           :options="yarnTypeList"
+                          filterable
                           @change="getMatId($event,itemChild)"
                           clearable>
                         </el-cascader>
                       </div>
                       <span class="text"
-                        v-else>{{itemChild.material_name}}</span>
+                        v-else>{{itemChild.material_name||(item.material_id===-1?'金丝':'银丝')}}</span>
                     </div>
                     <div class="tcol">
                       <div class="elCtn">
-                        <el-select filterable
-                          placeholder="物料颜色"
-                          v-model="itemChild.material_color">
-                          <el-option v-for="item in yarnColorList"
-                            :key="item.name"
-                            :label="item.name"
-                            :value="item.name">
-                          </el-option>
-                        </el-select>
+                        <el-autocomplete class="inline-input"
+                          v-model="itemChild.material_color"
+                          :fetch-suggestions="searchColor"
+                          placeholder="物料颜色"></el-autocomplete>
                       </div>
                     </div>
                     <div class="tcol">{{itemChild.has_plan?(itemChild.production_number + 'g'):'无计划值'}}</div>
@@ -355,8 +354,11 @@
                           need_number: '',
                           production_number: '',
                           loss: '',
-                          final_number: ''
+                          final_number: '',
+                          unit: 'kg'
                         })">添加</span>
+                        <span class="opr orange"
+                          @click="$addItem(item.info_data,$clone(itemChild))">复制</span>
                         <span class="opr red"
                           @click="item.info_data.length>1?$deleteItem(item.info_data,indexChild):$message.error('至少有一项，可以不填')">删除</span>
                       </div>
@@ -435,7 +437,33 @@
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
           <div class="btn backHoverBlue"
-            @click="saveMeterialPlan">提交</div>
+            @click="saveMaterialPlan">提交</div>
+        </div>
+      </div>
+    </div>
+    <div class="popup"
+      v-show="chooseIndexFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <div class="text">选择打样次数</div>
+          <div class="closeCtn"
+            @click="getProductionData();chooseIndexFlag=false">
+            <i class="el-icon-close"></i>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="tag"
+            v-for="(item,index) in orderInfo.time_data"
+            :key="index"
+            :class="{'backHoverBlue':index===orderIndex}"
+            @click="orderIndex=index"
+            v-show="item.has_material_plan===2">第{{index+1}}次打样</div>
+        </div>
+        <div class="oprCtn">
+          <div class="btn borderBtn"
+            @click="getProductionData();chooseIndexFlag=false">取消</div>
+          <div class="btn backHoverBlue"
+            @click="getProductionData();chooseIndexFlag=false">确定</div>
         </div>
       </div>
     </div>
@@ -463,6 +491,7 @@ export default Vue.extend({
       confirmFlag: 1,
       settingMethod: 2, // 数字取整方式
       orderIndex: 0, // 多张订单/样单
+      chooseIndexFlag: false,
       orderInfo: {
         id: null,
         client_id: '',
@@ -561,7 +590,12 @@ export default Vue.extend({
       return this.$store.state.api.yarnType.arr
     },
     yarnColorList() {
-      return this.$store.state.api.yarnColor.arr
+      return this.$store.state.api.yarnColor.arr.map((item: { name: any }) => {
+        return {
+          value: item.name,
+          label: item.name
+        }
+      })
     }
   },
   watch: {
@@ -600,7 +634,8 @@ export default Vue.extend({
                   loss: itemChild.need_number
                     ? this.numberAutoMethod(100 * (Number(itemChild.final_number) / Number(itemChild.need_number) - 1))
                     : 0,
-                  final_number: Number(itemChild.final_number)
+                  final_number: Number(itemChild.final_number),
+                  unit: itemChild.unit
                 })
               }
             }
@@ -611,6 +646,17 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 原料颜色搜索
+    searchColor(str: string, cb: any) {
+      let results = str ? this.yarnColorList.filter(this.createFilter(str)) : this.yarnColorList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    createFilter(queryString: string) {
+      return (restaurant: any) => {
+        return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+      }
+    },
     // 小数点处理方式
     numberAutoMethod(num: number | string) {
       const number = Number(num)
@@ -665,7 +711,7 @@ export default Vue.extend({
               product_code: itemPro.product_code,
               product_id: itemPro.product_id,
               category: itemPro.category,
-              type: itemPro.type,
+              secondary_category: itemPro.secondary_category,
               process_data: itemPro.process_data,
               part_data: [
                 {
@@ -681,7 +727,7 @@ export default Vue.extend({
       const mergeArr: OrderProductMerge[] = this.$mergeData(flattenArr, {
         mainRule: 'product_id',
         otherRule: [
-          { name: 'type' },
+          { name: 'secondary_category' },
           { name: 'category' },
           { name: 'product_code' },
           { name: 'part_data' },
@@ -717,6 +763,7 @@ export default Vue.extend({
         })
         return cloneItem
       })
+      console.log(this.materialPlanInfo.production_plan_data)
     },
     // 计算所需物料--按尺码颜色
     getMaterialPlanDetail(partId?: number, number?: number, proInfo?: any) {
@@ -767,7 +814,7 @@ export default Vue.extend({
                 this.materialPlanInfo.material_plan_data.push({
                   product_code: item.product_code,
                   category: item.category,
-                  type: item.type,
+                  secondary_category: item.secondary_category,
                   part_id: itemPart.part_id,
                   part_name: itemPart.name,
                   color_name: itemChild.color_name,
@@ -799,10 +846,11 @@ export default Vue.extend({
                             material_type: itemMat.material_type,
                             material_color: itemMat.material_color,
                             assist_material_number: '',
-                            need_number: this.numberAutoMethod((itemMat.number * Number(itemPart.number)) / 1000),
-                            production_number: itemMat.number,
+                            need_number: this.numberAutoMethod(itemMat.number * Number(itemPart.number)),
+                            production_number: itemMat.number * 1000,
                             loss: '',
                             final_number: '',
+                            unit: 'kg',
                             has_plan: true
                           }
                         })
@@ -817,6 +865,7 @@ export default Vue.extend({
                             need_number: '',
                             production_number: '',
                             loss: '',
+                            unit: 'kg',
                             final_number: ''
                           }
                         ]
@@ -858,10 +907,11 @@ export default Vue.extend({
                           material_type: itemMat.material_type,
                           material_color: itemMat.material_color,
                           assist_material_number: '',
-                          need_number: this.numberAutoMethod((itemMat.number * Number(itemPart.number)) / 1000),
-                          production_number: itemMat.number,
+                          need_number: this.numberAutoMethod(itemMat.number * Number(itemPart.number)),
+                          production_number: itemMat.number * 1000,
                           loss: '',
                           final_number: '',
+                          unit: 'kg',
                           has_plan: true
                         })
                       }
@@ -871,7 +921,7 @@ export default Vue.extend({
                   this.materialPlanInfo.material_plan_data.push({
                     product_code: item.product_code,
                     category: item.category,
-                    type: item.type,
+                    secondary_category: item.secondary_category,
                     part_id: itemPart.part_id,
                     part_name: itemPart.name,
                     color_name: '',
@@ -897,7 +947,8 @@ export default Vue.extend({
                               production_number: itemMat.number,
                               loss: '',
                               final_number: '',
-                              has_plan: true
+                              has_plan: true,
+                              unit: 'kg'
                             }
                           })
                         : [
@@ -911,7 +962,8 @@ export default Vue.extend({
                               need_number: '',
                               production_number: '',
                               loss: '',
-                              final_number: ''
+                              final_number: '',
+                              unit: 'kg'
                             }
                           ]
                   })
@@ -928,8 +980,13 @@ export default Vue.extend({
       this.initMaterialPlan()
       this.$message.success('已切换填写方式')
     },
-    getMatId(ev: number[], info: { material_id: number }) {
+    getMatId(ev: number[], info: any) {
       info.material_id = ev![2]
+      if (this.yarnTypeList.find((item) => item.value === ev[0])?.label === '面料') {
+        info.unit = 'm'
+      } else {
+        info.unit = 'kg'
+      }
     },
     getCmpData() {
       this.materialPlanInfo.order_id = Number(this.orderInfo.time_data[this.orderIndex].id)
@@ -940,7 +997,11 @@ export default Vue.extend({
         })
       })
     },
-    saveMeterialPlan() {
+    saveMaterialPlan() {
+      if (this.materialPlanInfo.material_plan_data.length === 0) {
+        this.$message.warning('请确认生产数量')
+        return
+      }
       const formCheck =
         this.materialPlanInfo.production_plan_data.some((item) => {
           return item.product_data.some((itemChild) => {
@@ -972,6 +1033,11 @@ export default Vue.extend({
               {
                 key: 'final_number',
                 errMsg: '检测到有未填写的物料最终数量，请补充'
+              },
+              {
+                key: 'unit',
+                errMsg: '物料的单位只能为kg或m',
+                regExp: /^((?!kg|m).)+$/
               }
             ])
           })
@@ -981,6 +1047,7 @@ export default Vue.extend({
         materialPlan.create(this.materialPlanInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
+            this.$router.push('/materialPlan/list?id=' + this.$route.query.id)
           }
         })
       }
@@ -1017,7 +1084,26 @@ export default Vue.extend({
         if (res.data.status) {
           this.orderInfo = res.data.data
           if (this.orderInfo.time_data.length > 1) {
-            this.$message.warning('多张样单操作没设计')
+            if (!this.$route.query.sampleOrderIndex) {
+              const length = this.orderInfo.time_data.filter((item) => item.has_material_plan === 2).length
+              if (length > 1) {
+                this.orderIndex = length - 1
+                this.getProductionData()
+              } else if (length === 1) {
+                this.orderInfo.time_data.forEach((item, index) => {
+                  if (item.has_material_plan === 2) {
+                    this.orderIndex = index
+                    this.getProductionData()
+                  }
+                })
+              } else {
+                this.$message.warning('所有计划单已经全部添加完毕')
+                this.$router.go(-1)
+              }
+            } else {
+              this.orderIndex = this.$route.query.sampleOrderIndex
+              this.getProductionData()
+            }
           } else {
             this.getProductionData()
           }
@@ -1035,6 +1121,20 @@ export default Vue.extend({
 #materialPlanCreate {
   .el-tabs__content {
     padding: 20px 32px;
+  }
+  .UnitCtn {
+    .el-input-group__append {
+      padding: 0;
+      .el-input {
+        width: 45px;
+        .el-input__inner {
+          padding: 0 8px;
+          border: 0;
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+        }
+      }
+    }
   }
 }
 </style>

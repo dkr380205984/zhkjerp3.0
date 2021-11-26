@@ -1,4 +1,5 @@
 export interface ProductInfo {
+  quote_rel_product_id?: number | string
   system_code?: string
   product_id?: number | string
   product_type: 1 // 1：产品 2：样品
@@ -11,8 +12,9 @@ export interface ProductInfo {
   unit?: string
   category?: string
   category_id?: string | number
-  type_id?: string | number
-  type?: string | string[] // 品类下拉框
+  secondary_category_id?: string | number
+  secondary_category?: string
+  type?: string | string[] | number[] // 品类下拉框
   image_data: string[]
   file_list?: Array<{
     id: number
@@ -34,7 +36,7 @@ export interface ProductInfo {
   color_data: Array<{
     name: string
     id: number
-  }> | Array<number>  // 配色组
+  }> | Array<string>  // 配色组
   // 配件信息
   part_data: PartInfo[]
 }
@@ -55,4 +57,5 @@ export interface PartInfo {
     component_name?: string
     number: string | number // 成分信息
   }>
+  client_edit_idea?: string
 }

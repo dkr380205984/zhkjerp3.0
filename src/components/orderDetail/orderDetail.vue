@@ -10,7 +10,7 @@
             effect="dark"
             content="点击查看审核日志"
             placement="bottom">
-            <img :src="null|checkFilter" />
+            <img :src="orderInfo.time_data[0].is_check|checkFilter" />
           </el-tooltip>
         </div>
         <div class="row">
@@ -24,7 +24,7 @@
           </div>
           <div class="col">
             <div class="label">创建时间：</div>
-            <div class="text">{{orderInfo.create_time}}</div>
+            <div class="text">{{orderInfo.created_at}}</div>
           </div>
         </div>
         <div class="row">
@@ -43,18 +43,19 @@
         </div>
         <div class="row">
           <div class="col flex3">
-            <div class="label">结算单位：</div>
+            <div class="label">下单币种：</div>
             <div class="text">{{orderInfo.settle_unit}}</div>
           </div>
           <div class="col flex3">
-            <div class="label">结算汇率：</div>
-            <div class="text">{{orderInfo.settle_tax}}</div>
+            <div class="label">币种汇率</div>
+            <div class="text">{{orderInfo.settle_tax || 100}}</div>
           </div>
         </div>
         <div class="row">
           <div class="col flex3">
             <div class="label">订单状态：</div>
-            <div class="text">{{orderInfo.status}}</div>
+            <div class="text"
+              :class="orderInfo.status|orderStatusClassFilter">{{orderInfo.status|orderStatusFilter}}</div>
           </div>
           <div class="col flex3">
             <div class="label">下单时间：</div>
@@ -84,12 +85,12 @@
           <div class="col">
             <div class="label">产前确认：</div>
             <div class="text"
-              :class="orderInfo.time_data[0].is_before_confirm===1?'green':'gray'">{{orderInfo.time_data[0].is_before_confirm?'是':'否'}}</div>
+              :class="orderInfo.time_data[0].is_before_confirm===1?'green':'gray'">{{orderInfo.time_data[0].is_before_confirm===1?'是':'否'}}</div>
           </div>
           <div class="col">
             <div class="label">是否加急：</div>
             <div class="text"
-              :class="orderInfo.time_data[0].is_urgent===1?'green':'gray'">{{orderInfo.time_data[0].is_urgent?'是':'否'}}</div>
+              :class="orderInfo.time_data[0].is_urgent===1?'green':'gray'">{{orderInfo.time_data[0].is_urgent===1?'是':'否'}}</div>
           </div>
         </div>
         <div class="row">
@@ -97,28 +98,43 @@
             <div class="label">相关文件：</div>
             <div class="fileCtn">
               <div class="once"
-                v-for="(item,index) in orderInfo.time_data[0].public_files"
+                v-for="(item,index) in orderInfo.public_files"
                 :key="index">
                 <div class="fileIcon">
-                  <i class="el-icon-platform-eleme"></i>
+                  <svg v-if="item.split('.')[item.split('.').length-1]==='xlsx'"
+                    class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-Excel"></use>
+                  </svg>
+                  <svg v-else-if="item.split('.')[item.split('.').length-1]==='png'||item.split('.')[item.split('.').length-1]==='jpeg'"
+                    class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-tupian"></use>
+                  </svg>
+                  <svg v-else-if="item.split('.')[item.split('.').length-1]==='word'"
+                    class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-word"></use>
+                  </svg>
+                  <svg v-else-if="item.split('.')[item.split('.').length-1]==='pdf'"
+                    class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-pdf"></use>
+                  </svg>
+                  <svg v-else
+                    class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-qitawenjian"></use>
+                  </svg>
                 </div>
-                <div class="name">文件{{index+1}}</div>
+                <div class="name">文件{{index+1}}.{{item.split('.')[item.split('.').length-1]}}</div>
                 <a class="opr hoverBlue"
-                  :href="item">点击下载</a>
+                  :href="item"
+                  target=_blank>点击下载</a>
               </div>
-              <div class="once">
-                <div class="fileIcon">
-                  <i class="el-icon-platform-eleme"></i>
-                </div>
-                <div class="name">示例</div>
-                <div class="opr">下载不了</div>
-              </div>
-              <div class="once">
-                <div class="fileIcon">
-                  <i class="el-icon-picture-outline"></i>
-                </div>
-                <div class="name">文件名称左边是根据文件后缀给图标类型</div>
-                <div class="opr">下载</div>
+              <div class="text"
+                v-if="orderInfo.public_files.length===0">
+                <span class="gray">暂无相关文件信息</span>
               </div>
             </div>
           </div>
@@ -217,6 +233,7 @@ export default Vue.extend({
   },
   watch: {
     data(newVal: OrderDetail) {
+      console.log(newVal)
       this.orderInfo = newVal
     }
   },

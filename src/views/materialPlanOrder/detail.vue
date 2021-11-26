@@ -20,7 +20,7 @@
           </div>
           <div class="col">
             <div class="label">预订购数量：</div>
-            <div class="text">{{materialPlanOrderDetail.total_number}}</div>
+            <div class="text">{{materialPlanOrderDetail.total_number}}kg</div>
           </div>
         </div>
       </div>
@@ -38,12 +38,13 @@
                 style="flex:5">
                 <div class="trow">
                   <div class="tcol">纱线名称</div>
-                  <div class="tcol">颜色/属性</div>
-                  <div class="tcol">批号/缸号</div>
-                  <div class="tcol">色号</div>
-                  <div class="tcol">数量</div>
+                  <div class="tcol">颜色</div>
+                  <div class="tcol">属性</div>
+                  <div class="tcol">订购数量</div>
+                  <div class="tcol">入库数量</div>
                 </div>
               </div>
+              <div class="tcol">额外费用</div>
               <div class="tcol">日期</div>
               <div class="tcol">备注信息</div>
               <div class="tcol">操作</div>
@@ -60,15 +61,16 @@
                   v-for="itemChild in item.info_data"
                   :key="itemChild.id">
                   <div class="tcol">{{itemChild.material_name}}</div>
-                  <div class="tcol">{{itemChild.material_color}}/{{itemChild.attribute}}</div>
-                  <div class="tcol"
-                    :class="itemChild.batch_code||itemChild.vat_code?'':'gray'">{{itemChild.batch_code||'无'}}/{{itemChild.vat_code||'无'}}</div>
-                  <div class="tcol"
-                    :class="itemChild.color_code?'':'gray'">{{itemChild.color_code||'无'}}</div>
+                  <div class="tcol">{{itemChild.material_color}}</div>
+                  <div class="tcol">{{itemChild.attribute}}</div>
                   <div class="tcol">{{itemChild.number}}kg</div>
+                  <div class="tcol">数据没有</div>
                 </div>
               </div>
-              <div class="tcol">{{item.complete_time}}</div>
+              <div class="tcol">
+                <others-fee-data :data="item.others_fee_data"></others-fee-data>
+              </div>
+              <div class="tcol">{{item.order_time}}</div>
               <div class="tcol">{{item.desc}}</div>
               <div class="tcol oprCtn">
                 <div class="opr hoverBlue"
@@ -102,11 +104,11 @@
               style="flex:6">
               <div class="trow">
                 <div class="tcol">原料名称</div>
-                <div class="tcol">调取颜色</div>
-                <div class="tcol">调取属性</div>
+                <div class="tcol">入库颜色</div>
+                <div class="tcol">入库属性</div>
                 <div class="tcol">批号/缸号/色号</div>
-                <div class="tcol">调取数量</div>
-                <div class="tcol">调取单价</div>
+                <div class="tcol">入库数量</div>
+                <div class="tcol">入库单价</div>
               </div>
             </div>
             <div class="tcol">操作</div>
@@ -160,8 +162,9 @@
               <div class="tcol">物料名称</div>
               <div class="tcol">物料颜色</div>
               <div class="tcol">物料属性</div>
-              <div class="tcol">单价</div>
-              <div class="tcol">数量</div>
+              <div class="tcol">入库单价</div>
+              <div class="tcol">入库数量</div>
+              <div class="tcol">总价</div>
             </div>
           </div>
           <div class="tbody">
@@ -173,6 +176,7 @@
               <div class="tcol">{{item.attribute}}</div>
               <div class="tcol">{{item.price}}元</div>
               <div class="tcol">{{item.number}}kg</div>
+              <div class="tcol">{{item.total_price}}元</div>
             </div>
           </div>
         </div>
@@ -272,15 +276,10 @@
                         placeholder="白胚"
                         disabled
                         v-if="itemMat.material_color==='白胚'"></el-input>
-                      <el-select v-else
-                        class="once"
-                        placeholder="颜色"
-                        v-model="itemMat.material_color">
-                        <el-option v-for="item in yarnColorList"
-                          :key="item.name"
-                          :value="item.name"
-                          :label="item.name"></el-option>
-                      </el-select>
+                      <el-autocomplete class="once"
+                        v-model="itemMat.material_color"
+                        :fetch-suggestions="searchColor"
+                        placeholder="物料颜色"></el-autocomplete>
                     </template>
                   </div>
                 </div>
@@ -289,7 +288,6 @@
                     v-if="indexMat===0">
                     <div class="once">
                       <span class="text">订购单价</span>
-                      <span class="explanation">(必填)</span>
                     </div>
                     <div class="once">
                       <span class="text">订购数量</span>
@@ -581,7 +579,9 @@ import { MaterialOrderInfo } from '@/types/materialOrder'
 import { MaterialPlanOrderClient } from '@/types/materialPlanOrder'
 import { yarnAttributeArr } from '@/assets/js/dictionary'
 import { CascaderInfo } from '@/types/vuex'
+import othersFeeData from '@/components/othersFeeData/othersFeeData.vue'
 export default Vue.extend({
+  components: { othersFeeData },
   data(): {
     storeList: CascaderInfo[]
     materialPlanOrderDetail: MaterialPlanOrderClient
@@ -606,6 +606,7 @@ export default Vue.extend({
       },
       materialOrderList: [],
       materialPlanOrderInfo: {
+        material_type: 1,
         order_id: '',
         plan_id: '',
         reserve_id: '',
@@ -686,8 +687,13 @@ export default Vue.extend({
         return total + Number(current.number)
       }, 0)
     },
-    yarnColorList(): CascaderInfo[] {
-      return this.$store.state.api.yarnColor.arr
+    yarnColorList() {
+      return this.$store.state.api.yarnColor.arr.map((item: { name: any }) => {
+        return {
+          value: item.name,
+          label: item.name
+        }
+      })
     }
   },
   methods: {
@@ -711,6 +717,17 @@ export default Vue.extend({
         this.materialStsList = res[2].data.data
         this.loading = false
       })
+    },
+    // 原料颜色搜索
+    searchColor(str: string, cb: any) {
+      let results = str ? this.yarnColorList.filter(this.createFilter(str)) : this.yarnColorList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    createFilter(queryString: string) {
+      return (restaurant: any) => {
+        return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+      }
     },
     getMatSts() {
       materialPlanOrder
@@ -740,10 +757,10 @@ export default Vue.extend({
             key: 'material_color',
             errMsg: '请选择物料颜色'
           },
-          {
-            key: 'price',
-            errMsg: '请输入订购单价'
-          },
+          // {
+          //   key: 'price',
+          //   errMsg: '请输入订购单价'
+          // },
           {
             key: 'number',
             errMsg: '请输入订购数量'
@@ -755,12 +772,14 @@ export default Vue.extend({
         materialOrder.create({ data: [this.materialPlanOrderInfo] }).then((res) => {
           if (res.data.status) {
             this.$message.success('物料订购成功')
+            this.loading = false
             if (ifStock) {
               this.goStock(res.data.data)
             } else {
               this.step = 1
               this.resetAll()
               this.materialPlanOrderFlag = false
+              this.init()
             }
           }
         })
@@ -825,6 +844,7 @@ export default Vue.extend({
             this.step = 1
             this.resetAll()
             this.materialPlanOrderFlag = false
+            this.init()
           }
         })
       }

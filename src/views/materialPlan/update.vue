@@ -46,7 +46,7 @@
             :key="item.product_id">
             <div class="tcol">
               <span>{{item.product_code}}</span>
-              <span>{{item.category}}/{{item.type}}</span>
+              <span>{{item.category}}/{{item.secondary_category}}</span>
             </div>
             <div class="tcol noPad"
               style="flex:7">
@@ -137,7 +137,7 @@
                 <div class="trow">
                   <div class="tcol">
                     <span>{{item.product_code}}</span>
-                    <span>{{item.category}}/{{item.type}}</span>
+                    <span>{{item.category}}/{{item.secondary_category}}</span>
                   </div>
                   <div class="tcol">{{item.size_name}}/{{item.color_name}}</div>
                   <div class="tcol">{{item.part_name}}</div>
@@ -210,10 +210,13 @@
                       </div>
                     </div>
                     <div class="tcol">
-                      <div class="elCtn">
+                      <div class="elCtn UnitCtn">
                         <el-input v-model="itemChild.final_number"
                           placeholder="数量">
-                          <template slot="append">kg</template>
+                          <template slot="append">
+                            <el-input v-model="itemChild.unit"
+                              placeholder="单位"></el-input>
+                          </template>
                         </el-input>
                       </div>
                     </div>
@@ -230,7 +233,8 @@
                           need_number: '',
                           production_number: '',
                           loss: '',
-                          final_number: ''
+                          final_number: '',
+                          unit: 'kg'
                         })">添加</span>
                         <span class="opr red"
                           @click="item.info_data.length>1?$deleteItem(item.info_data,indexChild):$message.error('至少有一项，可以不填')">删除</span>
@@ -264,7 +268,7 @@
                 <div class="trow">
                   <div class="tcol">
                     <span>{{item.product_code}}</span>
-                    <span>{{item.category}}/{{item.type}}</span>
+                    <span>{{item.category}}/{{item.secondary_category}}</span>
                   </div>
                   <div class="tcol">{{item.part_name}}</div>
                   <div class="tcol">{{item.order_number}}</div>
@@ -353,7 +357,8 @@
                           need_number: '',
                           production_number: '',
                           loss: '',
-                          final_number: ''
+                          final_number: '',
+                          unit: 'kg'
                         })">添加</span>
                         <span class="opr red"
                           @click="item.info_data.length>1?$deleteItem(item.info_data,indexChild):$message.error('至少有一项，可以不填')">删除</span>
@@ -432,7 +437,7 @@
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
           <div class="btn backHoverBlue"
-            @click="saveMeterialPlan">修改</div>
+            @click="saveMaterialPlan">修改</div>
         </div>
       </div>
     </div>
@@ -534,7 +539,8 @@ export default Vue.extend({
                   loss: itemChild.need_number
                     ? this.numberAutoMethod(100 * (Number(itemChild.final_number) / Number(itemChild.need_number) - 1))
                     : 0,
-                  final_number: Number(itemChild.final_number)
+                  final_number: Number(itemChild.final_number),
+                  unit: itemChild.unit
                 })
               }
             }
@@ -631,7 +637,7 @@ export default Vue.extend({
                 this.materialPlanInfo.material_plan_data.push({
                   product_code: item.product_code,
                   category: item.category,
-                  type: item.type,
+                  secondary_category: item.secondary_category,
                   part_id: itemPart.part_id,
                   part_name: itemPart.name,
                   color_name: itemChild.color_name,
@@ -667,7 +673,8 @@ export default Vue.extend({
                             production_number: itemMat.number,
                             loss: '',
                             final_number: '',
-                            has_plan: true
+                            has_plan: true,
+                            unit: 'kg'
                           }
                         })
                       : [
@@ -681,7 +688,8 @@ export default Vue.extend({
                             need_number: '',
                             production_number: '',
                             loss: '',
-                            final_number: ''
+                            final_number: '',
+                            unit: 'kg'
                           }
                         ]
                 })
@@ -726,7 +734,8 @@ export default Vue.extend({
                           production_number: itemMat.number,
                           loss: '',
                           final_number: '',
-                          has_plan: true
+                          has_plan: true,
+                          unit: 'kg'
                         })
                       }
                     })
@@ -735,7 +744,7 @@ export default Vue.extend({
                   this.materialPlanInfo.material_plan_data.push({
                     product_code: item.product_code,
                     category: item.category,
-                    type: item.type,
+                    secondary_category: item.secondary_category,
                     part_id: itemPart.part_id,
                     part_name: itemPart.name,
                     color_name: '',
@@ -761,7 +770,8 @@ export default Vue.extend({
                               production_number: itemMat.number,
                               loss: '',
                               final_number: '',
-                              has_plan: true
+                              has_plan: true,
+                              unit: 'kg'
                             }
                           })
                         : [
@@ -775,7 +785,8 @@ export default Vue.extend({
                               need_number: '',
                               production_number: '',
                               loss: '',
-                              final_number: ''
+                              final_number: '',
+                              unit: 'kg'
                             }
                           ]
                   })
@@ -792,8 +803,13 @@ export default Vue.extend({
       this.initMaterialPlan()
       this.$message.success('已切换填写方式')
     },
-    getMatId(ev: number[], info: { material_id: number }) {
+    getMatId(ev: number[], info: any) {
       info.material_id = ev![2]
+      if (this.yarnTypeList.find((item) => item.value === ev[0])?.label === '面料') {
+        info.unit = 'm'
+      } else {
+        info.unit = 'kg'
+      }
     },
     getCmpData() {
       this.materialPlanInfo.material_plan_data.forEach((item) => {
@@ -803,7 +819,7 @@ export default Vue.extend({
         })
       })
     },
-    saveMeterialPlan() {
+    saveMaterialPlan() {
       const formCheck =
         this.materialPlanInfo.production_plan_data.some((item) => {
           return item.product_data.some((itemChild) => {
@@ -835,6 +851,11 @@ export default Vue.extend({
               {
                 key: 'final_number',
                 errMsg: '检测到有未填写的物料最终数量，请补充'
+              },
+              {
+                key: 'unit',
+                errMsg: '物料的单位只能为kg或m',
+                regExp: /^((?!kg|m).)+$/
               }
             ])
           })
@@ -915,6 +936,20 @@ export default Vue.extend({
 #materialPlanCreate {
   .el-tabs__content {
     padding: 20px 32px;
+  }
+  .UnitCtn {
+    .el-input-group__append {
+      padding: 0;
+      .el-input {
+        width: 45px;
+        .el-input__inner {
+          padding: 0 8px;
+          border: 0;
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+        }
+      }
+    }
   }
 }
 </style>

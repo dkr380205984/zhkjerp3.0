@@ -11,8 +11,10 @@
           <el-submenu :key="index"
             :index="index.toString() + 'item'">
             <template v-slot:title>
-              <span class="iconFont"
-                :class="item.icon"></span>
+              <svg class="iconfont"
+                aria-hidden="true">
+                <use :xlink:href="'#' + item.icon"></use>
+              </svg>
               <span style="font-size:16px;vertical-align: 0px;">{{item.name}}</span>
             </template>
             <template v-for="(itemChild,indexChild) in item.children">
@@ -20,8 +22,10 @@
                 <el-submenu :key="indexChild"
                   :index="indexChild.toString() + 'itemChild'">
                   <template v-slot:title>
-                    <span class="iconFont"
-                      :class="itemChild.icon"></span>
+                    <svg class="iconfont"
+                      aria-hidden="true">
+                      <use :xlink:href="'#' + itemChild.icon"></use>
+                    </svg>
                     <span style="font-size:14px;vertical-align: 0px;">{{itemChild.name}}</span>
                   </template>
                   <el-menu-item v-for="(itemGrand,indexGrand) in itemChild.children"
@@ -37,8 +41,10 @@
                 <el-menu-item :key="indexChild"
                   :index="itemChild.url">
                   <template v-slot:title>
-                    <span class="iconFont"
-                      :class="itemChild.icon"></span>
+                    <svg class="iconfont"
+                      aria-hidden="true">
+                      <use :xlink:href="'#' + itemChild.icon"></use>
+                    </svg>
                     <span style="font-size:14px;vertical-align: 0px;">{{itemChild.name}}</span>
                   </template>
                 </el-menu-item>
@@ -50,8 +56,10 @@
           <el-menu-item :key="index"
             :index="item.url">
             <template v-slot:title>
-              <span class="iconFont"
-                :class="item.icon"></span>
+              <svg class="iconfont"
+                aria-hidden="true">
+                <use :xlink:href="'#' + item.icon"></use>
+              </svg>
               <span style="font-size:16px;vertical-align: 0px;">{{item.name}}</span>
             </template>
           </el-menu-item>

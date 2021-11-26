@@ -22,14 +22,14 @@ Vue.filter('checkFilter', (val: 0 | 1 | 2 | null) => {
   return imgArr[index]
 })
 // 样品转产品过程中的状态转换
-Vue.filter('productStatusFilter', (val: 1 | 2 | 3 | 4) => {
-  const statusArr = ['未知', '待确认', '已确认', '已修改', '已转产品']
+Vue.filter('productStatusFilter', (val: 1 | 2 | 3 | 4 | 5 | 6) => {
+  const statusArr = ['未知', '待确认', '已确认', '已修改', '已转产品', '已取消', '确认继续打样']
   return statusArr[val]
 })
 
 // 样品转产品过程中的状态转换 class
-Vue.filter('productStatusClassFilter', (val: 1 | 2 | 3 | 4) => {
-  const statusArr = ['', 'orange', 'green', 'orange', 'blue']
+Vue.filter('productStatusClassFilter', (val: 1 | 2 | 3 | 4 | 5 | 6) => {
+  const statusArr = ['', 'orange', 'green', 'orange', 'blue', 'gray', 'green']
   return statusArr[val]
 })
 
@@ -47,6 +47,17 @@ Vue.filter('materialStockTypeClassFilter', (val: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
   } else {
     return 'green'
   }
+})
+
+// 订单状态
+Vue.filter('orderStatusFilter', (val: 0 | 1 | 2 | 3) => {
+  const statusArr = ['', '已创建', '进行中', '已完成', '已结算', '已取消']
+  return statusArr[val]
+})
+// 订单状态 class
+Vue.filter('orderStatusClassFilter', (val: 0 | 1 | 2 | 3) => {
+  const statusArr = ['', 'orange', 'blue', 'green', 'green', 'red']
+  return statusArr[val]
 })
 
 

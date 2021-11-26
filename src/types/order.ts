@@ -25,7 +25,7 @@ export interface OrderBatch {
     product_id: string | number
     product_code?: string
     category?: string
-    type?: string
+    secondary_category?: string
     size_color_list: Array<{
       label: string
       value: string
@@ -62,6 +62,7 @@ export interface OrderTime {
   is_urgent?: 1 | 2 // 样单用 1.紧急 2.不紧急
   is_before_confirm?: 1 | 2 // 订单用 产前确认
   is_send?: 1 | 2 // 订单用 是否邮寄
+  has_material_plan?: 1 | 2
   batch_data: OrderBatch[]
 }
 
@@ -77,7 +78,7 @@ export interface OrderInfo {
   public_files: string[]
   private_files: string[]
   settle_tax: string // 结算税率
-  settle_unit: string // 结算单位
+  settle_unit: string // 报价币种
   time_data: OrderTime | OrderTime[]
 }
 
@@ -93,7 +94,7 @@ export interface OrderProductFlatten {
   product_code?: string
   product_id: string | number
   category?: string
-  type?: string
+  secondary_category?: string
   part_data?: PartInfo[]
   process_data?: Array<{
     process_id: number
@@ -106,7 +107,7 @@ export interface OrderProductMerge {
   product_code?: string
   product_id: string | number
   category?: string
-  type?: string
+  secondary_category?: string
   part_data: PartInfo[]
   childrenMergeInfo: Array<{
     color_id: string | number

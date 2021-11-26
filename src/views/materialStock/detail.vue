@@ -2,7 +2,7 @@
   <div id="materialStockDetail"
     class="bodyContainer"
     v-loading="loading">
-    <order-detail :id="$route.query.id"></order-detail>
+    <order-detail :data="orderInfo"></order-detail>
     <div class="module clearfix">
       <div class="titleCtn">
         <div class="title">物料采购单</div>
@@ -20,7 +20,6 @@
                 <div class="tcol">物料颜色</div>
                 <div class="tcol">采购数量</div>
                 <div class="tcol">入库数量</div>
-                <div class="tcol">操作</div>
               </div>
             </div>
           </div>
@@ -45,11 +44,8 @@
                 </div>
                 <div class="tcol">{{itemChild.attribute}}</div>
                 <div class="tcol">{{itemChild.material_color}}</div>
-                <div class="tcol">{{itemChild.number}}kg</div>
+                <div class="tcol">{{itemChild.number}}{{itemChild.unit||'kg'}}</div>
                 <div class="tcol">入库数量</div>
-                <div class="tcol oprCtn">
-                  <div class="opr hoverBlue">入库</div>
-                </div>
               </div>
             </div>
           </div>
@@ -95,7 +91,6 @@
               </div>
             </div>
             <div class="tcol">截止日期</div>
-            <div class="tcol">备注信息</div>
           </div>
         </div>
         <div class="tbody">
@@ -139,7 +134,6 @@
               </div>
             </div>
             <div class="tcol">{{itemProcess.delivery_time}}</div>
-            <div class="tcol">{{itemProcess.desc}}</div>
           </div>
         </div>
       </div>
@@ -242,7 +236,7 @@
           <div class="trow">
             <div class="tcol">单据编号</div>
             <div class="tcol">出入库类型</div>
-            <div class="tcol">单位名称</div>
+            <div class="tcol">库存转移</div>
             <div class="tcol noPad"
               style="flex:5">
               <div class="trow">
@@ -253,8 +247,6 @@
                 <div class="tcol">数量</div>
               </div>
             </div>
-            <div class="tcol">日期</div>
-            <div class="tcol">备注信息</div>
             <div class="tcol">操作</div>
           </div>
         </div>
@@ -265,7 +257,48 @@
             <div class="tcol">{{item.code}}</div>
             <div class="tcol"
               :class="item.action_type|materialStockTypeClassFilter">{{item.action_type|materialStockTypeFilter}}</div>
-            <div class="tcol">{{item.client_name}}</div>
+            <div class="tcol">
+              <template v-if="item.action_type===1">
+                <div class="changeCtn">
+                  <span>{{item.client_name}}</span>
+                  <span class="el-icon-s-unfold green"></span>
+                  <span>{{item.store}}/{{item.secondary_store}}</span>
+                </div>
+              </template>
+              <template v-else-if="item.action_type===2">
+                <div class="changeCtn">
+                  <span>{{item.client_name}}</span>
+                  <span class="el-icon-s-unfold green"></span>
+                  <span>{{item.store}}/{{item.secondary_store}}</span>
+                </div>
+              </template>
+              <template v-else-if="item.action_type===3 || item.action_type===5">
+                <div class="changeCtn">
+                  <span>{{item.store}}/{{item.secondary_store}}</span>
+                  <span class="el-icon-s-unfold orange"></span>
+                  <span>{{item.client_name}}</span>
+                </div>
+              </template>
+              <template v-else-if="item.action_type===4 || item.action_type===6 || item.action_type===9 || item.action_type===10">
+                <div class="changeCtn">
+                  <span>{{item.store}}/{{item.secondary_store}}</span>
+                </div>
+              </template>
+              <template v-else-if="item.action_type===7">
+                <div class="changeCtn">
+                  <span>{{item.store}}/{{item.secondary_store}}</span>
+                  <span class="el-icon-s-unfold orange"></span>
+                  <span>{{item.move_store}}/{{item.move_secondary_store}}</span>
+                </div>
+              </template>
+              <template v-else-if="item.action_type===8">
+                <div class="changeCtn">
+                  <span>{{item.store}}/{{item.secondary_store}}</span>
+                  <span class="el-icon-s-unfold green"></span>
+                  <span>{{item.move_store}}/{{item.move_secondary_store}}</span>
+                </div>
+              </template>
+            </div>
             <div class="tcol noPad"
               style="flex:5">
               <div class="trow"
@@ -280,8 +313,6 @@
                 <div class="tcol">{{itemChild.number}}kg</div>
               </div>
             </div>
-            <div class="tcol">{{item.complete_time}}</div>
-            <div class="tcol">{{item.desc}}</div>
             <div class="tcol oprCtn">
               <div class="opr hoverRed"
                 @click="deleteMaterialStockList(item.id)">删除</div>
@@ -569,6 +600,32 @@
         </div>
       </div>
     </div>
+    <div class="popup"
+      v-show="chooseIndexFlag">
+      <div class="main"
+        style=" width: 500px;">
+        <div class="titleCtn">
+          <div class="text">选择打样次数</div>
+          <div class="closeCtn"
+            @click="init();chooseIndexFlag=false">
+            <i class="el-icon-close"></i>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="tag"
+            v-for="(item,index) in orderInfo.time_data"
+            :key="index"
+            :class="{'backHoverBlue':index===orderIndex}"
+            @click="orderIndex=index">第{{index+1}}次打样</div>
+        </div>
+        <div class="oprCtn">
+          <div class="btn borderBtn"
+            @click="init();chooseIndexFlag=false">取消</div>
+          <div class="btn backHoverBlue"
+            @click="init();orderIndex=index;chooseIndexFlag=false">确定</div>
+        </div>
+      </div>
+    </div>
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
@@ -588,8 +645,13 @@ import { ProductionPlanInfo } from '@/types/productionPlan'
 import { MaterialProcessInfo } from '@/types/materialProcess'
 import { materialOrder, store, materialStock, productionPlan, order } from '@/assets/js/api'
 import { stockType } from '@/assets/js/dictionary'
+import { OrderInfo, OrderTime } from '@/types/order'
+interface OrderDetail extends OrderInfo {
+  time_data: OrderTime[]
+}
 export default Vue.extend({
   data(): {
+    orderInfo: OrderDetail
     materialProcessList: MaterialProcessInfo[]
     materialOrderList: MaterialOrderInfo[]
     materialStockInfo: MaterialStockInfo
@@ -599,11 +661,72 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      orderInfo: {
+        id: null,
+        client_id: '',
+        group_id: '',
+        contacts_id: '',
+        public_files: [],
+        private_files: [],
+        settle_tax: '',
+        settle_unit: '',
+        order_type: 1,
+        code: '',
+        desc: '',
+        time_data: [
+          {
+            id: '',
+            order_time: this.$getDate(new Date()),
+            order_type_id: '',
+            complete_time: '',
+            is_draft: 2,
+            total_style: '',
+            total_number: '',
+            total_price: '',
+            is_urgent: 2,
+            is_before_confirm: 2,
+            is_send: 2,
+            batch_data: [
+              {
+                id: '',
+                batch_number: 1,
+                batch_title: '',
+                batch_type_id: '',
+                delivery_time: '',
+                is_urgent: 2,
+                is_draft: 2,
+                total_style: '',
+                total_number: '',
+                total_price: '',
+                desc: '',
+                product_data: [
+                  {
+                    product_id: '',
+                    size_color_list: [],
+                    product_info: [
+                      {
+                        size_color: '',
+                        size_id: '',
+                        color_id: '',
+                        number: '',
+                        price: ''
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      orderIndex: 0, // 多张订单/样单
+      chooseIndexFlag: false,
       materialOrderList: [],
       materialProcessList: [],
       stockTypeList: stockType,
       materialStockFlag: false,
       materialStockInfo: {
+        order_id: '',
         action_type: 1,
         rel_doc_type: '',
         rel_doc_id: '',
@@ -638,13 +761,13 @@ export default Vue.extend({
       this.loading = true
       Promise.all([
         materialOrder.list({
-          top_order_id: Number(this.$route.query.id)
+          order_id: Number(this.orderInfo.time_data[this.orderIndex].id)
         }),
         materialStock.list({
-          top_order_id: Number(this.$route.query.id)
+          order_id: Number(this.orderInfo.time_data[this.orderIndex].id)
         }),
         productionPlan.list({
-          top_order_id: Number(this.$route.query.id)
+          order_id: Number(this.orderInfo.time_data[this.orderIndex].id)
         })
       ]).then((res) => {
         this.materialOrderList = res[0].data.data
@@ -653,10 +776,18 @@ export default Vue.extend({
           this.materialProcessList = this.materialProcessList.concat(item.process_info)
         })
         this.materialStockList = res[1].data.data
+        console.log(this.materialStockList)
         // 统计入库日志用于出库
-        const flattenStock = this.$flatten(this.$flatten(this.materialStockList)).filter(
-          (item) => item.action_type !== 3 && item.action_type !== 5
-        )
+        const flattenStock = this.$flatten(
+          this.$flatten(
+            this.materialStockList.map((item) => {
+              item.info_data.forEach((itemChild) => {
+                delete itemChild.id
+              })
+              return item
+            })
+          )
+        ).filter((item) => item.action_type !== 3 && item.action_type !== 5)
         this.storeInList = this.$mergeData(flattenStock, {
           mainRule: [
             'material_name',
@@ -756,7 +887,19 @@ export default Vue.extend({
           }
         })
       } else {
-        // 最终入库不知道怎么初始化
+        this.materialStockInfo.info_data = this.materialStockInfo.selectList.map((item) => {
+          return {
+            material_id: item.material_id as number,
+            material_color: item.material_color as string,
+            color_code: '',
+            batch_code: '',
+            vat_code: '',
+            attribute: item.attribute as string,
+            number: item.number as string,
+            item: '', // 件数
+            rel_doc_info_id: item.value // 采购单调取单加工单子项id
+          }
+        })
       }
       this.materialStockFlag = true
     },
@@ -876,6 +1019,7 @@ export default Vue.extend({
       this.materialStockFlag = true
     },
     getCmpData() {
+      this.materialStockInfo.order_id = Number(this.orderInfo.time_data[this.orderIndex].id)
       this.materialStockInfo.info_data.forEach((item) => {
         item.batch_code = item.batch_code || '无'
         item.vat_code = item.vat_code || '无'
@@ -900,6 +1044,8 @@ export default Vue.extend({
         materialStock.create(this.materialStockInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
+            this.materialStockFlag = false
+            this.init()
           }
         })
       }
@@ -933,7 +1079,21 @@ export default Vue.extend({
     }
   },
   mounted() {
-    this.init()
+    order
+      .detail({
+        id: Number(this.$route.query.id)
+      })
+      .then((res) => {
+        if (res.data.status) {
+          this.orderInfo = res.data.data
+          if (this.orderInfo.time_data.length > 1) {
+            this.chooseIndexFlag = true
+            this.loading = false
+          } else {
+            this.init()
+          }
+        }
+      })
   }
 })
 </script>

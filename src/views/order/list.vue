@@ -35,7 +35,7 @@
             <el-select @change="changeRouter"
               v-model="status"
               placeholder="筛选报价单状态">
-              <el-option value="0"
+              <el-option value="null"
                 label="全部"></el-option>
               <el-option value="1"
                 label="已审核"></el-option>
@@ -107,8 +107,10 @@
 import Vue from 'vue'
 import { order, listSetting } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
+import { ListSetting } from '@/types/list'
 export default Vue.extend({
   data(): {
+    originalSetting: ListSetting[]
     list: OrderInfo[]
     [porpName: string]: any
   } {
@@ -129,7 +131,7 @@ export default Vue.extend({
       originalSetting: [
         {
           key: 'code',
-          name: '样单号',
+          name: '订单号',
           ifShow: true,
           ifLock: true,
           index: 0
@@ -142,53 +144,56 @@ export default Vue.extend({
           index: 1
         },
         {
-          key: 'contact_name',
+          key: 'contacts_name',
           name: '公司联系人',
           ifShow: true,
           ifLock: false,
           index: 2
         },
         {
-          key: 'contact_name',
-          name: '公司联系人',
+          key: 'product_code',
+          otherkey: 'system_code',
+          name: '产品编号',
           ifShow: true,
           ifLock: false,
-          index: 3
-        },
-        {
-          key: 'product_info',
-          name: '产品信息',
-          ifShow: true,
-          ifLock: false,
-          index: 4
+          index: 3,
+          from: 'product_data',
+          mark: true
         },
         {
           key: 'image_data',
           name: '产品图片',
           ifShow: true,
           ifLock: false,
-          index: 5
+          ifImage: true,
+          index: 4,
+          from: 'product_data'
         },
         {
           key: 'total_number',
           name: '下单总数',
           ifShow: true,
           ifLock: false,
-          index: 6
+          index: 5,
+          errVal: '0'
         },
         {
           key: 'total_price',
           name: '下单总额',
           ifShow: true,
           ifLock: false,
-          index: 7
+          index: 6,
+          unit: '元',
+          errVal: '0'
         },
         {
           key: 'status',
-          name: '审核状态',
+          name: '订单状态',
           ifShow: true,
           ifLock: false,
-          index: 8
+          index: 7,
+          filterArr: ['', '已创建', '进行中', '已完成', '已结算', '已取消'],
+          classArr: ['', 'orange', 'blue', 'green', 'green', 'red']
         },
         {
           key: 'group_name',
@@ -203,13 +208,6 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 10
-        },
-        {
-          key: 'settle_unit',
-          name: '结算单位',
-          ifShow: true,
-          ifLock: false,
-          index: 11
         }
       ],
       pickerOptions: {
@@ -300,7 +298,7 @@ export default Vue.extend({
       this.page = Number(query.page)
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.keyword = query.keyword || ''
-      this.status = query.status || '0'
+      this.status = query.status || 'null'
       this.user_id = Number(query.user_id) || ''
       this.group_id = Number(query.gourp_id) || ''
       this.date = query.date ? (query.date as string).split(',') : []
@@ -335,7 +333,7 @@ export default Vue.extend({
           this.user_id = ''
           this.group_id = ''
           this.date = []
-          this.status = '0'
+          this.status = 'null'
           this.changeRouter()
         })
         .catch(() => {
@@ -397,7 +395,7 @@ export default Vue.extend({
       return this.$store.state.api.group.arr
     }
   },
-  mounted() {
+  created() {
     this.getFilters()
     this.getList()
     this.getListSetting()

@@ -14,7 +14,7 @@
           </div>
           <div class="col">
             <div class="label">关联订单：</div>
-            <div class="text">没给</div>
+            <div class="text">{{materialPlanInfo.order_code}}</div>
           </div>
           <div class="col">
             <div class="label">创建人：</div>
@@ -63,17 +63,26 @@
           <div class="otherInfo">
             <div class="btn backHoverBlue"
               @click="goOrderMaterial('色纱')">
-              <i class="iconfont">&#xe63b;</i>
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
               <span class="text">订购色纱</span>
             </div>
             <div class="btn backHoverBlue"
               @click="goOrderMaterial('白胚')">
-              <i class="iconfont">&#xe63b;</i>
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
               <span class="text">订购白胚</span>
             </div>
             <div class="btn backHoverOrange"
               @click="goStockMaterial()">
-              <i class="iconfont">&#xe63b;</i>
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
               <span class="text">库存调取</span>
             </div>
           </div>
@@ -170,17 +179,26 @@
               <div class="otherInfo">
                 <div class="btn backHoverBlue"
                   @click="goProcessMaterial('订购加工')">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
                   <span class="text">物料加工</span>
                 </div>
                 <div class="btn backHoverOrange"
                   @click="materialOrderUpdataInfo=$clone(item);materialOrderUpdataFlag=true">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
                   <span class="text">单据修改</span>
                 </div>
                 <div class="btn backHoverRed"
                   @click="deleteMaterialOrder(item.id)">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
                   <span class="text">删除单据</span>
                 </div>
               </div>
@@ -257,7 +275,7 @@
                     <div class="opr hoverOrange"
                       @click="materialProcessUpdataInfo=$clone(itemProcess);materialProcessUpdataFlag=true">修改</div>
                     <div class="opr hoverRed"
-                      @click="deleteMaterialProcess(item.id)">删除</div>
+                      @click="deleteMaterialProcess(itemProcess.id)">删除</div>
                   </div>
                 </div>
               </div>
@@ -340,13 +358,16 @@
           <div class="buttonList">
             <div class="btn backHoverBlue">
               <i class="el-icon-s-grid"></i>
-              <span class="text">订购单操作</span>
+              <span class="text">调取单操作</span>
             </div>
             <div class="otherInfoCtn">
               <div class="otherInfo">
                 <div class="btn backHoverBlue"
                   @click="goProcessMaterial('调取加工')">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
                   <span class="text">物料加工</span>
                 </div>
                 <!-- <div class="btn backHoverOrange">
@@ -355,7 +376,10 @@
                 </div> -->
                 <div class="btn backHoverRed"
                   @click="deleteMaterialStock(item.id)">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
                   <span class="text">删除单据</span>
                 </div>
               </div>
@@ -552,15 +576,11 @@
                       placeholder="白胚"
                       disabled
                       v-if="itemMat.material_color==='白胚'"></el-input>
-                    <el-select v-else
+                    <el-autocomplete v-else
                       class="once"
-                      placeholder="颜色"
-                      v-model="itemMat.material_color">
-                      <el-option v-for="item in yarnColorList"
-                        :key="item.name"
-                        :value="item.name"
-                        :label="item.name"></el-option>
-                    </el-select>
+                      v-model="itemMat.material_color"
+                      :fetch-suggestions="searchColor"
+                      placeholder="物料颜色"></el-autocomplete>
                   </template>
                 </div>
               </div>
@@ -592,6 +612,7 @@
               <div class="opr hoverBlue"
                 v-if="indexMat===0"
                 @click="$addItem(item.info_data,{
+                  material_type:1,
                   material_id: '',
                   material_name: '',
                   material_color_id: itemMat.material_color_id===0?0:'',
@@ -705,6 +726,7 @@
               desc: '',
               info_data: [
                 {
+                  material_type:1,
                   material_id: '',
                   material_name: '',
                   material_color: '',
@@ -787,8 +809,10 @@
                     v-model="materialStockFilter.color_code"></el-input>
                 </div>
                 <div class="elCtn">
-                  <el-select placeholder="筛选仓库"
-                    v-model="materialStockFilter.store_id"></el-select>
+                  <el-cascader placeholder="筛选仓库"
+                    v-model="materialStockFilter.store_id_arr"
+                    :options="storeList"
+                    @change="searchMaterial"></el-cascader>
                 </div>
                 <div class="btn backHoverBlue fr"
                   @click="searchMaterial">搜索</div>
@@ -814,8 +838,8 @@
                   <div class="col">{{item.batch_code}}/{{item.vat_code}}/{{item.color_code}}</div>
                   <div class="col">{{item.number}}kg</div>
                   <div class="col">
-                    <div class="opr hoverBlue"
-                      @click="checkMaterialStock(item)">调取</div>
+                    <el-checkbox v-model="item.check"
+                      @change="checkMaterialStock($event,item)"></el-checkbox>
                   </div>
                 </div>
                 <div class="pageCtn">
@@ -998,7 +1022,8 @@
                 </div>
                 <div class="info elCtn">
                   <el-select v-model="item.process"
-                    placeholder="选择加工工序">
+                    placeholder="选择加工工序"
+                    @change="getProcess">
                     <el-option v-for="item in yarnProcessList"
                       :key="item.value"
                       :label="item.label"
@@ -1115,15 +1140,10 @@
                       placeholder="白胚"
                       disabled>
                     </el-input>
-                    <el-select class="once"
-                      placeholder="选择颜色"
+                    <el-autocomplete class="once"
                       v-model="itemMat.after_color"
-                      filterable>
-                      <el-option v-for="item in yarnColorList"
-                        :key="item.name"
-                        :value="item.name"
-                        :label="item.name"></el-option>
-                    </el-select>
+                      :fetch-suggestions="searchColor"
+                      placeholder="物料颜色"></el-autocomplete>
                   </template>
                   <template v-if="item.process==='倒纱'">
                     <el-select class="once"
@@ -1664,15 +1684,10 @@
                       placeholder="白胚"
                       disabled>
                     </el-input>
-                    <el-select class="once"
-                      placeholder="选择颜色"
+                    <el-autocomplete class="once"
                       v-model="itemMat.after_color"
-                      filterable>
-                      <el-option v-for="item in yarnColorList"
-                        :key="item.name"
-                        :value="item.name"
-                        :label="item.name"></el-option>
-                    </el-select>
+                      :fetch-suggestions="searchColor"
+                      placeholder="物料颜色"></el-autocomplete>
                   </template>
                   <template v-if="materialProcessUpdataInfo.process==='倒纱'">
                     <el-select class="once"
@@ -1876,6 +1891,7 @@ export default Vue.extend({
       materialOrderUpdataFlag: false,
       materialProcessUpdataFlag: false,
       searchLoading: false,
+      storeList: [],
       materialPlanInfo: {
         order_id: '',
         type: '1', // 1、按颜色尺码 2.按产品
@@ -1889,6 +1905,7 @@ export default Vue.extend({
       searchTotal: 1,
       materialOrderInfo: [
         {
+          material_type: 1,
           order_id: '',
           plan_id: '',
           client_id: '',
@@ -1917,6 +1934,7 @@ export default Vue.extend({
         }
       ],
       materialOrderUpdataInfo: {
+        material_type: 1,
         order_id: '',
         plan_id: '',
         client_id: '',
@@ -1947,6 +1965,7 @@ export default Vue.extend({
       materialStockFilter: {
         material_id: '',
         material_name: '',
+        store_id_arr: [],
         store_id: '',
         second_store_id: '',
         vat_code: '',
@@ -2087,6 +2106,45 @@ export default Vue.extend({
         this.loading = false
       })
     },
+    // 原料颜色搜索
+    searchColor(str: string, cb: any) {
+      let results = str ? this.yarnColorList.filter(this.createFilter(str)) : this.yarnColorList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    createFilter(queryString: string) {
+      return (restaurant: any) => {
+        return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+      }
+    },
+    // 加工工序优化
+    getProcess(ev: string) {
+      if (ev === '染色') {
+        if (this.materialProcessFlag === '订购加工') {
+          this.materialProcessInfo.forEach((item) => {
+            item.info_data.forEach((itemChild) => {
+              const finded = this.checkMaterialProcessList.find(
+                (itemFind) => itemFind.id === itemChild.material_order_info_id
+              )
+              if (finded) {
+                itemChild.after_color = finded.material_color
+              }
+            })
+          })
+        } else {
+          this.materialProcessInfo.forEach((item) => {
+            item.info_data.forEach((itemChild) => {
+              const finded = this.checkMaterialStockList.find(
+                (itemFind) => itemFind.id === itemChild.material_transfer_info_id
+              )
+              if (finded) {
+                itemChild.after_color = finded.material_color
+              }
+            })
+          })
+        }
+      }
+    },
     goOrderMaterial(type: '白胚' | '色纱') {
       if (this.checkMaterialOrderList.length > 0) {
         this.materialOrderFlag = true
@@ -2130,6 +2188,7 @@ export default Vue.extend({
     resetOrderMaterial() {
       this.materialOrderInfo = [
         {
+          material_type: 1,
           order_id: '',
           plan_id: '',
           client_id: '',
@@ -2328,14 +2387,32 @@ export default Vue.extend({
       info.color_code = finded.color_code
       info.vat_code = finded.vat_code
     },
-    resetStockMaterial() {},
+    resetStockMaterial() {
+      this.materialStockFilter = {
+        material_id: '',
+        material_name: '',
+        store_id_arr: [],
+        store_id: '',
+        second_store_id: '',
+        vat_code: '',
+        batch_code: '',
+        color_code: '',
+        material_color: ''
+      }
+    },
     searchMaterial() {
       store
         .searchMat({
           material_id: '',
-          store_id: '',
-          secondary_id: '',
-          keyword: ''
+          store_id: this.materialStockFilter.store_id_arr.length > 0 ? this.materialStockFilter.store_id_arr[0] : '',
+          secondary_id:
+            this.materialStockFilter.store_id_arr.length > 0 ? this.materialStockFilter.store_id_arr[1] : '',
+          keyword: '',
+          material_name: this.materialStockFilter.material_name,
+          material_color: this.materialStockFilter.material_color,
+          vat_code: this.materialStockFilter.vat_code,
+          color_code: this.materialStockFilter.color_code,
+          batch_code: this.materialStockFilter.batch_code
         })
         .then((res) => {
           if (res.data.status) {
@@ -2344,21 +2421,29 @@ export default Vue.extend({
           }
         })
     },
-    checkMaterialStock(info: any) {
-      if (this.materialStockCheckList.find((item: any) => item.id === info.id)) {
-        this.$message.error('请不要重复选择物料')
-      } else if (
-        this.materialStockCheckList.length > 0 &&
-        this.materialStockCheckList.find(
-          (item: any) => item.store_id !== info.store_id || item.secondary_store_id !== info.secondary_store_id
-        )
-      ) {
-        this.$message.error('只能选择同一仓库的物料进行调取，如有需要请分两次调取')
+    checkMaterialStock(ev: boolean, info: any) {
+      if (ev) {
+        if (this.materialStockCheckList.find((item: any) => item.id === info.id)) {
+          this.$message.error('请不要重复选择物料')
+        } else if (
+          this.materialStockCheckList.length > 0 &&
+          this.materialStockCheckList.find(
+            (item: any) => item.store_id !== info.store_id || item.secondary_store_id !== info.secondary_store_id
+          )
+        ) {
+          this.$message.error('只能选择同一仓库的物料进行调取，如有需要请分两次调取')
+        } else {
+          this.materialStockCheckList.push(info)
+          this.materialStockInfo.store_id = this.materialStockCheckList[0].store_id
+          this.materialStockInfo.secondary_store_id = this.materialStockCheckList[0].secondary_store_id
+          this.$message.success('选取成功')
+        }
       } else {
-        this.materialStockCheckList.push(info)
-        this.materialStockInfo.store_id = this.materialStockCheckList[0].store_id
-        this.materialStockInfo.secondary_store_id = this.materialStockCheckList[0].secondary_store_id
-        this.$message.success('调取成功')
+        let deleteIndex = null
+        this.materialStockCheckList.find((item: any, index: number) => {
+          return item.id === info.id && (deleteIndex = index)
+        })
+        this.$deleteItem(this.materialStockCheckList, deleteIndex)
       }
     },
     closeStock() {
@@ -2599,6 +2684,7 @@ export default Vue.extend({
         ])
       })
       if (!formCheck) {
+        this.materialProcessUpdataInfo.order_id = this.materialPlanInfo.order_id
         materialProcess.create({ data: [this.materialProcessUpdataInfo] }).then((res) => {
           if (res.data.status) {
             this.$message.success('修改成功')
@@ -2680,8 +2766,13 @@ export default Vue.extend({
     prcessClientList(): CascaderInfo[] {
       return this.$store.state.api.clientType.arr.filter((item: { label: string }) => item.label === '原料加工单位')
     },
-    yarnColorList(): CascaderInfo[] {
-      return this.$store.state.api.yarnColor.arr
+    yarnColorList() {
+      return this.$store.state.api.yarnColor.arr.map((item: { name: any }) => {
+        return {
+          value: item.name,
+          label: item.name
+        }
+      })
     },
     totalOrderNumberList(): number[] {
       return this.materialOrderInfo.map((item) => {
@@ -2690,7 +2781,7 @@ export default Vue.extend({
         }, 0)
       })
     },
-    totalOrderPriceList(): number[] {
+    totalOrderPriceList(): string[] {
       return this.materialOrderInfo.map((item) => {
         return (
           item.info_data.reduce((total, current) => {
@@ -2699,7 +2790,7 @@ export default Vue.extend({
           item.others_fee_data.reduce((total, current) => {
             return total + Number(current.price)
           }, 0)
-        )
+        ).toFixed(2)
       })
     },
     totalOrderNumber(): number {
@@ -2707,7 +2798,7 @@ export default Vue.extend({
         return total + Number(current.number)
       }, 0)
     },
-    totalOrderPrice(): number {
+    totalOrderPrice(): string {
       return (
         this.materialOrderUpdataInfo.info_data.reduce((total, current) => {
           return total + Number(current.number) * Number(current.price)
@@ -2715,7 +2806,7 @@ export default Vue.extend({
         this.materialOrderUpdataInfo.others_fee_data.reduce((total, current) => {
           return total + Number(current.price)
         }, 0)
-      )
+      ).toFixed(2)
     },
     totalProcessNumberList(): number[] {
       return this.materialProcessInfo.map((item) => {
@@ -2724,7 +2815,7 @@ export default Vue.extend({
         }, 0)
       })
     },
-    totalProcessPriceList(): number[] {
+    totalProcessPriceList(): string[] {
       return this.materialProcessInfo.map((item) => {
         return (
           item.info_data.reduce((total, current) => {
@@ -2733,20 +2824,35 @@ export default Vue.extend({
           item.others_fee_data.reduce((total, current) => {
             return total + Number(current.price)
           }, 0)
-        )
+        ).toFixed(2)
       })
     },
-    totalProcessNumber() {
-      return 0
+    totalProcessNumber(): number {
+      return this.materialProcessUpdataInfo.info_data.reduce((total, current) => {
+        return total + Number(current.number)
+      }, 0)
     },
-    totalProcessPrice() {
-      return 0
+    totalProcessPrice(): string {
+      return (
+        this.materialProcessUpdataInfo.info_data.reduce((total, current) => {
+          return total + Number(current.number) * Number(current.price)
+        }, 0) +
+        this.materialProcessUpdataInfo.others_fee_data.reduce((total, current) => {
+          return total + Number(current.price)
+        }, 0)
+      ).toFixed(2)
     },
-    totalStockNumber() {
-      return 0
+    totalStockNumber(): number {
+      return this.materialStockInfo.info_data.reduce((total, current) => {
+        return total + Number(current.number)
+      }, 0)
     },
-    totalStockPrice() {
-      return 0
+    totalStockPrice(): string {
+      return this.materialStockInfo.info_data
+        .reduce((total, current) => {
+          return total + Number(current.number) * Number(current.price)
+        }, 0)
+        .toFixed(2)
     }
   },
   mounted() {
@@ -2762,6 +2868,22 @@ export default Vue.extend({
         getInfoApi: 'getYarnColorAsync'
       }
     ])
+    store.list().then((res) => {
+      if (res.data.status) {
+        this.storeList = res.data.data.map((item: any) => {
+          return {
+            label: item.name,
+            value: item.id,
+            children: item.secondary_store.map((itemChild: any) => {
+              return {
+                label: itemChild.name,
+                value: itemChild.id
+              }
+            })
+          }
+        })
+      }
+    })
     this.init()
   }
 })

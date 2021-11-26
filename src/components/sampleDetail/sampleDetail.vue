@@ -32,7 +32,7 @@
                     <div class="detailCtn">
                       <div class="row">
                         <div class="col">
-                          <div class="label">产品名称：</div>
+                          <div class="label">样品名称：</div>
                           <div class="text">{{sampleInfo.name}}</div>
                         </div>
                         <div class="col">
@@ -40,13 +40,13 @@
                           <div class="text">{{sampleInfo.style_code}}</div>
                         </div>
                         <div class="col">
-                          <div class="label">产品款式：</div>
-                          <div class="text">{{sampleInfo.style_data.map((item)=>item.name).join(',')}}</div>
+                          <div class="label">样品款式（没给）：</div>
+                          <!-- <div class="text">{{sampleInfo.style_data.map((item)=>item.name).join(',')}}</div> -->
                         </div>
                       </div>
                       <div class="row">
                         <div class="col">
-                          <div class="label">产品配色：</div>
+                          <div class="label">样品配色：</div>
                           <div class="text">
                             <span v-for="(item,index) in sampleInfo.color_data"
                               :key="item.id"
@@ -56,7 +56,7 @@
                       </div>
                       <div class="row">
                         <div class="col">
-                          <div class="label">产品描述：</div>
+                          <div class="label">样品描述：</div>
                           <div class="text">{{sampleInfo.desc}}</div>
                         </div>
                       </div>
@@ -138,50 +138,20 @@
                     <div class="rectCtn">
                       <div class="rect">
                         <div class="rectMain">
-                          <div class="icon yellow">
+                          <div class="icon"
+                            :class="sampleInfo.craft_list_id?'yellow':'gray'">
                             <img :src="require('@/assets/image/common/craft_icon.png')" />
                           </div>
                           <div class="rectContent">
                             <div class="text title">工艺单</div>
-                            <div class="text">隔壁老王</div>
-                            <div class="text">2019-08-23</div>
+                            <div class="text">创建人没给</div>
+                            <div class="text">创建时间没给</div>
                           </div>
                         </div>
                         <div class="menu">
                           <span class="opration">打印</span>
-                          <span class="opration">详情</span>
-                        </div>
-                      </div>
-                      <div class="rect">
-                        <div class="rectMain">
-                          <div class="icon blue">
-                            <img :src="require('@/assets/image/common/plan_icon.png')" />
-                          </div>
-                          <div class="rectContent">
-                            <div class="text title">配料单</div>
-                            <div class="text">隔壁老王</div>
-                            <div class="text">2019-08-23</div>
-                          </div>
-                        </div>
-                        <div class="menu">
-                          <span class="opration">打印</span>
-                          <span class="opration">详情</span>
-                        </div>
-                      </div>
-                      <div class="rect">
-                        <div class="rectMain">
-                          <div class="icon green">
-                            <img :src="require('@/assets/image/common/price_icon.png')" />
-                          </div>
-                          <div class="rectContent">
-                            <div class="text title">关联样单</div>
-                            <div class="text">隔壁老王</div>
-                            <div class="text">2019-08-23</div>
-                          </div>
-                        </div>
-                        <div class="menu">
-                          <span class="opration">打印</span>
-                          <span class="opration">详情</span>
+                          <span class="opration"
+                            @click="sampleInfo.craft_list_id?$openUrl('/craft/detail?id='+sampleInfo.product_id):$openUrl('/craft/create?id='+sampleInfo.product_id)">{{sampleInfo.craft_list_id?'详情':'添加'}}</span>
                         </div>
                       </div>
                     </div>
@@ -192,13 +162,11 @@
           </div>
         </div>
       </div>
-      <div class="oprCtn"
+      <!-- <div class="oprCtn"
         v-show="!noOpr">
         <span class="btn borderBtn"
-          @click="close">取消</span>
-        <span class="btn backHoverOrange">修改</span>
-        <span class="btn backHoverRed">删除</span>
-      </div>
+          @click="close">返回</span>
+      </div> -->
     </div>
   </div>
 </template>
@@ -239,7 +207,7 @@ export default Vue.extend({
         style_code: '', // 客户款号
         unit: '',
         category: '',
-        type: '',
+        secondary_category: '',
         image_data: [],
         desc: '',
         style_data: [], // 款式

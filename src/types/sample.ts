@@ -13,8 +13,9 @@ export interface SampleInfo {
   unit: string
   category?: string
   category_id?: string | number
-  type_id?: string | number
-  type?: string | number[] // 品类下拉框
+  secondary_category_id?: string | number
+  secondary_category?: string
+  type?: number[] // 品类下拉框
   image_data: string[]
   file_list?: Array<{
     id: number
@@ -36,7 +37,7 @@ export interface SampleInfo {
   color_data: Array<{
     name: string
     id: number
-  }> | Array<number>  // 配色组
+  }> | Array<string>  // 配色组
   // 配件信息
   part_data: Array<{
     name: string
@@ -53,4 +54,5 @@ export interface SampleInfo {
       number: string | number // 成分信息
     }>
   }>
+  client_edit_idea?: string
 }

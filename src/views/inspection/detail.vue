@@ -82,12 +82,18 @@
               <div class="otherInfo">
                 <div class="btn backHoverBlue"
                   @click="goInspection(1)">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
                   <span class="text">检验入库</span>
                 </div>
                 <div class="btn backHoverOrange"
                   @click="goInspection(2)">
-                  <i class="iconfont">&#xe63b;</i>
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
                   <span class="text">检验出库</span>
                 </div>
               </div>

@@ -4,7 +4,7 @@
       <div class="navCtn">
         <div class="leftCtn">
           <div class="companyCtn"
-            @click="$router.push('/homePage/homePage')">
+            @click="$router.push('/homePage')">
             <div class="logo">
               <img :src="logo" />
             </div>
@@ -57,7 +57,7 @@
           </div> -->
           <i class="el-icon-setting elIcon"
             v-show="haveSet"
-            @click="$router.push('/setting?pName=产品设置&cName=款式')"></i>
+            @click="$router.push('/setting?pName=产品设置&cName=品类')"></i>
           <!-- <i class="el-icon-s-data elIcon"
             v-show="haveSet"
             @click="$router.push('/order/orderStat/page=1&&keyword=&&date=&&group_id=&&company_id=')"></i>
@@ -93,7 +93,6 @@
     </div>
   </div>
 </template>
-
 <script lang="ts">
 import Vue from 'vue'
 import { navInfo } from '@/types/nav'
@@ -121,25 +120,25 @@ export default Vue.extend({
         {
           name: '报价管理',
           id: 1,
-          icon: 'price',
-          url: '/quotedPrice/list?page=1&keyword=&client_id=&user_id=&status=0&date='
+          icon: 'icon-baojiaguanli',
+          url: '/quotedPrice/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
           name: '样单管理',
           id: 2,
-          icon: 'sample',
-          url: '/sampleOrder/list?page=1&keyword=&client_id=&user_id=&status=0&date='
+          icon: 'icon-yangdanguanli',
+          url: '/sampleOrder/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
           name: '订单管理',
           id: 3,
-          icon: 'product',
-          url: '/order/list?page=1&keyword=&client_id=&user_id=&status=0&date='
+          icon: 'icon-dingdanguanli',
+          url: '/order/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
           name: '其它管理',
           id: null,
-          icon: 'other',
+          icon: 'icon-qitaguanli',
           url: '/menu'
         }
       ]

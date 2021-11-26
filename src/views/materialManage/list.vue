@@ -2,33 +2,42 @@
   <div id="orderList"
     class="bodyContainer">
     <div class="topTagCtn">
-      <div class="tag"
-        :class="type===1?'active':''"
-        @click="type=1;changeRouter()">
-        <i class="icon">图标</i>
+      <div class="tag active">
+        <div class="iconCtn">
+          <svg class="iconFont"
+            aria-hidden="true">
+            <use xlink:href="#icon-yuanliaoguanli"></use>
+          </svg>
+        </div>
         <span class="text">原料管理</span>
       </div>
       <div class="tag"
-        :class="type===2?'active':''"
-        @click="type=2;changeRouter()">
-        <i class="icon">图标</i>
+        @click="$router.push('/accessoriesManage/list?page=1&code=&date=')">
+        <div class="iconCtn">
+          <svg class="iconFont"
+            aria-hidden="true">
+            <use xlink:href="#icon-fuliaoguanli"></use>
+          </svg>
+        </div>
         <span class="text">辅料管理</span>
       </div>
     </div>
     <div class="module">
       <div class="titleCtn">
-        <div class="title">物料管理列表</div>
+        <div class="title">原料管理列表</div>
       </div>
       <div class="listCtn"
         v-loading="loading">
         <div class="filterCtn">
           <div class="elCtn">
             <el-input placeholder="搜索计划单号"
-              v-model="code"></el-input>
+              v-model="code"
+              @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
             <el-input placeholder="搜索订单号"
-              v-model="order_code"></el-input>
+              v-model="order_code"
+              @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
             <el-date-picker v-model="date"
@@ -43,6 +52,8 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
         </div>
         <div class="list">
           <div class="row title">
@@ -50,17 +61,15 @@
             <div class="col">关联订单</div>
             <div class="col">创建人</div>
             <div class="col">创建日期</div>
-            <div class="col">状态</div>
             <div class="col">操作</div>
           </div>
           <div class="row"
             v-for="(item,index) in list"
             :key="index">
             <div class="col">{{item.code}}</div>
-            <div class="col">没数据</div>
+            <div class="col">{{item.order_code}}</div>
             <div class="col">{{item.user_name}}</div>
             <div class="col">{{item.created_at.slice(0,10)}}</div>
-            <div class="col">没数据</div>
             <div class="col">
               <span class="opr hoverBlue"
                 @click="$router.push('/materialManage/detail?id='+item.id)">订购加工</span>
@@ -95,7 +104,6 @@ export default Vue.extend({
       list: [],
       total: 1,
       page: 1,
-      type: 1,
       code: '',
       order_code: '',
       date: [],
@@ -136,17 +144,50 @@ export default Vue.extend({
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)
-      this.type = Number(query.type)
+      this.code = query.code
+      this.order_code = query.order_code
+      this.date = query.date ? (query.date as string).split(',') : []
     },
     changeRouter() {
-      this.$router.push('/materialManage/list?page=' + this.page + '&type=' + this.type)
+      this.$router.push(
+        '/materialManage/list?page=' +
+          this.page +
+          '&code=' +
+          this.code +
+          '&order_code=' +
+          this.order_code +
+          '&date=' +
+          this.date
+      )
+    },
+    reset() {
+      this.$confirm('是否重置所有筛选条件?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.code = ''
+          this.order_code = ''
+          this.date = []
+          this.changeRouter()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消重置'
+          })
+        })
     },
     getList() {
       this.loading = true
       materialPlan
         .list({
           limit: 5,
-          page: this.page
+          page: this.page,
+          keyword: this.code,
+          start_time: this.date.length > 0 ? this.date[0] : '',
+          end_time: this.date.length > 0 ? this.date[1] : ''
         })
         .then((res) => {
           this.list = res.data.data.items

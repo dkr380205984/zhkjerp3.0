@@ -24,10 +24,22 @@ export interface SizeInfo {
   category_id: number | string
 }
 
-// 品类
-export interface ProductTypeInfo {
+// 产品尺码设置
+export interface SizeSetting {
   id: null | number | string
   pid: null | number | string
   name: string
   child_size: SizeInfo[]
+}
+
+// 产品品类
+export interface CategoryInfo {
+  id: number | string
+  name: string
+  code: string
+  unit: string
+  secondary_category: Array<{
+    name: string
+    id: number | string
+  }>
 }

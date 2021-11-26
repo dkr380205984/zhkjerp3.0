@@ -25,6 +25,10 @@ const routes: Array<RouteConfig> = [
     name: '菜单打印页',
     component: () => import('../views/commonPrint/printMenu.vue')
   }, {
+    path: '/materialPlan/print',
+    name: '物料计划单打印',
+    component: () => import('../views/materialPlan/print.vue')
+  }, {
     path: '/index',
     name: 'index',
     component: () => import('../views/index.vue'),
@@ -32,6 +36,10 @@ const routes: Array<RouteConfig> = [
       path: '/menu',
       name: '其他管理',
       component: () => import('../views/menu.vue')
+    }, {
+      path: '/homePage',
+      name: '主页',
+      component: () => import('../views/homePage.vue')
     }, {
       path: '/setting',
       name: '系统设置',
@@ -150,12 +158,24 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/materialPlan/update.vue')
     }, {
       path: '/materialManage/list',
-      name: '物料管理列表',
+      name: '原料管理列表',
       component: () => import('../views/materialManage/list.vue')
     }, {
       path: '/materialManage/detail',
-      name: '物料管理详情',
+      name: '原料管理详情',
       component: () => import('../views/materialManage/detail.vue')
+    }, {
+      path: '/accessoriesManage/create',
+      name: '辅料订购加工',
+      component: () => import('../views/accessoriesManage/create.vue')
+    }, {
+      path: '/accessoriesManage/list',
+      name: '辅料管理列表',
+      component: () => import('../views/accessoriesManage/list.vue')
+    }, {
+      path: '/accessoriesManage/detail',
+      name: '辅料管理详情',
+      component: () => import('../views/accessoriesManage/detail.vue')
     }, {
       path: '/materialStock/detail',
       name: '物料出入库详情',

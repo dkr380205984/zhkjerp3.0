@@ -41,7 +41,32 @@ const getAuthorization = () => http.post(`${baseUrl}/auth/info`, {}, 'applicatio
 // token
 const getToken = () => http.get(`${baseUrl}/upload/token`)
 
+//工厂信息
+const companyInfo = {
+  detail: () => http.get(`${baseUrl}/company/info`, {}),
+  create: (params: any) => http.post(`${baseUrl}/company/info/edit`, params, 'application/json')
+}
 
+// 纱线报价
+// 纱线报价
+interface YarnPrice {
+  id: string | number
+  client_id: string | number
+  info_data: Array<{
+    id?: string | number
+    material_id: string | number
+    material_arr?: number[]
+    material_color: string
+    attribute: string
+    price: string | number
+    desc: string
+  }>
+}
+const yarnPrice = {
+  create: (params: YarnPrice) => http.post(`${baseUrl}/yarn/price/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/yarn/price/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/yarn/price/delete`, params, 'application/json'),
+}
 // 单据审核
 // 单据类型 1订单 2物料订购 3无聊加工 4制造计划 5报价 6原料出入库 7原料预订购 8产品出入库 9物料计划单
 const check = {
@@ -52,45 +77,62 @@ const check = {
       check_desc: string | string[]
       is_check: 1 | 2 // 1通过 2没通过
       desc: string
-    }) => http.post(`${baseUrlScarf}/doc/check`, params, 'application/json'),
+    }) => http.post(`${baseUrl}/doc/check`, params, 'application/json'),
+}
+
+// 单据客户确认
+const clientCheck = {
+  create: (params: { order_id: number | string }) => http.post(`${baseUrl}/order/time/client/confirm`, params, 'application/json'),
+}
+// 单据确认完成
+const completeCheck = {
+  create: (params: { order_id: number | string }) => http.post(`${baseUrl}/order/time/complete`, params, 'application/json'),
+}
+
+// 产品品类
+import { CategoryInfo } from '@/types/productSetting'
+const category = {
+  create: (params: CategoryInfo) => http.post(`${baseUrl}/product/category/save`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/product/category/delete`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/product/category/lists`, params)
 }
 // 产品款式
 import { StyleInfo } from '@/types/productSetting'
 const style = {
-  create: (params: { data: StyleInfo[] }) => http.post(`${baseUrlScarf}/product/style/save`, params, 'application/json'),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/product/style/delete`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/product/style/lists`, params)
+  create: (params: { data: StyleInfo[] }) => http.post(`${baseUrl}/product/style/save`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/product/style/delete`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/product/style/lists`, params)
 }
 
 // 产品成分
 import { IngredientInfo } from '@/types/productSetting'
 const ingredient = {
-  create: (params: { data: IngredientInfo[] }) => http.post(`${baseUrlScarf}/product/component/save`, params, 'application/json'),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/product/component/delete`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/product/component/lists`, params)
+  create: (params: { data: IngredientInfo[] }) => http.post(`${baseUrl}/product/component/save`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/product/component/delete`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/product/component/lists`, params)
 }
 
 // 产品配色
 import { ColourInfo } from '@/types/productSetting'
 const colour = {
-  create: (params: { data: ColourInfo[] }) => http.post(`${baseUrlScarf}/product/color/save`, params, 'application/json'),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/product/color/delete`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/product/color/lists`, params)
+  create: (params: { data: ColourInfo[] }) => http.post(`${baseUrl}/product/color/save`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/product/color/delete`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/product/color/lists`, params)
 }
 
-// 产品品类
-import { ProductTypeInfo } from '@/types/productSetting'
+// 产品尺码设置
+import { SizeSetting } from '@/types/productSetting'
 const productType = {
-  create: (params: ProductTypeInfo) => http.post(`${baseUrlScarf}/product/category/save`, params, 'application/json'),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/product/category/delete`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/category/lists`, params)
+  create: (params: SizeSetting) => http.post(`${baseUrl}/product/category/save`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/product/category/delete`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/category/lists`, params)
 }
 
 // 产品尺码
 import { SizeInfo } from '@/types/productSetting'
 const size = {
-  create: (params: SizeInfo) => http.post(`${baseUrlScarf}/category/size/save`, params, 'application/json'),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/category/size/delete`, params, 'application/json')
+  create: (params: SizeInfo) => http.post(`${baseUrl}/category/size/save`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/category/size/delete`, params, 'application/json')
 }
 
 // 订单样单类型设置
@@ -98,39 +140,39 @@ import { OrderType } from '@/types/orderSetting'
 const orderType = {
   list: (params: {
     order_type: 1 | 2
-  }) => http.get(`${baseUrlScarf}/order/type/lists`, params),
-  create: (params: OrderType) => http.post(`${baseUrlScarf}/order/type/save`, params, 'application/json'),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/order/type/delete `, params, 'application/json')
+  }) => http.get(`${baseUrl}/order/type/lists`, params),
+  create: (params: OrderType) => http.post(`${baseUrl}/order/type/save`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/order/type/delete `, params, 'application/json')
 }
 
 import { ProcessInfo } from '@/types/processSetting'
 // 工序
 const process = {
-  create: (params: { data: ProcessInfo[] }) => http.post(`${baseUrlScarf}/process/save`, params, 'application/json'),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/process/delete`, params, 'application/json'),
-  list: (params?: { type: 1 | 2 | 3 }) => http.get(`${baseUrlScarf}/process/lists`, params)
+  create: (params: { data: ProcessInfo[] }) => http.post(`${baseUrl}/process/save`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/process/delete`, params, 'application/json'),
+  list: (params?: { type: 1 | 2 | 3 }) => http.get(`${baseUrl}/process/lists`, params)
 }
 
 // 工艺单设置
 import { SideInfo, MachineInfo, MethodsInfo } from '@/types/craftSetting'
 const craftSetting = {
-  listSide: () => http.get(`${baseUrlScarf}/craft/side/type/lists`, {}),
-  createSide: (params: { data: SideInfo[] }) => http.post(`${baseUrlScarf}/craft/side/type/save`, params, 'application/json'),
-  deleteSide: (params: DeleteParams) => http.post(`${baseUrlScarf}/craft/side/delete`, params, 'application/json'),
-  listMachine: () => http.get(`${baseUrlScarf}/craft/machine/type/lists`, {}),
-  createMachine: (params: { data: MachineInfo[] }) => http.post(`${baseUrlScarf}/craft/machine/type/save`, params, 'application/json'),
-  deleteMachine: (params: DeleteParams) => http.post(`${baseUrlScarf}/craft/machine/type/delete`, params, 'application/json'),
-  listMethods: () => http.get(`${baseUrlScarf}/craft/organization/method/lists`, {}),
-  createMethods: (params: { data: MethodsInfo[] }) => http.post(`${baseUrlScarf}/craft/organization/method/save`, params, 'application/json'),
-  deleteMethods: (params: DeleteParams) => http.post(`${baseUrlScarf}/craft/organization/method/delete`, params, 'application/json')
+  listSide: () => http.get(`${baseUrl}/craft/side/type/lists`, {}),
+  createSide: (params: { data: SideInfo[] }) => http.post(`${baseUrl}/craft/side/type/save`, params, 'application/json'),
+  deleteSide: (params: DeleteParams) => http.post(`${baseUrl}/craft/side/delete`, params, 'application/json'),
+  listMachine: () => http.get(`${baseUrl}/craft/machine/type/lists`, {}),
+  createMachine: (params: { data: MachineInfo[] }) => http.post(`${baseUrl}/craft/machine/type/save`, params, 'application/json'),
+  deleteMachine: (params: DeleteParams) => http.post(`${baseUrl}/craft/machine/type/delete`, params, 'application/json'),
+  listMethods: () => http.get(`${baseUrl}/craft/organization/method/lists`, {}),
+  createMethods: (params: { data: MethodsInfo[] }) => http.post(`${baseUrl}/craft/organization/method/save`, params, 'application/json'),
+  deleteMethods: (params: DeleteParams) => http.post(`${baseUrl}/craft/organization/method/delete`, params, 'application/json')
 }
 
 // 纱线颜色
 import { YarnColorInfo } from '@/types/craftSetting'
 const yarnColor = {
-  create: (params: { data: YarnColorInfo[] }) => http.post(`${baseUrlScarf}/yarn/color/save`, params, 'application/json'),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/yarn/color/delete`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/yarn/color/lists`, params)
+  create: (params: { data: YarnColorInfo[] }) => http.post(`${baseUrl}/yarn/color/save`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/yarn/color/delete`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/yarn/color/lists`, params)
 }
 // 潘通色号
 const pantongList = (params: { keyword?: string }) => http.get(`${baseUrl}/pan/color/list`, { params })
@@ -138,9 +180,9 @@ const pantongList = (params: { keyword?: string }) => http.get(`${baseUrl}/pan/c
 // 工艺单
 import { CraftInfo } from '@/types/craft'
 const craft = {
-  create: (params: CraftInfo) => http.post(`${baseUrlScarf}/craft/save`, params, 'application/json'),
-  detail: (params: DeleteParams) => http.get(`${baseUrlScarf}/craft/detail`, params),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/craft/lists`, params)
+  create: (params: CraftInfo) => http.post(`${baseUrl}/craft/save`, params, 'application/json'),
+  detail: (params: DeleteParams) => http.get(`${baseUrl}/craft/detail`, params),
+  list: (params?: ListParams) => http.get(`${baseUrl}/craft/lists`, params)
 }
 
 // 单证设置
@@ -159,9 +201,9 @@ const billDocumentSetting = {
 // 纱线类型
 import { YarnTypeInfo } from '@/types/yarnSetting'
 const yarnType = {
-  create: (params: YarnTypeInfo) => http.post(`${baseUrlScarf}/yarn/type/save`, params, 'application/json'),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/yarn/type/delete`, params, 'application/json'),
-  list: (params?: { type: 1 | 2 | 3 }) => http.get(`${baseUrlScarf}/yarn/type/lists`, params)
+  create: (params: YarnTypeInfo) => http.post(`${baseUrl}/yarn/type/save`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/yarn/type/delete`, params, 'application/json'),
+  list: (params?: { type: 1 | 2 | 3 }) => http.get(`${baseUrl}/yarn/type/lists`, params)
 }
 // 纱线
 import { YarnInfo } from '@/types/yarnSetting'
@@ -169,129 +211,140 @@ interface YarnListParams extends ListParams {
   type: 1 | 2 | 3
 }
 const yarn = {
-  create: (params: YarnInfo) => http.post(`${baseUrlScarf}/yarn/save`, params, 'application/json'),
-  list: (params?: YarnListParams) => http.get(`${baseUrlScarf}/yarn/lists`, params),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/yarn/delete`, params, 'application/json')
+  create: (params: YarnInfo) => http.post(`${baseUrl}/yarn/save`, params, 'application/json'),
+  list: (params?: YarnListParams) => http.get(`${baseUrl}/yarn/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/yarn/delete`, params, 'application/json')
 }
 
 // 装饰辅料
 import { DecorateMaterialInfo } from '@/types/materialSetting'
 const decorateMaterial = {
-  create: (params: DecorateMaterialInfo) => http.post(`${baseUrlScarf}/decorate/material/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/decorate/material/lists`, params),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/decorate/material/delete`, params, 'application/json')
+  create: (params: DecorateMaterialInfo) => http.post(`${baseUrl}/decorate/material/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/decorate/material/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/decorate/material/delete`, params, 'application/json')
 }
 
 // 包装辅料
 import { PackMaterialInfo } from '@/types/materialSetting'
 const packMaterial = {
-  create: (params: PackMaterialInfo) => http.post(`${baseUrlScarf}/pack/material/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/pack/material/lists`, params),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/pack/material/delete`, params, 'application/json')
+  create: (params: PackMaterialInfo) => http.post(`${baseUrl}/pack/material/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/pack/material/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/pack/material/delete`, params, 'application/json')
 }
 
 // 客户信息
 import { ClientInfo } from '@/types/client'
 const client = {
-  create: (params: ClientInfo) => http.post(`${baseUrlScarf}/client/save`, params, 'application/json'),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/client/detail`, params),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/client/lists`, params)
+  create: (params: ClientInfo) => http.post(`${baseUrl}/client/save`, params, 'application/json'),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/client/detail`, params),
+  list: (params?: ListParams) => http.get(`${baseUrl}/client/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/client/delete`, params, 'application/json'),
+  check: (params: DetailParams) => http.post(`${baseUrl}/client/check/status`, params, 'application/json') // 启用/禁用客户
 }
 
 // 公司类型
 import { ClientTypeInfo } from '@/types/client'
 const clientType = {
-  create: (params: ClientTypeInfo) => http.post(`${baseUrlScarf}/client/tag/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/client/type/lists`, params),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/client/tag/delete`, params, 'application/json')
+  create: (params: ClientTypeInfo) => http.post(`${baseUrl}/client/tag/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/client/type/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/client/tag/delete`, params, 'application/json')
 }
 
 // 小组/人
 import { GroupInfo } from '@/types/factoryInfoSetting'
 const group = {
-  create: (params: GroupInfo) => http.post(`${baseUrlScarf}/user/group/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/user/group/list`, params),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/user/group/delete`, params, 'application/json')
+  create: (params: GroupInfo) => http.post(`${baseUrl}/user/group/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/user/group/list`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/user/group/delete`, params, 'application/json')
 }
 
 // 用户
 import { UserInfo } from '@/types/user'
 const user = {
-  create: (params: UserInfo) => http.post(`${baseUrl}/company/member/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrl}/company/member/lists`, params),
-  delete: (params: DeleteParams) => http.post(`${baseUrl}/company/member/delete`, params, 'application/json')
+  create: (params: UserInfo) => http.post(`${baseUrl}/user/add`, params, 'application/json'), // 内部用户
+  list: (params?: ListParams) => http.get(`${baseUrl}/user/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/user/delete`, params, 'application/json'),
+  getSms: (params: { phone: string }) => http.post(`${baseUrl}/user/add/send/sms`, params, 'application/json'),
 }
 
 // 报价单
 import { QuotedPriceInfo } from '@/types/quotedPrice'
 const quotedPrice = {
-  create: (params: QuotedPriceInfo) => http.post(`${baseUrlScarf}/quote/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/quote/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/quote/detail`, params),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/quote/delete`, params, 'application/json')
+  create: (params: QuotedPriceInfo) => http.post(`${baseUrl}/quote/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/quote/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/quote/detail`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/quote/delete`, params, 'application/json'),
+  settingCreate: (params: any) => http.post(`${baseUrl}/quote/demo/save`, params, 'application/json'),
+  settingList: (params?: ListParams) => http.get(`${baseUrl}/quote/demo/lists`, params),
+  settingDelete: (params: DeleteParams) => http.post(`${baseUrl}/quote/demo/delete`, params, 'application/json'),
 }
 
 // 列表设置信息 type 1:报价单列表 , 2:样单列表
 const listSetting = {
-  create: (params: { id: number | null, type: number, value: string }) => http.post(`${baseUrlScarf}/list/setting/save`, params, 'application/json'),
-  detail: (params: { type: number }) => http.get(`${baseUrlScarf}/list/setting`, params)
+  create: (params: { id: number | null, type: number, value: string }) => http.post(`${baseUrl}/list/setting/save`, params, 'application/json'),
+  detail: (params: { type: number }) => http.get(`${baseUrl}/list/setting`, params)
 }
 
 // 仓库
 import { StoreInfo } from '@/types/store'
 const store = {
-  create: (params: StoreInfo) => http.post(`${baseUrlScarf}/store/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/store/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/store/detail`, params),
+  create: (params: StoreInfo) => http.post(`${baseUrl}/store/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/store/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/store/detail`, params),
   searchMat: (params: {
     material_id?: string | number
     store_id?: string | number
     secondary_id?: string | number
     keyword?: string
-  }) => http.get(`${baseUrlScarf}/store/total/lists`, params),
+    material_name?: string
+    material_color?: string
+    vat_code?: string
+    color_code?: string
+    batch_code?: string
+  }) => http.get(`${baseUrl}/store/total/lists`, params),
 }
 
 // 样品
 import { SampleInfo } from '@/types/sample'
 const sample = {
-  create: (params: SampleInfo) => http.post(`${baseUrlScarf}/product/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/product/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/product/detail`, params)
+  create: (params: SampleInfo) => http.post(`${baseUrl}/product/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/product/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/product/detail`, params)
 }
 
 // 样单
 import { SampleOrderInfo, SampleOrderTime } from '@/types/sampleOrder'
 const sampleOrder = {
-  again: (params: SampleOrderTime) => http.post(`${baseUrlScarf}/order/time/save`, params, 'application/json'),
-  create: (params: SampleOrderInfo) => http.post(`${baseUrlScarf}/order/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/order/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/order/detail`, params),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/order/delete`, params, 'application/json'),
-  confirm: (params: { id: string | number, status: 1 | 2 | 3 }) => http.post(`${baseUrlScarf}/order/product/confirm`, params, 'application/json'),
-  confirmList: (params: { order_id: number }) => http.get(`${baseUrlScarf}/order/confirm/product/lists`, params)
+  again: (params: SampleOrderTime) => http.post(`${baseUrl}/order/time/save`, params, 'application/json'),
+  create: (params: SampleOrderInfo) => http.post(`${baseUrl}/order/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/order/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/order/detail`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/order/delete`, params, 'application/json'),
+  confirm: (params: { id: string | number, status: 1 | 2 | 3 | 4 | 5 | 6 }) => http.post(`${baseUrl}/order/product/confirm`, params, 'application/json'),
+  confirmList: (params: { order_id: number, status?: number[] }) => http.get(`${baseUrl}/order/confirm/product/lists`, params)
 }
 
 // 产品 产品和样品的接口是同一个，前端方便区分
 import { ProductInfo } from '@/types/product'
 const product = {
-  create: (params: ProductInfo) => http.post(`${baseUrlScarf}/product/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/product/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/product/detail`, params),
+  create: (params: ProductInfo) => http.post(`${baseUrl}/product/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/product/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/product/detail`, params),
 }
 
 // 订单 
 import { OrderInfo } from '@/types/order'
 const order = {
-  create: (params: OrderInfo) => http.post(`${baseUrlScarf}/order/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/order/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/order/detail`, params),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/order/delete`, params, 'application/json')
+  create: (params: OrderInfo) => http.post(`${baseUrl}/order/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/order/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/order/detail`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/order/delete`, params, 'application/json')
 }
 
 // 物料计划单
 import { MaterialPlanInfo } from '@/types/materialPlan'
 const materialPlan = {
-  create: (params: MaterialPlanInfo) => http.post(`${baseUrlScarf}/material/plan/save`, params, 'application/json'),
+  create: (params: MaterialPlanInfo) => http.post(`${baseUrl}/material/plan/save`, params, 'application/json'),
   list: (params: {
     top_order_id?: string | number // 最外层order_id
     plan_id?: string | number
@@ -299,54 +352,60 @@ const materialPlan = {
     client_id?: string | number
     limit?: number
     page?: number
-  }) => http.get(`${baseUrlScarf}/material/plan/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/material/plan/detail`, params),
+    start_time?: string
+    end_time?: string
+    keyword?: string
+    type?: 1 | 2 // 1.原料计划单 2.辅料计划单
+  }) => http.get(`${baseUrl}/material/plan/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/material/plan/detail`, params),
 }
 // 物料订购
 import { MaterialOrderInfo } from '@/types/materialOrder'
 const materialOrder = {
-  create: (params: { data: MaterialOrderInfo[] }) => http.post(`${baseUrlScarf}/material/order/save`, params, 'application/json'),
+  create: (params: { data: MaterialOrderInfo[] }) => http.post(`${baseUrl}/material/order/save`, params, 'application/json'),
   list: (params: {
     plan_id?: string | number
     order_id?: string | number
     client_id?: string | number
     reserve_id?: string | number // 预订购单
     top_order_id?: string | number // 最外层order_id
-  }) => http.get(`${baseUrlScarf}/material/order/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/material/order/detail`, params),
-  delete: (params: DetailParams) => http.post(`${baseUrlScarf}/material/order/delete`, params, 'application/json')
+    material_type?: 1 | 2
+  }) => http.get(`${baseUrl}/material/order/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/material/order/detail`, params),
+  delete: (params: DetailParams) => http.post(`${baseUrl}/material/order/delete`, params, 'application/json')
 }
 
 // 物料预订购
 import { MaterialPlanOrderClient } from '@/types/materialPlanOrder'
 const materialPlanOrder = {
-  create: (params: MaterialPlanOrderClient) => http.post(`${baseUrlScarf}/material/reserve/order/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrlScarf}/material/reserve/order/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/material/reserve/order/detail`, params),
+  create: (params: MaterialPlanOrderClient) => http.post(`${baseUrl}/material/reserve/order/save`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/material/reserve/order/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/material/reserve/order/detail`, params),
+  delete: (params: DetailParams) => http.post(`${baseUrl}/material/reserve/order/delete`, params, 'application/json'),
   stockSts: (params: {
     reserve_id: number | string
     year: string | number
     month: string | number
-  }) => http.get(`${baseUrlScarf}/material/reserve/store/count`, params)
+  }) => http.get(`${baseUrl}/material/reserve/store/count`, params)
 }
 
 // 物料加工
 import { MaterialProcessInfo } from '@/types/materialProcess'
 const materialProcess = {
-  create: (params: { data: MaterialProcessInfo[] }) => http.post(`${baseUrlScarf}/material/process/save`, params, 'application/json'),
+  create: (params: { data: MaterialProcessInfo[] }) => http.post(`${baseUrl}/material/process/save`, params, 'application/json'),
   list: (params: {
     plan_id?: string | number
     order_id?: string | number
     client_id?: string | number
-  }) => http.get(`${baseUrlScarf}/material/process/lists`, params),
-  detail: (params: DetailParams) => http.get(`${baseUrlScarf}/material/process/detail`, params),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/material/process/delete`, params, 'application/json')
+  }) => http.get(`${baseUrl}/material/process/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/material/process/detail`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/material/process/delete`, params, 'application/json')
 }
 
 // 物料出入库
 import { MaterialStockInfo } from '@/types/materialStock'
 const materialStock = {
-  create: (params: MaterialStockInfo) => http.post(`${baseUrlScarf}/store/log/save`, params, 'application/json'),
+  create: (params: MaterialStockInfo) => http.post(`${baseUrl}/store/log/save`, params, 'application/json'),
   list: (params: {
     action_type?: number // 搜调取单的时候用，一般是出库单10
     plan_id?: string | number
@@ -354,33 +413,33 @@ const materialStock = {
     client_id?: string | number
     reserve_id?: string | number // 预订购单
     top_order_id?: string | number // 最外层order_id
-  }) => http.get(`${baseUrlScarf}/store/log/lists`, params),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/store/log/delete`, params, 'application/json')
+  }) => http.get(`${baseUrl}/store/log/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/store/log/delete`, params, 'application/json')
 }
 
 // 生产计划
 import { ProductionPlanInfo } from '@/types/productionPlan'
 const productionPlan = {
-  create: (params: { data: ProductionPlanInfo[] }) => http.post(`${baseUrlScarf}/weave/plan/save`, params, 'application/json'),
+  create: (params: { data: ProductionPlanInfo[] }) => http.post(`${baseUrl}/weave/plan/save`, params, 'application/json'),
   list: (params: {
     plan_id?: string | number
     order_id?: string | number
     client_id?: string | number
     top_order_id?: string | number // 最外层order_id
-  }) => http.get(`${baseUrlScarf}/weave/plan/lists`, params),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/weave/plan/delete`, params, 'application/json')
+  }) => http.get(`${baseUrl}/weave/plan/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/weave/plan/delete`, params, 'application/json')
 }
 
 import { InspectionInfo } from '@/types/inspection'
 const inspection = {
-  create: (params: { data: InspectionInfo[] }) => http.post(`${baseUrlScarf}/inspection/save`, params, 'application/json'),
+  create: (params: { data: InspectionInfo[] }) => http.post(`${baseUrl}/inspection/save`, params, 'application/json'),
   list: (params: {
     plan_id?: string | number
     order_id?: string | number
     client_id?: string | number
     type: 1 | 2 | null
-  }) => http.get(`${baseUrlScarf}/inspection/lists`, params),
-  delete: (params: DeleteParams) => http.post(`${baseUrlScarf}/inspection/delete`, params, 'application/json')
+  }) => http.get(`${baseUrl}/inspection/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/inspection/delete`, params, 'application/json')
 }
 export {
   login,
@@ -389,7 +448,11 @@ export {
   forgetPassword,
   getAuthorization,
   getToken,
+  companyInfo,
+  category,
   check,
+  clientCheck,
+  completeCheck,
   style,
   ingredient,
   getCoder,
@@ -400,6 +463,7 @@ export {
   process,
   craftSetting,
   yarnColor,
+  yarnPrice,
   craft,
   pantongList,
   billDocumentSetting,

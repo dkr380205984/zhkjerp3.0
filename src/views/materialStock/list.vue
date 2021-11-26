@@ -142,6 +142,8 @@ export default Vue.extend({
           name: '单据编号',
           ifShow: true,
           ifLock: true,
+          ifCaogao: 'order_type',
+          caogaoArr: ['订', '样'],
           index: 0
         },
         {
@@ -152,53 +154,55 @@ export default Vue.extend({
           index: 1
         },
         {
-          key: 'contact_name',
+          key: 'contacts_name',
           name: '公司联系人',
           ifShow: true,
           ifLock: false,
           index: 2
         },
         {
-          key: 'has_plan',
-          name: '物料计划状态',
+          key: 'product_code',
+          name: '产品编号',
           ifShow: true,
           ifLock: false,
-          index: 3
-        },
-        {
-          key: 'product_info',
-          name: '产品信息',
-          ifShow: true,
-          ifLock: false,
-          index: 4
+          index: 3,
+          from: 'product_data',
+          mark: true
         },
         {
           key: 'image_data',
           name: '产品图片',
           ifShow: true,
           ifLock: false,
-          index: 5
+          ifImage: true,
+          index: 4,
+          from: 'product_data'
         },
         {
           key: 'total_number',
           name: '下单总数',
           ifShow: true,
           ifLock: false,
-          index: 6
+          index: 5,
+          errVal: '0'
         },
         {
           key: 'total_price',
           name: '下单总额',
           ifShow: true,
           ifLock: false,
-          index: 7
+          index: 6,
+          unit: '元',
+          errVal: '0'
         },
         {
           key: 'status',
-          name: '审核状态',
+          name: '订单状态',
           ifShow: true,
           ifLock: false,
-          index: 8
+          index: 7,
+          filterArr: ['', '已创建', '进行中', '已完成', '已结算', '已取消'],
+          classArr: ['', 'orange', 'blue', 'green', 'green', 'red']
         },
         {
           key: 'group_name',
@@ -213,13 +217,6 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 10
-        },
-        {
-          key: 'settle_unit',
-          name: '结算单位',
-          ifShow: true,
-          ifLock: false,
-          index: 11
         }
       ],
       pickerOptions: {

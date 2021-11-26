@@ -261,31 +261,36 @@ export default Vue.extend({
           window.sessionStorage.setItem('token_type', res.data.data.token_type)
           getAuthorization().then((res) => {
             // 用户信息里的公司信息先保存了，方便后续切换的时候使用
-            window.sessionStorage.setItem('user_company', JSON.stringify(res.data.data.company_info))
-            if (res.data.data.bind_company_id) {
-              this.checkLogin(
-                res,
-                res.data.data.company_info.find((item: any) => {
-                  return item.company_id === res.data.data.bind_company_id
-                })
-              )
-            } else {
-              if (res.data.data.company_info.length > 1) {
-                // 多家公司
-                this.authInfo = res
-                this.companyInfo = res.data.data.company_info
-                this.bindClient = true
-              } else {
-                // 给用户自动绑定唯一一家公司的id
-                userCompanySetting({
-                  company_id: res.data.data.company_info[0].company_id
-                }).then((res2) => {
-                  if (res2.data.status) {
-                    this.checkLogin(res, res.data.data.company_info[0])
-                  }
-                })
-              }
-            }
+            // window.sessionStorage.setItem('user_company', JSON.stringify(res.data.data.company_info))
+            // if (res.data.data.bind_company_id) {
+            //   this.checkLogin(
+            //     res,
+            //     res.data.data.company_info.find((item: any) => {
+            //       return item.company_id === res.data.data.bind_company_id
+            //     })
+            //   )
+            // } else {
+            //   if (res.data.data.company_info.length > 1) {
+            //     // 多家公司
+            //     this.authInfo = res
+            //     this.companyInfo = res.data.data.company_info
+            //     this.bindClient = true
+            //   } else {
+            //     // 给用户自动绑定唯一一家公司的id
+            //     userCompanySetting({
+            //       company_id: res.data.data.company_info[0].company_id
+            //     }).then((res2) => {
+            //       if (res2.data.status) {
+            //         this.checkLogin(res, res.data.data.company_info[0])
+            //       }
+            //     })
+            //   }
+            // }
+            this.checkLogin(res, {
+              module_info: res.data.data.module_info || [],
+              company_name: res.data.data.company_name,
+              logo: res.data.data.logo
+            })
           })
         } else {
           this.loginInfo.password = ''
@@ -294,15 +299,15 @@ export default Vue.extend({
     },
     checkLogin(res: any, companyInfo: any) {
       this.$message.success('登录成功')
-      const moduleId = (companyInfo.module_info ? JSON.parse(companyInfo.module_info) : []).concat(
-        companyInfo.module_id_detail ? JSON.parse(companyInfo.module_id_detail) : []
-      )
-      console.log(moduleId)
+      // const moduleId = (companyInfo.module_info ? JSON.parse(companyInfo.module_info) : []).concat(
+      //   companyInfo.module_id_detail ? JSON.parse(companyInfo.module_id_detail) : []
+      // )
+      // console.log(moduleId)
       window.sessionStorage.setItem('user_name', res.data.data.name)
       window.sessionStorage.setItem('company_id', companyInfo.company_id)
       window.sessionStorage.setItem('company_name', companyInfo.company_name)
       window.sessionStorage.setItem('full_name', companyInfo.full_name)
-      window.sessionStorage.setItem('module_id', JSON.stringify(moduleId))
+      window.sessionStorage.setItem('module_id', JSON.stringify(companyInfo.module_info))
       window.sessionStorage.setItem('logo', companyInfo.logo)
       window.sessionStorage.setItem('has_check', companyInfo.has_check)
       // window.sessionStorage.setItem('user_id', res.data.data.user_id)
@@ -314,7 +319,8 @@ export default Vue.extend({
       } else {
         window.localStorage.setItem('zhPassword', '')
       }
-      this.$router.push('/index')
+      console.log('haha')
+      this.$router.push('/homePage')
     },
     goRegisiter() {
       this.$message.error('暂未开放注册功能')

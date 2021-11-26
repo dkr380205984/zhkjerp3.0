@@ -21,6 +21,43 @@
             @click="cName=item">{{item}}</div>
         </div>
         <div class="mainSetting">
+          <template v-if="cName==='品类'">
+            <div class="listCtn">
+              <div class="filterCtn clearfix">
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup=true">添加新品类</div>
+              </div>
+              <div class="list">
+                <div class="row title">
+                  <div class="col">品类</div>
+                  <div class="col">二级品类</div>
+                  <div class="col">单位</div>
+                  <div class="col">编号</div>
+                  <div class="col">操作</div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in categoryArr"
+                  :key="index">
+                  <div class="col">{{item.name}}</div>
+                  <div class="col">{{item.secondary_category.map((item)=>item.name).join(',')}}</div>
+                  <div class="col">{{item.unit}}</div>
+                  <div class="col">{{item.code}}</div>
+                  <div class="col">
+                    <span class="opr hoverRed"
+                      @click="deleteCategory(item.id)">删除</span>
+                  </div>
+                </div>
+              </div>
+              <div class="pageCtn">
+                <el-pagination background
+                  :page-size="5"
+                  layout="prev, pager, next"
+                  :total="styleTotal"
+                  :current-page.sync="stylePage">
+                </el-pagination>
+              </div>
+            </div>
+          </template>
           <template v-if="cName==='款式'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
@@ -221,11 +258,11 @@
               </div>
             </div>
           </template>
-          <template v-if="cName==='原料工序'">
+          <template v-if="cName==='原料加工工序'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
                 <div class="btn backHoverBlue fr"
-                  @click="showPopup=true">添加原料工序</div>
+                  @click="showPopup=true">添加原料加工工序</div>
                 <div class="btn backHoverOrange fr"
                   @click="importExcelData('yarnProcess')">批量导入</div>
                 <div class="btn backHoverGreen fr"
@@ -233,7 +270,7 @@
               </div>
               <div class="list">
                 <div class="row title">
-                  <div class="col">原料工序</div>
+                  <div class="col">原料加工工序</div>
                   <div class="col">操作</div>
                 </div>
                 <div class="row"
@@ -291,11 +328,11 @@
               </div>
             </div>
           </template>
-          <template v-if="cName==='结算工序'">
+          <template v-if="cName==='成品加工工序'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
                 <div class="btn backHoverBlue fr"
-                  @click="showPopup=true">添加结算工序</div>
+                  @click="showPopup=true">添加成品加工工序</div>
                 <div class="btn backHoverOrange fr"
                   @click="importExcelData('staffProcess')">批量导入</div>
                 <div class="btn backHoverGreen fr"
@@ -303,7 +340,7 @@
               </div>
               <div class="list">
                 <div class="row title">
-                  <div class="col">结算工序</div>
+                  <div class="col">成品加工工序</div>
                   <div class="col">操作</div>
                 </div>
                 <div class="row"
@@ -739,9 +776,11 @@
                   <div class="col">{{item.name}}</div>
                   <div class="col">{{item.rel_type.join('/')}}</div>
                   <div class="col">参考报价</div>
-                  <div class="col">添加人</div>
-                  <div class="col">添加时间</div>
+                  <div class="col">{{item.user_name}}</div>
+                  <div class="col">{{item.created_at}}</div>
                   <div class="col">
+                    <span class="opr hoverBlue"
+                      @click="deleteYarn(item.id,1)">添加报价</span>
                     <span class="opr hoverRed"
                       @click="deleteYarn(item.id,1)">删除</span>
                   </div>
@@ -917,28 +956,54 @@
               </div>
             </div>
           </template>
-          <template v-if="cName==='机型'">
+          <template v-if="cName==='纱线报价'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
                 <div class="btn backHoverBlue fr"
-                  @click="showPopup=true">添加机型</div>
-                <div class="btn backHoverOrange fr"
-                  @click="importExcelData('machine')">批量导入</div>
-                <div class="btn backHoverGreen fr"
-                  @click="downLoadTemplete('machine')">下载导入模板</div>
+                  @click="showPopup=true">添加报价</div>
               </div>
               <div class="list">
-                <div class="row title">
-                  <div class="col">机型</div>
-                  <div class="col">操作</div>
-                </div>
-                <div class="row"
-                  v-for="(item,index) in machineArr"
-                  :key="index">
-                  <div class="col">{{item.name}}</div>
-                  <div class="col">
-                    <span class="opr hoverRed"
-                      @click="deleteMachine(item.id)">删除</span>
+                <div class="tableCtn">
+                  <div class="thead">
+                    <div class="trow">
+                      <div class="tcol">报价单位</div>
+                      <div class="tcol noPad"
+                        style="flex:5">
+                        <div class="trow">
+                          <div class="tcol">纱线名称</div>
+                          <div class="tcol">纱线颜色</div>
+                          <div class="tcol">纱线属性</div>
+                          <div class="tcol">报价</div>
+                          <div class="tcol">备注</div>
+                        </div>
+                      </div>
+                      <div class="tcol">操作</div>
+                    </div>
+                  </div>
+                  <div class="tbody">
+                    <div class="trow"
+                      v-for="item in yarnPriceArr"
+                      :key="item.id">
+                      <div class="tcol">{{item.client_name}}</div>
+                      <div class="tcol noPad"
+                        style="flex:5">
+                        <div class="trow"
+                          v-for="(itemChild,indexChild) in item.info_data"
+                          :key="indexChild">
+                          <div class="tcol">{{itemChild.material_name}}</div>
+                          <div class="tcol">{{itemChild.material_color}}</div>
+                          <div class="tcol">{{itemChild.attribute}}</div>
+                          <div class="tcol">{{itemChild.price}}元/kg</div>
+                          <div class="tcol">{{itemChild.desc}}</div>
+                        </div>
+                      </div>
+                      <div class="tcol oprCtn">
+                        <span class="opr hoverOrange"
+                          @click="yarnPrice=item;showPopup=true;yarnPriceUpdate=true">修改</span>
+                        <span class="opr hoverRed"
+                          @click="deleteYarnPrice(item.id)">删除</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -946,8 +1011,8 @@
                 <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
-                  :total="machineTotal"
-                  :current-page.sync="machinePage">
+                  :total="yarnPriceTotal"
+                  :current-page.sync="yarnPricePage">
                 </el-pagination>
               </div>
             </div>
@@ -1023,17 +1088,19 @@
                   <div class="col">用户名</div>
                   <div class="col">手机号</div>
                   <div class="col">岗位</div>
-                  <div class="col">角色</div>
+                  <div class="col">小组</div>
+                  <div class="col">审核权限</div>
                   <div class="col">操作</div>
                 </div>
                 <div class="row"
                   v-for="(item,index) in userArr"
                   :key="index">
                   <div class="col">{{item.name}}</div>
-                  <div class="col">用户名</div>
-                  <div class="col">手机号</div>
-                  <div class="col">岗位</div>
-                  <div class="col">角色</div>
+                  <div class="col">{{item.user_name}}</div>
+                  <div class="col">{{item.phone}}</div>
+                  <div class="col">{{item.station}}</div>
+                  <div class="col">{{item.group_name}}</div>
+                  <div class="col">{{item.has_check?'有审核权限':'无权限'}}</div>
                   <div class="col">
                     <span class="opr hoverRed"
                       @click="deleteUser(item.id)">删除</span>
@@ -1050,11 +1117,180 @@
               </div>
             </div>
           </template>
+          <template v-if="cName==='报价模板'">
+            <div class="listCtn">
+              <div class="filterCtn clearfix">
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup=true">添加报价模板</div>
+              </div>
+              <div class="list">
+                <div class="row title">
+                  <div class="col">名称</div>
+                  <div class="col">操作</div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in quotedPriceProductArr"
+                  :key="index">
+                  <div class="col">{{item.title}}</div>
+                  <div class="col">
+                    <span class="opr hoverBlue"
+                      @click="lookQuotedPriceProduct(item)">查看详情</span>
+                    <span class="opr hoverRed"
+                      @click="deleteQuotedPriceProduct(item.id)">删除</span>
+                  </div>
+                </div>
+              </div>
+              <div class="pageCtn">
+                <el-pagination background
+                  :page-size="5"
+                  layout="prev, pager, next"
+                  :total="groupTotal"
+                  :current-page.sync="groupPage">
+                </el-pagination>
+              </div>
+            </div>
+          </template>
+          <template v-if="cName==='基本信息'">
+            <div class="companySetting">
+              <div class="row">
+                <div class="label">企业LOGO：</div>
+                <div class="imgCtn">
+                  <el-upload class="avatar-uploader"
+                    drag
+                    action="https://upload.qiniup.com/"
+                    :show-file-list="false"
+                    :on-success="uploadCompanySuccess"
+                    :before-upload="beforeUpload"
+                    :data="postData"
+                    :file-list="[companyInfo.logo]"
+                    ref="companyLogo">
+                    <img v-if="companyInfo.logo"
+                      :src="companyInfo.logo"
+                      class="logo-img"
+                      style="width:100%;height:100%">
+                    <i v-else
+                      class="el-icon-plus logo-icon"></i>
+                  </el-upload>
+                  <div class="prompt">点击或拖拽图片至上传框,只能上传jpg/png文件，且不超过6MB</div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="label">公司名称：</div>
+                <div class="content">
+                  <el-input placeholder="请输入公司名称"
+                    class="input-item"
+                    v-model="companyInfo.company_name"
+                    disabled
+                    clearable>
+                  </el-input>
+                </div>
+              </div>
+              <div class="row">
+                <div class="label">公司简称：</div>
+                <div class="content">
+                  <el-input placeholder="请输入公司简称"
+                    class="input-item"
+                    v-model="companyInfo.alias"
+                    clearable>
+                  </el-input>
+                </div>
+              </div>
+              <div class="row">
+                <span class="label">公司简介:</span>
+                <div class="content">
+                  <el-input class="input-item"
+                    style="width:600px;"
+                    type="textarea"
+                    placeholder="公司简介在200字以内..."
+                    v-model="companyInfo.introduce"
+                    :rows="7">
+                  </el-input>
+                </div>
+              </div>
+              <div class="row">
+                <span class="label">公司邮箱：</span>
+                <div class="content">
+                  <el-input placeholder="请输入公司邮箱"
+                    class="input-item"
+                    v-model="companyInfo.email">
+                  </el-input>
+                </div>
+              </div>
+              <div class="row">
+                <span class="label">公司地址：</span>
+                <div class="content">
+                  <el-input placeholder="请输入公司地址"
+                    class="input-item"
+                    v-model="companyInfo.address">
+                  </el-input>
+                </div>
+              </div>
+              <div class="btnCtn">
+                <div class="btn backHoverBlue"
+                  @click="saveCompany">保存修改</div>
+              </div>
+            </div>
+          </template>
         </div>
       </div>
     </div>
     <div class="popup"
       v-show="showPopup">
+      <template v-if="cName==='品类'">
+        <div class="main">
+          <div class="titleCtn">
+            <div class="text">新增品类</div>
+            <div class="closeCtn"
+              @click="showPopup=false">
+              <i class="el-icon-close"></i>
+            </div>
+          </div>
+          <div class="contentCtn">
+            <div class="row">
+              <div class="label">品类名称：</div>
+              <div class="info">
+                <el-input placeholder="请输入品类名称"
+                  v-model="categoryInfo.name"></el-input>
+              </div>
+            </div>
+            <div class="row"
+              v-for="(item,index) in categoryInfo.secondary_category"
+              :key="index">
+              <div class="label">{{index===0?'二级品类：':''}}</div>
+              <div class="info">
+                <el-input placeholder="请输入二级品类名称"
+                  v-model="item.name"></el-input>
+                <div class="info_btn hoverBlue"
+                  @click="$addItem(categoryInfo.secondary_category,{name:'',id:''})"
+                  v-if="index===0">添加</div>
+                <div class="info_btn hoverRed"
+                  @click="$deleteItem(categoryInfo.secondary_category,index)"
+                  v-if="index>0">删除</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">品类单位：</div>
+              <div class="info">
+                <el-input placeholder="请输入品类单位"
+                  v-model="categoryInfo.unit"></el-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">品类编号：</div>
+              <div class="info">
+                <el-input placeholder="请输入品类单位"
+                  v-model="categoryInfo.code"></el-input>
+              </div>
+            </div>
+          </div>
+          <div class="oprCtn">
+            <div class="btn borderBtn"
+              @click="showPopup=false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveCategory">确定</div>
+          </div>
+        </div>
+      </template>
       <template v-if="cName==='款式'">
         <div class="main">
           <div class="titleCtn">
@@ -1211,10 +1447,10 @@
           </div>
         </div>
       </template>
-      <template v-if="cName==='原料工序'">
+      <template v-if="cName==='原料加工工序'">
         <div class="main">
           <div class="titleCtn">
-            <div class="text">新增原料工序</div>
+            <div class="text">新增原料加工工序</div>
             <div class="closeCtn"
               @click="showPopup=false">
               <i class="el-icon-close"></i>
@@ -1222,9 +1458,9 @@
           </div>
           <div class="contentCtn">
             <div class="row">
-              <div class="label">原料工序：</div>
+              <div class="label">原料加工工序：</div>
               <div class="info">
-                <el-input placeholder="请输入原料工序"
+                <el-input placeholder="请输入原料加工工序"
                   v-model="materialProcessInfo.name"></el-input>
               </div>
             </div>
@@ -1263,10 +1499,10 @@
           </div>
         </div>
       </template>
-      <template v-if="cName==='结算工序'">
+      <template v-if="cName==='成品加工工序'">
         <div class="main">
           <div class="titleCtn">
-            <div class="text">新增结算工序</div>
+            <div class="text">新增成品加工工序</div>
             <div class="closeCtn"
               @click="showPopup=false">
               <i class="el-icon-close"></i>
@@ -1274,9 +1510,9 @@
           </div>
           <div class="contentCtn">
             <div class="row">
-              <div class="label">结算工序：</div>
+              <div class="label">成品加工工序：</div>
               <div class="info">
-                <el-input placeholder="请输入结算工序"
+                <el-input placeholder="请输入成品加工工序"
                   v-model="staffProcessInfo.name"></el-input>
               </div>
             </div>
@@ -1698,6 +1934,119 @@
           </div>
         </div>
       </template>
+      <template v-if="cName==='纱线报价'">
+        <div class="main"
+          style="width:1000px">
+          <div class="titleCtn">
+            <div class="text">新增纱线报价</div>
+            <div class="closeCtn"
+              @click="showPopup=false;yarnPriceUpdate=false">
+              <i class="el-icon-close"></i>
+            </div>
+          </div>
+          <div class="contentCtn">
+            <div class="row">
+              <div class="label">报价单位：</div>
+              <div class="info">
+                <span class="blue"
+                  style="line-height:32px"
+                  v-if="yarnPriceUpdate">{{yarnPrice.client_name}}</span>
+                <el-cascader v-else
+                  placeholder="请选择报价单位"
+                  v-model="yarnPrice.client_id_arr"
+                  :options="yarnClientList"
+                  @change="(ev)=>{yarnPrice.client_id=ev[2]}"></el-cascader>
+              </div>
+            </div>
+            <div class="tableCtn">
+              <div class="thead">
+                <div class="trow">
+                  <div class="tcol">纱线名称</div>
+                  <div class="tcol">属性</div>
+                  <div class="tcol">颜色</div>
+                  <div class="tcol">报价</div>
+                  <div class="tcol">其它备注</div>
+                  <div class="tcol">操作</div>
+                </div>
+              </div>
+              <div class="tbody">
+                <div class="trow"
+                  v-for="(item,index) in yarnPrice.info_data"
+                  :key="index">
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-select placeholder="选择纱线"
+                        v-model="item.material_id">
+                        <el-option v-for="item in yarnList1"
+                          :key="item.id"
+                          :value="item.id"
+                          :label="item.name"></el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-select placeholder="属性"
+                        v-model="item.attribute">
+                        <el-option v-for="item in yarnAttributeArr"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-autocomplete class="inline-input"
+                        v-model="item.material_color"
+                        :fetch-suggestions="searchColor"
+                        placeholder="物料颜色"></el-autocomplete>
+                    </div>
+                  </div>
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-input v-model="item.price"
+                        placeholder="单价">
+                        <template slot="append">元/kg</template>
+                      </el-input>
+                    </div>
+                  </div>
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-input v-model="item.desc"
+                        placeholder="备注">
+                      </el-input>
+                    </div>
+                  </div>
+                  <div class="tcol oprCtn">
+                    <div class="opr hoverBlue"
+                      v-if="index===0"
+                      @click="$addItem(yarnPrice.info_data,{
+                        id: '',
+                        material_id: '',
+                        material_arr: [],
+                        material_color: '',
+                        attribute: '',
+                        price: '',
+                        desc: ''
+                    })">添加</div>
+                    <div class="opr hoverRed"
+                      v-if="index>0"
+                      @click="$deleteItem(yarnPrice.info_data,index)">删除</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="oprCtn">
+            <div class="btn borderBtn"
+              @click="showPopup=false;yarnPriceUpdate=false">取消</div>
+            <div class="btn"
+              :class="yarnPriceUpdate?'backHoverOrange':'backHoverBlue'"
+              @click="saveYarnPrice">{{yarnPriceUpdate?'修改':'确认'}}</div>
+          </div>
+        </div>
+      </template>
       <template v-if="cName==='负责小组/人'">
         <div class="main">
           <div class="titleCtn">
@@ -1759,7 +2108,32 @@
               <div class="label">手机号：</div>
               <div class="info">
                 <el-input placeholder="请输入手机号"
-                  v-model="userInfo.phone"></el-input>
+                  v-model="userInfo.phone">
+                </el-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">验证码：</div>
+              <div class="info">
+                <el-input placeholder="请输入验证码"
+                  v-model="userInfo.sms_code">
+                  <template slot="append">
+                    <span style="cursor: pointer;"
+                      @click="getSmsCode">{{Number(smsIndex)?(Number(smsIndex)+'秒后重新发送'):smsIndex}}</span>
+                  </template>
+                </el-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">小组：</div>
+              <div class="info">
+                <el-select placeholder="请选择小组"
+                  v-model="userInfo.group_id">
+                  <el-option v-for="item in groupInfoList"
+                    :key="item.id"
+                    :value="item.id"
+                    :label="item.name"></el-option>
+                </el-select>
               </div>
             </div>
             <div class="row">
@@ -1769,12 +2143,264 @@
                   v-model="userInfo.station"></el-input>
               </div>
             </div>
+            <div class="row">
+              <div class="label">审核权限：</div>
+              <div class="info"
+                style="line-height:32px">
+                <el-radio v-model="userInfo.has_check"
+                  :label="true">有</el-radio>
+                <el-radio v-model="userInfo.has_check"
+                  :label="false">无</el-radio>
+              </div>
+            </div>
           </div>
           <div class="oprCtn">
             <div class="btn borderBtn"
               @click="showPopup=false">取消</div>
             <div class="btn backHoverBlue"
               @click="saveUser">确定</div>
+          </div>
+        </div>
+      </template>
+      <template v-if="cName==='报价模板'">
+        <div class="main">
+          <div class="titleCtn">
+            <div class="text">新增报价模板</div>
+            <div class="closeCtn"
+              @click="showPopup=false;quotedPriceProductUpdate=false">
+              <i class="el-icon-close"></i>
+            </div>
+          </div>
+          <div class="contentCtn">
+            <div class="editCtn">
+              <div class="row">
+                <div class="col">
+                  <div class="label">
+                    <span class="text">模板标题</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input placeholder="请输入模板标题"
+                      v-model="quotedPriceProduct.title"></el-input>
+                  </div>
+                </div>
+              </div>
+              <div class="row"
+                v-for="(itemWeave,indexWeave) in quotedPriceProduct.weave_data"
+                :key="'Weave'+indexWeave">
+                <div class="col">
+                  <div class="label"
+                    v-if="indexWeave===0">
+                    <span class="text">织造明细</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-select v-model="itemWeave.name"
+                      placeholder="请选择织造明细"
+                      clearable>
+                      <el-option v-for="item in weaveList"
+                        :key="item.value"
+                        :label="item.value"
+                        :value="item.value"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label"
+                    v-if="indexWeave===0">
+                    <span class="text">小计</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="itemWeave.total_price"
+                      placeholder="小计"
+                      :disabled="!itemWeave.name">
+                      <template slot="append">元</template>
+                    </el-input>
+                  </div>
+                </div>
+                <div class="opr hoverBlue"
+                  v-if="indexWeave===0"
+                  @click="$addItem(quotedPriceProduct.weave_data,{
+                 number:'',
+                 name:'',
+                 total_price:''
+                })">添加</div>
+                <div class="opr hoverRed"
+                  v-else
+                  @click="$deleteItem(quotedPriceProduct.weave_data,indexWeave)">删除</div>
+              </div>
+              <div class="row"
+                v-for="(itemHalfProcess,indexHalfProcess) in quotedPriceProduct.semi_product_data"
+                :key="'HalfProcess' + indexHalfProcess">
+                <div class="col">
+                  <div class="label"
+                    v-if="indexHalfProcess===0">
+                    <span class="text">半成品加工</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-select v-model="itemHalfProcess.process_id"
+                      placeholder="请选择加工工序"
+                      clearable>
+                      <el-option v-for="item in halfProcessStore"
+                        :key="item.id"
+                        :value="item.id"
+                        :label="item.name"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label"
+                    v-if="indexHalfProcess===0">
+                    <span class="text">小计</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="itemHalfProcess.total_price"
+                      placeholder="小计"
+                      :disabled="!itemHalfProcess.process_id">
+                      <template slot="append">元</template>
+                    </el-input>
+                  </div>
+                </div>
+                <div class="opr hoverBlue"
+                  v-if="indexHalfProcess===0"
+                  @click="$addItem(quotedPriceProduct.semi_product_data,{
+                 desc:'',
+                 name:'',
+                 total_price:''
+                })">添加</div>
+                <div class="opr hoverRed"
+                  v-else
+                  @click="$deleteItem(quotedPriceProduct.semi_product_data,indexHalfProcess)">删除</div>
+              </div>
+              <div class="row"
+                v-for="(itemFinishedProcess,indexFinishedProcess) in quotedPriceProduct.production_data"
+                :key="'FinishedProcess' + indexFinishedProcess">
+                <div class="col">
+                  <div class="label"
+                    v-if="indexFinishedProcess===0">
+                    <span class="text">成品加工</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-select v-model="itemFinishedProcess.name"
+                      placeholder="请选择加工工序"
+                      clearable>
+                      <el-option v-for="item in finishedList"
+                        :key="item.value"
+                        :label="item.value"
+                        :value="item.value"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label"
+                    v-if="indexFinishedProcess===0">
+                    <span class="text">小计</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="itemFinishedProcess.total_price"
+                      placeholder="小计"
+                      :disabled="!itemFinishedProcess.name">
+                      <template slot="append">元</template>
+                    </el-input>
+                  </div>
+                </div>
+                <div class="opr hoverBlue"
+                  v-if="indexFinishedProcess===0"
+                  @click="$addItem(quotedPriceProduct.production_data,{
+                    desc:'',
+                    name:'',
+                    total_price:''
+                  })">添加</div>
+                <div class="opr hoverRed"
+                  v-else
+                  @click="$deleteItem(quotedPriceProduct.production_data,indexFinishedProcess)">删除</div>
+              </div>
+              <div class="row"
+                v-for="(itemPackMaterial,indexPackMaterial) in quotedPriceProduct.pack_material_data"
+                :key="'PackMaterial' + indexPackMaterial">
+                <div class="col">
+                  <div class="label"
+                    v-if="indexPackMaterial===0">
+                    <span class="text">包装辅料</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-select v-model="itemPackMaterial.material_id"
+                      placeholder="请选择包装辅料"
+                      clearable>
+                      <el-option v-for="item in packMaterialStore"
+                        :key="item.id"
+                        :value="item.id"
+                        :label="item.name"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label"
+                    v-if="indexPackMaterial===0">
+                    <span class="text">小计</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="itemPackMaterial.total_price"
+                      placeholder="小计"
+                      :disabled="!itemPackMaterial.material_id">
+                      <template slot="append">元</template>
+                    </el-input>
+                  </div>
+                </div>
+                <div class="opr hoverBlue"
+                  v-if="indexPackMaterial===0"
+                  @click="$addItem(quotedPriceProduct.pack_material_data,{
+                    desc:'',
+                    name:'',
+                    total_price:''
+                    })">添加</div>
+                <div class="opr hoverRed"
+                  v-else
+                  @click="$deleteItem(quotedPriceProduct.pack_material_data,indexPackMaterial)">删除</div>
+              </div>
+              <div class="row"
+                v-for="(itemOther,indexOther) in quotedPriceProduct.other_fee_data"
+                :key="'Other' + indexOther">
+                <div class="col">
+                  <div class="label"
+                    v-if="indexOther===0">
+                    <span class="text">其他费用</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="itemOther.name"
+                      placeholder="其他费用"></el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label"
+                    v-if="indexOther===0">
+                    <span class="text">小计</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="itemOther.total_price"
+                      placeholder="小计"
+                      :disabled="!itemOther.name">
+                      <template slot="append">元</template>
+                    </el-input>
+                  </div>
+                </div>
+                <div class="opr hoverBlue"
+                  v-if="indexOther===0"
+                  @click="$addItem(quotedPriceProduct.other_fee_data,{
+                 desc:'',
+                 name:'',
+                 total_price:''
+                })">添加</div>
+                <div class="opr hoverRed"
+                  v-else
+                  @click="$deleteItem(quotedPriceProduct.other_fee_data,indexOther)">删除</div>
+              </div>
+            </div>
+          </div>
+          <div class="oprCtn">
+            <div class="btn borderBtn"
+              @click="showPopup=false;quotedPriceProductUpdate=false">取消</div>
+            <div class="btn"
+              :class="quotedPriceProductUpdate?'backHoverOrange':'backHoverBlue'"
+              @click="saveQuotedPriceProduct">{{quotedPriceProductUpdate?'修改':'确认'}}</div>
           </div>
         </div>
       </template>
@@ -1817,7 +2443,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { IngredientInfo, ColourInfo, ProductTypeInfo, SizeInfo, StyleInfo } from '@/types/productSetting'
+import { IngredientInfo, ColourInfo, SizeSetting, SizeInfo, StyleInfo, CategoryInfo } from '@/types/productSetting'
 import { OrderType } from '@/types/orderSetting'
 import { ProcessInfo } from '@/types/processSetting'
 import { SideInfo, MachineInfo, MethodsInfo, YarnColorInfo } from '@/types/craftSetting'
@@ -1826,14 +2452,30 @@ import { ClientEN, BankEN } from '@/types/billDocumentSetting'
 import { PackMaterialInfo, DecorateMaterialInfo } from '@/types/materialSetting'
 import { GroupInfo } from '@/types/factoryInfoSetting'
 import { UserInfo } from '@/types/user'
+import { QuotedPriceProduct } from '@/types/quotedPrice'
+import { yarnAttributeArr } from '@/assets/js/dictionary'
 interface YarnTypeInfoHasCheck extends YarnTypeInfo {
   check: boolean
 }
+// 纱线报价
+interface YarnPrice {
+  id: string | number
+  client_id: string | number
+  info_data: Array<{
+    id?: string | number
+    material_id: string | number
+    material_arr?: number[]
+    material_color: string
+    attribute: string
+    price: string | number
+    desc: string
+  }>
+}
 import {
+  category,
   style,
   ingredient,
   colour,
-  productType,
   size,
   orderType,
   process,
@@ -1845,11 +2487,16 @@ import {
   decorateMaterial,
   packMaterial,
   group,
-  user
+  user,
+  quotedPrice,
+  companyInfo,
+  yarnPrice
 } from '@/assets/js/api'
 export default Vue.extend({
   data(): {
     [propName: string]: any
+    categoryInfo: CategoryInfo
+    categoryList: CategoryInfo[]
     styleInfo: StyleInfo
     styleList: StyleInfo[]
     ingredientInfo: IngredientInfo
@@ -1858,7 +2505,7 @@ export default Vue.extend({
     colourList: ColourInfo[]
     sizeInfo: SizeInfo
     deleteSizeArr: SizeInfo[]
-    sizeList: ProductTypeInfo[]
+    sizeList: SizeSetting[]
     orderTypeInfo: OrderType
     orderTypeList: OrderType[]
     sampleOrderTypeInfo: OrderType
@@ -1894,32 +2541,52 @@ export default Vue.extend({
     decorateMaterialList: DecorateMaterialInfo[]
     groupInfo: GroupInfo
     groupInfoList: GroupInfo[]
+    quotedPriceProduct: QuotedPriceProduct
+    quotedPriceProductList: QuotedPriceProduct[]
+    yarnPrice: YarnPrice
+    yarnPriceList: YarnPrice[]
   } {
     return {
+      yarnAttributeArr: yarnAttributeArr,
       postData: { token: '' },
       nav: {
-        产品设置: ['款式', '成分', '配色组', '尺码'],
-        订单设置: ['订单类型', '样单类型', '订单预警', '样单预警'],
+        产品设置: ['品类', '款式', '成分', '配色组', '尺码'],
+        订单设置: ['订单类型', '样单类型'],
         报价单设置: ['报价模板', '报价说明'],
-        工序设置: ['原料工序', '半成品加工', '结算工序'],
+        工序设置: ['原料加工工序', '半成品加工', '成品加工工序'],
         工艺单设置: ['边型', '机型', '组织法', '纱线颜色'],
-        物料设置: ['纱线原料', '面料原料', '毛料原料', '装饰辅料', '包装辅料'],
+        物料设置: ['纱线原料', '面料原料', '装饰辅料', '包装辅料', '纱线报价'],
         工厂信息设置: ['基本信息', '负责小组/人', '部门管理', '员工标签'],
         系统账户管理: ['系统账户管理'],
-        打印设置: ['打印设置'],
-        单证设置: [
-          '英文工厂信息',
-          '英文银行信息',
-          'HS编码设置',
-          '常用公司设置',
-          '常用城市设置',
-          '常用品名设置',
-          '常用付款方式'
-        ]
+        打印设置: ['打印设置']
+        // 单证设置: [
+        //   '英文工厂信息',
+        //   '英文银行信息',
+        //   'HS编码设置',
+        //   '常用公司设置',
+        //   '常用城市设置',
+        //   '常用品名设置',
+        //   '常用付款方式'
+        // ]
       },
       pName: '',
       cName: '',
       showPopup: false,
+      categoryInfo: {
+        id: '',
+        name: '',
+        code: '',
+        unit: '',
+        secondary_category: [
+          {
+            name: '',
+            id: ''
+          }
+        ]
+      },
+      categoryList: [],
+      categoryTotal: 1,
+      categoryPage: 1,
       styleInfo: {
         id: null,
         name: ''
@@ -2137,14 +2804,163 @@ export default Vue.extend({
         phone: '',
         is_admin: 2, // 1：超管 2：普通用户
         module_info: [],
+        has_check: false,
+        group_id: '',
+        sms_code: '',
         station: '' // 岗位
       },
+      smsIndex: '发送验证码',
       userList: [],
       userTotal: 1,
-      userPage: 1
+      userPage: 1,
+      quotedPriceProduct: {
+        image_data: [],
+        desc: '',
+        transport_fee_desc: '',
+        transport_fee: '',
+        material_data: [
+          {
+            tree_data: [],
+            material_id: '',
+            material_name: '',
+            weight: '',
+            loss: '',
+            price: '',
+            total_price: '',
+            unit: 'kg'
+          }
+        ],
+        assist_material_data: [
+          {
+            material_id: '',
+            material_name: '',
+            number: '',
+            loss: '',
+            price: '',
+            total_price: '',
+            unit: ''
+          }
+        ],
+        weave_data: [
+          {
+            name: '',
+            desc: '',
+            total_price: ''
+          }
+        ],
+        semi_product_data: [
+          {
+            process_id: '',
+            process_name: '',
+            desc: '',
+            total_price: ''
+          }
+        ],
+        production_data: [
+          {
+            name: '',
+            desc: '',
+            total_price: ''
+          }
+        ],
+        pack_material_data: [
+          {
+            material_name: '',
+            material_id: '',
+            desc: '',
+            total_price: ''
+          }
+        ],
+        other_fee_data: [
+          {
+            name: '',
+            desc: '',
+            total_price: ''
+          }
+        ]
+      },
+      quotedPriceProductList: [],
+      quotedPriceProductTotal: 1,
+      quotedPriceProductPage: 1,
+      quotedPriceProductUpdate: false,
+      weaveList: [{ value: '针织织造' }, { value: '梭织织造' }, { value: '制版费' }],
+      finishedList: [{ value: '车标' }, { value: '包装' }, { value: '人工' }, { value: '检验' }, { value: '水洗' }],
+      companyInfo: {
+        alias: '',
+        logo: '',
+        company_name: '',
+        introduce: '',
+        email: '',
+        address: ''
+      },
+      yarnPrice: {
+        id: '',
+        client_id: '',
+        info_data: [
+          {
+            id: '',
+            material_id: '',
+            material_arr: [],
+            material_color: '',
+            attribute: '',
+            price: '',
+            desc: ''
+          }
+        ]
+      },
+      yarnPriceList: [],
+      yarnPricePage: 1,
+      yarnPriceTotal: 1,
+      yarnPriceUpdate: false
     }
   },
   methods: {
+    // 用户注册获取验证码
+    getSmsCode() {
+      if (Number(this.smsIndex)) {
+        this.$message.warning('请稍后发送')
+        return
+      }
+      if (
+        !this.$formCheck(this.userInfo, [
+          {
+            key: 'phone',
+            regNormal: 'isPhone'
+          }
+        ])
+      ) {
+        user.getSms({ phone: this.userInfo.phone }).then((res) => {
+          if (res.data.status) {
+            this.$message.success('发送成功')
+            this.smsIndex = 60
+            setInterval(() => {
+              if (this.smsIndex === 0) {
+                this.smsIndex = '重新发送'
+              } else {
+                this.smsIndex--
+              }
+            }, 1000)
+          }
+        })
+      }
+    },
+    // 原料颜色搜索
+    searchColor(str: string, cb: any) {
+      let results = str ? this.yarnColorList.filter(this.createFilter(str)) : this.yarnColorList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(
+        results.map((item) => {
+          return {
+            value: item.name
+          }
+        })
+      )
+    },
+    createFilter(queryString: string) {
+      return (restaurant: any) => {
+        return restaurant.name.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+      }
+    },
     uploadSignatureSuccess() {
       const fileArr = this.$refs.companySignatureUpload.uploadFiles.map(
         (item: { response: { key: string }; url: any }) => {
@@ -2160,6 +2976,12 @@ export default Vue.extend({
         }
       )
       this.clientEN.special_seal = fileArr[1] || fileArr[0]
+    },
+    uploadCompanySuccess() {
+      const fileArr = this.$refs.companyLogo.uploadFiles.map((item: { response: { key: string }; url: any }) => {
+        return item.response ? 'https://file.zwyknit.com/' + item.response.key : item.url
+      })
+      this.companyInfo.logo = fileArr[1] || fileArr[0]
     },
     beforeUpload: function (file: { name: string; type: string; size: number }) {
       let fileName = file.name.lastIndexOf('.') // 取到文件名开始到最后一个点的长度
@@ -2188,6 +3010,8 @@ export default Vue.extend({
     getList() {
       if (this.cName === '款式') {
         this.getStyle()
+      } else if (this.cName === '品类') {
+        this.getCategory()
       } else if (this.cName === '成分') {
         this.getIngredient()
       } else if (this.cName === '配色组') {
@@ -2198,11 +3022,11 @@ export default Vue.extend({
         this.getOrderType()
       } else if (this.cName === '样单类型') {
         this.getSampleOrderType()
-      } else if (this.cName === '原料工序') {
+      } else if (this.cName === '原料加工工序') {
         this.getMaterialProcess()
       } else if (this.cName === '半成品加工') {
         this.getHalfProcess()
-      } else if (this.cName === '结算工序') {
+      } else if (this.cName === '成品加工工序') {
         this.getStaffProcess()
       } else if (this.cName === '边型') {
         this.getSide()
@@ -2227,6 +3051,10 @@ export default Vue.extend({
       } else if (this.cName === '毛料原料') {
         this.getYarnType(3)
         this.getYarn(3)
+      } else if (this.cName === '纱线报价') {
+        this.getYarnPrice()
+        this.getYarn(1)
+        this.getYarnColor()
       } else if (this.cName === '装饰辅料') {
         this.getDecorateMaterial()
       } else if (this.cName === '包装辅料') {
@@ -2235,6 +3063,11 @@ export default Vue.extend({
         this.getGroup()
       } else if (this.cName === '系统账户管理') {
         this.getUser()
+        this.getGroup()
+      } else if (this.cName === '报价模板') {
+        this.getQuotedPriceProduct()
+      } else if (this.cName === '基本信息') {
+        this.getCompany()
       }
     },
     downLoadTemplete(type: string) {
@@ -2293,13 +3126,13 @@ export default Vue.extend({
           )
           break
         case 'yarnProcess':
-          this.$downloadExcel([], [{ title: '原料工序名称', key: 'name' }], '原料工序模板')
+          this.$downloadExcel([], [{ title: '原料加工工序名称', key: 'name' }], '原料加工工序模板')
           break
         case 'semiProcess':
-          this.$downloadExcel([], [{ title: '半成品加工工序名称', key: 'name' }], '半成品加工工序模板')
+          this.$downloadExcel([], [{ title: '生产工序名称', key: 'name' }], '生产工序模板')
           break
         case 'staffProcess':
-          this.$downloadExcel([], [{ title: '结算工序名称', key: 'name' }], '结算工序模板')
+          this.$downloadExcel([], [{ title: '成品加工工序名称', key: 'name' }], '成品加工工序模板')
           break
         default:
           this.$message.error('未知模板类型，下载失败！！！')
@@ -2433,7 +3266,7 @@ export default Vue.extend({
         case 'yarnProcess':
           typeObj = {
             id: [false, null],
-            name: ['原料工序名称'],
+            name: ['原料加工工序名称'],
             type: [false, 1]
           }
           api = process.create
@@ -2441,7 +3274,7 @@ export default Vue.extend({
         case 'semiProcess':
           typeObj = {
             id: [false, null],
-            name: ['半成品加工工序名称'],
+            name: ['生产工序名称'],
             type: [false, 2]
           }
           api = process.create
@@ -2449,7 +3282,7 @@ export default Vue.extend({
         case 'staffProcess':
           typeObj = {
             id: [false, null],
-            name: ['结算工序名称'],
+            name: ['成品加工工序名称'],
             type: [false, 3]
           }
           api = process.create
@@ -2490,6 +3323,85 @@ export default Vue.extend({
           }, 1000)
         }
       })
+    },
+    getCategory() {
+      category.list().then((res) => {
+        if (res.data.status) {
+          this.categoryList = res.data.data
+          this.categoryTotal = this.categoryList.length
+        }
+      })
+    },
+    saveCategory() {
+      const fromCheck =
+        this.$formCheck(this.categoryInfo, [
+          {
+            key: 'name',
+            errMsg: '品类不得为空'
+          },
+          {
+            key: 'unit',
+            errMsg: '单位不得为空'
+          },
+          {
+            key: 'code',
+            errMsg: '编号不得为空'
+          }
+        ]) ||
+        this.categoryInfo.secondary_category.some((item) => {
+          return this.$formCheck(item, [
+            {
+              key: 'name',
+              errMsg: '二级品类不得为空'
+            }
+          ])
+        })
+      if (!fromCheck) {
+        category.create(this.categoryInfo).then((res) => {
+          if (res.data.status) {
+            this.$message.success({
+              message: '添加品类成功'
+            })
+            this.categoryInfo = {
+              id: '',
+              name: '',
+              code: '',
+              unit: '',
+              secondary_category: [
+                {
+                  name: '',
+                  id: ''
+                }
+              ]
+            }
+            this.getCategory()
+          }
+        })
+      }
+    },
+    deleteCategory(id: number) {
+      this.$confirm('是否删除该品类?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          category.delete({ id }).then((res) => {
+            if (res.data.status) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+              this.getCategory()
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     getStyle() {
       style.list().then((res) => {
@@ -2664,8 +3576,8 @@ export default Vue.extend({
         })
     },
     getSize() {
-      productType.list().then((res) => {
-        this.sizeList = res.data.data.items
+      category.list().then((res) => {
+        this.sizeList = res.data.data
         this.sizeTotal = this.sizeList.length
       })
     },
@@ -2691,11 +3603,7 @@ export default Vue.extend({
             this.$message.success({
               message: '添加尺码成功'
             })
-            this.sizeInfo = {
-              category_id: '',
-              id: null,
-              name: ''
-            }
+            this.sizeInfo.name = ''
             this.getSize()
           }
         })
@@ -2845,7 +3753,7 @@ export default Vue.extend({
       const formCheck = this.$formCheck(this.materialProcessInfo, [
         {
           key: 'name',
-          errMsg: '请输入原料工序'
+          errMsg: '请输入原料加工工序'
         }
       ])
       if (!formCheck) {
@@ -3646,21 +4554,304 @@ export default Vue.extend({
         {
           key: 'phone',
           errMsg: '请填写手机号'
+        },
+        {
+          key: 'group_id',
+          errMsg: '请选择小组'
+        },
+        {
+          key: 'sms_code',
+          errMsg: '请填写验证码'
         }
       ])
       if (!formCheck) {
         user.create(this.userInfo).then((res) => {
           if (res.data.status) {
+            this.$message.success('添加成功')
             this.getUser()
+            this.showPopup = false
           }
         })
       }
     },
-    deleteUser(id: number) {}
+    deleteUser(id: number) {},
+    getQuotedPriceProduct() {
+      this.$checkCommonInfo([
+        {
+          checkWhich: 'api/packMaterial',
+          getInfoMethed: 'dispatch',
+          getInfoApi: 'getPackMaterialAsync'
+        },
+        {
+          checkWhich: 'api/halfProcess',
+          getInfoMethed: 'dispatch',
+          getInfoApi: 'getHalfProcessAsync'
+        }
+      ])
+      quotedPrice.settingList().then((res) => {
+        if (res.data.status) {
+          this.quotedPriceProductList = res.data.data
+          this.quotedPriceProductTotal = this.quotedPriceProductList.length
+        }
+      })
+    },
+    saveQuotedPriceProduct() {
+      let formData = this.$clone(this.quotedPriceProduct)
+      formData.weave_data = JSON.stringify(formData.weave_data)
+      formData.semi_product_data = JSON.stringify(formData.semi_product_data)
+      formData.pack_material_data = JSON.stringify(formData.pack_material_data)
+      formData.others_data = JSON.stringify(formData.others_data)
+      formData.production_data = JSON.stringify(formData.production_data)
+      formData.other_fee_data = JSON.stringify(formData.other_fee_data)
+      formData.material_data = JSON.stringify(formData.material_data)
+      formData.assist_material_data = JSON.stringify(formData.assist_material_data)
+      quotedPrice.settingCreate(formData).then((res) => {
+        if (res.data.status) {
+          this.$message.success('添加成功')
+          this.quotedPriceProduct = {
+            image_data: [],
+            desc: '',
+            transport_fee_desc: '',
+            transport_fee: '',
+            material_data: [
+              {
+                tree_data: [],
+                material_id: '',
+                material_name: '',
+                weight: '',
+                loss: '',
+                price: '',
+                total_price: '',
+                unit: 'kg'
+              }
+            ],
+            assist_material_data: [
+              {
+                material_id: '',
+                material_name: '',
+                number: '',
+                loss: '',
+                price: '',
+                total_price: '',
+                unit: ''
+              }
+            ],
+            weave_data: [
+              {
+                name: '',
+                desc: '',
+                total_price: ''
+              }
+            ],
+            semi_product_data: [
+              {
+                process_id: '',
+                process_name: '',
+                desc: '',
+                total_price: ''
+              }
+            ],
+            production_data: [
+              {
+                name: '',
+                desc: '',
+                total_price: ''
+              }
+            ],
+            pack_material_data: [
+              {
+                material_name: '',
+                material_id: '',
+                desc: '',
+                total_price: ''
+              }
+            ],
+            other_fee_data: [
+              {
+                name: '',
+                desc: '',
+                total_price: ''
+              }
+            ]
+          }
+          this.showPopup = false
+          this.getQuotedPriceProduct()
+        }
+      })
+    },
+    deleteQuotedPriceProduct(id: number) {
+      this.$confirm('是否删除该报价模板?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          quotedPrice
+            .settingDelete({
+              id: id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.getQuotedPriceProduct()
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    lookQuotedPriceProduct(info: QuotedPriceProduct) {
+      let formData = this.$clone(info)
+      formData.weave_data = JSON.parse(formData.weave_data)
+      formData.semi_product_data = JSON.parse(formData.semi_product_data)
+      formData.pack_material_data = JSON.parse(formData.pack_material_data)
+      // formData.others_data = JSON.parse(formData.others_data)
+      formData.production_data = JSON.parse(formData.production_data)
+      formData.other_fee_data = JSON.parse(formData.other_fee_data)
+      // formData.material_data = JSON.parse(formData.material_data)
+      // formData.assist_material_data = JSON.parse(formData.assist_material_data)
+      this.quotedPriceProduct = formData
+      this.quotedPriceProductUpdate = true
+      this.showPopup = true
+    },
+    getCompany() {
+      companyInfo.detail().then((res) => {
+        if (res.data.status) {
+          this.companyInfo = res.data.data
+        }
+      })
+    },
+    saveCompany() {
+      companyInfo.create(this.companyInfo).then((res) => {
+        if (res.data.status) {
+          this.$message.success('保存成功')
+          this.getCompany()
+        }
+      })
+    },
+    getYarnPrice() {
+      this.$checkCommonInfo([
+        {
+          checkWhich: 'api/clientType',
+          getInfoMethed: 'dispatch',
+          getInfoApi: 'getClientTypeAsync'
+        }
+      ])
+      yarnPrice.list().then((res) => {
+        if (res.data.status) {
+          this.yarnPriceList = res.data.data
+          this.yarnPriceTotal = this.yarnPriceList.length
+        }
+      })
+    },
+    saveYarnPrice() {
+      const formCheck =
+        this.$formCheck(this.yarnPrice, [
+          {
+            key: 'client_id',
+            errMsg: '请选择报价单位'
+          }
+        ]) ||
+        this.yarnPrice.info_data.some((item) => {
+          return this.$formCheck(item, [
+            {
+              key: 'material_id',
+              errMsg: '请选择纱线名称'
+            },
+            {
+              key: 'attribute',
+              errMsg: '请选择纱线属性'
+            },
+            {
+              key: 'material_color',
+              errMsg: '请输入纱线颜色'
+            },
+            {
+              key: 'price',
+              errMsg: '请输入单价'
+            }
+          ])
+        })
+      if (!formCheck) {
+        yarnPrice.create(this.yarnPrice).then((res) => {
+          if (res.data.status) {
+            this.$message.success('添加成功')
+            this.getYarnPrice()
+            this.showPopup = false
+            this.yarnPriceUpdate = false
+            this.yarnPrice = {
+              id: '',
+              client_id: '',
+              info_data: [
+                {
+                  id: '',
+                  material_id: '',
+                  material_arr: [],
+                  material_color: '',
+                  attribute: '',
+                  price: '',
+                  desc: ''
+                }
+              ]
+            }
+          }
+        })
+      }
+    },
+    deleteYarnPrice(id: number) {
+      this.$confirm('是否删除该报价信息?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          yarnPrice
+            .delete({
+              id: id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.getYarnPrice()
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    }
   },
   computed: {
+    // 纱线原料单位——纱线报价用
+    yarnClientList() {
+      return this.$store.state.api.clientType.arr.filter((item: { label: string }) => item.label === '纱线原料单位')
+    },
+    // 包装辅料——报价单里用
+    packMaterialStore(): PackMaterialInfo[] {
+      return this.$store.state.api.packMaterial.arr
+    },
+    // 半成品加工工序——报价单设置用
+    halfProcessStore() {
+      return this.$store.state.api.halfProcess.arr
+    },
     styleArr(): StyleInfo[] {
       return this.styleList.slice((this.stylePage - 1) * 5, this.stylePage * 5)
+    },
+    categoryArr(): CategoryInfo[] {
+      return this.categoryList.slice((this.categoryPage - 1) * 5, this.categoryPage * 5)
     },
     ingredientArr(): IngredientInfo[] {
       return this.ingredientList.slice((this.ingredientPage - 1) * 5, this.ingredientPage * 5)
@@ -3668,7 +4859,7 @@ export default Vue.extend({
     colourArr(): ColourInfo[] {
       return this.colourList.slice((this.colourPage - 1) * 5, this.colourPage * 5)
     },
-    sizeArr(): ProductTypeInfo[] {
+    sizeArr(): SizeSetting[] {
       return this.sizeList.slice((this.sizePage - 1) * 5, this.sizePage * 5)
     },
     orderTypeArr(): OrderType[] {
@@ -3709,6 +4900,12 @@ export default Vue.extend({
     },
     userArr(): UserInfo[] {
       return this.userList.slice((this.userPage - 1) * 5, this.userPage * 5)
+    },
+    quotedPriceProductArr(): QuotedPriceProduct[] {
+      return this.quotedPriceProductList.slice((this.quotedPriceProductPage - 1) * 5, this.quotedPriceProductPage * 5)
+    },
+    yarnPriceArr(): YarnPrice[] {
+      return this.yarnPriceList.slice((this.yarnPricePage - 1) * 5, this.yarnPricePage * 5)
     }
   },
   watch: {
@@ -3748,4 +4945,9 @@ export default Vue.extend({
 
 <style lang="less" scoped>
 @import '~@/assets/css/setting/setting.less';
+</style>
+<style lang="less">
+.el-upload-dragger {
+  line-height: 180px;
+}
 </style>

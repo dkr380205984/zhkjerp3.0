@@ -14,6 +14,7 @@ export interface SampleOrderBatch {
   desc: string
   product_data: Array<{
     id?: number
+    pid_status?: number
     status?: 1 | 2 // 1.待定 2.已确认
     image_data?: string[]
     color_data?: any[]
@@ -62,6 +63,6 @@ export interface SampleOrderInfo {
   public_files: string[]
   private_files: string[]
   settle_tax: string // 结算税率
-  settle_unit: string // 结算单位
+  settle_unit: string // 报价币种
   time_data: SampleOrderTime | SampleOrderTime[]
 }

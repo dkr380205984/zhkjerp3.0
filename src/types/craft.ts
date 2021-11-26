@@ -35,6 +35,7 @@ interface ColourInfo {
 
 interface MaterialInfo {
   material_id: string | number
+  material_name?: string
   apply: string[] | number[]
   type_materail?: 0 | 1 // 0：主要 1：次要
   number?: string | number
@@ -84,8 +85,8 @@ export interface CraftInfo {
     color_data: ColourInfo[]
     material_data: MaterialInfo[]
     assist_material: MaterialInfo[] // 辅助原料
-    warp_rank: string[]
-    warp_rank_back: string[]
+    warp_rank: Array<Array<any>>
+    warp_rank_back: Array<Array<any>>
     merge_data: string
     merge_data_back: string
     weft: string | number // 总头纹
@@ -104,8 +105,8 @@ export interface CraftInfo {
     color_data: ColourInfo[]
     material_data: MaterialInfo[]
     assist_material: MaterialInfo[] // 辅助原料
-    weft_rank: string[]
-    weft_rank_back: string[]
+    weft_rank: Array<Array<any>>
+    weft_rank_back: Array<Array<any>>
     merge_data: string
     merge_data_back: string
     organization_id: string | number // 组织法

@@ -12,7 +12,7 @@ export interface MaterialPlanInfo {
     product_code?: string
     product_name?: string
     category?: string
-    type?: string
+    secondary_category?: string
     product_id: string | number
     part_data?: PartInfo[]
     process_data?: Array<{
@@ -52,6 +52,7 @@ export interface MaterialPlanGatherData {
   need_number: string | number
   loss: string | number
   final_number: string | number
+  unit: string
 }
 
 export interface MaterailPlanData {
@@ -59,7 +60,7 @@ export interface MaterailPlanData {
   product_code?: string
   product_name?: string
   category?: string
-  type?: string
+  secondary_category?: string
   part_id: string | number
   part_name?: string
   size_color?: string[] // 尺码颜色下拉框选择项
@@ -88,5 +89,6 @@ export interface MaterailPlanData {
     loss: string | number
     final_number: string | number
     has_plan?: boolean
+    unit: string // 单位，默认是kg
   }>
 }
