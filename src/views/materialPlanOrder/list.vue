@@ -37,8 +37,12 @@
             <div class="col">{{item.material_type|filterMaterialType}}</div>
             <div class="col">{{item.client_name}}</div>
             <div class="col">{{item.total_number}}</div>
-            <div class="col">没数据</div>
-            <div class="col">没数据</div>
+            <div class="col"
+              style="white-space:nowrap;overflow: hidden;text-overflow: ellipsis;">
+              <span v-for="(itemChild,indexChild) in item.material_order_info"
+                :key="indexChild">{{indexChild}}</span>
+            </div>
+            <div class="col">{{item.material_order_info | cmpTotal}}kg</div>
             <div class="col">{{item.desc||'无'}}</div>
             <div class="col oprCtn">
               <div class="opr hoverBlue"
@@ -136,6 +140,7 @@ import Vue from 'vue'
 import { MaterialPlanOrderClient } from '@/types/materialPlanOrder'
 import { CascaderInfo } from '@/types/vuex'
 import { materialOrder, materialPlanOrder } from '@/assets/js/api'
+import { navInfo } from '@/types/nav'
 export default Vue.extend({
   data(): {
     materialPlanOrderClient: MaterialPlanOrderClient
@@ -164,6 +169,17 @@ export default Vue.extend({
     filterMaterialType(type: 1 | 2 | 3) {
       const typeArr = ['', '纱线', '面料', '毛料']
       return typeArr[type]
+    },
+    cmpTotal(val: any) {
+      let total = 0
+      for (let key in val) {
+        for (let keyChild in val[key]) {
+          for (let keyColor in val[key][keyChild]) {
+            total += Number(val[key][keyChild][keyColor])
+          }
+        }
+      }
+      return total
     }
   },
   watch: {

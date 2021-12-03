@@ -11,7 +11,6 @@
           <div class="col">
             <div class="label">
               <span class="text">样单号</span>
-              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-input placeholder="请输入样单号"
@@ -570,6 +569,7 @@ export default Vue.extend({
               .map((item) => Number(item))
             this.sampleOrderInfo.contacts_id = quotedPriceInfo.contacts_id
             this.sampleOrderInfo.group_id = quotedPriceInfo.group_id
+            this.sampleOrderInfo.rel_quote_id = Number(this.$route.query.quotedPriceId)
             this.getContacts(this.sampleOrderInfo.tree_data)
             this.quotedPriceProductList = quotedPriceInfo.product_data
             this.loading = false
@@ -599,15 +599,17 @@ export default Vue.extend({
     },
     getContacts(ev: number[]) {
       this.sampleOrderInfo.contacts_id = ''
-      client
-        .detail({
-          id: ev[2]
-        })
-        .then((res) => {
-          if (res.data.status) {
-            this.contactsList = res.data.data.contacts_data
-          }
-        })
+      if (ev) {
+        client
+          .detail({
+            id: ev[2]
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.contactsList = res.data.data.contacts_data
+            }
+          })
+      }
     },
     getSampleDetail(sample: SampleInfo) {
       this.sampleShow = true

@@ -44,11 +44,13 @@ export interface MaterialStockLog {
   number: string | number
   item: string // 件数
   tree_data?: string[]
+  unit?: string
   rel_doc_info_id?: string | number // 采购单调取单加工单子项id
 }
 export interface MaterialStockInfo {
   id?: number
   order_id?: string | number
+  material_type: number // 1纱线 2面料 4辅料
   action_type: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
   rel_doc_type?: string
   rel_doc_id: string | number
@@ -57,10 +59,12 @@ export interface MaterialStockInfo {
   client_id: string | number
   client_name?: string
   desc: string
+  store_arr?: number[]
   store_id?: number | string
   secondary_store_id?: number | null | string
   move_store_id?: number | string // 移库
   move_secondary_store_id?: number | string
+  move_store_arr?: number[]
   tree_data?: number[]
   selectList?: Array<{
     name: string

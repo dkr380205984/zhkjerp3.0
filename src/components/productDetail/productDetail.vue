@@ -40,8 +40,8 @@
                           <div class="text">{{productInfo.style_code}}</div>
                         </div>
                         <div class="col">
-                          <div class="label">产品款式（没给）：</div>
-                          <!-- <div class="text">{{productInfo.style_data.map((item)=>item.name).join(',')}}</div> -->
+                          <div class="label">产品款式：</div>
+                          <div class="text">{{productInfo.style_data.map((item)=>item.name).join(',')}}</div>
                         </div>
                       </div>
                       <div class="row">
@@ -144,14 +144,14 @@
                           </div>
                           <div class="rectContent">
                             <div class="text title">工艺单</div>
-                            <div class="text">创建人没给</div>
-                            <div class="text">创建时间没给</div>
+                            <!-- <div class="text">创建人没给</div>
+                            <div class="text">创建时间没给</div> -->
                           </div>
                         </div>
                         <div class="menu">
                           <span class="opration">打印</span>
                           <span class="opration"
-                            @click="productInfo.craft_list_id?$openUrl('/craft/detail?id='+productInfo.product_id):$openUrl('/craft/create?id='+productInfo.product_id)">{{productInfo.craft_list_id?'详情':'添加'}}</span>
+                            @click="productInfo.craft_list_id?$openUrl('/craft/detail?id='+productInfo.craft_list_id):$openUrl('/craft/create?id='+productInfo.craft_list_id)">{{productInfo.craft_list_id?'详情':'添加'}}</span>
                         </div>
                       </div>
                     </div>

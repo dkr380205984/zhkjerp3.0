@@ -44,9 +44,9 @@
         </div>
         <div class="list">
           <div class="row title">
-            <div class="col">纱线名称</div>
-            <div class="col">纱线颜色</div>
-            <div class="col">纱线属性</div>
+            <div class="col">物料名称</div>
+            <div class="col">物料颜色</div>
+            <div class="col">物料属性</div>
             <div class="col">批号</div>
             <div class="col">缸号</div>
             <div class="col">色号</div>
@@ -60,7 +60,7 @@
               <el-checkbox v-model="item.check">{{item.material_name}}</el-checkbox>
             </div>
             <div class="col">{{item.material_color}}</div>
-            <div class="col">{{item.attribute}}</div>
+            <div class="col">{{item.attribute || '无属性'}}</div>
             <div class="col">{{item.batch_code}}</div>
             <div class="col">{{item.vat_code}}</div>
             <div class="col">{{item.color_code}}</div>
@@ -97,19 +97,18 @@
             <div class="trow">
               <div class="tcol">单据编号</div>
               <div class="tcol">出入库类型</div>
-              <div class="tcol">单位名称</div>
+              <div class="tcol">库存转移</div>
               <div class="tcol noPad"
-                style="flex:5">
+                style="flex:4">
                 <div class="trow">
-                  <div class="tcol">纱线名称</div>
+                  <div class="tcol">物料名称</div>
                   <div class="tcol">颜色/属性</div>
-                  <div class="tcol">批号/缸号</div>
-                  <div class="tcol">色号</div>
+                  <div class="tcol">批号/缸号/色号</div>
                   <div class="tcol">数量</div>
                 </div>
               </div>
               <div class="tcol">日期</div>
-              <div class="tcol">备注信息</div>
+              <div class="tcol">操作</div>
             </div>
           </div>
           <div class="tbody">
@@ -119,23 +118,65 @@
               <div class="tcol">{{item.code}}</div>
               <div class="tcol"
                 :class="item.action_type|materialStockTypeClassFilter">{{item.action_type|materialStockTypeFilter}}</div>
-              <div class="tcol">{{item.client_name}}</div>
+              <div class="tcol">
+                <template v-if="item.action_type===1">
+                  <div class="changeCtn">
+                    <span>{{item.client_name}}</span>
+                    <span class="el-icon-s-unfold green"></span>
+                    <span>{{item.store}}/{{item.secondary_store}}</span>
+                  </div>
+                </template>
+                <template v-else-if="item.action_type===2">
+                  <div class="changeCtn">
+                    <span>{{item.client_name}}</span>
+                    <span class="el-icon-s-unfold green"></span>
+                    <span>{{item.store}}/{{item.secondary_store}}</span>
+                  </div>
+                </template>
+                <template v-else-if="item.action_type===3 || item.action_type===5">
+                  <div class="changeCtn">
+                    <span>{{item.store}}/{{item.secondary_store}}</span>
+                    <span class="el-icon-s-unfold orange"></span>
+                    <span>{{item.client_name}}</span>
+                  </div>
+                </template>
+                <template v-else-if="item.action_type===4 || item.action_type===6 || item.action_type===9 || item.action_type===10">
+                  <div class="changeCtn">
+                    <span>{{item.store}}/{{item.secondary_store}}</span>
+                  </div>
+                </template>
+                <template v-else-if="item.action_type===7">
+                  <div class="changeCtn">
+                    <span>{{item.store}}/{{item.secondary_store}}</span>
+                    <span class="el-icon-s-unfold orange"></span>
+                    <span>{{item.move_store}}/{{item.move_secondary_store}}</span>
+                  </div>
+                </template>
+                <template v-else-if="item.action_type===8">
+                  <div class="changeCtn">
+                    <span>{{item.store}}/{{item.secondary_store}}</span>
+                    <span class="el-icon-s-unfold green"></span>
+                    <span>{{item.move_store}}/{{item.move_secondary_store}}</span>
+                  </div>
+                </template>
+              </div>
               <div class="tcol noPad"
-                style="flex:5">
+                style="flex:4">
                 <div class="trow"
                   v-for="itemChild in item.info_data"
                   :key="itemChild.id">
                   <div class="tcol">{{itemChild.material_name}}</div>
-                  <div class="tcol">{{itemChild.material_color}}/{{itemChild.attribute}}</div>
+                  <div class="tcol">{{itemChild.material_color}}/{{itemChild.attribute ||'无属性'}}</div>
                   <div class="tcol"
-                    :class="itemChild.batch_code||itemChild.vat_code?'':'gray'">{{itemChild.batch_code||'无'}}/{{itemChild.vat_code||'无'}}</div>
-                  <div class="tcol"
-                    :class="itemChild.color_code?'':'gray'">{{itemChild.color_code||'无'}}</div>
+                    :class="itemChild.batch_code||itemChild.vat_code?'':'gray'">{{itemChild.batch_code||'无'}}/{{itemChild.vat_code||'无'}}/{{itemChild.color_code||'无'}}</div>
                   <div class="tcol">{{itemChild.number}}kg</div>
                 </div>
               </div>
               <div class="tcol">{{item.complete_time}}</div>
-              <div class="tcol">{{item.desc}}</div>
+              <div class="tcol oprCtn">
+                <span class="opr hoverBlue"
+                  @click="$openUrl('/store/materialLogPrint?id='+item.id + '&type=' + item.action_type)">打印</span>
+              </div>
             </div>
           </div>
         </div>
@@ -193,30 +234,77 @@
                   </el-select>
                 </div>
               </div>
-              <div class="col"></div>
+              <div class="col"
+                v-if="materialStockInfo.action_type===7">
+                <div class="label">
+                  <span class="text">移库仓库</span>
+                </div>
+                <div class="info elCtn">
+                  <el-cascader :options="storeArr"
+                    placeholder="请选择移库仓库"
+                    v-model="materialStockInfo.move_store_arr"
+                    @change="(ev)=>{materialStockInfo.move_store_id=ev[0];materialStockInfo.move_secondary_store_id=ev[1]}"></el-cascader>
+                </div>
+              </div>
+              <div class="col"
+                v-if="materialStockInfo.action_type!==7">
+                <div class="label">
+                  <span class="text">{{materialStockInfo.action_type===9?'来源单位':'出库单位'}}</span>
+                </div>
+                <div class="info elCtn">
+                  <el-cascader v-if="materialStockInfo.action_type===9"
+                    v-model="materialStockInfo.tree_data"
+                    placeholder="请选择单位信息"
+                    :options="yarnClientInList"
+                    filterable
+                    clearable>
+                  </el-cascader>
+                  <el-cascader v-if="materialStockInfo.action_type===10"
+                    v-model="materialStockInfo.tree_data"
+                    placeholder="请选择单位信息"
+                    :options="yarnClientOutList"
+                    filterable
+                    clearable>
+                  </el-cascader>
+                </div>
+              </div>
             </div>
             <div class="row"
               v-for="(item,index) in materialStockInfo.info_data"
               :key="index">
               <div class="col">
                 <div class="spaceBetween">
-                  <div class="once">
+                  <div class="once"
+                    style="flex:2">
                     <div class="label"
                       v-if="index===0">
                       <span class="text">物料名称</span>
                       <span class="explanation">(必选)</span>
                     </div>
                     <div class="info elCtn">
-                      <el-cascader placeholder="物料名称"
+                      <el-cascader v-if="materialStockInfo.material_type===1||materialStockInfo.material_type===2"
+                        placeholder="物料名称"
                         :show-all-levels="false"
                         v-model="item.tree_data"
                         :options="yarnTypeList"
+                        filterable
                         @change="(ev)=>{item.material_id=ev[2]}"
                         clearable>
                       </el-cascader>
+                      <el-select v-model="item.material_id"
+                        placeholder="请选择辅料"
+                        filterable
+                        v-if="materialStockInfo.material_type===4"
+                        @change="getUnit($event,item)">
+                        <el-option v-for="item in decorateMaterialList"
+                          :key="item.id"
+                          :label="item.name"
+                          :value="item.id"></el-option>
+                      </el-select>
                     </div>
                   </div>
-                  <div class="once">
+                  <div class="once"
+                    v-if="materialStockInfo.material_type===1">
                     <div class="label"
                       v-if="index===0">
                       <span class="text">属性</span>
@@ -239,14 +327,10 @@
                       <span class="explanation">(必选)</span>
                     </div>
                     <div class="info elCtn">
-                      <el-select placeholder="颜色"
-                        v-model="item.material_color">
-                        <el-option v-for="item in yarnColorList"
-                          :key="item.name"
-                          :label="item.name"
-                          :value="item.name">
-                        </el-option>
-                      </el-select>
+                      <el-autocomplete class="inline-input"
+                        v-model="item.material_color"
+                        :fetch-suggestions="searchColor"
+                        placeholder="物料颜色"></el-autocomplete>
                     </div>
                   </div>
                 </div>
@@ -293,10 +377,13 @@
                       <span class="text">数量</span>
                       <span class="explanation">(必填)</span>
                     </div>
-                    <div class="info elCtn">
+                    <div class="info elCtn UnitCtn">
                       <el-input placeholder="数量"
                         v-model="item.number">
-                        <template slot="append">kg</template>
+                        <template slot="append">
+                          <el-input v-model="item.unit"
+                            placeholder="单位"></el-input>
+                        </template>
                       </el-input>
                     </div>
                   </div>
@@ -324,6 +411,7 @@
                   vat_code: '',
                   attribute: '',
                   number: '',
+                  unit:'kg',
                   item: '', // 件数
                   rel_doc_info_id: '' // 采购单调取单加工单子项id
                 })">添加</div>
@@ -335,13 +423,13 @@
               <div class="col"
                 style="max-width:322px">
                 <div class="label">
-                  <span class="text">选择日期</span>
+                  <span class="text">操作日期</span>
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
                   <el-date-picker style="width:100%"
                     class="once"
-                    placeholder="选择日期"
+                    placeholder="操作日期"
                     value-format="yyyy-MM-dd"
                     v-model="materialStockInfo.complete_time"></el-date-picker>
                 </div>
@@ -366,11 +454,134 @@
         </div>
       </div>
     </div>
+    <div class="popup"
+      v-show="materialLogExcelFlag">
+      <div class="main"
+        style="width:500px">
+        <div class="titleCtn">
+          <span class="text">导出EXCEL筛选条件</span>
+          <div class="closeCtn"
+            @click="materialLogExcelFlag=false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="row">
+            <div class="label"
+              style="line-height:32px">选择日期：</div>
+            <div class="elCtn info">
+              <el-date-picker v-model="materialLogExcelDate"
+                type="daterange"
+                align="right"
+                unlink-panels
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :picker-options="pickerOptions">
+              </el-date-picker>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label"
+              style="line-height:32px">操作类型：</div>
+            <div class="elCtn info">
+              <el-select v-model="materialLogExcel.action_type">
+                <el-option v-for="item in stockTypeList"
+                  :key="item.name"
+                  :value="item.value"
+                  :label="item.name"></el-option>
+              </el-select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label"
+              style="line-height:32px">选择物料：</div>
+            <div class="elCtn info">
+              <el-cascader placeholder="请选择要导出的库存物料"
+                :show-all-levels="false"
+                v-model="materialLogExcel.material_arr"
+                :options="yarnTypeList"
+                @change="(ev)=>{materialLogExcel.material_id=ev[2]}"
+                clearable>
+              </el-cascader>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label"
+              style="line-height:32px">选择单位：</div>
+            <div class="elCtn info">
+              <el-cascader placeholder="请选择要导出的单位"
+                :show-all-levels="false"
+                v-model="materialLogExcel.client_arr"
+                :options="clientTypeList"
+                @change="(ev)=>{materialLogExcel.client_id=ev[2]}"
+                clearable>
+              </el-cascader>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="materialLogExcelFlag=false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="exportMaterialLogExcel">确认导出</span>
+        </div>
+      </div>
+    </div>
+    <div class="popup"
+      v-show="materialTotalExcelFlag">
+      <div class="main"
+        style="width:500px">
+        <div class="titleCtn">
+          <span class="text">导出EXCEL筛选条件</span>
+          <div class="closeCtn"
+            @click="materialTotalExcelFlag=false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="row">
+            <div class="label"
+              style="line-height:32px">选择物料：</div>
+            <div class="elCtn info">
+              <el-cascader placeholder="请选择要导出的库存物料"
+                :show-all-levels="false"
+                v-model="materialTotalExcel.material_arr"
+                :options="yarnTypeList"
+                @change="(ev)=>{materialTotalExcel.material_id=ev[2]}"
+                clearable>
+              </el-cascader>
+            </div>
+          </div>
+          <!-- <div class="row">
+            <div class="label"
+              style="line-height:32px">排序规则：</div>
+            <div class="elCtn info"
+              style="line-height:32px">
+              <el-radio v-model="radio"
+                label="1">从多到少</el-radio>
+              <el-radio v-model="radio"
+                label="2">从少到多</el-radio>
+            </div>
+          </div> -->
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="materialTotalExcelFlag=false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="exportMaterialTotalExcel">确认导出</span>
+        </div>
+      </div>
+    </div>
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
+          <span class="btn backHoverGreen"
+            @click="materialTotalExcelFlag = true">导出库存数量EXCEL</span>
+          <span class="btn backHoverGreen"
+            @click="materialLogExcelFlag = true">导出库存日志EXCEL</span>
         </div>
       </div>
     </div>
@@ -379,7 +590,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { store, materialStock } from '@/assets/js/api'
+import { store, materialStock, exportExcel } from '@/assets/js/api'
 import { yarnAttributeArr } from '@/assets/js/dictionary'
 import { StoreDetail } from '@/types/store'
 import { MaterialStockInfo, MaterialStockLog } from '@/types/materialStock'
@@ -392,6 +603,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      testValue: [],
       loading: true,
       stockTypeList: stockType,
       storeDetail: {
@@ -409,15 +621,21 @@ export default Vue.extend({
       },
       materialStockFlag: false,
       materialStockInfo: {
+        material_type: 1,
         action_type: 9,
         rel_doc_type: '',
         rel_doc_id: '',
         rel_doc_code: '',
         complete_time: this.$getDate(new Date()),
         client_id: '',
+        tree_data: [],
         desc: '',
+        store_arr: [],
         store_id: '',
         secondary_store_id: '',
+        move_store_id: '',
+        move_secondary_store_id: '',
+        move_store_arr: [],
         info_data: [
           {
             tree_data: [],
@@ -429,6 +647,7 @@ export default Vue.extend({
             attribute: '',
             number: '',
             item: '', // 件数
+            unit: 'kg',
             rel_doc_info_id: '' // 采购单调取单加工单子项id
           }
         ],
@@ -438,10 +657,66 @@ export default Vue.extend({
       storeTotal: 1,
       storePage: 1,
       logTotal: 1,
-      logPage: 1
+      logPage: 1,
+      defaultSecondaryId: 0,
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }
+        ]
+      },
+      materialLogExcelFlag: false,
+      materialLogExcelDate: [],
+      materialLogExcel: {
+        store_id: '',
+        material_type: '',
+        material_name: '',
+        client_id: '',
+        start_time: '',
+        end_time: '',
+        action_type: '',
+        client_arr: [],
+        material_arr: []
+      },
+      materialTotalExcelFlag: false,
+      materialTotalExcel: {
+        store_id: '',
+        material_type: '',
+        material_name: '',
+        material_arr: []
+      },
+      storeArr: []
     }
   },
   computed: {
+    decorateMaterialList(): any[] {
+      return this.$store.state.api.decorateMaterial.arr
+    },
     storeTotalList(): any[] {
       return this.storeDetail.store_total.slice((this.storePage - 1) * 5, this.storePage * 5)
     },
@@ -459,8 +734,25 @@ export default Vue.extend({
         return []
       }
     },
-    yarnColorList(): CascaderInfo {
-      return this.$store.state.api.yarnColor.arr
+    yarnColorList() {
+      return this.$store.state.api.yarnColor.arr.map((item: { name: any }) => {
+        return {
+          value: item.name,
+          label: item.name
+        }
+      })
+    },
+    clientTypeList() {
+      return this.$store.state.api.clientType.arr
+    },
+    yarnClientInList() {
+      return this.$store.state.api.clientType.arr.filter((item: { label: string }) => item.label === '纱线原料单位')
+    },
+    yarnClientOutList() {
+      return this.$store.state.api.clientType.arr.filter(
+        (item: { label: string }) =>
+          item.label === '原料加工单位' || item.label === '生产织造单位' || item.label === '生产加工单位'
+      )
     }
   },
   methods: {
@@ -473,11 +765,31 @@ export default Vue.extend({
         .then((res) => {
           if (res.data.status) {
             this.storeDetail = res.data.data
+            this.storeDetail.secondary_store.forEach((item) => {
+              if (item.is_default === 1) {
+                this.defaultSecondaryId = item.id
+              }
+            })
           }
           this.loading = false
         })
     },
+    getUnit(ev: number, info: MaterialStockLog) {
+      info.unit = this.decorateMaterialList.find((item) => item.id === ev).unit
+    },
+    // 原料颜色搜索
+    searchColor(str: string, cb: any) {
+      let results = str ? this.yarnColorList.filter(this.createFilter(str)) : this.yarnColorList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    createFilter(queryString: string) {
+      return (restaurant: any) => {
+        return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+      }
+    },
     goStock(type: 9 | 10, info?: MaterialStockLog) {
+      this.materialStockInfo.secondary_store_id = this.defaultSecondaryId || ''
       this.materialStockInfo.action_type = type
       if (info) {
         this.materialStockInfo.info_data = [
@@ -491,7 +803,8 @@ export default Vue.extend({
             attribute: info.attribute,
             number: '',
             item: '',
-            rel_doc_info_id: ''
+            rel_doc_info_id: '',
+            unit: info.unit || 'kg'
           }
         ]
       } else {
@@ -508,10 +821,31 @@ export default Vue.extend({
               attribute: item.attribute,
               number: '',
               item: '',
-              rel_doc_info_id: ''
+              rel_doc_info_id: '',
+              unit: item.unit || 'kg'
             }
           })
       }
+
+      // 如果没有勾选物料,给默认选项
+      if (this.materialStockInfo.info_data.length === 0) {
+        this.materialStockInfo.info_data = [
+          {
+            tree_data: [],
+            material_id: '',
+            material_color: '',
+            color_code: '',
+            batch_code: '',
+            vat_code: '',
+            attribute: '',
+            number: '',
+            item: '',
+            rel_doc_info_id: '',
+            unit: 'kg'
+          }
+        ]
+      }
+
       this.materialStockFlag = true
     },
     // 把material_id转成tree_data
@@ -530,6 +864,7 @@ export default Vue.extend({
       return treeData
     },
     getCmpData() {
+      this.materialStockInfo.material_type = Number(this.$route.query.store_type)
       this.materialStockInfo.store_id = Number(this.$route.query.id)
       this.materialStockInfo.info_data.forEach((item) => {
         item.batch_code = item.batch_code || '无'
@@ -551,10 +886,10 @@ export default Vue.extend({
               key: 'material_id',
               errMsg: '请选择物料名称'
             },
-            {
-              key: 'attribute',
-              errMsg: '请选择物料属性'
-            },
+            // {
+            //   key: 'attribute',
+            //   errMsg: '请选择物料属性'
+            // },
             {
               key: 'material_color',
               errMsg: '请选择物料颜色'
@@ -567,7 +902,7 @@ export default Vue.extend({
         })
       if (!formCheck) {
         this.getCmpData()
-        materialStock.create(this.materialStockInfo).then((res) => {
+        materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
             this.materialStockFlag = false
@@ -575,6 +910,34 @@ export default Vue.extend({
           }
         })
       }
+    },
+    exportMaterialLogExcel() {
+      this.materialLogExcel.start_time = this.materialLogExcelDate.length > 0 ? this.materialLogExcelDate[0] : ''
+      this.materialLogExcel.end_time = this.materialLogExcelDate.length > 0 ? this.materialLogExcelDate[1] : ''
+      this.materialLogExcel.store_id = this.$route.query.id
+      this.materialLogExcel.material_type = this.$route.query.store_type
+      this.loading = true
+      exportExcel.materialLog(this.materialLogExcel).then((res) => {
+        if (res.data.status) {
+          this.$message.success('导出成功')
+          this.materialLogExcelFlag = false
+          this.$openUrl(res.data.data)
+        }
+        this.loading = false
+      })
+    },
+    exportMaterialTotalExcel() {
+      this.materialLogExcel.store_id = this.$route.query.id
+      this.materialLogExcel.material_type = this.$route.query.store_type
+      this.loading = true
+      exportExcel.materialTotal(this.materialTotalExcel).then((res) => {
+        if (res.data.status) {
+          this.$message.success('导出成功')
+          this.materialTotalExcelFlag = false
+          this.$openUrl(res.data.data)
+        }
+        this.loading = false
+      })
     }
   },
   mounted() {
@@ -588,8 +951,42 @@ export default Vue.extend({
         checkWhich: 'api/yarnColor',
         getInfoMethed: 'dispatch',
         getInfoApi: 'getYarnColorAsync'
+      },
+      {
+        checkWhich: 'api/clientType',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getClientTypeAsync'
+      },
+      {
+        checkWhich: 'api/decorateMaterial',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getDecorateMaterialAsync'
       }
     ])
+    this.materialStockInfo.material_type = Number(this.$route.query.store_type)
+    store
+      .list({
+        store_type: this.store_type
+      })
+      .then((res) => {
+        if (res.data.status) {
+          // 移库仓库
+          this.storeArr = res.data.data
+            .filter((item: any) => item.id !== Number(this.$route.query.id))
+            .map((item: any) => {
+              return {
+                label: item.name,
+                value: item.id,
+                children: item.secondary_store.map((itemChild: any) => {
+                  return {
+                    label: itemChild.name,
+                    value: itemChild.id
+                  }
+                })
+              }
+            })
+        }
+      })
     this.init()
   }
 })
@@ -597,4 +994,22 @@ export default Vue.extend({
 
 <style lang="less" scoped>
 @import '~@/assets/css/store/materialDetail.less';
+</style>
+<style lang="less">
+#storeDetail {
+  .UnitCtn {
+    .el-input-group__append {
+      padding: 0;
+      .el-input {
+        width: 45px;
+        .el-input__inner {
+          padding: 0 8px;
+          border: 0;
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+        }
+      }
+    }
+  }
+}
 </style>

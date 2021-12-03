@@ -17,7 +17,6 @@
           <div class="col">
             <div class="label">
               <span class="text">样单号</span>
-              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-input placeholder="请输入样单号"
@@ -221,15 +220,17 @@ export default Vue.extend({
   methods: {
     getContacts(ev: number[]) {
       this.sampleOrderInfo.contacts_id = ''
-      client
-        .detail({
-          id: ev[2]
-        })
-        .then((res) => {
-          if (res.data.status) {
-            this.contactsList = res.data.data.contacts_data
-          }
-        })
+      if (ev) {
+        client
+          .detail({
+            id: ev[2]
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.contactsList = res.data.data.contacts_data
+            }
+          })
+      }
     },
     saveSampleOrder() {
       // 新旧图拼接

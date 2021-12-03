@@ -48,7 +48,6 @@ const companyInfo = {
 }
 
 // 纱线报价
-// 纱线报价
 interface YarnPrice {
   id: string | number
   client_id: string | number
@@ -277,6 +276,14 @@ const quotedPrice = {
   settingCreate: (params: any) => http.post(`${baseUrl}/quote/demo/save`, params, 'application/json'),
   settingList: (params?: ListParams) => http.get(`${baseUrl}/quote/demo/lists`, params),
   settingDelete: (params: DeleteParams) => http.post(`${baseUrl}/quote/demo/delete`, params, 'application/json'),
+  deleteProMat: (params: DeleteParams) => http.post(`${baseUrl}/quote/product/material/delete`, params, 'application/json'), //删除报价单产品原料项
+  deleteProAss: (params: DeleteParams) => http.post(`${baseUrl}/quote/product/assist/material/delete`, params, 'application/json'), // 删除报价单产品辅料项
+  deleteWeave: (params: DeleteParams) => http.post(`${baseUrl}/quote/product/material/delete`, params, 'application/json'), // 删除报价单产品织造项
+  deleteSemi: (params: DeleteParams) => http.post(`${baseUrl}/quote/product/semi/product/delete`, params, 'application/json'), // 删除报价单产品半成品加工项
+  deleteInspection: (params: DeleteParams) => http.post(`${baseUrl}/quote/product/production/delete`, params, 'application/json'), // 删除报价单产品成品加工项
+  deletePack: (params: DeleteParams) => http.post(`${baseUrl}/quote/product/pack/material/delete`, params, 'application/json'), // 删除报价单产品包装辅料项
+  deleteOther: (params: DeleteParams) => http.post(`${baseUrl}/quote/product/others/fee/delete`, params, 'application/json'), // 额外费用
+  oprLog: (params: DetailParams) => http.get(`${baseUrl}/quote/activity/logs`, params), // 操作记录
 }
 
 // 列表设置信息 type 1:报价单列表 , 2:样单列表
@@ -289,7 +296,7 @@ const listSetting = {
 import { StoreInfo } from '@/types/store'
 const store = {
   create: (params: StoreInfo) => http.post(`${baseUrl}/store/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrl}/store/lists`, params),
+  list: (params?: any) => http.get(`${baseUrl}/store/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/store/detail`, params),
   searchMat: (params: {
     material_id?: string | number
@@ -301,6 +308,10 @@ const store = {
     vat_code?: string
     color_code?: string
     batch_code?: string
+    page?: string | number
+    limit?: string | number
+    material_type?: number | string
+    attribute?: string
   }) => http.get(`${baseUrl}/store/total/lists`, params),
 }
 
@@ -321,7 +332,9 @@ const sampleOrder = {
   detail: (params: DetailParams) => http.get(`${baseUrl}/order/detail`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/order/delete`, params, 'application/json'),
   confirm: (params: { id: string | number, status: 1 | 2 | 3 | 4 | 5 | 6 }) => http.post(`${baseUrl}/order/product/confirm`, params, 'application/json'),
-  confirmList: (params: { order_id: number, status?: number[] }) => http.get(`${baseUrl}/order/confirm/product/lists`, params)
+  confirmList: (params: { order_id: number, status?: number[] }) => http.get(`${baseUrl}/order/confirm/product/lists`, params),
+  deletePro: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product`, params, 'application/json'), // 删除产品
+  deleteProChild: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product/info`, params, 'application/json'), // 删除产品子项
 }
 
 // 产品 产品和样品的接口是同一个，前端方便区分
@@ -338,7 +351,9 @@ const order = {
   create: (params: OrderInfo) => http.post(`${baseUrl}/order/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrl}/order/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/order/detail`, params),
-  delete: (params: DeleteParams) => http.post(`${baseUrl}/order/delete`, params, 'application/json')
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/order/delete`, params, 'application/json'),
+  deletePro: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product`, params, 'application/json'), // 删除订单里的产品
+  deleteProChild: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product/info`, params, 'application/json'), // 删除订单里的子项
 }
 
 // 物料计划单
@@ -405,7 +420,7 @@ const materialProcess = {
 // 物料出入库
 import { MaterialStockInfo } from '@/types/materialStock'
 const materialStock = {
-  create: (params: MaterialStockInfo) => http.post(`${baseUrl}/store/log/save`, params, 'application/json'),
+  create: (params: { data: MaterialStockInfo[] }) => http.post(`${baseUrl}/store/log/save`, params, 'application/json'),
   list: (params: {
     action_type?: number // 搜调取单的时候用，一般是出库单10
     plan_id?: string | number
@@ -414,7 +429,8 @@ const materialStock = {
     reserve_id?: string | number // 预订购单
     top_order_id?: string | number // 最外层order_id
   }) => http.get(`${baseUrl}/store/log/lists`, params),
-  delete: (params: DeleteParams) => http.post(`${baseUrl}/store/log/delete`, params, 'application/json')
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/store/log/delete`, params, 'application/json'),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/store/log/detail`, params),
 }
 
 // 生产计划
@@ -440,6 +456,24 @@ const inspection = {
     type: 1 | 2 | null
   }) => http.get(`${baseUrl}/inspection/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/inspection/delete`, params, 'application/json')
+}
+
+// excel导出
+const exportExcel = {
+  materialLog: (params: {
+    store_id: string | number
+    material_type: number
+    material_name: string
+    client_id: string
+    start_time: string
+    end_time: string
+    action_type: number
+  }) => http.get(`${baseUrl}/export/material/store/log`, params),
+  materialTotal: (params: {
+    store_id: string | number
+    material_name: string
+    material_type: number
+  }) => http.get(`${baseUrl}/export/material/store/total`, params),
 }
 export {
   login,
@@ -488,5 +522,6 @@ export {
   materialProcess,
   materialStock,
   productionPlan,
-  inspection
+  inspection,
+  exportExcel
 }

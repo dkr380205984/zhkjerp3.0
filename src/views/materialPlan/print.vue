@@ -32,8 +32,8 @@
         </div>
       </div>
       <div class="pbody">
-        <div class="tableCtn hasTop">
-          <div class="tbody">
+        <div class="tableCtn">
+          <div class="tbody hasTop">
             <div class="trow">
               <div class="tcol bgGray">下单客户</div>
               <div class="tcol">{{otherInfo.client_name ||'暂无'}}</div>
@@ -45,16 +45,16 @@
         <div class="tableCtn"
           v-for="item in materialPlanInfo"
           :key="item.material_id">
-          <div class="thead"
-            style="height: auto;">
+          <div class="thead bgWhite"
+            style="height:auto;">
             <div class="trow">
-              <div class="tcol">原料名称</div>
+              <div class="tcol bgGray">原料名称</div>
               <div class="tcol"
-                style="flex:4;background:#fff">
+                style="flex:4;">
                 {{item.material_name}}
               </div>
             </div>
-            <div class="trow">
+            <div class="trow bgGray">
               <div class="tcol">序号</div>
               <div class="tcol"
                 style="flex:4">

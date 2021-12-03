@@ -367,7 +367,7 @@
                   <div class="elCtn">
                     <el-select v-model="itemChild.product_id"
                       placeholder="选择产品"
-                      @change="getColour($event,item)"
+                      @change="getColour($event,itemChild)"
                       no-data-text="请先添加/导入产品">
                       <el-option v-for="item in productList"
                         :key="item.id"
@@ -386,7 +386,7 @@
                         <el-select v-model="itemPro.size_color"
                           placeholder="尺码颜色"
                           no-data-text="请先选择产品">
-                          <el-option v-for="item in item.size_color_list"
+                          <el-option v-for="item in itemChild.size_color_list"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value"></el-option>
@@ -632,6 +632,7 @@ export default Vue.extend({
         order_type: 1,
         code: '',
         desc: '',
+        rel_quote_id: '',
         time_data: {
           id: '',
           order_time: this.$getDate(new Date()),
@@ -836,7 +837,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    // 报价单转样单逻辑
+    // 报价单转订单逻辑
     getQuotedPrice() {
       if (this.$route.query.quotedPriceId) {
         this.loading = true
@@ -850,6 +851,7 @@ export default Vue.extend({
             this.getContacts(this.orderInfo.tree_data as number[])
             this.orderInfo.contacts_id = quotedPriceInfo.contacts_id
             this.orderInfo.group_id = quotedPriceInfo.group_id
+            this.orderInfo.rel_quote_id = Number(this.$route.query.quotedPriceId)
             this.quotedPriceProductList = quotedPriceInfo.product_data
             this.loading = false
           })
@@ -868,6 +870,7 @@ export default Vue.extend({
       this.addProductFlag = true
     },
     getColour(ev: number, info: any) {
+      console.log(ev, this.productList)
       info.size_color_list = []
       const product: ProductInfo = this.productList.find((item) => item.id === ev) as ProductInfo
       product.size_data.forEach((itemSize: any) => {
@@ -881,24 +884,27 @@ export default Vue.extend({
       info.product_info = info.size_color_list.map((item: any) => {
         return {
           size_color: item.value,
-          size_id: item.size_color.split('/')[0],
-          color_id: item.size_color.split('/')[1],
+          size_id: item.value.split('/')[0],
+          color_id: item.value.split('/')[1],
           number: '',
           price: 0
         }
       })
+      console.log(info)
     },
     getContacts(ev: number[]) {
       this.orderInfo.contacts_id = ''
-      client
-        .detail({
-          id: ev[2]
-        })
-        .then((res) => {
-          if (res.data.status) {
-            this.contactsList = res.data.data.contacts_data
-          }
-        })
+      if (ev) {
+        client
+          .detail({
+            id: ev[2]
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.contactsList = res.data.data.contacts_data
+            }
+          })
+      }
     },
     getNewProduct(product: ProductInfo) {
       const finded = this.confirmSampleInfo.find((item) => item.product_id === product.id)
@@ -1069,11 +1075,13 @@ export default Vue.extend({
         })
       ]).then((res) => {
         const sampleOrderInfo: SampleOrderDetail = res[0].data.data
-        this.orderInfo.tree_data = sampleOrderInfo.tree_data
+        // @ts-ignore
+        this.orderInfo.tree_data = sampleOrderInfo.tree_data.split(',').map((item) => Number(item))
         this.getContacts(this.orderInfo.tree_data as number[])
         this.orderInfo.contacts_id = sampleOrderInfo.contacts_id
         this.orderInfo.group_id = sampleOrderInfo.group_id
-        this.confirmSampleInfo = res[1].data.data
+        this.orderInfo.rel_quote_id = sampleOrderInfo.rel_quote_id
+        this.confirmSampleInfo = res[1].data.data.filter((item: any) => item.status === 2)
         this.loading = false
       })
     }

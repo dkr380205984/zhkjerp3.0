@@ -17,9 +17,19 @@
           <img :src="quotedPriceInfo.is_check|checkFilter" />
         </div>
         <div class="row">
-          <div class="col">
+          <div class="col flex3">
             <div class="label">报价单号：</div>
             <div class="text blue">{{quotedPriceInfo.code}}</div>
+          </div>
+          <div class="col flex3"
+            v-if="quotedPriceInfo.rel_order">
+            <div class="label">关联单据：</div>
+            <div class="text green">
+              <span v-for="item in quotedPriceInfo.rel_order"
+                :key="item.id"
+                style="cursor:pointer;margin-right:12px"
+                @click="$openUrl(item.order_type===1?('/order/detail?id='+item.id):('/sampleOrder/detail?id='+item.id))">{{item.code}}</span>
+            </div>
           </div>
         </div>
         <div class="row">
@@ -61,22 +71,22 @@
           </div>
         </div>
         <div class="row">
-          <div class="col">
+          <div class="col flex3">
             <div class="label">系统报价：</div>
             <div class="text">{{quotedPriceInfo.system_total_price}}元</div>
           </div>
-          <div class="col">
+          <!-- <div class="col">
             <div class="label">最终报价：</div>
             <div class="text">{{quotedPriceInfo.total_cost_price}}元</div>
-          </div>
-          <div class="col">
+          </div> -->
+          <div class="col flex3">
             <div class="label">客户报价：</div>
             <div class="text">{{quotedPriceInfo.real_quote_price}}元</div>
           </div>
         </div>
         <div class="row">
           <div class="col">
-            <div class="label">其它说明与备注：</div>
+            <div class="label">备注信息：</div>
             <div class="text">{{quotedPriceInfo.desc}}</div>
           </div>
         </div>
@@ -365,9 +375,115 @@
                   </svg>
                   <span class="text">生成订单</span>
                 </div>
+                <div class="btn backHoverBlue"
+                  @click="checkOpr">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-caozuojilu"></use>
+                  </svg>
+                  <span class="text">操作记录</span>
+                </div>
+                <div class="btn backHoverOrange"
+                  @click="$router.push('/quotedPrice/create?id='+$route.query.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-caozuojilu"></use>
+                  </svg>
+                  <span class="text">复制报价</span>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="popup"
+      v-show="oprLogFlag">
+      <div class="main"
+        style="width:1000px">
+        <div class="titleCtn">
+          <span class="text">操作记录</span>
+          <div class="closeCtn"
+            @click="oprLogFlag=false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="tableCtn noPad"
+            style="margin:12px 0">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol">序号</div>
+                <div class="tcol">修改日期</div>
+                <div class="tcol">修改人</div>
+                <div class="tcol">订单修改信息</div>
+                <div class="tcol"
+                  style="flex:4">产品修改详情</div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div class="trow"
+                v-for="(item,index) in oprLog"
+                :key="item.id">
+                <div class="tcol">{{index+1}}</div>
+                <div class="tcol">{{item.update_time}}</div>
+                <div class="tcol">{{item.user}}</div>
+                <div class="tcol">{{item.update_data}}</div>
+                <div class="tcol"
+                  style="flex:4">
+                  <div v-for="(itemPro,indexPro) in item.product_activity_log"
+                    :key="indexPro">
+                    <span>产品{{indexPro+1}}:</span>
+                    <div>
+                      <span class="label">产品修改信息：</span>
+                      <span>{{itemPro.product_update_data}}</span>
+                    </div>
+                    <div>
+                      <span class="label">原料修改信息：</span>
+                      <span v-for="(itemChild,indexChild) in itemPro.material_activity_log"
+                        :key="indexChild">{{itemChild}}</span>
+                    </div>
+                    <div>
+                      <span class="label">辅料修改信息：</span>
+                      <span v-for="(itemChild,indexChild) in itemPro.assist_material_activity_log"
+                        :key="indexChild">{{itemChild}}</span>
+                    </div>
+                    <div>
+                      <span class="label">织造修改信息：</span>
+                      <span v-for="(itemChild,indexChild) in itemPro.weave_activity_log"
+                        :key="indexChild">{{itemChild}}</span>
+                    </div>
+                    <div>
+                      <span class="label">半成品加工修改信息：</span>
+                      <span v-for="(itemChild,indexChild) in itemPro.semi_product_activity_log"
+                        :key="indexChild">{{itemChild}}</span>
+                    </div>
+                    <div>
+                      <span class="label">成品加工修改信息：</span>
+                      <span v-for="(itemChild,indexChild) in itemPro.production_activity_log"
+                        :key="indexChild">{{itemChild}}</span>
+                    </div>
+                    <div>
+                      <span class="label">包装辅料修改信息：</span>
+                      <span v-for="(itemChild,indexChild) in itemPro.pack_material_activity_log"
+                        :key="indexChild">{{itemChild}}</span>
+                    </div>
+                    <div>
+                      <span class="label">其他修改信息：</span>
+                      <span v-for="(itemChild,indexChild) in item.others_fee_activity_log"
+                        :key="indexChild">{{itemChild}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="oprLogFlag=false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="oprLogFlag=false">确认</span>
         </div>
       </div>
     </div>
@@ -384,9 +500,7 @@
 import Vue from 'vue'
 import { QuotedPriceInfo } from '@/types/quotedPrice'
 import { quotedPrice } from '@/assets/js/api'
-import zhCheck from '@/components/zhCheck/zhCheck.vue'
 export default Vue.extend({
-  components: { zhCheck },
   data(): {
     [propName: string]: any
     quotedPriceInfo: QuotedPriceInfo
@@ -490,7 +604,9 @@ export default Vue.extend({
             ]
           }
         ]
-      }
+      },
+      oprLogFlag: false,
+      oprLog: []
     }
   },
   computed: {
@@ -539,6 +655,24 @@ export default Vue.extend({
     }
   },
   methods: {
+    checkOpr() {
+      this.loading = true
+      quotedPrice
+        .oprLog({
+          id: Number(this.$route.query.id)
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.oprLog = res.data.data
+            if (this.oprLog.length > 0) {
+              this.oprLogFlag = true
+            } else {
+              this.$message.warning('暂无操作记录')
+            }
+          }
+          this.loading = false
+        })
+    },
     deleteQuotedPrice() {
       this.$confirm('是否删除报价单?', '提示', {
         confirmButtonText: '确定',

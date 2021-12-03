@@ -304,7 +304,7 @@
                         price: ''
                       })">新增尺码</div>
                       <div class="opr hoverRed"
-                        @click="itemChild.product_info.length>1?$deleteItem(itemChild.product_info,indexPro):$deleteItem(item.product_data,indexChild)">删除</div>
+                        @click="itemChild.product_info.length===1?deletePro(itemChild.id,indexChild,item.product_data):deleteProChild(itemPro.id,indexPro,itemChild.product_info)">删除</div>
                     </div>
                   </div>
                 </div>
@@ -695,15 +695,17 @@ export default Vue.extend({
       })
     },
     getContacts(ev: number[]) {
-      client
-        .detail({
-          id: ev[2]
-        })
-        .then((res) => {
-          if (res.data.status) {
-            this.contactsList = res.data.data.contacts_data
-          }
-        })
+      if (ev) {
+        client
+          .detail({
+            id: ev[2]
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.contactsList = res.data.data.contacts_data
+            }
+          })
+      }
     },
     getNewProduct(product: ProductInfo) {
       this.productList.push(product)
@@ -759,6 +761,62 @@ export default Vue.extend({
           })
         })
       })
+    },
+    deletePro(id: number, index: number, info: any[]) {
+      this.$confirm('是否删除该产品?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          order
+            .deletePro({
+              id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.$deleteItem(info, index)
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    deleteProChild(id: number, index: number, info: any[]) {
+      this.$confirm('是否删除该尺码颜色?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          order
+            .deleteProChild({
+              id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.$deleteItem(info, index)
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     saveOrder() {
       const formCheck =

@@ -150,7 +150,7 @@
           <div class="elCtn">
             <el-date-picker @change="getMatSts"
               v-model="date"
-              format="yyyy-MM"
+              value-format="yyyy-MM"
               type="month"
               placeholder="选择月">
             </el-date-picker>
@@ -250,7 +250,8 @@
                     </el-cascader>
                   </div>
                 </div>
-                <div class="col">
+                <div class="col"
+                  v-if="materialPlanOrderDetail.material_type===1">
                   <div class="label spaceBetween"
                     v-if="indexMat===0">
                     <div class="once">
@@ -300,24 +301,27 @@
                       v-model="itemMat.price">
                       <template slot="append">元</template>
                     </el-input>
-                    <el-input class="once"
+                    <el-input class="once UnitCtn"
                       placeholder="数量"
                       v-model="itemMat.number">
-                      <template slot="append">kg</template>
+                      <template slot="append">
+                        <el-input v-model="itemMat.unit"
+                          placeholder="单位"></el-input>
+                      </template>
                     </el-input>
                   </div>
                 </div>
                 <div class="opr hoverBlue"
                   v-if="indexMat===0"
                   @click="$addItem(materialPlanOrderInfo.info_data,{
-                  material_id: '',
-                  material_name: '',
-                  material_color_id: itemMat.material_color_id===0?0:'',
-                  attribute: '',
-                  price: '',
-                  number: '',
-                  unit: 'kg'
-                })">添加</div>
+                    material_id: '',
+                    material_name: '',
+                    material_color_id: itemMat.material_color_id===0?0:'',
+                    attribute: '',
+                    price: '',
+                    number: '',
+                    unit: 'kg'
+                  })">添加</div>
                 <div class="opr hoverRed"
                   v-if="indexMat>0"
                   @click="$deleteItem(materialPlanOrderInfo.info_data,indexMat)">删除</div>
@@ -398,7 +402,6 @@
                     <el-input placeholder="自动计算"
                       v-model="totalOrderNumber"
                       disabled>
-                      <template slot="append">kg</template>
                     </el-input>
                   </div>
                 </div>
@@ -489,8 +492,12 @@
                       </div>
                       <div class="info elCtn">
                         <el-input placeholder="数量"
+                          class="UnitCtn"
                           v-model="item.number">
-                          <template slot="append">kg</template>
+                          <template slot="append">
+                            <el-input v-model="item.unit"
+                              placeholder="单位"></el-input>
+                          </template>
                         </el-input>
                       </div>
                     </div>
@@ -636,6 +643,7 @@ export default Vue.extend({
         ]
       },
       materialStockInfo: {
+        material_type: 1,
         action_type: 4, // 采购单最终入库
         rel_doc_type: '',
         rel_doc_id: '',
@@ -730,6 +738,7 @@ export default Vue.extend({
       }
     },
     getMatSts() {
+      console.log(this.date)
       materialPlanOrder
         .stockSts({
           year: this.date.split('-')[0],
@@ -756,6 +765,11 @@ export default Vue.extend({
           {
             key: 'material_color',
             errMsg: '请选择物料颜色'
+          },
+          {
+            key: 'unit',
+            errMsg: '物料的单位只能为kg或m',
+            regExp: /^((?!kg|m).)+$/
           },
           // {
           //   key: 'price',
@@ -838,7 +852,7 @@ export default Vue.extend({
         ])
       })
       if (!formCheck) {
-        materialStock.create(this.materialStockInfo).then((res) => {
+        materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
             this.step = 1
@@ -872,6 +886,7 @@ export default Vue.extend({
           attribute: '',
           number: '',
           item: '', // 件数
+          unit: 'kg',
           rel_doc_info_id: '' // 采购单调取单加工单子项id
         }
       ]
@@ -993,4 +1008,22 @@ export default Vue.extend({
 
 <style lang="less" scoped>
 @import '~@/assets/css/materialPlanOrder/detail.less';
+</style>
+<style lang="less">
+#materialPlanOrderDetail {
+  .UnitCtn {
+    .el-input-group__append {
+      padding: 0;
+      .el-input {
+        width: 45px;
+        .el-input__inner {
+          padding: 0 8px;
+          border: 0;
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+        }
+      }
+    }
+  }
+}
 </style>

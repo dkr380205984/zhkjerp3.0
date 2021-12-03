@@ -122,7 +122,7 @@
                     <el-option v-for="item in sampleUpdateList"
                       :key="item.product_id"
                       :value="item.product_id"
-                      :label="item.system_code + '/' + item.name"></el-option>
+                      :label="item.system_code + '/' + (item.name ||'无名称')"></el-option>
                   </el-select>
                 </div>
               </div>

@@ -250,7 +250,7 @@
               <div class="col">
                 <div class="label">备注信息：</div>
                 <div class="text"
-                  :class="item.desc?'':'gray'">{{item.desc || '未填写'}}</div>
+                  :class="item.batch_data[0].desc?'':'gray'">{{item.batch_data[0].desc || '未填写'}}</div>
               </div>
             </div>
           </div>
@@ -564,7 +564,7 @@
                             price: ''
                           })">新增尺码</div>
                         <div class="opr hoverRed"
-                          @click="item.product_info.length>1?$deleteItem(item.product_info,indexChild):$message.error('至少有一种尺码颜色')">删除</div>
+                          @click="item.product_info.length>1?deleteProChild(itemChild.id,indexChild,item.product_info):deletePro(item.id,index,sampleOrderTime.batch_data[0].product_data)">删除</div>
                       </div>
                     </div>
                   </div>
@@ -575,7 +575,7 @@
               <div class="col">
                 <div class="label">
                   <span class="text">打样款数</span>
-                  <span class="explanation">(自动计算))</span>
+                  <span class="explanation">(自动计算)</span>
                 </div>
                 <div class="info elCtn">
                   <el-input placeholder="请输入打样总数"
@@ -856,6 +856,62 @@ export default Vue.extend({
         ])
         this.loading = false
       })
+    },
+    deletePro(id: number, index: number, info: any[]) {
+      this.$confirm('是否删除该产品?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          sampleOrder
+            .deletePro({
+              id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.$deleteItem(info, index)
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    deleteProChild(id: number, index: number, info: any[]) {
+      this.$confirm('是否删除该尺码颜色?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          sampleOrder
+            .deleteProChild({
+              id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.$deleteItem(info, index)
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     // 审核
     checkTimeData() {

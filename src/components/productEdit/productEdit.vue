@@ -26,7 +26,7 @@
               <div class="col">
                 <div class="label">搜索产品号查询</div>
                 <div class="info elCtn">
-                  <el-input placeholder="输入ABC查询有数据"
+                  <el-input placeholder="输入产品号查询"
                     v-model="searchProductCode"
                     @keydown.enter.native="searchProduct">
                     <el-button slot="append"
@@ -741,6 +741,9 @@ export default Vue.extend({
       }
       this.productInfo.category_id = this.productInfo.type![0]
       this.productInfo.secondary_category_id = this.productInfo.type![1]
+      this.productInfo.image_data = this.productInfo.image_data.concat(
+        this.productInfo.file_list!.map((item) => item.url)
+      ) // 新旧图拼接
       if (this.have_part) {
         this.productInfo.part_data.forEach((item) => {
           item.part_size_data!.forEach((itemChild, indexChild) => {
@@ -951,7 +954,7 @@ export default Vue.extend({
             weight: item.weight
           }
         }), // 尺码组
-        color_data: data.color_data.map((item: any) => item.id), // 配色组
+        color_data: data.color_data.map((item: any) => item.name), // 配色组
         // 配件信息
         part_data: data.part_data.map((item: any) => {
           return {

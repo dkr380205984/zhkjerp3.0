@@ -177,6 +177,7 @@
                           :show-all-levels="false"
                           v-model="itemChild.tree_data"
                           :options="yarnTypeList"
+                          filterable
                           @change="getMatId($event,itemChild)"
                           clearable>
                         </el-cascader>
@@ -530,8 +531,7 @@ export default Vue.extend({
                 this.numberAutoMethod(100 * (Number(finded.final_number) / Number(finded.need_number) - 1))
               } else {
                 this.materialPlanInfo.material_plan_gather_data.push({
-                  material_name:
-                    itemChild.material_name || this.$findId(flattenYarnList, itemChild.tree_data![2], 'label', 'value'),
+                  material_name: this.$findId(flattenYarnList, itemChild.tree_data![2], 'label', 'value'),
                   material_id: itemChild.material_id || itemChild.tree_data![2],
                   material_type: 1, // 目前只有原料
                   material_color: itemChild.material_color,
@@ -824,7 +824,7 @@ export default Vue.extend({
         this.materialPlanInfo.production_plan_data.some((item) => {
           return item.product_data.some((itemChild) => {
             return itemChild.info_data.some((itemPart) => {
-              return this.$formCheck(itemChild, [
+              return this.$formCheck(itemPart, [
                 {
                   key: 'number',
                   errMsg: '请输入计划生产数量'
@@ -866,6 +866,7 @@ export default Vue.extend({
         materialPlan.create(this.materialPlanInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('修改成功')
+            this.$router.push('/materialPlan/detail?id=' + this.$route.query.id)
           }
           this.loading = false
         })

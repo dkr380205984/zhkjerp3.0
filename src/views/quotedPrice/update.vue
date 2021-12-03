@@ -266,6 +266,7 @@
               <div class="opr hoverBlue"
                 v-if="indexYarn===0"
                 @click="$addItem(item.material_data,{
+                  id:'',
                   tree_data:[],
                   material_id: '',
                   weight: '',
@@ -276,7 +277,7 @@
                 })">添加</div>
               <div class="opr hoverRed"
                 v-else
-                @click="$deleteItem(item.material_data,indexYarn)">删除</div>
+                @click="deleteInfo(item.material_data,itemYarn,indexYarn,'deleteProMat')">删除</div>
             </div>
             <div class="row"
               v-for="(itemDecorateMaterial,indexDecorateMaterial) in item.assist_material_data"
@@ -351,6 +352,7 @@
               <div class="opr hoverBlue"
                 v-if="indexDecorateMaterial===0"
                 @click="$addItem(item.assist_material_data,{
+                  id:'',
                   material_name: '',
                   number: '',
                   loss: '',
@@ -359,7 +361,7 @@
                 })">添加</div>
               <div class="opr hoverRed"
                 v-else
-                @click="$deleteItem(item.assist_material_data,indexDecorateMaterial)">删除</div>
+                @click="deleteInfo(item.assist_material_data,itemDecorateMaterial,indexDecorateMaterial,'deleteProAss')">删除</div>
             </div>
             <div class="row"
               v-for="(itemWeave,indexWeave) in item.weave_data"
@@ -408,13 +410,14 @@
               <div class="opr hoverBlue"
                 v-if="indexWeave===0"
                 @click="$addItem(item.weave_data,{
+                  id:'',
                  number:'',
                  name:'',
                  total_price:''
                 })">添加</div>
               <div class="opr hoverRed"
                 v-else
-                @click="$deleteItem(item.weave_data,indexWeave)">删除</div>
+                @click="deleteInfo(item.weave_data,itemWeave,indexWeave,'deleteWeave')">删除</div>
             </div>
             <div class="row"
               v-for="(itemHalfProcess,indexHalfProcess) in item.semi_product_data"
@@ -463,13 +466,14 @@
               <div class="opr hoverBlue"
                 v-if="indexHalfProcess===0"
                 @click="$addItem(item.semi_product_data,{
+                 id:'',
                  desc:'',
                  name:'',
                  total_price:''
                 })">添加</div>
               <div class="opr hoverRed"
                 v-else
-                @click="$deleteItem(item.semi_product_data,indexHalfProcess)">删除</div>
+                @click="deleteInfo(item.semi_product_data,itemHalfProcess,indexHalfProcess,'deleteSemi')">删除</div>
             </div>
             <div class="row"
               v-for="(itemFinishedProcess,indexFinishedProcess) in item.production_data"
@@ -518,13 +522,14 @@
               <div class="opr hoverBlue"
                 v-if="indexFinishedProcess===0"
                 @click="$addItem(item.production_data,{
+                id:'',
                  desc:'',
                  name:'',
                  total_price:''
                 })">添加</div>
               <div class="opr hoverRed"
                 v-else
-                @click="$deleteItem(item.production_data,indexFinishedProcess)">删除</div>
+                @click="deleteInfo(item.production_data,itemFinishedProcess,indexFinishedProcess,'deleteInspection')">删除</div>
             </div>
             <div class="row"
               v-for="(itemPackMaterial,indexPackMaterial) in item.pack_material_data"
@@ -573,13 +578,14 @@
               <div class="opr hoverBlue"
                 v-if="indexPackMaterial===0"
                 @click="$addItem(item.pack_material_data,{
+                  id:'',
                  desc:'',
                  name:'',
                  total_price:''
                 })">添加</div>
               <div class="opr hoverRed"
                 v-else
-                @click="$deleteItem(item.pack_material_data,indexPackMaterial)">删除</div>
+                @click="deleteInfo(item.pack_material_data,itemPackMaterial,indexPackMaterial,'deletePack')">删除</div>
             </div>
             <div class="row"
               v-for="(itemOther,indexOther) in item.other_fee_data"
@@ -622,13 +628,14 @@
               <div class="opr hoverBlue"
                 v-if="indexOther===0"
                 @click="$addItem(item.other_fee_data,{
+                  id:'',
                  desc:'',
                  name:'',
                  total_price:''
                 })">添加</div>
               <div class="opr hoverRed"
                 v-else
-                @click="$deleteItem(item.other_fee_data,indexOther)">删除</div>
+                @click="deleteInfo(item.other_fee_data,itemOther,indexOther,'deleteOther')">删除</div>
             </div>
             <div class="row">
               <div class="col flex3">
@@ -794,7 +801,7 @@
           <div class="btn backHoverOrange"
             @click="saveQuotedPrice(true)">保存为草稿</div>
           <div class="btn backHoverBlue"
-            @click="saveQuotedPrice(false)">提交</div>
+            @click="saveQuotedPrice(false)">确认修改</div>
         </div>
       </div>
     </div>
@@ -856,6 +863,7 @@ export default Vue.extend({
             transport_fee: '',
             material_data: [
               {
+                id: '',
                 tree_data: [],
                 material_id: '',
                 material_name: '',
@@ -1022,6 +1030,7 @@ export default Vue.extend({
         transport_fee: '',
         material_data: [
           {
+            id: '',
             tree_data: [],
             material_id: '',
             material_name: '',
@@ -1034,6 +1043,7 @@ export default Vue.extend({
         ],
         assist_material_data: [
           {
+            id: '',
             material_id: '',
             material_name: '',
             number: '',
@@ -1045,6 +1055,7 @@ export default Vue.extend({
         ],
         weave_data: [
           {
+            id: '',
             name: '',
             desc: '',
             total_price: ''
@@ -1052,6 +1063,7 @@ export default Vue.extend({
         ],
         semi_product_data: [
           {
+            id: '',
             process_id: '',
             process_name: '',
             desc: '',
@@ -1060,6 +1072,7 @@ export default Vue.extend({
         ],
         production_data: [
           {
+            id: '',
             name: '',
             desc: '',
             total_price: ''
@@ -1067,6 +1080,7 @@ export default Vue.extend({
         ],
         pack_material_data: [
           {
+            id: '',
             material_id: '',
             material_name: '',
             desc: '',
@@ -1075,6 +1089,7 @@ export default Vue.extend({
         ],
         other_fee_data: [
           {
+            id: '',
             name: '',
             desc: '',
             total_price: ''
@@ -1120,18 +1135,20 @@ export default Vue.extend({
       info.unit = this.decorateMaterialList.find((item) => item.id === ev)!.unit
     },
     getContacts(ev: number[], init?: boolean) {
-      client
-        .detail({
-          id: ev[2]
-        })
-        .then((res) => {
-          if (res.data.status) {
-            if (!init) {
-              this.quotedPriceInfo.contacts_id = ''
+      if (ev) {
+        client
+          .detail({
+            id: ev[2]
+          })
+          .then((res) => {
+            if (res.data.status) {
+              if (!init) {
+                this.quotedPriceInfo.contacts_id = ''
+              }
+              this.contactsList = res.data.data.contacts_data
             }
-            this.contactsList = res.data.data.contacts_data
-          }
-        })
+          })
+      }
     },
     // 辅助计算产品原料和装饰辅料的小计，小计本身可直接修改
     cmpTotalPrice(info: { total_price: number; weight: number; loss: any; price: number; number: number }) {
@@ -1415,6 +1432,33 @@ export default Vue.extend({
             : []
         })
       })
+    },
+    deleteInfo<T extends { id: number | string }>(
+      arr: T[],
+      info: T,
+      index: number,
+      type:
+        | 'deleteProMat'
+        | 'deleteProAss'
+        | 'deleteWeave'
+        | 'deleteSemi'
+        | 'deleteInspection'
+        | 'deletePack'
+        | 'deleteOther'
+    ) {
+      if (!info.id) {
+        arr.splice(index, 1)
+      } else {
+        this.loading = true
+        quotedPrice[type]({
+          id: info.id
+        }).then((res) => {
+          if (res.data.status) {
+            arr.splice(index, 1)
+            this.loading = false
+          }
+        })
+      }
     }
   },
   mounted() {

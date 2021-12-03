@@ -58,11 +58,19 @@
             </div>
             <div class="info elCtn">
               <el-input placeholder="请输入二级仓库名称"
-                v-model="storeInfo.secondary_store[index]"></el-input>
+                v-model="item.name">
+                <template slot="append">
+                  <el-radio v-model="isDefault"
+                    :label="index">{{isDefault===index?'默认仓库':'其他仓库'}}</el-radio>
+                </template>
+              </el-input>
             </div>
           </div>
           <div class="opr hoverBlue"
-            @click="storeInfo.secondary_store.push('')"
+            @click="storeInfo.secondary_store.push({
+              name:'',
+              is_default:0
+            })"
             v-if="index===0">添加</div>
           <div class="opr hoverRed"
             v-if="index>0"
@@ -128,10 +136,16 @@ export default Vue.extend({
         tree_data: [],
         desc: '',
         store_type: Number(this.$route.query.store_type) as 1 | 2 | 3 | 4 | 5 | 6,
-        secondary_store: ['']
+        secondary_store: [
+          {
+            name: '',
+            is_default: 0
+          }
+        ]
       },
       storeTypeList: storeType,
-      userList: []
+      userList: [],
+      isDefault: 0
     }
   },
   computed: {
@@ -143,9 +157,15 @@ export default Vue.extend({
   },
   methods: {
     saveStore() {
+      this.storeInfo.secondary_store.forEach((item, index) => {
+        if (index === this.isDefault) {
+          item.is_default = 1
+        }
+      })
       store.create(this.storeInfo).then((res) => {
         if (res.data.status) {
           this.$message.success('添加成功')
+          this.$router.push('/store/list?page=1&keyword=&user_id=&store_type=' + this.$route.query.store_type)
         }
       })
     }

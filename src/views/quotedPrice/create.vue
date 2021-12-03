@@ -279,6 +279,7 @@
               <div class="opr hoverBlue"
                 v-if="indexYarn===0"
                 @click="$addItem(item.material_data,{
+                  id:'',
                   tree_data:[],
                   material_id: '',
                   weight: '',
@@ -364,6 +365,7 @@
               <div class="opr hoverBlue"
                 v-if="indexDecorateMaterial===0"
                 @click="$addItem(item.assist_material_data,{
+                  id:'',
                   material_name: '',
                   number: '',
                   loss: '',
@@ -421,6 +423,7 @@
               <div class="opr hoverBlue"
                 v-if="indexWeave===0"
                 @click="$addItem(item.weave_data,{
+                  id:'',
                  number:'',
                  name:'',
                  total_price:''
@@ -476,6 +479,7 @@
               <div class="opr hoverBlue"
                 v-if="indexHalfProcess===0"
                 @click="$addItem(item.semi_product_data,{
+                  id:'',
                  desc:'',
                  name:'',
                  total_price:''
@@ -531,6 +535,7 @@
               <div class="opr hoverBlue"
                 v-if="indexFinishedProcess===0"
                 @click="$addItem(item.production_data,{
+                  id:'',
                  desc:'',
                  name:'',
                  total_price:''
@@ -586,6 +591,7 @@
               <div class="opr hoverBlue"
                 v-if="indexPackMaterial===0"
                 @click="$addItem(item.pack_material_data,{
+                  id:'',
                  desc:'',
                  name:'',
                  total_price:''
@@ -635,6 +641,7 @@
               <div class="opr hoverBlue"
                 v-if="indexOther===0"
                 @click="$addItem(item.other_fee_data,{
+                  id:'',
                  desc:'',
                  name:'',
                  total_price:''
@@ -868,6 +875,7 @@ export default Vue.extend({
             transport_fee: '',
             material_data: [
               {
+                id: '',
                 tree_data: [],
                 material_id: '',
                 material_name: '',
@@ -880,6 +888,7 @@ export default Vue.extend({
             ],
             assist_material_data: [
               {
+                id: '',
                 material_id: '',
                 material_name: '',
                 number: '',
@@ -891,6 +900,7 @@ export default Vue.extend({
             ],
             weave_data: [
               {
+                id: '',
                 name: '',
                 desc: '',
                 total_price: ''
@@ -898,6 +908,7 @@ export default Vue.extend({
             ],
             semi_product_data: [
               {
+                id: '',
                 process_id: '',
                 process_name: '',
                 desc: '',
@@ -906,6 +917,7 @@ export default Vue.extend({
             ],
             production_data: [
               {
+                id: '',
                 name: '',
                 desc: '',
                 total_price: ''
@@ -913,6 +925,7 @@ export default Vue.extend({
             ],
             pack_material_data: [
               {
+                id: '',
                 material_name: '',
                 material_id: '',
                 desc: '',
@@ -921,6 +934,7 @@ export default Vue.extend({
             ],
             other_fee_data: [
               {
+                id: '',
                 name: '',
                 desc: '',
                 total_price: ''
@@ -1074,6 +1088,7 @@ export default Vue.extend({
         transport_fee: '',
         material_data: [
           {
+            id: '',
             tree_data: [],
             material_id: '',
             material_name: '',
@@ -1086,6 +1101,7 @@ export default Vue.extend({
         ],
         assist_material_data: [
           {
+            id: '',
             material_id: '',
             material_name: '',
             number: '',
@@ -1097,6 +1113,7 @@ export default Vue.extend({
         ],
         weave_data: [
           {
+            id: '',
             name: '',
             desc: '',
             total_price: ''
@@ -1104,6 +1121,7 @@ export default Vue.extend({
         ],
         semi_product_data: [
           {
+            id: '',
             process_id: '',
             process_name: '',
             desc: '',
@@ -1112,6 +1130,7 @@ export default Vue.extend({
         ],
         production_data: [
           {
+            id: '',
             name: '',
             desc: '',
             total_price: ''
@@ -1119,6 +1138,7 @@ export default Vue.extend({
         ],
         pack_material_data: [
           {
+            id: '',
             material_id: '',
             material_name: '',
             desc: '',
@@ -1127,6 +1147,7 @@ export default Vue.extend({
         ],
         other_fee_data: [
           {
+            id: '',
             name: '',
             desc: '',
             total_price: ''
@@ -1164,17 +1185,21 @@ export default Vue.extend({
     getUnit(ev: string, info: DecorateMaterialInfo) {
       info.unit = this.decorateMaterialList.find((item) => item.id === ev)!.unit
     },
-    getContacts(ev: string[]) {
-      client
-        .detail({
-          id: ev[2]
-        })
-        .then((res) => {
-          if (res.data.status) {
-            this.quotedPriceInfo.contacts_id = ''
-            this.contactsList = res.data.data.contacts_data
-          }
-        })
+    getContacts(ev: number[], init?: boolean) {
+      if (ev) {
+        client
+          .detail({
+            id: ev[2]
+          })
+          .then((res) => {
+            if (res.data.status) {
+              if (!init) {
+                this.quotedPriceInfo.contacts_id = ''
+              }
+              this.contactsList = res.data.data.contacts_data
+            }
+          })
+      }
     },
     // 辅助计算产品原料和装饰辅料的小计，小计本身可直接修改
     cmpTotalPrice(info: { total_price: number; weight: number; loss: any; price: number; number: number }) {
@@ -1184,6 +1209,7 @@ export default Vue.extend({
     },
     // 把通过计算属性得到的价格以及通过级联选择器选到的id赋给表单数据
     getCmpData() {
+      this.quotedPriceInfo.id = ''
       this.quotedPriceInfo.total_number = this.quotedPriceInfo.product_data.length
       this.quotedPriceInfo.commission_price = this.commissionPrice
       this.quotedPriceInfo.rate_price = this.ratePrice
@@ -1426,6 +1452,30 @@ export default Vue.extend({
           }
         })
       }
+    },
+    getUpdateInfo() {
+      this.quotedPriceInfo.tree_data = this.quotedPriceInfo.tree_data
+        ? (this.quotedPriceInfo.tree_data as string).split(',').map((item) => Number(item))
+        : []
+      if (this.quotedPriceInfo.tree_data.length > 0) {
+        this.getContacts(this.quotedPriceInfo.tree_data, true) //标记一下是初始化
+      }
+
+      this.quotedPriceInfo.product_data.forEach((item) => {
+        item.file_list = item.image_data.map((itemImage, index) => {
+          return {
+            id: index,
+            url: itemImage
+          }
+        })
+        item.image_data = [] // 清空image_data数据，用于存储新的url字符串，提交的时候拼接file_list剩下的就行
+        item.type = item.category_id ? [item.category_id as number, item.secondary_category_id as number] : []
+        item.material_data.forEach((itemMat) => {
+          itemMat.tree_data = itemMat.tree_data
+            ? (itemMat.tree_data as string).split(',').map((item) => Number(item))
+            : []
+        })
+      })
     }
   },
   mounted() {
@@ -1477,6 +1527,20 @@ export default Vue.extend({
         this.searchQuotedPriceList = res.data.data
       }
     })
+    // 复制报价单
+    if (this.$route.query.id) {
+      quotedPrice
+        .detail({
+          id: Number(this.$route.query.id)
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.quotedPriceInfo = res.data.data
+            this.getUpdateInfo()
+            this.loading = false
+          }
+        })
+    }
   }
 })
 </script>

@@ -50,6 +50,7 @@ export interface QuotedPriceProduct {
   transport_fee_desc?: string // 运费
   transport_fee?: string
   material_data: Array<{
+    id?: number | string
     material_id?: number | string
     tree_data?: number[] | string
     material_name?: string
@@ -60,6 +61,7 @@ export interface QuotedPriceProduct {
     total_price: number | string
   }>
   assist_material_data: Array<{
+    id?: number | string
     material_id?: number | string
     material_name?: string
     number: number | string
@@ -69,28 +71,33 @@ export interface QuotedPriceProduct {
     total_price: number | string
   }>
   weave_data: Array<{
+    id?: number | string
     name: string
     desc: number | string
     total_price: number | string
   }>
   semi_product_data: Array<{
+    id?: number | string
     process_id?: string | number
     process_name: string
     desc: string
     total_price: number | string
   }>
   production_data: Array<{
+    id?: number | string
     name: string
     desc: string
     total_price: number | string
   }>
   pack_material_data: Array<{
+    id?: number | string
     material_id?: string | number
     material_name: string
     desc: string
     total_price: number | string
   }>
   other_fee_data: Array<{
+    id?: number | string
     name: string
     desc: string
     total_price: number | string

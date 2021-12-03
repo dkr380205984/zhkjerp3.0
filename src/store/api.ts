@@ -261,7 +261,7 @@ const apiActions = {
   getYarnColorAsync(content: ActionContext<ApiState, any>) {
     yarnColor.list().then((res) => {
       if (res.data.status) {
-        content.commit('getYarnColor', res.data.data)
+        content.commit('getYarnColor', [{ name: '白胚' }].concat(res.data.data))
       }
     })
   },

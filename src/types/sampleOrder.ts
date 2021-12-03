@@ -64,5 +64,6 @@ export interface SampleOrderInfo {
   private_files: string[]
   settle_tax: string // 结算税率
   settle_unit: string // 报价币种
+  rel_quote_id?: number | string
   time_data: SampleOrderTime | SampleOrderTime[]
 }

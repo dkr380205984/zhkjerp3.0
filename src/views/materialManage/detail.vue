@@ -1974,6 +1974,7 @@ export default Vue.extend({
         material_color: ''
       },
       materialStockInfo: {
+        material_type: 1,
         action_type: 10, // 仓库出库绑定订单
         rel_doc_type: '',
         rel_doc_id: '',
@@ -2481,7 +2482,7 @@ export default Vue.extend({
         ])
       })
       if (!formCheck) {
-        materialStock.create(this.materialStockInfo).then((res) => {
+        materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
           if (res.data.status) {
             this.$message.success('调取成功')
             this.step = 1

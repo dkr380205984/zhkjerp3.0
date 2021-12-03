@@ -29,6 +29,10 @@ const routes: Array<RouteConfig> = [
     name: '物料计划单打印',
     component: () => import('../views/materialPlan/print.vue')
   }, {
+    path: '/store/materialLogPrint',
+    name: '原料出入库打印',
+    component: () => import('../views/store/materialLogPrint.vue')
+  }, {
     path: '/index',
     name: 'index',
     component: () => import('../views/index.vue'),

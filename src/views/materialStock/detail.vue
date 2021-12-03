@@ -726,6 +726,7 @@ export default Vue.extend({
       stockTypeList: stockType,
       materialStockFlag: false,
       materialStockInfo: {
+        material_type: 1,
         order_id: '',
         action_type: 1,
         rel_doc_type: '',
@@ -746,6 +747,7 @@ export default Vue.extend({
             attribute: '',
             number: '',
             item: '', // 件数
+            unit: 'kg',
             rel_doc_info_id: '' // 采购单调取单加工单子项id
           }
         ],
@@ -883,6 +885,7 @@ export default Vue.extend({
             attribute: item.attribute as string,
             number: item.number as string,
             item: '', // 件数
+            unit: 'kg',
             rel_doc_info_id: item.value // 采购单调取单加工单子项id
           }
         })
@@ -897,6 +900,7 @@ export default Vue.extend({
             attribute: item.attribute as string,
             number: item.number as string,
             item: '', // 件数
+            unit: 'kg',
             rel_doc_info_id: item.value // 采购单调取单加工单子项id
           }
         })
@@ -965,6 +969,7 @@ export default Vue.extend({
           attribute: '',
           number: item.number as string,
           item: '', // 件数
+          unit: 'kg',
           rel_doc_info_id: item.value // 采购单调取单加工单子项id
         }
       })
@@ -1013,6 +1018,7 @@ export default Vue.extend({
           attribute: '',
           number: item.number as string,
           item: '', // 件数
+          unit: 'kg',
           rel_doc_info_id: item.value // 采购单调取单加工单子项id
         }
       })
@@ -1041,7 +1047,7 @@ export default Vue.extend({
       })
       if (!formCheck) {
         this.getCmpData()
-        materialStock.create(this.materialStockInfo).then((res) => {
+        materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
             this.materialStockFlag = false

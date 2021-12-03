@@ -144,14 +144,14 @@
                           </div>
                           <div class="rectContent">
                             <div class="text title">工艺单</div>
-                            <div class="text">创建人没给</div>
-                            <div class="text">创建时间没给</div>
+                            <!-- <div class="text">创建人没给</div>
+                            <div class="text">创建时间没给</div> -->
                           </div>
                         </div>
                         <div class="menu">
                           <span class="opration">打印</span>
                           <span class="opration"
-                            @click="sampleInfo.craft_list_id?$openUrl('/craft/detail?id='+sampleInfo.product_id):$openUrl('/craft/create?id='+sampleInfo.product_id)">{{sampleInfo.craft_list_id?'详情':'添加'}}</span>
+                            @click="sampleInfo.craft_list_id?$openUrl('/craft/detail?id='+sampleInfo.craft_list_id):$openUrl('/craft/create?id='+sampleInfo.craft_list_id)">{{sampleInfo.craft_list_id?'详情':'添加'}}</span>
                         </div>
                       </div>
                     </div>
