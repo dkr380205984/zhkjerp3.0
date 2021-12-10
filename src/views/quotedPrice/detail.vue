@@ -24,6 +24,8 @@
           <div class="col flex3"
             v-if="quotedPriceInfo.rel_order">
             <div class="label">关联单据：</div>
+            <span class="gray"
+              v-if="!quotedPriceInfo.rel_order">无关联单据</span>
             <div class="text green">
               <span v-for="item in quotedPriceInfo.rel_order"
                 :key="item.id"
@@ -75,13 +77,20 @@
             <div class="label">系统报价：</div>
             <div class="text">{{quotedPriceInfo.system_total_price}}元</div>
           </div>
-          <!-- <div class="col">
-            <div class="label">最终报价：</div>
-            <div class="text">{{quotedPriceInfo.total_cost_price}}元</div>
-          </div> -->
           <div class="col flex3">
             <div class="label">客户报价：</div>
             <div class="text">{{quotedPriceInfo.real_quote_price}}元</div>
+          </div>
+          <div class="col"
+            v-if="quotedPriceInfo.rel_order.length>0">
+            <div class="label">绑定单据：</div>
+            <div class="text">
+              <span style="cursor:pointer"
+                v-for="item in quotedPriceInfo.rel_order"
+                :key="item.id"
+                class="blue"
+                @click="$openUrl(item.order_type===1?'/order/detail?id='+item.order_id:'/sampleOrder/detail?id='+item.order_id)">{{item.code}};</span>
+            </div>
           </div>
         </div>
         <div class="row">
@@ -207,7 +216,7 @@
                 :key="'HalfProcess' + indexHalfProcess">
                 <div class="col">
                   <div class="circle"
-                    :class="{'backHoverBlue':itemHalfProcess.process_name,'backGray':!itemHalfProcess.process_name}">半</div>{{itemHalfProcess.process_name || '无'}}
+                    :class="{'backHoverBlue':itemHalfProcess.process_name,'backGray':!itemHalfProcess.process_name}">半</div>{{itemHalfProcess.process_name.join(',') || '无'}}
                 </div>
                 <div class="col">{{itemHalfProcess.desc||'无'}}</div>
                 <div class="col"></div>
@@ -219,7 +228,7 @@
                 :key="'FinishedProcess' + indexFinishedProcess">
                 <div class="col">
                   <div class="circle"
-                    :class="{'backHoverBlue':itemFinishedProcess.name,'backGray':!itemFinishedProcess.name}">成</div>{{itemFinishedProcess.name || '无'}}
+                    :class="{'backHoverBlue':itemFinishedProcess.name,'backGray':!itemFinishedProcess.name}">成</div>{{itemFinishedProcess.name.join(',')  || '无'}}
                 </div>
                 <div class="col">{{itemFinishedProcess.desc||'无'}}</div>
                 <div class="col"></div>
@@ -360,7 +369,7 @@
                   <span class="text">打印报价</span>
                 </div>
                 <div class="btn backHoverGreen"
-                  @click="quotedPriceInfo.is_check===2?$message.error('该报价单审核未通过'):$router.push('/sampleOrder/create?quotedPriceId='+ $route.query.id)">
+                  @click="quotedPriceInfo.is_check===2?$message.error('该报价单审核未通过'):quotedPriceInfo.rel_order.length>0?$message.warning('已绑定单据，无法多次绑定'):$router.push('/sampleOrder/create?quotedPriceId='+ $route.query.id)">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-wuliaojihua1"></use>
@@ -368,12 +377,28 @@
                   <span class="text">生成样单</span>
                 </div>
                 <div class="btn backHoverGreen"
-                  @click="quotedPriceInfo.is_check===2?$message.error('该报价单审核未通过'):$router.push('/order/create?quotedPriceId='+ $route.query.id)">
+                  @click="quotedPriceInfo.is_check===2?$message.error('该报价单审核未通过'):quotedPriceInfo.rel_order.length>0?$message.warning('已绑定单据，无法多次绑定'):$router.push('/order/create?quotedPriceId='+ $route.query.id)">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-wuliaojihua1"></use>
                   </svg>
                   <span class="text">生成订单</span>
+                </div>
+                <div class="btn backHoverOrange"
+                  @click="quotedPriceInfo.rel_order.length>0?$message.warning('已绑定单据，无法多次绑定'):bindOrderFlag=true;bindOrderType=2;">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-wuliaojihua1"></use>
+                  </svg>
+                  <span class="text">绑定样单</span>
+                </div>
+                <div class="btn backHoverOrange"
+                  @click="quotedPriceInfo.rel_order.length>0?$message.warning('已绑定单据，无法多次绑定'):bindOrderFlag=true;bindOrderType=1;">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-wuliaojihua1"></use>
+                  </svg>
+                  <span class="text">绑定订单</span>
                 </div>
                 <div class="btn backHoverBlue"
                   @click="checkOpr">
@@ -416,7 +441,6 @@
                 <div class="tcol">序号</div>
                 <div class="tcol">修改日期</div>
                 <div class="tcol">修改人</div>
-                <div class="tcol">订单修改信息</div>
                 <div class="tcol"
                   style="flex:4">产品修改详情</div>
               </div>
@@ -428,49 +452,61 @@
                 <div class="tcol">{{index+1}}</div>
                 <div class="tcol">{{item.update_time}}</div>
                 <div class="tcol">{{item.user}}</div>
-                <div class="tcol">{{item.update_data}}</div>
                 <div class="tcol"
                   style="flex:4">
+                  <div class="line"
+                    v-if="item.update_data">
+                    <span class="label">订单修改信息:</span>
+                    <div class="line">{{item.update_data}}</div>
+                  </div>
                   <div v-for="(itemPro,indexPro) in item.product_activity_log"
                     :key="indexPro">
                     <span>产品{{indexPro+1}}:</span>
-                    <div>
+                    <div class="line"
+                      v-if="itemPro.product_update_data">
                       <span class="label">产品修改信息：</span>
                       <span>{{itemPro.product_update_data}}</span>
                     </div>
-                    <div>
+                    <div class="line"
+                      v-if="itemPro.material_activity_log.length>0">
                       <span class="label">原料修改信息：</span>
                       <span v-for="(itemChild,indexChild) in itemPro.material_activity_log"
                         :key="indexChild">{{itemChild}}</span>
                     </div>
-                    <div>
+                    <div class="line"
+                      v-if="itemPro.assist_material_activity_log.length>0">
                       <span class="label">辅料修改信息：</span>
                       <span v-for="(itemChild,indexChild) in itemPro.assist_material_activity_log"
                         :key="indexChild">{{itemChild}}</span>
                     </div>
-                    <div>
+                    <div class="line"
+                      v-if="itemPro.weave_activity_log.length>0">
                       <span class="label">织造修改信息：</span>
                       <span v-for="(itemChild,indexChild) in itemPro.weave_activity_log"
                         :key="indexChild">{{itemChild}}</span>
                     </div>
-                    <div>
+                    <div class="line"
+                      v-if="itemPro.semi_product_activity_log.length>0">
                       <span class="label">半成品加工修改信息：</span>
                       <span v-for="(itemChild,indexChild) in itemPro.semi_product_activity_log"
                         :key="indexChild">{{itemChild}}</span>
                     </div>
-                    <div>
+                    <div class="line"
+                      v-if="itemPro.production_activity_log.length>0">
                       <span class="label">成品加工修改信息：</span>
                       <span v-for="(itemChild,indexChild) in itemPro.production_activity_log"
                         :key="indexChild">{{itemChild}}</span>
                     </div>
-                    <div>
+                    <div class="line"
+                      v-if="itemPro.pack_material_activity_log.length>0">
                       <span class="label">包装辅料修改信息：</span>
                       <span v-for="(itemChild,indexChild) in itemPro.pack_material_activity_log"
                         :key="indexChild">{{itemChild}}</span>
                     </div>
-                    <div>
+                    <div class="line"
+                      v-if="itemPro.others_fee_activity_log.length>0">
                       <span class="label">其他修改信息：</span>
-                      <span v-for="(itemChild,indexChild) in item.others_fee_activity_log"
+                      <span v-for="(itemChild,indexChild) in itemPro.others_fee_activity_log"
                         :key="indexChild">{{itemChild}}</span>
                     </div>
                   </div>
@@ -487,6 +523,38 @@
         </div>
       </div>
     </div>
+    <div class="popup"
+      v-show="bindOrderFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">绑定单据</span>
+          <div class="closeCtn"
+            @click="bindOrderFlag=false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="row">
+            <div class="label">搜索单据：</div>
+            <div class="info">
+              <div class="elCtn"
+                style="width:100%">
+                <el-autocomplete v-model="bindOrderValue"
+                  :fetch-suggestions="searchOrder"
+                  placeholder="请输入内容"
+                  @select="selectId"></el-autocomplete>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="bindOrderFlag=false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="saveBindOrder">确认</span>
+        </div>
+      </div>
+    </div>
     <zh-check @close="checkFlag=false"
       @afterCheck="(ev)=>{quotedPriceInfo.is_check=ev;$forceUpdate()}"
       :show="checkFlag"
@@ -499,7 +567,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { QuotedPriceInfo } from '@/types/quotedPrice'
-import { quotedPrice } from '@/assets/js/api'
+import { quotedPrice, order } from '@/assets/js/api'
 export default Vue.extend({
   data(): {
     [propName: string]: any
@@ -533,6 +601,7 @@ export default Vue.extend({
         real_quote_price: '',
         system_total_price: 0,
         created_at: '',
+        rel_order: [],
         product_data: [
           {
             total_price: '',
@@ -576,14 +645,14 @@ export default Vue.extend({
             ],
             semi_product_data: [
               {
-                process_name: '',
+                process_name: [],
                 desc: '',
                 total_price: ''
               }
             ],
             production_data: [
               {
-                name: '',
+                name: [],
                 desc: '',
                 total_price: ''
               }
@@ -606,7 +675,11 @@ export default Vue.extend({
         ]
       },
       oprLogFlag: false,
-      oprLog: []
+      oprLog: [],
+      bindOrderFlag: false,
+      bindOrderValue: '',
+      bindOrderId: '',
+      bindOrderType: ''
     }
   },
   computed: {
@@ -655,6 +728,17 @@ export default Vue.extend({
     }
   },
   methods: {
+    init() {
+      this.loading = true
+      quotedPrice
+        .detail({
+          id: Number(this.$route.query.id)
+        })
+        .then((res) => {
+          this.quotedPriceInfo = res.data.data
+          this.loading = false
+        })
+    },
     checkOpr() {
       this.loading = true
       quotedPrice
@@ -700,17 +784,55 @@ export default Vue.extend({
             message: '已取消删除'
           })
         })
+    },
+    saveBindOrder() {
+      quotedPrice
+        .bindOrder({
+          quote_id: Number(this.$route.query.id),
+          order_id: Number(this.bindOrderId)
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.$message.success('绑定成功')
+            this.bindOrderFlag = false
+            this.init()
+          }
+        })
+    },
+    searchOrder(str: string, cb: any) {
+      if (str) {
+        order
+          .list({
+            page: 1,
+            limit: 20,
+            order_code: str,
+            order_type: Number(this.bindOrderType)
+          })
+          .then((res) => {
+            console.log(res.data.data)
+            if (res.data.data.items.length > 0) {
+              cb(
+                res.data.data.items.map((item: any) => {
+                  return {
+                    value: item.code,
+                    id: item.id
+                  }
+                })
+              )
+            } else {
+              cb([])
+            }
+          })
+      } else {
+        cb([])
+      }
+    },
+    selectId(ev: any) {
+      this.bindOrderId = ev.id
     }
   },
   mounted() {
-    quotedPrice
-      .detail({
-        id: Number(this.$route.query.id)
-      })
-      .then((res) => {
-        this.quotedPriceInfo = res.data.data
-        this.loading = false
-      })
+    this.init()
   }
 })
 </script>

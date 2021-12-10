@@ -112,13 +112,13 @@ export default Vue.extend({
             url: '/store/list?page=1&keyword=&user_id=&store_type=1'
           },
           {
-            name: '工厂管理',
+            name: '客户与合作商管理',
             id: 12,
             icon: 'icon-kehuguanli',
             url: '/client/list?page=1&type=1&status=1&keyword='
           },
           {
-            name: '物料预订购',
+            name: '原料预订购',
             id: 13,
             icon: 'icon-wuliaoyudinggou',
             url: '/materialPlanOrder/list?page=1&type=1'

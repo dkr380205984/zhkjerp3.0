@@ -26,7 +26,8 @@
                 v-model="quotedPriceInfo.tree_data"
                 :options="clientList"
                 @change="getContacts"
-                clearable>
+                clearable
+                filterable>
               </el-cascader>
             </div>
           </div>
@@ -192,9 +193,6 @@
           :key="index">
           <div class="titleCtn">
             <div class="title">报价信息
-              <span class="fr">
-                成本合计：<span class="blue">{{productTotalPrice[index]}}元</span>
-              </span>
               <div class="fr elCtn"
                 style="margin-right:24px">
                 <el-select v-model="searchQuotedPrice"
@@ -216,13 +214,35 @@
                 <div class="label"
                   v-if="indexYarn===0">
                   <span class="text">产品原料</span>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="设置成功后请点击此按钮刷新数据"
+                    placement="top">
+                    <i class="el-icon-refresh hoverGreen fr"
+                      style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                      @click="$checkCommonInfo([{
+                        checkWhich: 'api/yarnType',
+                        getInfoMethed: 'dispatch',
+                        getInfoApi: 'getYarnTypeAsync'
+                      }])"></i>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="添加新原料"
+                    placement="top">
+                    <i class="el-icon-upload hoverOrange fr"
+                      style="line-height:38px;font-size:18px;cursor:pointer"
+                      @click="$openUrl('/setting/?pName=物料设置&cName=纱线原料')"></i>
+                  </el-tooltip>
                 </div>
                 <div class="info elCtn">
                   <div class="info elCtn">
                     <el-cascader placeholder="请选择原料"
                       v-model="itemYarn.tree_data"
                       :options="yarnTypeList"
-                      clearable></el-cascader>
+                      clearable
+                      filterable
+                      @change="getYarnPrice($event,itemYarn)"></el-cascader>
                   </div>
                 </div>
               </div>
@@ -258,7 +278,17 @@
                 <div class="label spaceBetween"
                   v-if="indexYarn===0">
                   <div class="once">单价</div>
-                  <div class="once">小计</div>
+                  <div class="once">小计
+                    <div class="fr "
+                      style="font-size:12px;">
+                      <el-tooltip class="item"
+                        effect="dark"
+                        :content="itemYarn.price_info.length>0?itemYarn.price_info.map((item)=>item.client_name+':'+item.price+'元').join(';'):'无报价信息'"
+                        placement="top">
+                        <span class="hoverBlue">查看报价</span>
+                      </el-tooltip>
+                    </div>
+                  </div>
                 </div>
                 <div class="info elCtn spaceBetween">
                   <el-input class="once"
@@ -299,12 +329,33 @@
                 <div class="label"
                   v-if="indexDecorateMaterial===0">
                   <span class="text">装饰辅料</span>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="设置成功后请点击此按钮刷新数据"
+                    placement="top">
+                    <i class="el-icon-refresh hoverGreen fr"
+                      style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                      @click="$checkCommonInfo([{
+                          checkWhich: 'api/decorateMaterial',
+                          getInfoMethed: 'dispatch',
+                          getInfoApi: 'getDecorateMaterialAsync'
+                      }])"></i>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="添加新辅料"
+                    placement="top">
+                    <i class="el-icon-upload hoverOrange fr"
+                      style="line-height:38px;font-size:18px;cursor:pointer"
+                      @click="$openUrl('/setting/?pName=物料设置&cName=装饰辅料')"></i>
+                  </el-tooltip>
                 </div>
                 <div class="info elCtn">
                   <el-select v-model="itemDecorateMaterial.material_id"
                     @change="getUnit($event,itemDecorateMaterial)"
                     placeholder="请选择装饰辅料"
-                    clearable>
+                    clearable
+                    filterable>
                     <el-option v-for="item in decorateMaterialList"
                       :key="item.id"
                       :label="item.name"
@@ -439,11 +490,33 @@
                 <div class="label"
                   v-if="indexHalfProcess===0">
                   <span class="text">半成品加工</span>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="设置成功后请点击此按钮刷新数据"
+                    placement="top">
+                    <i class="el-icon-refresh hoverGreen fr"
+                      style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                      @click="$checkCommonInfo([{
+                          checkWhich: 'api/halfProcess',
+                          getInfoMethed: 'dispatch',
+                          getInfoApi: 'getHalfProcessAsync'
+                      }])"></i>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="添加新工序"
+                    placement="top">
+                    <i class="el-icon-upload hoverOrange fr"
+                      style="line-height:38px;font-size:18px;cursor:pointer"
+                      @click="$openUrl('/setting/?pName=工序设置&cName=半成品加工')"></i>
+                  </el-tooltip>
                 </div>
                 <div class="info elCtn">
                   <el-select v-model="itemHalfProcess.process_id"
                     placeholder="请选择加工工序"
-                    clearable>
+                    clearable
+                    filterable
+                    multiple>
                     <el-option v-for="item in halfProcessList"
                       :key="item.id"
                       :value="item.id"
@@ -459,7 +532,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemHalfProcess.desc"
                     placeholder="加工说明"
-                    :disabled="!itemHalfProcess.process_id">
+                    :disabled="!itemHalfProcess.process_id.length>0">
                   </el-input>
                 </div>
               </div>
@@ -471,7 +544,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemHalfProcess.total_price"
                     placeholder="小计"
-                    :disabled="!itemHalfProcess.process_id">
+                    :disabled="!itemHalfProcess.process_id.length>0">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -479,7 +552,8 @@
               <div class="opr hoverBlue"
                 v-if="indexHalfProcess===0"
                 @click="$addItem(item.semi_product_data,{
-                  id:'',
+                 id:'',
+                 process_id:[],
                  desc:'',
                  name:'',
                  total_price:''
@@ -499,7 +573,9 @@
                 <div class="info elCtn">
                   <el-select v-model="itemFinishedProcess.name"
                     placeholder="请选择加工工序"
-                    clearable>
+                    clearable
+                    filterable
+                    multiple>
                     <el-option v-for="item in finishedList"
                       :key="item.value"
                       :label="item.value"
@@ -515,7 +591,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemFinishedProcess.desc"
                     placeholder="加工说明"
-                    :disabled="!itemFinishedProcess.name">
+                    :disabled="!itemFinishedProcess.name.length>0">
                   </el-input>
                 </div>
               </div>
@@ -527,7 +603,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemFinishedProcess.total_price"
                     placeholder="小计"
-                    :disabled="!itemFinishedProcess.name">
+                    :disabled="!itemFinishedProcess.name.length>0">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -555,7 +631,8 @@
                 <div class="info elCtn">
                   <el-select v-model="itemPackMaterial.material_id"
                     placeholder="请选择包装辅料"
-                    clearable>
+                    clearable
+                    filterable>
                     <el-option v-for="item in packMaterialList"
                       :key="item.id"
                       :value="item.id"
@@ -669,6 +746,18 @@
                 <div class="info elCtn">
                   <el-input v-model="item.transport_fee_desc"
                     placeholder="费用说明">
+                  </el-input>
+                </div>
+              </div>
+              <div class="col flex3">
+                <div class="label">
+                  <span class="text">成本合计</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input v-model="productTotalPrice[index]"
+                    placeholder="成本合计"
+                    disabled>
+                    <template slot="append">元</template>
                   </el-input>
                 </div>
               </div>
@@ -825,7 +914,7 @@
 import { QuotedPriceInfo } from '@/types/quotedPrice'
 import { PackMaterialInfo, DecorateMaterialInfo } from '@/types/materialSetting'
 import { moneyArr } from '@/assets/js/dictionary'
-import { client, quotedPrice } from '@/assets/js/api'
+import { client, quotedPrice, yarn } from '@/assets/js/api'
 import Vue from 'vue'
 export default Vue.extend({
   data(): {
@@ -883,7 +972,8 @@ export default Vue.extend({
                 loss: '',
                 price: '',
                 total_price: '',
-                unit: 'kg'
+                unit: 'kg',
+                price_info: []
               }
             ],
             assist_material_data: [
@@ -909,8 +999,8 @@ export default Vue.extend({
             semi_product_data: [
               {
                 id: '',
-                process_id: '',
-                process_name: '',
+                process_id: [],
+                process_name: [],
                 desc: '',
                 total_price: ''
               }
@@ -918,7 +1008,7 @@ export default Vue.extend({
             production_data: [
               {
                 id: '',
-                name: '',
+                name: [],
                 desc: '',
                 total_price: ''
               }
@@ -1064,6 +1154,20 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 获取纱线报价
+    getYarnPrice(ev: number[], info: any) {
+      if (ev) {
+        yarn
+          .detail({
+            id: ev[2]
+          })
+          .then((res) => {
+            if (res.data.status) {
+              info.price_info = res.data.data.rel_price
+            }
+          })
+      }
+    },
     // 获取报价单模板
     getModules(ev: number) {
       const finded = this.searchQuotedPriceList.find((item: any) => item.id === ev)
@@ -1122,8 +1226,8 @@ export default Vue.extend({
         semi_product_data: [
           {
             id: '',
-            process_id: '',
-            process_name: '',
+            process_id: [],
+            process_name: [],
             desc: '',
             total_price: ''
           }
@@ -1131,7 +1235,7 @@ export default Vue.extend({
         production_data: [
           {
             id: '',
-            name: '',
+            name: [],
             desc: '',
             total_price: ''
           }
@@ -1364,7 +1468,7 @@ export default Vue.extend({
                 }) ||
                 item.semi_product_data.some((itemChild) => {
                   return (
-                    itemChild.process_id &&
+                    itemChild.process_id!.length > 0 &&
                     this.$formCheck(itemChild, [
                       {
                         key: 'process_id',
@@ -1379,7 +1483,7 @@ export default Vue.extend({
                 }) ||
                 item.production_data.some((itemChild) => {
                   return (
-                    itemChild.name &&
+                    itemChild.name!.length > 0 &&
                     this.$formCheck(itemChild, [
                       {
                         key: 'name',

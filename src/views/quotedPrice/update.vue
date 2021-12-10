@@ -27,7 +27,8 @@
                 v-model="quotedPriceInfo.tree_data"
                 :options="clientList"
                 @change="getContacts"
-                clearable>
+                clearable
+                filterable>
               </el-cascader>
             </div>
           </div>
@@ -209,7 +210,8 @@
                     <el-cascader placeholder="请选择原料"
                       v-model="itemYarn.tree_data"
                       :options="yarnTypeList"
-                      clearable></el-cascader>
+                      clearable
+                      filterable></el-cascader>
                   </div>
                 </div>
               </div>
@@ -291,7 +293,8 @@
                   <el-select v-model="itemDecorateMaterial.material_id"
                     @change="getUnit($event,itemDecorateMaterial)"
                     placeholder="请选择装饰辅料"
-                    clearable>
+                    clearable
+                    filterable>
                     <el-option v-for="item in decorateMaterialList"
                       :key="item.id"
                       :label="item.name"
@@ -430,7 +433,9 @@
                 <div class="info elCtn">
                   <el-select v-model="itemHalfProcess.process_id"
                     placeholder="请选择加工工序"
-                    clearable>
+                    clearable
+                    filterable
+                    multiple>
                     <el-option v-for="item in halfProcessList"
                       :key="item.id"
                       :value="item.id"
@@ -486,7 +491,9 @@
                 <div class="info elCtn">
                   <el-select v-model="itemFinishedProcess.name"
                     placeholder="请选择加工工序"
-                    clearable>
+                    clearable
+                    filterable
+                    multiple>
                     <el-option v-for="item in finishedList"
                       :key="item.value"
                       :label="item.value"
@@ -542,7 +549,8 @@
                 <div class="info elCtn">
                   <el-select v-model="itemPackMaterial.material_id"
                     placeholder="请选择包装辅料"
-                    clearable>
+                    clearable
+                    filterable>
                     <el-option v-for="item in packMaterialList"
                       :key="item.id"
                       :value="item.id"
@@ -894,15 +902,15 @@ export default Vue.extend({
             ],
             semi_product_data: [
               {
-                process_id: '',
-                process_name: '',
+                process_id: [],
+                process_name: [],
                 desc: '',
                 total_price: ''
               }
             ],
             production_data: [
               {
-                name: '',
+                name: [],
                 desc: '',
                 total_price: ''
               }
@@ -1064,8 +1072,8 @@ export default Vue.extend({
         semi_product_data: [
           {
             id: '',
-            process_id: '',
-            process_name: '',
+            process_id: [],
+            process_name: [],
             desc: '',
             total_price: ''
           }
@@ -1073,7 +1081,7 @@ export default Vue.extend({
         production_data: [
           {
             id: '',
-            name: '',
+            name: [],
             desc: '',
             total_price: ''
           }

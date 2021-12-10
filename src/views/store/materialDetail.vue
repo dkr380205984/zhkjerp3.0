@@ -34,7 +34,30 @@
         <div class="title">库存信息</div>
       </div>
       <div class="listCtn">
-        <div class="filterCtn clearfix">
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-input v-model="storeTotalFilter.material_name"
+              placeholder="请输入物料名称搜索"
+              @change="storePage=1;$forceUpdate()"></el-input>
+          </div>
+          <div class="elCtn"
+            style="width:184px">
+            <el-input placeholder="批号"
+              v-model="storeTotalFilter.batch_code"
+              @change="storePage=1;$forceUpdate()"></el-input>
+          </div>
+          <div class="elCtn"
+            style="width:184px">
+            <el-input placeholder="缸号"
+              v-model="storeTotalFilter.vat_code"
+              @change="storePage=1;$forceUpdate()"></el-input>
+          </div>
+          <div class="elCtn"
+            style="width:184px">
+            <el-input placeholder="色号"
+              v-model="storeTotalFilter.color_code"
+              @change="storePage=1;$forceUpdate()"></el-input>
+          </div>
           <div class="btn backHoverGreen fr"
             @click="goStock(9)">物料入库</div>
           <div class="btn backHoverOrange fr"
@@ -92,6 +115,58 @@
         <div class="title">出入库日志</div>
       </div>
       <div class="listCtn">
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-input v-model="storeLogFilter.code"
+              placeholder="请输入单号搜索"
+              @change="logPage=1;$forceUpdate()"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-select v-model="storeLogFilter.action_type"
+              placeholder="筛选出入库类型"
+              @change="logPage=1;$forceUpdate()"
+              clearable>
+              <el-option v-for="item in stockTypeList"
+                :key="item.value"
+                :value="item.value"
+                :label="item.name"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-cascader v-model="storeLogFilter.client_arr"
+              placeholder="请选择单位信息"
+              :options="yarnClientAllList"
+              filterable
+              clearable
+              @change="logPage=1;$forceUpdate()">
+            </el-cascader>
+          </div>
+          <div class="elCtn">
+            <el-input v-model="storeLogFilter.material_name"
+              placeholder="请输入物料名称搜索"
+              @change="logPage=1;$forceUpdate()"></el-input>
+          </div>
+        </div>
+        <div class="filterCtn">
+          <div class="elCtn"
+            style="width:184px">
+            <el-input placeholder="批号"
+              v-model="storeLogFilter.batch_code"
+              @change="logPage=1;$forceUpdate()"></el-input>
+          </div>
+          <div class="elCtn"
+            style="width:184px">
+            <el-input placeholder="缸号"
+              v-model="storeLogFilter.vat_code"
+              @change="logPage=1;$forceUpdate()"></el-input>
+          </div>
+          <div class="elCtn"
+            style="width:184px">
+            <el-input placeholder="色号"
+              v-model="storeLogFilter.color_code"
+              @change="logPage=1;$forceUpdate()"></el-input>
+          </div>
+        </div>
         <div class="tableCtn noPad">
           <div class="thead">
             <div class="trow">
@@ -126,21 +201,21 @@
                     <span>{{item.store}}/{{item.secondary_store}}</span>
                   </div>
                 </template>
-                <template v-else-if="item.action_type===2">
+                <template v-else-if="item.action_type===2 || item.action_type===4 || item.action_type===9">
                   <div class="changeCtn">
                     <span>{{item.client_name}}</span>
                     <span class="el-icon-s-unfold green"></span>
                     <span>{{item.store}}/{{item.secondary_store}}</span>
                   </div>
                 </template>
-                <template v-else-if="item.action_type===3 || item.action_type===5">
+                <template v-else-if="item.action_type===3 || item.action_type===5 || item.action_type===10">
                   <div class="changeCtn">
                     <span>{{item.store}}/{{item.secondary_store}}</span>
                     <span class="el-icon-s-unfold orange"></span>
                     <span>{{item.client_name}}</span>
                   </div>
                 </template>
-                <template v-else-if="item.action_type===4 || item.action_type===6 || item.action_type===9 || item.action_type===10">
+                <template v-else-if=" item.action_type===6">
                   <div class="changeCtn">
                     <span>{{item.store}}/{{item.secondary_store}}</span>
                   </div>
@@ -174,6 +249,8 @@
               </div>
               <div class="tcol">{{item.complete_time}}</div>
               <div class="tcol oprCtn">
+                <span class="opr hoverRed"
+                  @click="deleteStoreLog(item.id)">删除</span>
                 <span class="opr hoverBlue"
                   @click="$openUrl('/store/materialLogPrint?id='+item.id + '&type=' + item.action_type)">打印</span>
               </div>
@@ -184,8 +261,8 @@
           <el-pagination background
             :page-size="5"
             layout="prev, pager, next"
-            :total="storeTotal"
-            :current-page.sync="storePage">
+            :total="logTotal"
+            :current-page.sync="logPage">
           </el-pagination>
         </div>
       </div>
@@ -330,7 +407,7 @@
                       <el-autocomplete class="inline-input"
                         v-model="item.material_color"
                         :fetch-suggestions="searchColor"
-                        placeholder="物料颜色"></el-autocomplete>
+                        placeholder="颜色"></el-autocomplete>
                     </div>
                   </div>
                 </div>
@@ -466,6 +543,8 @@
           </div>
         </div>
         <div class="contentCtn">
+          <div class="explainCtn"
+            style="margin:12px 0">未选项默认为导出所有。</div>
           <div class="row">
             <div class="label"
               style="line-height:32px">选择日期：</div>
@@ -485,7 +564,8 @@
             <div class="label"
               style="line-height:32px">操作类型：</div>
             <div class="elCtn info">
-              <el-select v-model="materialLogExcel.action_type">
+              <el-select v-model="materialLogExcel.action_type"
+                clearable>
                 <el-option v-for="item in stockTypeList"
                   :key="item.name"
                   :value="item.value"
@@ -540,6 +620,8 @@
           </div>
         </div>
         <div class="contentCtn">
+          <div class="explainCtn"
+            style="margin:12px 0">未选项默认为导出所有。</div>
           <div class="row">
             <div class="label"
               style="line-height:32px">选择物料：</div>
@@ -654,9 +736,7 @@ export default Vue.extend({
         selectList: []
       },
       yarnAttributeList: yarnAttributeArr,
-      storeTotal: 1,
       storePage: 1,
-      logTotal: 1,
       logPage: 1,
       defaultSecondaryId: 0,
       pickerOptions: {
@@ -710,7 +790,24 @@ export default Vue.extend({
         material_name: '',
         material_arr: []
       },
-      storeArr: []
+      storeArr: [],
+      storeLogFilter: {
+        code: '',
+        action_type: '',
+        client_arr: '',
+        material_name: '',
+        vat_code: '',
+        color_code: '',
+        batch_code: '',
+        start_time: '',
+        end_time: ''
+      },
+      storeTotalFilter: {
+        material_name: '',
+        vat_code: '',
+        color_code: '',
+        batch_code: ''
+      }
     }
   },
   computed: {
@@ -718,10 +815,212 @@ export default Vue.extend({
       return this.$store.state.api.decorateMaterial.arr
     },
     storeTotalList(): any[] {
-      return this.storeDetail.store_total.slice((this.storePage - 1) * 5, this.storePage * 5)
+      return this.storeDetail.store_total
+        .filter((item: any) => {
+          if (this.storeTotalFilter.material_name) {
+            return item.material_name.toLowerCase().indexOf(this.storeTotalFilter.material_name.toLowerCase()) !== -1
+          } else {
+            return true
+          }
+        })
+        .filter((item: any) => {
+          if (this.storeTotalFilter.vat_code) {
+            return item.vat_code.toLowerCase().indexOf(this.storeTotalFilter.vat_code.toLowerCase()) !== -1
+          } else {
+            return true
+          }
+        })
+        .filter((item: any) => {
+          if (this.storeTotalFilter.color_code) {
+            return item.color_code.toLowerCase().indexOf(this.storeTotalFilter.color_code.toLowerCase()) !== -1
+          } else {
+            return true
+          }
+        })
+        .filter((item: any) => {
+          if (this.storeTotalFilter.batch_code) {
+            return item.batch_code.toLowerCase().indexOf(this.storeTotalFilter.batch_code.toLowerCase()) !== -1
+          } else {
+            return true
+          }
+        })
+        .slice((this.storePage - 1) * 5, this.storePage * 5)
     },
-    storeLogList(): any[] {
-      return this.storeDetail.store_log.slice((this.logPage - 1) * 5, this.logPage * 5)
+    storeTotal(): number {
+      return this.storeDetail.store_total
+        .filter((item: any) => {
+          if (this.storeTotalFilter.material_name) {
+            return item.material_name.toLowerCase().indexOf(this.storeTotalFilter.material_name.toLowerCase()) !== -1
+          } else {
+            return true
+          }
+        })
+        .filter((item: any) => {
+          if (this.storeTotalFilter.vat_code) {
+            return item.vat_code.toLowerCase().indexOf(this.storeTotalFilter.vat_code.toLowerCase()) !== -1
+          } else {
+            return true
+          }
+        })
+        .filter((item: any) => {
+          if (this.storeTotalFilter.color_code) {
+            return item.color_code.toLowerCase().indexOf(this.storeTotalFilter.color_code.toLowerCase()) !== -1
+          } else {
+            return true
+          }
+        })
+        .filter((item: any) => {
+          if (this.storeTotalFilter.batch_code) {
+            return item.batch_code.toLowerCase().indexOf(this.storeTotalFilter.batch_code.toLowerCase()) !== -1
+          } else {
+            return true
+          }
+        }).length
+    },
+    storeLogList(): MaterialStockInfo[] {
+      return this.storeDetail.store_log
+        .filter((item: MaterialStockInfo) => {
+          if (this.storeLogFilter.code) {
+            return (item.code as string).toLowerCase().indexOf(this.storeLogFilter.code.toLowerCase()) !== -1
+          } else {
+            return true
+          }
+        })
+        .filter((item: MaterialStockInfo) => {
+          if (this.storeLogFilter.action_type) {
+            return item.action_type === this.storeLogFilter.action_type
+          } else {
+            return true
+          }
+        })
+        .filter((item: MaterialStockInfo) => {
+          if (this.storeLogFilter.client_arr.length > 0) {
+            return item.client_id === this.storeLogFilter.client_arr[2]
+          } else {
+            return true
+          }
+        })
+        .filter((item: MaterialStockInfo) => {
+          if (this.storeLogFilter.material_name) {
+            return item.info_data.some((itemChild) => {
+              return (
+                (itemChild.material_name as string)
+                  .toLowerCase()
+                  .indexOf(this.storeLogFilter.material_name.toLowerCase()) !== -1
+              )
+            })
+          } else {
+            return true
+          }
+        })
+        .filter((item: MaterialStockInfo) => {
+          if (this.storeLogFilter.batch_code) {
+            return item.info_data.some((itemChild) => {
+              return (
+                (itemChild.batch_code as string).toLowerCase().indexOf(this.storeLogFilter.batch_code.toLowerCase()) !==
+                -1
+              )
+            })
+          } else {
+            return true
+          }
+        })
+        .filter((item: MaterialStockInfo) => {
+          if (this.storeLogFilter.vat_code) {
+            return item.info_data.some((itemChild) => {
+              return (
+                (itemChild.vat_code as string).toLowerCase().indexOf(this.storeLogFilter.vat_code.toLowerCase()) !== -1
+              )
+            })
+          } else {
+            return true
+          }
+        })
+        .filter((item: MaterialStockInfo) => {
+          if (this.storeLogFilter.color_code) {
+            return item.info_data.some((itemChild) => {
+              return (
+                (itemChild.color_code as string).toLowerCase().indexOf(this.storeLogFilter.color_code.toLowerCase()) !==
+                -1
+              )
+            })
+          } else {
+            return true
+          }
+        })
+        .slice((this.logPage - 1) * 5, this.logPage * 5)
+    },
+    logTotal(): number {
+      return this.storeDetail.store_log
+        .filter((item: MaterialStockInfo) => {
+          if (this.storeLogFilter.code) {
+            return (item.code as string).toLowerCase().indexOf(this.storeLogFilter.code.toLowerCase()) !== -1
+          } else {
+            return true
+          }
+        })
+        .filter((item: MaterialStockInfo) => {
+          if (this.storeLogFilter.action_type) {
+            return item.action_type === this.storeLogFilter.action_type
+          } else {
+            return true
+          }
+        })
+        .filter((item: MaterialStockInfo) => {
+          if (this.storeLogFilter.client_arr.length > 0) {
+            return item.client_id === this.storeLogFilter.client_arr[2]
+          } else {
+            return true
+          }
+        })
+        .filter((item: MaterialStockInfo) => {
+          if (this.storeLogFilter.material_name) {
+            return item.info_data.some((itemChild) => {
+              return (
+                (itemChild.material_name as string)
+                  .toLowerCase()
+                  .indexOf(this.storeLogFilter.material_name.toLowerCase()) !== -1
+              )
+            })
+          } else {
+            return true
+          }
+        })
+        .filter((item: MaterialStockInfo) => {
+          if (this.storeLogFilter.batch_code) {
+            return item.info_data.some((itemChild) => {
+              return (
+                (itemChild.batch_code as string).toLowerCase().indexOf(this.storeLogFilter.batch_code.toLowerCase()) !==
+                -1
+              )
+            })
+          } else {
+            return true
+          }
+        })
+        .filter((item: MaterialStockInfo) => {
+          if (this.storeLogFilter.vat_code) {
+            return item.info_data.some((itemChild) => {
+              return (
+                (itemChild.vat_code as string).toLowerCase().indexOf(this.storeLogFilter.vat_code.toLowerCase()) !== -1
+              )
+            })
+          } else {
+            return true
+          }
+        })
+        .filter((item: MaterialStockInfo) => {
+          if (this.storeLogFilter.color_code) {
+            return item.info_data.some((itemChild) => {
+              return (
+                (itemChild.color_code as string).toLowerCase().indexOf(this.storeLogFilter.color_code.toLowerCase()) !==
+                -1
+              )
+            })
+          } else {
+            return true
+          }
+        }).length
     },
     yarnTypeList() {
       if (this.storeDetail.store_type === 1) {
@@ -752,6 +1051,15 @@ export default Vue.extend({
       return this.$store.state.api.clientType.arr.filter(
         (item: { label: string }) =>
           item.label === '原料加工单位' || item.label === '生产织造单位' || item.label === '生产加工单位'
+      )
+    },
+    yarnClientAllList() {
+      return this.$store.state.api.clientType.arr.filter(
+        (item: { label: string }) =>
+          item.label === '纱线原料单位' ||
+          item.label === '原料加工单位' ||
+          item.label === '生产织造单位' ||
+          item.label === '生产加工单位'
       )
     }
   },
@@ -864,6 +1172,8 @@ export default Vue.extend({
       return treeData
     },
     getCmpData() {
+      this.materialStockInfo.client_id =
+        this.materialStockInfo.tree_data!.length > 0 ? this.materialStockInfo.tree_data![2] : ''
       this.materialStockInfo.material_type = Number(this.$route.query.store_type)
       this.materialStockInfo.store_id = Number(this.$route.query.id)
       this.materialStockInfo.info_data.forEach((item) => {
@@ -910,6 +1220,27 @@ export default Vue.extend({
           }
         })
       }
+    },
+    deleteStoreLog(id: number) {
+      this.$confirm('是否删除该日志', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          materialStock.delete({ id }).then((res) => {
+            if (res.data.status) {
+              this.$message.success('删除成功')
+              this.init()
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     exportMaterialLogExcel() {
       this.materialLogExcel.start_time = this.materialLogExcelDate.length > 0 ? this.materialLogExcelDate[0] : ''

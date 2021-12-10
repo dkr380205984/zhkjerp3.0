@@ -306,14 +306,14 @@ export default Vue.extend({
           url: '/store/list?page=1&keyword=&user_id=&store_type=1'
         },
         {
-          opr: '工厂管理',
+          opr: '客户与合作商管理',
           isChecked: false,
           id: 12,
           icon: 'icon-chanpinshoufa',
           url: '/client/list?page=1&type=1&status=1&keyword='
         },
         {
-          opr: '物料预订购',
+          opr: '原料预订购',
           isChecked: false,
           id: 13,
           icon: 'icon-chanpinshoufa',

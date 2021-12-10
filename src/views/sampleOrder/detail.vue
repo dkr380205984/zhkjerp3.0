@@ -43,6 +43,17 @@
           </div>
         </div>
         <div class="row">
+          <div class="col flex3">
+            <div class="label">关联单据：</div>
+            <div class="text green">
+              <span class="gray"
+                v-if="!sampleOrderInfo.rel_order">无关联单据</span>
+              <span v-for="item in sampleOrderInfo.rel_order"
+                :key="item.id"
+                style="cursor:pointer;margin-right:12px"
+                @click="$openUrl(item.order_type===1?('/order/detail?id='+item.id):('/sampleOrder/detail?id='+item.id))">{{item.code}}</span>
+            </div>
+          </div>
           <div class="col">
             <div class="label">备注信息：</div>
             <div class="text"

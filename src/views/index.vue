@@ -161,9 +161,11 @@ export default Vue.extend({
     },
     navCmp(): navInfo[] {
       if (this.moduleArr) {
-        return this.newNavData.filter((item: navInfo) => {
-          return item.id ? this.moduleArr!.indexOf(item.id as string) !== -1 : true
-        })
+        // 测试不判定权限
+        return this.newNavData
+        // return this.newNavData.filter((item: navInfo) => {
+        //   return item.id ? this.moduleArr!.indexOf(item.id as string) !== -1 : true
+        // })
       } else {
         return this.newNavData
       }

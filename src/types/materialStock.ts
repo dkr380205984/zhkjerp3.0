@@ -66,6 +66,7 @@ export interface MaterialStockInfo {
   move_secondary_store_id?: number | string
   move_store_arr?: number[]
   tree_data?: number[]
+  code?: string // 关联订单id
   selectList?: Array<{
     name: string
     value: number
@@ -74,6 +75,7 @@ export interface MaterialStockInfo {
     material_name?: string
     attribute?: string
     number?: string | number
+    unit?: string
   }> // 前端用，存储勾选的单据纱线列表
   info_data: MaterialStockLog[]
 }

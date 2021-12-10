@@ -233,7 +233,6 @@ export default Vue.extend({
   },
   watch: {
     data(newVal: OrderDetail) {
-      console.log(newVal)
       this.orderInfo = newVal
     }
   },

@@ -35,6 +35,10 @@
         border: none;
       }
     }
+    &.noData{
+      color: @font25;
+      line-height: 46px;
+    }
   }
   .tcol {
     min-height: 46px;
@@ -83,6 +87,11 @@
           line-height: 25px;
         }
       }
+    }
+    &.overflow{
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 }

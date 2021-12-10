@@ -208,7 +208,7 @@ const apiActions = {
       const data: YarnInfo[] = res.data.data
       const shaxian = data.filter((item) => item.type === 1)
       const mianliao = data.filter((item) => item.type === 2)
-      const maoliao = data.filter((item) => item.type === 3)
+      // const maoliao = data.filter((item) => item.type === 3)
       const cascaderData: CascaderInfo[] = [{
         label: '纱线',
         value: 1,
@@ -216,10 +216,11 @@ const apiActions = {
           return {
             label: item.name as string,
             value: item.id as number,
-            children: item.yarn_data?.map((itemChild) => {
+            children: item.yarn_data?.map((itemChild: any) => {
               return {
                 label: itemChild.name as string,
-                value: itemChild.id as number
+                value: itemChild.id as number,
+                rel_price: itemChild.rel_price
               }
             })
           }
@@ -231,25 +232,11 @@ const apiActions = {
           return {
             label: item.name as string,
             value: item.id as number,
-            children: item.yarn_data?.map((itemChild) => {
+            children: item.yarn_data?.map((itemChild: any) => {
               return {
                 label: itemChild.name as string,
-                value: itemChild.id as number
-              }
-            })
-          }
-        })
-      }, {
-        label: '毛料',
-        value: 3,
-        children: maoliao.map((item) => {
-          return {
-            label: item.name as string,
-            value: item.id as number,
-            children: item.yarn_data?.map((itemChild) => {
-              return {
-                label: itemChild.name as string,
-                value: itemChild.id as number
+                value: itemChild.id as number,
+                rel_price: itemChild.rel_price
               }
             })
           }
@@ -261,7 +248,7 @@ const apiActions = {
   getYarnColorAsync(content: ActionContext<ApiState, any>) {
     yarnColor.list().then((res) => {
       if (res.data.status) {
-        content.commit('getYarnColor', [{ name: '白胚' }].concat(res.data.data))
+        content.commit('getYarnColor', [{ name: '白胚', color_code: '#fff' }].concat(res.data.data))
       }
     })
   },

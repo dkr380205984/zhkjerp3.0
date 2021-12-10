@@ -46,10 +46,21 @@
                 :value="2"></el-option>
             </el-select>
           </div>
+          <div class="elCtn">
+            <el-select placeholder="客户类型筛选"
+              v-model="clientType"
+              @change="changeRouter"
+              clearable>
+              <el-option v-for="item in clientTypeArr"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
+          </div>
           <div class="btn borderBtn"
             @click="reset">重置</div>
           <div class="btn backHoverBlue fr"
-            @click="$router.push('/client/create?type='+$route.query.type)">添加客户</div>
+            @click="$router.push('/client/create?type='+$route.query.type)">{{type===1?'添加客户':'添加合作商'}}</div>
         </div>
         <div class="list">
           <div class="row title">
@@ -72,6 +83,8 @@
             <div class="col oprCtn">
               <span class="opr hoverBlue"
                 @click="checkClient(item.id,item.status)">{{item.status===1?'终止合作':'继续合作'}}</span>
+              <span class="opr hoverOrange"
+                @click="$router.push('/client/update?id='+item.id + '&type='+$route.query.type)">修改</span>
               <span class="opr hoverRed"
                 @click="deleteClient(item.id)">删除</span>
             </div>
@@ -106,10 +119,15 @@ export default Vue.extend({
       total: 1,
       type: 1,
       status: 1,
-      clientTypeList: []
+      clientTypeList: [],
+      clientType: ''
     }
   },
-  computed: {},
+  computed: {
+    clientTypeArr(): any {
+      return this.clientTypeList.filter((item: { type: string }) => Number(item.type) === Number(this.type))
+    }
+  },
   watch: {
     $route() {
       this.getFilters()
@@ -123,10 +141,20 @@ export default Vue.extend({
       this.type = Number(query.type)
       this.status = query.status === 'null' ? null : Number(query.status)
       this.keyword = query.keyword
+      this.clientType = Number(query.clientType) || ''
     },
     changeRouter() {
       this.$router.push(
-        '/client/list?page=' + this.page + '&type=' + this.type + '&keyword=' + this.keyword + '&status=' + this.status
+        '/client/list?page=' +
+          this.page +
+          '&type=' +
+          this.type +
+          '&keyword=' +
+          this.keyword +
+          '&status=' +
+          this.status +
+          '&clientType=' +
+          this.clientType
       )
     },
     reset() {
@@ -156,9 +184,7 @@ export default Vue.extend({
           name: this.keyword,
           status: this.status,
           tag_id: null, // 筛选标签用的，暂时没用到
-          type_id: this.clientTypeList
-            .filter((item: { type: string }) => Number(item.type) === Number(this.type))
-            .map((item: any) => item.id)
+          client_type_id: this.clientType ? [this.clientType] : this.clientTypeArr.map((item: any) => item.id)
         })
         .then((res) => {
           if (res.data.status) {

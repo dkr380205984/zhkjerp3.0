@@ -7,13 +7,41 @@
       </div>
       <div class="listCtn">
         <div class="filterCtn">
-          <div class="elCtn">
+          <div class="elCtn"
+            style="width:200px">
             <el-cascader placeholder="请选择订购供货商"
               v-model="search_client_id"
-              :options="orderClientList"
+              :options="orderClientAllList"
               @change="changeRouter"
               clearable>
             </el-cascader>
+          </div>
+          <div class="elCtn"
+            style="width:200px">
+            <el-date-picker v-model="year"
+              style="width:100%"
+              placeholder="请选择预定年份"
+              value-format="yyyy"
+              @change="changeRouter"
+              type="year"></el-date-picker>
+          </div>
+          <div class="elCtn"
+            style="width:200px">
+            <el-select placeholder="筛选类型"
+              v-model="material_type"
+              @change="changeRouter"
+              clearable>
+              <el-option v-for="item in yarnTypeList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn"
+            style="width:200px">
+            <el-input v-model="material_name"
+              placeholder="搜索物料名称"
+              @click.native.enter="changeRouter"></el-input>
           </div>
           <div class="btn backHoverBlue fr"
             @click="addFlag = true">添加预订购</div>
@@ -25,9 +53,9 @@
             <div class="col">类型</div>
             <div class="col">公司名称</div>
             <div class="col">预定数量</div>
-            <div class="col">入库物料</div>
+            <div class="col"
+              style="flex:2">入库物料</div>
             <div class="col">入库数量</div>
-            <div class="col">备注信息</div>
             <div class="col">操作</div>
           </div>
           <div class="row"
@@ -36,14 +64,13 @@
             <div class="col">{{item.year}}</div>
             <div class="col">{{item.material_type|filterMaterialType}}</div>
             <div class="col">{{item.client_name}}</div>
-            <div class="col">{{item.total_number}}</div>
+            <div class="col">{{item.total_number}}kg</div>
             <div class="col"
-              style="white-space:nowrap;overflow: hidden;text-overflow: ellipsis;">
+              style="flex:2;white-space:nowrap;overflow: hidden;text-overflow: ellipsis;">
               <span v-for="(itemChild,indexChild) in item.material_order_info"
-                :key="indexChild">{{indexChild}}</span>
+                :key="indexChild">{{indexChild}};</span>
             </div>
             <div class="col">{{item.material_order_info | cmpTotal}}kg</div>
-            <div class="col">{{item.desc||'无'}}</div>
             <div class="col oprCtn">
               <div class="opr hoverBlue"
                 @click="$router.push('/materialPlanOrder/detail?id='+item.id)">详情</div>
@@ -85,9 +112,9 @@
             </div>
           </div>
           <div class="row">
-            <div class="label isMust">原料类型：</div>
+            <div class="label isMust">物料类型：</div>
             <div class="info elCtn">
-              <el-select placeholder="请选择原料类型"
+              <el-select placeholder="请选择物料类型"
                 v-model="materialPlanOrderClient.material_type">
                 <el-option v-for="item in yarnTypeList"
                   :key="item.value"
@@ -99,7 +126,7 @@
           <div class="row">
             <div class="label isMust">订购供货商：</div>
             <div class="info elCtn">
-              <el-cascader placeholder="请选择订购供货商"
+              <el-cascader :placeholder="materialPlanOrderClient.material_type?'请选择订购供货商':'请先选择物料类型'"
                 v-model="materialPlanOrderClient.tree_data"
                 :options="orderClientList"
                 @change="(ev)=>{materialPlanOrderClient.client_id=ev[2]}">
@@ -151,6 +178,9 @@ export default Vue.extend({
       list: [],
       keyword: '',
       search_client_id: [],
+      year: '',
+      material_type: '',
+      material_name: '',
       client_id: [],
       date: [],
       total: 1,
@@ -193,19 +223,19 @@ export default Vue.extend({
       const query = this.$route.query
       this.page = Number(query.page)
       this.search_client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
-      this.keyword = query.keyword || ''
-      this.date = query.date ? (query.date as string).split(',') : []
+      this.material_type = Number(query.material_type) || ''
+      this.year = query.year || ''
     },
     changeRouter() {
       this.$router.push(
         '/materialPlanOrder/list?page=' +
           this.page +
-          '&keyword=' +
-          this.keyword +
+          '&material_type=' +
+          this.material_type +
           '&client_id=' +
           this.search_client_id +
-          '&date=' +
-          this.date
+          '&year=' +
+          this.year
       )
     },
     reset() {
@@ -236,8 +266,7 @@ export default Vue.extend({
           client_id: this.search_client_id.length > 0 ? this.search_client_id[2] : '',
           page: this.page,
           limit: 5,
-          start_time: this.date.length > 0 ? this.date[0] : '',
-          end_time: this.date.length > 0 ? this.date[1] : ''
+          year: this.year
         })
         .then((res) => {
           if (res.data.status) {
@@ -251,7 +280,7 @@ export default Vue.extend({
       const formcheck = this.$formCheck(this.materialPlanOrderClient, [
         {
           key: 'material_type',
-          errMsg: '请选择原料类型'
+          errMsg: '请选择物料类型'
         },
         {
           key: 'client_id',
@@ -298,8 +327,17 @@ export default Vue.extend({
   },
   computed: {
     orderClientList(): CascaderInfo[] {
+      return this.$store.state.api.clientType.arr.filter((item: any) =>
+        this.materialPlanOrderClient.material_type
+          ? this.materialPlanOrderClient.material_type === 1
+            ? item.label === '纱线原料单位'
+            : item.label === '面料原料单位'
+          : false
+      )
+    },
+    orderClientAllList(): CascaderInfo[] {
       return this.$store.state.api.clientType.arr.filter(
-        (item: { label: string }) => item.label === '纱线原料单位' || item.label === '面料原料单位'
+        (item: any) => item.label === '纱线原料单位' || item.label === '面料原料单位'
       )
     },
     yarnTypeList(): CascaderInfo[] {

@@ -69,6 +69,16 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
+          <div class="elCtn">
+            <el-select v-model="limit"
+              placeholder="每页展示条数"
+              @change="changeRouter">
+              <el-option v-for="item in limitList"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
           <div class="btn backHoverOrange fr"
             @click="showSetting=true">列表设置</div>
           <div class="btn backHoverGreen fr"
@@ -80,7 +90,7 @@
           :oprList="oprList"></zh-list>
         <div class="pageCtn">
           <el-pagination background
-            :page-size="5"
+            :page-size="limit"
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
@@ -104,6 +114,7 @@
 import Vue from 'vue'
 import { order, listSetting } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
+import { limitArr } from '@/assets/js/dictionary'
 export default Vue.extend({
   data(): {
     list: OrderInfo[]
@@ -113,6 +124,8 @@ export default Vue.extend({
       loading: true,
       list: [],
       order_type: null,
+      limitList: limitArr,
+      limit: 5,
       keyword: '',
       client_id: [],
       group_id: '',
@@ -266,6 +279,7 @@ export default Vue.extend({
       this.group_id = Number(query.gourp_id) || ''
       this.order_type = Number(query.order_type) || null
       this.date = query.date ? (query.date as string).split(',') : []
+      this.limit = Number(query.limit) || 5
     },
     changeRouter() {
       this.$router.push(
@@ -282,7 +296,9 @@ export default Vue.extend({
           '&order_type=' +
           this.order_type +
           '&date=' +
-          this.date
+          this.date +
+          '&limit=' +
+          this.limit
       )
     },
     reset() {
@@ -299,6 +315,7 @@ export default Vue.extend({
           this.date = []
           this.status = '0'
           this.order_type = null
+          this.limit = 5
           this.changeRouter()
         })
         .catch(() => {
@@ -316,7 +333,7 @@ export default Vue.extend({
           keyword: this.keyword,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           page: this.page,
-          limit: 5,
+          limit: this.limit,
           is_check: this.status,
           start_time: this.date.length > 0 ? this.date[0] : '',
           end_time: this.date.length > 0 ? this.date[1] : '',

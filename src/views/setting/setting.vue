@@ -1017,6 +1017,65 @@
               </div>
             </div>
           </template>
+          <template v-if="cName==='面料报价'">
+            <div class="listCtn">
+              <div class="filterCtn clearfix">
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup=true">添加报价</div>
+              </div>
+              <div class="list">
+                <div class="tableCtn">
+                  <div class="thead">
+                    <div class="trow">
+                      <div class="tcol">报价单位</div>
+                      <div class="tcol noPad"
+                        style="flex:5">
+                        <div class="trow">
+                          <div class="tcol">面料名称</div>
+                          <div class="tcol">面料颜色</div>
+                          <div class="tcol">报价</div>
+                          <div class="tcol">备注</div>
+                        </div>
+                      </div>
+                      <div class="tcol">操作</div>
+                    </div>
+                  </div>
+                  <div class="tbody">
+                    <div class="trow"
+                      v-for="item in mianliaoPriceArr"
+                      :key="item.id">
+                      <div class="tcol">{{item.client_name}}</div>
+                      <div class="tcol noPad"
+                        style="flex:5">
+                        <div class="trow"
+                          v-for="(itemChild,indexChild) in item.info_data"
+                          :key="indexChild">
+                          <div class="tcol">{{itemChild.material_name}}</div>
+                          <div class="tcol">{{itemChild.material_color}}</div>
+                          <div class="tcol">{{itemChild.price}}元/kg</div>
+                          <div class="tcol">{{itemChild.desc}}</div>
+                        </div>
+                      </div>
+                      <div class="tcol oprCtn">
+                        <span class="opr hoverOrange"
+                          @click="mianliaoPrice=item;showPopup=true;mianliaoPriceUpdate=true">修改</span>
+                        <span class="opr hoverRed"
+                          @click="deleteMianliaoPrice(item.id)">删除</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="pageCtn">
+                <el-pagination background
+                  :page-size="5"
+                  layout="prev, pager, next"
+                  :total="mianliaoPriceTotal"
+                  :current-page.sync="mianliaoPricePage">
+                </el-pagination>
+              </div>
+            </div>
+          </template>
           <template v-if="cName==='模板预加载'">
             <div class="listCtn">
               <div class="list">
@@ -1938,9 +1997,9 @@
         <div class="main"
           style="width:1000px">
           <div class="titleCtn">
-            <div class="text">新增纱线报价</div>
+            <div class="text">纱线报价</div>
             <div class="closeCtn"
-              @click="showPopup=false;yarnPriceUpdate=false">
+              @click="showPopup=false;yarnPriceUpdate=false;resetYarnPrice()">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -2044,6 +2103,107 @@
             <div class="btn"
               :class="yarnPriceUpdate?'backHoverOrange':'backHoverBlue'"
               @click="saveYarnPrice">{{yarnPriceUpdate?'修改':'确认'}}</div>
+          </div>
+        </div>
+      </template>
+      <template v-if="cName==='面料报价'">
+        <div class="main"
+          style="width:1000px">
+          <div class="titleCtn">
+            <div class="text">面料报价</div>
+            <div class="closeCtn"
+              @click="showPopup=false;yarnPriceUpdate=false;resetYarnPrice()">
+              <i class="el-icon-close"></i>
+            </div>
+          </div>
+          <div class="contentCtn">
+            <div class="row">
+              <div class="label">报价单位：</div>
+              <div class="info">
+                <span class="blue"
+                  style="line-height:32px"
+                  v-if="mianliaoPriceUpdate">{{mianliaoPrice.client_name}}</span>
+                <el-cascader v-else
+                  placeholder="请选择报价单位"
+                  v-model="mianliaoPrice.client_id_arr"
+                  :options="mianliaoClientList"
+                  @change="(ev)=>{mianliaoPrice.client_id=ev[2]}"></el-cascader>
+              </div>
+            </div>
+            <div class="tableCtn">
+              <div class="thead">
+                <div class="trow">
+                  <div class="tcol">面料名称</div>
+                  <div class="tcol">颜色</div>
+                  <div class="tcol">报价</div>
+                  <div class="tcol">其它备注</div>
+                  <div class="tcol">操作</div>
+                </div>
+              </div>
+              <div class="tbody">
+                <div class="trow"
+                  v-for="(item,index) in mianliaoPrice.info_data"
+                  :key="index">
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-select placeholder="选择面料"
+                        v-model="item.material_id">
+                        <el-option v-for="item in yarnList2"
+                          :key="item.id"
+                          :value="item.id"
+                          :label="item.name"></el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-autocomplete class="inline-input"
+                        v-model="item.material_color"
+                        :fetch-suggestions="searchColor"
+                        placeholder="物料颜色"></el-autocomplete>
+                    </div>
+                  </div>
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-input v-model="item.price"
+                        placeholder="单价">
+                        <template slot="append">元/kg</template>
+                      </el-input>
+                    </div>
+                  </div>
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-input v-model="item.desc"
+                        placeholder="备注">
+                      </el-input>
+                    </div>
+                  </div>
+                  <div class="tcol oprCtn">
+                    <div class="opr hoverBlue"
+                      v-if="index===0"
+                      @click="$addItem(mianliaoPrice.info_data,{
+                        id: '',
+                        material_id: '',
+                        material_arr: [],
+                        material_color: '',
+                        attribute: '',
+                        price: '',
+                        desc: ''
+                    })">添加</div>
+                    <div class="opr hoverRed"
+                      v-if="index>0"
+                      @click="$deleteItem(mianliaoPrice.info_data,index)">删除</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="oprCtn">
+            <div class="btn borderBtn"
+              @click="showPopup=false;mianliaoPriceUpdate=false">取消</div>
+            <div class="btn"
+              :class="mianliaoPriceUpdate?'backHoverOrange':'backHoverBlue'"
+              @click="saveMianliaoPrice">{{mianliaoPriceUpdate?'修改':'确认'}}</div>
           </div>
         </div>
       </template>
@@ -2238,7 +2398,8 @@
                   <div class="info elCtn">
                     <el-select v-model="itemHalfProcess.process_id"
                       placeholder="请选择加工工序"
-                      clearable>
+                      clearable
+                      multiple>
                       <el-option v-for="item in halfProcessStore"
                         :key="item.id"
                         :value="item.id"
@@ -2281,7 +2442,8 @@
                   <div class="info elCtn">
                     <el-select v-model="itemFinishedProcess.name"
                       placeholder="请选择加工工序"
-                      clearable>
+                      clearable
+                      multiple>
                       <el-option v-for="item in finishedList"
                         :key="item.value"
                         :label="item.value"
@@ -2461,6 +2623,7 @@ interface YarnTypeInfoHasCheck extends YarnTypeInfo {
 interface YarnPrice {
   id: string | number
   client_id: string | number
+  material_type: 1 | 2
   info_data: Array<{
     id?: string | number
     material_id: string | number
@@ -2545,6 +2708,8 @@ export default Vue.extend({
     quotedPriceProductList: QuotedPriceProduct[]
     yarnPrice: YarnPrice
     yarnPriceList: YarnPrice[]
+    mianliaoPrice: YarnPrice
+    mianliaoPriceList: YarnPrice[]
   } {
     return {
       yarnAttributeArr: yarnAttributeArr,
@@ -2555,7 +2720,7 @@ export default Vue.extend({
         报价单设置: ['报价模板', '报价说明'],
         工序设置: ['原料加工工序', '半成品加工', '成品加工工序'],
         工艺单设置: ['边型', '机型', '组织法', '纱线颜色'],
-        物料设置: ['纱线原料', '面料原料', '装饰辅料', '包装辅料', '纱线报价'],
+        物料设置: ['纱线原料', '面料原料', '装饰辅料', '包装辅料', '纱线报价', '面料报价'],
         工厂信息设置: ['基本信息', '负责小组/人', '部门管理', '员工标签'],
         系统账户管理: ['系统账户管理'],
         打印设置: ['打印设置']
@@ -2850,15 +3015,15 @@ export default Vue.extend({
         ],
         semi_product_data: [
           {
-            process_id: '',
-            process_name: '',
+            process_id: [],
+            process_name: [],
             desc: '',
             total_price: ''
           }
         ],
         production_data: [
           {
-            name: '',
+            name: [],
             desc: '',
             total_price: ''
           }
@@ -2896,6 +3061,7 @@ export default Vue.extend({
       yarnPrice: {
         id: '',
         client_id: '',
+        material_type: 1,
         info_data: [
           {
             id: '',
@@ -2911,7 +3077,27 @@ export default Vue.extend({
       yarnPriceList: [],
       yarnPricePage: 1,
       yarnPriceTotal: 1,
-      yarnPriceUpdate: false
+      yarnPriceUpdate: false,
+      mianliaoPrice: {
+        id: '',
+        client_id: '',
+        material_type: 2,
+        info_data: [
+          {
+            id: '',
+            material_id: '',
+            material_arr: [],
+            material_color: '',
+            attribute: '',
+            price: '',
+            desc: ''
+          }
+        ]
+      },
+      mianliaoPriceList: [],
+      mianliaoPricePage: 1,
+      mianliaoPriceTotal: 1,
+      mianliaoPriceUpdate: false
     }
   },
   methods: {
@@ -2946,7 +3132,8 @@ export default Vue.extend({
     },
     // 原料颜色搜索
     searchColor(str: string, cb: any) {
-      let results = str ? this.yarnColorList.filter(this.createFilter(str)) : this.yarnColorList.slice(0, 10)
+      const searchList = [{ name: '白胚' }].concat(this.yarnColorList)
+      let results = str ? searchList.filter(this.createFilter(str)) : searchList.slice(0, 10)
       // 调用 callback 返回建议列表的数据
       cb(
         results.map((item) => {
@@ -3054,6 +3241,10 @@ export default Vue.extend({
       } else if (this.cName === '纱线报价') {
         this.getYarnPrice()
         this.getYarn(1)
+        this.getYarnColor()
+      } else if (this.cName === '面料报价') {
+        this.getMianliaoPrice()
+        this.getYarn(2)
         this.getYarnColor()
       } else if (this.cName === '装饰辅料') {
         this.getDecorateMaterial()
@@ -4645,15 +4836,15 @@ export default Vue.extend({
             ],
             semi_product_data: [
               {
-                process_id: '',
-                process_name: '',
+                process_id: [],
+                process_name: [],
                 desc: '',
                 total_price: ''
               }
             ],
             production_data: [
               {
-                name: '',
+                name: [],
                 desc: '',
                 total_price: ''
               }
@@ -4744,12 +4935,34 @@ export default Vue.extend({
           getInfoApi: 'getClientTypeAsync'
         }
       ])
-      yarnPrice.list().then((res) => {
-        if (res.data.status) {
-          this.yarnPriceList = res.data.data
-          this.yarnPriceTotal = this.yarnPriceList.length
-        }
-      })
+      yarnPrice
+        .list({
+          material_type: 1
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.yarnPriceList = res.data.data
+            this.yarnPriceTotal = this.yarnPriceList.length
+          }
+        })
+    },
+    resetYarnPrice() {
+      this.yarnPrice = {
+        id: '',
+        client_id: '',
+        material_type: 1,
+        info_data: [
+          {
+            id: '',
+            material_id: '',
+            material_arr: [],
+            material_color: '',
+            attribute: '',
+            price: '',
+            desc: ''
+          }
+        ]
+      }
     },
     saveYarnPrice() {
       const formCheck =
@@ -4786,21 +4999,7 @@ export default Vue.extend({
             this.getYarnPrice()
             this.showPopup = false
             this.yarnPriceUpdate = false
-            this.yarnPrice = {
-              id: '',
-              client_id: '',
-              info_data: [
-                {
-                  id: '',
-                  material_id: '',
-                  material_arr: [],
-                  material_color: '',
-                  attribute: '',
-                  price: '',
-                  desc: ''
-                }
-              ]
-            }
+            this.resetYarnPrice()
           }
         })
       }
@@ -4832,12 +5031,117 @@ export default Vue.extend({
             message: '已取消删除'
           })
         })
+    },
+    getMianliaoPrice() {
+      this.$checkCommonInfo([
+        {
+          checkWhich: 'api/clientType',
+          getInfoMethed: 'dispatch',
+          getInfoApi: 'getClientTypeAsync'
+        }
+      ])
+      yarnPrice
+        .list({
+          material_type: 2
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.mianliaoPriceList = res.data.data
+            this.mianliaoPriceTotal = this.mianliaoPriceList.length
+          }
+        })
+    },
+    saveMianliaoPrice() {
+      const formCheck =
+        this.$formCheck(this.mianliaoPrice, [
+          {
+            key: 'client_id',
+            errMsg: '请选择报价单位'
+          }
+        ]) ||
+        this.mianliaoPrice.info_data.some((item) => {
+          return this.$formCheck(item, [
+            {
+              key: 'material_id',
+              errMsg: '请选择面料名称'
+            },
+            {
+              key: 'material_color',
+              errMsg: '请输入面料颜色'
+            },
+            {
+              key: 'price',
+              errMsg: '请输入单价'
+            }
+          ])
+        })
+      if (!formCheck) {
+        yarnPrice.create(this.mianliaoPrice).then((res) => {
+          if (res.data.status) {
+            this.$message.success('添加成功')
+            this.getMianliaoPrice()
+            this.showPopup = false
+            this.mianliaoPriceUpdate = false
+            this.resetMianliaoPrice()
+          }
+        })
+      }
+    },
+    deleteMianliaoPrice(id: number) {
+      this.$confirm('是否删除该报价信息?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          // yarnPrice
+          //   .delete({
+          //     id: id
+          //   })
+          //   .then((res) => {
+          //     if (res.data.status) {
+          //       this.$message({
+          //         type: 'success',
+          //         message: '删除成功!'
+          //       })
+          //       this.getMianliaoPrice()
+          //     }
+          //   })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    resetMianliaoPrice() {
+      this.mianliaoPrice = {
+        id: '',
+        client_id: '',
+        material_type: 2,
+        info_data: [
+          {
+            id: '',
+            material_id: '',
+            material_arr: [],
+            material_color: '',
+            attribute: '',
+            price: '',
+            desc: ''
+          }
+        ]
+      }
     }
   },
   computed: {
     // 纱线原料单位——纱线报价用
     yarnClientList() {
       return this.$store.state.api.clientType.arr.filter((item: { label: string }) => item.label === '纱线原料单位')
+    },
+    // 纱线原料单位——纱线报价用
+    mianliaoClientList() {
+      return this.$store.state.api.clientType.arr.filter((item: { label: string }) => item.label === '面料原料单位')
     },
     // 包装辅料——报价单里用
     packMaterialStore(): PackMaterialInfo[] {
@@ -4906,6 +5210,9 @@ export default Vue.extend({
     },
     yarnPriceArr(): YarnPrice[] {
       return this.yarnPriceList.slice((this.yarnPricePage - 1) * 5, this.yarnPricePage * 5)
+    },
+    mianliaoPriceArr(): YarnPrice[] {
+      return this.mianliaoPriceList.slice((this.mianliaoPricePage - 1) * 5, this.mianliaoPricePage * 5)
     }
   },
   watch: {

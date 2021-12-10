@@ -258,29 +258,29 @@ export default Vue.extend({
         this.$message.error('请至少选择一个标签')
         return
       }
-      const formCheck =
-        this.$formCheck(this.clientInfo, [
-          {
-            key: 'name',
-            errMsg: '请填写公司名称'
-          },
-          {
-            key: 'client_type_id',
-            errMsg: '请选择公司类型'
-          }
-        ]) ||
-        this.clientInfo.contacts_data.some((item) => {
-          return this.$formCheck(item, [
-            {
-              key: 'name',
-              errMsg: '请输入联系人姓名'
-            },
-            {
-              key: 'phone',
-              errMsg: '请输入联系人电话'
-            }
-          ])
-        })
+      const formCheck = this.$formCheck(this.clientInfo, [
+        {
+          key: 'name',
+          errMsg: '请填写公司名称'
+        },
+        {
+          key: 'client_type_id',
+          errMsg: '请选择公司类型'
+        }
+      ])
+      //  ||
+      // this.clientInfo.contacts_data.some((item) => {
+      //   return this.$formCheck(item, [
+      //     {
+      //       key: 'name',
+      //       errMsg: '请输入联系人姓名'
+      //     },
+      //     {
+      //       key: 'phone',
+      //       errMsg: '请输入联系人电话'
+      //     }
+      //   ])
+      // })
       if (!formCheck) {
         client.create(this.clientInfo).then((res) => {
           if (res.data.status) {

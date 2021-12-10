@@ -231,12 +231,57 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverOrange"
-            @click="goUpdate">修改</div>
-          <div class="btn backHoverBlue"
-            @click="$router.push('/materialPlan/create?id=' + $route.query.id)">继续添加</div>
-          <div class="btn backHoverGreen"
-            @click="$openUrl('/materialPlan/print?id=' + materialPlanIndex)">打印</div>
+          <div class="buttonList"
+            style="margin-left:12px">
+            <div class="btn backHoverBlue">
+              <i class="el-icon-s-grid"></i>
+              <span class="text">计划单操作</span>
+            </div>
+            <div class="otherInfoCtn">
+              <div class="otherInfo">
+                <div class="btn backHoverOrange"
+                  @click="goUpdate">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">修改计划</span>
+                </div>
+                <div class="btn backHoverBlue"
+                  @click="$router.push('/materialPlan/create?id=' + $route.query.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">继续添加</span>
+                </div>
+                <div class="btn backHoverBlue"
+                  @click="$openUrl('/materialPlan/print?id=' + materialPlanIndex)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-dayindingdan"></use>
+                  </svg>
+                  <span class="text">打印计划</span>
+                </div>
+                <div class="btn backHoverRed"
+                  @click="deleteMaterialPlan">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-shanchudingdan"></use>
+                  </svg>
+                  <span class="text">删除计划</span>
+                </div>
+                <div class="btn backHoverOrange"
+                  @click="$router.push('/materialPlan/create?id='+ orderInfo.id +'&copyId='+materialPlanIndex)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-caozuojilu"></use>
+                  </svg>
+                  <span class="text">复制报价</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -359,6 +404,36 @@ export default Vue.extend({
             this.materialPlanIndex = this.materialPlanInfo[0].id?.toString()
           }
           this.loading = false
+        })
+    },
+    deleteMaterialPlan() {
+      this.$confirm('是否删除改物料计划单?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          materialPlan
+            .delete({
+              id: Number(this.$route.query.id)
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.$router.push(
+                  '/materialPlan/list?page=1&keyword=&client_id=&user_id=&status=0&date=&&order_type=null'
+                )
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
         })
     }
   },

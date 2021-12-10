@@ -567,10 +567,10 @@ export default Vue.extend({
             this.sampleOrderInfo.tree_data = (quotedPriceInfo.tree_data as string)
               .split(',')
               .map((item) => Number(item))
-            this.sampleOrderInfo.contacts_id = quotedPriceInfo.contacts_id
             this.sampleOrderInfo.group_id = quotedPriceInfo.group_id
             this.sampleOrderInfo.rel_quote_id = Number(this.$route.query.quotedPriceId)
             this.getContacts(this.sampleOrderInfo.tree_data)
+            this.sampleOrderInfo.contacts_id = quotedPriceInfo.contacts_id
             this.quotedPriceProductList = quotedPriceInfo.product_data
             this.loading = false
           })

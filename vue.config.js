@@ -4,7 +4,7 @@ if (process.env.NODE_ENV === 'development') {
   TARGET = 'https://platform_beta.zwyknit.com'
 } else {
   // 正式环境
-  TARGET = 'https://api.zwyknit.com'
+  TARGET = 'https://platform_beta.zwyknit.com'
   // 测试环境
   // TARGET = 'https://beta.zwyknit.com'
 }

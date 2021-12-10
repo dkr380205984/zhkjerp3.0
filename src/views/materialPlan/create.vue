@@ -46,7 +46,7 @@
             v-for="item in materialPlanInfo.production_plan_data"
             :key="item.product_id">
             <div class="tcol">
-              <span>{{item.product_code}}</span>
+              <span>{{item.product_code || item.system_code}}</span>
               <span>{{item.category}}/{{item.secondary_category}}</span>
             </div>
             <div class="tcol noPad"
@@ -56,7 +56,7 @@
                 :key="indexChild">
                 <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
                 <div class="tcol">{{itemChild.order_number}}</div>
-                <div class="tcol">已计划数量</div>
+                <div class="tcol">{{itemChild.plan_number}}</div>
                 <div class="tcol">
                   <div class="elCtn">
                     <el-input placeholder="百分比"
@@ -121,6 +121,11 @@
           <div class="description">
             <span>如果您的产品不同尺码、色组将<span class="green">由多个单位生产</span>，我们建议您按<span class="green">尺码颜色</span>进行填写。</span>
           </div>
+          <div class="clearfix">
+            <div class="btn backHoverOrange fr"
+              style="margin-bottom:24px"
+              @click="copyMaterialPlanData">统一输入行</div>
+          </div>
           <div class="flattenTableCtn noPad">
             <div class="thead">
               <div class="trow">
@@ -129,7 +134,6 @@
                 <div class="tcol">产品部位</div>
                 <div class="tcol">下单数量</div>
                 <div class="tcol">计划生产数量</div>
-                <div class="tcol">原料损耗</div>
               </div>
             </div>
             <div class="tbody">
@@ -145,7 +149,6 @@
                   <div class="tcol">{{item.part_name}}</div>
                   <div class="tcol">{{item.order_number}}</div>
                   <div class="tcol">{{item.number}}</div>
-                  <div class="tcol">原料损耗</div>
                 </div>
                 <div class="childrenCtn">
                   <div class="trow">
@@ -252,6 +255,11 @@
           <div class="description">
             <span>如果您的产品不同尺码、色组将<span class="green">由一个单位生产</span>，我们建议您按<span class="green">相同产品</span>进行填写。</span>
           </div>
+          <div class="clearfix">
+            <div class="btn backHoverOrange fr"
+              style="margin-bottom:24px"
+              @click="copyMaterialPlanData">统一输入行</div>
+          </div>
           <div class="flattenTableCtn noPad">
             <div class="thead">
               <div class="trow">
@@ -259,7 +267,6 @@
                 <div class="tcol">产品部位</div>
                 <div class="tcol">下单数量</div>
                 <div class="tcol">计划生产数量</div>
-                <div class="tcol">原料损耗</div>
               </div>
             </div>
             <div class="tbody">
@@ -274,7 +281,6 @@
                   <div class="tcol">{{item.part_name}}</div>
                   <div class="tcol">{{item.order_number}}</div>
                   <div class="tcol">{{item.number}}</div>
-                  <div class="tcol">原料损耗</div>
                 </div>
                 <div class="childrenCtn">
                   <div class="trow">
@@ -412,7 +418,7 @@
               <div class="elCtn">
                 <el-input v-model="item.final_number"
                   placeholder="最终数量">
-                  <template slot="append">kg</template>
+                  <template slot="append">{{item.unit}}</template>
                 </el-input>
               </div>
             </div>
@@ -713,6 +719,7 @@ export default Vue.extend({
               category: itemPro.category,
               secondary_category: itemPro.secondary_category,
               process_data: itemPro.process_data,
+              plan_number: itemChild.plan_number,
               part_data: [
                 {
                   name: '大身',
@@ -739,6 +746,7 @@ export default Vue.extend({
             { name: 'size_name' },
             { name: 'color_name' },
             { name: 'order_number', type: 'add' },
+            { name: 'plan_number', type: 'add' },
             { name: 'price' },
             { name: 'material_info' }
           ]
@@ -763,7 +771,6 @@ export default Vue.extend({
         })
         return cloneItem
       })
-      console.log(this.materialPlanInfo.production_plan_data)
     },
     // 计算所需物料--按尺码颜色
     getMaterialPlanDetail(partId?: number, number?: number, proInfo?: any) {
@@ -1051,6 +1058,35 @@ export default Vue.extend({
           }
         })
       }
+    },
+    // 复制逻辑
+    getUpdateData() {
+      this.materialPlanInfo.material_plan_data.forEach((item) => {
+        item.info_data.forEach((itemChild) => {
+          // @ts-ignore
+          itemChild.tree_data = itemChild.tree_data && itemChild.tree_data.split(',').map((item) => Number(item))
+        })
+      })
+      this.materialPlanInfo.production_plan_data.forEach((item) => {
+        item.part_data = [
+          {
+            name: '大身',
+            id: 0, // 大身给零，接口写的
+            unit: '件'
+          }
+        ].concat(
+          // @ts-ignore
+          item.product_detail!.part_data
+        )
+      })
+    },
+    // 统一输入行逻辑
+    copyMaterialPlanData() {
+      this.materialPlanInfo.material_plan_data.forEach((item, index) => {
+        if (index > 0) {
+          item.info_data = this.$clone(this.materialPlanInfo.material_plan_data[0].info_data)
+        }
+      })
     }
   },
   mounted() {
@@ -1110,6 +1146,20 @@ export default Vue.extend({
           this.loading = false
         }
       })
+    // 复制逻辑
+    if (this.$route.query.copyId) {
+      materialPlan
+        .detail({
+          id: this.$route.query.copyId
+        })
+        .then((res) => {
+          this.materialPlanInfo = res.data.data
+          this.materialPlanInfo.type = this.materialPlanInfo.type.toString()
+          this.getUpdateData()
+          this.confirmFlag = 2
+          this.loading = false
+        })
+    }
   }
 })
 </script>

@@ -59,19 +59,25 @@
         <div class="filterCtn">
           <div class="elCtn">
             <el-cascader :options="storeArr"
+              clearable
               placeholder="请选择仓库"
               v-model="store_arr"
               @change="(ev)=>{store_id=ev[0];secondary_id=ev[1];changeRouter()}"></el-cascader>
           </div>
           <div class="elCtn">
-            <el-input v-model="material_name"
-              placeholder="搜索物料名称"
-              @keydown.enter.native="changeRouter"></el-input>
+            <el-autocomplete class="inline-input"
+              v-model="material_name"
+              :fetch-suggestions="searchMaterial"
+              placeholder="物料名称"
+              @keydown.enter.native="changeRouter"
+              @change="changeRouter"></el-autocomplete>
           </div>
           <div class="elCtn">
-            <el-input placeholder="物料颜色"
+            <el-autocomplete class="inline-input"
               v-model="material_color"
-              @keydown.enter.native="changeRouter"></el-input>
+              :fetch-suggestions="searchColor"
+              placeholder="物料颜色"
+              @keydown.enter.native="changeRouter"></el-autocomplete>
           </div>
           <div class="elCtn">
             <el-select clearable
@@ -131,9 +137,11 @@
           </div>
           <div class="row"
             v-for="item in list"
-            :key="item.id">
+            :key="item.id"
+            @click="item.check=!item.check;$forceUpdate()">
             <div class="col">
-              <el-checkbox v-model="item.check">{{item.store}}/{{item.secondary_store}}</el-checkbox>
+              <el-checkbox v-model="item.check"
+                disabled>{{item.store}}/{{item.secondary_store}}</el-checkbox>
             </div>
             <div class="col">{{item.material_name}}</div>
             <div class="col">{{item.material_color}}</div>
@@ -144,11 +152,11 @@
             <div class="col">
               <div class="oprCtn">
                 <span class="opr hoverGreen"
-                  @click="goStock(9,item)">入库</span>
+                  @click.stop="goStock(9,item)">入库</span>
                 <span class="opr hoverOrange"
-                  @click="goStock(10,item)">出库</span>
+                  @click.stop="goStock(10,item)">出库</span>
                 <span class="opr hoverBlue"
-                  @click="goStock(7,item)">移库</span>
+                  @click.stop="goStock(7,item)">移库</span>
               </div>
             </div>
           </div>
@@ -207,7 +215,8 @@
               <div class="col">
                 <div class="opr hoverBlue"
                   @click="store_type!==5?$router.push('/store/materialDetail?id='+item.id+'&store_type='+store_type):$router.push('/store/productDetail?id='+item.id +'&store_type='+store_type)">详情</div>
-                <div class="opr hoverRed">删除</div>
+                <div class="opr hoverRed"
+                  @click="deleteStore(item.id)">删除</div>
               </div>
             </div>
           </div>
@@ -538,7 +547,8 @@
             <div class="label"
               style="line-height:32px">操作类型：</div>
             <div class="elCtn info">
-              <el-select v-model="materialLogExcel.action_type">
+              <el-select v-model="materialLogExcel.action_type"
+                clearable>
                 <el-option v-for="item in stockTypeList"
                   :key="item.name"
                   :value="item.value"
@@ -836,6 +846,23 @@ export default Vue.extend({
       // 调用 callback 返回建议列表的数据
       cb(results)
     },
+    // 原料名称搜索
+    searchMaterial(str: string, cb: any) {
+      store
+        .getMatName({
+          material_name: str,
+          material_type: Number(this.$route.query.store_type)
+        })
+        .then((res) => {
+          const data = res.data.data.map((item: any) => {
+            return {
+              value: item
+            }
+          })
+          let results = str ? data.filter(this.createFilter(str)) : data.slice(0, 10)
+          cb(results)
+        })
+    },
     createFilter(queryString: string) {
       return (restaurant: any) => {
         return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
@@ -1029,7 +1056,11 @@ export default Vue.extend({
           }
         ]
       }
+      this.materialStockInfo.forEach((item) => {
+        item.action_type = type
+      })
       this.materialStockFlag = true
+      console.log(this.materialStockInfo)
     },
     // 把material_id转成tree_data
     findMaterial(id: number): any[] {
@@ -1064,7 +1095,6 @@ export default Vue.extend({
     getCmpData() {
       this.materialStockInfo.forEach((itemStock) => {
         itemStock.material_type = Number(this.$route.query.store_type)
-        itemStock.store_id = Number(this.$route.query.id)
         itemStock.info_data.forEach((item) => {
           item.batch_code = item.batch_code || '无'
           item.vat_code = item.vat_code || '无'
@@ -1109,6 +1139,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.$message.success('添加成功')
             this.materialStockFlag = false
+            this.resetStockInfo()
             this.getList()
           }
         })
@@ -1127,7 +1158,7 @@ export default Vue.extend({
       })
     },
     exportMaterialTotalExcel() {
-      this.materialLogExcel.material_type = this.$route.query.store_type
+      this.materialTotalExcel.material_type = this.$route.query.store_type
       exportExcel.materialTotal(this.materialTotalExcel).then((res) => {
         if (res.data.status) {
           this.$message.success('导出成功')
@@ -1135,6 +1166,64 @@ export default Vue.extend({
           this.$openUrl(res.data.data)
         }
       })
+    },
+    deleteStore(id: number) {
+      this.$confirm('是否删除该仓库?已有库存的仓库无法删除', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          store.delete({ id }).then((res) => {
+            if (res.data.status) {
+              this.$message.success('删除成功')
+              this.getStoreList()
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    resetStockInfo() {
+      this.materialStockInfo = [
+        {
+          material_type: 1,
+          action_type: 9,
+          rel_doc_type: '',
+          rel_doc_id: '',
+          rel_doc_code: '',
+          complete_time: this.$getDate(new Date()),
+          client_id: '',
+          store_arr: [],
+          tree_data: [],
+          desc: '',
+          store_id: '',
+          secondary_store_id: '',
+          move_store_id: '',
+          move_secondary_store_id: '',
+          move_store_arr: [],
+          info_data: [
+            {
+              tree_data: [],
+              material_id: '',
+              material_color: '',
+              color_code: '',
+              batch_code: '',
+              vat_code: '',
+              attribute: '',
+              number: '',
+              item: '', // 件数
+              unit: 'kg',
+              rel_doc_info_id: '' // 采购单调取单加工单子项id
+            }
+          ],
+          selectList: []
+        }
+      ]
     }
   },
   computed: {
@@ -1229,5 +1318,31 @@ export default Vue.extend({
       }
     }
   }
+  // checkbox优化
+  .el-checkbox__input.is-disabled + span.el-checkbox__label {
+    color: rgba(0, 0, 0, 0.65);
+    cursor: pointer;
+  }
+  .el-checkbox__input.is-disabled .el-checkbox__inner {
+    background: #fff;
+  }
+  .el-checkbox__input.is-disabled .el-checkbox__inner {
+    cursor: pointer;
+  }
+  .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
+    background-color: #409eff;
+    border-color: #409eff;
+  }
+  input:disabled {
+    cursor: pointer;
+    color: -internal-light-dark(black, white);
+  }
+  .el-checkbox__input.is-checked + .el-checkbox__label {
+    color: #409eff !important;
+  }
+  .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner::after {
+    border-color: #fff;
+  }
+  // checkbox瞎几把改造到此为止
 }
 </style>

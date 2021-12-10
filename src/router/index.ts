@@ -73,6 +73,10 @@ const routes: Array<RouteConfig> = [
       name: '添加客户/单位',
       component: () => import('../views/client/create.vue')
     }, {
+      path: '/client/update',
+      name: '修改客户/单位',
+      component: () => import('../views/client/update.vue')
+    }, {
       path: '/sampleOrder/list',
       name: '样单列表',
       component: () => import('../views/sampleOrder/list.vue')
@@ -206,11 +210,11 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/inspection/list.vue')
     }, {
       path: '/materialPlanOrder/list',
-      name: '物料预订购列表',
+      name: '原料预订购列表',
       component: () => import('../views/materialPlanOrder/list.vue')
     }, {
       path: '/materialPlanOrder/detail',
-      name: '物料预订购详情',
+      name: '原料预订购详情',
       component: () => import('../views/materialPlanOrder/detail.vue')
     }]
   }

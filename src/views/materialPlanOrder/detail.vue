@@ -4,7 +4,7 @@
     v-loading="loading">
     <div class="module">
       <div class="titleCtn flexBetween">
-        <div class="title">物料预订购详情</div>
+        <div class="title">原料预订购详情</div>
         <div class="btn backHoverBlue"
           @click="materialPlanOrderFlag=true">添加物料订购</div>
       </div>
@@ -33,7 +33,8 @@
         <div class="tableCtn noPad">
           <div class="thead">
             <div class="trow">
-              <div class="tcol">单据编号</div>
+              <div class="tcol"
+                style="flex:1.6">单据编号</div>
               <div class="tcol noPad"
                 style="flex:5">
                 <div class="trow">
@@ -54,7 +55,8 @@
             <div class="trow"
               v-for="item in materialOrderList"
               :key="item.id">
-              <div class="tcol">{{item.code}}</div>
+              <div class="tcol"
+                style="flex:1.6">{{item.code}}</div>
               <div class="tcol noPad"
                 style="flex:5">
                 <div class="trow"
@@ -79,6 +81,8 @@
                   @click="deleteMaterialOrder(item.id)">删除</div>
               </div>
             </div>
+            <div class="trow noData"
+              v-if="materialOrderList.length===0">暂无数据</div>
           </div>
         </div>
         <!-- <div class="pageCtn">
@@ -138,6 +142,8 @@
                 @click="deleteMaterialStock(item.id)">删除</div>
             </div>
           </div>
+          <div class="trow noData"
+            v-if="materialStockList.length===0">暂无数据</div>
         </div>
       </div>
     </div>
@@ -178,6 +184,8 @@
               <div class="tcol">{{item.number}}kg</div>
               <div class="tcol">{{item.total_price}}元</div>
             </div>
+            <div class="trow noData"
+              v-if="materialStsList.length===0">暂无数据</div>
           </div>
         </div>
       </div>
@@ -273,10 +281,6 @@
                         :value="item.value"></el-option>
                     </el-select>
                     <template>
-                      <el-input class="once"
-                        placeholder="白胚"
-                        disabled
-                        v-if="itemMat.material_color==='白胚'"></el-input>
                       <el-autocomplete class="once"
                         v-model="itemMat.material_color"
                         :fetch-suggestions="searchColor"
@@ -811,7 +815,8 @@ export default Vue.extend({
             material_color: itemChild.material_color,
             material_id: itemChild.material_id,
             attribute: itemChild.attribute,
-            number: itemChild.number
+            number: itemChild.number,
+            unit: itemChild.unit || 'kg'
           })
         })
       })
@@ -825,6 +830,7 @@ export default Vue.extend({
           attribute: item.attribute,
           number: item.number,
           item: '', // 件数
+          unit: item.unit,
           rel_doc_info_id: item.value // 采购单调取单加工单子项id
         }
       })
@@ -900,6 +906,7 @@ export default Vue.extend({
         .then(() => {
           this.resetAll()
           this.materialPlanOrderFlag = false
+          this.step = 1
         })
         .catch(() => {
           this.$message({

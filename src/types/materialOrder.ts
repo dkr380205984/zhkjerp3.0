@@ -3,7 +3,7 @@ export interface MaterialOrderInfo {
   code?: string
   order_id?: number | string
   plan_id?: number | string // 计划单id
-  reserve_id?: number | string // 物料预订购单id
+  reserve_id?: number | string // 原料预订购单id
   client_id_arr?: string[] // 前端下拉框选择公司用
   client_id: number | string
   client_name?: string

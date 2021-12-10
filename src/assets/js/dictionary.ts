@@ -97,6 +97,16 @@ const productionType = [{
   value: 3
 }]
 
+const limitArr = [{
+  name: '每页5条',
+  value: 5
+}, {
+  name: '每页10条',
+  value: 10
+}, {
+  name: '每页15条',
+  value: 15
+}]
 // handsontable 汉化包
 import Handsontable from 'handsontable'
 const C: any = Handsontable.languages.dictionaryKeys
@@ -200,5 +210,6 @@ export {
   yarnProcessArr,
   stockType,
   storeType,
-  productionType
+  productionType,
+  limitArr
 }

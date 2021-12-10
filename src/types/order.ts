@@ -44,6 +44,7 @@ export interface OrderBatch {
       size_name?: string
       number: string | number
       price: string | number
+      plan_number?: string | number
     }>
   }>
 }
@@ -97,6 +98,7 @@ export interface OrderProductFlatten {
   category?: string
   secondary_category?: string
   part_data?: PartInfo[]
+  plan_number?: string | number
   process_data?: Array<{
     process_id: number
     process_name: string

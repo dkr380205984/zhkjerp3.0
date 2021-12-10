@@ -63,7 +63,7 @@ interface YarnPrice {
 }
 const yarnPrice = {
   create: (params: YarnPrice) => http.post(`${baseUrl}/yarn/price/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrl}/yarn/price/lists`, params),
+  list: (params?: { material_type: 1 | 2 }) => http.get(`${baseUrl}/yarn/price/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/yarn/price/delete`, params, 'application/json'),
 }
 // 单据审核
@@ -207,11 +207,13 @@ const yarnType = {
 // 纱线
 import { YarnInfo } from '@/types/yarnSetting'
 interface YarnListParams extends ListParams {
-  type: 1 | 2 | 3
+  type?: 1 | 2 | 3
+  material_id?: number
 }
 const yarn = {
   create: (params: YarnInfo) => http.post(`${baseUrl}/yarn/save`, params, 'application/json'),
   list: (params?: YarnListParams) => http.get(`${baseUrl}/yarn/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/yarn/detail`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/yarn/delete`, params, 'application/json')
 }
 
@@ -274,6 +276,7 @@ const quotedPrice = {
   detail: (params: DetailParams) => http.get(`${baseUrl}/quote/detail`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/quote/delete`, params, 'application/json'),
   settingCreate: (params: any) => http.post(`${baseUrl}/quote/demo/save`, params, 'application/json'),
+  bindOrder: (params: { quote_id: string | number, order_id: string | number }) => http.post(`${baseUrl}/order/bind/quote`, params, 'application/json'),
   settingList: (params?: ListParams) => http.get(`${baseUrl}/quote/demo/lists`, params),
   settingDelete: (params: DeleteParams) => http.post(`${baseUrl}/quote/demo/delete`, params, 'application/json'),
   deleteProMat: (params: DeleteParams) => http.post(`${baseUrl}/quote/product/material/delete`, params, 'application/json'), //删除报价单产品原料项
@@ -298,6 +301,7 @@ const store = {
   create: (params: StoreInfo) => http.post(`${baseUrl}/store/save`, params, 'application/json'),
   list: (params?: any) => http.get(`${baseUrl}/store/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/store/detail`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/store/delete`, params, 'application/json'),
   searchMat: (params: {
     material_id?: string | number
     store_id?: string | number
@@ -312,7 +316,11 @@ const store = {
     limit?: string | number
     material_type?: number | string
     attribute?: string
-  }) => http.get(`${baseUrl}/store/total/lists`, params),
+  }) => http.get(`${baseUrl}/store/total/lists`, params), // 这个接口用于筛选仓库有多少物料
+  getMatName: (params: {
+    material_name: string
+    material_type: number
+  }) => http.get(`${baseUrl}/search/material/by/name`, params), // 这个接口用于筛选某一类型的物料列表
 }
 
 // 样品
@@ -373,6 +381,7 @@ const materialPlan = {
     type?: 1 | 2 // 1.原料计划单 2.辅料计划单
   }) => http.get(`${baseUrl}/material/plan/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/material/plan/detail`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/material/plan/delete`, params, 'application/json')
 }
 // 物料订购
 import { MaterialOrderInfo } from '@/types/materialOrder'
@@ -390,7 +399,7 @@ const materialOrder = {
   delete: (params: DetailParams) => http.post(`${baseUrl}/material/order/delete`, params, 'application/json')
 }
 
-// 物料预订购
+// 原料预订购
 import { MaterialPlanOrderClient } from '@/types/materialPlanOrder'
 const materialPlanOrder = {
   create: (params: MaterialPlanOrderClient) => http.post(`${baseUrl}/material/reserve/order/save`, params, 'application/json'),

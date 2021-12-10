@@ -23,6 +23,7 @@ export interface QuotedPriceInfo {
   profit_percentage: number | string //利润
   profit_price: string | number
   desc: string
+  rel_order?: any[]
   real_quote_price: string | number // 实际报价
   system_total_price: string | number //系统总价
   user_name?: string // 创建人
@@ -59,6 +60,7 @@ export interface QuotedPriceProduct {
     price: number | string
     unit: string
     total_price: number | string
+    price_info?: any[] // 前端用查询纱线报价
   }>
   assist_material_data: Array<{
     id?: number | string
@@ -77,15 +79,15 @@ export interface QuotedPriceProduct {
     total_price: number | string
   }>
   semi_product_data: Array<{
-    id?: number | string
-    process_id?: string | number
-    process_name: string
+    id?: string | number
+    process_id?: number[]
+    process_name?: string[]
     desc: string
     total_price: number | string
   }>
   production_data: Array<{
     id?: number | string
-    name: string
+    name: string[]
     desc: string
     total_price: number | string
   }>
