@@ -25,6 +25,10 @@ const routes: Array<RouteConfig> = [
     name: '菜单打印页',
     component: () => import('../views/commonPrint/printMenu.vue')
   }, {
+    path: '/craft/print',
+    name: '工艺单打印',
+    component: () => import('../views/craft/print.vue')
+  }, {
     path: '/materialPlan/print',
     name: '物料计划单打印',
     component: () => import('../views/materialPlan/print.vue')
@@ -124,6 +128,10 @@ const routes: Array<RouteConfig> = [
       path: '/craft/detail',
       name: '工艺单详情',
       component: () => import('../views/craft/detail.vue')
+    }, {
+      path: '/craft/list',
+      name: '工艺单列表',
+      component: () => import('../views/craft/list.vue')
     }, {
       path: '/ingredient/create',
       name: '创建配料单',

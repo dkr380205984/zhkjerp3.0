@@ -194,7 +194,7 @@
             <div class="label">纹版图循环：</div>
             <div class="info">
               <div style="position:relative"
-                v-for="(item,index) in craftInfo.draft_method.GLRepeat"
+                v-for="(item,index) in GLRepeatXuhao"
                 :key="index">
                 <div style="position:absolute;line-height:32px;color:rgba(0,0,0,0.65)">{{alphabet[index]}}：</div>
                 <div style="display:block;padding-left:32px;margin:3px 0"
@@ -600,6 +600,8 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
+          <div class="btn backHoverGreen"
+            @click="$openUrl('/craft/print?id='+$route.query.id)">打印</div>
           <div class="btn backHoverOrange"
             @click="$router.push('/craft/update?id='+$route.query.id)">修改</div>
         </div>
@@ -632,6 +634,7 @@ export default Vue.extend({
   },
   data(): {
     craftInfo: CraftInfo
+    GLRepeatXuhao: GLReapeat[][]
     warpCanvas: WarpCanvas[]
     weftCanvas: WeftCanvas[]
     warpCanvasBack: WarpCanvas[]
@@ -840,6 +843,7 @@ export default Vue.extend({
         material_info: []
       },
       canvasHeight: 0,
+      GLRepeatXuhao: [],
       GLXuhao: [], // 纹版图循环重算序号
       completeGL: [], // 纹版图根据纹版图循环补充完整
       warpCanvas: [],
@@ -1039,13 +1043,23 @@ export default Vue.extend({
       // 将纹版图循环补充完整
       // 例如1-2循环2次，5-6循环两次，补充3-4循环1次进去
       let GLRepeatComplete: GLReapeat[][] = []
-      if (this.craftInfo.draft_method.GLRepeat.length > 0 && !this.craftInfo.draft_method.GLRepeat[0][0].start) {
+      if (
+        this.craftInfo.draft_method.GLRepeat.length > 0 &&
+        this.craftInfo.draft_method.GLRepeat.every((item) => {
+          return item.every((itemChild) => !itemChild.start)
+        })
+      ) {
+        // 如果所有的文版循环选项都为空则处理一个简单的空数组
         this.craftInfo.draft_method.GLRepeat = []
       }
+      console.log(this.craftInfo.draft_method.GLRepeat)
       this.craftInfo.draft_method.GLRepeat.forEach((item, index) => {
         GLRepeatComplete.push([])
         let start = 1
         item.forEach((itemChild: GLReapeat) => {
+          if (!itemChild.start) {
+            return
+          }
           if (Number(itemChild.start) - start > 0) {
             GLRepeatComplete[index].push({
               start: start,
@@ -1089,12 +1103,12 @@ export default Vue.extend({
       })
 
       // 纹版图序号单独计算
-      let GLRepeatXuhao: GLReapeat[][] = []
+      // let GLRepeatXuhao: GLReapeat[][] = []
       GLRepeatComplete.forEach((item, index) => {
-        GLRepeatXuhao.push([])
+        this.GLRepeatXuhao.push([])
         let addNum: number = 0
         item.forEach((itemChild) => {
-          GLRepeatXuhao[index].push({
+          this.GLRepeatXuhao[index].push({
             start: addNum + Number(itemChild.start),
             end: addNum + Number(itemChild.end),
             repeat: itemChild.repeat
@@ -1103,7 +1117,7 @@ export default Vue.extend({
         })
       })
 
-      GLRepeatXuhao.forEach((item, index) => {
+      this.GLRepeatXuhao.forEach((item, index) => {
         this.GLXuhao.push([])
         item.forEach((itemChild) => {
           for (let i = Number(itemChild.start); i <= itemChild.end; i++) {
@@ -1111,7 +1125,6 @@ export default Vue.extend({
           }
         })
       })
-
       // 高度计算
       this.canvasHeight =
         (Number(this.craftInfo.weft_data.neichang) /
@@ -1283,7 +1296,6 @@ export default Vue.extend({
         })
       }
       // 纹版图
-      console.log(this.completeGL)
       weftGetGLNum.forEach((item: any) => {
         let GL = this.mergeArray(this.completeGL[this.alphabet.indexOf(item.GL)])
           .map((item) => item.value)

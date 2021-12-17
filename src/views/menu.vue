@@ -122,6 +122,12 @@ export default Vue.extend({
             id: 13,
             icon: 'icon-wuliaoyudinggou',
             url: '/materialPlanOrder/list?page=1&type=1'
+          },
+          {
+            name: '工艺单列表',
+            id: 14,
+            icon: 'icon-wuliaoyudinggou',
+            url: '/craft/list?page=1'
           }
           // {
           //   name: '普通打印模板',

@@ -121,11 +121,6 @@
           <div class="description">
             <span>如果您的产品不同尺码、色组将<span class="green">由多个单位生产</span>，我们建议您按<span class="green">尺码颜色</span>进行填写。</span>
           </div>
-          <div class="clearfix">
-            <div class="btn backHoverOrange fr"
-              style="margin-bottom:24px"
-              @click="copyMaterialPlanData">统一输入行</div>
-          </div>
           <div class="flattenTableCtn noPad">
             <div class="thead">
               <div class="trow">
@@ -134,6 +129,7 @@
                 <div class="tcol">产品部位</div>
                 <div class="tcol">下单数量</div>
                 <div class="tcol">计划生产数量</div>
+                <div class="tcol">操作</div>
               </div>
             </div>
             <div class="tbody">
@@ -149,6 +145,10 @@
                   <div class="tcol">{{item.part_name}}</div>
                   <div class="tcol">{{item.order_number}}</div>
                   <div class="tcol">{{item.number}}</div>
+                  <div class="tcol oprCtn">
+                    <div class="opr hoverBlue"
+                      @click="copyMaterialPlanData(index)">统一输入行</div>
+                  </div>
                 </div>
                 <div class="childrenCtn">
                   <div class="trow">
@@ -255,11 +255,6 @@
           <div class="description">
             <span>如果您的产品不同尺码、色组将<span class="green">由一个单位生产</span>，我们建议您按<span class="green">相同产品</span>进行填写。</span>
           </div>
-          <div class="clearfix">
-            <div class="btn backHoverOrange fr"
-              style="margin-bottom:24px"
-              @click="copyMaterialPlanData">统一输入行</div>
-          </div>
           <div class="flattenTableCtn noPad">
             <div class="thead">
               <div class="trow">
@@ -267,6 +262,7 @@
                 <div class="tcol">产品部位</div>
                 <div class="tcol">下单数量</div>
                 <div class="tcol">计划生产数量</div>
+                <div class="tcol">操作</div>
               </div>
             </div>
             <div class="tbody">
@@ -281,6 +277,10 @@
                   <div class="tcol">{{item.part_name}}</div>
                   <div class="tcol">{{item.order_number}}</div>
                   <div class="tcol">{{item.number}}</div>
+                  <div class="tcol oprCtn">
+                    <div class="opr hoverBlue"
+                      @click="copyMaterialPlanData(index)">统一输入行</div>
+                  </div>
                 </div>
                 <div class="childrenCtn">
                   <div class="trow">
@@ -1082,6 +1082,7 @@ export default Vue.extend({
     },
     // 统一输入行逻辑
     copyMaterialPlanData() {
+      console.log(this.materialPlanInfo.material_plan_data)
       this.materialPlanInfo.material_plan_data.forEach((item, index) => {
         if (index > 0) {
           item.info_data = this.$clone(this.materialPlanInfo.material_plan_data[0].info_data)

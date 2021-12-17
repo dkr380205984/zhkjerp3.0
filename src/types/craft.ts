@@ -20,6 +20,7 @@ export interface GLReapeat {
 interface ColourInfo {
   color_id: string | number
   weave_number: string | number
+  color_name?: string
   color_scheme: Array<{
     color: string
     name: string
@@ -50,7 +51,24 @@ export interface CraftMaterialInfo {
   number: number
 }
 
+export interface DraftMethods {
+  PM: PMInfo[] // 穿综法
+  PMFlag: 'normal' | 'complex' // 是否高级穿综法
+  GL: Array<Array<Array<GLInfo>>> // 纹版图
+  GLFlag: 'normal' | 'complex' // 是否高级纹版图
+  GLRepeat: Array<Array<GLReapeat>> // 纹版图循环
+  PMDesc: string // 穿综备注
+  GLDesc: string // 纹版备注
+}
 
+export interface MergeDataInfo {
+  row: number
+  col: number
+  rowspan?: number
+  colspan: number
+  romoved?: boolean
+  oldCol?: number // 工艺单打印页面夹断处理
+}
 export interface CraftInfo {
   id?: null | string | number
   product_id: string | number
@@ -71,15 +89,7 @@ export interface CraftInfo {
     chuankou: string | number
   }>
   // 穿综纹版
-  draft_method: {
-    PM: PMInfo[] // 穿综法
-    PMFlag: 'normal' | 'complex' // 是否高级穿综法
-    GL: Array<Array<Array<GLInfo>>> // 纹版图
-    GLFlag: 'normal' | 'complex' // 是否高级纹版图
-    GLRepeat: Array<Array<GLReapeat>> // 纹版图循环
-    PMDesc: string // 穿综备注
-    GLDesc: string // 纹版备注
-  }
+  draft_method: DraftMethods
   // 经向
   warp_data: {
     color_data: ColourInfo[]
@@ -87,8 +97,8 @@ export interface CraftInfo {
     assist_material: MaterialInfo[] // 辅助原料
     warp_rank: Array<Array<any>>
     warp_rank_back: Array<Array<any>>
-    merge_data: string
-    merge_data_back: string
+    merge_data: string | MergeDataInfo[]
+    merge_data_back: string | MergeDataInfo[]
     weft: string | number // 总头纹
     width: string // 整经门幅
     side_id: string | number // 边型
@@ -107,8 +117,8 @@ export interface CraftInfo {
     assist_material: MaterialInfo[] // 辅助原料
     weft_rank: Array<Array<any>>
     weft_rank_back: Array<Array<any>>
-    merge_data: string
-    merge_data_back: string
+    merge_data: string | MergeDataInfo[]
+    merge_data_back: string | MergeDataInfo[]
     organization_id: string | number // 组织法
     peifu: string | number // 胚服
     weimi: string // 纬密

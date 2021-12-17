@@ -1188,23 +1188,28 @@
     <div class="bottomFixBar">
       <div class="main"
         style="display: flex;justify-content: space-between;align-items:center">
-        <div class="elCtn">
-          <el-select v-model="searchCraftKey"
-            filterable
-            remote
-            reserve-keyword
-            placeholder="输入编号导入工艺单"
-            :remote-method="searchCraft"
-            :loading="searchLoading"
-            @change="getCraftDetail">
-            <el-option v-for="item in searchList"
-              :key="item.id"
-              :value="item.id">
-              <span style="float:left"
-                class="blue">{{item.craft_code}}</span>
-              <span style="float:right;color:#8492a6;font-size:12px">{{item.title}}</span>
-            </el-option>
-          </el-select>
+        <div>
+          <div class="elCtn">
+            <el-select v-model="searchCraftKey"
+              filterable
+              remote
+              reserve-keyword
+              placeholder="输入编号导入工艺单"
+              :remote-method="searchCraft"
+              :loading="searchLoading"
+              @change="getCraftDetail">
+              <el-option v-for="item in searchList"
+                :key="item.id"
+                :value="item.id">
+                <span style="float:left"
+                  class="blue">{{item.craft_code}}</span>
+                <span style="float:right;color:#8492a6;font-size:12px">{{item.title}}</span>
+              </el-option>
+            </el-select>
+          </div>
+          <span class="green"
+            style="margin-left:24px"
+            v-show="searchList.length>0">检测到有关联产品的工艺信息，点击输入框快速导入</span>
         </div>
         <div class="btnCtn">
           <div class="borderBtn"
@@ -1555,8 +1560,8 @@ export default Vue.extend({
       craft
         .list({
           page: 1,
-          limit: 10
-          // keyword: key
+          limit: 10,
+          keyword: key
         })
         .then((res) => {
           if (res.data.status) {
@@ -1565,15 +1570,86 @@ export default Vue.extend({
           this.searchLoading = false
         })
     },
-    getCraftDetail() {
+    getCraftDetail(ev: number) {
       this.loading = true
-      if (this.searchCraftKey) {
+      if (ev) {
         craft
           .detail({
-            id: this.searchCraftKey
+            id: ev
           })
           .then((res) => {
             if (res.data.status) {
+              this.searchCraftKey = res.data.data.craft_code
+              this.craftInfo = res.data.data
+
+              // 清空id防止变成修改
+              this.craftInfo.id = ''
+
+              this.tableData.warp.mergeCells = this.craftInfo.warp_data.merge_data
+              this.tableData.weft.mergeCells = this.craftInfo.weft_data.merge_data
+              this.tableData.warpBack.mergeCells = this.craftInfo.warp_data.merge_data_back
+              this.tableData.weftBack.mergeCells = this.craftInfo.weft_data.merge_data_back
+
+              this.tableData.warp.number = this.craftInfo.warp_data.warp_rank[0].length
+              this.tableData.warpBack.number = this.craftInfo.warp_data.warp_rank_back[0].length
+              this.tableData.weft.number = this.craftInfo.weft_data.weft_rank[0].length
+              this.tableData.weftBack.number = this.craftInfo.weft_data.weft_rank_back[0].length
+
+              this.tableData.warp.data = this.craftInfo.warp_data.warp_rank.map((item: any, index) => {
+                return index !== 1
+                  ? item
+                  : item.map((itemJia: any) => {
+                      return this.filterIndex(itemJia)
+                    })
+              })
+              this.tableData.warpBack.data = this.craftInfo.warp_data.warp_rank_back.map((item: any, index) => {
+                return index !== 1
+                  ? item
+                  : item.map((itemJia: any) => {
+                      return this.filterIndex(itemJia)
+                    })
+              })
+              this.tableData.weft.data = this.craftInfo.weft_data.weft_rank.map((item: any, index) => {
+                return index !== 1
+                  ? item
+                  : item.map((itemJia: any) => {
+                      return this.filterIndex(itemJia)
+                    })
+              })
+              this.tableData.weftBack.data = this.craftInfo.weft_data.weft_rank_back.map((item: any, index) => {
+                return index !== 1
+                  ? item
+                  : item.map((itemJia: any) => {
+                      return this.filterIndex(itemJia)
+                    })
+              })
+
+              this.tableHot.warp = new Handsontable((this.$refs as any).warp, this.tableData.warp)
+              this.tableHot.warpBack = new Handsontable((this.$refs as any).warpBack, this.tableData.warpBack)
+              this.tableHot.weft = new Handsontable((this.$refs as any).weft, this.tableData.weft)
+              this.tableHot.weftBack = new Handsontable((this.$refs as any).weftBack, this.tableData.weftBack)
+
+              // 清空克重数据，因为提交的时候需要重新计算
+              this.craftInfo.warp_data.color_data.forEach((item) => {
+                item.color_id = ''
+                item.color_scheme.forEach((itemColor) => {
+                  itemColor.number = 0
+                  itemColor.material_weight!.forEach((itemWeight) => {
+                    itemWeight.weight = 0
+                  })
+                })
+              })
+              this.craftInfo.weft_data.color_data.forEach((item) => {
+                item.color_id = ''
+                item.color_scheme.forEach((itemColor) => {
+                  itemColor.number = 0
+                  itemColor.material_weight!.forEach((itemWeight) => {
+                    itemWeight.weight = 0
+                  })
+                })
+              })
+              // @ts-ignore
+              this.craftInfo.process_data = this.craftInfo.process_data.map((item) => item.process_id)
             }
             this.loading = false
           })
@@ -2934,6 +3010,18 @@ export default Vue.extend({
       })
       .then((res) => {
         this.colourList = res.data.data.color_data
+      })
+    // 关联工艺单查询
+    craft
+      .list({
+        page: 1,
+        limit: 10,
+        product_id: Number(this.$route.query.id)
+      })
+      .then((res) => {
+        if (res.data.status) {
+          this.searchList = res.data.data.items
+        }
       })
   }
 })

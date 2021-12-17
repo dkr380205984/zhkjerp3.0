@@ -1,0 +1,298 @@
+@import '../printEasy.less';
+@import '../printMenu.less';
+@import '../popup.less';
+#craftPrint{
+  .pageOne{
+    min-height: 1350px;
+  }
+  .horizontal{
+    writing-mode: vertical-lr;
+    align-items: center;
+  }
+  .w50{
+    max-width: 50px;
+    box-sizing: border-box;
+  }
+  .maxW10{
+    max-width: 10%!important;
+    box-sizing: border-box;
+    border-right: 1px solid #010101;
+    padding: 0;
+  }
+  .h32Ctn{
+    height: 32px;
+    min-height: auto;
+    justify-content: space-between;
+    .tcol{
+      height: 100%;
+      min-height: auto;
+      text-align: center;
+      padding: 0;
+    }
+  }
+  .h32{
+    height: 32px;
+    min-height: auto;
+    justify-content: start;
+    .tcol{
+      max-width: 6.25%;
+      box-sizing: border-box;
+      height: 100%;
+      min-height: auto;
+      border-right: 1px solid #010101;
+      text-align: center;
+      font-size: 14px;
+      padding: 0;
+    }
+  }
+  .tcol{
+    position: relative;
+    box-sizing: border-box;
+    .rightTop{
+      position: absolute;
+      left: 2px;
+      top: 2px;
+    }
+    &.lastNoBorder{
+      &:nth-last-child(1){
+        border-right: 0;
+      }
+    }
+  }
+  .unit{
+    position: absolute;
+    font-size: 12px;
+    color: rgba(0,0,0,.25);
+    top: 50%;
+    right: 0;
+    transform: translate(-8px,-50%);
+  }
+  .flexRow{
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+  }
+  .label{
+    min-width: 120px;
+    max-width: 120px;
+    box-sizing: border-box;
+  }
+  .setting_sign_style{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    background-color: #FFF;
+    border: 1px solid #DDD;
+    box-sizing: border-box;
+    box-shadow: 4px 4px 4px #333;
+    display: flex;
+    flex-direction: column;
+    padding: 4px 0;
+    .setting_item{
+      width: 100%;
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      box-sizing: border-box;
+      cursor: pointer;
+      &:hover{
+        background-color: #CCC;
+      }
+      &.checked::after{
+        content: '当前模式';
+        color: rgba(0,0,0,0.4);
+      }
+    }
+  }
+  .GLCtn{
+    color: @font65;
+    overflow:hidden;
+    margin-top: 16px;
+    padding-left: 2.5em;
+    .deltaCtn {
+      min-width: 120px;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      color: #666;
+      margin-bottom: 12px;
+      margin-right: 12px;
+      float: left;
+      position: relative;
+      &.moreMargin{
+        margin-right: 62px;
+      }
+      .leftCtn {
+        height: 125px;
+        margin-right: 20px;
+        position: relative;
+        &::after {
+          content: "";
+          position: absolute;
+          width: 20px;
+          height: 1px;
+          background: #ccc;
+          left: 15px;
+          top: 38px;
+          transform: rotate(-31deg);
+        }
+        &::before {
+          content: "";
+          position: absolute;
+          width: 20px;
+          height: 1px;
+          background: #ccc;
+          left: 15px;
+          bottom: 38px;
+          transform: rotate(31deg);
+        }
+        span {
+          display: inline-block;
+          width: 22px;
+          height: 22px;
+          border: 1px solid #ddd;
+          border-radius: 50%;
+          line-height: 22px;
+          text-align: center;
+          margin: 50px 0;
+          &.⚫{
+            background: #111;
+            color:#fff;
+            border-color:#111;
+          }
+          &.⬛{
+            background: #111;
+            border-radius: 0;
+            color:#fff;
+            border-color:#111;
+          }
+          &.🔷{
+            background: #111;
+            border-radius: 0;
+            color:#111;
+            transform:rotate(45deg);
+            border-color:#111;
+            &::after{
+              content: attr(content);
+              color: #fff;
+              position: absolute;
+              left: 0;
+              top: 0;
+              line-height: 22px;
+              bottom: 0;
+              right: 0;
+              transform:rotate(-45deg);
+            }
+          }
+        }
+      }
+      .rightCtn {
+        height: 90px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        .hehe{
+          display: flex;
+          align-items: center;
+          min-height: 30px;
+          line-height: 30px;
+          .normal{
+            width: 28px;
+            height: 28px;
+            border:1px solid #ccc;
+            font-size: 12px;
+            margin-left: 6px;
+            border-radius: 2px;
+            text-align: center;
+            line-height: 28px;
+            color: #ccc;
+            cursor: pointer;
+            &.⚫{
+              background: #111;
+              color:#fff;
+              border-color:#111;
+              border-radius: 50%;
+            }
+            &.⬛{
+              background: #111;
+              color:#fff;
+              border-color:#111;
+            }
+            &.🔷{
+              background: #111;
+              border-radius: 0;
+              color:#111;
+              transform:rotate(45deg);
+              height: 24px;
+              width: 24px;
+              margin-left: 8px;
+              border-color:#111;
+              &::after{
+                content: attr(content);
+                color: #fff;
+                position: absolute;
+                left: 0;
+                top: 0;
+                line-height: 22px;
+                bottom: 0;
+                right: 0;
+                transform:rotate(-45deg);
+              }
+            }
+          }
+        }
+      }
+      .repeatLeft{
+        position: absolute;
+        top: 6px;
+        bottom: 6px;
+        left:-6px;
+        margin: auto;
+        width: 6px;
+        border-left: 2px solid #000;
+        border-top: 2px solid #000;
+        border-bottom: 2px solid #000;
+      }
+      .repeatRight{
+        position: absolute;
+        top: 6px;
+        bottom: 6px;
+        right:-6px;
+        margin: auto;
+        width: 6px;
+        border-right: 2px solid #000;
+        border-top: 2px solid #000;
+        border-bottom: 2px solid #000;
+        .repeatTime{
+          position: absolute;
+          top:50%;
+          transform: translate(0,-50%);
+          left: 10px;
+          white-space: nowrap;
+        }
+      }
+    }
+    .position{
+      float: left;
+      text-align: center;
+      margin-top: 45px;
+    }
+    .mark{
+      width: 2em;
+      height: 90px;
+      line-height: 90px;
+      margin: auto;
+      float: left;
+      color: @font65;
+      position: absolute;
+      left: 0.5em;
+      text-align: center;
+    }
+  }
+  .alignCenter{
+    text-align: center;
+  }
+}

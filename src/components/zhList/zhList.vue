@@ -17,7 +17,7 @@
           :key="itemKey.index"
           v-show="itemKey.ifShow">
           <!-- 普通元素 -->
-          <template v-if="!itemKey.from && !item.ifImage">
+          <template v-if="!itemKey.from && !itemKey.ifImage">
             <!-- 草稿标记 -->
             <span class="circle"
               v-if="itemKey.ifCaogao"

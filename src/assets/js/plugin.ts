@@ -418,6 +418,15 @@ const toFixedAuto = (num: number, precision: number = 2): number => {
   }
 }
 
+// 一维数组切割成二维数组,接受一个一维数组和切割长度
+const sliceToArray = (arr: any[], num: number) => {
+  let newArr = []
+  for (let i = 0; i < plugin.clone(arr).length; i = i + num) {
+    newArr.push(plugin.clone(arr).slice(i, i + num))
+  }
+  return newArr
+}
+
 // 数组查重，有重复return true
 const ifRepeatArray = (arr: string[]): boolean => {
   return Array.from(new Set(arr)).length !== arr.length
@@ -446,5 +455,6 @@ export default {
     Vue.prototype.$downLoadFile = plugin.downLoadFile
     Vue.prototype.$ifRepeatArray = ifRepeatArray
     Vue.prototype.$findId = plugin.findId
+    Vue.prototype.$sliceToArray = sliceToArray
   }
 }

@@ -283,7 +283,7 @@
                       style="font-size:12px;">
                       <el-tooltip class="item"
                         effect="dark"
-                        :content="itemYarn.price_info.length>0?itemYarn.price_info.map((item)=>item.client_name+':'+item.price+'元').join(';'):'无报价信息'"
+                        :content="(itemYarn.price_info&&itemYarn.price_info.length>0)?itemYarn.price_info.map((item)=>item.client_name+':'+item.price+'元').join(';'):'无报价信息'"
                         placement="top">
                         <span class="hoverBlue">查看报价</span>
                       </el-tooltip>
@@ -1558,6 +1558,12 @@ export default Vue.extend({
       }
     },
     getUpdateInfo() {
+      this.quotedPriceInfo.product_data.forEach((item) => {
+        item.material_data.forEach((item) => {
+          // @ts-ignore
+          this.getYarnPrice(item.tree_data.split(','), item)
+        })
+      })
       this.quotedPriceInfo.tree_data = this.quotedPriceInfo.tree_data
         ? (this.quotedPriceInfo.tree_data as string).split(',').map((item) => Number(item))
         : []
@@ -1631,7 +1637,7 @@ export default Vue.extend({
         this.searchQuotedPriceList = res.data.data
       }
     })
-    // 复制报价单
+    // 复制报价单 / 关联报价单
     if (this.$route.query.id) {
       quotedPrice
         .detail({
@@ -1640,6 +1646,8 @@ export default Vue.extend({
         .then((res) => {
           if (res.data.status) {
             this.quotedPriceInfo = res.data.data
+            this.quotedPriceInfo.id = ''
+            this.quotedPriceInfo.pid = this.$route.query.again ? Number(this.$route.query.id) : ''
             this.getUpdateInfo()
             this.loading = false
           }

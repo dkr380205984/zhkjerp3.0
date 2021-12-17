@@ -224,6 +224,7 @@ export default Vue.extend({
       this.page = Number(query.page)
       this.search_client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.material_type = Number(query.material_type) || ''
+      this.material_name = query.material_name || ''
       this.year = query.year || ''
     },
     changeRouter() {
@@ -235,7 +236,9 @@ export default Vue.extend({
           '&client_id=' +
           this.search_client_id +
           '&year=' +
-          this.year
+          this.year +
+          '&material_name=' +
+          this.material_name
       )
     },
     reset() {
@@ -266,6 +269,7 @@ export default Vue.extend({
           client_id: this.search_client_id.length > 0 ? this.search_client_id[2] : '',
           page: this.page,
           limit: 5,
+          material_name: this.material_name,
           year: this.year
         })
         .then((res) => {

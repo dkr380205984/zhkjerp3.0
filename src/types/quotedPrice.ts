@@ -1,6 +1,7 @@
 // 报价单数据结构
 export interface QuotedPriceInfo {
   code?: string
+  pid?: number | string // 关联报价单时候用
   id?: null | number | string
   is_check?: 0 | 1 | 2
   is_draft: 1 | 2 // 2草稿
@@ -29,6 +30,8 @@ export interface QuotedPriceInfo {
   user_name?: string // 创建人
   created_at?: string // 创建日期
   product_data: QuotedPriceProduct[]
+  belong_quote?: any[] // 关联报价
+  rel_quote?: any[] // 关联报价
 }
 
 // 报价单产品信息
