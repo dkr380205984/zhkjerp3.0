@@ -2,7 +2,102 @@
   <div id="craftDetail"
     class="bodyContainer"
     v-loading="loading">
-    <!-- 产品信息组件 -->
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">基本信息</div>
+      </div>
+      <div class="detailCtn">
+        <div class="row">
+          <div class="col">
+            <div class="label">{{productType}}编号：</div>
+            <div class="text">{{productInfo.product_code||productInfo.system_code}}</div>
+          </div>
+          <div class="col">
+            <div class="label">{{productType}}名称：</div>
+            <div class="text">{{productInfo.title||'无'}}</div>
+          </div>
+          <div class="col">
+            <div class="label">{{productType}}品类：</div>
+            <div class="text">{{productInfo.category_name}}/{{productInfo.secondary_category_name}}</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col flex3">
+            <div class="label">{{productType}}配色：</div>
+            <div class="text">
+              <span v-for="(item,index) in productInfo.color_data"
+                :key="item.id"
+                style="margin-right:12px">{{index+1}}.{{item.name}}</span>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">{{productType}}描述：</div>
+            <div class="text">{{productInfo.desc}}</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col flex3">
+            <div class="label">大身成分：</div>
+            <div class="text">
+              <span style="margin-right:12px"
+                v-for="item in productInfo.component_data"
+                :key="item.id">{{item.name}}{{item.number}}%</span>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">尺码信息：</div>
+            <div class="text">
+              <span v-for="(item,index) in productInfo.size_data"
+                :key="item.id"
+                style="margin-right:12px"> {{index+1}}.&nbsp;{{item.name}}&nbsp;{{item.weight}}g&nbsp;{{item.size_info}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row"
+          v-for="(item) in productInfo.part_data"
+          :key="item.id">
+          <div class="col">
+            <div class="label">配件名称：</div>
+            <div class="text">
+              <span style="margin-right:12px">{{item.name}}(单位:{{item.unit}})</span>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">配件成分：</div>
+            <div class="text">
+              <span style="margin-right:12px"
+                v-for="itemChild in item.part_component_data"
+                :key="itemChild.id">{{itemChild.name}}{{itemChild.number}}%</span>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">尺码信息：</div>
+            <div class="text">
+              <span v-for="(itemChild,indexChild) in item.part_size_data"
+                :key="itemChild.id"
+                style="margin-right:12px"> {{indexChild+1}}.&nbsp;{{itemChild.name}}&nbsp;{{itemChild.weight}}g&nbsp;{{itemChild.size_info}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col flex3">
+            <div class="label">{{productType}}图片：</div>
+            <div class="imgCtn">
+              <img v-for="(item,index) in productInfo.image_data"
+                :key="index"
+                class="img"
+                :src="item" />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="label">备注信息：</div>
+            <div class="text">{{productInfo.desc}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="module">
       <div class="titleCtn">
         <div class="title">原料经向</div>
@@ -155,8 +250,8 @@
               :key="index1">
               <div class="mark">{{alphabet[index1]}}：
                 <span class="hoverBlue"
-                  style="cursor:pointer"
-                  @click="showGL(item1)">预览</span>
+                  style="cursor:pointer;line-height: 32px;position: absolute;left: 0;top: calc(50% + 27px);"
+                  @click="showGL(index1)">预览</span>
               </div>
               <div v-for="(item2,index2) in item1"
                 :key="index2"
@@ -600,10 +695,77 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverGreen"
-            @click="$openUrl('/craft/print?id='+$route.query.id)">打印</div>
-          <div class="btn backHoverOrange"
-            @click="$router.push('/craft/update?id='+$route.query.id)">修改</div>
+          <div class="buttonList"
+            style="margin-left:12px">
+            <div class="btn backHoverBlue">
+              <i class="el-icon-s-grid"></i>
+              <span class="text">工艺操作</span>
+            </div>
+            <div class="otherInfoCtn">
+              <div class="otherInfo">
+                <div class="btn backHoverOrange"
+                  @click="$router.push('/craft/update?id='+$route.query.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">修改工艺</span>
+                </div>
+                <div class="btn backHoverRed"
+                  @click="deleteCraft">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-shanchudingdan"></use>
+                  </svg>
+                  <span class="text">删除工艺</span>
+                </div>
+                <div class="btn backHoverGreen"
+                  @click="$openUrl('/craft/print?id='+$route.query.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-dayindingdan"></use>
+                  </svg>
+                  <span class="text">打印工艺</span>
+                </div>
+                <div class="btn backHoverBlue"
+                  @click="$router.push('/materialPlan/create?id=' + craftInfo.order_id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-wuliaojihua1"></use>
+                  </svg>
+                  <span class="text">物料计划</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="popup"
+      v-show="showGLFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <div class="text">预览纹版图</div>
+          <i class="el-icon-close"
+            @click="showGLFlag=false"></i>
+        </div>
+        <div class="contentCtn">
+          <div class="GLCtns">
+            <div class="rowLine"
+              v-for="(item,index) in GLYulan"
+              :key="index">
+              <div class="col"
+                v-for="(itemChild,indexChild) in item"
+                :key="indexChild"
+                :class="{'black':itemChild===1,'white':itemChild===0}"></div>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="showGLFlag = false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="showGLFlag = false">确认</span>
         </div>
       </div>
     </div>
@@ -621,7 +783,8 @@ interface WeftCanvas {
 }
 import Vue from 'vue'
 import { craft } from '@/assets/js/api'
-import { CraftInfo, GLReapeat } from '@/types/craft'
+import { CraftInfo, GLReapeat, GLInfo } from '@/types/craft'
+import { ProductInfo } from '@/types/product'
 import { languages } from '@/assets/js/dictionary'
 import { HotTable } from '@handsontable/vue'
 import Handsontable from 'handsontable'
@@ -633,7 +796,9 @@ export default Vue.extend({
     HotTable
   },
   data(): {
+    completeGL: GLInfo[][][]
     craftInfo: CraftInfo
+    productInfo: ProductInfo
     GLRepeatXuhao: GLReapeat[][]
     warpCanvas: WarpCanvas[]
     weftCanvas: WeftCanvas[]
@@ -784,8 +949,8 @@ export default Vue.extend({
           merge_data_back: '',
           weft: '', // 总头纹
           width: '', // 整经门幅
-          side_id: '', // 边型
-          machine_id: '', // 机型
+          side: '', // 边型
+          machine: '', // 机型
           reed: '', // 筘号
           reed_method: '', // 穿筘法
           reed_width: '', // 筘幅
@@ -829,7 +994,7 @@ export default Vue.extend({
           weft_rank_back: [],
           merge_data: '',
           merge_data_back: '',
-          organization_id: '', // 组织法
+          organization: '', // 组织法
           peifu: '', // 胚服
           weimi: '', // 纬密
           shangchiya: '', // 上齿牙
@@ -842,6 +1007,52 @@ export default Vue.extend({
         },
         material_info: []
       },
+      productInfo: {
+        product_type: 1,
+        name: '',
+        product_code: '',
+        style_code: '', // 客户款号
+        unit: '',
+        category: '',
+        type: '',
+        image_data: [],
+        desc: '',
+        style_data: [], // 款式
+        component_data: [
+          {
+            component_id: '',
+            number: '' // 成分信息
+          }
+        ],
+        size_data: [
+          {
+            size_id: '',
+            size_info: '',
+            weight: ''
+          }
+        ], // 尺码组
+        color_data: [], // 配色组
+        // 配件信息
+        part_data: [
+          {
+            name: '',
+            unit: '',
+            part_size_data: [
+              {
+                size_id: '',
+                size_info: '',
+                weight: ''
+              }
+            ],
+            part_component_data: [
+              {
+                component_id: '',
+                number: '' // 成分信息
+              }
+            ]
+          }
+        ]
+      },
       canvasHeight: 0,
       GLRepeatXuhao: [],
       GLXuhao: [], // 纹版图循环重算序号
@@ -852,10 +1063,80 @@ export default Vue.extend({
       weftCanvasBack: [],
       showMagnifier: false, // 放大镜
       showImageLoading: false,
+      showGLFlag: false,
+      GLYulan: [],
       selectColour: -1 // 选择配色
     }
   },
   methods: {
+    deleteCraft() {
+      this.$confirm('是否删除工艺单?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          craft
+            .delete({
+              id: Number(this.$route.query.id)
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                // @ts-ignore
+                this.getList()
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    // 预览纹版图
+    showGL(GLIndex: number) {
+      let GLArr: any[][] = []
+      console.log(this.completeGL)
+      this.completeGL[GLIndex].forEach((item) => {
+        item.forEach((itemChild) => {
+          if (itemChild.value) {
+            GLArr.push(itemChild.value.split(','))
+          }
+        })
+      })
+      let max = 0
+      GLArr.forEach((item) => {
+        item.forEach((itemChild) => {
+          if (Number(itemChild) > max) {
+            max = Number(itemChild)
+          }
+        })
+      })
+      GLArr = GLArr.map((item) => {
+        return new Array(max - 2).fill(0).map((itemChild, indexChild) => {
+          if (item.find((itemFind) => Number(itemFind) === indexChild + 3)) {
+            itemChild = 1
+          }
+          return itemChild
+        })
+      })
+      // 把黑白格在经向和纬向上重复四遍
+      GLArr = GLArr.map((item) => {
+        return item.concat(item).concat(item)
+      })
+      this.GLYulan = []
+      for (let i = 0; i < 3; i++) {
+        GLArr.forEach((item) => {
+          this.GLYulan.push(item)
+        })
+      }
+      this.showGLFlag = true
+    },
     // 匹配主/夹名称
     filterIndex(index: number): string {
       if (index === 0) {
@@ -1543,10 +1824,13 @@ export default Vue.extend({
               )
             }, 0)) *
           1000
-        )
+        ).toFixed(2)
       } catch (error) {
         return 0
       }
+    },
+    productType(): string {
+      return this.productInfo.product_type === 1 ? '产品' : '样品'
     }
   },
   created() {
@@ -1610,10 +1894,7 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.craftInfo = res.data.data
-          // if (this.craftInfo.is_draft === 1) {
-          //   this.$message.warning('该工艺单还未填写完整，请完善后继续查看')
-          //   this.$router.push('/craft/update?id=' + this.$route.query.id)
-          // }
+          this.productInfo = res.data.data.product_info
           this.tableData.warp.data = this.craftInfo.warp_data.warp_rank.map((item: any, index) => {
             return index !== 1
               ? item

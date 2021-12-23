@@ -40,8 +40,8 @@
                           <div class="text">{{sampleInfo.style_code}}</div>
                         </div>
                         <div class="col">
-                          <div class="label">样品款式（没给）：</div>
-                          <!-- <div class="text">{{sampleInfo.style_data.map((item)=>item.name).join(',')}}</div> -->
+                          <div class="label">样品款式：</div>
+                          <div class="text">{{sampleInfo.style_data.map((item)=>item.name).join(',')}}</div>
                         </div>
                       </div>
                       <div class="row">

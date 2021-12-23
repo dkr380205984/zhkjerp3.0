@@ -193,6 +193,20 @@
           :key="index">
           <div class="titleCtn">
             <div class="title">报价信息
+              <el-popover placement="top"
+                title="物料说明"
+                width="300"
+                trigger="manual"
+                :content="desc"
+                v-model="showContent">
+                <el-image style="width: 100px; height: 100px"
+                  :src="quotedImage"
+                  :fit="[quotedImage]"></el-image>
+                <span slot="reference"
+                  class="hoverBlue"
+                  style="font-size:12px;margin-left:8px;cursor:pointer"
+                  @click="showContent.material_data?showContent.material_data=false:lookPriceDetail(item.type,'material_data')">{{showContent.material_data?'关闭说明':'查看说明'}}</span>
+              </el-popover>
               <div class="fr elCtn"
                 style="margin-right:24px">
                 <el-select v-model="searchQuotedPrice"
@@ -231,7 +245,7 @@
                     content="添加新原料"
                     placement="top">
                     <i class="el-icon-upload hoverOrange fr"
-                      style="line-height:38px;font-size:18px;cursor:pointer"
+                      style="line-height:38px;font-size:18px;cursor:pointer;"
                       @click="$openUrl('/setting/?pName=物料设置&cName=纱线原料')"></i>
                   </el-tooltip>
                 </div>
@@ -1037,7 +1051,10 @@ export default Vue.extend({
       weaveList: [{ value: '针织织造' }, { value: '梭织织造' }, { value: '制版费' }],
       finishedList: [{ value: '车标' }, { value: '包装' }, { value: '人工' }, { value: '检验' }, { value: '水洗' }],
       searchQuotedPrice: '',
-      searchQuotedPriceList: []
+      searchQuotedPriceList: [],
+      desc: '',
+      showContent: false,
+      quotedImage: ''
     }
   },
   computed: {
@@ -1586,6 +1603,26 @@ export default Vue.extend({
             : []
         })
       })
+    },
+    // 查看报价说明
+    lookPriceDetail(type: Number[]) {
+      if (type.length > 0) {
+        quotedPrice
+          .descDetail({
+            category_id: type[0]
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.quotedImage = res.data.data.type
+              this.desc = res.data.data.desc
+              this.showContent = true
+            } else {
+              this.$message.warning('暂无说明')
+            }
+          })
+      } else {
+        this.$message.error('请先选择产品品类')
+      }
     }
   },
   mounted() {

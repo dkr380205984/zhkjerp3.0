@@ -221,7 +221,6 @@
                 <div class="label"
                   v-if="index===0">
                   <span class="text">大身成分</span>
-                  <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
                   <el-select placeholder="请选择成分"
@@ -262,14 +261,10 @@
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-select v-model="item.size_id"
-                    placeholder="请选择大身尺码"
-                    no-data-text="请先选择品类">
-                    <el-option v-for="item in sizeList"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"></el-option>
-                  </el-select>
+                  <el-autocomplete class="inline-input"
+                    v-model="item.size_name"
+                    :fetch-suggestions="searchSize"
+                    placeholder="请选择大身尺码"></el-autocomplete>
                 </div>
               </div>
               <div class="col">
@@ -354,7 +349,6 @@
                   <div class="label"
                     v-if="indexComponent===0">
                     <span class="text">配件成分</span>
-                    <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
                     <el-select placeholder="请选择成分"
@@ -395,15 +389,11 @@
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select v-model="productInfo.size_data[index-1].size_id"
+                    <el-autocomplete class="inline-input"
+                      v-model="productInfo.size_data[index-1].size_name"
+                      :fetch-suggestions="searchSize"
                       placeholder="同大身尺码"
-                      no-data-text="请先选择品类"
-                      disabled>
-                      <el-option v-for="item in sizeList"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"></el-option>
-                    </el-select>
+                      disabled></el-autocomplete>
                   </div>
                 </div>
                 <div class="col">
@@ -533,6 +523,7 @@ export default Vue.extend({
         ],
         size_data: [
           {
+            size_name: '',
             size_id: '',
             size_info: '',
             weight: ''
@@ -546,6 +537,7 @@ export default Vue.extend({
             unit: '',
             part_size_data: [
               {
+                size_name: '',
                 size_id: '',
                 size_info: '',
                 weight: ''
@@ -622,6 +614,11 @@ export default Vue.extend({
       // 调用 callback 返回建议列表的数据
       cb(results)
     },
+    searchSize(str: string, cb: any) {
+      let results = str ? this.sizeList.filter(this.createFilter(str)) : this.sizeList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
     createFilter(queryString: string) {
       return (restaurant: any) => {
         return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
@@ -664,14 +661,18 @@ export default Vue.extend({
     },
     getUnit(ev: number[]) {
       const finded = this.productTypeList.find((item) => item.value === ev[0])
-      this.sizeList = finded!.size
+      this.sizeList = finded!.size?.map((item) => {
+        return {
+          value: item.name
+        }
+      })
       this.productInfo.unit = finded!.unit!
     },
     // 尺码的逻辑包含大身+配件尺码的添加&删除
     addSize() {
-      this.$addItem(this.productInfo.size_data, { size_id: '', weight: '', size_info: '' })
+      this.$addItem(this.productInfo.size_data, { size_name: '', size_id: '', weight: '', size_info: '' })
       this.productInfo.part_data.forEach((item) => {
-        this.$addItem(item.part_size_data!, { size_id: '', weight: '', size_info: '' })
+        this.$addItem(item.part_size_data!, { size_name: '', size_id: '', weight: '', size_info: '' })
       })
     },
     deleteSize(index: number) {
@@ -686,6 +687,7 @@ export default Vue.extend({
         unit: '',
         part_size_data: this.productInfo.size_data.map(() => {
           return {
+            size_name: '',
             size_id: '',
             size_info: '',
             weight: ''
@@ -747,6 +749,7 @@ export default Vue.extend({
       if (this.have_part) {
         this.productInfo.part_data.forEach((item) => {
           item.part_size_data!.forEach((itemChild, indexChild) => {
+            itemChild.size_name = this.productInfo.size_data[indexChild].size_name
             itemChild.size_id = this.productInfo.size_data[indexChild].size_id
           })
         })
@@ -782,22 +785,22 @@ export default Vue.extend({
             regNormal: 'checkArr'
           }
         ]) ||
-        this.productInfo.component_data.some((item) => {
-          return this.$formCheck(item, [
-            {
-              key: 'component_id',
-              errMsg: '请选择大身成分'
-            },
-            {
-              key: 'number',
-              errMsg: '请输入成分比例'
-            }
-          ])
-        }) ||
+        // this.productInfo.component_data.some((item) => {
+        //   return this.$formCheck(item, [
+        //     {
+        //       key: 'component_id',
+        //       errMsg: '请选择大身成分'
+        //     },
+        //     {
+        //       key: 'number',
+        //       errMsg: '请输入成分比例'
+        //     }
+        //   ])
+        // }) ||
         this.productInfo.size_data.some((item) => {
           return this.$formCheck(item, [
             {
-              key: 'size_id',
+              key: 'size_name',
               errMsg: '请选择大身尺码'
             },
             {
@@ -824,18 +827,18 @@ export default Vue.extend({
                 errMsg: '请输入配件单位'
               }
             ]) ||
-            item.part_component_data!.some((itemChild) => {
-              return this.$formCheck(itemChild, [
-                {
-                  key: 'component_id',
-                  errMsg: '请选择配件成分'
-                },
-                {
-                  key: 'number',
-                  errMsg: '请输入配件比例'
-                }
-              ])
-            }) ||
+            // item.part_component_data!.some((itemChild) => {
+            //   return this.$formCheck(itemChild, [
+            //     {
+            //       key: 'component_id',
+            //       errMsg: '请选择配件成分'
+            //     },
+            //     {
+            //       key: 'number',
+            //       errMsg: '请输入配件比例'
+            //     }
+            //   ])
+            // }) ||
             item.part_size_data!.some((itemChild) => {
               return this.$formCheck(itemChild, [
                 {
@@ -891,6 +894,7 @@ export default Vue.extend({
         ],
         size_data: [
           {
+            size_name: '',
             size_id: '',
             size_info: '',
             weight: ''
@@ -904,6 +908,7 @@ export default Vue.extend({
             unit: '',
             part_size_data: [
               {
+                size_name: '',
                 size_id: '',
                 size_info: '',
                 weight: ''
@@ -949,6 +954,7 @@ export default Vue.extend({
         }),
         size_data: data.size_data.map((item: any) => {
           return {
+            size_name: item.name,
             size_id: item.id,
             size_info: item.size_info,
             weight: item.weight
@@ -962,6 +968,7 @@ export default Vue.extend({
             unit: item.unit,
             part_size_data: item.part_size_data.map((item: any) => {
               return {
+                size_name: item.name,
                 size_id: item.id,
                 size_info: item.size_info,
                 weight: item.weight

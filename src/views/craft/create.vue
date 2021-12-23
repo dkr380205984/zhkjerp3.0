@@ -2,6 +2,175 @@
   <div id="craftCreate"
     class="bodyContainer"
     v-loading="loading">
+    <div class="module"
+      v-if="!$route.query.id">
+      <div class="titleCtn">
+        <div class="title">选择产品/样品</div>
+      </div>
+      <div class="listCtn">
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-input v-model="keyword"
+              placeholder="搜索产品/样品编号"
+              @keydown.enter.native="getProList"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-select v-model="product_type"
+              placeholder="请选择类型"
+              @change="getProList">
+              <el-option label="全部"
+                :value="0"></el-option>
+              <el-option label="产品"
+                :value="1"></el-option>
+              <el-option label="样品"
+                :value="2"></el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="list">
+          <div class="row title">
+            <div class="col">编号</div>
+            <div class="col">品类</div>
+            <div class="col">名称</div>
+            <div class="col">图片</div>
+            <div class="col">创建人</div>
+            <div class="col">创建日期</div>
+            <div class="col">操作</div>
+          </div>
+          <div class="row"
+            v-for="item in list"
+            :key="item.id">
+            <div class="col">
+              <span class="circle"
+                :class="{'backHoverBlue':item.product_type===1,'backHoverOrange':item.product_type===2}">{{item.product_type===1?'产':'样'}}</span>
+              {{item.product_code || item.system_code}}
+            </div>
+            <div class="col">{{item.category}}/{{item.secondary_category}}</div>
+            <div class="col">{{item.name}}</div>
+            <div class="col">
+              <div class="imageCtn">
+                <el-image :src="item.image_data.length>0?item.image_data[0]:require('@/assets/image/common/noPic.png')"
+                  :preview-src-list="item.image_data">
+                </el-image>
+              </div>
+            </div>
+            <div class="col">{{item.user_name}}</div>
+            <div class="col">{{item.created_at.slice(0,10)}}</div>
+            <div class="col oprCtn">
+              <div class="opr"
+                :class="{'hoverBlue':!item.check,'hoverOrange':item.check}"
+                @click="initProInfo(item.id);item.check=true">{{item.check?'已选择':'添加工艺'}}</div>
+            </div>
+          </div>
+          <div class="pageCtn">
+            <el-pagination background
+              :page-size="10"
+              layout="prev, pager, next"
+              :total="total"
+              :current-page.sync="page"
+              @current-change="getProList">
+            </el-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module"
+      v-if="$route.query.id">
+      <div class="titleCtn">
+        <div class="title">基本信息</div>
+      </div>
+      <div class="detailCtn">
+        <div class="row">
+          <div class="col">
+            <div class="label">{{productType}}编号：</div>
+            <div class="text">{{productInfo.product_code||productInfo.system_code}}</div>
+          </div>
+          <div class="col">
+            <div class="label">{{productType}}名称：</div>
+            <div class="text">{{productInfo.title||'无'}}</div>
+          </div>
+          <div class="col">
+            <div class="label">{{productType}}品类：</div>
+            <div class="text">{{productInfo.category}}/{{productInfo.secondary_category}}</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col flex3">
+            <div class="label">{{productType}}配色：</div>
+            <div class="text">
+              <span v-for="(item,index) in productInfo.color_data"
+                :key="item.id"
+                style="margin-right:12px">{{index+1}}.{{item.name}}</span>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">{{productType}}描述：</div>
+            <div class="text">{{productInfo.desc}}</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col flex3">
+            <div class="label">大身成分：</div>
+            <div class="text">
+              <span style="margin-right:12px"
+                v-for="item in productInfo.component_data"
+                :key="item.id">{{item.name}}{{item.number}}%</span>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">尺码信息：</div>
+            <div class="text">
+              <span v-for="(item,index) in productInfo.size_data"
+                :key="item.id"
+                style="margin-right:12px"> {{index+1}}.&nbsp;{{item.name}}&nbsp;{{item.weight}}g&nbsp;{{item.size_info}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row"
+          v-for="(item) in productInfo.part_data"
+          :key="item.id">
+          <div class="col">
+            <div class="label">配件名称：</div>
+            <div class="text">
+              <span style="margin-right:12px">{{item.name}}(单位:{{item.unit}})</span>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">配件成分：</div>
+            <div class="text">
+              <span style="margin-right:12px"
+                v-for="itemChild in item.part_component_data"
+                :key="itemChild.id">{{itemChild.name}}{{itemChild.number}}%</span>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">尺码信息：</div>
+            <div class="text">
+              <span v-for="(itemChild,indexChild) in item.part_size_data"
+                :key="itemChild.id"
+                style="margin-right:12px"> {{indexChild+1}}.&nbsp;{{itemChild.name}}&nbsp;{{itemChild.weight}}g&nbsp;{{itemChild.size_info}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col flex3">
+            <div class="label">{{productType}}图片：</div>
+            <div class="imgCtn">
+              <img v-for="(item,index) in productInfo.image_data"
+                :key="index"
+                class="img"
+                :src="item" />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="label">备注信息：</div>
+            <div class="text">{{productInfo.desc}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="module">
       <div class="titleCtn">
         <div class="title">原料经向</div>
@@ -199,11 +368,11 @@
             </div>
             <div style="color:rgba(0,0,0,0.45)">
               <br />
-              提示1：可使用乘以[ ]遍，最后一遍去掉[ ]列到[ ]列。例如：乘以[4]遍，最后一遍去掉[17]列到[19]列；
+              提示1：可使用乘以[ ]遍，最后一遍去掉[ ]列到[ ]列。例如：乘以[4]遍，最后一遍去掉[17]列到[19]列；注意只需要在括号中输入需要乘的遍数，和需要去掉的列数即可。删除括号符号会导致功能失效。
               <br />
               提示2：可以在第二个合并项里使用"顺一遍倒一遍"功能，注意不要在第一个合并项里使用！不要修改"顺一遍倒一遍"文字信息
               <br />
-              提示3：停撬功能可以点击纹版图序号单独标记
+              提示3：停撬功能，可以点击表格序号，选择需要标记的符号。
             </div>
           </div>
         </div>
@@ -266,14 +435,10 @@
               <span class="text">边型</span>
             </div>
             <div class="info elCtn">
-              <el-select v-model="craftInfo.warp_data.side_id"
-                placeholder="请选择边型">
-                <el-option v-for="item in sideList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
+              <el-autocomplete class="inline-input"
+                v-model="craftInfo.warp_data.side"
+                :fetch-suggestions="searchSide"
+                placeholder="请选择边型"></el-autocomplete>
             </div>
           </div>
         </div>
@@ -294,14 +459,10 @@
               <span class="text">机型</span>
             </div>
             <div class="info elCtn">
-              <el-select v-model="craftInfo.warp_data.machine_id"
-                placeholder="请选择机型">
-                <el-option v-for="item in machineList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
+              <el-autocomplete class="inline-input"
+                v-model="craftInfo.warp_data.machine"
+                :fetch-suggestions="searchMachine"
+                placeholder="请选择机型"></el-autocomplete>
             </div>
           </div>
         </div>
@@ -390,11 +551,27 @@
           <div class="col flex3">
             <div class="label">
               <span class="text">选择常用穿综法</span>
-              <span class="explanation">(点击小图标可保存本次穿综法)</span>
+              <el-tooltip class="item"
+                effect="dark"
+                content="保存本次穿综法"
+                placement="top">
+                <i class="el-icon-upload hoverOrange fr"
+                  style="line-height:38px;font-size:18px;cursor:pointer;"
+                  @click="saveDraftMethods"></i>
+              </el-tooltip>
             </div>
             <div class="info elCtn">
-              <el-select v-model="testValue"
-                placeholder="请选择常用穿综法">
+              <el-select v-model="draftMethod"
+                placeholder="请选择常用穿综法"
+                @change="getDraftMethod">
+                <el-option v-for="item in draftMethodList"
+                  :key="item.id"
+                  :value="item.pattern_loop"
+                  :label="item.name">
+                  <span class="green">{{item.name}}</span>
+                  <span class="red fr"
+                    @click.stop="deleteDraftMethods(item.id)">删除</span>
+                </el-option>
               </el-select>
             </div>
           </div>
@@ -419,9 +596,6 @@
               v-for="(item1,index1) in craftInfo.draft_method.GL"
               :key="index1">
               <div class="mark">{{alphabet[index1]}}：
-                <span class="hoverBlue"
-                  style="cursor:pointer"
-                  @click="showGL(item1)">预览</span>
               </div>
               <div v-for="(item2,index2) in item1"
                 :key="index2"
@@ -698,13 +872,10 @@
               <span class="text">组织法</span>
             </div>
             <div class="info elCtn">
-              <el-select v-model="craftInfo.weft_data.organization_id"
-                placeholder="请选择组织法">
-                <el-option v-for="item in methodsList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"></el-option>
-              </el-select>
+              <el-autocomplete class="inline-input"
+                v-model="craftInfo.weft_data.organization"
+                :fetch-suggestions="searchOrganization"
+                placeholder="请选择组织法"></el-autocomplete>
             </div>
           </div>
           <div class="col">
@@ -1006,11 +1177,11 @@
             </div>
             <div style="color:rgba(0,0,0,0.45)">
               <br />
-              提示1：可使用乘以[ ]遍，最后一遍去掉[ ]列到[ ]列。例如：乘以[4]遍，最后一遍去掉[17]列到[19]列；
+              提示1：可使用乘以[ ]遍，最后一遍去掉[ ]列到[ ]列。例如：乘以[4]遍，最后一遍去掉[17]列到[19]列；注意只需要在括号中输入需要乘的遍数，和需要去掉的列数即可。删除括号符号会导致功能失效。
               <br />
               提示2：可以在第二个合并项里使用"顺一遍倒一遍"功能，注意不要在第一个合并项里使用！不要修改"顺一遍倒一遍"文字信息
               <br />
-              提示3：停撬功能可以点击纹版图序号单独标记
+              提示3：停撬功能，可以点击表格序号，选择需要标记的符号。
             </div>
           </div>
         </div>
@@ -1232,14 +1403,68 @@ import 'handsontable/dist/handsontable.full.css'
 Handsontable.languages.registerLanguageDictionary(languages as any) // 注册中文字典
 import { CraftInfo, GLReapeat } from '@/types/craft'
 import { product, craftSetting, craft } from '@/assets/js/api'
+import { ProductInfo } from '@/types/product'
 export default Vue.extend({
   data(): {
     craftInfo: CraftInfo
+    productInfo: ProductInfo
     [propName: string]: any
   } {
     return {
-      testValue: '',
       loading: false,
+      productInfo: {
+        product_type: 1,
+        name: '',
+        product_code: '',
+        style_code: '', // 客户款号
+        unit: '',
+        category: '',
+        type: '',
+        image_data: [],
+        desc: '',
+        style_data: [], // 款式
+        component_data: [
+          {
+            component_id: '',
+            number: '' // 成分信息
+          }
+        ],
+        size_data: [
+          {
+            size_id: '',
+            size_info: '',
+            weight: ''
+          }
+        ], // 尺码组
+        color_data: [], // 配色组
+        // 配件信息
+        part_data: [
+          {
+            name: '',
+            unit: '',
+            part_size_data: [
+              {
+                size_id: '',
+                size_info: '',
+                weight: ''
+              }
+            ],
+            part_component_data: [
+              {
+                component_id: '',
+                number: '' // 成分信息
+              }
+            ]
+          }
+        ]
+      },
+      list: [],
+      page: 1,
+      total: 1,
+      keyword: '',
+      product_type: 0,
+      draftMethod: '',
+      draftMethodList: [],
       searchCraftKey: '',
       assistMaterialList: [
         {
@@ -1428,8 +1653,8 @@ export default Vue.extend({
           merge_data_back: '',
           weft: '', // 总头纹
           width: '', // 整经门幅
-          side_id: '', // 边型
-          machine_id: '', // 机型
+          side: '', // 边型
+          machine: '', // 机型
           reed: '', // 筘号
           reed_method: '', // 穿筘法
           reed_width: '', // 筘幅
@@ -1473,7 +1698,7 @@ export default Vue.extend({
           weft_rank_back: [],
           merge_data: '',
           merge_data_back: '',
-          organization_id: '', // 组织法
+          organization: '', // 组织法
           peifu: '', // 胚服
           weimi: '', // 纬密
           shangchiya: '', // 上齿牙
@@ -1551,9 +1776,133 @@ export default Vue.extend({
       } else {
         return '0'
       }
+    },
+    productType(): string {
+      return this.productInfo.product_type === 1 ? '产品' : '样品'
     }
   },
   methods: {
+    getProList() {
+      this.loading = true
+      product
+        .list({
+          limit: 10,
+          page: this.page,
+          product_code: this.keyword,
+          product_type: this.product_type,
+          craft_status: 1 // 0是默认 1是没有
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.list = res.data.data.items
+            this.total = res.data.data.total
+          }
+          this.loading = false
+        })
+    },
+    initProInfo(id: number) {
+      this.loading = true
+      product
+        .detail({
+          id: id
+        })
+        .then((res) => {
+          this.productInfo = res.data.data
+          this.colourList = res.data.data.color_data
+          this.loading = false
+        })
+      // 关联工艺单查询
+      craft
+        .list({
+          page: 1,
+          limit: 10,
+          product_id: id
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.searchList = res.data.data.items
+          }
+        })
+    },
+    searchOrganization(str: string, cb: any) {
+      let results = str ? this.methodsList.filter(this.createFilter(str)) : this.methodsList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    searchSide(str: string, cb: any) {
+      let results = str ? this.sideList.filter(this.createFilter(str)) : this.sideList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    searchMachine(str: string, cb: any) {
+      let results = str ? this.machineList.filter(this.createFilter(str)) : this.machineList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    createFilter(queryString: string) {
+      return (restaurant: any) => {
+        return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+      }
+    },
+    // 保存穿综法
+    saveDraftMethods() {
+      this.$prompt('请输入穿综法名称', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      })
+        .then((obj: any) => {
+          craft
+            .czfCreate({
+              name: obj.value as string,
+              pattern_loop: JSON.stringify(this.craftInfo.draft_method)
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '穿综法' + obj.value + '已保存成功'
+                })
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消保存'
+          })
+        })
+    },
+    getDraftMethod() {
+      this.craftInfo.draft_method = JSON.parse(this.draftMethod)
+    },
+    deleteDraftMethods(id: number) {
+      this.$confirm('是否删除该穿综循环?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          craft
+            .czfDelete({
+              id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.draftMethodList = this.draftMethodList.filter((item: any) => item.id !== id)
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
     // 搜索要导入的工艺单列表
     searchCraft(key: string) {
       this.seachLoading = true
@@ -2098,10 +2447,6 @@ export default Vue.extend({
               chuankou: ''
             }
     },
-    // 预览纹版图
-    showGL() {
-      this.$message.error('没做')
-    },
     copyGL(index1: number, index2: number) {
       this.craftInfo.draft_method.GL[index1].splice(
         index2,
@@ -2165,9 +2510,23 @@ export default Vue.extend({
       }
       this.$forceUpdate()
     },
+    // 夹断表格空数据
+    sliceTable(data: any[][]): any[][] {
+      let sliceLength = data[1].length + 1
+      data[1].some((item, index) => {
+        if (item !== 0 && !item) {
+          sliceLength = index
+          return true
+        }
+        return false
+      })
+      return data.map((item) => {
+        return item.slice(0, sliceLength)
+      })
+    },
     // 提交时获取特殊值 表格值，合并项等
     getCmpData() {
-      this.craftInfo.product_id = Number(this.$route.query.id)
+      this.craftInfo.product_id = Number(this.$route.query.id) || Number(this.productInfo.id)
       this.craftInfo.warp_data.material_data[0].apply = this.warpJiaList
         .filter((item) => {
           return !this.craftInfo.warp_data.material_data.slice(1).some((itemChild) => {
@@ -2189,78 +2548,86 @@ export default Vue.extend({
       this.craftInfo.weft_data.merge_data = this.tableHot.weft.getPlugin('MergeCells').mergedCellsCollection.mergedCells
       this.craftInfo.weft_data.merge_data_back =
         this.tableHot.weftBack.getPlugin('MergeCells').mergedCellsCollection.mergedCells
-      this.craftInfo.warp_data.warp_rank = this.tableData.warp.data.map((item: any[], index: number) => {
-        if (index === 1) {
-          return item.map((itemJia: any) => {
-            return this.warpJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)
-              ? this.warpJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)!.value
-              : ''
-          })
-        } else {
-          if (item.length === this.tableData.warp.number) {
-            return item
+      this.craftInfo.warp_data.warp_rank = this.sliceTable(
+        this.tableData.warp.data.map((item: any[], index: number) => {
+          if (index === 1) {
+            return item.map((itemJia: any) => {
+              return this.warpJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)
+                ? this.warpJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)!.value
+                : ''
+            })
           } else {
-            for (let i = 0; i < this.tableData.warp.number; i++) {
-              item[i] = item[i] || null
+            if (item.length === this.tableData.warp.number) {
+              return item
+            } else {
+              for (let i = 0; i < this.tableData.warp.number; i++) {
+                item[i] = item[i] || null
+              }
+              return item
             }
-            return item
           }
-        }
-      })
-      this.craftInfo.warp_data.warp_rank_back = this.tableData.warpBack.data.map((item: any[], index: number) => {
-        if (index === 1) {
-          return item.map((itemJia: any) => {
-            return this.warpJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)
-              ? this.warpJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)!.value
-              : ''
-          })
-        } else {
-          if (item.length === this.tableData.warpBack.number) {
-            return item
+        })
+      )
+      this.craftInfo.warp_data.warp_rank_back = this.sliceTable(
+        this.tableData.warpBack.data.map((item: any[], index: number) => {
+          if (index === 1) {
+            return item.map((itemJia: any) => {
+              return this.warpJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)
+                ? this.warpJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)!.value
+                : ''
+            })
           } else {
-            for (let i = 0; i < this.tableData.warpBack.number; i++) {
-              item[i] = item[i] || null
+            if (item.length === this.tableData.warpBack.number) {
+              return item
+            } else {
+              for (let i = 0; i < this.tableData.warpBack.number; i++) {
+                item[i] = item[i] || null
+              }
+              return item
             }
-            return item
           }
-        }
-      })
-      this.craftInfo.weft_data.weft_rank = this.tableData.weft.data.map((item: any[], index: number) => {
-        if (index === 1) {
-          return item.map((itemJia: any) => {
-            return this.weftJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)
-              ? this.weftJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)!.value
-              : ''
-          })
-        } else {
-          if (item.length === this.tableData.weft.number) {
-            return item
+        })
+      )
+      this.craftInfo.weft_data.weft_rank = this.sliceTable(
+        this.tableData.weft.data.map((item: any[], index: number) => {
+          if (index === 1) {
+            return item.map((itemJia: any) => {
+              return this.weftJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)
+                ? this.weftJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)!.value
+                : ''
+            })
           } else {
-            for (let i = 0; i < this.tableData.weft.number; i++) {
-              item[i] = item[i] || null
+            if (item.length === this.tableData.weft.number) {
+              return item
+            } else {
+              for (let i = 0; i < this.tableData.weft.number; i++) {
+                item[i] = item[i] || null
+              }
+              return item
             }
-            return item
           }
-        }
-      })
-      this.craftInfo.weft_data.weft_rank_back = this.tableData.weftBack.data.map((item: any[], index: number) => {
-        if (index === 1) {
-          return item.map((itemJia: any) => {
-            return this.weftJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)
-              ? this.weftJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)!.value
-              : ''
-          })
-        } else {
-          if (item.length === this.tableData.weft.number) {
-            return item
+        })
+      )
+      this.craftInfo.weft_data.weft_rank_back = this.sliceTable(
+        this.tableData.weftBack.data.map((item: any[], index: number) => {
+          if (index === 1) {
+            return item.map((itemJia: any) => {
+              return this.weftJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)
+                ? this.weftJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)!.value
+                : ''
+            })
           } else {
-            for (let i = 0; i < this.tableData.weft.number; i++) {
-              item[i] = item[i] || null
+            if (item.length === this.tableData.weft.number) {
+              return item
+            } else {
+              for (let i = 0; i < this.tableData.weft.number; i++) {
+                item[i] = item[i] || null
+              }
+              return item
             }
-            return item
           }
-        }
-      })
+        })
+      )
     },
     // 计算克重信息——具体到每种配色每个颜色，主要用于详情页展示
     getMaterialData() {
@@ -2595,18 +2962,29 @@ export default Vue.extend({
         if (formCheck) {
           return
         }
+        // 保证非连续性空数据出现，因此我们在第一次出现空数据时将其标记为1
+        let nullFlag = 0
         formCheck = this.tableData.warp.data.some((item: any[], index: number) => {
           if (index === 1 || index === 2) {
             return item.some((itemChild) => {
+              if (!itemChild && nullFlag === 0) {
+                nullFlag++
+                return false
+              }
               return !itemChild
             })
           } else {
             return false
           }
         })
+        nullFlag = 0
         formCheck = this.tableData.weft.data.some((item: any[], index: number) => {
           if (index === 1 || index === 2) {
             return item.some((itemChild) => {
+              if (!itemChild && nullFlag === 0) {
+                nullFlag++
+                return false
+              }
               return !itemChild
             })
           } else {
@@ -2631,9 +3009,145 @@ export default Vue.extend({
     }
   },
   created() {
+    // 默认表格
+    const initData = [
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    ]
     // handsometable设置项
     this.tableData.warp = {
-      data: [[1], [null], [null], [null], [null], [null], [null]],
+      data: this.$clone(initData),
       rowHeaders: (index: any) => {
         let headerArr = ['序号', '主/夹', '根数', '合并项', '合并项', '合并项', '穿综法']
         return `<div style="height:38px;line-height:38px;color:rgba(0,0,0,0.65);display:table-row">${headerArr[index]}</div>`
@@ -2719,7 +3233,7 @@ export default Vue.extend({
       height: 300
     }
     this.tableData.warpBack = {
-      data: [[1], [null], [null], [null], [null], [null], [null]],
+      data: this.$clone(initData),
       rowHeaders: (index: any) => {
         let headerArr = ['序号', '主/夹', '根数', '合并项', '合并项', '合并项', '穿综法']
         return `<div style="height:38px;line-height:38px;color:rgba(0,0,0,0.65);display:table-row">${headerArr[index]}</div>`
@@ -2805,7 +3319,7 @@ export default Vue.extend({
       height: 300
     }
     this.tableData.weft = {
-      data: [[1], [null], [null], [null], [null], [null], [null]],
+      data: this.$clone(initData),
       rowHeaders: (index: any) => {
         let headerArr = ['序号', '主/夹', '根数', '合并项', '合并项', '合并项', '穿综法']
         return `<div style="height:38px;line-height:38px;color:rgba(0,0,0,0.65);display:table-row">${headerArr[index]}</div>`
@@ -2891,7 +3405,7 @@ export default Vue.extend({
       height: 300
     }
     this.tableData.weftBack = {
-      data: [[1], [null], [null], [null], [null], [null], [null]],
+      data: this.$clone(initData),
       rowHeaders: (index: any) => {
         let headerArr = ['序号', '主/夹', '根数', '合并项', '合并项', '合并项', '穿综法']
         return `<div style="height:38px;line-height:38px;color:rgba(0,0,0,0.65);display:table-row">${headerArr[index]}</div>`
@@ -2999,30 +3513,34 @@ export default Vue.extend({
         getInfoApi: 'getHalfProcessAsync'
       }
     ])
-    Promise.all([craftSetting.listSide(), craftSetting.listMachine(), craftSetting.listMethods()]).then((res) => {
-      this.sideList = res[0].data.data
-      this.machineList = res[1].data.data
-      this.methodsList = res[2].data.data
-    })
-    product
-      .detail({
-        id: Number(this.$route.query.id)
-      })
-      .then((res) => {
-        this.colourList = res.data.data.color_data
-      })
-    // 关联工艺单查询
-    craft
-      .list({
-        page: 1,
-        limit: 10,
-        product_id: Number(this.$route.query.id)
-      })
-      .then((res) => {
-        if (res.data.status) {
-          this.searchList = res.data.data.items
+    Promise.all([
+      craftSetting.listSide(),
+      craftSetting.listMachine(),
+      craftSetting.listMethods(),
+      craft.czfList()
+    ]).then((res) => {
+      this.sideList = res[0].data.data.map((item: any) => {
+        return {
+          value: item.name
         }
       })
+      this.machineList = res[1].data.data.map((item: any) => {
+        return {
+          value: item.name
+        }
+      })
+      this.methodsList = res[2].data.data.map((item: any) => {
+        return {
+          value: item.name
+        }
+      })
+      this.draftMethodList = res[3].data.data
+    })
+    if (this.$route.query.id) {
+      this.initProInfo(Number(this.$route.query.id))
+    } else {
+      this.getProList()
+    }
   }
 })
 </script>
@@ -3059,5 +3577,8 @@ export default Vue.extend({
     border-radius: 2px;
     background-color: rgba(0, 0, 0, 0.5);
   }
+}
+.el-message-box__input {
+  height: 32px;
 }
 </style>

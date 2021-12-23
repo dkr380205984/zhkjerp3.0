@@ -262,11 +262,11 @@
             </div>
             <div style="color:rgba(0,0,0,0.45)">
               <br />
-              提示1：可使用乘以[ ]遍，最后一遍去掉[ ]列到[ ]列。例如：乘以[4]遍，最后一遍去掉[17]列到[19]列；
+              提示1：可使用乘以[ ]遍，最后一遍去掉[ ]列到[ ]列。例如：乘以[4]遍，最后一遍去掉[17]列到[19]列；注意只需要在括号中输入需要乘的遍数，和需要去掉的列数即可。删除括号符号会导致功能失效。
               <br />
               提示2：可以在第二个合并项里使用"顺一遍倒一遍"功能，注意不要在第一个合并项里使用！不要修改"顺一遍倒一遍"文字信息
               <br />
-              提示3：停撬功能可以点击纹版图序号单独标记
+              提示3：停撬功能，可以点击表格序号，选择需要标记的符号。
             </div>
           </div>
         </div>
@@ -329,7 +329,7 @@
               <span class="text">边型</span>
             </div>
             <div class="info elCtn">
-              <el-select v-model="craftInfo.warp_data.side_id"
+              <el-select v-model="craftInfo.warp_data.side"
                 placeholder="请选择边型">
                 <el-option v-for="item in sideList"
                   :key="item.id"
@@ -357,7 +357,7 @@
               <span class="text">机型</span>
             </div>
             <div class="info elCtn">
-              <el-select v-model="craftInfo.warp_data.machine_id"
+              <el-select v-model="craftInfo.warp_data.machine"
                 placeholder="请选择机型">
                 <el-option v-for="item in machineList"
                   :key="item.id"
@@ -761,7 +761,7 @@
               <span class="text">组织法</span>
             </div>
             <div class="info elCtn">
-              <el-select v-model="craftInfo.weft_data.organization_id"
+              <el-select v-model="craftInfo.weft_data.organization"
                 placeholder="请选择组织法">
                 <el-option v-for="item in methodsList"
                   :key="item.id"
@@ -1069,11 +1069,11 @@
             </div>
             <div style="color:rgba(0,0,0,0.45)">
               <br />
-              提示1：可使用乘以[ ]遍，最后一遍去掉[ ]列到[ ]列。例如：乘以[4]遍，最后一遍去掉[17]列到[19]列；
+              提示1：可使用乘以[ ]遍，最后一遍去掉[ ]列到[ ]列。例如：乘以[4]遍，最后一遍去掉[17]列到[19]列；注意只需要在括号中输入需要乘的遍数，和需要去掉的列数即可。删除括号符号会导致功能失效。
               <br />
               提示2：可以在第二个合并项里使用"顺一遍倒一遍"功能，注意不要在第一个合并项里使用！不要修改"顺一遍倒一遍"文字信息
               <br />
-              提示3：停撬功能可以点击纹版图序号单独标记
+              提示3：停撬功能，可以点击表格序号，选择需要标记的符号。
             </div>
           </div>
         </div>
@@ -1497,8 +1497,8 @@ export default Vue.extend({
           merge_data_back: '',
           weft: '', // 总头纹
           width: '', // 整经门幅
-          side_id: '', // 边型
-          machine_id: '', // 机型
+          side: '', // 边型
+          machine: '', // 机型
           reed: '', // 筘号
           reed_method: '', // 穿筘法
           reed_width: '', // 筘幅
@@ -1542,7 +1542,7 @@ export default Vue.extend({
           weft_rank_back: [],
           merge_data: '',
           merge_data_back: '',
-          organization_id: '', // 组织法
+          organization: '', // 组织法
           peifu: '', // 胚服
           weimi: '', // 纬密
           shangchiya: '', // 上齿牙

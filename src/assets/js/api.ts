@@ -177,11 +177,16 @@ const yarnColor = {
 const pantongList = (params: { keyword?: string }) => http.get(`${baseUrl}/pan/color/list`, { params })
 
 // 工艺单
-import { CraftInfo } from '@/types/craft'
+import { CraftInfo, DraftMethods } from '@/types/craft'
 const craft = {
   create: (params: CraftInfo) => http.post(`${baseUrl}/craft/save`, params, 'application/json'),
   detail: (params: DeleteParams) => http.get(`${baseUrl}/craft/detail`, params),
-  list: (params?: ListParams) => http.get(`${baseUrl}/craft/lists`, params)
+  list: (params?: ListParams) => http.get(`${baseUrl}/craft/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/craft/delete`, params, 'application/json'),
+  czfCreate: (params: { pattern_loop: DraftMethods | string, name: string }) => http.post(`${baseUrl}/craft/pattern/save`, params, 'application/json'),
+  czfDetail: (params: DeleteParams) => http.get(`${baseUrl}/craft/pattern/detail`, params),
+  czfList: (params?: ListParams) => http.get(`${baseUrl}/craft/pattern/lists`, params),
+  czfDelete: (params: DeleteParams) => http.post(`${baseUrl}/craft/pattern/delete`, params, 'application/json')
 }
 
 // 单证设置
@@ -287,6 +292,8 @@ const quotedPrice = {
   deletePack: (params: DeleteParams) => http.post(`${baseUrl}/quote/product/pack/material/delete`, params, 'application/json'), // 删除报价单产品包装辅料项
   deleteOther: (params: DeleteParams) => http.post(`${baseUrl}/quote/product/others/fee/delete`, params, 'application/json'), // 额外费用
   oprLog: (params: DetailParams) => http.get(`${baseUrl}/quote/activity/logs`, params), // 操作记录
+  descCreate: (params: { name?: string, type: string, desc: string, category_id: string | number }) => http.post(`${baseUrl}/quote/explain/save`, params, 'application/json'),
+  descDetail: (params: any) => http.get(`${baseUrl}/quote/explain/detail`, params),
 }
 
 // 列表设置信息 type 1:报价单列表 , 2:样单列表

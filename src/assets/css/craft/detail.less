@@ -1,5 +1,6 @@
 @import '../common.less';
 @import '../detail.less';
+@import '../popup.less';
 @import '../bottomBar.less';
 #craftDetail{
   .detailCtn{
@@ -428,30 +429,33 @@
     }
   }
   .popup{
-    .rowLine{
-      height: 11px;
-      display: flex;
-      justify-content: center;
-      &:nth-last-child(1){
-        height: 12px;
-        .col{
-          border-bottom: 1px solid #111;
-        }
-      }
-      .col{
-        width:10px;
-        height: 10px;
-        border-left:  1px solid #111;
-        
-        border-top: 1px solid #111;
+    .GLCtns{
+      padding: 12px 0;
+      .rowLine{
+        height: 11px;
+        display: flex;
+        justify-content: center;
         &:nth-last-child(1){
-          border-right: 1px solid #111;
+          height: 12px;
+          .col{
+            border-bottom: 1px solid #111;
+          }
         }
-        &.black{
-          background: #999;
-        }
-        &.white{
-          background: #fff;
+        .col{
+          width:10px;
+          height: 10px;
+          border-left:  1px solid #111;
+          
+          border-top: 1px solid #111;
+          &:nth-last-child(1){
+            border-right: 1px solid #111;
+          }
+          &.black{
+            background: #999;
+          }
+          &.white{
+            background: #fff;
+          }
         }
       }
     }

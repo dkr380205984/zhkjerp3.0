@@ -1112,8 +1112,8 @@ export default Vue.extend({
           merge_data_back: '',
           weft: '', // 总头纹
           width: '', // 整经门幅
-          side_id: '', // 边型
-          machine_id: '', // 机型
+          side: '', // 边型
+          machine: '', // 机型
           reed: '', // 筘号
           reed_method: '', // 穿筘法
           reed_width: '', // 筘幅
@@ -1157,7 +1157,7 @@ export default Vue.extend({
           weft_rank_back: [],
           merge_data: '',
           merge_data_back: '',
-          organization_id: '', // 组织法
+          organization: '', // 组织法
           peifu: '', // 胚服
           weimi: '', // 纬密
           shangchiya: '', // 上齿牙

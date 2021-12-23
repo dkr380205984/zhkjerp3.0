@@ -12,8 +12,10 @@
               placeholder="筛选工艺单编号"
               @keydown.enter.native="changeRouter"></el-input>
           </div>
-          <div class="btn borderBtn"
+          <div class="btn fr borderBtn"
             @click="reset">重置</div>
+          <div class="btn backHoverBlue fr"
+            @click="$router.push('/craft/create')">添加工艺单</div>
         </div>
         <zh-list :list="list"
           :listKey="listKey"
@@ -175,40 +177,40 @@ export default Vue.extend({
           fn: (item: any) => {
             this.$router.push('/craft/update?id=' + item.id)
           }
+        },
+        {
+          name: '删除',
+          class: 'hoverRed',
+          fn: (item: any) => {
+            this.$confirm('是否删除工艺单?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            })
+              .then(() => {
+                craft
+                  .delete({
+                    id: item.id
+                  })
+                  .then((res) => {
+                    if (res.data.status) {
+                      this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                      })
+                      // @ts-ignore
+                      this.getList()
+                    }
+                  })
+              })
+              .catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '已取消删除'
+                })
+              })
+          }
         }
-        // {
-        //   name: '删除',
-        //   class: 'hoverRed',
-        //   fn: (item: any) => {
-        //     this.$confirm('是否删除工艺单?', '提示', {
-        //       confirmButtonText: '确定',
-        //       cancelButtonText: '取消',
-        //       type: 'warning'
-        //     })
-        //       .then(() => {
-        //         // order
-        //         //   .delete({
-        //         //     id: item.id
-        //         //   })
-        //         //   .then((res) => {
-        //         //     if (res.data.status) {
-        //         //       this.$message({
-        //         //         type: 'success',
-        //         //         message: '删除成功!'
-        //         //       })
-        //         //       // @ts-ignore
-        //         //       this.getList()
-        //         //     }
-        //         //   })
-        //       })
-        //       .catch(() => {
-        //         this.$message({
-        //           type: 'info',
-        //           message: '已取消删除'
-        //         })
-        //       })
-        //   }
-        // }
       ]
     }
   },

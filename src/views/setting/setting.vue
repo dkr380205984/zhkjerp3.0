@@ -1184,13 +1184,15 @@
               </div>
               <div class="list">
                 <div class="row title">
-                  <div class="col">名称</div>
+                  <div class="col">预设名称</div>
+                  <div class="col">绑定品类</div>
                   <div class="col">操作</div>
                 </div>
                 <div class="row"
                   v-for="(item,index) in quotedPriceProductArr"
                   :key="index">
                   <div class="col">{{item.title}}</div>
+                  <div class="col">{{item.category_name}}</div>
                   <div class="col">
                     <span class="opr hoverBlue"
                       @click="lookQuotedPriceProduct(item)">查看详情</span>
@@ -1206,6 +1208,25 @@
                   :total="groupTotal"
                   :current-page.sync="groupPage">
                 </el-pagination>
+              </div>
+            </div>
+          </template>
+          <template v-if="cName==='报价说明'">
+            <div class="listCtn">
+              <div class="list">
+                <div class="row title">
+                  <div class="col">品类信息</div>
+                  <div class="col">操作</div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in categoryList"
+                  :key="index">
+                  <div class="col">{{item.name}}</div>
+                  <div class="col">
+                    <span class="opr hoverBlue"
+                      @click="lookQuotedPriceDescDetail(item)">查看</span>
+                  </div>
+                </div>
               </div>
             </div>
           </template>
@@ -2336,6 +2357,20 @@
               <div class="row">
                 <div class="col">
                   <div class="label">
+                    <span class="text">绑定品类</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-select placeholder="请选择产品品类"
+                      v-model="quotedPriceProduct.category_id">
+                      <el-option v-for="item in categoryList"
+                        :key="item.id"
+                        :value="item.id"
+                        :label="item.name"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
                     <span class="text">模板标题</span>
                   </div>
                   <div class="info elCtn">
@@ -2415,7 +2450,7 @@
                   <div class="info elCtn">
                     <el-input v-model="itemHalfProcess.total_price"
                       placeholder="小计"
-                      :disabled="!itemHalfProcess.process_id">
+                      :disabled="itemHalfProcess.process_id.length===0">
                       <template slot="append">元</template>
                     </el-input>
                   </div>
@@ -2423,10 +2458,10 @@
                 <div class="opr hoverBlue"
                   v-if="indexHalfProcess===0"
                   @click="$addItem(quotedPriceProduct.semi_product_data,{
-                 desc:'',
-                 name:'',
-                 total_price:''
-                })">添加</div>
+                    desc:'',
+                    name:'',
+                    total_price:''
+                  })">添加</div>
                 <div class="opr hoverRed"
                   v-else
                   @click="$deleteItem(quotedPriceProduct.semi_product_data,indexHalfProcess)">删除</div>
@@ -2459,7 +2494,7 @@
                   <div class="info elCtn">
                     <el-input v-model="itemFinishedProcess.total_price"
                       placeholder="小计"
-                      :disabled="!itemFinishedProcess.name">
+                      :disabled="itemFinishedProcess.name.length===0">
                       <template slot="append">元</template>
                     </el-input>
                   </div>
@@ -2563,6 +2598,81 @@
             <div class="btn"
               :class="quotedPriceProductUpdate?'backHoverOrange':'backHoverBlue'"
               @click="saveQuotedPriceProduct">{{quotedPriceProductUpdate?'修改':'确认'}}</div>
+          </div>
+        </div>
+      </template>
+      <template v-if="cName==='报价说明'">
+        <div class="main">
+          <div class="titleCtn">
+            <div class="text">新增报价说明</div>
+            <div class="closeCtn"
+              @click="showPopup=false">
+              <i class="el-icon-close"></i>
+            </div>
+          </div>
+          <div class="contentCtn">
+            <div class="editCtn">
+              <div class="row">
+                <div class="col">
+                  <div class="label">
+                    <span class="text">品类</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-select placeholder="请选择产品品类"
+                      v-model="quotedPriceCategoryId"
+                      disabled>
+                      <el-option v-for="item in categoryList"
+                        :key="item.id"
+                        :value="item.id"
+                        :label="item.name"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">
+                    <span class="text">文字说明</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="quotedPriceDesc.desc"
+                      placeholder="请输入报价说明"></el-input>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">
+                    <span class="text">图片说明</span>
+                  </div>
+                  <div class="imgCtn">
+                    <el-upload class="avatar-uploader"
+                      drag
+                      action="https://upload.qiniup.com/"
+                      :show-file-list="false"
+                      :on-success="uploadQuotedSuccess"
+                      :before-upload="beforeUpload"
+                      :data="postData"
+                      :file-list="[quotedPriceDesc.type]"
+                      ref="quotedLogo">
+                      <img v-if="quotedPriceDesc.type"
+                        :src="quotedPriceDesc.type"
+                        class="logo-img"
+                        style="width:100%;height:100%">
+                      <i v-else
+                        class="el-icon-plus logo-icon"></i>
+                    </el-upload>
+                    <div class="prompt">点击或拖拽图片至上传框,只能上传jpg/png文件，且不超过6MB</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="oprCtn">
+            <div class="btn borderBtn"
+              @click="showPopup=false;quotedPriceProductUpdate=false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveQuotedPriceDesc">确认</div>
           </div>
         </div>
       </template>
@@ -2979,6 +3089,7 @@ export default Vue.extend({
       userTotal: 1,
       userPage: 1,
       quotedPriceProduct: {
+        category_id: '',
         image_data: [],
         desc: '',
         transport_fee_desc: '',
@@ -3097,7 +3208,55 @@ export default Vue.extend({
       mianliaoPriceList: [],
       mianliaoPricePage: 1,
       mianliaoPriceTotal: 1,
-      mianliaoPriceUpdate: false
+      mianliaoPriceUpdate: false,
+      quotedPriceCategoryId: '',
+      quotedPriceDescList: [
+        {
+          name: '原料信息',
+          type: 'material_data',
+          desc: ''
+        },
+        {
+          name: '辅料信息',
+          type: 'assist_material_data',
+          desc: ''
+        },
+        {
+          name: '织造信息',
+          type: 'weave_data',
+          desc: ''
+        },
+        {
+          name: '半成品加工信息',
+          type: 'semi_product_data',
+          desc: ''
+        },
+        {
+          name: '成品加工信息',
+          type: 'production_data',
+          desc: ''
+        },
+        {
+          name: '包装辅料信息',
+          type: 'pack_material_data',
+          desc: ''
+        },
+        {
+          name: '其他信息',
+          type: 'other_fee_data',
+          desc: ''
+        },
+        {
+          name: '运费说明',
+          type: 'transport_fee',
+          desc: ''
+        }
+      ],
+      quotedPriceDesc: {
+        name: '',
+        type: '',
+        desc: ''
+      }
     }
   },
   methods: {
@@ -3169,6 +3328,12 @@ export default Vue.extend({
         return item.response ? 'https://file.zwyknit.com/' + item.response.key : item.url
       })
       this.companyInfo.logo = fileArr[1] || fileArr[0]
+    },
+    uploadQuotedSuccess() {
+      const fileArr = this.$refs.quotedLogo.uploadFiles.map((item: { response: { key: string }; url: any }) => {
+        return item.response ? 'https://file.zwyknit.com/' + item.response.key : item.url
+      })
+      this.quotedPriceDesc.type = fileArr[1] || fileArr[0]
     },
     beforeUpload: function (file: { name: string; type: string; size: number }) {
       let fileName = file.name.lastIndexOf('.') // 取到文件名开始到最后一个点的长度
@@ -3257,6 +3422,16 @@ export default Vue.extend({
         this.getGroup()
       } else if (this.cName === '报价模板') {
         this.getQuotedPriceProduct()
+        this.getCategory()
+      } else if (this.cName === '报价说明') {
+        this.$checkCommonInfo([
+          {
+            checkWhich: 'status/token',
+            getInfoMethed: 'dispatch',
+            getInfoApi: 'getTokenAsync'
+          }
+        ])
+        this.getCategory()
       } else if (this.cName === '基本信息') {
         this.getCompany()
       }
@@ -4800,6 +4975,7 @@ export default Vue.extend({
         if (res.data.status) {
           this.$message.success('添加成功')
           this.quotedPriceProduct = {
+            category_id: '',
             image_data: [],
             desc: '',
             transport_fee_desc: '',
@@ -4905,12 +5081,43 @@ export default Vue.extend({
       formData.pack_material_data = JSON.parse(formData.pack_material_data)
       // formData.others_data = JSON.parse(formData.others_data)
       formData.production_data = JSON.parse(formData.production_data)
-      formData.other_fee_data = JSON.parse(formData.other_fee_data)
+      formData.other_fee_data = formData.other_fee_data ? JSON.parse(formData.other_fee_data) : []
       // formData.material_data = JSON.parse(formData.material_data)
       // formData.assist_material_data = JSON.parse(formData.assist_material_data)
       this.quotedPriceProduct = formData
       this.quotedPriceProductUpdate = true
       this.showPopup = true
+    },
+    getQuotedPriceDesc() {
+      quotedPrice
+        .descDetail({
+          category_id: this.quotedPriceCategoryId
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.quotedPriceDesc.type = res.data.data.type
+            this.quotedPriceDesc.desc = res.data.data.desc
+          }
+        })
+    },
+    saveQuotedPriceDesc() {
+      quotedPrice
+        .descCreate({
+          type: this.quotedPriceDesc.type,
+          category_id: this.quotedPriceCategoryId,
+          desc: this.quotedPriceDesc.desc
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.$message.success('添加说明成功')
+            this.showPopup = false
+          }
+        })
+    },
+    lookQuotedPriceDescDetail(info: any) {
+      this.quotedPriceCategoryId = info.id
+      this.showPopup = true
+      this.getQuotedPriceDesc()
     },
     getCompany() {
       companyInfo.detail().then((res) => {

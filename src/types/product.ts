@@ -28,6 +28,7 @@ export interface ProductInfo {
     number: string | number // 成分信息
   }>
   size_data: Array<{
+    size_name?: string
     size_id: string | number
     name?: string
     size_info: string
@@ -47,6 +48,7 @@ export interface PartInfo {
   name: string
   unit: string
   part_size_data?: Array<{
+    size_name?: string
     size_id: string | number
     name?: string
     size_info: string

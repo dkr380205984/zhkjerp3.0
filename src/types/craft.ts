@@ -6,7 +6,7 @@ interface PMInfo {
   children?: PMInfo[]
 }
 
-interface GLInfo {
+export interface GLInfo {
   value: string
   mark: string | number
 }
@@ -101,8 +101,8 @@ export interface CraftInfo {
     merge_data_back: string | MergeDataInfo[]
     weft: string | number // 总头纹
     width: string // 整经门幅
-    side_id: string | number // 边型
-    machine_id: string | number // 机型
+    side: string | number // 边型
+    machine: string | number // 机型
     reed: string // 筘号
     reed_method: string // 穿筘法
     reed_width: string // 筘幅
@@ -119,7 +119,7 @@ export interface CraftInfo {
     weft_rank_back: Array<Array<any>>
     merge_data: string | MergeDataInfo[]
     merge_data_back: string | MergeDataInfo[]
-    organization_id: string | number // 组织法
+    organization: string | number // 组织法
     peifu: string | number // 胚服
     weimi: string // 纬密
     shangchiya: string // 上齿牙
