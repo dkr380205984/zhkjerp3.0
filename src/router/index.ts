@@ -37,6 +37,10 @@ const routes: Array<RouteConfig> = [
     name: '原料出入库打印',
     component: () => import('../views/store/materialLogPrint.vue')
   }, {
+    path: '/quotedPrice/print',
+    name: '报价单打印',
+    component: () => import('../views/quotedPrice/print.vue')
+  }, {
     path: '/index',
     name: 'index',
     component: () => import('../views/index.vue'),

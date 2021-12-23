@@ -370,7 +370,8 @@
                   </svg>
                   <span class="text">删除报价</span>
                 </div>
-                <div class="btn backHoverBlue">
+                <div class="btn backHoverBlue"
+                  @click="$openUrl('/quotedPrice/print?id='+$route.query.id)">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-dayindingdan"></use>
