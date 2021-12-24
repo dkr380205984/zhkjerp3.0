@@ -27,4 +27,84 @@
       color: @blue;
     }
   }
+  .box{
+    margin: 12px 12px 12px 0;
+    border:1px solid @borderColor;
+    display: inline-block;
+    padding: 0px 12px;
+    line-height: 32px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  .tips{
+    position: absolute;
+    right: 10px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    height: 32px;
+    line-height: 32px;
+    font-size: @fontSmall;
+    .lightGreen{
+      color: #fff;
+      animation: lightG 1.2s ease infinite alternate;
+    }
+    .lightRed{
+      color: #fff;
+      animation: lightR 1.2s ease infinite alternate;
+    }
+  }
+  .tableCtn{
+    .tcol{
+      position: relative;
+    }
+  }
+}
+@keyframes lightG{
+  from {
+    text-shadow:
+    0 0 1px #fff,
+    0 0 3px #fff,
+    0 0 5px  @green,
+    0 0 7px  @green,
+    0 0 9px  @green,
+    0 0 11px  @green,
+    0 0 13px  @green,
+    0 0 15px @green;
+  }
+  to {
+    text-shadow: 
+      0 0 0px #fff,
+      0 0 1px #fff,
+      0 0 2px @green,
+      0 0 3px  @green,
+      0 0 4px  @green,
+      0 0 5px  @green,
+      0 0 6px  @green,
+      0 0 7px  @green;
+  }
+}
+@keyframes lightR{
+  from {
+    text-shadow:
+    0 0 1px #fff,
+    0 0 3px #fff,
+    0 0 5px  @red,
+    0 0 7px  @red,
+    0 0 9px  @red,
+    0 0 11px  @red,
+    0 0 13px  @red,
+    0 0 15px @red;
+  }
+  to {
+    text-shadow: 
+      0 0 0px #fff,
+      0 0 1px #fff,
+      0 0 2px @red,
+      0 0 3px  @red,
+      0 0 4px  @red,
+      0 0 5px  @red,
+      0 0 6px  @red,
+      0 0 7px  @red;
+  }
 }

@@ -105,14 +105,19 @@
     <div class="module">
       <div class="titleCtn"
         style="border-bottom:0">
-        <div class="title">添加产品描述</div>
+        <div class="title">添加产品描述
+          <span class="orange"
+            style="font-size:14px"
+            v-if="$route.query.again">(再次报价不能新增或者删除产品)</span>
+        </div>
       </div>
       <div v-for="(item,index) in quotedPriceInfo.product_data"
         :key="index">
         <div class="lineInfo">
           <div class="text">产品{{index+1}}</div>
           <div class="deleteIcon"
-            @click="quotedPriceInfo.product_data.length>1?$deleteItem(quotedPriceInfo.product_data,index):$message.error('至少有一项产品描述')">删除</div>
+            @click="quotedPriceInfo.product_data.length>1?$deleteItem(quotedPriceInfo.product_data,index):$message.error('至少有一项产品描述')"
+            v-if="!$route.query.again">删除</div>
         </div>
         <div class="editCtn">
           <div class="row">
@@ -122,7 +127,8 @@
                 <span class="explanation">(必选)</span>
               </div>
               <div class="info elCtn">
-                <el-cascader placeholder="请选择品类"
+                <el-cascader :disabled="$route.query.again==='true'"
+                  placeholder="请选择品类"
                   v-model="item.type"
                   :options="productTypeList"></el-cascader>
               </div>
@@ -162,6 +168,7 @@
                   accept="image/jpeg,image/gif,image/png,image/bmp"
                   :before-upload="beforeAvatarUpload"
                   :data="postData"
+                  :file-list="item.file_list"
                   :on-remove="function(file){return removeFile(file, index)}"
                   :on-success="function(response){return successFile(response, index)}"
                   ref="uploada"
@@ -176,7 +183,7 @@
               </div>
             </div>
           </div>
-          <div v-if="index===quotedPriceInfo.product_data.length-1"
+          <div v-if="index===quotedPriceInfo.product_data.length-1 && !$route.query.again"
             class="oprRow">
             <div class="once"
               @click="addPro">新增产品描述
@@ -187,25 +194,27 @@
       </div>
     </div>
     <div class="module">
-      <el-tabs type="border-card">
+      <el-tabs type="border-card"
+        v-model="productIndex">
         <el-tab-pane :label="'产品'+(index+1)"
           v-for="(item,index) in quotedPriceInfo.product_data"
           :key="index">
           <div class="titleCtn">
             <div class="title">报价信息
               <el-popover placement="top"
-                title="物料说明"
+                title="报价说明"
                 width="300"
                 trigger="manual"
-                :content="desc"
-                v-model="showContent">
+                v-model="showContent"
+                v-if="Number(productIndex)===index">
+                <div class="blue">{{desc}}</div>
                 <el-image style="width: 100px; height: 100px"
                   :src="quotedImage"
-                  :fit="[quotedImage]"></el-image>
+                  :fit="quotedImage"></el-image>
                 <span slot="reference"
                   class="hoverBlue"
                   style="font-size:12px;margin-left:8px;cursor:pointer"
-                  @click="showContent.material_data?showContent.material_data=false:lookPriceDetail(item.type,'material_data')">{{showContent.material_data?'关闭说明':'查看说明'}}</span>
+                  @click="showContent?showContent=false:lookPriceDetail(item.type,'material_data')">{{showContent?'关闭说明':'查看说明'}}</span>
               </el-popover>
               <div class="fr elCtn"
                 style="margin-right:24px">
@@ -941,7 +950,7 @@ export default Vue.extend({
         key: '',
         token: ''
       },
-      productIndex: 0, // 目前选中的产品
+      productIndex: '0', // 目前选中的产品
       quotedPriceInfo: {
         id: null,
         is_draft: 1,
@@ -1171,6 +1180,11 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 对比信息
+    compareReturnInfo<T>(type: string, before: T, after: T) {
+      if (type === 'image') {
+      }
+    },
     // 获取纱线报价
     getYarnPrice(ev: number[], info: any) {
       if (ev) {
