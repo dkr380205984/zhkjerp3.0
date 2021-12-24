@@ -124,7 +124,7 @@
             </div>
             <div class="tbody">
               <div class="trow"
-                v-for="item in quotedPriceInfo.product_data"
+                v-for="(item) in quotedPriceInfo.product_data"
                 :key="item.id">
                 <div class="tcol">{{item.category_name}}/{{item.secondary_category}}</div>
                 <div class="tcol">
@@ -144,6 +144,52 @@
                 <div class="tcol">{{item.start_order_number}}</div>
                 <div class="tcol">{{item.desc}}</div>
               </div>
+              <template v-if="showCompareInfo">
+                <div class="trow"
+                  v-for="(item,index) in compareInfo.product_data"
+                  :key="item.id">
+                  <div class="tcol">{{item.category_name}}/{{item.secondary_category}}</div>
+                  <div class="tcol">
+                    <div class="imageCtn">
+                      <el-image style="width:100%;height:100%"
+                        :src="item.image_data.length>0?item.image_data[0]:''"
+                        :preview-src-list="item.image_data">
+                        <div slot="error"
+                          class="image-slot">
+                          <i class="el-icon-picture-outline"
+                            style="font-size:42px"></i>
+                        </div>
+                      </el-image>
+                      <div class="tips"
+                        v-if="compareDesc[index].image_data.change">
+                        <span :class="{'lightGreen':compareDesc[index].image_data.change==='up','lightRed':compareDesc[index].image_data.change==='down'}">
+                          {{compareDesc[index].image_data.change==='up'?'图片新增':'图片被删'}}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tcol">{{item.client_target_price}}元
+                    <div class="tips"
+                      v-if="compareDesc[index].client_target_price.change">
+                      <span :class="{'lightGreen':compareDesc[index].client_target_price.change==='up','lightRed':compareDesc[index].client_target_price.change==='down'}">
+                        {{compareDesc[index].client_target_price.change==='up'?'上涨':'下降'}}{{compareDesc[index].client_target_price.number}}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="tcol">{{item.start_order_number}}
+                    <div class="tips"
+                      v-if="compareDesc[index].start_order_number.change">
+                      <span :class="{'lightGreen':compareDesc[index].start_order_number.change==='up','lightRed':compareDesc[index].start_order_number.change==='down'}">
+                        {{compareDesc[index].start_order_number.change==='up'?'上涨':'下降'}}{{compareDesc[index].start_order_number.number}}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="tcol">{{item.desc}}
+                    <div class="tips lightGreen"
+                      v-if="compareDesc[index].desc.change">描述变化</div>
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
         </div>
@@ -174,22 +220,76 @@
                     :key="'Yarn' + indexYarn">
                     <div class="col">
                       <div class="circle backHoverOrange">原</div>{{itemYarn.material_name}}
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].material_data[indexYarn].change">
+                        <span :class="{'lightRed':compareDesc[index].material_data[indexYarn].change==='add','lightGreen':compareDesc[index].material_data[indexYarn].change==='delete'}">
+                          {{compareDesc[index].material_data[indexYarn].change==='add'?'新增原料':'删除物料'}}
+                        </span>
+                      </div>
                     </div>
-                    <div class="col">{{itemYarn.weight}}{{itemYarn.unit}}</div>
+                    <div class="col">{{itemYarn.weight}}{{itemYarn.unit}}
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].material_data[indexYarn].weightChange">
+                        <span :class="{'lightRed':compareDesc[index].material_data[indexYarn].weightChange==='up','lightGreen':compareDesc[index].material_data[indexYarn].weightChange==='down'}">
+                          用料{{compareDesc[index].material_data[indexYarn].weigthNew}}{{itemYarn.unit}}{{compareDesc[index].material_data[indexYarn].weightChange==='up'?'上升':'下降'}}{{compareDesc[index].material_data[indexYarn].weightNumber}}%
+                        </span>
+                      </div>
+                    </div>
                     <div class="col">{{itemYarn.loss}}%</div>
-                    <div class="col">{{itemYarn.price}}元</div>
-                    <div class="col">{{itemYarn.total_price}}元</div>
+                    <div class="col">{{itemYarn.price}}元
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].material_data[indexYarn].priceChange">
+                        <span :class="{'lightRed':compareDesc[index].material_data[indexYarn].priceChange==='up','lightGreen':compareDesc[index].material_data[indexYarn].priceChange==='down'}">
+                          单价{{compareDesc[index].material_data[indexYarn].priceNew}}元{{compareDesc[index].material_data[indexYarn].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].material_data[indexYarn].priceNumber}}%
+                        </span>
+                      </div>
+                    </div>
+                    <div class="col">{{itemYarn.total_price}}元
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].material_data[indexYarn].totalPriceChange">
+                        <span :class="{'lightRed':compareDesc[index].material_data[indexYarn].totalPriceChange==='up','lightGreen':compareDesc[index].material_data[indexYarn].totalPriceChange==='down'}">
+                          总价{{compareDesc[index].material_data[indexYarn].totalPriceNew}}元{{compareDesc[index].material_data[indexYarn].totalPriceChange==='up'?'上升':'下降'}}{{compareDesc[index].material_data[indexYarn].totalPriceNumber}}%
+                        </span>
+                      </div>
+                    </div>
                   </div>
                   <div class="row"
                     v-for="(itemDecorateMaterial,indexDecorateMaterial) in item.assist_material_data"
                     :key="'DecorateMaterial' + indexDecorateMaterial">
                     <div class="col">
                       <div class="circle backHoverGreen">辅</div>{{itemDecorateMaterial.material_name}}
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].assist_material_data[indexDecorateMaterial].change">
+                        <span :class="{'lightRed':compareDesc[index].assist_material_data[indexDecorateMaterial].change==='add','lightGreen':compareDesc[index].assist_material_data[indexDecorateMaterial].change==='delete'}">
+                          {{compareDesc[index].assist_material_data[indexDecorateMaterial].change==='add'?'新增原料':'删除物料'}}
+                        </span>
+                      </div>
                     </div>
-                    <div class="col">{{itemDecorateMaterial.number}}{{itemDecorateMaterial.unit}}</div>
+                    <div class="col">{{itemDecorateMaterial.number}}{{itemDecorateMaterial.unit}}
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].assist_material_data[indexDecorateMaterial].weightChange">
+                        <span :class="{'lightRed':compareDesc[index].assist_material_data[indexDecorateMaterial].weightChange==='up','lightGreen':compareDesc[index].assist_material_data[indexDecorateMaterial].weightChange==='down'}">
+                          用料{{compareDesc[index].assist_material_data[indexDecorateMaterial].weigthNew}}{{itemDecorateMaterial.unit}}{{compareDesc[index].assist_material_data[indexDecorateMaterial].weightChange==='up'?'上升':'下降'}}{{compareDesc[index].assist_material_data[indexDecorateMaterial].weightNumber}}%
+                        </span>
+                      </div>
+                    </div>
                     <div class="col">{{itemDecorateMaterial.loss}}%</div>
-                    <div class="col">{{itemDecorateMaterial.price}}元</div>
-                    <div class="col">{{itemDecorateMaterial.total_price}}元</div>
+                    <div class="col">{{itemDecorateMaterial.price}}元
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].assist_material_data[indexDecorateMaterial].priceChange">
+                        <span :class="{'lightRed':compareDesc[index].assist_material_data[indexDecorateMaterial].priceChange==='up','lightGreen':compareDesc[index].assist_material_data[indexDecorateMaterial].priceChange==='down'}">
+                          单价{{compareDesc[index].assist_material_data[indexDecorateMaterial].priceNew}}元{{compareDesc[index].assist_material_data[indexDecorateMaterial].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].assist_material_data[indexDecorateMaterial].priceNumber}}%
+                        </span>
+                      </div>
+                    </div>
+                    <div class="col">{{itemDecorateMaterial.total_price}}元
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].assist_material_data[indexDecorateMaterial].totalPriceChange">
+                        <span :class="{'lightRed':compareDesc[index].assist_material_data[indexDecorateMaterial].totalPriceChange==='up','lightGreen':compareDesc[index].assist_material_data[indexDecorateMaterial].totalPriceChange==='down'}">
+                          总价{{compareDesc[index].assist_material_data[indexDecorateMaterial].totalPriceNew}}元{{compareDesc[index].assist_material_data[indexDecorateMaterial].totalPriceChange==='up'?'上升':'下降'}}{{compareDesc[index].assist_material_data[indexDecorateMaterial].totalPriceNumber}}%
+                        </span>
+                      </div>
+                    </div>
                   </div>
                   <div class="row title">
                     <div class="col">费用名称
@@ -212,11 +312,31 @@
                     <div class="col">
                       <div class="circle"
                         :class="{'backHoverBlue':itemWeave.name,'backGray':!itemWeave.name}">织</div>{{itemWeave.name || '无'}}
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].weave_data[indexWeave] && compareDesc[index].weave_data[indexWeave].change">
+                        <span :class="{'lightRed':compareDesc[index].weave_data[indexWeave].change==='add','lightGreen':compareDesc[index].weave_data[indexWeave].change==='delete'}">
+                          {{compareDesc[index].weave_data[indexWeave].change==='add'?'新增织造':'删除织造'}}
+                        </span>
+                      </div>
                     </div>
-                    <div class="col">{{itemWeave.desc||'无'}}</div>
+                    <div class="col">{{itemWeave.desc||'无'}}
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].weave_data[indexWeave] && compareDesc[index].weave_data[indexWeave].desc">
+                        <span :class="{'lightRed':compareDesc[index].weave_data[indexWeave].desc}">
+                          更新说明：{{compareDesc[index].weave_data[indexWeave].desc}}
+                        </span>
+                      </div>
+                    </div>
                     <div class="col"></div>
                     <div class="col"></div>
-                    <div class="col">{{itemWeave.total_price||0}}元</div>
+                    <div class="col">{{itemWeave.total_price||0}}元
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].weave_data[indexWeave] && compareDesc[index].weave_data[indexWeave].priceChange">
+                        <span :class="{'lightRed':compareDesc[index].weave_data[indexWeave].priceChange==='up','lightGreen':compareDesc[index].weave_data[indexWeave].priceChange==='down'}">
+                          总价{{compareDesc[index].weave_data[indexWeave].priceNew}}元{{compareDesc[index].weave_data[indexWeave].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].weave_data[indexWeave].priceNumber}}%
+                        </span>
+                      </div>
+                    </div>
                   </div>
                   <div class="row"
                     v-for="(itemHalfProcess,indexHalfProcess) in item.semi_product_data"
@@ -224,11 +344,31 @@
                     <div class="col">
                       <div class="circle"
                         :class="{'backHoverBlue':itemHalfProcess.process_name,'backGray':!itemHalfProcess.process_name}">半</div>{{itemHalfProcess.process_name.join(',') || '无'}}
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].semi_product_data[indexHalfProcess] && compareDesc[index].semi_product_data[indexHalfProcess].change">
+                        <span :class="{'lightRed':compareDesc[index].semi_product_data[indexHalfProcess].change==='add','lightGreen':compareDesc[index].semi_product_data[indexHalfProcess].change==='delete'}">
+                          {{compareDesc[index].semi_product_data[indexHalfProcess].change==='add'?'新增加工':'删除加工'}}
+                        </span>
+                      </div>
                     </div>
-                    <div class="col">{{itemHalfProcess.desc||'无'}}</div>
+                    <div class="col">{{itemHalfProcess.desc||'无'}}
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].semi_product_data[indexHalfProcess] && compareDesc[index].semi_product_data[indexHalfProcess].desc">
+                        <span :class="{'lightRed':compareDesc[index].semi_product_data[indexHalfProcess].desc}">
+                          更新说明：{{compareDesc[index].semi_product_data[indexHalfProcess].desc}}
+                        </span>
+                      </div>
+                    </div>
                     <div class="col"></div>
                     <div class="col"></div>
-                    <div class="col">{{itemHalfProcess.total_price||0}}元</div>
+                    <div class="col">{{itemHalfProcess.total_price||0}}元
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].semi_product_data[indexHalfProcess] && compareDesc[index].semi_product_data[indexHalfProcess].priceChange">
+                        <span :class="{'lightRed':compareDesc[index].semi_product_data[indexHalfProcess].priceChange==='up','lightGreen':compareDesc[index].semi_product_data[indexHalfProcess].priceChange==='down'}">
+                          总价{{compareDesc[index].semi_product_data[indexHalfProcess].priceNew}}元{{compareDesc[index].semi_product_data[indexHalfProcess].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].semi_product_data[indexHalfProcess].priceNumber}}%
+                        </span>
+                      </div>
+                    </div>
                   </div>
                   <div class="row"
                     v-for="(itemFinishedProcess,indexFinishedProcess) in item.production_data"
@@ -236,11 +376,31 @@
                     <div class="col">
                       <div class="circle"
                         :class="{'backHoverBlue':itemFinishedProcess.name,'backGray':!itemFinishedProcess.name}">成</div>{{itemFinishedProcess.name.join(',')  || '无'}}
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].production_data[indexFinishedProcess] && compareDesc[index].production_data[indexFinishedProcess].change">
+                        <span :class="{'lightRed':compareDesc[index].production_data[indexFinishedProcess].change==='add','lightGreen':compareDesc[index].production_data[indexFinishedProcess].change==='delete'}">
+                          {{compareDesc[index].production_data[indexFinishedProcess].change==='add'?'新增加工':'删除加工'}}
+                        </span>
+                      </div>
                     </div>
-                    <div class="col">{{itemFinishedProcess.desc||'无'}}</div>
+                    <div class="col">{{itemFinishedProcess.desc||'无'}}
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].production_data[indexFinishedProcess] && compareDesc[index].production_data[indexFinishedProcess].desc">
+                        <span :class="{'lightRed':compareDesc[index].production_data[indexFinishedProcess].desc}">
+                          更新说明：{{compareDesc[index].production_data[indexFinishedProcess].desc}}
+                        </span>
+                      </div>
+                    </div>
                     <div class="col"></div>
                     <div class="col"></div>
-                    <div class="col">{{itemFinishedProcess.total_price||0}}元</div>
+                    <div class="col">{{itemFinishedProcess.total_price||0}}元
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].production_data[indexFinishedProcess] && compareDesc[index].production_data[indexFinishedProcess].priceChange">
+                        <span :class="{'lightRed':compareDesc[index].production_data[indexFinishedProcess].priceChange==='up','lightGreen':compareDesc[index].production_data[indexFinishedProcess].priceChange==='down'}">
+                          总价{{compareDesc[index].production_data[indexFinishedProcess].priceNew}}元{{compareDesc[index].production_data[indexFinishedProcess].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].production_data[indexFinishedProcess].priceNumber}}%
+                        </span>
+                      </div>
+                    </div>
                   </div>
                   <div class="row"
                     v-for="(itemPackMaterial,indexPackMaterial) in item.pack_material_data"
@@ -248,11 +408,31 @@
                     <div class="col">
                       <div class="circle"
                         :class="{'backHoverBlue':itemPackMaterial.material_name,'backGray':!itemPackMaterial.material_name}">包</div>{{itemPackMaterial.material_name || '无'}}
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].pack_material_data[indexPackMaterial] && compareDesc[index].pack_material_data[indexPackMaterial].change">
+                        <span :class="{'lightRed':compareDesc[index].pack_material_data[indexPackMaterial].change==='add','lightGreen':compareDesc[index].pack_material_data[indexPackMaterial].change==='delete'}">
+                          {{compareDesc[index].pack_material_data[indexPackMaterial].change==='add'?'新增包装':'删除包装'}}
+                        </span>
+                      </div>
                     </div>
-                    <div class="col">{{itemPackMaterial.desc||'无'}}</div>
+                    <div class="col">{{itemPackMaterial.desc||'无'}}
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].pack_material_data[indexPackMaterial] && compareDesc[index].pack_material_data[indexPackMaterial].desc">
+                        <span :class="{'lightRed':compareDesc[index].pack_material_data[indexPackMaterial].desc}">
+                          更新说明：{{compareDesc[index].pack_material_data[indexPackMaterial].desc}}
+                        </span>
+                      </div>
+                    </div>
                     <div class="col"></div>
                     <div class="col"></div>
-                    <div class="col">{{itemPackMaterial.total_price||0}}元</div>
+                    <div class="col">{{itemPackMaterial.total_price||0}}元
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].pack_material_data[indexPackMaterial] && compareDesc[index].pack_material_data[indexPackMaterial].priceChange">
+                        <span :class="{'lightRed':compareDesc[index].pack_material_data[indexPackMaterial].priceChange==='up','lightGreen':compareDesc[index].pack_material_data[indexPackMaterial].priceChange==='down'}">
+                          总价{{compareDesc[index].pack_material_data[indexPackMaterial].priceNew}}元{{compareDesc[index].pack_material_data[indexPackMaterial].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].pack_material_data[indexPackMaterial].priceNumber}}%
+                        </span>
+                      </div>
+                    </div>
                   </div>
                   <div class="row"
                     v-for="(itemOther,indexOther) in item.other_fee_data"
@@ -260,11 +440,31 @@
                     <div class="col">
                       <div class="circle"
                         :class="{'backHoverBlue':itemOther.name,'backGray':!itemOther.name}">其</div>{{itemOther.name || '无'}}
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].other_fee_data[indexOther] && compareDesc[index].other_fee_data[indexOther].change">
+                        <span :class="{'lightRed':compareDesc[index].other_fee_data[indexOther].change==='add','lightGreen':compareDesc[index].other_fee_data[indexOther].change==='delete'}">
+                          {{compareDesc[index].other_fee_data[indexOther].change==='add'?'新增包装':'删除包装'}}
+                        </span>
+                      </div>
                     </div>
-                    <div class="col">{{itemOther.desc||'无'}}</div>
+                    <div class="col">{{itemOther.desc||'无'}}
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].other_fee_data[indexOther] && compareDesc[index].other_fee_data[indexOther].desc">
+                        <span :class="{'lightRed':compareDesc[index].other_fee_data[indexOther].desc}">
+                          更新说明：{{compareDesc[index].other_fee_data[indexOther].desc}}
+                        </span>
+                      </div>
+                    </div>
                     <div class="col"></div>
                     <div class="col"></div>
-                    <div class="col">{{itemOther.total_price||0}}元</div>
+                    <div class="col">{{itemOther.total_price||0}}元
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].other_fee_data[indexOther] && compareDesc[index].other_fee_data[indexOther].priceChange">
+                        <span :class="{'lightRed':compareDesc[index].other_fee_data[indexOther].priceChange==='up','lightGreen':compareDesc[index].other_fee_data[indexOther].priceChange==='down'}">
+                          总价{{compareDesc[index].other_fee_data[indexOther].priceNew}}元{{compareDesc[index].other_fee_data[indexOther].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].other_fee_data[indexOther].priceNumber}}%
+                        </span>
+                      </div>
+                    </div>
                   </div>
                   <div class="row">
                     <div class="col">
@@ -334,6 +534,11 @@
         <div class="fl"
           style="line-height:56px">
           合计：<span class="blue">{{realTotalPrice}}元<span v-if="quotedPriceInfo.settle_unit!=='元'">{{'/'+realTotalPriceChange+quotedPriceInfo.settle_unit}}</span></span>
+        </div>
+        <div class="fl blue"
+          style="line-height:56px;margin-left:24px"
+          v-if="showCompareInfo">
+          正在与报价单"<span class="green">{{compareInfo.title}}</span>"进行比较
         </div>
         <div class="btnCtn">
           <div class="borderBtn"
@@ -433,6 +638,15 @@
                     <use xlink:href="#icon-caozuojilu"></use>
                   </svg>
                   <span class="text">再次报价</span>
+                </div>
+                <div class="btn backHoverGreen"
+                  v-if="quotedList.length>0"
+                  @click="compareFlag=true">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-caozuojilu"></use>
+                  </svg>
+                  <span class="text">对比报价</span>
                 </div>
               </div>
             </div>
@@ -573,6 +787,33 @@
         </div>
       </div>
     </div>
+    <div class="popup"
+      v-show="compareFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">对比单据</span>
+          <div class="closeCtn"
+            @click="compareFlag=false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="box"
+            v-for="(item,index) in quotedList"
+            :key="item.id"
+            :class="{'backHoverBlue':compareIndex===index}"
+            @click="compareIndex = index">
+            第{{index+1}}次报价
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="compareFlag=false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="confirmCompare">确认</span>
+        </div>
+      </div>
+    </div>
     <zh-check @close="checkFlag=false"
       @afterCheck="(ev)=>{quotedPriceInfo.is_check=ev;$forceUpdate()}"
       :show="checkFlag"
@@ -590,11 +831,114 @@ export default Vue.extend({
   data(): {
     [propName: string]: any
     quotedPriceInfo: QuotedPriceInfo
+    compareInfo: QuotedPriceInfo
   } {
     return {
       loading: true,
       checkFlag: false,
+      compareFlag: false,
+      compareIndex: 0,
+      showCompareInfo: false, // 是否展示对比数据
+      compareDesc: [],
       quotedPriceInfo: {
+        id: null,
+        is_draft: 1,
+        title: '',
+        client_id: '',
+        tree_data: '',
+        client_name: '',
+        contacts_id: '',
+        contacts_name: '',
+        group_id: '',
+        group_name: '',
+        settle_unit: '元',
+        exchange_rate: '',
+        total_number: '',
+        total_cost_price: '',
+        commission_percentage: '',
+        commission_price: '',
+        rate_taxation: '',
+        rate_price: '',
+        profit_percentage: '',
+        profit_price: '',
+        desc: '',
+        real_quote_price: '',
+        system_total_price: 0,
+        created_at: '',
+        rel_order: [],
+        product_data: [
+          {
+            total_price: '',
+            product_id: '',
+            type: [],
+            category_id: '',
+            secondary_category_id: '',
+            secondary_category: '',
+            image_data: [],
+            client_target_price: '',
+            start_order_number: '',
+            desc: '',
+            transport_fee_desc: '',
+            transport_fee: '',
+            material_data: [
+              {
+                material_name: '',
+                weight: '',
+                loss: '',
+                price: '',
+                total_price: '',
+                unit: 'kg'
+              }
+            ],
+            assist_material_data: [
+              {
+                material_name: '',
+                number: '',
+                loss: '',
+                price: '',
+                total_price: '',
+                unit: ''
+              }
+            ],
+            weave_data: [
+              {
+                name: '',
+                desc: '',
+                total_price: ''
+              }
+            ],
+            semi_product_data: [
+              {
+                process_name: [],
+                desc: '',
+                total_price: ''
+              }
+            ],
+            production_data: [
+              {
+                name: [],
+                desc: '',
+                total_price: ''
+              }
+            ],
+            pack_material_data: [
+              {
+                material_name: '',
+                desc: '',
+                total_price: ''
+              }
+            ],
+            other_fee_data: [
+              {
+                name: '',
+                desc: '',
+                total_price: ''
+              }
+            ]
+          }
+        ]
+      },
+      compareInfo: {
         id: null,
         is_draft: 1,
         title: '',
@@ -748,8 +1092,466 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 确认对比
+    confirmCompare() {
+      if (this.compareIndex === Number(this.quotedIndex)) {
+        this.$message.error('不能比较相同的报价单')
+        return
+      }
+      this.loading = true
+      this.compareDesc = []
+      quotedPrice
+        .detail({
+          id: this.quotedList[this.compareIndex]
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.compareInfo = res.data.data
+            this.quotedPriceInfo.product_data.forEach((item, index) => {
+              this.compareDesc.push({
+                image_data: {
+                  change: ''
+                },
+                desc: {
+                  change: ''
+                },
+                start_order_number: {
+                  change: '',
+                  number: 0
+                },
+                client_target_price: {
+                  change: '',
+                  number: 0
+                },
+                material_data: [],
+                assist_material_data: [],
+                weave_data: [],
+                semi_product_data: [],
+                production_data: [],
+                pack_material_data: [],
+                other_fee_data: [],
+                transport_fee: {
+                  change: '',
+                  number: 0
+                }
+              })
+              // 对比字段逻辑，这里可以封装，懒得搞
+              const comparePro = this.compareInfo.product_data[index]
+              const compareDesc = this.compareDesc[index]
+              // 手动夹断
+              if (comparePro.image_data.length > item.image_data.length) {
+                compareDesc.image_data.change = 'up'
+              } else if (comparePro.image_data.length < item.image_data.length) {
+                compareDesc.image_data.change = 'down'
+              }
+              // 手动夹断
+              if (Number(comparePro.start_order_number) > Number(item.start_order_number)) {
+                compareDesc.start_order_number.change = 'up'
+              } else if (Number(comparePro.start_order_number) < Number(item.start_order_number)) {
+                compareDesc.start_order_number.change = 'down'
+              }
+              compareDesc.start_order_number.number = (
+                Math.abs(
+                  (Number(comparePro.start_order_number) - Number(item.start_order_number)) /
+                    Number(item.start_order_number)
+                ) * 100
+              ).toFixed(2)
+              // 手动夹断
+              if (Number(comparePro.client_target_price) > Number(item.client_target_price)) {
+                compareDesc.client_target_price.change = 'up'
+              } else if (Number(comparePro.client_target_price) < Number(item.client_target_price)) {
+                compareDesc.client_target_price.change = 'down'
+              }
+              compareDesc.client_target_price.number = (
+                Math.abs(
+                  (Number(comparePro.client_target_price) - Number(item.client_target_price)) /
+                    Number(item.client_target_price)
+                ) * 100
+              ).toFixed(2)
+              // 手动夹断
+              if (comparePro.desc !== item.desc) {
+                compareDesc.desc.change = 'change'
+              }
+              // 手动夹断
+              item.material_data.forEach((itemChild, indexChild) => {
+                compareDesc.material_data.push({
+                  change: '',
+                  priceNew: 0,
+                  priceNumber: 0,
+                  priceChange: '',
+                  weightChange: '',
+                  weightNumber: 0,
+                  weigthNew: 0,
+                  totalPriceChange: '',
+                  totalPriceNew: 0,
+                  totalPriceNumber: 0
+                })
+                const finded = comparePro.material_data.find((item) => item.material_name === itemChild.material_name)
+                if (!finded) {
+                  compareDesc.material_data[indexChild].change = 'delete' //找不到说明被删了
+                } else {
+                  // @ts-ignore 加个标识，代表是旧的发生变化
+                  finded.ifOld = true
+                  if (finded.price > itemChild.price) {
+                    compareDesc.material_data[indexChild].priceChange = 'up'
+                  } else if (finded.price < itemChild.price) {
+                    compareDesc.material_data[indexChild].priceChange = 'down'
+                  }
+                  compareDesc.material_data[indexChild].priceNew = finded.price
+                  compareDesc.material_data[indexChild].priceNumber = (
+                    (Math.abs(Number(finded.price) - Number(itemChild.price)) / Number(itemChild.price)) *
+                    100
+                  ).toFixed(2)
+
+                  if (finded.weight > itemChild.weight) {
+                    compareDesc.material_data[indexChild].weightChange = 'up'
+                  } else if (finded.weight < itemChild.weight) {
+                    compareDesc.material_data[indexChild].weightChange = 'down'
+                  }
+                  compareDesc.material_data[indexChild].weigthNew = finded.weight
+                  compareDesc.material_data[indexChild].weightNumber = (
+                    (Math.abs(Number(finded.weight) - Number(itemChild.weight)) / Number(itemChild.weight)) *
+                    100
+                  ).toFixed(2)
+
+                  if (finded.total_price > itemChild.total_price) {
+                    compareDesc.material_data[indexChild].totalPriceChange = 'up'
+                  } else if (finded.total_price < itemChild.total_price) {
+                    compareDesc.material_data[indexChild].totalPriceChange = 'down'
+                  }
+                  compareDesc.material_data[indexChild].totalPriceNew = finded.total_price
+                  compareDesc.material_data[indexChild].totalPriceNumber = (
+                    (Math.abs(Number(finded.total_price) - Number(itemChild.total_price)) /
+                      Number(itemChild.total_price)) *
+                    100
+                  ).toFixed(2)
+                }
+              })
+              comparePro.material_data
+                .filter((item: any) => !item.ifOld)
+                .forEach((itemChild: any) => {
+                  compareDesc.material_data.push({
+                    change: 'add', // 标记是新增的
+                    priceNew: 0,
+                    priceNumber: 0,
+                    priceChange: '',
+                    weightChange: '',
+                    weightNumber: 0,
+                    weigthNew: 0,
+                    totalPriceChange: '',
+                    totalPriceNew: 0,
+                    totalPriceNumber: 0
+                  })
+                  item.material_data.push(itemChild)
+                })
+              // 手动夹断
+              item.assist_material_data.forEach((itemChild, indexChild) => {
+                compareDesc.assist_material_data.push({
+                  change: '',
+                  priceNew: 0,
+                  priceNumber: 0,
+                  priceChange: '',
+                  weightChange: '',
+                  weightNumber: 0,
+                  weigthNew: 0,
+                  totalPriceChange: '',
+                  totalPriceNew: 0,
+                  totalPriceNumber: 0
+                })
+                const finded = comparePro.assist_material_data.find(
+                  (item) => item.material_name === itemChild.material_name
+                )
+                if (!finded) {
+                  compareDesc.assist_material_data[indexChild].change = 'delete' //找不到说明被删了
+                } else {
+                  // @ts-ignore 加个标识，代表是旧的发生变化
+                  finded.ifOld = true
+                  if (finded.price > itemChild.price) {
+                    compareDesc.assist_material_data[indexChild].priceChange = 'up'
+                  } else if (finded.price < itemChild.price) {
+                    compareDesc.assist_material_data[indexChild].priceChange = 'down'
+                  }
+                  compareDesc.assist_material_data[indexChild].priceNew = finded.price
+                  compareDesc.assist_material_data[indexChild].priceNumber = (
+                    (Math.abs(Number(finded.price) - Number(itemChild.price)) / Number(itemChild.price)) *
+                    100
+                  ).toFixed(2)
+
+                  if (finded.number > itemChild.number) {
+                    compareDesc.assist_material_data[indexChild].weightChange = 'up'
+                  } else if (finded.number < itemChild.number) {
+                    compareDesc.assist_material_data[indexChild].weightChange = 'down'
+                  }
+                  compareDesc.assist_material_data[indexChild].weigthNew = finded.number
+                  compareDesc.assist_material_data[indexChild].weightNumber = (
+                    (Math.abs(Number(finded.number) - Number(itemChild.number)) / Number(itemChild.number)) *
+                    100
+                  ).toFixed(2)
+
+                  if (finded.total_price > itemChild.total_price) {
+                    compareDesc.assist_material_data[indexChild].totalPriceChange = 'up'
+                  } else if (finded.total_price < itemChild.total_price) {
+                    compareDesc.assist_material_data[indexChild].totalPriceChange = 'down'
+                  }
+                  compareDesc.assist_material_data[indexChild].totalPriceNew = finded.total_price
+                  compareDesc.assist_material_data[indexChild].totalPriceNumber = (
+                    (Math.abs(Number(finded.total_price) - Number(itemChild.total_price)) /
+                      Number(itemChild.total_price)) *
+                    100
+                  ).toFixed(2)
+                }
+              })
+              comparePro.assist_material_data
+                .filter((item: any) => !item.ifOld)
+                .forEach((itemChild: any) => {
+                  compareDesc.assist_material_data.push({
+                    change: 'add', // 标记是新增的
+                    priceNew: 0,
+                    priceNumber: 0,
+                    priceChange: '',
+                    weightChange: '',
+                    weightNumber: 0,
+                    weigthNew: 0,
+                    totalPriceChange: '',
+                    totalPriceNew: 0,
+                    totalPriceNumber: 0
+                  })
+                  item.assist_material_data.push(itemChild)
+                })
+              // 手动夹断
+              item.weave_data.forEach((itemChild, indexChild) => {
+                compareDesc.weave_data.push({
+                  change: '',
+                  priceNew: 0,
+                  desc: '',
+                  priceChange: '',
+                  priceNumber: 0
+                })
+                const finded = comparePro.weave_data.find((item) => item.name === itemChild.name)
+                if (!finded) {
+                  compareDesc.weave_data[indexChild].change = 'delete'
+                } else {
+                  // @ts-ignore 加个标识，代表是旧的发生变化
+                  finded.ifOld = true
+                  if (finded.total_price > itemChild.total_price) {
+                    compareDesc.weave_data[indexChild].priceChange = 'up'
+                  } else if (finded.total_price < itemChild.total_price) {
+                    compareDesc.weave_data[indexChild].priceChange = 'down'
+                  }
+                  compareDesc.weave_data[indexChild].priceNew = finded.total_price
+                  compareDesc.weave_data[indexChild].priceNumber = (
+                    (Math.abs(Number(finded.total_price) - Number(itemChild.total_price)) /
+                      Number(itemChild.total_price)) *
+                    100
+                  ).toFixed(2)
+                  if (finded.desc !== itemChild.desc) {
+                    compareDesc.weave_data[indexChild].desc = finded.desc
+                  }
+                }
+              })
+              comparePro.weave_data
+                .filter((item: any) => !item.ifOld)
+                .forEach((itemChild: any) => {
+                  compareDesc.weave_data.push({
+                    change: 'add',
+                    priceNew: '',
+                    desc: '',
+                    priceChange: '',
+                    priceNumber: 0
+                  })
+                  item.weave_data.push(itemChild)
+                })
+              // 手动夹断
+              item.semi_product_data.forEach((itemChild, indexChild) => {
+                compareDesc.semi_product_data.push({
+                  change: '',
+                  priceNew: '',
+                  desc: '',
+                  priceChange: '',
+                  priceNumber: 0
+                })
+                const finded = comparePro.semi_product_data.find(
+                  // @ts-ignore
+                  (item) => item.process_name.join(',') === itemChild.process_name.join(',')
+                )
+                if (!finded) {
+                  compareDesc.semi_product_data[indexChild].change = 'delete'
+                } else {
+                  // @ts-ignore 加个标识，代表是旧的发生变化
+                  finded.ifOld = true
+                  if (finded.total_price > itemChild.total_price) {
+                    compareDesc.semi_product_data[indexChild].priceChange = 'up'
+                  } else if (finded.total_price < itemChild.total_price) {
+                    compareDesc.semi_product_data[indexChild].priceChange = 'down'
+                  }
+                  compareDesc.semi_product_data[indexChild].priceNew = finded.total_price
+                  compareDesc.semi_product_data[indexChild].priceNumber = (
+                    (Math.abs(Number(finded.total_price) - Number(itemChild.total_price)) /
+                      Number(itemChild.total_price)) *
+                    100
+                  ).toFixed(2)
+                  if (finded.desc !== itemChild.desc) {
+                    compareDesc.semi_product_data[indexChild].desc = finded.desc
+                  }
+                }
+              })
+              comparePro.semi_product_data
+                .filter((item: any) => !item.ifOld)
+                .forEach((itemChild: any) => {
+                  compareDesc.semi_product_data.push({
+                    change: 'add',
+                    priceNew: '',
+                    desc: '',
+                    priceChange: '',
+                    priceNumber: 0
+                  })
+                  item.semi_product_data.push(itemChild)
+                })
+              // 手动夹断
+              item.production_data.forEach((itemChild, indexChild) => {
+                compareDesc.production_data.push({
+                  change: '',
+                  priceNew: '',
+                  desc: '',
+                  priceChange: '',
+                  priceNumber: 0
+                })
+                const finded = comparePro.production_data.find(
+                  // @ts-ignore
+                  (item) => item.name.join(',') === itemChild.name.join(',')
+                )
+                if (!finded) {
+                  compareDesc.production_data[indexChild].change = 'delete'
+                } else {
+                  // @ts-ignore 加个标识，代表是旧的发生变化
+                  finded.ifOld = true
+                  if (finded.total_price > itemChild.total_price) {
+                    compareDesc.production_data[indexChild].priceChange = 'up'
+                  } else if (finded.total_price < itemChild.total_price) {
+                    compareDesc.production_data[indexChild].priceChange = 'down'
+                  }
+                  compareDesc.production_data[indexChild].priceNew = finded.total_price
+                  compareDesc.production_data[indexChild].priceNumber = (
+                    (Math.abs(Number(finded.total_price) - Number(itemChild.total_price)) /
+                      Number(itemChild.total_price)) *
+                    100
+                  ).toFixed(2)
+                  if (finded.desc !== itemChild.desc) {
+                    compareDesc.production_data[indexChild].desc = finded.desc
+                  }
+                }
+              })
+              comparePro.production_data
+                .filter((item: any) => !item.ifOld)
+                .forEach((itemChild: any) => {
+                  compareDesc.production_data.push({
+                    change: 'add',
+                    priceNew: '',
+                    desc: '',
+                    priceChange: '',
+                    priceNumber: 0
+                  })
+                  item.production_data.push(itemChild)
+                })
+              // 手动夹断
+              item.pack_material_data.forEach((itemChild, indexChild) => {
+                compareDesc.pack_material_data.push({
+                  change: '',
+                  priceNew: '',
+                  desc: '',
+                  priceChange: '',
+                  priceNumber: 0
+                })
+                const finded = comparePro.pack_material_data.find(
+                  (item) => item.material_name === itemChild.material_name
+                )
+                if (!finded) {
+                  compareDesc.pack_material_data[indexChild].change = 'delete'
+                } else {
+                  // @ts-ignore 加个标识，代表是旧的发生变化
+                  finded.ifOld = true
+                  if (finded.total_price > itemChild.total_price) {
+                    compareDesc.pack_material_data[indexChild].priceChange = 'up'
+                  } else if (finded.total_price < itemChild.total_price) {
+                    compareDesc.pack_material_data[indexChild].priceChange = 'down'
+                  }
+                  compareDesc.pack_material_data[indexChild].priceNew = finded.total_price
+                  compareDesc.pack_material_data[indexChild].priceNumber = (
+                    (Math.abs(Number(finded.total_price) - Number(itemChild.total_price)) /
+                      Number(itemChild.total_price)) *
+                    100
+                  ).toFixed(2)
+                  if (finded.desc !== itemChild.desc) {
+                    compareDesc.pack_material_data[indexChild].desc = finded.desc
+                  }
+                }
+              })
+              comparePro.pack_material_data
+                .filter((item: any) => !item.ifOld)
+                .forEach((itemChild: any) => {
+                  compareDesc.pack_material_data.push({
+                    change: 'add',
+                    priceNew: '',
+                    desc: '',
+                    priceChange: '',
+                    priceNumber: 0
+                  })
+                  item.pack_material_data.push(itemChild)
+                })
+              // 手动夹断
+              item.other_fee_data.forEach((itemChild, indexChild) => {
+                compareDesc.other_fee_data.push({
+                  change: '',
+                  priceNew: '',
+                  desc: '',
+                  priceChange: '',
+                  priceNumber: 0
+                })
+                const finded = comparePro.other_fee_data.find((item) => item.name === itemChild.name)
+                if (!finded) {
+                  compareDesc.other_fee_data[indexChild].change = 'delete'
+                } else {
+                  // @ts-ignore 加个标识，代表是旧的发生变化
+                  finded.ifOld = true
+                  if (finded.total_price > itemChild.total_price) {
+                    compareDesc.other_fee_data[indexChild].priceChange = 'up'
+                  } else if (finded.total_price < itemChild.total_price) {
+                    compareDesc.other_fee_data[indexChild].priceChange = 'down'
+                  }
+                  compareDesc.other_fee_data[indexChild].priceNew = finded.total_price
+                  compareDesc.other_fee_data[indexChild].priceNumber = (
+                    (Math.abs(Number(finded.total_price) - Number(itemChild.total_price)) /
+                      Number(itemChild.total_price)) *
+                    100
+                  ).toFixed(2)
+                  if (finded.desc !== itemChild.desc) {
+                    compareDesc.other_fee_data[indexChild].desc = finded.desc
+                  }
+                }
+              })
+              comparePro.other_fee_data
+                .filter((item: any) => !item.ifOld)
+                .forEach((itemChild: any) => {
+                  compareDesc.other_fee_data.push({
+                    change: 'add',
+                    priceNew: '',
+                    desc: '',
+                    priceChange: '',
+                    priceNumber: 0
+                  })
+                  item.other_fee_data.push(itemChild)
+                })
+            })
+          }
+          this.compareFlag = false
+          this.showCompareInfo = true
+          this.loading = false
+        })
+    },
     init(id?: number) {
       this.loading = true
+      this.showCompareInfo = false
+      this.compareDesc = []
       quotedPrice
         .detail({
           id: id || Number(this.$route.query.id)
@@ -765,7 +1567,6 @@ export default Vue.extend({
               this.quotedList = this.quotedList.concat(this.quotedPriceInfo.rel_order)
             }
           }
-          console.log(this.quotedPriceInfo)
           this.loading = false
         })
     },
