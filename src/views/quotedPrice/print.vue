@@ -439,7 +439,7 @@ export default Vue.extend({
         id: Number(this.$route.query.id)
       })
       .then((res) => {
-        console.log(res.data.data)
+        // console.log(res.data.data)
         this.quotedPriceInfo = res.data.data
 
         // 生成二维码
@@ -447,7 +447,7 @@ export default Vue.extend({
         QRCode.toDataURL(`${this.quotedPriceInfo.code}`)
           .then((url: any) => {
             this.qrCodeUrl = url
-            console.log(this.qrCodeUrl)
+            // console.log(this.qrCodeUrl)
           })
           .catch((err: any) => {
             console.error(err)
