@@ -29,7 +29,6 @@
           </div>
         </div>
         <div class="fr">
-          <div class="remark">打开微信扫一扫 更新每日生产进度</div>
           <div class="pImage">假装有图</div>
         </div>
       </div>

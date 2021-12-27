@@ -20,8 +20,10 @@
           </div>
         </div>
         <div class="fr">
-          <div class="remark">打开微信扫一扫 更新每日生产进度</div>
-          <div class="pImage">假装有图</div>
+          <!-- <div class="remark">打开微信扫一扫 更新每日生产进度</div> -->
+          <div class="pImage">
+            <img :src="qrCodeUrl" width="100%" alt=""/>
+          </div>
         </div>
       </div>
       <div class="pbody">
@@ -247,6 +249,15 @@
         </div>
       </div>
     </div>
+    <div class="setting_sign_style"
+      v-if="showMenu"
+      :style="`left:${X_position || 0}px;top:${Y_position}px`"
+      @click.stop>
+      <div class="setting_item"
+        @click="windowMethod(1)">刷新</div>
+      <div class="setting_item"
+        @click="windowMethod(2)">打印</div>
+    </div>
   </div>
 </template>
 
@@ -260,6 +271,10 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      qrCodeUrl:'',
+      showMenu: false,
+      X_position: 0,
+      Y_position: 0,
       quotedPriceInfo: {
         id: null,
         is_draft: 1,
@@ -360,7 +375,26 @@ export default Vue.extend({
       }
     }
   },
-  methods: {},
+  methods: {
+    handleClickRight(e: any, type = true) {
+      this.showMenu = type
+      this.X_position = e.clientX
+      this.Y_position = e.clientY
+      e.preventDefault()
+      e.stopPropagation()
+    },
+    windowMethod(type: 1 | 2 ) {
+      this.showMenu = false
+      this.showPrintSetting = false
+      window.requestAnimationFrame(() => {
+        if (type === 1) {
+          window.location.reload()
+        } else if (type === 2) {
+          window.print()
+        }
+      })
+    },
+  },
   computed: {
     productTotalPrice(): string[] {
       return this.quotedPriceInfo.product_data.map((item) => {
@@ -407,6 +441,17 @@ export default Vue.extend({
       .then((res) => {
         console.log(res.data.data)
         this.quotedPriceInfo = res.data.data
+
+        // 生成二维码
+        const QRCode = require('qrcode');
+        QRCode.toDataURL(`${this.quotedPriceInfo.code}`)
+          .then((url: any) => {
+            this.qrCodeUrl = url
+            console.log(this.qrCodeUrl)
+          })
+          .catch((err: any) => {
+            console.error(err)
+          })
       })
   }
 })
