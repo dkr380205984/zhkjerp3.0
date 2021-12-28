@@ -495,9 +495,9 @@
                     filterable
                     multiple>
                     <el-option v-for="item in finishedList"
-                      :key="item.value"
-                      :label="item.value"
-                      :value="item.value"></el-option>
+                      :key="item.name"
+                      :label="item.name"
+                      :value="item.name"></el-option>
                   </el-select>
                 </div>
               </div>
@@ -509,7 +509,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemFinishedProcess.desc"
                     placeholder="加工说明"
-                    :disabled="!itemFinishedProcess.name">
+                    :disabled="!itemFinishedProcess.name.length>0">
                   </el-input>
                 </div>
               </div>
@@ -521,7 +521,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemFinishedProcess.total_price"
                     placeholder="小计"
-                    :disabled="!itemFinishedProcess.name">
+                    :disabled="!itemFinishedProcess.name.length>0">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -644,6 +644,56 @@
               <div class="opr hoverRed"
                 v-else
                 @click="deleteInfo(item.other_fee_data,itemOther,indexOther,'deleteOther')">删除</div>
+            </div>
+            <div class="row"
+              v-for="(itemNoPro,indexNoPro) in item.no_production_fee_data"
+              :key="'NoPro' + indexNoPro">
+              <div class="col">
+                <div class="label"
+                  v-if="indexNoPro===0">
+                  <span class="text">非生产型费用</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input v-model="itemNoPro.name"
+                    placeholder="非生产型费用"></el-input>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label"
+                  v-if="indexNoPro===0">
+                  <span class="text">费用说明</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input v-model="itemNoPro.desc"
+                    placeholder="费用说明"
+                    :disabled="!itemNoPro.name">
+                  </el-input>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label"
+                  v-if="indexNoPro===0">
+                  <span class="text">小计</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input v-model="itemNoPro.total_price"
+                    placeholder="小计"
+                    :disabled="!itemNoPro.name">
+                    <template slot="append">元</template>
+                  </el-input>
+                </div>
+              </div>
+              <div class="opr hoverBlue"
+                v-if="indexNoPro===0"
+                @click="$addItem(item.no_production_fee_data,{
+                  id:'',
+                 desc:'',
+                 name:'',
+                 total_price:''
+                })">添加</div>
+              <div class="opr hoverRed"
+                v-else
+                @click="$deleteItem(item.no_production_fee_data,indexOther)">删除</div>
             </div>
             <div class="row">
               <div class="col flex3">
@@ -929,13 +979,20 @@ export default Vue.extend({
                 desc: '',
                 total_price: ''
               }
+            ],
+            no_production_fee_data: [
+              {
+                id: '',
+                name: '',
+                desc: '',
+                total_price: ''
+              }
             ]
           }
         ]
       },
       contactsList: [],
-      weaveList: [{ value: '针织织造' }, { value: '梭织织造' }, { value: '制版费' }],
-      finishedList: [{ value: '车标' }, { value: '包装' }, { value: '人工' }, { value: '检验' }, { value: '水洗' }]
+      weaveList: [{ value: '针织织造' }, { value: '梭织织造' }, { value: '制版费' }]
     }
   },
   computed: {
@@ -965,6 +1022,9 @@ export default Vue.extend({
               return totalChild + Number(currentChild.total_price)
             }, 0) +
             current.other_fee_data.reduce((totalChild, currentChild) => {
+              return totalChild + Number(currentChild.total_price)
+            }, 0) +
+            current.no_production_fee_data.reduce((totalChild, currentChild) => {
               return totalChild + Number(currentChild.total_price)
             }, 0)
           )
@@ -1020,6 +1080,9 @@ export default Vue.extend({
     },
     clientList() {
       return this.$store.state.api.clientType.arr.filter((item: { type: any }) => Number(item.type) === 1)
+    },
+    finishedList() {
+      return this.$store.state.api.staffProcess.arr
     }
   },
   methods: {
@@ -1096,6 +1159,14 @@ export default Vue.extend({
           }
         ],
         other_fee_data: [
+          {
+            id: '',
+            name: '',
+            desc: '',
+            total_price: ''
+          }
+        ],
+        no_production_fee_data: [
           {
             id: '',
             name: '',
@@ -1207,6 +1278,9 @@ export default Vue.extend({
             return totalChild + Number(currentChild.total_price)
           }, 0) +
           item.other_fee_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
+          }, 0) +
+          item.no_production_fee_data.reduce((totalChild, currentChild) => {
             return totalChild + Number(currentChild.total_price)
           }, 0)
       })
@@ -1342,7 +1416,7 @@ export default Vue.extend({
                 }) ||
                 item.production_data.some((itemChild) => {
                   return (
-                    itemChild.name &&
+                    itemChild.name!.length > 0 &&
                     this.$formCheck(itemChild, [
                       {
                         key: 'name',
@@ -1381,6 +1455,21 @@ export default Vue.extend({
                       {
                         key: 'total_price',
                         errMsg: '请输入其他费用小计'
+                      }
+                    ])
+                  )
+                }) ||
+                item.no_production_fee_data.some((itemChild) => {
+                  return (
+                    itemChild.name &&
+                    this.$formCheck(itemChild, [
+                      {
+                        key: 'name',
+                        errMsg: '请输入非生产型费用名称'
+                      },
+                      {
+                        key: 'total_price',
+                        errMsg: '请输入非生产型费用小计'
                       }
                     ])
                   )
@@ -1500,6 +1589,11 @@ export default Vue.extend({
         checkWhich: 'api/halfProcess',
         getInfoMethed: 'dispatch',
         getInfoApi: 'getHalfProcessAsync'
+      },
+      {
+        checkWhich: 'api/staffProcess',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getStaffProcessAsync'
       },
       {
         checkWhich: 'api/group',

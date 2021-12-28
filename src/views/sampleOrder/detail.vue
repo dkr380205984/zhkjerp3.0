@@ -344,13 +344,13 @@
                       <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item @click.native="confirmSample(item.product_id,item.status===2?1:2)"
                           :disabled="item.status===6 ||item.status===5 || item.status===4 || item.status===3">
-                          <div :class="item.status===2?'hoverOrange':'hoverBlue'">{{item.status===2?'重新打样':'客户确认完成'}}</div>
+                          <div :class="item.status===2?'hoverOrange':'hoverGreen'">{{item.status===2?'重新打样':'确认大货生产'}}</div>
                         </el-dropdown-item>
                         <el-dropdown-item :disabled="item.status===4 || item.status===3"
-                          @click.native="item.status===6?confirmSample(item.product_id,1):confirmSample(item.product_id,6)"><span class="hoverGreen">{{item.status===6?'重新待定':'确认继续打样'}}</span></el-dropdown-item>
+                          @click.native="item.status===6?confirmSample(item.product_id,1):confirmSample(item.product_id,6)"><span class="hoverBlue">{{item.status===6?'重新待定':'不确认继续打样'}}</span></el-dropdown-item>
                         <el-dropdown-item @click.native="confirmSample(item.product_id,item.status===5?1:5)"
                           :disabled="item.status===6 ||item.status===4 || item.status===3 || item.status===2">
-                          <div class="hoverOrange">{{item.status===5?'重新打样':'取消打样'}}</div>
+                          <div class="hoverOrange">{{item.status===5?'重新打样':'不确认取消打样'}}</div>
                         </el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>

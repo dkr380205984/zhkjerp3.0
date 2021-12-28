@@ -275,13 +275,23 @@ const plugin = {
   checkCommonInfo(info: CheckCommonInfo[]) {
     info.forEach((item) => {
       const checkInfo = item.checkWhich.split('/')
-      if (!(store as any).state[checkInfo[0]][checkInfo[1]].status) {
+      // 是否强致刷新
+      if (item.forceUpdate) {
         if (item.getInfoMethed && item.getInfoMethed === 'commit') {
           store.commit(checkInfo[0] + '/' + item.getInfoApi)
         } else {
           store.dispatch(checkInfo[0] + '/' + item.getInfoApi)
         }
+      } else {
+        if (!(store as any).state[checkInfo[0]][checkInfo[1]].status) {
+          if (item.getInfoMethed && item.getInfoMethed === 'commit') {
+            store.commit(checkInfo[0] + '/' + item.getInfoApi)
+          } else {
+            store.dispatch(checkInfo[0] + '/' + item.getInfoApi)
+          }
+        }
       }
+
     })
   },
   addItem<T>(father: T[], son: T): void {

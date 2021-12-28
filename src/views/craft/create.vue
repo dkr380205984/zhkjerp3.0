@@ -1356,6 +1356,9 @@
         </div>
       </div>
     </div>
+    <div class="popup">
+      <div class="loading"></div>
+    </div>
     <div class="bottomFixBar">
       <div class="main"
         style="display: flex;justify-content: space-between;align-items:center">
@@ -2893,12 +2896,12 @@ export default Vue.extend({
           ]) ||
           this.craftInfo.warp_data.color_data.some((item) => {
             return (
-              this.$formCheck(item, [
-                {
-                  key: 'color_id',
-                  errMsg: '请选择经向产品配色'
-                }
-              ]) ||
+              // this.$formCheck(item, [
+              //   {
+              //     key: 'color_id',
+              //     errMsg: '请选择经向产品配色'
+              //   }
+              // ]) ||
               item.color_scheme.some((itemColor) => {
                 return this.$formCheck(itemColor, [
                   {
@@ -2911,12 +2914,12 @@ export default Vue.extend({
           }) ||
           this.craftInfo.weft_data.color_data.some((item) => {
             return (
-              this.$formCheck(item, [
-                {
-                  key: 'color_id',
-                  errMsg: '请选择纬向产品配色'
-                }
-              ]) ||
+              // this.$formCheck(item, [
+              //   {
+              //     key: 'color_id',
+              //     errMsg: '请选择纬向产品配色'
+              //   }
+              // ]) ||
               item.color_scheme.some((itemColor) => {
                 return this.$formCheck(itemColor, [
                   {
