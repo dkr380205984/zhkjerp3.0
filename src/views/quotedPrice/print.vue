@@ -242,7 +242,7 @@
             <div class="tbody hasTop">
               <div class="trow">
                 <div class="tcol bgGray">其它说明与备注</div>
-                <div class="tcol">{{ quotedPriceInfo.otherComment || '无' }}</div>
+                <div class="tcol" style="flex: 2 2%;">{{ quotedPriceInfo.otherComment }}</div>
               </div>
             </div>
           </div>
