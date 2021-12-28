@@ -20,6 +20,27 @@
             <div class="label">
               <span class="text">询价客户</span>
               <span class="explanation">(必选)</span>
+              <el-tooltip class="item"
+                effect="dark"
+                content="设置成功后请点击此按钮刷新数据"
+                placement="top">
+                <i class="el-icon-refresh hoverGreen fr"
+                  style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                  @click="$checkCommonInfo([{
+                    checkWhich: 'api/clientType',
+                    getInfoMethed: 'dispatch',
+                    getInfoApi: 'getClientTypeAsync',
+                    forceUpdate:true
+                  }])"></i>
+              </el-tooltip>
+              <el-tooltip class="item"
+                effect="dark"
+                content="添加新客户"
+                placement="top">
+                <i class="el-icon-upload hoverOrange fr"
+                  style="line-height:38px;font-size:18px;cursor:pointer;"
+                  @click="$openUrl('/client/create?type=1')"></i>
+              </el-tooltip>
             </div>
             <div class="info elCtn">
               <el-cascader placeholder="请选择询价客户"
@@ -246,7 +267,8 @@
                       @click="$checkCommonInfo([{
                         checkWhich: 'api/yarnType',
                         getInfoMethed: 'dispatch',
-                        getInfoApi: 'getYarnTypeAsync'
+                        getInfoApi: 'getYarnTypeAsync',
+                        forceUpdate:true
                       }])"></i>
                   </el-tooltip>
                   <el-tooltip class="item"
@@ -361,7 +383,8 @@
                       @click="$checkCommonInfo([{
                           checkWhich: 'api/decorateMaterial',
                           getInfoMethed: 'dispatch',
-                          getInfoApi: 'getDecorateMaterialAsync'
+                          getInfoApi: 'getDecorateMaterialAsync',
+                          forceUpdate:true
                       }])"></i>
                   </el-tooltip>
                   <el-tooltip class="item"
@@ -520,9 +543,10 @@
                     <i class="el-icon-refresh hoverGreen fr"
                       style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
                       @click="$checkCommonInfo([{
-                          checkWhich: 'api/halfProcess',
-                          getInfoMethed: 'dispatch',
-                          getInfoApi: 'getHalfProcessAsync'
+                        checkWhich: 'api/halfProcess',
+                        getInfoMethed: 'dispatch',
+                        getInfoApi: 'getHalfProcessAsync',
+                        forceUpdate:true
                       }])"></i>
                   </el-tooltip>
                   <el-tooltip class="item"
@@ -592,6 +616,27 @@
                 <div class="label"
                   v-if="indexFinishedProcess===0">
                   <span class="text">成品加工</span>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="设置成功后请点击此按钮刷新数据"
+                    placement="top">
+                    <i class="el-icon-refresh hoverGreen fr"
+                      style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                      @click="$checkCommonInfo([{
+                        checkWhich: 'api/staffProcess',
+                        getInfoMethed: 'dispatch',
+                        getInfoApi: 'getStaffProcessAsync',
+                        forceUpdate:true
+                      }])"></i>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="添加新工序"
+                    placement="top">
+                    <i class="el-icon-upload hoverOrange fr"
+                      style="line-height:38px;font-size:18px;cursor:pointer"
+                      @click="$openUrl('/setting/?pName=工序设置&cName=成品加工工序')"></i>
+                  </el-tooltip>
                 </div>
                 <div class="info elCtn">
                   <el-select v-model="itemFinishedProcess.name"
@@ -600,9 +645,9 @@
                     filterable
                     multiple>
                     <el-option v-for="item in finishedList"
-                      :key="item.value"
-                      :label="item.value"
-                      :value="item.value"></el-option>
+                      :key="item.name"
+                      :label="item.name"
+                      :value="item.name"></el-option>
                   </el-select>
                 </div>
               </div>
@@ -650,6 +695,27 @@
                 <div class="label"
                   v-if="indexPackMaterial===0">
                   <span class="text">包装辅料</span>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="设置成功后请点击此按钮刷新数据"
+                    placement="top">
+                    <i class="el-icon-refresh hoverGreen fr"
+                      style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                      @click="$checkCommonInfo([{
+                        checkWhich: 'api/packMaterial',
+                        getInfoMethed: 'dispatch',
+                        getInfoApi: 'getPackMaterialAsync',
+                        forceUpdate:true
+                      }])"></i>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="添加新包装辅料"
+                    placement="top">
+                    <i class="el-icon-upload hoverOrange fr"
+                      style="line-height:38px;font-size:18px;cursor:pointer"
+                      @click="$openUrl('/setting/?pName=物料设置&cName=包装辅料')"></i>
+                  </el-tooltip>
                 </div>
                 <div class="info elCtn">
                   <el-select v-model="itemPackMaterial.material_id"
@@ -749,6 +815,56 @@
               <div class="opr hoverRed"
                 v-else
                 @click="$deleteItem(item.other_fee_data,indexOther)">删除</div>
+            </div>
+            <div class="row"
+              v-for="(itemNoPro,indexNoPro) in item.no_production_fee_data"
+              :key="'NoPro' + indexNoPro">
+              <div class="col">
+                <div class="label"
+                  v-if="indexNoPro===0">
+                  <span class="text">非生产型费用</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input v-model="itemNoPro.name"
+                    placeholder="非生产型费用"></el-input>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label"
+                  v-if="indexNoPro===0">
+                  <span class="text">费用说明</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input v-model="itemNoPro.desc"
+                    placeholder="费用说明"
+                    :disabled="!itemNoPro.name">
+                  </el-input>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label"
+                  v-if="indexNoPro===0">
+                  <span class="text">小计</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input v-model="itemNoPro.total_price"
+                    placeholder="小计"
+                    :disabled="!itemNoPro.name">
+                    <template slot="append">元</template>
+                  </el-input>
+                </div>
+              </div>
+              <div class="opr hoverBlue"
+                v-if="indexNoPro===0"
+                @click="$addItem(item.no_production_fee_data,{
+                  id:'',
+                 desc:'',
+                 name:'',
+                 total_price:''
+                })">添加</div>
+              <div class="opr hoverRed"
+                v-else
+                @click="$deleteItem(item.no_production_fee_data,indexOther)">删除</div>
             </div>
             <div class="row">
               <div class="col flex3">
@@ -1052,13 +1168,20 @@ export default Vue.extend({
                 desc: '',
                 total_price: ''
               }
+            ],
+            no_production_fee_data: [
+              {
+                id: '',
+                name: '',
+                desc: '',
+                total_price: ''
+              }
             ]
           }
         ]
       },
       contactsList: [],
       weaveList: [{ value: '针织织造' }, { value: '梭织织造' }, { value: '制版费' }],
-      finishedList: [{ value: '车标' }, { value: '包装' }, { value: '人工' }, { value: '检验' }, { value: '水洗' }],
       searchQuotedPrice: '',
       searchQuotedPriceList: [],
       desc: '',
@@ -1093,6 +1216,9 @@ export default Vue.extend({
               return totalChild + Number(currentChild.total_price)
             }, 0) +
             current.other_fee_data.reduce((totalChild, currentChild) => {
+              return totalChild + Number(currentChild.total_price)
+            }, 0) +
+            current.no_production_fee_data.reduce((totalChild, currentChild) => {
               return totalChild + Number(currentChild.total_price)
             }, 0)
           )
@@ -1150,6 +1276,9 @@ export default Vue.extend({
           }, 0) +
           item.other_fee_data.reduce((totalChild, currentChild) => {
             return totalChild + Number(currentChild.total_price)
+          }, 0) +
+          item.no_production_fee_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
           }, 0)
         ).toFixed(2)
       })
@@ -1171,6 +1300,9 @@ export default Vue.extend({
     },
     halfProcessList() {
       return this.$store.state.api.halfProcess.arr
+    },
+    finishedList() {
+      return this.$store.state.api.staffProcess.arr
     },
     groupList() {
       return this.$store.state.api.group.arr
@@ -1281,6 +1413,14 @@ export default Vue.extend({
           }
         ],
         other_fee_data: [
+          {
+            id: '',
+            name: '',
+            desc: '',
+            total_price: ''
+          }
+        ],
+        no_production_fee_data: [
           {
             id: '',
             name: '',
@@ -1556,6 +1696,21 @@ export default Vue.extend({
                       }
                     ])
                   )
+                }) ||
+                item.no_production_fee_data.some((itemChild) => {
+                  return (
+                    itemChild.name &&
+                    this.$formCheck(itemChild, [
+                      {
+                        key: 'name',
+                        errMsg: '请输入非生产型费用名称'
+                      },
+                      {
+                        key: 'total_price',
+                        errMsg: '请输入非生产型费用小计'
+                      }
+                    ])
+                  )
                 })
               )
             }
@@ -1665,6 +1820,11 @@ export default Vue.extend({
         checkWhich: 'api/packMaterial',
         getInfoMethed: 'dispatch',
         getInfoApi: 'getPackMaterialAsync'
+      },
+      {
+        checkWhich: 'api/staffProcess',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getStaffProcessAsync'
       },
       {
         checkWhich: 'api/halfProcess',

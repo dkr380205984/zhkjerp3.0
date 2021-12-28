@@ -3153,6 +3153,14 @@ export default Vue.extend({
             desc: '',
             total_price: ''
           }
+        ],
+        no_production_fee_data: [
+          {
+            id: '',
+            name: '',
+            desc: '',
+            total_price: ''
+          }
         ]
       },
       quotedPriceProductList: [],
@@ -5035,6 +5043,14 @@ export default Vue.extend({
             ],
             other_fee_data: [
               {
+                name: '',
+                desc: '',
+                total_price: ''
+              }
+            ],
+            no_production_fee_data: [
+              {
+                id: '',
                 name: '',
                 desc: '',
                 total_price: ''

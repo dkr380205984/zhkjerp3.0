@@ -107,4 +107,10 @@ export interface QuotedPriceProduct {
     desc: string
     total_price: number | string
   }>
+  no_production_fee_data: Array<{
+    id?: number | string
+    name: string
+    desc: string
+    total_price: number | string
+  }>
 }

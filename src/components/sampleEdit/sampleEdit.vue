@@ -108,6 +108,27 @@
                 <div class="label">
                   <span class="text">样品品类</span>
                   <span class="explanation">(必选)</span>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="设置成功后请点击此按钮刷新数据"
+                    placement="top">
+                    <i class="el-icon-refresh hoverGreen fr"
+                      style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                      @click="$checkCommonInfo([{
+                        checkWhich: 'api/productType',
+                        getInfoMethed: 'dispatch',
+                        getInfoApi: 'getProductTypeAsync',
+                        forceUpdate:true
+                      }])"></i>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="添加新品类"
+                    placement="top">
+                    <i class="el-icon-upload hoverOrange fr"
+                      style="line-height:38px;font-size:18px;cursor:pointer;"
+                      @click="$openUrl('/setting?pName=产品设置&cName=品类')"></i>
+                  </el-tooltip>
                 </div>
                 <div class="info elCtn">
                   <el-cascader placeholder="请选择品类"
@@ -134,6 +155,27 @@
                 <div class="label">
                   <span class="text">样品款式</span>
                   <span class="explanation">(必选)</span>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="设置成功后请点击此按钮刷新数据"
+                    placement="top">
+                    <i class="el-icon-refresh hoverGreen fr"
+                      style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                      @click="$checkCommonInfo([{
+                        checkWhich: 'api/productStyle',
+                        getInfoMethed: 'dispatch',
+                        getInfoApi: 'getProductStyleAsync',
+                        forceUpdate:true
+                      }])"></i>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="添加新款式"
+                    placement="top">
+                    <i class="el-icon-upload hoverOrange fr"
+                      style="line-height:38px;font-size:18px;cursor:pointer;"
+                      @click="$openUrl('/setting?pName=产品设置&cName=款式')"></i>
+                  </el-tooltip>
                 </div>
                 <div class="info elCtn">
                   <el-select placeholder="请选择样品款式"
@@ -233,6 +275,27 @@
                 <div class="label"
                   v-if="index===0">
                   <span class="text">大身成分</span>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="设置成功后请点击此按钮刷新数据"
+                    placement="top">
+                    <i class="el-icon-refresh hoverGreen fr"
+                      style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                      @click="$checkCommonInfo([{
+                        checkWhich: 'api/ingredient',
+                        getInfoMethed: 'dispatch',
+                        getInfoApi: 'getIngredientAsync',
+                        forceUpdate:true
+                      }])"></i>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="添加新成分"
+                    placement="top">
+                    <i class="el-icon-upload hoverOrange fr"
+                      style="line-height:38px;font-size:18px;cursor:pointer;"
+                      @click="$openUrl('/setting?pName=产品设置&cName=成分')"></i>
+                  </el-tooltip>
                 </div>
                 <div class="info elCtn">
                   <el-select placeholder="请选择成分"

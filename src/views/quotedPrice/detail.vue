@@ -148,7 +148,11 @@
                 <div class="trow"
                   v-for="(item,index) in compareInfo.product_data"
                   :key="item.id">
-                  <div class="tcol">{{item.category_name}}/{{item.secondary_category}}</div>
+                  <div class="tcol">{{item.category_name}}/{{item.secondary_category}}
+                    <div class="tips">
+                      <div class="lightGreen">报价单{{compareIndex+1}}产品</div>
+                    </div>
+                  </div>
                   <div class="tcol">
                     <div class="imageCtn">
                       <el-image style="width:100%;height:100%"
@@ -185,8 +189,10 @@
                     </div>
                   </div>
                   <div class="tcol">{{item.desc}}
-                    <div class="tips lightGreen"
-                      v-if="compareDesc[index].desc.change">描述变化</div>
+                    <div class="tips"
+                      v-if="compareDesc[index].desc.change">
+                      <span class="lightGreen">描述变化</span>
+                    </div>
                   </div>
                 </div>
               </template>
@@ -194,7 +200,7 @@
           </div>
         </div>
         <div class="module">
-          <el-tabs type="border-card">
+          <el-tabs class="normalTab">
             <el-tab-pane :label="'产品'+(index+1)"
               v-for="(item,index) in quotedPriceInfo.product_data"
               :key="item.id">
@@ -295,7 +301,7 @@
                     <div class="col">费用名称
                       <el-tooltip class="item"
                         effect="dark"
-                        content="织：产品织造；半：半成品加工；成：成品加工；包：包装辅料；其：其他费用；运：运输费用。"
+                        content="织：产品织造；半：半成品加工；成：成品加工；包：包装辅料；其：其他费用；非：非生产型费用；运：运输费用。"
                         placement="top">
                         <i class="el-icon-question gray"
                           style="margin-left:4px"></i>
@@ -443,7 +449,7 @@
                       <div class="tips"
                         v-if="compareDesc[index] && compareDesc[index].other_fee_data[indexOther] && compareDesc[index].other_fee_data[indexOther].change">
                         <span :class="{'lightRed':compareDesc[index].other_fee_data[indexOther].change==='add','lightGreen':compareDesc[index].other_fee_data[indexOther].change==='delete'}">
-                          {{compareDesc[index].other_fee_data[indexOther].change==='add'?'新增包装':'删除包装'}}
+                          {{compareDesc[index].other_fee_data[indexOther].change==='add'?'新增项':'删除项'}}
                         </span>
                       </div>
                     </div>
@@ -466,15 +472,59 @@
                       </div>
                     </div>
                   </div>
+                  <div class="row"
+                    v-for="(itemOther,indexOther) in item.no_production_fee_data"
+                    :key="'NoPro' + indexOther">
+                    <div class="col">
+                      <div class="circle"
+                        :class="{'backHoverBlue':itemOther.name,'backGray':!itemOther.name}">非</div>{{itemOther.name || '无'}}
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].no_production_fee_data[indexOther] && compareDesc[index].no_production_fee_data[indexOther].change">
+                        <span :class="{'lightRed':compareDesc[index].no_production_fee_data[indexOther].change==='add','lightGreen':compareDesc[index].no_production_fee_data[indexOther].change==='delete'}">
+                          {{compareDesc[index].no_production_fee_data[indexOther].change==='add'?'新增项':'删除项'}}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="col">{{itemOther.desc||'无'}}
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].no_production_fee_data[indexOther] && compareDesc[index].no_production_fee_data[indexOther].desc">
+                        <span :class="{'lightRed':compareDesc[index].no_production_fee_data[indexOther].desc}">
+                          更新说明：{{compareDesc[index].no_production_fee_data[indexOther].desc}}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="col"></div>
+                    <div class="col"></div>
+                    <div class="col">{{itemOther.total_price||0}}元
+                      <div class="tips"
+                        v-if="compareDesc[index] && compareDesc[index].no_production_fee_data[indexOther] && compareDesc[index].no_production_fee_data[indexOther].priceChange">
+                        <span :class="{'lightRed':compareDesc[index].no_production_fee_data[indexOther].priceChange==='up','lightGreen':compareDesc[index].no_production_fee_data[indexOther].priceChange==='down'}">
+                          总价{{compareDesc[index].no_production_fee_data[indexOther].priceNew}}元{{compareDesc[index].no_production_fee_data[indexOther].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].no_production_fee_data[indexOther].priceNumber}}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                   <div class="row">
                     <div class="col">
                       <div class="circle"
                         :class="{'backHoverBlue':item.transport_fee,'backGray':!item.transport_fee}">运</div>{{item.transport_fee?'运输费用':'无'}}
                     </div>
-                    <div class="col">{{item.transport_fee_desc||'无'}}</div>
+                    <div class="col">{{item.transport_fee_desc||'无'}}
+                      <div class="tips"
+                        v-if="compareDesc[index]&&compareDesc[index].transport_fee.desc">
+                        <span :class="{'lightGreen':compareDesc[index].transport_fee.desc}">描述变化</span>
+                      </div>
+                    </div>
                     <div class="col"></div>
                     <div class="col"></div>
-                    <div class="col">{{item.transport_fee||0}}元</div>
+                    <div class="col">{{item.transport_fee||0}}元
+                      <div class="tips"
+                        v-if="compareDesc[index]&&compareDesc[index].transport_fee.desc">
+                        <span :class="{'lightGreen':compareDesc[index].transport_fee.desc}">
+                          总价{{compareDesc[index].transport_fee.priceNew}}元{{compareDesc[index].transport_fee.priceChange==='up'?'上升':'下降'}}{{compareDesc[index].transport_fee.priceNumber}}%
+                        </span>
+                      </div>
+                    </div>
                   </div>
                   <div class="row">
                     <div class="col">
@@ -483,7 +533,15 @@
                     <div class="col"></div>
                     <div class="col"></div>
                     <div class="col"></div>
-                    <div class="col">{{productTotalPrice[index]}}元</div>
+                    <div class="col">{{productTotalPrice[index]}}元
+                      <div class="tips"
+                        v-if="showCompareInfo && productTotalPrice[index]!==compareProductTotalPrice[index]">
+                        <div :class="{'lightGreen':productTotalPrice[index]>compareProductTotalPrice[index],'lightRed':productTotalPrice[index]<compareProductTotalPrice[index]}">
+                          费用
+                          {{productTotalPrice[index]>compareProductTotalPrice[index]?'下降':'上涨'}}
+                          {{Math.abs(productTotalPrice[index]-compareProductTotalPrice[index]).toFixed(2)}}元</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -505,24 +563,66 @@
               </div>
               <div class="row">
                 <div class="col">客户佣金</div>
-                <div class="col">{{quotedPriceInfo.commission_percentage}}%</div>
+                <div class="col">{{quotedPriceInfo.commission_percentage}}%
+                  <div class="tips"
+                    v-if="showCompareInfo && quotedPriceInfo.commission_percentage!==compareInfo.commission_percentage">
+                    <span :class="{'lightGreen':quotedPriceInfo.commission_percentage>compareInfo.commission_percentage,'lightRed':quotedPriceInfo.commission_percentage<compareInfo.commission_percentage}">
+                      {{quotedPriceInfo.commission_percentage>compareInfo.commission_percentage?'下调':'上调'}}了{{Math.abs(quotedPriceInfo.commission_percentage-compareInfo.commission_percentage)}}%
+                    </span>
+                  </div>
+                </div>
                 <div class="col"></div>
                 <div class="col"></div>
-                <div class="col">{{quotedPriceInfo.commission_price}}元</div>
+                <div class="col">{{quotedPriceInfo.commission_price}}元
+                  <div class="tips"
+                    v-if="showCompareInfo && quotedPriceInfo.commission_price!==compareInfo.commission_price">
+                    <span :class="{'lightGreen':quotedPriceInfo.commission_price>compareInfo.commission_price,'lightRed':quotedPriceInfo.commission_price<compareInfo.commission_price}">
+                      {{quotedPriceInfo.commission_price>compareInfo.commission_price?'下降':'上涨'}}了{{Math.abs(quotedPriceInfo.commission_price-compareInfo.commission_price).toFixed(2)}}元
+                    </span>
+                  </div>
+                </div>
               </div>
               <div class="row">
                 <div class="col">预计税率</div>
-                <div class="col">{{quotedPriceInfo.rate_taxation}}%</div>
+                <div class="col">{{quotedPriceInfo.rate_taxation}}%
+                  <div class="tips"
+                    v-if="showCompareInfo && quotedPriceInfo.rate_taxation!==compareInfo.rate_taxation">
+                    <span :class="{'lightGreen':quotedPriceInfo.rate_taxation>compareInfo.rate_taxation,'lightRed':quotedPriceInfo.rate_taxation<compareInfo.rate_taxation}">
+                      {{quotedPriceInfo.rate_taxation>compareInfo.rate_taxation?'下调':'上调'}}了{{Math.abs(quotedPriceInfo.rate_taxation-compareInfo.rate_taxation)}}%
+                    </span>
+                  </div>
+                </div>
                 <div class="col"></div>
                 <div class="col"></div>
-                <div class="col">{{quotedPriceInfo.rate_price}}元</div>
+                <div class="col">{{quotedPriceInfo.rate_price}}元
+                  <div class="tips"
+                    v-if="showCompareInfo && quotedPriceInfo.rate_price!==compareInfo.rate_price">
+                    <span :class="{'lightGreen':quotedPriceInfo.rate_price>compareInfo.rate_price,'lightRed':quotedPriceInfo.rate_price<compareInfo.rate_price}">
+                      {{quotedPriceInfo.rate_price>compareInfo.rate_price?'下降':'上涨'}}了{{Math.abs(quotedPriceInfo.rate_price-compareInfo.rate_price).toFixed(2)}}元
+                    </span>
+                  </div>
+                </div>
               </div>
               <div class="row">
                 <div class="col">预计利润</div>
-                <div class="col">{{quotedPriceInfo.profit_percentage}}%</div>
+                <div class="col">{{quotedPriceInfo.profit_percentage}}%
+                  <div class="tips"
+                    v-if="showCompareInfo && quotedPriceInfo.profit_percentage!==compareInfo.profit_percentage">
+                    <span :class="{'lightGreen':quotedPriceInfo.profit_percentage>compareInfo.profit_percentage,'lightRed':quotedPriceInfo.profit_percentage<compareInfo.profit_percentage}">
+                      {{quotedPriceInfo.profit_percentage>compareInfo.profit_percentage?'下调':'上调'}}了{{Math.abs(quotedPriceInfo.profit_percentage-compareInfo.profit_percentage)}}%
+                    </span>
+                  </div>
+                </div>
                 <div class="col"></div>
                 <div class="col"></div>
-                <div class="col">{{quotedPriceInfo.profit_price}}元</div>
+                <div class="col">{{quotedPriceInfo.profit_price}}元
+                  <div class="tips"
+                    v-if="showCompareInfo && quotedPriceInfo.profit_price!==compareInfo.profit_price">
+                    <span :class="{'lightGreen':quotedPriceInfo.profit_price<compareInfo.profit_price,'lightRed':quotedPriceInfo.profit_price>compareInfo.profit_price}">
+                      {{quotedPriceInfo.profit_price>compareInfo.profit_price?'下降':'上涨'}}了{{Math.abs(quotedPriceInfo.profit_price-compareInfo.profit_price).toFixed(2)}}元
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -533,12 +633,16 @@
       <div class="main">
         <div class="fl"
           style="line-height:56px">
-          合计：<span class="blue">{{realTotalPrice}}元<span v-if="quotedPriceInfo.settle_unit!=='元'">{{'/'+realTotalPriceChange+quotedPriceInfo.settle_unit}}</span></span>
+          合计：
+          <span class="blue">{{realTotalPrice}}元
+            <span v-if="quotedPriceInfo.settle_unit!=='元'">{{'/'+realTotalPriceChange+quotedPriceInfo.settle_unit}}</span>
+          </span>
         </div>
-        <div class="fl blue"
+        <div class="fl blue green"
           style="line-height:56px;margin-left:24px"
           v-if="showCompareInfo">
-          正在与报价单"<span class="green">{{compareInfo.title}}</span>"进行比较
+          正在与报价单{{compareIndex+1}}进行比较，
+          总价{{compareRealTotalPrice}}元
         </div>
         <div class="btnCtn">
           <div class="borderBtn"
@@ -640,7 +744,7 @@
                   <span class="text">再次报价</span>
                 </div>
                 <div class="btn backHoverGreen"
-                  v-if="quotedList.length>0"
+                  v-if="quotedList.length>1"
                   @click="compareFlag=true">
                   <svg class="iconFont"
                     aria-hidden="true">
@@ -934,6 +1038,14 @@ export default Vue.extend({
                 desc: '',
                 total_price: ''
               }
+            ],
+            no_production_fee_data: [
+              {
+                id: '',
+                name: '',
+                desc: '',
+                total_price: ''
+              }
             ]
           }
         ]
@@ -1032,6 +1144,14 @@ export default Vue.extend({
                 desc: '',
                 total_price: ''
               }
+            ],
+            no_production_fee_data: [
+              {
+                id: '',
+                name: '',
+                desc: '',
+                total_price: ''
+              }
             ]
           }
         ]
@@ -1061,6 +1181,15 @@ export default Vue.extend({
           Number(this.quotedPriceInfo.rate_taxation) / 100 || 0)
       ).toFixed(2)
     },
+    compareRealTotalPrice(): string {
+      return (
+        Number(this.compareInfo.total_cost_price) *
+        (1 -
+          (Number(this.compareInfo.commission_percentage) / 100 || 0) +
+          (Number(this.compareInfo.profit_percentage) / 100 || 0) +
+          Number(this.compareInfo.rate_taxation) / 100 || 0)
+      ).toFixed(2)
+    },
     // 产品项总价
     productTotalPrice(): string[] {
       return this.quotedPriceInfo.product_data.map((item) => {
@@ -1085,6 +1214,41 @@ export default Vue.extend({
             return totalChild + Number(currentChild.total_price)
           }, 0) +
           item.other_fee_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
+          }, 0) +
+          item.no_production_fee_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
+          }, 0)
+        ).toFixed(2)
+      })
+    },
+    // 对比报价单产品总价
+    compareProductTotalPrice(): string[] {
+      return this.compareInfo.product_data.map((item) => {
+        return (
+          Number(item.transport_fee) +
+          item.material_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
+          }, 0) +
+          item.assist_material_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
+          }, 0) +
+          item.weave_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
+          }, 0) +
+          item.semi_product_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
+          }, 0) +
+          item.production_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
+          }, 0) +
+          item.pack_material_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
+          }, 0) +
+          item.other_fee_data.reduce((totalChild, currentChild) => {
+            return totalChild + Number(currentChild.total_price)
+          }, 0) +
+          item.no_production_fee_data.reduce((totalChild, currentChild) => {
             return totalChild + Number(currentChild.total_price)
           }, 0)
         ).toFixed(2)
@@ -1132,7 +1296,9 @@ export default Vue.extend({
                 other_fee_data: [],
                 transport_fee: {
                   change: '',
-                  number: 0
+                  number: 0,
+                  desc: '',
+                  pirceNew: 0
                 }
               })
               // 对比字段逻辑，这里可以封装，懒得搞
@@ -1541,6 +1707,66 @@ export default Vue.extend({
                   })
                   item.other_fee_data.push(itemChild)
                 })
+              // 手动夹断
+              item.no_production_fee_data.forEach((itemChild, indexChild) => {
+                compareDesc.no_production_fee_data.push({
+                  change: '',
+                  priceNew: '',
+                  desc: '',
+                  priceChange: '',
+                  priceNumber: 0
+                })
+                const finded = comparePro.no_production_fee_data.find((item) => item.name === itemChild.name)
+                if (!finded) {
+                  compareDesc.no_production_fee_data[indexChild].change = 'delete'
+                } else {
+                  // @ts-ignore 加个标识，代表是旧的发生变化
+                  finded.ifOld = true
+                  if (finded.total_price > itemChild.total_price) {
+                    compareDesc.no_production_fee_data[indexChild].priceChange = 'up'
+                  } else if (finded.total_price < itemChild.total_price) {
+                    compareDesc.no_production_fee_data[indexChild].priceChange = 'down'
+                  }
+                  compareDesc.no_production_fee_data[indexChild].priceNew = finded.total_price
+                  compareDesc.no_production_fee_data[indexChild].priceNumber = (
+                    (Math.abs(Number(finded.total_price) - Number(itemChild.total_price)) /
+                      Number(itemChild.total_price)) *
+                    100
+                  ).toFixed(2)
+                  if (finded.desc !== itemChild.desc) {
+                    compareDesc.no_production_fee_data[indexChild].desc = finded.desc
+                  }
+                }
+              })
+              comparePro.no_production_fee_data
+                .filter((item: any) => !item.ifOld)
+                .forEach((itemChild: any) => {
+                  compareDesc.no_production_fee_data.push({
+                    change: 'add',
+                    priceNew: '',
+                    desc: '',
+                    priceChange: '',
+                    priceNumber: 0
+                  })
+                  item.no_production_fee_data.push(itemChild)
+                })
+              if (Number(item.transport_fee) > Number(comparePro.transport_fee)) {
+                compareDesc.transport_fee.change = 'down'
+              } else if (Number(item.transport_fee) < Number(comparePro.transport_fee)) {
+                compareDesc.transport_fee.change = 'up'
+              }
+              compareDesc.number = Number(item.transport_fee)
+                ? (
+                    (Math.abs(Number(item.transport_fee) - Number(comparePro.transport_fee)) /
+                      Number(item.transport_fee)) *
+                    100
+                  ).toFixed(2)
+                : ''
+              compareDesc.priceNew = Number(comparePro.transport_fee)
+              compareDesc.transport_fee
+              if (item.transport_fee_desc !== comparePro.transport_fee_desc) {
+                compareDesc.desc = 'change'
+              }
             })
           }
           this.compareFlag = false
@@ -1564,7 +1790,7 @@ export default Vue.extend({
               this.quotedList.push(this.quotedPriceInfo.pid)
             }
             if (this.quotedPriceInfo.rel_quote!.length > 0) {
-              this.quotedList = this.quotedList.concat(this.quotedPriceInfo.rel_order)
+              this.quotedList = this.quotedList.concat(this.quotedPriceInfo.rel_quote)
             }
           }
           this.loading = false
@@ -1678,6 +1904,11 @@ export default Vue.extend({
 #quotedPriceDetail {
   .el-tabs--border-card > .el-tabs__content {
     padding: 0;
+  }
+  .normalTab {
+    .el-tabs__nav {
+      margin-left: 32px !important;
+    }
   }
 }
 </style>

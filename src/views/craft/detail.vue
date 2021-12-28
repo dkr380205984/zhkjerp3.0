@@ -769,6 +769,11 @@
         </div>
       </div>
     </div>
+    <div class="popup"
+      v-show="showImageLoading">
+      <img class="loadingImg"
+        :src="require('@/assets/image/common/craft_loading.gif')">
+    </div>
   </div>
 </template>
 <script src="https://cdn.jsdelivr.net/npm/handsontable@7.3.0/dist/handsontable.full.min.js"></script>
@@ -1644,7 +1649,6 @@ export default Vue.extend({
     getCanvas(colorId: number) {
       this.showImageLoading = true
       this.selectColour = colorId
-      window.scrollTo(0, 9999)
       setTimeout(() => {
         const warpColor = this.craftInfo.warp_data.color_data.find((item) => item.color_id === colorId)!.color_scheme
         const weftColor = this.craftInfo.weft_data.color_data.find((item) => item.color_id === colorId)!.color_scheme
@@ -1726,6 +1730,7 @@ export default Vue.extend({
         let imgBack: any = this.$refs.imgBack
         imgBack.src = domBack.toDataURL()
         this.showImageLoading = false
+        window.scrollTo(0, 9999)
       }, 100)
     },
     // 放大镜效果实现

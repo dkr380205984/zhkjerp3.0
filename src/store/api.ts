@@ -11,18 +11,22 @@ import { category, yarnType, clientType, decorateMaterial, packMaterial, process
 import { OrderType } from '@/types/orderSetting'
 
 const apiState: ApiState = {
+  // 订单类型
   orderType: {
     status: false,
     arr: []
   },
+  // 样单类型
   sampleOrderType: {
     status: false,
     arr: []
   },
+  // 产品款式
   productStyle: {
     status: false,
     arr: []
   },
+  // 产品品类，二级
   productType: {
     status: false,
     arr: []
@@ -31,14 +35,17 @@ const apiState: ApiState = {
     status: false,
     arr: []
   },
+  // 产品配色
   colour: {
     status: false,
     arr: []
   },
+  // 纱线类型/一般用于调取纱线列表，三级
   yarnType: {
     status: false,
     arr: []
   },
+  // 纱线颜色/不含潘通色号
   yarnColor: {
     status: false,
     arr: []
@@ -48,34 +55,42 @@ const apiState: ApiState = {
     status: false,
     arr: []
   },
+  // 辅料
   decorateMaterial: {
     status: false,
     arr: []
   },
+  // 包装辅料
   packMaterial: {
     status: false,
     arr: []
   },
+  // 物料加工类型
   materialProcess: {
     status: false,
     arr: []
   },
+  // 半成品加工类型
   halfProcess: {
     status: false,
     arr: []
   },
+  // 成品加工类型
   staffProcess: {
     status: false,
     arr: []
   },
+  // 小组信息
   group: {
     status: false,
     arr: []
   },
+  // 原料列表，一级
   material: {
     status: false,
     arr: []
   },
+  // 系统用户表
   user: {
     status: false,
     arr: []
@@ -319,6 +334,15 @@ const apiActions = {
     }).then((res) => {
       if (res.data.status) {
         content.commit('getHalfProcess', res.data.data)
+      }
+    })
+  },
+  getStaffProcessAsync(content: ActionContext<ApiState, any>) {
+    process.list({
+      type: 3
+    }).then((res) => {
+      if (res.data.status) {
+        content.commit('getStaffProcess', res.data.data)
       }
     })
   },
