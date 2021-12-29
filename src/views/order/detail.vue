@@ -77,73 +77,78 @@
       <div class="titleCtn">
         <div class="title">发货信息</div>
       </div>
-      <div class="detailCtn"
-        v-for="itemBatch in orderInfo.time_data[0].batch_data"
+      <div :class="itemBatchIndex===0?'detailCtn':'detailCtn noPadTop'"
+        v-for="(itemBatch,itemBatchIndex) in orderInfo.time_data[0].batch_data"
         :key="itemBatch.id">
-        <div class="row">
-          <div class="col">
-            <div class="label">批次序号：</div>
-            <div class="text">第{{itemBatch.batch_number}}批</div>
-          </div>
-          <div class="col">
-            <div class="label">发货时间：</div>
-            <div class="text green">{{itemBatch.delivery_time}}</div>
-          </div>
-          <div class="col">
-            <div class="label">批次名称：</div>
-            <div class="text">{{itemBatch.batch_title}}</div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col flex3">
-            <div class="label">批次类型：</div>
-            <div class="text">{{itemBatch.batch_type_name}}</div>
-          </div>
-          <div class="col">
-            <div class="label">批次备注：</div>
-            <div class="text green">{{itemBatch.desc}}</div>
-          </div>
-        </div>
-        <div class="tableCtn"
-          v-for="itemPro in itemBatch.product_data"
-          :key="itemPro.id">
+        <div class="tableCtn noPadBtm">
           <div class="thead">
             <div class="trow">
-              <div class="tcol">产品品类</div>
-              <div class="tcol">产品名称</div>
-              <div class="tcol noPad"
-                style="flex:5">
+              <div class="tcol" style="flex:0.72">批次序号</div>
+              <div class="tcol">发货时间</div>
+              <div class="tcol">批次名称</div>
+              <div class="tcol">批次类型</div>
+              <div class="tcol">批次备注</div>
+              <div class="tcol noPad" style="flex:8.7">
                 <div class="trow">
-                  <div class="tcol">尺码颜色</div>
-                  <div class="tcol">计划发货数量</div>
-                  <div class="tcol">单价</div>
-                  <div class="tcol">总价</div>
-                  <div class="tcol">实际发货数量</div>
+                  <div class="tcol">产品品类</div>
+                  <div class="tcol">产品图片</div>
+                  <div class="tcol noPad"
+                    style="flex:3">
+                    <div class="trow">
+                      <div class="tcol">尺码颜色</div>
+                      <div class="tcol">计划发货数量</div>
+                      <div class="tcol">实际发货数量</div>
+                    </div>
+                  </div>
+                  <div class="tcol">批次状态</div>
                 </div>
               </div>
-              <div class="tcol">批次状态</div>
             </div>
           </div>
           <div class="tbody">
             <div class="trow">
-              <div class="tcol">
-                <span>{{itemPro.product_code||'无编号'}}</span>
-                <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
+              <div class="tcol" style="flex:0.72">
+                <span>第{{itemBatch.batch_number}}批</span>
               </div>
-              <div class="tcol">{{itemPro.name}}</div>
-              <div class="tcol noPad"
-                style="flex:5">
-                <div class="trow"
-                  v-for="(itemChild,indexChild) in itemPro.product_info"
-                  :key="indexChild">
-                  <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                  <div class="tcol">{{itemChild.number}}</div>
-                  <div class="tcol">{{itemChild.price}}元</div>
-                  <div class="tcol">{{itemChild.number*itemChild.price}}元</div>
-                  <div class="tcol">0</div>
+              <div class="tcol">
+                <span class="green">{{itemBatch.delivery_time}}</span>
+              </div>
+              <div class="tcol">
+                <span>{{itemBatch.batch_title || '无'}}</span>
+              </div>
+              <div class="tcol">
+                <span>{{itemBatch.batch_type_name}}</span>
+              </div>
+              <div class="tcol">
+                <span>{{itemBatch.desc || '无'}}</span>
+              </div>
+              <div class="tcol noPad" style="flex:8.7">
+                <div class="trow" v-for="itemPro in itemBatch.product_data"
+          :key="itemPro.id">
+                  <div class="tcol">
+                    <span>{{itemPro.product_code||'无编号'}}</span>
+                    <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
+                  </div>
+                  <div class="tcol">
+                    <div class="trow" v-for="(itemImage,indexImage) in itemPro.image_data" :key="indexImage">
+                      <div class="imageCtn">
+                        <img :src="itemImage" style="width:100%;height:100%;margin-top:2px"/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tcol noPad"
+                    style="flex:3">
+                    <div class="trow"
+                      v-for="(itemChild,indexChild) in itemPro.product_info"
+                      :key="indexChild">
+                      <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
+                      <div class="tcol">{{itemChild.number}}</div>
+                      <div class="tcol">0</div>
+                    </div>
+                  </div>
+                  <div class="tcol">暂无</div>
                 </div>
               </div>
-              <div class="tcol">暂无</div>
             </div>
           </div>
         </div>
@@ -384,6 +389,17 @@ export default Vue.extend({
         })
     }
   },
+  created(){
+    console.log(
+      this.$checkCommonInfo([
+        {
+          checkWhich: 'api/group',
+          getInfoMethed: 'dispatch',
+          getInfoApi: 'getGroupAsync'
+        }
+      ])
+    )
+  },
   mounted() {
     order
       .detail({
@@ -392,6 +408,7 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.orderInfo = res.data.data
+          console.log(this.orderInfo)
           // 整理产品信息
           this.orderInfo.time_data.forEach((itemTime) => {
             itemTime.batch_data.forEach((itemBatch) => {
