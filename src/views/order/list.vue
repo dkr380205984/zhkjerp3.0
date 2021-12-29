@@ -136,7 +136,7 @@ export default Vue.extend({
       user_id: '',
       status: '0',
       date: [],
-      limit: 5,
+      limit: 10,
       total: 1,
       page: 1,
       showSetting: false,
@@ -316,7 +316,7 @@ export default Vue.extend({
       this.user_id = Number(query.user_id) || ''
       this.group_id = Number(query.gourp_id) || ''
       this.date = query.date ? (query.date as string).split(',') : []
-      this.limit = Number(query.limit) || 5
+      this.limit = Number(query.limit) || 10
     },
     changeRouter() {
       this.$router.push(
@@ -351,7 +351,7 @@ export default Vue.extend({
           this.group_id = ''
           this.date = []
           this.status = 'null'
-          this.limit = 5
+          this.limit = 10
           this.changeRouter()
         })
         .catch(() => {

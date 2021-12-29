@@ -1,6 +1,7 @@
 <template>
   <div id="quotedPriceCreate"
-    class="bodyContainer">
+    class="bodyContainer"
+    v-loading="loading">
     <div class="module">
       <div class="titleCtn">
         <div class="title">添加报价单</div>
@@ -47,6 +48,7 @@
                 v-model="quotedPriceInfo.tree_data"
                 :options="clientList"
                 @change="getContacts"
+                :disabled="$route.query.again"
                 clearable
                 filterable>
               </el-cascader>
@@ -58,7 +60,8 @@
               <el-select placeholder="请选择公司联系人"
                 v-model="quotedPriceInfo.contacts_id"
                 no-data-text="请先选择询价客户"
-                clearable>
+                clearable
+                :disabled="$route.query.again">
                 <el-option v-for="item in contactsList"
                   :key="item.id"
                   :value="item.id"
@@ -75,7 +78,8 @@
             <div class="info elCtn">
               <el-select placeholder="请选择负责小组/人"
                 v-model="quotedPriceInfo.group_id"
-                clearable>
+                clearable
+                :disabled="$route.query.again">
                 <el-option v-for="item in groupList"
                   :key="item.id"
                   :value="item.id"
@@ -90,7 +94,8 @@
             </div>
             <div class="info elCtn">
               <el-select placeholder="请选择报价币种"
-                v-model="quotedPriceInfo.settle_unit">
+                v-model="quotedPriceInfo.settle_unit"
+                :disabled="$route.query.again">
                 <el-option v-for="item in unitArr"
                   :key="item.name"
                   :label="item.name"
@@ -117,7 +122,8 @@
             </div>
             <div class="info elCtn">
               <el-input placeholder="请输入币种汇率"
-                v-model="quotedPriceInfo.exchange_rate"></el-input>
+                v-model="quotedPriceInfo.exchange_rate"
+                :disabled="$route.query.again"></el-input>
             </div>
           </div>
         </div>
@@ -231,7 +237,7 @@
                 <div class="blue">{{desc}}</div>
                 <el-image style="width: 100px; height: 100px"
                   :src="quotedImage"
-                  :fit="quotedImage"></el-image>
+                  :preview-src-list="[quotedImage]"></el-image>
                 <span slot="reference"
                   class="hoverBlue"
                   style="font-size:12px;margin-left:8px;cursor:pointer"
@@ -1061,6 +1067,7 @@ export default Vue.extend({
     quotedPriceInfo: QuotedPriceInfo
   } {
     return {
+      loading: false,
       unitArr: moneyArr,
       postData: {
         key: '',
@@ -1850,6 +1857,7 @@ export default Vue.extend({
     })
     // 复制报价单 / 关联报价单
     if (this.$route.query.id) {
+      this.loading = true
       quotedPrice
         .detail({
           id: Number(this.$route.query.id)
@@ -1858,7 +1866,9 @@ export default Vue.extend({
           if (res.data.status) {
             this.quotedPriceInfo = res.data.data
             this.quotedPriceInfo.id = ''
-            this.quotedPriceInfo.pid = this.$route.query.again ? Number(this.$route.query.id) : ''
+            this.quotedPriceInfo.pid = this.$route.query.again
+              ? this.quotedPriceInfo.pid || Number(this.$route.query.id)
+              : ''
             this.getUpdateInfo()
             this.loading = false
           }

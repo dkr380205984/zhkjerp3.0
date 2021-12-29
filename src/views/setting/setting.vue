@@ -64,7 +64,7 @@
                 <div class="btn backHoverBlue fr"
                   @click="showPopup=true">添加新款式</div>
                 <div class="btn backHoverOrange fr">批量导入</div>
-                <div class="btn backHoverGreen fr">下载导入模板</div>
+                <div class="btn backHoverGreen fr" @click="downLoadTemplete('style')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -477,6 +477,9 @@
                   @click="importExcelData('yarnColor')">批量导入</div>
                 <div class="btn backHoverGreen fr"
                   @click="downLoadTemplete('yarnColor')">下载导入模板</div>
+                <div class="hoverBlue fr"
+                  style="cursor:pointer;line-height:32px"
+                  @click="$openUrl('http://www.pantone.net.cn/pantone/search/input.htm')">查询潘通色号</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -775,12 +778,39 @@
                   :key="index">
                   <div class="col">{{item.name}}</div>
                   <div class="col">{{item.rel_type.join('/')}}</div>
-                  <div class="col">参考报价</div>
+                  <div class="col">{{item.rel_price|filterPrice}}</div>
                   <div class="col">{{item.user_name}}</div>
                   <div class="col">{{item.created_at}}</div>
                   <div class="col">
-                    <span class="opr hoverBlue"
-                      @click="deleteYarn(item.id,1)">添加报价</span>
+                    <span class="opr hoverBlue">
+                      <el-popover placement="bottom"
+                        title="报价详情"
+                        width="600"
+                        trigger="manual"
+                        v-model="item.look">
+                        <div class="tableCtn"
+                          style="padding:0">
+                          <div class="thead">
+                            <div class="trow">
+                              <div class="tcol">单位名称</div>
+                              <div class="tcol">报价</div>
+                              <div class="tcol">备注</div>
+                            </div>
+                          </div>
+                          <div class="tbody">
+                            <div class="trow"
+                              v-for="(itemChild,indexChild) in item.rel_price"
+                              :key="indexChild">
+                              <div class="tcol">{{itemChild.client_name}}</div>
+                              <div class="tcol">{{itemChild.price}}元/kg</div>
+                              <div class="tcol">{{itemChild.desc || '无'}}</div>
+                            </div>
+                          </div>
+                        </div>
+                        <span slot="reference"
+                          @click="item.look=!item.look">{{item.look?'关闭报价':'查看报价'}}</span>
+                      </el-popover>
+                    </span>
                     <span class="opr hoverRed"
                       @click="deleteYarn(item.id,1)">删除</span>
                   </div>
@@ -817,10 +847,39 @@
                   :key="index">
                   <div class="col">{{item.name}}</div>
                   <div class="col">{{item.rel_type.join('/')}}</div>
-                  <div class="col">参考报价</div>
-                  <div class="col">添加人</div>
-                  <div class="col">添加时间</div>
+                  <div class="col">{{item.rel_price|filterPrice}}</div>
+                  <div class="col">{{item.user_name}}</div>
+                  <div class="col">{{item.created_at}}</div>
                   <div class="col">
+                    <span class="opr hoverBlue">
+                      <el-popover placement="bottom"
+                        title="报价详情"
+                        width="600"
+                        trigger="manual"
+                        v-model="item.look">
+                        <div class="tableCtn"
+                          style="padding:0">
+                          <div class="thead">
+                            <div class="trow">
+                              <div class="tcol">单位名称</div>
+                              <div class="tcol">报价</div>
+                              <div class="tcol">备注</div>
+                            </div>
+                          </div>
+                          <div class="tbody">
+                            <div class="trow"
+                              v-for="(itemChild,indexChild) in item.rel_price"
+                              :key="indexChild">
+                              <div class="tcol">{{itemChild.client_name}}</div>
+                              <div class="tcol">{{itemChild.price}}元/kg</div>
+                              <div class="tcol">{{itemChild.desc || '无'}}</div>
+                            </div>
+                          </div>
+                        </div>
+                        <span slot="reference"
+                          @click="item.look=!item.look">{{item.look?'关闭报价':'查看报价'}}</span>
+                      </el-popover>
+                    </span>
                     <span class="opr hoverRed"
                       @click="deleteYarn(item.id,2)">删除</span>
                   </div>
@@ -857,9 +916,9 @@
                   :key="index">
                   <div class="col">{{item.name}}</div>
                   <div class="col">{{item.rel_type.join('/')}}</div>
-                  <div class="col">参考报价</div>
-                  <div class="col">添加人</div>
-                  <div class="col">添加时间</div>
+                  <div class="col">{{item.rel_price|filterPrice}}</div>
+                  <div class="col">{{item.user_name}}</div>
+                  <div class="col">{{item.created_at}}</div>
                   <div class="col">
                     <span class="opr hoverRed">删除</span>
                   </div>
@@ -896,9 +955,9 @@
                   :key="index">
                   <div class="col">{{item.name}}</div>
                   <div class="col">{{item.unit}}</div>
-                  <div class="col">参考报价</div>
-                  <div class="col">添加人</div>
-                  <div class="col">添加时间</div>
+                  <div class="col">{{item.rel_price|filterPrice}}</div>
+                  <div class="col">{{item.user_name}}</div>
+                  <div class="col">{{item.created_at}}</div>
                   <div class="col">
                     <span class="opr hoverRed"
                       @click="deleteDecorateMaterial(item.id)">删除</span>
@@ -1355,13 +1414,13 @@
                   v-model="categoryInfo.unit"></el-input>
               </div>
             </div>
-            <div class="row">
+            <!-- <div class="row">
               <div class="label">品类编号：</div>
               <div class="info">
                 <el-input placeholder="请输入品类单位"
                   v-model="categoryInfo.code"></el-input>
               </div>
-            </div>
+            </div> -->
           </div>
           <div class="oprCtn">
             <div class="btn borderBtn"
@@ -2042,11 +2101,15 @@
               <div class="thead">
                 <div class="trow">
                   <div class="tcol">纱线名称</div>
-                  <div class="tcol">属性</div>
-                  <div class="tcol">颜色</div>
-                  <div class="tcol">报价</div>
+                  <div class="tcol"
+                    style="flex:0.5">属性</div>
+                  <div class="tcol"
+                    style="flex:0.5">颜色</div>
+                  <div class="tcol"
+                    style="flex:0.8">报价</div>
                   <div class="tcol">其它备注</div>
-                  <div class="tcol">操作</div>
+                  <div class="tcol"
+                    style="flex:0.5">操作</div>
                 </div>
               </div>
               <div class="tbody">
@@ -2056,7 +2119,8 @@
                   <div class="tcol">
                     <div class="elCtn">
                       <el-select placeholder="选择纱线"
-                        v-model="item.material_id">
+                        v-model="item.material_id"
+                        filterable>
                         <el-option v-for="item in yarnList1"
                           :key="item.id"
                           :value="item.id"
@@ -2064,7 +2128,8 @@
                       </el-select>
                     </div>
                   </div>
-                  <div class="tcol">
+                  <div class="tcol"
+                    style="flex:0.5">
                     <div class="elCtn">
                       <el-select placeholder="属性"
                         v-model="item.attribute">
@@ -2075,7 +2140,8 @@
                       </el-select>
                     </div>
                   </div>
-                  <div class="tcol">
+                  <div class="tcol"
+                    style="flex:0.5">
                     <div class="elCtn">
                       <el-autocomplete class="inline-input"
                         v-model="item.material_color"
@@ -2083,7 +2149,8 @@
                         placeholder="物料颜色"></el-autocomplete>
                     </div>
                   </div>
-                  <div class="tcol">
+                  <div class="tcol"
+                    style="flex:0.8">
                     <div class="elCtn">
                       <el-input v-model="item.price"
                         placeholder="单价">
@@ -2098,7 +2165,8 @@
                       </el-input>
                     </div>
                   </div>
-                  <div class="tcol oprCtn">
+                  <div class="tcol oprCtn"
+                    style="flex:0.5">
                     <div class="opr hoverBlue"
                       v-if="index===0"
                       @click="$addItem(yarnPrice.info_data,{
@@ -2271,7 +2339,7 @@
                   v-model="userInfo.name"></el-input>
               </div>
             </div>
-            <div class="row">
+            <!-- <div class="row">
               <div class="label">用户名：</div>
               <div class="info">
                 <el-input placeholder="请输入用户名"
@@ -2284,7 +2352,7 @@
                 <el-input placeholder="请输入密码"
                   v-model="userInfo.password"></el-input>
               </div>
-            </div>
+            </div> -->
             <div class="row">
               <div class="label">手机号：</div>
               <div class="info">
@@ -2831,9 +2899,9 @@ export default Vue.extend({
         工序设置: ['原料加工工序', '半成品加工', '成品加工工序'],
         工艺单设置: ['边型', '机型', '组织法', '纱线颜色'],
         物料设置: ['纱线原料', '面料原料', '装饰辅料', '包装辅料', '纱线报价', '面料报价'],
-        工厂信息设置: ['基本信息', '负责小组/人', '部门管理', '员工标签'],
-        系统账户管理: ['系统账户管理'],
-        打印设置: ['打印设置']
+        工厂信息设置: ['基本信息', '负责小组/人'],
+        系统账户管理: ['系统账户管理']
+        // 打印设置: ['打印设置']
         // 单证设置: [
         //   '英文工厂信息',
         //   '英文银行信息',
@@ -3267,6 +3335,22 @@ export default Vue.extend({
       }
     }
   },
+  filters: {
+    filterPrice(priceArr: any[]): string {
+      if (priceArr.length === 0) {
+        return '暂无报价'
+      } else if (priceArr.length === 1) {
+        return priceArr[0].price + '元'
+      } else {
+        return (
+          Math.min(...priceArr.map((item) => Number(item.price))) +
+          '元-' +
+          Math.max(...priceArr.map((item) => Number(item.price))) +
+          '元'
+        )
+      }
+    }
+  },
   methods: {
     // 用户注册获取验证码
     getSmsCode() {
@@ -3413,7 +3497,7 @@ export default Vue.extend({
         this.getYarn(3)
       } else if (this.cName === '纱线报价') {
         this.getYarnPrice()
-        this.getYarn(1)
+        this.getYarn(1, true) // 获取全部纱线
         this.getYarnColor()
       } else if (this.cName === '面料报价') {
         this.getMianliaoPrice()
@@ -3446,6 +3530,9 @@ export default Vue.extend({
     },
     downLoadTemplete(type: string) {
       switch (type) {
+        case 'style':
+          this.$downloadExcel([], [{ title: '款式名称', key: 'name' }], '产品款式模板')
+          break
         case 'flower':
           this.$downloadExcel([], [{ title: '花型名称', key: 'name' }], '产品花型模板')
           break
@@ -4718,8 +4805,9 @@ export default Vue.extend({
           })
         })
     },
-    getYarn(type: 1 | 2 | 3) {
-      yarn.list({ type: type, limit: 5, page: this['yarnPage' + type] }).then((res) => {
+    getYarn(type: 1 | 2 | 3, ifAll?: boolean) {
+      const limit = ifAll ? 999 : 5
+      yarn.list({ type: type, limit: limit, page: this['yarnPage' + type] }).then((res) => {
         this['yarnList' + type] = res.data.data.items
         this['yarnTotal' + type] = res.data.data.total
       })
@@ -4928,10 +5016,6 @@ export default Vue.extend({
         {
           key: 'phone',
           errMsg: '请填写手机号'
-        },
-        {
-          key: 'group_id',
-          errMsg: '请选择小组'
         },
         {
           key: 'sms_code',

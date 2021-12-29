@@ -37,7 +37,7 @@
                         </div>
                         <div class="col">
                           <div class="label">客户款号：</div>
-                          <div class="text">{{sampleInfo.style_code}}</div>
+                          <div class="text">{{sampleInfo.style_data.map((item)=>item.name).join(',')}}</div>
                         </div>
                         <div class="col">
                           <div class="label">样品款式：</div>
@@ -151,7 +151,7 @@
                         <div class="menu">
                           <span class="opration">打印</span>
                           <span class="opration"
-                            @click="sampleInfo.craft_list_id?$openUrl('/craft/detail?id='+sampleInfo.craft_list_id):$openUrl('/craft/create?id='+sampleInfo.craft_list_id)">{{sampleInfo.craft_list_id?'详情':'添加'}}</span>
+                            @click="sampleInfo.craft_list_id?$openUrl('/craft/detail?id='+sampleInfo.craft_list_id):$openUrl('/craft/create?id='+sampleInfo.id)">{{sampleInfo.craft_list_id?'详情':'添加'}}</span>
                         </div>
                       </div>
                     </div>

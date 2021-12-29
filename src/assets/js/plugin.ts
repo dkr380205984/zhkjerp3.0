@@ -312,7 +312,7 @@ const plugin = {
       // 默认不需要正则验证，只验证是否为空
       if (!item.regExp) {
         if (!item.regNormal || item.regNormal === 'isNull') {
-          if (!data[item.key]) {
+          if (!data[item.key] && Number(data[item.key]) !== 0) {
             msg = item.errMsg || '数据不得为空'
           }
         } else {
