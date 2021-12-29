@@ -1,6 +1,27 @@
 <template>
   <div id="materialPlanList"
     class="bodyContainer">
+    <div class="topTagCtn">
+      <div class="tag"
+        @click="$router.push('/materialManage/list?page=1&code=&date=')">
+        <div class="iconCtn">
+          <svg class="iconFont"
+            aria-hidden="true">
+            <use xlink:href="#icon-yuanliaoguanli"></use>
+          </svg>
+        </div>
+        <span class="text">原料管理</span>
+      </div>
+      <div class="tag active">
+        <div class="iconCtn">
+          <svg class="iconFont"
+            aria-hidden="true">
+            <use xlink:href="#icon-fuliaoguanli"></use>
+          </svg>
+        </div>
+        <span class="text">辅料管理</span>
+      </div>
+    </div>
     <div class="module">
       <div class="titleCtn">
         <div class="title">单据列表</div>
@@ -69,6 +90,16 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
+          <div class="elCtn">
+            <el-select v-model="limit"
+              placeholder="每页展示条数"
+              @change="changeRouter">
+              <el-option v-for="item in limitList"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
           <div class="btn backHoverOrange fr"
             @click="showSetting=true">列表设置</div>
           <div class="btn backHoverGreen fr"
@@ -104,6 +135,7 @@
 import Vue from 'vue'
 import { order, listSetting } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
+import { limitArr } from '@/assets/js/dictionary'
 export default Vue.extend({
   data(): {
     list: OrderInfo[]
@@ -112,6 +144,7 @@ export default Vue.extend({
     return {
       loading: true,
       list: [],
+      limitList: limitArr,
       order_type: null,
       keyword: '',
       client_id: [],
@@ -121,6 +154,7 @@ export default Vue.extend({
       date: [],
       total: 1,
       page: 1,
+      limit: 10,
       showSetting: false,
       listSettingId: null,
       listKey: [],
@@ -273,7 +307,9 @@ export default Vue.extend({
           '&order_type=' +
           this.order_type +
           '&date=' +
-          this.date
+          this.date +
+          '&limit=' +
+          this.limit
       )
     },
     reset() {
@@ -290,6 +326,7 @@ export default Vue.extend({
           this.date = []
           this.status = '0'
           this.order_type = null
+          this.limit = 10
           this.changeRouter()
         })
         .catch(() => {
@@ -307,7 +344,7 @@ export default Vue.extend({
           keyword: this.keyword,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           page: this.page,
-          limit: 5,
+          limit: this.limit,
           is_check: this.status,
           start_time: this.date.length > 0 ? this.date[0] : '',
           end_time: this.date.length > 0 ? this.date[1] : '',

@@ -117,7 +117,13 @@
       <div class="tableCtn"
         style="padding-top:0"
         v-if="confirmSampleInfo.length>0">
-        <div class="thead">
+        <div class="box"
+          v-for="(item,index) in confirmSampleInfo"
+          :key="index">{{item.name||item.product_code||item.system_code}}({{item.category}}/{{item.type}})
+          <span class="el-icon-view icon hoverBlue"
+            @click="sampleDetail=item;sampleShow=true"></span>
+        </div>
+        <!-- <div class="thead">
           <div class="trow">
             <div class="tcol noPad"
               style="flex:7">
@@ -197,7 +203,7 @@
                 @click="changeToOrder">大货生产</div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="module">
@@ -447,6 +453,14 @@
                     <use xlink:href="#icon-dayindingdan"></use>
                   </svg>
                   <span class="text">打印样单</span>
+                </div>
+                <div class="btn backHoverBlue"
+                  @click="changeToOrder">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-dayindingdan"></use>
+                  </svg>
+                  <span class="text">大货生产</span>
                 </div>
               </div>
             </div>

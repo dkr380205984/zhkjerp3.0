@@ -374,7 +374,8 @@
               </el-switch>
             </div>
             <div class="btn borderBtn blue"
-              @click="addPart">新增配件</div>
+              @click="addPart"
+              v-show="have_part">新增配件</div>
           </div>
           <div class="editCtn"
             v-show="have_part">

@@ -32,22 +32,6 @@
             </el-select>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter"
-              v-model="status"
-              placeholder="筛选报价单状态">
-              <el-option value="0"
-                label="全部"></el-option>
-              <el-option value="1"
-                label="已审核"></el-option>
-              <el-option value="2"
-                label="待审核"></el-option>
-            </el-select>
-          </div>
-          <div class="btn borderBtn"
-            @click="reset">重置</div>
-        </div>
-        <div class="filterCtn">
-          <div class="elCtn">
             <el-select v-model="order_type"
               @change="changeRouter">
               <el-option label="所有单据"
@@ -58,6 +42,10 @@
                 :value="2"></el-option>
             </el-select>
           </div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
+        </div>
+        <div class="filterCtn">
           <div class="elCtn">
             <el-select @change="changeRouter"
               v-model="group_id"
@@ -80,6 +68,16 @@
               @change="changeRouter"
               value-format="yyyy-MM-dd">
             </el-date-picker>
+          </div>
+          <div class="elCtn">
+            <el-select v-model="limit"
+              placeholder="每页展示条数"
+              @change="changeRouter">
+              <el-option v-for="item in limitList"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value"></el-option>
+            </el-select>
           </div>
           <div class="btn backHoverOrange fr"
             @click="showSetting=true">列表设置</div>
@@ -116,6 +114,7 @@
 import Vue from 'vue'
 import { order, listSetting } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
+import { limitArr } from '@/assets/js/dictionary'
 export default Vue.extend({
   data(): {
     list: OrderInfo[]
@@ -126,6 +125,7 @@ export default Vue.extend({
       list: [],
       order_type: null,
       keyword: '',
+      limitList: limitArr,
       client_id: [],
       group_id: '',
       user_id: '',
@@ -133,6 +133,7 @@ export default Vue.extend({
       date: [],
       total: 1,
       page: 1,
+      limit: 10,
       showSetting: false,
       listSettingId: null,
       listKey: [],
@@ -271,6 +272,7 @@ export default Vue.extend({
       this.group_id = Number(query.gourp_id) || ''
       this.order_type = Number(query.order_type) || null
       this.date = query.date ? (query.date as string).split(',') : []
+      this.limit = query.limit ? Number(query.limit) : 10
     },
     changeRouter() {
       this.$router.push(
@@ -287,7 +289,9 @@ export default Vue.extend({
           '&status=' +
           this.status +
           '&date=' +
-          this.date
+          this.date +
+          '&limit=' +
+          this.limit
       )
     },
     reset() {
@@ -304,6 +308,7 @@ export default Vue.extend({
           this.date = []
           this.status = '0'
           this.order_type = null
+          this.limit = 10
           this.changeRouter()
         })
         .catch(() => {
@@ -321,7 +326,7 @@ export default Vue.extend({
           keyword: this.keyword,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           page: this.page,
-          limit: 5,
+          limit: this.limit,
           is_check: this.status,
           start_time: this.date.length > 0 ? this.date[0] : '',
           end_time: this.date.length > 0 ? this.date[1] : '',

@@ -125,7 +125,7 @@ export default Vue.extend({
       list: [],
       order_type: null,
       limitList: limitArr,
-      limit: 5,
+      limit: 10,
       keyword: '',
       client_id: [],
       group_id: '',
@@ -279,7 +279,7 @@ export default Vue.extend({
       this.group_id = Number(query.gourp_id) || ''
       this.order_type = Number(query.order_type) || null
       this.date = query.date ? (query.date as string).split(',') : []
-      this.limit = Number(query.limit) || 5
+      this.limit = Number(query.limit) || 10
     },
     changeRouter() {
       this.$router.push(
@@ -315,7 +315,7 @@ export default Vue.extend({
           this.date = []
           this.status = '0'
           this.order_type = null
-          this.limit = 5
+          this.limit = 10
           this.changeRouter()
         })
         .catch(() => {

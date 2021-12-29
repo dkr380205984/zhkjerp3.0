@@ -106,6 +106,9 @@ const limitArr = [{
 }, {
   name: '每页15条',
   value: 15
+}, {
+  name: '每页20条',
+  value: 20
 }]
 // handsontable 汉化包
 import Handsontable from 'handsontable'

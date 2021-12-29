@@ -52,6 +52,16 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
+          <div class="elCtn">
+            <el-select v-model="limit"
+              placeholder="每页展示条数"
+              @change="changeRouter">
+              <el-option v-for="item in limitList"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
           <div class="btn borderBtn"
             @click="reset">重置</div>
         </div>
@@ -94,6 +104,7 @@
 import Vue from 'vue'
 import { materialPlan, listSetting } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
+import { limitArr } from '@/assets/js/dictionary'
 export default Vue.extend({
   data(): {
     list: OrderInfo[]
@@ -102,8 +113,10 @@ export default Vue.extend({
     return {
       loading: false,
       list: [],
+      limitList: limitArr,
       total: 1,
       page: 1,
+      limit: 10,
       code: '',
       order_code: '',
       date: [],
@@ -147,6 +160,7 @@ export default Vue.extend({
       this.code = query.code
       this.order_code = query.order_code
       this.date = query.date ? (query.date as string).split(',') : []
+      this.limit = Number(query.limit) || 10
     },
     changeRouter() {
       this.$router.push(
@@ -157,7 +171,9 @@ export default Vue.extend({
           '&order_code=' +
           this.order_code +
           '&date=' +
-          this.date
+          this.date +
+          '&limit=' +
+          this.limit
       )
     },
     reset() {
@@ -170,6 +186,7 @@ export default Vue.extend({
           this.code = ''
           this.order_code = ''
           this.date = []
+          this.limit = 10
           this.changeRouter()
         })
         .catch(() => {
@@ -183,7 +200,7 @@ export default Vue.extend({
       this.loading = true
       materialPlan
         .list({
-          limit: 5,
+          limit: this.limit,
           page: this.page,
           keyword: this.code,
           start_time: this.date.length > 0 ? this.date[0] : '',

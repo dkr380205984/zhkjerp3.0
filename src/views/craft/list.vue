@@ -63,7 +63,7 @@ export default Vue.extend({
       user_id: '',
       status: '0',
       date: [],
-      limit: 5,
+      limit: 10,
       total: 1,
       page: 1,
       showSetting: false,
