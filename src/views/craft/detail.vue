@@ -6,55 +6,70 @@
       <div class="titleCtn">
         <div class="title">基本信息</div>
       </div>
-      <div class="detailCtn">
-        <div class="row">
-          <div class="col">
-            <div class="label">{{productType}}编号：</div>
-            <div class="text">{{productInfo.product_code||productInfo.system_code}}</div>
-          </div>
-          <div class="col">
-            <div class="label">{{productType}}名称：</div>
-            <div class="text">{{productInfo.title||'无'}}</div>
-          </div>
-          <div class="col">
-            <div class="label">{{productType}}品类：</div>
-            <div class="text">{{productInfo.category_name}}/{{productInfo.secondary_category_name}}</div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col flex3">
-            <div class="label">{{productType}}配色：</div>
-            <div class="text">
-              <span v-for="(item,index) in productInfo.color_data"
-                :key="item.id"
-                style="margin-right:12px">{{index+1}}.{{item.name}}</span>
+      <template v-if="craftInfo.part_id">
+        <div class="detailCtn">
+          <div class="row">
+            <div class="col">
+              <div class="label">配件名称：</div>
+              <div class="text">{{craftInfo.part_info.name}}</div>
             </div>
-          </div>
-          <div class="col">
-            <div class="label">{{productType}}描述：</div>
-            <div class="text">{{productInfo.desc}}</div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col flex3">
-            <div class="label">大身成分：</div>
-            <div class="text">
-              <span style="margin-right:12px"
-                v-for="item in productInfo.component_data"
-                :key="item.id">{{item.name}}{{item.number}}%</span>
-            </div>
-          </div>
-          <div class="col">
-            <div class="label">尺码信息：</div>
-            <div class="text">
-              <span v-for="(item,index) in productInfo.size_data"
-                :key="item.id"
-                style="margin-right:12px"> {{index+1}}.&nbsp;{{item.name}}&nbsp;{{item.weight}}g&nbsp;{{item.size_info}}</span>
+            <div class="col">
+              <div class="label">配件单位：</div>
+              <div class="text">{{craftInfo.part_info.unit}}</div>
             </div>
           </div>
         </div>
-        <div class="row"
-          v-for="(item) in productInfo.part_data"
+      </template>
+      <template v-else>
+        <div class="detailCtn">
+          <div class="row">
+            <div class="col">
+              <div class="label">{{productType}}编号：</div>
+              <div class="text">{{productInfo.product_code||productInfo.system_code}}</div>
+            </div>
+            <div class="col">
+              <div class="label">{{productType}}名称：</div>
+              <div class="text">{{productInfo.title||'无'}}</div>
+            </div>
+            <div class="col">
+              <div class="label">{{productType}}品类：</div>
+              <div class="text">{{productInfo.category_name}}/{{productInfo.secondary_category_name}}</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col flex3">
+              <div class="label">{{productType}}配色：</div>
+              <div class="text">
+                <span v-for="(item,index) in productInfo.color_data"
+                  :key="item.id"
+                  style="margin-right:12px">{{index+1}}.{{item.name}}</span>
+              </div>
+            </div>
+            <div class="col">
+              <div class="label">{{productType}}描述：</div>
+              <div class="text">{{productInfo.desc}}</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col flex3">
+              <div class="label">大身成分：</div>
+              <div class="text">
+                <span style="margin-right:12px"
+                  v-for="item in productInfo.component_data"
+                  :key="item.id">{{item.name}}{{item.number}}%</span>
+              </div>
+            </div>
+            <div class="col">
+              <div class="label">尺码信息：</div>
+              <div class="text">
+                <span v-for="(item,index) in productInfo.size_data"
+                  :key="item.id"
+                  style="margin-right:12px"> {{index+1}}.&nbsp;{{item.name}}&nbsp;{{item.weight}}g&nbsp;{{item.size_info}}</span>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="row"
+          v-for="(item) in productInfo.part_info"
           :key="item.id">
           <div class="col">
             <div class="label">配件名称：</div>
@@ -78,25 +93,26 @@
                 style="margin-right:12px"> {{indexChild+1}}.&nbsp;{{itemChild.name}}&nbsp;{{itemChild.weight}}g&nbsp;{{itemChild.size_info}}</span>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col flex3">
-            <div class="label">{{productType}}图片：</div>
-            <div class="imgCtn">
-              <img v-for="(item,index) in productInfo.image_data"
-                :key="index"
-                class="img"
-                :src="item" />
+        </div> -->
+          <div class="row">
+            <div class="col flex3">
+              <div class="label">{{productType}}图片：</div>
+              <div class="imgCtn">
+                <img v-for="(item,index) in productInfo.image_data"
+                  :key="index"
+                  class="img"
+                  :src="item" />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="label">备注信息：</div>
+              <div class="text">{{productInfo.desc}}</div>
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col">
-            <div class="label">备注信息：</div>
-            <div class="text">{{productInfo.desc}}</div>
-          </div>
-        </div>
-      </div>
+      </template>
     </div>
     <div class="module">
       <div class="titleCtn">
@@ -728,7 +744,8 @@
                   <span class="text">打印工艺</span>
                 </div>
                 <div class="btn backHoverBlue"
-                  @click="$router.push('/materialPlan/create?id=' + craftInfo.order_id)">
+                  @click="$router.push('/materialPlan/create?id=' + craftInfo.order_id)"
+                  v-show="craftInfo.order_id">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-wuliaojihua1"></use>
@@ -772,7 +789,7 @@
     <div class="popup"
       v-show="showImageLoading">
       <img class="loadingImg"
-        :src="require('@/assets/image/common/craft_loading.gif')">
+        :src="require('@/assets/image/common/craft_loading2.gif')">
     </div>
   </div>
 </template>

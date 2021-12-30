@@ -107,7 +107,21 @@
                           <div class="label">配件单位：</div>
                           <div class="text">{{item.unit}}</div>
                         </div>
-                        <div class="col"></div>
+                        <div class="col">
+                          <div class="label">配件工艺：</div>
+                          <div class="text gray"
+                            v-if="!item.craft_list_id">暂无(
+                            <span class="hoverBlue"
+                              style="cursor:pointer"
+                              @click="$openUrl('/craft/create?id='+productInfo.id+'&part_id='+item.id)">添加</span>)
+                          </div>
+                          <div class="text"
+                            v-else>
+                            <span class="hoverBlue"
+                              style="cursor:pointer"
+                              @click="$openUrl('/craft/detail?id='+item.craft_list_id)">查看</span>
+                          </div>
+                        </div>
                       </div>
                       <div class="row">
                         <div class="col">
@@ -269,6 +283,7 @@ export default Vue.extend({
         this.$emit('beforeGet')
         if (this.data) {
           this.productInfo = this.data as ProductInfo
+          this.productInfo.id = this.productInfo.product_id // 订单过来的用product_id，id是订单用的
           this.getDataFlag = true
         } else {
           sample

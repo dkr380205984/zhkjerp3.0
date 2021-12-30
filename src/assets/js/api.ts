@@ -174,7 +174,7 @@ const yarnColor = {
   list: (params?: ListParams) => http.get(`${baseUrl}/yarn/color/lists`, params)
 }
 // 潘通色号
-const pantongList = (params: { keyword?: string }) => http.get(`${baseUrl}/pan/color/list`, { params })
+const pantongList = (params: { keyword?: string }) => http.get(`${baseUrl}/pan/color/list`, params)
 
 // 工艺单
 import { CraftInfo, DraftMethods } from '@/types/craft'

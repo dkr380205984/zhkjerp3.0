@@ -1,6 +1,7 @@
 import { PartInfo } from "./product";
 import { CraftMaterialInfo } from "./craft";
 import { ProductInfo } from "./product";
+import { QuotedPriceProduct } from "./quotedPrice";
 export interface MaterialPlanInfo {
   id?: number
   order_id: string | number
@@ -14,6 +15,8 @@ export interface MaterialPlanInfo {
     category?: string
     secondary_category?: string
     product_id: string | number
+    quote_rel_product_id?: string
+    quote_rel_product_info?: QuotedPriceProduct
     part_data?: PartInfo[]
     process_data?: Array<{
       process_id: number
@@ -28,6 +31,7 @@ export interface MaterialPlanInfo {
       size_name?: string
       add_percent: string | number
       order_number: number | string
+      quote_rel_product_id?: string | number
       number?: number | string | null // 后台给的不知道有什么软用
       info_data: Array<{
         id?: string
@@ -77,7 +81,9 @@ export interface MaterailPlanData {
     id: string | number
   }> // 优化产品是否有工艺单后道工序
   info_data: Array<{
-    process_id: string | number
+    process_name_arr?: string[]
+    process_name?: string
+    process_id?: string | number
     tree_data?: string[]
     material_id: string | number
     material_name?: string
