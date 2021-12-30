@@ -132,7 +132,15 @@
                   <div class="tcol">
                     <div class="trow" v-for="(itemImage,indexImage) in itemPro.image_data" :key="indexImage">
                       <div class="imageCtn">
-                        <img :src="itemImage" style="width:100%;height:100%;margin-top:2px"/>
+                        <el-image style="width:100%;height:100%;margin-top:2px"
+                          :src="itemPro.image_data.length>0?itemImage:''"
+                          :preview-src-list="itemPro.image_data">
+                          <div slot="error"
+                            class="image-slot">
+                            <i class="el-icon-picture-outline"
+                              style="font-size:42px"></i>
+                          </div>
+                        </el-image>
                       </div>
                     </div>
                   </div>
