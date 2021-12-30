@@ -3,6 +3,9 @@
     v-loading="loading">
     <div class="original">
       <div class="row title">
+        <div class="column check" v-if="check">
+          <span>全选</span>
+        </div>
         <div class="column"
           v-for="itemKey in listKey"
           :key="itemKey.index"
@@ -12,6 +15,9 @@
       <div class="row"
         v-for="(item,index) in list"
         :key="index">
+         <div class="column check" v-if="check">
+          <el-checkbox v-model="item['isCheck']"></el-checkbox>
+        </div>
         <div class="column"
           v-for="itemKey in listKey"
           :key="itemKey.index"
@@ -61,6 +67,9 @@
     <div class="cover">
       <div class="fixedLeft">
         <div class="row title">
+          <div class="column check" v-if="check">
+            <el-checkbox :indeterminate="isIndeterminate" v-model="allCheck" @change="handleCheckAllChange"></el-checkbox>
+          </div>
           <div class="column"
             v-for="itemKey in listKey"
             :key="itemKey.index"
@@ -69,6 +78,9 @@
         <div class="row"
           v-for="item,index in list"
           :key="index">
+          <div class="column check" v-if="check">
+            <el-checkbox v-model="item['isCheck']" @change="checkChange"></el-checkbox>
+          </div>
           <div class="column"
             v-for="itemKey in listKey"
             :key="itemKey.index"
@@ -111,6 +123,10 @@
 import Vue from 'vue'
 export default Vue.extend({
   props: {
+    check: {
+      type: Boolean,
+      required: false
+    },
     // 列表数据
     list: {
       type: Array,
@@ -125,11 +141,29 @@ export default Vue.extend({
       type: Array,
       required: true
     },
+    checkedCount:{
+      type: Array,
+      required: false
+    },
     // 操作列
     oprList: {
       type: Array,
       required: false
     }
+  },
+  data():{
+    isIndeterminate:boolean,
+    allCheck:boolean
+  }{
+    return {
+      isIndeterminate:false,
+      allCheck:false,
+    }
+  },
+  created(){
+    this.list.forEach((item:any) => {
+      item['isCheck']=false
+    });
   },
   methods: {
     changeIndex(type: 1 | 2, length: number, item: any) {
@@ -151,6 +185,40 @@ export default Vue.extend({
         }
       }
       this.$forceUpdate()
+    },
+    handleCheckAllChange(val:any) {
+      if(this.isIndeterminate || this.allCheck){
+        this.list.forEach((item: any) => {
+          item.isCheck=true
+          this.checkedCount.push(2)
+        });
+      } else {
+        this.list.forEach((item: any) => {
+          item.isCheck=false
+          this.checkedCount.pop()
+        });
+      }
+      
+      // console.log(val)
+      this.isIndeterminate = false;
+    },
+    checkChange(val:any){
+      console.log(val,this.checkedCount)
+      if(val){
+        this.checkedCount.push(2)
+      } else {
+        this.checkedCount.pop()
+        this.allCheck = false
+      }
+      if(this.checkedCount.length===0){
+        this.isIndeterminate = false;
+      } else if(this.checkedCount.length === this.list.length){
+        this.isIndeterminate = false;
+        this.allCheck = true
+      } else {
+        this.isIndeterminate = true;
+      }
+      // this.allCheck = this.checkedCount.length === this.list.length;
     }
   }
 })

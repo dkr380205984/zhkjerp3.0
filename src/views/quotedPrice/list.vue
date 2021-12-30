@@ -1,7 +1,7 @@
 <template>
   <div id="quotedPriceList"
     class="bodyContainer">
-    <div class="module">
+    <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">报价单列表</div>
       </div>
@@ -82,17 +82,23 @@
                 :value="item.value"></el-option>
             </el-select>
           </div>
+        </div>
+        <div class="filterCtn" style="height:33px"> 
           <div class="btn backHoverBlue fr"
             @click="$router.push('/quotedPrice/create')">添加报价单</div>
-          <div class="btn backHoverOrange fr"
-            @click="showSetting=true">列表设置</div>
-          <div class="btn backHoverGreen fr"
-            @click="getFilters();getList()"
-            style="margin-left:0">刷新列表</div>
+          <div class="btn backHoverOrange fl"
+            @click="showSetting=true"
+            style="margin-left:0">列表设置</div>
+          <div class="btn backHoverGreen fl"
+            @click="getFilters();getList()">刷新列表</div>
+          <div :class="checked?'btn backHoverBlue fl':'btn backHoverBlue fl noCheck'"
+            @click="exportExcel()">导出Excel</div>
         </div>
         <zh-list :list="list"
           :listKey="listKey"
           :loading="loading"
+          :check="true"
+          :checkedCount="checkedCount"
           :oprList="oprList"></zh-list>
         <div class="pageCtn">
           <el-pagination background
@@ -118,7 +124,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { quotedPrice, listSetting } from '@/assets/js/api'
+import { quotedPrice, listSetting, exportExcel } from '@/assets/js/api'
 import { ListSetting } from '@/types/list'
 import { QuotedPriceInfo } from '@/types/quotedPrice'
 import { limitArr } from '@/assets/js/dictionary'
@@ -136,6 +142,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      mainLoading:false,
       limitList: limitArr,
       list: [],
       page: 1,
@@ -149,6 +156,8 @@ export default Vue.extend({
       listSettingId: null,
       listKey: [],
       date: [],
+      checkedCount:[],
+      checked:false,
       originalSetting: [
         {
           key: 'code',
@@ -330,13 +339,20 @@ export default Vue.extend({
           }
         }
       ],
-      showSetting: false
+      showSetting: false,
     }
   },
   watch: {
     $route() {
       this.getFilters()
       this.getList()
+    },
+    checkedCount(newVal){
+      if(newVal.length>0){
+        this.checked = true
+      }else {
+        this.checked = false
+      }
     }
   },
   computed: {
@@ -424,6 +440,31 @@ export default Vue.extend({
           this.list = res.data.data.items
           this.total = res.data.data.total
           this.loading = false
+        })
+    },
+    exportExcel(){
+      if(!this.checked){
+        return
+      }
+      this.mainLoading=true
+      let idArr:any[] = []
+      this.list.forEach(item => {
+        // console.log(item)
+        idArr.push(item.id)
+      });
+      console.log(idArr)
+      exportExcel
+        .quoteList({
+          client_id: this.client_id,
+          id:idArr
+        })
+        .then((res: any) => {
+          console.log(this.list)
+          if (res.data.status) {
+            console.log(res.data.data)
+            this.mainLoading=false
+            window.location.href = res.data.data
+          }
         })
     },
     getListSetting() {

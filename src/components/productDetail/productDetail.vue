@@ -1,7 +1,7 @@
 <template>
   <div class="productDetail popup"
     v-show="show">
-    <div class="main">
+    <div class="main detailMain">
       <div class="titleCtn">
         <span class="text">产品详情</span>
         <div class="closeCtn"
@@ -162,12 +162,24 @@
           </div>
         </div>
       </div>
-      <!-- <div class="oprCtn"
+      <div class="oprCtn"
         v-show="!noOpr">
         <span class="btn borderBtn"
-          @click="close">取消</span>
-      </div> -->
+          @click="close">取消温鑫</span>
+        <span class="btn backHoverOrange" @click="proId=null;pid=null;pid_status=null;addProductFlag = true;">修改</span>
+      </div>
     </div>
+    <product-edit 
+      :edit="true"
+      :inDetail="true"
+      :pid="null"
+      :pid_status="null"
+      :id="data.id"
+      :data ="productInfo"
+      :show="addProductFlag"
+      @close="addProductFlag = false"
+      @afterSave="getNewProduct"
+      :quote_rel_product_data="productInfo"></product-edit>
   </div>
 </template>
 
@@ -200,6 +212,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      addProductFlag:false,
       productInfo: {
         product_type: 1,
         name: '',
@@ -277,6 +290,9 @@ export default Vue.extend({
     close() {
       this.getDataFlag = false
       this.$emit('close')
+    },
+    getNewProduct(val:any){
+      console.log(val)
     }
   }
 })

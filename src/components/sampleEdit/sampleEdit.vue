@@ -1,10 +1,10 @@
 <template>
   <div class="sampleEdit sidePopup"
     v-show="show">
-    <div class="main"
+    <div :class="inDetail?'inDetailMain main':'main'"
       v-loading="loading">
       <div class="titleCtn">
-        <span class="text">添加新样品</span>
+        <span class="text">{{edit?"修改样品":"添加新样品"}}</span>
         <div class="closeCtn"
           @click="close">
           <span class="el-icon-close"></span>
@@ -200,7 +200,7 @@
                 </div>
                 <div class="info elCtn">
                   <el-autocomplete class="inline-input"
-                    v-model="sampleInfo.color_data[index]"
+                    v-model="item.name"
                     :fetch-suggestions="searchColour"
                     placeholder="请输入样品配色"></el-autocomplete>
                 </div>
@@ -521,6 +521,10 @@ import { CascaderInfo } from '@/types/vuex'
 import { sample } from '@/assets/js/api'
 export default Vue.extend({
   props: {
+    inDetail:{
+      type:Boolean,
+      required:false
+    },
     show: {
       type: Boolean,
       required: true
@@ -620,7 +624,7 @@ export default Vue.extend({
             weight: ''
           }
         ], // 尺码组
-        color_data: [''], // 配色组
+        color_data: [{id:'',name:''}], // 配色组
         // 配件信息
         part_data: [
           {
@@ -991,7 +995,7 @@ export default Vue.extend({
             weight: ''
           }
         ], // 尺码组
-        color_data: [''], // 配色组
+        color_data: [{id:'',name:''}], // 配色组
         // 配件信息
         part_data: [
           {

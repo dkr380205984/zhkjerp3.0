@@ -1,64 +1,51 @@
 <template>
-  <div id="orderList"
-    class="bodyContainer">
-    <div class="module">
+  <div id="orderList" class="bodyContainer">
+    <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">订单列表</div>
       </div>
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input v-model="keyword"
+            <el-input
+              v-model="keyword"
               placeholder="筛选报价/产品/样品编号"
-              @keydown.enter.native="changeRouter"></el-input>
+              @keydown.enter.native="changeRouter"
+            ></el-input>
           </div>
           <div class="elCtn">
-            <el-cascader @change="changeRouter"
+            <el-cascader
+              @change="changeRouter"
               placeholder="筛选下单公司"
               v-model="client_id"
               :options="clientList"
-              clearable>
+              clearable
+            >
             </el-cascader>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter"
-              v-model="user_id"
-              placeholder="筛选创建人"
-              clearable>
-              <el-option v-for="item in userList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"></el-option>
+            <el-select @change="changeRouter" v-model="user_id" placeholder="筛选创建人" clearable>
+              <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter"
-              v-model="status"
-              placeholder="筛选报价单状态">
-              <el-option value="null"
-                label="全部"></el-option>
-              <el-option value="1"
-                label="已审核"></el-option>
-              <el-option value="2"
-                label="待审核"></el-option>
+            <el-select @change="changeRouter" v-model="status" placeholder="筛选报价单状态">
+              <el-option value="null" label="全部"></el-option>
+              <el-option value="1" label="已审核"></el-option>
+              <el-option value="2" label="待审核"></el-option>
             </el-select>
           </div>
-          <div class="btn borderBtn"
-            @click="reset">重置</div>
+          <div class="btn borderBtn" @click="reset">重置</div>
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select @change="changeRouter"
-              v-model="group_id"
-              placeholder="筛选负责小组">
-              <el-option v-for="item in groupList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"></el-option>
+            <el-select @change="changeRouter" v-model="group_id" placeholder="筛选负责小组">
+              <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-date-picker v-model="date"
+            <el-date-picker
+              v-model="date"
               type="daterange"
               align="right"
               unlink-panels
@@ -67,71 +54,96 @@
               end-placeholder="结束日期"
               :picker-options="pickerOptions"
               @change="changeRouter"
-              value-format="yyyy-MM-dd">
+              value-format="yyyy-MM-dd"
+            >
             </el-date-picker>
           </div>
           <div class="elCtn">
-            <el-select v-model="limit"
-              placeholder="每页展示条数"
-              @change="changeRouter">
-              <el-option v-for="item in limitList"
-                :key="item.value"
-                :label="item.name"
-                :value="item.value"></el-option>
+            <el-select v-model="limit" placeholder="每页展示条数" @change="changeRouter">
+              <el-option v-for="item in limitList" :key="item.value" :label="item.name" :value="item.value"></el-option>
             </el-select>
           </div>
-          <div class="btn backHoverBlue fr"
-            @click="$router.push('/order/create')">添加订单</div>
-          <div class="btn backHoverOrange fr"
-            @click="showSetting=true">列表设置</div>
-          <div class="btn backHoverGreen fr"
-            @click="getFilters();getList()"
-            style="margin-left:0">刷新列表</div>
         </div>
-        <zh-list :list="list"
-          :listKey="listKey"
-          :loading="loading"
-          :oprList="oprList"></zh-list>
+        <div class="filterCtn" style="height: 33px">
+          <div class="btn backHoverBlue fr" @click="$router.push('/order/create')">添加订单</div>
+          <div class="btn backHoverOrange fl" @click="showSetting = true" style="margin-left: 0">列表设置</div>
+          <div
+            class="btn backHoverGreen fl"
+            @click="
+              getFilters()
+              getList()
+            "
+          >
+            刷新列表
+          </div>
+          <div :class="checked?'btn backHoverBlue fl':'btn backHoverBlue fl noCheck'" @click="exportExcelClick()">导出Excel</div>
+        </div>
+        <zh-list :list="list" :check="true" :checkedCount="checkedCount" :listKey="listKey" :loading="loading" :oprList="oprList"></zh-list>
         <div class="pageCtn">
-          <el-pagination background
+          <el-pagination
+            background
             :page-size="limit"
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
-            @current-change="changeRouter">
+            @current-change="changeRouter"
+          >
           </el-pagination>
         </div>
       </div>
     </div>
     <!-- 列表设置 -->
-    <zh-list-setting @close="showSetting=false"
+    <zh-list-setting
+      @close="showSetting = false"
       @afterSave="getListSetting"
       :show="showSetting"
       :id="listSettingId"
       :type="3"
       :data.sync="listKey"
-      :originalData="originalSetting"></zh-list-setting>
+      :originalData="originalSetting"
+    ></zh-list-setting>
+
+    <!-- 导出Excel -->
+    <zhExportSetting
+      @close="showExport = false"
+      @afterSave="exportExcel"
+      :show="showExport"
+      :data.sync="exportKey"
+      :originalData="originalExport"
+    ></zhExportSetting>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { order, listSetting } from '@/assets/js/api'
+import { order, listSetting, exportExcel } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
 import { ListSetting } from '@/types/list'
 import { limitArr } from '@/assets/js/dictionary'
+import zhExportSetting from '@/components/zhExportSetting/zhExportSetting.vue'
 export default Vue.extend({
+  components: { zhExportSetting },
   data(): {
     originalSetting: ListSetting[]
     list: OrderInfo[]
     [porpName: string]: any
   } {
     return {
+      mainLoading:false,
       loading: true,
       list: [],
       limitList: limitArr,
+      showExport: false,
+      checkedCount:[],
+      exportKey: [],
       keyword: '',
       client_id: [],
+      checked:false,
+      exportExcelParam: {
+        show_row: [],
+        start_time: '',
+        end_time: ''
+      },
       group_id: '',
       user_id: '',
       status: '0',
@@ -142,6 +154,134 @@ export default Vue.extend({
       showSetting: false,
       listSettingId: null,
       listKey: [],
+      originalExport: [
+        {
+          key: 'code',
+          name: '订单号',
+          ifExport: true,
+          index: 0
+        },
+        {
+          key: 'client_name',
+          name: '下单客户',
+          ifExport: true,
+          index: 1
+        },
+        {
+          key: 'contacts',
+          name: '客户联系人',
+          ifExport: true,
+          index: 2
+        },
+        {
+          key: 'group_name',
+          name: '负责小组',
+          ifExport: true,
+          index: 3
+        },
+        {
+          key: 'settle_unit',
+          name: '结算单位',
+          ifExport: true,
+          index: 4
+        },
+        {
+          key: 'settle_exchange',
+          name: '结算货币',
+          ifExport: true,
+          index: 5
+        },
+        {
+          key: 'order_time',
+          name: '下单时间',
+          ifExport: true,
+          index: 6
+        },
+        {
+          key: 'delivery_time',
+          name: '完成时间',
+          ifExport: true,
+          index: 7
+        },
+        {
+          key: 'batch_title',
+          name: '批次标题',
+          ifExport: true,
+          index: 8
+        },
+        {
+          key: 'batch_type',
+          name: '批次类型',
+          ifExport: true,
+          index: 9
+        },
+        {
+          key: 'batch_desc',
+          name: '批次备注',
+          ifExport: true,
+          index: 10
+        },
+        {
+          key: 'product_code',
+          name: '产品编号',
+          ifExport: true,
+          index: 11
+        },
+        {
+          key: 'product_name',
+          name: '产品名称/品类',
+          ifExport: true,
+          index: 12
+        },
+        {
+          key: 'size_color_name',
+          name: '尺码/颜色',
+          ifExport: true,
+          index: 13
+        },
+        {
+          key: 'price',
+          name: '下单单价',
+          ifExport: true,
+          index: 14
+        },
+        {
+          key: 'number',
+          name: '下单数量',
+          ifExport: true,
+          index: 15
+        },
+        {
+          key: 'is_send',
+          name: '是否寄送产前样',
+          ifExport: true,
+          index: 16
+        },
+        {
+          key: 'is_confirm',
+          name: '是否产前确认',
+          ifExport: true,
+          index: 17
+        },
+        {
+          key: 'is_urgent',
+          name: '是否加急',
+          ifExport: true,
+          index: 18
+        },
+        {
+          key: 'user_name',
+          name: '创建人',
+          ifExport: true,
+          index: 19
+        },
+        {
+          key: 'create_time',
+          name: '创建时间',
+          ifExport: true,
+          index: 20
+        }
+      ],
       originalSetting: [
         {
           key: 'code',
@@ -318,6 +458,40 @@ export default Vue.extend({
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
     },
+    exportExcelClick(){
+      if(!this.checked) return
+      this.showExport = true
+    },
+    exportExcel(data: any) {
+      this.mainLoading = true
+      data.sort(function(a:any,b:any){
+        return a.index-b.index
+      })
+      this.exportExcelParam.show_row=[]
+      data.forEach((item: any) => {
+        if (item.ifExport) {
+          this.exportExcelParam.show_row.push(item.key)
+        }
+      })
+
+      let idArr: any = []
+
+      this.list.forEach((item) => {
+        idArr.push(item.id)
+      })
+
+      this.exportExcelParam['id'] = idArr
+      exportExcel.orderInfo(this.exportExcelParam).then((res: any) => {
+        if (res.data.status) {
+          console.log(res.data.data)
+          this.mainLoading = false
+          window.location.href = res.data.data
+        }
+      })
+      setTimeout(() => {
+        this.mainLoading = false
+      }, 10000);
+    },
     changeRouter() {
       this.$router.push(
         '/order/list?page=' +
@@ -393,6 +567,7 @@ export default Vue.extend({
         .then((res) => {
           this.listSettingId = res.data.data ? res.data.data.id : null
           this.listKey = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting)
+          this.exportKey = this.$clone(this.originalExport)
         })
     }
   },
@@ -400,6 +575,13 @@ export default Vue.extend({
     $route() {
       this.getFilters()
       this.getList()
+    },
+    checkedCount(newVal){
+      if(newVal.length>0){
+        this.checked = true
+      }else {
+        this.checked = false
+      }
     }
   },
   computed: {
