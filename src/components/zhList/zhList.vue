@@ -141,6 +141,10 @@ export default Vue.extend({
       type: Array,
       required: true
     },
+    checkedCount:{
+      type: Array,
+      required: false
+    },
     // 操作列
     oprList: {
       type: Array,
@@ -148,14 +152,12 @@ export default Vue.extend({
     }
   },
   data():{
-    checkedCount:any[],
     isIndeterminate:boolean,
     allCheck:boolean
   }{
     return {
       isIndeterminate:false,
       allCheck:false,
-      checkedCount:[],
     }
   },
   created(){
@@ -185,7 +187,6 @@ export default Vue.extend({
       this.$forceUpdate()
     },
     handleCheckAllChange(val:any) {
-      this.checkedCount = []
       if(this.isIndeterminate || this.allCheck){
         this.list.forEach((item: any) => {
           item.isCheck=true

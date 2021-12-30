@@ -76,9 +76,9 @@
           >
             刷新列表
           </div>
-          <div class="btn backHoverBlue fl" @click="showExport = true">导出Excel</div>
+          <div :class="checked?'btn backHoverBlue fl':'btn backHoverBlue fl noCheck'" @click="exportExcelClick()">导出Excel</div>
         </div>
-        <zh-list :list="list" :check="true" :listKey="listKey" :loading="loading" :oprList="oprList"></zh-list>
+        <zh-list :list="list" :check="true" :checkedCount="checkedCount" :listKey="listKey" :loading="loading" :oprList="oprList"></zh-list>
         <div class="pageCtn">
           <el-pagination
             background
@@ -133,9 +133,11 @@ export default Vue.extend({
       list: [],
       limitList: limitArr,
       showExport: false,
+      checkedCount:[],
       exportKey: [],
       keyword: '',
       client_id: [],
+      checked:false,
       exportExcelParam: {
         show_row: [],
         start_time: '',
@@ -455,6 +457,10 @@ export default Vue.extend({
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 5
     },
+    exportExcelClick(){
+      if(!this.checked) return
+      this.showExport = true
+    },
     exportExcel(data: any) {
       data.sort(function(a:any,b:any){
         return a.index-b.index
@@ -564,6 +570,13 @@ export default Vue.extend({
     $route() {
       this.getFilters()
       this.getList()
+    },
+    checkedCount(newVal){
+      if(newVal.length>0){
+        this.checked = true
+      }else {
+        this.checked = false
+      }
     }
   },
   computed: {

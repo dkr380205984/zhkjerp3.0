@@ -91,13 +91,14 @@
             style="margin-left:0">列表设置</div>
           <div class="btn backHoverGreen fl"
             @click="getFilters();getList()">刷新列表</div>
-          <div class="btn backHoverBlue fl"
+          <div :class="checked?'btn backHoverBlue fl':'btn backHoverBlue fl noCheck'"
             @click="exportExcel()">导出Excel</div>
         </div>
         <zh-list :list="list"
           :listKey="listKey"
           :loading="loading"
           :check="true"
+          :checkedCount="checkedCount"
           :oprList="oprList"></zh-list>
         <div class="pageCtn">
           <el-pagination background
@@ -154,6 +155,8 @@ export default Vue.extend({
       listSettingId: null,
       listKey: [],
       date: [],
+      checkedCount:[],
+      checked:false,
       originalSetting: [
         {
           key: 'code',
@@ -342,6 +345,13 @@ export default Vue.extend({
     $route() {
       this.getFilters()
       this.getList()
+    },
+    checkedCount(newVal){
+      if(newVal.length>0){
+        this.checked = true
+      }else {
+        this.checked = false
+      }
     }
   },
   computed: {
@@ -432,9 +442,13 @@ export default Vue.extend({
         })
     },
     exportExcel(){
+      if(!this.checked){
+        return
+      }
       let idArr:any[] = []
       this.list.forEach(item => {
-        idArr.push(item.id)
+        console.log(item)
+        // idArr.push(item.id)
       });
       console.log(idArr)
       exportExcel

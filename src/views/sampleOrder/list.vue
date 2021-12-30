@@ -82,17 +82,21 @@
                 :value="item.value"></el-option>
             </el-select>
           </div>
-          <div class="btn backHoverBlue fr"
-            @click="$router.push('/sampleOrder/create')">添加样单</div>
-          <div class="btn backHoverOrange fr"
-            @click="showSetting=true">列表设置</div>
-          <div class="btn backHoverGreen fr"
-            @click="getFilters();getList()"
-            style="margin-left:0">刷新列表</div>
         </div>
+        <div class="filterCtn" style="height:33px">
+            <div class="btn backHoverBlue fr"
+              @click="$router.push('/sampleOrder/create')">添加样单</div>
+            <div class="btn backHoverOrange fl"
+              @click="showSetting=true" style="margin-left:0">列表设置</div>
+            <div class="btn backHoverGreen fl"
+              @click="getFilters();getList()">刷新列表</div>
+            <div :class="checked?'btn backHoverBlue fl':'btn backHoverBlue fl noCheck'" @click="exportExcelClick">导出Excel</div>
+          </div>
         <zh-list :list="list"
           :listKey="listKey"
           :loading="loading"
+          :checkedCount="checkedCount"
+          :check="true"
           :oprList="oprList"></zh-list>
         <div class="pageCtn">
           <el-pagination background
@@ -113,15 +117,26 @@
       :type="2"
       :data.sync="listKey"
       :originalData="originalSetting"></zh-list-setting>
+
+    <!-- 导出Excel -->
+    <zhExportSetting
+      @close="showExport = false"
+      @afterSave="exportExcel"
+      :show="showExport"
+      :data.sync="exportKey"
+      :originalData="originalExport"
+    ></zhExportSetting>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { sampleOrder, listSetting } from '@/assets/js/api'
+import { sampleOrder, listSetting, exportExcel } from '@/assets/js/api'
 import { SampleOrderInfo } from '@/types/sampleOrder'
 import { limitArr } from '@/assets/js/dictionary'
+import zhExportSetting from '@/components/zhExportSetting/zhExportSetting.vue'
 export default Vue.extend({
+  components:{ zhExportSetting },
   data(): {
     list: SampleOrderInfo[]
     [porpName: string]: any
@@ -133,6 +148,8 @@ export default Vue.extend({
       limit: 5,
       total: 1,
       page: 1,
+      showExport:false,
+      exportKey: [],
       keyword: '',
       client_id: [],
       user_id: '',
@@ -142,6 +159,142 @@ export default Vue.extend({
       showSetting: false,
       listSettingId: null,
       listKey: [],
+      checkedCount:[],
+      checked:false,
+      exportExcelParam: {
+        show_row: [],
+        start_time: '',
+        end_time: '',
+        order_type:2
+      },
+      originalExport: [
+        {
+          key: 'code',
+          name: '订单号',
+          ifExport: true,
+          index: 0
+        },
+        {
+          key: 'client_name',
+          name: '下单客户',
+          ifExport: true,
+          index: 1
+        },
+        {
+          key: 'contacts',
+          name: '客户联系人',
+          ifExport: true,
+          index: 2
+        },
+        {
+          key: 'group_name',
+          name: '负责小组',
+          ifExport: true,
+          index: 3
+        },
+        {
+          key: 'settle_unit',
+          name: '结算单位',
+          ifExport: true,
+          index: 4
+        },
+        {
+          key: 'settle_exchange',
+          name: '结算货币',
+          ifExport: true,
+          index: 5
+        },
+        {
+          key: 'order_time',
+          name: '下单时间',
+          ifExport: true,
+          index: 6
+        },
+        {
+          key: 'delivery_time',
+          name: '完成时间',
+          ifExport: true,
+          index: 7
+        },
+        {
+          key: 'batch_title',
+          name: '批次标题',
+          ifExport: true,
+          index: 8
+        },
+        {
+          key: 'batch_type',
+          name: '批次类型',
+          ifExport: true,
+          index: 9
+        },
+        {
+          key: 'batch_desc',
+          name: '批次备注',
+          ifExport: true,
+          index: 10
+        },
+        {
+          key: 'product_code',
+          name: '产品编号',
+          ifExport: true,
+          index: 11
+        },
+        {
+          key: 'product_name',
+          name: '产品名称/品类',
+          ifExport: true,
+          index: 12
+        },
+        {
+          key: 'size_color_name',
+          name: '尺码/颜色',
+          ifExport: true,
+          index: 13
+        },
+        {
+          key: 'price',
+          name: '下单单价',
+          ifExport: true,
+          index: 14
+        },
+        {
+          key: 'number',
+          name: '下单数量',
+          ifExport: true,
+          index: 15
+        },
+        {
+          key: 'is_send',
+          name: '是否寄送产前样',
+          ifExport: true,
+          index: 16
+        },
+        {
+          key: 'is_confirm',
+          name: '是否产前确认',
+          ifExport: true,
+          index: 17
+        },
+        {
+          key: 'is_urgent',
+          name: '是否加急',
+          ifExport: true,
+          index: 18
+        },
+        {
+          key: 'user_name',
+          name: '创建人',
+          ifExport: true,
+          index: 19
+        },
+        {
+          key: 'create_time',
+          name: '创建时间',
+          ifExport: true,
+          index: 20
+        }
+      ],
       originalSetting: [
         {
           key: 'code',
@@ -310,6 +463,13 @@ export default Vue.extend({
     $route() {
       this.getFilters()
       this.getList()
+    },
+    checkedCount(newVal){
+      if(newVal.length>0){
+        this.checked = true
+      }else {
+        this.checked = false
+      }
     }
   },
   computed: {
@@ -324,6 +484,36 @@ export default Vue.extend({
     }
   },
   methods: {
+    exportExcelClick(){
+      if(!this.checked) return
+      this.showExport = true
+    },
+    exportExcel(data: any) {
+      data.sort(function(a:any,b:any){
+        return a.index-b.index
+      })
+      this.exportExcelParam.show_row=[]
+      data.forEach((item: any) => {
+        if (item.ifExport) {
+          this.exportExcelParam.show_row.push(item.key)
+        }
+      })
+
+      let idArr: any = []
+
+      this.list.forEach((item) => {
+        idArr.push(item.id)
+      })
+
+      this.exportExcelParam['id'] = idArr
+      exportExcel.orderInfo(this.exportExcelParam).then((res: any) => {
+        if (res.data.status) {
+          console.log(res.data.data)
+          window.location.href = res.data.data
+        }
+      })
+      console.log(this.exportExcelParam)
+    },
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)
@@ -409,6 +599,7 @@ export default Vue.extend({
         .then((res) => {
           this.listSettingId = res.data.data ? res.data.data.id : null
           this.listKey = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting)
+          this.exportKey = this.$clone(this.originalExport)
         })
     }
   },
