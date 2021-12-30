@@ -37,7 +37,7 @@ export interface SampleInfo {
   }> // 尺码组
   color_data: Array<{
     name: string
-    id: number
+    id: number | string
   }> | Array<string>  // 配色组
   // 配件信息
   part_data: Array<{

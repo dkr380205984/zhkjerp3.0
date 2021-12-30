@@ -1,10 +1,10 @@
 <template>
   <div class="productEdit sidePopup"
     v-show="show">
-    <div class="main"
+    <div :class="inDetail?'inDetailMain main':'main'"
       v-loading="loading">
       <div class="titleCtn">
-        <span class="text">添加新产品</span>
+        <span class="text">{{edit?"修改产品":"添加新产品"}}</span>
         <div class="closeCtn"
           @click="close">
           <span class="el-icon-close"></span>
@@ -200,7 +200,7 @@
                 </div>
                 <div class="info elCtn">
                   <el-autocomplete class="inline-input"
-                    v-model="productInfo.color_data[index]"
+                    v-model="item.name"
                     :fetch-suggestions="searchColour"
                     placeholder="请输入样品配色"></el-autocomplete>
                 </div>
@@ -512,6 +512,14 @@ export default Vue.extend({
       type: Boolean,
       required: true
     },
+    inDetail:{
+      type:Boolean,
+      required:false
+    },
+    edit:{
+      type:Boolean,
+      required: false
+    },
     // 这个参数用于保存后是否清空数据
     afterSaveClear: {
       type: Boolean,
@@ -544,7 +552,7 @@ export default Vue.extend({
     // 报价单描述信息
     quote_rel_product_data: {
       required: false
-    }
+    },
   },
   data(): {
     searchList: ProductInfo[]
@@ -592,7 +600,10 @@ export default Vue.extend({
             weight: ''
           }
         ], // 尺码组
-        color_data: [''], // 配色组
+        color_data: [{
+          id:"",
+          name:''
+        }], // 配色组
         // 配件信息
         part_data: [
           {
@@ -663,6 +674,7 @@ export default Vue.extend({
           if (this.data) {
             this.changeDetailToEdit(this.data)
           } else {
+            console.log('来到ID这里了')
             if (this.id) {
               this.getImport(Number(this.id))
             }
@@ -824,10 +836,10 @@ export default Vue.extend({
       this.$emit('beforeSave', this.productInfo)
       const formCheck =
         this.$formCheck(this.productInfo, [
-          {
-            key: 'style_code',
-            errMsg: '请输入客户款号'
-          },
+          // {
+          //   key: 'style_code',
+          //   errMsg: '请输入客户款号'
+          // },
           {
             key: 'name',
             errMsg: '请输入产品名称'
@@ -847,7 +859,7 @@ export default Vue.extend({
             errMsg: '请选择产品配色',
             regNormal: 'checkArr'
           }
-        ]) ||
+        ]) //||
         // this.productInfo.component_data.some((item) => {
         //   return this.$formCheck(item, [
         //     {
@@ -889,7 +901,7 @@ export default Vue.extend({
                 key: 'unit',
                 errMsg: '请输入配件单位'
               }
-            ]) ||
+            ]) //||
             // item.part_component_data!.some((itemChild) => {
             //   return this.$formCheck(itemChild, [
             //     {
@@ -902,18 +914,18 @@ export default Vue.extend({
             //     }
             //   ])
             // }) ||
-            item.part_size_data!.some((itemChild) => {
-              return this.$formCheck(itemChild, [
-                {
-                  key: 'weight',
-                  errMsg: '请输入配件克重'
-                },
-                {
-                  key: 'size_info',
-                  errMsg: '请输入配件尺寸'
-                }
-              ])
-            })
+            // item.part_size_data!.some((itemChild) => {
+            //   return this.$formCheck(itemChild, [
+            //     // {
+            //     //   key: 'weight',
+            //     //   errMsg: '请输入配件克重'
+            //     // },
+            //     // {
+            //     //   key: 'size_info',
+            //     //   errMsg: '请输入配件尺寸'
+            //     // }
+            //   ])
+            // })
           )
         })
       }
@@ -963,7 +975,10 @@ export default Vue.extend({
             weight: ''
           }
         ], // 尺码组
-        color_data: [''], // 配色组
+        color_data: [{
+          id:'',
+          name:''
+        }], // 配色组
         // 配件信息
         part_data: [
           {
@@ -1017,32 +1032,46 @@ export default Vue.extend({
         }),
         size_data: data.size_data.map((item: any) => {
           return {
+            id:item.id,
             size_name: item.name,
             size_id: item.id,
             size_info: item.size_info,
             weight: item.weight
           }
         }), // 尺码组
-        color_data: data.color_data.map((item: any) => item.name), // 配色组
+        color_data: data.color_data, // 配色组
         // 配件信息
         part_data: data.part_data.map((item: any) => {
           return {
+            id: item.id,
             name: item.name,
             unit: item.unit,
-            part_size_data: item.part_size_data.map((item: any) => {
+            part_size_data: item.part_size_data?item.part_size_data.map((item: any) => {
               return {
                 size_name: item.name,
                 size_id: item.id,
                 size_info: item.size_info,
                 weight: item.weight
               }
-            }),
-            part_component_data: item.part_component_data.map((item: any) => {
+            }):[
+              {
+                size_name: '',
+                size_id: '',
+                size_info: '',
+                weight: ''
+              }
+            ],
+            part_component_data: item.part_component_data?item.part_component_data.map((item: any) => {
               return {
                 component_id: item.id,
                 number: item.number
               }
-            })
+            }):[
+              {
+                component_id: '',
+                number: '' // 成分信息
+              }
+            ]
           }
         })
       }
