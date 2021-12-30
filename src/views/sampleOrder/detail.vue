@@ -455,7 +455,8 @@
                   <span class="text">打印样单</span>
                 </div>
                 <div class="btn backHoverBlue"
-                  @click="changeToOrder">
+                  @click="changeToOrder"
+                  v-show="confirmSampleInfo.length>0">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-dayindingdan"></use>
