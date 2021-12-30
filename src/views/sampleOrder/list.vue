@@ -1,7 +1,7 @@
 <template>
   <div id="sampleOrderList"
     class="bodyContainer">
-    <div class="module">
+    <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">样单列表</div>
       </div>
@@ -142,6 +142,7 @@ export default Vue.extend({
     [porpName: string]: any
   } {
     return {
+      mainLoading:false,
       loading: false,
       list: [],
       limitList: limitArr,
@@ -489,6 +490,7 @@ export default Vue.extend({
       this.showExport = true
     },
     exportExcel(data: any) {
+      this.mainLoading = true
       data.sort(function(a:any,b:any){
         return a.index-b.index
       })
@@ -509,6 +511,7 @@ export default Vue.extend({
       exportExcel.orderInfo(this.exportExcelParam).then((res: any) => {
         if (res.data.status) {
           console.log(res.data.data)
+          this.mainLoading = false
           window.location.href = res.data.data
         }
       })

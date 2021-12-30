@@ -1,7 +1,7 @@
 <template>
   <div id="quotedPriceList"
     class="bodyContainer">
-    <div class="module">
+    <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">报价单列表</div>
       </div>
@@ -142,6 +142,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      mainLoading:false,
       limitList: limitArr,
       list: [],
       page: 1,
@@ -445,10 +446,11 @@ export default Vue.extend({
       if(!this.checked){
         return
       }
+      this.mainLoading=true
       let idArr:any[] = []
       this.list.forEach(item => {
-        console.log(item)
-        // idArr.push(item.id)
+        // console.log(item)
+        idArr.push(item.id)
       });
       console.log(idArr)
       exportExcel
@@ -460,6 +462,7 @@ export default Vue.extend({
           console.log(this.list)
           if (res.data.status) {
             console.log(res.data.data)
+            this.mainLoading=false
             window.location.href = res.data.data
           }
         })
