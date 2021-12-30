@@ -1388,6 +1388,16 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
+          <div class="btnCtn"
+            style="float:left">
+            <using-tutorials :show="showUsing"
+              @close="showUsing=false"
+              :list="usingList"
+              :title="'工艺单使用教程'">
+              <div class="btn backHoverGreen"
+                @click="showUsing=true">使用教程</div>
+            </using-tutorials>
+          </div>
           <div class="btn backHoverOrange"
             @click="saveCraft(true)">保存为草稿</div>
           <div class="btn backHoverBlue"
@@ -1407,14 +1417,112 @@ Handsontable.languages.registerLanguageDictionary(languages as any) // 注册中
 import { CraftInfo, GLReapeat } from '@/types/craft'
 import { product, craftSetting, craft } from '@/assets/js/api'
 import { ProductInfo } from '@/types/product'
+import { UsingTutorials } from '@/types/usingTutorials'
 export default Vue.extend({
   data(): {
     craftInfo: CraftInfo
     productInfo: ProductInfo
+    usingList: UsingTutorials[]
     [propName: string]: any
   } {
     return {
       loading: false,
+      showUsing: false,
+      usingList: [
+        {
+          title: '如何添加主夹颜色？',
+          content: [
+            {
+              title: '如何添加原料颜色名称？',
+              content: [require('@/assets/image/craftCourse/1/1.png')]
+            },
+            {
+              title: '如何查找潘通色号？',
+              content: [require('@/assets/image/craftCourse/1/2.png')]
+            },
+            {
+              title: '如何添加新的潘通色号？',
+              content: [require('@/assets/image/craftCourse/1/3.png')]
+            }
+          ]
+        },
+        {
+          title: '如何添加主夹纱线？',
+          content: [
+            {
+              title: '如何添加金丝:银丝？',
+              content: [require('@/assets/image/craftCourse/2/1.png')]
+            },
+            {
+              title: '如何设置次要原料？',
+              content: [require('@/assets/image/craftCourse/2/2.png')]
+            }
+          ]
+        },
+        {
+          title: '如何使用排列表格？',
+          content: [
+            {
+              title: '如何使用复制粘贴功能？',
+              content: [require('@/assets/image/craftCourse/3/1.png')]
+            },
+            {
+              title: '如何使用删除列功能？',
+              content: [require('@/assets/image/craftCourse/3/2.png')]
+            },
+            {
+              title: '如何添加合并型？',
+              content: [require('@/assets/image/craftCourse/3/3.png')]
+            },
+            {
+              title: '如何设置穿综法？',
+              content: [require('@/assets/image/craftCourse/3/4.png')]
+            },
+            {
+              title: '如何设置X几遍最后去掉波浪线？',
+              content: [require('@/assets/image/craftCourse/3/5.png')]
+            },
+            {
+              title: '如何设置顺一遍倒一遍？',
+              content: [require('@/assets/image/craftCourse/3/6.png')]
+            },
+            {
+              title: '如何设置停撬？',
+              content: [require('@/assets/image/craftCourse/3/7.png')]
+            }
+          ]
+        },
+        {
+          title: '如何使用纹版图？',
+          content: [
+            {
+              title: '普通和高级纹版图的区别？',
+              content: [require('@/assets/image/craftCourse/4/1.png')]
+            },
+            {
+              title: '如何设置A,B纹版图？',
+              content: [require('@/assets/image/craftCourse/4/2.png')]
+            },
+            {
+              title: '如何设置纹板图x多遍？',
+              content: [require('@/assets/image/craftCourse/4/3.png')]
+            }
+          ]
+        },
+        {
+          title: '如何使用穿综循环？',
+          content: [
+            {
+              title: '普通和高级穿综法的区别？',
+              content: [require('@/assets/image/craftCourse/5/1.png')]
+            },
+            {
+              title: '如何设置多循环的穿综法？',
+              content: [require('@/assets/image/craftCourse/5/2.png')]
+            }
+          ]
+        }
+      ],
       productInfo: {
         product_type: 1,
         name: '',
@@ -2529,6 +2637,7 @@ export default Vue.extend({
     },
     // 提交时获取特殊值 表格值，合并项等
     getCmpData() {
+      this.craftInfo.part_id = Number(this.$route.query.part_id) || ''
       this.craftInfo.product_id = Number(this.$route.query.id) || Number(this.productInfo.id)
       this.craftInfo.warp_data.material_data[0].apply = this.warpJiaList
         .filter((item) => {

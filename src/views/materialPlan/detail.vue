@@ -277,7 +277,7 @@
                     aria-hidden="true">
                     <use xlink:href="#icon-caozuojilu"></use>
                   </svg>
-                  <span class="text">复制报价</span>
+                  <span class="text">复制计划</span>
                 </div>
               </div>
             </div>
@@ -391,7 +391,7 @@ export default Vue.extend({
   },
   methods: {
     goUpdate() {
-      this.$router.push('/materialPlan/update?id=' + this.materialPlanIndex)
+      this.$router.push('/materialPlan/update?id=' + this.materialPlanIndex + '&order_id=' + this.$route.query.id)
     },
     init() {
       materialPlan

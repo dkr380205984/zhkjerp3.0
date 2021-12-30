@@ -152,6 +152,27 @@
               <div class="label">
                 <span class="text">产品品类</span>
                 <span class="explanation">(必选)</span>
+                <el-tooltip class="item"
+                  effect="dark"
+                  content="设置成功后请点击此按钮刷新数据"
+                  placement="top">
+                  <i class="el-icon-refresh hoverGreen fr"
+                    style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                    @click="$checkCommonInfo([{
+                        checkWhich: 'api/productType',
+                        getInfoMethed: 'dispatch',
+                        getInfoApi: 'getProductTypeAsync',
+                        forceUpdate:true
+                      }])"></i>
+                </el-tooltip>
+                <el-tooltip class="item"
+                  effect="dark"
+                  content="添加品类"
+                  placement="top">
+                  <i class="el-icon-upload hoverOrange fr"
+                    style="line-height:38px;font-size:18px;cursor:pointer"
+                    @click="$openUrl('/setting/?pName=产品设置&cName=品类')"></i>
+                </el-tooltip>
               </div>
               <div class="info elCtn">
                 <el-cascader :disabled="$route.query.again==='true'"
@@ -1502,6 +1523,7 @@ export default Vue.extend({
       this.quotedPriceInfo.tree_data =
         this.quotedPriceInfo.tree_data && (this.quotedPriceInfo.tree_data as number[]).join(',') // 保存公司原始数据包含一级二级分类
       this.quotedPriceInfo.product_data.forEach((item) => {
+        item.image_data = item.image_data.concat(item.file_list!.map((item) => item.url)) // 新旧图拼接
         item.category_id = item.type && item.type[0]
         item.secondary_category_id = item.type && item.type[1]
         item.material_data.forEach((itemChild) => {

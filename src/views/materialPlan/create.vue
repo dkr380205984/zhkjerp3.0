@@ -82,10 +82,16 @@
                       </div>
                     </div>
                     <div class="tcol">
-                      <div class="elCtn">
+                      <div class="elCtn UnitCtn">
                         <el-input v-model="itemPart.number"
-                          placeholder="计划生产数量"
-                          @change="getMaterialPlanDetail(itemPart.part_id,itemPart.number,itemChild)"></el-input>
+                          placeholder="数量"
+                          @change="getMaterialPlanDetail(itemPart.part_id,itemPart.number,itemChild)">
+                          <template slot="append">
+                            <el-input v-model="itemPart.unit"
+                              placeholder="单位"
+                              disabled></el-input>
+                          </template>
+                        </el-input>
                       </div>
                     </div>
                     <div class="tcol oprCtn">
@@ -129,7 +135,6 @@
                 <div class="tcol">产品部位</div>
                 <div class="tcol">下单数量</div>
                 <div class="tcol">计划生产数量</div>
-                <div class="tcol">操作</div>
               </div>
             </div>
             <div class="tbody">
@@ -145,20 +150,48 @@
                   <div class="tcol">{{item.part_name}}</div>
                   <div class="tcol">{{item.order_number}}</div>
                   <div class="tcol">{{item.number}}</div>
-                  <div class="tcol oprCtn">
-                    <div class="opr hoverBlue"
-                      @click="copyMaterialPlanData(index)">统一输入行</div>
-                  </div>
                 </div>
                 <div class="childrenCtn">
                   <div class="trow">
-                    <div class="tcol">计划工序</div>
-                    <div class="tcol">原料名称</div>
-                    <div class="tcol">原料颜色</div>
+                    <div class="tcol">计划工序
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一工序"
+                        placement="top">
+                        <i class="el-icon-copy-document copyIcon hoverBlue"
+                          @click="copyInfo(item.info_data,['process_name_arr','process_name'])"></i>
+                      </el-tooltip>
+                    </div>
+                    <div class="tcol">原料名称
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一原料"
+                        placement="top">
+                        <i class="el-icon-copy-document copyIcon hoverBlue"
+                          @click="copyInfo(item.info_data,['tree_data','material_name'])"></i>
+                      </el-tooltip>
+                    </div>
+                    <div class="tcol">原料颜色
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一颜色"
+                        placement="top">
+                        <i class="el-icon-copy-document copyIcon hoverBlue"
+                          @click="copyInfo(item.info_data,['material_color'])"></i>
+                      </el-tooltip>
+                    </div>
                     <div class="tcol">单个数量</div>
                     <div class="tcol">所需数量</div>
                     <div class="tcol">原料损耗</div>
-                    <div class="tcol">最终数量</div>
+                    <div class="tcol">最终数量
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一数量"
+                        placement="top">
+                        <i class="el-icon-copy-document copyIcon hoverBlue"
+                          @click="copyInfo(item.info_data,['final_number','unit'])"></i>
+                      </el-tooltip>
+                    </div>
                     <div class="tcol">操作</div>
                   </div>
                   <div class="trow"
@@ -166,13 +199,14 @@
                     :key="indexChild">
                     <div class="tcol">
                       <div class="elCtn">
-                        <el-select v-model="itemChild.process_id"
-                          placeholder="选择工序">
-                          <el-option v-for="item in item.processList&&item.processList.length>0?item.processList:halfProcessList"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.id"></el-option>
-                        </el-select>
+                        <el-cascader placeholder="选择工序"
+                          :show-all-levels="false"
+                          v-model="itemChild.process_name_arr"
+                          :options="item.processList&&item.processList.length>0?item.processList:processList"
+                          @change="($event)=>{itemChild.process_name=ev[1]}"
+                          filterable
+                          clearable>
+                        </el-cascader>
                       </div>
                     </div>
                     <div class="tcol">
@@ -226,7 +260,8 @@
                       <div class="oprCtn">
                         <span class="opr blue"
                           @click="$addItem(item.info_data,{
-                            process_id: '',
+                            process_name_arr:[],
+                            process_name: '',
                             tree_data: [],
                             material_id: '',
                             material_type: '',
@@ -262,7 +297,6 @@
                 <div class="tcol">产品部位</div>
                 <div class="tcol">下单数量</div>
                 <div class="tcol">计划生产数量</div>
-                <div class="tcol">操作</div>
               </div>
             </div>
             <div class="tbody">
@@ -277,10 +311,6 @@
                   <div class="tcol">{{item.part_name}}</div>
                   <div class="tcol">{{item.order_number}}</div>
                   <div class="tcol">{{item.number}}</div>
-                  <div class="tcol oprCtn">
-                    <div class="opr hoverBlue"
-                      @click="copyMaterialPlanData(index)">统一输入行</div>
-                  </div>
                 </div>
                 <div class="childrenCtn">
                   <div class="trow">
@@ -298,13 +328,14 @@
                     :key="indexChild">
                     <div class="tcol">
                       <div class="elCtn">
-                        <el-select v-model="itemChild.process_id"
-                          placeholder="选择工序">
-                          <el-option v-for="item in item.processList&&item.processList.length>0?item.processList:halfProcessList"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.id"></el-option>
-                        </el-select>
+                        <el-cascader placeholder="选择工序"
+                          :show-all-levels="false"
+                          v-model="itemChild.process_name_arr"
+                          :options="item.processList&&item.processList.length>0?item.processList:processList"
+                          @change="($event)=>{itemChild.process_name=ev[1]}"
+                          filterable
+                          clearable>
+                        </el-cascader>
                       </div>
                     </div>
                     <div class="tcol">
@@ -351,7 +382,8 @@
                       <div class="oprCtn">
                         <span class="opr blue"
                           @click="$addItem(item.info_data,{
-                          process_id: '',
+                            process_name_arr:[],
+                          process_name: '',
                           tree_data: [],
                           material_id: '',
                           material_type: '',
@@ -481,6 +513,7 @@ import Vue from 'vue'
 import { order, materialPlan } from '@/assets/js/api'
 import { OrderInfo, OrderProductFlatten, OrderProductMerge, OrderTime } from '@/types/order'
 import { MaterialPlanInfo, MaterailPlanData } from '@/types/materialPlan'
+import { QuotedPriceProduct } from '@/types/quotedPrice'
 import { CascaderInfo } from '@/types/vuex'
 interface OrderDetail extends OrderInfo {
   time_data: OrderTime[]
@@ -493,7 +526,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
-      testValue: '',
+      justWatch: false, // 这个字段专门用于监听物料概览，在某些特定操作下无法触发watch的时候手动触发重新计算
       confirmFlag: 1,
       settingMethod: 2, // 数字取整方式
       orderIndex: 0, // 多张订单/样单
@@ -589,8 +622,38 @@ export default Vue.extend({
     }
   },
   computed: {
-    halfProcessList() {
-      return this.$store.state.api.halfProcess.arr
+    processList() {
+      return [
+        {
+          label: '织造工序',
+          value: '织造工序',
+          children: [
+            { label: '针织织造', value: '针织织造' },
+            { label: '梭织织造', value: '梭织织造' },
+            { label: '制版费', value: '制版费' }
+          ]
+        },
+        {
+          label: '成品加工工序',
+          value: '成品加工工序',
+          children: this.$store.state.api.staffProcess.arr.map((item: any) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        },
+        {
+          label: '半成品加工工序',
+          value: '半成品加工工序',
+          children: this.$store.state.api.halfProcess.arr.map((item: any) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        }
+      ]
     },
     yarnTypeList(): CascaderInfo[] {
       return this.$store.state.api.yarnType.arr
@@ -608,6 +671,7 @@ export default Vue.extend({
     // 监听物料计划表的变化，来计算所需物料概览
     'materialPlanInfo.material_plan_data': {
       handler: function (materailPlanData: MaterailPlanData[]) {
+        console.log(this.justWatch)
         this.materialPlanInfo.material_plan_gather_data = []
         const flattenYarnList: CascaderInfo[] = []
         this.yarnTypeList.forEach((item) => {
@@ -708,6 +772,8 @@ export default Vue.extend({
           itemPro.product_info.forEach((itemChild) =>
             flattenArr.push({
               material_info: itemChild.material_info || [],
+              quote_rel_product_id: itemPro.quote_rel_product_id,
+              quote_rel_product_info: itemPro.quote_rel_product_info,
               color_id: itemChild.color_id,
               color_name: itemChild.color_name,
               size_id: itemChild.size_id,
@@ -738,7 +804,9 @@ export default Vue.extend({
           { name: 'category' },
           { name: 'product_code' },
           { name: 'part_data' },
-          { name: 'process_data' }
+          { name: 'process_data' },
+          { name: 'quote_rel_product_id' },
+          { name: 'quote_rel_product_info' }
         ],
         childrenRule: {
           mainRule: ['color_id', 'size_id'],
@@ -832,21 +900,14 @@ export default Vue.extend({
                   number: itemPart.number || 0,
                   order_number: itemChild.order_number,
                   loss: '',
-                  processList:
-                    item.process_data!.length > 0
-                      ? item.process_data!.map((itemProcess) => {
-                          return {
-                            id: itemProcess.process_id,
-                            name: itemProcess.process_name
-                          }
-                        })
-                      : [],
+                  processList: item.quote_rel_product_id ? this.getProcessInfo(item.quote_rel_product_info!) : [],
                   // 只有大身有工艺单
                   info_data:
                     itemPart.part_id === 0 && itemChild.material_info.length > 0
                       ? itemChild.material_info.map((itemMat) => {
                           return {
-                            process_id: '',
+                            process_name_arr: [],
+                            process_name: '',
                             tree_data: [],
                             material_id: itemMat.material_id,
                             material_name: itemMat.material_name,
@@ -861,21 +922,12 @@ export default Vue.extend({
                             has_plan: true
                           }
                         })
-                      : [
-                          {
-                            process_id: '',
-                            tree_data: [],
-                            material_id: '',
-                            material_type: '',
-                            material_color: '',
-                            assist_material_number: '',
-                            need_number: '',
-                            production_number: '',
-                            loss: '',
-                            unit: 'kg',
-                            final_number: ''
-                          }
-                        ]
+                      : this.findPartCraftMaterial(
+                          itemPart.part_id,
+                          itemChild.color_id,
+                          item.product_id,
+                          itemPart.number
+                        )
                 })
               }
             })
@@ -907,7 +959,8 @@ export default Vue.extend({
                         findMat.need_number += this.numberAutoMethod((itemMat.number * Number(itemPart.number)) / 1000)
                       } else {
                         finded.info_data.push({
-                          process_id: '',
+                          process_name_arr: [],
+                          process_name: '',
                           tree_data: [],
                           material_id: itemMat.material_id,
                           material_name: itemMat.material_name,
@@ -943,7 +996,8 @@ export default Vue.extend({
                       itemChild.material_info.length > 0
                         ? itemChild.material_info.map((itemMat) => {
                             return {
-                              process_id: '',
+                              process_name_arr: [],
+                              process_name: '',
                               tree_data: [],
                               material_id: itemMat.material_id,
                               material_name: itemMat.material_name,
@@ -960,7 +1014,8 @@ export default Vue.extend({
                           })
                         : [
                             {
-                              process_id: '',
+                              process_name_arr: [],
+                              process_name: '',
                               tree_data: [],
                               material_id: '',
                               material_type: '',
@@ -981,6 +1036,86 @@ export default Vue.extend({
         })
       }
       this.confirmFlag = 2
+    },
+    // 工序信息
+    getProcessInfo(info: QuotedPriceProduct): any[] {
+      let processArr: any[] = []
+      info.weave_data!.forEach((item) => {
+        processArr.push(item.name)
+      })
+      info.semi_product_data.forEach((item) => {
+        processArr = processArr.concat(item.process_name)
+      })
+      info.production_data.forEach((item) => {
+        processArr = processArr.concat(item.name)
+      })
+      return [
+        {
+          label: '推荐工序',
+          value: '推荐工序',
+          children: Array.from(new Set(processArr)).map((item) => {
+            return { value: item, label: item }
+          })
+        }
+      ].concat(this.processList)
+    },
+    // 配件的工艺信息用单独的函数去order_info里寻找，这样就不需要破坏前面只有大身有工艺单的逻辑
+    findPartCraftMaterial(
+      partId: number | string,
+      colorId: number | string,
+      proId: number | string,
+      planNum: number | string
+    ) {
+      const initData = [
+        {
+          process_name_arr: [],
+          process_name: '',
+          tree_data: [],
+          material_id: '',
+          material_type: '',
+          material_color: '',
+          assist_material_number: '',
+          need_number: '',
+          production_number: '',
+          loss: '',
+          unit: 'kg',
+          final_number: ''
+        }
+      ]
+      let proList: any[] = []
+      this.orderInfo.time_data[this.orderIndex].batch_data.forEach((item) => {
+        item.product_data.forEach((itemPro) => {
+          proList.push(itemPro)
+        })
+      })
+      const findPro = proList.find((item) => Number(item.product_id) === Number(proId))
+      const findPart = findPro.part_data.find((item: any) => Number(item.id) === partId)
+      if (findPart && findPart.material_info && findPart.material_info.length > 0) {
+        const findMat = findPart.material_info.find((item: any) => Number(item.color_id) === Number(colorId))
+        if (findMat) {
+          return findMat.info_data.map((itemMat: any) => {
+            return {
+              process_name: '',
+              process_name_arr: [],
+              tree_data: [],
+              material_id: itemMat.material_id,
+              material_name: itemMat.material_name,
+              material_type: itemMat.material_type,
+              material_color: itemMat.material_color,
+              assist_material_number: '',
+              need_number: this.numberAutoMethod(itemMat.number * Number(planNum)),
+              production_number: itemMat.number * 1000,
+              loss: '',
+              final_number: '',
+              unit: 'kg',
+              has_plan: true
+            }
+          })
+        }
+      } else {
+        return initData
+      }
+      return initData
     },
     changeMaterialPlanType() {
       this.materialPlanInfo.material_plan_data = []
@@ -1026,7 +1161,7 @@ export default Vue.extend({
           return item.info_data.some((itemChild) => {
             return this.$formCheck(itemChild, [
               {
-                key: 'process_id',
+                key: 'process_name',
                 errMsg: '检测到有未选择工序信息，请补充'
               },
               {
@@ -1081,13 +1216,15 @@ export default Vue.extend({
       })
     },
     // 统一输入行逻辑
-    copyMaterialPlanData() {
-      console.log(this.materialPlanInfo.material_plan_data)
-      this.materialPlanInfo.material_plan_data.forEach((item, index) => {
-        if (index > 0) {
-          item.info_data = this.$clone(this.materialPlanInfo.material_plan_data[0].info_data)
+    copyInfo(info: any, keyArr: string[]) {
+      info.forEach((item: any, index: number) => {
+        if (index !== 0) {
+          keyArr.forEach((key) => {
+            item[key] = info[0][key]
+          })
         }
       })
+      this.justWatch = !this.justWatch
     }
   },
   mounted() {
@@ -1101,6 +1238,11 @@ export default Vue.extend({
         checkWhich: 'api/halfProcess',
         getInfoMethed: 'dispatch',
         getInfoApi: 'getHalfProcessAsync'
+      },
+      {
+        checkWhich: 'api/staffProcess',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getStaffProcessAsync'
       },
       {
         checkWhich: 'api/yarnType',

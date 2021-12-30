@@ -840,9 +840,15 @@
                         :key="indexChild">{{itemChild}}</span>
                     </div>
                     <div class="line"
-                      v-if="itemPro.others_fee_activity_log.length>0">
+                      v-if="itemPro.other_fee_activity_log.length>0">
                       <span class="label">其他修改信息：</span>
                       <span v-for="(itemChild,indexChild) in itemPro.others_fee_activity_log"
+                        :key="indexChild">{{itemChild}}</span>
+                    </div>
+                     <div class="line"
+                      v-if="itemPro.no_production_fee_activity_log.length>0">
+                      <span class="label">非生产型费用修改信息：</span>
+                      <span v-for="(itemChild,indexChild) in itemPro.no_production_fee_activity_log"
                         :key="indexChild">{{itemChild}}</span>
                     </div>
                   </div>
@@ -1287,6 +1293,7 @@ export default Vue.extend({
                   change: '',
                   number: 0
                 },
+                no_production_fee_data: [],
                 material_data: [],
                 assist_material_data: [],
                 weave_data: [],

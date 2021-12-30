@@ -11,6 +11,8 @@ import orderDetail from './orderDetail/orderDetail.vue'
 import zhList from './zhList/zhList.vue'
 import zhCheck from './zhCheck/zhCheck.vue'
 import othersFeeData from './othersFeeData/othersFeeData.vue'
+import usingTutorials from './usingTutorials/usingTutorials.vue'
+import vue from '@handsontable/vue'
 export default {
   install: (Vue: any) => {
     Vue.component('zhNav', zhNav)
@@ -26,5 +28,6 @@ export default {
     Vue.component('zhList', zhList)
     Vue.component('zhCheck', zhCheck)
     Vue.component('othersFeeData', othersFeeData)
+    Vue.component('usingTutorials', usingTutorials)
   }
 }

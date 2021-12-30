@@ -1,5 +1,6 @@
 import { PartInfo } from "./product";
 import { CraftMaterialInfo } from "./craft";
+import { QuotedPriceProduct } from "./quotedPrice";
 // 批次
 export interface OrderBatch {
   id?: number | null | string
@@ -26,6 +27,8 @@ export interface OrderBatch {
     product_code?: string
     category?: string
     secondary_category?: string
+    quote_rel_product_id?: string | number
+    quote_rel_product_info?: QuotedPriceProduct
     size_color_list: Array<{
       label: string
       value: string
@@ -80,6 +83,7 @@ export interface OrderInfo {
   private_files: string[]
   settle_tax: string // 结算税率
   settle_unit: string // 报价币种
+  exchange_rate?: string | number//汇率
   rel_quote_id?: number | string
   time_data: OrderTime | OrderTime[]
 }
@@ -99,6 +103,8 @@ export interface OrderProductFlatten {
   secondary_category?: string
   part_data?: PartInfo[]
   plan_number?: string | number
+  quote_rel_product_id?: string | number
+  quote_rel_product_info?: QuotedPriceProduct
   process_data?: Array<{
     process_id: number
     process_name: string

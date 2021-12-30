@@ -152,7 +152,10 @@
             <div class="tcol">{{item.desc}}</div>
             <div class="tcol oprCtn">
               <div class="opr hoverBlue"
-                @click="supplementInfo(item)">补充信息</div>
+                @click="supplementInfo(item)"
+                v-if="!item.has_change">补充信息</div>
+              <div class="opr orange"
+                v-else>已转换</div>
             </div>
           </div>
         </div>
@@ -162,7 +165,8 @@
       <div class="titleCtn flexBetween">
         <div class="title">添加样品</div>
         <div class="btn backHoverBlue"
-          @click="addSampleFlag = true">添加新样品</div>
+          @click="addSampleFlag = true"
+          v-show="quotedPriceProductList.length===0">添加新样品</div>
       </div>
       <div class="noDate"
         v-show="sampleList.length === 0">暂无样品信息</div>
@@ -608,6 +612,7 @@ export default Vue.extend({
           })
         })
       })
+      info.quote_rel_product_id = product.quote_rel_product_id
       info.product_info = info.size_color_list.map((item: any) => {
         return {
           size_color: item.value,
@@ -637,6 +642,11 @@ export default Vue.extend({
       this.sampleDetail = sample
     },
     getNewSample(sample: SampleInfo) {
+      if (this.quotedPriceProductInfo) {
+        // 标记一下报价产品已经转换了，不能二次转换了
+        this.quotedPriceProductInfo.has_change = true
+        sample.quote_rel_product_id = this.quotedPriceProductInfo.id
+      }
       this.sampleList.push(sample)
     },
     beforeAvatarUpload(file: any) {
