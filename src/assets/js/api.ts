@@ -490,6 +490,16 @@ const exportExcel = {
     material_name: string
     material_type: number
   }) => http.get(`${baseUrl}/export/material/store/total`, params),
+  quoteList: (params: {
+    client_id: number,
+    id: Array<number>
+  }) => http.get(`${baseUrl}/export/quote/list`, params),
+  orderInfo: (params: {
+    client_id: number
+    id: Array<number>
+    start_time:string
+    end_time:string
+  }) => http.get(`${baseUrl}/export/order/info`, params),
 }
 export {
   login,
