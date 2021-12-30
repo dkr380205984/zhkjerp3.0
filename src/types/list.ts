@@ -15,4 +15,5 @@ export interface ListSetting {
   filterArr?: string[] // 通常用于用于状态适配，如status = 1|2|3 filterArr:['待审核','已审核','未通过']
   class?: string // 用于改字体颜色用的
   classArr?: string[] // 一般配合filterArr一起用，不同状态用不同颜色标记
+  isCheck?: boolean
 }
