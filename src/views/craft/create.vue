@@ -3077,7 +3077,7 @@ export default Vue.extend({
         formCheck =
           this.checkSliceData(this.tableData.warp.data[1]) ||
           this.checkSliceData(this.tableData.warp.data[2]) ||
-          this.checkSliceData(this.tableData.weft.data[2]) ||
+          this.checkSliceData(this.tableData.weft.data[1]) ||
           this.checkSliceData(this.tableData.weft.data[2])
         if (formCheck) {
           this.$message.error('请完善经纬项信息')
