@@ -6,15 +6,15 @@
     <div class="pmain">
       <div class="phead clearfix">
         <div class="fl">
-          <div class="ptitle">{{craftInfo.title || '打印工艺单'}}</div>
+          <div class="ptitle">{{company_name + '打印工艺单'}}</div>
           <div class="prow">
             <div class="pcol">
               <div class="label">系统编号：</div>
               <div class="info">{{craftInfo.craft_code}}</div>
             </div>
             <div class="pcol">
-              <div class="label">关联订单：</div>
-              <div class="info"></div>
+              <div class="label">手机号：</div>
+              <div class="info">{{craftInfo.user_phone}}</div>
             </div>
           </div>
           <div class="prow">
@@ -29,7 +29,16 @@
           </div>
         </div>
         <div class="fr">
-          <div class="pImage">假装有图</div>
+          <div class="pImage">
+            <el-image :src="craftInfo.product_info&&craftInfo.product_info.image_data.length>0?craftInfo.product_info.image_data[0]:require('@/assets/image/common/noPic.png')"
+              :preview-src-list="craftInfo.product_info?craftInfo.product_info.image_data:[]">
+            </el-image>
+          </div>
+          <div class="pImage">
+            <img :src="qrCodeUrl"
+              width="100%"
+              alt="" />
+          </div>
         </div>
       </div>
       <div class="pbody">
@@ -965,6 +974,8 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      qrCodeUrl: '',
+      company_name: window.sessionStorage.getItem('company_name'),
       X_position: 0,
       Y_position: 0,
       showMenu: false,
@@ -1387,6 +1398,16 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.craftInfo = res.data.data
+          // 生成二维码
+          const QRCode = require('qrcode')
+          QRCode.toDataURL(`${this.craftInfo.craft_code}`)
+            .then((url: any) => {
+              this.qrCodeUrl = url
+              // console.log(this.qrCodeUrl)
+            })
+            .catch((err: any) => {
+              console.error(err)
+            })
           // 将纹版图循环补充完整
           // 例如1-2循环2次，5-6循环两次，补充3-4循环1次进去
           let GLRepeatComplete: GLReapeat[][] = []

@@ -35,7 +35,7 @@
         </svg>
         <span class="text">装饰辅料仓库</span>
       </div>
-      <div class="tag"
+      <!-- <div class="tag"
         :class="{'active':store_type===5}"
         @click="store_type=5;changeRouter">
         <svg class="iconFont"
@@ -52,7 +52,7 @@
           <use xlink:href='#icon-baozhuangfuliaocangku'></use>
         </svg>
         <span class="text">包装辅料仓库</span>
-      </div>
+      </div> -->
     </div>
     <div class="module">
       <div class="listCtn">

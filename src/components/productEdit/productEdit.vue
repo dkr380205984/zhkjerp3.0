@@ -207,7 +207,10 @@
               </div>
               <div class="opr hoverBlue"
                 v-if="index===0"
-                @click="$addItem(productInfo.color_data)">添加</div>
+                @click="$addItem(productInfo.color_data,{
+                  id:'',
+                  name:''
+                })">添加</div>
               <div class="opr hoverRed"
                 v-if="index>0"
                 @click="$deleteItem(productInfo.color_data,index)">删除</div>
@@ -513,12 +516,12 @@ export default Vue.extend({
       type: Boolean,
       required: true
     },
-    inDetail:{
-      type:Boolean,
-      required:false
+    inDetail: {
+      type: Boolean,
+      required: false
     },
-    edit:{
-      type:Boolean,
+    edit: {
+      type: Boolean,
       required: false
     },
     // 这个参数用于保存后是否清空数据
@@ -553,7 +556,7 @@ export default Vue.extend({
     // 报价单描述信息
     quote_rel_product_data: {
       required: false
-    },
+    }
   },
   data(): {
     searchList: ProductInfo[]
@@ -601,10 +604,12 @@ export default Vue.extend({
             weight: ''
           }
         ], // 尺码组
-        color_data: [{
-          id:"",
-          name:''
-        }], // 配色组
+        color_data: [
+          {
+            id: '',
+            name: ''
+          }
+        ], // 配色组
         // 配件信息
         part_data: [
           {
@@ -835,99 +840,96 @@ export default Vue.extend({
     },
     saveProduct() {
       this.$emit('beforeSave', this.productInfo)
-      const formCheck =
-        this.$formCheck(this.productInfo, [
-          // {
-          //   key: 'style_code',
-          //   errMsg: '请输入客户款号'
-          // },
+      const formCheck = this.$formCheck(this.productInfo, [
+        // {
+        //   key: 'style_code',
+        //   errMsg: '请输入客户款号'
+        // },
+        {
+          key: 'name',
+          errMsg: '请输入产品名称'
+        },
+        {
+          key: 'type',
+          errMsg: '请选择产品品类',
+          regNormal: 'checkArr'
+        },
+        {
+          key: 'style_data',
+          errMsg: '请选择产品款式',
+          regNormal: 'checkArr'
+        },
+        {
+          key: 'color_data',
+          errMsg: '请选择产品配色',
+          regNormal: 'checkArr'
+        }
+      ]) //||
+      // this.productInfo.component_data.some((item) => {
+      //   return this.$formCheck(item, [
+      //     {
+      //       key: 'component_id',
+      //       errMsg: '请选择大身成分'
+      //     },
+      //     {
+      //       key: 'number',
+      //       errMsg: '请输入成分比例'
+      //     }
+      //   ])
+      // }) ||
+      this.productInfo.size_data.some((item) => {
+        return this.$formCheck(item, [
           {
-            key: 'name',
-            errMsg: '请输入产品名称'
+            key: 'size_name',
+            errMsg: '请选择大身尺码'
           },
           {
-            key: 'type',
-            errMsg: '请选择产品品类',
-            regNormal: 'checkArr'
+            key: 'weight',
+            errMsg: '请输入大身克重'
           },
           {
-            key: 'style_data',
-            errMsg: '请选择产品款式',
-            regNormal: 'checkArr'
-          },
-          {
-            key: 'color_data',
-            errMsg: '请选择产品配色',
-            regNormal: 'checkArr'
+            key: 'size_info',
+            errMsg: '请输入大身尺寸'
           }
-        ]) //||
-        // this.productInfo.component_data.some((item) => {
-        //   return this.$formCheck(item, [
-        //     {
-        //       key: 'component_id',
-        //       errMsg: '请选择大身成分'
-        //     },
-        //     {
-        //       key: 'number',
-        //       errMsg: '请输入成分比例'
-        //     }
-        //   ])
-        // }) ||
-        this.productInfo.size_data.some((item) => {
-          return this.$formCheck(item, [
-            {
-              key: 'size_name',
-              errMsg: '请选择大身尺码'
-            },
-            {
-              key: 'weight',
-              errMsg: '请输入大身克重'
-            },
-            {
-              key: 'size_info',
-              errMsg: '请输入大身尺寸'
-            }
-          ])
-        })
+        ])
+      })
       let partFormCheck: boolean = false
       if (this.have_part && !formCheck) {
         partFormCheck = this.productInfo.part_data.some((item) => {
-          return (
-            this.$formCheck(item, [
-              {
-                key: 'name',
-                errMsg: '请输入配件名称'
-              },
-              {
-                key: 'unit',
-                errMsg: '请输入配件单位'
-              }
-            ]) //||
-            // item.part_component_data!.some((itemChild) => {
-            //   return this.$formCheck(itemChild, [
-            //     {
-            //       key: 'component_id',
-            //       errMsg: '请选择配件成分'
-            //     },
-            //     {
-            //       key: 'number',
-            //       errMsg: '请输入配件比例'
-            //     }
-            //   ])
-            // }) ||
-            // item.part_size_data!.some((itemChild) => {
-            //   return this.$formCheck(itemChild, [
-            //     // {
-            //     //   key: 'weight',
-            //     //   errMsg: '请输入配件克重'
-            //     // },
-            //     // {
-            //     //   key: 'size_info',
-            //     //   errMsg: '请输入配件尺寸'
-            //     // }
-            //   ])
-            // })
-          )
+          return this.$formCheck(item, [
+            {
+              key: 'name',
+              errMsg: '请输入配件名称'
+            },
+            {
+              key: 'unit',
+              errMsg: '请输入配件单位'
+            }
+          ]) //||
+          // item.part_component_data!.some((itemChild) => {
+          //   return this.$formCheck(itemChild, [
+          //     {
+          //       key: 'component_id',
+          //       errMsg: '请选择配件成分'
+          //     },
+          //     {
+          //       key: 'number',
+          //       errMsg: '请输入配件比例'
+          //     }
+          //   ])
+          // }) ||
+          // item.part_size_data!.some((itemChild) => {
+          //   return this.$formCheck(itemChild, [
+          //     // {
+          //     //   key: 'weight',
+          //     //   errMsg: '请输入配件克重'
+          //     // },
+          //     // {
+          //     //   key: 'size_info',
+          //     //   errMsg: '请输入配件尺寸'
+          //     // }
+          //   ])
+          // })
         })
       }
       this.getCmpData()
@@ -976,10 +978,12 @@ export default Vue.extend({
             weight: ''
           }
         ], // 尺码组
-        color_data: [{
-          id:'',
-          name:''
-        }], // 配色组
+        color_data: [
+          {
+            id: '',
+            name: ''
+          }
+        ], // 配色组
         // 配件信息
         part_data: [
           {
@@ -1033,7 +1037,7 @@ export default Vue.extend({
         }),
         size_data: data.size_data.map((item: any) => {
           return {
-            id:item.id,
+            id: item.id,
             size_name: item.name,
             size_id: item.id,
             size_info: item.size_info,
@@ -1047,32 +1051,36 @@ export default Vue.extend({
             id: item.id,
             name: item.name,
             unit: item.unit,
-            part_size_data: item.part_size_data?item.part_size_data.map((item: any) => {
-              return {
-                size_name: item.name,
-                size_id: item.id,
-                size_info: item.size_info,
-                weight: item.weight
-              }
-            }):[
-              {
-                size_name: '',
-                size_id: '',
-                size_info: '',
-                weight: ''
-              }
-            ],
-            part_component_data: item.part_component_data?item.part_component_data.map((item: any) => {
-              return {
-                component_id: item.id,
-                number: item.number
-              }
-            }):[
-              {
-                component_id: '',
-                number: '' // 成分信息
-              }
-            ]
+            part_size_data: item.part_size_data
+              ? item.part_size_data.map((item: any) => {
+                  return {
+                    size_name: item.name,
+                    size_id: item.id,
+                    size_info: item.size_info,
+                    weight: item.weight
+                  }
+                })
+              : [
+                  {
+                    size_name: '',
+                    size_id: '',
+                    size_info: '',
+                    weight: ''
+                  }
+                ],
+            part_component_data: item.part_component_data
+              ? item.part_component_data.map((item: any) => {
+                  return {
+                    component_id: item.id,
+                    number: item.number
+                  }
+                })
+              : [
+                  {
+                    component_id: '',
+                    number: '' // 成分信息
+                  }
+                ]
           }
         })
       }

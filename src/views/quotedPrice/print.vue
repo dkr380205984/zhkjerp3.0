@@ -6,11 +6,12 @@
     <div class="pmain">
       <div class="phead clearfix">
         <div class="fl">
-          <div class="ptitle">{{ quotedPriceInfo.title || '报价单' }}</div>
+          <div class="ptitle">{{ company_name + '报价单' }}</div>
           <div class="prow">
             <div class="pcol">
               <div class="label">系统报价编号：</div>
-              <div class="info">{{ quotedPriceInfo.code }}</div>
+              <div class="info"
+                style="white-space: nowrap;">{{ quotedPriceInfo.code }}</div>
             </div>
           </div>
           <div class="prow">
@@ -25,7 +26,9 @@
         <div class="fr">
           <!-- <div class="remark">打开微信扫一扫 更新每日生产进度</div> -->
           <div class="pImage">
-            <img :src="qrCodeUrl" width="100%" alt=""/>
+            <img :src="qrCodeUrl"
+              width="100%"
+              alt="" />
           </div>
         </div>
       </div>
@@ -252,7 +255,8 @@
             <div class="tbody hasTop">
               <div class="trow">
                 <div class="tcol bgGray">其它说明与备注</div>
-                <div class="tcol" style="flex: 2 2%;">{{ quotedPriceInfo.otherComment }}</div>
+                <div class="tcol"
+                  style="flex: 2 2%;">{{ quotedPriceInfo.otherComment }}</div>
               </div>
             </div>
           </div>
@@ -281,7 +285,8 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
-      qrCodeUrl:'',
+      company_name: window.sessionStorage.getItem('company_name'),
+      qrCodeUrl: '',
       showMenu: false,
       X_position: 0,
       Y_position: 0,
@@ -401,7 +406,7 @@ export default Vue.extend({
       e.preventDefault()
       e.stopPropagation()
     },
-    windowMethod(type: 1 | 2 ) {
+    windowMethod(type: 1 | 2) {
       this.showMenu = false
       this.showPrintSetting = false
       window.requestAnimationFrame(() => {
@@ -411,7 +416,7 @@ export default Vue.extend({
           window.print()
         }
       })
-    },
+    }
   },
   computed: {
     productTotalPrice(): string[] {
@@ -464,7 +469,7 @@ export default Vue.extend({
         this.quotedPriceInfo = res.data.data
 
         // 生成二维码
-        const QRCode = require('qrcode');
+        const QRCode = require('qrcode')
         QRCode.toDataURL(`${this.quotedPriceInfo.code}`)
           .then((url: any) => {
             this.qrCodeUrl = url

@@ -1523,7 +1523,9 @@ export default Vue.extend({
       this.quotedPriceInfo.tree_data =
         this.quotedPriceInfo.tree_data && (this.quotedPriceInfo.tree_data as number[]).join(',') // 保存公司原始数据包含一级二级分类
       this.quotedPriceInfo.product_data.forEach((item) => {
-        item.image_data = item.image_data.concat(item.file_list!.map((item) => item.url)) // 新旧图拼接
+        item.image_data = item.file_list
+          ? item.image_data.concat(item.file_list!.map((item) => item.url))
+          : item.image_data // 新旧图拼接
         item.category_id = item.type && item.type[0]
         item.secondary_category_id = item.type && item.type[1]
         item.material_data.forEach((itemChild) => {

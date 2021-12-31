@@ -259,8 +259,13 @@ export default Vue.extend({
           if (res.data.status) {
             this.list = res.data.data.items
             this.list.forEach((item: any) => {
-              item.product_code = item.product_info.product_code || item.system_code
-              item.image_data = item.product_info.image_data
+              if (item.product_info) {
+                item.product_code = item.product_info.product_code || item.product_info.system_code
+                item.image_data = item.product_info.image_data
+              } else {
+                item.product_code = '未绑定产品'
+                item.image_data = []
+              }
             })
             this.total = res.data.data.total
           }

@@ -3074,35 +3074,11 @@ export default Vue.extend({
         if (formCheck) {
           return
         }
-        // 保证非连续性空数据出现，因此我们在第一次出现空数据时将其标记为1
-        let nullFlag = 0
-        formCheck = this.tableData.warp.data.some((item: any[], index: number) => {
-          if (index === 1 || index === 2) {
-            return item.some((itemChild) => {
-              if (!itemChild && nullFlag === 0) {
-                nullFlag++
-                return false
-              }
-              return !itemChild
-            })
-          } else {
-            return false
-          }
-        })
-        nullFlag = 0
-        formCheck = this.tableData.weft.data.some((item: any[], index: number) => {
-          if (index === 1 || index === 2) {
-            return item.some((itemChild) => {
-              if (!itemChild && nullFlag === 0) {
-                nullFlag++
-                return false
-              }
-              return !itemChild
-            })
-          } else {
-            return false
-          }
-        })
+        formCheck =
+          this.checkSliceData(this.tableData.warp.data[1]) ||
+          this.checkSliceData(this.tableData.warp.data[2]) ||
+          this.checkSliceData(this.tableData.weft.data[2]) ||
+          this.checkSliceData(this.tableData.weft.data[2])
         if (formCheck) {
           this.$message.error('请完善经纬项信息')
         }
@@ -3118,6 +3094,24 @@ export default Vue.extend({
           })
         }
       }
+    },
+    // 判断数据是否断档
+    checkSliceData(data: any[]) {
+      let flag = false
+      if (!data[0]) {
+        return true
+      }
+      const indexData = data
+        .map((item: any, index: number) => {
+          return !item ? index : null
+        })
+        .filter((item: any) => !!item) as number[]
+      for (let i = 0; i < indexData.length - 1; i++) {
+        if (indexData[i + 1] - indexData[i] > 1) {
+          flag = true
+        }
+      }
+      return flag
     }
   },
   created() {

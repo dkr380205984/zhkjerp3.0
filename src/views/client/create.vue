@@ -245,7 +245,7 @@ export default Vue.extend({
                 check: true,
                 type: 'private'
               })
-              this.clientTagFlag = true
+              this.clientTagFlag = false
             }
           })
       }

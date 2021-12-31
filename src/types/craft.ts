@@ -73,6 +73,7 @@ export interface CraftInfo {
   id?: null | string | number
   part_id?: string | number
   product_id: string | number
+  craft_code?: string
   title: string
   size: string // 大身规格
   weight: string // 大身克重
