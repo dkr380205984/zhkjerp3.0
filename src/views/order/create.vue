@@ -367,7 +367,8 @@
                 v-for="(itemChild,indexChild) in item.product_data"
                 :key="indexChild">
                 <div class="tcol">
-                  <div class="elCtn">
+                  <div class="elCtn"
+                    style="width:220px">
                     <el-select v-model="itemChild.product_id"
                       placeholder="选择产品"
                       @change="getColour($event,itemChild)"
@@ -377,6 +378,13 @@
                         :value="item.id"
                         :label="item.system_code + '/' + item.name"></el-option>
                     </el-select>
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="统一单价和数量"
+                      placement="top">
+                      <i class="el-icon-copy-document copyIcon hoverBlue"
+                        @click="$copyInfo(itemChild.product_info,['price','number'])"></i>
+                    </el-tooltip>
                   </div>
                 </div>
                 <div class="tcol noPad"

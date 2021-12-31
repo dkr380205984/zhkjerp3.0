@@ -58,6 +58,8 @@
           <i class="el-icon-setting elIcon"
             v-show="haveSet"
             @click="$router.push('/setting?pName=产品设置&cName=品类')"></i>
+          <div @click="$router.push('/login')"
+            style="margin-left:12px;color:#fff;cursor:pointer">退出登录</div>
           <!-- <i class="el-icon-s-data elIcon"
             v-show="haveSet"
             @click="$router.push('/order/orderStat/page=1&&keyword=&&date=&&group_id=&&company_id=')"></i>

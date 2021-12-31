@@ -83,6 +83,7 @@ declare module 'vue/types/vue' {
     $ifRepeatArray(arr: string[]): boolean
     findId<T, K extends keyof T>(jsonArr: T[], id: number | string, returnKey: K, findKey: K): T[K]
     $sliceToArray<T>(arr: T[], num: number): T[][]
+    $copyInfo(info: any, keyArr: string[], callback?: Function): void
   }
 }
 new Vue({

@@ -300,6 +300,20 @@ const plugin = {
   deleteItem(father: any[], index: number | string): void {
     father.splice(index as number, 1)
   },
+  // 统一输入行逻辑
+  copyInfo(info: any, keyArr: string[], callback?: Function) {
+    info.forEach((item: any, index: number) => {
+      if (index !== 0) {
+        keyArr.forEach((key) => {
+          item[key] = info[0][key]
+        })
+      }
+    })
+    console.log(info)
+    if (callback) {
+      callback()
+    }
+  },
   // 表单验证，这里只验证对象，不验证数组，通常数组只要检测到某一次formCheck返回false即可停止验证
   // 第一个参数接收一个待验证对象 第二个参数接收一个待验证字段数组，如有特殊正则验证可以自定义new RegExp,通常我们只验证是否为空
   // regNormal:isNum | isEmail | isNull | isPhone
@@ -466,5 +480,6 @@ export default {
     Vue.prototype.$ifRepeatArray = ifRepeatArray
     Vue.prototype.$findId = plugin.findId
     Vue.prototype.$sliceToArray = sliceToArray
+    Vue.prototype.$copyInfo = plugin.copyInfo
   }
 }

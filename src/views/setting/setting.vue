@@ -63,8 +63,10 @@
               <div class="filterCtn clearfix">
                 <div class="btn backHoverBlue fr"
                   @click="showPopup=true">添加新款式</div>
-                <div class="btn backHoverOrange fr">批量导入</div>
-                <div class="btn backHoverGreen fr" @click="downLoadTemplete('style')">下载导入模板</div>
+                <div class="btn backHoverOrange fr"
+                  @click="importExcelData('style')">批量导入</div>
+                <div class="btn backHoverGreen fr"
+                  @click="downLoadTemplete('style')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -3645,13 +3647,13 @@ export default Vue.extend({
       let typeObj: any = {}
       let api = null
       switch (type) {
-        // case 'flower':
-        //   typeObj = {
-        //     id: [false, null],
-        //     name: ['花型名称']
-        //   }
-        //   api = flower.create
-        //   break
+        case 'style':
+          typeObj = {
+            id: [false, null],
+            name: ['款式名称']
+          }
+          api = style.create
+          break
         case 'ingredient':
           typeObj = {
             id: [false, null],
