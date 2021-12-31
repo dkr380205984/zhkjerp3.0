@@ -207,10 +207,7 @@
               </div>
               <div class="opr hoverBlue"
                 v-if="index===0"
-                @click="$addItem(sampleInfo.color_data,{
-                  id:'',
-                  name:''
-                })">添加</div>
+                @click="$addItem(sampleInfo.color_data)">添加</div>
               <div class="opr hoverRed"
                 v-if="index>0"
                 @click="$deleteItem(sampleInfo.color_data,index)">删除</div>
@@ -524,13 +521,13 @@ import { CascaderInfo } from '@/types/vuex'
 import { sample } from '@/assets/js/api'
 export default Vue.extend({
   props: {
-    edit: {
-      type: Boolean,
-      required: false
+    edit:{
+      type:Boolean,
+      required:false
     },
-    inDetail: {
-      type: Boolean,
-      required: false
+    inDetail:{
+      type:Boolean,
+      required:false
     },
     show: {
       type: Boolean,
@@ -626,12 +623,12 @@ export default Vue.extend({
         size_data: [
           {
             size_name: '',
-            id: '',
+            size_id: '',
             size_info: '',
             weight: ''
           }
         ], // 尺码组
-        color_data: [{ id: '', name: '' }], // 配色组
+        color_data: [{id:'',name:''}], // 配色组
         // 配件信息
         part_data: [
           {
@@ -774,7 +771,7 @@ export default Vue.extend({
     },
     // 尺码的逻辑包含大身+配件尺码的添加&删除
     addSize() {
-      this.$addItem(this.sampleInfo.size_data, { size_name: '', id: '', weight: '', size_info: '' })
+      this.$addItem(this.sampleInfo.size_data, { size_name: '', size_id: '', weight: '', size_info: '' })
       this.sampleInfo.part_data.forEach((item) => {
         this.$addItem(item.part_size_data, { size_name: '', size_id: '', weight: '', size_info: '' })
       })
@@ -853,7 +850,6 @@ export default Vue.extend({
         this.sampleInfo.part_data.forEach((item) => {
           item.part_size_data.forEach((itemChild, indexChild) => {
             itemChild.size_name = this.sampleInfo.size_data[indexChild].size_name
-            // @ts-ignore
             itemChild.size_id = this.sampleInfo.size_data[indexChild].size_id
           })
         })
@@ -998,12 +994,12 @@ export default Vue.extend({
         size_data: [
           {
             size_name: '',
-            id: '',
+            size_id: '',
             size_info: '',
             weight: ''
           }
         ], // 尺码组
-        color_data: [{ id: '', name: '' }], // 配色组
+        color_data: [{id:'',name:''}], // 配色组
         // 配件信息
         part_data: [
           {
@@ -1058,7 +1054,7 @@ export default Vue.extend({
         size_data: data.size_data.map((item: any) => {
           return {
             size_name: item.name,
-            id: item.id,
+            size_id: item.id,
             size_info: item.size_info,
             weight: item.weight
           }

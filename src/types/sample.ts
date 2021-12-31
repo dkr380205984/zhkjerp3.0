@@ -29,9 +29,8 @@ export interface SampleInfo {
     number: string | number // 成分信息
   }>
   size_data: Array<{
-    size_id?: string | number
     size_name?: string
-    id?: string | number
+    size_id: string | number
     name?: string
     size_info: string
     weight: string
