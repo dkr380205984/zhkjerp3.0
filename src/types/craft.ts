@@ -71,6 +71,7 @@ export interface MergeDataInfo {
 }
 export interface CraftInfo {
   id?: null | string | number
+  part_id?: string | number
   product_id: string | number
   title: string
   size: string // 大身规格

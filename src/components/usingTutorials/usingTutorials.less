@@ -1,0 +1,79 @@
+@import '../../assets/css/common.less';
+@import '../../assets/css/popup.less';
+.usingTutorials{
+  .popup{
+    .main{
+      width: 1200px;
+      height: 600px;
+      user-select: none;
+      .titleCtn{
+        min-height: 50px;
+      }
+      .contentCtn{
+        flex-direction: row;
+        display: flex;
+        padding: 0;
+        max-height: 1000px;
+      }
+     .leftCtn{
+        width: 221px;
+        border-right: 1px solid @borderColor;
+        .out_item{
+          width: 100%;
+          .label,
+          .inner_item{
+            min-height: 36px;
+            line-height: 36px;
+            padding: 0 16px;
+            box-sizing: border-box;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          .label{
+            background-color: #CCC;
+            text-align: center;
+          }
+          .inner_item{
+            cursor: pointer;
+            &::before{
+              display: inline-block;
+              content: attr(number);
+              background-color: @blue;
+              min-width: 1.2em;
+              min-height: 1.2em;
+              line-height: 1.2em;
+              border-radius: 50%;
+              color: #FFF;
+              margin-right: 8px;
+              text-align: center;
+            }
+            &:hover,
+            &.active{
+              background-color: rgba(26,149,255,.8);
+              color: #FFF;
+            }
+          }
+        }
+      }
+     .rightCtn{
+        width: 989px;
+        .center{
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+          color: @font45;
+          font-size: @fontBig;
+        }
+        .content{          
+          padding: 0 60px;
+        }
+        .content_el_image{
+          width: 100%;
+          overflow: visible;
+        }
+      }
+    }
+  }
+}

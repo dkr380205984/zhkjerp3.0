@@ -27,14 +27,14 @@
               <el-cascader placeholder="请选择下单公司"
                 v-model="orderInfo.tree_data"
                 :options="clientList"
-                @change="getContacts">
+                @change="getContacts"
+                filterable>
               </el-cascader>
             </div>
           </div>
           <div class="col">
             <div class="label">
               <span class="text">公司联系人</span>
-              <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
               <el-select placeholder="请选择公司联系人"
@@ -52,7 +52,6 @@
           <div class="col">
             <div class="label">
               <span class="text">负责小组/人</span>
-              <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
               <el-select placeholder="请选择负责小组/人"
@@ -191,7 +190,8 @@
       <div class="titleCtn flexBetween">
         <div class="title">添加产品</div>
         <div class="btn backHoverBlue"
-          @click="proId=null;pid=null;pid_status=null;addProductFlag = true;">添加新产品</div>
+          @click="proId=null;pid=null;pid_status=null;addProductFlag = true;"
+          v-show="quotedPriceProductList.length===0">添加新产品</div>
       </div>
       <div class="noDate"
         v-show="productList.length === 0">暂无产品信息</div>
@@ -248,7 +248,10 @@
             <div class="tcol">{{item.desc}}</div>
             <div class="tcol oprCtn">
               <div class="opr hoverBlue"
-                @click="supplementInfo(item)">补充信息</div>
+                @click="supplementInfo(item)"
+                v-if="!item.has_change">补充信息</div>
+              <div class="opr orange"
+                v-else>已转换</div>
             </div>
           </div>
         </div>
@@ -628,11 +631,12 @@ export default Vue.extend({
         public_files: [],
         private_files: [],
         settle_tax: '',
-        settle_unit: '',
         order_type: 1,
         code: '',
         desc: '',
         rel_quote_id: '',
+        settle_unit: '元',
+        exchange_rate: '100',
         time_data: {
           id: '',
           order_time: this.$getDate(new Date()),
@@ -860,7 +864,6 @@ export default Vue.extend({
     supplementInfo(productInfo: ProductInfo) {
       this.addProductFlag = true
       this.quotedPriceProductInfo = productInfo
-      console.log(this.quotedPriceProductInfo)
     },
     // 样品转产品
     changeToPro(id: number) {
@@ -870,7 +873,6 @@ export default Vue.extend({
       this.addProductFlag = true
     },
     getColour(ev: number, info: any) {
-      console.log(ev, this.productList)
       info.size_color_list = []
       const product: ProductInfo = this.productList.find((item) => item.id === ev) as ProductInfo
       product.size_data.forEach((itemSize: any) => {
@@ -890,6 +892,7 @@ export default Vue.extend({
           price: 0
         }
       })
+      info.quote_rel_product_id = product.quote_rel_product_id
       console.log(info)
     },
     getContacts(ev: number[]) {
@@ -910,6 +913,11 @@ export default Vue.extend({
       const finded = this.confirmSampleInfo.find((item) => item.product_id === product.id)
       if (finded) {
         finded.status = 4
+      }
+      if (this.quotedPriceProductInfo) {
+        // 标记一下报价产品已经转换了，不能二次转换了
+        this.quotedPriceProductInfo.has_change = true
+        product.quote_rel_product_id = this.quotedPriceProductInfo.id
       }
       this.productList.push(product)
     },
@@ -961,6 +969,7 @@ export default Vue.extend({
       })
     },
     saveOrder() {
+      console.log(this.orderInfo)
       const formCheck =
         this.$formCheck(this.orderInfo, [
           {
