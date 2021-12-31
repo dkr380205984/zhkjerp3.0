@@ -201,7 +201,7 @@ export default Vue.extend({
       this.isIndeterminate = false;
     },
     checkChange(val:any){
-      console.log(val,this.checkedCount)
+      // console.log(val,this.checkedCount)
       if(val){
         this.checkedCount.push(2)
       } else {
