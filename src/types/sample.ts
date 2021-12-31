@@ -30,7 +30,7 @@ export interface SampleInfo {
   }>
   size_data: Array<{
     size_name?: string
-    size_id: string | number
+    id: string | number
     name?: string
     size_info: string
     weight: string

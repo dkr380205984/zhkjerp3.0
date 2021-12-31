@@ -623,7 +623,7 @@ export default Vue.extend({
         size_data: [
           {
             size_name: '',
-            size_id: '',
+            id: '',
             size_info: '',
             weight: ''
           }
@@ -771,7 +771,7 @@ export default Vue.extend({
     },
     // 尺码的逻辑包含大身+配件尺码的添加&删除
     addSize() {
-      this.$addItem(this.sampleInfo.size_data, { size_name: '', size_id: '', weight: '', size_info: '' })
+      this.$addItem(this.sampleInfo.size_data, { size_name: '', id: '', weight: '', size_info: '' })
       this.sampleInfo.part_data.forEach((item) => {
         this.$addItem(item.part_size_data, { size_name: '', size_id: '', weight: '', size_info: '' })
       })
@@ -994,7 +994,7 @@ export default Vue.extend({
         size_data: [
           {
             size_name: '',
-            size_id: '',
+            id: '',
             size_info: '',
             weight: ''
           }
@@ -1054,7 +1054,7 @@ export default Vue.extend({
         size_data: data.size_data.map((item: any) => {
           return {
             size_name: item.name,
-            size_id: item.id,
+            id: item.id,
             size_info: item.size_info,
             weight: item.weight
           }
