@@ -202,7 +202,7 @@
                   <el-autocomplete class="inline-input"
                     v-model="item.name"
                     :fetch-suggestions="searchColour"
-                    placeholder="请输入样品配色"></el-autocomplete>
+                    placeholder="请输入产品配色"></el-autocomplete>
                 </div>
               </div>
               <div class="opr hoverBlue"
