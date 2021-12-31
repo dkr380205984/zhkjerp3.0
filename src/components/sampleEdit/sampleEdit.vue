@@ -217,7 +217,7 @@
                 <div class="label">
                   <span class="text">样品图片</span>
                 </div>
-                <div class="info">
+                <div class="info imgInfo">
                   <el-upload class="upload"
                     action="https://upload.qiniup.com/"
                     accept="image/jpeg,image/gif,image/png,image/bmp"
@@ -521,6 +521,10 @@ import { CascaderInfo } from '@/types/vuex'
 import { sample } from '@/assets/js/api'
 export default Vue.extend({
   props: {
+    edit:{
+      type:Boolean,
+      required:false
+    },
     inDetail:{
       type:Boolean,
       required:false
@@ -1055,7 +1059,7 @@ export default Vue.extend({
             weight: item.weight
           }
         }), // 尺码组
-        color_data: data.color_data.map((item: any) => item.name), // 配色组
+        color_data: data.color_data, // 配色组
         // 配件信息
         part_data: data.part_data.map((item: any) => {
           return {

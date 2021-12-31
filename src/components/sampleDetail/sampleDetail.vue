@@ -164,7 +164,7 @@
         <div class="oprCtn"
           v-show="!noOpr">
           <span class="btn borderBtn"
-            @click="close">取消温鑫</span>
+            @click="close">取消</span>
           <span class="btn backHoverOrange" @click="proId=null;pid=null;pid_status=null;addProductFlag = true;">修改</span>
         </div>
       </div>
