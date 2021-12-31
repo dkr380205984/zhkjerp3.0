@@ -431,7 +431,7 @@ export default Vue.extend({
                         message: '删除成功!'
                       })
                       // @ts-ignore
-                      this.getList()
+                      this.getListList()
                     }
                   })
               })
@@ -552,6 +552,10 @@ export default Vue.extend({
         })
         .then((res) => {
           if (res.data.status) {
+            res.data.data.items.map((item:any) =>{
+              this.$set(item, 'isCheck', false)
+              return item
+            })
             this.list = res.data.data.items
             this.total = res.data.data.total
           }

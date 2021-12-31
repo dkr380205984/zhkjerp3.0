@@ -16,7 +16,7 @@
         v-for="(item,index) in list"
         :key="index">
          <div class="column check" v-if="check">
-          <el-checkbox v-model="item['isCheck']"></el-checkbox>
+          <el-checkbox></el-checkbox>
         </div>
         <div class="column"
           v-for="itemKey in listKey"
@@ -79,7 +79,7 @@
           v-for="item,index in list"
           :key="index">
           <div class="column check" v-if="check">
-            <el-checkbox v-model="item['isCheck']" @change="checkChange"></el-checkbox>
+            <el-checkbox v-model="item.isCheck" @change="checkChange"></el-checkbox>
           </div>
           <div class="column"
             v-for="itemKey in listKey"
@@ -160,11 +160,6 @@ export default Vue.extend({
       allCheck:false,
     }
   },
-  created(){
-    this.list.forEach((item:any) => {
-      item['isCheck']=false
-    });
-  },
   methods: {
     changeIndex(type: 1 | 2, length: number, item: any) {
       if (length === 1) {
@@ -188,6 +183,9 @@ export default Vue.extend({
     },
     handleCheckAllChange(val:any) {
       if(this.isIndeterminate || this.allCheck){
+        this.list.forEach((item: any) => {
+          this.checkedCount.pop()
+        });
         this.list.forEach((item: any) => {
           item.isCheck=true
           this.checkedCount.push(2)

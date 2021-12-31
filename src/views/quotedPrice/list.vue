@@ -437,6 +437,10 @@ export default Vue.extend({
         })
         .then((res) => {
           // 产品信息需要在列表里展示，配合列表设置要把产品信息拿到最外层
+          res.data.data.items.map((item:any) =>{
+            this.$set(item, 'isCheck', false)
+            return item
+          })
           this.list = res.data.data.items
           this.total = res.data.data.total
           this.loading = false
