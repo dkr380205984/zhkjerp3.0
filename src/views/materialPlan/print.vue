@@ -20,7 +20,7 @@
             <div class="prow">
               <div class="pcol">
                 <div class="label">计划单创建信息：</div>
-                <div class="info">{{ otherInfo.created_at.slice(0, 10) + '，' + otherInfo.user_name + '，' + otherInfo.user_phone }}</div>
+                <div class="info">{{ otherInfo.created_at.slice(0, 10) }}{{otherInfo.user_name?'，' + otherInfo.user_name:''}}{{otherInfo.user_phone?'，' + otherInfo.user_phone:''}}</div>
               </div>
             </div>
           </div>

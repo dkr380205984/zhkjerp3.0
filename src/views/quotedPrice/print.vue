@@ -8,7 +8,7 @@
         <div class="fl">
           <div class="ptitle">{{ quotedPriceInfo.title || '报价单' }}</div>
           <div class="prow">
-            <div class="pcol">
+            <div class="pcol wa">
               <div class="label">系统报价编号：</div>
               <div class="info">{{ quotedPriceInfo.code }}</div>
             </div>
@@ -16,9 +16,7 @@
           <div class="prow">
             <div class="pcol wa">
               <div class="label">报价创建信息：</div>
-              <div class="info">{{ quotedPriceInfo.created_at ? quotedPriceInfo.created_at.slice(0, 10) : '' }}</div>
-              <div class="info">{{ quotedPriceInfo.user_name }}</div>
-              <div class="info">{{ quotedPriceInfo.phoneNumber }}</div>
+              <div class="info">{{ quotedPriceInfo.created_at ? quotedPriceInfo.created_at.slice(0, 10) : '' }}{{ quotedPriceInfo.user_name?'，'+quotedPriceInfo.user_name:'' }}{{ quotedPriceInfo.user_phone?'，'+quotedPriceInfo.user_phone:'' }}</div>
             </div>
           </div>
         </div>
@@ -58,13 +56,13 @@
           <div v-for="(item, index) in quotedPriceInfo.product_data"
             :key="item.id">
             <div class="module">
-              <div class="tbody hasTop">
+              <div class="tbody hasTop productInfo">
                 <div class="trow">
                   <div class="tcol bgGray">产品品类</div>
                   <div class="tcol bgGray">产品图片</div>
                   <div class="tcol bgGray">客户目标价格</div>
                   <div class="tcol bgGray">客户最低起订量</div>
-                  <div class="tcol bgGray">产品描述/客户要求</div>
+                  <div class="tcol bgGray big">产品描述/客户要求</div>
                 </div>
                 <div class="trow">
                   <div class="tcol">{{ item.category_name }}/{{ item.secondary_category }}</div>
@@ -83,7 +81,7 @@
                   </div>
                   <div class="tcol">{{ item.client_target_price }}元</div>
                   <div class="tcol">{{ item.start_order_number }}</div>
-                  <div class="tcol">{{ item.desc }}</div>
+                  <div class="tcol big">{{ item.desc }}</div>
                 </div>
               </div>
             </div>
@@ -121,51 +119,51 @@
                   <div class="tcol">{{ itemDecorateMaterial.total_price }}元</div>
                 </div>
                 <div class="trow">
-                  <div class="tcol bgGray">费用名称</div>
-                  <div class="tcol bgGray">费用说明</div>
-                  <div class="tcol bgGray">总价</div>
+                  <div class="tcol bgGray f0922">费用名称</div>
+                  <div class="tcol bgGray f3">费用说明</div>
+                  <div class="tcol bgGray f0922">总价</div>
                 </div>
                 <div class="trow"
                   v-for="(itemWeave, indexWeave) in item.weave_data"
                   :key="'Weave' + indexWeave">
-                  <div class="tcol circlrParent">
+                  <div class="tcol circlrParent f0922 f0922">
                     <div class="circle"
                       :class="{ backHoverBlue: itemWeave.name, backGray: !itemWeave.name }">织</div>
                     {{ itemWeave.name || '无' }}
                   </div>
-                  <div class="tcol">{{ itemWeave.desc || '无' }}</div>
-                  <div class="tcol">{{ itemWeave.total_price || 0 }}元</div>
+                  <div class="tcol f3">{{ itemWeave.desc || '无' }}</div>
+                  <div class="tcol f0922">{{ itemWeave.total_price || 0 }}元</div>
                 </div>
                 <div class="trow"
                   v-for="(itemHalfProcess, indexHalfProcess) in item.semi_product_data"
                   :key="'HalfProcess' + indexHalfProcess">
-                  <div class="tcol circlrParent">
+                  <div class="tcol circlrParent f0922">
                     <div class="circle"
                       :class="{ backHoverBlue: itemHalfProcess.process_name, backGray: !itemHalfProcess.process_name }">
                       半
                     </div>
                     {{ itemHalfProcess.process_name.join(',') || '无' }}
                   </div>
-                  <div class="tcol">{{ itemHalfProcess.desc || '无' }}</div>
-                  <div class="tcol">{{ itemHalfProcess.total_price || 0 }}元</div>
+                  <div class="tcol f3">{{ itemHalfProcess.desc || '无' }}</div>
+                  <div class="tcol f0922">{{ itemHalfProcess.total_price || 0 }}元</div>
                 </div>
                 <div class="trow"
                   v-for="(itemFinishedProcess, indexFinishedProcess) in item.production_data"
                   :key="'FinishedProcess' + indexFinishedProcess">
-                  <div class="tcol circlrParent">
+                  <div class="tcol circlrParent f0922">
                     <div class="circle"
                       :class="{ backHoverBlue: itemFinishedProcess.name, backGray: !itemFinishedProcess.name }">
                       成
                     </div>
                     {{ itemFinishedProcess.name.join(',') || '无' }}
                   </div>
-                  <div class="tcol">{{ itemFinishedProcess.desc || '无' }}</div>
-                  <div class="tcol">{{ itemFinishedProcess.total_price || 0 }}元</div>
+                  <div class="tcol f3">{{ itemFinishedProcess.desc || '无' }}</div>
+                  <div class="tcol f0922">{{ itemFinishedProcess.total_price || 0 }}元</div>
                 </div>
                 <div class="trow"
                   v-for="(itemPackMaterial, indexPackMaterial) in item.pack_material_data"
                   :key="'PackMaterial' + indexPackMaterial">
-                  <div class="tcol circlrParent">
+                  <div class="tcol circlrParent f0922">
                     <div class="circle"
                       :class="{
                         backHoverBlue: itemPackMaterial.material_name,
@@ -175,46 +173,46 @@
                     </div>
                     {{ itemPackMaterial.material_name || '无' }}
                   </div>
-                  <div class="tcol">{{ itemPackMaterial.desc || '无' }}</div>
-                  <div class="tcol">{{ itemPackMaterial.total_price || 0 }}元</div>
+                  <div class="tcol f3">{{ itemPackMaterial.desc || '无' }}</div>
+                  <div class="tcol f0922">{{ itemPackMaterial.total_price || 0 }}元</div>
                 </div>
                 <div class="trow"
                   v-for="(itemOther, indexOther) in item.other_fee_data"
                   :key="'Other' + indexOther">
-                  <div class="tcol circlrParent">
+                  <div class="tcol circlrParent f0922">
                     <div class="circle"
                       :class="{ backHoverBlue: itemOther.name, backGray: !itemOther.name }">其</div>
                     {{ itemOther.name || '无' }}
                   </div>
-                  <div class="tcol">{{ itemOther.desc || '无' }}</div>
-                  <div class="tcol">{{ itemOther.total_price || 0 }}元</div>
+                  <div class="tcol f3">{{ itemOther.desc || '无' }}</div>
+                  <div class="tcol f0922">{{ itemOther.total_price || 0 }}元</div>
                 </div>
                 <div class="trow"
                   v-for="(itemOther, indexOther) in item.no_production_fee_data"
                   :key="'NoPro' + indexOther">
-                  <div class="tcol circlrParent">
+                  <div class="tcol circlrParent f0922">
                     <div class="circle"
                       :class="{ backHoverBlue: itemOther.name, backGray: !itemOther.name }">非</div>
                     {{ itemOther.name || '无' }}
                   </div>
-                  <div class="tcol">{{ itemOther.desc || '无' }}</div>
-                  <div class="tcol">{{ itemOther.total_price || 0 }}元</div>
+                  <div class="tcol f3">{{ itemOther.desc || '无' }}</div>
+                  <div class="tcol f0922">{{ itemOther.total_price || 0 }}元</div>
                 </div>
                 <div class="trow">
-                  <div class="tcol circlrParent">
+                  <div class="tcol circlrParent f0922">
                     <div class="circle"
                       :class="{ backHoverBlue: item.transport_fee, backGray: !item.transport_fee }">
                       运
                     </div>
                     {{ item.transport_fee ? '运输费用' : '无' }}
                   </div>
-                  <div class="tcol">{{ item.transport_fee_desc || '无' }}</div>
-                  <div class="tcol">{{ item.transport_fee || 0 }}元</div>
+                  <div class="tcol f3">{{ item.transport_fee_desc || '无' }}</div>
+                  <div class="tcol f0922">{{ item.transport_fee || 0 }}元</div>
                 </div>
                 <div class="trow">
-                  <div class="tcol bgGray">小计</div>
-                  <div class="tcol bgGray"></div>
-                  <div class="tcol bgGray">{{ productTotalPrice[index] }}元</div>
+                  <div class="tcol bgGray f0922">小计</div>
+                  <div class="tcol bgGray f3"></div>
+                  <div class="tcol bgGray f0922">{{ productTotalPrice[index] }}元</div>
                 </div>
               </div>
             </div>
@@ -222,36 +220,36 @@
           <div class="module">
             <div class="tbody hasTop">
               <div class="trow">
-                <div class="tcol bgGray">费用名称</div>
-                <div class="tcol bgGray">费用比例</div>
-                <div class="tcol bgGray">总价</div>
+                <div class="tcol bgGray f0922">费用名称</div>
+                <div class="tcol bgGray f3">费用比例</div>
+                <div class="tcol bgGray f0922">总价</div>
               </div>
               <div class="trow">
-                <div class="tcol">基本佣金</div>
-                <div class="tcol">{{ quotedPriceInfo.commission_percentage }}%</div>
-                <div class="tcol">{{ quotedPriceInfo.commission_price }}元</div>
+                <div class="tcol f0922">基本佣金</div>
+                <div class="tcol f3">{{ quotedPriceInfo.commission_percentage }}%</div>
+                <div class="tcol f0922">{{ quotedPriceInfo.commission_price }}元</div>
               </div>
               <div class="trow">
-                <div class="tcol">基本税率</div>
-                <div class="tcol">{{ quotedPriceInfo.rate_taxation }}%</div>
-                <div class="tcol">{{ quotedPriceInfo.rate_price }}元</div>
+                <div class="tcol f0922">基本税率</div>
+                <div class="tcol f3">{{ quotedPriceInfo.rate_taxation }}%</div>
+                <div class="tcol f0922">{{ quotedPriceInfo.rate_price }}元</div>
               </div>
               <div class="trow">
-                <div class="tcol">基本利润</div>
-                <div class="tcol">{{ quotedPriceInfo.profit_percentage }}%</div>
-                <div class="tcol">{{ quotedPriceInfo.profit_price }}元</div>
+                <div class="tcol f0922">基本利润</div>
+                <div class="tcol f3">{{ quotedPriceInfo.profit_percentage }}%</div>
+                <div class="tcol f0922">{{ quotedPriceInfo.profit_price }}元</div>
               </div>
               <div class="trow">
-                <div class="tcol bgGray">合计总价</div>
-                <div class="tcol bgGray"></div>
-                <div class="tcol bgGray">{{ totalPrice }}元</div>
+                <div class="tcol bgGray f0922">合计总价</div>
+                <div class="tcol bgGray f3"></div>
+                <div class="tcol bgGray f0922">{{ totalPrice }}元</div>
               </div>
             </div>
           </div>
           <div class="module">
             <div class="tbody hasTop">
               <div class="trow">
-                <div class="tcol bgGray">其它说明与备注</div>
+                <div class="tcol bgGray f047">其它说明与备注</div>
                 <div class="tcol" style="flex: 2 2%;">{{ quotedPriceInfo.otherComment }}</div>
               </div>
             </div>
