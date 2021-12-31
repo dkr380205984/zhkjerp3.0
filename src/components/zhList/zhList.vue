@@ -3,24 +3,26 @@
     v-loading="loading">
     <div class="original">
       <div class="row title">
-        <div class="column check" v-if="check">
+        <div class="column check"
+          v-if="check">
           <span>全选</span>
         </div>
         <div class="column"
           v-for="itemKey in listKey"
-          :key="itemKey.index"
+          :key="itemKey.index+Math.random(1)"
           v-show="itemKey.ifShow">{{itemKey.name}}</div>
         <div class="column w130">操作</div>
       </div>
       <div class="row"
         v-for="(item,index) in list"
-        :key="index">
-         <div class="column check" v-if="check">
+        :key="index+Math.random(1)">
+        <div class="column check"
+          v-if="check">
           <el-checkbox></el-checkbox>
         </div>
         <div class="column"
           v-for="itemKey in listKey"
-          :key="itemKey.index"
+          :key="itemKey.index+Math.random(1)"
           v-show="itemKey.ifShow">
           <!-- 普通元素 -->
           <template v-if="!itemKey.from && !itemKey.ifImage">
@@ -67,23 +69,28 @@
     <div class="cover">
       <div class="fixedLeft">
         <div class="row title">
-          <div class="column check" v-if="check">
-            <el-checkbox :indeterminate="isIndeterminate" v-model="allCheck" @change="handleCheckAllChange"></el-checkbox>
+          <div class="column check"
+            v-if="check">
+            <el-checkbox :indeterminate="isIndeterminate"
+              v-model="allCheck"
+              @change="handleCheckAllChange"></el-checkbox>
           </div>
           <div class="column"
             v-for="itemKey in listKey"
-            :key="itemKey.index"
+            :key="itemKey.index+Math.random(1)"
             v-show="itemKey.ifShow && itemKey.ifLock">{{itemKey.name}}</div>
         </div>
         <div class="row"
           v-for="item,index in list"
-          :key="index">
-          <div class="column check" v-if="check">
-            <el-checkbox v-model="item.isCheck" @change="checkChange"></el-checkbox>
+          :key="index+Math.random(1)">
+          <div class="column check"
+            v-if="check">
+            <el-checkbox v-model="item.isCheck"
+              @change="checkChange"></el-checkbox>
           </div>
           <div class="column"
             v-for="itemKey in listKey"
-            :key="itemKey.index"
+            :key="itemKey.index+Math.random(1)"
             v-show="itemKey.ifShow && itemKey.ifLock">
             <!-- 普通元素 -->
             <template v-if="!itemKey.from && !item.ifImage">
@@ -105,12 +112,12 @@
         </div>
         <div class="row"
           v-for="(item,index) in list"
-          :key="index">
+          :key="index+Math.random(1)">
           <div class="column w130">
             <div class="opr"
               :class="typeof(itemOpr.class)==='function'?itemOpr.class(item):itemOpr.class"
               v-for="(itemOpr,indexOpr) in oprList"
-              :key="indexOpr"
+              :key="indexOpr+Math.random(1)"
               @click="itemOpr.fn(item)">{{typeof(itemOpr.name)==='function'?itemOpr.name(item):itemOpr.name}}</div>
           </div>
         </div>
@@ -141,7 +148,7 @@ export default Vue.extend({
       type: Array,
       required: true
     },
-    checkedCount:{
+    checkedCount: {
       type: Array,
       required: false
     },
@@ -151,13 +158,13 @@ export default Vue.extend({
       required: false
     }
   },
-  data():{
-    isIndeterminate:boolean,
-    allCheck:boolean
-  }{
+  data(): {
+    isIndeterminate: boolean
+    allCheck: boolean
+  } {
     return {
-      isIndeterminate:false,
-      allCheck:false,
+      isIndeterminate: false,
+      allCheck: false
     }
   },
   methods: {
@@ -181,40 +188,40 @@ export default Vue.extend({
       }
       this.$forceUpdate()
     },
-    handleCheckAllChange(val:any) {
-      if(this.isIndeterminate || this.allCheck){
+    handleCheckAllChange(val: any) {
+      if (this.isIndeterminate || this.allCheck) {
         this.list.forEach((item: any) => {
           this.checkedCount.pop()
-        });
+        })
         this.list.forEach((item: any) => {
-          item.isCheck=true
+          item.isCheck = true
           this.checkedCount.push(2)
-        });
+        })
       } else {
         this.list.forEach((item: any) => {
-          item.isCheck=false
+          item.isCheck = false
           this.checkedCount.pop()
-        });
+        })
       }
-      
+
       // console.log(val)
-      this.isIndeterminate = false;
+      this.isIndeterminate = false
     },
-    checkChange(val:any){
+    checkChange(val: any) {
       // console.log(val,this.checkedCount)
-      if(val){
+      if (val) {
         this.checkedCount.push(2)
       } else {
         this.checkedCount.pop()
         this.allCheck = false
       }
-      if(this.checkedCount.length===0){
-        this.isIndeterminate = false;
-      } else if(this.checkedCount.length === this.list.length){
-        this.isIndeterminate = false;
+      if (this.checkedCount.length === 0) {
+        this.isIndeterminate = false
+      } else if (this.checkedCount.length === this.list.length) {
+        this.isIndeterminate = false
         this.allCheck = true
       } else {
-        this.isIndeterminate = true;
+        this.isIndeterminate = true
       }
       // this.allCheck = this.checkedCount.length === this.list.length;
     }
