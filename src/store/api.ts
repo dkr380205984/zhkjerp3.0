@@ -369,7 +369,12 @@ const apiActions = {
   },
   getUserAsync(content: ActionContext<ApiState, any>) {
     user.list().then((res) => {
-      content.commit('getUser', res.data.data)
+      content.commit('getUser', res.data.data.map((item: any) => {
+        return {
+          value: item.id,
+          label: item.name
+        }
+      }))
     })
   }
 }

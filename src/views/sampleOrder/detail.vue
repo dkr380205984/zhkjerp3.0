@@ -119,7 +119,7 @@
         v-if="confirmSampleInfo.length>0">
         <div class="box"
           v-for="(item,index) in confirmSampleInfo"
-          :key="index">{{item.name||item.product_code||item.system_code}}({{item.category}}/{{item.type}})
+          :key="index">{{item.name||item.product_code||item.system_code}}({{item.category}}/{{item.secondary_category}})
           <span class="el-icon-view icon hoverBlue"
             @click="sampleDetail=item;sampleShow=true"></span>
         </div>

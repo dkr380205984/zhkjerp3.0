@@ -260,7 +260,7 @@
     <div class="module">
       <div class="titleCtn flexBetween"
         style="border-bottom:0">
-        <div class="title">添加产品描述</div>
+        <div class="title">添加批次信息</div>
         <div class="btn backHoverBlue"
           @click="$addItem(orderInfo.time_data.batch_data, {
             id: '',
@@ -408,7 +408,7 @@
                       <div class="elCtn">
                         <el-input v-model="itemPro.price"
                           placeholder="下单单价">
-                          <template slot="append">元</template>
+                          <template slot="append">{{orderInfo.settle_unit||'元'}}</template>
                         </el-input>
                       </div>
                     </div>
@@ -532,7 +532,9 @@
             <div class="info elCtn">
               <el-input placeholder="请输入下单总费用"
                 v-model="totalPrice"
-                disabled></el-input>
+                disabled>
+                <template slot="append">{{orderInfo.settle_unit||'元'}}</template>
+              </el-input>
             </div>
           </div>
         </div>

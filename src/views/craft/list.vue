@@ -12,6 +12,16 @@
               placeholder="筛选工艺单编号"
               @keydown.enter.native="changeRouter"></el-input>
           </div>
+          <div class="elCtn">
+            <el-select v-model="limit"
+              placeholder="每页展示条数"
+              @change="changeRouter">
+              <el-option v-for="item in limitList"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
           <div class="btn fr borderBtn"
             @click="reset">重置</div>
           <div class="btn backHoverBlue fr"
@@ -219,7 +229,7 @@ export default Vue.extend({
       const query = this.$route.query
       this.page = Number(query.page)
       this.keyword = query.keyword || ''
-      this.limit = Number(query.limit) || 5
+      this.limit = Number(query.limit) || 10
     },
     changeRouter() {
       this.$router.push('/craft/list?page=' + this.page + '&keyword=' + this.keyword + '&limit=' + this.limit)

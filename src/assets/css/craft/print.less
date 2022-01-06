@@ -107,6 +107,102 @@
       }
     }
   }
+  .sign{
+    position: absolute;
+    max-width: 25%;
+    box-sizing: border-box;
+    &.left{
+      order: 0;
+    }
+    &.right{
+      order: 2;
+    }
+    // 模式一
+    &.style1{
+      color: @font85;
+      font-weight: bolder;
+      &.left{
+        left: 2px;
+        &::after{
+          content: '→';
+          top: 0;
+          bottom: 0;
+          margin: auto;
+        }
+      }
+      &.right{
+        right:2px;
+        &::after{
+          content: '←';
+          top: 0;
+          bottom: 0;
+          margin: auto;
+        }
+      }
+    }
+    // 模式二
+    &.style2{
+      border: 5px solid rgba(0,0,0,0.6);
+      height: 32px;
+      width: 16px;
+      &.left{
+        left: 0;
+        border-right: none;
+      }
+      &.right{
+        right: 0;
+        border-left: none;
+      }
+    }
+    // 模式三
+    &.style3{
+      height: 16px;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      &.left{
+        left: 0;
+        border-left: 3px solid rgba(0,0,0,0.6);
+        .auto_long_arrow{
+          left: 0;
+        }
+      }
+      &.right{
+        right: 0;
+        border-right: 3px solid rgba(0,0,0,0.6);
+        .auto_long_arrow{
+          right: 0;
+        }
+      }
+      .auto_long_arrow{
+        width: 30px;
+        height: 10px;
+        background-color: rgba(0,0,0,0.6);
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        &::after{
+          content: '';
+          display: block;
+          border: 8px solid rgba(0,0,0,0.6);
+          width: 0;
+          height: 0;
+          border-right-color: transparent;
+          border-bottom-color: transparent;
+          position: absolute;
+          top: 50%;
+        }
+        &.left_to_right::after{
+          right: 0;
+          transform: translateX(50%) translateY(-50%) rotateZ(135deg);
+        }
+        &.right_to_left::after{
+          left: 0;
+          transform: translateX(-50%) translateY(-50%) rotateZ(-45deg);
+        }
+      }      
+    }
+  }
   .GLCtn{
     color: @font65;
     overflow:hidden;
@@ -294,5 +390,24 @@
   }
   .alignCenter{
     text-align: center;
+  }
+  .bold{
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .labelCtn{
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    flex-direction: row;
+    .signCtn{
+      left: 100px;
+      height: 32px;
+      position: absolute;
+      display: flex;
+      align-items: center;
+      width: 112px;
+    }
+
   }
 }
