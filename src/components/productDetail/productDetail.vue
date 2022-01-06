@@ -328,7 +328,7 @@ export default Vue.extend({
     },
     openUrl(){
       sessionStorage[`product_${this.$route.query.id}`] = JSON.stringify(this.productInfo)
-      this.$router.push('/order/editTag?id=' + this.$route.query.id)
+      this.$router.push('/tagEditPrint/editTag?id=' + this.$route.query.id)
     }
   }
 })
