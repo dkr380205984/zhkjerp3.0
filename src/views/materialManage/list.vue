@@ -40,6 +40,17 @@
               @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
+            <el-select @change="changeRouter"
+              v-model="user_id"
+              placeholder="筛选创建人"
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
             <el-date-picker v-model="date"
               type="daterange"
               align="right"
@@ -52,6 +63,10 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
+        </div>
+        <div class="filterCtn">
           <div class="elCtn">
             <el-select v-model="limit"
               placeholder="每页展示条数"
@@ -62,13 +77,17 @@
                 :value="item.value"></el-option>
             </el-select>
           </div>
-          <div class="btn borderBtn"
-            @click="reset">重置</div>
         </div>
         <div class="list">
           <div class="row title">
             <div class="col">计划单号</div>
             <div class="col">关联订单</div>
+            <div class="col">负责小组/人</div>
+            <div class="col">合计计划数量</div>
+            <div class="col">合计采购数量</div>
+            <div class="col">合计加工数量</div>
+            <div class="col">采购比例</div>
+            <div class="col">审核状态</div>
             <div class="col">创建人</div>
             <div class="col">创建日期</div>
             <div class="col">操作</div>
@@ -78,6 +97,14 @@
             :key="index">
             <div class="col">{{item.code}}</div>
             <div class="col">{{item.order_code}}</div>
+            <div class="col">{{item.group_name}}</div>
+            <div class="col">{{item.total_plan_number}}</div>
+            <div class="col">{{item.total_order_number}}</div>
+            <div class="col">{{item.material_order_progress || 0}}</div>
+            <div class="col"
+              :class="item.total_plan_number>item.total_order_number?'orange':'green'">{{$toFixed(item.total_order_number/item.total_plan_number*100)}}%</div>
+            <div class="col"
+              :class="item.is_check|filterCheckClass">{{item.is_check|filterCheck}}</div>
             <div class="col">{{item.user_name}}</div>
             <div class="col">{{item.created_at.slice(0,10)}}</div>
             <div class="col">
@@ -120,6 +147,7 @@ export default Vue.extend({
       code: '',
       order_code: '',
       date: [],
+      user_id: '',
       pickerOptions: {
         shortcuts: [
           {
@@ -153,6 +181,14 @@ export default Vue.extend({
       }
     }
   },
+  filters: {
+    filterCheck(type: 0 | 1 | 2) {
+      return ['待审核', '已审核', '已驳回'][type]
+    },
+    filterCheckClass(type: 0 | 1 | 2) {
+      return ['orange', 'green', 'red'][type]
+    }
+  },
   methods: {
     getFilters() {
       const query = this.$route.query
@@ -161,6 +197,7 @@ export default Vue.extend({
       this.order_code = query.order_code
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
+      this.user_id = Number(query.user_id) || ''
     },
     changeRouter() {
       this.$router.push(
@@ -173,7 +210,9 @@ export default Vue.extend({
           '&date=' +
           this.date +
           '&limit=' +
-          this.limit
+          this.limit +
+          '&user_id' +
+          this.user_id
       )
     },
     reset() {
@@ -187,6 +226,7 @@ export default Vue.extend({
           this.order_code = ''
           this.date = []
           this.limit = 10
+          this.user_id = ''
           this.changeRouter()
         })
         .catch(() => {
@@ -202,9 +242,11 @@ export default Vue.extend({
         .list({
           limit: this.limit,
           page: this.page,
-          keyword: this.code,
+          code: this.code,
+          order_code: this.order_code,
           start_time: this.date.length > 0 ? this.date[0] : '',
-          end_time: this.date.length > 0 ? this.date[1] : ''
+          end_time: this.date.length > 0 ? this.date[1] : '',
+          user_id: this.user_id
         })
         .then((res) => {
           this.list = res.data.data.items
@@ -224,6 +266,11 @@ export default Vue.extend({
         })
     }
   },
+  computed: {
+    userList() {
+      return this.$store.state.api.user.arr
+    }
+  },
   watch: {
     $route() {
       this.getFilters()
@@ -234,6 +281,13 @@ export default Vue.extend({
     this.getFilters()
     this.getList()
     this.getListSetting()
+    this.$checkCommonInfo([
+      {
+        checkWhich: 'api/user',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getUserAsync'
+      }
+    ])
   }
 })
 </script>

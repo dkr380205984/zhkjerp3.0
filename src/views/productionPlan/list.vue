@@ -196,13 +196,13 @@ export default Vue.extend({
           errVal: '0'
         },
         {
-          key: 'status',
-          name: '订单状态',
+          key: 'has_weave_plan',
+          name: '状态',
           ifShow: true,
           ifLock: false,
           index: 7,
-          filterArr: ['', '已创建', '进行中', '已完成', '已结算', '已取消'],
-          classArr: ['', 'orange', 'blue', 'green', 'green', 'red']
+          filterArr: ['', '已添加', '待添加'],
+          classArr: ['', 'green', 'orange']
         },
         {
           key: 'group_name',

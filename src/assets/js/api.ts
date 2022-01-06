@@ -47,6 +47,14 @@ const companyInfo = {
   create: (params: any) => http.post(`${baseUrl}/company/info/edit`, params, 'application/json')
 }
 
+// 首页
+const homePage = {
+  searchAll: (params: {
+    keyword: string
+    type: number // 1:订单 2样单 3报价单 4工艺单 5物料计划
+  }) => http.get(`${baseUrl}/index/search`, params)
+}
+
 // 纱线报价
 interface YarnPrice {
   id: string | number
@@ -385,6 +393,9 @@ const materialPlan = {
     start_time?: string
     end_time?: string
     keyword?: string
+    code?: string
+    user_id?: string | number
+    order_code?: string
     type?: 1 | 2 // 1.原料计划单 2.辅料计划单
   }) => http.get(`${baseUrl}/material/plan/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/material/plan/detail`, params),
@@ -497,8 +508,8 @@ const exportExcel = {
   orderInfo: (params: {
     client_id: number
     id: Array<number>
-    start_time:string
-    end_time:string
+    start_time: string
+    end_time: string
   }) => http.get(`${baseUrl}/export/order/info`, params),
 }
 export {
@@ -508,6 +519,7 @@ export {
   forgetPassword,
   getAuthorization,
   getToken,
+  homePage,
   companyInfo,
   category,
   check,

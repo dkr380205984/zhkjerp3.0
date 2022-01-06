@@ -164,7 +164,7 @@ export default Vue.extend({
         {
           key: 'has_material_plan',
           name: '物料计划状态',
-          filterArr: ['', '已创建', '待添加'],
+          filterArr: ['', '已添加', '待添加'],
           classArr: ['', 'blue', 'orange'],
           ifShow: true,
           ifLock: false,

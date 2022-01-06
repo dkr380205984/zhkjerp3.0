@@ -3004,7 +3004,7 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.craftInfo = res.data.data
-          this.colourList = this.craftInfo.product_info.color_data
+          this.colourList = this.craftInfo.product_info ? this.craftInfo.product_info.color_data : []
 
           this.tableData.warp.mergeCells = this.craftInfo.warp_data.merge_data
           this.tableData.weft.mergeCells = this.craftInfo.weft_data.merge_data

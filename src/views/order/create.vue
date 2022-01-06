@@ -261,7 +261,7 @@
       <div class="titleCtn flexBetween"
         style="border-bottom:0">
         <div class="title">
-          添加产品描述
+          添加批次信息
           <span v-if="showTable" @click="showTable = !showTable" style="cursor:pointer;color:#1A95FF;margin-left:60px">切换为输入框模式icon</span>
           <span v-else @click="showTable = !showTable" style="cursor:pointer;color:#1A95FF;margin-left:60px">切换为表格模式icon</span>
         </div>
@@ -663,7 +663,9 @@
             <div class="info elCtn">
               <el-input placeholder="请输入下单总费用"
                 v-model="totalPrice"
-                disabled></el-input>
+                disabled>
+                <template slot="append">{{orderInfo.settle_unit||'元'}}</template>
+              </el-input>
             </div>
           </div>
         </div>
