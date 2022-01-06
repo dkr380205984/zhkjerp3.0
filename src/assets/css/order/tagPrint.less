@@ -1,0 +1,71 @@
+@import '../printEasy.less';
+@import '../printMenu.less';
+@import '../popup.less';
+#printTag{
+  page-break-before: always;
+  page-break-after: always;
+  height: auto;
+  max-height: 330px;
+  max-width: 226px;
+  padding: 20px;
+  box-sizing: border-box;
+  font-size: 12px;
+  overflow: hidden;
+  line-height: 1em;
+  .tag_item{
+    height: auto;
+    margin-bottom: 4px;
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+  }
+  .tag_label{
+    min-width: 5em;
+    text-align: left;
+  }
+  .tag_info{
+    width: 100%;
+    word-break: break-all;
+  }
+  .col{
+    flex-direction: column;
+  }
+  .tag_qrCode{
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+  }
+  .tag_text{
+    margin: 0 auto;
+  }
+}
+.setting_sign_style{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200px;
+  background-color: #FFF;
+  border: 1px solid #DDD;
+  box-sizing: border-box;
+  box-shadow: 4px 4px 4px #333;
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+  .setting_item{
+    width: 100%;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    box-sizing: border-box;
+    cursor: pointer;
+    &:hover{
+      background-color: #CCC;
+    }
+    &.checked::after{
+      content: '当前模式';
+      color: rgba(0,0,0,0.4);
+    }
+  }
+}
