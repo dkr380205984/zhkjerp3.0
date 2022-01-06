@@ -1,0 +1,87 @@
+@import '../common.less';
+@import '../detail.less';
+@import '../bottomBar.less';
+@import '../table.less';
+
+#editTag {
+    .flex {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .flex2{
+        justify-content: space-around;
+    }
+
+    .detailCtn {
+        padding: 20px 32px;
+        position: relative;
+
+        .row {
+            margin: 18px 0;
+            display: flex;
+            justify-content: flex-start;
+
+            .gtoup {
+                label {
+                    align-self: center;
+                }
+            }
+        }
+
+        .border {
+            border: 1px solid #eee;
+            page-break-before: always;
+            page-break-after: always;
+            height: auto;
+            max-height: 660px;
+            max-width: 452px;
+            padding: 24px;
+            box-sizing: border-box;
+            font-size: 16px;
+            overflow: hidden;
+            line-height: 2em;
+            margin-top: 20px;
+            margin-left: 20px;
+            .col {
+                flex-direction: column;
+            }
+        }
+
+        .tag_item {
+            height: auto;
+            margin-bottom: 4px;
+            width: 100%;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .tag_label {
+            min-width: 5em;
+            text-align: left;
+        }
+
+        .tag_info {
+            width: 100%;
+            word-break: break-all;
+        }
+
+        .tag_qrCode {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+        }
+
+        .tag_text {
+            margin: 0 auto;
+        }
+    }
+
+    .noPadTop {
+        padding-top: 0;
+    }
+
+    .noPadBtm {
+        padding-bottom: 0;
+    }
+}

@@ -180,6 +180,10 @@
         v-show="!noOpr">
         <span class="btn borderBtn"
           @click="close">取消</span>
+          <span class="btn backHoverBlue" @click="openUrl()">
+            <use xlink:href="#icon-dayindingdan"></use>
+            编辑标签
+          </span>
         <span class="btn backHoverOrange" @click="proId=null;pid=null;pid_status=null;addProductFlag = true;">修改</span>
       </div>
     </div>
@@ -226,6 +230,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      qrCodeUrl:'',
       addProductFlag:false,
       productInfo: {
         product_type: 1,
@@ -301,6 +306,18 @@ export default Vue.extend({
       }
     }
   },
+  mounted(){
+    // 生成二维码
+    const QRCode = require('qrcode')
+    QRCode.toDataURL(`${this.productInfo}`)
+      .then((url: any) => {
+        this.qrCodeUrl = url
+        // console.log(this.qrCodeUrl)
+      })
+      .catch((err: any) => {
+        console.error(err)
+      })
+  },
   methods: {
     close() {
       this.getDataFlag = false
@@ -308,6 +325,10 @@ export default Vue.extend({
     },
     getNewProduct(val:any){
       console.log(val)
+    },
+    openUrl(){
+      sessionStorage[`product_${this.$route.query.id}`] = JSON.stringify(this.productInfo)
+      this.$router.push('/order/editTag?id=' + this.$route.query.id)
     }
   }
 })

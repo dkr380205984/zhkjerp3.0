@@ -202,7 +202,7 @@
                   <el-autocomplete class="inline-input"
                     v-model="item.name"
                     :fetch-suggestions="searchColour"
-                    placeholder="请输入样品配色"></el-autocomplete>
+                    placeholder="请输入产品配色"></el-autocomplete>
                 </div>
               </div>
               <div class="opr hoverBlue"
@@ -1039,7 +1039,6 @@ export default Vue.extend({
           return {
             id: item.id,
             size_name: item.name,
-            size_id: item.id,
             size_info: item.size_info,
             weight: item.weight
           }

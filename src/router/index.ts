@@ -37,6 +37,10 @@ const routes: Array<RouteConfig> = [
     name: '原料出入库打印',
     component: () => import('../views/store/materialLogPrint.vue')
   }, {
+    path: '/order/tagPrint',
+    name: '产品标签打印',
+    component: () => import('../views/order/tagPrint.vue')
+  }, {
     path: '/quotedPrice/print',
     name: '报价单打印',
     component: () => import('../views/quotedPrice/print.vue')
@@ -120,6 +124,10 @@ const routes: Array<RouteConfig> = [
       path: '/order/update',
       name: '订单修改',
       component: () => import('../views/order/update.vue')
+    }, {
+      path: '/order/editTag',
+      name: '编辑标签',
+      component: () => import('../views/order/editTag.vue')
     }, {
       path: '/craft/create',
       name: '创建工艺单',
