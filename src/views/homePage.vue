@@ -17,18 +17,18 @@
               slot="prepend"
               class="select"
               placeholder="请选择">
-              <el-option label="所有"
-                value="1"></el-option>
-              <el-option label="样品"
-                value="2"></el-option>
-              <el-option label="样品订单"
-                value="3"></el-option>
-              <el-option label="报价单"
-                value="4"></el-option>
-              <el-option label="产品"
-                value="5"></el-option>
+              <!-- <el-option label="所有"
+                value="0"></el-option> -->
               <el-option label="订单"
-                value="6"></el-option>
+                value="1"></el-option>
+              <el-option label="样品订单"
+                value="2"></el-option>
+              <el-option label="报价单"
+                value="3"></el-option>
+              <el-option label="工艺单"
+                value="4"></el-option>
+              <el-option label="物料计划单"
+                value="5"></el-option>
             </el-select>
           </el-input>
           <div class="btn backHoverBlue"
@@ -50,96 +50,86 @@
           v-loading="searchLoading">
           <i class="el-icon-circle-close icons"
             @click="showSearch = false"></i>
-          <div class="block">
-            <div class="titled">相关样品</div>
-            <div class="info">
-              <span class="text">XXXXXXX</span>
-              <span class="text">XXXXXXXXXXX</span>
-              <span class="text">XXXXXXXXXXX</span>
-              <span class="text">XXXXXXXXX</span>
+          <div class="block"
+            v-show="searchType==='0'||searchType==='1'">
+            <div class="titled">相关订单</div>
+            <div class="info"
+              v-for="item in searchList.order"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/order/detail?id=' + item.id)"></span>
+              <span class="text">公司名称</span>
+              <span class="text">哈哈哈</span>
+              <span class="text">哈哈哈</span>
             </div>
-            <div class="noMsg">暂无相关信息</div>
+            <div class="noMsg"
+              v-if="searchList.order.length===0">暂无相关信息</div>
           </div>
-          <!--<div class="block"
-              v-show="searchType==='1'||searchType==='2'">
-              <div class="titled">相关样品</div>
-              <div class="info"
-                v-for="item in sampleProductCmp"
-                :key="item.id">
-                <span class="text"
-                  v-html="item.product_code"
-                  @click="$router.push('/sample/sampleDetail/' + item.id)"></span>
-                <span class="text">{{item.category_info.category_name + '/' + item.category_info.type_name + '/' + item.category_info.style_name }}</span>
-                <span class="text">{{item.product_title}}</span>
-                <span class="text">{{item.user_name}}</span>
-              </div>
-              <div class="noMsg"
-                v-if="sample_product.length===0">暂无相关信息</div>
+          <div class="block"
+            v-show="searchType==='0'||searchType==='2'">
+            <div class="titled">相关样单</div>
+            <div class="info"
+              v-for="item in searchList.sampleOrder"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/sampleOrder/detail?id=' + item.id)"></span>
+              <span class="text">公司名称</span>
+              <span class="text">哈哈哈</span>
+              <span class="text">哈哈哈</span>
             </div>
-            <div class="block"
-              v-show="searchType==='1'||searchType==='3'">
-              <div class="titled">相关样单</div>
-              <div class="info"
-                v-for="item in sampleOrderCmp"
-                :key="item.id">
-                <span class="text"
-                  v-html="item.order_code"
-                  @click="$router.push('/sample/sampleOrderDetail/' + (item.pid!==0?item.pid:item.id))"></span>
-                <span class="text">{{item.client_name}}</span>
-                <span class="text">{{item.total_number}}</span>
-                <span class="text">{{item.group_name}}</span>
-              </div>
-              <div class="noMsg"
-                v-if="sample_order.length===0">暂无相关信息</div>
+            <div class="noMsg"
+              v-if="searchList.sampleOrder.length===0">暂无相关信息</div>
+          </div>
+          <div class="block"
+            v-show="searchType==='0'||searchType==='3'">
+            <div class="titled">相关报价单</div>
+            <div class="info"
+              v-for="item in searchList.quotedPrice"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/quotedPrice/detail?id=' + item.id)"></span>
+              <span class="text">公司名称</span>
+              <span class="text">哈哈哈</span>
+              <span class="text">哈哈哈</span>
             </div>
-            <div class="block"
-              v-show="searchType==='1'||searchType==='5'">
-              <div class="titled">相关产品</div>
-              <div class="info"
-                v-for="item in productCmp"
-                :key="item.id">
-                <span class="text"
-                  v-html="item.product_code"
-                  @click="$router.push('/product/productDetail/' + item.id)"></span>
-                <span class="text">{{item.category_info.category_name + '/' + item.category_info.type_name + '/' + item.category_info.style_name }}</span>
-                <span class="text">{{item.product_title}}</span>
-                <span class="text">{{item.user_name}}</span>
-              </div>
-              <div class="noMsg"
-                v-if="product.length===0">暂无相关信息</div>
+            <div class="noMsg"
+              v-if="searchList.quotedPrice.length===0">暂无相关信息</div>
+          </div>
+          <div class="block"
+            v-show="searchType==='0'||searchType==='4'">
+            <div class="titled">相关报价单</div>
+            <div class="info"
+              v-for="item in searchList.craft"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/craft/detail?id=' + item.id)"></span>
+              <span class="text">公司名称</span>
+              <span class="text">哈哈哈</span>
+              <span class="text">哈哈哈</span>
             </div>
-            <div class="block"
-              v-show="searchType==='1'||searchType==='4'">
-              <div class="titled">相关报价单</div>
-              <div class="info"
-                v-for="item in quotationCmp"
-                :key="item.id">
-                <span class="text"
-                  v-html="item.quotation_code"
-                  @click="$router.push('/price/priceDetail/' + item.id)"></span>
-                <span class="text">{{item.client_name}}</span>
-                <span class="text">{{item.total_price}}元</span>
-                <span class="text">{{item.status===1?'待审核':(item.status===2?'已通过':'驳回')}}</span>
-              </div>
-              <div class="noMsg"
-                v-if="quotation.length===0">暂无相关信息</div>
+            <div class="noMsg"
+              v-if="searchList.craft.length===0">暂无相关信息</div>
+          </div>
+          <div class="block"
+            v-show="searchType==='0'||searchType==='5'">
+            <div class="titled">相关物料计划</div>
+            <div class="info"
+              v-for="item in searchList.materialPlan"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/materialPlan/detail?id=' + item.id)"></span>
+              <span class="text">公司名称</span>
+              <span class="text">哈哈哈</span>
+              <span class="text">哈哈哈</span>
             </div>
-            <div class="block"
-              v-show="searchType==='1'||searchType==='6'">
-              <div class="titled">相关订单</div>
-              <div class="info"
-                v-for="item in orderCmp"
-                :key="item.id">
-                <span class="text"
-                  v-html="item.order_code"
-                  @click="$router.push('/order/orderDetail/' + item.id)"></span>
-                <span class="text">{{item.client_name}}</span>
-                <span class="text">{{item.total_number}}</span>
-                <span class="text">{{item.group_name}}</span>
-              </div>
-              <div class="noMsg"
-                v-if="order.length===0">暂无相关信息</div>
-            </div> -->
+            <div class="noMsg"
+              v-if="searchList.materialPlan.length===0">暂无相关信息</div>
+          </div>
         </div>
       </div>
     </div>
@@ -162,7 +152,7 @@
           @click="easyOprFlag ? saveOpr() : easyOprFlag = true">
           <svg class="iconFont"
             aria-hidden="true">
-            <use xlink:href="#icon-xitongshezhi"></use>
+            <use xlink:href="#icon-zhuangshifuliaocangku"></use>
           </svg>
           <span class="name blue">{{easyOprFlag ? '完成编辑' : '自定义编辑'}}</span>
         </div>
@@ -209,22 +199,27 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { homePage } from '@/assets/js/api'
 export default Vue.extend({
   data() {
     return {
       searchType: '1',
       searchValue: '',
-      history: ['喜喜', '哈哈'],
-      showSearch: true,
+      history: window.localStorage.getItem('searchHistory')
+        ? JSON.parse(window.localStorage.getItem('searchHistory') as string)
+        : [],
+      showSearch: false,
       searchLoading: false,
       easyOprFlag: false,
-      userEasyOpr: [],
+      userEasyOpr: window.localStorage.getItem('userEasyOpr')
+        ? JSON.parse(window.localStorage.getItem('userEasyOpr') as string)
+        : [],
       easyOpr: [
         {
           id: 1,
           isChecked: false,
           opr: '添加报价单',
-          icon: 'icon-tianjiabaojiadan',
+          icon: 'icon-baojiaguanli1',
           url: '/quotedPrice/create',
           check: true
         },
@@ -232,21 +227,21 @@ export default Vue.extend({
           id: 1,
           isChecked: false,
           opr: '报价单列表',
-          icon: 'icon-baojiadan',
+          icon: 'icon-baojiaguanli1',
           url: '/quotedPrice/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
           id: 3,
           isChecked: false,
           opr: '添加订单',
-          icon: 'icon-tianjiadingdan',
+          icon: 'icon-dingdanguanli1',
           url: '/order/create'
         },
         {
           id: 3,
           isChecked: false,
           opr: '订单管理',
-          icon: 'icon-dingdan',
+          icon: 'icon-dingdanguanli1',
           url: '/order/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
@@ -274,7 +269,7 @@ export default Vue.extend({
           id: 7,
           isChecked: false,
           opr: '物料管理',
-          icon: 'icon-wuliaodinggou',
+          icon: 'icon-wuliaoguanli',
           url: '/materialManage/list?page=1&type=1&code=&order_code=&date='
         },
         {
@@ -288,38 +283,45 @@ export default Vue.extend({
           id: 9,
           isChecked: false,
           opr: '生产计划',
-          icon: 'icon-zhizaojiagong',
+          icon: 'icon-shengchanjihua',
           url: '/productionPlan/list?page=1&type=1'
         },
         {
           id: 10,
           isChecked: false,
           opr: '产品检验',
-          icon: 'icon-chanpinshoufa',
+          icon: 'icon-shengchanpinjianyan',
           url: '/inspection/list?page=1&type=1'
         },
         {
           opr: '仓库管理',
           isChecked: false,
           id: 11,
-          icon: 'icon-chanpinshoufa',
+          icon: 'icon-cangkuguanli',
           url: '/store/list?page=1&keyword=&user_id=&store_type=1'
         },
         {
           opr: '客户与合作商管理',
           isChecked: false,
           id: 12,
-          icon: 'icon-chanpinshoufa',
+          icon: 'icon-kehuguanli',
           url: '/client/list?page=1&type=1&status=1&keyword='
         },
         {
           opr: '原料预订购',
           isChecked: false,
           id: 13,
-          icon: 'icon-chanpinshoufa',
+          icon: 'icon-wuliaoyudinggou',
           url: '/materialPlanOrder/list?page=1&type=1'
         }
-      ]
+      ],
+      searchList: {
+        order: [],
+        sampleOrder: [],
+        quotedPrice: [],
+        materialPlan: [],
+        craft: []
+      }
     }
   },
   methods: {
@@ -337,14 +339,51 @@ export default Vue.extend({
       return arr
     },
     searchInfo() {
-      console.log(this.userCanCheckedOpr)
+      this.searchLoading = true
+      homePage
+        .searchAll({
+          keyword: this.searchValue,
+          type: Number(this.searchType)
+        })
+        .then((res) => {
+          if (res.data.status) {
+            if (Number(this.searchType) === 1) {
+              this.searchList.order = res.data.data
+            } else if (Number(this.searchType) === 2) {
+              this.searchList.sampleOrder = res.data.data
+            } else if (Number(this.searchType) === 3) {
+              this.searchList.quotedPrice = res.data.data
+            } else if (Number(this.searchType) === 4) {
+              this.searchList.craft = res.data.data
+            } else if (Number(this.searchType) === 5) {
+              this.searchList.materialPlan = res.data.data
+            }
+          }
+          if (!this.history.find((item: string) => item === this.searchValue)) {
+            if (this.history.length < 10) {
+              this.history.unshift(this.searchValue)
+            } else {
+              this.history.unshift(this.searchValue)
+              this.history.pop()
+            }
+            window.localStorage.setItem('searchHistory', JSON.stringify(this.history))
+          }
+          this.showSearch = true
+          this.searchLoading = false
+        })
     },
-    searchHistory() {},
-    resetHistory() {},
+    searchHistory(keyword: string) {
+      this.searchValue = keyword
+      this.searchInfo()
+    },
+    resetHistory() {
+      this.history = []
+      window.localStorage.setItem('searchHistory', JSON.stringify([]))
+    },
     saveOpr() {
-      // window.localStorage.setItem('userEasyOpr', JSON.stringify(this.userCheckedOpr.map(itemM => itemM.opr)))
-      // this.$message.success('编辑成功')
-      // this.easyOprFlag = false
+      window.localStorage.setItem('userEasyOpr', JSON.stringify(this.userCheckedOpr.map((itemM) => itemM.opr)))
+      this.$message.success('编辑成功')
+      this.easyOprFlag = false
     },
     deleteOpr(index: number) {
       this.userEasyOpr.splice(index, 1)
@@ -369,6 +408,17 @@ export default Vue.extend({
     userCheckedOpr(): any[] {
       return this.easyOpr.filter((itemF: any) => itemF.isChecked)
     }
+  },
+  mounted() {
+    let userEasyOpr = window.localStorage.getItem('userEasyOpr')
+      ? JSON.parse(window.localStorage.getItem('userEasyOpr') as string)
+      : []
+    userEasyOpr.forEach((item: string) => {
+      let flag = this.easyOpr.find((itemF) => itemF.opr === item)
+      if (flag) {
+        flag.isChecked = true
+      }
+    })
   }
 })
 </script>

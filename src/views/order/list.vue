@@ -1,51 +1,66 @@
 <template>
-  <div id="orderList" class="bodyContainer">
-    <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
+  <div id="orderList"
+    class="bodyContainer">
+    <div class="module"
+      v-loading="mainLoading"
+      element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">订单列表</div>
       </div>
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input
-              v-model="keyword"
+            <el-input v-model="keyword"
               placeholder="筛选报价/产品/样品编号"
-              @keydown.enter.native="changeRouter"
-            ></el-input>
+              @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
-            <el-cascader
-              @change="changeRouter"
+            <el-cascader @change="changeRouter"
               placeholder="筛选下单公司"
               v-model="client_id"
               :options="clientList"
-              clearable
-            >
+              clearable>
             </el-cascader>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter" v-model="user_id" placeholder="筛选创建人" clearable>
-              <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            <el-select @change="changeRouter"
+              v-model="user_id"
+              placeholder="筛选创建人"
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter" v-model="status" placeholder="筛选报价单状态">
-              <el-option value="null" label="全部"></el-option>
-              <el-option value="1" label="已审核"></el-option>
-              <el-option value="2" label="待审核"></el-option>
+            <el-select @change="changeRouter"
+              v-model="status"
+              placeholder="筛选审核状态">
+              <el-option value="null"
+                label="全部"></el-option>
+              <el-option value="1"
+                label="已审核"></el-option>
+              <el-option value="2"
+                label="待审核"></el-option>
             </el-select>
           </div>
-          <div class="btn borderBtn" @click="reset">重置</div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select @change="changeRouter" v-model="group_id" placeholder="筛选负责小组">
-              <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+            <el-select @change="changeRouter"
+              v-model="group_id"
+              placeholder="筛选负责小组">
+              <el-option v-for="item in groupList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-date-picker
-              v-model="date"
+            <el-date-picker v-model="date"
               type="daterange"
               align="right"
               unlink-panels
@@ -54,63 +69,69 @@
               end-placeholder="结束日期"
               :picker-options="pickerOptions"
               @change="changeRouter"
-              value-format="yyyy-MM-dd"
-            >
+              value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
           <div class="elCtn">
-            <el-select v-model="limit" placeholder="每页展示条数" @change="changeRouter">
-              <el-option v-for="item in limitList" :key="item.value" :label="item.name" :value="item.value"></el-option>
+            <el-select v-model="limit"
+              placeholder="每页展示条数"
+              @change="changeRouter">
+              <el-option v-for="item in limitList"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value"></el-option>
             </el-select>
           </div>
         </div>
-        <div class="filterCtn" style="height: 33px">
-          <div class="btn backHoverBlue fr" @click="$router.push('/order/create')">添加订单</div>
-          <div class="btn backHoverOrange fl" @click="showSetting = true" style="margin-left: 0">列表设置</div>
-          <div
-            class="btn backHoverGreen fl"
+        <div class="filterCtn"
+          style="height: 33px">
+          <div class="btn backHoverBlue fr"
+            @click="$router.push('/order/create')">添加订单</div>
+          <div class="btn backHoverOrange fl"
+            @click="showSetting = true"
+            style="margin-left: 0">列表设置</div>
+          <div class="btn backHoverGreen fl"
             @click="
               getFilters()
               getList()
-            "
-          >
+            ">
             刷新列表
           </div>
-          <div :class="checked?'btn backHoverBlue fl':'btn backHoverBlue fl noCheck'" @click="exportExcelClick()">导出Excel</div>
+          <div :class="checked?'btn backHoverBlue fl':'btn backHoverBlue fl noCheck'"
+            @click="exportExcelClick()">导出Excel</div>
         </div>
-        <zh-list :list="list" :check="true" :checkedCount="checkedCount" :listKey="listKey" :loading="loading" :oprList="oprList"></zh-list>
+        <zh-list :list="list"
+          :check="true"
+          :checkedCount="checkedCount"
+          :listKey="listKey"
+          :loading="loading"
+          :oprList="oprList"></zh-list>
         <div class="pageCtn">
-          <el-pagination
-            background
+          <el-pagination background
             :page-size="limit"
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
-            @current-change="changeRouter"
-          >
+            @current-change="changeRouter">
           </el-pagination>
         </div>
       </div>
     </div>
     <!-- 列表设置 -->
-    <zh-list-setting
-      @close="showSetting = false"
+    <zh-list-setting @close="showSetting = false"
       @afterSave="getListSetting"
       :show="showSetting"
       :id="listSettingId"
       :type="3"
       :data.sync="listKey"
-      :originalData="originalSetting"
-    ></zh-list-setting>
+      :originalData="originalSetting"></zh-list-setting>
 
     <!-- 导出Excel -->
-    <zhExportSetting
-      @close="showExport = false"
+    <zhExportSetting @close="showExport = false"
       @afterSave="exportExcel"
       :show="showExport"
       :data.sync="exportKey"
-      :originalData="originalExport"
-    ></zhExportSetting>
+      :originalData="originalExport"></zhExportSetting>
   </div>
 </template>
 
@@ -129,16 +150,16 @@ export default Vue.extend({
     [porpName: string]: any
   } {
     return {
-      mainLoading:false,
+      mainLoading: false,
       loading: true,
       list: [],
       limitList: limitArr,
       showExport: false,
-      checkedCount:[],
+      checkedCount: [],
       exportKey: [],
       keyword: '',
       client_id: [],
-      checked:false,
+      checked: false,
       exportExcelParam: {
         show_row: [],
         start_time: '',
@@ -458,16 +479,16 @@ export default Vue.extend({
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
     },
-    exportExcelClick(){
-      if(!this.checked) return
+    exportExcelClick() {
+      if (!this.checked) return
       this.showExport = true
     },
     exportExcel(data: any) {
       this.mainLoading = true
-      data.sort(function(a:any,b:any){
-        return a.index-b.index
+      data.sort(function (a: any, b: any) {
+        return a.index - b.index
       })
-      this.exportExcelParam.show_row=[]
+      this.exportExcelParam.show_row = []
       data.forEach((item: any) => {
         if (item.ifExport) {
           this.exportExcelParam.show_row.push(item.key)
@@ -490,7 +511,7 @@ export default Vue.extend({
       })
       setTimeout(() => {
         this.mainLoading = false
-      }, 10000);
+      }, 10000)
     },
     changeRouter() {
       this.$router.push(
@@ -552,7 +573,7 @@ export default Vue.extend({
         })
         .then((res) => {
           if (res.data.status) {
-            res.data.data.items.map((item:any) =>{
+            res.data.data.items.map((item: any) => {
               this.$set(item, 'isCheck', false)
               return item
             })
@@ -580,10 +601,10 @@ export default Vue.extend({
       this.getFilters()
       this.getList()
     },
-    checkedCount(newVal){
-      if(newVal.length>0){
+    checkedCount(newVal) {
+      if (newVal.length > 0) {
         this.checked = true
-      }else {
+      } else {
         this.checked = false
       }
     }

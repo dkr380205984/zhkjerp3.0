@@ -743,7 +743,7 @@
                   <span class="text">删除工艺</span>
                 </div>
                 <div class="btn backHoverGreen"
-                  @click="craftInfo.product_id||craftInfo.part_id?$openUrl('/craft/print?id='+$route.query.id):$message.warning('不能打印未绑定产品信息的工艺单')">
+                  @click="$openUrl('/craft/print?id='+$route.query.id)">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-dayindingdan"></use>

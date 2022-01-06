@@ -301,13 +301,14 @@
             v-for="(item,index) in orderInfo.time_data"
             :key="index"
             :class="{'backHoverBlue':index===orderIndex}"
-            @click="orderIndex=index">第{{index+1}}次打样</div>
+            @click="orderIndex=index"
+            v-show="item.has_material_plan===2">第{{index+1}}次打样</div>
         </div>
         <div class="oprCtn">
           <div class="btn borderBtn"
             @click="init();chooseIndexFlag=false">取消</div>
           <div class="btn backHoverBlue"
-            @click="init();orderIndex=index;chooseIndexFlag=false">确定</div>
+            @click="init();chooseIndexFlag=false">确定</div>
         </div>
       </div>
     </div>
@@ -446,11 +447,21 @@ export default Vue.extend({
         if (res.data.status) {
           this.orderInfo = res.data.data
           if (this.orderInfo.time_data.length > 1) {
-            this.chooseIndexFlag = true
-            this.loading = false
+            if (this.orderInfo.time_data.filter((item: any) => item.has_material_plan === 1).length > 1) {
+              this.chooseIndexFlag = true
+            } else {
+              this.orderInfo.time_data.forEach((item: any, index: number) => {
+                if (item.has_material_plan === 1) {
+                  this.orderIndex = index
+                }
+              })
+              console.log(this.orderIndex)
+              this.init()
+            }
           } else {
             this.init()
           }
+          this.loading = false
         }
       })
   }

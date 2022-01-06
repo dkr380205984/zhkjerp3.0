@@ -1,7 +1,9 @@
 <template>
   <div id="quotedPriceList"
     class="bodyContainer">
-    <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
+    <div class="module"
+      v-loading="mainLoading"
+      element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">报价单列表</div>
       </div>
@@ -83,7 +85,8 @@
             </el-select>
           </div>
         </div>
-        <div class="filterCtn" style="height:33px"> 
+        <div class="filterCtn"
+          style="height:33px">
           <div class="btn backHoverBlue fr"
             @click="$router.push('/quotedPrice/create')">添加报价单</div>
           <div class="btn backHoverOrange fl"
@@ -142,7 +145,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
-      mainLoading:false,
+      mainLoading: false,
       limitList: limitArr,
       list: [],
       page: 1,
@@ -156,8 +159,8 @@ export default Vue.extend({
       listSettingId: null,
       listKey: [],
       date: [],
-      checkedCount:[],
-      checked:false,
+      checkedCount: [],
+      checked: false,
       originalSetting: [
         {
           key: 'code',
@@ -339,7 +342,7 @@ export default Vue.extend({
           }
         }
       ],
-      showSetting: false,
+      showSetting: false
     }
   },
   watch: {
@@ -347,10 +350,10 @@ export default Vue.extend({
       this.getFilters()
       this.getList()
     },
-    checkedCount(newVal){
-      if(newVal.length>0){
+    checkedCount(newVal) {
+      if (newVal.length > 0) {
         this.checked = true
-      }else {
+      } else {
         this.checked = false
       }
     }
@@ -437,7 +440,7 @@ export default Vue.extend({
         })
         .then((res) => {
           // 产品信息需要在列表里展示，配合列表设置要把产品信息拿到最外层
-          res.data.data.items.map((item:any) =>{
+          res.data.data.items.map((item: any) => {
             this.$set(item, 'isCheck', false)
             return item
           })
@@ -446,27 +449,27 @@ export default Vue.extend({
           this.loading = false
         })
     },
-    exportExcel(){
-      if(!this.checked){
+    exportExcel() {
+      if (!this.checked) {
         return
       }
-      this.mainLoading=true
-      let idArr:any[] = []
-      this.list.forEach(item => {
+      this.mainLoading = true
+      let idArr: any[] = []
+      this.list.forEach((item) => {
         // console.log(item)
         idArr.push(item.id)
-      });
+      })
       console.log(idArr)
       exportExcel
         .quoteList({
           client_id: this.client_id,
-          id:idArr
+          id: idArr
         })
         .then((res: any) => {
           console.log(this.list)
           if (res.data.status) {
             console.log(res.data.data)
-            this.mainLoading=false
+            this.mainLoading = false
             window.location.href = res.data.data
           }
         })

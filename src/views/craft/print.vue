@@ -46,7 +46,9 @@
           <div class="tbody hasTop">
             <div class="trow">
               <div class="tcol bgGray label">产品名称</div>
-              <div class="tcol">{{craftInfo.product_info && craftInfo.product_info.product_code}}</div>
+              <div class="tcol">{{craftInfo.product_info && craftInfo.product_info.product_code}}
+                <span v-if="!craftInfo.product_id&&!craftInfo.part_id">无产品信息</span>
+              </div>
               <div class="tcol bgGray label">客户款号</div>
               <div class="tcol">{{craftInfo.product_info && craftInfo.product_info.product_code}}</div>
               <div class="tcol bgGray label">其它信息</div>
@@ -103,7 +105,19 @@
                             v-for="(itemChild,indexChild) in getMergeInfo(craftInfo.warp_data.merge_data,index,craftInfo.warp_data.warp_rank[index].length)"
                             :key="indexChild"
                             :style="{'min-width':6.25*itemChild.colspan + '%'}">
+                            <span class="sign left"
+                              :class="'style'+signType"
+                              v-if="itemChild.colspan>1">
+                              <span class="auto_long_arrow left_to_right"
+                                v-if="signType==='3'"></span>
+                            </span>
                             {{item[itemChild.col]}}
+                            <span class="sign right"
+                              :class="'style'+signType"
+                              v-if="itemChild.colspan>1">
+                              <span class="auto_long_arrow right_to_left"
+                                v-if="signType==='3'"></span>
+                            </span>
                           </div>
                         </template>
                         <template v-if="index===1">
@@ -305,7 +319,19 @@
                             v-for="(itemChild,indexChild) in getMergeInfo(craftInfo.weft_data.merge_data,index,craftInfo.weft_data.weft_rank[index].length)"
                             :key="indexChild"
                             :style="{'min-width':6.25*itemChild.colspan + '%'}">
+                            <span class="sign left"
+                              :class="'style'+signType"
+                              v-if="itemChild.colspan>1">
+                              <span class="auto_long_arrow left_to_right"
+                                v-if="signType==='3'"></span>
+                            </span>
                             {{item[itemChild.col]}}
+                            <span class="sign right"
+                              :class="'style'+signType"
+                              v-if="itemChild.colspan>1">
+                              <span class="auto_long_arrow right_to_left"
+                                v-if="signType==='3'"></span>
+                            </span>
                           </div>
                         </template>
                         <template v-if="index===1">
@@ -360,9 +386,9 @@
                               :key="index"
                               style="min-width:20%;max-width:20%;border-right:1px solid #010101">
                               <div class="tcol alignCenter"
-                                style="max-width:100%;min-width:auto">{{colorWeigth.warp_data[0].color_scheme[index-1]?colorWeigth.warp_data[0].color_scheme[index-1].number:'0'}}</div>
+                                style="max-width:100%;min-width:auto">{{colorWeigth.warp_data[0].color_scheme[index-1]?colorWeigth.warp_data[0].color_scheme[index-1].number||0:'0'}}</div>
                               <div class="tcol alignCenter"
-                                style="max-width:100%;min-width:auto;border-right:0">{{colorWeigth.weft_data[0].color_scheme[index-1]?colorWeigth.weft_data[0].color_scheme[index-1].number:'0'}}</div>
+                                style="max-width:100%;min-width:auto;border-right:0">{{colorWeigth.weft_data[0].color_scheme[index-1]?colorWeigth.weft_data[0].color_scheme[index-1].number||0:'0'}}</div>
                             </div>
                           </div>
                         </div>
@@ -388,7 +414,7 @@
                       <div class="trow"
                         v-for="(itemColour,indexColour) in colorWeigth.warp_data"
                         :key="indexColour">
-                        <div class="tcol label bgGray">{{itemColour.colour_name}}</div>
+                        <div class="tcol label bgGray">{{itemColour.colour_name || '配色组' + (indexColour+1)}}</div>
                         <div class="tcol noPad">
                           <div class="trow flexRow">
                             <div class="tcol noPad flexRow"
@@ -443,10 +469,10 @@
                               <div class="trow flexRow">
                                 <div class="tcol alignCenter maxW10"
                                   v-for="(item,index) in colorWeigth.warp_data[0].color_scheme"
-                                  :key="index+'warp'">{{item.number}}</div>
+                                  :key="index+'warp'">{{item.number || 0}}</div>
                                 <div class="tcol alignCenter maxW10"
                                   v-for="(item,index) in colorWeigth.weft_data[0].color_scheme"
-                                  :key="index+'weft'">{{item.number}}</div>
+                                  :key="index+'weft'">{{item.number || 0}}</div>
                               </div>
                             </div>
                             <div class="tcol label">{{craftInfo.product_time}}</div>
@@ -468,7 +494,7 @@
                           <div class="trow"
                             v-for="(itemColour,indexColour) in colorWeigth.warp_data"
                             :key="indexColour">
-                            <div class="tcol label bgGray">{{itemColour.colour_name}}</div>
+                            <div class="tcol label bgGray">{{itemColour.colour_name || '配色组' + (indexColour+1)}}</div>
                             <div class="tcol noPad">
                               <div class="trow flexRow">
                                 <div class="tcol alignCenter maxW10"
@@ -519,12 +545,24 @@
                       </div>
                     </template>
                     <template v-if="index===7||index===4||index===5||index===6">
-                      <div class="tcol"
+                      <div class="tcol bold"
                         v-for="(itemChild,indexChild) in getMergeSliceInfo(getMergeInfo(craftInfo.warp_data.merge_data,index-1,craftInfo.warp_data.warp_rank[index-1].length))[indexFather]"
                         :key="indexChild"
                         :style="{'min-width':6.25*itemChild.colspan + '%'}">
+                        <span class="sign left"
+                          :class="'style'+signType"
+                          v-if="itemChild.start&&itemChild.colspan>1">
+                          <span class="auto_long_arrow left_to_right"
+                            v-if="signType==='3'"></span>
+                        </span>
                         <!-- itemChild.oldCol===0||itemChild.oldCol处理以下0判断为false -->
-                        {{$sliceToArray(craftInfo.warp_data.warp_rank[index-1], 16)[(itemChild.oldCol===0||itemChild.oldCol)?Math.floor(itemChild.oldCol/16):indexFather][itemChild.oldCol||itemChild.oldCol===0?itemChild.oldCol:itemChild.col]}}
+                        {{$sliceToArray(craftInfo.warp_data.warp_rank[index-1], 16)[(itemChild.oldCol===0||itemChild.oldCol)?Math.floor(itemChild.oldCol/16):indexFather][itemChild.oldCol||itemChild.oldCol===0?(itemChild.oldCol%16):(itemChild.col%16)]}}
+                        <span class="sign right"
+                          :class="'style'+signType"
+                          v-if="itemChild.end&&itemChild.colspan>1">
+                          <span class="auto_long_arrow right_to_left"
+                            v-if="signType==='3'"></span>
+                        </span>
                       </div>
                     </template>
                     <template v-if="index===2">
@@ -564,8 +602,20 @@
                         v-for="(itemChild,indexChild) in getMergeSliceInfo(getMergeInfo(craftInfo.weft_data.merge_data,index-1,craftInfoweft_data.weft_rank[index-1].length))[indexFather]"
                         :key="indexChild"
                         :style="{'min-width':6.25*itemChild.colspan + '%'}">
+                        <span class="sign left"
+                          :class="'style'+signType"
+                          v-if="itemChild.start&&itemChild.colspan>1">
+                          <span class="auto_long_arrow left_to_right"
+                            v-if="signType==='3'"></span>
+                        </span>
                         <!-- itemChild.oldCol===0||itemChild.oldCol处理以下0判断为false -->
-                        {{$sliceToArray(craftInfo.weft_data.weft_rank[index-1], 16)[(itemChild.oldCol===0||itemChild.oldCol)?Math.floor(itemChild.oldCol/16):indexFather][itemChild.oldCol||itemChild.oldCol===0?itemChild.oldCol:itemChild.col]}}
+                        {{$sliceToArray(craftInfo.weft_data.weft_rank[index-1], 16)[(itemChild.oldCol===0||itemChild.oldCol)?Math.floor(itemChild.oldCol/16):indexFather][itemChild.oldCol||itemChild.oldCol===0?(itemChild.oldCol%16):(itemChild.col%16)]}}
+                        <span class="sign right"
+                          :class="'style'+signType"
+                          v-if="itemChild.end&&itemChild.colspan>1">
+                          <span class="auto_long_arrow right_to_left"
+                            v-if="signType==='3'"></span>
+                        </span>
                       </div>
                     </template>
                     <template v-if="index===2">
@@ -607,7 +657,7 @@
                       <div class="trow">
                         <div class="tcol alignCenter"
                           v-for="(item,index) in colorWeigth.warp_data[0].color_scheme"
-                          :key="index">{{item.number}}</div>
+                          :key="index">{{item.number || 0}}</div>
                       </div>
                     </div>
                     <div class="tcol label">{{craftInfo.product_time}}</div>
@@ -626,7 +676,7 @@
                   <div class="trow"
                     v-for="(itemColour,indexColour) in colorWeigth.warp_data"
                     :key="indexColour">
-                    <div class="tcol label bgGray">{{itemColour.colour_name}}</div>
+                    <div class="tcol label bgGray">{{itemColour.colour_name || '配色组' + (indexColour+1)}}</div>
                     <div class="tcol noPad">
                       <div class="trow">
                         <div class="tcol alignCenter"
@@ -665,7 +715,7 @@
                       <div class="trow">
                         <div class="tcol alignCenter"
                           v-for="(item,index) in colorWeigth.weft_data[0].color_scheme"
-                          :key="index">{{item.number}}</div>
+                          :key="index">{{item.number || 0}}</div>
                       </div>
                     </div>
                     <div class="tcol label">{{craftInfo.product_time}}</div>
@@ -684,7 +734,7 @@
                   <div class="trow"
                     v-for="(itemColour,indexColour) in colorWeigth.weft_data"
                     :key="indexColour">
-                    <div class="tcol label bgGray">{{itemColour.colour_name}}</div>
+                    <div class="tcol label bgGray">{{itemColour.colour_name || '配色组' + (indexColour+1)}}</div>
                     <div class="tcol noPad">
                       <div class="trow">
                         <div class="tcol alignCenter"
@@ -742,9 +792,9 @@
                           :style="indexChild===5?'border-right:0':''"
                           style="min-width:20%;max-width:20%;border-right:1px solid #010101">
                           <div class="tcol alignCenter"
-                            style="max-width:100%;min-width:auto">{{colorWeigth.warp_data[0].color_scheme[(indexChild+5*(index-1)-1)]?colorWeigth.warp_data[0].color_scheme[(indexChild+5*(index-1)-1)].number:'0'}}</div>
+                            style="max-width:100%;min-width:auto">{{colorWeigth.warp_data[0].color_scheme[(indexChild+5*(index-1)-1)]?colorWeigth.warp_data[0].color_scheme[(indexChild+5*(index-1)-1)].number||0:'0'}}</div>
                           <div class="tcol alignCenter"
-                            style="max-width:100%;min-width:auto;border-right:0">{{colorWeigth.weft_data[0].color_scheme[(indexChild+5*(index-1)-1)]?colorWeigth.weft_data[0].color_scheme[(indexChild+5*(index-1)-1)].number:'0'}}</div>
+                            style="max-width:100%;min-width:auto;border-right:0">{{colorWeigth.weft_data[0].color_scheme[(indexChild+5*(index-1)-1)]?colorWeigth.weft_data[0].color_scheme[(indexChild+5*(index-1)-1)].number||0:'0'}}</div>
                         </div>
                       </div>
                     </div>
@@ -771,7 +821,7 @@
                   <div class="trow"
                     v-for="(itemColour,indexColour) in colorWeigth.warp_data"
                     :key="indexColour">
-                    <div class="tcol label bgGray">{{itemColour.colour_name}}</div>
+                    <div class="tcol label bgGray">{{itemColour.colour_name || '配色组' + (indexColour+1)}}</div>
                     <div class="tcol noPad">
                       <div class="trow flexRow">
                         <div class="tcol noPad flexRow"
@@ -875,63 +925,58 @@
             @click="showPrintSettingFlag = false"></span>
         </div>
         <div class="contentCtn">
-          <!-- <div class="row">
+          <div class="row">
             <span class="label"
-              style="width:8em;">表格遍数模式：</span>
-            <span class="info">
+              style="width:8em;padding-top:12px">表格遍数模式：</span>
+            <span class="info"
+              style="height:auto">
               <el-radio-group v-model="signType"
-                @change="changeModeType('sign_type_craft_table_setting','signType',$event)"
-                style="display:flex;flex-direction:column;height:60px;justify-content:space-between">
+                style="display:flex;flex-direction:column;justify-content:space-between;margin-top:10px">
                 <el-radio label="1">
-                  <span style="width:150px;display:inline-flex;align-items:center;position: relative;">
-                    <span style="margin-right:20px">模式一</span>
-                    <span class="sign style1 right"
-                      style="height:1.2em"></span>
-                    <span class="value_span"
-                      style="width:40px;order:1"></span>
-                    <span class="sign style1 left"
-                      style="height:1.2em"></span>
+                  <span class="labelCtn">
+                    <span style="margin-right:12px">模式一</span>
+                    <span class="signCtn">
+                      <span class="sign style1 right"></span>
+                      <span class="sign style1 left"></span>
+                    </span>
                   </span>
                 </el-radio>
                 <el-radio label="2">
-                  <span style="width:150px;display:inline-flex;align-items:center;position: relative;">
-                    <span style="margin-right:20px">模式二</span>
-                    <span class="sign style2 right"
-                      style="height:1.2em"></span>
-                    <span class="value_span"
-                      style="width:40px;order:1"></span>
-                    <span class="sign style2 left"
-                      style="height:1.2em"></span>
+                  <span class="labelCtn">
+                    <span style="margin-right:12px">模式二</span>
+                    <span class="signCtn">
+                      <span class="sign style2 right"></span>
+                      <span class="sign style2 left"></span>
+                    </span>
                   </span>
                 </el-radio>
                 <el-radio label="3">
-                  <span style="width:150px;display:inline-flex;align-items:center;position: relative;">
-                    <span style="margin-right:20px">模式三</span>
-                    <span class="sign style3 right"
-                      style="height:1.2em">
-                      <span class="auto_long_arrow right_to_left"></span>
-                    </span>
-                    <span class="value_span"
-                      style="width:40px;order:1"></span>
-                    <span class="sign style3 left"
-                      style="height:1.2em">
-                      <span class="auto_long_arrow left_to_right"></span>
+                  <span class="labelCtn">
+                    <span style="margin-right:12px">模式三</span>
+                    <span class="signCtn">
+                      <span class="sign style3 right">
+                        <span class="auto_long_arrow right_to_left"></span>
+                      </span>
+                      <span class="sign style3 left">
+                        <span class="auto_long_arrow left_to_right"></span>
+                      </span>
                     </span>
                   </span>
                 </el-radio>
               </el-radio-group>
             </span>
-          </div> -->
+          </div>
           <div class="row">
             <span class="label"
-              style="width:7em;">配色工艺排列：</span>
-            <span class="info">
+              style="width:7em;padding-top:12px">配色工艺排列：</span>
+            <span class="info"
+              style="height:auto">
               <el-radio-group v-model="colourInfoType"
-                style="display:flex;flex-direction:column;height:80px;justify-content:space-between;margin-top:10px">
-                <el-radio :label="1">按主夹排列 </el-radio>
+                style="display:flex;flex-direction:column;justify-content:space-between;margin-top:10px">
+                <el-radio :label="1"><span class="labelCtn">按主夹排列</span> </el-radio>
                 <el-radio :label="2"
-                  v-if="colorWeigth.warp_data[0].color_scheme.length + colorWeigth.weft_data[0].color_scheme.length <=10">按经纬排列 </el-radio>
-                <el-radio :label="3">按经纬排列，且不缩小字体 </el-radio>
+                  v-if="colorWeigth.warp_data[0].color_scheme.length + colorWeigth.weft_data[0].color_scheme.length <=10"><span class="labelCtn">按经纬排列</span> </el-radio>
+                <el-radio :label="3"><span class="labelCtn">按经纬排列，且不缩小字体</span> </el-radio>
               </el-radio-group>
             </span>
           </div>
@@ -974,6 +1019,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      signType: '3',
       qrCodeUrl: '',
       company_name: window.sessionStorage.getItem('company_name'),
       X_position: 0,
@@ -1277,31 +1323,105 @@ export default Vue.extend({
         }
         i = i + item.colspan
         if (i === 16) {
+          // 直接嵌入
           sliceMergeData[j].push({
             col: item.col,
-            colspan: 1,
-            row: item.row
+            colspan: item.colspan,
+            row: item.row,
+            oldCol: item.col,
+            start: true,
+            end: true
           })
           j++
           i = 0
         } else if (i > 16) {
+          // 先把剩下的格子填满
           sliceMergeData[j].push({
             col: item.col,
             colspan: 16 - i + item.colspan,
-            row: item.row
+            row: item.row,
+            oldCol: item.col,
+            start: true,
+            end: false
           })
-          j++
-          sliceMergeData[j] = []
+          i = i - 16
+          while (i > 16) {
+            j++
+            sliceMergeData.push([
+              {
+                oldCol: item.col,
+                col: j * 16,
+                colspan: 16,
+                row: item.row,
+                start: false,
+                end: false
+              }
+            ])
+            i = i - 16
+          }
+          if (i > 0) {
+            j++
+            sliceMergeData.push([
+              {
+                oldCol: item.col,
+                col: j * 16,
+                colspan: i,
+                row: item.row,
+                start: false,
+                end: true
+              }
+            ])
+          }
+        } else {
           sliceMergeData[j].push({
             oldCol: item.col,
-            col: j * 16,
-            colspan: item.col + item.colspan - j * 16,
-            row: item.row
+            col: item.col,
+            colspan: item.colspan,
+            row: item.row,
+            start: true,
+            end: true
           })
-          i = 0
-        } else {
-          sliceMergeData[j].push(item)
         }
+        // if (i === 16) {
+        //   sliceMergeData[j].push({
+        //     col: item.col,
+        //     colspan: 1,
+        //     row: item.row
+        //   })
+        //   j++
+        //   i = 0
+        // } else if (i > 16) {
+        //   sliceMergeData[j].push({
+        //     col: item.col,
+        //     colspan: 16 - i + item.colspan,
+        //     row: item.row
+        //   })
+        //   j++
+        //   sliceMergeData[j] = []
+        //   i = i - (16 - i + item.colspan)
+        //   while (i > 16) {
+        //     sliceMergeData[j].push({
+        //       oldCol: item.col,
+        //       col: j * 16,
+        //       colspan: 16,
+        //       row: item.row
+        //     })
+        //     i = i - 16
+        //     j++
+        //     sliceMergeData[j] = []
+        //   }
+        //   if (i > 0) {
+        //     sliceMergeData[j].push({
+        //       oldCol: item.col,
+        //       col: j * 16,
+        //       colspan: item.col + item.colspan - j * 16,
+        //       row: item.row
+        //     })
+        //     i = item.col + item.colspan - j * 16
+        //   }
+        // } else {
+        //   sliceMergeData[j].push(item)
+        // }
       })
       return sliceMergeData
     }
@@ -1534,13 +1654,13 @@ export default Vue.extend({
 
         console.log(
           // @ts-ignore
-          this.getMergeInfo(this.craftInfo.warp_data.merge_data, 4, this.craftInfo.warp_data.warp_rank[3].length),
+          this.getMergeInfo(this.craftInfo.warp_data.merge_data, 3, this.craftInfo.warp_data.warp_rank[3].length),
           this.getMergeSliceInfo(
             // @ts-ignore
-            this.getMergeInfo(this.craftInfo.warp_data.merge_data, 4, this.craftInfo.warp_data.warp_rank[3].length)
+            this.getMergeInfo(this.craftInfo.warp_data.merge_data, 3, this.craftInfo.warp_data.warp_rank[3].length)
           )
         )
-        console.log(this.$sliceToArray(this.craftInfo.warp_data.warp_rank[0], 16))
+        console.log(this.$sliceToArray(this.craftInfo.warp_data.warp_rank[3], 16))
       })
   }
 })

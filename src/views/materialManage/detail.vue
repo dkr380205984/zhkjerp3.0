@@ -90,7 +90,8 @@
       </div>
     </div>
     <!-- 订购单列表 -->
-    <div class="module">
+    <div class="module"
+      v-if="materialOrderList.length>0">
       <el-tabs type="border-card"
         v-model="materialOrderIndex">
         <el-tab-pane v-for="(item,index) in materialOrderList"
@@ -149,7 +150,6 @@
                 <div class="tcol">订购属性</div>
                 <div class="tcol">订购数量</div>
                 <div class="tcol">订购单价</div>
-                <div class="tcol">加工数量</div>
               </div>
             </div>
             <div class="tbody">
@@ -166,7 +166,6 @@
                 <div class="tcol">{{itemChild.attribute}}</div>
                 <div class="tcol">{{itemChild.number}}kg</div>
                 <div class="tcol">{{itemChild.price}}元</div>
-                <div class="tcol">加工数量</div>
               </div>
             </div>
           </div>
@@ -295,7 +294,8 @@
       </el-tabs>
     </div>
     <!-- 调取单列表 -->
-    <div class="module">
+    <div class="module"
+      v-if="materialStockLog.length>0">
       <el-tabs type="border-card"
         v-model="materialStockIndex">
         <el-tab-pane v-for="(item,index) in materialStockLog"
