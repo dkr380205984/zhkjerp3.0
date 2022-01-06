@@ -237,5 +237,5 @@ export default Vue.extend({
 })
 </script>
 <style lang="less" scoped>
-@import '~@/assets/css/order/tagPrint.less';
+@import '~@/assets/css/tagEditPrint/tagPrint.less';
 </style>

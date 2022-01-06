@@ -241,7 +241,7 @@ export default Vue.extend({
       //   let obj: any = JSON.parse(sessionStorage[`product_${this.$route.query.id}`])
       //   obj.company = this.orderInfo.client_name
       //   sessionStorage[`product_${this.$route.query.id}`] = JSON.stringify(this.productInfo)
-      this.$openUrl('/order/tagPrint?id=' + this.$route.query.id)
+      this.$openUrl('/tagEditPrint/tagPrint?id=' + this.$route.query.id)
     },
     changeData(){
         let size_data = this.sizeData
@@ -362,7 +362,7 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import '~@/assets/css/order/editTag.less';
+@import '~@/assets/css/tagEditPrint/editTag.less';
 </style>
 
 <style lang="less">
