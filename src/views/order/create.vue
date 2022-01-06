@@ -366,7 +366,7 @@
                         <div class="trow">
                           <div class="tcol" style="flex:0.85">
                             <div class="elCtn"
-                              style="width:100%">
+                              style="width:87%">
                               <el-select v-model="itemPro.product_id"
                                 placeholder="选择产品"
                                 @change="getColour($event,itemPro)"
@@ -376,6 +376,13 @@
                                   :value="itemProduct.id"
                                   :label="itemProduct.system_code + '/' + itemProduct.name"></el-option>
                               </el-select>
+                              <el-tooltip class="item"
+                                effect="dark"
+                                content="统一单价和数量"
+                                placement="top">
+                                <i class="el-icon-copy-document copyIcon hoverBlue"
+                                  @click="$copyInfo(itemPro.product_info,['price','number'])"></i>
+                              </el-tooltip>
                             </div>
                           </div>
                           <div class="tcol" style="flex:0.5">
@@ -524,44 +531,51 @@
                       </el-tooltip>
                     </div>
                   </div>
-                  <div class="tcol">
-                    <div class="elCtn">
-                      <el-select v-model="itemChild.size_color"
-                        placeholder="尺码颜色"
-                        no-data-text="请先选择产品">
-                        <el-option v-for="item in itemChild.size_color_list"
-                          :key="item.value"
-                          :label="item.label"
-                          :value="item.value"></el-option>
-                      </el-select>
+                  <div class="tcol noPad"
+                    style="flex:4.35">
+                    <div class="trow"
+                      v-for="(itemPro,indexPro) in itemChild.product_info"
+                      :key="indexPro">
+                      <div class="tcol">
+                        <div class="elCtn">
+                          <el-select v-model="itemPro.size_color"
+                            placeholder="尺码颜色"
+                            no-data-text="请先选择产品">
+                            <el-option v-for="item in itemChild.size_color_list"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </div>
+                      </div>
+                      <div class="tcol">
+                        <div class="elCtn">
+                          <el-input v-model="itemPro.price"
+                            placeholder="下单单价">
+                            <template slot="append">{{orderInfo.settle_unit||'元'}}</template>
+                          </el-input>
+                        </div>
+                      </div>
+                      <div class="tcol">
+                        <div class="elCtn">
+                          <el-input v-model="itemPro.number"
+                            placeholder="下单数量">
+                          </el-input>
+                        </div>
+                      </div>
+                      <div class="tcol oprCtn">
+                        <div class="opr hoverBlue"
+                          @click="$addItem(itemChild.product_info,{
+                          size_color: [], // 用于下拉框选择尺码颜色
+                          size_id: '',
+                          color_id: '',
+                          number: '',
+                          price: ''
+                        })">新增尺码</div>
+                        <div class="opr hoverRed"
+                          @click="itemChild.product_info.length>1?$deleteItem(itemChild.product_info,indexPro):$deleteItem(item.product_data,indexChild)">删除</div>
+                      </div>
                     </div>
-                  </div>
-                  <div class="tcol">
-                    <div class="elCtn">
-                      <el-input v-model="itemChild.price"
-                        placeholder="下单单价">
-                        <template slot="append">元</template>
-                      </el-input>
-                    </div>
-                  </div>
-                  <div class="tcol">
-                    <div class="elCtn">
-                      <el-input v-model="itemChild.number"
-                        placeholder="下单数量">
-                      </el-input>
-                    </div>
-                  </div>
-                  <div class="tcol oprCtn">
-                    <div class="opr hoverBlue"
-                      @click="$addItem(itemChild.product_info,{
-                      size_color: [], // 用于下拉框选择尺码颜色
-                      size_id: '',
-                      color_id: '',
-                      number: '',
-                      price: ''
-                    })">新增尺码</div>
-                    <div class="opr hoverRed"
-                      @click="itemChild.product_info.length>1?$deleteItem(itemChild.product_info,indexPro):$deleteItem(item.product_data,indexChild)">删除</div>
                   </div>
                 </div>
               </div>
