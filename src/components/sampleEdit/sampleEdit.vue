@@ -1053,8 +1053,8 @@ export default Vue.extend({
         }),
         size_data: data.size_data.map((item: any) => {
           return {
+            id: item.id,
             size_name: item.name,
-            size_id: item.id,
             size_info: item.size_info,
             weight: item.weight
           }
