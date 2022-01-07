@@ -41,6 +41,9 @@ const getAuthorization = () => http.post(`${baseUrl}/auth/info`, {}, 'applicatio
 // token
 const getToken = () => http.get(`${baseUrl}/upload/token`)
 
+// 版本公告
+const systemMessage = () => http.get(`${baseUrl}/system/update/log`, {})
+
 //工厂信息
 const companyInfo = {
   detail: () => http.get(`${baseUrl}/company/info`, {}),
@@ -524,6 +527,7 @@ const exportExcel = {
   }) => http.get(`${baseUrl}/export/order/info`, params),
 }
 export {
+  systemMessage,
   login,
   logout,
   userCompanySetting,

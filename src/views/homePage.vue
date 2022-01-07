@@ -186,7 +186,7 @@
             <div class="title">版本更新公告</div>
           </div>
           <div class="content">
-
+            <div v-html="systemMessageContent"></div>
           </div>
         </div>
       </div>
@@ -216,7 +216,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { homePage } from '@/assets/js/api'
-import { tutorialSystem } from '@/assets/js/api'
+import { tutorialSystem, systemMessage } from '@/assets/js/api'
 export default Vue.extend({
   data() {
     return {
@@ -339,7 +339,8 @@ export default Vue.extend({
         materialPlan: [],
         craft: []
       },
-      tutorialSystemArr: []
+      tutorialSystemArr: [],
+      systemMessageContent: ''
     }
   },
   methods: {
@@ -440,8 +441,10 @@ export default Vue.extend({
         flag.isChecked = true
       }
     })
-    Promise.all([tutorialSystem.list({ type: 1 })]).then((res) => {
+    Promise.all([tutorialSystem.list({ type: 1 }), systemMessage()]).then((res) => {
       this.tutorialSystemArr = res[0].data.data.slice(0, 8)
+      this.systemMessageContent =
+        res[1].data.data.data.length > 0 ? res[1].data.data.data[0].content : '暂无版本更新公告'
     })
   }
 })

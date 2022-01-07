@@ -65,7 +65,7 @@
               <span class="yarnNameTag"
                 :class="{'active':item.check,'unactive':!item.check}"
                 v-for="(item,index) in clientTagList"
-                :key="item.value"
+                :key="item.value + (item.check?item.check:'aaa')"
                 @click="item.check=!item.check;$forceUpdate()">
                 <span class="name">{{item.label}}</span>
                 <span class="el-icon-close icon"
@@ -286,7 +286,7 @@ export default Vue.extend({
       if (!formCheck) {
         client.create(this.clientInfo).then((res) => {
           if (res.data.status) {
-            this.$message.success('添加成功')
+            this.$message.success('修改成功')
             // 更新缓存
             this.$checkCommonInfo([
               {
@@ -321,7 +321,15 @@ export default Vue.extend({
         this.clientInfo = res.data.data
         setTimeout(() => {
           this.getClientTag(this.clientInfo.client_type_id as number)
-        }, 200)
+          console.log(this.clientTagList)
+          this.clientTagList.forEach((item: any) => {
+            const finded = this.clientInfo.rel_tag_data.find((itemFind: any) => itemFind.id === item.value)
+            console.log(finded)
+            if (finded) {
+              item.check = true
+            }
+          })
+        }, 1000)
       }
     })
   }
