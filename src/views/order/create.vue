@@ -268,9 +268,9 @@
             placement="top">
             <svg class="iconFont hoverBlue"
               style="cursor:pointer;color:#1A95FF;margin-left:12px;font-size:28px"
-              aria-hidden="true">
-              <use xlink:href='#icon-qiehuanshurukuang'
-                @click="showTable = !showTable"></use>
+              aria-hidden="true"
+              @click="showTable = !showTable">
+              <use xlink:href='#icon-qiehuanshurukuang'></use>
             </svg>
           </el-tooltip>
         </div>
@@ -311,12 +311,12 @@
               <div class="thead">
                 <div class="trow">
                   <div class="tcol"
-                    style="flex:1.5">发货日期</div>
+                    style="flex:1.2">发货日期</div>
                   <div class="tcol">批次名称</div>
                   <div class="tcol">批次类型</div>
                   <div class="tcol">批次备注</div>
                   <div class="tcol noPad"
-                    style="flex:5.7">
+                    style="flex:6">
                     <div class="trow">
                       <div class="tcol noPad"
                         style="flex:3">
@@ -330,7 +330,7 @@
                           <div class="tcol"
                             style="flex:0.5">下单数量</div>
                           <div class="tcol"
-                            style="flex:0.43">操作</div>
+                            style="flex:0.9">操作</div>
                         </div>
                       </div>
                     </div>
@@ -342,7 +342,7 @@
                   v-for="(item,index) in orderInfo.time_data.batch_data"
                   :key="'tableIcon_'+index">
                   <div class="tcol"
-                    style="flex:1.5">
+                    style="flex:1.2">
                     <div class="info elCtn">
                       <el-date-picker style="width:100%"
                         placeholder="请选择发货日期"
@@ -377,7 +377,7 @@
                     </div>
                   </div>
                   <div class="tcol noPad"
-                    style="flex:5.7">
+                    style="flex:6">
                     <div class="trow"
                       v-for="itemPro,indexPro in item.product_data"
                       :key="itemPro.id">
@@ -385,7 +385,7 @@
                         style="flex:3">
                         <div class="trow">
                           <div class="tcol"
-                            style="flex:0.85">
+                            style="flex:1.31">
                             <div class="elCtn"
                               style="width:87%">
                               <el-select v-model="itemPro.product_id"
@@ -409,53 +409,68 @@
                               </el-tooltip>
                             </div>
                           </div>
-                          <div class="tcol"
-                            style="flex:0.5">
-                            <div class="elCtn">
-                              <el-select v-model="itemPro.size_color"
-                                placeholder="尺码颜色"
-                                no-data-text="请先选择产品">
-                                <el-option v-for="itemColor in itemPro.size_color_list"
-                                  :key="itemColor.value"
-                                  :label="itemColor.label"
-                                  :value="itemColor.value"></el-option>
-                              </el-select>
-                            </div>
-                          </div>
-                          <div class="tcol"
-                            style="flex:0.5">
-                            <div class="elCtn">
-                              <el-input v-model="itemPro.price"
-                                placeholder="下单单价">
-                              </el-input>
-                            </div>
-                          </div>
-                          <div class="tcol"
-                            style="flex:0.5">
-                            <div class="elCtn">
-                              <el-input v-model="itemPro.number"
-                                placeholder="下单数量">
-                              </el-input>
-                            </div>
-                          </div>
-                          <div class="tcol oprCtn"
-                            style="flex:0.43">
-                            <div class="opr hoverBlue"
-                              @click="addItem(item.product_data,{
-                              product_id: '',
-                              size_color_list: [],
-                              product_info: [
-                                {
-                                  size_color: '',
+                          <div class="tcol noPad"
+                            style="flex:4.35">
+                            <div class="trow"
+                              v-for="(itemProInfo,indexProInfo) in itemPro.product_info"
+                              :key="indexProInfo">
+                              <div class="tcol"
+                                style="flex:0.5">
+                                <div class="elCtn">
+                                  <el-select v-model="itemProInfo.size_color"
+                                    placeholder="尺码颜色"
+                                    no-data-text="请先选择产品">
+                                    <el-option v-for="itemColor in itemPro.size_color_list"
+                                      :key="itemColor.value"
+                                      :label="itemColor.label"
+                                      :value="itemColor.value"></el-option>
+                                  </el-select>
+                                </div>
+                              </div>
+                              <div class="tcol"
+                                style="flex:0.5">
+                                <div class="elCtn">
+                                  <el-input v-model="itemProInfo.price"
+                                    placeholder="下单单价">
+                                  </el-input>
+                                </div>
+                              </div>
+                              <div class="tcol"
+                                style="flex:0.5">
+                                <div class="elCtn">
+                                  <el-input v-model="itemProInfo.number"
+                                    placeholder="下单数量">
+                                  </el-input>
+                                </div>
+                              </div>
+                              <div class="tcol oprCtn"
+                                style="flex:0.9">
+                                <div class="opr hoverBlue"
+                                  @click="$addItem(item.product_data, {
+                                  product_id: '',
+                                  size_color_list: [],
+                                  product_info: [
+                                    {
+                                      size_color: [], 
+                                      size_id: '',
+                                      color_id: '',
+                                      number: '',
+                                      price: ''
+                                    }
+                                  ]
+                                })">新增</div>
+                                <div class="opr hoverBlue"
+                                  @click="$addItem(itemPro.product_info,{
+                                  size_color: [], // 用于下拉框选择尺码颜色
                                   size_id: '',
                                   color_id: '',
                                   number: '',
                                   price: ''
-                                } 
-                              ]
-                            })">新增</div>
-                            <div class="opr hoverRed"
-                              @click="tableDelete(orderInfo.time_data.batch_data,index,item.product_data,indexPro)">删除</div>
+                                })">新增尺码</div>
+                                <div class="opr hoverRed"
+                                  @click="tableDelete(orderInfo.time_data.batch_data,index,item.product_data,indexPro,itemPro.product_info,indexProInfo)">删除</div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1028,15 +1043,15 @@ export default Vue.extend({
     }
   },
   methods: {
-    addItem(array: Array<any>, children: Array<any>) {
-      array.push(children)
-    },
-
     deleteItem(array: Array<any>, index: number) {
       array.splice(index, 1)
     },
-    tableDelete(orderInfo_batch_data: Array<any>, index: number, product_data: Array<any>, indexPro: number) {
-      if (product_data.length !== 1) {
+    tableDelete(orderInfo_batch_data: Array<any>, index: number, product_data: Array<any>, indexPro: number,itemProInfo:Array<any>,indexProInfo:number) {
+      if(itemProInfo.length !== 1){
+        console.log(itemProInfo)
+        this.deleteItem(itemProInfo, indexProInfo)
+      }else {
+        if (product_data.length !== 1) {
         this.deleteItem(product_data, indexPro)
       } else {
         if (orderInfo_batch_data.length !== 1) {
@@ -1044,6 +1059,7 @@ export default Vue.extend({
         } else {
           this.$message.error('至少有一批')
         }
+      }
       }
     },
     // 报价单转订单逻辑
