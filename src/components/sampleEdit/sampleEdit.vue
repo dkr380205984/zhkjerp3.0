@@ -207,7 +207,7 @@
               </div>
               <div class="opr hoverBlue"
                 v-if="index===0"
-                @click="$addItem(sampleInfo.color_data)">添加</div>
+                @click="$addItem(sampleInfo.color_data,index)">添加</div>
               <div class="opr hoverRed"
                 v-if="index>0"
                 @click="$deleteItem(sampleInfo.color_data,index)">删除</div>
