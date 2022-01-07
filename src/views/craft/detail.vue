@@ -640,27 +640,42 @@
         </div>
         <div class="row">
           <div class="col">
+            <div class="label">上传图像：</div>
+            <div class="imageCtn">
+              <el-image style="width:150px;height:150px;margin-right:16px"
+                v-for="(item,index) in craftInfo.image_data"
+                :key="index"
+                :src="item.file_url || ''"
+                :preview-src-list="[item.file_url]">
+              </el-image>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
             <div class="label">仿真图像：</div>
             <div class="btnList">
               <div class="button"
                 v-for="(item,index) in craftInfo.warp_data.color_data"
                 :key="index"
                 :class="{'active':item.color_id===selectColour}"
-                @click="getCanvas(item.color_id)">{{item.color_name || '无配色'}}</div>
+                @click="getCanvas(item.color_id,index)">{{item.color_name || '无配色'}}</div>
             </div>
           </div>
         </div>
         <div class="row"
           style="position:relative"
           v-show="selectColour!==-1">
-          <!-- <span style="position: absolute;
+          <span class="hoverBlue"
+            style="position: absolute;
               left: 0px;
               top: -1em;
               color: rgb(26, 149, 255);
               cursor: pointer;
               right: 0;
               margin: auto;
-              text-align: center;">上传当前配色图片</span> -->
+              text-align: center;"
+            @click="uploadImg">上传当前配色图片</span>
           <div class="col"
             style="margin:0">
             <div class="canvasCtn">
@@ -1130,7 +1145,6 @@ export default Vue.extend({
     // 预览纹版图
     showGL(GLIndex: number) {
       let GLArr: any[][] = []
-      console.log(this.completeGL)
       this.completeGL[GLIndex].forEach((item) => {
         item.forEach((itemChild) => {
           if (itemChild.value) {
@@ -1362,7 +1376,6 @@ export default Vue.extend({
         // 如果所有的文版循环选项都为空则处理一个简单的空数组
         this.craftInfo.draft_method.GLRepeat = []
       }
-      console.log(this.craftInfo.draft_method.GLRepeat)
       this.craftInfo.draft_method.GLRepeat.forEach((item, index) => {
         GLRepeatComplete.push([])
         let start = 1
@@ -1587,7 +1600,7 @@ export default Vue.extend({
         })
       } else {
         this.craftInfo.draft_method.PM.forEach((item) => {
-          const PMArr = (item.value as string).split(',')
+          const PMArr = item.value ? (item.value as string).split(',') : []
           const times = Math.floor(Number(item.number) / PMArr.length)
           const remainder = Number(item.number) % PMArr.length
           for (let i = 0; i < times; i++) {
@@ -1596,7 +1609,7 @@ export default Vue.extend({
           warpGetPM = warpGetPM.concat(PMArr.filter((item, index) => index < remainder))
         })
         this.craftInfo.draft_method.PM.forEach((item) => {
-          const PMArr = (item.value as string).split(',')
+          const PMArr = item.value ? (item.value as string).split(',') : []
           const times = Math.floor(Number(item.number) / PMArr.length)
           const remainder = Number(item.number) % PMArr.length
           for (let i = 0; i < times; i++) {
@@ -1670,9 +1683,9 @@ export default Vue.extend({
       this.weftCanvasBack = weftCanvasBack
     },
     // 渲染图像
-    getCanvas(colorId: number) {
+    getCanvas(colorId: number, index: number) {
       this.showImageLoading = true
-      this.selectColour = colorId
+      this.selectColour = colorId ? colorId : -index
       setTimeout(() => {
         const warpColor = this.craftInfo.warp_data.color_data.find((item) => item.color_id === colorId)!.color_scheme
         const weftColor = this.craftInfo.weft_data.color_data.find((item) => item.color_id === colorId)!.color_scheme
@@ -1829,6 +1842,88 @@ export default Vue.extend({
         })
         return arr
       }
+    },
+    // 上传图片
+    uploadImg() {
+      let _this = this
+      let uploadData = {
+        craft_id: Number(this.$route.query.id),
+        is_back: 1,
+        color_id: this.selectColour,
+        file_url: ''
+      }
+      let uploadDataBack = {
+        craft_id: Number(this.$route.query.id),
+        is_back: 2,
+        color_id: this.selectColour,
+        file_url: ''
+      }
+      if (this.craftInfo.image_data!.find((item) => item.color_id === this.selectColour)) {
+        this.$message.error('请勿重复上传')
+        return
+      }
+      // 获取图片base64链接
+      // @ts-ignore
+      var image = _this.$refs.myCanvas.toDataURL('image/png')
+      var url = 'https://upload.qiniup.com/'
+      var xhr = new XMLHttpRequest()
+      let formData = new FormData()
+      formData.append('token', _this.token)
+      // @ts-ignore
+      let filename = Date.parse(new Date()) + '.jpg'
+      formData.append('key', filename)
+      formData.append('file', this.dataURLtoFile(image, filename))
+      xhr.open('POST', url, true)
+      xhr.send(formData)
+      _this.loading = true
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          uploadData.file_url = 'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key
+          _this.$message.success('上传成功')
+          craft.uploadImg(uploadData).then((res) => {
+            _this.craftInfo.image_data!.push(uploadData)
+            _this.loading = false
+            if (_this.craftInfo.warp_data.back_status === 1 || _this.craftInfo.weft_data.back_status === 1) {
+              _this.loading = true
+              // @ts-ignore
+              var imageBack = _this.$refs.myCanvasBack.toDataURL('image/png')
+              var urlBack = 'https://upload.qiniup.com/'
+              var xhrBack = new XMLHttpRequest()
+              let formData = new FormData()
+              formData.append('token', _this.token)
+              // @ts-ignore
+              let filename = Date.parse(new Date()) + '.jpg'
+              formData.append('key', filename)
+              formData.append('file', _this.dataURLtoFile(imageBack, filename))
+              xhrBack.open('POST', urlBack, true)
+              xhrBack.send(formData)
+              xhrBack.onreadystatechange = function () {
+                if (xhrBack.readyState === 4) {
+                  uploadDataBack.file_url = 'https://file.zwyknit.com/' + JSON.parse(xhrBack.responseText).key
+                  uploadDataBack.is_back = 2
+                  _this.$message.success('上传背面成功')
+                  craft.uploadImg(uploadDataBack).then((res) => {
+                    _this.loading = false
+                    _this.craftInfo.image_data!.push(uploadDataBack)
+                  })
+                }
+              }
+            }
+          })
+        }
+      }
+    },
+    dataURLtoFile(dataurl: string, filename: string) {
+      var arr = dataurl.split(',')
+      // @ts-ignore
+      var mime = arr[0].match(/:(.*?);/)[1]
+      var bstr = atob(arr[1])
+      var n = bstr.length
+      var u8arr = new Uint8Array(n)
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+      }
+      return new File([u8arr], filename, { type: mime })
     }
   },
   computed: {
@@ -1860,6 +1955,9 @@ export default Vue.extend({
     },
     productType(): string {
       return this.productInfo.product_type === 1 ? '产品' : '样品'
+    },
+    token(): string {
+      return this.$store.state.status.token
     }
   },
   created() {
@@ -1916,6 +2014,13 @@ export default Vue.extend({
     this.tableData.weftBack = this.deepClone(initData)
   },
   mounted() {
+    this.$checkCommonInfo([
+      {
+        checkWhich: 'status/token',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getTokenAsync'
+      }
+    ])
     craft
       .detail({
         id: Number(this.$route.query.id)

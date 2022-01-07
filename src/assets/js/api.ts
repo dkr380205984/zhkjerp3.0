@@ -55,6 +55,11 @@ const homePage = {
   }) => http.get(`${baseUrl}/index/search`, params)
 }
 
+// 系统教程
+const tutorialSystem = {
+  list: (params: { type: 1 }) => http.get(`${baseUrl}/system/study/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/system/study/detail`, params),
+}
 // 纱线报价
 interface YarnPrice {
   id: string | number
@@ -191,6 +196,12 @@ const craft = {
   detail: (params: DeleteParams) => http.get(`${baseUrl}/craft/detail`, params),
   list: (params?: ListParams) => http.get(`${baseUrl}/craft/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/craft/delete`, params, 'application/json'),
+  uploadImg: (params: {
+    craft_id: number
+    is_back: number
+    color_id: number
+    file_url: string
+  }) => http.post(`${baseUrl}/craft/image/save`, params, 'application/json'),
   czfCreate: (params: { pattern_loop: DraftMethods | string, name: string }) => http.post(`${baseUrl}/craft/pattern/save`, params, 'application/json'),
   czfDetail: (params: DeleteParams) => http.get(`${baseUrl}/craft/pattern/detail`, params),
   czfList: (params?: ListParams) => http.get(`${baseUrl}/craft/pattern/lists`, params),
@@ -561,5 +572,6 @@ export {
   materialStock,
   productionPlan,
   inspection,
-  exportExcel
+  exportExcel,
+  tutorialSystem
 }

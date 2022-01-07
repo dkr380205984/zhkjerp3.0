@@ -85,6 +85,13 @@ export interface CraftInfo {
   calc_weight_way: 1 | 2 // 计算公式
   product_time: string // 下机时间
   process_data: string[] // 后道工序
+  image_data?: Array<{
+    craft_id: number
+    color_name?: string
+    is_back: number
+    color_id: number
+    file_url: string
+  }>
   // 物料系数
   yarn_coefficient: Array<{
     id?: string
