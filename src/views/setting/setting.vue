@@ -1231,8 +1231,8 @@
                 <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
-                  :total="groupTotal"
-                  :current-page.sync="groupPage">
+                  :total="userTotal"
+                  :current-page.sync="userPage">
                 </el-pagination>
               </div>
             </div>

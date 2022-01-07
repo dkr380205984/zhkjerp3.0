@@ -236,6 +236,18 @@ const routes: Array<RouteConfig> = [
       path: '/materialPlanOrder/detail',
       name: '原料预订购详情',
       component: () => import('../views/materialPlanOrder/detail.vue')
+    }, {
+      path: '/tutorialSystem/create',
+      name: '添加系统教程',
+      component: () => import('../views/tutorialSystem/create.vue')
+    }, {
+      path: '/tutorialSystem/detail',
+      name: '系统教程详情',
+      component: () => import('../views/tutorialSystem/detail.vue')
+    }, {
+      path: '/tutorialSystem/list',
+      name: '系统教程列表',
+      component: () => import('../views/tutorialSystem/list.vue')
     }]
   }
 ]

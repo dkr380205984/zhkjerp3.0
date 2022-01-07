@@ -382,8 +382,11 @@
                       effect="dark"
                       content="统一单价和数量"
                       placement="top">
-                      <i class="el-icon-copy-document copyIcon hoverBlue"
-                        @click="$copyInfo(itemChild.product_info,['price','number'])"></i>
+                      <svg class="iconFont copyIcon hoverBlue"
+                        aria-hidden="true">
+                        <use xlink:href='#icon-tongbushuju1'
+                          @click="$copyInfo(itemChild.product_info,['price','number'])"></use>
+                      </svg>
                     </el-tooltip>
                   </div>
                 </div>

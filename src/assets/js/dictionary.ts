@@ -1,4 +1,116 @@
 import { CascaderInfo } from '@/types/vuex'
+// 之前的系统模块，之后补上新的模块后记得删除
+const permissions = [{
+  module: '样品管理',
+  id: 1
+}, {
+  module: '报价单管理',
+  id: 2
+}, {
+  module: '产品管理',
+  id: 3
+}, {
+  module: '设计单管理',
+  id: 4
+}, {
+  module: '订单管理',
+  id: 5
+}, {
+  module: '物料计划管理',
+  id: 6
+}, {
+  module: '物料订购管理',
+  id: 7
+}, {
+  module: '物料出入库管理',
+  id: 15
+}, {
+  module: '织造加工管理',
+  id: 8
+}, {
+  module: '产品收发管理',
+  id: 9
+}, {
+  module: '检验管理',
+  id: 10
+}, {
+  module: '装箱出库管理',
+  id: 11
+}, {
+  module: '库存管理',
+  id: 12
+}, {
+  module: '客户管理',
+  id: 13
+}, {
+  module: '系统设置',
+  id: 14
+}, {
+  module: '财务统计',
+  id: 16
+}, {
+  id: 99,
+  module: '常见问题'
+}]
+
+const systemModule = [{
+  id: 1,
+  name: '报价管理',
+  detail: []
+}, {
+  id: 1,
+  name: '样单管理',
+  detail: []
+}, {
+  id: 1,
+  name: '订单管理',
+  detail: []
+}, {
+  id: 1,
+  name: '物料计划',
+  detail: []
+}, {
+  id: 1,
+  name: '物料管理',
+  detail: []
+}, {
+  id: 1,
+  name: '物料出入库',
+  detail: []
+}, {
+  id: 1,
+  name: '生产计划',
+  detail: []
+}, {
+  id: 1,
+  name: '产品检验',
+  detail: []
+}, {
+  id: 1,
+  name: '装箱计划',
+  detail: []
+}, {
+  id: 1,
+  name: '装箱运输',
+  detail: []
+}, {
+  id: 1,
+  name: '仓库管理',
+  detail: []
+}, {
+  id: 1,
+  name: '客户与合作商管理',
+  detail: []
+}, {
+  id: 1,
+  name: '原料预订购',
+  detail: []
+}, {
+  id: 1,
+  name: '工艺单管理',
+  detail: []
+}]
+
 const yarnAttributeArr: CascaderInfo[] = [{
   label: '筒纱',
   value: '筒纱'
@@ -214,5 +326,7 @@ export {
   stockType,
   storeType,
   productionType,
-  limitArr
+  limitArr,
+  systemModule,
+  permissions
 }

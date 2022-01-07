@@ -16,7 +16,8 @@
             <el-select v-model="searchType"
               slot="prepend"
               class="select"
-              placeholder="请选择">
+              placeholder="请选择"
+              @change="searchInfo">
               <!-- <el-option label="所有"
                 value="0"></el-option> -->
               <el-option label="订单"
@@ -184,12 +185,27 @@
           <div class="titleCtn">
             <div class="title">版本更新公告</div>
           </div>
+          <div class="content">
+
+          </div>
         </div>
       </div>
       <div class="rightCtn">
         <div class="module">
           <div class="titleCtn">
-            <div class="title">系统教学</div>
+            <div class="title">系统教学<div class="fr hoverBlue"
+                style="font-size:16px;font-weight:normal;cursor:pointer"
+                @click="$openUrl('/tutorialSystem/list')">查看全部</div>
+            </div>
+          </div>
+          <div class="content">
+            <div class="line"
+              v-for="(item,index) in tutorialSystemArr"
+              :key="index">
+              <div class="number">{{index + 1}}</div>
+              <div class="text"
+                @click.prevent="$openUrl('/tutorialSystem/detail?id=' + item.id)">{{item.title}}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -200,6 +216,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { homePage } from '@/assets/js/api'
+import { tutorialSystem } from '@/assets/js/api'
 export default Vue.extend({
   data() {
     return {
@@ -248,14 +265,14 @@ export default Vue.extend({
           id: 5,
           isChecked: false,
           opr: '添加样单',
-          icon: 'icon-tianjiayangdan',
+          icon: 'icon-yangdanguanli1',
           url: '/sampleOrder/create'
         },
         {
           id: 5,
           isChecked: false,
           opr: '样单管理',
-          icon: 'icon-yangdan',
+          icon: 'icon-yangdanguanli1',
           url: '/sampleOrder/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
@@ -321,7 +338,8 @@ export default Vue.extend({
         quotedPrice: [],
         materialPlan: [],
         craft: []
-      }
+      },
+      tutorialSystemArr: []
     }
   },
   methods: {
@@ -339,6 +357,9 @@ export default Vue.extend({
       return arr
     },
     searchInfo() {
+      if (!this.searchValue) {
+        return
+      }
       this.searchLoading = true
       homePage
         .searchAll({
@@ -418,6 +439,9 @@ export default Vue.extend({
       if (flag) {
         flag.isChecked = true
       }
+    })
+    Promise.all([tutorialSystem.list({ type: 1 })]).then((res) => {
+      this.tutorialSystemArr = res[0].data.data.slice(0, 8)
     })
   }
 })
