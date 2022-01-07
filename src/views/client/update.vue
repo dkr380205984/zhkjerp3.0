@@ -133,7 +133,7 @@
           </div>
           <div class="oprRow">
             <div class="once"
-              @click="$addItem(clientInfo.contacts_data,{ name: '',phone: '',email: '',station: '' })">新增联系人
+              @click="$addItem(clientInfo.contacts_data,{id:'', name: '',phone: '',email: '',station: '' })">新增联系人
               <i class="el-icon-plus"></i>
             </div>
           </div>
@@ -319,7 +319,9 @@ export default Vue.extend({
       this.loading = false
       if (res.data.status) {
         this.clientInfo = res.data.data
-        this.getClientTag(this.clientInfo.client_type_id as number)
+        setTimeout(() => {
+          this.getClientTag(this.clientInfo.client_type_id as number)
+        }, 200)
       }
     })
   }

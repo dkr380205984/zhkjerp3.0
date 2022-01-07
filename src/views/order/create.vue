@@ -262,12 +262,17 @@
         style="border-bottom:0">
         <div class="title">
           添加批次信息
-          <span v-if="showTable"
-            @click="showTable = !showTable"
-            style="cursor:pointer;color:#1A95FF;margin-left:60px">切换为输入框模式icon</span>
-          <span v-else
-            @click="showTable = !showTable"
-            style="cursor:pointer;color:#1A95FF;margin-left:60px">切换为表格模式icon</span>
+          <el-tooltip class="item"
+            effect="dark"
+            :content="showTable?'切换为输入框模式':'切换为表格模式'"
+            placement="top">
+            <svg class="iconFont hoverBlue"
+              style="cursor:pointer;color:#1A95FF;margin-left:12px;font-size:28px"
+              aria-hidden="true">
+              <use xlink:href='#icon-qiehuanshurukuang'
+                @click="showTable = !showTable"></use>
+            </svg>
+          </el-tooltip>
         </div>
         <div class="btn backHoverBlue"
           @click="$addItem(orderInfo.time_data.batch_data, {
@@ -396,8 +401,11 @@
                                 effect="dark"
                                 content="统一单价和数量"
                                 placement="top">
-                                <i class="el-icon-copy-document copyIcon hoverBlue"
-                                  @click="$copyInfo(itemPro.product_info,['price','number'])"></i>
+                                <svg class="iconFont copyIcon hoverBlue"
+                                  aria-hidden="true">
+                                  <use xlink:href='#icon-tongbushuju1'
+                                    @click="$copyInfo(itemChild.product_info,['price','number'])"></use>
+                                </svg>
                               </el-tooltip>
                             </div>
                           </div>
@@ -526,33 +534,33 @@
                   <div class="tcol">操作</div>
                 </div>
               </div>
-            </div>
-            <div class="tbody">
-              <div class="trow"
-                v-for="(itemChild,indexChild) in item.product_data"
-                :key="indexChild">
-                <div class="tcol">
-                  <div class="elCtn"
-                    style="width:220px">
-                    <el-select v-model="itemChild.product_id"
-                      placeholder="选择产品"
-                      @change="getColour($event,itemChild)"
-                      no-data-text="请先添加/导入产品">
-                      <el-option v-for="item in productList"
-                        :key="item.id"
-                        :value="item.id"
-                        :label="item.system_code + '/' + item.name"></el-option>
-                    </el-select>
-                    <el-tooltip class="item"
-                      effect="dark"
-                      content="统一单价和数量"
-                      placement="top">
-                      <svg class="iconFont copyIcon hoverBlue"
-                        aria-hidden="true">
-                        <use xlink:href='#icon-tongbushuju1'
-                          @click="$copyInfo(itemChild.product_info,['price','number'])"></use>
-                      </svg>
-                    </el-tooltip>
+              <div class="tbody">
+                <div class="trow"
+                  v-for="(itemChild,indexChild) in item.product_data"
+                  :key="indexChild">
+                  <div class="tcol">
+                    <div class="elCtn"
+                      style="width:220px">
+                      <el-select v-model="itemChild.product_id"
+                        placeholder="选择产品"
+                        @change="getColour($event,itemChild)"
+                        no-data-text="请先添加/导入产品">
+                        <el-option v-for="item in productList"
+                          :key="item.id"
+                          :value="item.id"
+                          :label="item.system_code + '/' + item.name"></el-option>
+                      </el-select>
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一单价和数量"
+                        placement="top">
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true">
+                          <use xlink:href='#icon-tongbushuju1'
+                            @click="$copyInfo(itemChild.product_info,['price','number'])"></use>
+                        </svg>
+                      </el-tooltip>
+                    </div>
                   </div>
                   <div class="tcol noPad"
                     style="flex:4.35">
@@ -602,10 +610,11 @@
                   </div>
                 </div>
               </div>
-              <div class="oprRow"
-                style="margin-right:0">
-                <div class="once"
-                  @click="$addItem(item.product_data, {
+            </div>
+            <div class="oprRow"
+              style="margin-right:0">
+              <div class="once"
+                @click="$addItem(item.product_data, {
                   product_id: '',
                   size_color_list: [],
                   product_info: [
@@ -618,8 +627,7 @@
                     }
                   ]
                 })">新增产品
-                  <i class="el-icon-plus"></i>
-                </div>
+                <i class="el-icon-plus"></i>
               </div>
             </div>
           </div>
