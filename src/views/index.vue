@@ -122,25 +122,25 @@ export default Vue.extend({
         {
           name: '报价管理',
           id: 1,
-          icon: 'icon-baojiaguanli',
+          icon: 'icon-baojiaguanli1',
           url: '/quotedPrice/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
           name: '样单管理',
           id: 2,
-          icon: 'icon-yangdanguanli',
+          icon: 'icon-yangdanguanli1',
           url: '/sampleOrder/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
           name: '订单管理',
           id: 3,
-          icon: 'icon-dingdanguanli',
+          icon: 'icon-dingdanguanli1',
           url: '/order/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
           name: '其它管理',
           id: null,
-          icon: 'icon-qitaguanli',
+          icon: 'icon-qitaguanli1',
           url: '/menu'
         }
       ]

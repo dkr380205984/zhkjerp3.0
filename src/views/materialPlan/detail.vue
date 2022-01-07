@@ -416,7 +416,7 @@ export default Vue.extend({
         .then(() => {
           materialPlan
             .delete({
-              id: Number(this.$route.query.id)
+              id: this.materialPlanIndex
             })
             .then((res) => {
               if (res.data.status) {
@@ -424,9 +424,16 @@ export default Vue.extend({
                   type: 'success',
                   message: '删除成功!'
                 })
-                this.$router.push(
-                  '/materialPlan/list?page=1&keyword=&client_id=&user_id=&status=0&date=&&order_type=null'
-                )
+                if (this.materialPlanInfo.length > 1) {
+                  this.materialPlanInfo = this.materialPlanInfo.filter(
+                    (item) => item.id !== Number(this.materialPlanIndex)
+                  )
+                  this.materialPlanIndex = this.materialPlanInfo[0].id?.toString()
+                } else {
+                  this.$router.push(
+                    '/materialPlan/list?page=1&keyword=&client_id=&user_id=&status=0&date=&&order_type=null'
+                  )
+                }
               }
             })
         })

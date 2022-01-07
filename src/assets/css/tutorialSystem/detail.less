@@ -1,0 +1,37 @@
+
+@import '../common.less';
+@import '../bottomBar.less';
+#tutorialSystemDetail{
+  .stepsCtn{
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    .step_item{
+      display: flex;
+      line-height: 2em;
+      height: auto;
+      .lineCtn{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .step_num{
+          width: 2em;
+          border: 2px solid @blue;
+          border-radius: 50%;
+          height: 2em;
+          text-align: center;
+        }
+        .step_line{
+          flex: 1;
+          width: 3px;
+          background: @blue;
+        }
+      }
+      .contentCtn{
+        flex: 1;
+        margin-left: 8px;
+        height: auto;
+      }
+    }
+  }
+}

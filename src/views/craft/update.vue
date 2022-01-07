@@ -482,9 +482,6 @@
               v-for="(item1,index1) in craftInfo.draft_method.GL"
               :key="index1">
               <div class="mark">{{alphabet[index1]}}：
-                <span class="hoverBlue"
-                  style="cursor:pointer"
-                  @click="showGL(item1)">预览</span>
               </div>
               <div v-for="(item2,index2) in item1"
                 :key="index2"
@@ -2181,6 +2178,27 @@ export default Vue.extend({
         })
         .map((item) => Number(item.value))
       this.craftInfo.weft_data.weimi = this.weimi
+      // 调整穿综纹版逗号
+      if (this.craftInfo.draft_method.PMFlag === 'normal') {
+        this.craftInfo.draft_method.PM.forEach((item) => {
+          item.value = item.value!.replace(/，|\./g, ',')
+          item.repeat = Number(item.repeat) > 0 ? Number(item.repeat) : 1
+        })
+      } else {
+        this.craftInfo.draft_method.PM.forEach((item) => {
+          item.children?.forEach((itemChild) => {
+            itemChild.value = itemChild.value!.replace(/，|\./g, ',')
+            itemChild.repeat = Number(itemChild.repeat) > 0 ? Number(itemChild.repeat) : 1
+          })
+        })
+      }
+      this.craftInfo.draft_method.GL.forEach((item) => {
+        item.forEach((itemChild) => {
+          itemChild.forEach((itemSon) => {
+            itemSon.value = itemSon.value.replace(/，|\./g, ',')
+          })
+        })
+      })
       this.craftInfo.warp_data.merge_data = this.tableHot.warp.getPlugin('MergeCells').mergedCellsCollection.mergedCells
       this.craftInfo.warp_data.merge_data_back =
         this.tableHot.warpBack.getPlugin('MergeCells').mergedCellsCollection.mergedCells

@@ -158,8 +158,11 @@
                         effect="dark"
                         content="统一工序"
                         placement="top">
-                        <i class="el-icon-copy-document copyIcon hoverBlue"
-                          @click="copyInfo(item.info_data,['process_name_arr','process_name'])"></i>
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true">
+                          <use xlink:href='#icon-tongbushuju1'
+                            @click="copyInfo(item.info_data,['process_name_arr','process_name'])"></use>
+                        </svg>
                       </el-tooltip>
                     </div>
                     <div class="tcol">原料名称
@@ -167,8 +170,11 @@
                         effect="dark"
                         content="统一原料"
                         placement="top">
-                        <i class="el-icon-copy-document copyIcon hoverBlue"
-                          @click="copyInfo(item.info_data,['tree_data','material_name'])"></i>
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true">
+                          <use xlink:href='#icon-tongbushuju1'
+                            @click="copyInfo(item.info_data,['tree_data','material_name'])"></use>
+                        </svg>
                       </el-tooltip>
                     </div>
                     <div class="tcol">原料颜色
@@ -176,8 +182,11 @@
                         effect="dark"
                         content="统一颜色"
                         placement="top">
-                        <i class="el-icon-copy-document copyIcon hoverBlue"
-                          @click="copyInfo(item.info_data,['material_color'])"></i>
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true">
+                          <use xlink:href='#icon-tongbushuju1'
+                            @click="copyInfo(item.info_data,['material_color'])"></use>
+                        </svg>
                       </el-tooltip>
                     </div>
                     <div class="tcol">单个数量</div>
@@ -188,8 +197,11 @@
                         effect="dark"
                         content="统一数量"
                         placement="top">
-                        <i class="el-icon-copy-document copyIcon hoverBlue"
-                          @click="copyInfo(item.info_data,['final_number','unit'])"></i>
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true">
+                          <use xlink:href='#icon-tongbushuju1'
+                            @click="copyInfo(item.info_data,['final_number','unit'])"></use>
+                        </svg>
                       </el-tooltip>
                     </div>
                     <div class="tcol">操作</div>
@@ -1144,6 +1156,7 @@ export default Vue.extend({
         this.$message.warning('请确认生产数量')
         return
       }
+      console.log(this.materialPlanInfo)
       const formCheck =
         this.materialPlanInfo.production_plan_data.some((item) => {
           return item.product_data.some((itemChild) => {

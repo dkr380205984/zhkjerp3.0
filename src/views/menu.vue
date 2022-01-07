@@ -141,6 +141,12 @@ export default Vue.extend({
           //   icon: 'iconshouye',
           //   url: '/commonPrint/printMenu'
           // }
+          // {
+          //   name: '系统教程',
+          //   id: 16,
+          //   icon: 'icon-wuliaoyudinggou',
+          //   url: '/tutorialSystem/create'
+          // }
         ],
         finance: []
       }
