@@ -816,7 +816,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
-      showTable: false,
+      showTable: true,
       loading: false,
       unitArr: moneyArr,
       quotedPriceProductInfo: {
@@ -826,6 +826,7 @@ export default Vue.extend({
       },
       quotedPriceProductList: [], // 报价单的产品描述
       orderInfo: {
+        pid: null,
         id: null,
         client_id: '',
         group_id: '',
@@ -1046,20 +1047,27 @@ export default Vue.extend({
     deleteItem(array: Array<any>, index: number) {
       array.splice(index, 1)
     },
-    tableDelete(orderInfo_batch_data: Array<any>, index: number, product_data: Array<any>, indexPro: number,itemProInfo:Array<any>,indexProInfo:number) {
-      if(itemProInfo.length !== 1){
+    tableDelete(
+      orderInfo_batch_data: Array<any>,
+      index: number,
+      product_data: Array<any>,
+      indexPro: number,
+      itemProInfo: Array<any>,
+      indexProInfo: number
+    ) {
+      if (itemProInfo.length !== 1) {
         console.log(itemProInfo)
         this.deleteItem(itemProInfo, indexProInfo)
-      }else {
-        if (product_data.length !== 1) {
-        this.deleteItem(product_data, indexPro)
       } else {
-        if (orderInfo_batch_data.length !== 1) {
-          this.deleteItem(orderInfo_batch_data, index)
+        if (product_data.length !== 1) {
+          this.deleteItem(product_data, indexPro)
         } else {
-          this.$message.error('至少有一批')
+          if (orderInfo_batch_data.length !== 1) {
+            this.deleteItem(orderInfo_batch_data, index)
+          } else {
+            this.$message.error('至少有一批')
+          }
         }
-      }
       }
     },
     // 报价单转订单逻辑
@@ -1145,7 +1153,6 @@ export default Vue.extend({
     getProductDetail(product: ProductInfo) {
       this.productShow = true
       this.productDetail = product
-      console.log(product)
     },
     beforeAvatarUpload(file: any) {
       const fileName = file.name.lastIndexOf('.') // 取到文件名开始到最后一个点的长度
@@ -1175,6 +1182,7 @@ export default Vue.extend({
       )
     },
     getCmpData() {
+      this.orderInfo.pid = Number(this.$route.query.sampleOrderId) ? Number(this.$route.query.sampleOrderId) : null
       this.orderInfo.client_id = (this.orderInfo.tree_data as number[])[2]
       this.orderInfo.tree_data = (this.orderInfo.tree_data as number[]).join(',')
       this.orderInfo.time_data.total_style = this.totalStyle

@@ -130,7 +130,7 @@
       <div class="pmain">
         <div class="phead clearfix">
           <div class="fl">
-            <div class="ptitle">物料计划单</div>
+            <div class="ptitle">{{company_name}}物料计划单</div>
             <div class="prow">
               <div class="pcol">
                 <div class="label">系统计划单编号：</div>
@@ -182,7 +182,7 @@
             </div>
           </div>
           <div class="tableCtn"
-            v-for="item in materialPlanInfo"
+            v-for="(item,index) in materialPlanInfo"
             :key="item.material_id">
             <div class="thead bgWhite"
               style="height: auto">
@@ -224,9 +224,25 @@
                       style="flex:0.3">{{ itemChild.material_color }}</div>
                     <div class="tcol"
                       :style="tableLineHeight"
-                      style="flex:0.3">{{ itemChild.final_number }}{{ itemChild.unit }}</div>
+                      style="flex:0.3">
+                      <template v-if="!editFlag">
+                        {{ itemChild.final_number }}{{ itemChild.unit }}
+                      </template>
+                      <template v-else>
+                        <div class="elCtn">
+                          <el-input v-model="itemChild.final_number"
+                            placeholder="输入数量">
+                            <template slot="append">{{itemChild.unit}}</template>
+                          </el-input>
+                        </div>
+                      </template>
+                    </div>
                     <div class="tcol"
-                      :style="tableLineHeight"></div>
+                      :style="tableLineHeight">
+                      <div class="deleteIcon hoverRed"
+                        v-show="editFlag"
+                        @click="item.childrenMergeInfo.length>1?$deleteItem(item.childrenMergeInfo,indexChild):$deleteItem(materialPlanInfo,index)">删除本行</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -267,6 +283,8 @@
         @click="windowMethod(1)">刷新页面</div>
       <div class="setting_item"
         @click="windowMethod(2)">打印计划单</div>
+      <div class="setting_item"
+        @click="windowMethod(3)">{{editFlag?'完成编辑':'编辑模式'}}</div>
     </div>
   </div>
 </template>
@@ -297,7 +315,8 @@ export default Vue.extend({
         created_at: '',
         client_name: '',
         group_name: ''
-      }
+      },
+      editFlag: false
     }
   },
   methods: {
@@ -319,6 +338,8 @@ export default Vue.extend({
             window.print()
           }, 100)
         } else if (type === 3) {
+          this.editFlag = !this.editFlag
+          this.showMenu = false
         } else if (type === 4) {
           this.isBreak = !this.isBreak
           this.showMenu = false
@@ -336,21 +357,15 @@ export default Vue.extend({
         this.materialPlanInfo = this.$mergeData(res.data.data.material_plan_gather_data, {
           mainRule: ['material_name', 'material_id']
         })
-
         // 生成二维码
         const QRCode = require('qrcode')
         QRCode.toDataURL(`${this.otherInfo.code}`)
           .then((url: any) => {
             this.qrCodeUrl = url
-            // console.log(this.qrCodeUrl)
           })
           .catch((err: any) => {
             console.error(err)
           })
-        // setTimeout(() => {
-        //   window.print()
-        // }, 1000)
-
         this.loading = false
       })
   },

@@ -48,9 +48,9 @@
             </div>
             <div class="tcol">{{item.material_name}}</div>
             <div class="tcol">{{item.material_color}}</div>
-            <div class="tcol">{{item.need_number}}kg</div>
+            <div class="tcol">{{item.need_number}}{{item.unit}}</div>
             <div class="tcol">{{item.loss}}%</div>
-            <div class="tcol">{{item.final_number}}kg</div>
+            <div class="tcol">{{item.final_number}}{{item.unit}}</div>
           </div>
         </div>
       </div>
@@ -67,7 +67,7 @@
                 aria-hidden="true">
                 <use xlink:href="#icon-xiugaidingdan"></use>
               </svg>
-              <span class="text">订购色纱</span>
+              <span class="text">订购成品</span>
             </div>
             <div class="btn backHoverBlue"
               @click="goOrderMaterial('白胚')">
@@ -164,7 +164,7 @@
                 <div class="tcol">{{itemChild.material_name}}</div>
                 <div class="tcol">{{itemChild.material_color}}</div>
                 <div class="tcol">{{itemChild.attribute}}</div>
-                <div class="tcol">{{itemChild.number}}kg</div>
+                <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
                 <div class="tcol">{{itemChild.price}}元</div>
               </div>
             </div>
@@ -264,7 +264,7 @@
                           <span>{{itemMat.qiege_desc}}</span>
                         </template>
                       </div>
-                      <div class="tcol">{{itemMat.number}}kg</div>
+                      <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
                       <div class="tcol">{{itemMat.price}}元</div>
                     </div>
                   </div>
@@ -349,7 +349,7 @@
                 <div class="tcol">{{itemChild.material_color}}</div>
                 <div class="tcol">{{itemChild.attribute}}</div>
                 <div class="tcol">{{itemChild.batch_code}}/{{itemChild.vat_code}}/{{itemChild.color_code}}</div>
-                <div class="tcol">{{itemChild.number}}kg</div>
+                <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
                 <div class="tcol">{{itemChild.price||0}}元</div>
                 <div class="tcol">加工数量</div>
               </div>
@@ -446,7 +446,7 @@
                           <span>{{itemMat.qiege_desc}}</span>
                         </template>
                       </div>
-                      <div class="tcol">{{itemMat.number}}kg</div>
+                      <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
                       <div class="tcol">{{itemMat.price}}元</div>
                     </div>
                   </div>
@@ -555,7 +555,7 @@
                   v-if="indexMat===0">
                   <div class="once">
                     <span class="text">订购属性</span>
-                    <span class="explanation">(必选)</span>
+                    <span class="explanation">(选填)</span>
                   </div>
                   <div class="once">
                     <span class="text">订购颜色</span>
@@ -563,14 +563,10 @@
                   </div>
                 </div>
                 <div class="info elCtn spaceBetween">
-                  <el-select class="once"
-                    placeholder="属性"
-                    v-model="itemMat.attribute">
-                    <el-option v-for="item in yarnAttributeList"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"></el-option>
-                  </el-select>
+                  <el-autocomplete class="once"
+                    v-model="itemMat.attribute"
+                    :fetch-suggestions="searchAttribute"
+                    placeholder="物料属性"></el-autocomplete>
                   <template>
                     <el-input class="once"
                       placeholder="白胚"
@@ -602,10 +598,13 @@
                     v-model="itemMat.price">
                     <template slot="append">元</template>
                   </el-input>
-                  <el-input class="once"
+                  <el-input class="once UnitCtn"
                     placeholder="数量"
                     v-model="itemMat.number">
-                    <template slot="append">kg</template>
+                    <template slot="append">
+                      <el-input v-model="itemMat.unit"
+                        placeholder="单位"></el-input>
+                    </template>
                   </el-input>
                 </div>
               </div>
@@ -701,7 +700,6 @@
                   <el-input placeholder="自动计算"
                     v-model="totalOrderNumberList[index]"
                     disabled>
-                    <template slot="append">kg</template>
                   </el-input>
                 </div>
               </div>
@@ -922,15 +920,30 @@
                         <template slot="append">元</template>
                       </el-input>
                     </div>
-                    <div class="once">
+                    <div class="once UnitCtn">
                       <el-input placeholder="调取数量"
                         v-model="item.number">
-                        <template slot="append">kg</template>
+                        <template slot="append">
+                          <el-input v-model="item.unit"
+                            placeholder="单位"></el-input>
+                        </template>
                       </el-input>
                     </div>
                   </div>
                 </div>
-                <div class="opr hoverBlue">添加</div>
+                <div class="opr hoverBlue"
+                  @click="$addItem(materialStockInfo.info_data,{
+                    material_id: '',
+                    material_color: '',
+                    color_code: '',
+                    batch_code: '',
+                    vat_code: '',
+                    attribute: '',
+                    number: item.final_number,
+                    item: '', // 件数
+                    unit: 'kg',
+                    rel_doc_info_id: '' // 采购单调取单加工单子项id
+                })">添加</div>
               </div>
               <div class="row">
                 <div class="col">
@@ -955,7 +968,6 @@
                     <el-input placeholder="调取总数"
                       disabled
                       v-model="totalStockNumber">
-                      <template slot="append">kg</template>
                     </el-input>
                   </div>
                 </div>
@@ -1146,24 +1158,14 @@
                       placeholder="物料颜色"></el-autocomplete>
                   </template>
                   <template v-if="item.process==='倒纱'">
-                    <el-select class="once"
-                      placeholder="选择属性"
+                    <el-autocomplete class="once"
                       v-model="itemMat.before_attribute"
-                      filterable>
-                      <el-option v-for="item in yarnAttributeList"
-                        :key="item.value"
-                        :value="item.value"
-                        :label="item.label"></el-option>
-                    </el-select>
-                    <el-select class="once"
-                      placeholder="选择属性"
+                      :fetch-suggestions="searchAttribute"
+                      placeholder="物料属性"></el-autocomplete>
+                    <el-autocomplete class="once"
                       v-model="itemMat.after_attribute"
-                      filterable>
-                      <el-option v-for="item in yarnAttributeList"
-                        :key="item.value"
-                        :value="item.value"
-                        :label="item.label"></el-option>
-                    </el-select>
+                      :fetch-suggestions="searchAttribute"
+                      placeholder="物料属性"></el-autocomplete>
                   </template>
                   <template v-if="item.process==='膨纱'">
                     <el-input class="once"
@@ -1203,10 +1205,13 @@
                     v-model="itemMat.price">
                     <template slot="append">元</template>
                   </el-input>
-                  <el-input class="once"
+                  <el-input class="once UnitCtn"
                     placeholder="数量"
                     v-model="itemMat.number">
-                    <template slot="append">kg</template>
+                    <template slot="append">
+                      <el-input v-model="itemMat.unit"
+                        placeholder="单位"></el-input>
+                    </template>
                   </el-input>
                 </div>
               </div>
@@ -1394,7 +1399,7 @@
                   v-if="indexMat===0">
                   <div class="once">
                     <span class="text">订购属性</span>
-                    <span class="explanation">(默认)</span>
+                    <span class="explanation">(选填))</span>
                   </div>
                   <div class="once">
                     <span class="text">订购颜色</span>
@@ -1402,30 +1407,21 @@
                   </div>
                 </div>
                 <div class="info elCtn spaceBetween">
-                  <el-select class="once"
-                    placeholder="属性"
+                  <el-autocomplete class="once"
                     v-model="itemMat.attribute"
-                    disabled>
-                    <el-option v-for="item in yarnAttributeList"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"></el-option>
-                  </el-select>
+                    :fetch-suggestions="searchAttribute"
+                    disabled
+                    placeholder="物料属性"></el-autocomplete>
                   <template>
                     <el-input class="once"
                       placeholder="白胚"
                       disabled
                       v-if="itemMat.material_color==='白胚'"></el-input>
-                    <el-select v-else
+                    <el-autocomplete v-else
                       class="once"
-                      placeholder="颜色"
                       v-model="itemMat.material_color"
-                      disabled>
-                      <el-option v-for="item in yarnColorList"
-                        :key="item.name"
-                        :value="item.name"
-                        :label="item.name"></el-option>
-                    </el-select>
+                      :fetch-suggestions="searchColor"
+                      placeholder="物料颜色"></el-autocomplete>
                   </template>
                 </div>
               </div>
@@ -1450,7 +1446,7 @@
                   <el-input class="once"
                     placeholder="数量"
                     v-model="itemMat.number">
-                    <template slot="append">kg</template>
+                    <template slot="append">{{itemMat.unit}}</template>
                   </el-input>
                 </div>
               </div>
@@ -1690,24 +1686,14 @@
                       placeholder="物料颜色"></el-autocomplete>
                   </template>
                   <template v-if="materialProcessUpdataInfo.process==='倒纱'">
-                    <el-select class="once"
-                      placeholder="选择属性"
+                    <el-autocomplete class="once"
                       v-model="itemMat.before_attribute"
-                      filterable>
-                      <el-option v-for="item in yarnAttributeList"
-                        :key="item.value"
-                        :value="item.value"
-                        :label="item.label"></el-option>
-                    </el-select>
-                    <el-select class="once"
-                      placeholder="选择属性"
+                      :fetch-suggestions="searchAttribute"
+                      placeholder="物料属性"></el-autocomplete>
+                    <el-autocomplete class="once"
                       v-model="itemMat.after_attribute"
-                      filterable>
-                      <el-option v-for="item in yarnAttributeList"
-                        :key="item.value"
-                        :value="item.value"
-                        :label="item.label"></el-option>
-                    </el-select>
+                      :fetch-suggestions="searchAttribute"
+                      placeholder="物料属性"></el-autocomplete>
                   </template>
                   <template v-if="materialProcessUpdataInfo.process==='膨纱'">
                     <el-input class="once"
@@ -1750,7 +1736,7 @@
                   <el-input class="once"
                     placeholder="数量"
                     v-model="itemMat.number">
-                    <template slot="append">kg</template>
+                    <template slot="append">{{itemMat.unit}}</template>
                   </el-input>
                 </div>
               </div>
@@ -2113,6 +2099,11 @@ export default Vue.extend({
       // 调用 callback 返回建议列表的数据
       cb(results)
     },
+    // 原料属性搜索
+    searchAttribute(str: string, cb: any) {
+      let results = str ? this.yarnAttributeList.filter(this.createFilter(str)) : this.yarnAttributeList.slice(0, 10)
+      cb(results)
+    },
     createFilter(queryString: string) {
       return (restaurant: any) => {
         return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
@@ -2155,10 +2146,10 @@ export default Vue.extend({
               material_id: item.material_id,
               material_name: '',
               material_color: item.material_color,
-              attribute: '',
+              attribute: '筒纱',
               price: '',
               number: item.final_number,
-              unit: 'kg'
+              unit: item.unit
             }
           })
         } else {
@@ -2174,10 +2165,10 @@ export default Vue.extend({
                 material_id: item.material_id,
                 material_name: '',
                 material_color: '白胚',
-                attribute: '',
+                attribute: '绞纱',
                 price: '',
                 number: item.final_number,
-                unit: 'kg'
+                unit: item.unit
               })
             }
           })
@@ -2260,10 +2251,10 @@ export default Vue.extend({
                   key: 'material_id',
                   errMsg: '请选择物料名称'
                 },
-                {
-                  key: 'attribute',
-                  errMsg: '请选择物料属性'
-                },
+                // {
+                //   key: 'attribute',
+                //   errMsg: '请选择物料属性'
+                // },
                 {
                   key: 'material_color',
                   errMsg: '请选择物料颜色'
@@ -2360,6 +2351,7 @@ export default Vue.extend({
             attribute: '',
             number: item.final_number,
             item: '', // 件数
+            unit: item.unit,
             rel_doc_info_id: item.id // 采购单调取单加工单子项id
           }
         })
@@ -2530,7 +2522,7 @@ export default Vue.extend({
               after_color: '', // 加工后颜色
               price: '',
               number: item.number,
-              unit: 'kg',
+              unit: item.unit,
               pengsha_desc: '', // 膨纱要求
               qiege_desc: '', // 切割要求
               bingxian_desc: '' // 并线要求
@@ -2552,7 +2544,7 @@ export default Vue.extend({
               after_color: '', // 加工后颜色
               price: '',
               number: item.number,
-              unit: 'kg',
+              unit: item.unit,
               pengsha_desc: '', // 膨纱要求
               qiege_desc: '', // 切割要求
               bingxian_desc: '' // 并线要求
@@ -2897,6 +2889,20 @@ export default Vue.extend({
 #materialManageDetail {
   .el-tabs__content {
     padding: 0;
+  }
+  .UnitCtn {
+    .el-input-group__append {
+      padding: 0;
+      .el-input {
+        width: 45px;
+        .el-input__inner {
+          padding: 0 8px;
+          border: 0;
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+        }
+      }
+    }
   }
 }
 </style>

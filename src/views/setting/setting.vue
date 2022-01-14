@@ -765,6 +765,10 @@
               <div class="filterCtn clearfix">
                 <div class="btn backHoverBlue fr"
                   @click="showPopup=true">添加纱线</div>
+                <div class="btn backHoverOrange fr"
+                  @click="showYarn = true">批量导入</div>
+                <div class="btn backHoverGreen fr"
+                  @click="downLoadTemplete('yarn1')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -834,6 +838,10 @@
               <div class="filterCtn clearfix">
                 <div class="btn backHoverBlue fr"
                   @click="showPopup=true">添加面料</div>
+                <div class="btn backHoverOrange fr"
+                  @click="showYarn = true">批量导入</div>
+                <div class="btn backHoverGreen fr"
+                  @click="downLoadTemplete('yarn2')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -942,6 +950,10 @@
               <div class="filterCtn clearfix">
                 <div class="btn backHoverBlue fr"
                   @click="showPopup=true">添加辅料</div>
+                <div class="btn backHoverOrange fr"
+                  @click="importExcelData('decorateMaterial')">批量导入</div>
+                <div class="btn backHoverGreen fr"
+                  @click="downLoadTemplete('decorateMaterial')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -2747,6 +2759,51 @@
         </div>
       </template>
     </div>
+    <!-- 选择物料类型上传excel -->
+    <div class="popup"
+      v-show="showYarn">
+      <div class="main">
+        <div class="titleCtn">
+          <div class="text">导入物料</div>
+          <div class="closeCtn"
+            @click="showYarn=false">
+            <i class="el-icon-close"></i>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="row">
+            <div class="label">选择类型：</div>
+            <div class="info tagCtn">
+              <span class="yarnNameTag"
+                :class="{'active':item.check,'unactive':!item.check}"
+                v-for="(item,index) in (cName==='纱线原料'?yarnTypeList1:yarnTypeList2)"
+                :key="item.id"
+                @click="item.check=!item.check;$forceUpdate()">
+                <span class="name">{{item.name}}</span>
+                <span class="el-icon-close icon"
+                  @click.stop="deleteYarnType(item.id,index,1)"></span>
+              </span>
+              <span class="elCtn"
+                v-show="yarnTypeFlag1">
+                <el-input placeholder="输入新增类型"
+                  v-model="yarnTypeInfo1.name"></el-input>
+              </span>
+              <span class="yarnNameTag"
+                :class="yarnTypeFlag1?'active':'addBtn'"
+                @click="yarnTypeFlag1?saveYarnType(1):yarnTypeFlag1=true">{{yarnTypeFlag1?'保存类型':'新增类型'}}
+                <i :class="yarnTypeFlag1?'el-icon-document-checked':'el-icon-plus'"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <div class="btn borderBtn"
+            @click="showYarn=false">取消</div>
+          <div class="btn backHoverBlue"
+            @click="importExcelData('yarn1')">确定</div>
+        </div>
+      </div>
+    </div>
     <!-- 删除尺码 -->
     <div class="popup"
       v-show="deleteSizeFLag">
@@ -2917,6 +2974,7 @@ export default Vue.extend({
       pName: '',
       cName: '',
       showPopup: false,
+      showYarn: false,
       categoryInfo: {
         id: '',
         name: '',
@@ -3532,6 +3590,22 @@ export default Vue.extend({
     },
     downLoadTemplete(type: string) {
       switch (type) {
+        case 'yarn1':
+          this.$downloadExcel([], [{ title: '纱线名称', key: 'name' }], '纱线名称模板')
+          break
+        case 'yarn2':
+          this.$downloadExcel([], [{ title: '面料名称', key: 'name' }], '面料名称模板')
+          break
+        case 'decorateMaterial':
+          this.$downloadExcel(
+            [],
+            [
+              { title: '辅料名称', key: 'name' },
+              { title: '计量单位', key: 'unit' }
+            ],
+            '辅料名称模板'
+          )
+          break
         case 'style':
           this.$downloadExcel([], [{ title: '款式名称', key: 'name' }], '产品款式模板')
           break
@@ -3614,6 +3688,7 @@ export default Vue.extend({
       inputFile.dispatchEvent(click)
     },
     getExcelData(file: any, callBack: any, type: string) {
+      const _this = this
       const XLSX = require('xlsx')
       const files = file.target.files
       const fileReader = new FileReader()
@@ -3637,13 +3712,12 @@ export default Vue.extend({
           })
           callBack && callBack(r, type)
         } catch (e) {
-          console.log('文件类型不正确')
+          _this.$message.error('文件类型不正确')
         }
       }
       fileReader.readAsArrayBuffer(files[0])
     },
     saveImportData(data: any, type: string) {
-      console.log(data, type)
       let typeObj: any = {}
       let api = null
       switch (type) {
@@ -3690,14 +3764,20 @@ export default Vue.extend({
           }
           api = craftSetting.createMethods
           break
-        // case 'yarn':
-        //   typeObj = {
-        //     id: [false, null],
-        //     name: ['纱线原料名称'],
-        //     price_data: [false, []]
-        //   }
-        //   api = yarn.create
-        //   break
+        case 'yarn1':
+          typeObj = {
+            id: [false, null],
+            name: ['纱线名称']
+          }
+          api = yarn.create
+          break
+        case 'yarn2':
+          typeObj = {
+            id: [false, null],
+            name: ['面料名称']
+          }
+          api = yarn.create
+          break
         case 'yarnColor':
           typeObj = {
             id: [false, null],
@@ -3706,16 +3786,14 @@ export default Vue.extend({
           }
           api = yarnColor.create
           break
-        // case 'material':
-        //   typeObj = {
-        //     id: [false, null],
-        //     name: ['装饰辅料名称'],
-        //     unit: ['计量单位'],
-        //     need_weave: [`是否需要织造(注:'是'填'1','否'填'0',默认为'0')`, 0],
-        //     price_data: [false, []]
-        //   }
-        //   api = material.create
-        //   break
+        case 'decorateMaterial':
+          typeObj = {
+            id: [false, null],
+            name: ['辅料名称'],
+            unit: ['计量单位']
+          }
+          api = decorateMaterial.create
+          break
         // case 'pack':
         //   typeObj = {
         //     id: [false, null],
@@ -3776,16 +3854,42 @@ export default Vue.extend({
         this.$message.warning('未读取到可用参数')
         return
       }
-      api({
-        data: submitData
-      }).then((res) => {
-        if (res.data.status !== false) {
-          this.$message.success('导入成功,即将刷新数据')
-          setTimeout(() => {
-            window.location.reload()
-          }, 1000)
+      if (type === 'yarn1' || type === 'yarn2') {
+        const realType = (type === 'yarn1' ? this.yarnTypeList1 : this.yarnTypeList2)
+          .filter((item: { check: any }) => item.check)
+          .map((item: { id: any }) => item.id)
+        if (realType.length === 0) {
+          this.$message.error('请至少选择一种类型')
+          return
         }
-      })
+        // @ts-ignore
+        api({
+          id: null,
+          // @ts-ignore
+          name: submitData.map((item) => item.name),
+          type: type === 'yarn1' ? 1 : 2,
+          yarn_rel_type: realType as number[]
+        }).then((res) => {
+          if (res.data.status !== false) {
+            this.$message.success('导入成功,即将刷新数据')
+            setTimeout(() => {
+              window.location.reload()
+            }, 1000)
+          }
+        })
+      } else {
+        // @ts-ignore
+        api({
+          data: submitData
+        }).then((res) => {
+          if (res.data.status !== false) {
+            this.$message.success('导入成功,即将刷新数据')
+            setTimeout(() => {
+              window.location.reload()
+            }, 1000)
+          }
+        })
+      }
     },
     getCategory() {
       category.list().then((res) => {
@@ -3805,10 +3909,6 @@ export default Vue.extend({
           {
             key: 'unit',
             errMsg: '单位不得为空'
-          },
-          {
-            key: 'code',
-            errMsg: '编号不得为空'
           }
         ]) ||
         this.categoryInfo.secondary_category.some((item) => {

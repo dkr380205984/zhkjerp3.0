@@ -45,6 +45,14 @@ const routes: Array<RouteConfig> = [
     name: '报价单打印',
     component: () => import('../views/quotedPrice/print.vue')
   }, {
+    path: '/sampleOrder/print',
+    name: '布置单打印',
+    component: () => import('../views/sampleOrder/print.vue')
+  }, {
+    path: '/productionPlan/print',
+    name: '生产计划单打印',
+    component: () => import('../views/productionPlan/print.vue')
+  }, {
     path: '/index',
     name: 'index',
     component: () => import('../views/index.vue'),

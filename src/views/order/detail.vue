@@ -83,12 +83,14 @@
         <div class="tableCtn noPadBtm">
           <div class="thead">
             <div class="trow">
-              <div class="tcol" style="flex:0.72">批次序号</div>
+              <div class="tcol"
+                style="flex:0.72">批次序号</div>
               <div class="tcol">发货时间</div>
               <div class="tcol">批次名称</div>
               <div class="tcol">批次类型</div>
               <div class="tcol">批次备注</div>
-              <div class="tcol noPad" style="flex:8.7">
+              <div class="tcol noPad"
+                style="flex:8.7">
                 <div class="trow">
                   <div class="tcol">产品品类</div>
                   <div class="tcol">产品图片</div>
@@ -107,7 +109,8 @@
           </div>
           <div class="tbody">
             <div class="trow">
-              <div class="tcol" style="flex:0.72">
+              <div class="tcol"
+                style="flex:0.72">
                 <span>第{{itemBatch.batch_number}}批</span>
               </div>
               <div class="tcol">
@@ -122,15 +125,19 @@
               <div class="tcol">
                 <span>{{itemBatch.desc || '无'}}</span>
               </div>
-              <div class="tcol noPad" style="flex:8.7">
-                <div class="trow" v-for="itemPro in itemBatch.product_data"
-          :key="itemPro.id">
+              <div class="tcol noPad"
+                style="flex:8.7">
+                <div class="trow"
+                  v-for="itemPro in itemBatch.product_data"
+                  :key="itemPro.id">
                   <div class="tcol">
                     <span>{{itemPro.product_code||'无编号'}}</span>
                     <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
                   </div>
                   <div class="tcol">
-                    <div class="trow" v-for="(itemImage,indexImage) in itemPro.image_data" :key="indexImage">
+                    <div class="trow"
+                      v-for="(itemImage,indexImage) in itemPro.image_data"
+                      :key="indexImage">
                       <div class="imageCtn">
                         <el-image style="width:100%;height:100%;margin-top:2px"
                           :src="itemPro.image_data.length>0?itemImage:''"
@@ -220,6 +227,14 @@
                     <use xlink:href="#icon-youjianfenxiang"></use>
                   </svg>
                   <span class="text">邮件分享</span>
+                </div>
+                <div class="btn backHoverBlue"
+                  @click="$router.push('/quotedPrice/create?orderId='+$route.query.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-caozuojilu"></use>
+                  </svg>
+                  <span class="text">转报价单</span>
                 </div>
                 <div class="btn backHoverBlue">
                   <svg class="iconFont"
@@ -397,7 +412,7 @@ export default Vue.extend({
         })
     }
   },
-  created(){
+  created() {
     console.log(
       this.$checkCommonInfo([
         {

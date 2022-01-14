@@ -26,8 +26,11 @@
           </div>
         </div>
         <div class="fr">
-          <div class="remark">打开微信扫一扫 更新每日生产进度</div>
-          <div class="pImage">假装有图</div>
+          <div class="pImage">
+            <img :src="qrCodeUrl"
+              width="100%"
+              alt="" />
+          </div>
         </div>
       </div>
       <div class="pbody">
@@ -126,7 +129,8 @@ export default Vue.extend({
           }
         ],
         selectList: []
-      }
+      },
+      qrCodeUrl: ''
     }
   },
   mounted() {
@@ -138,6 +142,18 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.materialStockInfo = res.data.data
+          // 生成二维码
+          const QRCode = require('qrcode')
+          QRCode.toDataURL(`${Number(this.$route.query.id)}`)
+            .then((url: any) => {
+              this.qrCodeUrl = url
+            })
+            .catch((err: any) => {
+              console.error(err)
+            })
+          setTimeout(() => {
+            window.print()
+          }, 1000)
         }
       })
   }

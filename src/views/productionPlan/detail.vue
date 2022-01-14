@@ -78,13 +78,13 @@
             </div>
             <div class="otherInfoCtn">
               <div class="otherInfo">
-                <div class="btn backHoverBlue">
+                <!-- <div class="btn backHoverBlue">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">加工计划</span>
-                </div>
+                </div> -->
                 <div class="btn backHoverOrange"
                   @click="getProductionPlan">
                   <svg class="iconFont"
@@ -127,10 +127,6 @@
             </div>
             <div class="row">
               <div class="col">
-                <div class="label">加工类型：</div>
-                <div class="text">{{productionTypeList[item.type-1].name}}</div>
-              </div>
-              <div class="col">
                 <div class="label">加工工序：</div>
                 <div class="text">{{item.process_name}}</div>
               </div>
@@ -138,6 +134,7 @@
                 <div class="label">交货日期：</div>
                 <div class="text">{{item.end_time}}</div>
               </div>
+              <div class="col"></div>
             </div>
           </div>
           <div class="tableCtn"
@@ -159,7 +156,7 @@
                 <div class="tcol">{{indexPro+1}}</div>
                 <div class="tcol">
                   <span>{{itemPro.product_code||itemPro.system_code}}</span>
-                  <span>{{itemPro.category_name}}/{{itemPro.type_name}}</span>
+                  <span>{{itemPro.category_name}}/{{itemPro.secondary_category_name}}</span>
                 </div>
                 <div class="tcol">{{itemPro.size_name?itemPro.size_name + '/' + itemPro.color_name:'未选择尺码颜色'}}</div>
                 <div class="tcol">{{itemPro.number}}</div>
@@ -185,7 +182,7 @@
                 <div class="tcol">{{indexMat+1}}</div>
                 <div class="tcol">{{itemMat.material_name}}</div>
                 <div class="tcol">{{itemMat.material_color}}</div>
-                <div class="tcol">{{itemMat.number}}kg</div>
+                <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
               </div>
             </div>
           </div>
@@ -196,12 +193,13 @@
             </div>
             <div class="otherInfoCtn">
               <div class="otherInfo">
-                <div class="btn backHoverOrange">
+                <div class="btn backHoverBlue"
+                  @click="$openUrl('/productionPlan/print?id='+item.id)">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
-                  <span class="text">修改单据</span>
+                  <span class="text">打印单据</span>
                 </div>
                 <div class="btn backHoverRed"
                   @click="deleteProductionPlan(item.id)">
@@ -262,37 +260,19 @@
                   </div>
                 </div>
                 <div class="col">
-                  <div class="spaceBetween">
-                    <div class="once">
-                      <div class="label">
-                        <span class="text">加工类型</span>
-                        <span class="explanation">(必选)</span>
-                      </div>
-                      <div class="info elCtn">
-                        <el-select placeholder="请选择加工类型"
-                          v-model="item.type">
-                          <el-option v-for="item in productionTypeList"
-                            :key="item.value"
-                            :label="item.name"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </div>
-                    </div>
-                    <div class="once">
-                      <div class="label">
-                        <span class="text">加工工序</span>
-                        <span class="explanation">(必选)</span>
-                      </div>
-                      <div class="info elCtn">
-                        <el-select placeholder="请选择加工工序"
-                          v-model="item.process_id">
-                          <el-option v-for="item in halfProcessList"
-                            :key="item.id"
-                            :value="item.id"
-                            :label="item.name"></el-option>
-                        </el-select>
-                      </div>
-                    </div>
+                  <div class="label">
+                    <span class="text">加工工序</span>
+                    <span class="explanation">(必选)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-cascader placeholder="选择工序"
+                      :show-all-levels="false"
+                      v-model="item.process_name_arr"
+                      :options="processList"
+                      @change="(ev)=>{item.process_type=ev[0];item.process_name=ev[1]}"
+                      filterable
+                      clearable>
+                    </el-cascader>
                   </div>
                 </div>
                 <div class="col">
@@ -553,7 +533,6 @@ import { materialPlan, order, productionPlan } from '@/assets/js/api'
 import { ProductionPlanInfo } from '@/types/productionPlan'
 import { MaterialPlanInfo, MaterailPlanData } from '@/types/materialPlan'
 import { CascaderInfo } from '@/types/vuex'
-import { productionType } from '@/assets/js/dictionary'
 export default Vue.extend({
   data(): {
     materialPlanList: MaterialPlanInfo[]
@@ -629,7 +608,7 @@ export default Vue.extend({
       materialPlanFlag: false,
       productionPlanInfo: [
         {
-          type: null,
+          process_type: '',
           order_id: '',
           client_id: '',
           start_time: this.$getDate(new Date()),
@@ -638,6 +617,8 @@ export default Vue.extend({
           total_price: '',
           total_number: '',
           process_id: '',
+          process_name: '',
+          process_name_arr: [],
           product_info_data: [
             {
               product_id: '',
@@ -655,7 +636,8 @@ export default Vue.extend({
               material_id: '',
               material_name: '',
               material_color: '',
-              number: ''
+              number: '',
+              unit: ''
             }
           ],
           others_fee: [
@@ -667,7 +649,6 @@ export default Vue.extend({
           ]
         }
       ],
-      productionTypeList: productionType,
       productionPlanList: [],
       productionPlanIndex: '0'
     }
@@ -678,8 +659,38 @@ export default Vue.extend({
         (item: { label: string }) => item.label === '生产织造单位' || item.label === '生产加工单位'
       )
     },
-    halfProcessList() {
-      return this.$store.state.api.halfProcess.arr
+    processList() {
+      return [
+        {
+          label: '织造工序',
+          value: '织造工序',
+          children: [
+            { label: '针织织造', value: '针织织造' },
+            { label: '梭织织造', value: '梭织织造' },
+            { label: '制版费', value: '制版费' }
+          ]
+        },
+        {
+          label: '成品加工工序',
+          value: '成品加工工序',
+          children: this.$store.state.api.staffProcess.arr.map((item: any) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        },
+        {
+          label: '半成品加工工序',
+          value: '半成品加工工序',
+          children: this.$store.state.api.halfProcess.arr.map((item: any) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        }
+      ]
     },
     // 被选中的产品信息
     checkList(): MaterailPlanData[] {
@@ -777,17 +788,13 @@ export default Vue.extend({
             })
           })
         })
-        // 获取工序名称————展示用
-        item.process_name = item.process_id
-          ? this.halfProcessList.find((itemFind: any) => itemFind.id === item.process_id).name
-          : '未选择工序'
         item.material_info_data = []
         item.product_info_data.forEach((itemChild) => {
           const matList = this.checkMaterialFlattenList.filter((itemFind) => {
             if (edit_type === 1) {
               // 物料计划单按照尺码颜色匹配
               return (
-                itemFind.process_id === item.process_id &&
+                itemFind.process_name === item.process_name &&
                 itemFind.product_id === itemChild.product_id &&
                 itemFind.part_id === itemChild.part_id &&
                 itemFind.color_id === itemChild.color_id &&
@@ -796,7 +803,7 @@ export default Vue.extend({
             } else {
               // 按照产品id匹配
               return (
-                itemFind.process_id === item.process_id &&
+                itemFind.process_name === item.process_name &&
                 itemFind.product_id === itemChild.product_id &&
                 itemFind.part_id === itemChild.part_id
               )
@@ -808,7 +815,8 @@ export default Vue.extend({
                 material_id: itemMat.material_id,
                 material_name: itemMat.material_name,
                 material_color: itemMat.material_color,
-                number: this.$toFixed((itemMat.final_number / itemMat.number) * Number(itemChild.number))
+                number: this.$toFixed((itemMat.final_number / itemMat.number) * Number(itemChild.number)),
+                unit: itemMat.unit
               }
             })
           )
@@ -880,11 +888,7 @@ export default Vue.extend({
               errMsg: '请选择加工单位'
             },
             {
-              key: 'type',
-              errMsg: '请选择加工类型'
-            },
-            {
-              key: 'process_id',
+              key: 'process_name',
               errMsg: '请选择加工工序'
             },
             {
@@ -974,6 +978,11 @@ export default Vue.extend({
         checkWhich: 'api/clientType',
         getInfoMethed: 'dispatch',
         getInfoApi: 'getClientTypeAsync'
+      },
+      {
+        checkWhich: 'api/staffProcess',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getStaffProcessAsync'
       },
       {
         checkWhich: 'api/halfProcess',

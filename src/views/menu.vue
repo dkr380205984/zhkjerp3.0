@@ -68,26 +68,32 @@ export default Vue.extend({
             url: '/materialPlan/list?page=1&keyword=&client_id=&user_id=&status=0&date=&&order_type=null'
           },
           {
-            name: '物料管理',
+            name: '原料管理',
             id: 5,
             icon: 'icon-wuliaoguanli',
             url: '/materialManage/list?page=1&type=1&code=&order_code=&date='
           },
           {
-            name: '物料出入库',
+            name: '辅料管理',
             id: 6,
+            icon: 'icon-fuliaoguanli',
+            url: '/accessoriesManage/list?page=1&code=&date='
+          },
+          {
+            name: '物料出入库',
+            id: 7,
             icon: 'icon-wuliaochuruku',
             url: '/materialStock/list?page=1&type=1'
           },
           {
             name: '生产计划',
-            id: 7,
+            id: 8,
             icon: 'icon-shengchanjihua',
             url: '/productionPlan/list?page=1&type=1'
           },
           {
             name: '产品检验',
-            id: 8,
+            id: 9,
             icon: 'icon-shengchanpinjianyan',
             url: '/inspection/list?page=1&type=1'
           }

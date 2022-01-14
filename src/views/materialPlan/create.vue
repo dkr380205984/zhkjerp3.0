@@ -135,6 +135,7 @@
                 <div class="tcol">产品部位</div>
                 <div class="tcol">下单数量</div>
                 <div class="tcol">计划生产数量</div>
+                <div class="tcol">操作</div>
               </div>
             </div>
             <div class="tbody">
@@ -150,8 +151,28 @@
                   <div class="tcol">{{item.part_name}}</div>
                   <div class="tcol">{{item.order_number}}</div>
                   <div class="tcol">{{item.number}}</div>
+                  <div class="tcol oprCtn">
+                    <span class="opr blue"
+                      @click="$addItem(item.info_data,{
+                        process_name_arr:[],
+                        process_name: '',
+                        tree_data: [],
+                        material_id: '',
+                        material_type: '',
+                        material_color: '',
+                        assist_material_number: '',
+                        need_number: '',
+                        production_number: '',
+                        loss: '',
+                        final_number: '',
+                        unit: 'kg'
+                    })">新增物料</span>
+                    <div class="opr hoverRed"
+                      @click="item.info_data=[]">不需要物料</div>
+                  </div>
                 </div>
-                <div class="childrenCtn">
+                <div class="childrenCtn"
+                  v-if="item.info_data.length>0">
                   <div class="trow">
                     <div class="tcol">计划工序
                       <el-tooltip class="item"
@@ -215,7 +236,7 @@
                           :show-all-levels="false"
                           v-model="itemChild.process_name_arr"
                           :options="item.processList&&item.processList.length>0?item.processList:processList"
-                          @change="($event)=>{itemChild.process_name=ev[1]}"
+                          @change="(ev)=>{itemChild.process_type=ev[0];itemChild.process_name=ev[1]}"
                           filterable
                           clearable>
                         </el-cascader>
@@ -293,6 +314,13 @@
                     </div>
                   </div>
                 </div>
+                <div class="childrenCtn"
+                  v-else>
+                  <div class="trow">
+                    <div class="tcol gray"
+                      style="text-align: center;">确认不需要物料</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -309,6 +337,7 @@
                 <div class="tcol">产品部位</div>
                 <div class="tcol">下单数量</div>
                 <div class="tcol">计划生产数量</div>
+                <div class="tcol">操作</div>
               </div>
             </div>
             <div class="tbody">
@@ -323,8 +352,28 @@
                   <div class="tcol">{{item.part_name}}</div>
                   <div class="tcol">{{item.order_number}}</div>
                   <div class="tcol">{{item.number}}</div>
+                  <div class="tcol oprCtn">
+                    <span class="opr blue"
+                      @click="$addItem(item.info_data,{
+                        process_name_arr:[],
+                        process_name: '',
+                        tree_data: [],
+                        material_id: '',
+                        material_type: '',
+                        material_color: '',
+                        assist_material_number: '',
+                        need_number: '',
+                        production_number: '',
+                        loss: '',
+                        final_number: '',
+                        unit: 'kg'
+                    })">新增物料</span>
+                    <div class="opr hoverRed"
+                      @click="item.info_data=[]">不需要物料</div>
+                  </div>
                 </div>
-                <div class="childrenCtn">
+                <div class="childrenCtn"
+                  v-if="item.info_data.length>0">
                   <div class="trow">
                     <div class="tcol">计划工序</div>
                     <div class="tcol">原料名称</div>
@@ -344,7 +393,7 @@
                           :show-all-levels="false"
                           v-model="itemChild.process_name_arr"
                           :options="item.processList&&item.processList.length>0?item.processList:processList"
-                          @change="($event)=>{itemChild.process_name=ev[1]}"
+                          @change="(ev)=>{itemChild.process_type=ev[0];itemChild.process_name=ev[1]}"
                           filterable
                           clearable>
                         </el-cascader>
@@ -386,15 +435,21 @@
                     </div>
                     <div class="tcol">
                       <div class="elCtn">
-                        <el-input v-model="itemChild.final_number"
-                          placeholder="数量"></el-input>
+                        <el-input class="UnitCtn"
+                          v-model="itemChild.final_number"
+                          placeholder="数量">
+                          <template slot="append">
+                            <el-input v-model="itemChild.unit"
+                              placeholder="单位"></el-input>
+                          </template>
+                        </el-input>
                       </div>
                     </div>
                     <div class="tcol">
                       <div class="oprCtn">
                         <span class="opr blue"
                           @click="$addItem(item.info_data,{
-                            process_name_arr:[],
+                          process_name_arr:[],
                           process_name: '',
                           tree_data: [],
                           material_id: '',
@@ -413,6 +468,13 @@
                           @click="item.info_data.length>1?$deleteItem(item.info_data,indexChild):$message.error('至少有一项，可以不填')">删除</span>
                       </div>
                     </div>
+                  </div>
+                </div>
+                <div class="childrenCtn"
+                  v-else>
+                  <div class="trow">
+                    <div class="tcol gray"
+                      style="text-align: center;">确认不需要物料</div>
                   </div>
                 </div>
               </div>
@@ -1156,20 +1218,19 @@ export default Vue.extend({
         this.$message.warning('请确认生产数量')
         return
       }
-      console.log(this.materialPlanInfo)
       const formCheck =
-        this.materialPlanInfo.production_plan_data.some((item) => {
-          return item.product_data.some((itemChild) => {
-            return itemChild.info_data.some((itemPart) => {
-              return this.$formCheck(itemPart, [
-                {
-                  key: 'number',
-                  errMsg: '请输入计划生产数量'
-                }
-              ])
-            })
-          })
-        }) ||
+        // this.materialPlanInfo.production_plan_data.some((item) => {
+        //   return item.product_data.some((itemChild) => {
+        //     return itemChild.info_data.some((itemPart) => {
+        //       return this.$formCheck(itemPart, [
+        //         {
+        //           key: 'number',
+        //           errMsg: '请输入计划生产数量'
+        //         }
+        //       ])
+        //     })
+        //   })
+        // }) ||
         this.materialPlanInfo.material_plan_data.some((item) => {
           return item.info_data.some((itemChild) => {
             return this.$formCheck(itemChild, [

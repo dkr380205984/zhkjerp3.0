@@ -7,7 +7,7 @@ interface PMInfo {
 }
 
 export interface GLInfo {
-  value: string
+  value: string | null
   mark: string | number
 }
 

@@ -52,6 +52,7 @@
                 :key="item.id"
                 style="cursor:pointer;margin-right:12px"
                 @click="$openUrl(item.order_type===1?('/order/detail?id='+item.id):('/sampleOrder/detail?id='+item.id))">{{item.code}}</span>
+
             </div>
           </div>
           <div class="col">
@@ -301,10 +302,11 @@
                   <div class="tcol">
                     <span class="blue"
                       @click="sampleDetail=item;sampleShow = true"
-                      style="cursor:pointer">{{item.product_code||item.system_code}}</span>
+                      style="cursor:pointer">{{item.product_code || item.system_code}}</span>
                     <span class="gray">({{item.category}}/{{item.secondary_category}})</span>
                   </div>
-                  <div class="tcol">{{item.name}}</div>
+                  <div class="tcol"
+                    :class="{'gray':!item.name}">{{item.name || '无名称'}}</div>
                   <div class="tcol">
                     <div class="imageCtn">
                       <el-image style="width:100%;height:100%"
@@ -447,7 +449,8 @@
                   </svg>
                   <span class="text">继续打样</span>
                 </div>
-                <div class="btn backHoverBlue">
+                <div class="btn backHoverBlue"
+                  @click="$openUrl('/sampleOrder/print?id='+$route.query.id+'&sampleOrderIndex='+sampleOrderIndex)">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-dayindingdan"></use>
@@ -462,6 +465,14 @@
                     <use xlink:href="#icon-dayindingdan"></use>
                   </svg>
                   <span class="text">大货生产</span>
+                </div>
+                <div class="btn backHoverBlue"
+                  @click="$router.push('/quotedPrice/create?sampleOrderId='+$route.query.id+'&sampleOrderIndex='+sampleOrderIndex)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-dayindingdan"></use>
+                  </svg>
+                  <span class="text">转报价单</span>
                 </div>
               </div>
             </div>

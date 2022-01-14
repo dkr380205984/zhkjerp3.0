@@ -484,7 +484,8 @@ const productionPlan = {
     client_id?: string | number
     top_order_id?: string | number // 最外层order_id
   }) => http.get(`${baseUrl}/weave/plan/lists`, params),
-  delete: (params: DeleteParams) => http.post(`${baseUrl}/weave/plan/delete`, params, 'application/json')
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/weave/plan/delete`, params, 'application/json'),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/weave/plan/detail`, params),
 }
 
 import { InspectionInfo } from '@/types/inspection'

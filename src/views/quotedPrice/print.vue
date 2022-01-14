@@ -406,7 +406,6 @@ export default Vue.extend({
     },
     windowMethod(type: 1 | 2) {
       this.showMenu = false
-      this.showPrintSetting = false
       window.requestAnimationFrame(() => {
         if (type === 1) {
           window.location.reload()

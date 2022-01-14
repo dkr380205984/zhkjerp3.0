@@ -1,27 +1,6 @@
 <template>
   <div id="orderList"
     class="bodyContainer">
-    <div class="topTagCtn">
-      <div class="tag active">
-        <div class="iconCtn">
-          <svg class="iconFont"
-            aria-hidden="true">
-            <use xlink:href="#icon-yuanliaoguanli"></use>
-          </svg>
-        </div>
-        <span class="text">原料管理</span>
-      </div>
-      <div class="tag"
-        @click="$router.push('/accessoriesManage/list?page=1&code=&date=')">
-        <div class="iconCtn">
-          <svg class="iconFont"
-            aria-hidden="true">
-            <use xlink:href="#icon-fuliaoguanli"></use>
-          </svg>
-        </div>
-        <span class="text">辅料管理</span>
-      </div>
-    </div>
     <div class="module">
       <div class="titleCtn">
         <div class="title">原料管理列表</div>

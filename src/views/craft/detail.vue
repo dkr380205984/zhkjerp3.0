@@ -1130,8 +1130,7 @@ export default Vue.extend({
                   type: 'success',
                   message: '删除成功!'
                 })
-                // @ts-ignore
-                this.getList()
+                this.$router.go(-1)
               }
             })
         })

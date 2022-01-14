@@ -1,6 +1,7 @@
 // 报价单数据结构
 export interface QuotedPriceInfo {
   code?: string
+  real_order_id?: number | string // 绑订单用
   pid?: number | string // 关联报价单时候用
   id?: null | number | string
   is_check?: 0 | 1 | 2

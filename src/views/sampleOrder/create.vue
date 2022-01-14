@@ -208,8 +208,10 @@
             <div class="trow"
               v-for="(item,index) in sampleOrderInfo.time_data.batch_data[0].product_data"
               :key="index">
-              <div class="tcol">
-                <div class="elCtn">
+              <div class="tcol"
+                style="position:relative">
+                <div class="elCtn"
+                  style="width:87%">
                   <el-select v-model="item.product_id"
                     placeholder="选择样品"
                     @change="getColour($event,item)"
@@ -219,6 +221,16 @@
                       :value="item.id"
                       :label="item.system_code + '/' + (item.name ||'无样品名称')"></el-option>
                   </el-select>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="统一单价和数量"
+                    placement="top">
+                    <svg class="iconFont copyIcon hoverBlue"
+                      aria-hidden="true">
+                      <use xlink:href='#icon-tongbushuju1'
+                        @click="$copyInfo(item.product_info,['price','number'])"></use>
+                    </svg>
+                  </el-tooltip>
                 </div>
               </div>
               <div class="tcol noPad"

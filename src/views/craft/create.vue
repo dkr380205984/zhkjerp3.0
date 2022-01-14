@@ -2668,10 +2668,11 @@ export default Vue.extend({
           })
         })
       }
+      console.log(this.craftInfo.draft_method.GL)
       this.craftInfo.draft_method.GL.forEach((item) => {
         item.forEach((itemChild) => {
           itemChild.forEach((itemSon) => {
-            itemSon.value = itemSon.value.replace(/，|\./g, ',')
+            itemSon.value = itemSon.value ? itemSon.value.replace(/，|\./g, ',') : null
           })
         })
       })

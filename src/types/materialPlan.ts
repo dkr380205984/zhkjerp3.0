@@ -82,7 +82,8 @@ export interface MaterailPlanData {
   }> // 优化产品是否有工艺单后道工序
   info_data: Array<{
     process_name_arr?: string[]
-    process_name?: string
+    process_name?: string // 二级工序
+    process_type?: string // 一级工序
     process_id?: string | number
     tree_data?: string[]
     material_id: string | number

@@ -1,30 +1,9 @@
 <template>
   <div id="materialPlanList"
     class="bodyContainer">
-    <div class="topTagCtn">
-      <div class="tag"
-        @click="$router.push('/materialManage/list?page=1&code=&date=')">
-        <div class="iconCtn">
-          <svg class="iconFont"
-            aria-hidden="true">
-            <use xlink:href="#icon-yuanliaoguanli"></use>
-          </svg>
-        </div>
-        <span class="text">原料管理</span>
-      </div>
-      <div class="tag active">
-        <div class="iconCtn">
-          <svg class="iconFont"
-            aria-hidden="true">
-            <use xlink:href="#icon-fuliaoguanli"></use>
-          </svg>
-        </div>
-        <span class="text">辅料管理</span>
-      </div>
-    </div>
     <div class="module">
       <div class="titleCtn">
-        <div class="title">单据列表</div>
+        <div class="title">辅料管理列表</div>
       </div>
       <div class="listCtn">
         <div class="filterCtn">
@@ -183,9 +162,9 @@ export default Vue.extend({
           index: 2
         },
         {
-          key: 'has_material_plan',
-          name: '暂时没状态',
-          filterArr: ['', '暗暗啊', '随便给'],
+          key: 'has_decorate_order',
+          name: '辅料采购',
+          filterArr: ['', '已订购', '未订购'],
           classArr: ['', 'blue', 'orange'],
           ifShow: true,
           ifLock: false,

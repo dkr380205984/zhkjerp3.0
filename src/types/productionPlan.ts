@@ -1,9 +1,10 @@
 export interface ProductionPlanInfo {
   id?: string | number
   code?: string
-  type: null | 1 | 2 | 3 //  1机织计划 2 半成品加工计划 3 成品加工计
+  process_type?: string | number//  1机织计划 2 半成品加工计划 3 成品加工计
   process_id: number | string
   process_name?: string
+  process_name_arr?: string[]
   order_id: number | string
   plan_id?: number | string // 计划单id
   client_id_arr?: number[] // 前端选公司用
@@ -37,6 +38,7 @@ export interface ProductionPlanInfo {
     material_name: string
     material_color: string
     number: number | string
+    unit: string
   }>
   others_fee: Array<{
     name: string

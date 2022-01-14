@@ -1080,8 +1080,10 @@
 import { QuotedPriceInfo } from '@/types/quotedPrice'
 import { PackMaterialInfo, DecorateMaterialInfo } from '@/types/materialSetting'
 import { moneyArr } from '@/assets/js/dictionary'
-import { client, quotedPrice, yarn } from '@/assets/js/api'
+import { client, quotedPrice, yarn, sampleOrder, order } from '@/assets/js/api'
 import Vue from 'vue'
+import { SampleOrderInfo, SampleOrderTime } from '@/types/sampleOrder'
+import { OrderInfo, OrderTime } from '@/types/order'
 export default Vue.extend({
   data(): {
     [propName: string]: any
@@ -1896,6 +1898,251 @@ export default Vue.extend({
             this.getUpdateInfo()
             this.loading = false
           }
+        })
+    }
+    // 样单转报价单逻辑
+    if (this.$route.query.sampleOrderId) {
+      this.loading = true
+      sampleOrder
+        .detail({
+          id: Number(this.$route.query.sampleOrderId)
+        })
+        .then((res) => {
+          if (res.data.status) {
+            const data: SampleOrderInfo = res.data.data
+            this.quotedPriceInfo.real_order_id = Number(this.$route.query.sampleOrderId)
+            this.quotedPriceInfo.tree_data = (data.tree_data as string).split(',').map((item: string) => Number(item))
+            this.getContacts(this.quotedPriceInfo.tree_data as number[], true)
+            this.quotedPriceInfo.contacts_id = data.contacts_id
+            this.quotedPriceInfo.group_id = data.group_id
+            this.quotedPriceInfo.product_data = (data.time_data as SampleOrderTime[])[
+              Number(this.$route.query.sampleOrderIndex)
+            ].batch_data[0].product_data
+              .filter((item) => {
+                // 过滤掉多个或同一批次里面相同的产品
+                return !this.quotedPriceInfo.product_data.find((itemFind) => itemFind.product_id === item.product_id)
+              })
+              .map((item) => {
+                return {
+                  total_price: '',
+                  product_id: item.product_id,
+                  type: [item.category_id as number, item.secondary_category_id as number],
+                  category_id: item.category_id,
+                  secondary_category_id: item.secondary_category_id,
+                  file_list: (item.image_data as string[]).map((itemImage, index) => {
+                    return {
+                      id: index,
+                      url: itemImage
+                    }
+                  }),
+                  image_data: [],
+                  client_target_price: '',
+                  start_order_number: '',
+                  desc: item.desc,
+                  transport_fee_desc: '',
+                  transport_fee: '',
+                  material_data: [
+                    {
+                      id: '',
+                      tree_data: [],
+                      material_id: '',
+                      material_name: '',
+                      weight: '',
+                      loss: '',
+                      price: '',
+                      total_price: '',
+                      unit: 'kg',
+                      price_info: []
+                    }
+                  ],
+                  assist_material_data: [
+                    {
+                      id: '',
+                      material_id: '',
+                      material_name: '',
+                      number: '',
+                      loss: '',
+                      price: '',
+                      total_price: '',
+                      unit: ''
+                    }
+                  ],
+                  weave_data: [
+                    {
+                      id: '',
+                      name: '',
+                      desc: '',
+                      total_price: ''
+                    }
+                  ],
+                  semi_product_data: [
+                    {
+                      id: '',
+                      process_id: [],
+                      process_name: [],
+                      desc: '',
+                      total_price: ''
+                    }
+                  ],
+                  production_data: [
+                    {
+                      id: '',
+                      name: [],
+                      desc: '',
+                      total_price: ''
+                    }
+                  ],
+                  pack_material_data: [
+                    {
+                      id: '',
+                      material_name: '',
+                      material_id: '',
+                      desc: '',
+                      total_price: ''
+                    }
+                  ],
+                  other_fee_data: [
+                    {
+                      id: '',
+                      name: '',
+                      desc: '',
+                      total_price: ''
+                    }
+                  ],
+                  no_production_fee_data: [
+                    {
+                      id: '',
+                      name: '',
+                      desc: '',
+                      total_price: ''
+                    }
+                  ]
+                }
+              })
+          }
+          this.loading = false
+        })
+    }
+    // 订单转报价单逻辑
+    if (this.$route.query.orderId) {
+      this.loading = true
+      order
+        .detail({
+          id: Number(this.$route.query.orderId)
+        })
+        .then((res) => {
+          if (res.data.status) {
+            const data: OrderInfo = res.data.data
+            this.quotedPriceInfo.real_order_id = Number(this.$route.query.orderId)
+            this.quotedPriceInfo.tree_data = (data.tree_data as string).split(',').map((item: string) => Number(item))
+            this.getContacts(this.quotedPriceInfo.tree_data as number[], true)
+            this.quotedPriceInfo.contacts_id = data.contacts_id
+            this.quotedPriceInfo.group_id = data.group_id
+            this.quotedPriceInfo.product_data = []
+            // @ts-ignore
+            data.time_data[0].batch_data.forEach((item) => {
+              this.quotedPriceInfo.product_data = this.quotedPriceInfo.product_data.concat(
+                item.product_data.map((item: any) => {
+                  return {
+                    total_price: '',
+                    product_id: '',
+                    type: [item.category_id as number, item.secondary_category_id as number],
+                    category_id: item.category_id,
+                    secondary_category_id: item.secondary_category_id,
+                    file_list: (item.image_data as string[]).map((itemImage, index) => {
+                      return {
+                        id: index,
+                        url: itemImage
+                      }
+                    }),
+                    image_data: [],
+                    client_target_price: '',
+                    start_order_number: '',
+                    desc: item.desc,
+                    transport_fee_desc: '',
+                    transport_fee: '',
+                    material_data: [
+                      {
+                        id: '',
+                        tree_data: [],
+                        material_id: '',
+                        material_name: '',
+                        weight: '',
+                        loss: '',
+                        price: '',
+                        total_price: '',
+                        unit: 'kg',
+                        price_info: []
+                      }
+                    ],
+                    assist_material_data: [
+                      {
+                        id: '',
+                        material_id: '',
+                        material_name: '',
+                        number: '',
+                        loss: '',
+                        price: '',
+                        total_price: '',
+                        unit: ''
+                      }
+                    ],
+                    weave_data: [
+                      {
+                        id: '',
+                        name: '',
+                        desc: '',
+                        total_price: ''
+                      }
+                    ],
+                    semi_product_data: [
+                      {
+                        id: '',
+                        process_id: [],
+                        process_name: [],
+                        desc: '',
+                        total_price: ''
+                      }
+                    ],
+                    production_data: [
+                      {
+                        id: '',
+                        name: [],
+                        desc: '',
+                        total_price: ''
+                      }
+                    ],
+                    pack_material_data: [
+                      {
+                        id: '',
+                        material_name: '',
+                        material_id: '',
+                        desc: '',
+                        total_price: ''
+                      }
+                    ],
+                    other_fee_data: [
+                      {
+                        id: '',
+                        name: '',
+                        desc: '',
+                        total_price: ''
+                      }
+                    ],
+                    no_production_fee_data: [
+                      {
+                        id: '',
+                        name: '',
+                        desc: '',
+                        total_price: ''
+                      }
+                    ]
+                  }
+                })
+              )
+            })
+          }
+          this.loading = false
         })
     }
   }

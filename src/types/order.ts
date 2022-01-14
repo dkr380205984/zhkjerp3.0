@@ -54,6 +54,7 @@ export interface OrderBatch {
 
 // 第几次下单，样单为多次打样，订单可能翻单
 export interface OrderTime {
+  order_type?: string | number
   order_id?: number | null | string // 再次打样的时候用
   id?: number | null | string
   order_time: string
@@ -71,6 +72,7 @@ export interface OrderTime {
 }
 
 export interface OrderInfo {
+  pid?: number | null | string // 绑定样单的id
   id?: number | null | string
   order_type: 1
   code: string

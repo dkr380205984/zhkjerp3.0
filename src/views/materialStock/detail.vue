@@ -49,6 +49,11 @@
               </div>
             </div>
           </div>
+          <div class="trow"
+            v-if="materialOrderList.length===0">
+            <div class="tcol gray"
+              style="text-align:center">暂无单据</div>
+          </div>
         </div>
       </div>
       <div class="buttonList">
@@ -60,12 +65,18 @@
           <div class="otherInfo">
             <div class="btn backHoverBlue"
               @click="goStock(4)">
-              <i class="iconfont">&#xe63b;</i>
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
               <span class="text">最终入库</span>
             </div>
             <div class="btn backHoverOrange"
               @click="goStock(1)">
-              <i class="iconfont">&#xe63b;</i>
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
               <span class="text">中转入库</span>
             </div>
           </div>
@@ -130,10 +141,15 @@
                     <span>{{itemMat.after_attribute}}</span>
                   </div>
                 </div>
-                <div class="tcol">{{itemMat.number}}kg</div>
+                <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
               </div>
             </div>
             <div class="tcol">{{itemProcess.delivery_time}}</div>
+          </div>
+          <div class="trow"
+            v-if="materialProcessList.length===0">
+            <div class="tcol gray"
+              style="text-align:center">暂无单据</div>
           </div>
         </div>
       </div>
@@ -146,7 +162,10 @@
           <div class="otherInfo">
             <div class="btn backHoverBlue"
               @click="goStock(3)">
-              <i class="iconfont">&#xe63b;</i>
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
               <span class="text">中转出库</span>
             </div>
           </div>
@@ -201,13 +220,18 @@
                   </el-checkbox>
                 </div>
                 <div class="tcol">{{itemMat.material_color}}</div>
-                <div class="tcol">{{itemMat.number}}kg</div>
+                <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
                 <div class="tcol">出库数量</div>
                 <div class="tcol oprCtn">
                   <div class="opr hoverBlue">出库</div>
                 </div>
               </div>
             </div>
+          </div>
+          <div class="trow"
+            v-if="productionPlanList.length===0">
+            <div class="tcol gray"
+              style="text-align:center">暂无单据</div>
           </div>
         </div>
       </div>
@@ -220,7 +244,10 @@
           <div class="otherInfo">
             <div class="btn backHoverBlue"
               @click="goStock(5)">
-              <i class="iconfont">&#xe63b;</i>
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
               <span class="text">生产出库</span>
             </div>
           </div>
@@ -310,13 +337,20 @@
                   :class="itemChild.batch_code||itemChild.vat_code?'':'gray'">{{itemChild.batch_code||'无'}}/{{itemChild.vat_code||'无'}}</div>
                 <div class="tcol"
                   :class="itemChild.color_code?'':'gray'">{{itemChild.color_code||'无'}}</div>
-                <div class="tcol">{{itemChild.number}}kg</div>
+                <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
               </div>
             </div>
             <div class="tcol oprCtn">
               <div class="opr hoverRed"
                 @click="deleteMaterialStockList(item.id)">删除</div>
+              <div class="opr hoverBlue"
+                @click="$openUrl('/store/materialLogPrint?id='+item.id + '&type=' + item.action_type)">打印</div>
             </div>
+          </div>
+          <div class="trow"
+            v-if="materialStockList.length===0">
+            <div class="tcol gray"
+              style="text-align:center">暂无单据</div>
           </div>
         </div>
       </div>
@@ -341,7 +375,7 @@
                 </div>
                 <div class="info elCtn">
                   <el-select v-model="materialStockInfo.stock_id"
-                    placeholder="本厂仓库/主仓库（默认"
+                    placeholder="本厂仓库/主仓库（默认)"
                     disabled></el-select>
                 </div>
               </div>
@@ -404,8 +438,10 @@
                         <span class="explanation">(必选)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-select placeholder="属性"
-                          v-model="item.attribute"></el-select>
+                        <el-autocomplete class="once"
+                          v-model="item.attribute"
+                          :fetch-suggestions="searchAttribute"
+                          placeholder="属性"></el-autocomplete>
                       </div>
                     </div>
                     <div class="once">
@@ -415,8 +451,9 @@
                         <span class="explanation">(必选)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-select placeholder="颜色"
-                          v-model="item.material_color"></el-select>
+                        <el-autocomplete v-model="item.material_color"
+                          :fetch-suggestions="searchColor"
+                          placeholder="颜色"></el-autocomplete>
                       </div>
                     </div>
                   </div>
@@ -466,7 +503,7 @@
                       <div class="info elCtn">
                         <el-input placeholder="数量"
                           v-model="item.number">
-                          <template slot="append">kg</template>
+                          <template slot="append">{{item.unit}}</template>
                         </el-input>
                       </div>
                     </div>
@@ -644,7 +681,7 @@ import { MaterialStockInfo, MaterialStockLog } from '@/types/materialStock'
 import { ProductionPlanInfo } from '@/types/productionPlan'
 import { MaterialProcessInfo } from '@/types/materialProcess'
 import { materialOrder, store, materialStock, productionPlan, order } from '@/assets/js/api'
-import { stockType } from '@/assets/js/dictionary'
+import { stockType, yarnAttributeArr } from '@/assets/js/dictionary'
 import { OrderInfo, OrderTime } from '@/types/order'
 interface OrderDetail extends OrderInfo {
   time_data: OrderTime[]
@@ -755,7 +792,8 @@ export default Vue.extend({
       },
       materialStockList: [],
       productionPlanList: [],
-      storeInList: []
+      storeInList: [],
+      yarnAttributeList: yarnAttributeArr
     }
   },
   methods: {
@@ -805,6 +843,22 @@ export default Vue.extend({
         this.productionPlanList = res[2].data.data
         this.loading = false
       })
+    },
+    // 原料颜色搜索
+    searchColor(str: string, cb: any) {
+      let results = str ? this.yarnColorList.filter(this.createFilter(str)) : this.yarnColorList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    // 原料属性搜索
+    searchAttribute(str: string, cb: any) {
+      let results = str ? this.yarnAttributeList.filter(this.createFilter(str)) : this.yarnAttributeList.slice(0, 10)
+      cb(results)
+    },
+    createFilter(queryString: string) {
+      return (restaurant: any) => {
+        return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+      }
     },
     getAllCheck(ev: boolean, info: any) {
       info.info_data
@@ -865,7 +919,8 @@ export default Vue.extend({
             this.materialStockInfo.rel_doc_id = item.id as number
             this.materialStockInfo.selectList!.push({
               value: itemChild.id as number,
-              name: itemChild.material_name + '/' + itemChild.material_color + '/' + itemChild.attribute,
+              name:
+                itemChild.material_name + '/' + (itemChild.material_color || '未知颜色') + '/' + itemChild.attribute,
               material_color: itemChild.material_color,
               material_id: itemChild.material_id,
               attribute: itemChild.attribute,
@@ -885,7 +940,7 @@ export default Vue.extend({
             attribute: item.attribute as string,
             number: item.number as string,
             item: '', // 件数
-            unit: 'kg',
+            unit: item.unit,
             rel_doc_info_id: item.value // 采购单调取单加工单子项id
           }
         })
@@ -900,7 +955,7 @@ export default Vue.extend({
             attribute: item.attribute as string,
             number: item.number as string,
             item: '', // 件数
-            unit: 'kg',
+            unit: item.unit,
             rel_doc_info_id: item.value // 采购单调取单加工单子项id
           }
         })
@@ -969,7 +1024,7 @@ export default Vue.extend({
           attribute: '',
           number: item.number as string,
           item: '', // 件数
-          unit: 'kg',
+          unit: item.unit,
           rel_doc_info_id: item.value // 采购单调取单加工单子项id
         }
       })
@@ -1018,7 +1073,7 @@ export default Vue.extend({
           attribute: '',
           number: item.number as string,
           item: '', // 件数
-          unit: 'kg',
+          unit: item.unit,
           rel_doc_info_id: item.value // 采购单调取单加工单子项id
         }
       })
@@ -1084,7 +1139,24 @@ export default Vue.extend({
         })
     }
   },
+  computed: {
+    yarnColorList() {
+      return this.$store.state.api.yarnColor.arr.map((item: { name: any }) => {
+        return {
+          value: item.name,
+          label: item.name
+        }
+      })
+    }
+  },
   mounted() {
+    this.$checkCommonInfo([
+      {
+        checkWhich: 'api/yarnColor',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getYarnColorAsync'
+      }
+    ])
     order
       .detail({
         id: Number(this.$route.query.id)

@@ -845,7 +845,7 @@
                       <span v-for="(itemChild,indexChild) in itemPro.others_fee_activity_log"
                         :key="indexChild">{{itemChild}}</span>
                     </div>
-                     <div class="line"
+                    <div class="line"
                       v-if="itemPro.no_production_fee_activity_log.length>0">
                       <span class="label">非生产型费用修改信息：</span>
                       <span v-for="(itemChild,indexChild) in itemPro.no_production_fee_activity_log"
@@ -883,7 +883,7 @@
                 style="width:100%">
                 <el-autocomplete v-model="bindOrderValue"
                   :fetch-suggestions="searchOrder"
-                  placeholder="请输入内容"
+                  :placeholder="'请输入'+(bindOrderType===1?'订单号搜索':'样单号搜索')"
                   @select="selectId"></el-autocomplete>
               </div>
             </div>
@@ -892,6 +892,8 @@
         <div class="oprCtn">
           <span class="btn borderBtn"
             @click="bindOrderFlag=false">取消</span>
+          <span class="btn backHoverOrange"
+            @click="$openUrl(bindOrderType===1?'/order/list?page=1&keyword=&client_id=&user_id=&status=null&date=':'/sampleOrder/list?page=1&keyword=&client_id=&user_id=&status=null&date=')">查看{{bindOrderType===1?'订单':'样单'}}列表</span>
           <span class="btn backHoverBlue"
             @click="saveBindOrder">确认</span>
         </div>

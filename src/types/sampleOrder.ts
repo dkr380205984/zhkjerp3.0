@@ -20,6 +20,9 @@ export interface SampleOrderBatch {
     color_data?: any[]
     size_data?: any[]
     product_id: string | number
+    category_id?: number
+    secondary_category_id?: number
+    desc?: string
     size_color_list: Array<{
       label: string
       value: string
@@ -40,6 +43,7 @@ export interface SampleOrderTime {
   id?: number | null | string
   order_time: string
   order_type_id: string | number
+  order_type?: string
   complete_time: string
   is_draft: 1 | 2  // 1.草稿 2.非草稿
   total_style: string | number

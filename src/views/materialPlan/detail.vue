@@ -135,14 +135,19 @@
                   <div class="tcol noPad"
                     style="flex:6">
                     <div class="trow"
+                      v-if="item.info_data.length===0">
+                      <div class="tcol gray"
+                        style="text-align:center">不需要物料</div>
+                    </div>
+                    <div class="trow"
                       v-for="(itemChild,indexChild) in item.info_data"
                       :key="indexChild">
                       <div class="tcol">{{itemChild.process_name}}</div>
                       <div class="tcol">{{itemChild.material_name}}</div>
                       <div class="tcol">{{itemChild.material_color}}</div>
                       <div class="tcol">{{itemChild.loss}}%</div>
-                      <div class="tcol">{{itemChild.final_number}}kg</div>
-                      <div class="tcol">{{$toFixed(itemChild.final_number/item.order_number*1000)}}g</div>
+                      <div class="tcol">{{itemChild.final_number}}{{itemChild.unit}}</div>
+                      <div class="tcol">{{itemChild.unit==='kg'?$toFixed(itemChild.final_number/item.order_number*1000)+'g':$toFixed(itemChild.final_number/item.order_number)+itemChild.unit}}</div>
                     </div>
                   </div>
                 </div>
@@ -212,14 +217,19 @@
             </div>
             <div class="tbody">
               <div class="trow"
+                v-if="itemFather.material_plan_gather_data.length===0">
+                <div class="tcol gray"
+                  style="text-align:center">不需要物料</div>
+              </div>
+              <div class="trow"
                 v-for="(item,index) in itemFather.material_plan_gather_data"
                 :key="index">
                 <div class="tcol">{{index+1}}</div>
                 <div class="tcol">{{item.material_name}}</div>
                 <div class="tcol">{{item.material_color}}</div>
-                <div class="tcol">{{item.need_number}}kg</div>
+                <div class="tcol">{{item.need_number}}{{item.unit}}</div>
                 <div class="tcol">{{item.loss}}%</div>
-                <div class="tcol">{{item.final_number}}kg</div>
+                <div class="tcol">{{item.final_number}}{{item.unit}}</div>
               </div>
             </div>
           </div>

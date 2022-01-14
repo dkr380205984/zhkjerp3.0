@@ -61,6 +61,19 @@
             <div class="label">下单时间：</div>
             <div class="text">{{orderInfo.time_data[0].order_time}}</div>
           </div>
+          <div class="col flex3">
+            <div class="label">关联单据：</div>
+            <div class="text green">
+              <span v-if="orderInfo.rel_quote_id"
+                style="cursor:pointer;margin-right:12px"
+                @click="$openUrl('/quotedPrice/detail?id='+orderInfo.rel_quote_id)">{{orderInfo.rel_quote_code}}(报价单)</span>
+              <span v-if="orderInfo.rel_order_id"
+                style="cursor:pointer;margin-right:12px"
+                @click="$openUrl('/sampleOrder/detail?id='+orderInfo.rel_order_id)">{{orderInfo.rel_order_code}}(报价单)</span>
+              <span class="gray"
+                v-if="!orderInfo.rel_quote_id&&!orderInfo.rel_order_id">无关联单据</span>
+            </div>
+          </div>
         </div>
         <div class="row">
           <div class="col">
