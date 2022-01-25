@@ -772,8 +772,10 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
+          <div class="btn backHoverOrange"
+            @click="saveOrder(true)">保存为草稿</div>
           <div class="btn backHoverBlue"
-            @click="saveOrder">提交</div>
+            @click="saveOrder(false)">提交</div>
         </div>
       </div>
     </div>
@@ -909,6 +911,7 @@ export default Vue.extend({
         ],
         size_data: [
           {
+            id: '',
             size_id: '',
             size_info: '',
             weight: ''
@@ -922,6 +925,7 @@ export default Vue.extend({
             unit: '',
             part_size_data: [
               {
+                id: '',
                 size_id: '',
                 size_info: '',
                 weight: ''
@@ -957,6 +961,7 @@ export default Vue.extend({
         ],
         size_data: [
           {
+            id: '',
             size_id: '',
             size_info: '',
             weight: ''
@@ -970,6 +975,7 @@ export default Vue.extend({
             unit: '',
             part_size_data: [
               {
+                id: '',
                 size_id: '',
                 size_info: '',
                 weight: ''
@@ -1183,100 +1189,112 @@ export default Vue.extend({
     },
     getCmpData() {
       this.orderInfo.pid = Number(this.$route.query.sampleOrderId) ? Number(this.$route.query.sampleOrderId) : null
-      this.orderInfo.client_id = (this.orderInfo.tree_data as number[])[2]
-      this.orderInfo.tree_data = (this.orderInfo.tree_data as number[]).join(',')
+      this.orderInfo.client_id = this.orderInfo.tree_data!.length > 0 ? (this.orderInfo.tree_data as number[])[2] : ''
+      this.orderInfo.tree_data =
+        this.orderInfo.tree_data!.length > 0 ? (this.orderInfo.tree_data as number[]).join(',') : ''
       this.orderInfo.time_data.total_style = this.totalStyle
       this.orderInfo.time_data.total_number = this.totalNumber
       this.orderInfo.time_data.total_price = this.totalPrice
       this.orderInfo.time_data.batch_data.forEach((itemBatch) => {
         itemBatch.product_data.forEach((item) => {
           item.product_info.forEach((itemChild) => {
-            itemChild.size_id = itemChild.size_color!.split('/')[0]
-            itemChild.color_id = itemChild.size_color!.split('/')[1]
+            itemChild.size_id = itemChild.size_color!.length > 0 ? itemChild.size_color!.split('/')[0] : ''
+            itemChild.color_id = itemChild.size_color!.length > 0 ? itemChild.size_color!.split('/')[1] : ''
           })
         })
       })
     },
-    saveOrder() {
-      console.log(this.orderInfo)
-      const formCheck =
-        this.$formCheck(this.orderInfo, [
-          {
-            key: 'tree_data',
-            errMsg: '请选择下单公司',
-            regNormal: 'checkArr'
-          },
-          {
-            key: 'contacts_id',
-            errMsg: '请选择联系人'
-          },
-          {
-            key: 'group_id',
-            errMsg: '请选择负责小组'
-          }
-        ]) ||
-        this.$formCheck(this.orderInfo.time_data, [
-          {
-            key: 'order_time',
-            errMsg: '请选择下单时间'
-          }
-        ]) ||
-        this.orderInfo.time_data.batch_data.some((item) => {
-          return (
-            this.$formCheck(item, [
-              {
-                key: 'delivery_time',
-                errMsg: '请选择发货日期'
-              },
-              {
-                key: 'batch_type_id',
-                errMsg: '请选择批次类型'
-              }
-            ]) ||
-            item.product_data.some((itemChild) => {
-              return (
-                this.$formCheck(itemChild, [
-                  {
-                    key: 'product_id',
-                    errMsg: '请选择产品'
-                  }
-                ]) ||
-                itemChild.product_info.some((itemPro) => {
-                  return this.$formCheck(itemPro, [
-                    {
-                      key: 'size_color',
-                      errMsg: '请选择尺码颜色'
-                    },
-                    {
-                      key: 'price',
-                      errMsg: '请输入下单单价'
-                    },
-                    {
-                      key: 'number',
-                      errMsg: '请输入下单数量'
-                    }
-                  ])
-                })
-              )
-            })
-          )
-        })
-      if (
-        this.orderInfo.time_data.batch_data.some((item) => {
-          this.$ifRepeatArray(item.product_data.map((itemChild) => itemChild.product_id) as string[])
-        })
-      ) {
-        this.$message.error('相同样品请不要分多次添加')
-        return
-      }
-      if (!formCheck) {
+    saveOrder(ifCaogao: boolean) {
+      if (ifCaogao) {
+        this.orderInfo.is_draft = 1
         this.getCmpData()
         order.create(this.orderInfo).then((res) => {
           if (res.data.status) {
-            this.$message.success('添加成功')
+            this.$message.success('草稿保存成功')
             this.$router.push('/order/list?page=1&keyword=&client_id=&user_id=&status=null&date=')
           }
         })
+      } else {
+        this.orderInfo.is_draft = 2
+        const formCheck =
+          this.$formCheck(this.orderInfo, [
+            {
+              key: 'tree_data',
+              errMsg: '请选择下单公司',
+              regNormal: 'checkArr'
+            },
+            {
+              key: 'contacts_id',
+              errMsg: '请选择联系人'
+            },
+            {
+              key: 'group_id',
+              errMsg: '请选择负责小组'
+            }
+          ]) ||
+          this.$formCheck(this.orderInfo.time_data, [
+            {
+              key: 'order_time',
+              errMsg: '请选择下单时间'
+            }
+          ]) ||
+          this.orderInfo.time_data.batch_data.some((item) => {
+            return (
+              this.$formCheck(item, [
+                {
+                  key: 'delivery_time',
+                  errMsg: '请选择发货日期'
+                },
+                {
+                  key: 'batch_type_id',
+                  errMsg: '请选择批次类型'
+                }
+              ]) ||
+              item.product_data.some((itemChild) => {
+                return (
+                  this.$formCheck(itemChild, [
+                    {
+                      key: 'product_id',
+                      errMsg: '请选择产品'
+                    }
+                  ]) ||
+                  itemChild.product_info.some((itemPro) => {
+                    return this.$formCheck(itemPro, [
+                      {
+                        key: 'size_color',
+                        errMsg: '请选择尺码颜色'
+                      },
+                      {
+                        key: 'price',
+                        errMsg: '请输入下单单价'
+                      },
+                      {
+                        key: 'number',
+                        errMsg: '请输入下单数量'
+                      }
+                    ])
+                  })
+                )
+              })
+            )
+          })
+        if (
+          this.orderInfo.time_data.batch_data.some((item) => {
+            this.$ifRepeatArray(item.product_data.map((itemChild) => itemChild.product_id) as string[])
+          })
+        ) {
+          this.$message.error('相同产品请不要分多次添加')
+          return
+        }
+        if (!formCheck) {
+          this.getCmpData()
+          order.create(this.orderInfo).then((res) => {
+            if (res.data.status) {
+              this.$message.success('添加成功')
+              this.$router.push('/order/list?page=1&keyword=&client_id=&user_id=&status=null&date=')
+            }
+          })
+        }
       }
     }
   },

@@ -69,10 +69,16 @@ const routes: Array<RouteConfig> = [
       name: '系统设置',
       component: () => import('../views/setting/setting.vue')
     }, {
+      meta: {
+        permissions_id: '1-1',
+      },
       path: '/quotedPrice/create',
       name: '添加报价单',
       component: () => import('../views/quotedPrice/create.vue')
     }, {
+      meta: {
+        permissions_id: '1-3',
+      },
       path: '/quotedPrice/list',
       name: '报价单列表',
       component: () => import('../views/quotedPrice/list.vue')
@@ -81,26 +87,44 @@ const routes: Array<RouteConfig> = [
       name: '报价单详情',
       component: () => import('../views/quotedPrice/detail.vue')
     }, {
+      meta: {
+        permissions_id: '1-2',
+      },
       path: '/quotedPrice/update',
       name: '修改报价单',
       component: () => import('../views/quotedPrice/update.vue')
     }, {
+      meta: {
+        permissions_id: '13-3',
+      },
       path: '/client/list',
       name: '客户/单位列表',
       component: () => import('../views/client/list.vue')
     }, {
+      meta: {
+        permissions_id: '13-1',
+      },
       path: '/client/create',
       name: '添加客户/单位',
       component: () => import('../views/client/create.vue')
     }, {
+      meta: {
+        permissions_id: '13-2',
+      },
       path: '/client/update',
       name: '修改客户/单位',
       component: () => import('../views/client/update.vue')
     }, {
+      meta: {
+        permissions_id: '2-3',
+      },
       path: '/sampleOrder/list',
       name: '样单列表',
       component: () => import('../views/sampleOrder/list.vue')
     }, {
+      meta: {
+        permissions_id: '2-1',
+      },
       path: '/sampleOrder/create',
       name: '样单添加',
       component: () => import('../views/sampleOrder/create.vue')
@@ -109,18 +133,30 @@ const routes: Array<RouteConfig> = [
       name: '样单详情',
       component: () => import('../views/sampleOrder/detail.vue')
     }, {
+      meta: {
+        permissions_id: '2-2',
+      },
       path: '/sampleOrder/update',
       name: '样单修改',
       component: () => import('../views/sampleOrder/update.vue')
     }, {
+      meta: {
+        permissions_id: '2-1',
+      },
       path: '/sampleOrder/again',
       name: '继续打样',
       component: () => import('../views/sampleOrder/again.vue')
     }, {
+      meta: {
+        permissions_id: '3-3',
+      },
       path: '/order/list',
       name: '订单列表',
       component: () => import('../views/order/list.vue')
     }, {
+      meta: {
+        permissions_id: '3-1',
+      },
       path: '/order/create',
       name: '订单添加',
       component: () => import('../views/order/create.vue')
@@ -129,6 +165,9 @@ const routes: Array<RouteConfig> = [
       name: '订单详情',
       component: () => import('../views/order/detail.vue')
     }, {
+      meta: {
+        permissions_id: '3-2',
+      },
       path: '/order/update',
       name: '订单修改',
       component: () => import('../views/order/update.vue')
@@ -137,10 +176,16 @@ const routes: Array<RouteConfig> = [
       name: '编辑标签',
       component: () => import('../views/tagEditPrint/editTag.vue')
     }, {
+      meta: {
+        permissions_id: '15-1',
+      },
       path: '/craft/create',
       name: '创建工艺单',
       component: () => import('../views/craft/create.vue')
     }, {
+      meta: {
+        permissions_id: '15-2',
+      },
       path: '/craft/update',
       name: '修改工艺单',
       component: () => import('../views/craft/update.vue')
@@ -149,22 +194,23 @@ const routes: Array<RouteConfig> = [
       name: '工艺单详情',
       component: () => import('../views/craft/detail.vue')
     }, {
+      meta: {
+        permissions_id: '15-3',
+      },
       path: '/craft/list',
       name: '工艺单列表',
       component: () => import('../views/craft/list.vue')
     }, {
-      path: '/ingredient/create',
-      name: '创建配料单',
-      component: () => import('../views/ingredient/create.vue')
-    }, {
-      path: '/ingredient/update',
-      name: '修改配料单',
-      component: () => import('../views/ingredient/update.vue')
-    }, {
+      meta: {
+        permissions_id: '12-3',
+      },
       path: '/store/list',
       name: '仓库列表',
       component: () => import('../views/store/list.vue')
     }, {
+      meta: {
+        permissions_id: '12-1',
+      },
       path: '/store/create',
       name: '添加仓库',
       component: () => import('../views/store/create.vue')
@@ -177,10 +223,16 @@ const routes: Array<RouteConfig> = [
       name: '产品仓库详情',
       component: () => import('../views/store/productDetail.vue')
     }, {
+      meta: {
+        permissions_id: '4-1',
+      },
       path: '/materialPlan/create',
       name: '物料计划添加',
       component: () => import('../views/materialPlan/create.vue')
     }, {
+      meta: {
+        permissions_id: '4-3',
+      },
       path: '/materialPlan/list',
       name: '物料计划列表',
       component: () => import('../views/materialPlan/list.vue')
@@ -189,10 +241,16 @@ const routes: Array<RouteConfig> = [
       name: '物料计划详情',
       component: () => import('../views/materialPlan/detail.vue')
     }, {
+      meta: {
+        permissions_id: '4-2',
+      },
       path: '/materialPlan/update',
       name: '物料计划修改',
       component: () => import('../views/materialPlan/update.vue')
     }, {
+      meta: {
+        permissions_id: '5-3',
+      },
       path: '/materialManage/list',
       name: '原料管理列表',
       component: () => import('../views/materialManage/list.vue')
@@ -201,10 +259,20 @@ const routes: Array<RouteConfig> = [
       name: '原料管理详情',
       component: () => import('../views/materialManage/detail.vue')
     }, {
+      path: '/materialManage/supList',
+      name: '补充物料列表',
+      component: () => import('../views/materialManage/supList.vue')
+    }, {
+      meta: {
+        permissions_id: '6-1',
+      },
       path: '/accessoriesManage/create',
       name: '辅料订购加工',
       component: () => import('../views/accessoriesManage/create.vue')
     }, {
+      meta: {
+        permissions_id: '6-3',
+      },
       path: '/accessoriesManage/list',
       name: '辅料管理列表',
       component: () => import('../views/accessoriesManage/list.vue')
@@ -217,10 +285,16 @@ const routes: Array<RouteConfig> = [
       name: '物料出入库详情',
       component: () => import('../views/materialStock/detail.vue')
     }, {
+      meta: {
+        permissions_id: '7-3',
+      },
       path: '/materialStock/list',
       name: '物料出入库列表',
       component: () => import('../views/materialStock/list.vue')
     }, {
+      meta: {
+        permissions_id: '8-3',
+      },
       path: '/productionPlan/list',
       name: '生产计划列表',
       component: () => import('../views/productionPlan/list.vue')
@@ -229,6 +303,9 @@ const routes: Array<RouteConfig> = [
       name: '生产计划详情',
       component: () => import('../views/productionPlan/detail.vue')
     }, {
+      meta: {
+        permissions_id: '9-3',
+      },
       path: '/inspection/detail',
       name: '检验收发详情',
       component: () => import('../views/inspection/detail.vue')
@@ -237,6 +314,9 @@ const routes: Array<RouteConfig> = [
       name: '检验收发列表',
       component: () => import('../views/inspection/list.vue')
     }, {
+      meta: {
+        permissions_id: '14-3',
+      },
       path: '/materialPlanOrder/list',
       name: '原料预订购列表',
       component: () => import('../views/materialPlanOrder/list.vue')
@@ -281,6 +361,7 @@ const isHasPermissions = (id: string | number) => {
 // 路由守卫
 router.beforeEach((to, from, next) => {
   // 权限判断
+  console.log(to)
   if (to.meta && to.meta.permissions_id) {
     if (!isHasPermissions(to.meta.permissions_id)) {
       next(false)

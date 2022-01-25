@@ -23,14 +23,14 @@
             </el-cascader>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter"
+            <el-select @change="$setLocalStorage('create_user',user_id);changeRouter()"
               v-model="user_id"
               placeholder="筛选创建人"
               clearable>
               <el-option v-for="item in userList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"></el-option>
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
@@ -52,7 +52,7 @@
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select @change="changeRouter"
+            <el-select @change="$setLocalStorage('group_id',group_id);changeRouter()"
               v-model="group_id"
               placeholder="筛选负责小组">
               <el-option v-for="item in groupList"
@@ -396,8 +396,8 @@ export default Vue.extend({
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.keyword = query.keyword || ''
       this.status = query.status === 'null' ? null : query.status
-      this.user_id = Number(query.user_id) || ''
-      this.group_id = Number(query.group_id) || ''
+      this.user_id = query.user_id || this.$getLocalStorage('create_user')
+      this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.limit = Number(query.limit) || 10
       this.date = query.date ? (query.date as string).split(',') : []
     },

@@ -54,7 +54,7 @@ const companyInfo = {
 const homePage = {
   searchAll: (params: {
     keyword: string
-    type: number // 1:订单 2样单 3报价单 4工艺单 5物料计划
+    type: number | string // 1:订单 2样单 3报价单 4工艺单 5物料计划 空:所有
   }) => http.get(`${baseUrl}/index/search`, params)
 }
 
@@ -265,7 +265,15 @@ import { ClientInfo } from '@/types/client'
 const client = {
   create: (params: ClientInfo) => http.post(`${baseUrl}/client/save`, params, 'application/json'),
   detail: (params: DetailParams) => http.get(`${baseUrl}/client/detail`, params),
-  list: (params?: ListParams) => http.get(`${baseUrl}/client/lists`, params),
+  list: (params?: {
+    limit?: number | string
+    page?: number | string
+    name?: string
+    status?: number | string
+    tag_id?: number | string
+    client_type_id?: number | string
+    workshop_id?: 0
+  }) => http.get(`${baseUrl}/client/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/client/delete`, params, 'application/json'),
   check: (params: DetailParams) => http.post(`${baseUrl}/client/check/status`, params, 'application/json') // 启用/禁用客户
 }
@@ -289,6 +297,7 @@ const group = {
 // 用户
 import { UserInfo } from '@/types/user'
 const user = {
+  update: (params: UserInfo) => http.post(`${baseUrl}/user/edit`, params, 'application/json'), // 内部用户
   create: (params: UserInfo) => http.post(`${baseUrl}/user/add`, params, 'application/json'), // 内部用户
   list: (params?: ListParams) => http.get(`${baseUrl}/user/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/user/delete`, params, 'application/json'),
@@ -371,6 +380,7 @@ const sampleOrder = {
   confirm: (params: { id: string | number, status: 1 | 2 | 3 | 4 | 5 | 6 }) => http.post(`${baseUrl}/order/product/confirm`, params, 'application/json'),
   confirmList: (params: { order_id: number, status?: number[] }) => http.get(`${baseUrl}/order/confirm/product/lists`, params),
   deletePro: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product`, params, 'application/json'), // 删除产品
+  materialDetail: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/material/info`, params),
   deleteProChild: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product/info`, params, 'application/json'), // 删除产品子项
 }
 
@@ -391,7 +401,11 @@ const order = {
   delete: (params: DeleteParams) => http.post(`${baseUrl}/order/delete`, params, 'application/json'),
   deletePro: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product`, params, 'application/json'), // 删除订单里的产品
   deleteProChild: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product/info`, params, 'application/json'), // 删除订单里的子项
+  materialDetail: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/material/info`, params),
 }
+
+// 跟单据相关的所有单位
+const clientInOrder = (params: { order_id: string | number }) => http.get(`${baseUrl}/order/all/rel/client`, params)
 
 // 物料计划单
 import { MaterialPlanInfo } from '@/types/materialPlan'
@@ -426,6 +440,7 @@ const materialOrder = {
     reserve_id?: string | number // 预订购单
     top_order_id?: string | number // 最外层order_id
     material_type?: 1 | 2
+    sup_id?: string | number //补纱单id
   }) => http.get(`${baseUrl}/material/order/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/material/order/detail`, params),
   delete: (params: DetailParams) => http.post(`${baseUrl}/material/order/delete`, params, 'application/json')
@@ -464,11 +479,11 @@ const materialStock = {
   create: (params: { data: MaterialStockInfo[] }) => http.post(`${baseUrl}/store/log/save`, params, 'application/json'),
   list: (params: {
     action_type?: number // 搜调取单的时候用，一般是出库单10
-    plan_id?: string | number
     order_id?: string | number
     client_id?: string | number
     reserve_id?: string | number // 预订购单
     top_order_id?: string | number // 最外层order_id
+    rel_doc_id?: string | number
   }) => http.get(`${baseUrl}/store/log/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/store/log/delete`, params, 'application/json'),
   detail: (params: DetailParams) => http.get(`${baseUrl}/store/log/detail`, params),
@@ -486,6 +501,29 @@ const productionPlan = {
   }) => http.get(`${baseUrl}/weave/plan/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/weave/plan/delete`, params, 'application/json'),
   detail: (params: DetailParams) => http.get(`${baseUrl}/weave/plan/detail`, params),
+}
+
+// 补纱
+import { MaterialSupplementInfo } from '@/types/materialSupplement'
+const materialSupplement = {
+  create: (params: MaterialSupplementInfo) => http.post(`${baseUrl}/material/sup/save`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/material/sup/delete`, params, 'application/json'),
+  list: (params: {
+    top_order_id?: string | number // 最外层order_id
+    plan_id?: string | number
+    order_id?: string | number // time_data里的
+    client_id?: string | number
+    limit?: number
+    page?: number
+    start_time?: string
+    end_time?: string
+    keyword?: string
+    code?: string
+    user_id?: string | number
+    order_code?: string
+    type?: 1 | 2 // 1.原料计划单 2.辅料计划单
+  }) => http.get(`${baseUrl}/material/sup/lists`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/material/sup/detail`, params),
 }
 
 import { InspectionInfo } from '@/types/inspection'
@@ -527,7 +565,15 @@ const exportExcel = {
     end_time: string
   }) => http.get(`${baseUrl}/export/order/info`, params),
 }
+
+// 客户绑定小程序
+const clientBind = {
+  list: (params?: ListParams) => http.get(`${baseUrl}/workshop/apply/list`, params),
+  bind: (params: { client_id: string | number, uuid: string }) => http.post(`${baseUrl}/workshop/client/save`, params, 'application/json'),
+  unbind: (params: { client_id: string | number }) => http.post(`${baseUrl}/workshop/client/unbind`, params, 'application/json')
+}
 export {
+  clientBind,
   systemMessage,
   login,
   logout,
@@ -578,5 +624,7 @@ export {
   productionPlan,
   inspection,
   exportExcel,
-  tutorialSystem
+  tutorialSystem,
+  materialSupplement,
+  clientInOrder
 }

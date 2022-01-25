@@ -42,8 +42,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { tutorialSystem } from '@/assets/js/api'
-// permissions是旧系统，systemModule是新系统，暂时调接口用旧系统的
-import { permissions, systemModule } from '@/assets/js/dictionary'
+import { systemModule } from '@/assets/js/dictionary'
 export default Vue.extend({
   data(): {
     [propName: string]: any
@@ -57,7 +56,7 @@ export default Vue.extend({
           id: 99,
           module: '常见问题'
         },
-        ...permissions
+        ...systemModule
       ]
     }
   },

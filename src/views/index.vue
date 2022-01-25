@@ -100,12 +100,12 @@ import Vue from 'vue'
 import { navInfo } from '@/types/nav'
 export default Vue.extend({
   data(): {
-    newNavData: navInfo[]
-    moduleArr: null | string
+    navData: navInfo[]
+    moduleArr: string
     [propName: string]: any
   } {
     return {
-      moduleArr: window.sessionStorage.getItem('module_id'),
+      moduleArr: window.sessionStorage.getItem('module_id') as string,
       userName: window.sessionStorage.getItem('user_name'),
       logo: window.sessionStorage.getItem('logo') || require('@/assets/image/common/noPic.png'),
       companyName: window.sessionStorage.getItem('company_name') || '未登录',
@@ -118,7 +118,7 @@ export default Vue.extend({
       sendIntervalTime: 60, // 方便后期修改间隔时间
       firstPasd: '',
       lastPasd: '',
-      newNavData: [
+      navData: [
         {
           name: '报价管理',
           id: 1,
@@ -163,13 +163,13 @@ export default Vue.extend({
     },
     navCmp(): navInfo[] {
       if (this.moduleArr) {
-        // 测试不判定权限
-        return this.newNavData
-        // return this.newNavData.filter((item: navInfo) => {
-        //   return item.id ? this.moduleArr!.indexOf(item.id as string) !== -1 : true
-        // })
+        return JSON.parse(this.moduleArr).length > 0
+          ? this.navData.filter((item: navInfo) => {
+              return item.id ? JSON.parse(this.moduleArr).indexOf(item.id) !== -1 : true
+            })
+          : this.navData
       } else {
-        return this.newNavData
+        return this.navData
       }
     }
   },

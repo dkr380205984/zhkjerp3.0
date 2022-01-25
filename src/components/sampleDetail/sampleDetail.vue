@@ -161,21 +161,21 @@
             </div>
           </div>
         </div>
-        <div class="oprCtn"
-          v-show="!noOpr">
-          <span class="btn borderBtn"
-            @click="close">取消</span>
-          <span class="btn backHoverOrange" @click="proId=null;pid=null;pid_status=null;addProductFlag = true;">修改</span>
-        </div>
+      </div>
+      <div class="oprCtn"
+        v-show="!noOpr">
+        <span class="btn borderBtn"
+          @click="close">取消</span>
+        <span class="btn backHoverOrange"
+          @click="proId=null;pid=null;pid_status=null;addProductFlag = true;">修改</span>
       </div>
     </div>
-    <sample-edit 
-      :edit="true"
+    <sample-edit :edit="true"
       :inDetail="true"
       :pid="null"
       :pid_status="null"
       :id="data.id"
-      :data ="sampleInfo"
+      :data="sampleInfo"
       :show="addProductFlag"
       @close="addProductFlag = false"
       @afterSave="getNewSample"
@@ -212,7 +212,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
-      addProductFlag:false,
+      addProductFlag: false,
       sampleInfo: {
         product_type: 2,
         name: '',
@@ -232,6 +232,7 @@ export default Vue.extend({
         ],
         size_data: [
           {
+            id: '',
             size_id: '',
             size_info: '',
             weight: ''
@@ -245,6 +246,7 @@ export default Vue.extend({
             unit: '',
             part_size_data: [
               {
+                id: '',
                 size_id: '',
                 size_info: '',
                 weight: ''
@@ -291,7 +293,7 @@ export default Vue.extend({
       this.getDataFlag = false
       this.$emit('close')
     },
-    getNewSample(val:any){
+    getNewSample(val: any) {
       console.log(val)
     }
   }

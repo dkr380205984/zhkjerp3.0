@@ -29,9 +29,11 @@
 // }, {
 //   name: '仓库出库',
 //   value: 10
-// }]
+// }] //11是补纱线
 export interface MaterialStockLog {
+  process_info?: any[]
   check?: boolean
+  id?: string | number
   stockInList?: MaterialStockLog[] // 这部分数据是前端用的入库数据列表,出库的时候只能选入库日志
   material_id: string | number
   material_name?: string
@@ -51,7 +53,7 @@ export interface MaterialStockInfo {
   id?: number
   order_id?: string | number
   material_type: number // 1纱线 2面料 4辅料
-  action_type: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+  action_type: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
   rel_doc_type?: string
   rel_doc_id: string | number
   rel_doc_code?: string // 前端显示单据编号用
@@ -67,6 +69,7 @@ export interface MaterialStockInfo {
   move_store_arr?: number[]
   tree_data?: number[]
   code?: string // 关联订单id
+  process_info?: any[]
   selectList?: Array<{
     name: string
     value: number
@@ -76,6 +79,9 @@ export interface MaterialStockInfo {
     attribute?: string
     number?: string | number
     unit?: string
+    vat_code?: string
+    color_code?: string
+    batch_code?: string
   }> // 前端用，存储勾选的单据纱线列表
   info_data: MaterialStockLog[]
 }

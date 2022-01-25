@@ -58,7 +58,7 @@
               <div class="tcol bgGray label">工艺单名称</div>
               <div class="tcol">{{craftInfo.title}}</div>
               <div class="tcol bgGray label">大身规格</div>
-              <div class="tcol"></div>
+              <div class="tcol">{{craftInfo.size}}</div>
               <div class="tcol bgGray label">大身克重</div>
               <div class="tcol">{{craftInfo.weight}}g</div>
             </div>
@@ -142,7 +142,7 @@
                     <span class="unit">根</span>
                   </div>
                   <div class="tcol bgGray label">边型</div>
-                  <div class="tcol">{{craftInfo.warp_data.side_name || '无'}}</div>
+                  <div class="tcol">{{craftInfo.warp_data.side || '无'}}</div>
                   <div class="tcol bgGray label">综页</div>
                   <div class="tcol">{{craftInfo.warp_data.sum_up || '0'}}
                     <span class="unit">页</span>
@@ -154,7 +154,7 @@
                     <span class="unit">cm</span>
                   </div>
                   <div class="tcol bgGray label">机型</div>
-                  <div class="tcol">{{craftInfo.warp_data.machine_name || '无'}}</div>
+                  <div class="tcol">{{craftInfo.warp_data.machine || '无'}}</div>
                   <div class="tcol bgGray label">其它</div>
                   <div class="tcol"></div>
                 </div>
@@ -269,8 +269,8 @@
                   <div class="tcol bgGray label">让位要求</div>
                   <div class="tcol flexRow">
                     <span>内长：</span>
-                    {{craftInfo.weft_data.neichang}}cm
-                    <span>让位：</span>
+                    {{craftInfo.weft_data.neichang}}cm；
+                    <span style="margin-left:22px">让位：</span>
                     {{craftInfo.weft_data.rangwei}}cm
                   </div>
                   <div class="tcol bgGray label">总计</div>
@@ -599,7 +599,7 @@
                     </template>
                     <template v-if="index===7||index===4||index===5||index===6">
                       <div class="tcol"
-                        v-for="(itemChild,indexChild) in getMergeSliceInfo(getMergeInfo(craftInfo.weft_data.merge_data,index-1,craftInfoweft_data.weft_rank[index-1].length))[indexFather]"
+                        v-for="(itemChild,indexChild) in getMergeSliceInfo(getMergeInfo(craftInfo.weft_data.merge_data,index-1,craftInfo.weft_data.weft_rank[index-1].length))[indexFather]"
                         :key="indexChild"
                         :style="{'min-width':6.25*itemChild.colspan + '%'}">
                         <span class="sign left"

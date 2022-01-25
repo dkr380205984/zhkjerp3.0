@@ -1,3 +1,5 @@
+import { MaterialSupplementInfo } from "./materialSupplement";
+
 export interface ProductionPlanInfo {
   id?: string | number
   code?: string
@@ -29,6 +31,7 @@ export interface ProductionPlanInfo {
     number: number | string
     price: number | string
     total_price: number | string
+    image_data?: string[]
     select_arr?: string // 前端用，下拉框选择一个产品尺码配色信息
   }>
   material_info_data: Array<{
@@ -40,6 +43,7 @@ export interface ProductionPlanInfo {
     number: number | string
     unit: string
   }>
+  sup_data?: MaterialSupplementInfo[]
   others_fee: Array<{
     name: string
     price: string | number

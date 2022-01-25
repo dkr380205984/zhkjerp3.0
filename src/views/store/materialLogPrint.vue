@@ -59,7 +59,7 @@
               <div class="tcol">{{item.batch_code}}</div>
               <div class="tcol">{{item.vat_code}}</div>
               <div class="tcol">{{item.color_code}}</div>
-              <div class="tcol">{{item.number}}kg</div>
+              <div class="tcol">{{item.number}}{{item.unit}}</div>
               <div class="tcol">{{item.item}}件</div>
             </div>
           </div>
@@ -102,6 +102,8 @@ export default Vue.extend({
   } {
     return {
       type: 1,
+      user_name: window.sessionStorage.getItem('user_name'),
+      company_name: window.sessionStorage.getItem('company_name'),
       materialStockInfo: {
         material_type: 1,
         action_type: 9,

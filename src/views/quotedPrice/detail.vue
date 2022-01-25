@@ -250,7 +250,7 @@
                         </span>
                       </div>
                     </div>
-                    <div class="col">{{itemYarn.total_price}}元
+                    <div class="col">{{itemYarn.total_price.toFixed(2)}}元
                       <div class="tips"
                         v-if="compareDesc[index] && compareDesc[index].material_data[indexYarn].totalPriceChange">
                         <span :class="{'lightRed':compareDesc[index].material_data[indexYarn].totalPriceChange==='up','lightGreen':compareDesc[index].material_data[indexYarn].totalPriceChange==='down'}">
@@ -804,49 +804,49 @@
                       <span>{{itemPro.product_update_data}}</span>
                     </div>
                     <div class="line"
-                      v-if="itemPro.material_activity_log.length>0">
+                      v-if="itemPro.material_activity_log && itemPro.material_activity_log.length>0">
                       <span class="label">原料修改信息：</span>
                       <span v-for="(itemChild,indexChild) in itemPro.material_activity_log"
                         :key="indexChild">{{itemChild}}</span>
                     </div>
                     <div class="line"
-                      v-if="itemPro.assist_material_activity_log.length>0">
+                      v-if="itemPro.assist_material_activity_log && itemPro.assist_material_activity_log.length>0">
                       <span class="label">辅料修改信息：</span>
                       <span v-for="(itemChild,indexChild) in itemPro.assist_material_activity_log"
                         :key="indexChild">{{itemChild}}</span>
                     </div>
                     <div class="line"
-                      v-if="itemPro.weave_activity_log.length>0">
+                      v-if="itemPro.weave_activity_log && itemPro.weave_activity_log.length>0">
                       <span class="label">织造修改信息：</span>
                       <span v-for="(itemChild,indexChild) in itemPro.weave_activity_log"
                         :key="indexChild">{{itemChild}}</span>
                     </div>
                     <div class="line"
-                      v-if="itemPro.semi_product_activity_log.length>0">
+                      v-if="itemPro.semi_product_activity_log && itemPro.semi_product_activity_log.length>0">
                       <span class="label">半成品加工修改信息：</span>
                       <span v-for="(itemChild,indexChild) in itemPro.semi_product_activity_log"
                         :key="indexChild">{{itemChild}}</span>
                     </div>
                     <div class="line"
-                      v-if="itemPro.production_activity_log.length>0">
+                      v-if="itemPro.production_activity_log && itemPro.production_activity_log.length>0">
                       <span class="label">成品加工修改信息：</span>
                       <span v-for="(itemChild,indexChild) in itemPro.production_activity_log"
                         :key="indexChild">{{itemChild}}</span>
                     </div>
                     <div class="line"
-                      v-if="itemPro.pack_material_activity_log.length>0">
+                      v-if="itemPro.pack_material_activity_log && itemPro.pack_material_activity_log.length>0">
                       <span class="label">包装辅料修改信息：</span>
                       <span v-for="(itemChild,indexChild) in itemPro.pack_material_activity_log"
                         :key="indexChild">{{itemChild}}</span>
                     </div>
                     <div class="line"
-                      v-if="itemPro.other_fee_activity_log.length>0">
+                      v-if="itemPro.other_fee_activity_log && itemPro.other_fee_activity_log.length>0">
                       <span class="label">其他修改信息：</span>
                       <span v-for="(itemChild,indexChild) in itemPro.others_fee_activity_log"
                         :key="indexChild">{{itemChild}}</span>
                     </div>
                     <div class="line"
-                      v-if="itemPro.no_production_fee_activity_log.length>0">
+                      v-if="itemPro.no_production_fee_activity_log && itemPro.no_production_fee_activity_log.length>0">
                       <span class="label">非生产型费用修改信息：</span>
                       <span v-for="(itemChild,indexChild) in itemPro.no_production_fee_activity_log"
                         :key="indexChild">{{itemChild}}</span>

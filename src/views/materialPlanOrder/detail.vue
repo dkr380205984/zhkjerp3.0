@@ -36,15 +36,16 @@
               <div class="tcol"
                 style="flex:1.6">单据编号</div>
               <div class="tcol noPad"
-                style="flex:5">
+                style="flex:4">
                 <div class="trow">
                   <div class="tcol">纱线名称</div>
                   <div class="tcol">颜色</div>
                   <div class="tcol">属性</div>
                   <div class="tcol">订购数量</div>
-                  <div class="tcol">入库数量</div>
+
                 </div>
               </div>
+              <div class="tcol">入库数量</div>
               <div class="tcol">额外费用</div>
               <div class="tcol">日期</div>
               <div class="tcol">备注信息</div>
@@ -58,17 +59,17 @@
               <div class="tcol"
                 style="flex:1.6">{{item.code}}</div>
               <div class="tcol noPad"
-                style="flex:5">
+                style="flex:4">
                 <div class="trow"
                   v-for="itemChild in item.info_data"
                   :key="itemChild.id">
                   <div class="tcol">{{itemChild.material_name}}</div>
                   <div class="tcol">{{itemChild.material_color}}</div>
                   <div class="tcol">{{itemChild.attribute}}</div>
-                  <div class="tcol">{{itemChild.number}}kg</div>
-                  <div class="tcol">数据没有</div>
+                  <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
                 </div>
               </div>
+              <div class="tcol">{{item.rel_push_number}}{{item.unit}}</div>
               <div class="tcol">
                 <others-fee-data :data="item.others_fee_data"></others-fee-data>
               </div>

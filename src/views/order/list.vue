@@ -23,7 +23,7 @@
             </el-cascader>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter"
+            <el-select @change="$setLocalStorage('create_user',user_id);changeRouter()"
               v-model="user_id"
               placeholder="筛选创建人"
               clearable>
@@ -50,7 +50,7 @@
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select @change="changeRouter"
+            <el-select @change="$setLocalStorage('group_id',group_id);changeRouter()"
               v-model="group_id"
               placeholder="筛选负责小组">
               <el-option v-for="item in groupList"
@@ -309,6 +309,8 @@ export default Vue.extend({
           name: '订单号',
           ifShow: true,
           ifLock: true,
+          ifCaogao: 'is_draft',
+          caogaoArr: ['稿', '整'],
           index: 0
         },
         {
@@ -421,7 +423,11 @@ export default Vue.extend({
           name: '详情',
           class: 'hoverBlue',
           fn: (item: any) => {
-            this.$router.push('/order/detail?id=' + item.id)
+            if (item.is_draft === 1) {
+              this.$router.push('/order/update?id=' + item.id)
+            } else {
+              this.$router.push('/order/detail?id=' + item.id)
+            }
           }
         },
         {
@@ -474,8 +480,8 @@ export default Vue.extend({
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.keyword = query.keyword || ''
       this.status = query.status || 'null'
-      this.user_id = Number(query.user_id) || ''
-      this.group_id = Number(query.gourp_id) || ''
+      this.user_id = query.user_id || this.$getLocalStorage('create_user')
+      this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
     },

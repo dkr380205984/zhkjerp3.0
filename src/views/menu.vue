@@ -62,38 +62,38 @@ export default Vue.extend({
       menuList: {
         production: [
           {
-            name: '物料计划',
-            id: 4,
+            name: '原料计划',
+            id: '4-3',
             icon: 'icon-wuliaojihua',
             url: '/materialPlan/list?page=1&keyword=&client_id=&user_id=&status=0&date=&&order_type=null'
           },
           {
             name: '原料管理',
-            id: 5,
+            id: '5-3',
             icon: 'icon-wuliaoguanli',
             url: '/materialManage/list?page=1&type=1&code=&order_code=&date='
           },
           {
             name: '辅料管理',
-            id: 6,
+            id: '6-3',
             icon: 'icon-fuliaoguanli',
             url: '/accessoriesManage/list?page=1&code=&date='
           },
           {
-            name: '物料出入库',
-            id: 7,
+            name: '原料出入库',
+            id: '7-3',
             icon: 'icon-wuliaochuruku',
             url: '/materialStock/list?page=1&type=1'
           },
           {
             name: '生产计划',
-            id: 8,
+            id: '8-3',
             icon: 'icon-shengchanjihua',
             url: '/productionPlan/list?page=1&type=1'
           },
           {
             name: '产品检验',
-            id: 9,
+            id: '9-3',
             icon: 'icon-shengchanpinjianyan',
             url: '/inspection/list?page=1&type=1'
           }
@@ -113,40 +113,28 @@ export default Vue.extend({
         other: [
           {
             name: '仓库管理',
-            id: 11,
+            id: '12-3',
             icon: 'icon-cangkuguanli',
             url: '/store/list?page=1&keyword=&user_id=&store_type=1'
           },
           {
             name: '客户与合作商管理',
-            id: 12,
+            id: '13-3',
             icon: 'icon-kehuguanli',
             url: '/client/list?page=1&type=1&status=1&keyword='
           },
           {
             name: '原料预订购',
-            id: 13,
+            id: '14-3',
             icon: 'icon-wuliaoyudinggou',
             url: '/materialPlanOrder/list?page=1&type=1'
           },
           {
             name: '工艺单列表',
-            id: 14,
+            id: '15-3',
             icon: 'icon-wuliaoyudinggou',
             url: '/craft/list?page=1'
           }
-          // {
-          //   name: '普通打印模板',
-          //   id: 14,
-          //   icon: 'iconshouye',
-          //   url: '/commonPrint/printEasy'
-          // },
-          // {
-          //   name: '菜单打印没做',
-          //   id: 15,
-          //   icon: 'iconshouye',
-          //   url: '/commonPrint/printMenu'
-          // }
           // {
           //   name: '系统教程',
           //   id: 16,
@@ -156,6 +144,18 @@ export default Vue.extend({
         ],
         finance: []
       }
+    }
+  },
+  mounted() {
+    const moduleInfo = window.sessionStorage.getItem('module_id') as string
+    this.menuList = {
+      production: this.menuList.production.filter((item) => {
+        return JSON.parse(moduleInfo).indexOf(item.id) !== -1
+      }),
+      other: this.menuList.other.filter((item) => {
+        return JSON.parse(moduleInfo).indexOf(item.id) !== -1
+      }),
+      finance: []
     }
   }
 })

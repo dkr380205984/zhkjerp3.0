@@ -2,6 +2,7 @@ export interface MaterialOrderInfo {
   id?: number | string
   code?: string
   order_id?: number | string
+  sup_id?: number | string
   plan_id?: number | string // 计划单id
   reserve_id?: number | string // 原料预订购单id
   client_id_arr?: string[] // 前端下拉框选择公司用
@@ -20,11 +21,13 @@ export interface MaterialOrderInfo {
 }
 
 export interface MaterialListInfo {
+  process_info?: any[]
   id?: string | number
   check?: boolean // 前端用
   material_id?: number | string
   material_name?: string
   material_color?: string
+  before_color?: string | null
   attribute?: string
   price: string
   number: string | number
@@ -39,5 +42,7 @@ export interface MaterialListInfo {
   pengsha_desc?: string // 膨纱要求 
   qiege_desc?: string // 切割要求
   bingxian_desc?: string // 并线要求
+  plan_color?: string
+  sup_color?: string
 }
 

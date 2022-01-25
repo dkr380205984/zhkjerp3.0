@@ -264,7 +264,7 @@
               <br />
               提示1：可使用乘以[ ]遍，最后一遍去掉[ ]列到[ ]列。例如：乘以[4]遍，最后一遍去掉[17]列到[19]列；注意只需要在括号中输入需要乘的遍数，和需要去掉的列数即可。删除括号符号会导致功能失效。
               <br />
-              提示2：可以在第二个合并项里使用"顺一遍倒一遍"功能，注意不要在第一个合并项里使用！不要修改"顺一遍倒一遍"文字信息
+              提示2：可以在第三个合并项里使用"顺一遍倒一遍"功能，注意不要在第一个/第二个合并项里使用！不要修改"顺一遍倒一遍"文字信息
               <br />
               提示3：停撬功能，可以点击表格序号，选择需要标记的符号。
             </div>
@@ -1068,7 +1068,7 @@
               <br />
               提示1：可使用乘以[ ]遍，最后一遍去掉[ ]列到[ ]列。例如：乘以[4]遍，最后一遍去掉[17]列到[19]列；注意只需要在括号中输入需要乘的遍数，和需要去掉的列数即可。删除括号符号会导致功能失效。
               <br />
-              提示2：可以在第二个合并项里使用"顺一遍倒一遍"功能，注意不要在第一个合并项里使用！不要修改"顺一遍倒一遍"文字信息
+              提示2：可以在第三个合并项里使用"顺一遍倒一遍"功能，注意不要在第一个/第二个合并项里使用！不要修改"顺一遍倒一遍"文字信息
               <br />
               提示3：停撬功能，可以点击表格序号，选择需要标记的符号。
             </div>
@@ -2541,12 +2541,12 @@ export default Vue.extend({
           ]) ||
           this.craftInfo.warp_data.color_data.some((item) => {
             return (
-              this.$formCheck(item, [
-                {
-                  key: 'color_id',
-                  errMsg: '请选择经向产品配色'
-                }
-              ]) ||
+              // this.$formCheck(item, [
+              //   {
+              //     key: 'color_id',
+              //     errMsg: '请选择经向产品配色'
+              //   }
+              // ]) ||
               item.color_scheme.some((itemColor) => {
                 return this.$formCheck(itemColor, [
                   {
@@ -2559,12 +2559,12 @@ export default Vue.extend({
           }) ||
           this.craftInfo.weft_data.color_data.some((item) => {
             return (
-              this.$formCheck(item, [
-                {
-                  key: 'color_id',
-                  errMsg: '请选择纬向产品配色'
-                }
-              ]) ||
+              // this.$formCheck(item, [
+              //   {
+              //     key: 'color_id',
+              //     errMsg: '请选择纬向产品配色'
+              //   }
+              // ]) ||
               item.color_scheme.some((itemColor) => {
                 return this.$formCheck(itemColor, [
                   {

@@ -5,7 +5,7 @@
     <order-detail :data="orderInfo"></order-detail>
     <div class="module clearfix">
       <div class="titleCtn">
-        <div class="title">物料采购单</div>
+        <div class="title">物料采购单入库</div>
       </div>
       <div class="tableCtn">
         <div class="thead">
@@ -13,12 +13,17 @@
             <div class="tcol">采购单号</div>
             <div class="tcol">采购单位</div>
             <div class="tcol noPad"
-              style="flex:6">
+              style="flex:5">
               <div class="trow">
                 <div class="tcol">物料名称</div>
-                <div class="tcol">物料属性</div>
-                <div class="tcol">物料颜色</div>
-                <div class="tcol">采购数量</div>
+                <div class="tcol">订购属性</div>
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow">
+                    <div class="tcol">初始/染色颜色</div>
+                    <div class="tcol">采购/已加工数量</div>
+                  </div>
+                </div>
                 <div class="tcol">入库数量</div>
               </div>
             </div>
@@ -34,7 +39,7 @@
             </div>
             <div class="tcol">{{item.client_name}}</div>
             <div class="tcol noPad"
-              style="flex:6">
+              style="flex:5">
               <div class="trow"
                 v-for="(itemChild,indexChild) in item.info_data"
                 :key="indexChild">
@@ -43,9 +48,68 @@
                     @change="$forceUpdate()">{{itemChild.material_name}}</el-checkbox>
                 </div>
                 <div class="tcol">{{itemChild.attribute}}</div>
-                <div class="tcol">{{itemChild.material_color}}</div>
-                <div class="tcol">{{itemChild.number}}{{itemChild.unit||'kg'}}</div>
-                <div class="tcol">入库数量</div>
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow"
+                    v-if="itemChild.process_info.filter((item)=>item.process==='染色').length===0">
+                    <div class="tcol">
+                      <span style="display:flex;align-items:center">
+                        <div class="backHoverOrange"
+                          style="display: inline-block;
+                          width: 22px;
+                          line-height: 22px;
+                          height: 22px;
+                          text-align: center;
+                          border-radius: 50%;
+                          color:white;
+                          font-size:14px;
+                          margin-right:8px">初</div>{{itemChild.material_color}}
+                      </span>
+                    </div>
+                    <div class="tcol">{{itemChild.number}}{{itemChild.unit||'kg'}}</div>
+                  </div>
+                  <div class="trow"
+                    v-else
+                    v-for="(itemSon,indexSon) in itemChild.process_info.filter((item)=>item.process==='染色')"
+                    :key="indexSon">
+                    <div class="tcol">
+                      <span style="display:flex;align-items:center">
+                        <div class="backHoverGreen"
+                          style="display: inline-block;
+                          width: 22px;
+                          line-height: 22px;
+                          height: 22px;
+                          text-align: center;
+                          border-radius: 50%;
+                          color:white;
+                          font-size:14px;
+                          margin-right:8px">染</div>
+                        {{itemSon.after_color}}
+                      </span>
+                    </div>
+                    <div class="tcol">{{itemSon.number}}{{itemChild.unit||'kg'}}</div>
+                  </div>
+                  <!-- 没染完 -->
+                  <div class="trow"
+                    v-if="itemChild.process_info.filter((item)=>item.process==='染色').length>0&&itemChild.process_info.filter((item)=>item.process==='染色').reduce((total,cur)=>(total+cur.number),0)<itemChild.number">
+                    <div class="tcol">
+                      <span style="display:flex;align-items:center">
+                        <div class="backHoverOrange"
+                          style="display: inline-block;
+                          width: 22px;
+                          line-height: 22px;
+                          height: 22px;
+                          text-align: center;
+                          border-radius: 50%;
+                          color:white;
+                          font-size:14px;
+                          margin-right:8px">初</div>{{itemChild.material_color}}
+                      </span>
+                    </div>
+                    <div class="tcol">{{itemChild.number - itemChild.process_info.filter((item)=>item.process==='染色').reduce((total,cur)=>(total+cur.number),0)}}{{itemChild.unit||'kg'}}</div>
+                  </div>
+                </div>
+                <div class="tcol">{{item.rel_push_number}}</div>
               </div>
             </div>
           </div>
@@ -71,19 +135,288 @@
               </svg>
               <span class="text">最终入库</span>
             </div>
-            <div class="btn backHoverOrange"
+            <!-- 中转入库是为了中转出库给物料加工单，没人管所以隐藏 -->
+            <!-- <div class="btn backHoverOrange"
               @click="goStock(1)">
               <svg class="iconFont"
                 aria-hidden="true">
                 <use xlink:href="#icon-xiugaidingdan"></use>
               </svg>
               <span class="text">中转入库</span>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module clearfix"
+      v-show="materialJHDQList.length>0">
+      <div class="titleCtn">
+        <div class="title">计划调取单入库</div>
+      </div>
+      <div class="tableCtn">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol">调取单号</div>
+            <div class="tcol">来源仓库</div>
+            <div class="tcol noPad"
+              style="flex:5">
+              <div class="trow">
+                <div class="tcol">原料名称</div>
+                <div class="tcol">调取属性</div>
+                <div class="tcol">批号/缸号/色号</div>
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow">
+                    <div class="tcol">调取/染色颜色</div>
+                    <div class="tcol">调取/已加工数量</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow"
+            v-for="item in materialJHDQList"
+            :key="item.id">
+            <div class="tcol">
+              <el-checkbox v-model="item.checkAll"
+                @change="getAllCheck($event,item)">{{item.code}}</el-checkbox>
+            </div>
+            <div class="tcol">{{item.store}}/{{item.secondary_store}}</div>
+            <div class="tcol noPad"
+              style="flex:5">
+              <div class="trow"
+                v-for="(itemChild,indexChild) in item.info_data"
+                :key="indexChild">
+                <div class="tcol">
+                  <el-checkbox v-model="itemChild.check"
+                    @change="$forceUpdate()">{{itemChild.material_name}}
+                  </el-checkbox>
+                </div>
+                <div class="tcol">{{itemChild.attribute}}</div>
+                <div class="tcol">{{itemChild.batch_code}}/{{itemChild.vat_code}}/{{itemChild.color_code}}</div>
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow"
+                    v-if="itemChild.process_info.filter((item)=>item.process==='染色').length===0">
+                    <div class="tcol">
+                      <span style="display:flex;align-items:center">
+                        <div class="backHoverOrange"
+                          style="display: inline-block;
+                          width: 22px;
+                          line-height: 22px;
+                          height: 22px;
+                          text-align: center;
+                          border-radius: 50%;
+                          color:white;
+                          font-size:14px;
+                          margin-right:8px">调</div>{{itemChild.material_color}}
+                      </span>
+                    </div>
+                    <div class="tcol">{{itemChild.number}}{{itemChild.unit||'kg'}}</div>
+                  </div>
+                  <div class="trow"
+                    v-else
+                    v-for="(itemSon,indexSon) in itemChild.process_info.filter((item)=>item.process==='染色')"
+                    :key="indexSon">
+                    <div class="tcol">
+                      <span style="display:flex;align-items:center">
+                        <div class="backHoverGreen"
+                          style="display: inline-block;
+                          width: 22px;
+                          line-height: 22px;
+                          height: 22px;
+                          text-align: center;
+                          border-radius: 50%;
+                          color:white;
+                          font-size:14px;
+                          margin-right:8px">染</div>
+                        {{itemSon.after_color}}
+                      </span>
+                    </div>
+                    <div class="tcol">{{itemSon.number}}{{itemChild.unit||'kg'}}</div>
+                  </div>
+                  <!-- 没染完 -->
+                  <div class="trow"
+                    v-if="itemChild.process_info.filter((item)=>item.process==='染色').length>0&&itemChild.process_info.filter((item)=>item.process==='染色').reduce((total,cur)=>(total+cur.number),0)<itemChild.number">
+                    <div class="tcol">
+                      <span style="display:flex;align-items:center">
+                        <div class="backHoverOrange"
+                          style="display: inline-block;
+                          width: 22px;
+                          line-height: 22px;
+                          height: 22px;
+                          text-align: center;
+                          border-radius: 50%;
+                          color:white;
+                          font-size:14px;
+                          margin-right:8px">调</div>{{itemChild.material_color}}
+                      </span>
+                    </div>
+                    <div class="tcol">{{itemChild.number - itemChild.process_info.filter((item)=>item.process==='染色').reduce((total,cur)=>(total+cur.number),0)}}{{itemChild.unit||'kg'}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="buttonList">
+        <div class="btn backHoverBlue">
+          <i class="el-icon-s-grid"></i>
+          <span class="text">调取单操作</span>
+        </div>
+        <div class="otherInfoCtn">
+          <div class="otherInfo">
+            <div class="btn backHoverBlue"
+              @click="goStock(7)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">调取入库</span>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="module clearfix">
+    <div class="module clearfix"
+      v-show="materialBSDQList.length>0">
+      <div class="titleCtn">
+        <div class="title">补纱调取单入库</div>
+      </div>
+      <div class="tableCtn">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol">调取单号</div>
+            <div class="tcol">来源仓库</div>
+            <div class="tcol noPad"
+              style="flex:5">
+              <div class="trow">
+                <div class="tcol">原料名称</div>
+                <div class="tcol">调取属性</div>
+                <div class="tcol">批号/缸号/色号</div>
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow">
+                    <div class="tcol">调取/染色颜色</div>
+                    <div class="tcol">调取/已加工数量</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow"
+            v-for="item in materialBSDQList"
+            :key="item.id">
+            <div class="tcol">
+              <el-checkbox v-model="item.checkAll"
+                @change="getAllCheck($event,item)">{{item.code}}</el-checkbox>
+            </div>
+            <div class="tcol">{{item.store}}/{{item.secondary_store}}</div>
+            <div class="tcol noPad"
+              style="flex:5"
+              v-for="(itemChild,indexChild) in item.info_data"
+              :key="indexChild">
+              <div class="trow">
+                <div class="tcol">
+                  <el-checkbox v-model="itemChild.check"
+                    @change="$forceUpdate()">{{itemChild.material_name}}
+                  </el-checkbox>
+                </div>
+                <div class="tcol">{{itemChild.attribute}}</div>
+                <div class="tcol">{{itemChild.batch_code}}/{{itemChild.vat_code}}/{{itemChild.color_code}}</div>
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow"
+                    v-if="itemChild.process_info.filter((item)=>item.process==='染色').length===0">
+                    <div class="tcol">
+                      <span style="display:flex;align-items:center">
+                        <div class="backHoverOrange"
+                          style="display: inline-block;
+                          width: 22px;
+                          line-height: 22px;
+                          height: 22px;
+                          text-align: center;
+                          border-radius: 50%;
+                          color:white;
+                          font-size:14px;
+                          margin-right:8px">调</div>{{itemChild.material_color}}
+                      </span>
+                    </div>
+                    <div class="tcol">{{itemChild.number}}{{itemChild.unit||'kg'}}</div>
+                  </div>
+                  <div class="trow"
+                    v-else
+                    v-for="(itemSon,indexSon) in itemChild.process_info.filter((item)=>item.process==='染色')"
+                    :key="indexSon">
+                    <div class="tcol">
+                      <span style="display:flex;align-items:center">
+                        <div class="backHoverGreen"
+                          style="display: inline-block;
+                          width: 22px;
+                          line-height: 22px;
+                          height: 22px;
+                          text-align: center;
+                          border-radius: 50%;
+                          color:white;
+                          font-size:14px;
+                          margin-right:8px">染</div>
+                        {{itemSon.after_color}}
+                      </span>
+                    </div>
+                    <div class="tcol">{{itemSon.number}}{{itemChild.unit||'kg'}}</div>
+                  </div>
+                  <!-- 没染完 -->
+                  <div class="trow"
+                    v-if="itemChild.process_info.filter((item)=>item.process==='染色').length>0&&itemChild.process_info.filter((item)=>item.process==='染色').reduce((total,cur)=>(total+cur.number),0)<itemChild.number">
+                    <div class="tcol">
+                      <span style="display:flex;align-items:center">
+                        <div class="backHoverOrange"
+                          style="display: inline-block;
+                          width: 22px;
+                          line-height: 22px;
+                          height: 22px;
+                          text-align: center;
+                          border-radius: 50%;
+                          color:white;
+                          font-size:14px;
+                          margin-right:8px">调</div>{{itemChild.material_color}}
+                      </span>
+                    </div>
+                    <div class="tcol">{{itemChild.number - itemChild.process_info.filter((item)=>item.process==='染色').reduce((total,cur)=>(total+cur.number),0)}}{{itemChild.unit||'kg'}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="buttonList">
+        <div class="btn backHoverBlue">
+          <i class="el-icon-s-grid"></i>
+          <span class="text">补纱单操作</span>
+        </div>
+        <div class="otherInfoCtn">
+          <div class="otherInfo">
+            <div class="btn backHoverBlue"
+              @click="goStock(8)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">调取入库</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 物料加工单暂时没人管出入库，隐藏 -->
+    <div class="module clearfix"
+      v-show="false">
       <div class="titleCtn">
         <div class="title">物料加工单</div>
       </div>
@@ -174,7 +507,7 @@
     </div>
     <div class="module clearfix">
       <div class="titleCtn">
-        <div class="title">半成品加工单</div>
+        <div class="title">半成品加工单最终出库</div>
       </div>
       <div class="tableCtn">
         <div class="thead">
@@ -188,7 +521,7 @@
                 <div class="tcol">纱线颜色</div>
                 <div class="tcol">所需数量</div>
                 <div class="tcol">出库数量</div>
-                <div class="tcol">操作</div>
+                <!-- <div class="tcol">操作</div> -->
               </div>
             </div>
           </div>
@@ -209,23 +542,65 @@
               style="flex:5">
               <template v-if="item.material_info_data.length===0">
                 <span class="gray"
-                  style="text-align:center">不需要物料</span>
+                  style="text-align:center">不需要计划物料</span>
               </template>
               <div class="trow"
                 v-for="(itemMat,indexMat) in item.material_info_data"
-                :key="indexMat">
+                :key="indexMat + 'plan'">
                 <div class="tcol">
                   <el-checkbox v-model="itemMat.check"
-                    @change="$forceUpdate()">{{itemMat.material_name}}
+                    @change="$forceUpdate()">
+                    <span style="display:flex;align-items:center">
+                      <div class="backHoverOrange"
+                        style="display: inline-block;
+                          width: 22px;
+                          line-height: 22px;
+                          height: 22px;
+                          text-align: center;
+                          border-radius: 50%;
+                          color:white;
+                          font-size:14px;
+                          margin-right:8px">计</div>{{itemMat.material_name}}
+                    </span>
                   </el-checkbox>
                 </div>
                 <div class="tcol">{{itemMat.material_color}}</div>
                 <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
                 <div class="tcol">出库数量</div>
-                <div class="tcol oprCtn">
+                <!-- <div class="tcol oprCtn">
                   <div class="opr hoverBlue">出库</div>
-                </div>
+                </div> -->
               </div>
+              <!-- 补纱单 -->
+              <template v-for="(itemMat) in item.sup_data">
+                <div v-for="itemChild in itemMat.info_data"
+                  :key="itemChild.id"
+                  class="trow">
+                  <div class="tcol">
+                    <el-checkbox v-model="itemChild.check"
+                      @change="$forceUpdate()">
+                      <span style="display:flex;align-items:center">
+                        <div class="backHoverGreen"
+                          style="display: inline-block;
+                          width: 22px;
+                          line-height: 22px;
+                          height: 22px;
+                          text-align: center;
+                          border-radius: 50%;
+                          color:white;
+                          font-size:14px;
+                          margin-right:8px">补</div>{{itemChild.material_name}}
+                      </span>
+                    </el-checkbox>
+                  </div>
+                  <div class="tcol">{{itemChild.material_color}}</div>
+                  <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
+                  <div class="tcol">出库数量</div>
+                  <!-- <div class="tcol oprCtn">
+                    <div class="opr hoverBlue">出库</div>
+                  </div> -->
+                </div>
+              </template>
             </div>
           </div>
           <div class="trow"
@@ -692,7 +1067,9 @@ export default Vue.extend({
     materialProcessList: MaterialProcessInfo[]
     materialOrderList: MaterialOrderInfo[]
     materialStockInfo: MaterialStockInfo
-    materialStockList: MaterialOrderInfo[]
+    materialStockList: MaterialStockInfo[]
+    materialJHDQList: MaterialStockInfo[]
+    materialBSDQList: MaterialStockInfo[]
     productionPlanList: ProductionPlanInfo[]
     [propName: string]: any
   } {
@@ -791,6 +1168,8 @@ export default Vue.extend({
         selectList: []
       },
       materialStockList: [],
+      materialJHDQList: [], // 计划调取单，实际上和出入库日志是同一个接口
+      materialBSDQList: [], // 补纱调取单，实际上和出入库日志是同一个接口
       productionPlanList: [],
       storeInList: [],
       yarnAttributeList: yarnAttributeArr
@@ -815,13 +1194,18 @@ export default Vue.extend({
         res[0].data.data.forEach((item: any) => {
           this.materialProcessList = this.materialProcessList.concat(item.process_info)
         })
-        this.materialStockList = res[1].data.data
-        console.log(this.materialStockList)
+        // 出入库日志把调取单过滤掉
+        this.materialStockList = res[1].data.data.filter(
+          (item: any) => item.action_type !== 10 && item.action_type !== 12
+        )
+        this.materialJHDQList = res[1].data.data.filter((item: any) => item.action_type === 10) // 计划调取
+        this.materialBSDQList = res[1].data.data.filter((item: any) => item.action_type === 12) // 补纱调取
         // 统计入库日志用于出库
         const flattenStock = this.$flatten(
           this.$flatten(
             this.materialStockList.map((item) => {
               item.info_data.forEach((itemChild) => {
+                // @ts-ignore
                 delete itemChild.id
               })
               return item
@@ -861,9 +1245,15 @@ export default Vue.extend({
       }
     },
     getAllCheck(ev: boolean, info: any) {
+      console.log(info)
       info.info_data
         ? info.info_data.forEach((item: any) => (item.check = ev))
         : info.material_info_data.forEach((item: any) => (item.check = ev))
+      if (info.sup_data && info.sup_data.length > 0) {
+        info.sup_data.forEach((item: any) => {
+          item.info_data.forEach((itemChild: any) => (itemChild.check = ev))
+        })
+      }
     },
     goStock(type: number) {
       const tipsArr = [
@@ -873,27 +1263,30 @@ export default Vue.extend({
         '中转出库只能选择已入库物料进行出库操作，请确认物料已入库',
         '最终入库一般为成品原料入库，半成品原料请选择中转入库',
         '单据生产出库',
-        '订单结余入库'
+        '订单结余入库',
+        '调取单最终入库',
+        '调取单最终入库'
       ]
       this.$confirm(tipsArr[type], '提示', {
-        confirmButtonText: this.stockTypeList[type - 1].name,
+        confirmButtonText: type !== 7 && type !== 8 ? this.stockTypeList[type - 1].name : '调取单最终入库',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
-          // 采购单入库操作
           if (type === 1 || type === 4) {
             this.getOrderInfo(type)
           } else if (type === 3) {
             this.getProcessInfo(type)
           } else if (type === 5) {
             this.getInspectionInfo()
+          } else if (type === 7 || type === 8) {
+            this.getDiaoquInfo(type)
           }
         })
         .catch(() => {
           this.$message({
             type: 'info',
-            message: '已取消' + this.stockTypeList[type - 1].name
+            message: '已取消' + (type !== 7 && type !== 8 ? this.stockTypeList[type - 1].name : '调取单最终入库')
           })
         })
     },
@@ -945,19 +1338,68 @@ export default Vue.extend({
           }
         })
       } else {
-        this.materialStockInfo.info_data = this.materialStockInfo.selectList.map((item) => {
-          return {
-            material_id: item.material_id as number,
-            material_color: item.material_color as string,
-            color_code: '',
-            batch_code: '',
-            vat_code: '',
-            attribute: item.attribute as string,
-            number: item.number as string,
-            item: '', // 件数
-            unit: item.unit,
-            rel_doc_info_id: item.value // 采购单调取单加工单子项id
-          }
+        this.materialStockInfo.info_data = []
+        this.materialOrderList.forEach((item) => {
+          item.info_data.forEach((itemChild) => {
+            if (itemChild.check) {
+              this.materialStockInfo.rel_doc_code = item.code
+              this.materialStockInfo.rel_doc_id = item.id as number
+              if (itemChild.process_info!.filter((item) => item.process === '染色').length > 0) {
+                itemChild
+                  .process_info!.filter((item) => item.process === '染色')
+                  .forEach((itemProcess) => {
+                    this.materialStockInfo.info_data.push({
+                      material_id: itemChild.material_id as number,
+                      material_color: itemProcess.after_color,
+                      color_code: '',
+                      batch_code: '',
+                      vat_code: '',
+                      attribute: '筒纱',
+                      number: itemProcess.number,
+                      item: '', // 件数
+                      unit: itemProcess.unit,
+                      rel_doc_info_id: itemChild.id // 采购单调取单加工单子项id
+                    })
+                  })
+                if (
+                  itemChild.process_info!.filter((item) => item.process === '染色').length > 0 &&
+                  itemChild
+                    .process_info!.filter((item) => item.process === '染色')
+                    .reduce((total, cur) => total + cur.number, 0) < itemChild.number
+                ) {
+                  this.materialStockInfo.info_data.push({
+                    material_id: itemChild.material_id as number,
+                    material_color: itemChild.material_color as string,
+                    color_code: '',
+                    batch_code: '',
+                    vat_code: '',
+                    attribute: '筒纱',
+                    number:
+                      Number(itemChild.number) -
+                      itemChild
+                        .process_info!.filter((item) => item.process === '染色')
+                        .reduce((total, cur) => total + cur.number, 0),
+                    item: '', // 件数
+                    unit: itemChild.unit,
+                    rel_doc_info_id: itemChild.id // 采购单调取单加工单子项id
+                  })
+                }
+              } else {
+                this.materialStockInfo.info_data.push({
+                  material_id: itemChild.material_id as number,
+                  material_color: itemChild.material_color as string,
+                  color_code: '',
+                  batch_code: '',
+                  vat_code: '',
+                  attribute: '筒纱',
+                  number: itemChild.number as string,
+                  item: '', // 件数
+                  unit: itemChild.unit,
+                  rel_doc_info_id: itemChild.id // 采购单调取单加工单子项id
+                })
+              }
+            }
+          })
         })
       }
       this.materialStockFlag = true
@@ -1034,7 +1476,12 @@ export default Vue.extend({
     // 半成品加工出库
     getInspectionInfo() {
       const checkLength = this.productionPlanList.filter((item) => {
-        return item.material_info_data.some((itemChild) => itemChild.check)
+        return (
+          item.material_info_data.some((itemChild) => itemChild.check) ||
+          item.sup_data!.some((itemChild) => {
+            return itemChild.info_data.some((itemSon) => itemSon.check)
+          })
+        )
       }).length
       if (checkLength === 0) {
         this.$message.error('请选择加工单进行出库操作')
@@ -1049,6 +1496,7 @@ export default Vue.extend({
       this.productionPlanList.forEach((item) => {
         item.material_info_data.forEach((itemChild) => {
           if (itemChild.check) {
+            this.materialStockInfo.client_id = item.client_id
             this.materialStockInfo.rel_doc_code = item.code
             this.materialStockInfo.rel_doc_id = item.id as number
             this.materialStockInfo.selectList!.push({
@@ -1056,10 +1504,27 @@ export default Vue.extend({
               name: itemChild.material_name + '/' + (itemChild.material_color || '未知颜色'),
               material_color: itemChild.material_color,
               material_id: itemChild.material_id,
-              attribute: '无属性',
+              attribute: '筒纱', // 根据最终入库是筒纱推测最终出库也是筒纱
               number: itemChild.number
             })
           }
+        })
+        item.sup_data!.forEach((itemSup) => {
+          itemSup.info_data.forEach((itemChild) => {
+            if (itemChild.check) {
+              this.materialStockInfo.client_id = itemSup.client_id
+              this.materialStockInfo.rel_doc_code = item.code
+              this.materialStockInfo.rel_doc_id = item.id as number
+              this.materialStockInfo.selectList!.push({
+                value: itemChild.id as number,
+                name: itemChild.material_name + '/' + (itemChild.material_color || '未知颜色'),
+                material_color: itemChild.material_color,
+                material_id: itemChild.material_id,
+                attribute: '筒纱', // 根据最终入库是筒纱推测最终出库也是筒纱
+                number: itemChild.number
+              })
+            }
+          })
         })
       })
       this.materialStockInfo.info_data = this.materialStockInfo.selectList.map((item) => {
@@ -1077,6 +1542,208 @@ export default Vue.extend({
           rel_doc_info_id: item.value // 采购单调取单加工单子项id
         }
       })
+      this.materialStockFlag = true
+    },
+    // 调取单入库
+    getDiaoquInfo(type: 7 | 8) {
+      if (type === 7) {
+        const checkLength = this.materialJHDQList.filter((item) => {
+          return item.info_data.some((itemChild) => itemChild.check)
+        }).length
+        if (checkLength === 0) {
+          this.$message.error('请选择调取单进行入库操作')
+          return
+        }
+        if (checkLength > 1) {
+          this.$message.error('只能选择一张调取单进行入库操作')
+          return
+        }
+        this.materialStockInfo.action_type = 11
+        this.materialStockInfo.selectList = []
+        this.materialStockInfo.info_data = []
+        this.materialJHDQList.forEach((item) => {
+          item.info_data.forEach((itemChild) => {
+            if (itemChild.check) {
+              this.materialStockInfo.selectList!.push({
+                value: itemChild.id as number,
+                name: itemChild.material_name + '/' + (itemChild.material_color || '未知颜色'),
+                material_color: itemChild.material_color,
+                material_id: itemChild.material_id,
+                attribute: itemChild.attribute,
+                vat_code: itemChild.vat_code,
+                color_code: itemChild.color_code,
+                batch_code: itemChild.batch_code,
+                number: itemChild.number,
+                unit: itemChild.unit
+              })
+            }
+          })
+        })
+        this.materialJHDQList.forEach((item) => {
+          item.info_data.forEach((itemChild) => {
+            if (itemChild.check) {
+              this.materialStockInfo.rel_doc_code = item.code
+              this.materialStockInfo.rel_doc_id = item.id as number
+              if (itemChild.process_info!.filter((item) => item.process === '染色').length > 0) {
+                itemChild
+                  .process_info!.filter((item) => item.process === '染色')
+                  .forEach((itemProcess) => {
+                    this.materialStockInfo.info_data.push({
+                      material_id: itemChild.material_id as number,
+                      material_color: itemProcess.after_color,
+                      vat_code: itemChild.vat_code,
+                      color_code: itemChild.color_code,
+                      batch_code: itemChild.batch_code,
+                      attribute: '筒纱',
+                      number: itemProcess.number,
+                      item: '', // 件数
+                      unit: itemProcess.unit,
+                      rel_doc_info_id: itemChild.id // 采购单调取单加工单子项id
+                    })
+                  })
+                if (
+                  itemChild.process_info!.filter((item) => item.process === '染色').length > 0 &&
+                  itemChild
+                    .process_info!.filter((item) => item.process === '染色')
+                    .reduce((total, cur) => total + cur.number, 0) < itemChild.number
+                ) {
+                  this.materialStockInfo.info_data.push({
+                    material_id: itemChild.material_id as number,
+                    material_color: itemChild.material_color as string,
+                    vat_code: itemChild.vat_code,
+                    color_code: itemChild.color_code,
+                    batch_code: itemChild.batch_code,
+                    attribute: '筒纱',
+                    number:
+                      Number(itemChild.number) -
+                      itemChild
+                        .process_info!.filter((item) => item.process === '染色')
+                        .reduce((total, cur) => total + cur.number, 0),
+                    item: '', // 件数
+                    unit: itemChild.unit,
+                    rel_doc_info_id: itemChild.id // 采购单调取单加工单子项id
+                  })
+                }
+              } else {
+                this.materialStockInfo.info_data.push({
+                  stockInList: this.storeInList.filter(
+                    (itemFind: any) => itemFind.material_id === itemChild.material_id
+                  ),
+                  material_id: itemChild.material_id,
+                  material_color: itemChild.material_color,
+                  attribute: itemChild.attribute,
+                  vat_code: itemChild.vat_code,
+                  color_code: itemChild.color_code,
+                  batch_code: itemChild.batch_code,
+                  number: itemChild.number as string,
+                  item: '', // 件数
+                  unit: itemChild.unit,
+                  rel_doc_info_id: itemChild.id
+                })
+              }
+            }
+          })
+        })
+      } else {
+        const checkLength = this.materialBSDQList.filter((item) => {
+          return item.info_data.some((itemChild) => itemChild.check)
+        }).length
+        if (checkLength === 0) {
+          this.$message.error('请选择调取单进行入库操作')
+          return
+        }
+        if (checkLength > 1) {
+          this.$message.error('只能选择一张调取单进行入库操作')
+          return
+        }
+        this.materialStockInfo.action_type = 11
+        this.materialStockInfo.selectList = []
+        this.materialStockInfo.info_data = []
+        this.materialBSDQList.forEach((item) => {
+          item.info_data.forEach((itemChild) => {
+            if (itemChild.check) {
+              this.materialStockInfo.selectList!.push({
+                value: itemChild.id as number,
+                name: itemChild.material_name + '/' + (itemChild.material_color || '未知颜色'),
+                material_color: itemChild.material_color,
+                material_id: itemChild.material_id,
+                attribute: itemChild.attribute,
+                vat_code: itemChild.vat_code,
+                color_code: itemChild.color_code,
+                batch_code: itemChild.batch_code,
+                number: itemChild.number,
+                unit: itemChild.unit
+              })
+            }
+          })
+        })
+        this.materialBSDQList.forEach((item) => {
+          item.info_data.forEach((itemChild) => {
+            if (itemChild.check) {
+              this.materialStockInfo.rel_doc_code = item.code
+              this.materialStockInfo.rel_doc_id = item.id as number
+              if (itemChild.process_info!.filter((item) => item.process === '染色').length > 0) {
+                this.materialStockInfo.info_data = []
+                itemChild
+                  .process_info!.filter((item) => item.process === '染色')
+                  .forEach((itemProcess) => {
+                    this.materialStockInfo.info_data.push({
+                      material_id: itemChild.material_id as number,
+                      material_color: itemProcess.after_color,
+                      vat_code: itemChild.vat_code,
+                      color_code: itemChild.color_code,
+                      batch_code: itemChild.batch_code,
+                      attribute: '筒纱',
+                      number: itemProcess.number,
+                      item: '', // 件数
+                      unit: itemProcess.unit,
+                      rel_doc_info_id: itemChild.id // 采购单调取单加工单子项id
+                    })
+                  })
+                if (
+                  itemChild.process_info!.filter((item) => item.process === '染色').length > 0 &&
+                  itemChild
+                    .process_info!.filter((item) => item.process === '染色')
+                    .reduce((total, cur) => total + cur.number, 0) < itemChild.number
+                ) {
+                  this.materialStockInfo.info_data.push({
+                    material_id: itemChild.material_id as number,
+                    material_color: itemChild.material_color as string,
+                    vat_code: itemChild.vat_code,
+                    color_code: itemChild.color_code,
+                    batch_code: itemChild.batch_code,
+                    attribute: '筒纱',
+                    number:
+                      Number(itemChild.number) -
+                      itemChild
+                        .process_info!.filter((item) => item.process === '染色')
+                        .reduce((total, cur) => total + cur.number, 0),
+                    item: '', // 件数
+                    unit: itemChild.unit,
+                    rel_doc_info_id: itemChild.id // 采购单调取单加工单子项id
+                  })
+                }
+              } else {
+                this.materialStockInfo.info_data.push({
+                  stockInList: this.storeInList.filter(
+                    (itemFind: any) => itemFind.material_id === itemChild.material_id
+                  ),
+                  material_id: itemChild.material_id,
+                  material_color: itemChild.material_color,
+                  attribute: itemChild.attribute,
+                  vat_code: itemChild.vat_code,
+                  color_code: itemChild.color_code,
+                  batch_code: itemChild.batch_code,
+                  number: itemChild.number as string,
+                  item: '', // 件数
+                  unit: itemChild.unit,
+                  rel_doc_info_id: itemChild.id
+                })
+              }
+            }
+          })
+        })
+      }
       this.materialStockFlag = true
     },
     getCmpData() {

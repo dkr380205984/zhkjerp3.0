@@ -84,6 +84,8 @@ declare module 'vue/types/vue' {
     findId<T, K extends keyof T>(jsonArr: T[], id: number | string, returnKey: K, findKey: K): T[K]
     $sliceToArray<T>(arr: T[], num: number): T[][]
     $copyInfo(info: any, keyArr: string[], callback?: Function): void
+    $setLocalStorage(name: string, info: any): void
+    $getLocalStorage(name: string): string
   }
 }
 new Vue({

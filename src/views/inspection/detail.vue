@@ -8,7 +8,7 @@
         v-model="productionPlanIndex">
         <el-tab-pane v-for="(item,index) in productionPlanMergeList"
           :key="index"
-          :name="item.process_id.toString()"
+          :name="item.process_name"
           :label="item.process_name">
           <div class="titleCtn">
             <div class="title">计划加工</div>
@@ -57,7 +57,7 @@
                         style="display: flex;align-items: center;">
                         <div style="display:flex;flex-direction:column">
                           <span>{{itemPro.product_code}}</span>
-                          <span>{{itemPro.category_name}}/{{itemPro.type_name}}</span>
+                          <span>{{itemPro.category_name}}/{{itemPro.secondary_category_name}}</span>
                         </div>
                       </el-checkbox>
                     </div>
@@ -76,7 +76,7 @@
           <div class="buttonList">
             <div class="btn backHoverBlue">
               <i class="el-icon-s-grid"></i>
-              <span class="text">计划单操作</span>
+              <span class="text">生产单操作</span>
             </div>
             <div class="otherInfoCtn">
               <div class="otherInfo">
@@ -403,9 +403,7 @@ export default Vue.extend({
   },
   computed: {
     checkList(): ProductionPlanInfo[] {
-      const finded = this.productionPlanMergeList.find(
-        (itemFind) => itemFind.process_id.toString() === this.productionPlanIndex
-      )
+      const finded = this.productionPlanMergeList.find((itemFind) => itemFind.process_name === this.productionPlanIndex)
       const checkInfo = finded
         ? finded.childrenMergeInfo.filter((item) => {
             return item.product_info_data.filter((itemChild) => itemChild.check).length > 0
@@ -436,9 +434,9 @@ export default Vue.extend({
         this.productionPlanList = res[0].data.data
         if (this.productionPlanList.length > 0) {
           this.productionPlanMergeList = this.$mergeData(this.productionPlanList, {
-            mainRule: ['process_name', 'process_id']
+            mainRule: ['process_name']
           })
-          this.productionPlanIndex = this.productionPlanMergeList[0].process_id.toString()
+          this.productionPlanIndex = this.productionPlanMergeList[0].process_name
         } else {
           this.$message.warning('该订单还未创建生产计划信息，请先填写生产计划')
           this.$router.push('/productionPlan/detail?id=' + this.$route.query.id)

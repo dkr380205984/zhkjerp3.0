@@ -58,9 +58,9 @@ export interface OrderTime {
   order_id?: number | null | string // 再次打样的时候用
   id?: number | null | string
   order_time: string
+  is_draft?: 1 | 2  // 1.草稿 2.非草稿 该字段已经弃用，草稿信息放最外层
   order_type_id: string | number
   complete_time: string
-  is_draft: 1 | 2  // 1.草稿 2.非草稿
   total_style: string | number
   total_number: string | number
   total_price: string | number
@@ -77,6 +77,7 @@ export interface OrderInfo {
   order_type: 1
   code: string
   desc: string
+  is_draft?: 1 | 2  // 1.草稿 2.非草稿
   client_id: number | string
   tree_data?: string | number[]
   group_id: number | string

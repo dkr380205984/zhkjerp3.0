@@ -1,2 +1,41 @@
 @import '../common.less';
 @import '../list.less';
+@import '../popup.less';
+#clientList{
+  .popup{
+    .contentCtn{
+      padding: 12px 18px;
+    }
+    .box{
+      display: inline-flex;
+      flex-direction: column;
+      width:220px;
+      border: 1px solid @borderColor;
+      border-radius: 4px;
+      padding: 12px;
+      box-sizing: border-box;
+      margin: 12px 14px 12px 0;
+      color: @font65;
+      position: relative;
+      &:nth-child(2n){
+        margin-right: 0;
+      }
+      .userName{
+        font-size: @fontBig;
+      }
+      .phone{
+        font-size: @fontMiddle;
+        margin: 6px 0;
+        color: @font45;
+      }
+      .process{
+        font-size: @fontSmall;
+        color: @font45;
+        margin: 6px 0;
+        .fr{
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
