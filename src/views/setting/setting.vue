@@ -1328,6 +1328,16 @@
                 </div>
               </div>
               <div class="row">
+                <div class="label">公司二维码：</div>
+                <div class="content border tc">
+                  <div>
+                    <img :src="qrCodeUrl"/>
+                  </div>
+                  <div>织为云外协生产小程序</div>
+                  <div>微信扫一扫，在线管理加工单进度</div>
+                </div>
+              </div>
+              <div class="row">
                 <div class="label">公司名称：</div>
                 <div class="content">
                   <el-input placeholder="请输入公司名称"
@@ -2947,9 +2957,11 @@ export default Vue.extend({
     yarnPriceList: YarnPrice[]
     mianliaoPrice: YarnPrice
     mianliaoPriceList: YarnPrice[]
+    qrCodeUrl: String
   } {
     return {
       yarnAttributeArr: yarnAttributeArr,
+      qrCodeUrl:'',
       postData: { token: '' },
       nav: {
         产品设置: ['品类', '款式', '成分', '配色组', '尺码'],
@@ -3301,6 +3313,7 @@ export default Vue.extend({
         alias: '',
         logo: '',
         company_name: '',
+        company_id: '',
         introduce: '',
         email: '',
         address: ''
@@ -5325,6 +5338,18 @@ export default Vue.extend({
       companyInfo.detail().then((res) => {
         if (res.data.status) {
           this.companyInfo = res.data.data
+          let _this = this
+          let a = 'https://knit-m-beta.zwyknit.com/miniprogram?company_id=' + _this.companyInfo.company_id
+        
+          // 生成二维码
+          const QRCode = require('qrcode')
+          QRCode.toDataURL(a)
+            .then((url: any) => {
+              _this.qrCodeUrl = url
+            })
+            .catch((err: any) => {
+              console.error(err)
+            })
         }
       })
     },
@@ -5665,5 +5690,14 @@ export default Vue.extend({
 <style lang="less">
 .el-upload-dragger {
   line-height: 180px;
+}
+
+.tc{
+  text-align: center;
+}
+
+.border{
+  border: 1px solid #DCDFE6;
+  padding: 5px 30px;
 }
 </style>
