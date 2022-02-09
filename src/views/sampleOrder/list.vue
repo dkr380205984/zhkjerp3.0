@@ -1,7 +1,9 @@
 <template>
   <div id="sampleOrderList"
     class="bodyContainer">
-    <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
+    <div class="module"
+      v-loading="mainLoading"
+      element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">样单列表</div>
       </div>
@@ -20,7 +22,7 @@
               clearable>
             </el-cascader>
           </div>
-          <div class="elCtn">
+          <div class="elCtn hasIcon">
             <el-select @change="changeRouter"
               v-model="user_id"
               placeholder="筛选创建人"
@@ -30,6 +32,13 @@
                 :label="item.label"
                 :value="item.value"></el-option>
             </el-select>
+            <el-tooltip class="item"
+              effect="dark"
+              content="保存创建人筛选"
+              placement="top">
+              <i class="el-icon-upload hoverOrange"
+                @click="$setLocalStorage('create_user',user_id)"></i>
+            </el-tooltip>
           </div>
           <div class="elCtn">
             <el-select @change="changeRouter"
@@ -49,7 +58,7 @@
             @click="reset">重置</div>
         </div>
         <div class="filterCtn">
-          <div class="elCtn">
+          <div class="elCtn hasIcon">
             <el-select @change="changeRouter"
               v-model="group_id"
               placeholder="筛选负责小组">
@@ -58,6 +67,13 @@
                 :value="item.id"
                 :label="item.name"></el-option>
             </el-select>
+            <el-tooltip class="item"
+              effect="dark"
+              content="保存负责小组筛选"
+              placement="top">
+              <i class="el-icon-upload hoverOrange"
+                @click="$setLocalStorage('group_id',group_id)"></i>
+            </el-tooltip>
           </div>
           <div class="elCtn">
             <el-date-picker v-model="date"
@@ -83,15 +99,18 @@
             </el-select>
           </div>
         </div>
-        <div class="filterCtn" style="height:33px">
-            <div class="btn backHoverBlue fr"
-              @click="$router.push('/sampleOrder/create')">添加样单</div>
-            <div class="btn backHoverOrange fl"
-              @click="showSetting=true" style="margin-left:0">列表设置</div>
-            <div class="btn backHoverGreen fl"
-              @click="getFilters();getList()">刷新列表</div>
-            <div :class="checked?'btn backHoverBlue fl':'btn backHoverBlue fl noCheck'" @click="exportExcelClick">导出Excel</div>
-          </div>
+        <div class="filterCtn"
+          style="height:33px">
+          <div class="btn backHoverBlue fr"
+            @click="$router.push('/sampleOrder/create')">添加样单</div>
+          <div class="btn backHoverOrange fl"
+            @click="showSetting=true"
+            style="margin-left:0">列表设置</div>
+          <div class="btn backHoverGreen fl"
+            @click="getFilters();getList()">刷新列表</div>
+          <div :class="checked?'btn backHoverBlue fl':'btn backHoverBlue fl noCheck'"
+            @click="exportExcelClick">导出Excel</div>
+        </div>
         <zh-list :list="list"
           :listKey="listKey"
           :loading="loading"
@@ -119,13 +138,11 @@
       :originalData="originalSetting"></zh-list-setting>
 
     <!-- 导出Excel -->
-    <zhExportSetting
-      @close="showExport = false"
+    <zhExportSetting @close="showExport = false"
       @afterSave="exportExcel"
       :show="showExport"
       :data.sync="exportKey"
-      :originalData="originalExport"
-    ></zhExportSetting>
+      :originalData="originalExport"></zhExportSetting>
   </div>
 </template>
 
@@ -136,20 +153,20 @@ import { SampleOrderInfo } from '@/types/sampleOrder'
 import { limitArr } from '@/assets/js/dictionary'
 import zhExportSetting from '@/components/zhExportSetting/zhExportSetting.vue'
 export default Vue.extend({
-  components:{ zhExportSetting },
+  components: { zhExportSetting },
   data(): {
     list: SampleOrderInfo[]
     [porpName: string]: any
   } {
     return {
-      mainLoading:false,
+      mainLoading: false,
       loading: false,
       list: [],
       limitList: limitArr,
       limit: 10,
       total: 1,
       page: 1,
-      showExport:false,
+      showExport: false,
       exportKey: [],
       keyword: '',
       client_id: [],
@@ -160,13 +177,13 @@ export default Vue.extend({
       showSetting: false,
       listSettingId: null,
       listKey: [],
-      checkedCount:[],
-      checked:false,
+      checkedCount: [],
+      checked: false,
       exportExcelParam: {
         show_row: [],
         start_time: '',
         end_time: '',
-        order_type:2
+        order_type: 2
       },
       originalExport: [
         {
@@ -465,10 +482,10 @@ export default Vue.extend({
       this.getFilters()
       this.getList()
     },
-    checkedCount(newVal){
-      if(newVal.length>0){
+    checkedCount(newVal) {
+      if (newVal.length > 0) {
         this.checked = true
-      }else {
+      } else {
         this.checked = false
       }
     }
@@ -485,16 +502,16 @@ export default Vue.extend({
     }
   },
   methods: {
-    exportExcelClick(){
-      if(!this.checked) return
+    exportExcelClick() {
+      if (!this.checked) return
       this.showExport = true
     },
     exportExcel(data: any) {
       this.mainLoading = true
-      data.sort(function(a:any,b:any){
-        return a.index-b.index
+      data.sort(function (a: any, b: any) {
+        return a.index - b.index
       })
-      this.exportExcelParam.show_row=[]
+      this.exportExcelParam.show_row = []
       data.forEach((item: any) => {
         if (item.ifExport) {
           this.exportExcelParam.show_row.push(item.key)
@@ -523,8 +540,8 @@ export default Vue.extend({
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.keyword = query.keyword || ''
       this.status = query.status === 'null' ? null : query.status
-      this.user_id = Number(query.user_id) || ''
-      this.group_id = Number(query.gourp_id) || ''
+      this.user_id = query.user_id || this.$getLocalStorage('create_user')
+      this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
     },
@@ -558,6 +575,7 @@ export default Vue.extend({
           this.client_id = []
           this.keyword = ''
           this.user_id = ''
+          this.group_id = ''
           this.date = []
           this.status = '0'
           this.limit = 10
@@ -587,7 +605,7 @@ export default Vue.extend({
         })
         .then((res) => {
           if (res.data.status) {
-            res.data.data.items.map((item:any) =>{
+            res.data.data.items.map((item: any) => {
               this.$set(item, 'isCheck', false)
               return item
             })

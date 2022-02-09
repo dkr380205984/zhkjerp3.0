@@ -6,7 +6,7 @@
     <div class="pmain">
       <div class="phead clearfix">
         <div class="fl">
-          <div class="ptitle">{{ company_name + '生产计划单'}}</div>
+          <div class="ptitle">{{title?title: company_name + '生产计划单'}}</div>
           <div class="prow">
             <div class="pcol wa">
               <div class="label">系统编号：</div>
@@ -18,7 +18,7 @@
             <div class="pcol wa">
               <div class="label">创建信息：</div>
               <div class="info"
-                style="white-space: nowrap;">{{ productionPlanInfo.created_at?productionPlanInfo.created_at.slice(0, 10):'' }}{{productionPlanInfo.user_name?'，' + productionPlanInfo.user_name:''}}{{productionPlanInfo.user_phone?'，' + productionPlanInfo.user_phone:''}}</div>
+                style="white-space: nowrap;">{{ productionPlanInfo.created_at?productionPlanInfo.created_at.slice(0, 10):'' }}{{productionPlanInfo.user_name?'，' + productionPlanInfo.user_name:''}}{{user_name?'，' + user_name:''}}</div>
             </div>
           </div>
         </div>
@@ -83,7 +83,7 @@
               </div>
               <div class="tcol">{{itemPro.size_name}}/{{itemPro.color_name}}</div>
               <div class="tcol">{{itemPro.part_name}}</div>
-              <div class="tcol">暂无信息</div>
+              <div class="tcol">{{itemPro.size_info}}</div>
               <div class="tcol">{{itemPro.price}}元</div>
               <div class="tcol">{{itemPro.number}}</div>
             </div>
@@ -121,11 +121,70 @@
           </div>
           <div class="tbody">
             <div class="trow">
-              <div class="tcol"></div>
+              <div class="tcol"
+                style="display:block">
+                <div style="line-height:22px"
+                  v-for="item,index in descArr"
+                  :key="index">{{item?(index+1)+'.':''}}{{item}}</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
+    <div class="popup"
+      v-show="settingFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">打印设置</span>
+          <span class="el-icon-close"
+            @click="settingFlag = false"></span>
+        </div>
+        <div class="contentCtn">
+          <div class="row">
+            <span class="label">设置标题：</span>
+            <div class="info">
+              <el-input v-model="title"
+                placeholder="请输入常用标题"></el-input>
+            </div>
+          </div>
+          <div class="row"
+            v-for="(item,index) in descArr"
+            :key="index">
+            <span class="label">注意事项{{index+1}}：</span>
+            <div class="info">
+              <el-input v-model="descArr[index]"
+                placeholder="请输入注意事项">
+              </el-input>
+              <div v-if="index===0"
+                class="info_btn hoverBlue"
+                @click="$addItem(descArr,'')">添加</div>
+              <div v-if="index>0"
+                class="info_btn hoverRed"
+                @click="$deleteItem(descArr,index)">删除</div>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="settingFlag = false">取消</span>
+          <span class="btn backHoverOrange"
+            @click="resetSetting">清空设置</span>
+          <span class="btn backHoverBlue"
+            @click="saveSetting">保存</span>
+        </div>
+      </div>
+    </div>
+    <div class="setting_sign_style"
+      v-if="showMenu"
+      :style="`left:${X_position || 0}px;top:${Y_position}px`"
+      @click.stop>
+      <div class="setting_item"
+        @click="windowMethod(1)">刷新页面</div>
+      <div class="setting_item"
+        @click="windowMethod(2)">打印计划单</div>
+      <div class="setting_item"
+        @click="windowMethod(3)">打印设置</div>
     </div>
   </div>
 </template>
@@ -142,8 +201,12 @@ export default Vue.extend({
     return {
       loading: true,
       showMenu: false,
+      user_name: window.sessionStorage.getItem('user_name'),
       company_name: window.sessionStorage.getItem('company_name'),
       qrCodeUrl: '',
+      settingFlag: false,
+      title: '',
+      descArr: [''], // 注意事项
       productionPlanInfo: {
         process_type: '',
         order_id: '',
@@ -165,7 +228,8 @@ export default Vue.extend({
             number: '',
             price: '',
             total_price: '',
-            select_arr: ''
+            select_arr: '',
+            image_data: []
           }
         ],
         material_info_data: [
@@ -200,7 +264,43 @@ export default Vue.extend({
     }
   },
   methods: {
-    handleClickRight() {}
+    handleClickRight(e: any, type = true) {
+      this.showMenu = type
+      this.X_position = e.clientX
+      this.Y_position = e.clientY
+      e.preventDefault()
+      e.stopPropagation()
+    },
+    windowMethod(type: number) {
+      this.showPrintSetting = false
+      window.requestAnimationFrame(() => {
+        if (type === 1) {
+          window.location.reload()
+        } else if (type === 2) {
+          this.showMenu = false
+          setTimeout(() => {
+            window.print()
+          }, 100)
+        } else if (type === 3) {
+          this.settingFlag = true
+          this.showMenu = false
+        }
+      })
+    },
+    saveSetting() {
+      this.$setLocalStorage('productionPlanPrintTitle', this.title)
+      this.$setLocalStorage('productionPlanPrintDesc', JSON.stringify(this.descArr))
+      this.$message.success('保存成功')
+      this.settingFlag = false
+    },
+    resetSetting() {
+      this.$setLocalStorage('productionPlanPrintTitle', '')
+      this.$setLocalStorage('productionPlanPrintDesc', JSON.stringify(['']))
+      this.title = ''
+      this.descArr = ['']
+      this.$message.success('已清空')
+      this.settingFlag = false
+    }
   },
   mounted() {
     productionPlan

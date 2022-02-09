@@ -326,7 +326,7 @@ const plugin = {
       // 默认不需要正则验证，只验证是否为空
       if (!item.regExp) {
         if (!item.regNormal || item.regNormal === 'isNull') {
-          if (!data[item.key] && data[item.key] !== '0') {
+          if (!data[item.key] && data[item.key] !== '0' && data[item.key] !== 0) {
             msg = item.errMsg || '数据不得为空'
           }
         } else {
@@ -371,6 +371,13 @@ const plugin = {
     } else {
       return '无匹配值'
     }
+  },
+  // 设置localstorage
+  setLocalStorage(name: string, info: any) {
+    window.localStorage.setItem(name, info)
+  },
+  getLocalStorage(name: string) {
+    return window.localStorage.getItem(name)
   }
 }
 const submitLock = () => {
@@ -481,5 +488,7 @@ export default {
     Vue.prototype.$findId = plugin.findId
     Vue.prototype.$sliceToArray = sliceToArray
     Vue.prototype.$copyInfo = plugin.copyInfo
+    Vue.prototype.$setLocalStorage = plugin.setLocalStorage
+    Vue.prototype.$getLocalStorage = plugin.getLocalStorage
   }
 }

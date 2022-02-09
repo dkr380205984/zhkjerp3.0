@@ -34,7 +34,6 @@
           <div class="col">
             <div class="label">
               <span class="text">公司联系人</span>
-              <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
               <el-select placeholder="请选择公司联系人"
@@ -207,7 +206,6 @@
             <div class="col">
               <div class="label">
                 <span class="text">批次类型</span>
-                <span class="explanation">(必选)</span>
               </div>
               <div class="info elCtn">
                 <el-select v-model="item.batch_type_id">
@@ -456,7 +454,9 @@
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
           <div class="btn backHoverOrange"
-            @click="saveOrder">修改</div>
+            @click="saveOrder(true)">保存为草稿</div>
+          <div class="btn backHoverBlue"
+            @click="saveOrder(false)">修改</div>
         </div>
       </div>
     </div>
@@ -572,6 +572,7 @@ export default Vue.extend({
         ],
         size_data: [
           {
+            id: '',
             size_id: '',
             size_info: '',
             weight: ''
@@ -585,6 +586,7 @@ export default Vue.extend({
             unit: '',
             part_size_data: [
               {
+                id: '',
                 size_id: '',
                 size_info: '',
                 weight: ''
@@ -663,6 +665,9 @@ export default Vue.extend({
       const flattenArr: ProductInfo[] = [] // 存储return信息
       orderInfo.time_data.batch_data.forEach((itemBatch) => {
         itemBatch.product_data.forEach((itemPro) => {
+          if (!itemPro.product_id) {
+            return
+          }
           flattenArr.push({
             system_code: itemPro.system_code,
             id: itemPro.product_id,
@@ -683,6 +688,9 @@ export default Vue.extend({
       return flattenArr
     },
     getColour(ev: number, info: any) {
+      if (!ev) {
+        return
+      }
       info.size_color_list = []
       const product: ProductInfo = this.productList.find((item) => item.id === ev) as ProductInfo
       product.size_data.forEach((itemSize: any) => {
@@ -818,85 +826,97 @@ export default Vue.extend({
           })
         })
     },
-    saveOrder() {
-      const formCheck =
-        this.$formCheck(this.orderInfo, [
-          {
-            key: 'tree_data',
-            errMsg: '请选择下单公司',
-            regNormal: 'checkArr'
-          },
-          {
-            key: 'contacts_id',
-            errMsg: '请选择联系人'
-          },
-          {
-            key: 'group_id',
-            errMsg: '请选择负责小组'
-          }
-        ]) ||
-        this.$formCheck(this.orderInfo.time_data, [
-          {
-            key: 'order_time',
-            errMsg: '请选择下单时间'
-          }
-        ]) ||
-        this.orderInfo.time_data.batch_data.some((item) => {
-          return (
-            this.$formCheck(item, [
-              {
-                key: 'delivery_time',
-                errMsg: '请选择发货日期'
-              },
-              {
-                key: 'batch_type_id',
-                errMsg: '请选择批次类型'
-              }
-            ]) ||
-            item.product_data.some((itemChild) => {
-              return (
-                this.$formCheck(itemChild, [
-                  {
-                    key: 'product_id',
-                    errMsg: '请选择产品'
-                  }
-                ]) ||
-                itemChild.product_info.some((itemPro) => {
-                  return this.$formCheck(itemPro, [
-                    {
-                      key: 'size_color',
-                      errMsg: '请选择尺码颜色'
-                    },
-                    {
-                      key: 'price',
-                      errMsg: '请输入下单单价'
-                    },
-                    {
-                      key: 'number',
-                      errMsg: '请输入下单数量'
-                    }
-                  ])
-                })
-              )
-            })
-          )
-        })
-      if (
-        this.orderInfo.time_data.batch_data.some((item) => {
-          this.$ifRepeatArray(item.product_data.map((itemChild) => itemChild.product_id) as string[])
-        })
-      ) {
-        this.$message.error('相同样品请不要分多次添加')
-        return
-      }
-      if (!formCheck) {
+    saveOrder(ifCaogao: boolean) {
+      if (ifCaogao) {
+        this.orderInfo.is_draft = 1
         this.getCmpData()
         order.create(this.orderInfo).then((res) => {
           if (res.data.status) {
-            this.$message.success('修改成功')
-            this.$router.push('/order/detail?id=' + this.$route.query.id)
+            this.$message.success('草稿保存成功')
+            this.$router.push('/order/list?page=1&keyword=&client_id=&user_id=&status=null&date=')
           }
         })
+      } else {
+        this.orderInfo.is_draft = 2
+        const formCheck =
+          this.$formCheck(this.orderInfo, [
+            {
+              key: 'tree_data',
+              errMsg: '请选择下单公司',
+              regNormal: 'checkArr'
+            },
+            {
+              key: 'contacts_id',
+              errMsg: '请选择联系人'
+            },
+            {
+              key: 'group_id',
+              errMsg: '请选择负责小组'
+            }
+          ]) ||
+          this.$formCheck(this.orderInfo.time_data, [
+            {
+              key: 'order_time',
+              errMsg: '请选择下单时间'
+            }
+          ]) ||
+          this.orderInfo.time_data.batch_data.some((item) => {
+            return (
+              this.$formCheck(item, [
+                {
+                  key: 'delivery_time',
+                  errMsg: '请选择发货日期'
+                }
+                // {
+                //   key: 'batch_type_id',
+                //   errMsg: '请选择批次类型'
+                // }
+              ]) ||
+              item.product_data.some((itemChild) => {
+                return (
+                  this.$formCheck(itemChild, [
+                    {
+                      key: 'product_id',
+                      errMsg: '请选择产品'
+                    }
+                  ]) ||
+                  itemChild.product_info.some((itemPro) => {
+                    return this.$formCheck(itemPro, [
+                      {
+                        key: 'size_color',
+                        errMsg: '请选择尺码颜色'
+                      },
+                      {
+                        key: 'price',
+                        errMsg: '请输入下单单价'
+                      },
+                      {
+                        key: 'number',
+                        errMsg: '请输入下单数量'
+                      }
+                    ])
+                  })
+                )
+              })
+            )
+          })
+        if (
+          this.orderInfo.time_data.batch_data.some((item) => {
+            this.$ifRepeatArray(item.product_data.map((itemChild) => itemChild.product_id) as string[])
+          })
+        ) {
+          this.$message.error('相同产品请不要分多次添加')
+          return
+        }
+        if (!formCheck) {
+          this.getCmpData()
+          order.create(this.orderInfo).then((res) => {
+            if (res.data.status) {
+              this.$message.success('修改成功')
+              this.$router.push('/order/detail?id=' + this.$route.query.id)
+            }
+          })
+        }
       }
     }
   },

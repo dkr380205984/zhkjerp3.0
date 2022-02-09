@@ -13,6 +13,46 @@
               @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
+            <el-input v-model="product_code"
+              placeholder="筛选产品/样品编号"
+              @keydown.enter.native="changeRouter"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-input v-model="yarn_name"
+              placeholder="筛选纱线名称"
+              @keydown.enter.native="changeRouter"></el-input>
+          </div>
+          <div class="btn fr borderBtn"
+            @click="reset">重置</div>
+          <div class="btn backHoverBlue fr"
+            @click="$router.push('/craft/create')">添加工艺单</div>
+        </div>
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-select @change="$setLocalStorage('create_user',user_id);changeRouter()"
+              v-model="user_id"
+              placeholder="筛选创建人"
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-date-picker v-model="date"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+              @change="changeRouter"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </div>
+          <div class="elCtn">
             <el-select v-model="limit"
               placeholder="每页展示条数"
               @change="changeRouter">
@@ -22,10 +62,6 @@
                 :value="item.value"></el-option>
             </el-select>
           </div>
-          <div class="btn fr borderBtn"
-            @click="reset">重置</div>
-          <div class="btn backHoverBlue fr"
-            @click="$router.push('/craft/create')">添加工艺单</div>
         </div>
         <zh-list :list="list"
           :listKey="listKey"
@@ -68,6 +104,8 @@ export default Vue.extend({
       list: [],
       limitList: limitArr,
       keyword: '',
+      product_code: '',
+      yarn_name: '',
       client_id: [],
       group_id: '',
       user_id: '',
@@ -88,11 +126,18 @@ export default Vue.extend({
           index: 0
         },
         {
+          key: 'title',
+          name: '工艺单名称',
+          ifShow: true,
+          ifLock: true,
+          index: 1
+        },
+        {
           key: 'product_code',
           name: '产品编号',
           ifShow: true,
           ifLock: false,
-          index: 1
+          index: 2
         },
         {
           key: 'image_data',
@@ -100,7 +145,7 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           ifImage: true,
-          index: 2
+          index: 3
         },
         {
           key: 'material_name',
@@ -108,7 +153,7 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           from: 'material_info',
-          index: 3,
+          index: 4,
           mark: true
         },
         {
@@ -117,7 +162,7 @@ export default Vue.extend({
           unit: 'cm',
           ifShow: true,
           ifLock: false,
-          index: 4
+          index: 5
         },
         {
           key: 'weight',
@@ -125,21 +170,21 @@ export default Vue.extend({
           unit: 'g',
           ifShow: true,
           ifLock: false,
-          index: 5
+          index: 6
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 6
+          index: 7
         },
         {
           key: 'create_time',
           name: '创建时间',
           ifShow: true,
           ifLock: false,
-          index: 7
+          index: 8
         }
       ],
       pickerOptions: {
@@ -229,10 +274,29 @@ export default Vue.extend({
       const query = this.$route.query
       this.page = Number(query.page)
       this.keyword = query.keyword || ''
+      this.product_code = query.product_code || ''
+      this.yarn_name = query.yarn_name || ''
+      this.user_id = query.user_id || this.$getLocalStorage('create_user')
+      this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
     },
     changeRouter() {
-      this.$router.push('/craft/list?page=' + this.page + '&keyword=' + this.keyword + '&limit=' + this.limit)
+      this.$router.push(
+        '/craft/list?page=' +
+          this.page +
+          '&user_id=' +
+          this.user_id +
+          '&keyword=' +
+          this.keyword +
+          '&product_code=' +
+          this.product_code +
+          '&yarn_name=' +
+          this.yarn_name +
+          '&date=' +
+          this.date +
+          '&limit=' +
+          this.limit
+      )
     },
     reset() {
       this.$confirm('是否重置所有筛选条件?', '提示', {
@@ -244,7 +308,8 @@ export default Vue.extend({
           this.client_id = []
           this.keyword = ''
           this.user_id = ''
-          this.group_id = ''
+          this.product_code = ''
+          this.yarn_name = ''
           this.date = []
           this.status = 'null'
           this.limit = 5
@@ -263,6 +328,11 @@ export default Vue.extend({
         .list({
           keyword: this.keyword,
           page: this.page,
+          start_time: this.date.length > 0 ? this.date[0] : '',
+          end_time: this.date.length > 0 ? this.date[1] : '',
+          user_id: this.user_id,
+          product_code: this.product_code,
+          yarn_name: this.yarn_name,
           limit: this.limit
         })
         .then((res) => {

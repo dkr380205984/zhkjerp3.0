@@ -33,7 +33,7 @@
                   v-for="(itemPro,indexPro) in item.material_plan_data"
                   :key="indexPro">
                   <div class="tcol">
-                    <el-checkbox v-model="itemPro.check"> {{itemPro.product_code}}</el-checkbox>
+                    <el-checkbox v-model="itemPro.check">{{itemPro.name||itemPro.product_code||itemPro.system_code}}</el-checkbox>
                   </div>
                   <div class="tcol">{{itemPro.part_name}}</div>
                   <div class="tcol">{{itemPro.size_name}}/{{itemPro.color_name}}</div>
@@ -62,7 +62,7 @@
                   v-for="(itemPro,indexPro) in item.material_plan_data"
                   :key="indexPro">
                   <div class="tcol">
-                    <el-checkbox v-model="itemPro.check"> {{itemPro.product_code}}</el-checkbox>
+                    <el-checkbox v-model="itemPro.check"> {{itemPro.name||itemPro.product_code||itemPro.system_code}}</el-checkbox>
                   </div>
                   <div class="tcol">{{itemPro.part_name}}</div>
                   <div class="tcol">{{itemPro.order_number}}</div>
@@ -209,6 +209,63 @@
                   </svg>
                   <span class="text">删除单据</span>
                 </div>
+                <div class="btn backHoverGreen"
+                  @click="goMaterialSupplement(item)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">补充物料</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="titleCtn"
+            style="margin-top:40px"
+            v-if="item.sup_data.length>0">
+            <div class="title">加工物料补充</div>
+          </div>
+          <div class="tableCtn"
+            v-if="item.sup_data.length>0">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol">补纱单编号</div>
+                <div class="tcol">承担单位</div>
+                <div class="tcol">承担金额</div>
+                <div class="tcol"
+                  style="flex:3">
+                  <div class="trow">
+                    <div class="tcol">物料名称</div>
+                    <div class="tcol">物料颜色</div>
+                    <div class="tcol">物料数量</div>
+                  </div>
+                </div>
+                <div class="tcol">备注信息</div>
+                <div class="tcol">操作</div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div class="trow"
+                v-for="itemChild in item.sup_data"
+                :key="itemChild.id">
+                <div class="tcol">{{itemChild.code}}</div>
+                <div class="tcol">{{itemChild.bear_client_name}}</div>
+                <div class="tcol">{{itemChild.bear_price}}元</div>
+                <div class="tcol"
+                  style="flex:3">
+                  <div class="trow"
+                    v-for="itemMat in itemChild.info_data"
+                    :key="itemMat.id">
+                    <div class="tcol">{{itemMat.material_name}}</div>
+                    <div class="tcol">{{itemMat.material_color}}</div>
+                    <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
+                  </div>
+                </div>
+                <div class="tcol">{{itemChild.desc}}</div>
+                <div class="tcol oprCtn">
+                  <div class="opr hoverRed"
+                    @click="deleteMaterialSupplement(itemChild.id)">删除</div>
+                </div>
               </div>
             </div>
           </div>
@@ -320,7 +377,7 @@
                       <el-option v-for="(item,index) in checkList"
                         :key="index"
                         :value="item.product_id+'/'+ item.part_id+'/'+item.size_id+'/'+ item.color_id"
-                        :label="item.size_name?item.product_code+'/'+ item.part_name+'/'+item.size_name+'/'+ item.color_name:item.product_code+'/'+ item.part_name"></el-option>
+                        :label="item.size_name?(item.name||item.product_code||item.system_code)+'/'+ item.part_name+'/'+item.size_name+'/'+ item.color_name:(item.name||item.product_code||item.system_code)+'/'+ item.part_name"></el-option>
                     </el-select>
                   </div>
                 </div>
@@ -516,6 +573,137 @@
         </div>
       </div>
     </div>
+    <div class="popup"
+      v-show="materialSupplementFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">补充物料填写</span>
+          <div class="closeCtn"
+            @click="materialSupplementFlag = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="editCtn">
+            <div class="row">
+              <div class="col">
+                <div class="label">
+                  <span class="text">补物料单位</span>
+                  <span class="explanation">(默认)</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input disabled
+                    placeholder="默认为加工单位"
+                    v-model="materialSupplementInfo.client_name"></el-input>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label">
+                  <span class="text">承担单位</span>
+                  <span class="explanation">(必选)</span>
+                </div>
+                <div class="info elCtn">
+                  <el-select placeholder="请选择承担单位"
+                    v-model="materialSupplementInfo.bear_client_id">
+                    <el-option :value="materialSupplementInfo.client_id"
+                      :label="materialSupplementInfo.client_name"></el-option>
+                    <el-option :value="-1"
+                      label="本厂"></el-option>
+                    <el-option v-for="item in bearClientArr"
+                      :key="item.client_id"
+                      :value="item.client_id"
+                      :label="item.client_name"></el-option>
+                  </el-select>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label">
+                  <span class="text">承担金额</span>
+                  <span class="explanation">(不填默认为0)</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input placeholder="请输入承担金额"
+                    v-model="materialSupplementInfo.bear_price">
+                    <template slot="append">元</template>
+                  </el-input>
+                </div>
+              </div>
+            </div>
+            <div class="row"
+              v-for="(item,index) in materialSupplementInfo.info_data"
+              :key="index">
+              <div class="col">
+                <div class="label"
+                  v-show="index===0">
+                  <span class="text">物料名称/颜色</span>
+                  <span class="explanation">(必选)</span>
+                </div>
+                <div class="info elCtn">
+                  <el-select v-model="item.tree_data"
+                    placeholder="请选择物料名称/颜色"
+                    @change="getMatId($event,item)">
+                    <el-option v-for="item in materialSupplementSelect"
+                      :key="item.material_id + 'dkr' + item.material_color + 'dkr' + (item.unit || 'kg')"
+                      :label="item.material_name + '/' + item.material_color"
+                      :value="item.material_id + 'dkr' + item.material_color + 'dkr'+ (item.unit || 'kg')"></el-option>
+                  </el-select>
+                </div>
+              </div>
+              <div class="col"
+                style="max-width:322px">
+                <div class="label"
+                  v-show="index===0">
+                  <span class="text">物料数量</span>
+                  <span class="explanation">(必填)</span>
+                </div>
+                <div class="info elCtn UnitCtn">
+                  <el-input placeholder="请输入物料数量"
+                    v-model="item.number">
+                    <template slot="append">
+                      <el-input v-model="item.unit"
+                        placeholder="单位"></el-input>
+                    </template>
+                  </el-input>
+                </div>
+              </div>
+              <div class="opr hoverBlue"
+                v-if="index===0"
+                @click="$addItem(materialSupplementInfo.info_data, {
+                  id: '',
+                  material_id: '',
+                  material_color: '',
+                  material_type: 1,
+                  number: '',
+                  tree_data:''
+                })">添加</div>
+              <div class="opr hoverRed"
+                v-if="index>0"
+                @click="$deleteItem(materialSupplementInfo.info_data, index)">删除</div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="label">
+                  <span class="text">备注信息</span>
+                  <span class="explanation">(默认)</span>
+                </div>
+                <div class="info elCtn">
+                  <el-autocomplete class="once"
+                    v-model="materialSupplementInfo.desc"
+                    :fetch-suggestions="searchReason"
+                    placeholder="原因填写"></el-autocomplete>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="materialSupplementFlag = false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="saveMaterialSupplement">确认</span>
+        </div>
+      </div>
+    </div>
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
@@ -529,15 +717,17 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { materialPlan, order, productionPlan } from '@/assets/js/api'
+import { materialPlan, order, productionPlan, materialSupplement, clientInOrder } from '@/assets/js/api'
 import { ProductionPlanInfo } from '@/types/productionPlan'
 import { MaterialPlanInfo, MaterailPlanData } from '@/types/materialPlan'
+import { MaterialSupplementInfo } from '@/types/materialSupplement'
 import { CascaderInfo } from '@/types/vuex'
 export default Vue.extend({
   data(): {
     materialPlanList: MaterialPlanInfo[]
     productionPlanInfo: ProductionPlanInfo[]
     productionPlanList: ProductionPlanInfo[]
+    materialSupplementInfo: MaterialSupplementInfo
     [propName: string]: any
   } {
     return {
@@ -650,7 +840,30 @@ export default Vue.extend({
         }
       ],
       productionPlanList: [],
-      productionPlanIndex: '0'
+      productionPlanIndex: '0',
+      materialSupplementFlag: false,
+      materialSupplementSelect: [], // 可补的纱线
+      materialSupplementInfo: {
+        order_id: '',
+        rel_doc_id: '',
+        bear_client_id: '',
+        client_id: '',
+        client_name: '',
+        bear_price: '',
+        desc: '',
+        info_data: [
+          {
+            id: '',
+            tree_data: '',
+            material_id: '',
+            material_color: '',
+            material_type: 1,
+            number: '',
+            unit: ''
+          }
+        ]
+      },
+      bearClientArr: [] // 所有的相关承担单位，包括纱线订购厂，加工厂之类的
     }
   },
   computed: {
@@ -699,16 +912,25 @@ export default Vue.extend({
     },
     // 被选中的产品的物料信息展开
     checkMaterialFlattenList(): any[] {
-      return this.$flatten(this.$flatten(this.checkList))
+      // 由于process_name_arr是数组，展开的时候多展开一层，所以去掉process_name_arr
+      let checkListToChange = this.$clone(this.checkList)
+      checkListToChange.forEach((item) => {
+        item.info_data.forEach((itemChild) => {
+          itemChild.process_name_arr = []
+        })
+      })
+      return this.$flatten(this.$flatten(checkListToChange))
     },
-    totalPlanNumberList(): number[] {
+    totalPlanNumberList(): string[] {
       return this.productionPlanInfo.map((item) => {
-        return item.product_info_data.reduce((total, current) => {
-          return total + Number(current.number)
-        }, 0)
+        return item.product_info_data
+          .reduce((total, current) => {
+            return total + Number(current.number)
+          }, 0)
+          .toFixed(2)
       })
     },
-    totalPlanPriceList(): number[] {
+    totalPlanPriceList(): string[] {
       return this.productionPlanInfo.map((item) => {
         return (
           item.product_info_data.reduce((total, current) => {
@@ -717,7 +939,15 @@ export default Vue.extend({
           item.others_fee.reduce((total, current) => {
             return total + Number(current.price)
           }, 0)
-        )
+        ).toFixed(2)
+      })
+    },
+    yarnColorList() {
+      return this.$store.state.api.yarnColor.arr.map((item: { name: any }) => {
+        return {
+          value: item.name,
+          label: item.name
+        }
       })
     }
   },
@@ -745,6 +975,37 @@ export default Vue.extend({
           this.productionPlanIndex = this.productionPlanList[0].id?.toString()
         }
       })
+    },
+    searchReason(str: string, cb: any) {
+      const reasonArr = [
+        {
+          value: '本厂工艺问题'
+        },
+        {
+          value: '纱线数量问题'
+        },
+        {
+          value: '纱线质量问题'
+        },
+        {
+          value: '纱线颜色问题'
+        },
+        {
+          value: '条数多织'
+        },
+        {
+          value: '次品重织'
+        },
+        {
+          value: '其他原因'
+        }
+      ]
+      let results = str
+        ? reasonArr.filter((info: any) => {
+            info.value.toLowerCase().indexOf(str.toLowerCase()) === 0
+          })
+        : reasonArr
+      cb(results)
     },
     getProInfo(ev: string, info: any) {
       const idArr = ev.split(',')
@@ -961,6 +1222,94 @@ export default Vue.extend({
             message: '已取消删除'
           })
         })
+    },
+    // 原料颜色搜索
+    searchColor(str: string, cb: any) {
+      let results = str ? this.yarnColorList.filter(this.createFilter(str)) : this.yarnColorList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    createFilter(queryString: string) {
+      return (restaurant: any) => {
+        return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+      }
+    },
+    getMatId(str: string, info: any) {
+      const realVal = str.split('dkr')
+      console.log(realVal)
+      info.material_id = realVal[0]
+      info.material_color = realVal[1]
+      info.unit = realVal[2] || 'kg'
+    },
+    // 补纱逻辑
+    goMaterialSupplement(info: ProductionPlanInfo) {
+      this.materialSupplementFlag = true
+      this.materialSupplementInfo.order_id = this.order_id
+      this.materialSupplementInfo.client_id = info.client_id
+      this.materialSupplementInfo.rel_doc_id = info.id as number
+      this.materialSupplementInfo.client_name = info.client_name
+      this.materialSupplementSelect = info.material_info_data
+    },
+    saveMaterialSupplement() {
+      const formCheck =
+        this.$formCheck(this.materialSupplementInfo, [
+          {
+            key: 'bear_client_id',
+            errMsg: '请选择承担单位'
+          }
+        ]) ||
+        this.materialSupplementInfo.info_data.some((item) => {
+          return this.$formCheck(item, [
+            {
+              key: 'material_id',
+              errMsg: '请选择物料名称'
+            },
+            {
+              key: 'material_color',
+              errMsg: '请输入物料颜色'
+            },
+            {
+              key: 'number',
+              errMsg: '请输入物料数量'
+            }
+          ])
+        })
+      if (!formCheck) {
+        this.loading = true
+        materialSupplement.create(this.materialSupplementInfo).then((res) => {
+          if (res.data.status) {
+            this.$message.success('添加成功')
+            this.materialSupplementFlag = false
+            this.loading = false
+            this.init()
+          }
+        })
+      }
+    },
+    deleteMaterialSupplement(id: number) {
+      this.$confirm('是否删除该补纱单据?', '提示', {
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          materialSupplement
+            .delete({
+              id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message.success('删除成功')
+                this.init()
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     }
   },
   mounted() {
@@ -971,8 +1320,14 @@ export default Vue.extend({
       .then((res) => {
         this.order_id = res.data.data.time_data[this.orderIndex].id
         this.orderInfo = res.data.data
+        clientInOrder({
+          order_id: this.order_id
+        }).then((res) => {
+          this.bearClientArr = res.data.data[2].concat(res.data.data[3])
+        })
         this.init()
       })
+
     this.$checkCommonInfo([
       {
         checkWhich: 'api/clientType',
@@ -988,6 +1343,11 @@ export default Vue.extend({
         checkWhich: 'api/halfProcess',
         getInfoMethed: 'dispatch',
         getInfoApi: 'getHalfProcessAsync'
+      },
+      {
+        checkWhich: 'api/yarnColor',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getYarnColorAsync'
       }
     ])
   }
@@ -1001,6 +1361,20 @@ export default Vue.extend({
 #productionPlanDetail {
   .el-tabs__content {
     padding: 0;
+  }
+  .UnitCtn {
+    .el-input-group__append {
+      padding: 0;
+      .el-input {
+        width: 45px;
+        .el-input__inner {
+          padding: 0 8px;
+          border: 0;
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+        }
+      }
+    }
   }
 }
 </style>

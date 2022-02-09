@@ -1,0 +1,22 @@
+// 补纱
+export interface MaterialSupplementInfo {
+  id?: string | number
+  order_id: string | number
+  rel_doc_id: string | number // 关联加工单
+  bear_client_id: string | number // 承担单位
+  client_name?: string
+  client_id: string | number // 补纱单位
+  bear_price: string | number // 承担金额
+  desc: string
+  info_data: Array<{
+    check?: boolean
+    id?: string | number
+    material_id: string | number
+    material_name?: string
+    material_color: string
+    number: string | number
+    tree_data: string | string[]
+    unit: string
+    material_type: 1 | 2 //1原料 2辅料
+  }>
+}

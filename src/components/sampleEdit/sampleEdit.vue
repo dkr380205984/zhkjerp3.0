@@ -333,20 +333,20 @@
               v-for="(item,index) in sampleInfo.size_data"
               :key="'Size' + index">
               <div class="col">
-                <div class="label"
-                  v-if="index===0">
-                  <span class="text">大身尺码</span>
-                  <span class="explanation">(必选)</span>
-                </div>
-                <div class="info elCtn">
-                  <el-autocomplete class="inline-input"
-                    v-model="item.size_name"
-                    :fetch-suggestions="searchSize"
-                    placeholder="请选择大身尺码"></el-autocomplete>
-                </div>
-              </div>
-              <div class="col">
                 <div class="spaceBetween">
+                  <div class="once">
+                    <div class="label"
+                      v-if="index===0">
+                      <span class="text">大身尺码</span>
+                      <span class="explanation">(必选)</span>
+                    </div>
+                    <div class="info elCtn">
+                      <el-autocomplete class="inline-input"
+                        v-model="item.size_name"
+                        :fetch-suggestions="searchSize"
+                        placeholder="请选择大身尺码"></el-autocomplete>
+                    </div>
+                  </div>
                   <div class="once">
                     <div class="label"
                       v-if="index===0">
@@ -358,6 +358,10 @@
                       </el-input>
                     </div>
                   </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="spaceBetween">
                   <div class="once">
                     <div class="label"
                       v-if="index===0">
@@ -462,21 +466,21 @@
                 v-for="index in sampleInfo.size_data.length"
                 :key="'Size' + index">
                 <div class="col">
-                  <div class="label"
-                    v-if="index===1">
-                    <span class="text">配件尺码</span>
-                    <span class="explanation">(必选)</span>
-                  </div>
-                  <div class="info elCtn">
-                    <el-autocomplete class="inline-input"
-                      v-model="sampleInfo.size_data[index-1].size_name"
-                      :fetch-suggestions="searchSize"
-                      placeholder="同大身尺码"
-                      disabled></el-autocomplete>
-                  </div>
-                </div>
-                <div class="col">
                   <div class="spaceBetween">
+                    <div class="once">
+                      <div class="label"
+                        v-if="index===1">
+                        <span class="text">配件尺码</span>
+                        <span class="explanation">(必选)</span>
+                      </div>
+                      <div class="info elCtn">
+                        <el-autocomplete class="inline-input"
+                          v-model="sampleInfo.size_data[index-1].size_name"
+                          :fetch-suggestions="searchSize"
+                          placeholder="同大身尺码"
+                          disabled></el-autocomplete>
+                      </div>
+                    </div>
                     <div class="once">
                       <div class="label"
                         v-if="index===1">
@@ -488,6 +492,11 @@
                         </el-input>
                       </div>
                     </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="spaceBetween">
+
                     <div class="once">
                       <div class="label"
                         v-if="index===1">
@@ -524,13 +533,13 @@ import { CascaderInfo } from '@/types/vuex'
 import { sample } from '@/assets/js/api'
 export default Vue.extend({
   props: {
-    edit:{
-      type:Boolean,
-      required:false
+    edit: {
+      type: Boolean,
+      required: false
     },
-    inDetail:{
-      type:Boolean,
-      required:false
+    inDetail: {
+      type: Boolean,
+      required: false
     },
     show: {
       type: Boolean,
@@ -625,13 +634,14 @@ export default Vue.extend({
         ],
         size_data: [
           {
+            id: '',
             size_name: '',
             size_id: '',
             size_info: '',
             weight: ''
           }
         ], // 尺码组
-        color_data: [{id:'',name:''}], // 配色组
+        color_data: [{ id: '', name: '' }], // 配色组
         // 配件信息
         part_data: [
           {
@@ -639,6 +649,7 @@ export default Vue.extend({
             unit: '',
             part_size_data: [
               {
+                id: '',
                 size_name: '',
                 size_id: '',
                 size_info: '',
@@ -774,9 +785,9 @@ export default Vue.extend({
     },
     // 尺码的逻辑包含大身+配件尺码的添加&删除
     addSize() {
-      this.$addItem(this.sampleInfo.size_data, { size_name: '', size_id: '', weight: '', size_info: '' })
+      this.$addItem(this.sampleInfo.size_data, { id: '', size_name: '', size_id: '', weight: '', size_info: '' })
       this.sampleInfo.part_data.forEach((item) => {
-        this.$addItem(item.part_size_data, { size_name: '', size_id: '', weight: '', size_info: '' })
+        this.$addItem(item.part_size_data, { id: '', size_name: '', size_id: '', weight: '', size_info: '' })
       })
     },
     deleteSize(index: number) {
@@ -791,6 +802,7 @@ export default Vue.extend({
         unit: '',
         part_size_data: this.sampleInfo.size_data.map(() => {
           return {
+            id: '',
             size_name: '',
             size_id: '',
             size_info: '',
@@ -996,13 +1008,14 @@ export default Vue.extend({
         ],
         size_data: [
           {
+            id: '',
             size_name: '',
             size_id: '',
             size_info: '',
             weight: ''
           }
         ], // 尺码组
-        color_data: [{id:'',name:''}], // 配色组
+        color_data: [{ id: '', name: '' }], // 配色组
         // 配件信息
         part_data: [
           {
@@ -1010,6 +1023,7 @@ export default Vue.extend({
             unit: '',
             part_size_data: [
               {
+                id: '',
                 size_name: '',
                 size_id: '',
                 size_info: '',

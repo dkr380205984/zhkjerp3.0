@@ -58,6 +58,8 @@
       border-radius: 4px;
       top: 70px;
       z-index: 999;
+      max-height: 600px;
+      overflow: auto;
       .icons{
         position: absolute;
         right: 10px;
@@ -87,11 +89,16 @@
         line-height: 26px;
         .text{
           display: block;
-          min-width: 120px;
+          min-width: 160px;
           margin-right: 16px;
           &:nth-of-type(1){
             cursor: pointer;
+            width: 200px;
           }
+        }
+        &.title{
+          color: @font85;
+          font-size: @fontBig;
         }
       }
       .noMsg{

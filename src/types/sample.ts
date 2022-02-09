@@ -29,6 +29,7 @@ export interface SampleInfo {
     number: string | number // 成分信息
   }>
   size_data: Array<{
+    id: string
     size_name?: string
     size_id: string | number
     name?: string
@@ -44,6 +45,7 @@ export interface SampleInfo {
     name: string
     unit: string
     part_size_data: Array<{
+      id: string
       size_name?: string
       size_id: string | number
       name?: string

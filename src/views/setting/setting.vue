@@ -371,9 +371,9 @@
                 <div class="btn backHoverBlue fr"
                   @click="showPopup=true">添加边型</div>
                 <div class="btn backHoverOrange fr"
-                  @click="importExcelData('staffProcess')">批量导入</div>
+                  @click="importExcelData('side')">批量导入</div>
                 <div class="btn backHoverGreen fr"
-                  @click="downLoadTemplete('staffProcess')">下载导入模板</div>
+                  @click="downLoadTemplete('side')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -1232,10 +1232,12 @@
                   <div class="col">{{item.phone}}</div>
                   <div class="col">{{item.station}}</div>
                   <div class="col">{{item.group_name}}</div>
-                  <div class="col">{{item.has_check?'有审核权限':'无权限'}}</div>
+                  <div class="col">{{item.has_check===1?'有审核权限':'无权限'}}</div>
                   <div class="col">
                     <span class="opr hoverRed"
                       @click="deleteUser(item.id)">删除</span>
+                    <span class="opr hoverOrange"
+                      @click="getUpdateUser(item)">修改</span>
                   </div>
                 </div>
               </div>
@@ -2349,9 +2351,9 @@
       <template v-if="cName==='系统账户管理'">
         <div class="main">
           <div class="titleCtn">
-            <div class="text">新增用户</div>
+            <div class="text">{{userUpdate?'修改':'新增'}}用户</div>
             <div class="closeCtn"
-              @click="showPopup=false">
+              @click="showPopup=false;resetUser()">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -2381,11 +2383,13 @@
               <div class="label">手机号：</div>
               <div class="info">
                 <el-input placeholder="请输入手机号"
-                  v-model="userInfo.phone">
+                  v-model="userInfo.phone"
+                  :disabled="userUpdate">
                 </el-input>
               </div>
             </div>
-            <div class="row">
+            <div class="row"
+              v-show="!userUpdate">
               <div class="label">验证码：</div>
               <div class="info">
                 <el-input placeholder="请输入验证码"
@@ -2421,17 +2425,41 @@
               <div class="info"
                 style="line-height:32px">
                 <el-radio v-model="userInfo.has_check"
-                  :label="true">有</el-radio>
+                  :label="1">有</el-radio>
                 <el-radio v-model="userInfo.has_check"
-                  :label="false">无</el-radio>
+                  :label="2">无</el-radio>
+              </div>
+            </div>
+            <div class="row"
+              style="height:auto">
+              <div class="label">系统模块：</div>
+              <div class="info checkBoxCtn">
+                <div class="checkbox"
+                  v-for="item in systemModuleArr"
+                  :key="item.id">
+                  <el-checkbox v-model="item.check"
+                    @change="getModuleChild($event,item.id,item.detail)">{{item.name}}</el-checkbox>
+                </div>
+              </div>
+            </div>
+            <div class="row"
+              style="height:auto">
+              <div class="label">模块细分：</div>
+              <div class="info checkBoxCtn">
+                <div class="checkbox"
+                  v-for="item in systemModuleChild"
+                  :key="item.id">
+                  <el-checkbox v-model="item.check"
+                    @change="getModuleChild($event,item.id)">{{item.name}}</el-checkbox>
+                </div>
               </div>
             </div>
           </div>
           <div class="oprCtn">
             <div class="btn borderBtn"
-              @click="showPopup=false">取消</div>
+              @click="showPopup=false;resetUser()">取消</div>
             <div class="btn backHoverBlue"
-              @click="saveUser">确定</div>
+              @click="userUpdate?updateUser():saveUser()">确定</div>
           </div>
         </div>
       </template>
@@ -2862,7 +2890,7 @@ import { PackMaterialInfo, DecorateMaterialInfo } from '@/types/materialSetting'
 import { GroupInfo } from '@/types/factoryInfoSetting'
 import { UserInfo } from '@/types/user'
 import { QuotedPriceProduct } from '@/types/quotedPrice'
-import { yarnAttributeArr } from '@/assets/js/dictionary'
+import { yarnAttributeArr, systemModule } from '@/assets/js/dictionary'
 interface YarnTypeInfoHasCheck extends YarnTypeInfo {
   check: boolean
 }
@@ -2967,7 +2995,7 @@ export default Vue.extend({
         产品设置: ['品类', '款式', '成分', '配色组', '尺码'],
         订单设置: ['订单类型', '样单类型'],
         报价单设置: ['报价模板', '报价说明'],
-        工序设置: ['原料加工工序', '半成品加工', '成品加工工序'],
+        工序设置: ['半成品加工', '成品加工工序'],
         工艺单设置: ['边型', '机型', '组织法', '纱线颜色'],
         物料设置: ['纱线原料', '面料原料', '装饰辅料', '包装辅料', '纱线报价', '面料报价'],
         工厂信息设置: ['基本信息', '负责小组/人'],
@@ -3219,15 +3247,18 @@ export default Vue.extend({
         phone: '',
         is_admin: 2, // 1：超管 2：普通用户
         module_info: [],
-        has_check: false,
+        has_check: 2,
         group_id: '',
         sms_code: '',
         station: '' // 岗位
       },
+      systemModuleArr: systemModule,
+      systemModuleChild: [],
       smsIndex: '发送验证码',
       userList: [],
       userTotal: 1,
       userPage: 1,
+      userUpdate: false,
       quotedPriceProduct: {
         category_id: '',
         image_data: [],
@@ -3425,6 +3456,35 @@ export default Vue.extend({
     }
   },
   methods: {
+    getModuleChild(ev: boolean, id: number, detailInfo: any[]) {
+      if (detailInfo) {
+        this.systemModuleChild = detailInfo.map((item) => {
+          return {
+            id: item.id,
+            name: item.name,
+            check: ev
+          }
+        })
+        if (ev) {
+          this.userInfo.module_info.push(id)
+          this.userInfo.module_info = this.userInfo.module_info.concat(detailInfo.map((item) => item.id))
+          this.userInfo.module_info = Array.from(new Set(this.userInfo.module_info))
+        } else {
+          this.userInfo.module_info.splice(this.userInfo.module_info.indexOf(id), 1)
+          detailInfo.forEach((item) => {
+            if (this.userInfo.module_info.indexOf(item.id) !== -1) {
+              this.userInfo.module_info.splice(this.userInfo.module_info.indexOf(item.id), 1)
+            }
+          })
+        }
+      } else {
+        if (ev) {
+          this.userInfo.module_info.push(id)
+        } else {
+          this.userInfo.module_info.splice(this.userInfo.module_info.indexOf(id), 1)
+        }
+      }
+    },
     // 用户注册获取验证码
     getSmsCode() {
       if (Number(this.smsIndex)) {
@@ -3653,13 +3713,12 @@ export default Vue.extend({
             '纱线颜色模板'
           )
           break
-        case 'material':
+        case 'decorateMaterial':
           this.$downloadExcel(
             [],
             [
               { title: '装饰辅料名称', key: 'name' },
-              { title: '计量单位', key: 'unit' },
-              { title: `是否需要织造(注:'是'填'1','否'填'0',默认为'0')`, key: 'need_weave' }
+              { title: '计量单位', key: 'unit' }
             ],
             '装饰辅料模板'
           )
@@ -5127,24 +5186,99 @@ export default Vue.extend({
       })
     },
     saveUser() {
-      const formCheck = this.$formCheck(this.userInfo, [
-        {
-          key: 'phone',
-          errMsg: '请填写手机号'
-        },
-        {
-          key: 'sms_code',
-          errMsg: '请填写验证码'
-        }
-      ])
+      let formCheck = false
+      if (!this.userUpdate) {
+        formCheck = this.$formCheck(this.userInfo, [
+          {
+            key: 'phone',
+            errMsg: '请填写手机号'
+          },
+          {
+            key: 'sms_code',
+            errMsg: '请填写验证码'
+          }
+        ])
+      } else {
+        formCheck = this.$formCheck(this.userInfo, [
+          {
+            key: 'phone',
+            errMsg: '请填写手机号'
+          }
+        ])
+      }
+
       if (!formCheck) {
         user.create(this.userInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
             this.getUser()
+            this.resetUser()
             this.showPopup = false
           }
         })
+      }
+    },
+    updateUser() {
+      let formCheck = false
+      if (!this.userUpdate) {
+        formCheck = this.$formCheck(this.userInfo, [
+          {
+            key: 'phone',
+            errMsg: '请填写手机号'
+          }
+        ])
+      } else {
+        formCheck = this.$formCheck(this.userInfo, [
+          {
+            key: 'phone',
+            errMsg: '请填写手机号'
+          }
+        ])
+      }
+
+      if (!formCheck) {
+        user.update(this.userInfo).then((res) => {
+          if (res.data.status) {
+            this.$message.success('修改成功')
+            this.getUser()
+            this.resetUser()
+            this.showPopup = false
+          }
+        })
+      }
+    },
+    resetUser() {
+      this.userInfo = {
+        name: '',
+        user_name: '',
+        password: '',
+        phone: '',
+        is_admin: 2, // 1：超管 2：普通用户
+        module_info: [],
+        has_check: 2,
+        group_id: '',
+        sms_code: '',
+        station: '' // 岗位
+      }
+      this.userUpdate = false
+    },
+    getUpdateUser(userInfo: UserInfo) {
+      this.showPopup = true
+      this.userUpdate = true
+      this.userInfo = userInfo
+      this.systemModuleArr.forEach((item: any) => {
+        item.check = false
+        if (
+          this.userInfo.module_info &&
+          (this.userInfo.module_info.indexOf(item.id) !== -1 ||
+            this.userInfo.module_info.indexOf(item.id.toString()) !== -1)
+        ) {
+          item.check = true
+        }
+      })
+      // 针对初始化为null做一下特殊处理
+      if (!this.userInfo.module_info) {
+        this.userInfo.module_info = []
       }
     },
     deleteUser(id: number) {},

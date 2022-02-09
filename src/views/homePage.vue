@@ -18,8 +18,8 @@
               class="select"
               placeholder="请选择"
               @change="searchInfo">
-              <!-- <el-option label="所有"
-                value="0"></el-option> -->
+              <el-option label="所有"
+                value="0"></el-option>
               <el-option label="订单"
                 value="1"></el-option>
               <el-option label="样品订单"
@@ -54,15 +54,23 @@
           <div class="block"
             v-show="searchType==='0'||searchType==='1'">
             <div class="titled">相关订单</div>
+            <div class="info title">
+              <span class="text">编号</span>
+              <span class="text">下单公司</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+              <span class="text">下单总数</span>
+            </div>
             <div class="info"
               v-for="item in searchList.order"
               :key="item.id">
               <span class="text hoverBlue"
-                v-html="item.code"
+                v-html="item.code || item.system_code"
                 @click="$openUrl('/order/detail?id=' + item.id)"></span>
-              <span class="text">公司名称</span>
-              <span class="text">哈哈哈</span>
-              <span class="text">哈哈哈</span>
+              <span class="text">{{item.client_name}}</span>
+              <span class="text">{{item.create_time}}</span>
+              <span class="text">{{item.user_name}}</span>
+              <span class="text">{{item.total_number}}</span>
             </div>
             <div class="noMsg"
               v-if="searchList.order.length===0">暂无相关信息</div>
@@ -70,15 +78,23 @@
           <div class="block"
             v-show="searchType==='0'||searchType==='2'">
             <div class="titled">相关样单</div>
+            <div class="info title">
+              <span class="text">编号</span>
+              <span class="text">打样公司</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+              <span class="text">打样总数</span>
+            </div>
             <div class="info"
               v-for="item in searchList.sampleOrder"
               :key="item.id">
               <span class="text hoverBlue"
                 v-html="item.code"
                 @click="$openUrl('/sampleOrder/detail?id=' + item.id)"></span>
-              <span class="text">公司名称</span>
-              <span class="text">哈哈哈</span>
-              <span class="text">哈哈哈</span>
+              <span class="text">{{item.client_name}}</span>
+              <span class="text">{{item.create_time}}</span>
+              <span class="text">{{item.user_name}}</span>
+              <span class="text">{{item.total_number}}</span>
             </div>
             <div class="noMsg"
               v-if="searchList.sampleOrder.length===0">暂无相关信息</div>
@@ -86,31 +102,47 @@
           <div class="block"
             v-show="searchType==='0'||searchType==='3'">
             <div class="titled">相关报价单</div>
+            <div class="info title">
+              <span class="text">编号</span>
+              <span class="text">标题</span>
+              <span class="text">询价公司</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+            </div>
             <div class="info"
               v-for="item in searchList.quotedPrice"
               :key="item.id">
               <span class="text hoverBlue"
                 v-html="item.code"
                 @click="$openUrl('/quotedPrice/detail?id=' + item.id)"></span>
-              <span class="text">公司名称</span>
-              <span class="text">哈哈哈</span>
-              <span class="text">哈哈哈</span>
+              <span class="text">{{item.title}}</span>
+              <span class="text">{{item.client_name}}</span>
+              <span class="text">{{item.create_time}}</span>
+              <span class="text">{{item.user_name}}</span>
             </div>
             <div class="noMsg"
               v-if="searchList.quotedPrice.length===0">暂无相关信息</div>
           </div>
           <div class="block"
             v-show="searchType==='0'||searchType==='4'">
-            <div class="titled">相关报价单</div>
+            <div class="titled">相关工艺单</div>
+            <div class="info title">
+              <span class="text">工艺单编号</span>
+              <span class="text">标题</span>
+              <span class="text">产/样品编号</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+            </div>
             <div class="info"
               v-for="item in searchList.craft"
               :key="item.id">
               <span class="text hoverBlue"
                 v-html="item.code"
                 @click="$openUrl('/craft/detail?id=' + item.id)"></span>
-              <span class="text">公司名称</span>
-              <span class="text">哈哈哈</span>
-              <span class="text">哈哈哈</span>
+              <span class="text">{{item.title}}</span>
+              <span class="text">{{item.product_code}}</span>
+              <span class="text">{{item.create_time}}</span>
+              <span class="text">{{item.user_name}}</span>
             </div>
             <div class="noMsg"
               v-if="searchList.craft.length===0">暂无相关信息</div>
@@ -118,15 +150,21 @@
           <div class="block"
             v-show="searchType==='0'||searchType==='5'">
             <div class="titled">相关物料计划</div>
+            <div class="info title">
+              <span class="text">编号</span>
+              <span class="text">订/样单编号</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+            </div>
             <div class="info"
               v-for="item in searchList.materialPlan"
               :key="item.id">
               <span class="text hoverBlue"
                 v-html="item.code"
                 @click="$openUrl('/materialPlan/detail?id=' + item.id)"></span>
-              <span class="text">公司名称</span>
-              <span class="text">哈哈哈</span>
-              <span class="text">哈哈哈</span>
+              <span class="text">{{item.order_code}}</span>
+              <span class="text">{{item.create_time}}</span>
+              <span class="text">{{item.user_name}}</span>
             </div>
             <div class="noMsg"
               v-if="searchList.materialPlan.length===0">暂无相关信息</div>
@@ -220,7 +258,7 @@ import { tutorialSystem, systemMessage } from '@/assets/js/api'
 export default Vue.extend({
   data() {
     return {
-      searchType: '1',
+      searchType: '0',
       searchValue: '',
       history: window.localStorage.getItem('searchHistory')
         ? JSON.parse(window.localStorage.getItem('searchHistory') as string)
@@ -233,7 +271,7 @@ export default Vue.extend({
         : [],
       easyOpr: [
         {
-          id: 1,
+          id: '1-1',
           isChecked: false,
           opr: '添加报价单',
           icon: 'icon-baojiaguanli1',
@@ -241,70 +279,98 @@ export default Vue.extend({
           check: true
         },
         {
-          id: 1,
+          id: '1-3',
           isChecked: false,
           opr: '报价单列表',
           icon: 'icon-baojiaguanli1',
           url: '/quotedPrice/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
-          id: 3,
+          id: '3-1',
           isChecked: false,
           opr: '添加订单',
           icon: 'icon-dingdanguanli1',
           url: '/order/create'
         },
         {
-          id: 3,
+          id: '3-3',
           isChecked: false,
           opr: '订单管理',
           icon: 'icon-dingdanguanli1',
           url: '/order/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
-          id: 5,
+          id: '2-1',
           isChecked: false,
           opr: '添加样单',
           icon: 'icon-yangdanguanli1',
           url: '/sampleOrder/create'
         },
         {
-          id: 5,
+          id: '2-3',
           isChecked: false,
           opr: '样单管理',
           icon: 'icon-yangdanguanli1',
           url: '/sampleOrder/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
-          id: 6,
+          id: '15-1',
+          isChecked: false,
+          opr: '添加工艺单',
+          icon: 'icon-gongyidanguanli',
+          url: '/craft/create'
+        },
+        {
+          id: '15-3',
+          isChecked: false,
+          opr: '工艺单列表',
+          icon: 'icon-gongyidanguanli',
+          url: '/craft/list?page=1&keyword&user_id='
+        },
+        {
+          id: '4-1',
           isChecked: false,
           opr: '物料计划',
           icon: 'icon-wuliaojihua',
           url: '/materialPlan/list?page=1&keyword=&client_id=&user_id=&status=0&date=&&order_type=null'
         },
         {
-          id: 7,
+          id: '4-3',
           isChecked: false,
           opr: '物料管理',
           icon: 'icon-wuliaoguanli',
           url: '/materialManage/list?page=1&type=1&code=&order_code=&date='
         },
         {
-          id: 8,
+          id: '5-3',
+          isChecked: false,
+          opr: '原料管理',
+          icon: 'icon-wuliaochuruku',
+          url: '/materialStock/list?page=1&type=1'
+        },
+        {
+          id: '6-3',
+          isChecked: false,
+          opr: '辅料管理',
+          icon: 'icon-wuliaochuruku',
+          url: '/accessoriesManage/list?page=1&type=1'
+        },
+        {
+          id: '7-3',
           isChecked: false,
           opr: '物料出入库',
           icon: 'icon-wuliaochuruku',
           url: '/materialStock/list?page=1&type=1'
         },
         {
-          id: 9,
+          id: '8-3',
           isChecked: false,
           opr: '生产计划',
           icon: 'icon-shengchanjihua',
           url: '/productionPlan/list?page=1&type=1'
         },
         {
-          id: 10,
+          id: '9-3',
           isChecked: false,
           opr: '产品检验',
           icon: 'icon-shengchanpinjianyan',
@@ -313,21 +379,21 @@ export default Vue.extend({
         {
           opr: '仓库管理',
           isChecked: false,
-          id: 11,
+          id: '12-3',
           icon: 'icon-cangkuguanli',
           url: '/store/list?page=1&keyword=&user_id=&store_type=1'
         },
         {
           opr: '客户与合作商管理',
           isChecked: false,
-          id: 12,
+          id: '13-3',
           icon: 'icon-kehuguanli',
           url: '/client/list?page=1&type=1&status=1&keyword='
         },
         {
           opr: '原料预订购',
           isChecked: false,
-          id: 13,
+          id: '14-3',
           icon: 'icon-wuliaoyudinggou',
           url: '/materialPlanOrder/list?page=1&type=1'
         }
@@ -365,7 +431,7 @@ export default Vue.extend({
       homePage
         .searchAll({
           keyword: this.searchValue,
-          type: Number(this.searchType)
+          type: Number(this.searchType) ? Number(this.searchType) : ''
         })
         .then((res) => {
           if (res.data.status) {
@@ -379,6 +445,14 @@ export default Vue.extend({
               this.searchList.craft = res.data.data
             } else if (Number(this.searchType) === 5) {
               this.searchList.materialPlan = res.data.data
+            } else {
+              this.searchList = {
+                order: res.data.data.order,
+                sampleOrder: res.data.data.sample_order,
+                quotedPrice: res.data.data.quote,
+                materialPlan: res.data.data.material_plan,
+                craft: res.data.data.craft_list
+              }
             }
           }
           if (!this.history.find((item: string) => item === this.searchValue)) {
@@ -432,6 +506,12 @@ export default Vue.extend({
     }
   },
   mounted() {
+    const moduleInfo = window.sessionStorage.getItem('module_id') as string
+    this.easyOpr = moduleInfo
+      ? this.easyOpr.filter((item) => {
+          return JSON.parse(moduleInfo).indexOf(item.id) !== -1
+        })
+      : this.easyOpr
     let userEasyOpr = window.localStorage.getItem('userEasyOpr')
       ? JSON.parse(window.localStorage.getItem('userEasyOpr') as string)
       : []

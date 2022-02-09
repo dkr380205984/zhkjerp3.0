@@ -516,7 +516,6 @@
               <div class="col">
                 <div class="label">
                   <span class="text">批次类型</span>
-                  <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
                   <el-select v-model="item.batch_type_id">
@@ -732,24 +731,47 @@
         <div class="row">
           <div class="col">
             <div class="label">
-              <span class="text">文件信息</span>
+              <span class="text">公开文件</span>
+              <span class="explanation">(涉及订单流程权限的帐号均可查看)</span>
             </div>
             <div class="info">
               <el-upload class="upload"
                 action="https://upload.qiniup.com/"
-                accept="image/jpeg,image/gif,image/png,image/bmp"
                 :before-upload="beforeAvatarUpload"
                 :data="postData"
-                :on-remove="removeFile"
-                :on-success="successFile"
-                ref="uploada"
-                list-type="picture">
+                :on-remove="(ev)=>{return removeFile(ev,orderInfo.public_files)}"
+                :on-success="(ev)=>{return successFile(ev,orderInfo.public_files)}"
+                ref="uploada">
                 <div class="uploadBtn">
                   <i class="el-icon-upload"></i>
-                  <span>上传图片</span>
+                  <span>上传文件</span>
                 </div>
                 <div slot="tip"
-                  class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M</div>
+                  class="el-upload__tip">可以上传word、excel、pdf等格式的文件，且不超过10M</div>
+              </el-upload>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="label">
+              <span class="text">私密文件</span>
+              <span class="explanation">(只有具有审核权限的帐号可查看)</span>
+            </div>
+            <div class="info">
+              <el-upload class="upload"
+                action="https://upload.qiniup.com/"
+                :before-upload="beforeAvatarUpload"
+                :data="postData"
+                :on-remove="(ev)=>{return removeFile(ev,orderInfo.private_files)}"
+                :on-success="(ev)=>{return successFile(ev,orderInfo.private_files)}"
+                ref="uploada">
+                <div class="uploadBtn">
+                  <i class="el-icon-upload"></i>
+                  <span>上传文件</span>
+                </div>
+                <div slot="tip"
+                  class="el-upload__tip">可以上传word、excel、pdf等格式的文件，且不超过10M</div>
               </el-upload>
             </div>
           </div>
@@ -772,8 +794,10 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
+          <div class="btn backHoverOrange"
+            @click="saveOrder(true)">保存为草稿</div>
           <div class="btn backHoverBlue"
-            @click="saveOrder">提交</div>
+            @click="saveOrder(false)">提交</div>
         </div>
       </div>
     </div>
@@ -909,6 +933,7 @@ export default Vue.extend({
         ],
         size_data: [
           {
+            id: '',
             size_id: '',
             size_info: '',
             weight: ''
@@ -922,6 +947,7 @@ export default Vue.extend({
             unit: '',
             part_size_data: [
               {
+                id: '',
                 size_id: '',
                 size_info: '',
                 weight: ''
@@ -957,6 +983,7 @@ export default Vue.extend({
         ],
         size_data: [
           {
+            id: '',
             size_id: '',
             size_info: '',
             weight: ''
@@ -970,6 +997,7 @@ export default Vue.extend({
             unit: '',
             part_size_data: [
               {
+                id: '',
                 size_id: '',
                 size_info: '',
                 weight: ''
@@ -1160,123 +1188,132 @@ export default Vue.extend({
       const fileFormat = file.name.substring(fileName + 1, fileNameLength) // 截
       this.postData.token = this.token
       this.postData.key = Date.parse(new Date() + '') + '.' + fileFormat
-      const isJPG = file.type === 'image/jpeg'
-      const isPNG = file.type === 'image/png'
+      // const isJPG = file.type === 'image/jpeg'
+      // const isPNG = file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 10
-      if (!isJPG && !isPNG) {
-        this.$message.error('图片只能是 JPG/PNG 格式!')
-        return false
-      }
+      // if (!isJPG && !isPNG) {
+      //   this.$message.error('图片只能是 JPG/PNG 格式!')
+      //   return false
+      // }
       if (!isLt2M) {
-        this.$message.error('图片大小不能超过 10MB!')
+        this.$message.error('文件大小不能超过 10MB!')
         return false
       }
     },
-    successFile(response: { hash: string; key: string }) {
-      this.orderInfo.public_files.push('https://file.zwyknit.com/' + response.key)
+    successFile(response: { hash: string; key: string }, orderFile: any[]) {
+      orderFile.push('https://file.zwyknit.com/' + response.key)
     },
-    removeFile(file: { response: { hash: string; key: string } }) {
-      this.$deleteItem(
-        this.orderInfo.public_files,
-        this.orderInfo.public_files.indexOf('https://file.zwyknit.com/' + file.response.key)
-      )
+    removeFile(file: { response: { hash: string; key: string } }, orderFile: any[]) {
+      this.$deleteItem(orderFile, orderFile.indexOf('https://file.zwyknit.com/' + file.response.key))
     },
     getCmpData() {
       this.orderInfo.pid = Number(this.$route.query.sampleOrderId) ? Number(this.$route.query.sampleOrderId) : null
-      this.orderInfo.client_id = (this.orderInfo.tree_data as number[])[2]
-      this.orderInfo.tree_data = (this.orderInfo.tree_data as number[]).join(',')
+      this.orderInfo.client_id = this.orderInfo.tree_data!.length > 0 ? (this.orderInfo.tree_data as number[])[2] : ''
+      this.orderInfo.tree_data =
+        this.orderInfo.tree_data!.length > 0 ? (this.orderInfo.tree_data as number[]).join(',') : ''
       this.orderInfo.time_data.total_style = this.totalStyle
       this.orderInfo.time_data.total_number = this.totalNumber
       this.orderInfo.time_data.total_price = this.totalPrice
       this.orderInfo.time_data.batch_data.forEach((itemBatch) => {
         itemBatch.product_data.forEach((item) => {
           item.product_info.forEach((itemChild) => {
-            itemChild.size_id = itemChild.size_color!.split('/')[0]
-            itemChild.color_id = itemChild.size_color!.split('/')[1]
+            itemChild.size_id = itemChild.size_color!.length > 0 ? itemChild.size_color!.split('/')[0] : ''
+            itemChild.color_id = itemChild.size_color!.length > 0 ? itemChild.size_color!.split('/')[1] : ''
           })
         })
       })
     },
-    saveOrder() {
-      console.log(this.orderInfo)
-      const formCheck =
-        this.$formCheck(this.orderInfo, [
-          {
-            key: 'tree_data',
-            errMsg: '请选择下单公司',
-            regNormal: 'checkArr'
-          },
-          {
-            key: 'contacts_id',
-            errMsg: '请选择联系人'
-          },
-          {
-            key: 'group_id',
-            errMsg: '请选择负责小组'
-          }
-        ]) ||
-        this.$formCheck(this.orderInfo.time_data, [
-          {
-            key: 'order_time',
-            errMsg: '请选择下单时间'
-          }
-        ]) ||
-        this.orderInfo.time_data.batch_data.some((item) => {
-          return (
-            this.$formCheck(item, [
-              {
-                key: 'delivery_time',
-                errMsg: '请选择发货日期'
-              },
-              {
-                key: 'batch_type_id',
-                errMsg: '请选择批次类型'
-              }
-            ]) ||
-            item.product_data.some((itemChild) => {
-              return (
-                this.$formCheck(itemChild, [
-                  {
-                    key: 'product_id',
-                    errMsg: '请选择产品'
-                  }
-                ]) ||
-                itemChild.product_info.some((itemPro) => {
-                  return this.$formCheck(itemPro, [
-                    {
-                      key: 'size_color',
-                      errMsg: '请选择尺码颜色'
-                    },
-                    {
-                      key: 'price',
-                      errMsg: '请输入下单单价'
-                    },
-                    {
-                      key: 'number',
-                      errMsg: '请输入下单数量'
-                    }
-                  ])
-                })
-              )
-            })
-          )
-        })
-      if (
-        this.orderInfo.time_data.batch_data.some((item) => {
-          this.$ifRepeatArray(item.product_data.map((itemChild) => itemChild.product_id) as string[])
-        })
-      ) {
-        this.$message.error('相同样品请不要分多次添加')
-        return
-      }
-      if (!formCheck) {
+    saveOrder(ifCaogao: boolean) {
+      if (ifCaogao) {
+        this.orderInfo.is_draft = 1
         this.getCmpData()
         order.create(this.orderInfo).then((res) => {
           if (res.data.status) {
-            this.$message.success('添加成功')
+            this.$message.success('草稿保存成功')
             this.$router.push('/order/list?page=1&keyword=&client_id=&user_id=&status=null&date=')
           }
         })
+      } else {
+        this.orderInfo.is_draft = 2
+        const formCheck =
+          this.$formCheck(this.orderInfo, [
+            {
+              key: 'tree_data',
+              errMsg: '请选择下单公司',
+              regNormal: 'checkArr'
+            },
+            {
+              key: 'contacts_id',
+              errMsg: '请选择联系人'
+            },
+            {
+              key: 'group_id',
+              errMsg: '请选择负责小组'
+            }
+          ]) ||
+          this.$formCheck(this.orderInfo.time_data, [
+            {
+              key: 'order_time',
+              errMsg: '请选择下单时间'
+            }
+          ]) ||
+          this.orderInfo.time_data.batch_data.some((item) => {
+            return (
+              this.$formCheck(item, [
+                {
+                  key: 'delivery_time',
+                  errMsg: '请选择发货日期'
+                }
+                // {
+                //   key: 'batch_type_id',
+                //   errMsg: '请选择批次类型'
+                // }
+              ]) ||
+              item.product_data.some((itemChild) => {
+                return (
+                  this.$formCheck(itemChild, [
+                    {
+                      key: 'product_id',
+                      errMsg: '请选择产品'
+                    }
+                  ]) ||
+                  itemChild.product_info.some((itemPro) => {
+                    return this.$formCheck(itemPro, [
+                      {
+                        key: 'size_color',
+                        errMsg: '请选择尺码颜色'
+                      },
+                      {
+                        key: 'price',
+                        errMsg: '请输入下单单价'
+                      },
+                      {
+                        key: 'number',
+                        errMsg: '请输入下单数量'
+                      }
+                    ])
+                  })
+                )
+              })
+            )
+          })
+        if (
+          this.orderInfo.time_data.batch_data.some((item) => {
+            this.$ifRepeatArray(item.product_data.map((itemChild) => itemChild.product_id) as string[])
+          })
+        ) {
+          this.$message.error('相同产品请不要分多次添加')
+          return
+        }
+        if (!formCheck) {
+          this.getCmpData()
+          order.create(this.orderInfo).then((res) => {
+            if (res.data.status) {
+              this.$message.success('添加成功')
+              this.$router.push('/order/list?page=1&keyword=&client_id=&user_id=&status=null&date=')
+            }
+          })
+        }
       }
     }
   },

@@ -21,7 +21,7 @@
             </el-cascader>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter"
+            <el-select @change="$setLocalStorage('create_user',user_id);changeRouter()"
               v-model="user_id"
               placeholder="筛选创建人"
               clearable>
@@ -49,7 +49,7 @@
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select @change="changeRouter"
+            <el-select @change="$setLocalStorage('group_id',group_id);changeRouter()"
               v-model="group_id"
               placeholder="筛选负责小组">
               <el-option v-for="item in groupList"
@@ -208,18 +208,38 @@ export default Vue.extend({
           classArr: ['', 'orange', 'blue', 'green', 'green', 'red']
         },
         {
+          key: 'push_progress',
+          name: '入库进度',
+          ifShow: true,
+          ifLock: false,
+          index: 8,
+          unit: '%',
+          errVal: '0',
+          class: 'green'
+        },
+        {
+          key: 'pop_progress',
+          name: '出库进度',
+          ifShow: true,
+          ifLock: false,
+          index: 9,
+          unit: '%',
+          errVal: '0',
+          class: 'green'
+        },
+        {
           key: 'group_name',
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 9
+          index: 10
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 10
+          index: 11
         }
       ],
       pickerOptions: {
@@ -271,8 +291,8 @@ export default Vue.extend({
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.keyword = query.keyword || ''
       this.status = query.status || '0'
-      this.user_id = Number(query.user_id) || ''
-      this.group_id = Number(query.gourp_id) || ''
+      this.user_id = query.user_id || this.$getLocalStorage('create_user')
+      this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.order_type = Number(query.order_type) || null
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = query.limit ? Number(query.limit) : 10

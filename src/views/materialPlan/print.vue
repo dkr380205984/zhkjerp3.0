@@ -4,64 +4,64 @@
     v-loading="loading"
     @click="showMenu = false"
     @click.right="handleClickRight">
-    <div v-if="isBreak">
-      <div class="pmain"
-        v-for="item in materialPlanInfo"
-        :key="item.material_id">
-        <div class="phead clearfix">
-          <div class="fl">
-            <div class="ptitle">{{company_name}}物料计划单</div>
-            <div class="prow">
-              <div class="pcol">
-                <div class="label">系统计划单编号：</div>
-                <div class="info">{{ otherInfo.code }}</div>
-              </div>
-            </div>
-            <div class="prow">
-              <div class="pcol">
-                <div class="label">计划单创建信息：</div>
-                <div class="info">{{ otherInfo.created_at.slice(0, 10) }}{{otherInfo.user_name?'，' + otherInfo.user_name:''}}{{otherInfo.user_phone?'，' + otherInfo.user_phone:''}}</div>
-              </div>
+    <div class="pmain">
+      <div class="phead clearfix">
+        <div class="fl">
+          <div class="ptitle">{{title?title:company_name+'物料计划单'}}</div>
+          <div class="prow">
+            <div class="pcol">
+              <div class="label">系统计划单编号：</div>
+              <div class="info">{{ otherInfo.code }}</div>
             </div>
           </div>
-          <div class="fr">
-            <div class="pImage">
-              <img :src="qrCodeUrl"
-                width="100%"
-                alt="" />
+          <div class="prow">
+            <div class="pcol">
+              <div class="label">计划单创建信息：</div>
+              <div class="info">{{ otherInfo.created_at.slice(0, 10) }}{{otherInfo.user_name?'，' + otherInfo.user_name:''}}{{otherInfo.user_phone?'，' + otherInfo.user_phone:''}}</div>
             </div>
           </div>
         </div>
-        <div class="pbody">
-          <div class="tableCtn">
-            <div class="tbody hasTop">
-              <div class="trow">
-                <div class="tcol bgGray headTitle">订单号</div>
-                <div class="tcol"
-                  style="flex:1.2">{{ otherInfo.order_code || '暂无' }}</div>
-                <div class="tcol bgGray headTitle">下单客户</div>
-                <div class="tcol">{{ otherInfo.client_name || '暂无' }}</div>
-                <div class="tcol bgGray headTitle">下单日期</div>
-                <div class="tcol">{{ otherInfo.order_time || '暂无' }}</div>
-                <div class="tcol bgGray headTitle"
-                  style="flex:0.73">负责人/小组</div>
-                <div class="tcol">{{ otherInfo.group_name || '暂无' }}</div>
-              </div>
-              <div class="trow">
-                <div class="tcol bgGray headTitle"></div>
-                <div class="tcol"
-                  style="flex:1.2"></div>
-                <div class="tcol bgGray headTitle"></div>
-                <div class="tcol"></div>
-                <div class="tcol bgGray headTitle"></div>
-                <div class="tcol"></div>
-                <div class="tcol bgGray headTitle"
-                  style="flex:0.73"></div>
-                <div class="tcol"></div>
-              </div>
+        <div class="fr">
+          <div class="pImage">
+            <img :src="qrCodeUrl"
+              width="100%"
+              alt="" />
+          </div>
+        </div>
+      </div>
+      <div class="pbody">
+        <div class="tableCtn">
+          <div class="tbody hasTop">
+            <div class="trow">
+              <div class="tcol bgGray headTitle">订单号</div>
+              <div class="tcol"
+                style="flex:1.2">{{ otherInfo.order_code || '暂无' }}</div>
+              <div class="tcol bgGray headTitle">下单客户</div>
+              <div class="tcol">{{ otherInfo.client_name || '暂无' }}</div>
+              <div class="tcol bgGray headTitle">下单日期</div>
+              <div class="tcol">{{ otherInfo.order_time || '暂无' }}</div>
+              <div class="tcol bgGray headTitle"
+                style="flex:0.73">负责人/小组</div>
+              <div class="tcol">{{ otherInfo.group_name || '暂无' }}</div>
+            </div>
+            <div class="trow">
+              <div class="tcol bgGray headTitle"></div>
+              <div class="tcol"
+                style="flex:1.2"></div>
+              <div class="tcol bgGray headTitle"></div>
+              <div class="tcol"></div>
+              <div class="tcol bgGray headTitle"></div>
+              <div class="tcol"></div>
+              <div class="tcol bgGray headTitle"
+                style="flex:0.73"></div>
+              <div class="tcol"></div>
             </div>
           </div>
-          <div class="tableCtn">
+        </div>
+        <template v-if="isBreak">
+          <div class="tableCtn"
+            v-for="item in materialPlanInfo"
+            :key="item.material_id">
             <div class="thead bgWhite"
               style="height: auto">
               <div class="trow">
@@ -110,77 +110,8 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="pbody">
-          <div class="tableCtn">
-            <div class="thead bgWhite"
-              style="height: auto">
-              <div class="trow">
-                <div class="tcol bgGray"
-                  style="flex:0.3">其它备注</div>
-                <div class="tcol"
-                  style="flex: 4;text-align:left">{{ otherInfo.desc }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div v-else>
-      <div class="pmain">
-        <div class="phead clearfix">
-          <div class="fl">
-            <div class="ptitle">{{company_name}}物料计划单</div>
-            <div class="prow">
-              <div class="pcol">
-                <div class="label">系统计划单编号：</div>
-                <div class="info">{{ otherInfo.code }}</div>
-              </div>
-            </div>
-            <div class="prow">
-              <div class="pcol">
-                <div class="label">计划单创建信息：</div>
-                <div class="info">{{ otherInfo.created_at.slice(0, 10) + '，' + otherInfo.user_name + '，' + otherInfo.user_phone }}</div>
-              </div>
-            </div>
-          </div>
-          <div class="fr">
-            <div class="pImage">
-              <img :src="qrCodeUrl"
-                width="100%"
-                alt="" />
-            </div>
-          </div>
-        </div>
-        <div class="pbody">
-          <div class="tableCtn">
-            <div class="tbody hasTop">
-              <div class="trow">
-                <div class="tcol bgGray headTitle">订单号</div>
-                <div class="tcol"
-                  style="flex:1.2">{{ otherInfo.order_code || '暂无' }}</div>
-                <div class="tcol bgGray headTitle">下单客户</div>
-                <div class="tcol">{{ otherInfo.client_name || '暂无' }}</div>
-                <div class="tcol bgGray headTitle">下单日期</div>
-                <div class="tcol">{{ otherInfo.order_time || '暂无' }}</div>
-                <div class="tcol bgGray headTitle"
-                  style="flex:0.73">负责人/小组</div>
-                <div class="tcol">{{ otherInfo.group_name || '暂无' }}</div>
-              </div>
-              <div class="trow">
-                <div class="tcol bgGray headTitle"></div>
-                <div class="tcol"
-                  style="flex:1.2"></div>
-                <div class="tcol bgGray headTitle"></div>
-                <div class="tcol"></div>
-                <div class="tcol bgGray headTitle"></div>
-                <div class="tcol"></div>
-                <div class="tcol bgGray headTitle"
-                  style="flex:0.73"></div>
-                <div class="tcol"></div>
-              </div>
-            </div>
-          </div>
+        </template>
+        <template v-else>
           <div class="tableCtn"
             v-for="(item,index) in materialPlanInfo"
             :key="item.material_id">
@@ -248,19 +179,72 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="pbody">
-          <div class="tableCtn">
-            <div class="thead bgWhite"
-              style="height: auto">
-              <div class="trow">
-                <div class="tcol bgGray"
-                  style="flex:0.3">其它备注</div>
-                <div class="tcol"
-                  style="flex: 4;text-align:left">{{ otherInfo.desc }}</div>
+        </template>
+      </div>
+      <div class="pbody">
+        <div class="tableCtn">
+          <div class="thead bgWhite"
+            style="height: auto">
+            <div class="trow">
+              <div class="tcol bgGray"
+                style="flex:0.3">其它备注</div>
+              <div class="tcol"
+                style="flex: 4;text-align:left">{{ otherInfo.desc }}</div>
+            </div>
+            <div class="trow">
+              <div class="tcol bgGray"
+                style="flex:0.3">注意事项</div>
+              <div class="tcol"
+                style="flex: 4;text-align:left;display:block">
+                <div style="line-height:22px"
+                  v-for="item,index in descArr"
+                  :key="index">{{item?(index+1)+'.':''}}{{item}}</div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="popup"
+      v-show="settingFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">打印设置</span>
+          <span class="el-icon-close"
+            @click="settingFlag = false"></span>
+        </div>
+        <div class="contentCtn">
+          <div class="row">
+            <span class="label">设置标题：</span>
+            <div class="info">
+              <el-input v-model="title"
+                placeholder="请输入常用标题"></el-input>
+            </div>
+          </div>
+          <div class="row"
+            v-for="(item,index) in descArr"
+            :key="index">
+            <span class="label">注意事项{{index+1}}：</span>
+            <div class="info">
+              <el-input v-model="descArr[index]"
+                placeholder="请输入注意事项">
+              </el-input>
+              <div v-if="index===0"
+                class="info_btn hoverBlue"
+                @click="$addItem(descArr,'')">添加</div>
+              <div v-if="index>0"
+                class="info_btn hoverRed"
+                @click="$deleteItem(descArr,index)">删除</div>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="settingFlag = false">取消</span>
+          <span class="btn backHoverOrange"
+            @click="resetSetting">清空设置</span>
+          <span class="btn backHoverBlue"
+            @click="saveSetting">保存</span>
         </div>
       </div>
     </div>
@@ -285,6 +269,8 @@
         @click="windowMethod(2)">打印计划单</div>
       <div class="setting_item"
         @click="windowMethod(3)">{{editFlag?'完成编辑':'编辑模式'}}</div>
+      <div class="setting_item"
+        @click="windowMethod(5)">打印设置</div>
     </div>
   </div>
 </template>
@@ -316,7 +302,10 @@ export default Vue.extend({
         client_name: '',
         group_name: ''
       },
-      editFlag: false
+      editFlag: false,
+      settingFlag: false,
+      title: '',
+      descArr: [''] // 注意事项
     }
   },
   methods: {
@@ -327,7 +316,7 @@ export default Vue.extend({
       e.preventDefault()
       e.stopPropagation()
     },
-    windowMethod(type: 1 | 2) {
+    windowMethod(type: number) {
       this.showPrintSetting = false
       window.requestAnimationFrame(() => {
         if (type === 1) {
@@ -343,11 +332,32 @@ export default Vue.extend({
         } else if (type === 4) {
           this.isBreak = !this.isBreak
           this.showMenu = false
+        } else if (type === 5) {
+          this.settingFlag = true
+          this.showMenu = false
         }
       })
+    },
+    saveSetting() {
+      this.$setLocalStorage('materialPlanPrintTitle', this.title)
+      this.$setLocalStorage('materialPlanPrintDesc', JSON.stringify(this.descArr))
+      this.$message.success('保存成功')
+      this.settingFlag = false
+    },
+    resetSetting() {
+      this.$setLocalStorage('materialPlanPrintTitle', '')
+      this.$setLocalStorage('materialPlanPrintDesc', JSON.stringify(['']))
+      this.title = ''
+      this.descArr = ['']
+      this.$message.success('已清空')
+      this.settingFlag = false
     }
   },
   mounted() {
+    this.title = this.$getLocalStorage('materialPlanPrintTitle') || ''
+    this.descArr = this.$getLocalStorage('materialPlanPrintDesc')
+      ? JSON.parse(this.$getLocalStorage('materialPlanPrintDesc'))
+      : ['']
     materialPlan
       .detail({
         id: Number(this.$route.query.id)

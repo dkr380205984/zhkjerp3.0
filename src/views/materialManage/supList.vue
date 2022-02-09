@@ -1,16 +1,16 @@
 <template>
   <div id="materialManageList"
     class="bodyContainer">
-    <div class="topTagCtn">
-      <div class="tag active">
+    <div class="topTagCtn"
+      @click="$router.push('/materialManage/list?page=1&type=1&code=&order_code=&date=')">
+      <div class="tag">
         <svg class="iconFont"
           aria-hidden="true">
           <use xlink:href='#icon-shaxianyuanliaocangku'></use>
         </svg>
         <span class="text">物料计划单</span>
       </div>
-      <div class="tag"
-        @click="$router.push('/materialManage/supList?page=1')">
+      <div class="tag active">
         <svg class="iconFont"
           aria-hidden="true">
           <use xlink:href='#icon-mianliaoyuanliaocangku'></use>
@@ -62,26 +62,15 @@
           <div class="btn borderBtn"
             @click="reset">重置</div>
         </div>
-        <div class="filterCtn">
-          <div class="elCtn">
-            <el-select v-model="limit"
-              placeholder="每页展示条数"
-              @change="changeRouter">
-              <el-option v-for="item in limitList"
-                :key="item.value"
-                :label="item.name"
-                :value="item.value"></el-option>
-            </el-select>
-          </div>
-        </div>
         <div class="list">
           <div class="row title">
-            <div class="col">计划单号</div>
+            <div class="col">补纱单号</div>
             <div class="col">关联订单</div>
-            <div class="col">负责小组/人</div>
-            <div class="col">合计计划数量</div>
-            <div class="col">合计采购数量</div>
-            <div class="col">合计加工数量</div>
+            <div class="col">补纱单位</div>
+            <div class="col">承担单位</div>
+            <div class="col">计划数量</div>
+            <div class="col">采购数量</div>
+            <div class="col">加工数量</div>
             <div class="col">采购比例</div>
             <div class="col">审核状态</div>
             <div class="col">创建人</div>
@@ -93,7 +82,8 @@
             :key="index">
             <div class="col">{{item.code}}</div>
             <div class="col">{{item.order_code}}</div>
-            <div class="col">{{item.group_name}}</div>
+            <div class="col">{{item.client_name}}</div>
+            <div class="col">{{item.bear_client_name}}</div>
             <div class="col">{{item.total_plan_number}}</div>
             <div class="col">{{item.total_order_number}}</div>
             <div class="col">{{item.material_order_progress || 0}}</div>
@@ -102,21 +92,21 @@
             <div class="col"
               :class="item.is_check|filterCheckClass">{{item.is_check|filterCheck}}</div>
             <div class="col">{{item.user_name}}</div>
-            <div class="col">{{item.created_at.slice(0,10)}}</div>
+            <div class="col">{{item.created_at}}</div>
             <div class="col">
               <span class="opr hoverBlue"
-                @click="$router.push('/materialManage/detail?id='+item.id)">订购加工</span>
+                @click="$router.push('/materialManage/detail?id='+item.id+'&supFlag=1')">订购加工</span>
             </div>
           </div>
-        </div>
-        <div class="pageCtn">
-          <el-pagination background
-            :page-size="5"
-            layout="prev, pager, next"
-            :total="total"
-            :current-page.sync="page"
-            @current-change="changeRouter">
-          </el-pagination>
+          <div class="pageCtn">
+            <el-pagination background
+              :page-size="limit"
+              layout="prev, pager, next"
+              :total="total"
+              :current-page.sync="page"
+              @current-change="changeRouter">
+            </el-pagination>
+          </div>
         </div>
       </div>
     </div>
@@ -124,14 +114,14 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { materialPlan } from '@/assets/js/api'
+import { materialSupplement } from '@/assets/js/api'
+import { MaterialSupplementInfo } from '@/types/materialSupplement'
 import { limitArr } from '@/assets/js/dictionary'
-import { MaterialPlanInfo } from '@/types/materialPlan'
+import Vue from 'vue'
 export default Vue.extend({
   data(): {
-    list: MaterialPlanInfo[]
-    [porpName: string]: any
+    list: MaterialSupplementInfo[]
+    [propName: string]: any
   } {
     return {
       loading: false,
@@ -189,15 +179,15 @@ export default Vue.extend({
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)
-      this.code = query.code
-      this.order_code = query.order_code
+      this.code = query.code || ''
+      this.order_code = query.order_code || ''
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
       this.user_id = query.user_id || this.$getLocalStorage('create_user')
     },
     changeRouter() {
       this.$router.push(
-        '/materialManage/list?page=' +
+        '/materialManage/supList?page=' +
           this.page +
           '&code=' +
           this.code +
@@ -234,7 +224,7 @@ export default Vue.extend({
     },
     getList() {
       this.loading = true
-      materialPlan
+      materialSupplement
         .list({
           limit: this.limit,
           page: this.page,
@@ -250,17 +240,6 @@ export default Vue.extend({
           this.loading = false
         })
     }
-    // getListSetting() {
-    //   this.listKey = []
-    //   listSetting
-    //     .detail({
-    //       type: 5
-    //     })
-    //     .then((res) => {
-    //       this.listSettingId = res.data.data ? res.data.data.id : null
-    //       this.listKey = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting)
-    //     })
-    // }
   },
   computed: {
     userList() {
@@ -276,7 +255,6 @@ export default Vue.extend({
   created() {
     this.getFilters()
     this.getList()
-    // this.getListSetting()
     this.$checkCommonInfo([
       {
         checkWhich: 'api/user',

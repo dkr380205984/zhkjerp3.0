@@ -1,114 +1,272 @@
 import { CascaderInfo } from '@/types/vuex'
-// 之前的系统模块，之后补上新的模块后记得删除
-const permissions = [{
-  module: '样品管理',
-  id: 1
-}, {
-  module: '报价单管理',
-  id: 2
-}, {
-  module: '产品管理',
-  id: 3
-}, {
-  module: '设计单管理',
-  id: 4
-}, {
-  module: '订单管理',
-  id: 5
-}, {
-  module: '物料计划管理',
-  id: 6
-}, {
-  module: '物料订购管理',
-  id: 7
-}, {
-  module: '物料出入库管理',
-  id: 15
-}, {
-  module: '织造加工管理',
-  id: 8
-}, {
-  module: '产品收发管理',
-  id: 9
-}, {
-  module: '检验管理',
-  id: 10
-}, {
-  module: '装箱出库管理',
-  id: 11
-}, {
-  module: '库存管理',
-  id: 12
-}, {
-  module: '客户管理',
-  id: 13
-}, {
-  module: '系统设置',
-  id: 14
-}, {
-  module: '财务统计',
-  id: 16
-}, {
-  id: 99,
-  module: '常见问题'
-}]
-
 const systemModule = [{
   id: 1,
   name: '报价管理',
-  detail: []
+  detail: [{
+    id: '1-1',
+    name: '添加单据',
+  }, {
+    id: '1-2',
+    name: '修改单据',
+  }, {
+    id: '1-3',
+    name: '单据列表',
+  }, {
+    id: '1-4',
+    name: '删除单据',
+  }]
 }, {
-  id: 1,
+  id: 2,
   name: '样单管理',
-  detail: []
+  detail: [{
+    id: '2-1',
+    name: '添加单据',
+  }, {
+    id: '2-2',
+    name: '修改单据',
+  }, {
+    id: '2-3',
+    name: '单据列表',
+  }, {
+    id: '2-4',
+    name: '删除单据',
+  }]
 }, {
-  id: 1,
+  id: 3,
   name: '订单管理',
-  detail: []
+  detail: [{
+    id: '3-1',
+    name: '添加单据',
+  }, {
+    id: '3-2',
+    name: '修改单据',
+  }, {
+    id: '3-3',
+    name: '单据列表',
+  }, {
+    id: '3-4',
+    name: '删除单据',
+  }]
 }, {
-  id: 1,
+  id: 4,
   name: '物料计划',
-  detail: []
+  detail: [{
+    id: '4-1',
+    name: '添加单据',
+  }, {
+    id: '4-2',
+    name: '修改单据',
+  }, {
+    id: '4-3',
+    name: '单据列表',
+  }, {
+    id: '4-4',
+    name: '删除单据',
+  }]
 }, {
-  id: 1,
-  name: '物料管理',
-  detail: []
+  id: 5,
+  name: '原料管理',
+  detail: [{
+    id: '5-1',
+    name: '添加单据',
+  }, {
+    id: '5-2',
+    name: '修改单据',
+  }, {
+    id: '5-3',
+    name: '单据列表',
+  }, {
+    id: '5-4',
+    name: '删除单据',
+  }]
 }, {
-  id: 1,
+  id: 6,
+  name: '辅料管理',
+  detail: [{
+    id: '6-1',
+    name: '添加单据',
+  }, {
+    id: '6-2',
+    name: '修改单据',
+  }, {
+    id: '6-3',
+    name: '单据列表',
+  }, {
+    id: '6-4',
+    name: '删除单据',
+  }]
+}, {
+  id: 7,
   name: '物料出入库',
-  detail: []
+  detail: [{
+    id: '7-1',
+    name: '添加单据',
+  }, {
+    id: '7-2',
+    name: '修改单据',
+  }, {
+    id: '7-3',
+    name: '单据列表',
+  }, {
+    id: '7-4',
+    name: '删除单据',
+  }]
 }, {
-  id: 1,
+  id: 8,
   name: '生产计划',
-  detail: []
+  detail: [{
+    id: '8-1',
+    name: '添加单据',
+  }, {
+    id: '8-2',
+    name: '修改单据',
+  }, {
+    id: '8-3',
+    name: '单据列表',
+  }, {
+    id: '8-4',
+    name: '删除单据',
+  }]
 }, {
-  id: 1,
+  id: 9,
   name: '产品检验',
-  detail: []
+  detail: [{
+    id: '9-1',
+    name: '添加单据',
+  }, {
+    id: '9-2',
+    name: '修改单据',
+  }, {
+    id: '9-3',
+    name: '单据列表',
+  }, {
+    id: '9-4',
+    name: '删除单据',
+  }]
 }, {
-  id: 1,
+  id: 10,
   name: '装箱计划',
-  detail: []
+  detail: [{
+    id: '10-1',
+    name: '添加单据',
+  }, {
+    id: '10-2',
+    name: '修改单据',
+  }, {
+    id: '10-3',
+    name: '单据列表',
+  }, {
+    id: '10-4',
+    name: '删除单据',
+  }]
 }, {
-  id: 1,
-  name: '装箱运输',
-  detail: []
+  id: 11,
+  name: '包装管理',
+  detail: [{
+    id: '11-1',
+    name: '添加单据',
+  }, {
+    id: '11-2',
+    name: '修改单据',
+  }, {
+    id: '11-3',
+    name: '单据列表',
+  }, {
+    id: '11-4',
+    name: '删除单据',
+  }]
 }, {
-  id: 1,
+  id: 12,
   name: '仓库管理',
-  detail: []
+  detail: [{
+    id: '12-1',
+    name: '纱线仓库',
+  }, {
+    id: '12-2',
+    name: '面料仓库',
+  }, {
+    id: '12-3',
+    name: '辅料仓库',
+  }, {
+    id: '12-4',
+    name: '产品仓库',
+  }]
 }, {
-  id: 1,
+  id: 13,
   name: '客户与合作商管理',
-  detail: []
+  detail: [{
+    id: '13-1',
+    name: '添加单据',
+  }, {
+    id: '13-2',
+    name: '修改单据',
+  }, {
+    id: '13-3',
+    name: '单据列表',
+  }, {
+    id: '13-4',
+    name: '删除单据',
+  }]
 }, {
-  id: 1,
+  id: 14,
   name: '原料预订购',
-  detail: []
+  detail: [{
+    id: '14-1',
+    name: '添加单据',
+  }, {
+    id: '14-2',
+    name: '修改单据',
+  }, {
+    id: '14-3',
+    name: '单据列表',
+  }, {
+    id: '14-4',
+    name: '删除单据',
+  }]
 }, {
-  id: 1,
+  id: 15,
   name: '工艺单管理',
-  detail: []
+  detail: [{
+    id: '15-1',
+    name: '添加单据',
+  }, {
+    id: '15-2',
+    name: '修改单据',
+  }, {
+    id: '15-3',
+    name: '单据列表',
+  }, {
+    id: '15-4',
+    name: '删除单据',
+  }]
+}, {
+  id: 16,
+  name: '系统设置',
+  detail: [{
+    id: '16-1',
+    name: '产品设置',
+  }, {
+    id: '16-2',
+    name: '订单设置',
+  }, {
+    id: '16-3',
+    name: '报价单设置',
+  }, {
+    id: '16-4',
+    name: '工序设置',
+  }, {
+    id: '16-5',
+    name: '工艺单设置',
+  }, {
+    id: '16-6',
+    name: '物料设置',
+  }, {
+    id: '16-7',
+    name: '工厂信息设置',
+  }, {
+    id: '16-8',
+    name: '系统账户设置',
+  },]
 }]
 
 const yarnAttributeArr: CascaderInfo[] = [{
@@ -183,6 +341,12 @@ const stockType = [{
 }, {
   name: '仓库出库',
   value: 10
+}, {
+  name: '调取最终入库',
+  value: 11
+}, {
+  name: '补纱调取出库',
+  value: 12
 }]
 
 // 仓库类型
@@ -327,6 +491,5 @@ export {
   storeType,
   productionType,
   limitArr,
-  systemModule,
-  permissions
+  systemModule
 }

@@ -220,7 +220,7 @@
           </div>
           <div class="col flex3">
             <div class="label">边型：</div>
-            <div class="text">{{craftInfo.warp_data.side_name || '无'}}</div>
+            <div class="text">{{craftInfo.warp_data.side || '无'}}</div>
           </div>
         </div>
         <div class="row">
@@ -230,7 +230,7 @@
           </div>
           <div class="col flex3">
             <div class="label">机型：</div>
-            <div class="text">{{craftInfo.warp_data.machine_name || '无'}}</div>
+            <div class="text">{{craftInfo.warp_data.machine || '无'}}</div>
           </div>
         </div>
       </div>
@@ -1070,6 +1070,7 @@ export default Vue.extend({
         ],
         size_data: [
           {
+            id: '',
             size_id: '',
             size_info: '',
             weight: ''
@@ -1083,6 +1084,7 @@ export default Vue.extend({
             unit: '',
             part_size_data: [
               {
+                id: '',
                 size_id: '',
                 size_info: '',
                 weight: ''
@@ -1276,6 +1278,16 @@ export default Vue.extend({
         for (let i = 0; i < forNum.number; i++) {
           let realStorage = temporaryStorage
           thirdArr.push(realStorage)
+          // 在这里倒一遍，根据py暗号state = special
+          if (forNum.state === 'special') {
+            thirdArr.push(
+              this.$clone(realStorage)
+                .map((item) => {
+                  return item.reverse()
+                })
+                .reverse()
+            ) // 注意reverse会改变原数组
+          }
         }
       })
       let flattenArr = this.mergeArray(thirdArr)
@@ -1341,6 +1353,7 @@ export default Vue.extend({
       number: number
       start?: number
       end?: number
+      state?: string
     } {
       if (Number(info)) {
         return {
@@ -1351,7 +1364,8 @@ export default Vue.extend({
       // 倒一遍数量直接翻倍就行，这里单纯算个根数直接循环2遍就行，画图的时候复杂一点
       if (info === '顺一遍倒一遍') {
         return {
-          number: 2
+          number: 1,
+          state: 'special'
         }
       }
       let arr = info.split(']')

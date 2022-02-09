@@ -377,6 +377,157 @@
               </div>
             </div>
           </div>
+          <div class="titleCtn">
+            <div class="title">物料汇总信息</div>
+          </div>
+          <div class="tableCtn samallFont">
+            <div class="thead"
+              style="height:auto">
+              <div class="trow">
+                <div class="tcol w100">原料名称</div>
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow">
+                    <div class="tcol">颜色</div>
+                    <div class="tcol">数量</div>
+                  </div>
+                </div>
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow">
+                    <div class="tcol center">调取信息</div>
+                  </div>
+                  <div class="trow">
+                    <div class="tcol">调取仓库</div>
+                    <div class="tcol">调取数量</div>
+                  </div>
+                </div>
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow">
+                    <div class="tcol center">采购信息</div>
+                  </div>
+                  <div class="trow">
+                    <div class="tcol">采购单位</div>
+                    <div class="tcol">采购数量</div>
+                  </div>
+                </div>
+                <div class="tcol noPad"
+                  style="flex:3">
+                  <div class="trow">
+                    <div class="tcol center">加工信息</div>
+                  </div>
+                  <div class="trow">
+                    <div class="tcol">加工单位</div>
+                    <div class="tcol">加工工序</div>
+                    <div class="tcol">加工数量</div>
+                  </div>
+                </div>
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow">
+                    <div class="tcol center">加工信息</div>
+                  </div>
+                  <div class="trow">
+                    <div class="tcol">出库单位</div>
+                    <div class="tcol">出库数量</div>
+                  </div>
+                </div>
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow">
+                    <div class="tcol center">入库/结余信息</div>
+                  </div>
+                  <div class="trow">
+                    <div class="tcol">入库数</div>
+                    <div class="tcol">结余数量</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div class="trow"
+                v-for="(item,index) in materialDetail"
+                :key="index + 'plan'">
+                <div class="tcol w100">{{item.material_name}}</div>
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow"
+                    v-for="(itemColor,indexColor) in item.color_info"
+                    :key="indexColor">
+                    <div class="tcol">{{itemColor.material_color}}</div>
+                    <div class="tcol">{{itemColor.number}}{{itemColor.unit}}</div>
+                  </div>
+                </div>
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow"
+                    v-if="item.material_transfer_info.length===0">
+                    <div class="tcol gray">无调取信息</div>
+                  </div>
+                  <div class="trow"
+                    v-for="(itemTransfer,indexTransfer) in item.material_transfer_info"
+                    :key="indexTransfer">
+                    <div class="tcol">{{itemTransfer.store_name}}</div>
+                    <div class="tcol">{{itemTransfer.number}}</div>
+                  </div>
+                </div>
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow"
+                    v-if="item.material_order_info.length===0">
+                    <div class="tcol gray">无订购信息</div>
+                  </div>
+                  <div class="trow"
+                    v-for="(itemOrder,indexOrder) in item.material_order_info"
+                    :key="indexOrder">
+                    <div class="tcol">{{itemOrder.client_name}}</div>
+                    <div class="tcol">{{itemOrder.number}}{{itemOrder.unit}}</div>
+                  </div>
+                </div>
+                <div class="tcol noPad"
+                  style="flex:3">
+                  <div class="trow"
+                    v-for="(itemProcess,indexProcess) in item.material_process_info"
+                    :key="indexProcess">
+                    <div class="trow"
+                      v-if="item.material_process_info.length===0">
+                      <div class="tcol gray">无加工信息</div>
+                    </div>
+                    <div class="tcol">{{itemProcess.client_name}}</div>
+                    <div class="tcol">{{itemProcess.process}}</div>
+                    <div class="tcol">{{itemProcess.number}}{{itemProcess.unit}}</div>
+                  </div>
+                </div>
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow"
+                    v-if="item.final_pop_info.length===0">
+                    <div class="tcol gray">无出库信息</div>
+                  </div>
+                  <div class="trow"
+                    v-for="(itemPop,indexPop) in  item.final_pop_info"
+                    :key="indexPop">
+                    <div class="tcol">{{itemPop.client_name}}</div>
+                    <div class="tcol">{{itemPop.number}}{{itemPop.unit}}</div>
+                  </div>
+                </div>
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow"
+                    v-if="item.final_push_info.length===0">
+                    <div class="tcol gray">无入库信息</div>
+                  </div>
+                  <div class="trow"
+                    v-for="(itemPush,indexPush) in  item.final_push_info"
+                    :key="indexPush">
+                    <div class="tcol">{{itemPush.client_name}}</div>
+                    <div class="tcol">{{itemPush.number}}{{itemPush.unit}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -837,6 +988,7 @@ export default Vue.extend({
         ]
       },
       sampleId: '',
+      materialDetail: [],
       confirmSampleInfo: [], // 已经确认的样品信息
       unConfirmSampleInfo: [] // 除了已确认的其他样品信息
     }
@@ -892,6 +1044,16 @@ export default Vue.extend({
             getInfoApi: 'getSampleOrderTypeAsync'
           }
         ])
+        sampleOrder
+          .materialDetail({
+            order_id: Number(this.sampleOrderInfo.time_data[this.sampleOrderIndex].id)
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.materialDetail = res.data.data
+            }
+            this.loading = false
+          })
         this.loading = false
       })
     },

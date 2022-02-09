@@ -223,9 +223,31 @@
         </div>
         <div class="row">
           <div class="col">
-            <div class="label">
+            <div class="label"
+              style="width:220px">
               <span class="text">主要原料</span>
               <span class="explanation">(必选)</span>
+              <el-tooltip class="item"
+                effect="dark"
+                content="设置成功后请点击此按钮刷新数据"
+                placement="top">
+                <i class="el-icon-refresh hoverGreen fr"
+                  style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                  @click="$checkCommonInfo([{
+                    checkWhich: 'api/material',
+                    getInfoMethed: 'dispatch',
+                    getInfoApi: 'getMaterialAsync',
+                    forceUpdate:true
+                  }])"></i>
+              </el-tooltip>
+              <el-tooltip class="item"
+                effect="dark"
+                content="添加新原料"
+                placement="top">
+                <i class="el-icon-upload hoverOrange fr"
+                  style="line-height:38px;font-size:18px;cursor:pointer;"
+                  @click="$openUrl('/setting/?pName=物料设置&cName=纱线原料')"></i>
+              </el-tooltip>
             </div>
             <div class="elCtn">
               <el-select placeholder="请选择主要原料"
@@ -370,7 +392,7 @@
               <br />
               提示1：可使用乘以[ ]遍，最后一遍去掉[ ]列到[ ]列。例如：乘以[4]遍，最后一遍去掉[17]列到[19]列；注意只需要在括号中输入需要乘的遍数，和需要去掉的列数即可。删除括号符号会导致功能失效。
               <br />
-              提示2：可以在第二个合并项里使用"顺一遍倒一遍"功能，注意不要在第一个合并项里使用！不要修改"顺一遍倒一遍"文字信息
+              提示2：可以在第三个合并项里使用"顺一遍倒一遍"功能，注意不要在第一个/第二个合并项里使用！不要修改"顺一遍倒一遍"文字信息
               <br />
               提示3：停撬功能，可以点击表格序号，选择需要标记的符号。
             </div>
@@ -1033,9 +1055,31 @@
         </div>
         <div class="row">
           <div class="col">
-            <div class="label">
+            <div class="label"
+              style="width:220px">
               <span class="text">主要原料</span>
               <span class="explanation">(必选)</span>
+              <el-tooltip class="item"
+                effect="dark"
+                content="设置成功后请点击此按钮刷新数据"
+                placement="top">
+                <i class="el-icon-refresh hoverGreen fr"
+                  style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                  @click="$checkCommonInfo([{
+                    checkWhich: 'api/material',
+                    getInfoMethed: 'dispatch',
+                    getInfoApi: 'getMaterialAsync',
+                    forceUpdate:true
+                  }])"></i>
+              </el-tooltip>
+              <el-tooltip class="item"
+                effect="dark"
+                content="添加新原料"
+                placement="top">
+                <i class="el-icon-upload hoverOrange fr"
+                  style="line-height:38px;font-size:18px;cursor:pointer;"
+                  @click="$openUrl('/setting/?pName=物料设置&cName=纱线原料')"></i>
+              </el-tooltip>
             </div>
             <div class="elCtn">
               <el-select placeholder="请选择主要原料"
@@ -1179,7 +1223,7 @@
               <br />
               提示1：可使用乘以[ ]遍，最后一遍去掉[ ]列到[ ]列。例如：乘以[4]遍，最后一遍去掉[17]列到[19]列；注意只需要在括号中输入需要乘的遍数，和需要去掉的列数即可。删除括号符号会导致功能失效。
               <br />
-              提示2：可以在第二个合并项里使用"顺一遍倒一遍"功能，注意不要在第一个合并项里使用！不要修改"顺一遍倒一遍"文字信息
+              提示2：可以在第三个合并项里使用"顺一遍倒一遍"功能，注意不要在第一个/第二个合并项里使用！不要修改"顺一遍倒一遍"文字信息
               <br />
               提示3：停撬功能，可以点击表格序号，选择需要标记的符号。
             </div>
@@ -1542,6 +1586,7 @@ export default Vue.extend({
         ],
         size_data: [
           {
+            id: '',
             size_id: '',
             size_info: '',
             weight: ''
@@ -1555,6 +1600,7 @@ export default Vue.extend({
             unit: '',
             part_size_data: [
               {
+                id: '',
                 size_id: '',
                 size_info: '',
                 weight: ''
@@ -2668,7 +2714,6 @@ export default Vue.extend({
           })
         })
       }
-      console.log(this.craftInfo.draft_method.GL)
       this.craftInfo.draft_method.GL.forEach((item) => {
         item.forEach((itemChild) => {
           itemChild.forEach((itemSon) => {
@@ -3344,7 +3389,7 @@ export default Vue.extend({
         'remove_col'
       ],
       className: 'handsontable',
-      number: 1,
+      number: 20,
       afterCreateCol: (index: any, amount: any) => {
         this.tableData.warp.number++
         for (let i = 0; i < this.tableData.warp.number; i++) {
@@ -3430,7 +3475,7 @@ export default Vue.extend({
         'remove_col'
       ],
       className: 'handsontable',
-      number: 1,
+      number: 20,
       afterCreateCol: (index: any, amount: any) => {
         this.tableData.warpBack.number++
         for (let i = 0; i < this.tableData.warpBack.number; i++) {
@@ -3516,7 +3561,7 @@ export default Vue.extend({
         'remove_col'
       ],
       className: 'handsontable',
-      number: 1,
+      number: 20,
       afterCreateCol: (index: any, amount: any) => {
         this.tableData.weft.number++
         for (let i = 0; i < this.tableData.weft.number; i++) {
@@ -3602,7 +3647,7 @@ export default Vue.extend({
         'remove_col'
       ],
       className: 'handsontable',
-      number: 1,
+      number: 20,
       afterCreateCol: (index: any, amount: any) => {
         this.tableData.weftBack.number++
         for (let i = 0; i < this.tableData.weftBack.number; i++) {

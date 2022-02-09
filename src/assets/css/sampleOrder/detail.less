@@ -6,6 +6,21 @@
 @import '../popup.less';
 @import '../bottomBar.less';
 #sampleOrderDetail{
+  .samallFont{
+    .trow{
+      height: 100%;
+    }
+    .tcol{
+      &.center{
+        text-align: center;
+      }
+      font-size: @fontSmall;
+      &.w100{
+        min-width: 100px;
+        max-width: 150px;
+      }
+    }
+  }
   .box{
     padding: 0 24px;
     line-height: 32px;

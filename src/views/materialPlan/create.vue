@@ -2,7 +2,8 @@
   <div id="materialPlanCreate"
     class="bodyContainer"
     v-loading="loading">
-    <order-detail :data="orderInfo"></order-detail>
+    <order-detail :data="orderInfo"
+      :sampleOrderIndex="orderIndex"></order-detail>
     <div class="module">
       <div class="titleCtn flexBetween">
         <div class="title">生产计划单</div>
@@ -182,7 +183,7 @@
                         <svg class="iconFont copyIcon hoverBlue"
                           aria-hidden="true">
                           <use xlink:href='#icon-tongbushuju1'
-                            @click="copyInfo(item.info_data,['process_name_arr','process_name'])"></use>
+                            @click="copyInfo(item.info_data,['process_name_arr','process_name','process_type'])"></use>
                         </svg>
                       </el-tooltip>
                     </div>
@@ -194,7 +195,7 @@
                         <svg class="iconFont copyIcon hoverBlue"
                           aria-hidden="true">
                           <use xlink:href='#icon-tongbushuju1'
-                            @click="copyInfo(item.info_data,['tree_data','material_name'])"></use>
+                            @click="copyInfo(item.info_data,['tree_data','material_name','material_id'])"></use>
                         </svg>
                       </el-tooltip>
                     </div>
@@ -375,13 +376,57 @@
                 <div class="childrenCtn"
                   v-if="item.info_data.length>0">
                   <div class="trow">
-                    <div class="tcol">计划工序</div>
-                    <div class="tcol">原料名称</div>
-                    <div class="tcol">原料颜色</div>
+                    <div class="tcol">计划工序
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一工序"
+                        placement="top">
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true">
+                          <use xlink:href='#icon-tongbushuju1'
+                            @click="copyInfo(item.info_data,['process_name_arr','process_name','process_type'])"></use>
+                        </svg>
+                      </el-tooltip>
+                    </div>
+                    <div class="tcol">原料名称
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一原料"
+                        placement="top">
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true">
+                          <use xlink:href='#icon-tongbushuju1'
+                            @click="copyInfo(item.info_data,['tree_data','material_name','material_id'])"></use>
+                        </svg>
+                      </el-tooltip>
+                    </div>
+                    <div class="tcol">原料颜色
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一颜色"
+                        placement="top">
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true">
+                          <use xlink:href='#icon-tongbushuju1'
+                            @click="copyInfo(item.info_data,['material_color'])"></use>
+                        </svg>
+                      </el-tooltip>
+                    </div>
                     <div class="tcol">单个数量</div>
                     <div class="tcol">所需数量</div>
                     <div class="tcol">原料损耗</div>
-                    <div class="tcol">最终数量</div>
+                    <div class="tcol">最终数量
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一数量"
+                        placement="top">
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true">
+                          <use xlink:href='#icon-tongbushuju1'
+                            @click="copyInfo(item.info_data,['final_number','unit'])"></use>
+                        </svg>
+                      </el-tooltip>
+                    </div>
                     <div class="tcol">操作</div>
                   </div>
                   <div class="trow"
@@ -1291,6 +1336,7 @@ export default Vue.extend({
     },
     // 统一输入行逻辑
     copyInfo(info: any, keyArr: string[]) {
+      console.log('hhhhhh')
       info.forEach((item: any, index: number) => {
         if (index !== 0) {
           keyArr.forEach((key) => {

@@ -1,8 +1,8 @@
 <template>
   <div class="othersFeeData">
-    <span :class="data.length>0?'blue':'gray'"
-      @click="data.length>0?lookDetail=true:''"
-      :style="{'cursor':data.length>0?'pointer':''}">{{data.length>0?'查看额外费用':'无额外费用'}}</span>
+    <span :class="data.length>0&&data[0].price>0?'blue':'gray'"
+      @click="data.length>0&&data[0].price>0?lookDetail=true:''"
+      :style="{'cursor':data.length>0&&data[0].price>0?'pointer':''}">{{data.length>0&&data[0].price?'查看额外费用':'无额外费用'}}</span>
     <div class="popup"
       v-show="lookDetail">
       <div class="main">

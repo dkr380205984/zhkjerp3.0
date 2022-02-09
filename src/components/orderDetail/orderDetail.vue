@@ -1,165 +1,399 @@
 <template>
   <div class="orderDetail">
     <div class="module">
-      <div class="titleCtn">
-        <div class="title">基本信息</div>
-      </div>
-      <div class="detailCtn">
-        <div class="checkCtn">
-          <el-tooltip class="item"
-            effect="dark"
-            content="点击查看审核日志"
-            placement="bottom">
-            <img :src="orderInfo.time_data[0].is_check|checkFilter" />
-          </el-tooltip>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="label">订单号：</div>
-            <div class="text">{{orderInfo.code}}</div>
-          </div>
-          <div class="col">
-            <div class="label">创建人：</div>
-            <div class="text">{{orderInfo.user_name}}</div>
-          </div>
-          <div class="col">
-            <div class="label">创建时间：</div>
-            <div class="text">{{orderInfo.created_at}}</div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="label">订单公司：</div>
-            <div class="text">{{orderInfo.client_name}}</div>
-          </div>
-          <div class="col">
-            <div class="label">联系人：</div>
-            <div class="text">{{orderInfo.contacts_name}}</div>
-          </div>
-          <div class="col">
-            <div class="label">负责组/人：</div>
-            <div class="text">{{orderInfo.group_name}}</div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col flex3">
-            <div class="label">下单币种：</div>
-            <div class="text">{{orderInfo.settle_unit}}</div>
-          </div>
-          <div class="col flex3">
-            <div class="label">币种汇率</div>
-            <div class="text">{{orderInfo.settle_tax || 100}}</div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col flex3">
-            <div class="label">订单状态：</div>
-            <div class="text"
-              :class="orderInfo.status|orderStatusClassFilter">{{orderInfo.status|orderStatusFilter}}</div>
-          </div>
-          <div class="col flex3">
-            <div class="label">下单时间：</div>
-            <div class="text">{{orderInfo.time_data[0].order_time}}</div>
-          </div>
-          <div class="col flex3">
-            <div class="label">关联单据：</div>
-            <div class="text green">
-              <span v-if="orderInfo.rel_quote_id"
-                style="cursor:pointer;margin-right:12px"
-                @click="$openUrl('/quotedPrice/detail?id='+orderInfo.rel_quote_id)">{{orderInfo.rel_quote_code}}(报价单)</span>
-              <span v-if="orderInfo.rel_order_id"
-                style="cursor:pointer;margin-right:12px"
-                @click="$openUrl('/sampleOrder/detail?id='+orderInfo.rel_order_id)">{{orderInfo.rel_order_code}}(报价单)</span>
-              <span class="gray"
-                v-if="!orderInfo.rel_quote_id&&!orderInfo.rel_order_id">无关联单据</span>
+      <el-tabs type="border-card"
+        v-model="cardName">
+        <el-tab-pane name="基本信息"
+          label="基本信息">
+          <div class="detailCtn">
+            <div class="checkCtn">
+              <el-tooltip class="item"
+                effect="dark"
+                content="点击查看审核日志"
+                placement="bottom">
+                <img :src="orderInfo.time_data[0].is_check|checkFilter" />
+              </el-tooltip>
             </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="label">下单款数：</div>
-            <div class="text">{{orderInfo.time_data[0].total_style}}款</div>
-          </div>
-          <div class="col">
-            <div class="label">下单总数：</div>
-            <div class="text">{{orderInfo.time_data[0].total_number}}</div>
-          </div>
-          <div class="col">
-            <div class="label">下单总额：</div>
-            <div class="text">{{orderInfo.time_data[0].total_price}}</div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="label">产前样寄送：</div>
-            <div class="text"
-              :class="orderInfo.time_data[0].is_send===1?'green':'gray'">{{orderInfo.time_data[0].is_send===1?'是':'否'}}</div>
-          </div>
-          <div class="col">
-            <div class="label">产前确认：</div>
-            <div class="text"
-              :class="orderInfo.time_data[0].is_before_confirm===1?'green':'gray'">{{orderInfo.time_data[0].is_before_confirm===1?'是':'否'}}</div>
-          </div>
-          <div class="col">
-            <div class="label">是否加急：</div>
-            <div class="text"
-              :class="orderInfo.time_data[0].is_urgent===1?'green':'gray'">{{orderInfo.time_data[0].is_urgent===1?'是':'否'}}</div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="label">相关文件：</div>
-            <div class="fileCtn">
-              <div class="once"
-                v-for="(item,index) in orderInfo.public_files"
-                :key="index">
-                <div class="fileIcon">
-                  <svg v-if="item.split('.')[item.split('.').length-1]==='xlsx'"
-                    class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-Excel"></use>
-                  </svg>
-                  <svg v-else-if="item.split('.')[item.split('.').length-1]==='png'||item.split('.')[item.split('.').length-1]==='jpeg'"
-                    class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-tupian"></use>
-                  </svg>
-                  <svg v-else-if="item.split('.')[item.split('.').length-1]==='word'"
-                    class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-word"></use>
-                  </svg>
-                  <svg v-else-if="item.split('.')[item.split('.').length-1]==='pdf'"
-                    class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-pdf"></use>
-                  </svg>
-                  <svg v-else
-                    class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-qitawenjian"></use>
-                  </svg>
+            <div class="row">
+              <div class="col">
+                <div class="label">{{orderInfo.order_type===1?'订':'样'}}单号：</div>
+                <div class="text">{{orderInfo.code}}</div>
+              </div>
+              <div class="col">
+                <div class="label">创建人：</div>
+                <div class="text">{{orderInfo.user_name}}</div>
+              </div>
+              <div class="col">
+                <div class="label">创建时间：</div>
+                <div class="text">{{orderInfo.created_at}}</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="label">{{orderInfo.order_type===1?'订':'样'}}单公司：</div>
+                <div class="text">{{orderInfo.client_name}}</div>
+              </div>
+              <div class="col">
+                <div class="label">联系人：</div>
+                <div class="text">{{orderInfo.contacts_name}}</div>
+              </div>
+              <div class="col">
+                <div class="label">负责组/人：</div>
+                <div class="text">{{orderInfo.group_name}}</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col flex3">
+                <div class="label">下单币种：</div>
+                <div class="text">{{orderInfo.settle_unit}}</div>
+              </div>
+              <div class="col flex3">
+                <div class="label">币种汇率</div>
+                <div class="text">{{orderInfo.settle_tax || 100}}</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col flex3">
+                <div class="label">{{orderInfo.order_type===1?'订':'样'}}单状态：</div>
+                <div class="text"
+                  :class="orderInfo.status|orderStatusClassFilter">{{orderInfo.status|orderStatusFilter}}</div>
+              </div>
+              <div class="col flex3">
+                <div class="label">{{orderInfo.order_type===1?'下单':'打样'}}时间：</div>
+                <div class="text">{{orderInfo.time_data[0].order_time}}</div>
+              </div>
+              <!-- <div class="col flex3">
+                <div class="label">关联单据：</div>
+                <div class="text green">
+                  <span v-if="orderInfo.rel_quote_id"
+                    style="cursor:pointer;margin-right:12px"
+                    @click="$openUrl('/quotedPrice/detail?id='+orderInfo.rel_quote_id)">{{orderInfo.rel_quote_code}}(报价单)</span>
+                  <span v-if="orderInfo.rel_order_id"
+                    style="cursor:pointer;margin-right:12px"
+                    @click="$openUrl('/sampleOrder/detail?id='+orderInfo.rel_order_id)">{{orderInfo.rel_order_code}}(报价单)</span>
+                  <span class="gray"
+                    v-if="!orderInfo.rel_quote_id&&!orderInfo.rel_order_id">无关联单据</span>
                 </div>
-                <div class="name">文件{{index+1}}.{{item.split('.')[item.split('.').length-1]}}</div>
-                <a class="opr hoverBlue"
-                  :href="item"
-                  target=_blank>点击下载</a>
+              </div> -->
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="label">{{orderInfo.order_type===1?'下单':'打样'}}款数：</div>
+                <div class="text">{{orderInfo.time_data[0].total_style}}款</div>
               </div>
-              <div class="text"
-                v-if="orderInfo.public_files.length===0">
-                <span class="gray">暂无相关文件信息</span>
+              <div class="col">
+                <div class="label">{{orderInfo.order_type===1?'下单':'打样'}}总数：</div>
+                <div class="text">{{orderInfo.time_data[0].total_number}}</div>
+              </div>
+              <div class="col">
+                <div class="label">{{orderInfo.order_type===1?'下单':'打样'}}总额：</div>
+                <div class="text">{{orderInfo.time_data[0].total_price}}</div>
+              </div>
+            </div>
+            <div class="row"
+              v-if="orderInfo.order_type===1">
+              <div class="col">
+                <div class="label">产前样寄送：</div>
+                <div class="text"
+                  :class="orderInfo.time_data[0].is_send===1?'green':'gray'">{{orderInfo.time_data[0].is_send===1?'是':'否'}}</div>
+              </div>
+              <div class="col">
+                <div class="label">产前确认：</div>
+                <div class="text"
+                  :class="orderInfo.time_data[0].is_before_confirm===1?'green':'gray'">{{orderInfo.time_data[0].is_before_confirm===1?'是':'否'}}</div>
+              </div>
+              <div class="col">
+                <div class="label">是否加急：</div>
+                <div class="text"
+                  :class="orderInfo.time_data[0].is_urgent===1?'green':'gray'">{{orderInfo.time_data[0].is_urgent===1?'是':'否'}}</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="label">相关文件：</div>
+                <div class="fileCtn">
+                  <div class="once"
+                    v-for="(item,index) in orderInfo.public_files"
+                    :key="index">
+                    <div class="fileIcon">
+                      <svg v-if="item.split('.')[item.split('.').length-1]==='xlsx'"
+                        class="iconFont"
+                        aria-hidden="true">
+                        <use xlink:href="#icon-Excel"></use>
+                      </svg>
+                      <svg v-else-if="item.split('.')[item.split('.').length-1]==='png'||item.split('.')[item.split('.').length-1]==='jpeg'"
+                        class="iconFont"
+                        aria-hidden="true">
+                        <use xlink:href="#icon-tupian"></use>
+                      </svg>
+                      <svg v-else-if="item.split('.')[item.split('.').length-1]==='word'"
+                        class="iconFont"
+                        aria-hidden="true">
+                        <use xlink:href="#icon-word"></use>
+                      </svg>
+                      <svg v-else-if="item.split('.')[item.split('.').length-1]==='pdf'"
+                        class="iconFont"
+                        aria-hidden="true">
+                        <use xlink:href="#icon-pdf"></use>
+                      </svg>
+                      <svg v-else
+                        class="iconFont"
+                        aria-hidden="true">
+                        <use xlink:href="#icon-qitawenjian"></use>
+                      </svg>
+                    </div>
+                    <div class="name">文件{{index+1}}.{{item.split('.')[item.split('.').length-1]}}</div>
+                    <a class="opr hoverBlue"
+                      :href="item"
+                      target=_blank>点击下载</a>
+                  </div>
+                  <div class="text"
+                    v-if="orderInfo.public_files.length===0">
+                    <span class="gray">暂无相关文件信息</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="label">备注信息：</div>
+                <div class="text"
+                  :class="orderInfo.desc?'':'gray'">{{orderInfo.desc || '无备注信息'}}</div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="label">备注信息：</div>
-            <div class="text"
-              :class="orderInfo.desc?'':'gray'">{{orderInfo.desc || '无备注信息'}}</div>
+        </el-tab-pane>
+        <el-tab-pane :name="(orderInfo.order_type===1?'产':'样')+'品信息'"
+          :label="(orderInfo.order_type===1?'产':'样')+'品信息'">
+          <div class="tableCtn">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol">{{orderInfo.order_type===1?'产':'样'}}品编号</div>
+                <div class="tcol">{{orderInfo.order_type===1?'产':'样'}}品名称</div>
+                <div class="tcol">{{orderInfo.order_type===1?'产':'样'}}品图片</div>
+                <div class="tcol noPad"
+                  style="flex:3">
+                  <div class="trow">
+                    <div class="tcol">尺码颜色</div>
+                    <div class="tcol">{{orderInfo.order_type===1?'下单':'打样'}}单价</div>
+                    <div class="tcol">{{orderInfo.order_type===1?'下单':'打样'}}数量</div>
+                  </div>
+                </div>
+                <div class="tcol">工艺单状态</div>
+                <div class="tcol">{{orderInfo.order_type===1?'产':'样'}}品描述</div>
+                <div class="tcol">修改意见</div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div class="trow"
+                v-for="(item,index) in productList"
+                :key="index">
+                <div class="tcol">
+                  <span>{{item.product_code||item.system_code}}</span>
+                  <span class="gray">({{item.category}}/{{item.secondary_category}})</span>
+                </div>
+                <div class="tcol">{{item.name}}</div>
+                <div class="tcol">
+                  <div class="imageCtn">
+                    <el-image style="width:100%;height:100%"
+                      :src="item.image_data.length>0?item.image_data[0]:''"
+                      :preview-src-list="item.image_data">
+                      <div slot="error"
+                        class="image-slot">
+                        <i class="el-icon-picture-outline"
+                          style="font-size:42px"></i>
+                      </div>
+                    </el-image>
+                  </div>
+                </div>
+                <div class="tcol noPad"
+                  style="flex:3">
+                  <div class="trow"
+                    v-for="(itemChild,indexChild) in item.product_info"
+                    :key="indexChild">
+                    <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
+                    <div class="tcol">{{itemChild.price}}元</div>
+                    <div class="tcol">{{itemChild.number}}</div>
+                  </div>
+                </div>
+                <div class="tcol stateCtn">
+                  <div class="state">
+                    <div class="circle"
+                      :class="{'backGray':!item.craft_list_id,'backBlue':item.craft_list_id}">工</div>
+                  </div>
+                </div>
+                <div class="tcol">{{item.desc||'无'}}</div>
+                <div class="tcol">{{item.client_edit_idea||'无'}}</div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </el-tab-pane>
+        <el-tab-pane :name="(orderInfo.order_type===1?'发货信息':'打样信息')"
+          :label="(orderInfo.order_type===1?'发货信息':'打样信息')">
+          <template v-if="orderInfo.order_type===1">
+            <div class="tableCtn">
+              <div class="thead">
+                <div class="trow">
+                  <div class="tcol"
+                    style="flex:0.72">批次序号</div>
+                  <div class="tcol">发货时间</div>
+                  <div class="tcol">批次名称</div>
+                  <div class="tcol">批次类型</div>
+                  <div class="tcol">批次备注</div>
+                  <div class="tcol noPad"
+                    style="flex:8.7">
+                    <div class="trow">
+                      <div class="tcol">产品品类</div>
+                      <div class="tcol">产品图片</div>
+                      <div class="tcol noPad"
+                        style="flex:3">
+                        <div class="trow">
+                          <div class="tcol">尺码颜色</div>
+                          <div class="tcol">计划发货数量</div>
+                          <div class="tcol">实际发货数量</div>
+                        </div>
+                      </div>
+                      <div class="tcol">批次状态</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tbody">
+                <div class="trow"
+                  v-for="itemBatch in orderInfo.time_data[0].batch_data"
+                  :key="itemBatch.id">
+                  <div class="tcol"
+                    style="flex:0.72">
+                    <span>第{{itemBatch.batch_number}}批</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="green">{{itemBatch.delivery_time}}</span>
+                  </div>
+                  <div class="tcol">
+                    <span>{{itemBatch.batch_title || '无'}}</span>
+                  </div>
+                  <div class="tcol">
+                    <span>{{itemBatch.batch_type_name}}</span>
+                  </div>
+                  <div class="tcol">
+                    <span>{{itemBatch.desc || '无'}}</span>
+                  </div>
+                  <div class="tcol noPad"
+                    style="flex:8.7">
+                    <div class="trow"
+                      v-for="itemPro in itemBatch.product_data"
+                      :key="itemPro.id">
+                      <div class="tcol">
+                        <span>{{itemPro.product_code||itemPro.system_code||'无编号'}}</span>
+                        <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
+                      </div>
+                      <div class="tcol">
+                        <div class="trow"
+                          v-for="(itemImage,indexImage) in itemPro.image_data"
+                          :key="indexImage">
+                          <div class="imageCtn">
+                            <el-image style="width:100%;height:100%;margin-top:2px"
+                              :src="itemPro.image_data.length>0?itemImage:''"
+                              :preview-src-list="itemPro.image_data">
+                              <div slot="error"
+                                class="image-slot">
+                                <i class="el-icon-picture-outline"
+                                  style="font-size:42px"></i>
+                              </div>
+                            </el-image>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="tcol noPad"
+                        style="flex:3">
+                        <div class="trow"
+                          v-for="(itemChild,indexChild) in itemPro.product_info"
+                          :key="indexChild">
+                          <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
+                          <div class="tcol">{{itemChild.number}}</div>
+                          <div class="tcol">0</div>
+                        </div>
+                      </div>
+                      <div class="tcol">暂无</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+          <template v-else>
+            <div class="tableCtn">
+              <div class="thead">
+                <div class="trow">
+                  <div class="tcol">样品编号</div>
+                  <div class="tcol">样品名称</div>
+                  <div class="tcol">样品图片</div>
+                  <div class="tcol noPad"
+                    style="flex:2">
+                    <div class="trow">
+                      <div class="tcol">尺码颜色</div>
+                      <div class="tcol">单价</div>
+                      <div class="tcol">打样数量</div>
+                    </div>
+                  </div>
+                  <div class="tcol">样品描述</div>
+                  <div class="tcol">客户确认状态</div>
+                </div>
+              </div>
+              <div class="tbody">
+                <div class="trow"
+                  v-for="(item,index) in orderInfo.time_data[sampleOrderIndex].batch_data[0].product_data"
+                  :key="index">
+                  <!-- 判断样品信息是否完整 -->
+                  <template v-if="item.category && item.color_data.length>0 && item.size_data.length>0">
+                    <div class="tcol">
+                      <span class="blue"
+                        @click="sampleDetail=item;sampleShow = true"
+                        style="cursor:pointer">{{item.product_code || item.system_code}}</span>
+                      <span class="gray">({{item.category}}/{{item.secondary_category}})</span>
+                    </div>
+                    <div class="tcol"
+                      :class="{'gray':!item.name}">{{item.name || '无名称'}}</div>
+                    <div class="tcol">
+                      <div class="imageCtn">
+                        <el-image style="width:100%;height:100%"
+                          :src="item.image_data.length>0?item.image_data[0]:''"
+                          :preview-src-list="item.image_data">
+                          <div slot="error"
+                            class="image-slot">
+                            <i class="el-icon-picture-outline"
+                              style="font-size:42px"></i>
+                          </div>
+                        </el-image>
+                      </div>
+                    </div>
+                    <div class="tcol noPad"
+                      style="flex:2">
+                      <div class="trow"
+                        v-for="(itemChild,indexChild) in item.product_info"
+                        :key="indexChild">
+                        <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
+                        <div class="tcol">{{itemChild.price}}元</div>
+                        <div class="tcol">{{itemChild.number}}</div>
+                      </div>
+                    </div>
+                    <div class="tcol">{{item.desc}}</div>
+                    <div class="tcol">
+                      <span :class="item.status|productStatusClassFilter">{{item.status|productStatusFilter}}</span>
+                    </div>
+                  </template>
+                  <template v-else>
+                    <div class="tcol">
+                      <span class="gray"
+                        style="text-align:center">样品信息待补充</span>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </template>
+        </el-tab-pane>
+      </el-tabs>
     </div>
   </div>
 </template>
@@ -176,6 +410,12 @@ export default Vue.extend({
     data: {
       required: false
     },
+    // 用于标记打样次数
+    sampleOrderIndex: {
+      default: 0,
+      type: Number,
+      required: false
+    },
     id: {
       type: Number,
       required: false
@@ -186,6 +426,8 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      cardName: '基本信息',
+      productList: [],
       orderInfo: {
         id: null,
         client_id: '',
@@ -247,6 +489,15 @@ export default Vue.extend({
   watch: {
     data(newVal: OrderDetail) {
       this.orderInfo = newVal
+      if (this.orderInfo.order_type === 1) {
+        this.orderInfo.time_data.forEach((itemTime) => {
+          itemTime.batch_data.forEach((itemBatch) => {
+            this.productList = this.productList.concat(itemBatch.product_data)
+          })
+        })
+      } else {
+        this.productList = this.orderInfo.time_data[this.sampleOrderIndex || 0].batch_data[0].product_data
+      }
     }
   },
   mounted() {
@@ -267,4 +518,11 @@ export default Vue.extend({
 
 <style lang="less" scoped>
 @import './orderDetail.less';
+</style>
+<style lang="less">
+.orderDetail {
+  .el-tabs__content {
+    padding: 0 !important;
+  }
+}
 </style>

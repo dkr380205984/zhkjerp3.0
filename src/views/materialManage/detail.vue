@@ -10,15 +10,15 @@
         <div class="row">
           <div class="col">
             <div class="label">单据编号：</div>
-            <div class="text">{{materialPlanInfo.code}}</div>
+            <div class="text">{{materialPlanInfo.code||materialSupplementInfo.code}}</div>
           </div>
           <div class="col">
             <div class="label">关联订单：</div>
-            <div class="text">{{materialPlanInfo.order_code}}</div>
+            <div class="text">{{materialPlanInfo.order_code||materialSupplementInfo.order_code}}</div>
           </div>
           <div class="col">
             <div class="label">创建人：</div>
-            <div class="text">{{materialPlanInfo.user_name}}</div>
+            <div class="text">{{materialPlanInfo.user_name||materialSupplementInfo.user_name}}</div>
           </div>
         </div>
       </div>
@@ -32,9 +32,10 @@
             </div>
             <div class="tcol">原料名称</div>
             <div class="tcol">原料颜色</div>
-            <div class="tcol">所需数量</div>
-            <div class="tcol">原料损耗</div>
-            <div class="tcol">最终数量</div>
+            <div class="tcol">计划数量</div>
+            <div class="tcol">采购数量</div>
+            <div class="tcol">调取数量</div>
+            <div class="tcol">数量差值</div>
           </div>
         </div>
         <div class="tbody">
@@ -48,16 +49,22 @@
             </div>
             <div class="tcol">{{item.material_name}}</div>
             <div class="tcol">{{item.material_color}}</div>
-            <div class="tcol">{{item.need_number}}{{item.unit}}</div>
-            <div class="tcol">{{item.loss}}%</div>
             <div class="tcol">{{item.final_number}}{{item.unit}}</div>
+            <div class="tcol">{{item.total_order_number}}{{item.unit}}</div>
+            <div class="tcol">{{item.total_transfer_number}}{{item.unit}}</div>
+            <div class="tcol"
+              :class="{
+              'red':item.total_order_number+item.total_transfer_number>item.final_number,
+              'green':item.total_order_number+item.total_transfer_number===item.final_number,
+              'orange':item.total_order_number+item.total_transfer_number<item.final_number
+              }">{{(item.total_order_number+item.total_transfer_number>item.final_number?'+':'')+(item.total_order_number+item.total_transfer_number - item.final_number)}}{{item.unit}}</div>
           </div>
         </div>
       </div>
       <div class="buttonList">
         <div class="btn backHoverBlue">
           <i class="el-icon-s-grid"></i>
-          <span class="text">计划单操作</span>
+          <span class="text">{{$route.query.supFlag?'补纱单':'计划单'}}操作</span>
         </div>
         <div class="otherInfoCtn">
           <div class="otherInfo">
@@ -131,6 +138,12 @@
               </div>
             </div>
             <div class="row">
+              <div class="col flex3">
+                <div class="label">额外费用：</div>
+                <div class="text">
+                  <others-fee-data :data="item.others_fee_data"></others-fee-data>
+                </div>
+              </div>
               <div class="col">
                 <div class="label">备注信息：</div>
                 <div class="text">{{item.desc}}</div>
@@ -147,6 +160,7 @@
                 </div>
                 <div class="tcol">原料名称</div>
                 <div class="tcol">订购颜色</div>
+                <div class="tcol">{{$route.query.supFlag?'补纱单':'计划单'}}颜色</div>
                 <div class="tcol">订购属性</div>
                 <div class="tcol">订购数量</div>
                 <div class="tcol">订购单价</div>
@@ -163,6 +177,7 @@
                 </div>
                 <div class="tcol">{{itemChild.material_name}}</div>
                 <div class="tcol">{{itemChild.material_color}}</div>
+                <div class="tcol">{{$route.query.supFlag?itemChild.sup_color:itemChild.plan_color}}</div>
                 <div class="tcol">{{itemChild.attribute}}</div>
                 <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
                 <div class="tcol">{{itemChild.price}}元</div>
@@ -224,6 +239,7 @@
                 </div>
                 <div class="tcol">截止日期</div>
                 <div class="tcol">备注信息</div>
+                <div class="tcol">额外费用</div>
                 <div class="tcol">操作</div>
               </div>
             </div>
@@ -270,6 +286,9 @@
                   </div>
                   <div class="tcol">{{itemProcess.delivery_time}}</div>
                   <div class="tcol">{{itemProcess.desc}}</div>
+                  <div class="tcol">
+                    <others-fee-data :data="itemProcess.others_fee_data"></others-fee-data>
+                  </div>
                   <div class="tcol oprCtn">
                     <div class="opr hoverOrange"
                       @click="materialProcessUpdataInfo=$clone(itemProcess);materialProcessUpdataFlag=true">修改</div>
@@ -333,7 +352,6 @@
                 <div class="tcol">批号/缸号/色号</div>
                 <div class="tcol">调取数量</div>
                 <div class="tcol">调取单价</div>
-                <div class="tcol">加工数量</div>
               </div>
             </div>
             <div class="tbody">
@@ -351,7 +369,6 @@
                 <div class="tcol">{{itemChild.batch_code}}/{{itemChild.vat_code}}/{{itemChild.color_code}}</div>
                 <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
                 <div class="tcol">{{itemChild.price||0}}元</div>
-                <div class="tcol">加工数量</div>
               </div>
             </div>
           </div>
@@ -542,8 +559,9 @@
                 </div>
                 <div class="info elCtn">
                   <el-select placeholder="请选择物料名称"
-                    v-model="itemMat.material_id">
-                    <el-option v-for="item in selectMaterialOrderList"
+                    v-model="itemMat.material_id"
+                    disabled>
+                    <el-option v-for="item in selectMaterialOrderList()"
                       :key="item.material_id"
                       :value="item.material_id"
                       :label="item.material_name"></el-option>
@@ -571,12 +589,7 @@
                     <el-input class="once"
                       placeholder="白胚"
                       disabled
-                      v-if="itemMat.material_color==='白胚'"></el-input>
-                    <el-autocomplete v-else
-                      class="once"
-                      v-model="itemMat.material_color"
-                      :fetch-suggestions="searchColor"
-                      placeholder="物料颜色"></el-autocomplete>
+                      v-model="itemMat.material_color"></el-input>
                   </template>
                 </div>
               </div>
@@ -586,6 +599,16 @@
                   <div class="once">
                     <span class="text">订购单价</span>
                     <span class="explanation">(必填)</span>
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="统一单价"
+                      placement="top">
+                      <svg class="iconFont copyIcon hoverBlue"
+                        aria-hidden="true">
+                        <use xlink:href='#icon-tongbushuju1'
+                          @click="$copyInfo(item.info_data,['price'])"></use>
+                      </svg>
+                    </el-tooltip>
                   </div>
                   <div class="once">
                     <span class="text">订购数量</span>
@@ -608,20 +631,7 @@
                   </el-input>
                 </div>
               </div>
-              <div class="opr hoverBlue"
-                v-if="indexMat===0"
-                @click="$addItem(item.info_data,{
-                  material_type:1,
-                  material_id: '',
-                  material_name: '',
-                  material_color_id: itemMat.material_color_id===0?0:'',
-                  attribute: '',
-                  price: '',
-                  number: '',
-                  unit: 'kg'
-                })">添加</div>
               <div class="opr hoverRed"
-                v-if="indexMat>0"
                 @click="$deleteItem(item.info_data,indexMat)">删除</div>
             </div>
             <div class="row"
@@ -777,10 +787,10 @@
               <div class="label">已选择物料：</div>
               <div class="boxCtn">
                 <div class="box"
-                  v-for="item in checkMaterialOrderList"
+                  v-for="item in checkMaterialOrderList()"
                   :key="item.id">{{item.material_name}}/{{item.material_color}}
                   <span class="el-icon-search closeIcon hoverGreen"
-                    @click="materialStockFilter.material_name=item.material_name;materialStockFilter.material_color=item.material_color;searchMaterial()"></span>
+                    @click="materialStockFilter.material_name=item.material_name;materialStockFilter.material_color=materialStockFilter.color_flag?'白胚':item.material_color;searchMaterial()"></span>
                 </div>
               </div>
             </div>
@@ -812,6 +822,7 @@
                     :options="storeList"
                     @change="searchMaterial"></el-cascader>
                 </div>
+                <el-checkbox v-model="materialStockFilter.color_flag">搜索白胚</el-checkbox>
                 <div class="btn backHoverBlue fr"
                   @click="searchMaterial">搜索</div>
               </div>
@@ -894,7 +905,7 @@
                   <div class="info elCtn">
                     <el-select placeholder="请选择单据物料"
                       v-model="item.rel_doc_info_id">
-                      <el-option v-for="item in checkMaterialOrderList"
+                      <el-option v-for="item in checkMaterialOrderList()"
                         :key="item.id"
                         :value="item.id"
                         :label="item.material_name+'/'+item.material_color"></el-option>
@@ -1035,7 +1046,7 @@
                 <div class="info elCtn">
                   <el-select v-model="item.process"
                     placeholder="选择加工工序"
-                    @change="getProcess">
+                    @change="getProcess($event,item)">
                     <el-option v-for="item in yarnProcessList"
                       :key="item.value"
                       :label="item.label"
@@ -1080,19 +1091,21 @@
                 <div class="info elCtn">
                   <el-select v-if="materialProcessFlag==='订购加工'"
                     placeholder="请选择订购物料"
-                    v-model="itemMat.material_order_info_id">
+                    v-model="itemMat.material_order_info_id"
+                    @change="getAfterColor($event,itemMat,'订购加工')">
                     <el-option v-for="item in checkMaterialProcessList"
                       :key="item.id"
                       :value="item.id"
-                      :label="item.material_name + '/' + item.material_color + '/' + item.attribute"></el-option>
+                      :label="item.material_name + '/' + item.material_color + '(' +(item.plan_color||item.sup_color) + ')/' + item.attribute"></el-option>
                   </el-select>
                   <el-select v-if="materialProcessFlag==='调取加工'"
                     placeholder="请选择调取物料"
-                    v-model="itemMat.material_transfer_info_id">
+                    v-model="itemMat.material_transfer_info_id"
+                    @change="getAfterColor($event,itemMat,'调取加工')">
                     <el-option v-for="item in checkMaterialStockList"
                       :key="item.id"
                       :value="item.id"
-                      :label="item.material_name + '/' + item.material_color + '/' + item.attribute"></el-option>
+                      :label="item.material_name + '/' + item.material_color+'(' +(item.plan_color||item.sup_color) + ')/' + item.attribute"></el-option>
                   </el-select>
                 </div>
               </div>
@@ -1155,7 +1168,8 @@
                     <el-autocomplete class="once"
                       v-model="itemMat.after_color"
                       :fetch-suggestions="searchColor"
-                      placeholder="物料颜色"></el-autocomplete>
+                      placeholder="物料颜色"
+                      disabled></el-autocomplete>
                   </template>
                   <template v-if="item.process==='倒纱'">
                     <el-autocomplete class="once"
@@ -1193,6 +1207,16 @@
                   <div class="once">
                     <span class="text">加工单价</span>
                     <span class="explanation">(必填)</span>
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="统一单价"
+                      placement="top">
+                      <svg class="iconFont copyIcon hoverBlue"
+                        aria-hidden="true">
+                        <use xlink:href='#icon-tongbushuju1'
+                          @click="$copyInfo(item.info_data,['price'])"></use>
+                      </svg>
+                    </el-tooltip>
                   </div>
                   <div class="once">
                     <span class="text">加工数量</span>
@@ -1318,7 +1342,41 @@
             </div>
           </div>
           <div class="btn backHoverBlue"
-            style="margin-bottom:16px">添加加工单位</div>
+            style="margin-bottom:16px"
+            @click="$addItem(materialProcessInfo,{
+              order_id: '',
+              plan_id: '',
+              process: '',
+              material_order_id: '',
+              material_transfer_id: '',
+              client_id: '',
+              client_id_arr: [],
+              order_time:$getDate(new Date()),
+              delivery_time: '',
+              others_fee_data: [
+                {
+                  desc: '', // 额外费用备注
+                  name: '',
+                  price: ''
+                }
+              ],
+              desc: '',
+              info_data: [
+                {
+                  material_order_info_id: '', // 采购单子项id 可以通过这个查询到原纱线id，颜色id
+                  material_transfer_info_id: '', // 调取单子项id 可以通过这个查询到原纱线id，颜色id
+                  before_attribute: '', // 原属性
+                  after_attribute: '',
+                  after_color: '', // 加工后颜色
+                  price: '',
+                  number: '',
+                  unit: 'kg',
+                  pengsha_desc: '', // 膨纱要求
+                  qiege_desc: '', // 切割要求
+                  bingxian_desc: '' // 并线要求
+                }
+              ]
+            })">添加加工单位</div>
         </div>
         <div class="oprCtn">
           <span class="btn borderBtn"
@@ -1683,7 +1741,8 @@
                     <el-autocomplete class="once"
                       v-model="itemMat.after_color"
                       :fetch-suggestions="searchColor"
-                      placeholder="物料颜色"></el-autocomplete>
+                      placeholder="物料颜色"
+                      disabled></el-autocomplete>
                   </template>
                   <template v-if="materialProcessUpdataInfo.process==='倒纱'">
                     <el-autocomplete class="once"
@@ -1848,12 +1907,14 @@ import Vue from 'vue'
 import { MaterialOrderInfo, MaterialListInfo } from '@/types/materialOrder'
 import { MaterialProcessInfo } from '@/types/materialProcess'
 import { MaterialPlanInfo, MaterialPlanGatherData } from '@/types/materialPlan'
-import { materialPlan, materialOrder, materialProcess, store, materialStock } from '@/assets/js/api'
+import { materialPlan, materialOrder, materialProcess, store, materialStock, materialSupplement } from '@/assets/js/api'
 import { CascaderInfo } from '@/types/vuex'
 import { yarnAttributeArr, yarnProcessArr } from '@/assets/js/dictionary'
 import { MaterialStockInfo } from '@/types/materialStock'
+import { MaterialSupplementInfo } from '@/types/materialSupplement'
 export default Vue.extend({
   data(): {
+    materialSupplementInfo: MaterialSupplementInfo
     materialPlanInfo: MaterialPlanInfo
     materialOrderInfo: MaterialOrderInfo[]
     materialOrderUpdataInfo: MaterialOrderInfo
@@ -1878,6 +1939,26 @@ export default Vue.extend({
       materialProcessUpdataFlag: false,
       searchLoading: false,
       storeList: [],
+      materialSupplementInfo: {
+        order_id: '',
+        rel_doc_id: '',
+        bear_client_id: '',
+        client_id: '',
+        client_name: '',
+        bear_price: '',
+        desc: '',
+        info_data: [
+          {
+            id: '',
+            tree_data: [],
+            material_id: '',
+            material_color: '',
+            material_type: 1,
+            number: '',
+            unit: ''
+          }
+        ]
+      },
       materialPlanInfo: {
         order_id: '',
         type: '1', // 1、按颜色尺码 2.按产品
@@ -1957,7 +2038,8 @@ export default Vue.extend({
         vat_code: '',
         batch_code: '',
         color_code: '',
-        material_color: ''
+        material_color: '白胚',
+        color_flag: true
       },
       materialStockInfo: {
         material_type: 1,
@@ -2066,22 +2148,40 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 选取物料本来应该在computed里面，因为不触发更新拿到methods里每次获取强致重新计算
+    checkMaterialOrderList(): MaterialPlanGatherData[] {
+      return this.planMaterialList.filter((item) => item.check)
+    },
+    // 同理监听不到放在methods里
+    selectMaterialOrderList(): any[] {
+      return this.$mergeData(this.checkMaterialOrderList(), {
+        mainRule: ['material_id'],
+        otherRule: [{ name: 'material_name' }]
+      })
+    },
     // 初始化函数没有拿加工信息，是因为所有采购和加工信息都放在采购单列表里了
     init() {
+      const api = this.$route.query.supFlag ? materialSupplement : materialPlan
       this.loading = true
       Promise.all([
-        materialPlan.detail({
+        api.detail({
           id: Number(this.$route.query.id)
         }),
         materialOrder.list({
-          plan_id: Number(this.$route.query.id)
+          plan_id: this.$route.query.supFlag ? '' : Number(this.$route.query.id),
+          sup_id: this.$route.query.supFlag ? Number(this.$route.query.id) : ''
         }),
         materialStock.list({
-          action_type: 10,
-          plan_id: Number(this.$route.query.id)
+          action_type: this.$route.query.supFlag ? 12 : 10,
+          rel_doc_id: Number(this.$route.query.id)
         })
       ]).then((res) => {
-        this.materialPlanInfo = res[0].data.data
+        if (this.$route.query.supFlag) {
+          this.materialSupplementInfo = res[0].data.data
+        } else {
+          this.materialPlanInfo = res[0].data.data
+        }
+
         this.materialOrderList = res[1].data.data
         if (this.materialOrderList.length > 0) {
           this.materialOrderIndex = this.materialOrderList[0].id!.toString()
@@ -2095,7 +2195,19 @@ export default Vue.extend({
     },
     // 原料颜色搜索
     searchColor(str: string, cb: any) {
-      let results = str ? this.yarnColorList.filter(this.createFilter(str)) : this.yarnColorList.slice(0, 10)
+      let results = str
+        ? this.planMaterialList
+            .map((item) => {
+              return {
+                value: item.material_color
+              }
+            })
+            .filter(this.createFilter(str))
+        : this.planMaterialList.map((item) => {
+            return {
+              value: item.material_color
+            }
+          })
       // 调用 callback 返回建议列表的数据
       cb(results)
     },
@@ -2110,39 +2222,18 @@ export default Vue.extend({
       }
     },
     // 加工工序优化
-    getProcess(ev: string) {
+    getProcess(ev: string, info: MaterialProcessInfo) {
       if (ev === '染色') {
-        if (this.materialProcessFlag === '订购加工') {
-          this.materialProcessInfo.forEach((item) => {
-            item.info_data.forEach((itemChild) => {
-              const finded = this.checkMaterialProcessList.find(
-                (itemFind) => itemFind.id === itemChild.material_order_info_id
-              )
-              if (finded) {
-                itemChild.after_color = finded.material_color
-              }
-            })
-          })
-        } else {
-          this.materialProcessInfo.forEach((item) => {
-            item.info_data.forEach((itemChild) => {
-              const finded = this.checkMaterialStockList.find(
-                (itemFind) => itemFind.id === itemChild.material_transfer_info_id
-              )
-              if (finded) {
-                itemChild.after_color = finded.material_color
-              }
-            })
-          })
-        }
       }
     },
     goOrderMaterial(type: '白胚' | '色纱') {
-      if (this.checkMaterialOrderList.length > 0) {
+      if (this.checkMaterialOrderList().length > 0) {
         this.materialOrderFlag = true
         if (type === '色纱') {
-          this.materialOrderInfo[0].info_data = this.checkMaterialOrderList.map((item) => {
+          this.materialOrderInfo[0].info_data = this.checkMaterialOrderList().map((item) => {
             return {
+              sup_info_id: this.$route.query.supFlag ? item.id : '',
+              plan_info_id: this.$route.query.supFlag ? '' : item.id,
               material_id: item.material_id,
               material_name: '',
               material_color: item.material_color,
@@ -2153,23 +2244,37 @@ export default Vue.extend({
             }
           })
         } else {
-          this.materialOrderInfo[0].info_data = []
-          this.checkMaterialOrderList.forEach((item) => {
-            const finded = this.materialOrderInfo[0].info_data.find(
-              (itemFind) => itemFind.material_id === item.material_id
-            )
-            if (finded) {
-              finded!.number = Number(item.final_number) + Number(finded!.number)
-            } else {
-              this.materialOrderInfo[0].info_data.push({
-                material_id: item.material_id,
-                material_name: '',
-                material_color: '白胚',
-                attribute: '绞纱',
-                price: '',
-                number: item.final_number,
-                unit: item.unit
-              })
+          // 这部分的逻辑是4个颜色的纱线订购白胚可以合起来订，现在不需要这个逻辑，因为要一一绑定计划单
+          // this.materialOrderInfo[0].info_data = []
+          // this.checkMaterialOrderList().forEach((item) => {
+          //   const finded = this.materialOrderInfo[0].info_data.find(
+          //     (itemFind) => itemFind.material_id === item.material_id
+          //   )
+          //   if (finded) {
+          //     finded!.number = Number(item.final_number) + Number(finded!.number)
+          //   } else {
+          //     this.materialOrderInfo[0].info_data.push({
+          //       material_id: item.material_id,
+          //       material_name: '',
+          //       material_color: '白胚',
+          //       attribute: '绞纱',
+          //       price: '',
+          //       number: item.final_number,
+          //       unit: item.unit
+          //     })
+          //   }
+          // })
+          this.materialOrderInfo[0].info_data = this.checkMaterialOrderList().map((item) => {
+            return {
+              sup_info_id: this.$route.query.supFlag ? item.id : '',
+              plan_info_id: this.$route.query.supFlag ? '' : item.id,
+              material_id: item.material_id,
+              material_name: '',
+              material_color: '白胚',
+              attribute: '筒纱',
+              price: '',
+              number: item.final_number,
+              unit: item.unit
             }
           })
         }
@@ -2230,7 +2335,11 @@ export default Vue.extend({
       this.materialOrderInfo.forEach((item) => {
         item.client_id = item.client_id_arr![2]
         item.order_id = this.materialPlanInfo.order_id
-        item.plan_id = this.$route.query.id
+        if (this.$route.query.supFlag) {
+          item.sup_id = this.$route.query.id
+        } else {
+          item.plan_id = this.$route.query.id
+        }
       })
     },
     saveMaterialOrder() {
@@ -2340,8 +2449,8 @@ export default Vue.extend({
       }
     },
     goStockMaterial() {
-      if (this.checkMaterialOrderList.length > 0) {
-        this.materialStockInfo.info_data = this.checkMaterialOrderList.map((item) => {
+      if (this.checkMaterialOrderList().length > 0) {
+        this.materialStockInfo.info_data = this.checkMaterialOrderList().map((item) => {
           return {
             material_id: '',
             material_color: '',
@@ -2367,6 +2476,12 @@ export default Vue.extend({
         this.$message.error('请选择需要调取的物料')
       } else {
         this.materialStockInfo.rel_doc_id = this.$route.query.id
+        if (this.materialStockCheckList.length === 1) {
+          this.materialStockInfo.info_data.forEach((item) => {
+            item.tree_data = this.materialStockCheckList[0].id
+            this.getMatId(this.materialStockCheckList[0].id, item)
+          })
+        }
         this.step = 2
       }
     },
@@ -2390,7 +2505,8 @@ export default Vue.extend({
         vat_code: '',
         batch_code: '',
         color_code: '',
-        material_color: ''
+        material_color: '白胚',
+        color_flag: true
       }
     },
     searchMaterial() {
@@ -2457,6 +2573,10 @@ export default Vue.extend({
         })
     },
     saveMaterialStock() {
+      this.materialStockInfo.order_id = this.$route.query.supFlag
+        ? this.materialSupplementInfo.order_id
+        : this.materialPlanInfo.order_id
+      this.materialStockInfo.action_type = this.$route.query.supFlag ? 12 : 10
       const formCheck = this.materialStockInfo.info_data.some((item) => {
         return this.$formCheck(item, [
           {
@@ -2508,6 +2628,17 @@ export default Vue.extend({
           })
         })
     },
+    // 加工单获取after_color信息
+    getAfterColor(ev: number, info: any, type: '订购加工' | '调取加工') {
+      console.log(ev, this.checkMaterialProcessList)
+      if (type === '订购加工') {
+        const finded = this.checkMaterialProcessList.find((item) => item.id === ev)
+        info.after_color = finded!.plan_color || finded!.sup_color
+      } else {
+        const finded = this.checkMaterialStockList.find((item) => item.id === ev)
+        info.after_color = finded!.plan_color || finded!.sup_color
+      }
+    },
     goProcessMaterial(type: '订购加工' | '调取加工') {
       if (type === '订购加工') {
         if (this.checkMaterialProcessList.length > 0) {
@@ -2519,7 +2650,7 @@ export default Vue.extend({
               before_attribute: item.attribute, // 原属性
               after_attribute: '',
               before_color: null,
-              after_color: '', // 加工后颜色
+              after_color: item.plan_color || item.sup_color, // 加工后颜色
               price: '',
               number: item.number,
               unit: item.unit,
@@ -2541,7 +2672,7 @@ export default Vue.extend({
               before_attribute: item.attribute, // 原属性
               after_attribute: '',
               before_color: null,
-              after_color: '', // 加工后颜色
+              after_color: item.plan_color || item.sup_color, // 加工后颜色,默认拿物料计划单的颜色
               price: '',
               number: item.number,
               unit: item.unit,
@@ -2730,18 +2861,22 @@ export default Vue.extend({
       return this.materialStockArr.slice((this.searchPage - 1) * 5, this.searchPage * 5)
     },
     planMaterialList(): MaterialPlanGatherData[] {
-      return this.materialPlanInfo.material_plan_gather_data.filter((item) => item.material_type === 1)
-    },
-    checkMaterialOrderList(): MaterialPlanGatherData[] {
-      // 这里加入checkAllPlanFlag的打印是因为全选之后这里的computed不触发更新
-      console.log(this.checkAllPlanFlag)
-      return this.planMaterialList.filter((item) => item.check)
-    },
-    selectMaterialOrderList(): any[] {
-      return this.$mergeData(this.checkMaterialOrderList, {
-        mainRule: ['material_id'],
-        otherRule: [{ name: 'material_name' }]
-      })
+      return this.$route.query.supFlag
+        ? this.materialSupplementInfo.info_data.map((item) => {
+            return {
+              id: Number(item.id),
+              check: false,
+              need_number: item.number,
+              material_color: item.material_color,
+              material_name: item.material_name,
+              material_id: item.material_id,
+              unit: item.unit,
+              loss: 0,
+              final_number: item.number,
+              material_type: 1
+            }
+          })
+        : this.materialPlanInfo.material_plan_gather_data.filter((item) => item.material_type === 1)
     },
     checkMaterialProcessList(): MaterialListInfo[] {
       console.log(this.checkAllOrderFlag)
@@ -2754,7 +2889,9 @@ export default Vue.extend({
       return nowStock ? nowStock!.info_data.filter((item) => item.check) : []
     },
     orderClientList(): CascaderInfo[] {
-      return this.$store.state.api.clientType.arr.filter((item: { label: string }) => item.label === '纱线原料单位')
+      return this.$store.state.api.clientType.arr.filter(
+        (item: { label: string }) => item.label === '纱线原料单位' || item.label === '面料原料单位'
+      )
     },
     prcessClientList(): CascaderInfo[] {
       return this.$store.state.api.clientType.arr.filter((item: { label: string }) => item.label === '原料加工单位')

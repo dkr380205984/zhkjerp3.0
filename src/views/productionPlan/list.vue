@@ -21,7 +21,7 @@
             </el-cascader>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter"
+            <el-select @change="$setLocalStorage('create_user',user_id);changeRouter()"
               v-model="user_id"
               placeholder="筛选创建人"
               clearable>
@@ -47,7 +47,7 @@
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select @change="changeRouter"
+            <el-select @change="$setLocalStorage('group_id',group_id);changeRouter()"
               v-model="group_id"
               placeholder="筛选负责小组">
               <el-option v-for="item in groupList"
@@ -197,10 +197,19 @@ export default Vue.extend({
         },
         {
           key: 'has_weave_plan',
-          name: '状态',
+          name: '生产计划状态',
           ifShow: true,
           ifLock: false,
           index: 7,
+          filterArr: ['', '已添加', '待添加'],
+          classArr: ['', 'green', 'orange']
+        },
+        {
+          key: 'has_material_plan',
+          name: '物料计划状态',
+          ifShow: true,
+          ifLock: false,
+          index: 8,
           filterArr: ['', '已添加', '待添加'],
           classArr: ['', 'green', 'orange']
         },
@@ -252,10 +261,16 @@ export default Vue.extend({
       },
       oprList: [
         {
-          name: '生产计划',
-          class: 'hoverBlue',
+          name: (item: any) => {
+            return item.has_material_plan === 1 ? '生产计划' : '待添加物料计划'
+          },
+          class: (item: any) => {
+            return item.has_material_plan === 1 ? 'hoverBlue' : 'gray'
+          },
           fn: (item: any) => {
-            this.$router.push('/productionPlan/detail?id=' + item.id)
+            item.has_material_plan === 1
+              ? this.$router.push('/productionPlan/detail?id=' + item.id)
+              : this.$message.warning('请先添加物料计划')
           }
         }
       ]
@@ -268,8 +283,8 @@ export default Vue.extend({
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.keyword = query.keyword || ''
       this.status = query.status || '0'
-      this.user_id = Number(query.user_id) || ''
-      this.group_id = Number(query.gourp_id) || ''
+      this.user_id = query.user_id || this.$getLocalStorage('create_user')
+      this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.order_type = Number(query.order_type) || null
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = query.limit ? Number(query.limit) : 10
