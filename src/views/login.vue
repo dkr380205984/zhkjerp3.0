@@ -298,7 +298,7 @@ export default Vue.extend({
       })
     },
     checkLogin(res: any, companyInfo: any) {
-      this.$message.success('登录成功')
+      this.$message.success({ message: '登录成功', showClose: true })
       // const moduleId = (companyInfo.module_info ? JSON.parse(companyInfo.module_info) : []).concat(
       //   companyInfo.module_id_detail ? JSON.parse(companyInfo.module_id_detail) : []
       // )
@@ -312,14 +312,13 @@ export default Vue.extend({
       window.sessionStorage.setItem('has_check', companyInfo.has_check)
       // window.sessionStorage.setItem('user_id', res.data.data.user_id)
       // window.sessionStorage.setItem('group_name', res.data.data.group_name)
-      // window.sessionStorage.setItem('telephone', res.data.data.telephone)
+      window.sessionStorage.setItem('telephone', res.data.data.telephone || this.loginInfo.user_name)
       window.localStorage.setItem('zhUsername', this.loginInfo.user_name)
       if (this.remPsd) {
         window.localStorage.setItem('zhPassword', this.loginInfo.password)
       } else {
         window.localStorage.setItem('zhPassword', '')
       }
-      console.log('haha')
       this.$router.push('/homePage')
     },
     goRegisiter() {

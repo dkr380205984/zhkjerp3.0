@@ -109,7 +109,7 @@
                     <div class="tcol">{{itemChild.number - itemChild.process_info.filter((item)=>item.process==='染色').reduce((total,cur)=>(total+cur.number),0)}}{{itemChild.unit||'kg'}}</div>
                   </div>
                 </div>
-                <div class="tcol">{{item.rel_push_number}}</div>
+                <div class="tcol">{{item.rel_push_number||0}}{{item.unit||'kg'}}</div>
               </div>
             </div>
           </div>
@@ -566,7 +566,7 @@
                 </div>
                 <div class="tcol">{{itemMat.material_color}}</div>
                 <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
-                <div class="tcol">出库数量</div>
+                <div class="tcol">暂无数据</div>
                 <!-- <div class="tcol oprCtn">
                   <div class="opr hoverBlue">出库</div>
                 </div> -->
@@ -594,8 +594,8 @@
                     </el-checkbox>
                   </div>
                   <div class="tcol">{{itemChild.material_color}}</div>
-                  <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
-                  <div class="tcol">出库数量</div>
+                  <div class="tcol">{{itemChild.number}}{{itemChild.unit||'kg'}}</div>
+                  <div class="tcol">暂无数据</div>
                   <!-- <div class="tcol oprCtn">
                     <div class="opr hoverBlue">出库</div>
                   </div> -->
@@ -712,7 +712,7 @@
                   :class="itemChild.batch_code||itemChild.vat_code?'':'gray'">{{itemChild.batch_code||'无'}}/{{itemChild.vat_code||'无'}}</div>
                 <div class="tcol"
                   :class="itemChild.color_code?'':'gray'">{{itemChild.color_code||'无'}}</div>
-                <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
+                <div class="tcol">{{itemChild.number}}{{itemChild.unit || 'kg'}}</div>
               </div>
             </div>
             <div class="tcol oprCtn">

@@ -2,7 +2,8 @@
   <div id="materialPlanCreate"
     class="bodyContainer"
     v-loading="loading">
-    <order-detail :data="orderInfo"></order-detail>
+    <order-detail :data="orderInfo"
+      :sampleOrderIndex="orderIndex"></order-detail>
     <div class="module">
       <div class="titleCtn flexBetween">
         <div class="title">生产计划单</div>

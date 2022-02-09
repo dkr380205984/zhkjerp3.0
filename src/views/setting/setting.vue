@@ -371,9 +371,9 @@
                 <div class="btn backHoverBlue fr"
                   @click="showPopup=true">添加边型</div>
                 <div class="btn backHoverOrange fr"
-                  @click="importExcelData('staffProcess')">批量导入</div>
+                  @click="importExcelData('side')">批量导入</div>
                 <div class="btn backHoverGreen fr"
-                  @click="downLoadTemplete('staffProcess')">下载导入模板</div>
+                  @click="downLoadTemplete('side')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -2983,7 +2983,7 @@ export default Vue.extend({
         产品设置: ['品类', '款式', '成分', '配色组', '尺码'],
         订单设置: ['订单类型', '样单类型'],
         报价单设置: ['报价模板', '报价说明'],
-        工序设置: ['原料加工工序', '半成品加工', '成品加工工序'],
+        工序设置: ['半成品加工', '成品加工工序'],
         工艺单设置: ['边型', '机型', '组织法', '纱线颜色'],
         物料设置: ['纱线原料', '面料原料', '装饰辅料', '包装辅料', '纱线报价', '面料报价'],
         工厂信息设置: ['基本信息', '负责小组/人'],
@@ -3700,13 +3700,12 @@ export default Vue.extend({
             '纱线颜色模板'
           )
           break
-        case 'material':
+        case 'decorateMaterial':
           this.$downloadExcel(
             [],
             [
               { title: '装饰辅料名称', key: 'name' },
-              { title: '计量单位', key: 'unit' },
-              { title: `是否需要织造(注:'是'填'1','否'填'0',默认为'0')`, key: 'need_weave' }
+              { title: '计量单位', key: 'unit' }
             ],
             '装饰辅料模板'
           )
@@ -5257,12 +5256,17 @@ export default Vue.extend({
       this.systemModuleArr.forEach((item: any) => {
         item.check = false
         if (
-          this.userInfo.module_info.indexOf(item.id) !== -1 ||
-          this.userInfo.module_info.indexOf(item.id.toString()) !== -1
+          this.userInfo.module_info &&
+          (this.userInfo.module_info.indexOf(item.id) !== -1 ||
+            this.userInfo.module_info.indexOf(item.id.toString()) !== -1)
         ) {
           item.check = true
         }
       })
+      // 针对初始化为null做一下特殊处理
+      if (!this.userInfo.module_info) {
+        this.userInfo.module_info = []
+      }
     },
     deleteUser(id: number) {},
     getQuotedPriceProduct() {

@@ -22,8 +22,8 @@
               clearable>
             </el-cascader>
           </div>
-          <div class="elCtn">
-            <el-select @change="$setLocalStorage('create_user',user_id);changeRouter()"
+          <div class="elCtn hasIcon">
+            <el-select @change="changeRouter"
               v-model="user_id"
               placeholder="筛选创建人"
               clearable>
@@ -32,6 +32,13 @@
                 :label="item.label"
                 :value="item.value"></el-option>
             </el-select>
+            <el-tooltip class="item"
+              effect="dark"
+              content="保存创建人筛选"
+              placement="top">
+              <i class="el-icon-upload hoverOrange"
+                @click="$setLocalStorage('create_user',user_id)"></i>
+            </el-tooltip>
           </div>
           <div class="elCtn">
             <el-select @change="changeRouter"
@@ -49,8 +56,8 @@
             @click="reset">重置</div>
         </div>
         <div class="filterCtn">
-          <div class="elCtn">
-            <el-select @change="$setLocalStorage('group_id',group_id);changeRouter()"
+          <div class="elCtn hasIcon">
+            <el-select @change="changeRouter"
               v-model="group_id"
               placeholder="筛选负责小组">
               <el-option v-for="item in groupList"
@@ -58,6 +65,13 @@
                 :value="item.id"
                 :label="item.name"></el-option>
             </el-select>
+            <el-tooltip class="item"
+              effect="dark"
+              content="保存负责小组筛选"
+              placement="top">
+              <i class="el-icon-upload hoverOrange"
+                @click="$setLocalStorage('group_id',group_id)"></i>
+            </el-tooltip>
           </div>
           <div class="elCtn">
             <el-date-picker v-model="date"

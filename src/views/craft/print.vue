@@ -183,7 +183,11 @@
                     <div class="trow">
                       <div class="tcol label">穿综法循环：</div>
                       <div class="tcol">
-                        {{craftInfo.draft_method|filterThroughMethod}}
+                        <template v-if="ifShowPM">
+                          <div :style="{'font-size':fontSize + 'px'}">{{craftInfo.draft_method|filterThroughMethod}}</div>
+                        </template>
+                        <div class="alignCenter"
+                          v-else>查看附件信息</div>
                       </div>
                     </div>
                     <div class="trow">
@@ -852,6 +856,18 @@
           </div>
         </template>
         <div class="tableCtn"
+          v-if="!ifShowPM">
+          <div class="tbody hasTop">
+            <div class="trow">
+              <div class="tcol w50 horizontal bgGray">穿综法循环</div>
+              <div class="tcol noPad"
+                :style="{'font-size':fontSize + 'px'}">
+                {{craftInfo.draft_method|filterThroughMethod}}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tableCtn"
           v-if="!ifShowGL">
           <div class="tbody hasTop">
             <div class="trow">
@@ -907,7 +923,17 @@
     <div class="setting_sign_style"
       v-if="showMenu"
       :style="`left:${X_position || 0}px;top:${Y_position}px`"
+      style="width:350px"
       @click.stop>
+      <div class="setting_item">穿综法字体
+        <el-input-number v-model="fontSize"
+          style="height:32px"
+          :precision="1"
+          size="small"
+          :step="1"
+          :min="14"
+          :max="32"></el-input-number>
+      </div>
       <div class="setting_item"
         @click="windowMethod(1)">刷新</div>
       <div class="setting_item"
@@ -1019,6 +1045,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      fontSize: 14,
       signType: '3',
       qrCodeUrl: '',
       company_name: window.sessionStorage.getItem('company_name'),
@@ -1508,6 +1535,9 @@ export default Vue.extend({
     },
     ifShowWeftMerge3(): boolean {
       return (this.craftInfo.weft_data.merge_data as MergeDataInfo[]).filter((item) => item.row === 5).length > 0
+    },
+    ifShowPM(): boolean {
+      return this.craftInfo.draft_method.PM.length < 4 && this.fontSize <= 20
     }
   },
   mounted() {

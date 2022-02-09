@@ -134,13 +134,13 @@ export default Vue.extend({
             id: '15-3',
             icon: 'icon-wuliaoyudinggou',
             url: '/craft/list?page=1'
+          },
+          {
+            name: '系统设置',
+            id: 16,
+            icon: 'icon-wuliaoyudinggou',
+            url: '/setting?pName=产品设置&cName=品类'
           }
-          // {
-          //   name: '系统教程',
-          //   id: 16,
-          //   icon: 'icon-wuliaoyudinggou',
-          //   url: '/tutorialSystem/create'
-          // }
         ],
         finance: []
       }
@@ -149,12 +149,18 @@ export default Vue.extend({
   mounted() {
     const moduleInfo = window.sessionStorage.getItem('module_id') as string
     this.menuList = {
-      production: this.menuList.production.filter((item) => {
-        return JSON.parse(moduleInfo).indexOf(item.id) !== -1
-      }),
-      other: this.menuList.other.filter((item) => {
-        return JSON.parse(moduleInfo).indexOf(item.id) !== -1
-      }),
+      production:
+        JSON.parse(moduleInfo).length === 0
+          ? this.menuList.production
+          : this.menuList.production.filter((item) => {
+              return JSON.parse(moduleInfo).indexOf(item.id) !== -1
+            }),
+      other:
+        JSON.parse(moduleInfo).length === 0
+          ? this.menuList.other
+          : this.menuList.other.filter((item) => {
+              return JSON.parse(moduleInfo).indexOf(item.id) !== -1
+            }),
       finance: []
     }
   }

@@ -55,14 +55,11 @@
               <div class="msgBottom"><span @click="$router.push('/other/msgList')">查看全部通知</span></div>
             </div>
           </div> -->
-          <i class="el-icon-setting elIcon"
+          <!-- <i class="el-icon-setting elIcon"
             v-show="haveSet"
-            @click="$router.push('/setting?pName=产品设置&cName=品类')"></i>
-          <div @click="$router.push('/login')"
-            style="margin-left:12px;color:#fff;cursor:pointer">退出登录</div>
+            @click="$router.push('/setting?pName=产品设置&cName=品类')"></i> -->
           <!-- <i class="el-icon-s-data elIcon"
-            v-show="haveSet"
-            @click="$router.push('/order/orderStat/page=1&&keyword=&&date=&&group_id=&&company_id=')"></i>
+            @click="$router.push('/order/orderStat/page=1&&keyword=&&date=&&group_id=&&company_id=')"></i> -->
           <div class="headImg">{{userName.charAt(userName.length-1)}}</div>
           <div class="selectCtn">
             <el-dropdown @command="commondHandler"
@@ -71,14 +68,12 @@
                 个人中心<i class="el-icon-arrow-down el-icon--right"></i>
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="sendMsg">发布通知</el-dropdown-item>
-                <el-dropdown-item command="changePas"
-                  divided>修改密码</el-dropdown-item>
+                <el-dropdown-item command="changePas">修改密码</el-dropdown-item>
                 <el-dropdown-item command="logout"
                   divided>退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-          </div> -->
+          </div>
         </div>
       </div>
     </div>
@@ -93,11 +88,62 @@
         <router-view />
       </div>
     </div>
+    <div class="popup"
+      v-if="changePasPopupFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">修改密码</span>
+          <span class="el-icon-close"
+            @click="closePopup"></span>
+        </div>
+        <div class="contentCtn">
+          <div class="row">
+            <span class="label">新密码：</span>
+            <span class="info">
+              <el-input placeholder="请输入新密码"
+                v-model="firstPasd">
+              </el-input>
+            </span>
+          </div>
+          <div class="row">
+            <span class="label">确认密码：</span>
+            <span class="info">
+              <el-input placeholder="请再次输入新密码"
+                v-model="lastPasd">
+              </el-input>
+            </span>
+          </div>
+          <div class="row">
+            <span class="label">验证码：</span>
+            <span class="info">
+              <el-input placeholder="请输入验证码"
+                v-model="verificationCode">
+                <template slot="append">
+                  <div :class="{'canHandle':!resetTime,'notHandle':resetTime}"
+                    @click="sendVerificationCode">{{resetTime ? `${resetTime}s后重试` : '发送验证码'}}</div>
+                </template>
+              </el-input>
+              <div class="prompt"
+                v-if="resetTime">已向{{telephoneComp}}发送验证码,请注意查收</div>
+              <div class="prompt"
+                v-else>点击发送验证码,将会向手机号{{telephoneComp}}发送验证码</div>
+            </span>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <div class="btn borderBtn"
+            @click="closePopup">取消</div>
+          <div class="btn backHoverOrange"
+            @click="changePasd">修改</div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import { navInfo } from '@/types/nav'
+import { changePassword, getCoder } from '@/assets/js/api'
 export default Vue.extend({
   data(): {
     navData: navInfo[]
@@ -146,9 +192,81 @@ export default Vue.extend({
       ]
     }
   },
+  methods: {
+    commondHandler(ev: string) {
+      if (ev === 'logout') {
+        window.sessionStorage.setItem('user_name', '')
+        window.sessionStorage.setItem('company_id', '')
+        window.sessionStorage.setItem('company_name', '')
+        window.sessionStorage.setItem('full_name', '')
+        window.sessionStorage.setItem('module_id', '')
+        window.sessionStorage.setItem('logo', '')
+        window.sessionStorage.setItem('has_check', '')
+        this.$message.success('已退出登录')
+        this.$router.push('/login')
+      } else if (ev === 'changePas') {
+        this.changePasPopupFlag = true
+      }
+    },
+    closePopup() {
+      this.changePasPopupFlag = false
+    },
+    // 发送验证码
+    sendVerificationCode() {
+      const outTime = (new Date().getTime() - this.lastTime) / 1000
+      if (!this.lastTime || outTime > this.sendIntervalTime) {
+        getCoder
+          .forgetPassword({
+            telephone: this.telephoneComp
+          })
+          .then((res) => {
+            if (res.data.status !== false) {
+              this.$message.success(`我们已向您的手机号发送一条6位长度验证码，请注意查收`)
+              this.lastTime = new Date().getTime() // 记录点击时间
+              this.sendInterval()
+            }
+          })
+      } else {
+        this.$message.warning(`${this.resetTime}s后在重试`)
+      }
+    },
+    // 重试倒计时
+    sendInterval() {
+      const outTime = (new Date().getTime() - this.lastTime) / 1000
+      this.resetTime = Math.ceil(this.sendIntervalTime - outTime)
+      if (outTime <= this.sendIntervalTime) {
+        window.requestAnimationFrame(() => {
+          this.sendInterval()
+        })
+      }
+    },
+    changePasd() {
+      if (!/^[0-9]{6}$/.test(this.verificationCode)) {
+        this.$message.error('请输入正确的4位数字验证码')
+        return
+      }
+      if (!this.firstPasd || !this.lastPasd) {
+        this.$message.error('请输入新密码')
+        return
+      }
+      if (this.firstPasd !== this.lastPasd) {
+        this.$message.warning('请确认输入的密码一致')
+      } else {
+        changePassword({
+          sms_code: this.verificationCode,
+          new_password: this.firstPasd
+        }).then((res) => {
+          if (res.data.status !== false) {
+            this.$message.success('修改密码成功，请重新登录')
+            this.$router.push('/login')
+          }
+        })
+      }
+    }
+  },
   computed: {
-    telephoneComp() {
-      const telephone = window.sessionStorage.getItem('telephone') || false
+    telephoneComp(): string {
+      const telephone = window.sessionStorage.getItem('telephone') || ''
       if (telephone) return String().concat(telephone.slice(0, 3)).concat('****').concat(telephone.slice(-4))
       return telephone
     },
@@ -158,9 +276,9 @@ export default Vue.extend({
     breadUrl() {
       return this.$store.state.breadUrl
     },
-    haveSet(): boolean {
-      return !this.moduleArr || JSON.parse(this.moduleArr) !== -1
-    },
+    // haveSet(): boolean {
+    //   return !this.moduleArr || JSON.parse(this.moduleArr) !== -1
+    // },
     navCmp(): navInfo[] {
       if (this.moduleArr) {
         return JSON.parse(this.moduleArr).length > 0

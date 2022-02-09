@@ -34,7 +34,6 @@
           <div class="col">
             <div class="label">
               <span class="text">公司联系人</span>
-              <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
               <el-select placeholder="请选择公司联系人"
@@ -207,7 +206,6 @@
             <div class="col">
               <div class="label">
                 <span class="text">批次类型</span>
-                <span class="explanation">(必选)</span>
               </div>
               <div class="info elCtn">
                 <el-select v-model="item.batch_type_id">
@@ -868,11 +866,11 @@ export default Vue.extend({
                 {
                   key: 'delivery_time',
                   errMsg: '请选择发货日期'
-                },
-                {
-                  key: 'batch_type_id',
-                  errMsg: '请选择批次类型'
                 }
+                // {
+                //   key: 'batch_type_id',
+                //   errMsg: '请选择批次类型'
+                // }
               ]) ||
               item.product_data.some((itemChild) => {
                 return (

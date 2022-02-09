@@ -180,16 +180,16 @@ const systemModule = [{
   name: '仓库管理',
   detail: [{
     id: '12-1',
-    name: '添加单据',
+    name: '纱线仓库',
   }, {
     id: '12-2',
-    name: '修改单据',
+    name: '面料仓库',
   }, {
     id: '12-3',
-    name: '单据列表',
+    name: '辅料仓库',
   }, {
     id: '12-4',
-    name: '删除单据',
+    name: '产品仓库',
   }]
 }, {
   id: 13,

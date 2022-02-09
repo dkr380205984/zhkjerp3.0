@@ -35,6 +35,12 @@ const getCoder = {
 import { ForgetPasswordInfo } from '@/types/logReg'
 const forgetPassword = (params: ForgetPasswordInfo) => http.post(`${baseUrl}/user/password/forget`, params, 'application/json')
 
+// 修改密码
+const changePassword = (params: {
+  new_password: string
+  sms_code: string
+}) => http.post(`${baseUrl}/user/change/password`, params, 'application/json')
+
 // 用户信息
 const getAuthorization = () => http.post(`${baseUrl}/auth/info`, {}, 'application/json')
 
@@ -401,7 +407,8 @@ const order = {
   delete: (params: DeleteParams) => http.post(`${baseUrl}/order/delete`, params, 'application/json'),
   deletePro: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product`, params, 'application/json'), // 删除订单里的产品
   deleteProChild: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product/info`, params, 'application/json'), // 删除订单里的子项
-  materialDetail: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/material/info`, params),
+  materialDetail: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/material/info`, params), // 物料汇总表
+  productionDetail: (params: { order_time_id: string | number }) => http.get(`${baseUrl}/order/weave/info`, params), // 生产汇总表
 }
 
 // 跟单据相关的所有单位
@@ -579,6 +586,7 @@ export {
   logout,
   userCompanySetting,
   forgetPassword,
+  changePassword,
   getAuthorization,
   getToken,
   homePage,

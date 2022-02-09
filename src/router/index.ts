@@ -352,7 +352,9 @@ const router = new VueRouter({
  * @returns {boolean}
  */
 const isHasPermissions = (id: string | number) => {
-  if (!window.sessionStorage.getItem('module_id')) return
+  if (!window.sessionStorage.getItem('module_id')) {
+    return true
+  }
   const moduleId = JSON.parse(window.sessionStorage.getItem('module_id') as string)
   if (!moduleId.includes(id)) return
   return true
@@ -360,9 +362,8 @@ const isHasPermissions = (id: string | number) => {
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
-  // 权限判断
-  console.log(to)
-  if (to.meta && to.meta.permissions_id) {
+  // 权限判断 新增无权限即为初始帐号权限
+  if (to.meta && to.meta.permissions_id && window.sessionStorage.getItem('module_id') && JSON.parse(window.sessionStorage.getItem('module_id') as string).length > 0) {
     if (!isHasPermissions(to.meta.permissions_id)) {
       next(false)
       Message.Message.warning('抱歉，您没有相应的权限')

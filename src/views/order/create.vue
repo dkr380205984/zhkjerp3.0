@@ -516,7 +516,6 @@
               <div class="col">
                 <div class="label">
                   <span class="text">批次类型</span>
-                  <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
                   <el-select v-model="item.batch_type_id">
@@ -732,24 +731,47 @@
         <div class="row">
           <div class="col">
             <div class="label">
-              <span class="text">文件信息</span>
+              <span class="text">公开文件</span>
+              <span class="explanation">(涉及订单流程权限的帐号均可查看)</span>
             </div>
             <div class="info">
               <el-upload class="upload"
                 action="https://upload.qiniup.com/"
-                accept="image/jpeg,image/gif,image/png,image/bmp"
                 :before-upload="beforeAvatarUpload"
                 :data="postData"
-                :on-remove="removeFile"
-                :on-success="successFile"
-                ref="uploada"
-                list-type="picture">
+                :on-remove="(ev)=>{return removeFile(ev,orderInfo.public_files)}"
+                :on-success="(ev)=>{return successFile(ev,orderInfo.public_files)}"
+                ref="uploada">
                 <div class="uploadBtn">
                   <i class="el-icon-upload"></i>
-                  <span>上传图片</span>
+                  <span>上传文件</span>
                 </div>
                 <div slot="tip"
-                  class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M</div>
+                  class="el-upload__tip">可以上传word、excel、pdf等格式的文件，且不超过10M</div>
+              </el-upload>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="label">
+              <span class="text">私密文件</span>
+              <span class="explanation">(只有具有审核权限的帐号可查看)</span>
+            </div>
+            <div class="info">
+              <el-upload class="upload"
+                action="https://upload.qiniup.com/"
+                :before-upload="beforeAvatarUpload"
+                :data="postData"
+                :on-remove="(ev)=>{return removeFile(ev,orderInfo.private_files)}"
+                :on-success="(ev)=>{return successFile(ev,orderInfo.private_files)}"
+                ref="uploada">
+                <div class="uploadBtn">
+                  <i class="el-icon-upload"></i>
+                  <span>上传文件</span>
+                </div>
+                <div slot="tip"
+                  class="el-upload__tip">可以上传word、excel、pdf等格式的文件，且不超过10M</div>
               </el-upload>
             </div>
           </div>
@@ -1166,26 +1188,23 @@ export default Vue.extend({
       const fileFormat = file.name.substring(fileName + 1, fileNameLength) // 截
       this.postData.token = this.token
       this.postData.key = Date.parse(new Date() + '') + '.' + fileFormat
-      const isJPG = file.type === 'image/jpeg'
-      const isPNG = file.type === 'image/png'
+      // const isJPG = file.type === 'image/jpeg'
+      // const isPNG = file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 10
-      if (!isJPG && !isPNG) {
-        this.$message.error('图片只能是 JPG/PNG 格式!')
-        return false
-      }
+      // if (!isJPG && !isPNG) {
+      //   this.$message.error('图片只能是 JPG/PNG 格式!')
+      //   return false
+      // }
       if (!isLt2M) {
-        this.$message.error('图片大小不能超过 10MB!')
+        this.$message.error('文件大小不能超过 10MB!')
         return false
       }
     },
-    successFile(response: { hash: string; key: string }) {
-      this.orderInfo.public_files.push('https://file.zwyknit.com/' + response.key)
+    successFile(response: { hash: string; key: string }, orderFile: any[]) {
+      orderFile.push('https://file.zwyknit.com/' + response.key)
     },
-    removeFile(file: { response: { hash: string; key: string } }) {
-      this.$deleteItem(
-        this.orderInfo.public_files,
-        this.orderInfo.public_files.indexOf('https://file.zwyknit.com/' + file.response.key)
-      )
+    removeFile(file: { response: { hash: string; key: string } }, orderFile: any[]) {
+      this.$deleteItem(orderFile, orderFile.indexOf('https://file.zwyknit.com/' + file.response.key))
     },
     getCmpData() {
       this.orderInfo.pid = Number(this.$route.query.sampleOrderId) ? Number(this.$route.query.sampleOrderId) : null
@@ -1244,11 +1263,11 @@ export default Vue.extend({
                 {
                   key: 'delivery_time',
                   errMsg: '请选择发货日期'
-                },
-                {
-                  key: 'batch_type_id',
-                  errMsg: '请选择批次类型'
                 }
+                // {
+                //   key: 'batch_type_id',
+                //   errMsg: '请选择批次类型'
+                // }
               ]) ||
               item.product_data.some((itemChild) => {
                 return (
