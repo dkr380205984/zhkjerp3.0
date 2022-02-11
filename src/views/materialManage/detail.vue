@@ -207,6 +207,14 @@
                   </svg>
                   <span class="text">单据修改</span>
                 </div>
+                <div class="btn backHoverGreen"
+                  @click="goDeduct(item,2)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">单据扣款</span>
+                </div>
                 <div class="btn backHoverRed"
                   @click="deleteMaterialOrder(item.id)">
                   <svg class="iconFont"
@@ -214,6 +222,15 @@
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">删除单据</span>
+                </div>
+                <div class="btn"
+                  :class="item.deduct_data && item.deduct_data.length>0?'backHoverBlue':'backGray'"
+                  @click="getDeduct(item.deduct_data)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">扣款记录</span>
                 </div>
               </div>
             </div>
@@ -227,32 +244,39 @@
               <div class="trow">
                 <div class="tcol">加工单号</div>
                 <div class="tcol">加工单位</div>
-                <div class="tcol">工序</div>
+                <div class="tcol"
+                  style="flex:0.5">工序</div>
                 <div class="tcol noPad"
-                  style="flex:4">
+                  style="flex:3">
                   <div class="trow">
                     <div class="tcol">纱线名称</div>
                     <div class="tcol">加工详情</div>
-                    <div class="tcol">加工数量</div>
-                    <div class="tcol">加工单价</div>
+                    <div class="tcol"
+                      style="flex:0.5">数量</div>
+                    <div class="tcol"
+                      style="flex:0.5">单价</div>
                   </div>
                 </div>
-                <div class="tcol">截止日期</div>
+                <div class="tcol"
+                  style="flex:0.8">截止日期</div>
                 <div class="tcol">备注信息</div>
                 <div class="tcol">额外费用</div>
-                <div class="tcol">操作</div>
+                <div class="tcol"
+                  style="flex:1.8">操作</div>
               </div>
             </div>
             <template v-if="item.process_info.length>0">
-              <div class="tbody">
+              <div class="tbody"
+                style="font-size:14px">
                 <div class="trow"
                   v-for="itemProcess in item.process_info"
                   :key="itemProcess.id">
                   <div class="tcol"><span class="overText">{{itemProcess.code}}</span></div>
                   <div class="tcol">{{itemProcess.client_name}}</div>
-                  <div class="tcol">{{itemProcess.process}}</div>
+                  <div class="tcol"
+                    style="flex:0.5">{{itemProcess.process}}</div>
                   <div class="tcol noPad"
-                    style="flex:4">
+                    style="flex:3">
                     <div class="trow"
                       v-for="(itemMat,indexMat) in itemProcess.info_data"
                       :key="indexMat">
@@ -280,20 +304,29 @@
                           <span>{{itemMat.qiege_desc}}</span>
                         </template>
                       </div>
-                      <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
-                      <div class="tcol">{{itemMat.price}}元</div>
+                      <div class="tcol"
+                        style="flex:0.5">{{itemMat.number}}{{itemMat.unit}}</div>
+                      <div class="tcol"
+                        style="flex:0.5">{{itemMat.price}}元</div>
                     </div>
                   </div>
-                  <div class="tcol">{{itemProcess.delivery_time}}</div>
-                  <div class="tcol">{{itemProcess.desc}}</div>
+                  <div class="tcol"
+                    style="flex:0.8">{{itemProcess.delivery_time}}</div>
+                  <div class="tcol">{{itemProcess.desc || '无备注'}}</div>
                   <div class="tcol">
                     <others-fee-data :data="itemProcess.others_fee_data"></others-fee-data>
                   </div>
-                  <div class="tcol oprCtn">
+                  <div class="tcol oprCtn"
+                    style="flex:1.8">
                     <div class="opr hoverOrange"
                       @click="materialProcessUpdataInfo=$clone(itemProcess);materialProcessUpdataFlag=true">修改</div>
+                    <div class="opr hoverGreen"
+                      @click="goDeduct(itemProcess,3)">扣款</div>
                     <div class="opr hoverRed"
                       @click="deleteMaterialProcess(itemProcess.id)">删除</div>
+                    <div class="opr"
+                      :class="itemProcess.deduct_data&&itemProcess.deduct_data.length>0?'hoverBlue':'gray'"
+                      @click="getDeduct(itemProcess.deduct_data)">扣款记录</div>
                   </div>
                 </div>
               </div>
@@ -411,31 +444,39 @@
               <div class="trow">
                 <div class="tcol">加工单号</div>
                 <div class="tcol">加工单位</div>
-                <div class="tcol">工序</div>
+                <div class="tcol"
+                  style="flex:0.5">工序</div>
                 <div class="tcol noPad"
-                  style="flex:4">
+                  style="flex:3">
                   <div class="trow">
                     <div class="tcol">纱线名称</div>
                     <div class="tcol">加工详情</div>
-                    <div class="tcol">加工数量</div>
-                    <div class="tcol">加工单价</div>
+                    <div class="tcol"
+                      style="flex:0.5">数量</div>
+                    <div class="tcol"
+                      style="flex:0.5">单价</div>
                   </div>
                 </div>
-                <div class="tcol">截止日期</div>
+                <div class="tcol"
+                  style="flex:0.8">截止日期</div>
                 <div class="tcol">备注信息</div>
-                <div class="tcol">操作</div>
+                <div class="tcol">额外费用</div>
+                <div class="tcol"
+                  style="flex:1.8">操作</div>
               </div>
             </div>
             <template v-if="item.process_info.length>0">
-              <div class="tbody">
+              <div class="tbody"
+                style="font-size:14px">
                 <div class="trow"
                   v-for="itemProcess in item.process_info"
                   :key="itemProcess.id">
                   <div class="tcol"><span class="overText">{{itemProcess.code}}</span></div>
                   <div class="tcol">{{itemProcess.client_name}}</div>
-                  <div class="tcol">{{itemProcess.process}}</div>
+                  <div class="tcol"
+                    style="flex:0.5">{{itemProcess.process}}</div>
                   <div class="tcol noPad"
-                    style="flex:4">
+                    style="flex:3">
                     <div class="trow"
                       v-for="(itemMat,indexMat) in itemProcess.info_data"
                       :key="indexMat">
@@ -463,17 +504,29 @@
                           <span>{{itemMat.qiege_desc}}</span>
                         </template>
                       </div>
-                      <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
-                      <div class="tcol">{{itemMat.price}}元</div>
+                      <div class="tcol"
+                        style="flex:0.5">{{itemMat.number}}{{itemMat.unit}}</div>
+                      <div class="tcol"
+                        style="flex:0.5">{{itemMat.price}}元</div>
                     </div>
                   </div>
-                  <div class="tcol">{{itemProcess.delivery_time}}</div>
-                  <div class="tcol">{{itemProcess.desc}}</div>
-                  <div class="tcol oprCtn">
+                  <div class="tcol"
+                    style="flex:0.8">{{itemProcess.delivery_time}}</div>
+                  <div class="tcol">{{itemProcess.desc || '无备注'}}</div>
+                  <div class="tcol">
+                    <others-fee-data :data="itemProcess.others_fee_data"></others-fee-data>
+                  </div>
+                  <div class="tcol oprCtn"
+                    style="flex:1.8">
                     <div class="opr hoverOrange"
                       @click="materialProcessUpdataInfo=$clone(itemProcess);materialProcessUpdataFlag=true">修改</div>
+                    <div class="opr hoverGreen"
+                      @click="goDeduct(itemProcess,3)">扣款</div>
                     <div class="opr hoverRed"
                       @click="deleteMaterialProcess(item.id)">删除</div>
+                    <div class="opr"
+                      :class="itemProcess.deduct_data&&itemProcess.deduct_data.length>0?'hoverBlue':'gray'"
+                      @click="getDeduct(itemProcess.deduct_data)">扣款记录</div>
                   </div>
                 </div>
               </div>
@@ -604,9 +657,9 @@
                       content="统一单价"
                       placement="top">
                       <svg class="iconFont copyIcon hoverBlue"
-                        aria-hidden="true">
-                        <use xlink:href='#icon-tongbushuju1'
-                          @click="$copyInfo(item.info_data,['price'])"></use>
+                        aria-hidden="true"
+                        @click="$copyInfo(item.info_data,['price'])">
+                        <use xlink:href='#icon-tongbushuju1'></use>
                       </svg>
                     </el-tooltip>
                   </div>
@@ -1212,9 +1265,9 @@
                       content="统一单价"
                       placement="top">
                       <svg class="iconFont copyIcon hoverBlue"
-                        aria-hidden="true">
-                        <use xlink:href='#icon-tongbushuju1'
-                          @click="$copyInfo(item.info_data,['price'])"></use>
+                        aria-hidden="true"
+                        @click="$copyInfo(item.info_data,['price'])">
+                        <use xlink:href='#icon-tongbushuju1'></use>
                       </svg>
                     </el-tooltip>
                   </div>
@@ -1899,6 +1952,15 @@
         </div>
       </div>
     </div>
+    <zh-deduct :show="deductFlag"
+      @close="deductFlag = false"
+      :type="deductInfo.type"
+      :id="deductInfo.doc_id"
+      :client_id="deductInfo.client_id"
+      :client_name="deductInfo.client_name"></zh-deduct>
+    <zh-deduct-detail :show="deductDetailFlag"
+      @close="deductDetailFlag = false"
+      :data="deductDetail"></zh-deduct-detail>
   </div>
 </template>
 
@@ -1937,6 +1999,15 @@ export default Vue.extend({
       checkAllStockFlag: false,
       materialOrderUpdataFlag: false,
       materialProcessUpdataFlag: false,
+      deductFlag: false,
+      deductDetailFlag: false,
+      deductDetail: [],
+      deductInfo: {
+        client_id: '',
+        client_name: '',
+        doc_id: '',
+        type: 2
+      },
       searchLoading: false,
       storeList: [],
       materialSupplementInfo: {
@@ -2841,6 +2912,22 @@ export default Vue.extend({
             message: '已取消删除'
           })
         })
+    },
+    // 扣款
+    goDeduct(info: MaterialOrderInfo, type: 2 | 3) {
+      this.deductInfo.client_id = info.client_id
+      this.deductInfo.client_name = info.client_name
+      this.deductInfo.doc_id = info.id
+      this.deductInfo.type = type
+      this.deductFlag = true
+    },
+    getDeduct(info: any[]) {
+      if (!info || info.length === 0) {
+        this.$message.warning('暂无扣款信息')
+      } else {
+        this.deductDetail = info
+        this.deductDetailFlag = true
+      }
     }
   },
   watch: {

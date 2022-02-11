@@ -70,6 +70,16 @@ export default Vue.extend({
       type: Array,
       required: true
     },
+    // const SCARF_DOC_ORDER=1;//订单
+    // const SCARF_DOC_MATERIAL_ORDER = 2; //物料订购单
+    // const SCARF_DOC_MATERIAL_PROCESS = 3; //物料加工单
+    // const SCARF_DOC_WEAVE_PLAN = 4; //织造计划单
+    // const SCARF_DOC_QUOTE=5;//报价单
+    // const SCARF_DOC_MATERIAL_STORE_LOG=6;//原料出入库单
+    // const SCARF_DOC_MATERIAL_RESERVE=7;//原料预订购单
+    // const SCARF_DOC_PRODUCT_STORE_LOG=8;//产品出入库单
+    // const SCARF_DOC_MATERIAL_PLAN=9;//物料计划单
+    // const SCARF_DOC_MATERIAL_SUP=10;//物料计划单
     check_type: {
       type: Number,
       required: true

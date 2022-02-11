@@ -21,7 +21,10 @@
             <div class="tableCtn">
               <div class="thead">
                 <div class="trow">
-                  <div class="tcol">产品信息</div>
+                  <div class="tcol">
+                    <el-checkbox v-model="checkAllColorSize"
+                      @change="(ev)=>{item.material_plan_data.forEach((item)=>item.check=ev)}">产品信息</el-checkbox>
+                  </div>
                   <div class="tcol">产品部位</div>
                   <div class="tcol">尺码颜色</div>
                   <div class="tcol">下单数量</div>
@@ -33,7 +36,8 @@
                   v-for="(itemPro,indexPro) in item.material_plan_data"
                   :key="indexPro">
                   <div class="tcol">
-                    <el-checkbox v-model="itemPro.check">{{itemPro.name||itemPro.product_code||itemPro.system_code}}</el-checkbox>
+                    <el-checkbox v-model="itemPro.check"
+                      @change="$forceUpdate()">{{itemPro.name||itemPro.product_code||itemPro.system_code}}</el-checkbox>
                   </div>
                   <div class="tcol">{{itemPro.part_name}}</div>
                   <div class="tcol">{{itemPro.size_name}}/{{itemPro.color_name}}</div>
@@ -51,7 +55,10 @@
             <div class="tableCtn">
               <div class="thead">
                 <div class="trow">
-                  <div class="tcol">产品信息</div>
+                  <div class="tcol">
+                    <el-checkbox v-model="checkAllPro"
+                      @change="(ev)=>{item.material_plan_data.forEach((item)=>item.check=ev)}">产品信息</el-checkbox>
+                  </div>
                   <div class="tcol">产品部位</div>
                   <div class="tcol">下单数量</div>
                   <div class="tcol">计划生产数量</div>
@@ -62,7 +69,8 @@
                   v-for="(itemPro,indexPro) in item.material_plan_data"
                   :key="indexPro">
                   <div class="tcol">
-                    <el-checkbox v-model="itemPro.check"> {{itemPro.name||itemPro.product_code||itemPro.system_code}}</el-checkbox>
+                    <el-checkbox v-model="itemPro.check"
+                      @change="$forceUpdate()"> {{itemPro.name||itemPro.product_code||itemPro.system_code}}</el-checkbox>
                   </div>
                   <div class="tcol">{{itemPro.part_name}}</div>
                   <div class="tcol">{{itemPro.order_number}}</div>
@@ -216,6 +224,31 @@
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">补充物料</span>
+                </div>
+                <div class="btn backHoverGreen"
+                  @click="goDeduct(item,4)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">单据扣款</span>
+                </div>
+                <div class="btn"
+                  :class="item.deduct_data && item.deduct_data.length>0?'backHoverBlue':'backGray'"
+                  @click="getDeduct(item.deduct_data)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">扣款记录</span>
+                </div>
+                <div class="btn backHoverOrange"
+                  @click="divideProductionPlan(item)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">拆分单据</span>
                 </div>
               </div>
             </div>
@@ -481,16 +514,16 @@
               <div class="row">
                 <div class="col">
                   <div class="label">
-                    <span class="text">订购备注信息</span>
+                    <span class="text">备注信息</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input placeholder="请输入订购备注信息"
+                    <el-input placeholder="请输入备注信息"
                       v-model="item.desc"></el-input>
                   </div>
                 </div>
                 <div class="col">
                   <div class="label">
-                    <span class="text">订购总价</span>
+                    <span class="text">加工总价</span>
                   </div>
                   <div class="info elCtn">
                     <el-input v-model="totalPlanPriceList[index]"
@@ -704,6 +737,238 @@
         </div>
       </div>
     </div>
+    <!-- 拆分单据 -->
+    <div class="popup"
+      v-if="dividePlanFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">生产计划拆分</span>
+          <div class="closeCtn"
+            @click="dividePlanFlag = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="editCtn">
+            <div class="row">
+              <div class="col">
+                <div class="label">
+                  <span class="text">原分配单位</span>
+                  <span class="explanation">(默认)</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input disabled
+                    placeholder="默认为加工单位"
+                    v-model="productionDivideInfo[0].client_name"></el-input>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label">
+                  <span class="text">原分配单位</span>
+                  <span class="explanation">(默认)</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input disabled
+                    placeholder="默认为加工单位"
+                    v-model="productionDivideInfo[0].process_name"></el-input>
+                </div>
+              </div>
+              <div class="col"></div>
+            </div>
+          </div>
+          <div class="editCtn"
+            v-for="(item,index) in productionDivideInfo.slice(1)"
+            :key="index">
+            <div class="row">
+              <div class="col">
+                <div class="label">
+                  <span class="text">加工单位</span>
+                  <span class="explanation">(必选)</span>
+                </div>
+                <div class="info elCtn">
+                  <el-cascader placeholder="请选择加工单位"
+                    v-model="item.client_id_arr"
+                    :options="processClientList"
+                    @change="(ev)=>{item.client_id=ev[2]}"></el-cascader>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label">
+                  <span class="text">加工工序</span>
+                  <span class="explanation">(默认)</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input v-model="item.process_name"
+                    disabled></el-input>
+                </div>
+              </div>
+              <div class="col">
+                <div class="spaceBetween">
+                  <div class="once">
+                    <div class="label">
+                      <span class="text">订购时间</span>
+                      <span class="explanation">(必选)</span>
+                    </div>
+                    <div class="info elCtn">
+                      <el-date-picker style="width:100%"
+                        placeholder="请选择时间"
+                        value-format="yyyy-MM-dd"
+                        v-model="item.start_time"></el-date-picker>
+                    </div>
+                  </div>
+                  <div class="once">
+                    <div class="label">
+                      <span class="text">交货日期</span>
+                      <span class="explanation">(必选)</span>
+                    </div>
+                    <div class="info elCtn">
+                      <el-date-picker style="width:100%"
+                        placeholder="请选择交货日期"
+                        value-format="yyyy-MM-dd"
+                        v-model="item.end_time"></el-date-picker>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row"
+              v-for="(itemPro,indexPro) in item.product_info_data"
+              :key="'pro'+ indexPro">
+              <div class="col">
+                <div class="label"
+                  v-if="indexPro===0">
+                  <span class="text">产品信息</span>
+                  <span class="explanation">(必选)</span>
+                </div>
+                <div class="info elCtn">
+                  <el-select placeholder="请选择产品信息"
+                    v-model="itemPro.select_arr"
+                    @change="getProInfo($event,itemPro)">
+                    <el-option v-for="(item,index) in productionDivideInfo[0].product_info_data"
+                      :key="index"
+                      :value="item.product_id+'/'+ item.part_id+'/'+item.size_id+'/'+ item.color_id"
+                      :label="item.size_name?(item.name||item.product_code||item.system_code)+'/'+ item.part_name+'/'+item.size_name+'/'+ item.color_name:(item.name||item.product_code||item.system_code)+'/'+ item.part_name"></el-option>
+                  </el-select>
+                </div>
+              </div>
+              <div class="col">
+                <div class="spaceBetween">
+                  <div class="once">
+                    <div class="label"
+                      v-if="indexPro===0">
+                      <span class="text">单价</span>
+                      <span class="explanation">(必填)</span>
+                    </div>
+                    <div class="info elCtn">
+                      <el-input v-model="itemPro.price"
+                        placeholder="请输入单价"
+                        @input="(ev)=>{itemPro.total_price=Number(ev)*Number(itemPro.number)}">
+                        <template slot="append">元</template>
+                      </el-input>
+                    </div>
+                  </div>
+                  <div class="once">
+                    <div class="label"
+                      v-if="indexPro===0">
+                      <span class="text">数量</span>
+                      <span class="explanation">(必填)</span>
+                    </div>
+                    <div class="info elCtn">
+                      <el-input v-model="itemPro.number"
+                        :disabled="materialPlanList.find((item) => Number(item.id) === Number(materialPlanIndex))&&materialPlanList.find((item) => Number(item.id) === Number(materialPlanIndex)).type===2"
+                        @input="(ev)=>{itemPro.total_price=Number(ev)*Number(itemPro.price)}"
+                        placeholder="请输入数量">
+                      </el-input>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label"
+                  v-if="indexPro===0">
+                  <span class="text">合计总价</span>
+                  <span class="explanation">(默认)</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input v-model="itemPro.total_price"
+                    placeholder="默认"
+                    disabled>
+                  </el-input>
+                </div>
+              </div>
+              <div class="opr hoverRed"
+                @click="item.product_info_data.length>1?$deleteItem(item.product_info_data,indexPro):$deleteItem(productionDivideInfo,index)">删除</div>
+            </div>
+            <div class="row"
+              v-for="(itemOther,indexOther) in item.others_fee"
+              :key="'other'+indexOther">
+              <div class="col">
+                <div class="label"
+                  v-if="indexOther===0">
+                  <span class="text">额外费用名称</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input placeholder="请输入额外费用名称"
+                    v-model="itemOther.name"></el-input>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label"
+                  v-if="indexOther===0">
+                  <span class="text">额外费用金额</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input placeholder="请输入额外费用金额"
+                    v-model="itemOther.price">
+                    <template slot="append">元</template>
+                  </el-input>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label"
+                  v-if="indexOther===0">
+                  <span class="text">额外费用备注</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input placeholder="请输入额外费用备注"
+                    v-model="itemOther.desc"></el-input>
+                </div>
+              </div>
+              <div class="opr hoverBlue"
+                v-if="indexOther===0"
+                @click="$addItem(item.others_fee,{
+                  desc: '',
+                  name: '',
+                  price: ''
+                })">添加</div>
+              <div class="opr hoverRed"
+                v-if="indexOther>0"
+                @click="$deleteItem(item.others_fee,indexOther)">删除</div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="label">
+                  <span class="text">备注信息</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input placeholder="请输入备注信息"
+                    v-model="item.desc"></el-input>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="btn backHoverBlue"
+            style="margin-bottom:16px"
+            @click="addDivideClient">添加分配单位</div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="dividePlanFlag = false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="saveDivideProductionPlan">确认重新分配</span>
+        </div>
+      </div>
+    </div>
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
@@ -712,6 +977,15 @@
         </div>
       </div>
     </div>
+    <zh-deduct :show="deductFlag"
+      @close="deductFlag = false"
+      :type="deductInfo.type"
+      :id="deductInfo.doc_id"
+      :client_id="deductInfo.client_id"
+      :client_name="deductInfo.client_name"></zh-deduct>
+    <zh-deduct-detail :show="deductDetailFlag"
+      @close="deductDetailFlag = false"
+      :data="deductDetail"></zh-deduct-detail>
   </div>
 </template>
 
@@ -726,12 +1000,22 @@ export default Vue.extend({
   data(): {
     materialPlanList: MaterialPlanInfo[]
     productionPlanInfo: ProductionPlanInfo[]
+    productionDivideInfo: ProductionPlanInfo[]
     productionPlanList: ProductionPlanInfo[]
     materialSupplementInfo: MaterialSupplementInfo
     [propName: string]: any
   } {
     return {
       loading: true,
+      deductFlag: false,
+      deductDetailFlag: false,
+      deductDetail: [],
+      deductInfo: {
+        client_id: '',
+        client_name: '',
+        doc_id: '',
+        type: 2
+      },
       order_id: 0,
       orderIndex: '0',
       orderInfo: {
@@ -796,6 +1080,9 @@ export default Vue.extend({
       materialPlanIndex: '0',
       productionPlanFlag: false,
       materialPlanFlag: false,
+      dividePlanFlag: false,
+      checkAllColorSize: false,
+      checkAllPro: false,
       productionPlanInfo: [
         {
           process_type: '',
@@ -863,6 +1150,7 @@ export default Vue.extend({
           }
         ]
       },
+      productionDivideInfo: [],
       bearClientArr: [] // 所有的相关承担单位，包括纱线订购厂，加工厂之类的
     }
   },
@@ -907,6 +1195,8 @@ export default Vue.extend({
     },
     // 被选中的产品信息
     checkList(): MaterailPlanData[] {
+      // 监听一下全选按钮
+      console.log(this.checkAllColorSize, this.checkAllPro)
       const finded = this.materialPlanList.find((item) => Number(item.id) === Number(this.materialPlanIndex))
       return finded ? finded.material_plan_data.filter((item) => item.check) : []
     },
@@ -916,7 +1206,7 @@ export default Vue.extend({
       let checkListToChange = this.$clone(this.checkList)
       checkListToChange.forEach((item) => {
         item.info_data.forEach((itemChild) => {
-          itemChild.process_name_arr = []
+          delete itemChild.process_name_arr
         })
       })
       return this.$flatten(this.$flatten(checkListToChange))
@@ -1036,6 +1326,7 @@ export default Vue.extend({
     },
     // 根据加工单选的信息计算物料信息
     getMaterialInfo(ifShow: boolean = false) {
+      console.log(this.productionPlanInfo)
       // 填写方式
       const edit_type = this.materialPlanList.find((item) => Number(item.id) === Number(this.materialPlanIndex))?.type
       this.productionPlanInfo.forEach((item) => {
@@ -1310,6 +1601,105 @@ export default Vue.extend({
             message: '已取消删除'
           })
         })
+    },
+    // 扣款
+    goDeduct(info: any, type: 2 | 3) {
+      this.deductInfo.client_id = info.client_id
+      this.deductInfo.client_name = info.client_name
+      this.deductInfo.doc_id = info.id
+      this.deductInfo.type = type
+      this.deductFlag = true
+    },
+    getDeduct(info: any[]) {
+      if (!info || info.length === 0) {
+        this.$message.warning('暂无扣款信息')
+      } else {
+        this.deductDetail = info
+        this.deductDetailFlag = true
+      }
+    },
+    // 拆单子
+    divideProductionPlan(info: ProductionPlanInfo) {
+      this.productionDivideInfo = [this.$clone(info)]
+      this.addDivideClient()
+      this.dividePlanFlag = true
+    },
+    // 拆分单据新增加工单位
+    addDivideClient() {
+      this.productionDivideInfo.push(this.$clone(this.productionDivideInfo[0]))
+      const index = this.productionDivideInfo.length - 1
+      this.productionDivideInfo[index].total_number = 0
+      this.productionDivideInfo[index].client_id_arr = []
+      this.productionDivideInfo[index].client_id = ''
+      this.productionDivideInfo[index].id = ''
+      this.productionDivideInfo[index].total_number = ''
+      this.productionDivideInfo[index].product_info_data.forEach((item) => {
+        item.total_price = ''
+        item.number = ''
+        item.select_arr = item.product_id + '/' + item.part_id + '/' + item.size_id + '/' + item.color_id
+      })
+      this.productionDivideInfo[index].start_time = this.$getDate(new Date())
+    },
+    saveDivideProductionPlan() {
+      this.$message.error('暂未开放')
+      return
+      console.log(this.productionDivideInfo)
+      const formcheck = this.productionDivideInfo.some((item) => {
+        return (
+          this.$formCheck(item, [
+            {
+              key: 'client_id',
+              errMsg: '请选择加工单位'
+            }
+          ]) ||
+          item.product_info_data.some((itemChild) => {
+            return this.$formCheck(itemChild, [
+              {
+                key: 'product_id',
+                errMsg: '请选择产品信息'
+              },
+              {
+                key: 'price',
+                errMsg: '请输入分配单价'
+              },
+              {
+                key: 'number',
+                errMsg: '请输入分配数量'
+              }
+            ])
+          })
+        )
+      })
+      console.log(formcheck)
+      if (!formcheck) {
+        let errMsg = ''
+        this.productionDivideInfo.forEach((item, index) => {
+          if (index === 0) {
+            item.product_info_data.forEach((itemChild) => {
+              this.productionDivideInfo.slice(1).forEach((itemFind) => {
+                itemFind.product_info_data.forEach((itemSon) => {
+                  if (
+                    itemSon.product_id === itemChild.product_id &&
+                    itemSon.size_name === itemChild.size_name &&
+                    itemSon.color_name === itemChild.color_name &&
+                    itemSon.part_id === itemChild.part_id
+                  ) {
+                    itemChild.number = Number(itemChild.number) - Number(itemSon.number)
+                    if (itemChild.number < 0) {
+                      errMsg = '拆分数量大于分配数量,请重新分配'
+                    }
+                  }
+                })
+              })
+            })
+          } else {
+          }
+        })
+        if (!errMsg) {
+        } else {
+          this.$message.error(errMsg)
+        }
+      }
     }
   },
   mounted() {

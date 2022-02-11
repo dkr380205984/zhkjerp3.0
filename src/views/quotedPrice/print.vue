@@ -107,7 +107,7 @@
                   <div class="tcol">{{ itemYarn.weight }}{{ itemYarn.unit }}</div>
                   <div class="tcol">{{ itemYarn.loss }}%</div>
                   <div class="tcol">{{ itemYarn.price }}元</div>
-                  <div class="tcol">{{ itemYarn.total_price }}元</div>
+                  <div class="tcol">{{ $toFixed(itemYarn.total_price) }}元</div>
                 </div>
                 <div class="trow"
                   v-for="(itemDecorateMaterial, indexDecorateMaterial) in item.assist_material_data"
@@ -119,7 +119,7 @@
                   <div class="tcol">{{ itemDecorateMaterial.number }}{{ itemDecorateMaterial.unit }}</div>
                   <div class="tcol">{{ itemDecorateMaterial.loss }}%</div>
                   <div class="tcol">{{ itemDecorateMaterial.price }}元</div>
-                  <div class="tcol">{{ itemDecorateMaterial.total_price }}元</div>
+                  <div class="tcol">{{ $toFixed(itemDecorateMaterial.total_price) }}元</div>
                 </div>
                 <div class="trow">
                   <div class="tcol bgGray f0922">费用名称</div>
@@ -135,7 +135,7 @@
                     {{ itemWeave.name || '无' }}
                   </div>
                   <div class="tcol f3">{{ itemWeave.desc || '无' }}</div>
-                  <div class="tcol f0922">{{ itemWeave.total_price || 0 }}元</div>
+                  <div class="tcol f0922">{{ $toFixed(itemWeave.total_price) }}元</div>
                 </div>
                 <div class="trow"
                   v-for="(itemHalfProcess, indexHalfProcess) in item.semi_product_data"
@@ -148,7 +148,7 @@
                     {{ itemHalfProcess.process_name.join(',') || '无' }}
                   </div>
                   <div class="tcol f3">{{ itemHalfProcess.desc || '无' }}</div>
-                  <div class="tcol f0922">{{ itemHalfProcess.total_price || 0 }}元</div>
+                  <div class="tcol f0922">{{  $toFixed(itemHalfProcess.total_price) }}元</div>
                 </div>
                 <div class="trow"
                   v-for="(itemFinishedProcess, indexFinishedProcess) in item.production_data"
@@ -161,7 +161,7 @@
                     {{ itemFinishedProcess.name.join(',') || '无' }}
                   </div>
                   <div class="tcol f3">{{ itemFinishedProcess.desc || '无' }}</div>
-                  <div class="tcol f0922">{{ itemFinishedProcess.total_price || 0 }}元</div>
+                  <div class="tcol f0922">{{$toFixed(itemFinishedProcess.total_price)}}元</div>
                 </div>
                 <div class="trow"
                   v-for="(itemPackMaterial, indexPackMaterial) in item.pack_material_data"
@@ -177,7 +177,7 @@
                     {{ itemPackMaterial.material_name || '无' }}
                   </div>
                   <div class="tcol f3">{{ itemPackMaterial.desc || '无' }}</div>
-                  <div class="tcol f0922">{{ itemPackMaterial.total_price || 0 }}元</div>
+                  <div class="tcol f0922">{{ $toFixed(itemPackMaterial.total_price)}}元</div>
                 </div>
                 <div class="trow"
                   v-for="(itemOther, indexOther) in item.other_fee_data"
@@ -188,7 +188,7 @@
                     {{ itemOther.name || '无' }}
                   </div>
                   <div class="tcol f3">{{ itemOther.desc || '无' }}</div>
-                  <div class="tcol f0922">{{ itemOther.total_price || 0 }}元</div>
+                  <div class="tcol f0922">{{  $toFixed(itemOther.total_price) }}元</div>
                 </div>
                 <div class="trow"
                   v-for="(itemOther, indexOther) in item.no_production_fee_data"
@@ -199,7 +199,7 @@
                     {{ itemOther.name || '无' }}
                   </div>
                   <div class="tcol f3">{{ itemOther.desc || '无' }}</div>
-                  <div class="tcol f0922">{{ itemOther.total_price || 0 }}元</div>
+                  <div class="tcol f0922">{{ $toFixed(itemOther.total_price) }}元</div>
                 </div>
                 <div class="trow">
                   <div class="tcol circlrParent f0922">
@@ -210,12 +210,12 @@
                     {{ item.transport_fee ? '运输费用' : '无' }}
                   </div>
                   <div class="tcol f3">{{ item.transport_fee_desc || '无' }}</div>
-                  <div class="tcol f0922">{{ item.transport_fee || 0 }}元</div>
+                  <div class="tcol f0922">{{  $toFixed(item.transport_fee) }}元</div>
                 </div>
                 <div class="trow">
                   <div class="tcol bgGray f0922">小计</div>
                   <div class="tcol bgGray f3"></div>
-                  <div class="tcol bgGray f0922">{{ productTotalPrice[index] }}元</div>
+                  <div class="tcol bgGray f0922">{{  $toFixed(productTotalPrice[index]) }}元</div>
                 </div>
               </div>
             </div>
@@ -230,22 +230,22 @@
               <div class="trow">
                 <div class="tcol f0922">基本佣金</div>
                 <div class="tcol f3">{{ quotedPriceInfo.commission_percentage }}%</div>
-                <div class="tcol f0922">{{ quotedPriceInfo.commission_price }}元</div>
+                <div class="tcol f0922">{{  $toFixed(quotedPriceInfo.commission_price) }}元</div>
               </div>
               <div class="trow">
                 <div class="tcol f0922">基本税率</div>
                 <div class="tcol f3">{{ quotedPriceInfo.rate_taxation }}%</div>
-                <div class="tcol f0922">{{ quotedPriceInfo.rate_price }}元</div>
+                <div class="tcol f0922">{{  $toFixed(quotedPriceInfo.rate_price) }}元</div>
               </div>
               <div class="trow">
                 <div class="tcol f0922">基本利润</div>
                 <div class="tcol f3">{{ quotedPriceInfo.profit_percentage }}%</div>
-                <div class="tcol f0922">{{ quotedPriceInfo.profit_price }}元</div>
+                <div class="tcol f0922">{{  $toFixed(quotedPriceInfo.profit_price) }}元</div>
               </div>
               <div class="trow">
                 <div class="tcol bgGray f0922">合计总价</div>
                 <div class="tcol bgGray f3"></div>
-                <div class="tcol bgGray f0922">{{ totalPrice }}元</div>
+                <div class="tcol bgGray f0922">{{  $toFixed(totalPrice) }}元</div>
               </div>
             </div>
           </div>

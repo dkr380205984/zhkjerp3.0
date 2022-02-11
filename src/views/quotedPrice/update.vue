@@ -255,7 +255,7 @@
                     placeholder="单价"
                     @change="cmpTotalPrice(itemYarn)"
                     :disabled="itemYarn.tree_data.length===0">
-                    <template slot="append">元/{{itemYarn.unit || '单位'}}</template>
+                    <template slot="append">元/{{itemYarn.unit==='g'?'kg':itemYarn.unit || '单位'}}</template>
                   </el-input>
                   <el-input class="once"
                     v-model="itemYarn.total_price"
@@ -1035,7 +1035,7 @@ export default Vue.extend({
     realTotalPrice(): string {
       return (
         Number(this.totalPrice) *
-        (1 -
+        (1 +
           (Number(this.quotedPriceInfo.commission_percentage) / 100 || 0) +
           (Number(this.quotedPriceInfo.profit_percentage) / 100 || 0) +
           Number(this.quotedPriceInfo.rate_taxation) / 100 || 0)
@@ -1230,10 +1230,28 @@ export default Vue.extend({
       }
     },
     // 辅助计算产品原料和装饰辅料的小计，小计本身可直接修改
-    cmpTotalPrice(info: { total_price: number; weight: number; loss: any; price: number; number: number }) {
-      info.total_price = this.$toFixed(
-        (Number(info.weight || info.number) || 0) * (1 + (Number(info.loss) || 0) / 100) * (Number(info.price) || 0)
-      )
+    // 辅助计算产品原料和装饰辅料的小计，小计本身可直接修改
+    cmpTotalPrice(info: {
+      total_price: number
+      weight: number
+      loss: any
+      price: number
+      number: number
+      unit?: string
+    }) {
+      // 为了纱线单独做数量为g单价为kg的判断
+      if (info.unit === 'g') {
+        info.total_price = this.$toFixed(
+          ((Number(info.weight || info.number) || 0) *
+            (1 + (Number(info.loss) || 0) / 100) *
+            (Number(info.price) || 0)) /
+            1000
+        )
+      } else {
+        info.total_price = this.$toFixed(
+          (Number(info.weight || info.number) || 0) * (1 + (Number(info.loss) || 0) / 100) * (Number(info.price) || 0)
+        )
+      }
     },
     // 把通过计算属性得到的价格以及通过级联选择器选到的id赋给表单数据
     getCmpData() {
@@ -1352,7 +1370,9 @@ export default Vue.extend({
                       },
                       {
                         key: 'unit',
-                        errMsg: '请输入产品原料数量单位'
+                        errMsg: '请输入产品原料数量单位',
+                        regExp: /^g$|^m$|^kg$/,
+                        regNegate: true
                       },
                       {
                         key: 'price',
@@ -1482,7 +1502,7 @@ export default Vue.extend({
           quotedPrice.create(this.quotedPriceInfo).then((res) => {
             if (res.data.status) {
               this.$message.success('修改成功')
-              this.$router.push('/quotedPrice/list?page=1&keyword=&client_id=&user_id=&status=0&date=')
+              this.$router.push('/quotedPrice/detail?id=' + Number(this.$route.query.id))
             } else {
               // 提交不成功把tree_data反复横跳改来改去
               // @ts-ignore

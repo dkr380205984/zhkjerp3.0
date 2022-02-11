@@ -96,13 +96,13 @@ export default Vue.extend({
             id: '9-3',
             icon: 'icon-shengchanpinjianyan',
             url: '/inspection/list?page=1&type=1'
+          },
+          {
+            name: '包装计划',
+            id: '10-3',
+            icon: 'icon-zhuangxiangjihua',
+            url: '/packManage/list?page=1&type=1'
           }
-          // {
-          //   name: '装箱计划——暂无',
-          //   id: 9,
-          //   icon: 'icon-zhuangxiangjihua',
-          //   url: '/packPlan/list?page=1&type=1'
-          // },
           // {
           //   name: '装箱运输——暂无',
           //   id: 10,

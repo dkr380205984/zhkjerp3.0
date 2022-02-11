@@ -60,7 +60,7 @@
                       @change="getImport">
                       <el-radio v-for="item in searchList"
                         :key="item.id"
-                        :label="item.id">{{item.product_code}}</el-radio>
+                        :label="item.id">{{item.product_code || item.system_code}}</el-radio>
                     </el-radio-group>
                   </div>
                 </div>
@@ -533,6 +533,7 @@ import { CascaderInfo } from '@/types/vuex'
 import { sample } from '@/assets/js/api'
 export default Vue.extend({
   props: {
+    // 注意：修改样品有两种情况，一种是继续打样，表面修改，实际新增，一种就是普通的修改样品
     edit: {
       type: Boolean,
       required: false
@@ -576,12 +577,6 @@ export default Vue.extend({
     },
     // 报价单描述信息
     quote_rel_product_data: {
-      required: false
-    },
-    // 注意：修改样品有两种情况，一种是继续打样，表面修改，实际新增，一种就是普通的修改样品
-    ifUpdate: {
-      type: Boolean,
-      default: false,
       required: false
     },
     // 是否有修改意见
@@ -853,7 +848,7 @@ export default Vue.extend({
     },
     getCmpData() {
       // 注意继续打样修改是新增样品
-      if ((this.id || this.data) && this.ifUpdate) {
+      if ((this.id || this.data) && this.edit) {
         this.sampleInfo.id = this.id || (this.data as SampleInfo).id
       } else {
         this.sampleInfo.id = null
@@ -970,7 +965,7 @@ export default Vue.extend({
         this.loading = true
         sample.create(this.sampleInfo).then((res) => {
           if (res.data.status) {
-            this.$message.success('添加成功')
+            this.$message.success(this.eidt ? '修改成功' : '添加成功')
             this.$emit('afterSave', res.data.data)
             if (this.afterSaveClear) {
               this.reset()

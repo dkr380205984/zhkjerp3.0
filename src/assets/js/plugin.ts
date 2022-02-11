@@ -317,9 +317,10 @@ const plugin = {
   // 表单验证，这里只验证对象，不验证数组，通常数组只要检测到某一次formCheck返回false即可停止验证
   // 第一个参数接收一个待验证对象 第二个参数接收一个待验证字段数组，如有特殊正则验证可以自定义new RegExp,通常我们只验证是否为空
   // regNormal:isNum | isEmail | isNull | isPhone
+  // regNegate 对正则验证的结果是否取反
   formCheck(
     data: any,
-    checkArr: Array<{ key: string, errMsg?: string, regExp?: RegExp, regNormal?: regNormal }>
+    checkArr: Array<{ key: string, errMsg?: string, regExp?: RegExp, regNormal?: regNormal, regNegate?: boolean }>
   ): boolean {
     let msg = ''
     return checkArr.some((item) => {
@@ -343,7 +344,8 @@ const plugin = {
           }
         }
       } else {
-        if (item.regExp.test(data[item.key])) {
+        const result = item.regExp.test(data[item.key])
+        if (item.regNegate ? !result : result) {
           msg = item.errMsg || '验证失败'
         }
       }

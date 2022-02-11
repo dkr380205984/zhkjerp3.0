@@ -87,7 +87,7 @@
           </div>
           <div class="col">
             <div class="label">{{productType}}名称：</div>
-            <div class="text">{{productInfo.title||'无'}}</div>
+            <div class="text">{{productInfo.name||'无'}}</div>
           </div>
           <div class="col">
             <div class="label">{{productType}}品类：</div>

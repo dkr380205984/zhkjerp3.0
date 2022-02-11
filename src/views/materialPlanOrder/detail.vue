@@ -774,7 +774,8 @@ export default Vue.extend({
           {
             key: 'unit',
             errMsg: '物料的单位只能为kg或m',
-            regExp: /^((?!kg|m).)+$/
+            regExp: /^m$|^kg$/,
+            regNegate: true
           },
           // {
           //   key: 'price',

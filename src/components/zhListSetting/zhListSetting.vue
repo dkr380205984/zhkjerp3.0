@@ -74,7 +74,7 @@ export default Vue.extend({
       type: Boolean,
       required: true
     },
-    // 1:报价单
+    // 1:报价单 2.样单 3.订单 4.物料计划 5.物料出入库 6.生产计划  7.产品检验 8.包装计划
     type: {
       type: Number,
       required: true

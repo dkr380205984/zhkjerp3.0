@@ -523,9 +523,9 @@
             </div>
             <div class="trow">
               <div class="tcol bgGray label">后道工序</div>
-              <div class="tcol"></div>
+              <div class="tcol">{{craftInfo.process_data.map((item)=>item.process_name).join('；')}}</div>
               <div class="tcol bgGray label">备注信息</div>
-              <div class="tcol"></div>
+              <div class="tcol">{{craftInfo.desc}}</div>
             </div>
           </div>
         </div>

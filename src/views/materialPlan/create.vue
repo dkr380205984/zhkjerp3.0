@@ -181,9 +181,9 @@
                         content="统一工序"
                         placement="top">
                         <svg class="iconFont copyIcon hoverBlue"
-                          aria-hidden="true">
-                          <use xlink:href='#icon-tongbushuju1'
-                            @click="copyInfo(item.info_data,['process_name_arr','process_name','process_type'])"></use>
+                          aria-hidden="true"
+                          @click="copyInfo(item.info_data,['process_name_arr','process_name','process_type'])">
+                          <use xlink:href='#icon-tongbushuju1'></use>
                         </svg>
                       </el-tooltip>
                     </div>
@@ -193,9 +193,9 @@
                         content="统一原料"
                         placement="top">
                         <svg class="iconFont copyIcon hoverBlue"
-                          aria-hidden="true">
-                          <use xlink:href='#icon-tongbushuju1'
-                            @click="copyInfo(item.info_data,['tree_data','material_name','material_id'])"></use>
+                          aria-hidden="true"
+                          @click="copyInfo(item.info_data,['tree_data','material_name','material_id'])">
+                          <use xlink:href='#icon-tongbushuju1'></use>
                         </svg>
                       </el-tooltip>
                     </div>
@@ -205,9 +205,9 @@
                         content="统一颜色"
                         placement="top">
                         <svg class="iconFont copyIcon hoverBlue"
-                          aria-hidden="true">
-                          <use xlink:href='#icon-tongbushuju1'
-                            @click="copyInfo(item.info_data,['material_color'])"></use>
+                          aria-hidden="true"
+                          @click="copyInfo(item.info_data,['material_color'])">
+                          <use xlink:href='#icon-tongbushuju1'></use>
                         </svg>
                       </el-tooltip>
                     </div>
@@ -220,9 +220,9 @@
                         content="统一数量"
                         placement="top">
                         <svg class="iconFont copyIcon hoverBlue"
-                          aria-hidden="true">
-                          <use xlink:href='#icon-tongbushuju1'
-                            @click="copyInfo(item.info_data,['final_number','unit'])"></use>
+                          aria-hidden="true"
+                          @click="copyInfo(item.info_data,['final_number','unit'])">
+                          <use xlink:href='#icon-tongbushuju1'></use>
                         </svg>
                       </el-tooltip>
                     </div>
@@ -266,9 +266,31 @@
                           placeholder="物料颜色"></el-autocomplete>
                       </div>
                     </div>
-                    <div class="tcol"
-                      :class="itemChild.has_plan?'blue':'gray'">{{itemChild.has_plan?(itemChild.production_number + 'g'):'无计划值'}}</div>
-                    <div class="tcol">{{itemChild.need_number}}kg</div>
+                    <div class="tcol">
+                      <span class="blue"
+                        v-if="itemChild.has_plan">{{itemChild.production_number}}g</span>
+                      <div class="elCtn"
+                        v-else>
+                        <el-input class="UnitCtn"
+                          v-model="itemChild.production_number"
+                          placeholder="无计划值"
+                          @input="(ev)=>{
+                            itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='g'?1000:1));
+                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)
+                          }">
+                          <template slot="append">
+                            <el-input v-model="itemChild.unit"
+                              placeholder="单位"></el-input>
+                          </template>
+                        </el-input>
+                      </div>
+                    </div>
+                    <div class="tcol">
+                      <span class="blue"
+                        v-if="itemChild.need_number">{{itemChild.need_number}}{{itemChild.unit==='g'?'kg':itemChild.unit}}</span>
+                      <span v-else
+                        class="gray">0{{itemChild.unit==='g'?'kg':itemChild.unit}}</span>
+                    </div>
                     <div class="tcol">
                       <div class="elCtn">
                         <el-input v-model="itemChild.loss"
@@ -280,12 +302,11 @@
                     </div>
                     <div class="tcol">
                       <div class="elCtn">
-                        <el-input class="UnitCtn"
-                          v-model="itemChild.final_number"
-                          placeholder="数量">
+                        <el-input v-model="itemChild.final_number"
+                          placeholder="数量"
+                          @input="(ev)=>itemChild.loss = $toFixed((itemChild.final_number<=itemChild.need_number || !itemChild.need_number)?0:(itemChild.final_number-itemChild.need_number)/itemChild.need_number*100)">
                           <template slot="append">
-                            <el-input v-model="itemChild.unit"
-                              placeholder="单位"></el-input>
+                            {{itemChild.unit==='g'?'kg':itemChild.unit}}
                           </template>
                         </el-input>
                       </div>
@@ -305,7 +326,7 @@
                             production_number: '',
                             loss: '',
                             final_number: '',
-                            unit: 'kg'
+                            unit: 'g'
                         })">添加</span>
                         <span class="opr orange"
                           @click="$addItem(item.info_data,$clone(itemChild))">复制</span>
@@ -367,7 +388,7 @@
                         production_number: '',
                         loss: '',
                         final_number: '',
-                        unit: 'kg'
+                        unit: 'g'
                     })">新增物料</span>
                     <div class="opr hoverRed"
                       @click="item.info_data=[]">不需要物料</div>
@@ -382,9 +403,9 @@
                         content="统一工序"
                         placement="top">
                         <svg class="iconFont copyIcon hoverBlue"
-                          aria-hidden="true">
-                          <use xlink:href='#icon-tongbushuju1'
-                            @click="copyInfo(item.info_data,['process_name_arr','process_name','process_type'])"></use>
+                          aria-hidden="true"
+                          @click="copyInfo(item.info_data,['process_name_arr','process_name','process_type'])">
+                          <use xlink:href='#icon-tongbushuju1'></use>
                         </svg>
                       </el-tooltip>
                     </div>
@@ -394,9 +415,9 @@
                         content="统一原料"
                         placement="top">
                         <svg class="iconFont copyIcon hoverBlue"
-                          aria-hidden="true">
-                          <use xlink:href='#icon-tongbushuju1'
-                            @click="copyInfo(item.info_data,['tree_data','material_name','material_id'])"></use>
+                          aria-hidden="true"
+                          @click="copyInfo(item.info_data,['tree_data','material_name','material_id'])">
+                          <use xlink:href='#icon-tongbushuju1'></use>
                         </svg>
                       </el-tooltip>
                     </div>
@@ -406,9 +427,9 @@
                         content="统一颜色"
                         placement="top">
                         <svg class="iconFont copyIcon hoverBlue"
-                          aria-hidden="true">
-                          <use xlink:href='#icon-tongbushuju1'
-                            @click="copyInfo(item.info_data,['material_color'])"></use>
+                          aria-hidden="true"
+                          @click="copyInfo(item.info_data,['material_color'])">
+                          <use xlink:href='#icon-tongbushuju1'></use>
                         </svg>
                       </el-tooltip>
                     </div>
@@ -421,9 +442,9 @@
                         content="统一数量"
                         placement="top">
                         <svg class="iconFont copyIcon hoverBlue"
-                          aria-hidden="true">
-                          <use xlink:href='#icon-tongbushuju1'
-                            @click="copyInfo(item.info_data,['final_number','unit'])"></use>
+                          aria-hidden="true"
+                          @click="copyInfo(item.info_data,['final_number','unit'])">
+                          <use xlink:href='#icon-tongbushuju1'></use>
                         </svg>
                       </el-tooltip>
                     </div>
@@ -467,8 +488,31 @@
                           placeholder="物料颜色"></el-autocomplete>
                       </div>
                     </div>
-                    <div class="tcol">{{itemChild.has_plan?(itemChild.production_number + 'g'):'无计划值'}}</div>
-                    <div class="tcol">{{itemChild.need_number}}kg</div>
+                    <div class="tcol">
+                      <span class="blue"
+                        v-if="itemChild.has_plan">{{itemChild.production_number}}g</span>
+                      <div class="elCtn"
+                        v-else>
+                        <el-input class="UnitCtn"
+                          v-model="itemChild.production_number"
+                          placeholder="无计划值"
+                          @input="(ev)=>{
+                            itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='g'?1000:1));
+                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)
+                          }">
+                          <template slot="append">
+                            <el-input v-model="itemChild.unit"
+                              placeholder="单位"></el-input>
+                          </template>
+                        </el-input>
+                      </div>
+                    </div>
+                    <div class="tcol">
+                      <span class="blue"
+                        v-if="itemChild.need_number">{{itemChild.need_number}}{{itemChild.unit==='g'?'kg':itemChild.unit}}</span>
+                      <span v-else
+                        class="gray">0{{itemChild.unit==='g'?'kg':itemChild.unit}}</span>
+                    </div>
                     <div class="tcol">
                       <div class="elCtn">
                         <el-input v-model="itemChild.loss"
@@ -480,12 +524,11 @@
                     </div>
                     <div class="tcol">
                       <div class="elCtn">
-                        <el-input class="UnitCtn"
-                          v-model="itemChild.final_number"
-                          placeholder="数量">
+                        <el-input v-model="itemChild.final_number"
+                          placeholder="数量"
+                          @input="(ev)=>itemChild.loss = $toFixed((itemChild.final_number<=itemChild.need_number || !itemChild.need_number)?0:(itemChild.final_number-itemChild.need_number)/itemChild.need_number*100)">
                           <template slot="append">
-                            <el-input v-model="itemChild.unit"
-                              placeholder="单位"></el-input>
+                            {{itemChild.unit==='g'?'kg':itemChild.unit}}
                           </template>
                         </el-input>
                       </div>
@@ -505,7 +548,7 @@
                           production_number: '',
                           loss: '',
                           final_number: '',
-                          unit: 'kg'
+                          unit: 'g'
                         })">添加</span>
                         <span class="opr orange"
                           @click="$addItem(item.info_data,$clone(itemChild))">复制</span>
@@ -555,7 +598,7 @@
             <div class="tcol">{{index+1}}</div>
             <div class="tcol">{{item.material_name}}</div>
             <div class="tcol">{{item.material_color}}</div>
-            <div class="tcol">{{item.need_number}}kg</div>
+            <div class="tcol">{{item.need_number}}{{item.unit==='g'?'kg':item.unit}}</div>
             <div class="tcol">
               <div class="elCtn">
                 <el-input v-model="item.loss"
@@ -569,7 +612,7 @@
               <div class="elCtn">
                 <el-input v-model="item.final_number"
                   placeholder="最终数量">
-                  <template slot="append">{{item.unit}}</template>
+                  <template slot="append">{{item.unit==='g'?'kg':item.unit}}</template>
                 </el-input>
               </div>
             </div>
@@ -811,6 +854,10 @@ export default Vue.extend({
               if (finded) {
                 finded.need_number = Number(itemChild.need_number) + Number(finded.need_number)
                 finded.final_number = Number(itemChild.final_number) + Number(finded.final_number)
+                finded.loss =
+                  finded.final_number >= finded.need_number
+                    ? this.$toFixed((finded.final_number / finded.need_number - 1) * 100)
+                    : 0
                 this.numberAutoMethod(100 * (Number(finded.final_number) / Number(finded.need_number) - 1))
               } else {
                 this.materialPlanInfo.material_plan_gather_data.push({
@@ -1037,7 +1084,7 @@ export default Vue.extend({
                             production_number: itemMat.number * 1000,
                             loss: '',
                             final_number: '',
-                            unit: 'kg',
+                            unit: 'g',
                             has_plan: true
                           }
                         })
@@ -1090,7 +1137,7 @@ export default Vue.extend({
                           production_number: itemMat.number * 1000,
                           loss: '',
                           final_number: '',
-                          unit: 'kg',
+                          unit: 'g',
                           has_plan: true
                         })
                       }
@@ -1128,7 +1175,7 @@ export default Vue.extend({
                               loss: '',
                               final_number: '',
                               has_plan: true,
-                              unit: 'kg'
+                              unit: 'g'
                             }
                           })
                         : [
@@ -1144,7 +1191,7 @@ export default Vue.extend({
                               production_number: '',
                               loss: '',
                               final_number: '',
-                              unit: 'kg'
+                              unit: 'g'
                             }
                           ]
                   })
@@ -1154,6 +1201,7 @@ export default Vue.extend({
           })
         })
       }
+      console.log(this.materialPlanInfo)
       this.confirmFlag = 2
     },
     // 工序信息
@@ -1197,7 +1245,7 @@ export default Vue.extend({
           need_number: '',
           production_number: '',
           loss: '',
-          unit: 'kg',
+          unit: 'g',
           final_number: ''
         }
       ]
@@ -1246,7 +1294,7 @@ export default Vue.extend({
       if (this.yarnTypeList.find((item) => item.value === ev[0])?.label === '面料') {
         info.unit = 'm'
       } else {
-        info.unit = 'kg'
+        info.unit = 'g'
       }
     },
     getCmpData() {
@@ -1255,7 +1303,11 @@ export default Vue.extend({
         item.info_data.forEach((itemChild) => {
           // @ts-ignore
           itemChild.tree_data = itemChild.tree_data.join(',')
+          itemChild.unit = itemChild.unit === 'g' ? 'kg' : itemChild.unit
         })
+      })
+      this.materialPlanInfo.material_plan_gather_data.forEach((item) => {
+        item.unit = item.unit === 'g' ? 'kg' : item.unit
       })
     },
     saveMaterialPlan() {
@@ -1297,8 +1349,9 @@ export default Vue.extend({
               },
               {
                 key: 'unit',
-                errMsg: '物料的单位只能为kg或m',
-                regExp: /^((?!kg|m).)+$/
+                errMsg: '物料的单位只能为g,kg或m',
+                regExp: /^g$|^m$|^kg$/,
+                regNegate: true
               }
             ])
           })
@@ -1308,7 +1361,7 @@ export default Vue.extend({
         materialPlan.create(this.materialPlanInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
-            this.$router.push('/materialPlan/list?id=' + this.$route.query.id)
+            this.$router.push('/materialPlan/detail?id=' + this.$route.query.id)
           }
         })
       }

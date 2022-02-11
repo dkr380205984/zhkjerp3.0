@@ -60,7 +60,7 @@
                       @change="getImport">
                       <el-radio v-for="item in searchList"
                         :key="item.id"
-                        :label="item.id">{{item.product_code}}</el-radio>
+                        :label="item.id">{{item.product_code || item.system_code}}</el-radio>
                     </el-radio-group>
                   </div>
                 </div>
@@ -690,7 +690,6 @@ export default Vue.extend({
           if (this.data) {
             this.changeDetailToEdit(this.data)
           } else {
-            console.log('来到ID这里了')
             if (this.id) {
               this.getImport(Number(this.id))
             }
@@ -828,7 +827,7 @@ export default Vue.extend({
       }
     },
     getCmpData() {
-      if (this.id || this.data) {
+      if ((this.id || this.data) && this.edit) {
         this.productInfo.id = this.id || (this.data as ProductInfo).id
       } else {
         this.productInfo.id = null
@@ -948,7 +947,7 @@ export default Vue.extend({
         this.loading = true
         product.create(this.productInfo).then((res) => {
           if (res.data.status) {
-            this.$message.success('添加成功')
+            this.$message.success(this.eidt ? '修改成功' : '添加成功')
             this.$emit('afterSave', res.data.data)
             if (this.afterSaveClear) {
               this.reset()

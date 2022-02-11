@@ -402,9 +402,9 @@
                                 content="统一单价和数量"
                                 placement="top">
                                 <svg class="iconFont copyIcon hoverBlue"
-                                  aria-hidden="true">
-                                  <use xlink:href='#icon-tongbushuju1'
-                                    @click="$copyInfo(itemChild.product_info,['price','number'])"></use>
+                                  aria-hidden="true"
+                                  @click="$copyInfo(itemPro.product_info,['price','number'])">
+                                  <use xlink:href='#icon-tongbushuju1'></use>
                                 </svg>
                               </el-tooltip>
                             </div>
@@ -569,9 +569,9 @@
                         content="统一单价和数量"
                         placement="top">
                         <svg class="iconFont copyIcon hoverBlue"
-                          aria-hidden="true">
-                          <use xlink:href='#icon-tongbushuju1'
-                            @click="$copyInfo(itemChild.product_info,['price','number'])"></use>
+                          aria-hidden="true"
+                          @click="$copyInfo(itemChild.product_info,['price','number'])">
+                          <use xlink:href='#icon-tongbushuju1'></use>
                         </svg>
                       </el-tooltip>
                     </div>

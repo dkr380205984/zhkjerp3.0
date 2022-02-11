@@ -327,7 +327,7 @@ export default Vue.extend({
       this.$emit('close')
     },
     getNewProduct(val: any) {
-      console.log(val)
+      this.productInfo = val
     },
     openUrl() {
       sessionStorage[`product_${this.$route.query.id}`] = JSON.stringify(this.productInfo)

@@ -131,7 +131,7 @@
                   </div>
                   <div class="tcol">{{item.size_name}}/{{item.color_name}}</div>
                   <div class="tcol">{{item.part_name}}</div>
-                  <div class="tcol">{{item.order_number}}</div>
+                  <div class="tcol">{{item.number}}</div>
                   <div class="tcol noPad"
                     style="flex:6">
                     <div class="trow"
@@ -147,7 +147,7 @@
                       <div class="tcol">{{itemChild.material_color}}</div>
                       <div class="tcol">{{itemChild.loss}}%</div>
                       <div class="tcol">{{itemChild.final_number}}{{itemChild.unit}}</div>
-                      <div class="tcol">{{itemChild.unit==='kg'?$toFixed(itemChild.final_number/item.order_number*1000)+'g':$toFixed(itemChild.final_number/item.order_number)+itemChild.unit}}</div>
+                      <div class="tcol">{{itemChild.unit==='kg'?$toFixed(itemChild.final_number/item.number*1000)+'g':$toFixed(itemChild.final_number/item.number)+itemChild.unit}}</div>
                     </div>
                   </div>
                 </div>

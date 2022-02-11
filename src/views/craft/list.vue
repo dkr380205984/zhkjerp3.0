@@ -276,7 +276,7 @@ export default Vue.extend({
       this.keyword = query.keyword || ''
       this.product_code = query.product_code || ''
       this.yarn_name = query.yarn_name || ''
-      this.user_id = query.user_id || this.$getLocalStorage('create_user')
+      this.user_id = query.user_id || ''
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
     },
