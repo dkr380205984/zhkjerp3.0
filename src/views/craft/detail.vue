@@ -6,14 +6,33 @@
       <div class="titleCtn">
         <div class="title">基本信息</div>
       </div>
+      <div class="detailCtn"
+        style="padding-bottom:0">
+        <div class="row">
+          <div class="col">
+            <div class="label">工艺单编号：</div>
+            <div class="text">{{craftInfo.craft_code}}</div>
+          </div>
+          <div class="col">
+            <div class="label">创建日期：</div>
+            <div class="text">{{craftInfo.create_time && craftInfo.create_time.slice(0,10)}}</div>
+          </div>
+          <div class="col">
+            <div class="label">创建人：</div>
+            <div class="text">{{craftInfo.user_name}}</div>
+          </div>
+        </div>
+      </div>
       <template v-if="!craftInfo.product_id&&!craftInfo.part_id">
-        <div class="detailCtn gray">
+        <div class="detailCtn gray"
+          style="padding-top:0">
           未绑定产品信息
         </div>
       </template>
       <template v-else>
         <template v-if="craftInfo.part_id">
-          <div class="detailCtn">
+          <div class="detailCtn"
+            style="padding-top:0">
             <div class="row">
               <div class="col">
                 <div class="label">配件名称：</div>
@@ -27,7 +46,8 @@
           </div>
         </template>
         <template v-else>
-          <div class="detailCtn">
+          <div class="detailCtn"
+            style="padding-top:0">
             <div class="row">
               <div class="col">
                 <div class="label">{{productType}}编号：</div>

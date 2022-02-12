@@ -52,8 +52,8 @@
                 <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
-                  :total="styleTotal"
-                  :current-page.sync="stylePage">
+                  :total="categoryTotal"
+                  :current-page.sync="categoryPage">
                 </el-pagination>
               </div>
             </div>

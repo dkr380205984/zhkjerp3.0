@@ -343,7 +343,7 @@
                   </div>
                   <div class="tcol">
                     <el-image style="width:100%;height:100%"
-                      :src="itemPro.image_data.length>0?itemPro.image_data[0]:''"
+                      :src="itemPro.image_data&&itemPro.image_data.length>0?itemPro.image_data[0]:''"
                       :preview-src-list="itemPro.image_data">
                       <div slot="error"
                         class="image-slot">

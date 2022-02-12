@@ -425,17 +425,17 @@
                               v-for="index in maxJia"
                               :key="index"
                               style="min-width:20%;max-width:20%;border-right:1px solid #010101">
-                              <template v-if="colorWeigth.warp_data[0].color_scheme[index-1]&&colorWeigth.weft_data[0].color_scheme[index-1]&&colorWeigth.warp_data[0].color_scheme[index-1].name===colorWeigth.weft_data[0].color_scheme[index-1].name">
+                              <template v-if="colorWeigth.warp_data[indexColour].color_scheme[index-1]&&colorWeigth.weft_data[indexColour].color_scheme[index-1]&&colorWeigth.warp_data[indexColour].color_scheme[index-1].name===colorWeigth.weft_data[indexColour].color_scheme[index-1].name">
                                 <div class="tcol alignCenter"
                                   style="max-width:100%;min-width:auto">
-                                  {{colorWeigth.warp_data[0].color_scheme[index-1].name}}
+                                  {{colorWeigth.warp_data[indexColour].color_scheme[index-1]?colorWeigth.warp_data[indexColour].color_scheme[index-1].name:''}}
                                 </div>
                               </template>
                               <template v-else>
                                 <div class="tcol alignCenter"
-                                  style="max-width:100%;min-width:auto">{{colorWeigth.warp_data[0].color_scheme[index-1]?colorWeigth.warp_data[0].color_scheme[index-1].name:''}}</div>
+                                  style="max-width:100%;min-width:auto">{{colorWeigth.warp_data[indexColour].color_scheme[index-1]?colorWeigth.warp_data[indexColour].color_scheme[index-1].name:''}}</div>
                                 <div class="tcol alignCenter"
-                                  style="max-width:100%;min-width:auto;border-right:0">{{colorWeigth.weft_data[0].color_scheme[index-1]?colorWeigth.weft_data[0].color_scheme[index-1].name:'0'}}</div>
+                                  style="max-width:100%;min-width:auto;border-right:0">{{colorWeigth.weft_data[indexColour].color_scheme[index-1]?colorWeigth.weft_data[indexColour].color_scheme[index-1].name:''}}</div>
                               </template>
                             </div>
                           </div>
