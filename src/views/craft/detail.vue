@@ -134,7 +134,7 @@
                 v-for="(item,index) in craftInfo.warp_data.color_data"
                 :key="index">
                 <span class="circle">{{index+1}}</span>
-                <span>{{item.product_color}}：</span>
+                <span>{{item.color_name}}：</span>
                 <div class="colorBox"
                   v-for="(itemColor,indexColor) in item.color_scheme"
                   :key="indexColor">
@@ -508,7 +508,7 @@
                 v-for="(item,index) in craftInfo.weft_data.color_data"
                 :key="index">
                 <span class="circle">{{index+1}}</span>
-                <span>{{item.product_color}}：</span>
+                <span>{{item.color_name}}：</span>
                 <div class="colorBox"
                   v-for="(itemColor,indexColor) in item.color_scheme"
                   :key="indexColor">
@@ -1206,7 +1206,9 @@ export default Vue.extend({
     },
     filterColorWeigth(itemColor: any) {
       return itemColor.material_weight
-        ? itemColor.material_weight.map((item: any) => item.material_name + ':' + item.weight + 'g').join(';')
+        ? itemColor.material_weight
+            .map((item: any) => item.material_name + ':' + this.$toFixed(item.weight) + 'g')
+            .join(';')
         : ''
     },
     // 穿综法1-2合并，此时你访问table[6][2]，返回的结果是null，所以我们需要table[6][1]的值,所以我们需要一个函数返回1

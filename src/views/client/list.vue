@@ -4,7 +4,7 @@
     <div class="topTagCtn">
       <div class="tag"
         :class="{'active':type===1}"
-        @click="type=1;changeRouter()">
+        @click="type=1;clientType='';changeRouter()">
         <div class="iconCtn">
           <svg class="iconFont"
             aria-hidden="true">
@@ -15,7 +15,7 @@
       </div>
       <div class="tag"
         :class="{'active':type===2}"
-        @click="type=2;changeRouter()">
+        @click="type=2;clientType='';changeRouter()">
         <div class="iconCtn">
           <svg class="iconFont"
             aria-hidden="true">
@@ -217,7 +217,7 @@ export default Vue.extend({
       })
         .then(() => {
           this.status = 1
-          this.keyword = ''
+          this.clientType = ''
           this.changeRouter()
         })
         .catch(() => {

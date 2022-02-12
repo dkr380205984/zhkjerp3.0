@@ -373,7 +373,7 @@
                         v-for="(itemChild,indexChild) in item.product_info"
                         :key="indexChild">
                         <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                        <div class="tcol">{{itemChild.price}}元</div>
+                        <div class="tcol">{{itemChild.price}}{{orderInfo.settle_unit||'元'}}</div>
                         <div class="tcol">{{itemChild.number}}</div>
                       </div>
                     </div>

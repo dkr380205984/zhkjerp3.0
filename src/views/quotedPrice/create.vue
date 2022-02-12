@@ -852,8 +852,10 @@
                   <span class="text">非生产型费用</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input v-model="itemNoPro.name"
-                    placeholder="非生产型费用"></el-input>
+                  <el-autocomplete class="inline-input"
+                    v-model="itemNoPro.name"
+                    :fetch-suggestions="searchNoProFee"
+                    placeholder="非生产型费用"></el-autocomplete>
                 </div>
               </div>
               <div class="col">
@@ -1342,6 +1344,20 @@ export default Vue.extend({
     }
   },
   methods: {
+    searchNoProFee(str: string, cb: Function) {
+      const arr = [
+        {
+          value: '打样费'
+        }
+      ]
+      cb(
+        str
+          ? arr.filter((item) => {
+              return item.value.toLowerCase().indexOf(str.toLowerCase()) === 0
+            })
+          : arr
+      )
+    },
     // 对比信息
     compareReturnInfo<T>(type: string, before: T, after: T) {
       if (type === 'image') {
