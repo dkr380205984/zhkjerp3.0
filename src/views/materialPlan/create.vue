@@ -213,7 +213,18 @@
                     </div>
                     <div class="tcol">单个数量</div>
                     <div class="tcol">所需数量</div>
-                    <div class="tcol">原料损耗</div>
+                    <div class="tcol">原料损耗
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一损耗"
+                        placement="top">
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true"
+                          @click="copyInfo(item.info_data,['loss']);changeAllLoss(item.info_data)">
+                          <use xlink:href='#icon-tongbushuju1'></use>
+                        </svg>
+                      </el-tooltip>
+                    </div>
                     <div class="tcol">最终数量
                       <el-tooltip class="item"
                         effect="dark"
@@ -435,7 +446,18 @@
                     </div>
                     <div class="tcol">单个数量</div>
                     <div class="tcol">所需数量</div>
-                    <div class="tcol">原料损耗</div>
+                    <div class="tcol">原料损耗
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一损耗"
+                        placement="top">
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true"
+                          @click="copyInfo(item.info_data,['loss']);changeAllLoss(item.info_data)">
+                          <use xlink:href='#icon-tongbushuju1'></use>
+                        </svg>
+                      </el-tooltip>
+                    </div>
                     <div class="tcol">最终数量
                       <el-tooltip class="item"
                         effect="dark"
@@ -993,22 +1015,27 @@ export default Vue.extend({
       return mergeArr
     },
     getProductionData() {
+      console.log(this.getOrderProduct(this.orderInfo))
       this.materialPlanInfo.production_plan_data = this.getOrderProduct(this.orderInfo).map((item) => {
         const cloneItem: any = this.$clone(item)
         cloneItem.product_data = item.childrenMergeInfo.map((itemChild) => {
+          // @ts-ignore
+          itemChild.add_percent = 0
           // @ts-ignore
           itemChild.info_data = item.part_data.map((itemPart) => {
             return {
               unit: itemPart.unit,
               name: itemPart.name,
               part_id: itemPart.id, // 下拉框选id用
-              number: ''
+              // @ts-ignore
+              number: itemPart.id === 0 ? itemChild.order_number : ''
             }
           })
           return itemChild
         })
         return cloneItem
       })
+      console.log(this.materialPlanInfo.production_plan_data)
     },
     // 计算所需物料--按尺码颜色
     getMaterialPlanDetail(partId?: number, number?: number, proInfo?: any) {
@@ -1402,6 +1429,12 @@ export default Vue.extend({
         }
       })
       this.justWatch = !this.justWatch
+    },
+    // 统一损耗逻辑
+    changeAllLoss(info: any) {
+      info.forEach((itemChild: any) => {
+        itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number)
+      })
     }
   },
   mounted() {
