@@ -46,12 +46,25 @@
                 :value="2"></el-option>
             </el-select>
           </div>
-          <div class="elCtn">
+          <div class="elCtn"
+            style="width:200px">
             <el-select placeholder="客户类型筛选"
               v-model="clientType"
-              @change="changeRouter"
+              @change="tag_id='';getClientTag($event)"
               clearable>
               <el-option v-for="item in clientTypeArr"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn"
+            style="width:200px">
+            <el-select placeholder="客户标签筛选"
+              v-model="tag_id"
+              @change="changeRouter"
+              clearable>
+              <el-option v-for="item in clientTagList"
                 :key="item.id"
                 :value="item.id"
                 :label="item.name"></el-option>
@@ -172,7 +185,9 @@ export default Vue.extend({
       clientType: '',
       clientBindList: [],
       unBindClient: [],
-      bindFlag: false
+      tag_id: '',
+      bindFlag: false,
+      clientTagList: []
     }
   },
   computed: {
@@ -187,13 +202,21 @@ export default Vue.extend({
     }
   },
   methods: {
+    getClientTag(ev: number) {
+      this.clientTagList = this.clientTypeList.find((item: any) => item.id === ev).public_tag
+      this.changeRouter()
+    },
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)
       this.type = Number(query.type)
+      this.tag_id = Number(query.tag_id) || ''
       this.status = query.status === 'null' ? null : Number(query.status)
       this.keyword = query.keyword
       this.clientType = Number(query.clientType) || ''
+      this.clientTagList = this.clientType
+        ? this.clientTypeList.find((item: any) => item.id === Number(query.clientType)).public_tag
+        : []
     },
     changeRouter() {
       this.$router.push(
@@ -206,7 +229,9 @@ export default Vue.extend({
           '&status=' +
           this.status +
           '&clientType=' +
-          this.clientType
+          this.clientType +
+          '&tag_id=' +
+          this.tag_id
       )
     },
     reset() {
@@ -218,6 +243,7 @@ export default Vue.extend({
         .then(() => {
           this.status = 1
           this.clientType = ''
+          this.tag_id = ''
           this.changeRouter()
         })
         .catch(() => {
@@ -235,7 +261,7 @@ export default Vue.extend({
           page: this.page,
           name: this.keyword,
           status: this.status,
-          // tag_id: null, // 筛选标签用的，暂时没用到
+          tag_id: this.tag_id ? [this.tag_id] : null, // 筛选标签用的，暂时没用到
           client_type_id: this.clientType ? [this.clientType] : this.clientTypeArr.map((item: any) => item.id)
         })
         .then((res) => {

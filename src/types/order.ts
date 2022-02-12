@@ -103,6 +103,8 @@ export interface OrderProductFlatten {
   product_code?: string
   product_id: string | number
   category?: string
+  system_code?: string
+  name?: string
   secondary_category?: string
   part_data?: PartInfo[]
   plan_number?: string | number

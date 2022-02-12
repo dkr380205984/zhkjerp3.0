@@ -47,7 +47,7 @@
             v-for="item in materialPlanInfo.production_plan_data"
             :key="item.product_id">
             <div class="tcol">
-              <span>{{item.product_code || item.system_code}}</span>
+              <span>{{item.product_code || item.name || item.system_code}}</span>
               <span>{{item.category}}/{{item.secondary_category}}</span>
             </div>
             <div class="tcol noPad"
@@ -947,6 +947,8 @@ export default Vue.extend({
               order_number: itemChild.number,
               price: itemChild.price,
               product_code: itemPro.product_code,
+              system_code: itemPro.system_code,
+              name: itemPro.name,
               product_id: itemPro.product_id,
               category: itemPro.category,
               secondary_category: itemPro.secondary_category,
@@ -966,6 +968,8 @@ export default Vue.extend({
       const mergeArr: OrderProductMerge[] = this.$mergeData(flattenArr, {
         mainRule: 'product_id',
         otherRule: [
+          { name: 'name' },
+          { name: 'system_code' },
           { name: 'secondary_category' },
           { name: 'category' },
           { name: 'product_code' },

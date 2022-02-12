@@ -71,7 +71,7 @@
                 v-for="item in itemFather.production_plan_data"
                 :key="item.product_id">
                 <div class="tcol">
-                  <span>{{item.product_code}}</span>
+                  <span>{{item.product_code || item.name || item.system_code}}</span>
                   <span>{{item.category}}/{{item.secondary_category}}</span>
                 </div>
                 <div class="tcol noPad"

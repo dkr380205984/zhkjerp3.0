@@ -289,7 +289,7 @@ const client = {
     page?: number | string
     name?: string
     status?: number | string
-    tag_id?: number | string
+    tag_id?: number[] | string[] | null
     client_type_id?: number | string
     workshop_id?: 0
   }) => http.get(`${baseUrl}/client/lists`, params),
