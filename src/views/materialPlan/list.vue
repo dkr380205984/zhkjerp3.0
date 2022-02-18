@@ -22,7 +22,7 @@
             </el-cascader>
           </div>
           <div class="elCtn">
-            <el-select @change="$setLocalStorage('create_user',user_id);changeRouter()"
+            <el-select @change="changeRouter()"
               v-model="user_id"
               placeholder="筛选创建人"
               clearable>
@@ -48,7 +48,7 @@
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select @change="$setLocalStorage('group_id',group_id);changeRouter()"
+            <el-select @change="changeRouter()"
               v-model="group_id"
               placeholder="筛选负责小组"
               clearable>

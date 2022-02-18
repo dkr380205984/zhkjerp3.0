@@ -83,7 +83,7 @@
               </div>
               <div class="tcol">{{itemPro.size_name}}/{{itemPro.color_name}}</div>
               <div class="tcol">{{itemPro.part_name}}</div>
-              <div class="tcol">{{itemPro.size_info}}</div>
+              <div class="tcol">{{itemPro.size_info}}/{{itemPro.weight||0}}g</div>
               <div class="tcol">{{itemPro.price}}元</div>
               <div class="tcol">{{itemPro.number}}</div>
             </div>
@@ -241,7 +241,7 @@ export default Vue.extend({
             unit: ''
           }
         ],
-        others_fee: [
+        others_fee_data: [
           {
             name: '',
             price: '',

@@ -15,7 +15,7 @@
           <div class="tbody">
             <div class="trow">
               <div class="tcol">
-                <div>
+                <div style="max-height:400px">
                   <el-image :src="productInfo.image_data.length>0?productInfo.image_data[0]:require('@/assets/image/common/noPic.png')"
                     :preview-src-list="productInfo.image_data">
                   </el-image>
@@ -35,17 +35,21 @@
                           <div class="label">产品名称：</div>
                           <div class="text">{{productInfo.name}}</div>
                         </div>
+                      </div>
+                      <div class="row">
                         <div class="col">
                           <div class="label">客户款号：</div>
-                          <div class="text">{{productInfo.style_data.map((item)=>item.name).join(',')}}</div>
+                          <div class="text">{{productInfo.style_code}}</div>
                         </div>
                         <div class="col">
                           <div class="label">产品款式：</div>
                           <div class="text">{{productInfo.style_data.map((item)=>item.name).join(',')}}</div>
                         </div>
+                        <div class="col"></div>
                       </div>
                       <div class="row">
-                        <div class="col">
+                        <div class="col"
+                          style="min-height:32px;height:auto">
                           <div class="label">产品配色：</div>
                           <div class="text">
                             <span v-for="(item,index) in productInfo.color_data"
@@ -55,7 +59,8 @@
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col">
+                        <div class="col"
+                          style="min-height:32px;height:auto">
                           <div class="label">产品描述：</div>
                           <div class="text">{{productInfo.desc}}</div>
                         </div>
@@ -189,22 +194,24 @@
           @click="proId=null;pid=null;pid_status=null;addProductFlag = true;">修改</span>
       </div>
     </div>
-    <product-edit :edit="true"
-      :inDetail="true"
-      :pid="null"
-      :pid_status="null"
-      :id="data.id"
-      :data="productInfo"
-      :show="addProductFlag"
-      @close="addProductFlag = false"
-      @afterSave="getNewProduct"
-      :quote_rel_product_data="productInfo"></product-edit>
+    <template v-if="!noOpr">
+      <product-edit :edit="true"
+        :inDetail="true"
+        :pid="null"
+        :pid_status="null"
+        :id="data.id"
+        :data="productInfo"
+        :show="addProductFlag"
+        @close="addProductFlag = false"
+        @afterSave="getNewProduct"
+        :quote_rel_product_data="productInfo"></product-edit>
+    </template>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { sample } from '@/assets/js/api'
+import { product } from '@/assets/js/api'
 import { ProductInfo } from '@/types/product'
 export default Vue.extend({
   props: {
@@ -294,7 +301,7 @@ export default Vue.extend({
           this.productInfo.id = this.productInfo.product_id // 订单过来的用product_id，id是订单用的
           this.getDataFlag = true
         } else {
-          sample
+          product
             .detail({
               id: this.id
             })

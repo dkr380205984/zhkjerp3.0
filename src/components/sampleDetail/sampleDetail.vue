@@ -35,17 +35,21 @@
                           <div class="label">样品名称：</div>
                           <div class="text">{{sampleInfo.name}}</div>
                         </div>
+                      </div>
+                      <div class="row">
                         <div class="col">
                           <div class="label">客户款号：</div>
-                          <div class="text">{{sampleInfo.style_data.map((item)=>item.name).join(',')}}</div>
+                          <div class="text">{{sampleInfo.style_code}}</div>
                         </div>
                         <div class="col">
                           <div class="label">样品款式：</div>
                           <div class="text">{{sampleInfo.style_data.map((item)=>item.name).join(',')}}</div>
                         </div>
+                        <div class="col"></div>
                       </div>
                       <div class="row">
-                        <div class="col">
+                        <div class="col"
+                          style="min-height:32px;height:auto">
                           <div class="label">样品配色：</div>
                           <div class="text">
                             <span v-for="(item,index) in sampleInfo.color_data"
@@ -55,7 +59,8 @@
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col">
+                        <div class="col"
+                          style="min-height:32px;height:auto">
                           <div class="label">样品描述：</div>
                           <div class="text">{{sampleInfo.desc}}</div>
                         </div>
@@ -170,16 +175,18 @@
           @click="proId=null;pid=null;pid_status=null;addProductFlag = true;">修改</span>
       </div>
     </div>
-    <sample-edit :edit="true"
-      :inDetail="true"
-      :pid="null"
-      :pid_status="null"
-      :id="data.id"
-      :data="sampleInfo"
-      :show="addProductFlag"
-      @close="addProductFlag = false"
-      @afterSave="getNewSample"
-      :quote_rel_product_data="sampleInfo"></sample-edit>
+    <template v-if="!noOpr">
+      <sample-edit :edit="true"
+        :inDetail="true"
+        :pid="null"
+        :pid_status="null"
+        :id="data.id"
+        :data="sampleInfo"
+        :show="addProductFlag"
+        @close="addProductFlag = false"
+        @afterSave="getNewSample"
+        :quote_rel_product_data="sampleInfo"></sample-edit>
+    </template>
   </div>
 </template>
 

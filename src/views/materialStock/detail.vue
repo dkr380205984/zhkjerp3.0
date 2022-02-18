@@ -109,7 +109,7 @@
                     <div class="tcol">{{itemChild.number - itemChild.process_info.filter((item)=>item.process==='染色').reduce((total,cur)=>(total+cur.number),0)}}{{itemChild.unit||'kg'}}</div>
                   </div>
                 </div>
-                <div class="tcol">{{item.rel_push_number||0}}{{item.unit||'kg'}}</div>
+                <div class="tcol">{{itemChild.final_push_number||0}}{{item.unit||'kg'}}</div>
               </div>
             </div>
           </div>
@@ -566,7 +566,7 @@
                 </div>
                 <div class="tcol">{{itemMat.material_color}}</div>
                 <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
-                <div class="tcol">暂无数据</div>
+                <div class="tcol">{{itemMat.final_pop_number||0}}{{itemMat.unit}}</div>
                 <!-- <div class="tcol oprCtn">
                   <div class="opr hoverBlue">出库</div>
                 </div> -->
@@ -595,7 +595,7 @@
                   </div>
                   <div class="tcol">{{itemChild.material_color}}</div>
                   <div class="tcol">{{itemChild.number}}{{itemChild.unit||'kg'}}</div>
-                  <div class="tcol">暂无数据</div>
+                  <div class="tcol">{{itemChild.final_pop_number || 0}}{{itemChild.unit||'kg'}}</div>
                   <!-- <div class="tcol oprCtn">
                     <div class="opr hoverBlue">出库</div>
                   </div> -->
@@ -1527,19 +1527,58 @@ export default Vue.extend({
           })
         })
       })
-      this.materialStockInfo.info_data = this.materialStockInfo.selectList.map((item) => {
-        return {
-          stockInList: this.storeInList.filter((itemFind: any) => itemFind.material_id === item.material_id),
-          material_id: '',
-          material_color: '',
-          color_code: '',
-          batch_code: '',
-          vat_code: '',
-          attribute: '',
-          number: item.number as string,
-          item: '', // 件数
-          unit: item.unit,
-          rel_doc_info_id: item.value // 采购单调取单加工单子项id
+      this.materialStockInfo.info_data = []
+      this.materialStockInfo.selectList.forEach((item) => {
+        const inList = this.storeInList.filter(
+          (itemFind: any) =>
+            itemFind.material_id === item.material_id &&
+            itemFind.material_color === item.material_color &&
+            itemFind.attribute === '筒纱'
+        )
+        console.log(inList)
+        if (inList.length === 0) {
+          this.materialStockInfo.info_data.push({
+            stockInList: inList,
+            material_id: '',
+            material_color: '',
+            color_code: '',
+            batch_code: '',
+            vat_code: '',
+            attribute: '',
+            number: item.number as string,
+            item: '', // 件数
+            unit: item.unit,
+            rel_doc_info_id: item.value,
+            out_id: ''
+          })
+        } else {
+          inList.forEach((itemStore: any) => {
+            this.materialStockInfo.info_data.push({
+              stockInList: inList,
+              material_id: itemStore.material_id,
+              material_color: itemStore.material_color,
+              color_code: itemStore.color_code,
+              batch_code: itemStore.batch_code,
+              vat_code: itemStore.vat_code,
+              attribute: itemStore.attribute,
+              number: itemStore.number as string,
+              item: '', // 件数
+              unit: item.unit,
+              rel_doc_info_id: item.value,
+              out_id:
+                itemStore.material_id +
+                '分隔符' +
+                itemStore.material_color +
+                '分隔符' +
+                itemStore.attribute +
+                '分隔符' +
+                itemStore.batch_code +
+                '分隔符' +
+                itemStore.vat_code +
+                '分隔符' +
+                itemStore.color_code
+            })
+          })
         }
       })
       this.materialStockFlag = true

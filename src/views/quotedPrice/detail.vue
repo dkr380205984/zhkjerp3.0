@@ -867,7 +867,8 @@
     </div>
     <div class="popup"
       v-show="bindOrderFlag">
-      <div class="main">
+      <div class="main"
+        style="width:1000px">
         <div class="titleCtn">
           <span class="text">绑定单据</span>
           <div class="closeCtn"
@@ -931,7 +932,7 @@
       :show="checkFlag"
       :pid="quotedList[quotedIndex]"
       :check_type="5"
-      :reason="['驳回理由1','驳回理由2','驳回理由3','驳回理由4','驳回理由5']"></zh-check>
+      :reason="['物料价格偏低','织造费用偏低','加工费用偏低','包装费用偏低','人工费用偏低','运输费用偏低','基本利润偏低','整体报价偏低']"></zh-check>
   </div>
 </template>
 
@@ -1871,16 +1872,15 @@ export default Vue.extend({
           .list({
             page: 1,
             limit: 20,
-            order_code: str,
+            keyword: str,
             order_type: Number(this.bindOrderType)
           })
           .then((res) => {
-            console.log(res.data.data)
             if (res.data.data.items.length > 0) {
               cb(
                 res.data.data.items.map((item: any) => {
                   return {
-                    value: item.code,
+                    value: item.system_code + '(' + item.code + ')' + '/' + item.client_name + '/' + item.user_name,
                     id: item.id
                   }
                 })

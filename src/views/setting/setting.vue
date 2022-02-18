@@ -3658,6 +3658,13 @@ export default Vue.extend({
         ])
         this.getCategory()
       } else if (this.cName === '基本信息') {
+         this.$checkCommonInfo([
+          {
+            checkWhich: 'status/token',
+            getInfoMethed: 'dispatch',
+            getInfoApi: 'getTokenAsync'
+          }
+        ])
         this.getCompany()
       }
     },

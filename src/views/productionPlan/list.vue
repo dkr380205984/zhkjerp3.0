@@ -92,7 +92,7 @@
           :oprList="oprList"></zh-list>
         <div class="pageCtn">
           <el-pagination background
-            :page-size="5"
+            :page-size="limit"
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
@@ -142,9 +142,11 @@ export default Vue.extend({
       originalSetting: [
         {
           key: 'code',
-          name: '订单号',
+          name: '单据编号',
           ifShow: true,
           ifLock: true,
+          ifCaogao: 'order_type',
+          caogaoArr: ['订', '样'],
           index: 0
         },
         {

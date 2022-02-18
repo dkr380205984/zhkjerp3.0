@@ -15,6 +15,11 @@
               @keydown.enter.native="getProList"></el-input>
           </div>
           <div class="elCtn">
+            <el-input v-model="product_name"
+              placeholder="搜索产品/样品名称"
+              @keydown.enter.native="getProList"></el-input>
+          </div>
+          <div class="elCtn">
             <el-select v-model="product_type"
               placeholder="请选择类型"
               @change="getProList">
@@ -40,10 +45,11 @@
           <div class="row"
             v-for="item in list"
             :key="item.id">
-            <div class="col">
+            <div class="col ">
               <span class="circle"
                 :class="{'backHoverBlue':item.product_type===1,'backHoverOrange':item.product_type===2}">{{item.product_type===1?'产':'样'}}</span>
-              {{item.product_code || item.system_code}}
+              <span style="cursor:pointer"
+                @click="proId=item.id;item.product_type===1?productShow=true:sampleShow=true">{{item.product_code || item.system_code}}</span>
             </div>
             <div class="col">{{item.category}}/{{item.secondary_category}}</div>
             <div class="col">{{item.name}}</div>
@@ -252,7 +258,8 @@
             <div class="elCtn">
               <el-select placeholder="请选择主要原料"
                 v-model="craftInfo.warp_data.material_data[0].material_id"
-                @change="cmpYarnCoefficient">
+                @change="cmpYarnCoefficient"
+                filterable>
                 <el-option v-for="item in materialList"
                   :key="item.id"
                   :value="item.id"
@@ -269,12 +276,14 @@
             <div class="elCtn colourCtn"
               v-for="(itemMat,indexMat) in craftInfo.warp_data.material_data"
               :key="indexMat + 'ciyao'"
-              v-show="indexMat>0">
+              v-show="indexMat>0"
+              filterable>
               <el-select class="colour noBottom"
                 placeholder="请选择次要原料"
                 v-model="itemMat.material_id"
                 clearable
-                @change="cmpYarnCoefficient">
+                @change="cmpYarnCoefficient"
+                filterable>
                 <el-option v-for="item in materialList"
                   :key="item.id"
                   :value="item.id"
@@ -355,11 +364,11 @@
               <span class="text">经向排列</span>
               <i class="sliderCtn">
                 <span class="text"
-                  @click="ifDouble.warp=false"
-                  :class="{'active':!ifDouble.warp}">单</span>
+                  @click="craftInfo.warp_data.back_status=2"
+                  :class="{'active':craftInfo.warp_data.back_status===2}">单</span>
                 <span class="text"
-                  @click="ifDouble.warp=true"
-                  :class="{'active':ifDouble.warp}">双</span>
+                  @click="craftInfo.warp_data.back_status=1"
+                  :class="{'active':craftInfo.warp_data.back_status===1}">双</span>
               </i>
               <el-input v-model="insertNumber.warp"
                 class="element"
@@ -399,7 +408,7 @@
           </div>
         </div>
         <div class="row"
-          v-show="ifDouble.warp">
+          v-show="craftInfo.warp_data.back_status===1">
           <div class="col">
             <div class="label">
               <span class="text">经向反面</span>
@@ -1084,7 +1093,8 @@
             <div class="elCtn">
               <el-select placeholder="请选择主要原料"
                 v-model="craftInfo.weft_data.material_data[0].material_id"
-                @change="cmpYarnCoefficient">
+                @change="cmpYarnCoefficient"
+                filterable>
                 <el-option v-for="item in materialList"
                   :key="item.id"
                   :value="item.id"
@@ -1106,7 +1116,8 @@
                 placeholder="请选择次要原料"
                 v-model="itemMat.material_id"
                 @change="cmpYarnCoefficient"
-                clearable>
+                clearable
+                filterable>
                 <el-option v-for="item in materialList"
                   :key="item.id"
                   :value="item.id"
@@ -1187,11 +1198,11 @@
               <span class="text">纬向排列</span>
               <i class="sliderCtn">
                 <span class="text"
-                  @click="ifDouble.weft=false"
-                  :class="{'active':!ifDouble.weft}">单</span>
+                  @click="craftInfo.weft_data.back_status=2"
+                  :class="{'active':craftInfo.weft_data.back_status===2}">单</span>
                 <span class="text"
-                  @click="ifDouble.weft=true"
-                  :class="{'active':ifDouble.weft}">双</span>
+                  @click="craftInfo.weft_data.back_status=1"
+                  :class="{'active':craftInfo.weft_data.back_status===1}">双</span>
               </i>
               <el-input v-model="insertNumber.weft"
                 class="element"
@@ -1230,7 +1241,7 @@
           </div>
         </div>
         <div class="row"
-          v-show="ifDouble.weft">
+          v-show="craftInfo.weft_data.back_status===1">
           <div class="col">
             <div class="label">
               <span class="text">经向反面</span>
@@ -1449,6 +1460,15 @@
         </div>
       </div>
     </div>
+    <!-- 不需要操作的产品详情 -->
+    <product-detail :id="proId"
+      :show="productShow"
+      :noOpr="true"
+      @close="productShow = false"></product-detail>
+    <sample-detail :id="proId"
+      :show="sampleShow"
+      :noOpr="true"
+      @close="sampleShow = false"></sample-detail>
   </div>
 </template>
 <script src="https://cdn.jsdelivr.net/npm/handsontable@7.3.0/dist/handsontable.full.min.js"></script>
@@ -1472,6 +1492,9 @@ export default Vue.extend({
     return {
       loading: false,
       showUsing: false,
+      proId: '',
+      productShow: false,
+      sampleShow: false,
       usingList: [
         {
           title: '如何添加主夹颜色？',
@@ -1619,6 +1642,7 @@ export default Vue.extend({
       page: 1,
       total: 1,
       keyword: '',
+      product_name: '',
       product_type: 0,
       draftMethod: '',
       draftMethodList: [],
@@ -1641,11 +1665,6 @@ export default Vue.extend({
       testColor: {
         color: '',
         name: ''
-      },
-      // 是否为双面巾
-      ifDouble: {
-        warp: false,
-        weft: false
       },
       // 插入列数
       insertNumber: {
@@ -1945,6 +1964,7 @@ export default Vue.extend({
         .list({
           limit: 10,
           page: this.page,
+          product_name: this.product_name,
           product_code: this.keyword,
           product_type: this.product_type,
           craft_status: 1 // 0是默认 1是没有
@@ -2540,11 +2560,11 @@ export default Vue.extend({
         'weft'
       )
       const weftTableBack = this.getFlatTable(
-        this.tableData.warpBack.data.map((item: any, index: number) => {
+        this.tableData.weftBack.data.map((item: any, index: number) => {
           if (index === 1) {
             return item.map((itemJia: any) => {
-              return this.warpJiaList.find((itemFind: any) => itemFind.label === itemJia)
-                ? (this.warpJiaList.find((itemFind: any) => itemFind.label === itemJia) as any).value
+              return this.weftJiaList.find((itemFind: any) => itemFind.label === itemJia)
+                ? (this.weftJiaList.find((itemFind: any) => itemFind.label === itemJia) as any).value
                 : ''
             })
           } else {
@@ -2880,11 +2900,11 @@ export default Vue.extend({
         'weft'
       )
       const weftTableBack = this.getFlatTable(
-        this.tableData.warpBack.data.map((item: any, index: number) => {
+        this.tableData.weftBack.data.map((item: any, index: number) => {
           if (index === 1) {
             return item.map((itemJia: any) => {
-              return this.warpJiaList.find((itemFind: any) => itemFind.label === itemJia)
-                ? (this.warpJiaList.find((itemFind: any) => itemFind.label === itemJia) as any).value
+              return this.weftJiaList.find((itemFind: any) => itemFind.label === itemJia)
+                ? (this.weftJiaList.find((itemFind: any) => itemFind.label === itemJia) as any).value
                 : ''
             })
           } else {
@@ -3651,7 +3671,7 @@ export default Vue.extend({
       afterCreateCol: (index: any, amount: any) => {
         this.tableData.weftBack.number++
         for (let i = 0; i < this.tableData.weftBack.number; i++) {
-          this.tableData.weft.data[0][i] = i + 1
+          this.tableData.weftBack.data[0][i] = i + 1
         }
       },
       afterRemoveCol: (index: any, amount: any) => {

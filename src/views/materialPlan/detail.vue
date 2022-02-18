@@ -2,6 +2,7 @@
   <div id="materialPlanDetail"
     class="bodyContainer"
     v-loading="loading">
+    <order-detail :data="orderInfo"></order-detail>
     <div class="module">
       <el-tabs type="border-card"
         v-model="materialPlanIndex">
@@ -71,7 +72,7 @@
                 v-for="item in itemFather.production_plan_data"
                 :key="item.product_id">
                 <div class="tcol">
-                  <span>{{item.product_code || item.name || item.system_code}}</span>
+                  <span>{{item.product_code || item.system_code}}</span>
                   <span>{{item.category}}/{{item.secondary_category}}</span>
                 </div>
                 <div class="tcol noPad"

@@ -238,6 +238,7 @@ export default Vue.extend({
         this.file_list.map((item: any) => item.url)
       )
       this.sampleOrderInfo.client_id = this.sampleOrderInfo.tree_data[2]
+      this.sampleOrderInfo.tree_data = (this.sampleOrderInfo.tree_data as number[]).join(',')
       // @ts-ignore
       this.sampleOrderInfo.time_data = null
       this.loading = true
@@ -307,6 +308,10 @@ export default Vue.extend({
       .then((res) => {
         this.sampleOrderInfo = this.$clone(res.data.data)
         this.sampleOrderInfo.time_data = res.data.data.time_data[0]
+        this.sampleOrderInfo.tree_data = (this.sampleOrderInfo.tree_data as string)
+          .split(',')
+          .map((item) => Number(item))
+        this.sampleOrderInfo.client_id = this.sampleOrderInfo.tree_data[2]
         this.getContacts(this.sampleOrderInfo.tree_data as number[])
         this.sampleOrderInfo.contacts_id = res.data.data.contacts_id
         // 把public_files的东西放到file_list里，因为后台给的文件和upload组件需要的数据结构不同

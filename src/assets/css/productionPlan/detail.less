@@ -4,6 +4,7 @@
 @import '../bottomBar.less';
 @import '../table.less';
 @import '../popup.less';
+@import '../buttonList.less';
 #productionPlanDetail{
   .description{
     padding: 18px;
@@ -16,11 +17,22 @@
   .popup{
     .main{
       width: 1200px;
+      .copyIcon{
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        cursor: pointer;
+        width: 16px;
+        height: 16px;
+      }
       .label{
         line-height: 38px;
         font-size: 14px;
         width: auto;
         text-align: left;
+        position: relative;
       }
       .editCtn{
         background:#F0F0F0 ;
@@ -78,48 +90,6 @@
           top: 21px;
           background: #ccc;
           z-index: -1;
-        }
-      }
-    }
-  }
-  .buttonList{
-    position: relative;
-    float: right;
-    margin-right: 32px;
-    margin-bottom: 20px;
-    &:hover{
-      .otherInfoCtn{
-        display: block;
-      }
-    }
-    .text{
-      margin-left: 8px;
-    }
-    .otherInfoCtn{
-      position: absolute;
-      bottom: 32px;
-      right: 0;
-      display: none;
-      .otherInfo{
-        padding-bottom: 12px;
-        margin-bottom: 6px;
-        background: #fff;
-        border:1px solid #d9d9d9;
-        border-radius: 4px;
-        width: 320px;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        .btn{
-          margin: 12px 12px 0 12px;
-          display: inline-block;
-          .icon{
-            width: 18px;
-            height: 18px;
-            display: inline-block;
-            background: #fff;
-            vertical-align: middle;
-          }
         }
       }
     }

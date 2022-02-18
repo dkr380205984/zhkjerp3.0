@@ -44,7 +44,7 @@ export interface ProductionPlanInfo {
     unit: string
   }>
   sup_data?: MaterialSupplementInfo[]
-  others_fee: Array<{
+  others_fee_data: Array<{
     name: string
     price: string | number
     desc: string

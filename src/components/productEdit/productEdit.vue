@@ -41,7 +41,8 @@
                 <div class="label">搜索订单号查询</div>
                 <div class="info elCtn">
                   <el-input placeholder="请输入订单号查询"
-                    v-model="searchOrderCode">
+                    v-model="searchOrderCode"
+                    @keydown.enter.native="searchProduct">
                     <el-button slot="append"
                       icon="el-icon-search"
                       @click="searchProduct"></el-button>
@@ -715,7 +716,7 @@ export default Vue.extend({
       }
     },
     searchProduct() {
-      if (this.searchProductCode) {
+      if (this.searchProductCode || this.searchOrderCode) {
         this.loading = true
         product
           .list({

@@ -68,6 +68,7 @@ export interface MergeDataInfo {
   colspan: number
   romoved?: boolean
   oldCol?: number // 工艺单打印页面夹断处理
+  oldColspan?: number // 工艺单打印页面夹断处理
   start?: boolean | number // 左箭头
   end?: boolean | number // 右箭头
 }

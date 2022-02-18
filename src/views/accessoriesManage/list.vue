@@ -172,18 +172,23 @@ export default Vue.extend({
           index: 3
         },
         {
-          key: 'product_info',
-          name: '产品信息',
+          key: 'product_code',
+          otherkey: 'system_code',
+          name: '产品编号',
           ifShow: true,
           ifLock: false,
-          index: 4
+          index: 4,
+          from: 'product_data',
+          mark: true
         },
         {
           key: 'image_data',
           name: '产品图片',
           ifShow: true,
           ifLock: false,
-          index: 5
+          ifImage: true,
+          index: 5,
+          from: 'product_data'
         },
         {
           key: 'total_number',
