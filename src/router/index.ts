@@ -53,6 +53,10 @@ const routes: Array<RouteConfig> = [
     name: '生产计划单打印',
     component: () => import('../views/productionPlan/print.vue')
   }, {
+    path: '/setting/printQRCode',
+    name: '公司二维码打印',
+    component: () => import('../views/setting/printQRCode.vue')
+  }, {
     path: '/index',
     name: 'index',
     component: () => import('../views/index.vue'),
