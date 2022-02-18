@@ -77,12 +77,14 @@
         </div>
       </div>
     </div>
-    <div class="breadCtn">
+    <div class="breadCtn"
+      ref="breadCtn">
       <div class="bread">
         <zh-bread></zh-bread>
       </div>
     </div>
-    <div class="body">
+    <div class="body"
+      :style="{'max-height':'calc(100% - '+ breadHeight +'px)'}">
       <div class="main">
         <!-- keep-alive是Vue提供的一个抽象组件，用来对组件进行缓存  -->
         <router-view />
@@ -151,6 +153,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      breadHeight: 100,
       moduleArr: window.sessionStorage.getItem('module_id') as string,
       userName: window.sessionStorage.getItem('user_name'),
       logo: window.sessionStorage.getItem('logo') || require('@/assets/image/common/noPic.png'),
@@ -190,6 +193,12 @@ export default Vue.extend({
           url: '/menu'
         }
       ]
+    }
+  },
+  watch: {
+    $route() {
+      // @ts-ignore
+      this.breadHeight = 64 + this.$refs.breadCtn.clientHeight
     }
   },
   methods: {
@@ -291,10 +300,7 @@ export default Vue.extend({
       }
     }
   },
-  mounted() {
-    // console.log(window.sessionStorage.getItem('module_id'))
-    // console.log(this.moduleArr)
-  }
+  mounted() {}
 })
 </script>
 

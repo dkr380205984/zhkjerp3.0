@@ -41,7 +41,8 @@
                 <div class="label">搜索样单号查询</div>
                 <div class="info elCtn">
                   <el-input placeholder="请输入样单号查询"
-                    v-model="searchSampleOrderCode">
+                    v-model="searchSampleOrderCode"
+                    @keydown.enter.native="searchSample">
                     <el-button slot="append"
                       icon="el-icon-search"
                       @click="searchSample"></el-button>
@@ -735,7 +736,7 @@ export default Vue.extend({
       }
     },
     searchSample() {
-      if (this.searchSampleCode) {
+      if (this.searchSampleCode || this.searchSampleOrderCode) {
         this.loading = true
         sample
           .list({

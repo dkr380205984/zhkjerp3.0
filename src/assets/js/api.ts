@@ -546,6 +546,7 @@ const materialSupplement = {
   detail: (params: DetailParams) => http.get(`${baseUrl}/material/sup/detail`, params),
 }
 
+// 检验
 import { InspectionInfo } from '@/types/inspection'
 const inspection = {
   create: (params: { data: InspectionInfo[] }) => http.post(`${baseUrl}/inspection/save`, params, 'application/json'),
@@ -558,6 +559,12 @@ const inspection = {
   delete: (params: DeleteParams) => http.post(`${baseUrl}/inspection/delete`, params, 'application/json')
 }
 
+// 包装
+import { PackOrderInfo } from '@/types/packManage'
+const packManage = {
+  createOrder: (params: { data: PackOrderInfo[] }) => http.post(`${baseUrl}/pack/order/save`, params, 'application/json'),
+  orderList: (params: { order_id: string | number }) => http.get(`${baseUrl}/pack/order/lists`, params),
+}
 // excel导出
 const exportExcel = {
   materialLog: (params: {
@@ -645,6 +652,7 @@ export {
   materialStock,
   productionPlan,
   inspection,
+  packManage,
   exportExcel,
   tutorialSystem,
   materialSupplement,

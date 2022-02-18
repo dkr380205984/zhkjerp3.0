@@ -31,7 +31,8 @@
         <div class="fr">
           <div class="pImage">
             <el-image :src="craftInfo.product_info&&craftInfo.product_info.image_data.length>0?craftInfo.product_info.image_data[0]:require('@/assets/image/common/noPic.png')"
-              :preview-src-list="craftInfo.product_info?craftInfo.product_info.image_data:[]">
+              :preview-src-list="craftInfo.product_info?craftInfo.product_info.image_data:[]"
+              :fit="'scale-down'">
             </el-image>
           </div>
           <div class="pImage">
@@ -52,7 +53,7 @@
               <div class="tcol bgGray label">客户款号</div>
               <div class="tcol">{{craftInfo.product_info && craftInfo.product_info.product_code}}</div>
               <div class="tcol bgGray label">其它信息</div>
-              <div class="tcol"></div>
+              <div class="tcol">{{craftInfo.other_info}}</div>
             </div>
             <div class="trow">
               <div class="tcol bgGray label">工艺单名称</div>
@@ -111,7 +112,14 @@
                               <span class="auto_long_arrow left_to_right"
                                 v-if="signType==='3'"></span>
                             </span>
-                            {{item[itemChild.col]}}
+                            <template v-if="index!==6">
+                              <span>{{Number(item[itemChild.col])? '✖' + Number(item[itemChild.col])+'遍':item[itemChild.col]}}</span>
+                              <span style="font-size:12px"
+                                v-if="item[itemChild.col]">共{{computedNumber('warp',index,itemChild.col,itemChild.col+itemChild.colspan)}}梭</span>
+                            </template>
+                            <template v-else>
+                              <span>{{item[itemChild.col]}}</span>
+                            </template>
                             <span class="sign right"
                               :class="'style'+signType"
                               v-if="itemChild.colspan>1">
@@ -329,7 +337,14 @@
                               <span class="auto_long_arrow left_to_right"
                                 v-if="signType==='3'"></span>
                             </span>
-                            {{item[itemChild.col]}}
+                            <template v-if="index!==6">
+                              <span>{{Number(item[itemChild.col])? '✖' + Number(item[itemChild.col])+'遍':item[itemChild.col]}}</span>
+                              <span style="font-size:12px"
+                                v-if="item[itemChild.col]">共{{computedNumber('weft',index,itemChild.col,itemChild.col+itemChild.colspan)}}梭</span>
+                            </template>
+                            <template v-else>
+                              <span>{{item[itemChild.col]}}</span>
+                            </template>
                             <span class="sign right"
                               :class="'style'+signType"
                               v-if="itemChild.colspan>1">
@@ -548,7 +563,7 @@
                         {{itemChild}}
                       </div>
                     </template>
-                    <template v-if="index===7||index===4||index===5||index===6">
+                    <template v-if="index===4||index===5||index===6||index===7">
                       <div class="tcol bold"
                         v-for="(itemChild,indexChild) in getMergeSliceInfo(getMergeInfo(craftInfo.warp_data.merge_data,index-1,craftInfo.warp_data.warp_rank[index-1].length))[indexFather]"
                         :key="indexChild"
@@ -560,7 +575,14 @@
                             v-if="signType==='3'"></span>
                         </span>
                         <!-- itemChild.oldCol===0||itemChild.oldCol处理以下0判断为false -->
-                        {{$sliceToArray(craftInfo.warp_data.warp_rank[index-1], 16)[(itemChild.oldCol===0||itemChild.oldCol)?Math.floor(itemChild.oldCol/16):indexFather][itemChild.oldCol||itemChild.oldCol===0?(itemChild.oldCol%16):(itemChild.col%16)]}}
+                        <template v-if="index!==7">
+                          <span>{{$sliceToArray(craftInfo.warp_data.warp_rank[index-1], 16)[(itemChild.oldCol===0||itemChild.oldCol)?Math.floor(itemChild.oldCol/16):indexFather][itemChild.oldCol||itemChild.oldCol===0?(itemChild.oldCol%16):(itemChild.col%16)]}}</span>
+                          <span style="font-size:12px"
+                            v-if="itemChild.oldColspan>1&&(itemChild.oldCol===0 || itemChild.oldCol)">共{{computedNumber('warp',index-1,itemChild.oldCol,itemChild.oldCol + itemChild.oldColspan)}}梭</span>
+                        </template>
+                        <template v-else>
+                          <span>{{$sliceToArray(craftInfo.warp_data.warp_rank[index-1], 16)[(itemChild.oldCol===0||itemChild.oldCol)?Math.floor(itemChild.oldCol/16):indexFather][itemChild.oldCol||itemChild.oldCol===0?(itemChild.oldCol%16):(itemChild.col%16)]}}</span>
+                        </template>
                         <span class="sign right"
                           :class="'style'+signType"
                           v-if="itemChild.end&&itemChild.colspan>1">
@@ -572,6 +594,66 @@
                     <template v-if="index===2">
                       <div class="tcol"
                         v-for="(itemChild,indexChild) in $sliceToArray(craftInfo.warp_data.warp_rank[index-1], 16)[indexFather]"
+                        :key="indexChild">
+                        {{itemChild|filterIndex}}
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+        <template v-if="craftInfo.warp_data.back_status===1">
+          <div class="tableCtn"
+            v-for="(itemFather,indexFather) in $sliceToArray(craftInfo.warp_data.warp_rank_back[0], 16)"
+            :key="indexFather + 'warp_rank_back'">
+            <div class="tbody hasTop">
+              <div class="trow">
+                <div class="tcol w50 horizontal bgGray">原料经向反面</div>
+                <div class="tcol noPad">
+                  <div class="trow h32"
+                    v-for="index in 7"
+                    :key="index"
+                    :style="{'display':index!==6||ifShowWarpMerge3?'flex':'none'}">
+                    <template v-if="index===1||index===3">
+                      <div class="tcol"
+                        v-for="(itemChild,indexChild) in $sliceToArray(craftInfo.warp_data.warp_rank_back[index-1], 16)[indexFather]"
+                        :key="indexChild">
+                        {{itemChild}}
+                      </div>
+                    </template>
+                    <template v-if="index===4||index===5||index===6||index===7">
+                      <div class="tcol bold"
+                        v-for="(itemChild,indexChild) in getMergeSliceInfo(getMergeInfo(craftInfo.warp_data.merge_data_back,index-1,craftInfo.warp_data.warp_rank_back[index-1].length))[indexFather]"
+                        :key="indexChild"
+                        :style="{'min-width':6.25*itemChild.colspan + '%'}">
+                        <span class="sign left"
+                          :class="'style'+signType"
+                          v-if="itemChild.start&&itemChild.colspan>1">
+                          <span class="auto_long_arrow left_to_right"
+                            v-if="signType==='3'"></span>
+                        </span>
+                        <!-- itemChild.oldCol===0||itemChild.oldCol处理以下0判断为false -->
+                        <template v-if="index!==7">
+                          <span>{{$sliceToArray(craftInfo.warp_data.warp_rank_back[index-1], 16)[(itemChild.oldCol===0||itemChild.oldCol)?Math.floor(itemChild.oldCol/16):indexFather][itemChild.oldCol||itemChild.oldCol===0?(itemChild.oldCol%16):(itemChild.col%16)]}}</span>
+                          <span style="font-size:12px"
+                            v-if="itemChild.oldColspan>1&&(itemChild.oldCol===0 || itemChild.oldCol)">共{{computedNumber('warpBack',index-1,itemChild.oldCol,itemChild.oldCol + itemChild.oldColspan)}}梭</span>
+                        </template>
+                        <template v-else>
+                          <span>{{$sliceToArray(craftInfo.warp_data.warp_rank_back[index-1], 16)[(itemChild.oldCol===0||itemChild.oldCol)?Math.floor(itemChild.oldCol/16):indexFather][itemChild.oldCol||itemChild.oldCol===0?(itemChild.oldCol%16):(itemChild.col%16)]}}</span>
+                        </template>
+                        <span class="sign right"
+                          :class="'style'+signType"
+                          v-if="itemChild.end&&itemChild.colspan>1">
+                          <span class="auto_long_arrow right_to_left"
+                            v-if="signType==='3'"></span>
+                        </span>
+                      </div>
+                    </template>
+                    <template v-if="index===2">
+                      <div class="tcol"
+                        v-for="(itemChild,indexChild) in $sliceToArray(craftInfo.warp_data.warp_rank_back[index-1], 16)[indexFather]"
                         :key="indexChild">
                         {{itemChild|filterIndex}}
                       </div>
@@ -613,7 +695,14 @@
                             v-if="signType==='3'"></span>
                         </span>
                         <!-- itemChild.oldCol===0||itemChild.oldCol处理以下0判断为false -->
-                        {{$sliceToArray(craftInfo.weft_data.weft_rank[index-1], 16)[(itemChild.oldCol===0||itemChild.oldCol)?Math.floor(itemChild.oldCol/16):indexFather][itemChild.oldCol||itemChild.oldCol===0?(itemChild.oldCol%16):(itemChild.col%16)]}}
+                        <template v-if="index!==7">
+                          <span> {{$sliceToArray(craftInfo.weft_data.weft_rank[index-1], 16)[(itemChild.oldCol===0||itemChild.oldCol)?Math.floor(itemChild.oldCol/16):indexFather][itemChild.oldCol||itemChild.oldCol===0?(itemChild.oldCol%16):(itemChild.col%16)]}}</span>
+                          <span style="font-size:12px"
+                            v-if="itemChild.oldColspan>1&&(itemChild.oldCol===0 || itemChild.oldCol)">共{{computedNumber('weft',index-1,itemChild.oldCol,itemChild.oldCol + itemChild.oldColspan)}}梭</span>
+                        </template>
+                        <template v-else>
+                          <span> {{$sliceToArray(craftInfo.weft_data.weft_rank[index-1], 16)[(itemChild.oldCol===0||itemChild.oldCol)?Math.floor(itemChild.oldCol/16):indexFather][itemChild.oldCol||itemChild.oldCol===0?(itemChild.oldCol%16):(itemChild.col%16)]}}</span>
+                        </template>
                         <span class="sign right"
                           :class="'style'+signType"
                           v-if="itemChild.end&&itemChild.colspan>1">
@@ -625,6 +714,66 @@
                     <template v-if="index===2">
                       <div class="tcol"
                         v-for="(itemChild,indexChild) in $sliceToArray(craftInfo.weft_data.weft_rank[index-1], 16)[indexFather]"
+                        :key="indexChild">
+                        {{itemChild|filterIndex}}
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+        <template v-if="craftInfo.weft_data.back_status===1">
+          <div class="tableCtn"
+            v-for="(itemFather,indexFather) in $sliceToArray(craftInfo.weft_data.weft_rank_back[0], 16)"
+            :key="indexFather + 'warp_rank_back'">
+            <div class="tbody hasTop">
+              <div class="trow">
+                <div class="tcol w50 horizontal bgGray">原料纬向反面</div>
+                <div class="tcol noPad">
+                  <div class="trow h32"
+                    v-for="index in 7"
+                    :key="index"
+                    :style="{'display':index!==6||ifShowWarpMerge3?'flex':'none'}">
+                    <template v-if="index===1||index===3">
+                      <div class="tcol"
+                        v-for="(itemChild,indexChild) in $sliceToArray(craftInfo.weft_data.weft_rank_back[index-1], 16)[indexFather]"
+                        :key="indexChild">
+                        {{itemChild}}
+                      </div>
+                    </template>
+                    <template v-if="index===4||index===5||index===6||index===7">
+                      <div class="tcol bold"
+                        v-for="(itemChild,indexChild) in getMergeSliceInfo(getMergeInfo(craftInfo.weft_data.merge_data_back,index-1,craftInfo.weft_data.weft_rank_back[index-1].length))[indexFather]"
+                        :key="indexChild"
+                        :style="{'min-width':6.25*itemChild.colspan + '%'}">
+                        <span class="sign left"
+                          :class="'style'+signType"
+                          v-if="itemChild.start&&itemChild.colspan>1">
+                          <span class="auto_long_arrow left_to_right"
+                            v-if="signType==='3'"></span>
+                        </span>
+                        <!-- itemChild.oldCol===0||itemChild.oldCol处理以下0判断为false -->
+                        <template v-if="index!==7">
+                          <span>{{$sliceToArray(craftInfo.weft_data.weft_rank_back[index-1], 16)[(itemChild.oldCol===0||itemChild.oldCol)?Math.floor(itemChild.oldCol/16):indexFather][itemChild.oldCol||itemChild.oldCol===0?(itemChild.oldCol%16):(itemChild.col%16)]}}</span>
+                          <span style="font-size:12px"
+                            v-if="itemChild.oldColspan>1&&(itemChild.oldCol===0 || itemChild.oldCol)">共{{computedNumber('weftBack',index-1,itemChild.oldCol,itemChild.oldCol + itemChild.oldColspan)}}梭</span>
+                        </template>
+                        <template v-else>
+                          <span>{{$sliceToArray(craftInfo.weft_data.weft_rank_back[index-1], 16)[(itemChild.oldCol===0||itemChild.oldCol)?Math.floor(itemChild.oldCol/16):indexFather][itemChild.oldCol||itemChild.oldCol===0?(itemChild.oldCol%16):(itemChild.col%16)]}}</span>
+                        </template>
+                        <span class="sign right"
+                          :class="'style'+signType"
+                          v-if="itemChild.end&&itemChild.colspan>1">
+                          <span class="auto_long_arrow right_to_left"
+                            v-if="signType==='3'"></span>
+                        </span>
+                      </div>
+                    </template>
+                    <template v-if="index===2">
+                      <div class="tcol"
+                        v-for="(itemChild,indexChild) in $sliceToArray(craftInfo.weft_data.weft_rank_back[index-1], 16)[indexFather]"
                         :key="indexChild">
                         {{itemChild|filterIndex}}
                       </div>
@@ -1269,7 +1418,30 @@ export default Vue.extend({
           }
         ]
       },
-      colourInfoType: 1
+      colourInfoType: 1,
+      // 工艺单展平信息用于梭数计算
+      flatInfo: {
+        warp: {
+          firstArr: [],
+          secondArr: [],
+          thirdArr: []
+        },
+        warpBack: {
+          firstArr: [],
+          secondArr: [],
+          thirdArr: []
+        },
+        weft: {
+          firstArr: [],
+          secondArr: [],
+          thirdArr: []
+        },
+        weftBack: {
+          firstArr: [],
+          secondArr: [],
+          thirdArr: []
+        }
+      }
     }
   },
   methods: {
@@ -1356,6 +1528,7 @@ export default Vue.extend({
             colspan: item.colspan,
             row: item.row,
             oldCol: item.col,
+            oldColspan: item.colspan,
             start: true,
             end: true
           })
@@ -1368,6 +1541,7 @@ export default Vue.extend({
             colspan: 16 - i + item.colspan,
             row: item.row,
             oldCol: item.col,
+            oldColspan: item.colspan,
             start: true,
             end: false
           })
@@ -1377,6 +1551,7 @@ export default Vue.extend({
             sliceMergeData.push([
               {
                 oldCol: item.col,
+                oldColspan: item.colspan,
                 col: j * 16,
                 colspan: 16,
                 row: item.row,
@@ -1391,6 +1566,7 @@ export default Vue.extend({
             sliceMergeData.push([
               {
                 oldCol: item.col,
+                oldColspan: item.colspan,
                 col: j * 16,
                 colspan: i,
                 row: item.row,
@@ -1402,6 +1578,7 @@ export default Vue.extend({
         } else {
           sliceMergeData[j].push({
             oldCol: item.col,
+            oldColspan: item.colspan,
             col: item.col,
             colspan: item.colspan,
             row: item.row,
@@ -1409,48 +1586,123 @@ export default Vue.extend({
             end: true
           })
         }
-        // if (i === 16) {
-        //   sliceMergeData[j].push({
-        //     col: item.col,
-        //     colspan: 1,
-        //     row: item.row
-        //   })
-        //   j++
-        //   i = 0
-        // } else if (i > 16) {
-        //   sliceMergeData[j].push({
-        //     col: item.col,
-        //     colspan: 16 - i + item.colspan,
-        //     row: item.row
-        //   })
-        //   j++
-        //   sliceMergeData[j] = []
-        //   i = i - (16 - i + item.colspan)
-        //   while (i > 16) {
-        //     sliceMergeData[j].push({
-        //       oldCol: item.col,
-        //       col: j * 16,
-        //       colspan: 16,
-        //       row: item.row
-        //     })
-        //     i = i - 16
-        //     j++
-        //     sliceMergeData[j] = []
-        //   }
-        //   if (i > 0) {
-        //     sliceMergeData[j].push({
-        //       oldCol: item.col,
-        //       col: j * 16,
-        //       colspan: item.col + item.colspan - j * 16,
-        //       row: item.row
-        //     })
-        //     i = item.col + item.colspan - j * 16
-        //   }
-        // } else {
-        //   sliceMergeData[j].push(item)
-        // }
       })
       return sliceMergeData
+    },
+    // 展开工艺单
+    getFlatTable(table: Array<Array<any>>, mergeData: MergeDataInfo[]): any {
+      const mergeTable = mergeData // 合并项
+      // 获取完整的合并项信息
+      const firstMerge = this.getMergeInfo(mergeTable, 3, table[0].length)
+      const secondMerge = this.getMergeInfo(mergeTable, 4, table[0].length)
+      const thirdMerge = this.getMergeInfo(mergeTable, 5, table[0].length)
+      let firstArr: { order: number; number: any }[][] = []
+      firstMerge.forEach((item) => {
+        let temporaryStorage = [] // 临时存储合并项
+        for (let i = item.col; i < item.col + item.colspan; i++) {
+          temporaryStorage.push({
+            jia: Number(table[1][i]), // 主夹信息,计算克重的时候用
+            order: parseInt(table[0][i]),
+            number: table[2][i]
+          })
+        }
+        let forNum = this.getSpecial(table[item.row][item.col] || 1)
+        for (let i = 0; i < forNum.number; i++) {
+          let realStorage = temporaryStorage
+          if (forNum.start && i === forNum.number - 1) {
+            realStorage = temporaryStorage.filter((item) => {
+              // @ts-ignore 最后一遍去掉start~end
+              return item.order < forNum.start || item.order > forNum.end
+            })
+          }
+          firstArr.push(realStorage)
+        }
+      })
+      let secondArr: { order: number; number: any }[][][] = []
+      secondMerge.forEach((item) => {
+        let temporaryStorage = firstArr.filter((itemFilter) => {
+          return itemFilter[0].order > item.col && itemFilter[0].order <= item.col + item.colspan
+        })
+        let forNum = this.getSpecial(table[item.row][item.col] || 1)
+        for (let i = 0; i < forNum.number; i++) {
+          let realStorage = temporaryStorage
+          if (forNum.start && i === forNum.number - 1) {
+            realStorage = temporaryStorage.filter((item) => {
+              let flag = true
+              item.forEach((itemChild) => {
+                // @ts-ignore
+                if (itemChild.order >= forNum.start && itemChild.order <= forNum.end) {
+                  flag = false
+                }
+              })
+              return flag
+            })
+          }
+          secondArr.push(realStorage)
+        }
+      })
+      let thirdArr: { order: number; number: any }[][][][] = []
+      thirdMerge.forEach((item) => {
+        let temporaryStorage = secondArr.filter((itemFilter) => {
+          return itemFilter[0] && itemFilter[0][0].order > item.col && itemFilter[0][0].order <= item.col + item.colspan
+        })
+        let forNum = this.getSpecial(table[item.row][item.col] || 1)
+        for (let i = 0; i < forNum.number; i++) {
+          let realStorage = temporaryStorage
+          thirdArr.push(realStorage)
+        }
+      })
+      return {
+        firstArr: this.mergeArray(firstArr),
+        secondArr: this.mergeArray(secondArr),
+        thirdArr: this.mergeArray(thirdArr)
+      }
+    },
+    // 合并数组
+    mergeArray(arr: any[], saveArr?: any[]): any[] {
+      let array = saveArr || []
+      arr.forEach((item) => {
+        if (Array.isArray(item)) {
+          this.mergeArray(item, array)
+        } else {
+          array.push(item)
+        }
+      })
+      return array
+    },
+    // 获取特殊数据,用于处理 乘以[n]遍，最后一遍去掉[x]列到[y]列
+    getSpecial(info: string): {
+      number: number
+      start?: number
+      end?: number
+    } {
+      if (Number(info)) {
+        return {
+          number: Number(info)
+        }
+      }
+      // 要么就是"倒一遍"，要么就是特殊情况
+      // 倒一遍数量直接翻倍就行，这里单纯算个根数直接循环2遍就行，画图的时候复杂一点
+      if (info === '顺一遍倒一遍') {
+        return {
+          number: 2
+        }
+      }
+      let arr = info.split(']')
+      return {
+        number: arr[0].split('[')[1] as unknown as number,
+        start: arr[1].split('[')[1] as unknown as number | undefined,
+        end: arr[2].split('[')[1] as unknown as number | undefined
+      }
+    },
+    computedNumber(type: 'warp' | 'weft' | 'warpBack' | 'weftBack', row: number, start: number, end: number): number {
+      console.log(row, start, end)
+      const arr = ['', '', '', 'firstArr', 'secondArr', 'thirdArr']
+      return this.flattenInfo[type][arr[row]]
+        .filter((item: any) => item.order > start && item.order <= end)
+        .reduce((total: number, cur: any) => {
+          return total + Number(cur.number)
+        }, 0)
     }
   },
   filters: {
@@ -1548,12 +1800,30 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.craftInfo = res.data.data
+          // 保存一下展平的工艺单用于梭数计算
+          this.flattenInfo = {
+            warp: this.getFlatTable(
+              this.craftInfo.warp_data.warp_rank,
+              this.craftInfo.warp_data.merge_data as MergeDataInfo[]
+            ),
+            warpBack: this.getFlatTable(
+              this.craftInfo.warp_data.warp_rank_back,
+              this.craftInfo.warp_data.merge_data_back as MergeDataInfo[]
+            ),
+            weft: this.getFlatTable(
+              this.craftInfo.weft_data.weft_rank,
+              this.craftInfo.weft_data.merge_data as MergeDataInfo[]
+            ),
+            weftBack: this.getFlatTable(
+              this.craftInfo.weft_data.weft_rank,
+              this.craftInfo.weft_data.merge_data_back as MergeDataInfo[]
+            )
+          }
           // 生成二维码
           const QRCode = require('qrcode')
           QRCode.toDataURL(`${this.craftInfo.craft_code}`)
             .then((url: any) => {
               this.qrCodeUrl = url
-              // console.log(this.qrCodeUrl)
             })
             .catch((err: any) => {
               console.error(err)
@@ -1681,16 +1951,6 @@ export default Vue.extend({
             })
           })
         }
-
-        console.log(
-          // @ts-ignore
-          this.getMergeInfo(this.craftInfo.warp_data.merge_data, 3, this.craftInfo.warp_data.warp_rank[3].length),
-          this.getMergeSliceInfo(
-            // @ts-ignore
-            this.getMergeInfo(this.craftInfo.warp_data.merge_data, 3, this.craftInfo.warp_data.warp_rank[3].length)
-          )
-        )
-        console.log(this.$sliceToArray(this.craftInfo.warp_data.warp_rank[3], 16))
       })
   }
 })

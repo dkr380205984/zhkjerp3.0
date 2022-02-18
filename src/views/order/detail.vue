@@ -342,15 +342,17 @@
                     <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
                   </div>
                   <div class="tcol">
-                    <el-image style="width:100%;height:100%"
-                      :src="itemPro.image_data&&itemPro.image_data.length>0?itemPro.image_data[0]:''"
-                      :preview-src-list="itemPro.image_data">
-                      <div slot="error"
-                        class="image-slot">
-                        <i class="el-icon-picture-outline"
-                          style="font-size:42px"></i>
-                      </div>
-                    </el-image>
+                    <div class="imageCtn">
+                      <el-image style="width:100%;height:100%"
+                        :src="itemPro.image_data&&itemPro.image_data.length>0?itemPro.image_data[0]:''"
+                        :preview-src-list="itemPro.image_data">
+                        <div slot="error"
+                          class="image-slot">
+                          <i class="el-icon-picture-outline"
+                            style="font-size:42px"></i>
+                        </div>
+                      </el-image>
+                    </div>
                   </div>
                   <div class="tcol noPad"
                     style="flex:3">
@@ -378,18 +380,34 @@
         <div class="thead">
           <div class="trow">
             <div class="tcol">产品信息</div>
-            <div class="tcol">尺码颜色</div>
-            <div class="tcol">下单数量</div>
-            <div class="tcol">计划生产数量</div>
             <div class="tcol noPad"
-              style="flex:6">
+              style="flex:10">
               <div class="trow">
-                <div class="tcol">生产单位</div>
-                <div class="tcol">生产工序</div>
-                <div class="tcol">完成数量</div>
-                <div class="tcol">检验入库数量</div>
-                <div class="tcol">次品数量</div>
-                <div class="tcol">次品率</div>
+                <div class="tcol">产品颜色</div>
+                <div class="tcol noPad"
+                  style="flex:9">
+                  <div class="trow">
+                    <div class="tcol">产品尺码</div>
+                    <div class="tcol">下单数量</div>
+                    <div class="tcol">计划数量</div>
+                    <div class="tcol noPad"
+                      style="flex:6">
+                      <div class="trow">
+                        <div class="tcol">生产单位</div>
+                        <div class="tcol noPad"
+                          style="flex:5">
+                          <div class="trow">
+                            <div class="tcol">生产工序</div>
+                            <div class="tcol">完成数量</div>
+                            <div class="tcol">检验入库数量</div>
+                            <div class="tcol">次品数量</div>
+                            <div class="tcol">次品率</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -399,20 +417,42 @@
             v-for="(item,index) in productionDetail"
             :key="index">
             <div class="tcol">{{item.product_code}}</div>
-            <div class="tcol">{{item.color}}/{{item.size}}</div>
-            <div class="tcol">{{item.order_number}}</div>
-            <div class="tcol">{{item.plan_number}}</div>
             <div class="tcol noPad"
-              style="flex:6">
+              style="flex:10">
               <div class="trow"
-                v-for="(itemChild,indexChild) in item.weave_info"
-                :key="indexChild">
-                <div class="tcol">{{itemChild.client_name}}</div>
-                <div class="tcol">{{itemChild.process_name}}</div>
-                <div class="tcol">{{itemChild.real_number}}</div>
-                <div class="tcol">{{itemChild.inspection_number}}</div>
-                <div class="tcol">{{itemChild.shoddy_number}}</div>
-                <div class="tcol">{{itemChild.shoddy_pre}}%</div>
+                v-for="(itemColor,indexColor) in item.data"
+                :key="indexColor">
+                <div class="tcol">{{itemColor.color_name}}</div>
+                <div class="tcol noPad"
+                  style="flex:9">
+                  <div class="trow"
+                    v-for="(itemSize,indexSize) in itemColor.data"
+                    :key="indexSize">
+                    <div class="tcol">{{itemSize.size_name}}</div>
+                    <div class="tcol">{{itemSize.data.order_number}}</div>
+                    <div class="tcol">{{itemSize.data.plan_number}}</div>
+                    <div class="tcol noPad"
+                      style="flex:6">
+                      <div class="trow"
+                        v-for="(itemClient,indexClient) in itemSize.data.weave_info"
+                        :key="indexClient">
+                        <div class="tcol">{{itemClient.client_name}}</div>
+                        <div class="tcol noPad"
+                          style="flex:5">
+                          <div class="trow"
+                            v-for="(itemChild,indexChild) in itemClient.data"
+                            :key="indexChild">
+                            <div class="tcol">{{itemChild.process_name}}</div>
+                            <div class="tcol">{{itemChild.data.real_number}}</div>
+                            <div class="tcol">{{itemChild.data.inspection_number}}</div>
+                            <div class="tcol">{{itemChild.data.shoddy_number}}</div>
+                            <div class="tcol">{{itemChild.data.shoddy_pre}}%</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -474,21 +514,21 @@
             <div class="tcol noPad"
               style="flex:2">
               <div class="trow">
-                <div class="tcol center">加工信息</div>
+                <div class="tcol center">入库信息</div>
               </div>
               <div class="trow">
-                <div class="tcol">出库单位</div>
-                <div class="tcol">出库数量</div>
+                <div class="tcol">入库仓库</div>
+                <div class="tcol">入库数量</div>
               </div>
             </div>
             <div class="tcol noPad"
               style="flex:2">
               <div class="trow">
-                <div class="tcol center">入库/结余信息</div>
+                <div class="tcol center">出库信息</div>
               </div>
               <div class="trow">
-                <div class="tcol">入库数</div>
-                <div class="tcol">结余数量</div>
+                <div class="tcol">出库单位</div>
+                <div class="tcol">出库数量</div>
               </div>
             </div>
           </div>
@@ -550,19 +590,6 @@
             <div class="tcol noPad"
               style="flex:2">
               <div class="trow"
-                v-if="item.final_pop_info.length===0">
-                <div class="tcol gray">无出库信息</div>
-              </div>
-              <div class="trow"
-                v-for="(itemPop,indexPop) in  item.final_pop_info"
-                :key="indexPop">
-                <div class="tcol">{{itemPop.client_name}}</div>
-                <div class="tcol">{{itemPop.number}}{{itemPop.unit}}</div>
-              </div>
-            </div>
-            <div class="tcol noPad"
-              style="flex:2">
-              <div class="trow"
                 v-if="item.final_push_info.length===0">
                 <div class="tcol gray">无入库信息</div>
               </div>
@@ -571,6 +598,19 @@
                 :key="indexPush">
                 <div class="tcol">{{itemPush.client_name}}</div>
                 <div class="tcol">{{itemPush.number}}{{itemPush.unit}}</div>
+              </div>
+            </div>
+            <div class="tcol noPad"
+              style="flex:2">
+              <div class="trow"
+                v-if="item.final_pop_info.length===0">
+                <div class="tcol gray">无出库信息</div>
+              </div>
+              <div class="trow"
+                v-for="(itemPop,indexPop) in  item.final_pop_info"
+                :key="indexPop">
+                <div class="tcol">{{itemPop.client_name}}</div>
+                <div class="tcol">{{itemPop.number}}{{itemPop.unit}}</div>
               </div>
             </div>
           </div>
@@ -670,7 +710,7 @@
       :show="checkFlag"
       :pid="orderInfo.time_data[0].id"
       :check_type="1"
-      :reason="['驳回理由1','驳回理由2','驳回理由3','驳回理由4','驳回理由5']"></zh-check>
+      :reason="[]"></zh-check>
   </div>
 </template>
 

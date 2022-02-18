@@ -2,6 +2,7 @@
   <div id="materialPlanCreate"
     class="bodyContainer"
     v-loading="loading">
+    <order-detail :id="$route.query.order_id"></order-detail>
     <div class="module">
       <div class="titleCtn flexBetween">
         <div class="title">生产计划单</div>
@@ -23,7 +24,6 @@
               <div class="trow">
                 <div class="tcol">尺码颜色</div>
                 <div class="tcol">下单数量</div>
-                <div class="tcol">已计划数量</div>
                 <div class="tcol">总数量百分比</div>
                 <div class="tcol noPad"
                   style="flex:3">
@@ -52,7 +52,6 @@
                 :key="indexChild">
                 <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
                 <div class="tcol">{{itemChild.order_number}}</div>
-                <div class="tcol">已计划数量</div>
                 <div class="tcol">
                   <div class="elCtn">
                     <el-input placeholder="百分比"
@@ -185,7 +184,7 @@
                   </div>
                   <div class="tcol">
                     <div class="elCtn"
-                      v-if="!itemChild.has_plan">
+                      v-if="itemChild.tree_data">
                       <el-cascader placeholder="物料名称"
                         :show-all-levels="false"
                         v-model="itemChild.tree_data"
@@ -611,7 +610,8 @@ export default Vue.extend({
                 this.numberAutoMethod(100 * (Number(finded.final_number) / Number(finded.need_number) - 1))
               } else {
                 this.materialPlanInfo.material_plan_gather_data.push({
-                  material_name: this.$findId(flattenYarnList, itemChild.tree_data![2], 'label', 'value'),
+                  material_name:
+                    itemChild.material_name || this.$findId(flattenYarnList, itemChild.tree_data![2], 'label', 'value'),
                   material_id: itemChild.material_id || itemChild.tree_data![2],
                   material_type: 1, // 目前只有原料
                   material_color: itemChild.material_color,

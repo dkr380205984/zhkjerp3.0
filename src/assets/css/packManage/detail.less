@@ -1,0 +1,44 @@
+@import '../common.less';
+@import '../table.less';
+@import '../detail.less';
+@import '../buttonList.less';
+@import '../popup.less';
+@import '../edit.less';
+#packManageDetail{
+  .popup{
+    .main{
+      width: 1200px;
+      .label{
+        line-height: 38px;
+        font-size: 14px;
+        width: auto;
+        text-align: left;
+      }
+      .editCtn{
+        background: #F0F0F0;
+        margin: 16px 0;
+        .deleteIcon{
+          cursor: pointer;
+          width: 20px;
+          height: 20px;
+          color: #fff;
+          line-height: 20px;
+          text-align: center;
+          border-radius: 50%;
+          background: @red;
+          float: right;
+          margin-right: -20px;
+          &:hover{
+            background: @hoverRed;
+          }
+        }
+        .col{
+          margin-right: 30px;
+        }
+        .opr{
+          transform: translate(-20px, 100%);
+        }
+      }
+    }
+  }
+}

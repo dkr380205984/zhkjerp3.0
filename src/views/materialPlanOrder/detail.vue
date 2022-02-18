@@ -69,7 +69,7 @@
                   <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
                 </div>
               </div>
-              <div class="tcol">{{item.rel_push_number}}{{item.unit}}</div>
+              <div class="tcol">{{item.final_push_number}}{{item.unit}}</div>
               <div class="tcol">
                 <others-fee-data :data="item.others_fee_data"></others-fee-data>
               </div>
@@ -649,7 +649,7 @@ export default Vue.extend({
       },
       materialStockInfo: {
         material_type: 1,
-        action_type: 4, // 采购单最终入库
+        action_type: 13, // 预订购采购单最终入库
         rel_doc_type: '',
         rel_doc_id: '',
         rel_doc_code: '',

@@ -47,7 +47,7 @@
             v-for="item in materialPlanInfo.production_plan_data"
             :key="item.product_id">
             <div class="tcol">
-              <span>{{item.product_code || item.name || item.system_code}}</span>
+              <span>{{item.product_code || item.system_code}}</span>
               <span>{{item.category}}/{{item.secondary_category}}</span>
             </div>
             <div class="tcol noPad"
@@ -57,7 +57,7 @@
                 :key="indexChild">
                 <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
                 <div class="tcol">{{itemChild.order_number}}</div>
-                <div class="tcol">{{itemChild.plan_number}}</div>
+                <div class="tcol">{{getHasPlanNumber(item.product_id,itemChild.color_name,itemChild.size_name)}}</div>
                 <div class="tcol">
                   <div class="elCtn">
                     <el-input placeholder="百分比"
@@ -704,6 +704,7 @@ interface OrderDetail extends OrderInfo {
 }
 export default Vue.extend({
   data(): {
+    materialDetialInfo: MaterialPlanInfo[]
     materialPlanInfo: MaterialPlanInfo
     orderInfo: OrderDetail
     [propName: string]: any
@@ -712,7 +713,7 @@ export default Vue.extend({
       loading: true,
       justWatch: false, // 这个字段专门用于监听物料概览，在某些特定操作下无法触发watch的时候手动触发重新计算
       confirmFlag: 1,
-      settingMethod: 2, // 数字取整方式
+      settingMethod: 1, // 数字取整方式
       orderIndex: 0, // 多张订单/样单
       chooseIndexFlag: false,
       orderInfo: {
@@ -773,6 +774,7 @@ export default Vue.extend({
           }
         ]
       },
+      materialDetialInfo: [],
       materialPlanInfo: {
         order_id: '',
         type: '1', // 1、按颜色尺码 2.按产品
@@ -880,7 +882,7 @@ export default Vue.extend({
                   finded.final_number >= finded.need_number
                     ? this.$toFixed((finded.final_number / finded.need_number - 1) * 100)
                     : 0
-                this.numberAutoMethod(100 * (Number(finded.final_number) / Number(finded.need_number) - 1))
+                this.$toFixed(100 * (Number(finded.final_number) / Number(finded.need_number) - 1))
               } else {
                 this.materialPlanInfo.material_plan_gather_data.push({
                   material_name:
@@ -890,7 +892,7 @@ export default Vue.extend({
                   material_color: itemChild.material_color,
                   need_number: Number(itemChild.need_number),
                   loss: itemChild.need_number
-                    ? this.numberAutoMethod(100 * (Number(itemChild.final_number) / Number(itemChild.need_number) - 1))
+                    ? this.$toFixed(100 * (Number(itemChild.final_number) / Number(itemChild.need_number) - 1))
                     : 0,
                   final_number: Number(itemChild.final_number),
                   unit: itemChild.unit
@@ -1103,8 +1105,9 @@ export default Vue.extend({
                     itemPart.part_id === 0 && itemChild.material_info.length > 0
                       ? itemChild.material_info.map((itemMat) => {
                           return {
-                            process_name_arr: [],
-                            process_name: '',
+                            process_name_arr: ['织造工序', '梭织织造'],
+                            process_name: '梭织织造',
+                            process_type: '织造工序',
                             tree_data: [],
                             material_id: itemMat.material_id,
                             material_name: itemMat.material_name,
@@ -1293,8 +1296,9 @@ export default Vue.extend({
         if (findMat) {
           return findMat.info_data.map((itemMat: any) => {
             return {
-              process_name: '',
-              process_name_arr: [],
+              process_name: '梭织织造',
+              process_type: '织造工序',
+              process_name_arr: ['织造工序', '梭织织造'],
               tree_data: [],
               material_id: itemMat.material_id,
               material_name: itemMat.material_name,
@@ -1420,7 +1424,6 @@ export default Vue.extend({
     },
     // 统一输入行逻辑
     copyInfo(info: any, keyArr: string[]) {
-      console.log('hhhhhh')
       info.forEach((item: any, index: number) => {
         if (index !== 0) {
           keyArr.forEach((key) => {
@@ -1435,6 +1438,37 @@ export default Vue.extend({
       info.forEach((itemChild: any) => {
         itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number)
       })
+    },
+    // 因为多批次产品合并问题导致后端无法计算plan_number，所需前端根据物料计划单列表累加已计划的数量
+    getHasPlanNumber(id: number, color: string, size: string) {
+      console.log(this.materialDetialInfo)
+      if (this.materialDetialInfo.length === 0) {
+        return 0
+      } else {
+        return this.materialDetialInfo.reduce((total, cur) => {
+          return (
+            total +
+            cur.material_plan_data.reduce((totalChild, curChild) => {
+              // @ts-ignore
+              return totalChild +
+                (Number(curChild.product_id) === id && curChild.size_name === size && curChild.color_name === color)
+                ? Number(curChild.number)
+                : 0
+            }, 0)
+          )
+        }, 0)
+      }
+    },
+    getMaterialPlan() {
+      materialPlan
+        .list({
+          order_id: Number(this.orderInfo.time_data[this.orderIndex].id)
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.materialDetialInfo = res.data.data
+          }
+        })
     }
   },
   mounted() {
@@ -1496,6 +1530,8 @@ export default Vue.extend({
           } else {
             this.getProductionData()
           }
+          // 别问我添加页面为什么要拿详情接口，因为有继续添加，要计算一个已计划数量值
+          this.getMaterialPlan()
           this.loading = false
         }
       })

@@ -1346,10 +1346,10 @@ export default Vue.extend({
                     key: 'type',
                     errMsg: '请选择产品品类'
                   },
-                  {
-                    key: 'client_target_price',
-                    errMsg: '请输入客户目标价'
-                  },
+                  // {
+                  //   key: 'client_target_price',
+                  //   errMsg: '请输入客户目标价'
+                  // },
                   {
                     key: 'start_order_number',
                     errMsg: '请输入客户最低起订量'

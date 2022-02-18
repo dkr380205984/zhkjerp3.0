@@ -815,7 +815,7 @@
       :show="checkFlag"
       :pid="sampleOrderInfo.time_data[sampleOrderIndex].id"
       :check_type="1"
-      :reason="['驳回理由1','驳回理由2','驳回理由3','驳回理由4','驳回理由5']"></zh-check>
+      :reason="[]"></zh-check>
   </div>
 </template>
 

@@ -94,34 +94,8 @@
                 </div>
               </div>
             </div>
-            <!-- <div class="row"
-          v-for="(item) in productInfo.part_info"
-          :key="item.id">
-          <div class="col">
-            <div class="label">配件名称：</div>
-            <div class="text">
-              <span style="margin-right:12px">{{item.name}}(单位:{{item.unit}})</span>
-            </div>
-          </div>
-          <div class="col">
-            <div class="label">配件成分：</div>
-            <div class="text">
-              <span style="margin-right:12px"
-                v-for="itemChild in item.part_component_data"
-                :key="itemChild.id">{{itemChild.name}}{{itemChild.number}}%</span>
-            </div>
-          </div>
-          <div class="col">
-            <div class="label">尺码信息：</div>
-            <div class="text">
-              <span v-for="(itemChild,indexChild) in item.part_size_data"
-                :key="itemChild.id"
-                style="margin-right:12px"> {{indexChild+1}}.&nbsp;{{itemChild.name}}&nbsp;{{itemChild.weight}}g&nbsp;{{itemChild.size_info}}</span>
-            </div>
-          </div>
-        </div> -->
             <div class="row">
-              <div class="col flex3">
+              <div class="col">
                 <div class="label">{{productType}}图片：</div>
                 <div class="imgCtn">
                   <img v-for="(item,index) in productInfo.image_data"
@@ -1227,7 +1201,7 @@ export default Vue.extend({
     filterColorWeigth(itemColor: any) {
       return itemColor.material_weight
         ? itemColor.material_weight
-            .map((item: any) => item.material_name + ':' + this.$toFixed(item.weight) + 'g')
+            .map((item: any) => item.material_name + ':' + this.$toFixed(item.weight * 1000) + 'g')
             .join(';')
         : ''
     },
@@ -1491,7 +1465,6 @@ export default Vue.extend({
             : Number(this.craftInfo.weft_data.peifu))) *
         600 *
         4
-      // 把表格里的穿综纹版合并项里的null补上正确的值
 
       // 展开表格
       const warpTable = this.getFlatTable(this.craftInfo.warp_data.warp_rank, 'warp')
@@ -1666,7 +1639,9 @@ export default Vue.extend({
         weftGetGL = weftGetGL.concat(GL.filter((item, index) => index < remainder))
       })
       weftGetGLNumBack.forEach((item: any) => {
-        let GL = this.mergeArray(this.completeGL[this.alphabet.indexOf(item.GL)]).filter((item) => item) // 剔除null
+        let GL = this.mergeArray(this.completeGL[this.alphabet.indexOf(item.GL)])
+          .map((item) => item.value)
+          .filter((item) => item) // 剔除null
         let times = Math.floor(item.number / GL.length)
         let remainder = item.number % GL.length
         for (let i = 0; i < times; i++) {
@@ -1893,10 +1868,10 @@ export default Vue.extend({
         color_id: this.selectColour,
         file_url: ''
       }
-      if (this.craftInfo.image_data!.find((item) => item.color_id === this.selectColour)) {
-        this.$message.error('请勿重复上传')
-        return
-      }
+      // if (this.craftInfo.image_data!.find((item) => item.color_id === this.selectColour)) {
+      //   this.$message.error('请勿重复上传')
+      //   return
+      // }
       // 获取图片base64链接
       // @ts-ignore
       var image = _this.$refs.myCanvas.toDataURL('image/png')

@@ -62,19 +62,6 @@
                 <div class="label">{{orderInfo.order_type===1?'下单':'打样'}}时间：</div>
                 <div class="text">{{orderInfo.time_data[0].order_time}}</div>
               </div>
-              <!-- <div class="col flex3">
-                <div class="label">关联单据：</div>
-                <div class="text green">
-                  <span v-if="orderInfo.rel_quote_id"
-                    style="cursor:pointer;margin-right:12px"
-                    @click="$openUrl('/quotedPrice/detail?id='+orderInfo.rel_quote_id)">{{orderInfo.rel_quote_code}}(报价单)</span>
-                  <span v-if="orderInfo.rel_order_id"
-                    style="cursor:pointer;margin-right:12px"
-                    @click="$openUrl('/sampleOrder/detail?id='+orderInfo.rel_order_id)">{{orderInfo.rel_order_code}}(报价单)</span>
-                  <span class="gray"
-                    v-if="!orderInfo.rel_quote_id&&!orderInfo.rel_order_id">无关联单据</span>
-                </div>
-              </div> -->
             </div>
             <div class="row">
               <div class="col flex3">
@@ -85,10 +72,6 @@
                 <div class="label">{{orderInfo.order_type===1?'下单':'打样'}}总数：</div>
                 <div class="text">{{orderInfo.time_data[0].total_number}}</div>
               </div>
-              <!-- <div class="col">
-                <div class="label">{{orderInfo.order_type===1?'下单':'打样'}}总额：</div>
-                <div class="text">{{orderInfo.time_data[0].total_price}}</div>
-              </div> -->
             </div>
             <div class="row"
               v-if="orderInfo.order_type===1">
@@ -175,7 +158,6 @@
                   style="flex:2">
                   <div class="trow">
                     <div class="tcol">尺码颜色</div>
-                    <!-- <div class="tcol">{{orderInfo.order_type===1?'下单':'打样'}}单价</div> -->
                     <div class="tcol">{{orderInfo.order_type===1?'下单':'打样'}}数量</div>
                   </div>
                 </div>
@@ -189,7 +171,9 @@
                 v-for="(item,index) in productList"
                 :key="index">
                 <div class="tcol">
-                  <span>{{item.product_code||item.system_code}}</span>
+                  <span class="blue"
+                    style="cursor:pointer"
+                    @click="proId=item.product_id;orderInfo.order_type===1?productShow=true:sampleShow=true">{{item.product_code||item.system_code}}</span>
                   <span class="gray">({{item.category}}/{{item.secondary_category}})</span>
                 </div>
                 <div class="tcol">{{item.name}}</div>
@@ -212,7 +196,6 @@
                     v-for="(itemChild,indexChild) in item.product_info"
                     :key="indexChild">
                     <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                    <!-- <div class="tcol">{{itemChild.price}}元</div> -->
                     <div class="tcol">{{itemChild.number}}</div>
                   </div>
                 </div>
@@ -395,6 +378,15 @@
         </el-tab-pane>
       </el-tabs>
     </div>
+    <!-- 不需要操作的产品详情 -->
+    <product-detail :id="proId"
+      :show="productShow"
+      :noOpr="true"
+      @close="productShow = false"></product-detail>
+    <sample-detail :id="proId"
+      :show="sampleShow"
+      :noOpr="true"
+      @close="sampleShow = false"></sample-detail>
   </div>
 </template>
 
@@ -417,7 +409,7 @@ export default Vue.extend({
       required: false
     },
     id: {
-      type: Number,
+      type: [Number, String],
       required: false
     }
   },
@@ -428,6 +420,9 @@ export default Vue.extend({
     return {
       cardName: '基本信息',
       productList: [],
+      proId: '',
+      productShow: false,
+      sampleShow: false,
       orderInfo: {
         id: null,
         client_id: '',
@@ -489,6 +484,11 @@ export default Vue.extend({
   watch: {
     data(newVal: OrderDetail) {
       this.orderInfo = newVal
+      this.getProInfo()
+    }
+  },
+  methods: {
+    getProInfo() {
       if (this.orderInfo.order_type === 1) {
         this.orderInfo.time_data.forEach((itemTime) => {
           itemTime.batch_data.forEach((itemBatch) => {
@@ -504,11 +504,12 @@ export default Vue.extend({
     if (this.id) {
       order
         .detail({
-          id: Number(this.$route.query.id)
+          id: this.id
         })
         .then((res) => {
           if (res.data.status) {
             this.orderInfo = res.data.data
+            this.getProInfo()
           }
         })
     }

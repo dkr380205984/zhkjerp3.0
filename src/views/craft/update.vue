@@ -124,7 +124,8 @@
             <div class="elCtn">
               <el-select placeholder="请选择主要原料"
                 v-model="craftInfo.warp_data.material_data[0].material_id"
-                @change="cmpYarnCoefficient">
+                @change="cmpYarnCoefficient"
+                filterable>
                 <el-option v-for="item in materialList"
                   :key="item.id"
                   :value="item.id"
@@ -146,7 +147,8 @@
                 placeholder="请选择次要原料"
                 v-model="itemMat.material_id"
                 clearable
-                @change="cmpYarnCoefficient">
+                @change="cmpYarnCoefficient"
+                filterable>
                 <el-option v-for="item in materialList"
                   :key="item.id"
                   :value="item.id"
@@ -227,11 +229,11 @@
               <span class="text">经向排列</span>
               <i class="sliderCtn">
                 <span class="text"
-                  @click="ifDouble.warp=false"
-                  :class="{'active':!ifDouble.warp}">单</span>
+                  @click="craftInfo.warp_data.back_status=2"
+                  :class="{'active':craftInfo.warp_data.back_status===2}">单</span>
                 <span class="text"
-                  @click="ifDouble.warp=true"
-                  :class="{'active':ifDouble.warp}">双</span>
+                  @click="craftInfo.warp_data.back_status=1"
+                  :class="{'active':craftInfo.warp_data.back_status===1}">双</span>
               </i>
               <el-input v-model="insertNumber.warp"
                 class="element"
@@ -271,7 +273,7 @@
           </div>
         </div>
         <div class="row"
-          v-show="ifDouble.warp">
+          v-show="craftInfo.warp_data.back_status===1">
           <div class="col">
             <div class="label">
               <span class="text">经向反面</span>
@@ -929,7 +931,8 @@
             <div class="elCtn">
               <el-select placeholder="请选择主要原料"
                 v-model="craftInfo.weft_data.material_data[0].material_id"
-                @change="cmpYarnCoefficient">
+                @change="cmpYarnCoefficient"
+                filterable>
                 <el-option v-for="item in materialList"
                   :key="item.id"
                   :value="item.id"
@@ -951,7 +954,8 @@
                 placeholder="请选择次要原料"
                 v-model="itemMat.material_id"
                 @change="cmpYarnCoefficient"
-                clearable>
+                clearable
+                filterable>
                 <el-option v-for="item in materialList"
                   :key="item.id"
                   :value="item.id"
@@ -1032,11 +1036,11 @@
               <span class="text">纬向排列</span>
               <i class="sliderCtn">
                 <span class="text"
-                  @click="ifDouble.weft=false"
-                  :class="{'active':!ifDouble.weft}">单</span>
+                  @click="craftInfo.weft_data.back_status=2"
+                  :class="{'active':craftInfo.weft_data.back_status===2}">单</span>
                 <span class="text"
-                  @click="ifDouble.weft=true"
-                  :class="{'active':ifDouble.weft}">双</span>
+                  @click="craftInfo.weft_data.back_status=1"
+                  :class="{'active':craftInfo.weft_data.back_status===1}">双</span>
               </i>
               <el-input v-model="insertNumber.weft"
                 class="element"
@@ -1075,7 +1079,7 @@
           </div>
         </div>
         <div class="row"
-          v-show="ifDouble.weft">
+          v-show="craftInfo.weft_data.back_status===1">
           <div class="col">
             <div class="label">
               <span class="text">经向反面</span>
@@ -1322,11 +1326,6 @@ export default Vue.extend({
       testColor: {
         color: '',
         name: ''
-      },
-      // 是否为双面巾
-      ifDouble: {
-        warp: false,
-        weft: false
       },
       // 插入列数
       insertNumber: {
@@ -2028,11 +2027,11 @@ export default Vue.extend({
         'weft'
       )
       const weftTableBack = this.getFlatTable(
-        this.tableData.warpBack.data.map((item: any, index: number) => {
+        this.tableData.weftBack.data.map((item: any, index: number) => {
           if (index === 1) {
             return item.map((itemJia: any) => {
-              return this.warpJiaList.find((itemFind: any) => itemFind.label === itemJia)
-                ? (this.warpJiaList.find((itemFind: any) => itemFind.label === itemJia) as any).value
+              return this.weftJiaList.find((itemFind: any) => itemFind.label === itemJia)
+                ? (this.weftJiaList.find((itemFind: any) => itemFind.label === itemJia) as any).value
                 : ''
             })
           } else {
@@ -2159,6 +2158,20 @@ export default Vue.extend({
       }
       this.$forceUpdate()
     },
+    // 夹断表格空数据
+    sliceTable(data: any[][]): any[][] {
+      let sliceLength = data[1].length + 1
+      data[1].some((item, index) => {
+        if (item !== 0 && !item) {
+          sliceLength = index
+          return true
+        }
+        return false
+      })
+      return data.map((item) => {
+        return item.slice(0, sliceLength)
+      })
+    },
     // 提交时获取特殊值 表格值，合并项等
     getCmpData() {
       // this.craftInfo.product_id = Number(this.$route.query.id)
@@ -2205,78 +2218,86 @@ export default Vue.extend({
       this.craftInfo.weft_data.merge_data = this.tableHot.weft.getPlugin('MergeCells').mergedCellsCollection.mergedCells
       this.craftInfo.weft_data.merge_data_back =
         this.tableHot.weftBack.getPlugin('MergeCells').mergedCellsCollection.mergedCells
-      this.craftInfo.warp_data.warp_rank = this.tableData.warp.data.map((item: any[], index: number) => {
-        if (index === 1) {
-          return item.map((itemJia: any) => {
-            return this.warpJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)
-              ? this.warpJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)!.value
-              : ''
-          })
-        } else {
-          if (item.length === this.tableData.warp.number) {
-            return item
+      this.craftInfo.warp_data.warp_rank = this.sliceTable(
+        this.tableData.warp.data.map((item: any[], index: number) => {
+          if (index === 1) {
+            return item.map((itemJia: any) => {
+              return this.warpJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)
+                ? this.warpJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)!.value
+                : ''
+            })
           } else {
-            for (let i = 0; i < this.tableData.warp.number; i++) {
-              item[i] = item[i] || null
+            if (item.length === this.tableData.warp.number) {
+              return item
+            } else {
+              for (let i = 0; i < this.tableData.warp.number; i++) {
+                item[i] = item[i] || null
+              }
+              return item
             }
-            return item
           }
-        }
-      })
-      this.craftInfo.warp_data.warp_rank_back = this.tableData.warpBack.data.map((item: any[], index: number) => {
-        if (index === 1) {
-          return item.map((itemJia: any) => {
-            return this.warpJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)
-              ? this.warpJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)!.value
-              : ''
-          })
-        } else {
-          if (item.length === this.tableData.warpBack.number) {
-            return item
+        })
+      )
+      this.craftInfo.warp_data.warp_rank_back = this.sliceTable(
+        this.tableData.warpBack.data.map((item: any[], index: number) => {
+          if (index === 1) {
+            return item.map((itemJia: any) => {
+              return this.warpJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)
+                ? this.warpJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)!.value
+                : ''
+            })
           } else {
-            for (let i = 0; i < this.tableData.warpBack.number; i++) {
-              item[i] = item[i] || null
+            if (item.length === this.tableData.warpBack.number) {
+              return item
+            } else {
+              for (let i = 0; i < this.tableData.warpBack.number; i++) {
+                item[i] = item[i] || null
+              }
+              return item
             }
-            return item
           }
-        }
-      })
-      this.craftInfo.weft_data.weft_rank = this.tableData.weft.data.map((item: any[], index: number) => {
-        if (index === 1) {
-          return item.map((itemJia: any) => {
-            return this.weftJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)
-              ? this.weftJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)!.value
-              : ''
-          })
-        } else {
-          if (item.length === this.tableData.weft.number) {
-            return item
+        })
+      )
+      this.craftInfo.weft_data.weft_rank = this.sliceTable(
+        this.tableData.weft.data.map((item: any[], index: number) => {
+          if (index === 1) {
+            return item.map((itemJia: any) => {
+              return this.weftJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)
+                ? this.weftJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)!.value
+                : ''
+            })
           } else {
-            for (let i = 0; i < this.tableData.weft.number; i++) {
-              item[i] = item[i] || null
+            if (item.length === this.tableData.weft.number) {
+              return item
+            } else {
+              for (let i = 0; i < this.tableData.weft.number; i++) {
+                item[i] = item[i] || null
+              }
+              return item
             }
-            return item
           }
-        }
-      })
-      this.craftInfo.weft_data.weft_rank_back = this.tableData.weftBack.data.map((item: any[], index: number) => {
-        if (index === 1) {
-          return item.map((itemJia: any) => {
-            return this.weftJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)
-              ? this.weftJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)!.value
-              : ''
-          })
-        } else {
-          if (item.length === this.tableData.weft.number) {
-            return item
+        })
+      )
+      this.craftInfo.weft_data.weft_rank_back = this.sliceTable(
+        this.tableData.weftBack.data.map((item: any[], index: number) => {
+          if (index === 1) {
+            return item.map((itemJia: any) => {
+              return this.weftJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)
+                ? this.weftJiaList.find((itemFind: { label: any }) => itemFind.label === itemJia)!.value
+                : ''
+            })
           } else {
-            for (let i = 0; i < this.tableData.weft.number; i++) {
-              item[i] = item[i] || null
+            if (item.length === this.tableData.weft.number) {
+              return item
+            } else {
+              for (let i = 0; i < this.tableData.weft.number; i++) {
+                item[i] = item[i] || null
+              }
+              return item
             }
-            return item
           }
-        }
-      })
+        })
+      )
     },
     // 计算克重信息——具体到每种配色每个颜色，主要用于详情页展示
     getMaterialData() {
@@ -2345,11 +2366,11 @@ export default Vue.extend({
         'weft'
       )
       const weftTableBack = this.getFlatTable(
-        this.tableData.warpBack.data.map((item: any, index: number) => {
+        this.tableData.weftBack.data.map((item: any, index: number) => {
           if (index === 1) {
             return item.map((itemJia: any) => {
-              return this.warpJiaList.find((itemFind: any) => itemFind.label === itemJia)
-                ? (this.warpJiaList.find((itemFind: any) => itemFind.label === itemJia) as any).value
+              return this.weftJiaList.find((itemFind: any) => itemFind.label === itemJia)
+                ? (this.weftJiaList.find((itemFind: any) => itemFind.label === itemJia) as any).value
                 : ''
             })
           } else {
@@ -2377,8 +2398,10 @@ export default Vue.extend({
       front.concat(behind).forEach((item) => {
         // 先算根数
         this.craftInfo[type].color_data.forEach((itemColour) => {
-          itemColour.color_scheme[item.jia].number =
-            (Number(itemColour.color_scheme[item.jia].number) || 0) + Number(item.number)
+          if (itemColour.color_scheme[item.jia]) {
+            itemColour.color_scheme[item.jia].number =
+              (Number(itemColour.color_scheme[item.jia].number) || 0) + Number(item.number)
+          }
         })
       })
       // 算物料克重
@@ -2974,7 +2997,7 @@ export default Vue.extend({
       afterCreateCol: (index: any, amount: any) => {
         this.tableData.weftBack.number++
         for (let i = 0; i < this.tableData.weftBack.number; i++) {
-          this.tableData.weft.data[0][i] = i + 1
+          this.tableData.weftBack.data[0][i] = i + 1
         }
       },
       afterRemoveCol: (index: any, amount: any) => {
@@ -3063,12 +3086,14 @@ export default Vue.extend({
                 })
           })
 
-          this.tableHot.warp = new Handsontable((this.$refs as any).warp, this.tableData.warp)
-          this.tableHot.warpBack = new Handsontable((this.$refs as any).warpBack, this.tableData.warpBack)
-          this.tableHot.weft = new Handsontable((this.$refs as any).weft, this.tableData.weft)
-          this.tableHot.weftBack = new Handsontable((this.$refs as any).weftBack, this.tableData.weftBack)
+          // v-show拿不到$ref节点，加个nextTick
+          this.$nextTick(() => {
+            this.tableHot.warp = new Handsontable((this.$refs as any).warp, this.tableData.warp)
+            this.tableHot.warpBack = new Handsontable((this.$refs as any).warpBack, this.tableData.warpBack)
+            this.tableHot.weft = new Handsontable((this.$refs as any).weft, this.tableData.weft)
+            this.tableHot.weftBack = new Handsontable((this.$refs as any).weftBack, this.tableData.weftBack)
+          })
 
-          console.log(this.craftInfo.warp_data.color_data, this.craftInfo.weft_data.color_data)
           // 清空克重数据，因为提交的时候需要重新计算
           this.craftInfo.warp_data.color_data.forEach((item) => {
             item.color_scheme.forEach((itemColor) => {

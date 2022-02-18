@@ -98,7 +98,7 @@ export default Vue.extend({
             url: '/inspection/list?page=1&type=1'
           },
           {
-            name: '包装计划',
+            name: '包装管理',
             id: '10-3',
             icon: 'icon-zhuangxiangjihua',
             url: '/packManage/list?page=1&type=1'

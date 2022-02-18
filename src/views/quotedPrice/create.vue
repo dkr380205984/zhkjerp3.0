@@ -209,7 +209,22 @@
           </div>
           <div class="row">
             <div class="col">
-              <div class="label">产品图片</div>
+              <div class="label">产品图片
+                <el-checkbox v-model="item.cvFlag"
+                  @change="(ev)=>{return changeCVOpration(ev,index,item.cvImageLength)}">{{item.cvFlag?'关闭复制粘贴图片上传功能':'开启复制粘贴图片上传功能'}}
+                </el-checkbox>
+              </div>
+              <div class="cvImageCtn"
+                v-show="item.cvFlag || item.cv_list.length>0">
+                <div class="cvImage">
+                  <img v-for="indexImage of item.cvImageLength"
+                    :key="indexImage"
+                    :id="index + 'cvImg'+indexImage"
+                    :src="require('@/assets/image/common/cv.png')">
+                  <i class="icon el-icon-close"
+                    @click="deleteCvImage(index,indexImage-1)"></i>
+                </div>
+              </div>
               <div class="info">
                 <el-upload class="upload"
                   action="https://upload.qiniup.com/"
@@ -1079,7 +1094,7 @@
 </template>
 
 <script lang="ts">
-import { QuotedPriceInfo } from '@/types/quotedPrice'
+import { QuotedPriceInfo, QuotedPriceProduct } from '@/types/quotedPrice'
 import { PackMaterialInfo, DecorateMaterialInfo } from '@/types/materialSetting'
 import { moneyArr } from '@/assets/js/dictionary'
 import { client, quotedPrice, yarn, sampleOrder, order } from '@/assets/js/api'
@@ -1122,6 +1137,10 @@ export default Vue.extend({
         system_total_price: 0,
         product_data: [
           {
+            cv_list: [],
+            file_list: [],
+            cvFlag: false,
+            cvImageLength: 1,
             total_price: '',
             product_id: '',
             type: [],
@@ -1218,7 +1237,9 @@ export default Vue.extend({
       searchQuotedPriceList: [],
       desc: '',
       showContent: false,
-      quotedImage: ''
+      quotedImage: '',
+      notify: null,
+      imgId: ''
     }
   },
   computed: {
@@ -1344,6 +1365,30 @@ export default Vue.extend({
     }
   },
   methods: {
+    changeCVOpration(flag: boolean, mark: number, imageLength: number) {
+      if (this.notify) {
+        this.notify.close()
+        this.deletePasteImage()
+      }
+      if (flag) {
+        this.notify = this.$notify({
+          title: '警告！',
+          message:
+            '已开启复制粘贴图片上传功能，请勿在其余文字/数字输入框使用复制粘贴或使用ctrl+v键操作,操作完成后请关闭复制粘贴图片上传功能',
+          type: 'warning',
+          duration: 0,
+          showClose: false
+        })
+        this.addPasteImage()
+      }
+      this.quotedPriceInfo.product_data.forEach((item, index) => {
+        if (index !== mark) {
+          item.cvFlag = false
+        }
+      })
+      this.imgId = mark + 'cvImg' + imageLength
+      this.$forceUpdate()
+    },
     searchNoProFee(str: string, cb: Function) {
       const arr = [
         {
@@ -1388,6 +1433,10 @@ export default Vue.extend({
     },
     addPro() {
       this.$addItem(this.quotedPriceInfo.product_data, {
+        cv_list: [],
+        file_list: [],
+        cvFlag: false,
+        cvImageLength: 1,
         total_price: '',
         product_id: '',
         type: [],
@@ -1561,6 +1610,7 @@ export default Vue.extend({
         item.image_data = item.file_list
           ? item.image_data.concat(item.file_list!.map((item) => item.url))
           : item.image_data // 新旧图拼接
+        item.image_data = item.cv_list ? item.cv_list.concat(item.image_data) : item.image_data // cv图拼接
         item.category_id = item.type && item.type[0]
         item.secondary_category_id = item.type && item.type[1]
         item.material_data.forEach((itemChild) => {
@@ -1632,10 +1682,10 @@ export default Vue.extend({
                     errMsg: '请选择产品品类',
                     regNormal: 'checkArr'
                   },
-                  {
-                    key: 'client_target_price',
-                    errMsg: '请输入客户目标价'
-                  },
+                  // {
+                  //   key: 'client_target_price',
+                  //   errMsg: '请输入客户目标价'
+                  // },
                   {
                     key: 'start_order_number',
                     errMsg: '请输入客户最低起订量'
@@ -1860,6 +1910,90 @@ export default Vue.extend({
       } else {
         this.$message.error('请先选择产品品类')
       }
+    },
+    dataURLtoFile(dataurl: string, filename: string) {
+      var arr = dataurl.split(',')
+      // @ts-ignore
+      var mime = arr[0].match(/:(.*?);/)[1]
+      var bstr = atob(arr[1])
+      var n = bstr.length
+      var u8arr = new Uint8Array(n)
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+      }
+      return new File([u8arr], filename, { type: mime })
+    },
+    // 复制粘贴图片
+    // imgId,标记图片id
+    pasteImage(event: any) {
+      let _this = this
+      // 只处理图片格式数据
+      if (event.clipboardData || event.originalEvent) {
+        let clipboardData = event.clipboardData || event.originalEvent.clipboardData
+        if (clipboardData.items) {
+          let blob
+          for (let i = 0; i < clipboardData.items.length; i++) {
+            if (clipboardData.items[i].type.indexOf('image') !== -1) {
+              blob = clipboardData.items[i].getAsFile()
+            }
+          }
+          let render = new FileReader()
+          render.onload = function (evt: any) {
+            //输出base64编码
+            const base64 = evt.target.result
+            const arr = _this.imgId.split('cvImg')
+            // @ts-ignore
+            document
+              .getElementById(arr[0] + 'cvImg' + _this.quotedPriceInfo.product_data[arr[0]].cvImageLength)
+              .setAttribute('src', base64)
+            var url = 'https://upload.qiniup.com/'
+            var xhr = new XMLHttpRequest()
+            let formData = new FormData()
+            formData.append('token', _this.token)
+            _this.loading = true
+            // @ts-ignore
+            let filename = Date.parse(new Date()) + '.jpg'
+            formData.append('key', filename)
+            formData.append('file', _this.dataURLtoFile(base64, filename))
+            xhr.open('POST', url, true)
+            xhr.send(formData)
+            xhr.onreadystatechange = function () {
+              _this.loading = false
+              if (xhr.readyState === 4) {
+                // @ts-ignore
+                document
+                  .getElementById(arr[0] + 'cvImg' + _this.quotedPriceInfo.product_data[arr[0]].cvImageLength)
+                  .setAttribute('src', 'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key)
+                _this.$message.success('上传成功')
+                // @ts-ignore
+                _this.quotedPriceInfo.product_data[arr[0]].cv_list.push(
+                  // @ts-ignore
+                  'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key
+                )
+                _this.quotedPriceInfo.product_data[arr[0]].cvImageLength =
+                  Number(_this.quotedPriceInfo.product_data[arr[0]].cvImageLength) + 1
+              }
+            }
+          }
+          if (render.readAsDataURL && blob) {
+            render.readAsDataURL(blob)
+          }
+        }
+      }
+    },
+    addPasteImage() {
+      document.addEventListener('paste', this.pasteImage)
+    },
+    deletePasteImage() {
+      document.removeEventListener('paste', this.pasteImage)
+    },
+    // 删除复制粘贴的图片
+    deleteCvImage(proIndex: number, imageIndex: number) {
+      if (this.quotedPriceInfo.product_data[proIndex].cv_list![imageIndex]) {
+        this.$deleteItem(this.quotedPriceInfo.product_data[proIndex].cv_list!, imageIndex)
+      } else {
+        this.$message.error('请先上传图片')
+      }
     }
   },
   mounted() {
@@ -1959,6 +2093,8 @@ export default Vue.extend({
               })
               .map((item) => {
                 return {
+                  cv_list: [],
+                  cvFlag: false,
                   total_price: '',
                   product_id: item.product_id,
                   type: [item.category_id as number, item.secondary_category_id as number],
@@ -2079,6 +2215,8 @@ export default Vue.extend({
               this.quotedPriceInfo.product_data = this.quotedPriceInfo.product_data.concat(
                 item.product_data.map((item: any) => {
                   return {
+                    cv_list: [],
+                    cvFlag: false,
                     total_price: '',
                     product_id: '',
                     type: [item.category_id as number, item.secondary_category_id as number],
@@ -2180,6 +2318,12 @@ export default Vue.extend({
           this.loading = false
         })
     }
+  },
+  beforeDestroy() {
+    if (this.notify) {
+      this.notify.close()
+    }
+    this.deletePasteImage()
   }
 })
 </script>

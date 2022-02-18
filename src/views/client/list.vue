@@ -43,28 +43,15 @@
               <el-option label="合作中"
                 :value="1"></el-option>
               <el-option label="暂停合作"
-                :value="2"></el-option>
+                :value="0"></el-option>
             </el-select>
           </div>
-          <div class="elCtn"
-            style="width:200px">
+          <div class="elCtn">
             <el-select placeholder="客户类型筛选"
               v-model="clientType"
               @change="tag_id='';getClientTag($event)"
               clearable>
               <el-option v-for="item in clientTypeArr"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"></el-option>
-            </el-select>
-          </div>
-          <div class="elCtn"
-            style="width:200px">
-            <el-select placeholder="客户标签筛选"
-              v-model="tag_id"
-              @change="changeRouter"
-              clearable>
-              <el-option v-for="item in clientTagList"
                 :key="item.id"
                 :value="item.id"
                 :label="item.name"></el-option>
@@ -79,6 +66,29 @@
               class="el-icon-chat-dot-square"
               :class="{'hoverRed':clientBindList.length>0}"
               @click="bindFlag = true"></i>
+          </div>
+        </div>
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-select placeholder="客户标签筛选"
+              v-model="tag_id"
+              @change="changeRouter"
+              clearable>
+              <el-option v-for="item in clientTagList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-select v-model="limit"
+              placeholder="每页展示条数"
+              @change="changeRouter">
+              <el-option v-for="item in limitList"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value"></el-option>
+            </el-select>
           </div>
         </div>
         <div class="list">
@@ -106,7 +116,7 @@
             <div class="col oprCtn"
               style="flex:1.8">
               <span class="opr hoverGreen"
-                @click="deletebindClient(item.client_id)">{{item.workshop_id==='0'?'暂无操作':'解除绑定'}}</span>
+                @click="deletebindClient(item.id)">{{item.workshop_id==='0'?'暂无操作':'解除绑定'}}</span>
               <span class="opr hoverBlue"
                 @click="checkClient(item.id,item.status)">{{item.status===1?'终止合作':'继续合作'}}</span>
               <span class="opr hoverOrange"
@@ -118,7 +128,7 @@
         </div>
         <div class="pageCtn">
           <el-pagination background
-            :page-size="5"
+            :page-size="limit"
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
@@ -169,6 +179,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { client, clientBind, clientCheck, clientType } from '@/assets/js/api'
+import { limitArr } from '@/assets/js/dictionary'
 export default Vue.extend({
   data(): {
     [propName: string]: any
@@ -179,6 +190,7 @@ export default Vue.extend({
       list: [],
       page: 1,
       total: 1,
+      limit: 10,
       type: 1,
       status: 1,
       clientTypeList: [],
@@ -187,7 +199,8 @@ export default Vue.extend({
       unBindClient: [],
       tag_id: '',
       bindFlag: false,
-      clientTagList: []
+      clientTagList: [],
+      limitList: limitArr
     }
   },
   computed: {
@@ -209,6 +222,7 @@ export default Vue.extend({
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)
+      this.limit = Number(query.limit) || 10
       this.type = Number(query.type)
       this.tag_id = Number(query.tag_id) || ''
       this.status = query.status === 'null' ? null : Number(query.status)
@@ -222,6 +236,8 @@ export default Vue.extend({
       this.$router.push(
         '/client/list?page=' +
           this.page +
+          '&limit=' +
+          this.limit +
           '&type=' +
           this.type +
           '&keyword=' +
@@ -257,7 +273,7 @@ export default Vue.extend({
       this.loading = true
       client
         .list({
-          limit: 5,
+          limit: this.limit,
           page: this.page,
           name: this.keyword,
           status: this.status,

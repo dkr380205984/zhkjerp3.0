@@ -127,7 +127,7 @@
             <div class="col">{{item.client_name}}</div>
             <div class="col">{{item.complete_time}}</div>
             <div class="col">{{item.product_code}}</div>
-            <div class="col">产品部位</div>
+            <div class="col">{{item.part_name}}</div>
             <div class="col">{{item.color_name}}/{{item.size_name}}</div>
             <div class="col">{{item.number}}</div>
             <div class="col">{{item.shoddy_number}}</div>
@@ -389,20 +389,34 @@ export default Vue.extend({
       inspectionList: [],
       shoddy_reason: [
         {
-          value: '原因1',
-          label: '原因1'
+          value: '织造原因'
         },
         {
-          value: '原因2',
-          label: '原因2'
+          value: '捻须原因'
         },
         {
-          value: '原因3',
-          label: '原因3'
+          value: '拉毛原因'
         },
         {
-          value: '原因4',
-          label: '原因4'
+          value: '刺毛原因'
+        },
+        {
+          value: '水洗原因'
+        },
+        {
+          value: '车缝原因'
+        },
+        {
+          value: '套口原因'
+        },
+        {
+          value: '整烫原因'
+        },
+        {
+          value: '手工原因'
+        },
+        {
+          value: '其它原因'
         }
       ]
     }
