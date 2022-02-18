@@ -1331,12 +1331,15 @@
               </div>
               <div class="row">
                 <div class="label">公司二维码：</div>
-                <div class="content border tc">
+                <div class="row" style="align-items: flex-end;">
+                  <div class="content border tc">
                   <div>
                     <img :src="qrCodeUrl" />
                   </div>
                   <div>织为云外协生产小程序</div>
                   <div>微信扫一扫，在线管理加工单进度</div>
+                </div>
+                <div class="btn backHoverBlue fl" style="height: 33px;margin-left:20px"  @click="$openUrl('/setting/printQRCode?companyID='+companyID)">点击打印</div>
                 </div>
               </div>
               <div class="row">
@@ -5480,6 +5483,7 @@ export default Vue.extend({
           QRCode.toDataURL(a)
             .then((url: any) => {
               _this.qrCodeUrl = url
+              _this.companyID = _this.companyInfo.company_id
             })
             .catch((err: any) => {
               console.error(err)
