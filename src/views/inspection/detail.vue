@@ -94,7 +94,7 @@
                     aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
-                  <span class="text">检验出库</span>
+                  <span class="text">生产出库</span>
                 </div>
               </div>
             </div>
@@ -167,9 +167,9 @@
                     v-model="item.type"
                     disabled>
                     <el-option :value="1"
-                      label="入库"></el-option>
+                      label="检验入库"></el-option>
                     <el-option :value="2"
-                      label="出库"></el-option>
+                      label="生产出库"></el-option>
                   </el-select>
                 </div>
               </div>
@@ -226,11 +226,11 @@
                   </div>
                   <div class="once">
                     <div class="label">
-                      <span class="text">检验数量</span>
+                      <span class="text">{{item.type===1?'检验数量':'出库数量'}}</span>
                       <span class="explanation">(必填)</span>
                     </div>
                     <div class="info elCtn">
-                      <el-input placeholder="请填写检验数量"
+                      <el-input placeholder="请填写数量"
                         v-model="itemChild.number"></el-input>
                     </div>
                   </div>
@@ -241,20 +241,26 @@
                   <div class="once">
                     <div class="label">
                       <span class="text">次品数量</span>
+                      <span class="explanation"
+                        v-if="item.type===2">(无)</span>
                     </div>
                     <div class="info elCtn">
                       <el-input placeholder="请填写次品数量"
-                        v-model="itemChild.shoddy_number"></el-input>
+                        v-model="itemChild.shoddy_number"
+                        :disabled="item.type===2"></el-input>
                     </div>
                   </div>
                   <div class="once">
                     <div class="label">
                       <span class="text">次品原因</span>
+                      <span class="explanation"
+                        v-if="item.type===2">(无)</span>
                     </div>
                     <div class="info elCtn">
                       <el-select placeholder="请填写次品原因"
                         v-model="itemChild.shoddy_reason"
-                        multiple>
+                        multiple
+                        :disabled="item.type===2">
                         <el-option v-for="item in shoddy_reason"
                           :key="item.value"
                           :label="item.label"

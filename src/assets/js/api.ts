@@ -101,6 +101,19 @@ const check = {
     }) => http.post(`${baseUrl}/doc/check`, params, 'application/json'),
 }
 
+// 单据扣款
+// 类型同审核
+const deduct = {
+  create: (params:
+    {
+      rel_doc_id: number | string
+      doc_type: number
+      reason: string[]
+      client_id: number | string
+      file_url: string[]
+      price: string
+    }) => http.post(`${baseUrl}/doc/deduct`, params, 'application/json'),
+}
 // 单据客户确认
 const clientCheck = {
   create: (params: { order_id: number | string }) => http.post(`${baseUrl}/order/time/client/confirm`, params, 'application/json'),
@@ -276,7 +289,7 @@ const client = {
     page?: number | string
     name?: string
     status?: number | string
-    tag_id?: number | string
+    tag_id?: number[] | string[] | null
     client_type_id?: number | string
     workshop_id?: 0
   }) => http.get(`${baseUrl}/client/lists`, params),
@@ -593,6 +606,7 @@ export {
   companyInfo,
   category,
   check,
+  deduct,
   clientCheck,
   completeCheck,
   style,

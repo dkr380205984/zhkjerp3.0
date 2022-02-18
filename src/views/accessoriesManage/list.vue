@@ -49,7 +49,8 @@
           <div class="elCtn">
             <el-select @change="$setLocalStorage('group_id',group_id);changeRouter()"
               v-model="group_id"
-              placeholder="筛选负责小组">
+              placeholder="筛选负责小组"
+              clearable>
               <el-option v-for="item in groupList"
                 :key="item.id"
                 :value="item.id"
@@ -266,7 +267,7 @@ export default Vue.extend({
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.keyword = query.keyword || ''
       this.status = query.status || '0'
-      this.user_id = query.user_id || this.$getLocalStorage('create_user')
+      this.user_id = query.user_id || ''
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.order_type = Number(query.order_type) || null
       this.date = query.date ? (query.date as string).split(',') : []

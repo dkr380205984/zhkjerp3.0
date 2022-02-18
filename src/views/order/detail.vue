@@ -263,7 +263,7 @@
                 v-for="(itemChild,indexChild) in item.product_info"
                 :key="indexChild">
                 <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                <div class="tcol">{{itemChild.price}}元</div>
+                <div class="tcol">{{itemChild.price}}{{orderInfo.settle_unit}}</div>
                 <div class="tcol">{{itemChild.number}}</div>
               </div>
             </div>
@@ -342,21 +342,15 @@
                     <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
                   </div>
                   <div class="tcol">
-                    <div class="trow"
-                      v-for="(itemImage,indexImage) in itemPro.image_data"
-                      :key="indexImage">
-                      <div class="imageCtn">
-                        <el-image style="width:100%;height:100%;margin-top:2px"
-                          :src="itemPro.image_data.length>0?itemImage:''"
-                          :preview-src-list="itemPro.image_data">
-                          <div slot="error"
-                            class="image-slot">
-                            <i class="el-icon-picture-outline"
-                              style="font-size:42px"></i>
-                          </div>
-                        </el-image>
+                    <el-image style="width:100%;height:100%"
+                      :src="itemPro.image_data&&itemPro.image_data.length>0?itemPro.image_data[0]:''"
+                      :preview-src-list="itemPro.image_data">
+                      <div slot="error"
+                        class="image-slot">
+                        <i class="el-icon-picture-outline"
+                          style="font-size:42px"></i>
                       </div>
-                    </div>
+                    </el-image>
                   </div>
                   <div class="tcol noPad"
                     style="flex:3">

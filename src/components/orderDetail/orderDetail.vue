@@ -77,18 +77,18 @@
               </div> -->
             </div>
             <div class="row">
-              <div class="col">
+              <div class="col flex3">
                 <div class="label">{{orderInfo.order_type===1?'下单':'打样'}}款数：</div>
                 <div class="text">{{orderInfo.time_data[0].total_style}}款</div>
               </div>
-              <div class="col">
+              <div class="col flex3">
                 <div class="label">{{orderInfo.order_type===1?'下单':'打样'}}总数：</div>
                 <div class="text">{{orderInfo.time_data[0].total_number}}</div>
               </div>
-              <div class="col">
+              <!-- <div class="col">
                 <div class="label">{{orderInfo.order_type===1?'下单':'打样'}}总额：</div>
                 <div class="text">{{orderInfo.time_data[0].total_price}}</div>
-              </div>
+              </div> -->
             </div>
             <div class="row"
               v-if="orderInfo.order_type===1">
@@ -172,10 +172,10 @@
                 <div class="tcol">{{orderInfo.order_type===1?'产':'样'}}品名称</div>
                 <div class="tcol">{{orderInfo.order_type===1?'产':'样'}}品图片</div>
                 <div class="tcol noPad"
-                  style="flex:3">
+                  style="flex:2">
                   <div class="trow">
                     <div class="tcol">尺码颜色</div>
-                    <div class="tcol">{{orderInfo.order_type===1?'下单':'打样'}}单价</div>
+                    <!-- <div class="tcol">{{orderInfo.order_type===1?'下单':'打样'}}单价</div> -->
                     <div class="tcol">{{orderInfo.order_type===1?'下单':'打样'}}数量</div>
                   </div>
                 </div>
@@ -207,12 +207,12 @@
                   </div>
                 </div>
                 <div class="tcol noPad"
-                  style="flex:3">
+                  style="flex:2">
                   <div class="trow"
                     v-for="(itemChild,indexChild) in item.product_info"
                     :key="indexChild">
                     <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                    <div class="tcol">{{itemChild.price}}元</div>
+                    <!-- <div class="tcol">{{itemChild.price}}元</div> -->
                     <div class="tcol">{{itemChild.number}}</div>
                   </div>
                 </div>
@@ -373,7 +373,7 @@
                         v-for="(itemChild,indexChild) in item.product_info"
                         :key="indexChild">
                         <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                        <div class="tcol">{{itemChild.price}}元</div>
+                        <div class="tcol">{{itemChild.price}}{{orderInfo.settle_unit||'元'}}</div>
                         <div class="tcol">{{itemChild.number}}</div>
                       </div>
                     </div>

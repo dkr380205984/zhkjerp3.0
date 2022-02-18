@@ -717,6 +717,45 @@ export default Vue.extend({
     },
     getNewProduct(product: ProductInfo) {
       this.productList.push(product)
+      if (!this.orderInfo.time_data.batch_data[0].product_data[0].product_id) {
+        this.orderInfo.time_data.batch_data[0].product_data = []
+      }
+      let productInfo = {
+        product_id: product.id as number,
+        quote_rel_product_id: '',
+        size_color_list: [], // 用于下拉框选择尺码颜色
+        product_info: [
+          {
+            size_color: '', // 用于下拉框选择尺码颜色
+            size_id: '',
+            color_id: '',
+            number: '',
+            price: ''
+          }
+        ]
+      }
+      product.size_data.forEach((itemSize: any) => {
+        product.color_data.forEach((itemColor: any) => {
+          productInfo.size_color_list.push({
+            // @ts-ignore
+            label: itemSize.name + '/' + itemColor.name,
+            // @ts-ignore
+            value: itemSize.id + '/' + itemColor.id
+          })
+        })
+      })
+      // @ts-ignore
+      productInfo.product_info = productInfo.size_color_list.map((item: any) => {
+        return {
+          size_color: item.value,
+          size_id: item.value.split('/')[0],
+          color_id: item.value.split('/')[1],
+          number: '',
+          price: 0
+        }
+      })
+      productInfo.quote_rel_product_id = product.quote_rel_product_id as string
+      this.orderInfo.time_data.batch_data[0].product_data.push(productInfo)
     },
     getProductDetail(product: ProductInfo) {
       this.productShow = true

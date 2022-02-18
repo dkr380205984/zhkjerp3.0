@@ -6,14 +6,33 @@
       <div class="titleCtn">
         <div class="title">基本信息</div>
       </div>
+      <div class="detailCtn"
+        style="padding-bottom:0">
+        <div class="row">
+          <div class="col">
+            <div class="label">工艺单编号：</div>
+            <div class="text">{{craftInfo.craft_code}}</div>
+          </div>
+          <div class="col">
+            <div class="label">创建日期：</div>
+            <div class="text">{{craftInfo.create_time && craftInfo.create_time.slice(0,10)}}</div>
+          </div>
+          <div class="col">
+            <div class="label">创建人：</div>
+            <div class="text">{{craftInfo.user_name}}</div>
+          </div>
+        </div>
+      </div>
       <template v-if="!craftInfo.product_id&&!craftInfo.part_id">
-        <div class="detailCtn gray">
+        <div class="detailCtn gray"
+          style="padding-top:0">
           未绑定产品信息
         </div>
       </template>
       <template v-else>
         <template v-if="craftInfo.part_id">
-          <div class="detailCtn">
+          <div class="detailCtn"
+            style="padding-top:0">
             <div class="row">
               <div class="col">
                 <div class="label">配件名称：</div>
@@ -27,7 +46,8 @@
           </div>
         </template>
         <template v-else>
-          <div class="detailCtn">
+          <div class="detailCtn"
+            style="padding-top:0">
             <div class="row">
               <div class="col">
                 <div class="label">{{productType}}编号：</div>
@@ -134,7 +154,7 @@
                 v-for="(item,index) in craftInfo.warp_data.color_data"
                 :key="index">
                 <span class="circle">{{index+1}}</span>
-                <span>{{item.product_color}}：</span>
+                <span>{{item.color_name}}：</span>
                 <div class="colorBox"
                   v-for="(itemColor,indexColor) in item.color_scheme"
                   :key="indexColor">
@@ -508,7 +528,7 @@
                 v-for="(item,index) in craftInfo.weft_data.color_data"
                 :key="index">
                 <span class="circle">{{index+1}}</span>
-                <span>{{item.product_color}}：</span>
+                <span>{{item.color_name}}：</span>
                 <div class="colorBox"
                   v-for="(itemColor,indexColor) in item.color_scheme"
                   :key="indexColor">
@@ -1206,7 +1226,9 @@ export default Vue.extend({
     },
     filterColorWeigth(itemColor: any) {
       return itemColor.material_weight
-        ? itemColor.material_weight.map((item: any) => item.material_name + ':' + item.weight + 'g').join(';')
+        ? itemColor.material_weight
+            .map((item: any) => item.material_name + ':' + this.$toFixed(item.weight) + 'g')
+            .join(';')
         : ''
     },
     // 穿综法1-2合并，此时你访问table[6][2]，返回的结果是null，所以我们需要table[6][1]的值,所以我们需要一个函数返回1

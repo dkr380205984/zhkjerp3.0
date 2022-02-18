@@ -78,7 +78,7 @@ declare module 'vue/types/vue' {
     $flatten(data: any[]): any[]
     $formCheck(
       data: any,
-      checkArr: Array<{ key: string, errMsg?: string, regExp?: RegExp, regNormal?: 'isNum' | 'isEmail' | 'isPhone' | 'isNull' | 'checkArr' }>
+      checkArr: Array<{ key: string, errMsg?: string, regExp?: RegExp, regNormal?: 'isNum' | 'isEmail' | 'isPhone' | 'isNull' | 'checkArr', regNegate?: boolean }>
     ): boolean
     $ifRepeatArray(arr: string[]): boolean
     findId<T, K extends keyof T>(jsonArr: T[], id: number | string, returnKey: K, findKey: K): T[K]

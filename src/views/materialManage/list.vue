@@ -193,7 +193,7 @@ export default Vue.extend({
       this.order_code = query.order_code
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
-      this.user_id = query.user_id || this.$getLocalStorage('create_user')
+      this.user_id = query.user_id || ''
     },
     changeRouter() {
       this.$router.push(

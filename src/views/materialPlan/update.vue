@@ -212,8 +212,8 @@
                     </div>
                   </div>
                   <div class="tcol"
-                    :class="itemChild.has_plan?'blue':'gray'">{{itemChild.has_plan?(itemChild.production_number + 'g'):'无计划值'}}</div>
-                  <div class="tcol">{{itemChild.need_number}}kg</div>
+                    :class="itemChild.production_number?'blue':'gray'">{{itemChild.production_number||'无计划值'}}</div>
+                  <div class="tcol">{{itemChild.need_number}}{{itemChild.unit}}</div>
                   <div class="tcol">
                     <div class="elCtn">
                       <el-input v-model="itemChild.loss"
@@ -365,8 +365,9 @@
                       </el-select>
                     </div>
                   </div>
-                  <div class="tcol">{{itemChild.has_plan?(itemChild.production_number + 'g'):'无计划值'}}</div>
-                  <div class="tcol">{{itemChild.need_number}}kg</div>
+                  <div class="tcol"
+                    :class="itemChild.production_number?'blue':'gray'">{{itemChild.production_number||'无计划值'}}</div>
+                  <div class="tcol">{{itemChild.need_number}}{{itemChild.unit}}</div>
                   <div class="tcol">
                     <div class="elCtn">
                       <el-input v-model="itemChild.loss"
@@ -734,7 +735,8 @@ export default Vue.extend({
               {
                 key: 'unit',
                 errMsg: '物料的单位只能为kg或m',
-                regExp: /^((?!kg|m).)+$/
+                regExp: /^m$|^kg$/,
+                regNegate: true
               }
             ])
           })
@@ -816,7 +818,7 @@ export default Vue.extend({
       })
       .then((res) => {
         this.materialPlanInfo = res.data.data
-        this.materialPlanInfo.type = this.materialPlanInfo.type.toString()
+        // this.materialPlanInfo.type = this.materialPlanInfo.type.toString()
         this.getUpdateData()
         this.loading = false
       })

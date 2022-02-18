@@ -303,16 +303,27 @@ const routes: Array<RouteConfig> = [
       name: '生产计划详情',
       component: () => import('../views/productionPlan/detail.vue')
     }, {
-      meta: {
-        permissions_id: '9-3',
-      },
       path: '/inspection/detail',
       name: '检验收发详情',
       component: () => import('../views/inspection/detail.vue')
     }, {
+      meta: {
+        permissions_id: '9-3',
+      },
       path: '/inspection/list',
       name: '检验收发列表',
       component: () => import('../views/inspection/list.vue')
+    }, {
+      meta: {
+        permissions_id: '10-3',
+      },
+      path: '/packManage/list',
+      name: '包装管理列表',
+      component: () => import('../views/packManage/list.vue')
+    }, {
+      path: '/packManage/detail',
+      name: '包装管理详情',
+      component: () => import('../views/packManage/detail.vue')
     }, {
       meta: {
         permissions_id: '14-3',

@@ -52,8 +52,8 @@
                 <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
-                  :total="styleTotal"
-                  :current-page.sync="stylePage">
+                  :total="categoryTotal"
+                  :current-page.sync="categoryPage">
                 </el-pagination>
               </div>
             </div>
@@ -1333,7 +1333,7 @@
                 <div class="label">公司二维码：</div>
                 <div class="content border tc">
                   <div>
-                    <img :src="qrCodeUrl"/>
+                    <img :src="qrCodeUrl" />
                   </div>
                   <div>织为云外协生产小程序</div>
                   <div>微信扫一扫，在线管理加工单进度</div>
@@ -2579,7 +2579,7 @@
                   v-if="indexHalfProcess===0"
                   @click="$addItem(quotedPriceProduct.semi_product_data,{
                     desc:'',
-                    name:'',
+                    process_id:[],
                     total_price:''
                   })">添加</div>
                 <div class="opr hoverRed"
@@ -2623,7 +2623,7 @@
                   v-if="indexFinishedProcess===0"
                   @click="$addItem(quotedPriceProduct.production_data,{
                     desc:'',
-                    name:'',
+                    name:[],
                     total_price:''
                   })">添加</div>
                 <div class="opr hoverRed"
@@ -2989,7 +2989,7 @@ export default Vue.extend({
   } {
     return {
       yarnAttributeArr: yarnAttributeArr,
-      qrCodeUrl:'',
+      qrCodeUrl: '',
       postData: { token: '' },
       nav: {
         产品设置: ['品类', '款式', '成分', '配色组', '尺码'],
@@ -5474,7 +5474,7 @@ export default Vue.extend({
           this.companyInfo = res.data.data
           let _this = this
           let a = 'https://knit-m-beta.zwyknit.com/miniprogram?company_id=' + _this.companyInfo.company_id
-        
+
           // 生成二维码
           const QRCode = require('qrcode')
           QRCode.toDataURL(a)
@@ -5826,12 +5826,12 @@ export default Vue.extend({
   line-height: 180px;
 }
 
-.tc{
+.tc {
   text-align: center;
 }
 
-.border{
-  border: 1px solid #DCDFE6;
+.border {
+  border: 1px solid #dcdfe6;
   padding: 5px 30px;
 }
 </style>

@@ -49,7 +49,8 @@
           <div class="elCtn">
             <el-select @change="changeRouter"
               v-model="group_id"
-              placeholder="筛选负责小组">
+              placeholder="筛选负责小组"
+              clearable>
               <el-option v-for="item in groupList"
                 :key="item.id"
                 :value="item.id"
@@ -104,7 +105,7 @@
       @afterSave="getListSetting"
       :show="showSetting"
       :id="listSettingId"
-      :type="5"
+      :type="7"
       :data.sync="listKey"
       :originalData="originalSetting"></zh-list-setting>
   </div>
@@ -252,10 +253,16 @@ export default Vue.extend({
       },
       oprList: [
         {
-          name: '产品检验',
-          class: 'hoverBlue',
+          name: (item: any) => {
+            return item.has_weave_plan === 1 ? '产品检验' : '待添加生产计划'
+          },
+          class: (item: any) => {
+            return item.has_weave_plan === 1 ? 'hoverBlue' : 'gray'
+          },
           fn: (item: any) => {
-            this.$router.push('/inspection/detail?id=' + item.id)
+            item.has_weave_plan === 1
+              ? this.$router.push('/inspection/detail?id=' + item.id)
+              : this.$message.warning('请先添加生产计划')
           }
         }
       ]
@@ -345,7 +352,7 @@ export default Vue.extend({
       this.listKey = []
       listSetting
         .detail({
-          type: 3
+          type: 7
         })
         .then((res) => {
           this.listSettingId = res.data.data ? res.data.data.id : null

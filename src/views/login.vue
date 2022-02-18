@@ -1,52 +1,46 @@
 <template>
   <div id="login">
-    <img class="rightTop"
-      src="@/assets/image/login/圆圈.png" />
-    <img class="leftBottom"
-      src="@/assets/image/login/圆圈.png" />
-    <img class="atCenter"
-      src="@/assets/image/login/线条.png" />
-    <div class="main">
+    <div class="leftCtn">
       <div class="title">
-        <img src="@/assets/image/login/标题.png" />
+        织为云 <br />
+        协同织造平台
       </div>
-      <div class="btnList">
-        <div class="btn active">登陆</div>
-        <div class="btn"
-          @click="goRegisiter">注册</div>
-      </div>
-      <div class="userName">
-        <el-input placeholder="请输入用户名"
+      <div class="input_container account">
+        <div class="icon">
+          <i class="el-icon-user"></i>
+        </div>
+        <el-input class="input_item"
           v-model="loginInfo.user_name"
-          @keydown.enter.native="goLogin">
-          <template slot="prepend">
-            <i class="icons el-icon-user"></i>
-          </template>
-        </el-input>
+          placeholder="请输入帐号"></el-input>
       </div>
-      <div class="password">
-        <el-input type="password"
-          placeholder="请输入密码"
+      <div class="input_container password">
+        <div class="icon">
+          <i class="el-icon-lock"></i>
+        </div>
+        <el-input type='password'
+          class="input_item"
           v-model="loginInfo.password"
-          @keydown.enter.native="goLogin">
-          <template slot="prepend">
-            <i class="icons el-icon-lock"></i>
-          </template>
-        </el-input>
+          placeholder="请输入密码"></el-input>
       </div>
-      <div class="psdOp">
-        <el-checkbox v-model="remPsd">记住密码</el-checkbox>
-        <div class="fogotPsd"
-          @click="forgetPsd">忘记密码？</div>
+      <div class="rememberOrForgetCtn">
+        <div class="remember_psd">
+          <el-checkbox v-model="remPsd">记住密码</el-checkbox>
+        </div>
+        <div class="forget_psd"
+          @click="showForgetPassword=true">忘记密码？</div>
       </div>
-      <div class="subBtn"
+      <div class="login"
         @click="goLogin">登录</div>
+      <!-- <div class="buy_account">没有账号？<span class="buy_link">去购买</span></div> -->
+      <div class="bottomInfo">
+        <div class="line">©zwyknit.com版权所有 数据应用服务：浙ICP备 <a target="_blank"
+            href="http://www.miit.gov.cn/">19041626号</a></div>
+      </div>
     </div>
-    <!-- 备案信息 -->
-    <div class="bottomInfo">
-      <div class="line">©zwyknit.com版权所有 数据应用服务：浙ICP备 <a target="_blank"
-          href="http://www.miit.gov.cn/">19041626号</a></div>
-      <!-- <div class="line">浙公网安备 33010602009975号</div> -->
+    <div class="rightCtn">
+      <img :src="require('@/assets/image/login/login_1.jpg')"
+        style="width:100%"
+        alt="">
     </div>
     <!-- 忘记密码弹窗 -->
     <div class="popup"
@@ -65,7 +59,6 @@
             <span class="info">
               <el-input placeholder='请输入手机号'
                 v-model="forgetPasswordInfo.telephone">
-                <template slot="append">11</template>
               </el-input>
             </span>
           </div>
@@ -89,7 +82,7 @@
                 v-model="forgetPasswordInfo.new_pass"></el-input>
             </span>
           </div>
-          <div class="row">
+          <!-- <div class="row">
             <span class="label">安全验证：</span>
             <span class="info">
               <el-input placeholder='请输入右侧的4位安全验证码'
@@ -105,7 +98,7 @@
                 </template>
               </el-input>
             </span>
-          </div>
+          </div> -->
         </div>
         <div class="oprCtn">
           <span class="btn borderBtn"
@@ -211,12 +204,12 @@ export default Vue.extend({
   },
   methods: {
     goChangePassword() {
-      if (!this.verificationCode.checkCode(this.imageCode)) {
-        this.$message.warning('请输入正确的图形验证码')
-        this.verificationCode.updatedCode()
-        this.imageCode = ''
-        return
-      }
+      // if (!this.verificationCode.checkCode(this.imageCode)) {
+      //   this.$message.warning('请输入正确的图形验证码')
+      //   this.verificationCode.updatedCode()
+      //   this.imageCode = ''
+      //   return
+      // }
       const formCheck = this.$formCheck(this.forgetPasswordInfo, [
         {
           key: 'telephone',
@@ -400,4 +393,36 @@ export default Vue.extend({
 
 <style lang="less" scoped>
 @import '~@/assets/css/login.less';
+</style>
+<style lang='less'>
+#login {
+  .leftCtn {
+    .el-input__inner {
+      padding-left: 36px;
+      color: rgba(0, 0, 0, 0.65);
+      background: transparent;
+      border: none;
+      font-size: 18px;
+    }
+    .el-carousel__container {
+      height: 100%;
+    }
+    .el-carousel__indicator {
+      .el-carousel__button {
+        background: rgba(0, 0, 0, 0.65);
+      }
+      &.is-active {
+        .el-carousel__button {
+          background: #1a95ff;
+          width: 40px;
+        }
+      }
+    }
+    .el-carousel__indicators--horizontal {
+      bottom: 40px;
+      right: 54px;
+      left: auto;
+    }
+  }
+}
 </style>

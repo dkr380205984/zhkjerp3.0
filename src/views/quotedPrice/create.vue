@@ -303,9 +303,18 @@
                     content="添加新原料"
                     placement="top">
                     <i class="el-icon-upload hoverOrange fr"
-                      style="line-height:38px;font-size:18px;cursor:pointer;"
+                      style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
                       @click="$openUrl('/setting/?pName=物料设置&cName=纱线原料')"></i>
                   </el-tooltip>
+                  <div class="fr "
+                    style="font-size:12px;">
+                    <el-tooltip class="item"
+                      effect="dark"
+                      :content="(itemYarn.price_info&&itemYarn.price_info.length>0)?itemYarn.price_info.map((item)=>item.client_name+':'+item.price+'元').join(';'):'无报价信息'"
+                      placement="top">
+                      <span class="hoverBlue">查看报价</span>
+                    </el-tooltip>
+                  </div>
                 </div>
                 <div class="info elCtn">
                   <div class="info elCtn">
@@ -350,17 +359,7 @@
                 <div class="label spaceBetween"
                   v-if="indexYarn===0">
                   <div class="once">单价</div>
-                  <div class="once">小计
-                    <div class="fr "
-                      style="font-size:12px;">
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="(itemYarn.price_info&&itemYarn.price_info.length>0)?itemYarn.price_info.map((item)=>item.client_name+':'+item.price+'元').join(';'):'无报价信息'"
-                        placement="top">
-                        <span class="hoverBlue">查看报价</span>
-                      </el-tooltip>
-                    </div>
-                  </div>
+                  <div class="once">小计</div>
                 </div>
                 <div class="info elCtn spaceBetween">
                   <el-input class="once"
@@ -368,7 +367,7 @@
                     placeholder="单价"
                     @change="cmpTotalPrice(itemYarn)"
                     :disabled="itemYarn.tree_data.length===0">
-                    <template slot="append">元/{{itemYarn.unit || '单位'}}</template>
+                    <template slot="append">元/{{itemYarn.unit==='g'?'kg':itemYarn.unit || '单位'}}</template>
                   </el-input>
                   <el-input class="once"
                     v-model="itemYarn.total_price"
@@ -388,7 +387,7 @@
                   loss: '',
                   price: '',
                   total_price: '',
-                  unit: 'kg'
+                  unit: 'g'
                 })">添加</div>
               <div class="opr hoverRed"
                 v-else
@@ -784,10 +783,11 @@
               <div class="opr hoverBlue"
                 v-if="indexPackMaterial===0"
                 @click="$addItem(item.pack_material_data,{
-                  id:'',
-                 desc:'',
-                 name:'',
-                 total_price:''
+                  id: '',
+                  material_name: '',
+                  material_id: '',
+                  desc: '',
+                  total_price: ''
                 })">添加</div>
               <div class="opr hoverRed"
                 v-else
@@ -852,8 +852,10 @@
                   <span class="text">非生产型费用</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input v-model="itemNoPro.name"
-                    placeholder="非生产型费用"></el-input>
+                  <el-autocomplete class="inline-input"
+                    v-model="itemNoPro.name"
+                    :fetch-suggestions="searchNoProFee"
+                    placeholder="非生产型费用"></el-autocomplete>
                 </div>
               </div>
               <div class="col">
@@ -1141,7 +1143,7 @@ export default Vue.extend({
                 loss: '',
                 price: '',
                 total_price: '',
-                unit: 'kg',
+                unit: 'g',
                 price_info: []
               }
             ],
@@ -1259,7 +1261,7 @@ export default Vue.extend({
     realTotalPrice(): string {
       return (
         Number(this.totalPrice) *
-        (1 -
+        (1 +
           (Number(this.quotedPriceInfo.commission_percentage) / 100 || 0) +
           (Number(this.quotedPriceInfo.profit_percentage) / 100 || 0) +
           Number(this.quotedPriceInfo.rate_taxation) / 100 || 0)
@@ -1342,6 +1344,20 @@ export default Vue.extend({
     }
   },
   methods: {
+    searchNoProFee(str: string, cb: Function) {
+      const arr = [
+        {
+          value: '打样费'
+        }
+      ]
+      cb(
+        str
+          ? arr.filter((item) => {
+              return item.value.toLowerCase().indexOf(str.toLowerCase()) === 0
+            })
+          : arr
+      )
+    },
     // 对比信息
     compareReturnInfo<T>(type: string, before: T, after: T) {
       if (type === 'image') {
@@ -1393,7 +1409,7 @@ export default Vue.extend({
             loss: '',
             price: '',
             total_price: '',
-            unit: 'kg'
+            unit: 'g'
           }
         ],
         assist_material_data: [
@@ -1507,10 +1523,27 @@ export default Vue.extend({
       }
     },
     // 辅助计算产品原料和装饰辅料的小计，小计本身可直接修改
-    cmpTotalPrice(info: { total_price: number; weight: number; loss: any; price: number; number: number }) {
-      info.total_price = this.$toFixed(
-        (Number(info.weight || info.number) || 0) * (1 + (Number(info.loss) || 0) / 100) * (Number(info.price) || 0)
-      )
+    cmpTotalPrice(info: {
+      total_price: number
+      weight: number
+      loss: any
+      price: number
+      number: number
+      unit?: string
+    }) {
+      // 为了纱线单独做数量为g单价为kg的判断
+      if (info.unit === 'g') {
+        info.total_price = this.$toFixed(
+          ((Number(info.weight || info.number) || 0) *
+            (1 + (Number(info.loss) || 0) / 100) *
+            (Number(info.price) || 0)) /
+            1000
+        )
+      } else {
+        info.total_price = this.$toFixed(
+          (Number(info.weight || info.number) || 0) * (1 + (Number(info.loss) || 0) / 100) * (Number(info.price) || 0)
+        )
+      }
     },
     // 把通过计算属性得到的价格以及通过级联选择器选到的id赋给表单数据
     getCmpData() {
@@ -1623,7 +1656,9 @@ export default Vue.extend({
                       },
                       {
                         key: 'unit',
-                        errMsg: '请输入产品原料数量单位'
+                        errMsg: '物料的单位只能为g，kg或m',
+                        regExp: /^g$|^m$|^kg$/,
+                        regNegate: true
                       },
                       {
                         key: 'price',
@@ -1753,7 +1788,7 @@ export default Vue.extend({
           quotedPrice.create(this.quotedPriceInfo).then((res) => {
             if (res.data.status) {
               this.$message.success('创建成功')
-              this.$router.push('/quotedPrice/list?page=1&keyword=&client_id=&user_id=&status=0&date=')
+              this.$router.push('/quotedPrice/detail?id=' + res.data.data)
             } else {
               // 提交不成功把tree_data反复横跳改来改去
               // @ts-ignore
@@ -1951,7 +1986,7 @@ export default Vue.extend({
                       loss: '',
                       price: '',
                       total_price: '',
-                      unit: 'kg',
+                      unit: 'g',
                       price_info: []
                     }
                   ],
@@ -2071,7 +2106,7 @@ export default Vue.extend({
                         loss: '',
                         price: '',
                         total_price: '',
-                        unit: 'kg',
+                        unit: 'g',
                         price_info: []
                       }
                     ],

@@ -232,3 +232,10 @@ export default Vue.extend({
 <style lang="less" scoped>
 @import './zhList.less';
 </style>
+<style lang="less">
+.imageCtn {
+  .el-image__inner {
+    width: auto !important;
+  }
+}
+</style>

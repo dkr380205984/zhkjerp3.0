@@ -1183,7 +1183,7 @@ export default Vue.extend({
     realTotalPrice(): string {
       return (
         Number(this.quotedPriceInfo.total_cost_price) *
-        (1 -
+        (1 +
           (Number(this.quotedPriceInfo.commission_percentage) / 100 || 0) +
           (Number(this.quotedPriceInfo.profit_percentage) / 100 || 0) +
           Number(this.quotedPriceInfo.rate_taxation) / 100 || 0)
@@ -1192,7 +1192,7 @@ export default Vue.extend({
     compareRealTotalPrice(): string {
       return (
         Number(this.compareInfo.total_cost_price) *
-        (1 -
+        (1 +
           (Number(this.compareInfo.commission_percentage) / 100 || 0) +
           (Number(this.compareInfo.profit_percentage) / 100 || 0) +
           Number(this.compareInfo.rate_taxation) / 100 || 0)

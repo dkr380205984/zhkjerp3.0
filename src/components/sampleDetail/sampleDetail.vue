@@ -271,6 +271,7 @@ export default Vue.extend({
         this.$emit('beforeGet')
         if (this.data) {
           this.sampleInfo = this.data as SampleInfo
+          this.sampleInfo.id = this.sampleInfo.product_id
           this.getDataFlag = true
         } else {
           sample
@@ -294,7 +295,7 @@ export default Vue.extend({
       this.$emit('close')
     },
     getNewSample(val: any) {
-      console.log(val)
+      this.sampleInfo = val
     }
   }
 })
