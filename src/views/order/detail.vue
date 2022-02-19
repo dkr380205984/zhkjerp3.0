@@ -155,7 +155,7 @@
           </div>
         </div>
         <div class="row"
-          v-if="orderInfo.private_files.length>0">
+          v-if="orderInfo.private_files && orderInfo.private_files.length>0">
           <div class="col">
             <div class="label">私密文件：</div>
             <div class="fileCtn">

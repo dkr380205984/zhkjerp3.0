@@ -254,7 +254,7 @@ export default Vue.extend({
   computed: {
     totalPrice(): number {
       return this.productionPlanInfo.product_info_data.reduce((total, item) => {
-        return total + Number(item.total_price)
+        return total + Number(this.$toFixed(Number(item.price) * Number(item.number)))
       }, 0)
     },
     totalNumber(): number {

@@ -48,7 +48,7 @@
                 v-model="quotedPriceInfo.tree_data"
                 :options="clientList"
                 @change="getContacts"
-                :disabled="$route.query.again"
+                :disabled="!!$route.query.again"
                 clearable
                 filterable>
               </el-cascader>
@@ -61,7 +61,7 @@
                 v-model="quotedPriceInfo.contacts_id"
                 no-data-text="请先选择询价客户"
                 clearable
-                :disabled="$route.query.again">
+                :disabled="!!$route.query.again">
                 <el-option v-for="item in contactsList"
                   :key="item.id"
                   :value="item.id"
@@ -79,7 +79,7 @@
               <el-select placeholder="请选择负责小组/人"
                 v-model="quotedPriceInfo.group_id"
                 clearable
-                :disabled="$route.query.again">
+                :disabled="!!$route.query.again">
                 <el-option v-for="item in groupList"
                   :key="item.id"
                   :value="item.id"
@@ -95,7 +95,7 @@
             <div class="info elCtn">
               <el-select placeholder="请选择报价币种"
                 v-model="quotedPriceInfo.settle_unit"
-                :disabled="$route.query.again">
+                :disabled="!!$route.query.again">
                 <el-option v-for="item in unitArr"
                   :key="item.name"
                   :label="item.name"
@@ -123,7 +123,7 @@
             <div class="info elCtn">
               <el-input placeholder="请输入币种汇率"
                 v-model="quotedPriceInfo.exchange_rate"
-                :disabled="$route.query.again"></el-input>
+                :disabled="!!$route.query.again"></el-input>
             </div>
           </div>
         </div>
@@ -1882,6 +1882,7 @@ export default Vue.extend({
             url: itemImage
           }
         })
+        item.cv_list = []
         item.image_data = [] // 清空image_data数据，用于存储新的url字符串，提交的时候拼接file_list剩下的就行
         item.type = item.category_id ? [item.category_id as number, item.secondary_category_id as number] : []
         item.material_data.forEach((itemMat) => {

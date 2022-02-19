@@ -1206,6 +1206,7 @@ export default Vue.extend({
           this.productList = this.getOrderProduct(this.orderInfo)
           this.orderInfo.tree_data = (this.orderInfo.tree_data as string).split(',').map((item) => Number(item))
           this.getContacts(this.orderInfo.tree_data as number[])
+          this.orderInfo.private_files = this.orderInfo.private_files || []
           this.pub_file_list = this.orderInfo.public_files.map((item: any, index: number) => {
             return {
               name: '文件' + (index + 1) + '.' + item.split('.')[item.split('.').length - 1],
