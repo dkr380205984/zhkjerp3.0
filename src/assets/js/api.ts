@@ -599,6 +599,14 @@ const clientBind = {
   bind: (params: { client_id: string | number, uuid: string }) => http.post(`${baseUrl}/workshop/client/save`, params, 'application/json'),
   unbind: (params: { client_id: string | number }) => http.post(`${baseUrl}/workshop/client/unbind`, params, 'application/json')
 }
+
+// 生产流转码
+const productFlowCode = {
+  list: (params: {
+    limit: number,
+    keyword: string
+  }) => http.get(`${baseUrl}/production/code/list`, params),
+}
 export {
   clientBind,
   systemMessage,
@@ -656,5 +664,6 @@ export {
   exportExcel,
   tutorialSystem,
   materialSupplement,
-  clientInOrder
+  clientInOrder,
+  productFlowCode
 }

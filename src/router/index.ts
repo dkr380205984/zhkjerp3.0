@@ -64,6 +64,10 @@ const routes: Array<RouteConfig> = [
       path: '/menu',
       name: '其他管理',
       component: () => import('../views/menu.vue')
+    },{
+      path: '/productFlowCode/list',
+      name: '生产流转码',
+      component: () => import('../views/productFlowCode/list.vue')
     }, {
       path: '/homePage',
       name: '主页',
