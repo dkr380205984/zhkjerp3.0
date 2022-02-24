@@ -5,7 +5,7 @@
     @click.right="handleClickRight">
     <div class="pmain" style="text-align: center;">
       <div class="phead clearfix">
-        <div class="ptitle">{{ company_name + '工厂码' }}</div>
+        <div class="ptitle">{{ company_name + '工厂注册码' }}</div>
       </div>
       <div class="pbody">
         <div class="tableCtn pageOne">
