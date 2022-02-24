@@ -187,12 +187,6 @@ export default Vue.extend({
           url: '/order/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
-          name: '生产流转码',
-          id: 4,
-          icon: 'icon-shengchanliuzhuanma',
-          url: '/productFlowCode/list?page=1&keyword=&client_id=&user_id=&status=null&date='
-        },
-        {
           name: '其它管理',
           id: null,
           icon: 'icon-qitaguanli1',
