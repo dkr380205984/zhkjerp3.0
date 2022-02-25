@@ -219,7 +219,7 @@
                     <el-option v-for="item in sampleList"
                       :key="item.id"
                       :value="item.id"
-                      :label="item.system_code + '/' + (item.name ||'无样品名称')"></el-option>
+                      :label="item.product_code + '/' + (item.name ||'无样品名称')"></el-option>
                   </el-select>
                   <el-tooltip class="item"
                     effect="dark"
