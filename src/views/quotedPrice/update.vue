@@ -275,7 +275,7 @@
                   loss: '',
                   price: '',
                   total_price: '',
-                  unit: 'kg'
+                  unit: 'g'
                 })">添加</div>
               <div class="opr hoverRed"
                 v-else
@@ -929,7 +929,7 @@ export default Vue.extend({
                 loss: '',
                 price: '',
                 total_price: '',
-                unit: 'kg'
+                unit: 'g'
               }
             ],
             assist_material_data: [
@@ -1034,11 +1034,11 @@ export default Vue.extend({
     // 总合计——含各种税 quotedPriceInfo.system_total_price
     realTotalPrice(): string {
       return (
-        Number(this.totalPrice) *
-        (1 +
-          (Number(this.quotedPriceInfo.commission_percentage) / 100 || 0) +
-          (Number(this.quotedPriceInfo.profit_percentage) / 100 || 0) +
-          Number(this.quotedPriceInfo.rate_taxation) / 100 || 0)
+        Number(this.totalPrice) /
+        (1 -
+          ((Number(this.quotedPriceInfo.commission_percentage) / 100 || 0) +
+            (Number(this.quotedPriceInfo.profit_percentage) / 100 || 0) +
+            Number(this.quotedPriceInfo.rate_taxation) / 100 || 0))
       ).toFixed(2)
     },
     // 总合计，按照汇率转换后
@@ -1047,15 +1047,15 @@ export default Vue.extend({
     },
     // quotedPriceInfo.commission_price
     commissionPrice(): string {
-      return (Number(this.totalPrice) * (Number(this.quotedPriceInfo.commission_percentage) / 100 || 0)).toFixed(2)
+      return (Number(this.realTotalPrice) * (Number(this.quotedPriceInfo.commission_percentage) / 100 || 0)).toFixed(2)
     },
     // quotedPriceInfo.profit_price
     profitPrice(): string {
-      return (Number(this.totalPrice) * (Number(this.quotedPriceInfo.profit_percentage) / 100 || 0)).toFixed(2)
+      return (Number(this.realTotalPrice) * (Number(this.quotedPriceInfo.profit_percentage) / 100 || 0)).toFixed(2)
     },
     // quotedPriceInfo.rate_price
     ratePrice(): string {
-      return (Number(this.totalPrice) * (Number(this.quotedPriceInfo.rate_taxation) / 100 || 0)).toFixed(2)
+      return (Number(this.realTotalPrice) * (Number(this.quotedPriceInfo.rate_taxation) / 100 || 0)).toFixed(2)
     },
     token() {
       return this.$store.state.status.token
@@ -1109,7 +1109,7 @@ export default Vue.extend({
             loss: '',
             price: '',
             total_price: '',
-            unit: 'kg'
+            unit: 'g'
           }
         ],
         assist_material_data: [
@@ -1326,7 +1326,7 @@ export default Vue.extend({
               errMsg: '请输入利润百分比'
             }
           ]) ||
-          this.quotedPriceInfo.product_data.some((item) => {
+          this.quotedPriceInfo.product_data.some((item, index) => {
             // 选择已有产品和直接添加产品描述验证不同
             if (item.product_id) {
               this.$message.error('暂时不支持')
@@ -1336,23 +1336,12 @@ export default Vue.extend({
                 this.$formCheck(item, [
                   {
                     key: 'transport_fee',
-                    errMsg: '请输入运费'
+                    errMsg: '产品' + (index + 1) + '请输入运费'
                   },
                   {
                     key: 'type',
-                    errMsg: '请选择产品品类'
-                  },
-                  {
-                    key: 'type',
-                    errMsg: '请选择产品品类'
-                  },
-                  // {
-                  //   key: 'client_target_price',
-                  //   errMsg: '请输入客户目标价'
-                  // },
-                  {
-                    key: 'start_order_number',
-                    errMsg: '请输入客户最低起订量'
+                    errMsg: '请选择产品' + (index + 1) + '品类',
+                    regNormal: 'checkArr'
                   }
                 ]) ||
                 item.material_data.some((itemChild) => {
@@ -1361,22 +1350,22 @@ export default Vue.extend({
                     this.$formCheck(itemChild, [
                       {
                         key: 'tree_data',
-                        errMsg: '请选择产品原料',
+                        errMsg: '请选择产品' + (index + 1) + '原料',
                         regNormal: 'checkArr'
                       },
                       {
                         key: 'weight',
-                        errMsg: '请输入产品原料预计数量'
+                        errMsg: '请输入产品' + (index + 1) + '原料预计数量'
                       },
                       {
                         key: 'unit',
-                        errMsg: '请输入产品原料数量单位',
+                        errMsg: '物料的单位只能为g，kg或m',
                         regExp: /^g$|^m$|^kg$/,
                         regNegate: true
                       },
                       {
                         key: 'price',
-                        errMsg: '请输入产品原料单价'
+                        errMsg: '请输入产品' + (index + 1) + '原料单价'
                       }
                     ])
                   )
@@ -1387,19 +1376,19 @@ export default Vue.extend({
                     this.$formCheck(itemChild, [
                       {
                         key: 'material_id',
-                        errMsg: '请选择装饰辅料'
+                        errMsg: '请选择产品' + (index + 1) + '装饰辅料'
                       },
                       {
                         key: 'number',
-                        errMsg: '请输入装饰辅料预计数量'
+                        errMsg: '请输入产品' + (index + 1) + '装饰辅料预计数量'
                       },
                       {
                         key: 'unit',
-                        errMsg: '请输入装饰辅料数量单位'
+                        errMsg: '请输入产品' + (index + 1) + '装饰辅料数量单位'
                       },
                       {
                         key: 'price',
-                        errMsg: '请输入装饰辅料单价'
+                        errMsg: '请输入产品' + (index + 1) + '装饰辅料单价'
                       }
                     ])
                   )
@@ -1410,26 +1399,26 @@ export default Vue.extend({
                     this.$formCheck(itemChild, [
                       {
                         key: 'name',
-                        errMsg: '请选择织造明细'
+                        errMsg: '请选择产品' + (index + 1) + '织造明细'
                       },
                       {
                         key: 'total_price',
-                        errMsg: '请输入织造小计'
+                        errMsg: '请输入产品' + (index + 1) + '织造小计'
                       }
                     ])
                   )
                 }) ||
                 item.semi_product_data.some((itemChild) => {
                   return (
-                    itemChild.process_id &&
+                    itemChild.process_id!.length > 0 &&
                     this.$formCheck(itemChild, [
                       {
                         key: 'process_id',
-                        errMsg: '请选择半成品加工工序'
+                        errMsg: '请选择产品' + (index + 1) + '半成品加工工序'
                       },
                       {
                         key: 'total_price',
-                        errMsg: '请输入半成品加工小计'
+                        errMsg: '请输入产品' + (index + 1) + '半成品加工小计'
                       }
                     ])
                   )
@@ -1440,11 +1429,11 @@ export default Vue.extend({
                     this.$formCheck(itemChild, [
                       {
                         key: 'name',
-                        errMsg: '请选择成品加工工序'
+                        errMsg: '请选择产品' + (index + 1) + '成品加工工序'
                       },
                       {
                         key: 'total_price',
-                        errMsg: '请输入成品加工小计'
+                        errMsg: '请输入产品' + (index + 1) + '成品加工小计'
                       }
                     ])
                   )
@@ -1455,11 +1444,11 @@ export default Vue.extend({
                     this.$formCheck(itemChild, [
                       {
                         key: 'material_id',
-                        errMsg: '请选择包装辅料'
+                        errMsg: '请选择产品' + (index + 1) + '包装辅料'
                       },
                       {
                         key: 'total_price',
-                        errMsg: '请输入包装辅料小计'
+                        errMsg: '请输入产品' + (index + 1) + '包装辅料小计'
                       }
                     ])
                   )
@@ -1470,11 +1459,11 @@ export default Vue.extend({
                     this.$formCheck(itemChild, [
                       {
                         key: 'name',
-                        errMsg: '请输入其他费用名称'
+                        errMsg: '请输入产品' + (index + 1) + '其他费用名称'
                       },
                       {
                         key: 'total_price',
-                        errMsg: '请输入其他费用小计'
+                        errMsg: '请输入产品' + (index + 1) + '其他费用小计'
                       }
                     ])
                   )
@@ -1485,11 +1474,11 @@ export default Vue.extend({
                     this.$formCheck(itemChild, [
                       {
                         key: 'name',
-                        errMsg: '请输入非生产型费用名称'
+                        errMsg: '请输入产品' + (index + 1) + '非生产型费用名称'
                       },
                       {
                         key: 'total_price',
-                        errMsg: '请输入非生产型费用小计'
+                        errMsg: '请输入产品' + (index + 1) + '非生产型费用小计'
                       }
                     ])
                   )

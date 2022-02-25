@@ -97,7 +97,7 @@
             </div>
             <div class="info elCtn">
               <el-input placeholder="请输入汇率"
-                v-model="orderInfo.exchange_rate"></el-input>
+                v-model="orderInfo.settle_tax"></el-input>
             </div>
           </div>
         </div>
@@ -201,7 +201,7 @@
         <div class="once"
           v-for="(item,index) in productList"
           :key="item.id">
-          <span class="text">{{item.system_code}}</span>
+          <span class="text">{{item.product_code}}</span>
           <span class="el-icon-view detailIcon hoverBlue"
             @click="getProductDetail(item)"></span>
           <span class="el-icon-delete deleteIcon hoverRed"
@@ -394,7 +394,7 @@
                             <el-option v-for="itemProduct in productList"
                               :key="itemProduct.id"
                               :value="itemProduct.id"
-                              :label="itemProduct.system_code + '/' + itemProduct.name"></el-option>
+                              :label="itemProduct.product_code + '/' + itemProduct.name"></el-option>
                           </el-select>
                           <el-tooltip class="item"
                             effect="dark"
@@ -558,7 +558,7 @@
                         <el-option v-for="item in productList"
                           :key="item.id"
                           :value="item.id"
-                          :label="item.system_code + '/' + item.name"></el-option>
+                          :label="item.product_code + '/' + item.name"></el-option>
                       </el-select>
                       <el-tooltip class="item"
                         effect="dark"
@@ -854,13 +854,12 @@ export default Vue.extend({
         contacts_id: '',
         public_files: [],
         private_files: [],
-        settle_tax: '',
         order_type: 1,
         code: '',
         desc: '',
         rel_quote_id: '',
         settle_unit: '元',
-        exchange_rate: '100',
+        settle_tax: '100',
         time_data: {
           id: '',
           order_time: this.$getDate(new Date()),
@@ -1069,9 +1068,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    deleteItem(array: Array<any>, index: number) {
-      array.splice(index, 1)
-    },
     tableDelete(
       orderInfo_batch_data: Array<any>,
       index: number,
@@ -1082,13 +1078,13 @@ export default Vue.extend({
     ) {
       if (itemProInfo.length !== 1) {
         console.log(itemProInfo)
-        this.deleteItem(itemProInfo, indexProInfo)
+        this.$deleteItem(itemProInfo, indexProInfo)
       } else {
         if (product_data.length !== 1) {
-          this.deleteItem(product_data, indexPro)
+          this.$deleteItem(product_data, indexPro)
         } else {
           if (orderInfo_batch_data.length !== 1) {
-            this.deleteItem(orderInfo_batch_data, index)
+            this.$deleteItem(orderInfo_batch_data, index)
           } else {
             this.$message.error('至少有一批')
           }
@@ -1334,7 +1330,7 @@ export default Vue.extend({
           })
         if (
           this.orderInfo.time_data.batch_data.some((item) => {
-            this.$ifRepeatArray(item.product_data.map((itemChild) => itemChild.product_id) as string[])
+            return this.$ifRepeatArray(item.product_data.map((itemChild) => itemChild.product_id) as string[])
           })
         ) {
           this.$message.error('相同产品请不要分多次添加')

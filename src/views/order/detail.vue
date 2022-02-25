@@ -50,7 +50,7 @@
           </div>
           <div class="col flex3">
             <div class="label">币种汇率</div>
-            <div class="text">{{orderInfo.settle_tax || 100}}</div>
+            <div class="text">{{orderInfo.settle_tax}}</div>
           </div>
         </div>
         <div class="row">
@@ -66,14 +66,11 @@
           <div class="col flex3">
             <div class="label">关联单据：</div>
             <div class="text green">
-              <span v-if="orderInfo.rel_quote_id"
-                style="cursor:pointer;margin-right:12px"
-                @click="$openUrl('/quotedPrice/detail?id='+orderInfo.rel_quote_id)">{{orderInfo.rel_quote_code}}(报价单)</span>
               <span v-if="orderInfo.rel_order_id"
                 style="cursor:pointer;margin-right:12px"
-                @click="$openUrl('/sampleOrder/detail?id='+orderInfo.rel_order_id)">{{orderInfo.rel_order_code}}(报价单)</span>
+                @click="$openUrl('/sampleOrder/detail?id='+orderInfo.rel_order_id)">{{orderInfo.rel_order_code}}(订单)</span>
               <span class="gray"
-                v-if="!orderInfo.rel_quote_id&&!orderInfo.rel_order_id">无关联单据</span>
+                v-if="!orderInfo.rel_order_id">无关联单据</span>
             </div>
           </div>
         </div>
@@ -272,6 +269,11 @@
                 @click="item.craft_list_id?$router.push('/craft/detail?id='+item.craft_list_id):$router.push('/craft/create?id=' + item.product_id)">
                 <div class="circle"
                   :class="{'backGray':!item.craft_list_id,'backBlue':item.craft_list_id}">工</div>
+              </div>
+              <div class="state"
+                @click="item.rel_quote_info.quote_id?$router.push('/quotedPrice/detail?id='+item.rel_quote_info.quote_id):$router.push('/quotedPrice/create?orderId=' + $route.query.id + '&order_product_id='+item.id)">
+                <div class="circle"
+                  :class="{'backGray':!item.rel_quote_info.quote_id,'backBlue':item.rel_quote_info.quote_id}">报</div>
               </div>
             </div>
             <div class="tcol">{{item.desc||'无'}}</div>
@@ -689,7 +691,8 @@
                   </svg>
                   <span class="text">转报价单</span>
                 </div>
-                <div class="btn backHoverBlue">
+                <div class="btn backHoverBlue"
+                  @click="checkOpr">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-caozuojilu"></use>
@@ -699,6 +702,101 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    <!-- 操作记录 -->
+    <div class="popup"
+      v-show="oprLogFlag">
+      <div class="main"
+        style="width:1000px">
+        <div class="titleCtn">
+          <span class="text">操作记录</span>
+          <div class="closeCtn"
+            @click="oprLogFlag=false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="tableCtn noPad"
+            style="margin:12px 0">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol">序号</div>
+                <div class="tcol">修改日期</div>
+                <div class="tcol">修改人</div>
+                <div class="tcol">订单修改详情</div>
+                <div class="tcol noPad"
+                  style="flex:4">
+                  <div class="trow">
+                    <div class="tcol">批次修改详情</div>
+                    <div class="tcol noPad"
+                      style="flex:3">
+                      产品修改详情
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div class="trow"
+                v-for="(item,index) in oprLog"
+                :key="item.id">
+                <div class="tcol">{{index+1}}</div>
+                <div class="tcol">{{item.update_time}}</div>
+                <div class="tcol">{{item.user}}</div>
+                <div class="tcol">
+                  <div class="line"
+                    v-if="item.update_data">
+                    <span class="label">订单修改信息:</span>
+                    <div class="line">{{item.update_data}}</div>
+                  </div>
+                  <div class="line"
+                    v-if="item.order_time_activity_log[0].update_data">
+                    <span class="label">其他修改信息:</span>
+                    <div class="line">{{item.order_time_activity_log[0].update_data}}</div>
+                  </div>
+                </div>
+                <div class="tcol noPad"
+                  style="flex:4">
+                  <div class="trow"
+                    v-for="(itemChild,indexChild) in item.order_time_activity_log[0].batch_activity_log"
+                    :key="indexChild">
+                    <div class="tcol">
+                      <div class="line">
+                        <span class="label">批次名称:</span>
+                        <div class="line">{{itemChild.batch_number}}</div>
+                      </div>
+                      <div class="line"
+                        v-if="itemChild.update_data">
+                        <span class="label">批次修改信息:</span>
+                        <div class="line">{{itemChild.update_data}}</div>
+                      </div>
+                    </div>
+                    <div class="tcol noPad"
+                      style="flex:3">
+                      <div class="trow"
+                        v-for="(itemPro,indexPro) in itemChild.batch_product_activity_log"
+                        :key="indexPro">
+                        <div class="tcol">
+                          <div class="line">
+                            <span class="label">修改信息:</span>
+                            <div class="line">{{itemPro.update_data}}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="oprLogFlag=false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="oprLogFlag=false">确认</span>
         </div>
       </div>
     </div>
@@ -718,10 +816,12 @@
 import Vue from 'vue'
 import { order } from '@/assets/js/api'
 import { OrderInfo, OrderTime } from '@/types/order'
+import zhImage from '@/components/zhImage/zhImage.vue'
 interface OrderDetail extends OrderInfo {
   time_data: OrderTime[]
 }
 export default Vue.extend({
+  components: { zhImage },
   data(): {
     orderInfo: OrderDetail
     [propName: string]: any
@@ -832,6 +932,8 @@ export default Vue.extend({
           }
         ]
       },
+      oprLogFlag: false,
+      oprLog: [],
       materialDetail: [],
       productionDetail: [],
       productShow: false
@@ -864,6 +966,25 @@ export default Vue.extend({
             type: 'info',
             message: '已取消删除'
           })
+        })
+    },
+    // 操作记录
+    checkOpr() {
+      this.loading = true
+      order
+        .oprLog({
+          id: Number(this.$route.query.id)
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.oprLog = res.data.data
+            if (this.oprLog.length > 0) {
+              this.oprLogFlag = true
+            } else {
+              this.$message.warning('暂无操作记录')
+            }
+          }
+          this.loading = false
         })
     }
   },

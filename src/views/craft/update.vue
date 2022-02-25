@@ -2191,6 +2191,7 @@ export default Vue.extend({
         })
         .map((item) => Number(item.value))
       this.craftInfo.weft_data.weimi = this.weimi
+      console.log(this.craftInfo.draft_method.PM)
       // 调整穿综纹版逗号
       if (this.craftInfo.draft_method.PMFlag === 'normal') {
         this.craftInfo.draft_method.PM.forEach((item) => {
@@ -2200,8 +2201,10 @@ export default Vue.extend({
       } else {
         this.craftInfo.draft_method.PM.forEach((item) => {
           item.children?.forEach((itemChild) => {
-            itemChild.value = itemChild.value!.replace(/，|\./g, ',')
-            itemChild.repeat = Number(itemChild.repeat) > 0 ? Number(itemChild.repeat) : 1
+            itemChild.children?.forEach((itemSon) => {
+              itemSon.value = itemSon.value!.replace(/，|\./g, ',')
+              itemSon.repeat = Number(itemSon.repeat) > 0 ? Number(itemSon.repeat) : 1
+            })
           })
         })
       }

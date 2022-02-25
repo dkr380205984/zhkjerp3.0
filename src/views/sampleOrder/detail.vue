@@ -568,22 +568,6 @@
                   </svg>
                   <span class="text">打样审核</span>
                 </div>
-                <div class="btn backHoverBlue"
-                  @click="checkClient">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-shenhedingdan"></use>
-                  </svg>
-                  <span class="text">客户确认</span>
-                </div>
-                <div class="btn backHoverBlue"
-                  @click="checkComplete">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-shenhedingdan"></use>
-                  </svg>
-                  <span class="text">打样确认</span>
-                </div>
                 <div class="btn backHoverOrange"
                   @click="goUpdateOrderTime">
                   <svg class="iconFont"
@@ -823,7 +807,7 @@
 import Vue from 'vue'
 import { SampleInfo } from '@/types/sample'
 import { SampleOrderInfo, SampleOrderTime } from '@/types/sampleOrder'
-import { sampleOrder, completeCheck, clientCheck } from '@/assets/js/api'
+import { sampleOrder } from '@/assets/js/api'
 interface SampleOrderDetail extends SampleOrderInfo {
   time_data: SampleOrderTime[]
 }
@@ -1122,56 +1106,6 @@ export default Vue.extend({
       })
         .then(() => {
           this.checkFlag = true
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消'
-          })
-        })
-    },
-    // 客户确认
-    checkClient() {
-      this.$confirm('客户是否确认第' + (Number(this.sampleOrderIndex) + 1) + '次打样信息', '提示', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          clientCheck
-            .create({
-              order_id: this.sampleOrderInfo.time_data[this.sampleOrderIndex].id as number
-            })
-            .then((res) => {
-              if (res.data.status) {
-                this.$message.success('已确认')
-              }
-            })
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消'
-          })
-        })
-    },
-    // 打样确认完成
-    checkComplete() {
-      this.$confirm('是否确认第' + (Number(this.sampleOrderIndex) + 1) + '次打样信息已完成', '提示', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          completeCheck
-            .create({
-              order_id: this.sampleOrderInfo.time_data[this.sampleOrderIndex].id as number
-            })
-            .then((res) => {
-              if (res.data.status) {
-                this.$message.success('已确认')
-              }
-            })
         })
         .catch(() => {
           this.$message({

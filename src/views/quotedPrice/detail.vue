@@ -16,11 +16,11 @@
           <div class="detailCtn">
             <div class="checkCtn">
               <!-- <el-tooltip class="item"
-            effect="dark"
-            content="点击查看审核日志"
-            placement="bottom">
-            <img :src="quotedPriceInfo.is_check|checkFilter" />
-          </el-tooltip> -->
+                effect="dark"
+                content="点击查看审核日志"
+                placement="bottom">
+                <img :src="quotedPriceInfo.is_check|checkFilter" />
+              </el-tooltip> -->
               <img :src="quotedPriceInfo.is_check|checkFilter" />
             </div>
             <div class="row">
@@ -28,7 +28,7 @@
                 <div class="label">报价单号：</div>
                 <div class="text blue">{{quotedPriceInfo.code}}</div>
               </div>
-              <div class="col flex3"
+              <!-- <div class="col flex3"
                 v-if="quotedPriceInfo.rel_order">
                 <div class="label">关联单据：</div>
                 <span class="gray"
@@ -39,7 +39,7 @@
                     style="cursor:pointer;margin-right:12px"
                     @click="$openUrl(item.order_type===1?('/order/detail?id='+item.order_id):('/sampleOrder/detail?id='+item.order_id))">{{item.code}}</span>
                 </div>
-              </div>
+              </div> -->
             </div>
             <div class="row">
               <div class="col">
@@ -88,7 +88,7 @@
                 <div class="label">客户报价：</div>
                 <div class="text">{{quotedPriceInfo.real_quote_price}}元</div>
               </div>
-              <div class="col"
+              <!-- <div class="col"
                 v-if="quotedPriceInfo.rel_order.length>0">
                 <div class="label">绑定单据：</div>
                 <div class="text">
@@ -98,7 +98,7 @@
                     class="blue"
                     @click="$openUrl(item.order_type===1?'/order/detail?id='+item.order_id:('/sampleOrder/detail?id='+item.order_id))">{{item.code}};</span>
                 </div>
-              </div>
+              </div> -->
             </div>
             <div class="row">
               <div class="col">
@@ -120,6 +120,7 @@
                 <div class="tcol">客户目标价格</div>
                 <div class="tcol">客户最低起订量</div>
                 <div class="tcol">产品描述/客户要求</div>
+                <div class="tcol">是否已绑订单</div>
               </div>
             </div>
             <div class="tbody">
@@ -143,6 +144,8 @@
                 <div class="tcol">{{item.client_target_price}}元</div>
                 <div class="tcol">{{item.start_order_number}}</div>
                 <div class="tcol">{{item.desc}}</div>
+                <div class="tcol"
+                  :class="{'blue':item.order_product_id,'gray':!item.order_product_id}">{{item.order_product_id?'已绑定':'未绑定'}}</div>
               </div>
               <template v-if="showCompareInfo">
                 <div class="trow"
@@ -297,249 +300,252 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row title">
-                    <div class="col">费用名称
-                      <el-tooltip class="item"
-                        effect="dark"
-                        content="织：产品织造；半：半成品加工；成：成品加工；包：包装辅料；其：其他费用；非：非生产型费用；运：运输费用。"
-                        placement="top">
-                        <i class="el-icon-question gray"
-                          style="margin-left:4px"></i>
-                      </el-tooltip>
+                  <div class="list">
+                    <div class="row title">
+                      <div class="col">费用名称
+                        <el-tooltip class="item"
+                          effect="dark"
+                          content="织：产品织造；半：半成品加工；成：成品加工；包：包装辅料；其：其他费用；非：非生产型费用；运：运输费用。"
+                          placement="top">
+                          <i class="el-icon-question gray"
+                            style="margin-left:4px"></i>
+                        </el-tooltip>
+                      </div>
+                      <div class="col">费用说明</div>
+                      <div class="col"></div>
+                      <div class="col"></div>
+                      <div class="col">总价</div>
                     </div>
-                    <div class="col">费用说明</div>
-                    <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col">总价</div>
-                  </div>
-                  <div class="row"
-                    v-for="(itemWeave,indexWeave) in item.weave_data"
-                    :key="'Weave'+indexWeave">
-                    <div class="col">
-                      <div class="circle"
-                        :class="{'backHoverBlue':itemWeave.name,'backGray':!itemWeave.name}">织</div>{{itemWeave.name || '无'}}
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].weave_data[indexWeave] && compareDesc[index].weave_data[indexWeave].change">
-                        <span :class="{'lightRed':compareDesc[index].weave_data[indexWeave].change==='add','lightGreen':compareDesc[index].weave_data[indexWeave].change==='delete'}">
-                          {{compareDesc[index].weave_data[indexWeave].change==='add'?'新增织造':'删除织造'}}
-                        </span>
+                    <div class="row"
+                      v-for="(itemWeave,indexWeave) in item.weave_data"
+                      :key="'Weave'+indexWeave">
+                      <div class="col">
+                        <div class="circle"
+                          :class="{'backHoverBlue':itemWeave.name,'backGray':!itemWeave.name}">织</div>{{itemWeave.name || '无'}}
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].weave_data[indexWeave] && compareDesc[index].weave_data[indexWeave].change">
+                          <span :class="{'lightRed':compareDesc[index].weave_data[indexWeave].change==='add','lightGreen':compareDesc[index].weave_data[indexWeave].change==='delete'}">
+                            {{compareDesc[index].weave_data[indexWeave].change==='add'?'新增织造':'删除织造'}}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col">{{itemWeave.desc||'无'}}
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].weave_data[indexWeave] && compareDesc[index].weave_data[indexWeave].desc">
+                          <span :class="{'lightRed':compareDesc[index].weave_data[indexWeave].desc}">
+                            更新说明：{{compareDesc[index].weave_data[indexWeave].desc}}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col"></div>
+                      <div class="col"></div>
+                      <div class="col">{{itemWeave.total_price||0}}元
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].weave_data[indexWeave] && compareDesc[index].weave_data[indexWeave].priceChange">
+                          <span :class="{'lightRed':compareDesc[index].weave_data[indexWeave].priceChange==='up','lightGreen':compareDesc[index].weave_data[indexWeave].priceChange==='down'}">
+                            总价{{compareDesc[index].weave_data[indexWeave].priceNew}}元{{compareDesc[index].weave_data[indexWeave].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].weave_data[indexWeave].priceNumber}}%
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <div class="col">{{itemWeave.desc||'无'}}
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].weave_data[indexWeave] && compareDesc[index].weave_data[indexWeave].desc">
-                        <span :class="{'lightRed':compareDesc[index].weave_data[indexWeave].desc}">
-                          更新说明：{{compareDesc[index].weave_data[indexWeave].desc}}
-                        </span>
+                    <div class="row"
+                      v-for="(itemHalfProcess,indexHalfProcess) in item.semi_product_data"
+                      :key="'HalfProcess' + indexHalfProcess">
+                      <div class="col">
+                        <div class="circle"
+                          :class="{'backHoverBlue':itemHalfProcess.process_name,'backGray':!itemHalfProcess.process_name}">半</div>{{itemHalfProcess.process_name.join(',') || '无'}}
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].semi_product_data[indexHalfProcess] && compareDesc[index].semi_product_data[indexHalfProcess].change">
+                          <span :class="{'lightRed':compareDesc[index].semi_product_data[indexHalfProcess].change==='add','lightGreen':compareDesc[index].semi_product_data[indexHalfProcess].change==='delete'}">
+                            {{compareDesc[index].semi_product_data[indexHalfProcess].change==='add'?'新增加工':'删除加工'}}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col">{{itemHalfProcess.desc||'无'}}
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].semi_product_data[indexHalfProcess] && compareDesc[index].semi_product_data[indexHalfProcess].desc">
+                          <span :class="{'lightRed':compareDesc[index].semi_product_data[indexHalfProcess].desc}">
+                            更新说明：{{compareDesc[index].semi_product_data[indexHalfProcess].desc}}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col"></div>
+                      <div class="col"></div>
+                      <div class="col">{{itemHalfProcess.total_price||0}}元
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].semi_product_data[indexHalfProcess] && compareDesc[index].semi_product_data[indexHalfProcess].priceChange">
+                          <span :class="{'lightRed':compareDesc[index].semi_product_data[indexHalfProcess].priceChange==='up','lightGreen':compareDesc[index].semi_product_data[indexHalfProcess].priceChange==='down'}">
+                            总价{{compareDesc[index].semi_product_data[indexHalfProcess].priceNew}}元{{compareDesc[index].semi_product_data[indexHalfProcess].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].semi_product_data[indexHalfProcess].priceNumber}}%
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col">{{itemWeave.total_price||0}}元
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].weave_data[indexWeave] && compareDesc[index].weave_data[indexWeave].priceChange">
-                        <span :class="{'lightRed':compareDesc[index].weave_data[indexWeave].priceChange==='up','lightGreen':compareDesc[index].weave_data[indexWeave].priceChange==='down'}">
-                          总价{{compareDesc[index].weave_data[indexWeave].priceNew}}元{{compareDesc[index].weave_data[indexWeave].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].weave_data[indexWeave].priceNumber}}%
-                        </span>
+                    <div class="row"
+                      v-for="(itemFinishedProcess,indexFinishedProcess) in item.production_data"
+                      :key="'FinishedProcess' + indexFinishedProcess">
+                      <div class="col">
+                        <div class="circle"
+                          :class="{'backHoverBlue':itemFinishedProcess.name,'backGray':!itemFinishedProcess.name}">成</div>{{itemFinishedProcess.name.join(',')  || '无'}}
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].production_data[indexFinishedProcess] && compareDesc[index].production_data[indexFinishedProcess].change">
+                          <span :class="{'lightRed':compareDesc[index].production_data[indexFinishedProcess].change==='add','lightGreen':compareDesc[index].production_data[indexFinishedProcess].change==='delete'}">
+                            {{compareDesc[index].production_data[indexFinishedProcess].change==='add'?'新增加工':'删除加工'}}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col">{{itemFinishedProcess.desc||'无'}}
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].production_data[indexFinishedProcess] && compareDesc[index].production_data[indexFinishedProcess].desc">
+                          <span :class="{'lightRed':compareDesc[index].production_data[indexFinishedProcess].desc}">
+                            更新说明：{{compareDesc[index].production_data[indexFinishedProcess].desc}}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col"></div>
+                      <div class="col"></div>
+                      <div class="col">{{itemFinishedProcess.total_price||0}}元
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].production_data[indexFinishedProcess] && compareDesc[index].production_data[indexFinishedProcess].priceChange">
+                          <span :class="{'lightRed':compareDesc[index].production_data[indexFinishedProcess].priceChange==='up','lightGreen':compareDesc[index].production_data[indexFinishedProcess].priceChange==='down'}">
+                            总价{{compareDesc[index].production_data[indexFinishedProcess].priceNew}}元{{compareDesc[index].production_data[indexFinishedProcess].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].production_data[indexFinishedProcess].priceNumber}}%
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="row"
-                    v-for="(itemHalfProcess,indexHalfProcess) in item.semi_product_data"
-                    :key="'HalfProcess' + indexHalfProcess">
-                    <div class="col">
-                      <div class="circle"
-                        :class="{'backHoverBlue':itemHalfProcess.process_name,'backGray':!itemHalfProcess.process_name}">半</div>{{itemHalfProcess.process_name.join(',') || '无'}}
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].semi_product_data[indexHalfProcess] && compareDesc[index].semi_product_data[indexHalfProcess].change">
-                        <span :class="{'lightRed':compareDesc[index].semi_product_data[indexHalfProcess].change==='add','lightGreen':compareDesc[index].semi_product_data[indexHalfProcess].change==='delete'}">
-                          {{compareDesc[index].semi_product_data[indexHalfProcess].change==='add'?'新增加工':'删除加工'}}
-                        </span>
+                    <div class="row"
+                      v-for="(itemPackMaterial,indexPackMaterial) in item.pack_material_data"
+                      :key="'PackMaterial' + indexPackMaterial">
+                      <div class="col">
+                        <div class="circle"
+                          :class="{'backHoverBlue':itemPackMaterial.material_name,'backGray':!itemPackMaterial.material_name}">包</div>{{itemPackMaterial.material_name || '无'}}
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].pack_material_data[indexPackMaterial] && compareDesc[index].pack_material_data[indexPackMaterial].change">
+                          <span :class="{'lightRed':compareDesc[index].pack_material_data[indexPackMaterial].change==='add','lightGreen':compareDesc[index].pack_material_data[indexPackMaterial].change==='delete'}">
+                            {{compareDesc[index].pack_material_data[indexPackMaterial].change==='add'?'新增包装':'删除包装'}}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col">{{itemPackMaterial.desc||'无'}}
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].pack_material_data[indexPackMaterial] && compareDesc[index].pack_material_data[indexPackMaterial].desc">
+                          <span :class="{'lightRed':compareDesc[index].pack_material_data[indexPackMaterial].desc}">
+                            更新说明：{{compareDesc[index].pack_material_data[indexPackMaterial].desc}}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col"></div>
+                      <div class="col"></div>
+                      <div class="col">{{itemPackMaterial.total_price||0}}元
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].pack_material_data[indexPackMaterial] && compareDesc[index].pack_material_data[indexPackMaterial].priceChange">
+                          <span :class="{'lightRed':compareDesc[index].pack_material_data[indexPackMaterial].priceChange==='up','lightGreen':compareDesc[index].pack_material_data[indexPackMaterial].priceChange==='down'}">
+                            总价{{compareDesc[index].pack_material_data[indexPackMaterial].priceNew}}元{{compareDesc[index].pack_material_data[indexPackMaterial].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].pack_material_data[indexPackMaterial].priceNumber}}%
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <div class="col">{{itemHalfProcess.desc||'无'}}
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].semi_product_data[indexHalfProcess] && compareDesc[index].semi_product_data[indexHalfProcess].desc">
-                        <span :class="{'lightRed':compareDesc[index].semi_product_data[indexHalfProcess].desc}">
-                          更新说明：{{compareDesc[index].semi_product_data[indexHalfProcess].desc}}
-                        </span>
+                    <div class="row"
+                      v-for="(itemOther,indexOther) in item.other_fee_data"
+                      :key="'Other' + indexOther">
+                      <div class="col">
+                        <div class="circle"
+                          :class="{'backHoverBlue':itemOther.name,'backGray':!itemOther.name}">其</div>{{itemOther.name || '无'}}
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].other_fee_data[indexOther] && compareDesc[index].other_fee_data[indexOther].change">
+                          <span :class="{'lightRed':compareDesc[index].other_fee_data[indexOther].change==='add','lightGreen':compareDesc[index].other_fee_data[indexOther].change==='delete'}">
+                            {{compareDesc[index].other_fee_data[indexOther].change==='add'?'新增项':'删除项'}}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col">{{itemOther.desc||'无'}}
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].other_fee_data[indexOther] && compareDesc[index].other_fee_data[indexOther].desc">
+                          <span :class="{'lightRed':compareDesc[index].other_fee_data[indexOther].desc}">
+                            更新说明：{{compareDesc[index].other_fee_data[indexOther].desc}}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col"></div>
+                      <div class="col"></div>
+                      <div class="col">{{itemOther.total_price||0}}元
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].other_fee_data[indexOther] && compareDesc[index].other_fee_data[indexOther].priceChange">
+                          <span :class="{'lightRed':compareDesc[index].other_fee_data[indexOther].priceChange==='up','lightGreen':compareDesc[index].other_fee_data[indexOther].priceChange==='down'}">
+                            总价{{compareDesc[index].other_fee_data[indexOther].priceNew}}元{{compareDesc[index].other_fee_data[indexOther].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].other_fee_data[indexOther].priceNumber}}%
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col">{{itemHalfProcess.total_price||0}}元
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].semi_product_data[indexHalfProcess] && compareDesc[index].semi_product_data[indexHalfProcess].priceChange">
-                        <span :class="{'lightRed':compareDesc[index].semi_product_data[indexHalfProcess].priceChange==='up','lightGreen':compareDesc[index].semi_product_data[indexHalfProcess].priceChange==='down'}">
-                          总价{{compareDesc[index].semi_product_data[indexHalfProcess].priceNew}}元{{compareDesc[index].semi_product_data[indexHalfProcess].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].semi_product_data[indexHalfProcess].priceNumber}}%
-                        </span>
+                    <div class="row"
+                      v-for="(itemOther,indexOther) in item.no_production_fee_data"
+                      :key="'NoPro' + indexOther">
+                      <div class="col">
+                        <div class="circle"
+                          :class="{'backHoverBlue':itemOther.name,'backGray':!itemOther.name}">非</div>{{itemOther.name || '无'}}
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].no_production_fee_data[indexOther] && compareDesc[index].no_production_fee_data[indexOther].change">
+                          <span :class="{'lightRed':compareDesc[index].no_production_fee_data[indexOther].change==='add','lightGreen':compareDesc[index].no_production_fee_data[indexOther].change==='delete'}">
+                            {{compareDesc[index].no_production_fee_data[indexOther].change==='add'?'新增项':'删除项'}}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col">{{itemOther.desc||'无'}}
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].no_production_fee_data[indexOther] && compareDesc[index].no_production_fee_data[indexOther].desc">
+                          <span :class="{'lightRed':compareDesc[index].no_production_fee_data[indexOther].desc}">
+                            更新说明：{{compareDesc[index].no_production_fee_data[indexOther].desc}}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col"></div>
+                      <div class="col"></div>
+                      <div class="col">{{itemOther.total_price||0}}元
+                        <div class="tips"
+                          v-if="compareDesc[index] && compareDesc[index].no_production_fee_data[indexOther] && compareDesc[index].no_production_fee_data[indexOther].priceChange">
+                          <span :class="{'lightRed':compareDesc[index].no_production_fee_data[indexOther].priceChange==='up','lightGreen':compareDesc[index].no_production_fee_data[indexOther].priceChange==='down'}">
+                            总价{{compareDesc[index].no_production_fee_data[indexOther].priceNew}}元{{compareDesc[index].no_production_fee_data[indexOther].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].no_production_fee_data[indexOther].priceNumber}}%
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="row"
-                    v-for="(itemFinishedProcess,indexFinishedProcess) in item.production_data"
-                    :key="'FinishedProcess' + indexFinishedProcess">
-                    <div class="col">
-                      <div class="circle"
-                        :class="{'backHoverBlue':itemFinishedProcess.name,'backGray':!itemFinishedProcess.name}">成</div>{{itemFinishedProcess.name.join(',')  || '无'}}
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].production_data[indexFinishedProcess] && compareDesc[index].production_data[indexFinishedProcess].change">
-                        <span :class="{'lightRed':compareDesc[index].production_data[indexFinishedProcess].change==='add','lightGreen':compareDesc[index].production_data[indexFinishedProcess].change==='delete'}">
-                          {{compareDesc[index].production_data[indexFinishedProcess].change==='add'?'新增加工':'删除加工'}}
-                        </span>
+                    <div class="row">
+                      <div class="col">
+                        <div class="circle"
+                          :class="{'backHoverBlue':item.transport_fee,'backGray':!item.transport_fee}">运</div>{{item.transport_fee?'运输费用':'无'}}
+                      </div>
+                      <div class="col">{{item.transport_fee_desc||'无'}}
+                        <div class="tips"
+                          v-if="compareDesc[index]&&compareDesc[index].transport_fee.desc">
+                          <span :class="{'lightGreen':compareDesc[index].transport_fee.desc}">描述变化</span>
+                        </div>
+                      </div>
+                      <div class="col"></div>
+                      <div class="col"></div>
+                      <div class="col">{{item.transport_fee||0}}元
+                        <div class="tips"
+                          v-if="compareDesc[index]&&compareDesc[index].transport_fee.desc">
+                          <span :class="{'lightGreen':compareDesc[index].transport_fee.desc}">
+                            总价{{compareDesc[index].transport_fee.priceNew}}元{{compareDesc[index].transport_fee.priceChange==='up'?'上升':'下降'}}{{compareDesc[index].transport_fee.priceNumber}}%
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <div class="col">{{itemFinishedProcess.desc||'无'}}
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].production_data[indexFinishedProcess] && compareDesc[index].production_data[indexFinishedProcess].desc">
-                        <span :class="{'lightRed':compareDesc[index].production_data[indexFinishedProcess].desc}">
-                          更新说明：{{compareDesc[index].production_data[indexFinishedProcess].desc}}
-                        </span>
+                    <div class="row">
+                      <div class="col">
+                        <div class="circle backHoverGreen">合</div>产品合计费用
                       </div>
-                    </div>
-                    <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col">{{itemFinishedProcess.total_price||0}}元
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].production_data[indexFinishedProcess] && compareDesc[index].production_data[indexFinishedProcess].priceChange">
-                        <span :class="{'lightRed':compareDesc[index].production_data[indexFinishedProcess].priceChange==='up','lightGreen':compareDesc[index].production_data[indexFinishedProcess].priceChange==='down'}">
-                          总价{{compareDesc[index].production_data[indexFinishedProcess].priceNew}}元{{compareDesc[index].production_data[indexFinishedProcess].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].production_data[indexFinishedProcess].priceNumber}}%
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row"
-                    v-for="(itemPackMaterial,indexPackMaterial) in item.pack_material_data"
-                    :key="'PackMaterial' + indexPackMaterial">
-                    <div class="col">
-                      <div class="circle"
-                        :class="{'backHoverBlue':itemPackMaterial.material_name,'backGray':!itemPackMaterial.material_name}">包</div>{{itemPackMaterial.material_name || '无'}}
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].pack_material_data[indexPackMaterial] && compareDesc[index].pack_material_data[indexPackMaterial].change">
-                        <span :class="{'lightRed':compareDesc[index].pack_material_data[indexPackMaterial].change==='add','lightGreen':compareDesc[index].pack_material_data[indexPackMaterial].change==='delete'}">
-                          {{compareDesc[index].pack_material_data[indexPackMaterial].change==='add'?'新增包装':'删除包装'}}
-                        </span>
-                      </div>
-                    </div>
-                    <div class="col">{{itemPackMaterial.desc||'无'}}
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].pack_material_data[indexPackMaterial] && compareDesc[index].pack_material_data[indexPackMaterial].desc">
-                        <span :class="{'lightRed':compareDesc[index].pack_material_data[indexPackMaterial].desc}">
-                          更新说明：{{compareDesc[index].pack_material_data[indexPackMaterial].desc}}
-                        </span>
-                      </div>
-                    </div>
-                    <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col">{{itemPackMaterial.total_price||0}}元
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].pack_material_data[indexPackMaterial] && compareDesc[index].pack_material_data[indexPackMaterial].priceChange">
-                        <span :class="{'lightRed':compareDesc[index].pack_material_data[indexPackMaterial].priceChange==='up','lightGreen':compareDesc[index].pack_material_data[indexPackMaterial].priceChange==='down'}">
-                          总价{{compareDesc[index].pack_material_data[indexPackMaterial].priceNew}}元{{compareDesc[index].pack_material_data[indexPackMaterial].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].pack_material_data[indexPackMaterial].priceNumber}}%
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row"
-                    v-for="(itemOther,indexOther) in item.other_fee_data"
-                    :key="'Other' + indexOther">
-                    <div class="col">
-                      <div class="circle"
-                        :class="{'backHoverBlue':itemOther.name,'backGray':!itemOther.name}">其</div>{{itemOther.name || '无'}}
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].other_fee_data[indexOther] && compareDesc[index].other_fee_data[indexOther].change">
-                        <span :class="{'lightRed':compareDesc[index].other_fee_data[indexOther].change==='add','lightGreen':compareDesc[index].other_fee_data[indexOther].change==='delete'}">
-                          {{compareDesc[index].other_fee_data[indexOther].change==='add'?'新增项':'删除项'}}
-                        </span>
-                      </div>
-                    </div>
-                    <div class="col">{{itemOther.desc||'无'}}
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].other_fee_data[indexOther] && compareDesc[index].other_fee_data[indexOther].desc">
-                        <span :class="{'lightRed':compareDesc[index].other_fee_data[indexOther].desc}">
-                          更新说明：{{compareDesc[index].other_fee_data[indexOther].desc}}
-                        </span>
-                      </div>
-                    </div>
-                    <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col">{{itemOther.total_price||0}}元
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].other_fee_data[indexOther] && compareDesc[index].other_fee_data[indexOther].priceChange">
-                        <span :class="{'lightRed':compareDesc[index].other_fee_data[indexOther].priceChange==='up','lightGreen':compareDesc[index].other_fee_data[indexOther].priceChange==='down'}">
-                          总价{{compareDesc[index].other_fee_data[indexOther].priceNew}}元{{compareDesc[index].other_fee_data[indexOther].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].other_fee_data[indexOther].priceNumber}}%
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row"
-                    v-for="(itemOther,indexOther) in item.no_production_fee_data"
-                    :key="'NoPro' + indexOther">
-                    <div class="col">
-                      <div class="circle"
-                        :class="{'backHoverBlue':itemOther.name,'backGray':!itemOther.name}">非</div>{{itemOther.name || '无'}}
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].no_production_fee_data[indexOther] && compareDesc[index].no_production_fee_data[indexOther].change">
-                        <span :class="{'lightRed':compareDesc[index].no_production_fee_data[indexOther].change==='add','lightGreen':compareDesc[index].no_production_fee_data[indexOther].change==='delete'}">
-                          {{compareDesc[index].no_production_fee_data[indexOther].change==='add'?'新增项':'删除项'}}
-                        </span>
-                      </div>
-                    </div>
-                    <div class="col">{{itemOther.desc||'无'}}
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].no_production_fee_data[indexOther] && compareDesc[index].no_production_fee_data[indexOther].desc">
-                        <span :class="{'lightRed':compareDesc[index].no_production_fee_data[indexOther].desc}">
-                          更新说明：{{compareDesc[index].no_production_fee_data[indexOther].desc}}
-                        </span>
-                      </div>
-                    </div>
-                    <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col">{{itemOther.total_price||0}}元
-                      <div class="tips"
-                        v-if="compareDesc[index] && compareDesc[index].no_production_fee_data[indexOther] && compareDesc[index].no_production_fee_data[indexOther].priceChange">
-                        <span :class="{'lightRed':compareDesc[index].no_production_fee_data[indexOther].priceChange==='up','lightGreen':compareDesc[index].no_production_fee_data[indexOther].priceChange==='down'}">
-                          总价{{compareDesc[index].no_production_fee_data[indexOther].priceNew}}元{{compareDesc[index].no_production_fee_data[indexOther].priceChange==='up'?'上升':'下降'}}{{compareDesc[index].no_production_fee_data[indexOther].priceNumber}}%
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="circle"
-                        :class="{'backHoverBlue':item.transport_fee,'backGray':!item.transport_fee}">运</div>{{item.transport_fee?'运输费用':'无'}}
-                    </div>
-                    <div class="col">{{item.transport_fee_desc||'无'}}
-                      <div class="tips"
-                        v-if="compareDesc[index]&&compareDesc[index].transport_fee.desc">
-                        <span :class="{'lightGreen':compareDesc[index].transport_fee.desc}">描述变化</span>
-                      </div>
-                    </div>
-                    <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col">{{item.transport_fee||0}}元
-                      <div class="tips"
-                        v-if="compareDesc[index]&&compareDesc[index].transport_fee.desc">
-                        <span :class="{'lightGreen':compareDesc[index].transport_fee.desc}">
-                          总价{{compareDesc[index].transport_fee.priceNew}}元{{compareDesc[index].transport_fee.priceChange==='up'?'上升':'下降'}}{{compareDesc[index].transport_fee.priceNumber}}%
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="circle backHoverGreen">合</div>产品合计费用
-                    </div>
-                    <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col">{{productTotalPrice[index]}}元
-                      <div class="tips"
-                        v-if="showCompareInfo && productTotalPrice[index]!==compareProductTotalPrice[index]">
-                        <div :class="{'lightGreen':productTotalPrice[index]>compareProductTotalPrice[index],'lightRed':productTotalPrice[index]<compareProductTotalPrice[index]}">
-                          费用
-                          {{productTotalPrice[index]>compareProductTotalPrice[index]?'下降':'上涨'}}
-                          {{Math.abs(productTotalPrice[index]-compareProductTotalPrice[index]).toFixed(2)}}元</div>
+                      <div class="col"></div>
+                      <div class="col"></div>
+                      <div class="col"></div>
+                      <div class="col">
+                        <span style="font-weight:bold;font-size:20px;">{{productTotalPrice[index]}}</span>元
+                        <div class="tips"
+                          v-if="showCompareInfo && productTotalPrice[index]!==compareProductTotalPrice[index]">
+                          <div :class="{'lightGreen':productTotalPrice[index]>compareProductTotalPrice[index],'lightRed':productTotalPrice[index]<compareProductTotalPrice[index]}">
+                            费用
+                            {{productTotalPrice[index]>compareProductTotalPrice[index]?'下降':'上涨'}}
+                            {{Math.abs(productTotalPrice[index]-compareProductTotalPrice[index]).toFixed(2)}}元</div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -624,6 +630,22 @@
                   </div>
                 </div>
               </div>
+              <div class="row">
+                <div class="col">订单合计费用</div>
+                <div class="col"></div>
+                <div class="col"></div>
+                <div class="col"></div>
+                <div class="col">
+                  <span style="font-weight:bold;font-size:20px;">{{realOrderPrice}}</span>元
+                  <div class="tips"
+                    v-if="showCompareInfo && realOrderPrice!==compareRealOrderPrice">
+                    <div :class="{'lightGreen':realOrderPrice>compareRealOrderPrice,'lightRed':realOrderPrice<compareRealOrderPrice}">
+                      费用
+                      {{realOrderPrice>compareRealOrderPrice?'下降':'上涨'}}
+                      {{Math.abs(realOrderPrice-compareRealOrderPrice).toFixed(2)}}元</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -634,7 +656,9 @@
         <div class="fl"
           style="line-height:56px">
           合计：
-          <span class="blue">{{realTotalPrice}}元
+          <span>
+            <span class="blue"
+              style="font-weight:bold;font-size:20px;">{{realTotalPrice}}</span>元
             <span v-if="quotedPriceInfo.settle_unit!=='元'">{{'/'+realTotalPriceChange+quotedPriceInfo.settle_unit}}</span>
           </span>
         </div>
@@ -703,7 +727,7 @@
                   </svg>
                   <span class="text">生成订单</span>
                 </div>
-                <div class="btn backHoverOrange"
+                <!-- <div class="btn backHoverOrange"
                   @click="quotedPriceInfo.rel_order.length>0?$message.warning('已绑定单据，无法多次绑定'):bindOrderFlag=true;bindOrderType=2;">
                   <svg class="iconFont"
                     aria-hidden="true">
@@ -718,7 +742,7 @@
                     <use xlink:href="#icon-wuliaojihua1"></use>
                   </svg>
                   <span class="text">绑定订单</span>
-                </div>
+                </div> -->
                 <div class="btn backHoverBlue"
                   @click="checkOpr">
                   <svg class="iconFont"
@@ -1176,6 +1200,21 @@ export default Vue.extend({
     }
   },
   computed: {
+    // 订单总费用
+    realOrderPrice(): string {
+      return (
+        Number(this.quotedPriceInfo.commission_price) +
+        Number(this.quotedPriceInfo.profit_price) +
+        Number(this.quotedPriceInfo.rate_price)
+      ).toFixed(2)
+    },
+    compareRealOrderPrice(): string {
+      return (
+        Number(this.compareInfo.commission_price) +
+        Number(this.compareInfo.profit_price) +
+        Number(this.compareInfo.rate_price)
+      ).toFixed(2)
+    },
     // 总合计，按照汇率转换后
     realTotalPriceChange(): string {
       return ((Number(this.realTotalPrice) / Number(this.quotedPriceInfo.exchange_rate)) * 100).toFixed(2)
@@ -1183,20 +1222,20 @@ export default Vue.extend({
     // 总合计——含各种税 quotedPriceInfo.system_total_price
     realTotalPrice(): string {
       return (
-        Number(this.quotedPriceInfo.total_cost_price) *
-        (1 +
-          (Number(this.quotedPriceInfo.commission_percentage) / 100 || 0) +
-          (Number(this.quotedPriceInfo.profit_percentage) / 100 || 0) +
-          Number(this.quotedPriceInfo.rate_taxation) / 100 || 0)
+        Number(this.quotedPriceInfo.total_cost_price) /
+        (1 -
+          ((Number(this.quotedPriceInfo.commission_percentage) / 100 || 0) +
+            (Number(this.quotedPriceInfo.profit_percentage) / 100 || 0) +
+            Number(this.quotedPriceInfo.rate_taxation) / 100 || 0))
       ).toFixed(2)
     },
     compareRealTotalPrice(): string {
       return (
-        Number(this.compareInfo.total_cost_price) *
-        (1 +
-          (Number(this.compareInfo.commission_percentage) / 100 || 0) +
-          (Number(this.compareInfo.profit_percentage) / 100 || 0) +
-          Number(this.compareInfo.rate_taxation) / 100 || 0)
+        Number(this.compareInfo.total_cost_price) /
+        (1 -
+          ((Number(this.compareInfo.commission_percentage) / 100 || 0) +
+            (Number(this.compareInfo.profit_percentage) / 100 || 0) +
+            Number(this.compareInfo.rate_taxation) / 100 || 0))
       ).toFixed(2)
     },
     // 产品项总价
@@ -1796,9 +1835,10 @@ export default Vue.extend({
           this.quotedPriceInfo = res.data.data
           if (!id) {
             this.quotedList = [Number(this.$route.query.id)]
-            if (this.quotedPriceInfo.pid) {
-              this.quotedList.push(this.quotedPriceInfo.pid)
-            }
+            // pid已经在关联id数组里了，所以不需要
+            // if (this.quotedPriceInfo.pid) {
+            //   this.quotedList.push(this.quotedPriceInfo.pid)
+            // }
             if (this.quotedPriceInfo.rel_quote!.length > 0) {
               this.quotedList = this.quotedList.concat(this.quotedPriceInfo.rel_quote)
             }

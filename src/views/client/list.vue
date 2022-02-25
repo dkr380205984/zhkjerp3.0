@@ -178,7 +178,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { client, clientBind, clientCheck, clientType } from '@/assets/js/api'
+import { client, clientBind, clientType } from '@/assets/js/api'
 import { limitArr } from '@/assets/js/dictionary'
 export default Vue.extend({
   data(): {

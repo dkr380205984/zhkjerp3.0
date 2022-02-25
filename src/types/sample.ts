@@ -21,6 +21,9 @@ export interface SampleInfo {
     id: number
     url: string
   }>
+  cv_list?: string[] // 复制粘贴操作专用字段
+  cvFlag?: boolean
+  cvImageLength?: number
   desc: string
   style_data: string[] // 款式
   component_data: Array<{

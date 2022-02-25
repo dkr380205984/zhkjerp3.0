@@ -1,6 +1,7 @@
 import { MaterialListInfo } from "./materialOrder";
 export interface MaterialProcessInfo {
   code?: string
+  created_at?: string
   id?: number
   order_id: number | string
   plan_id: number | string

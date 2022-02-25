@@ -11,6 +11,7 @@ export interface MaterialPlanInfo {
   production_plan_data: Array<{
     product_detail?: ProductInfo // product_detail的数据在外面一层也有是为了保持源数据结构不变
     product_code?: string
+    system_code?: string
     product_name?: string
     category?: string
     secondary_category?: string
@@ -60,6 +61,7 @@ export interface MaterialPlanGatherData {
 }
 
 export interface MaterailPlanData {
+  id?: string | number
   check?: boolean // 前端用
   product_code?: string
   product_name?: string

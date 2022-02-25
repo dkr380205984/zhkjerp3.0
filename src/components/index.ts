@@ -14,6 +14,8 @@ import othersFeeData from './othersFeeData/othersFeeData.vue'
 import usingTutorials from './usingTutorials/usingTutorials.vue'
 import zhDeduct from './zhDeduct/zhDeduct.vue'
 import zhDeductDetail from './zhDeduct/zhDeductDetail.vue'
+import associatedPage from './associatedPage/associatedPage.vue'
+import zhImage from './zhImage/zhImage.vue'
 import vue from '@handsontable/vue'
 export default {
   install: (Vue: any) => {
@@ -33,5 +35,7 @@ export default {
     Vue.component('usingTutorials', usingTutorials)
     Vue.component('zhDeduct', zhDeduct)
     Vue.component('zhDeductDetail', zhDeductDetail)
+    Vue.component('associatedPage', associatedPage)
+    Vue.component('zhImage', zhImage)
   }
 }

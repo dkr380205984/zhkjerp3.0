@@ -223,6 +223,14 @@
                   </svg>
                   <span class="text">删除单据</span>
                 </div>
+                <div class="btn backHoverBlue"
+                  @click="$openUrl('/materialManage/orderPrint?id='+item.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-dayindingdan"></use>
+                  </svg>
+                  <span class="text">打印订购</span>
+                </div>
                 <div class="btn"
                   :class="item.deduct_data && item.deduct_data.length>0?'backHoverBlue':'backGray'"
                   @click="getDeduct(item.deduct_data)">
@@ -262,7 +270,7 @@
                 <div class="tcol">备注信息</div>
                 <div class="tcol">额外费用</div>
                 <div class="tcol"
-                  style="flex:1.8">操作</div>
+                  style="flex:1.3">操作</div>
               </div>
             </div>
             <template v-if="item.process_info.length>0">
@@ -316,17 +324,23 @@
                   <div class="tcol">
                     <others-fee-data :data="itemProcess.others_fee_data"></others-fee-data>
                   </div>
-                  <div class="tcol oprCtn"
-                    style="flex:1.8">
-                    <div class="opr hoverOrange"
-                      @click="materialProcessUpdataInfo=$clone(itemProcess);materialProcessUpdataFlag=true">修改</div>
-                    <div class="opr hoverGreen"
-                      @click="goDeduct(itemProcess,3)">扣款</div>
-                    <div class="opr hoverRed"
-                      @click="deleteMaterialProcess(itemProcess.id)">删除</div>
-                    <div class="opr"
-                      :class="itemProcess.deduct_data&&itemProcess.deduct_data.length>0?'hoverBlue':'gray'"
-                      @click="getDeduct(itemProcess.deduct_data)">扣款记录</div>
+                  <div class="tcol"
+                    style="flex:1.3">
+                    <div class="oprCtn">
+                      <div class="opr hoverOrange"
+                        @click="materialProcessUpdataInfo=$clone(itemProcess);materialProcessUpdataFlag=true">修改</div>
+                      <div class="opr hoverGreen"
+                        @click="$openUrl('/materialManage/processPrint?id='+itemProcess.id)">打印</div>
+                      <div class="opr hoverRed"
+                        @click="deleteMaterialProcess(itemProcess.id)">删除</div>
+                    </div>
+                    <div class="oprCtn">
+                      <div class="opr hoverGreen"
+                        @click="goDeduct(itemProcess,3)">扣款</div>
+                      <div class="opr"
+                        :class="itemProcess.deduct_data&&itemProcess.deduct_data.length>0?'hoverBlue':'gray'"
+                        @click="getDeduct(itemProcess.deduct_data)">扣款记录</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -462,7 +476,7 @@
                 <div class="tcol">备注信息</div>
                 <div class="tcol">额外费用</div>
                 <div class="tcol"
-                  style="flex:1.8">操作</div>
+                  style="flex:1.3">操作</div>
               </div>
             </div>
             <template v-if="item.process_info.length>0">
@@ -516,17 +530,23 @@
                   <div class="tcol">
                     <others-fee-data :data="itemProcess.others_fee_data"></others-fee-data>
                   </div>
-                  <div class="tcol oprCtn"
-                    style="flex:1.8">
-                    <div class="opr hoverOrange"
-                      @click="materialProcessUpdataInfo=$clone(itemProcess);materialProcessUpdataFlag=true">修改</div>
-                    <div class="opr hoverGreen"
-                      @click="goDeduct(itemProcess,3)">扣款</div>
-                    <div class="opr hoverRed"
-                      @click="deleteMaterialProcess(item.id)">删除</div>
-                    <div class="opr"
-                      :class="itemProcess.deduct_data&&itemProcess.deduct_data.length>0?'hoverBlue':'gray'"
-                      @click="getDeduct(itemProcess.deduct_data)">扣款记录</div>
+                  <div class="tcol"
+                    style="flex:1.3">
+                    <div class="oprCtn">
+                      <div class="opr hoverOrange"
+                        @click="materialProcessUpdataInfo=$clone(itemProcess);materialProcessUpdataFlag=true">修改</div>
+                      <div class="opr hoverGreen"
+                        @click="$openUrl('/materialManage/processPrint?id='+itemProcess.id)">打印</div>
+                      <div class="opr hoverRed"
+                        @click="deleteMaterialProcess(itemProcess.id)">删除</div>
+                    </div>
+                    <div class="oprCtn">
+                      <div class="opr hoverGreen"
+                        @click="goDeduct(itemProcess,3)">扣款</div>
+                      <div class="opr"
+                        :class="itemProcess.deduct_data&&itemProcess.deduct_data.length>0?'hoverBlue':'gray'"
+                        @click="getDeduct(itemProcess.deduct_data)">扣款记录</div>
+                    </div>
                   </div>
                 </div>
               </div>

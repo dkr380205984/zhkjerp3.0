@@ -1,6 +1,23 @@
 <template>
   <div id="productionPlanList"
     class="bodyContainer">
+    <div class="topTagCtn">
+      <div class="tag active">
+        <svg class="iconFont"
+          aria-hidden="true">
+          <use xlink:href='#icon-zhuangshifuliaocangku'></use>
+        </svg>
+        <span class="text">生产计划</span>
+      </div>
+      <div class="tag"
+        @click="$router.push('/productionPlan/progressList')">
+        <svg class="iconFont"
+          aria-hidden="true">
+          <use xlink:href='#icon-zhuangshifuliaocangku'></use>
+        </svg>
+        <span class="text">生产进度</span>
+      </div>
+    </div>
     <div class="module">
       <div class="titleCtn">
         <div class="title">单据列表</div>
@@ -22,7 +39,7 @@
             </el-cascader>
           </div>
           <div class="elCtn">
-            <el-select @change="$setLocalStorage('create_user',user_id);changeRouter()"
+            <el-select @change="changeRouter"
               v-model="user_id"
               placeholder="筛选创建人"
               clearable>
@@ -191,20 +208,11 @@ export default Vue.extend({
           errVal: '0'
         },
         {
-          key: 'total_price',
-          name: '下单总额',
-          ifShow: true,
-          ifLock: false,
-          index: 6,
-          unit: '元',
-          errVal: '0'
-        },
-        {
           key: 'has_weave_plan',
           name: '生产计划状态',
           ifShow: true,
           ifLock: false,
-          index: 7,
+          index: 6,
           filterArr: ['', '已添加', '待添加'],
           classArr: ['', 'green', 'orange']
         },
@@ -213,7 +221,7 @@ export default Vue.extend({
           name: '物料计划状态',
           ifShow: true,
           ifLock: false,
-          index: 8,
+          index: 7,
           filterArr: ['', '已添加', '待添加'],
           classArr: ['', 'green', 'orange']
         },
@@ -222,14 +230,14 @@ export default Vue.extend({
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 9
+          index: 8
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 10
+          index: 9
         }
       ],
       pickerOptions: {
@@ -305,6 +313,8 @@ export default Vue.extend({
           this.user_id +
           '&group_id=' +
           this.group_id +
+          '&order_type=' +
+          this.order_type +
           '&status=' +
           this.status +
           '&date=' +

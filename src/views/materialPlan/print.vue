@@ -59,22 +59,50 @@
               </div>
             </div>
           </div>
+          <div class="tableCtn">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol">产品信息</div>
+                <div class="tcol"
+                  v-if="materialPlanType===1">尺码颜色</div>
+                <div class="tcol">产品部位</div>
+                <div class="tcol">计划生产数量</div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div class="trow"
+                v-for="(item,index) in productInfo"
+                :key="index">
+                <div class="tcol">
+                  <div>{{item.product_code||item.system_code}}</div>
+                  <div>{{item.category}}/{{item.secondary_category}}</div>
+                </div>
+                <div class="tcol"
+                  v-if="materialPlanType===1">{{item.size_name}}/{{item.color_name}}</div>
+                <div class="tcol">{{item.part_name}}</div>
+                <div class="tcol">{{item.number}}</div>
+              </div>
+            </div>
+          </div>
           <div class="tableCtn"
             v-for="(item,index) in materialPlanInfo"
             :key="item.material_id">
             <div class="thead bgWhite"
               style="height: auto">
               <div class="trow">
-                <div class="tcol bgGray"
-                  style="flex:0.3">原料名称</div>
+                <div class="tcol bgGray label">原料名称</div>
                 <div class="tcol"
                   style="flex: 4">
                   {{ item.material_name }}
                 </div>
+                <div class="tcol bgGray label">合计值</div>
+                <div class="tcol"
+                  style="flex:2">
+                  {{ item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.final_number),0)}}{{item.childrenMergeInfo[0].unit}}
+                </div>
               </div>
               <div class="trow bgGray">
-                <div class="tcol"
-                  style="flex:0.3">序号</div>
+                <div class="tcol label">序号</div>
                 <div class="tcol"
                   style="flex: 4">
                   <div class="trow">
@@ -92,8 +120,7 @@
                 :style="tableLineHeight"
                 v-for="(itemChild, indexChild) in item.childrenMergeInfo"
                 :key="indexChild">
-                <div class="tcol"
-                  style="flex:0.3">{{ indexChild + 1 }}</div>
+                <div class="tcol label">{{ indexChild + 1 }}</div>
                 <div class="tcol"
                   style="flex: 4">
                   <div class="trow">
@@ -126,20 +153,16 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="pbody">
           <div class="tableCtn">
             <div class="thead bgWhite"
               style="height: auto">
               <div class="trow">
-                <div class="tcol bgGray"
-                  style="flex:0.3">其它备注</div>
+                <div class="tcol bgGray label">其它备注</div>
                 <div class="tcol"
                   style="flex: 4;text-align:left">{{ otherInfo.desc }}</div>
               </div>
               <div class="trow">
-                <div class="tcol bgGray"
-                  style="flex:0.3">注意事项</div>
+                <div class="tcol bgGray label">注意事项</div>
                 <div class="tcol"
                   style="flex: 4;text-align:left;display:block">
                   <div style="line-height:22px"
@@ -210,19 +233,47 @@
             </div>
           </div>
           <div class="tableCtn">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol">产品信息</div>
+                <div class="tcol"
+                  v-if="materialPlanType===1">尺码颜色</div>
+                <div class="tcol">产品部位</div>
+                <div class="tcol">计划生产数量</div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div class="trow"
+                v-for="(item,index) in productInfo"
+                :key="index">
+                <div class="tcol">
+                  <div>{{item.product_code||item.system_code}}</div>
+                  <div>{{item.category}}/{{item.secondary_category}}</div>
+                </div>
+                <div class="tcol"
+                  v-if="materialPlanType===1">{{item.size_name}}/{{item.color_name}}</div>
+                <div class="tcol">{{item.part_name}}</div>
+                <div class="tcol">{{item.number}}</div>
+              </div>
+            </div>
+          </div>
+          <div class="tableCtn">
             <div class="thead bgWhite"
               style="height: auto">
               <div class="trow">
-                <div class="tcol bgGray"
-                  style="flex:0.3">原料名称</div>
+                <div class="tcol bgGray label">原料名称</div>
                 <div class="tcol"
                   style="flex: 4">
                   {{ item.material_name }}
                 </div>
+                <div class="tcol bgGray label">合计值</div>
+                <div class="tcol"
+                  style="flex:2">
+                  {{ item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.final_number),0)}}{{item.childrenMergeInfo[0].unit}}
+                </div>
               </div>
               <div class="trow bgGray">
-                <div class="tcol"
-                  style="flex:0.3">序号</div>
+                <div class="tcol label">序号</div>
                 <div class="tcol"
                   style="flex: 4">
                   <div class="trow">
@@ -240,8 +291,7 @@
                 :style="tableLineHeight"
                 v-for="(itemChild, indexChild) in item.childrenMergeInfo"
                 :key="indexChild">
-                <div class="tcol"
-                  style="flex:0.3">{{ indexChild + 1 }}</div>
+                <div class="tcol label">{{ indexChild + 1 }}</div>
                 <div class="tcol"
                   style="flex: 4">
                   <div class="trow">
@@ -274,8 +324,6 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="pbody">
           <div class="tableCtn">
             <div class="thead bgWhite"
               style="height: auto">
@@ -347,14 +395,13 @@
       v-if="showMenu"
       :style="`left:${X_position || 0}px;top:${Y_position}px`"
       @click.stop>
-      <div class="setting_item"
-        @click="windowMethod(3)">设置行高 <el-input-number v-model="lineHeight"
+      <div class="setting_item">设置行高 <el-input-number v-model="lineHeight"
           style="height:32px"
           :precision="1"
           size="small"
           :step="0.1"
-          :min="1"
-          :max="3"></el-input-number>
+          :min="0.7"
+          :max="2"></el-input-number>
       </div>
       <div class="setting_item"
         @click="windowMethod(4)">切换到原料名称{{ isBreak ? '合并' : '拆分' }}页面</div>
@@ -373,8 +420,10 @@
 <script lang="ts">
 import Vue from 'vue'
 import { materialPlan } from '@/assets/js/api'
+import { MaterailPlanData } from '@/types/materialPlan'
 export default Vue.extend({
   data(): {
+    productInfo: MaterailPlanData[]
     [propName: string]: any
   } {
     return {
@@ -387,7 +436,9 @@ export default Vue.extend({
       X_position: 0,
       Y_position: 0,
       materialPlanIndex: '0',
+      productInfo: [],
       materialPlanInfo: [],
+      materialPlanType: 1,
       otherInfo: {
         code: '',
         order_code: '',
@@ -449,6 +500,7 @@ export default Vue.extend({
     }
   },
   mounted() {
+    const proIdArr = JSON.parse(this.$route.query.proId as string)
     this.title = this.$getLocalStorage('materialPlanPrintTitle') || ''
     this.descArr = this.$getLocalStorage('materialPlanPrintDesc')
       ? JSON.parse(this.$getLocalStorage('materialPlanPrintDesc'))
@@ -459,12 +511,37 @@ export default Vue.extend({
       })
       .then((res) => {
         this.otherInfo = res.data.data
-        this.materialPlanInfo = this.$mergeData(res.data.data.material_plan_gather_data, {
+        this.materialPlanType = this.otherInfo.type
+        this.productInfo = this.otherInfo.material_plan_data.filter((item: any) => {
+          return proIdArr.indexOf(item.id) !== -1
+        })
+        // 物料根据所选产品信息重新计算
+        const material_plan_gather_data: any[] = []
+        this.productInfo.forEach((item) => {
+          item.info_data.forEach((itemChild) => {
+            const finded = material_plan_gather_data.find(
+              (itemFind) =>
+                itemFind.material_color === itemChild.material_color && itemFind.material_id === itemChild.material_id
+            )
+            if (finded) {
+              finded.final_number = Number(finded.final_number) + Number(itemChild.final_number)
+            } else {
+              material_plan_gather_data.push({
+                final_number: itemChild.final_number,
+                material_color: itemChild.material_color,
+                material_name: itemChild.material_name,
+                unit: itemChild.unit,
+                material_id: itemChild.material_id
+              })
+            }
+          })
+        })
+        this.materialPlanInfo = this.$mergeData(material_plan_gather_data, {
           mainRule: ['material_name', 'material_id']
         })
         // 生成二维码
         const QRCode = require('qrcode')
-        QRCode.toDataURL(`${this.otherInfo.code}`)
+        QRCode.toDataURL('/materialPlan/detail?id=' + `${this.otherInfo.code}` + '&ifprint=true')
           .then((url: any) => {
             this.qrCodeUrl = url
           })

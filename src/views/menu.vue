@@ -70,7 +70,7 @@ export default Vue.extend({
           {
             name: '原料管理',
             id: '5-3',
-            icon: 'icon-wuliaoguanli',
+            icon: 'icon-yuanliaoguanli',
             url: '/materialManage/list?page=1&type=1&code=&order_code=&date='
           },
           {
@@ -132,13 +132,13 @@ export default Vue.extend({
           {
             name: '工艺单列表',
             id: '15-3',
-            icon: 'icon-wuliaoyudinggou',
+            icon: 'icon-gongyidanliebiao',
             url: '/craft/list?page=1'
           },
           {
             name: '系统设置',
             id: 16,
-            icon: 'icon-wuliaoyudinggou',
+            icon: 'icon-xitongshezhi',
             url: '/setting?pName=产品设置&cName=品类'
           }
         ],

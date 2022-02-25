@@ -1331,15 +1331,18 @@
               </div>
               <div class="row">
                 <div class="label">公司二维码：</div>
-                <div class="row" style="align-items: flex-end;">
+                <div class="row"
+                  style="align-items: flex-end;">
                   <div class="content border tc">
-                  <div>
-                    <img :src="qrCodeUrl" />
+                    <div>
+                      <img :src="qrCodeUrl" />
+                    </div>
+                    <div>织为云外协生产小程序</div>
+                    <div>微信扫一扫，在线管理加工单进度</div>
                   </div>
-                  <div>织为云外协生产小程序</div>
-                  <div>微信扫一扫，在线管理加工单进度</div>
-                </div>
-                <div class="btn backHoverBlue fl" style="height: 33px;margin-left:20px"  @click="$openUrl('/setting/printQRCode?companyID='+companyID)">点击打印</div>
+                  <div class="btn backHoverBlue fl"
+                    style="height: 33px;margin-left:20px"
+                    @click="$openUrl('/setting/printQRCode?companyID='+companyID)">点击打印</div>
                 </div>
               </div>
               <div class="row">
@@ -3661,7 +3664,7 @@ export default Vue.extend({
         ])
         this.getCategory()
       } else if (this.cName === '基本信息') {
-         this.$checkCommonInfo([
+        this.$checkCommonInfo([
           {
             checkWhich: 'status/token',
             getInfoMethed: 'dispatch',
@@ -5072,7 +5075,7 @@ export default Vue.extend({
         }
       ])
       if (!formCheck) {
-        decorateMaterial.create(this.decorateMaterialInfo).then((res) => {
+        decorateMaterial.create({ data: [this.decorateMaterialInfo] }).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
             this.getDecorateMaterial()

@@ -1086,7 +1086,7 @@ export default Vue.extend({
               itemPart.number = itemPart.number || 0
               if (itemPart.number) {
                 this.materialPlanInfo.material_plan_data.push({
-                  product_code: item.product_code,
+                  product_code: item.product_code || item.system_code,
                   category: item.category,
                   secondary_category: item.secondary_category,
                   part_id: itemPart.part_id,
@@ -1179,7 +1179,7 @@ export default Vue.extend({
                   }
                 } else {
                   this.materialPlanInfo.material_plan_data.push({
-                    product_code: item.product_code,
+                    product_code: item.product_code || item.system_code,
                     category: item.category,
                     secondary_category: item.secondary_category,
                     part_id: itemPart.part_id,
@@ -1337,7 +1337,7 @@ export default Vue.extend({
       this.materialPlanInfo.material_plan_data.forEach((item) => {
         item.info_data.forEach((itemChild) => {
           // @ts-ignore
-          itemChild.tree_data = itemChild.tree_data.join(',')
+          itemChild.tree_data = itemChild.tree_data ? itemChild.tree_data.join(',') : itemChild.tree_data
           itemChild.unit = itemChild.unit === 'g' ? 'kg' : itemChild.unit
         })
       })
