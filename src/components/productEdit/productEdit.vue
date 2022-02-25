@@ -1064,7 +1064,7 @@ export default Vue.extend({
             regNormal: 'checkArr'
           }
         ]) ||
-        this.productInfo.color_data.some((item) => {
+        this.productInfo.color_data.some((item: any) => {
           return this.$formCheck(item, [
             {
               key: 'name',
