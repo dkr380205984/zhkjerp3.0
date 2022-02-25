@@ -16,7 +16,7 @@
             <div class="trow">
               <div class="tcol">
                 <div style="max-height:400px">
-                  <zh-image :data="productInfo.image_data"></zh-image>
+                  <zh-image :data="sampleInfo.image_data"></zh-image>
                 </div>
                 <div style="text-align:center">{{sampleInfo.product_code}}</div>
               </div>
