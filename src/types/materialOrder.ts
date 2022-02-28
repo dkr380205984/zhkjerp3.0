@@ -1,4 +1,5 @@
 export interface MaterialOrderInfo {
+  created_at?: string
   id?: number | string
   code?: string
   order_id?: number | string
@@ -32,6 +33,7 @@ export interface MaterialListInfo {
   price: string
   number: string | number
   material_order_name?: string // 后端根据采购单查询的物料
+  material_transfer_name?: string
   order_material_id?: string | number // 后端根据采购单查询的物料
   material_order_info_id?: number | string // 采购单子项id 可以通过这个查询到原纱线id，颜色id
   material_transfer_info_id?: number | string // 调取单子项id 可以通过这个查询到原纱线id，颜色id

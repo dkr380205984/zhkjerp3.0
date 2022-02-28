@@ -24,7 +24,7 @@
             </el-cascader>
           </div>
           <div class="elCtn hasIcon">
-            <el-select @change="$setLocalStorage('create_user',user_id);changeRouter()"
+            <el-select @change="(ev)=>getLocalStorage(ev,'create_user')"
               v-model="user_id"
               placeholder="筛选创建人"
               clearable>
@@ -60,7 +60,7 @@
         </div>
         <div class="filterCtn">
           <div class="elCtn hasIcon">
-            <el-select @change="$setLocalStorage('group_id',group_id);changeRouter()"
+            <el-select @change="(ev)=>getLocalStorage(ev,'group_id')"
               v-model="group_id"
               placeholder="筛选负责小组"
               clearable>
@@ -386,6 +386,12 @@ export default Vue.extend({
     }
   },
   methods: {
+    getLocalStorage(ev: any, type: string) {
+      if (!ev) {
+        this.$setLocalStorage(type, '')
+      }
+      this.changeRouter()
+    },
     changeRouter() {
       this.$router.push(
         '/quotedPrice/list?page=' +

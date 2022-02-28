@@ -16,4 +16,5 @@ export interface ListSetting {
   class?: string // 用于改字体颜色用的
   classArr?: string[] // 一般配合filterArr一起用，不同状态用不同颜色标记
   isCheck?: boolean
+  specialForOrderPrcess?: 'order' | 'sampleOrder' // 订单样单流程专用，理论上不应该出现在组件里
 }

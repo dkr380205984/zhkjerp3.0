@@ -16,9 +16,7 @@
             <div class="trow">
               <div class="tcol">
                 <div style="max-height:400px">
-                  <el-image :src="productInfo.image_data.length>0?productInfo.image_data[0]:require('@/assets/image/common/noPic.png')"
-                    :preview-src-list="productInfo.image_data">
-                  </el-image>
+                  <zh-image :data="productInfo.image_data"></zh-image>
                 </div>
                 <div style="text-align:center">{{productInfo.product_code}}</div>
               </div>
@@ -186,7 +184,7 @@
         <span class="btn borderBtn"
           @click="close">取消</span>
         <span class="btn backHoverBlue"
-          @click="openUrl()">
+          @click="$openUrl('/tagEditPrint/editTag?id=' + productInfo.id + '&type=2')">
           <use xlink:href="#icon-dayindingdan"></use>
           编辑标签
         </span>
@@ -316,18 +314,7 @@ export default Vue.extend({
       }
     }
   },
-  mounted() {
-    // 生成二维码
-    const QRCode = require('qrcode')
-    QRCode.toDataURL(`${this.productInfo}`)
-      .then((url: any) => {
-        this.qrCodeUrl = url
-        // console.log(this.qrCodeUrl)
-      })
-      .catch((err: any) => {
-        console.error(err)
-      })
-  },
+  mounted() {},
   methods: {
     close() {
       this.getDataFlag = false
@@ -335,10 +322,6 @@ export default Vue.extend({
     },
     getNewProduct(val: any) {
       this.productInfo = val
-    },
-    openUrl() {
-      sessionStorage[`product_${this.$route.query.id}`] = JSON.stringify(this.productInfo)
-      this.$router.push('/tagEditPrint/editTag?id=' + this.$route.query.id)
     }
   }
 })

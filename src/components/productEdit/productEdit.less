@@ -3,6 +3,48 @@
 @import '../../assets/css/list.less';
 @import '../../assets/css/edit.less';
 .productEdit{
+  .stepCtn{
+    display: flex;
+    align-items: center;
+    height: 70px;
+    margin: 12px 0;
+    justify-content: space-around;
+    position: relative;
+    .step{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .circle{
+        text-align: center;
+        line-height: 40px;
+        width: 40px;
+        color: @blue;
+        border-radius: 50%;
+        border:1px solid @blue;
+        background: #fff;
+      }
+      .name{
+        margin-top: 10px;
+        color: @blue;
+      }
+      &.active{
+        .circle{
+          background: @blue;
+          color: #fff;
+        }
+      }
+    }
+    &::after{
+      content:'';
+      position: absolute;
+      height: 1px;
+      left: 0;
+      right: 0;
+      top: 21px;
+      background: #ccc;
+      z-index: -1;
+    }
+  }
   &.sidePopup{
     .main{
       background:#EEE;

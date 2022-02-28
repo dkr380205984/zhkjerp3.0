@@ -42,7 +42,7 @@
             v-for="item in materialPlanInfo.production_plan_data"
             :key="item.product_id">
             <div class="tcol">
-              <span>{{item.product_code}}</span>
+              <span>{{item.product_code || item.system_code}}</span>
               <span>{{item.category}}/{{item.secondary_category}}</span>
             </div>
             <div class="tcol noPad"
@@ -128,7 +128,7 @@
               :key="index">
               <div class="trow">
                 <div class="tcol">
-                  <span>{{item.product_code}}</span>
+                  <span>{{item.product_code || item.system_code}}</span>
                   <span>{{item.category}}/{{item.secondary_category}}</span>
                 </div>
                 <div class="tcol">{{item.size_name}}/{{item.color_name}}</div>
@@ -176,7 +176,7 @@
                         :show-all-levels="false"
                         v-model="itemChild.process_name_arr"
                         :options="processList"
-                        @change="($event)=>{itemChild.process_name=ev[1]}"
+                        @change="(ev)=>{itemChild.process_type=ev[0];itemChild.process_name=ev[1]}"
                         filterable
                         clearable>
                       </el-cascader>
@@ -284,7 +284,7 @@
               :key="index">
               <div class="trow">
                 <div class="tcol">
-                  <span>{{item.product_code}}</span>
+                  <span>{{item.product_code || item.system_code}}</span>
                   <span>{{item.category}}/{{item.secondary_category}}</span>
                 </div>
                 <div class="tcol">{{item.part_name}}</div>
@@ -331,7 +331,7 @@
                         :show-all-levels="false"
                         v-model="itemChild.process_name_arr"
                         :options="processList"
-                        @change="($event)=>{itemChild.process_name=ev[1]}"
+                        @change="(ev)=>{itemChild.process_type=ev[0];itemChild.process_name=ev[1]}"
                         filterable
                         clearable>
                       </el-cascader>
@@ -462,7 +462,7 @@
               <div class="elCtn">
                 <el-input v-model="item.final_number"
                   placeholder="最终数量">
-                  <template slot="append">kg</template>
+                  <template slot="append">{{item.unit==='g'?'kg':item.unit}}</template>
                 </el-input>
               </div>
             </div>
@@ -610,8 +610,9 @@ export default Vue.extend({
                 this.numberAutoMethod(100 * (Number(finded.final_number) / Number(finded.need_number) - 1))
               } else {
                 this.materialPlanInfo.material_plan_gather_data.push({
-                  material_name:
-                    itemChild.material_name || this.$findId(flattenYarnList, itemChild.tree_data![2], 'label', 'value'),
+                  material_name: itemChild.tree_data
+                    ? this.$findId(flattenYarnList, itemChild.tree_data![2], 'label', 'value')
+                    : itemChild.material_name,
                   material_id: itemChild.material_id || itemChild.tree_data![2],
                   material_type: 1, // 目前只有原料
                   material_color: itemChild.material_color,
@@ -695,7 +696,7 @@ export default Vue.extend({
       this.materialPlanInfo.material_plan_data.forEach((item) => {
         item.info_data.forEach((itemChild) => {
           // @ts-ignore
-          itemChild.tree_data = itemChild.tree_data.join(',')
+          itemChild.tree_data = itemChild.tree_data ? itemChild.tree_data.join(',') : itemChild.tree_data
         })
       })
     },

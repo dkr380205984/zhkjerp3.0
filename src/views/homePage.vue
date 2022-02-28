@@ -223,7 +223,8 @@
           <div class="titleCtn">
             <div class="title">版本更新公告</div>
           </div>
-          <div class="content">
+          <div class="content"
+            style="overflow: auto;">
             <div v-html="systemMessageContent"></div>
           </div>
         </div>

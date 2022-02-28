@@ -37,7 +37,10 @@
                   :key="indexPro">
                   <div class="tcol">
                     <el-checkbox v-model="itemPro.check"
-                      @change="$forceUpdate()">{{itemPro.name||itemPro.product_code||itemPro.system_code}}</el-checkbox>
+                      @change="$forceUpdate()">
+                      <span>{{itemPro.name||itemPro.product_code||itemPro.system_code}}</span>
+                      <span>({{itemPro.category}}/{{itemPro.secondary_category}})</span>
+                    </el-checkbox>
                   </div>
                   <div class="tcol">{{itemPro.part_name}}</div>
                   <div class="tcol">{{itemPro.size_name}}/{{itemPro.color_name}}</div>
@@ -407,10 +410,10 @@
                     <el-select placeholder="请选择产品信息"
                       v-model="itemPro.select_arr"
                       @change="getProInfo($event,itemPro)">
-                      <el-option v-for="(item,index) in checkList"
+                      <el-option v-for="(item,index) in checkList()"
                         :key="index"
                         :value="item.product_id+'/'+ item.part_id+'/'+item.size_id+'/'+ item.color_id"
-                        :label="item.size_name?(item.name||item.product_code||item.system_code)+'/'+ item.part_name+'/'+item.size_name+'/'+ item.color_name:(item.name||item.product_code||item.system_code)+'/'+ item.part_name"></el-option>
+                        :label="item.size_name?(item.name||item.product_code||item.system_code)+'('+ item.category+'/'+item.secondary_category+')'+'/'+ item.part_name+'/'+item.size_name+'/'+ item.color_name:(item.name||item.product_code||item.system_code)+'/'+ item.part_name"></el-option>
                     </el-select>
                   </div>
                 </div>
@@ -1317,17 +1320,10 @@ export default Vue.extend({
         }
       ]
     },
-    // 被选中的产品信息
-    checkList(): MaterailPlanData[] {
-      // 监听一下全选按钮
-      console.log(this.checkAllColorSize, this.checkAllPro)
-      const finded = this.materialPlanList.find((item) => Number(item.id) === Number(this.materialPlanIndex))
-      return finded ? finded.material_plan_data.filter((item) => item.check) : []
-    },
     // 被选中的产品的物料信息展开
     checkMaterialFlattenList(): any[] {
       // 由于process_name_arr是数组，展开的时候多展开一层，所以去掉process_name_arr
-      let checkListToChange = this.$clone(this.checkList)
+      let checkListToChange = this.$clone(this.checkList())
       checkListToChange.forEach((item) => {
         item.info_data.forEach((itemChild) => {
           delete itemChild.process_name_arr
@@ -1429,12 +1425,12 @@ export default Vue.extend({
       info.color_id = Number(idArr[3])
     },
     getProductionPlan() {
-      const checkLength = this.checkList.length
+      const checkLength = this.checkList().length
       if (checkLength === 0) {
         this.$message.error('请选择产品信息进行加工操作')
         return
       }
-      this.productionPlanInfo[0].product_info_data = this.checkList.map((item) => {
+      this.productionPlanInfo[0].product_info_data = this.checkList().map((item) => {
         return {
           product_id: item.product_id,
           size_id: item.size_id,
@@ -1897,6 +1893,11 @@ export default Vue.extend({
           this.$message.error(errMsg)
         }
       }
+    },
+    // 被选中的产品信息
+    checkList(): MaterailPlanData[] {
+      const finded = this.materialPlanList.find((item) => Number(item.id) === Number(this.materialPlanIndex))
+      return finded ? finded.material_plan_data.filter((item) => item.check) : []
     }
   },
   mounted() {

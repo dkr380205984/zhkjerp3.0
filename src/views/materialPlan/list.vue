@@ -199,25 +199,18 @@ export default Vue.extend({
           index: 6
         },
         {
-          key: 'total_price',
-          name: '下单总额',
-          ifShow: true,
-          ifLock: false,
-          index: 7
-        },
-        {
           key: 'group_name',
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 8
+          index: 7
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 9
+          index: 8
         }
       ],
       pickerOptions: {

@@ -24,7 +24,7 @@
             </el-cascader>
           </div>
           <div class="elCtn hasIcon">
-            <el-select @change="changeRouter"
+            <el-select @change="(ev)=>getLocalStorage(ev,'create_user')"
               v-model="user_id"
               placeholder="筛选创建人"
               clearable>
@@ -58,7 +58,7 @@
         </div>
         <div class="filterCtn">
           <div class="elCtn hasIcon">
-            <el-select @change="changeRouter"
+            <el-select @change="(ev)=>getLocalStorage(ev,'group_id')"
               v-model="group_id"
               placeholder="筛选负责小组"
               clearable>
@@ -363,11 +363,28 @@ export default Vue.extend({
           from: 'product_data'
         },
         {
+          key: '',
+          name: '流程进度',
+          ifShow: true,
+          ifLock: false,
+          index: 5,
+          specialForOrderPrcess: 'order'
+        },
+        {
+          key: 'status',
+          name: '订单状态',
+          ifShow: true,
+          ifLock: false,
+          index: 6,
+          filterArr: ['', '已创建', '进行中', '已完成', '已结算', '已取消'],
+          classArr: ['', 'orange', 'blue', 'green', 'green', 'red']
+        },
+        {
           key: 'total_number',
           name: '下单总数',
           ifShow: true,
           ifLock: false,
-          index: 5,
+          index: 7,
           errVal: '0'
         },
         {
@@ -375,18 +392,9 @@ export default Vue.extend({
           name: '下单总额',
           ifShow: true,
           ifLock: false,
-          index: 6,
+          index: 8,
           unit: '元',
           errVal: '0'
-        },
-        {
-          key: 'status',
-          name: '订单状态',
-          ifShow: true,
-          ifLock: false,
-          index: 7,
-          filterArr: ['', '已创建', '进行中', '已完成', '已结算', '已取消'],
-          classArr: ['', 'orange', 'blue', 'green', 'green', 'red']
         },
         {
           key: 'group_name',
@@ -490,6 +498,12 @@ export default Vue.extend({
     }
   },
   methods: {
+    getLocalStorage(ev: any, type: string) {
+      if (!ev) {
+        this.$setLocalStorage(type, '')
+      }
+      this.changeRouter()
+    },
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)

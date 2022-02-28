@@ -190,20 +190,11 @@ export default Vue.extend({
           errVal: '0'
         },
         {
-          key: 'total_price',
-          name: '下单总额',
-          ifShow: true,
-          ifLock: false,
-          index: 6,
-          unit: '元',
-          errVal: '0'
-        },
-        {
           key: 'status',
           name: '订单状态',
           ifShow: true,
           ifLock: false,
-          index: 7,
+          index: 6,
           filterArr: ['', '已创建', '进行中', '已完成', '已结算', '已取消'],
           classArr: ['', 'orange', 'blue', 'green', 'green', 'red']
         },
@@ -212,14 +203,14 @@ export default Vue.extend({
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 9
+          index: 7
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 10
+          index: 8
         }
       ],
       pickerOptions: {
@@ -295,6 +286,8 @@ export default Vue.extend({
           this.user_id +
           '&group_id=' +
           this.group_id +
+          '&order_type=' +
+          this.order_type +
           '&status=' +
           this.status +
           '&date=' +

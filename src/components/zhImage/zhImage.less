@@ -1,0 +1,150 @@
+.zhImageCtn{
+  width: 100%;
+  height: 100%;
+  position: relative;
+  .hoverBlue{
+    color:#fff;
+    &:hover{
+      color: #51ADFD;
+    }
+  }
+  &:hover{
+    .hoverText{
+      display: flex;
+    }
+    .leftJT{
+      display: flex;
+    }
+    .rightJT{
+      display: flex;
+    }
+  }
+  .realImage{
+    width: 100%;
+    height: 100%;
+    img{
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .hoverText{
+    z-index: 1;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0,0,0,.25);
+    color: #fff;
+    display: none;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    flex-direction: column;
+    font-size: 16px;
+  }
+  .leftJT{
+    z-index: 2;
+    background: rgba(0,0,0,.45);
+    cursor: pointer;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    display: none;
+    align-items: center;
+    color:#fff;
+    width: 16px;
+  }
+  .rightJT{
+    z-index: 2;
+    background: rgba(0,0,0,.45);
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: none;
+    align-items: center;
+    color:#fff;
+    width: 16px;
+  }
+  .zh_img_screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(64,64,64,0.6);
+    z-index: 99;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    user-select:none;
+    .close{
+      font-size: 40px;
+      color: #FFF;
+      margin-bottom: 60px;
+      cursor: pointer;
+      &:hover{
+        color: #1a95ff;
+      }
+    }
+    .zh_img_box{
+      height: 550px;
+      width: 1000px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .handle_btn_item {
+        display: flex;
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        top: 50%;
+        cursor: pointer;
+        transform: translateY(-50%);
+        background: #1a95ff;
+        color: #FFF;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        font-size: 32px;
+        &.left{
+          left: 0;
+        }
+        &.right{
+          right: 0;
+        }
+      }
+      .screen_img {
+        max-width: 900px;
+        max-height: 550px;
+        // height: 100%;
+      }
+      .handle_indicator {
+        position: absolute;
+        bottom: 0;
+        transform: translateY(20px);
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        width: auto;
+        height: 5px;
+        display: flex;
+        &>li{
+          width: 40px;
+          height: inherit;
+          margin: 0 10px;
+          border-radius: 2px;
+          background: rgba(0,0,0,0.15);
+          &.active {
+            background: #1a95ff;
+          }
+        }
+      }
+    }
+  }
+}

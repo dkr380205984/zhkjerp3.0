@@ -15,10 +15,8 @@
           <div class="tbody">
             <div class="trow">
               <div class="tcol">
-                <div>
-                  <el-image :src="sampleInfo.image_data.length>0?sampleInfo.image_data[0]:require('@/assets/image/common/noPic.png')"
-                    :preview-src-list="sampleInfo.image_data">
-                  </el-image>
+                <div style="max-height:400px">
+                  <zh-image :data="sampleInfo.image_data"></zh-image>
                 </div>
                 <div style="text-align:center">{{sampleInfo.product_code}}</div>
               </div>
@@ -171,6 +169,11 @@
         v-show="!noOpr">
         <span class="btn borderBtn"
           @click="close">取消</span>
+        <span class="btn backHoverBlue"
+          @click="$openUrl('/tagEditPrint/editTag?id=' + sampleInfo.id+'&type=2')">
+          <use xlink:href="#icon-dayindingdan"></use>
+          编辑标签
+        </span>
         <span class="btn backHoverOrange"
           @click="proId=null;pid=null;pid_status=null;addProductFlag = true;">修改</span>
       </div>

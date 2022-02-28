@@ -33,6 +33,14 @@ const routes: Array<RouteConfig> = [
     name: '物料计划单打印',
     component: () => import('../views/materialPlan/print.vue')
   }, {
+    path: '/materialManage/orderPrint',
+    name: '物料订购单打印',
+    component: () => import('../views/materialManage/orderPrint.vue')
+  }, {
+    path: '/materialManage/processPrint',
+    name: '物料加工单打印',
+    component: () => import('../views/materialManage/processPrint.vue')
+  }, {
     path: '/store/materialLogPrint',
     name: '原料出入库打印',
     component: () => import('../views/store/materialLogPrint.vue')
@@ -213,6 +221,13 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/store/list.vue')
     }, {
       meta: {
+        permissions_id: '12-3',
+      },
+      path: '/store/productList',
+      name: '产品仓库列表',
+      component: () => import('../views/store/productList.vue')
+    }, {
+      meta: {
         permissions_id: '12-1',
       },
       path: '/store/create',
@@ -303,9 +318,20 @@ const routes: Array<RouteConfig> = [
       name: '生产计划列表',
       component: () => import('../views/productionPlan/list.vue')
     }, {
+      meta: {
+        permissions_id: '8-3',
+      },
+      path: '/productionPlan/progressList',
+      name: '生产进度列表',
+      component: () => import('../views/productionPlan/progressList.vue')
+    }, {
       path: '/productionPlan/detail',
       name: '生产计划详情',
       component: () => import('../views/productionPlan/detail.vue')
+    }, {
+      path: '/productionPlan/progressDetail',
+      name: '生产进度详情',
+      component: () => import('../views/productionPlan/progressDetail.vue')
     }, {
       path: '/inspection/detail',
       name: '检验收发详情',

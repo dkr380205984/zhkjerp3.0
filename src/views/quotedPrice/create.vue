@@ -135,7 +135,7 @@
         <div class="title">添加产品描述
           <span class="orange"
             style="font-size:14px"
-            v-if="$route.query.again">(再次报价不能新增或者删除产品)</span>
+            v-if="$route.query.again || $route.query.product_id">(订单产品转报价/再次报价不能新增或者删除产品)</span>
         </div>
       </div>
       <div v-for="(item,index) in quotedPriceInfo.product_data"
@@ -144,7 +144,7 @@
           <div class="text">产品{{index+1}}</div>
           <div class="deleteIcon"
             @click="quotedPriceInfo.product_data.length>1?$deleteItem(quotedPriceInfo.product_data,index):$message.error('至少有一项产品描述')"
-            v-if="!$route.query.again">删除</div>
+            v-if="!$route.query.again && !$route.query.product_id">删除</div>
         </div>
         <div class="editCtn">
           <div class="row">
@@ -216,13 +216,15 @@
               </div>
               <div class="cvImageCtn"
                 v-show="item.cvFlag || item.cv_list.length>0">
-                <div class="cvImage">
-                  <img v-for="indexImage of item.cvImageLength"
-                    :key="indexImage"
-                    :id="index + 'cvImg'+indexImage"
-                    :src="require('@/assets/image/common/cv.png')">
-                  <i class="icon el-icon-close"
-                    @click="deleteCvImage(index,indexImage-1)"></i>
+                <div class="cvImage"
+                  v-for="indexImage of item.cvImageLength"
+                  :key="indexImage">
+                  <template v-if="item.cv_list[indexImage-1]!==null">
+                    <img :id="index + 'cvImg'+indexImage"
+                      :src="require('@/assets/image/common/cv.png')">
+                    <i class="icon el-icon-close"
+                      @click="deleteCvImage(index,indexImage-1)"></i>
+                  </template>
                 </div>
               </div>
               <div class="info">
@@ -246,7 +248,7 @@
               </div>
             </div>
           </div>
-          <div v-if="index===quotedPriceInfo.product_data.length-1 && !$route.query.again"
+          <div v-if="index===quotedPriceInfo.product_data.length-1 && !$route.query.again && !$route.query.product_id"
             class="oprRow">
             <div class="once"
               @click="addPro">新增产品描述
@@ -817,8 +819,10 @@
                   <span class="text">其他费用</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input v-model="itemOther.name"
-                    placeholder="其他费用"></el-input>
+                  <el-autocomplete class="inline-input"
+                    v-model="itemOther.name"
+                    :fetch-suggestions="searchOtherFee"
+                    placeholder="其他费用"></el-autocomplete>
                 </div>
               </div>
               <div class="col">
@@ -1281,11 +1285,11 @@ export default Vue.extend({
     // 总合计——含各种税 quotedPriceInfo.system_total_price
     realTotalPrice(): string {
       return (
-        Number(this.totalPrice) *
-        (1 +
-          (Number(this.quotedPriceInfo.commission_percentage) / 100 || 0) +
-          (Number(this.quotedPriceInfo.profit_percentage) / 100 || 0) +
-          Number(this.quotedPriceInfo.rate_taxation) / 100 || 0)
+        Number(this.totalPrice) /
+        (1 -
+          ((Number(this.quotedPriceInfo.commission_percentage) / 100 || 0) +
+            (Number(this.quotedPriceInfo.profit_percentage) / 100 || 0) +
+            Number(this.quotedPriceInfo.rate_taxation) / 100 || 0))
       ).toFixed(2)
     },
     // 总合计，按照汇率转换后
@@ -1294,15 +1298,15 @@ export default Vue.extend({
     },
     // quotedPriceInfo.commission_price
     commissionPrice(): string {
-      return (Number(this.totalPrice) * (Number(this.quotedPriceInfo.commission_percentage) / 100 || 0)).toFixed(2)
+      return (Number(this.realTotalPrice) * (Number(this.quotedPriceInfo.commission_percentage) / 100 || 0)).toFixed(2)
     },
     // quotedPriceInfo.profit_price
     profitPrice(): string {
-      return (Number(this.totalPrice) * (Number(this.quotedPriceInfo.profit_percentage) / 100 || 0)).toFixed(2)
+      return (Number(this.realTotalPrice) * (Number(this.quotedPriceInfo.profit_percentage) / 100 || 0)).toFixed(2)
     },
     // quotedPriceInfo.rate_price
     ratePrice(): string {
-      return (Number(this.totalPrice) * (Number(this.quotedPriceInfo.rate_taxation) / 100 || 0)).toFixed(2)
+      return (Number(this.realTotalPrice) * (Number(this.quotedPriceInfo.rate_taxation) / 100 || 0)).toFixed(2)
     },
     // 产品项总价
     productTotalPrice(): string[] {
@@ -1389,10 +1393,24 @@ export default Vue.extend({
       this.imgId = mark + 'cvImg' + imageLength
       this.$forceUpdate()
     },
-    searchNoProFee(str: string, cb: Function) {
+    searchOtherFee(str: string, cb: Function) {
       const arr = [
         {
           value: '打样费'
+        }
+      ]
+      cb(
+        str
+          ? arr.filter((item) => {
+              return item.value.toLowerCase().indexOf(str.toLowerCase()) === 0
+            })
+          : arr
+      )
+    },
+    searchNoProFee(str: string, cb: Function) {
+      const arr = [
+        {
+          value: '管理费'
         }
       ]
       cb(
@@ -1610,7 +1628,7 @@ export default Vue.extend({
         item.image_data = item.file_list
           ? item.image_data.concat(item.file_list!.map((item) => item.url))
           : item.image_data // 新旧图拼接
-        item.image_data = item.cv_list ? item.cv_list.concat(item.image_data) : item.image_data // cv图拼接
+        item.image_data = item.cv_list ? item.cv_list.filter((item) => !!item).concat(item.image_data) : item.image_data // cv图拼接
         item.category_id = item.type && item.type[0]
         item.secondary_category_id = item.type && item.type[1]
         item.material_data.forEach((itemChild) => {
@@ -1665,7 +1683,7 @@ export default Vue.extend({
               errMsg: '请输入利润百分比'
             }
           ]) ||
-          this.quotedPriceInfo.product_data.some((item) => {
+          this.quotedPriceInfo.product_data.some((item, index) => {
             // 选择已有产品和直接添加产品描述验证不同
             if (item.product_id) {
               this.$message.error('暂时不支持')
@@ -1675,20 +1693,12 @@ export default Vue.extend({
                 this.$formCheck(item, [
                   {
                     key: 'transport_fee',
-                    errMsg: '请输入运费'
+                    errMsg: '产品' + (index + 1) + '请输入运费'
                   },
                   {
                     key: 'type',
-                    errMsg: '请选择产品品类',
+                    errMsg: '请选择产品' + (index + 1) + '品类',
                     regNormal: 'checkArr'
-                  },
-                  // {
-                  //   key: 'client_target_price',
-                  //   errMsg: '请输入客户目标价'
-                  // },
-                  {
-                    key: 'start_order_number',
-                    errMsg: '请输入客户最低起订量'
                   }
                 ]) ||
                 item.material_data.some((itemChild) => {
@@ -1697,12 +1707,12 @@ export default Vue.extend({
                     this.$formCheck(itemChild, [
                       {
                         key: 'tree_data',
-                        errMsg: '请选择产品原料',
+                        errMsg: '请选择产品' + (index + 1) + '原料',
                         regNormal: 'checkArr'
                       },
                       {
                         key: 'weight',
-                        errMsg: '请输入产品原料预计数量'
+                        errMsg: '请输入产品' + (index + 1) + '原料预计数量'
                       },
                       {
                         key: 'unit',
@@ -1712,7 +1722,7 @@ export default Vue.extend({
                       },
                       {
                         key: 'price',
-                        errMsg: '请输入产品原料单价'
+                        errMsg: '请输入产品' + (index + 1) + '原料单价'
                       }
                     ])
                   )
@@ -1723,19 +1733,19 @@ export default Vue.extend({
                     this.$formCheck(itemChild, [
                       {
                         key: 'material_id',
-                        errMsg: '请选择装饰辅料'
+                        errMsg: '请选择产品' + (index + 1) + '装饰辅料'
                       },
                       {
                         key: 'number',
-                        errMsg: '请输入装饰辅料预计数量'
+                        errMsg: '请输入产品' + (index + 1) + '装饰辅料预计数量'
                       },
                       {
                         key: 'unit',
-                        errMsg: '请输入装饰辅料数量单位'
+                        errMsg: '请输入产品' + (index + 1) + '装饰辅料数量单位'
                       },
                       {
                         key: 'price',
-                        errMsg: '请输入装饰辅料单价'
+                        errMsg: '请输入产品' + (index + 1) + '装饰辅料单价'
                       }
                     ])
                   )
@@ -1746,11 +1756,11 @@ export default Vue.extend({
                     this.$formCheck(itemChild, [
                       {
                         key: 'name',
-                        errMsg: '请选择织造明细'
+                        errMsg: '请选择产品' + (index + 1) + '织造明细'
                       },
                       {
                         key: 'total_price',
-                        errMsg: '请输入织造小计'
+                        errMsg: '请输入产品' + (index + 1) + '织造小计'
                       }
                     ])
                   )
@@ -1761,11 +1771,11 @@ export default Vue.extend({
                     this.$formCheck(itemChild, [
                       {
                         key: 'process_id',
-                        errMsg: '请选择半成品加工工序'
+                        errMsg: '请选择产品' + (index + 1) + '半成品加工工序'
                       },
                       {
                         key: 'total_price',
-                        errMsg: '请输入半成品加工小计'
+                        errMsg: '请输入产品' + (index + 1) + '半成品加工小计'
                       }
                     ])
                   )
@@ -1776,11 +1786,11 @@ export default Vue.extend({
                     this.$formCheck(itemChild, [
                       {
                         key: 'name',
-                        errMsg: '请选择成品加工工序'
+                        errMsg: '请选择产品' + (index + 1) + '成品加工工序'
                       },
                       {
                         key: 'total_price',
-                        errMsg: '请输入成品加工小计'
+                        errMsg: '请输入产品' + (index + 1) + '成品加工小计'
                       }
                     ])
                   )
@@ -1791,11 +1801,11 @@ export default Vue.extend({
                     this.$formCheck(itemChild, [
                       {
                         key: 'material_id',
-                        errMsg: '请选择包装辅料'
+                        errMsg: '请选择产品' + (index + 1) + '包装辅料'
                       },
                       {
                         key: 'total_price',
-                        errMsg: '请输入包装辅料小计'
+                        errMsg: '请输入产品' + (index + 1) + '包装辅料小计'
                       }
                     ])
                   )
@@ -1806,11 +1816,11 @@ export default Vue.extend({
                     this.$formCheck(itemChild, [
                       {
                         key: 'name',
-                        errMsg: '请输入其他费用名称'
+                        errMsg: '请输入产品' + (index + 1) + '其他费用名称'
                       },
                       {
                         key: 'total_price',
-                        errMsg: '请输入其他费用小计'
+                        errMsg: '请输入产品' + (index + 1) + '其他费用小计'
                       }
                     ])
                   )
@@ -1821,11 +1831,11 @@ export default Vue.extend({
                     this.$formCheck(itemChild, [
                       {
                         key: 'name',
-                        errMsg: '请输入非生产型费用名称'
+                        errMsg: '请输入产品' + (index + 1) + '非生产型费用名称'
                       },
                       {
                         key: 'total_price',
-                        errMsg: '请输入非生产型费用小计'
+                        errMsg: '请输入产品' + (index + 1) + '非生产型费用小计'
                       }
                     ])
                   )
@@ -1991,7 +2001,10 @@ export default Vue.extend({
     // 删除复制粘贴的图片
     deleteCvImage(proIndex: number, imageIndex: number) {
       if (this.quotedPriceInfo.product_data[proIndex].cv_list![imageIndex]) {
-        this.$deleteItem(this.quotedPriceInfo.product_data[proIndex].cv_list!, imageIndex)
+        // @ts-ignore 标记特殊值，软删除图片，上传的时候过滤掉就行了
+        this.quotedPriceInfo.product_data[proIndex].cv_list![imageIndex] = null
+        this.$message.success('删除成功')
+        this.$forceUpdate()
       } else {
         this.$message.error('请先上传图片')
       }
@@ -2080,7 +2093,7 @@ export default Vue.extend({
         .then((res) => {
           if (res.data.status) {
             const data: SampleOrderInfo = res.data.data
-            this.quotedPriceInfo.real_order_id = Number(this.$route.query.sampleOrderId)
+            this.quotedPriceInfo.rel_order_id = Number(this.$route.query.sampleOrderId)
             this.quotedPriceInfo.tree_data = (data.tree_data as string).split(',').map((item: string) => Number(item))
             this.getContacts(this.quotedPriceInfo.tree_data as number[], true)
             this.quotedPriceInfo.contacts_id = data.contacts_id
@@ -2205,7 +2218,7 @@ export default Vue.extend({
         .then((res) => {
           if (res.data.status) {
             const data: OrderInfo = res.data.data
-            this.quotedPriceInfo.real_order_id = Number(this.$route.query.orderId)
+            this.quotedPriceInfo.rel_order_id = Number(this.$route.query.orderId)
             this.quotedPriceInfo.tree_data = (data.tree_data as string).split(',').map((item: string) => Number(item))
             this.getContacts(this.quotedPriceInfo.tree_data as number[], true)
             this.quotedPriceInfo.contacts_id = data.contacts_id
@@ -2220,6 +2233,7 @@ export default Vue.extend({
                     cvFlag: false,
                     total_price: '',
                     product_id: '',
+                    order_product_id: item.id,
                     type: [item.category_id as number, item.secondary_category_id as number],
                     category_id: item.category_id,
                     secondary_category_id: item.secondary_category_id,
@@ -2315,6 +2329,13 @@ export default Vue.extend({
                 })
               )
             })
+            // 如果是产品转报价，过滤掉其他产品
+            if (this.$route.query.product_id) {
+              this.quotedPriceInfo
+              this.quotedPriceInfo.product_data = this.quotedPriceInfo.product_data.filter(
+                (item) => Number(item.order_product_id) === Number(this.$route.query.order_product_id)
+              )
+            }
           }
           this.loading = false
         })

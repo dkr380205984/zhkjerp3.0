@@ -1,7 +1,8 @@
 // 报价单数据结构
 export interface QuotedPriceInfo {
   code?: string
-  real_order_id?: number | string // 绑订单用
+  rel_order_id?: number | string // 绑订单用
+  rel_product_id?: number | string // 绑产品勇
   pid?: number | string // 关联报价单时候用
   id?: null | number | string
   is_check?: 0 | 1 | 2
@@ -41,7 +42,8 @@ export interface QuotedPriceProduct {
   cvFlag?: boolean // 复制粘贴图片开关
   cvImageLength?: number // 复制粘贴图片张数
   total_price?: number | string // 统计产品的价格信息
-  product_id?: string | number // 有id传id，无id传下面
+  product_id?: string | number // 有id传id，无id传下面'
+  order_product_id?: string | number // 订单转报价单
   type?: number[] // 品类下拉框
   category_id?: string | number
   category?: string

@@ -35,16 +35,15 @@
         </svg>
         <span class="text">装饰辅料仓库</span>
       </div>
-      <!-- <div class="tag"
-        :class="{'active':store_type===5}"
-        @click="store_type=5;changeRouter">
+      <div class="tag"
+        @click="$router.push('/store/productList')">
         <svg class="iconFont"
           aria-hidden="true">
           <use xlink:href='#icon-chanpincangku'></use>
         </svg>
         <span class="text">产品仓库</span>
       </div>
-      <div class="tag"
+      <!--<div class="tag"
         :class="{'active':store_type===6}"
         @click="store_type=6;changeRouter">
         <svg class="iconFont"

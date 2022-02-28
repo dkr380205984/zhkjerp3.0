@@ -29,12 +29,22 @@
           </div>
         </div>
         <div class="fr">
-          <div class="pImage">
-            <el-image :src="craftInfo.product_info&&craftInfo.product_info.image_data.length>0?craftInfo.product_info.image_data[0]:require('@/assets/image/common/noPic.png')"
-              :preview-src-list="craftInfo.product_info?craftInfo.product_info.image_data:[]"
-              :fit="'scale-down'">
-            </el-image>
-          </div>
+          <template v-if="!craftInfo.image_data || (craftInfo.image_data.length===0)">
+            <div class="pImage">
+              <el-image :src="craftInfo.product_info&&craftInfo.product_info.image_data.length>0?craftInfo.product_info.image_data[0]:require('@/assets/image/common/noPic.png')"
+                :preview-src-list="craftInfo.product_info?craftInfo.product_info.image_data:[]"
+                :fit="'scale-down'">
+              </el-image>
+            </div>
+          </template>
+          <template v-else>
+            <div class="pImage">
+              <el-image :src="craftInfo.image_data.map((item)=>item.file_url)[0]"
+                :preview-src-list="craftInfo.image_data.map((item)=>item.file_url)"
+                :fit="'scale-down'">
+              </el-image>
+            </div>
+          </template>
           <div class="pImage">
             <img :src="qrCodeUrl"
               width="100%"
@@ -46,12 +56,12 @@
         <div class="tableCtn pageOne">
           <div class="tbody hasTop">
             <div class="trow">
-              <div class="tcol bgGray label">产品名称</div>
+              <div class="tcol bgGray label">产品编号</div>
               <div class="tcol">{{craftInfo.product_info && craftInfo.product_info.product_code}}
                 <span v-if="!craftInfo.product_id&&!craftInfo.part_id">无产品信息</span>
               </div>
               <div class="tcol bgGray label">客户款号</div>
-              <div class="tcol">{{craftInfo.product_info && craftInfo.product_info.product_code}}</div>
+              <div class="tcol">{{craftInfo.product_info && craftInfo.product_info.style_code}}</div>
               <div class="tcol bgGray label">其它信息</div>
               <div class="tcol">{{craftInfo.other_info}}</div>
             </div>
@@ -181,7 +191,7 @@
                     <span class="unit">根/筘</span>
                   </div>
                   <div class="tcol bgGray label">筘幅</div>
-                  <div class="tcol">{{craftInfo.warp_data.reed_width || '0'}}
+                  <div class="tcol">{{craftInfo.warp_data.reed_width_explain[0] + '+' + craftInfo.warp_data.reed_width_explain[1] + '+' + craftInfo.warp_data.reed_width_explain[2]}}
                     <span class="unit">cm</span>
                   </div>
                 </div>
@@ -727,7 +737,7 @@
         <template v-if="craftInfo.weft_data.back_status===1">
           <div class="tableCtn"
             v-for="(itemFather,indexFather) in $sliceToArray(craftInfo.weft_data.weft_rank_back[0], 16)"
-            :key="indexFather + 'warp_rank_back'">
+            :key="indexFather + 'weft_rank_back'">
             <div class="tbody hasTop">
               <div class="trow">
                 <div class="tcol w50 horizontal bgGray">原料纬向反面</div>

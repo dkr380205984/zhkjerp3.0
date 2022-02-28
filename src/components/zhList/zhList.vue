@@ -10,7 +10,8 @@
         <div class="column"
           v-for="itemKey in listKey"
           :key="itemKey.index+Math.random(1)"
-          v-show="itemKey.ifShow">{{itemKey.name}}</div>
+          v-show="itemKey.ifShow"
+          :class="{'orderProcess':itemKey.specialForOrderPrcess==='order','sampleOrderProcess':itemKey.specialForOrderPrcess==='sampleOrder'}">{{itemKey.name}}</div>
         <div class="column w130">操作</div>
       </div>
       <div class="row"
@@ -23,9 +24,10 @@
         <div class="column"
           v-for="itemKey in listKey"
           :key="itemKey.index+Math.random(1)"
-          v-show="itemKey.ifShow">
+          v-show="itemKey.ifShow"
+          :class="{'orderProcess':itemKey.specialForOrderPrcess==='order','sampleOrderProcess':itemKey.specialForOrderPrcess==='sampleOrder'}">
           <!-- 普通元素 -->
-          <template v-if="!itemKey.from && !itemKey.ifImage">
+          <template v-if="!itemKey.from && !itemKey.ifImage && !itemKey.specialForOrderPrcess">
             <!-- 草稿标记 -->
             <span class="circle"
               v-if="itemKey.ifCaogao"
@@ -60,9 +62,208 @@
               </el-image>
             </div>
           </template>
+          <!-- 特殊元素，给订单流程搞得特殊值 -->
+          <template v-if="itemKey.specialForOrderPrcess === 'order'">
+            <div class="processCtn">
+              <div class="process"
+                :class="{'green':item.has_quote===1,'gray':item.has_quote===2}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="'报价单'+(item.has_quote===1?'已添加':'未添加')"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-baojiadan"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+              <div class="process"
+                :class="{'green':item.has_material_plan===1,'gray':item.has_material_plan===2}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="'原料计划'+(item.has_material_plan===1?'已添加':'未添加')"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-yuanliaojihua"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+              <div class="process"
+                :class="{'green':item.has_material_order===1,'gray':item.has_material_order===2}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="'原料采购'+(item.has_material_order===1?'已添加':'未添加')"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-yuanliaocaigou"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+              <div class="process"
+                :class="{'green':item.push_progress===100||item.push_progress>100,'orange':item.push_progress>0 && item.push_progress<100,'gray':!item.push_progress}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="'原料入库进度'+(item.push_progress||0)+'%'"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-yuanliaoruku"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+              <div class="process"
+                :class="{'green':item.pop_progress===100||item.pop_progress>100,'orange':item.pop_progress>0 && item.pop_progress<100,'gray':!item.pop_progress}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="'原料出库进度'+(item.pop_progress||0)+'%'"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-yuanliaochuku"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+              <div class="process"
+                :class="{'green':item.has_weave_plan===1,'gray':item.has_weave_plan===2}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="'生产计划'+(item.has_weave_plan===1?'已添加':'未添加')"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-shengchanjihua1"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+              <div class="process"
+                :class="{'green':item.inspection_push_progress===100||item.inspection_push_progress>100,'orange':item.inspection_push_progress>0 && item.inspection_push_progress<100,'gray':!item.inspection_push_progress}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="'生产检验进度'+(item.inspection_push_progress||0)+'%'"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-jianyanruku"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+              <div class="process"
+                :class="{'green':item.has_pack_order===1,'gray':item.has_pack_order===2}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="'包装订购'+(item.has_pack_order===1?'已添加':'未添加')"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-baozhuangcaigou"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+              <div class="process gray">
+                <el-tooltip class="item"
+                  effect="dark"
+                  content="装箱出库暂不支持"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-zhuangxiangchuku"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+              <div class="process gray">
+                <el-tooltip class="item"
+                  effect="dark"
+                  content="财务结算暂不支持"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-caiwukaipiao"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+            </div>
+          </template>
+          <template v-if="itemKey.specialForOrderPrcess === 'sampleOrder'">
+            <div class="processCtn">
+              <div class="process"
+                :class="{'green':item.has_quote===1,'gray':item.has_quote===2}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="'报价单'+(item.has_quote===1?'已添加':'未添加')"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-baojiadan"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+              <div class="process"
+                :class="{'green':item.has_material_plan===1,'gray':item.has_material_plan===2}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="'原料计划'+(item.has_material_plan===1?'已添加':'未添加')"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-yuanliaojihua"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+              <div class="process"
+                :class="{'green':item.has_material_order===1,'gray':item.has_material_order===2}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="'原料采购'+(item.has_material_order===1?'已添加':'未添加')"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-yuanliaocaigou"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+              <div class="process"
+                :class="{'green':item.push_progress===100||item.push_progress>100,'orange':item.push_progress>0 && item.push_progress<100,'gray':!item.push_progress}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="'原料入库进度'+(item.push_progress||0)+'%'"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-yuanliaoruku"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+              <div class="process"
+                :class="{'green':item.pop_progress===100||item.pop_progress>100,'orange':item.pop_progress>0 && item.pop_progress<100,'gray':!item.pop_progress}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="'原料出库进度'+(item.pop_progress||0)+'%'"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-yuanliaochuku"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+              <div class="process"
+                :class="{'green':item.has_weave_plan===1,'gray':item.has_weave_plan===2}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="'生产计划'+(item.has_weave_plan===1?'已添加':'未添加')"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-shengchanjihua1"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+            </div>
+          </template>
         </div>
         <div class="column w130">
-          <!-- 占位符 -->
+          <!-- 给操作栏留的占位符 -->
         </div>
       </div>
     </div>

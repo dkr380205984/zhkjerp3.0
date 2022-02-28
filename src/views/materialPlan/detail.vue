@@ -127,8 +127,11 @@
                   v-for="(item,index) in itemFather.material_plan_data"
                   :key="index">
                   <div class="tcol">
-                    <span>{{item.product_code||item.system_code}}</span>
-                    <span>{{item.category}}/{{item.secondary_category}}</span>
+                    <el-checkbox v-model="item.check"
+                      style="align-items: center;display: flex;">
+                      <div>{{item.product_code||item.system_code}}</div>
+                      <div>{{item.category}}/{{item.secondary_category}}</div>
+                    </el-checkbox>
                   </div>
                   <div class="tcol">{{item.size_name}}/{{item.color_name}}</div>
                   <div class="tcol">{{item.part_name}}</div>
@@ -180,8 +183,11 @@
                   v-for="(item,index) in itemFather.material_plan_data"
                   :key="index">
                   <div class="tcol">
-                    <span>{{item.product_code||item.system_code}}</span>
-                    <span>{{item.category}}/{{item.secondary_category}}</span>
+                    <el-checkbox v-model="item.check"
+                      style="align-items: center;display: flex;">
+                      <span>{{item.product_code||item.system_code}}</span>
+                      <span>{{item.category}}/{{item.secondary_category}}</span>
+                    </el-checkbox>
                   </div>
                   <div class="tcol">{{item.part_name}}</div>
                   <div class="tcol">{{item.order_number}}</div>
@@ -266,14 +272,19 @@
                   </svg>
                   <span class="text">继续添加</span>
                 </div>
-                <div class="btn backHoverBlue"
-                  @click="$openUrl('/materialPlan/print?id=' + materialPlanIndex)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-dayindingdan"></use>
-                  </svg>
-                  <span class="text">打印计划</span>
-                </div>
+                <el-tooltip class="item"
+                  effect="dark"
+                  content="可勾选部分产品信息进行打印"
+                  placement="top">
+                  <div class="btn backHoverBlue"
+                    @click="openPrint">
+                    <svg class="iconFont"
+                      aria-hidden="true">
+                      <use xlink:href="#icon-dayindingdan"></use>
+                    </svg>
+                    <span class="text">打印计划</span>
+                  </div>
+                </el-tooltip>
                 <div class="btn backHoverRed"
                   @click="deleteMaterialPlan">
                   <svg class="iconFont"
@@ -289,6 +300,14 @@
                     <use xlink:href="#icon-caozuojilu"></use>
                   </svg>
                   <span class="text">复制计划</span>
+                </div>
+                <div class="btn backHoverGreen"
+                  @click="showAssociatedPage=true">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-caozuojilu"></use>
+                  </svg>
+                  <span class="text">关联页面</span>
                 </div>
               </div>
             </div>
@@ -323,6 +342,9 @@
         </div>
       </div>
     </div>
+    <associated-page :data="associatedPage"
+      @close="showAssociatedPage = false"
+      :show="showAssociatedPage"></associated-page>
   </div>
 </template>
 
@@ -398,7 +420,22 @@ export default Vue.extend({
         ]
       },
       materialPlanIndex: '0',
-      materialPlanInfo: []
+      materialPlanInfo: [],
+      showAssociatedPage: false
+    }
+  },
+  computed: {
+    associatedPage(): any[] {
+      return [
+        {
+          name: '原料采购',
+          url: '/materialManage/detail?id=' + this.materialPlanIndex
+        },
+        {
+          name: '原料出入库',
+          url: '/materialStock/detail?id=' + this.$route.query.id
+        }
+      ]
     }
   },
   methods: {
@@ -454,6 +491,15 @@ export default Vue.extend({
             message: '已取消删除'
           })
         })
+    },
+    openPrint() {
+      const planInfo = this.materialPlanInfo.find((item) => item.id!.toString() === this.materialPlanIndex)
+      let arr = planInfo!.material_plan_data.filter((item) => item.check).map((item) => item.id)
+      // 没选就是全选
+      if (arr.length === 0) {
+        arr = planInfo!.material_plan_data.map((item) => item.id)
+      }
+      this.$openUrl('/materialPlan/print?id=' + this.materialPlanIndex + '&proId=' + JSON.stringify(arr))
     }
   },
   mounted() {
@@ -473,11 +519,13 @@ export default Vue.extend({
                   this.orderIndex = index
                 }
               })
-              console.log(this.orderIndex)
               this.init()
             }
           } else {
             this.init()
+          }
+          if (this.$route.query.ifprint) {
+            this.showAssociatedPage = true
           }
           this.loading = false
         }

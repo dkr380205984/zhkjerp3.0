@@ -219,7 +219,24 @@
             <div class="row">
               <div class="col">
                 <div class="label">
-                  <span class="text">样品图片</span>
+                  <span class="text">样品
+                    <el-checkbox v-model="sampleInfo.cvFlag"
+                      @change="changeCVOpration">{{sampleInfo.cvFlag?'关闭复制粘贴图片上传功能':'开启复制粘贴图片上传功能'}}
+                    </el-checkbox>
+                  </span>
+                </div>
+                <div class="cvImageCtn"
+                  v-show="sampleInfo.cvFlag || sampleInfo.cv_list.length>0">
+                  <div class="cvImage"
+                    v-for="indexImage of sampleInfo.cvImageLength"
+                    :key="indexImage">
+                    <template v-if="sampleInfo.cv_list[indexImage-1]!==null">
+                      <img :id="'cvImg'+indexImage"
+                        :src="require('@/assets/image/common/cv.png')">
+                      <i class="icon el-icon-close"
+                        @click="deleteCvImage(indexImage-1)"></i>
+                    </template>
+                  </div>
                 </div>
                 <div class="info imgInfo">
                   <el-upload class="upload"
@@ -596,6 +613,7 @@ export default Vue.extend({
       loading: false,
       have_part: false,
       need_import: false,
+      notify: '',
       searchSampleOrderCode: '', // 搜样单编号导入
       searchSampleCode: '', // 搜样品编号导入
       searchList: [],
@@ -620,6 +638,9 @@ export default Vue.extend({
         type: [], // 品类下拉框
         image_data: [],
         file_list: [],
+        cv_list: [],
+        cvFlag: false,
+        cvImageLength: 1,
         desc: '',
         style_data: [], // 款式
         component_data: [
@@ -716,6 +737,11 @@ export default Vue.extend({
             }
           }
         }
+      } else {
+        if (this.notify) {
+          this.notify.close()
+        }
+        this.deletePasteImage()
       }
     }
   },
@@ -857,6 +883,9 @@ export default Vue.extend({
       this.sampleInfo.category_id = this.sampleInfo.type![0]
       this.sampleInfo.secondary_category_id = this.sampleInfo.type![1]
       this.sampleInfo.image_data = this.sampleInfo.image_data.concat(this.sampleInfo.file_list!.map((item) => item.url)) // 新旧图拼接
+      this.sampleInfo.image_data = this.sampleInfo.cv_list
+        ? this.sampleInfo.cv_list.filter((item) => !!item).concat(this.sampleInfo.image_data)
+        : this.sampleInfo.image_data // cv图拼接
       if (this.have_part) {
         this.sampleInfo.part_data.forEach((item) => {
           item.part_size_data.forEach((itemChild, indexChild) => {
@@ -885,13 +914,16 @@ export default Vue.extend({
             key: 'style_data',
             errMsg: '请选择样品款式',
             regNormal: 'checkArr'
-          },
-          {
-            key: 'color_data',
-            errMsg: '请选择样品配色',
-            regNormal: 'checkArr'
           }
         ]) ||
+        this.sampleInfo.color_data.some((item: any) => {
+          return this.$formCheck(item, [
+            {
+              key: 'name',
+              errMsg: '请输入样品配色组'
+            }
+          ])
+        }) ||
         // this.sampleInfo.component_data.some((item) => {
         //   return this.$formCheck(item, [
         //     {
@@ -994,6 +1026,9 @@ export default Vue.extend({
         type: [], // 品类下拉框
         image_data: [],
         file_list: [],
+        cv_list: [],
+        cvFlag: false,
+        cvImageLength: 1,
         desc: '',
         style_data: [], // 款式
         component_data: [
@@ -1035,6 +1070,10 @@ export default Vue.extend({
           }
         ]
       }
+      if (this.notify) {
+        this.notify.close()
+      }
+      this.deletePasteImage()
     },
     changeDetailToEdit(data: any) {
       this.sampleInfo = {
@@ -1056,6 +1095,9 @@ export default Vue.extend({
             url: item
           }
         }),
+        cv_list: [],
+        cvFlag: false,
+        cvImageLength: 1,
         desc: data.desc,
         style_data: data.style_data.map((item: any) => item.id),
         component_data: data.component_data.map((item: any) => {
@@ -1097,6 +1139,103 @@ export default Vue.extend({
       }
       this.have_part = this.sampleInfo.part_data.length > 0
       this.getUnit([data.category_id as number, data.secondary_category_id as number])
+    },
+    // 打开复制粘贴图片功能
+    changeCVOpration(flag: boolean) {
+      if (this.notify) {
+        this.notify.close()
+        this.deletePasteImage()
+      }
+      if (flag) {
+        this.notify = this.$notify({
+          title: '警告！',
+          message:
+            '已开启复制粘贴图片上传功能，请勿在其余文字/数字输入框使用复制粘贴或使用ctrl+v键操作,操作完成后请关闭复制粘贴图片上传功能',
+          type: 'warning',
+          duration: 0,
+          showClose: false
+        })
+        this.addPasteImage()
+      }
+      this.$forceUpdate()
+    },
+    dataURLtoFile(dataurl: string, filename: string) {
+      var arr = dataurl.split(',')
+      // @ts-ignore
+      var mime = arr[0].match(/:(.*?);/)[1]
+      var bstr = atob(arr[1])
+      var n = bstr.length
+      var u8arr = new Uint8Array(n)
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+      }
+      return new File([u8arr], filename, { type: mime })
+    },
+    // 复制粘贴图片
+    pasteImage(event: any) {
+      let _this = this
+      // 只处理图片格式数据
+      if (event.clipboardData || event.originalEvent) {
+        let clipboardData = event.clipboardData || event.originalEvent.clipboardData
+        if (clipboardData.items) {
+          let blob
+          for (let i = 0; i < clipboardData.items.length; i++) {
+            if (clipboardData.items[i].type.indexOf('image') !== -1) {
+              blob = clipboardData.items[i].getAsFile()
+            }
+          }
+          let render = new FileReader()
+          render.onload = function (evt: any) {
+            //输出base64编码
+            const base64 = evt.target.result
+            // @ts-ignore
+            document.getElementById('cvImg' + _this.sampleInfo.cvImageLength).setAttribute('src', base64)
+            var url = 'https://upload.qiniup.com/'
+            var xhr = new XMLHttpRequest()
+            let formData = new FormData()
+            formData.append('token', _this.token)
+            _this.loading = true
+            // @ts-ignore
+            let filename = Date.parse(new Date()) + '.jpg'
+            formData.append('key', filename)
+            formData.append('file', _this.dataURLtoFile(base64, filename))
+            xhr.open('POST', url, true)
+            xhr.send(formData)
+            xhr.onreadystatechange = function () {
+              _this.loading = false
+              if (xhr.readyState === 4) {
+                _this.$message.success('上传成功')
+                // @ts-ignore
+                _this.sampleInfo.cv_list.push(
+                  // @ts-ignore
+                  'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key
+                )
+                _this.sampleInfo.cvImageLength = Number(_this.sampleInfo.cvImageLength) + 1
+              }
+            }
+          }
+          if (render.readAsDataURL && blob) {
+            render.readAsDataURL(blob)
+          }
+        }
+      }
+    },
+    addPasteImage() {
+      document.addEventListener('paste', this.pasteImage)
+    },
+    deletePasteImage() {
+      document.removeEventListener('paste', this.pasteImage)
+    },
+    // 删除复制粘贴的图片
+    deleteCvImage(imageIndex: number) {
+      if (this.sampleInfo.cv_list![imageIndex]) {
+        // @ts-ignore 标记特殊值，软删除图片，上传的时候过滤掉就行了
+        this.sampleInfo.cv_list[imageIndex] = null
+        this.$message.success('删除成功')
+        this.$forceUpdate()
+      } else {
+        this.$message.error('请先上传图片')
+      }
     }
   },
   mounted() {
@@ -1127,6 +1266,12 @@ export default Vue.extend({
         getInfoApi: 'getProductStyleAsync'
       }
     ])
+  },
+  beforeDestroy() {
+    if (this.notify) {
+      this.notify.close()
+    }
+    this.deletePasteImage()
   }
 })
 </script>

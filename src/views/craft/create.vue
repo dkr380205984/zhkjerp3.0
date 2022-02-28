@@ -31,6 +31,17 @@
                 :value="2"></el-option>
             </el-select>
           </div>
+          <div class="elCtn">
+            <el-select v-model="user_id"
+              placeholder="请选择创建人"
+              @change="getProList"
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
         </div>
         <div class="list">
           <div class="row title">
@@ -179,7 +190,14 @@
     </div>
     <div class="module">
       <div class="titleCtn">
-        <div class="title">原料经向</div>
+        <div class="title"
+          style="display:flex;
+            align-items: center;
+            justify-content: space-between;">原料经向
+          <div class="btn backHoverOrange"
+            style="height:32px;font-weight: normal;"
+            @click="openImport">导入旧版工艺单</div>
+        </div>
       </div>
       <div class="editCtn">
         <div class="row">
@@ -1643,6 +1661,7 @@ export default Vue.extend({
       total: 1,
       keyword: '',
       product_name: '',
+      user_id: '',
       product_type: 0,
       draftMethod: '',
       draftMethodList: [],
@@ -1955,9 +1974,150 @@ export default Vue.extend({
     },
     productType(): string {
       return this.productInfo.product_type === 1 ? '产品' : '样品'
+    },
+    userList() {
+      return this.$store.state.api.user.arr
     }
   },
   methods: {
+    // 导入旧版工艺单
+    openImport() {
+      this.$prompt('请粘贴旧版工艺单密钥导入', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputErrorMessage: '邮箱格式不正确'
+      })
+        .then(({ value }: any) => {
+          craft
+            .getOldCraft({
+              export_key: value
+            })
+            .then((res) => {
+              if (res.data.status) {
+                console.log(JSON.parse(res.data.data.draft_method))
+                const oldCraftInfo = res.data.data
+
+                this.craftInfo.warp_data.back_status = oldCraftInfo.warp_data.back_status === 0 ? 2 : 1
+                this.craftInfo.weft_data.back_status = oldCraftInfo.weft_data.back_status === 0 ? 2 : 1
+
+                // 穿综法纹版图数据没变
+                this.craftInfo.draft_method = JSON.parse(res.data.data.draft_method)
+
+                // 处理颜色数据
+                this.craftInfo.warp_data.color_data = oldCraftInfo.warp_data.color_data.map((item: any) => {
+                  return {
+                    color_id: '',
+                    weave_number: '',
+                    color_scheme: JSON.parse(item.color_scheme).map((item: any) => {
+                      return {
+                        color: item.value,
+                        name: item.name
+                      }
+                    })
+                  }
+                })
+
+                this.craftInfo.weft_data.color_data = oldCraftInfo.weft_data.color_data.map((item: any) => {
+                  return {
+                    color_id: '',
+                    weave_number: '',
+                    color_scheme: JSON.parse(item.color_scheme).map((item: any) => {
+                      return {
+                        color: item.value,
+                        name: item.name
+                      }
+                    })
+                  }
+                })
+
+                // 这里加个模板更新，让双面巾的html加载出来在操作
+                this.$nextTick(() => {
+                  this.tableData.warp.data = JSON.parse(oldCraftInfo.warp_data.warp_rank).map(
+                    (item: any, index: number) => {
+                      return index !== 1
+                        ? item
+                        : item.map((itemJia: any) => {
+                            return this.filterIndex(itemJia)
+                          })
+                    }
+                  )
+                  // 插入一行合并项
+                  this.tableData.warp.data.splice(
+                    5,
+                    0,
+                    this.tableData.warp.data[0].map((item: any) => null)
+                  )
+                  this.tableData.warpBack.data = JSON.parse(oldCraftInfo.warp_data.warp_rank_back).map(
+                    (item: any, index: number) => {
+                      return index !== 1
+                        ? item
+                        : item.map((itemJia: any) => {
+                            return this.filterIndex(itemJia)
+                          })
+                    }
+                  )
+                  // 插入一行合并项
+                  this.tableData.warpBack.data.splice(
+                    5,
+                    0,
+                    this.tableData.warpBack.data[0].map((item: any) => null)
+                  )
+                  this.tableData.weft.data = JSON.parse(oldCraftInfo.weft_data.weft_rank).map(
+                    (item: any, index: number) => {
+                      return index !== 1
+                        ? item
+                        : item.map((itemJia: any) => {
+                            return this.filterIndex(itemJia)
+                          })
+                    }
+                  )
+                  // 插入一行合并项
+                  this.tableData.weft.data.splice(
+                    5,
+                    0,
+                    this.tableData.weft.data[0].map((item: any) => null)
+                  )
+                  this.tableData.weftBack.data = JSON.parse(oldCraftInfo.weft_data.weft_rank_back).map(
+                    (item: any, index: number) => {
+                      return index !== 1
+                        ? item
+                        : item.map((itemJia: any) => {
+                            return this.filterIndex(itemJia)
+                          })
+                    }
+                  )
+                  // 插入一行合并项
+                  this.tableData.weftBack.data.splice(
+                    5,
+                    0,
+                    this.tableData.weftBack.data[0].map((item: any) => null)
+                  )
+
+                  this.tableData.warp.mergeCells = JSON.parse(oldCraftInfo.warp_data.merge_data)
+                  this.tableData.weft.mergeCells = JSON.parse(oldCraftInfo.weft_data.merge_data)
+                  this.tableData.warpBack.mergeCells = JSON.parse(oldCraftInfo.warp_data.merge_data_back)
+                  this.tableData.weftBack.mergeCells = JSON.parse(oldCraftInfo.weft_data.merge_data_back)
+
+                  this.tableData.warp.number = JSON.parse(oldCraftInfo.warp_data.warp_rank)[0].length
+                  this.tableData.warpBack.number = JSON.parse(oldCraftInfo.warp_data.warp_rank_back)[0].length
+                  this.tableData.weft.number = JSON.parse(oldCraftInfo.weft_data.weft_rank)[0].length
+                  this.tableData.weftBack.number = JSON.parse(oldCraftInfo.weft_data.weft_rank_back)[0].length
+
+                  this.tableHot.warp = new Handsontable((this.$refs as any).warp, this.tableData.warp)
+                  this.tableHot.warpBack = new Handsontable((this.$refs as any).warpBack, this.tableData.warpBack)
+                  this.tableHot.weft = new Handsontable((this.$refs as any).weft, this.tableData.weft)
+                  this.tableHot.weftBack = new Handsontable((this.$refs as any).weftBack, this.tableData.weftBack)
+                })
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消导入'
+          })
+        })
+    },
     getProList() {
       this.loading = true
       product
@@ -1967,6 +2127,7 @@ export default Vue.extend({
           product_name: this.product_name,
           product_code: this.keyword,
           product_type: this.product_type,
+          user_id: this.user_id,
           craft_status: 1 // 0是默认 1是没有
         })
         .then((res) => {
@@ -2121,39 +2282,42 @@ export default Vue.extend({
               this.tableData.weft.number = this.craftInfo.weft_data.weft_rank[0].length
               this.tableData.weftBack.number = this.craftInfo.weft_data.weft_rank_back[0].length
 
-              this.tableData.warp.data = this.craftInfo.warp_data.warp_rank.map((item: any, index) => {
-                return index !== 1
-                  ? item
-                  : item.map((itemJia: any) => {
-                      return this.filterIndex(itemJia)
-                    })
-              })
-              this.tableData.warpBack.data = this.craftInfo.warp_data.warp_rank_back.map((item: any, index) => {
-                return index !== 1
-                  ? item
-                  : item.map((itemJia: any) => {
-                      return this.filterIndex(itemJia)
-                    })
-              })
-              this.tableData.weft.data = this.craftInfo.weft_data.weft_rank.map((item: any, index) => {
-                return index !== 1
-                  ? item
-                  : item.map((itemJia: any) => {
-                      return this.filterIndex(itemJia)
-                    })
-              })
-              this.tableData.weftBack.data = this.craftInfo.weft_data.weft_rank_back.map((item: any, index) => {
-                return index !== 1
-                  ? item
-                  : item.map((itemJia: any) => {
-                      return this.filterIndex(itemJia)
-                    })
-              })
+              // 这里加个模板更新，让双面巾的html加载出来在操作
+              this.$nextTick(() => {
+                this.tableData.warp.data = this.craftInfo.warp_data.warp_rank.map((item: any, index) => {
+                  return index !== 1
+                    ? item
+                    : item.map((itemJia: any) => {
+                        return this.filterIndex(itemJia)
+                      })
+                })
+                this.tableData.warpBack.data = this.craftInfo.warp_data.warp_rank_back.map((item: any, index) => {
+                  return index !== 1
+                    ? item
+                    : item.map((itemJia: any) => {
+                        return this.filterIndex(itemJia)
+                      })
+                })
+                this.tableData.weft.data = this.craftInfo.weft_data.weft_rank.map((item: any, index) => {
+                  return index !== 1
+                    ? item
+                    : item.map((itemJia: any) => {
+                        return this.filterIndex(itemJia)
+                      })
+                })
+                this.tableData.weftBack.data = this.craftInfo.weft_data.weft_rank_back.map((item: any, index) => {
+                  return index !== 1
+                    ? item
+                    : item.map((itemJia: any) => {
+                        return this.filterIndex(itemJia)
+                      })
+                })
 
-              this.tableHot.warp = new Handsontable((this.$refs as any).warp, this.tableData.warp)
-              this.tableHot.warpBack = new Handsontable((this.$refs as any).warpBack, this.tableData.warpBack)
-              this.tableHot.weft = new Handsontable((this.$refs as any).weft, this.tableData.weft)
-              this.tableHot.weftBack = new Handsontable((this.$refs as any).weftBack, this.tableData.weftBack)
+                this.tableHot.warp = new Handsontable((this.$refs as any).warp, this.tableData.warp)
+                this.tableHot.warpBack = new Handsontable((this.$refs as any).warpBack, this.tableData.warpBack)
+                this.tableHot.weft = new Handsontable((this.$refs as any).weft, this.tableData.weft)
+                this.tableHot.weftBack = new Handsontable((this.$refs as any).weftBack, this.tableData.weftBack)
+              })
 
               // 清空克重数据，因为提交的时候需要重新计算
               this.craftInfo.warp_data.color_data.forEach((item) => {
@@ -2720,6 +2884,7 @@ export default Vue.extend({
         })
         .map((item) => Number(item.value))
       this.craftInfo.weft_data.weimi = this.weimi
+
       // 调整穿综纹版逗号
       if (this.craftInfo.draft_method.PMFlag === 'normal') {
         this.craftInfo.draft_method.PM.forEach((item) => {
@@ -2729,8 +2894,10 @@ export default Vue.extend({
       } else {
         this.craftInfo.draft_method.PM.forEach((item) => {
           item.children?.forEach((itemChild) => {
-            itemChild.value = itemChild.value!.replace(/，|\./g, ',')
-            itemChild.repeat = Number(itemChild.repeat) > 0 ? Number(itemChild.repeat) : 1
+            itemChild.children?.forEach((itemSon) => {
+              itemSon.value = itemSon.value!.replace(/，|\./g, ',')
+              itemSon.repeat = Number(itemSon.repeat) > 0 ? Number(itemSon.repeat) : 1
+            })
           })
         })
       }
@@ -3709,6 +3876,11 @@ export default Vue.extend({
         checkWhich: 'api/halfProcess',
         getInfoMethed: 'dispatch',
         getInfoApi: 'getHalfProcessAsync'
+      },
+      {
+        checkWhich: 'api/user',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getUserAsync'
       }
     ])
     Promise.all([

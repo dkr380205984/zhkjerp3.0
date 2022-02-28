@@ -97,7 +97,7 @@
             </div>
             <div class="info elCtn">
               <el-input placeholder="请输入汇率"
-                v-model="orderInfo.exchange_rate"></el-input>
+                v-model="orderInfo.settle_tax"></el-input>
             </div>
           </div>
         </div>
@@ -131,7 +131,7 @@
         <div class="once"
           v-for="(item,index) in productList"
           :key="item.id">
-          <span class="text">{{item.system_code}}</span>
+          <span class="text">{{item.product_code}}</span>
           <span class="el-icon-view detailIcon hoverBlue"
             @click="getProductDetail(item)"></span>
           <span class="el-icon-delete deleteIcon hoverRed"
@@ -275,7 +275,7 @@
                             <el-option v-for="itemProduct in productList"
                               :key="itemProduct.id"
                               :value="itemProduct.id"
-                              :label="itemProduct.system_code + '/' + itemProduct.name"></el-option>
+                              :label="itemProduct.product_code + '/' + itemProduct.name"></el-option>
                           </el-select>
                           <el-tooltip class="item"
                             effect="dark"
@@ -347,7 +347,7 @@
                                   price: ''
                                 })">新增尺码</div>
                             <div class="opr hoverRed"
-                              @click="tableDelete(orderInfo.time_data.batch_data,index,item.product_data,indexPro,itemPro.product_info,indexProInfo)">删除</div>
+                              @click="itemPro.product_info.length===1?deletePro(itemPro.id,indexChild,item.product_data):deleteProChild(itemProInfo.id,indexPro,itemPro.product_info)">删除</div>
                           </div>
                         </div>
                       </div>
@@ -443,7 +443,7 @@
                         <el-option v-for="item in productList"
                           :key="item.id"
                           :value="item.id"
-                          :label="item.system_code + '/' + item.name"></el-option>
+                          :label="item.product_code + '/' + item.name"></el-option>
                       </el-select>
                     </div>
                   </div>
@@ -457,7 +457,7 @@
                           <el-select v-model="itemPro.size_color"
                             placeholder="尺码颜色"
                             no-data-text="请先选择产品">
-                            <el-option v-for="item in item.size_color_list"
+                            <el-option v-for="item in itemChild.size_color_list"
                               :key="item.value"
                               :label="item.label"
                               :value="item.value"></el-option>
@@ -1157,7 +1157,7 @@ export default Vue.extend({
           })
         if (
           this.orderInfo.time_data.batch_data.some((item) => {
-            this.$ifRepeatArray(item.product_data.map((itemChild) => itemChild.product_id) as string[])
+            return this.$ifRepeatArray(item.product_data.map((itemChild) => itemChild.product_id) as string[])
           })
         ) {
           this.$message.error('相同产品请不要分多次添加')

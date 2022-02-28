@@ -114,14 +114,6 @@ const deduct = {
       price: string
     }) => http.post(`${baseUrl}/doc/deduct`, params, 'application/json'),
 }
-// 单据客户确认
-const clientCheck = {
-  create: (params: { order_id: number | string }) => http.post(`${baseUrl}/order/time/client/confirm`, params, 'application/json'),
-}
-// 单据确认完成
-const completeCheck = {
-  create: (params: { order_id: number | string }) => http.post(`${baseUrl}/order/time/complete`, params, 'application/json'),
-}
 
 // 产品品类
 import { CategoryInfo } from '@/types/productSetting'
@@ -227,7 +219,8 @@ const craft = {
   czfCreate: (params: { pattern_loop: DraftMethods | string, name: string }) => http.post(`${baseUrl}/craft/pattern/save`, params, 'application/json'),
   czfDetail: (params: DeleteParams) => http.get(`${baseUrl}/craft/pattern/detail`, params),
   czfList: (params?: ListParams) => http.get(`${baseUrl}/craft/pattern/lists`, params),
-  czfDelete: (params: DeleteParams) => http.post(`${baseUrl}/craft/pattern/delete`, params, 'application/json')
+  czfDelete: (params: DeleteParams) => http.post(`${baseUrl}/craft/pattern/delete`, params, 'application/json'),
+  getOldCraft: (params: { export_key: string }) => http.get(`${baseUrl}/get/old/craft`, params),
 }
 
 // 单证设置
@@ -266,7 +259,7 @@ const yarn = {
 // 装饰辅料
 import { DecorateMaterialInfo } from '@/types/materialSetting'
 const decorateMaterial = {
-  create: (params: DecorateMaterialInfo) => http.post(`${baseUrl}/decorate/material/save`, params, 'application/json'),
+  create: (params: { data: DecorateMaterialInfo[] }) => http.post(`${baseUrl}/decorate/material/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrl}/decorate/material/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/decorate/material/delete`, params, 'application/json')
 }
@@ -378,6 +371,10 @@ const store = {
     material_name: string
     material_type: number
   }) => http.get(`${baseUrl}/search/material/by/name`, params), // 这个接口用于筛选某一类型的物料列表
+  searchPro: (params: {
+    page?: string | number
+    limit?: string | number
+  }) => http.get(`${baseUrl}/product/store/total/lists`, params),
 }
 
 // 样品
@@ -418,6 +415,7 @@ const order = {
   list: (params?: ListParams) => http.get(`${baseUrl}/order/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/order/detail`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/order/delete`, params, 'application/json'),
+  oprLog: (params: DetailParams) => http.get(`${baseUrl}/order/activity/logs`, params), // 操作记录
   deletePro: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product`, params, 'application/json'), // 删除订单里的产品
   deleteProChild: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product/info`, params, 'application/json'), // 删除订单里的子项
   materialDetail: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/material/info`, params), // 物料汇总表
@@ -509,6 +507,12 @@ const materialStock = {
   detail: (params: DetailParams) => http.get(`${baseUrl}/store/log/detail`, params),
 }
 
+// 产品出入库
+import { ProductStockInfo } from '@/types/productStock'
+const productStock = {
+  create: (params: ProductStockInfo) => http.post(`${baseUrl}/product/store/log/save`, params, 'application/json'),
+}
+
 // 生产计划
 import { ProductionPlanInfo } from '@/types/productionPlan'
 const productionPlan = {
@@ -521,6 +525,20 @@ const productionPlan = {
   }) => http.get(`${baseUrl}/weave/plan/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/weave/plan/delete`, params, 'application/json'),
   detail: (params: DetailParams) => http.get(`${baseUrl}/weave/plan/detail`, params),
+}
+
+// 生产进度
+const productionProgress = {
+  list: (params: {
+    keyword: string // 计划单/客户/加工单位
+    status: string | number // 1 已分配 2 已逾期 3 生产中 4 生产完成
+    start_time?: string
+    end_time?: string
+    page?: number | string
+    limit?: number | string
+    user_id?: string | number
+  }) => http.get(`${baseUrl}/production/list`, params),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/production/detail`, params),
 }
 
 // 补纱
@@ -614,8 +632,6 @@ export {
   category,
   check,
   deduct,
-  clientCheck,
-  completeCheck,
   style,
   ingredient,
   getCoder,
@@ -656,5 +672,7 @@ export {
   exportExcel,
   tutorialSystem,
   materialSupplement,
-  clientInOrder
+  clientInOrder,
+  productStock,
+  productionProgress
 }

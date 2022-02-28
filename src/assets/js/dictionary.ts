@@ -349,6 +349,25 @@ const stockType = [{
   value: 12
 }]
 
+const productStockType = [{
+  name: '普通入库',
+  value: 1
+}, {
+  name: '订单结余入库',
+  value: 2
+}, {
+  name: '移库入库',
+  value: 3
+}, {
+  name: '移库出库',
+  value: 4
+}, {
+  name: '销售出库',
+  value: 5
+}, {
+  name: '销毁出库',
+  value: 6
+}]
 // 仓库类型
 const storeType = [{
   name: '本厂仓库',
@@ -491,5 +510,6 @@ export {
   storeType,
   productionType,
   limitArr,
-  systemModule
+  systemModule,
+  productStockType
 }

@@ -86,6 +86,7 @@ declare module 'vue/types/vue' {
     $copyInfo(info: any, keyArr: string[], callback?: Function): void
     $setLocalStorage(name: string, info: any): void
     $getLocalStorage(name: string): string
+    $openUrl(url: string): void
   }
 }
 new Vue({
