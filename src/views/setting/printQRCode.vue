@@ -36,10 +36,9 @@
 <script lang="ts">
 import Vue from 'vue'
 import { QuotedPriceInfo } from '@/types/quotedPrice'
-import { quotedPrice } from '@/assets/js/api'
+import { clientBind } from '@/assets/js/api'
 export default Vue.extend({
   data(): {
-    quotedPriceInfo: QuotedPriceInfo
     [propName: string]: any
   } {
     return {
@@ -48,112 +47,6 @@ export default Vue.extend({
       showMenu: false,
       X_position: 0,
       Y_position: 0,
-      quotedPriceInfo: {
-        id: null,
-        is_draft: 1,
-        title: '',
-        client_id: '',
-        tree_data: '',
-        client_name: '',
-        contacts_id: '',
-        contacts_name: '',
-        group_id: '',
-        group_name: '',
-        settle_unit: '元',
-        exchange_rate: '',
-        total_number: '',
-        total_cost_price: '',
-        commission_percentage: '',
-        commission_price: '',
-        rate_taxation: '',
-        rate_price: '',
-        profit_percentage: '',
-        profit_price: '',
-        desc: '',
-        real_quote_price: '',
-        system_total_price: 0,
-        created_at: '',
-        rel_order: [],
-        product_data: [
-          {
-            total_price: '',
-            product_id: '',
-            type: [],
-            category_id: '',
-            secondary_category_id: '',
-            secondary_category: '',
-            image_data: [],
-            client_target_price: '',
-            start_order_number: '',
-            desc: '',
-            transport_fee_desc: '',
-            transport_fee: '',
-            material_data: [
-              {
-                material_name: '',
-                weight: '',
-                loss: '',
-                price: '',
-                total_price: '',
-                unit: 'kg'
-              }
-            ],
-            assist_material_data: [
-              {
-                material_name: '',
-                number: '',
-                loss: '',
-                price: '',
-                total_price: '',
-                unit: ''
-              }
-            ],
-            weave_data: [
-              {
-                name: '',
-                desc: '',
-                total_price: ''
-              }
-            ],
-            semi_product_data: [
-              {
-                process_name: [],
-                desc: '',
-                total_price: ''
-              }
-            ],
-            production_data: [
-              {
-                name: [],
-                desc: '',
-                total_price: ''
-              }
-            ],
-            pack_material_data: [
-              {
-                material_name: '',
-                desc: '',
-                total_price: ''
-              }
-            ],
-            other_fee_data: [
-              {
-                name: '',
-                desc: '',
-                total_price: ''
-              }
-            ],
-            no_production_fee_data: [
-              {
-                id: '',
-                name: '',
-                desc: '',
-                total_price: ''
-              }
-            ]
-          }
-        ]
-      }
     }
   },
   methods: {
@@ -175,59 +68,10 @@ export default Vue.extend({
       })
     }
   },
-  computed: {
-    productTotalPrice(): string[] {
-      return this.quotedPriceInfo.product_data.map((item) => {
-        return (
-          Number(item.transport_fee) +
-          item.material_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.assist_material_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.weave_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.semi_product_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.production_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.pack_material_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.other_fee_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.no_production_fee_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0)
-        ).toFixed(2)
-      })
-    },
-    totalPrice(): string {
-      let quotedPriceInfo = this.quotedPriceInfo
-      let total =
-        Number(quotedPriceInfo.commission_price) +
-        Number(quotedPriceInfo.rate_price) +
-        Number(quotedPriceInfo.profit_price)
-      return String(total.toFixed(2))
-    }
-  },
   mounted() {
     let _this = this
-    let a = 'https://knit-m-beta.zwyknit.com/miniprogram?company_id=' + _this.$route.query.companyID
-
-    // 生成二维码
-    const QRCode = require('qrcode')
-    QRCode.toDataURL(a)
-    .then((url: any) => {
-        _this.qrCodeUrl = url
-    })
-    .catch((err: any) => {
-        console.error(err)
+    clientBind.qrCode().then((res) => {
+      _this.qrCodeUrl = res.data.data
     })
   }
 })

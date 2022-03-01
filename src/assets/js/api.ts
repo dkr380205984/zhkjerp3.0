@@ -614,6 +614,7 @@ const exportExcel = {
 // 客户绑定小程序
 const clientBind = {
   list: (params?: ListParams) => http.get(`${baseUrl}/workshop/apply/list`, params),
+  qrCode: (params?: ListParams) => http.get(`${baseUrl}/workshop/qrcode`, params),
   bind: (params: { client_id: string | number, uuid: string }) => http.post(`${baseUrl}/workshop/client/save`, params, 'application/json'),
   unbind: (params: { client_id: string | number }) => http.post(`${baseUrl}/workshop/client/unbind`, params, 'application/json')
 }
