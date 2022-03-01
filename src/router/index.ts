@@ -214,6 +214,62 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/craft/list.vue')
     }, {
       meta: {
+        permissions_id: '17-1',
+      },
+      path: '/workerManage/create',
+      name: '添加员工',
+      component: () => import('../views/workerManage/create.vue')
+    }, {
+      meta: {
+        permissions_id: '17-2',
+      },
+      path: '/workerManage/detail',
+      name: '员工详情',
+      component: () => import('../views/workerManage/detail.vue')
+    }, {
+      meta: {
+        permissions_id: '17-2',
+      },
+      path: '/workerManage/update',
+      name: '修改员工',
+      component: () => import('../views/workerManage/update.vue')
+    }, {
+      meta: {
+        permissions_id: '17-3',
+      },
+      path: '/workerManage/list',
+      name: '员工列表',
+      component: () => import('../views/workerManage/list.vue')
+    }, {
+      meta: {
+        permissions_id: '18-1',
+      },
+      path: '/reimbursementManage/create',
+      name: '添加报销单',
+      component: () => import('../views/reimbursementManage/create.vue')
+    }, {
+      meta: {
+        permissions_id: '18-2',
+      },
+      path: '/reimbursementManage/detail',
+      name: '报销单详情',
+      component: () => import('../views/reimbursementManage/detail.vue')
+    }, {
+      meta: {
+        permissions_id: '18-3',
+      },
+      path: '/reimbursementManage/list',
+      name: '报销单列表',
+      component: () => import('../views/reimbursementManage/list.vue')
+    }, {
+      meta: {
+        permissions_id: '18-3',
+      },
+      path: '/reimbursementManage/update',
+      name: '修改报销单',
+      component: () => import('../views/reimbursementManage/update.vue')
+    }, {
+      meta: {
         permissions_id: '12-3',
       },
       path: '/store/list',
@@ -227,7 +283,7 @@ const routes: Array<RouteConfig> = [
       name: '产品仓库列表',
       component: () => import('../views/store/productList.vue')
     }, {
-      meta: {
+      meta: { 
         permissions_id: '12-1',
       },
       path: '/store/create',

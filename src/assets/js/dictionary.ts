@@ -267,6 +267,38 @@ const systemModule = [{
     id: '16-8',
     name: '系统账户设置',
   },]
+}, {
+  id: 17,
+  name: '员工管理',
+  detail: [{
+    id: '17-1',
+    name: '添加员工',
+  }, {
+    id: '17-2',
+    name: '修改员工',
+  }, {
+    id: '17-3',
+    name: '员工列表',
+  }, {
+    id: '17-4',
+    name: '删除员工',
+  }]
+}, {
+  id: 18,
+  name: '报销单管理',
+  detail: [{
+    id: '18-1',
+    name: '添加报销单',
+  }, {
+    id: '18-2',
+    name: '修改报销单',
+  }, {
+    id: '18-3',
+    name: '报销单列表',
+  }, {
+    id: '18-4',
+    name: '删除报销单',
+  }]
 }]
 
 const yarnAttributeArr: CascaderInfo[] = [{

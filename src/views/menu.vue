@@ -1,20 +1,20 @@
 <template>
-  <div id="menu"
-    class="bodyContainer">
+  <div id="menu" class="bodyContainer">
     <div class="module">
       <div class="titleCtn">
         <div class="title">生产流程管理</div>
       </div>
       <div class="menuList">
-        <div class="menu_item"
-          v-for="(item,index) in menuList.production"
+        <div
+          class="menu_item"
+          v-for="(item, index) in menuList.production"
           :key="index"
-          @click="$router.push(item.url)">
-          <svg class="iconFont"
-            aria-hidden="true">
+          @click="$router.push(item.url)"
+        >
+          <svg class="iconFont" aria-hidden="true">
             <use :xlink:href="'#' + item.icon"></use>
           </svg>
-          <p class="name">{{item.name}}</p>
+          <p class="name">{{ item.name }}</p>
         </div>
       </div>
     </div>
@@ -23,35 +23,27 @@
         <div class="title">其他管理</div>
       </div>
       <div class="menuList">
-        <div class="menu_item"
-          v-for="(item,index) in menuList.other"
-          :key="index"
-          @click="$router.push(item.url)">
-          <svg class="iconFont"
-            aria-hidden="true">
+        <div class="menu_item" v-for="(item, index) in menuList.other" :key="index" @click="$router.push(item.url)">
+          <svg class="iconFont" aria-hidden="true">
             <use :xlink:href="'#' + item.icon"></use>
           </svg>
-          <p class="name">{{item.name}}</p>
+          <p class="name">{{ item.name }}</p>
         </div>
       </div>
     </div>
-    <!-- <div class="module">
+    <div class="module">
       <div class="titleCtn">
         <div class="title">财务管理</div>
       </div>
       <div class="menuList">
-        <div class="menu_item"
-          v-for="(item,index) in menuList.finance"
-          :key="index"
-          @click="$router.push(item.url)">
-          <svg class="iconFont"
-            aria-hidden="true">
+        <div class="menu_item" v-for="(item, index) in menuList.finance" :key="index" @click="$router.push(item.url)">
+          <svg class="iconFont" aria-hidden="true">
             <use :xlink:href="'#' + item.icon"></use>
           </svg>
-          <p class="name">{{item.name}}</p>
+          <p class="name">{{ item.name }}</p>
         </div>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -136,13 +128,26 @@ export default Vue.extend({
             url: '/craft/list?page=1'
           },
           {
+            name: '员工管理',
+            id: '17-3',
+            icon: 'icon-yuangongguanli',
+            url: '/workerManage/list?page=1&status=1'
+          },
+          {
             name: '系统设置',
             id: 16,
             icon: 'icon-xitongshezhi',
             url: '/setting?pName=产品设置&cName=品类'
           }
         ],
-        finance: []
+        finance: [
+          {
+            name: '报销单管理',
+            id: '18-3',
+            icon: 'icon-chexiaodanguanli',
+            url: '/reimbursementManage/list?page=1&status=null'
+          }
+        ]
       }
     }
   },
@@ -161,7 +166,12 @@ export default Vue.extend({
           : this.menuList.other.filter((item) => {
               return JSON.parse(moduleInfo).indexOf(item.id) !== -1
             }),
-      finance: []
+      finance:
+        JSON.parse(moduleInfo).length === 0
+          ? this.menuList.finance
+          : this.menuList.finance.filter((item) => {
+              return JSON.parse(moduleInfo).indexOf(item.id) !== -1
+            })
     }
   }
 })

@@ -70,6 +70,25 @@
     font-size: @fontMiddle;
     text-align: left;
     min-height: 330px;
+    .el-table--enable-row-hover .el-table__body tr:hover>td {
+      background: rgba(26, 149, 255, 0.25);
+    }
+    .el-table--enable-row-hover .has-gutter tr:hover>th {
+      background: rgba(26, 149, 255, 0.25);
+    }
+    .el-table__header-wrapper .el-table__header .has-gutter{
+      color: rgba(0, 0, 0, 0.85);
+      font-size: 16px;
+      text-align: left;
+      font-family: Source Han Sans CN;
+      th{
+        background: #FAFAFA;
+        font-weight: unset;
+      }
+      .el-table_1_column_1{
+        padding-left: 5px;
+      }
+    }
     .row{
       height: 55px;
       border-bottom: 1px solid #E8E8E8;
