@@ -127,12 +127,12 @@ export default Vue.extend({
             icon: 'icon-gongyidanliebiao',
             url: '/craft/list?page=1'
           },
-          {
-            name: '员工管理',
-            id: '17-3',
-            icon: 'icon-yuangongguanli',
-            url: '/workerManage/list?page=1&status=1'
-          },
+          // {
+          //   name: '员工管理',
+          //   id: '17-3',
+          //   icon: 'icon-yuangongguanli',
+          //   url: '/workerManage/list?page=1&status=1'
+          // },
           {
             name: '系统设置',
             id: 16,
@@ -140,14 +140,14 @@ export default Vue.extend({
             url: '/setting?pName=产品设置&cName=品类'
           }
         ],
-        finance: [
-          {
-            name: '报销单管理',
-            id: '18-3',
-            icon: 'icon-chexiaodanguanli',
-            url: '/reimbursementManage/list?page=1&status=null'
-          }
-        ]
+        // finance: [
+          // {
+          //   name: '报销单管理',
+          //   id: '18-3',
+          //   icon: 'icon-chexiaodanguanli',
+          //   url: '/reimbursementManage/list?page=1&status=null'
+          // }
+        // ]
       }
     }
   },
@@ -166,12 +166,12 @@ export default Vue.extend({
           : this.menuList.other.filter((item) => {
               return JSON.parse(moduleInfo).indexOf(item.id) !== -1
             }),
-      finance:
-        JSON.parse(moduleInfo).length === 0
-          ? this.menuList.finance
-          : this.menuList.finance.filter((item) => {
-              return JSON.parse(moduleInfo).indexOf(item.id) !== -1
-            })
+      // finance:
+      //   JSON.parse(moduleInfo).length === 0
+      //     ? this.menuList.finance
+      //     : this.menuList.finance.filter((item) => {
+      //         return JSON.parse(moduleInfo).indexOf(item.id) !== -1
+      //       })
     }
   }
 })
