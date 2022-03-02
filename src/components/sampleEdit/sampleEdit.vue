@@ -4,7 +4,11 @@
     <div :class="inDetail?'inDetailMain main':'main'"
       v-loading="loading">
       <div class="titleCtn">
-        <span class="text">{{edit?"修改样品":"添加新样品"}}</span>
+        <span class="text">{{edit?"修改样品":"添加新样品"}}
+          <el-checkbox v-if="!edit"
+            v-model="repeatAdd">{{repeatAdd?'关闭连续添加':'开启连续添加'}}
+          </el-checkbox>
+        </span>
         <div class="closeCtn"
           @click="close">
           <span class="el-icon-close"></span>
@@ -589,7 +593,7 @@ export default Vue.extend({
       required: false
     },
     // 报价单初始化样品用,该参数和修改样品的参数互斥
-    quote_rel_product_id: {
+    quote_product_id: {
       type: [Number, String],
       required: false
     },
@@ -613,6 +617,7 @@ export default Vue.extend({
       loading: false,
       have_part: false,
       need_import: false,
+      repeatAdd: false,
       notify: '',
       searchSampleOrderCode: '', // 搜样单编号导入
       searchSampleCode: '', // 搜样品编号导入
@@ -627,7 +632,7 @@ export default Vue.extend({
         id: null,
         pid: null,
         pid_status: null,
-        quote_rel_product_id: '',
+        quote_product_id: '',
         product_type: 2,
         name: '',
         product_code: '',
@@ -712,8 +717,8 @@ export default Vue.extend({
     show(val) {
       if (val) {
         // 修改样单里的样品需要新建样品，并修改原样品的状态
-        if (this.quote_rel_product_id) {
-          this.sampleInfo.quote_rel_product_id = this.quote_rel_product_id
+        if (this.quote_product_id) {
+          this.sampleInfo.quote_product_id = this.quote_product_id
           const quotedPriceProductInfo = this.quote_rel_product_data as SampleInfo
           this.sampleInfo.type = [
             quotedPriceProductInfo.category_id as number,
@@ -901,10 +906,6 @@ export default Vue.extend({
       this.$emit('beforeSave', this.sampleInfo)
       const formCheck =
         this.$formCheck(this.sampleInfo, [
-          // {
-          //   key: 'name',
-          //   errMsg: '请输入样品名称'
-          // },
           {
             key: 'type',
             errMsg: '请选择样品品类',
@@ -924,18 +925,6 @@ export default Vue.extend({
             }
           ])
         }) ||
-        // this.sampleInfo.component_data.some((item) => {
-        //   return this.$formCheck(item, [
-        //     {
-        //       key: 'component_id',
-        //       errMsg: '请选择大身成分'
-        //     },
-        //     {
-        //       key: 'number',
-        //       errMsg: '请输入成分比例'
-        //     }
-        //   ])
-        // }) ||
         this.sampleInfo.size_data.some((item) => {
           return this.$formCheck(item, [
             {
@@ -966,18 +955,6 @@ export default Vue.extend({
                 errMsg: '请输入配件单位'
               }
             ]) ||
-            // item.part_component_data.some((itemChild) => {
-            //   return this.$formCheck(itemChild, [
-            //     {
-            //       key: 'component_id',
-            //       errMsg: '请选择配件成分'
-            //     },
-            //     {
-            //       key: 'number',
-            //       errMsg: '请输入配件比例'
-            //     }
-            //   ])
-            // }) ||
             item.part_size_data.some((itemChild) => {
               return this.$formCheck(itemChild, [
                 {
@@ -1003,6 +980,9 @@ export default Vue.extend({
             if (this.afterSaveClear) {
               this.reset()
             }
+            if (!this.repeatAdd) {
+              this.$emit('close', res.data.data)
+            }
           }
           this.loading = false
         })
@@ -1015,7 +995,7 @@ export default Vue.extend({
         id: null,
         pid: null,
         pid_status: null,
-        quote_rel_product_id: '',
+        quote_product_id: '',
         product_type: 2,
         name: '',
         product_code: '',

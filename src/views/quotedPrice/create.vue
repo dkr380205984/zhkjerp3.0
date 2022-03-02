@@ -1125,7 +1125,7 @@ export default Vue.extend({
         client_id: '',
         tree_data: [],
         contacts_id: '',
-        group_id: '',
+        group_id: Number(this.$getLocalStorage('group_id')) || '',
         settle_unit: '元',
         exchange_rate: '100',
         total_number: '',
@@ -1428,7 +1428,7 @@ export default Vue.extend({
     },
     // 获取纱线报价
     getYarnPrice(ev: number[], info: any) {
-      if (ev) {
+      if (ev && ev.length > 0) {
         yarn
           .detail({
             id: ev[2]
@@ -2204,6 +2204,13 @@ export default Vue.extend({
                   ]
                 }
               })
+            // 如果是订单产品转报价，过滤掉其他产品
+            if (this.$route.query.product_id) {
+              this.quotedPriceInfo
+              this.quotedPriceInfo.product_data = this.quotedPriceInfo.product_data.filter(
+                (item) => Number(item.product_id) === Number(this.$route.query.product_id)
+              )
+            }
           }
           this.loading = false
         })
@@ -2232,8 +2239,7 @@ export default Vue.extend({
                     cv_list: [],
                     cvFlag: false,
                     total_price: '',
-                    product_id: '',
-                    order_product_id: item.id,
+                    product_id: item.product_id,
                     type: [item.category_id as number, item.secondary_category_id as number],
                     category_id: item.category_id,
                     secondary_category_id: item.secondary_category_id,
@@ -2329,11 +2335,11 @@ export default Vue.extend({
                 })
               )
             })
-            // 如果是产品转报价，过滤掉其他产品
+            // 如果是订单产品转报价，过滤掉其他产品
             if (this.$route.query.product_id) {
               this.quotedPriceInfo
               this.quotedPriceInfo.product_data = this.quotedPriceInfo.product_data.filter(
-                (item) => Number(item.order_product_id) === Number(this.$route.query.order_product_id)
+                (item) => Number(item.product_id) === Number(this.$route.query.product_id)
               )
             }
           }

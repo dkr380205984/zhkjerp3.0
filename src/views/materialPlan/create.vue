@@ -962,7 +962,7 @@ export default Vue.extend({
           itemPro.product_info.forEach((itemChild) =>
             flattenArr.push({
               material_info: itemChild.material_info || [],
-              quote_rel_product_id: itemPro.quote_rel_product_id,
+              quote_product_id: itemPro.quote_product_id,
               quote_rel_product_info: itemPro.quote_rel_product_info,
               color_id: itemChild.color_id,
               color_name: itemChild.color_name,
@@ -999,7 +999,7 @@ export default Vue.extend({
           { name: 'product_code' },
           { name: 'part_data' },
           { name: 'process_data' },
-          { name: 'quote_rel_product_id' },
+          { name: 'quote_product_id' },
           { name: 'quote_rel_product_info' }
         ],
         childrenRule: {
@@ -1084,7 +1084,7 @@ export default Vue.extend({
             itemChild.info_data.forEach((itemPart) => {
               // 过滤掉空值和0
               itemPart.number = itemPart.number || 0
-              if (itemPart.number) {
+              if (itemPart.number && Number(itemPart.number) !== 0) {
                 this.materialPlanInfo.material_plan_data.push({
                   product_code: item.product_code || item.system_code,
                   category: item.category,
@@ -1099,7 +1099,7 @@ export default Vue.extend({
                   number: itemPart.number || 0,
                   order_number: itemChild.order_number,
                   loss: '',
-                  processList: item.quote_rel_product_id ? this.getProcessInfo(item.quote_rel_product_info!) : [],
+                  processList: item.quote_product_id ? this.getProcessInfo(item.quote_rel_product_info!) : [],
                   // 只有大身有工艺单
                   info_data:
                     itemPart.part_id === 0 && itemChild.material_info.length > 0
@@ -1139,7 +1139,7 @@ export default Vue.extend({
             itemChild.info_data.forEach((itemPart) => {
               // 过滤掉空值和0
               itemPart.number = itemPart.number || 0
-              if (itemPart.number) {
+              if (itemPart.number && Number(itemPart.number) !== 0) {
                 const finded = this.materialPlanInfo.material_plan_data.find(
                   (itemFind) => itemFind.product_id === item.product_id && itemFind.part_id === itemPart.part_id
                 )

@@ -339,6 +339,11 @@
                       <div v-else
                         class="gray">无需工艺单</div>
                     </div>
+                    <div class="state"
+                      @click="item.rel_quote_info.quote_id?$router.push('/quotedPrice/detail?id='+item.rel_quote_info.quote_id):$router.push('/quotedPrice/create?sampleOrderId=' + $route.query.id + '&product_id='+item.product_id +'&sampleOrderIndex='+ sampleOrderIndex)">
+                      <div class="circle"
+                        :class="{'backGray':!item.rel_quote_info.quote_id,'backBlue':item.rel_quote_info.quote_id}">报</div>
+                    </div>
                   </div>
                   <!-- <div class="tcol">{{item.desc}}</div> -->
                   <div class="tcol">

@@ -377,6 +377,7 @@ const plugin = {
   // 设置localstorage
   setLocalStorage(name: string, info: any) {
     window.localStorage.setItem(name, info)
+    Message.Message.success('已保存')
   },
   getLocalStorage(name: string) {
     return window.localStorage.getItem(name)

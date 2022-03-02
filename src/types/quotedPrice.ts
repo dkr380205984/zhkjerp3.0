@@ -38,12 +38,12 @@ export interface QuotedPriceInfo {
 
 // 报价单产品信息
 export interface QuotedPriceProduct {
+  id?: string | number
   cv_list?: string[]
   cvFlag?: boolean // 复制粘贴图片开关
   cvImageLength?: number // 复制粘贴图片张数
   total_price?: number | string // 统计产品的价格信息
   product_id?: string | number // 有id传id，无id传下面'
-  order_product_id?: string | number // 订单转报价单
   type?: number[] // 品类下拉框
   category_id?: string | number
   category?: string

@@ -541,7 +541,7 @@ export default Vue.extend({
         })
         // 生成二维码
         const QRCode = require('qrcode')
-        QRCode.toDataURL('/materialPlan/detail?id=' + `${this.otherInfo.code}` + '&ifprint=true')
+        QRCode.toDataURL('/materialPlan/detail?id=' + `${this.otherInfo.top_order_id}` + '&ifprint=true')
           .then((url: any) => {
             this.qrCodeUrl = url
           })

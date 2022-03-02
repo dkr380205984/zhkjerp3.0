@@ -331,14 +331,10 @@
               <span class="text">边型</span>
             </div>
             <div class="info elCtn">
-              <el-select v-model="craftInfo.warp_data.side"
-                placeholder="请选择边型">
-                <el-option v-for="item in sideList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
+              <el-autocomplete class="inline-input"
+                v-model="craftInfo.warp_data.side"
+                :fetch-suggestions="searchSide"
+                placeholder="请选择边型"></el-autocomplete>
             </div>
           </div>
         </div>
@@ -359,14 +355,10 @@
               <span class="text">机型</span>
             </div>
             <div class="info elCtn">
-              <el-select v-model="craftInfo.warp_data.machine"
-                placeholder="请选择机型">
-                <el-option v-for="item in machineList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
+              <el-autocomplete class="inline-input"
+                v-model="craftInfo.warp_data.machine"
+                :fetch-suggestions="searchMachine"
+                placeholder="请选择机型"></el-autocomplete>
             </div>
           </div>
         </div>
@@ -760,13 +752,10 @@
               <span class="text">组织法</span>
             </div>
             <div class="info elCtn">
-              <el-select v-model="craftInfo.weft_data.organization"
-                placeholder="请选择组织法">
-                <el-option v-for="item in methodsList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"></el-option>
-              </el-select>
+              <el-autocomplete class="inline-input"
+                v-model="craftInfo.weft_data.organization"
+                :fetch-suggestions="searchOrganization"
+                placeholder="请选择组织法"></el-autocomplete>
             </div>
           </div>
           <div class="col">
@@ -1619,6 +1608,26 @@ export default Vue.extend({
     }
   },
   methods: {
+    searchOrganization(str: string, cb: any) {
+      let results = str ? this.methodsList.filter(this.createFilter(str)) : this.methodsList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    searchSide(str: string, cb: any) {
+      let results = str ? this.sideList.filter(this.createFilter(str)) : this.sideList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    searchMachine(str: string, cb: any) {
+      let results = str ? this.machineList.filter(this.createFilter(str)) : this.machineList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    createFilter(queryString: string) {
+      return (restaurant: any) => {
+        return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+      }
+    },
     // 搜索要导入的工艺单列表
     searchCraft(key: string) {
       this.seachLoading = true
@@ -2090,10 +2099,6 @@ export default Vue.extend({
               value: '',
               chuankou: ''
             }
-    },
-    // 预览纹版图
-    showGL() {
-      this.$message.error('没做')
     },
     copyGL(index1: number, index2: number) {
       this.craftInfo.draft_method.GL[index1].splice(

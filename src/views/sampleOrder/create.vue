@@ -408,7 +408,7 @@
       </div>
     </div>
     <sample-edit :show="addSampleFlag"
-      :quote_rel_product_id="quotedPriceProductInfo.id"
+      :quote_product_id="quotedPriceProductInfo.id"
       :quote_rel_product_data="quotedPriceProductInfo"
       @close="addSampleFlag = false"
       @afterSave="getNewSample"></sample-edit>
@@ -491,7 +491,7 @@ export default Vue.extend({
         id: null,
         client_id: '',
         tree_data: [],
-        group_id: '',
+        group_id: Number(this.$getLocalStorage('group_id')) || '',
         contacts_id: '',
         public_files: [],
         private_files: [],
@@ -626,7 +626,7 @@ export default Vue.extend({
           })
         })
       })
-      info.quote_rel_product_id = product.quote_rel_product_id
+      info.quote_product_id = product.quote_product_id
       info.product_info = info.size_color_list.map((item: any) => {
         return {
           size_color: item.value,
@@ -659,7 +659,7 @@ export default Vue.extend({
       if (this.quotedPriceProductInfo) {
         // 标记一下报价产品已经转换了，不能二次转换了
         this.quotedPriceProductInfo.has_change = true
-        sample.quote_rel_product_id = this.quotedPriceProductInfo.id
+        sample.quote_product_id = this.quotedPriceProductInfo.id
       }
       this.sampleList.push(sample)
     },

@@ -51,7 +51,6 @@
           <div class="col">
             <div class="label">
               <span class="text">负责小组/人</span>
-              <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
               <el-select placeholder="请选择负责小组/人"
@@ -936,7 +935,7 @@ export default Vue.extend({
       }
       let productInfo = {
         product_id: product.id as number,
-        quote_rel_product_id: '',
+        quote_product_id: '',
         size_color_list: [], // 用于下拉框选择尺码颜色
         product_info: [
           {
@@ -968,7 +967,7 @@ export default Vue.extend({
           price: 0
         }
       })
-      productInfo.quote_rel_product_id = product.quote_rel_product_id as string
+      productInfo.quote_product_id = product.quote_product_id as string
       this.orderInfo.time_data.batch_data[0].product_data.push(productInfo)
     },
     getProductDetail(product: ProductInfo) {
@@ -1099,14 +1098,6 @@ export default Vue.extend({
               key: 'tree_data',
               errMsg: '请选择下单公司',
               regNormal: 'checkArr'
-            },
-            {
-              key: 'contacts_id',
-              errMsg: '请选择联系人'
-            },
-            {
-              key: 'group_id',
-              errMsg: '请选择负责小组'
             }
           ]) ||
           this.$formCheck(this.orderInfo.time_data, [

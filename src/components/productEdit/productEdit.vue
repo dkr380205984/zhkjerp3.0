@@ -4,7 +4,11 @@
     <div :class="inDetail?'inDetailMain main':'main'"
       v-loading="loading">
       <div class="titleCtn">
-        <span class="text">{{edit?"修改产品":"添加新产品"}}</span>
+        <span class="text">{{edit?"修改产品":"添加新产品"}}
+          <el-checkbox v-if="!edit"
+            v-model="repeatAdd">{{repeatAdd?'关闭连续添加':'开启连续添加'}}
+          </el-checkbox>
+        </span>
         <div class="closeCtn"
           @click="close">
           <span class="el-icon-close"></span>
@@ -634,7 +638,8 @@
                     <span class="text">备注信息</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input placeholder="默认"></el-input>
+                    <el-input placeholder="备注信息"
+                      v-model="productStockInfo.desc"></el-input>
                   </div>
                 </div>
               </div>
@@ -709,7 +714,7 @@ export default Vue.extend({
       required: false
     },
     // 报价单初始化样品用,该参数和修改样品的参数互斥
-    quote_rel_product_id: {
+    quote_product_id: {
       type: [Number, String],
       required: false
     },
@@ -728,6 +733,7 @@ export default Vue.extend({
       loading: false,
       have_part: false,
       need_import: false,
+      repeatAdd: false, // 连续添加产品
       step: 1,
       notify: '',
       searchOrderCode: '', // 搜产单编号导入
@@ -801,23 +807,26 @@ export default Vue.extend({
         ]
       },
       productStockInfo: {
-        store_arr: [],
         action_type: 1,
         complete_time: this.$getDate(new Date()),
+        tree_data: [], // 存公司或者移库仓库用
         client_id: '',
         move_store_id: '',
         move_secondary_store_id: '',
         desc: '',
         store_id: '',
         secondary_store_id: '',
+        store: '',
+        secondary_store: '',
+        store_arr: [], // 前端下拉框用
         info_data: [
           {
             product_id: '',
             size_id: '',
             color_id: '',
-            color_size: '',
             price: '',
-            number: ''
+            number: '',
+            color_size: ''
           }
         ]
       },
@@ -853,8 +862,8 @@ export default Vue.extend({
     // 打开产品详情窗口之前需要获取产品详情
     show(val) {
       if (val) {
-        if (this.quote_rel_product_id) {
-          this.productInfo.quote_rel_product_id = this.quote_rel_product_id
+        if (this.quote_product_id) {
+          this.productInfo.quote_product_id = this.quote_product_id
           const quotedPriceProductInfo = this.quote_rel_product_data as ProductInfo
           this.productInfo.type = [
             quotedPriceProductInfo.category_id as number,
@@ -1045,14 +1054,6 @@ export default Vue.extend({
       console.log(this.productInfo)
       const formCheck =
         this.$formCheck(this.productInfo, [
-          // {
-          //   key: 'style_code',
-          //   errMsg: '请输入客户款号'
-          // },
-          // {
-          //   key: 'name',
-          //   errMsg: '请输入产品名称'
-          // },
           {
             key: 'type',
             errMsg: '请选择产品品类',
@@ -1072,18 +1073,6 @@ export default Vue.extend({
             }
           ])
         }) ||
-        // this.productInfo.component_data.some((item) => {
-        //   return this.$formCheck(item, [
-        //     {
-        //       key: 'component_id',
-        //       errMsg: '请选择大身成分'
-        //     },
-        //     {
-        //       key: 'number',
-        //       errMsg: '请输入成分比例'
-        //     }
-        //   ])
-        // }) ||
         this.productInfo.size_data.some((item) => {
           return this.$formCheck(item, [
             {
@@ -1112,31 +1101,7 @@ export default Vue.extend({
               key: 'unit',
               errMsg: '请输入配件单位'
             }
-          ]) //||
-          // item.part_component_data!.some((itemChild) => {
-          //   return this.$formCheck(itemChild, [
-          //     {
-          //       key: 'component_id',
-          //       errMsg: '请选择配件成分'
-          //     },
-          //     {
-          //       key: 'number',
-          //       errMsg: '请输入配件比例'
-          //     }
-          //   ])
-          // }) ||
-          // item.part_size_data!.some((itemChild) => {
-          //   return this.$formCheck(itemChild, [
-          //     // {
-          //     //   key: 'weight',
-          //     //   errMsg: '请输入配件克重'
-          //     // },
-          //     // {
-          //     //   key: 'size_info',
-          //     //   errMsg: '请输入配件尺寸'
-          //     // }
-          //   ])
-          // })
+          ])
         })
       }
       this.getCmpData()
@@ -1163,6 +1128,9 @@ export default Vue.extend({
             } else {
               if (this.afterSaveClear) {
                 this.reset()
+              }
+              if (!this.repeatAdd) {
+                this.$emit('close', res.data.data)
               }
             }
           }
@@ -1359,22 +1327,31 @@ export default Vue.extend({
             this.$message.success('入库成功')
             this.$emit('afterStockSave', res.data.data)
             this.productStockInfo = {
-              store_arr: [],
               action_type: 1,
               complete_time: this.$getDate(new Date()),
+              tree_data: [], // 存公司或者移库仓库用
               client_id: '',
               move_store_id: '',
               move_secondary_store_id: '',
               desc: '',
               store_id: '',
               secondary_store_id: '',
+              store: '',
+              secondary_store: '',
+              store_arr: [], // 前端下拉框用
               info_data: [
                 {
+                  product_code: '',
+                  name: '',
+                  category: '',
+                  secondary_category: '',
                   product_id: '',
                   size_id: '',
                   color_id: '',
-                  color_size: '',
                   price: '',
+                  size_name: '',
+                  color_name: '',
+                  color_size: '',
                   number: ''
                 }
               ]

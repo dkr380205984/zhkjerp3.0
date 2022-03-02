@@ -145,7 +145,9 @@
                 <div class="tcol">{{item.start_order_number}}</div>
                 <div class="tcol">{{item.desc}}</div>
                 <div class="tcol"
-                  :class="{'blue':item.order_product_id,'gray':!item.order_product_id}">{{item.order_product_id?'已绑定':'未绑定'}}</div>
+                  style="cursor:pointer"
+                  :class="{'green':item.rel_product_info.product_id,'blue':!item.rel_product_info.product_id}"
+                  @click="item.rel_product_info.product_id?$openUrl(item.rel_order_info.order_type===1?'/order/detail?id='+item.rel_order_info.order_id:'/sampleOrder/detail?id='+item.rel_order_info.order_id):bindOrderFlag=true;bindQuoteId=item.id">{{item.rel_product_info.product_id?item.rel_order_info.order_code:'去绑定'}}</div>
               </div>
               <template v-if="showCompareInfo">
                 <div class="trow"
@@ -712,7 +714,7 @@
                   <span class="text">打印报价</span>
                 </div>
                 <div class="btn backHoverGreen"
-                  @click="quotedPriceInfo.is_check===2?$message.error('该报价单审核未通过'):quotedPriceInfo.rel_order.length>0?$message.warning('已绑定单据，无法多次绑定'):$router.push('/sampleOrder/create?quotedPriceId='+ quotedList[quotedIndex])">
+                  @click="quotedPriceInfo.is_check===2?$message.error('该报价单审核未通过'):$router.push('/sampleOrder/create?quotedPriceId='+ quotedList[quotedIndex])">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-wuliaojihua1"></use>
@@ -720,29 +722,13 @@
                   <span class="text">生成样单</span>
                 </div>
                 <div class="btn backHoverGreen"
-                  @click="quotedPriceInfo.is_check===2?$message.error('该报价单审核未通过'):quotedPriceInfo.rel_order.length>0?$message.warning('已绑定单据，无法多次绑定'):$router.push('/order/create?quotedPriceId='+ quotedList[quotedIndex])">
+                  @click="quotedPriceInfo.is_check===2?$message.error('该报价单审核未通过'):$router.push('/order/create?quotedPriceId='+ quotedList[quotedIndex])">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-wuliaojihua1"></use>
                   </svg>
                   <span class="text">生成订单</span>
                 </div>
-                <!-- <div class="btn backHoverOrange"
-                  @click="quotedPriceInfo.rel_order.length>0?$message.warning('已绑定单据，无法多次绑定'):bindOrderFlag=true;bindOrderType=2;">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-wuliaojihua1"></use>
-                  </svg>
-                  <span class="text">绑定样单</span>
-                </div>
-                <div class="btn backHoverOrange"
-                  @click="quotedPriceInfo.rel_order.length>0?$message.warning('已绑定单据，无法多次绑定'):bindOrderFlag=true;bindOrderType=1;">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-wuliaojihua1"></use>
-                  </svg>
-                  <span class="text">绑定订单</span>
-                </div> -->
                 <div class="btn backHoverBlue"
                   @click="checkOpr">
                   <svg class="iconFont"
@@ -902,6 +888,18 @@
         </div>
         <div class="contentCtn">
           <div class="row">
+            <div class="label">单据类型：</div>
+            <div class="info"
+              style="display: flex;align-items: center;vertical-align:middle">
+              <div>
+                <el-radio v-model="bindOrderType"
+                  :label="1">绑定订单</el-radio>
+                <el-radio v-model="bindOrderType"
+                  :label="2">绑定样单</el-radio>
+              </div>
+            </div>
+          </div>
+          <div class="row">
             <div class="label">搜索单据：</div>
             <div class="info">
               <div class="elCtn"
@@ -909,7 +907,21 @@
                 <el-autocomplete v-model="bindOrderValue"
                   :fetch-suggestions="searchOrder"
                   :placeholder="'请输入'+(bindOrderType===1?'订单号搜索':'样单号搜索')"
-                  @select="selectId"></el-autocomplete>
+                  @select="selectOrder"></el-autocomplete>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label">绑定{{bindOrderType===1?'产品':'样品'}}：</div>
+            <div class="info"
+              style="display: flex;align-items: center;vertical-align:middle">
+              <div class="gray"
+                v-if="orderProList.length===0">暂未选择单据</div>
+              <div>
+                <el-radio v-for="item in orderProList"
+                  :key="item.system_code"
+                  v-model="bindProId"
+                  :label="item.id">{{item.system_code}}</el-radio>
               </div>
             </div>
           </div>
@@ -1193,8 +1205,10 @@ export default Vue.extend({
       oprLog: [],
       bindOrderFlag: false,
       bindOrderValue: '',
-      bindOrderId: '',
-      bindOrderType: '',
+      orderProList: [],
+      bindQuoteId: '',
+      bindProId: '',
+      bindOrderType: 1,
       quotedIndex: '0',
       quotedList: []
     }
@@ -1895,8 +1909,8 @@ export default Vue.extend({
     saveBindOrder() {
       quotedPrice
         .bindOrder({
-          quote_id: Number(this.quotedList[this.quotedIndex]),
-          order_id: Number(this.bindOrderId)
+          quote_product_id: Number(this.bindQuoteId),
+          product_id: Number(this.bindProId)
         })
         .then((res) => {
           if (res.data.status) {
@@ -1920,8 +1934,9 @@ export default Vue.extend({
               cb(
                 res.data.data.items.map((item: any) => {
                   return {
+                    proList: item.product_data,
                     value: item.system_code + '(' + item.code + ')' + '/' + item.client_name + '/' + item.user_name,
-                    id: item.id
+                    id: item.product_id
                   }
                 })
               )
@@ -1933,8 +1948,8 @@ export default Vue.extend({
         cb([])
       }
     },
-    selectId(ev: any) {
-      this.bindOrderId = ev.id
+    selectOrder(ev: any) {
+      this.orderProList = ev.proList
     },
     getQuotedList() {
       this.init(this.quotedList[this.quotedIndex])

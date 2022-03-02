@@ -5,6 +5,124 @@
     <order-detail :data="orderInfo"></order-detail>
     <div class="module clearfix">
       <div class="titleCtn">
+        <div class="title">发货信息</div>
+      </div>
+      <div class="tableCtn">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol"
+              style="flex:0.72">批次序号</div>
+            <div class="tcol">发货时间</div>
+            <div class="tcol">批次名称</div>
+            <div class="tcol">批次类型</div>
+            <div class="tcol">批次备注</div>
+            <div class="tcol noPad"
+              style="flex:8.7">
+              <div class="trow">
+                <div class="tcol">产品品类</div>
+                <div class="tcol">产品图片</div>
+                <div class="tcol noPad"
+                  style="flex:3">
+                  <div class="trow">
+                    <div class="tcol">尺码颜色</div>
+                    <div class="tcol">计划发货数量</div>
+                    <div class="tcol">实际发货数量</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow"
+            v-for="itemBatch in orderInfo.time_data[0].batch_data"
+            :key="itemBatch.id">
+            <div class="tcol"
+              style="flex:0.72">
+              <span>第{{itemBatch.batch_number}}批</span>
+            </div>
+            <div class="tcol">
+              <span class="green">{{itemBatch.delivery_time}}</span>
+            </div>
+            <div class="tcol">
+              <span>{{itemBatch.batch_title || '无'}}</span>
+            </div>
+            <div class="tcol">
+              <span>{{itemBatch.batch_type_name}}</span>
+            </div>
+            <div class="tcol">
+              <span>{{itemBatch.desc || '无'}}</span>
+            </div>
+            <div class="tcol noPad"
+              style="flex:8.7">
+              <div class="trow"
+                v-for="itemPro in itemBatch.product_data"
+                :key="itemPro.id">
+                <div class="tcol">
+                  <span>{{itemPro.product_code||itemPro.system_code||'无编号'}}</span>
+                  <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
+                </div>
+                <div class="tcol">
+                  <div class="trow">
+                    <div class="imageCtn">
+                      <el-image style="width:100%;height:100%;margin-top:2px"
+                        :src="itemPro.image_data.length>0?itemPro.image_data[0]:''"
+                        :preview-src-list="itemPro.image_data">
+                        <div slot="error"
+                          class="image-slot">
+                          <i class="el-icon-picture-outline"
+                            style="font-size:42px"></i>
+                        </div>
+                      </el-image>
+                    </div>
+                  </div>
+                </div>
+                <div class="tcol noPad"
+                  style="flex:3">
+                  <div class="trow"
+                    v-for="(itemChild,indexChild) in itemPro.product_info"
+                    :key="indexChild">
+                    <div class="tcol">
+                      <el-checkbox v-model="itemChild.check">{{itemChild.size_name}}/{{itemChild.color_name}}</el-checkbox>
+                    </div>
+                    <div class="tcol">{{itemChild.number}}</div>
+                    <div class="tcol">0</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="buttonList">
+        <div class="btn backHoverBlue">
+          <i class="el-icon-s-grid"></i>
+          <span class="text">装箱计划操作</span>
+        </div>
+        <div class="otherInfoCtn">
+          <div class="otherInfo">
+            <div class="btn backHoverBlue"
+              @click="goPlanPack(1)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">合并装箱</span>
+            </div>
+            <div class="btn backHoverBlue"
+              @click="goPlanPack(2)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">单独装箱</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module clearfix">
+      <div class="titleCtn">
         <div class="title">包装计划信息</div>
       </div>
       <div class="tableCtn">
@@ -159,6 +277,7 @@
         </el-tab-pane>
       </el-tabs>
     </div>
+    <!-- 包装订购 -->
     <div class="popup"
       v-show="packOrderFlag">
       <div class="main">
@@ -170,7 +289,7 @@
           </div>
         </div>
         <div class="contentCtn">
-          <div class="editCtn"
+          <div class="editCtn packOrder"
             v-for="(item,index) in packOrderInfo"
             :key="index">
             <div class="deleteIcon"
@@ -488,17 +607,263 @@
         </div>
       </div>
     </div>
+    <!-- 装箱计划 -->
+    <div class="popup"
+      v-show="packPlanFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">装箱计划</span>
+          <div class="closeCtn">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <template v-if="packPlanStep===1">
+            <div class="editCtn packPlan">
+              <div class="row">
+                <div class="col">
+                  <div class="label">
+                    <span class="text">发货批次</span>
+                  </div>
+                  <div class="info">
+                    <el-input v-model="packPlanInfo.delivery_batch"
+                      placeholder="请输入发货批次"></el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
+                    <span class="text">批次名称</span>
+                  </div>
+                  <div class="info">
+                    <el-input v-model="packPlanInfo.batch_name"
+                      placeholder="请输入批次名称"></el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
+                    <span class="text">发货日期</span>
+                    <span class="explanation">(必填)</span>
+                  </div>
+                  <div class="info">
+                    <el-date-picker style="width:100%"
+                      placeholder="请选择发货日期"
+                      v-model="packPlanInfo.delivery_time"
+                      value-format="yyyy-MM-dd"></el-date-picker>
+                  </div>
+                </div>
+              </div>
+              <div class="tableCtn specialTable">
+                <div class="thead">
+                  <div class="trow outTrow">
+                    <div class="tcol noPad"
+                      style="min-width:220px">
+                      <div class="trow">
+                        <div class="tcol">产品</div>
+                        <div class="tcol">尺码颜色</div>
+                      </div>
+                    </div>
+                    <div class="tcol">产品装袋说明</div>
+                    <div class="tcol noPad"
+                      style="min-width:1650px">
+                      <div class="trow">
+                        <div class="tcol">包装操作</div>
+                        <div class="tcol noPad"
+                          style="min-width:110px">
+                          <div class="trow">
+                            <div class="tcol">数量/箱</div>
+                          </div>
+                        </div>
+                        <div class="tcol">头箱号#</div>
+                        <div class="tcol">尾箱号#</div>
+                        <div class="tcol">箱数</div>
+                        <div class="tcol">每箱毛重kg</div>
+                        <div class="tcol">每箱净重kg</div>
+                        <div class="tcol">总毛重kg</div>
+                        <div class="tcol">总净重kg</div>
+                        <div class="tcol">长cm</div>
+                        <div class="tcol">宽cm</div>
+                        <div class="tcol">高cm</div>
+                        <div class="tcol">单箱体积m³</div>
+                        <div class="tcol">总体积m³</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tbody">
+                  <div class="trow outTrow"
+                    v-for="(item,index) in packPlanInfo.data"
+                    :key="index">
+                    <div class="tcol noPad"
+                      style="min-width:220px">
+                      <div class="trow"
+                        v-for="(itemPro,indexPro) in item.product_info"
+                        :key="indexPro">
+                        <div class="tcol">{{itemPro.product_show_info}}</div>
+                        <div class="tcol">{{itemPro.size_name}}/{{itemPro.color_name}}</div>
+                      </div>
+                    </div>
+                    <div class="tcol">
+                      <textarea class="tableInput"
+                        v-model="item.desc"
+                        placeholder="产品装袋说明"></textarea>
+                    </div>
+                    <div class="tcol noPad"
+                      style="min-width:1650px">
+                      <div class="trow"
+                        v-for="(itemPack,indexPack) in item.info_data"
+                        :key="indexPack">
+                        <div class="tcol">
+                          <div class="oprCtn"
+                            style="border-top:0;justify-content: flex-start;">
+                            <div class="opr hoverBlue"
+                              @click="addPlanPack(item)"
+                              v-if="indexPack===0">添加纸箱</div>
+                            <div class="opr hoverRed"
+                              @click="$deleteItem(item.info_data,indexPack)"
+                              v-if="indexPack>0">删除纸箱</div>
+                          </div>
+                        </div>
+                        <div class="tcol noPad"
+                          style="min-width:110px">
+                          <div class="trow"
+                            v-for="(itemChildPro,indexChildPro) in itemPack.product_info"
+                            :key="indexChildPro">
+                            <div class="tcol">
+                              <input class="tableInput"
+                                v-model="itemChildPro.pack_number"
+                                placeholder="数量" />
+                              <el-tooltip class="item"
+                                effect="dark"
+                                :content="itemChildPro.product_show_info"
+                                placement="top-start">
+                                <i class="el-icon-question unit"></i>
+                              </el-tooltip>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="tcol">
+                          <input class="tableInput"
+                            v-model="itemPack.first_box_number"
+                            placeholder="箱号" />
+                        </div>
+                        <div class="tcol">
+                          <input class="tableInput"
+                            v-model="itemPack.last_box_number"
+                            placeholder="箱号" />
+                        </div>
+                        <div class="tcol">
+                          <input class="tableInput"
+                            v-model="itemPack.box_count"
+                            placeholder="箱数" />
+                        </div>
+                        <div class="tcol">
+                          <input class="tableInput"
+                            v-model="itemPack.box_gross_weight"
+                            placeholder="毛重" />
+                        </div>
+                        <div class="tcol">
+                          <input class="tableInput"
+                            v-model="itemPack.box_net_weight"
+                            placeholder="净重" />
+                        </div>
+                        <div class="tcol">
+                          <input class="tableInput"
+                            v-model="itemPack.total_gross_weight"
+                            placeholder="总毛重" />
+                        </div>
+                        <div class="tcol">
+                          <input class="tableInput"
+                            v-model="itemPack.total_net_weight"
+                            placeholder="总净重" />
+                        </div>
+                        <div class="tcol">
+                          <input class="tableInput"
+                            v-model="itemPack.length"
+                            placeholder="长" />
+                        </div>
+                        <div class="tcol">
+                          <input class="tableInput"
+                            v-model="itemPack.width"
+                            placeholder="宽" />
+                        </div>
+                        <div class="tcol">
+                          <input class="tableInput"
+                            v-model="itemPack.height"
+                            placeholder="高" />
+                        </div>
+                        <div class="tcol">
+                          <input class="tableInput"
+                            v-model="itemPack.single_bulk"
+                            placeholder="单箱体积" />
+                        </div>
+                        <div class="tcol">
+                          <input class="tableInput"
+                            v-model="itemPack.total_bulk"
+                            placeholder="总体积" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+          <template v-else>
+            <div class="tableCtn">
+              <div class="thead">
+                <div class="trow">
+                  <div class="tcol">包装名称</div>
+                  <div class="tcol">单位</div>
+                  <div class="tcol">长</div>
+                  <div class="tcol">宽</div>
+                  <div class="tcol">高</div>
+                  <div class="tcol">所需数量</div>
+                  <div class="tcol">属性或说明</div>
+                  <div class="tcol">图片</div>
+                </div>
+              </div>
+              <div class="tbody">
+                <div class="trow"
+                  v-for="(item,index) in packPlanInfo.gather_info"
+                  :key="index">
+                  <div class="tcol">包装名称</div>
+                  <div class="tcol">单位</div>
+                  <div class="tcol">{{item.length}}</div>
+                  <div class="tcol">{{item.width}}</div>
+                  <div class="tcol">{{item.height}}</div>
+                  <div class="tcol">{{item.number}}</div>
+                  <div class="tcol">属性或说明</div>
+                  <div class="tcol">图片</div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="packPlanFlag = false">取消</span>
+          <span class="btn backHoverOrange"
+            @click="packPlanStep=1"
+            v-if="packPlanStep===2">上一步</span>
+          <span class="btn backHoverBlue"
+            @click="packPlanStep===1?computedPackOrder():savePlanPack()">{{packPlanStep===1?'下一步':'确认保存'}}</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import { order, packManage } from '@/assets/js/api'
-import { PackOrderInfo } from '@/types/packManage'
+import { PackOrderInfo, PackPlanInfo, PackPlanInfoData } from '@/types/packManage'
 import { PackMaterialInfo } from '@/types/materialSetting'
 import { CascaderInfo } from '@/types/vuex'
+import { OrderInfo, OrderTime } from '@/types/order'
 export default Vue.extend({
   data(): {
+    orderInfo: OrderInfo
+    packPlanInfo: PackPlanInfo
     packOrderLog: PackOrderInfo[]
     packOrderInfo: PackOrderInfo[]
     [propName: string]: any
@@ -548,6 +913,7 @@ export default Vue.extend({
                   {
                     product_id: '',
                     size_color_list: [],
+                    image_data: [],
                     product_info: [
                       {
                         size_color: '',
@@ -561,6 +927,69 @@ export default Vue.extend({
                 ]
               }
             ]
+          }
+        ]
+      },
+      packPlanStep: 1,
+      packPlanFlag: false,
+      packPlanInfo: {
+        id: '',
+        order_id: '',
+        delivery_time: '',
+        delivery_batch: '',
+        batch_name: '',
+        total_delivery_number: '',
+        data: [
+          {
+            product_info: [
+              {
+                product_show_info: '',
+                product_id: '',
+                size_id: '',
+                size_name: '',
+                color_id: '',
+                color_name: '',
+                pack_number: ''
+              }
+            ],
+            info_data: [
+              {
+                first_box_number: '',
+                last_box_number: '',
+                box_count: '',
+                box_gross_weight: '',
+                box_net_weight: '',
+                total_gross_weight: '',
+                total_net_weight: '',
+                length: '',
+                width: '',
+                height: '',
+                single_bulk: '',
+                total_bulk: '',
+                desc: '',
+                product_info: [
+                  {
+                    product_id: '',
+                    size_id: '',
+                    color_id: '',
+                    pack_number: ''
+                  }
+                ]
+              }
+            ],
+            desc: ''
+          }
+        ],
+        gather_info: [
+          {
+            unit: '',
+            number: '',
+            pack_material_id: '',
+            length: '',
+            width: '',
+            height: '',
+            desc: '',
+            file_url: ''
           }
         ]
       },
@@ -741,7 +1170,204 @@ export default Vue.extend({
           }
         })
       }
-    }
+    },
+    // 1合并装箱 2单独装箱
+    goPlanPack(type: 1 | 2) {
+      this.resetPlanPack()
+      if (type === 1) {
+        this.packPlanInfo.data[0].product_info = []
+      } else {
+        this.packPlanInfo.data = []
+      }
+      ;(this.orderInfo.time_data as OrderTime[])[0].batch_data.forEach((item) => {
+        item.product_data.forEach((itemPro) => {
+          itemPro.product_info.forEach((itemChild) => {
+            if (itemChild.check) {
+              if (type === 1) {
+                this.packPlanInfo.data[0].product_info.push({
+                  product_show_info:
+                    itemPro.product_code + '(' + itemPro.category + '/' + itemPro.secondary_category + ')',
+                  product_id: itemPro.product_id,
+                  size_id: itemChild.size_id,
+                  size_name: itemChild.size_name,
+                  color_id: itemChild.color_id,
+                  color_name: itemChild.color_name,
+                  pack_number: ''
+                })
+              } else {
+                this.packPlanInfo.data.push({
+                  product_info: [
+                    {
+                      product_show_info:
+                        itemPro.product_code + '(' + itemPro.category + '/' + itemPro.secondary_category + ')',
+                      product_id: itemPro.product_id,
+                      size_id: itemChild.size_id,
+                      size_name: itemChild.size_name,
+                      color_id: itemChild.color_id,
+                      color_name: itemChild.color_name,
+                      pack_number: ''
+                    }
+                  ],
+                  info_data: [
+                    {
+                      first_box_number: '',
+                      last_box_number: '',
+                      box_count: '',
+                      box_gross_weight: '',
+                      box_net_weight: '',
+                      total_gross_weight: '',
+                      total_net_weight: '',
+                      length: '',
+                      width: '',
+                      height: '',
+                      single_bulk: '',
+                      total_bulk: '',
+                      desc: '',
+                      product_info: [
+                        {
+                          product_id: '',
+                          size_id: '',
+                          color_id: '',
+                          pack_number: ''
+                        }
+                      ]
+                    }
+                  ],
+                  desc: ''
+                })
+              }
+            }
+          })
+        })
+      })
+      if (this.packPlanInfo.data.length === 0 || this.packPlanInfo.data[0].product_info.length === 0) {
+        this.$message.error('请选择发货信息计划装箱')
+        return
+      }
+      console.log(this.packPlanInfo)
+      this.packPlanInfo.data.forEach((item) => {
+        item.info_data = []
+        this.addPlanPack(item)
+      })
+      this.packPlanFlag = true
+    },
+    // 新增包装
+    addPlanPack(father: PackPlanInfoData) {
+      father.info_data.push({
+        first_box_number: '',
+        last_box_number: '',
+        box_count: '',
+        box_gross_weight: '',
+        box_net_weight: '',
+        total_gross_weight: '',
+        total_net_weight: '',
+        length: '',
+        width: '',
+        height: '',
+        single_bulk: '',
+        total_bulk: '',
+        desc: '',
+        product_info: father.product_info.map((item) => {
+          return {
+            product_show_info: item.product_show_info + '/' + item.size_name + '/' + item.color_name,
+            product_id: item.product_id,
+            size_id: item.size_id,
+            color_id: item.color_id,
+            pack_number: ''
+          }
+        })
+      })
+    },
+    resetPlanPack() {
+      this.packPlanInfo = {
+        id: '',
+        order_id: '',
+        delivery_time: this.$getDate(new Date()),
+        delivery_batch: '',
+        batch_name: '',
+        total_delivery_number: '',
+        data: [
+          {
+            product_info: [
+              {
+                product_show_info: '',
+                product_id: '',
+                size_id: '',
+                size_name: '',
+                color_id: '',
+                color_name: '',
+                pack_number: ''
+              }
+            ],
+            info_data: [
+              {
+                first_box_number: '',
+                last_box_number: '',
+                box_count: '',
+                box_gross_weight: '',
+                box_net_weight: '',
+                total_gross_weight: '',
+                total_net_weight: '',
+                length: '',
+                width: '',
+                height: '',
+                single_bulk: '',
+                total_bulk: '',
+                desc: '',
+                product_info: [
+                  {
+                    product_id: '',
+                    size_id: '',
+                    color_id: '',
+                    pack_number: ''
+                  }
+                ]
+              }
+            ],
+            desc: ''
+          }
+        ],
+        gather_info: [
+          {
+            unit: '',
+            number: '',
+            pack_material_id: '',
+            length: '',
+            width: '',
+            height: '',
+            desc: '',
+            file_url: ''
+          }
+        ]
+      }
+    },
+    computedPackOrder() {
+      this.packPlanInfo.gather_info = []
+      this.packPlanInfo.data.forEach((item) => {
+        item.info_data.forEach((itemPack) => {
+          const finded = this.packPlanInfo.gather_info.find(
+            (item) =>
+              item.length === itemPack.length && item.width === itemPack.width && item.height === itemPack.height
+          )
+          if (finded) {
+            finded.number = Number(finded.number) + Number(itemPack.box_count)
+          } else {
+            this.packPlanInfo.gather_info.push({
+              unit: '',
+              number: Number(itemPack.box_count),
+              pack_material_id: '',
+              length: itemPack.length,
+              width: itemPack.width,
+              height: itemPack.height,
+              desc: '',
+              file_url: ''
+            })
+          }
+        })
+      })
+      this.packPlanStep = 2
+    },
+    savePlanPack() {}
   },
   mounted() {
     this.$checkCommonInfo([

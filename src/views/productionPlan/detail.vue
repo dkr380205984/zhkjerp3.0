@@ -349,7 +349,8 @@
                     <el-cascader placeholder="请选择加工单位"
                       v-model="item.client_id_arr"
                       :options="processClientList"
-                      @change="(ev)=>{item.client_id=ev[2]}"></el-cascader>
+                      @change="(ev)=>{item.client_id=ev[2]}"
+                      filterable></el-cascader>
                   </div>
                 </div>
                 <div class="col">
@@ -870,7 +871,8 @@
                     <el-cascader placeholder="请选择加工单位"
                       v-model="item.client_id_arr"
                       :options="processClientList"
-                      @change="(ev)=>{item.client_id=ev[2]}"></el-cascader>
+                      @change="(ev)=>{item.client_id=ev[2]}"
+                      filterable></el-cascader>
                   </div>
                 </div>
                 <div class="col">
@@ -1824,7 +1826,6 @@ export default Vue.extend({
       this.materialDivideFlag = ifShow
     },
     saveDivideProductionPlan() {
-      console.log(this.productionDivideInfo)
       const formcheck = this.productionDivideInfo.some((item) => {
         return (
           this.$formCheck(item, [
