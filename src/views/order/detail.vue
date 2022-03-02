@@ -266,12 +266,12 @@
             </div>
             <div class="tcol stateCtn">
               <div class="state"
-                @click="item.craft_list_id?$router.push('/craft/detail?id='+item.craft_list_id):$router.push('/craft/create?id=' + item.product_id)">
+                @click="item.craft_list_id?$openUrl('/craft/detail?id='+item.craft_list_id):$openUrl('/craft/create?id=' + item.product_id)">
                 <div class="circle"
                   :class="{'backGray':!item.craft_list_id,'backBlue':item.craft_list_id}">工</div>
               </div>
               <div class="state"
-                @click="item.rel_quote_info.quote_id?$router.push('/quotedPrice/detail?id='+item.rel_quote_info.quote_id):$router.push('/quotedPrice/create?orderId=' + $route.query.id + '&order_product_id='+item.id)">
+                @click="item.rel_quote_info.quote_id?$openUrl('/quotedPrice/detail?id='+item.rel_quote_info.quote_id):$openUrl('/quotedPrice/create?orderId=' + $route.query.id + '&product_id='+item.product_id)">
                 <div class="circle"
                   :class="{'backGray':!item.rel_quote_info.quote_id,'backBlue':item.rel_quote_info.quote_id}">报</div>
               </div>

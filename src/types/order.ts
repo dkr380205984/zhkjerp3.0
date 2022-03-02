@@ -27,7 +27,7 @@ export interface OrderBatch {
     product_code?: string
     category?: string
     secondary_category?: string
-    quote_rel_product_id?: string | number
+    quote_product_id?: string | number
     quote_rel_product_info?: QuotedPriceProduct
     size_color_list: Array<{
       label: string
@@ -39,6 +39,7 @@ export interface OrderBatch {
       process_name: string
     }>
     product_info: Array<{
+      check?: boolean // 前端用
       material_info?: CraftMaterialInfo[] //有工艺单就有物料信息
       size_color?: string // 前端使用
       size_id: string | number
@@ -108,7 +109,7 @@ export interface OrderProductFlatten {
   secondary_category?: string
   part_data?: PartInfo[]
   plan_number?: string | number
-  quote_rel_product_id?: string | number
+  quote_product_id?: string | number
   quote_rel_product_info?: QuotedPriceProduct
   process_data?: Array<{
     process_id: number

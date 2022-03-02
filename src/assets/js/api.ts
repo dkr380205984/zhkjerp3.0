@@ -324,7 +324,7 @@ const quotedPrice = {
   detail: (params: DetailParams) => http.get(`${baseUrl}/quote/detail`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/quote/delete`, params, 'application/json'),
   settingCreate: (params: any) => http.post(`${baseUrl}/quote/demo/save`, params, 'application/json'),
-  bindOrder: (params: { quote_id: string | number, order_id: string | number }) => http.post(`${baseUrl}/order/bind/quote`, params, 'application/json'),
+  bindOrder: (params: { quote_product_id: string | number, product_id: string | number }) => http.post(`${baseUrl}/order/bind/quote`, params, 'application/json'),
   settingList: (params?: ListParams) => http.get(`${baseUrl}/quote/demo/lists`, params),
   settingDelete: (params: DeleteParams) => http.post(`${baseUrl}/quote/demo/delete`, params, 'application/json'),
   deleteProMat: (params: DeleteParams) => http.post(`${baseUrl}/quote/product/material/delete`, params, 'application/json'), //删除报价单产品原料项
@@ -375,6 +375,10 @@ const store = {
     page?: string | number
     limit?: string | number
   }) => http.get(`${baseUrl}/product/store/total/lists`, params),
+  proLog: (params: {
+    page?: string | number
+    limit?: string | number
+  }) => http.get(`${baseUrl}/product/store/log/lists`, params),
 }
 
 // 样品

@@ -212,7 +212,7 @@
     <div class="module"
       v-if="quotedPriceProductList.length>0">
       <div class="titleCtn">
-        <div class="title">报价样品表</div>
+        <div class="title">报价信息表</div>
       </div>
       <div class="tableCtn">
         <div class="thead">
@@ -804,7 +804,7 @@
       :show="addProductFlag"
       @close="addProductFlag = false"
       @afterSave="getNewProduct"
-      :quote_rel_product_id="quotedPriceProductInfo.id"
+      :quote_product_id="quotedPriceProductInfo.id"
       :quote_rel_product_data="quotedPriceProductInfo"></product-edit>
     <product-detail :data="productDetail"
       :show="productShow"
@@ -850,7 +850,7 @@ export default Vue.extend({
         pid: null,
         id: null,
         client_id: '',
-        group_id: '',
+        group_id: Number(this.$getLocalStorage('group_id')) || '',
         contacts_id: '',
         public_files: [],
         private_files: [],
@@ -1142,7 +1142,7 @@ export default Vue.extend({
           price: 0
         }
       })
-      info.quote_rel_product_id = product.quote_rel_product_id
+      info.quote_product_id = product.quote_product_id
     },
     getContacts(ev: number[]) {
       this.orderInfo.contacts_id = ''
@@ -1166,7 +1166,7 @@ export default Vue.extend({
       if (this.quotedPriceProductInfo) {
         // 标记一下报价产品已经转换了，不能二次转换了
         this.quotedPriceProductInfo.has_change = true
-        product.quote_rel_product_id = this.quotedPriceProductInfo.id
+        product.quote_product_id = this.quotedPriceProductInfo.id
       }
       this.productList.push(product)
       if (!this.orderInfo.time_data.batch_data[0].product_data[0].product_id) {
@@ -1174,7 +1174,7 @@ export default Vue.extend({
       }
       let productInfo = {
         product_id: product.id as number,
-        quote_rel_product_id: '',
+        quote_product_id: '',
         size_color_list: [], // 用于下拉框选择尺码颜色
         product_info: [
           {
@@ -1206,7 +1206,7 @@ export default Vue.extend({
           price: 0
         }
       })
-      productInfo.quote_rel_product_id = product.quote_rel_product_id as string
+      productInfo.quote_product_id = product.quote_product_id as string
       this.orderInfo.time_data.batch_data[0].product_data.push(productInfo)
     },
     getProductDetail(product: ProductInfo) {
@@ -1272,14 +1272,6 @@ export default Vue.extend({
               key: 'tree_data',
               errMsg: '请选择下单公司',
               regNormal: 'checkArr'
-            },
-            {
-              key: 'contacts_id',
-              errMsg: '请选择联系人'
-            },
-            {
-              key: 'group_id',
-              errMsg: '请选择负责小组'
             }
           ]) ||
           this.$formCheck(this.orderInfo.time_data, [

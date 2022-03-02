@@ -271,12 +271,10 @@
                         <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
                       </div>
                       <div class="tcol">
-                        <div class="trow"
-                          v-for="(itemImage,indexImage) in itemPro.image_data"
-                          :key="indexImage">
+                        <div class="trow">
                           <div class="imageCtn">
                             <el-image style="width:100%;height:100%;margin-top:2px"
-                              :src="itemPro.image_data.length>0?itemImage:''"
+                              :src="itemPro.image_data.length>0?itemPro.image_data[0]:''"
                               :preview-src-list="itemPro.image_data">
                               <div slot="error"
                                 class="image-slot">
@@ -461,6 +459,7 @@ export default Vue.extend({
                 desc: '',
                 product_data: [
                   {
+                    image_data: [],
                     product_id: '',
                     size_color_list: [], // 用于下拉框选择尺码颜色
                     product_info: [

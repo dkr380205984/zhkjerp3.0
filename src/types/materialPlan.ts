@@ -16,7 +16,7 @@ export interface MaterialPlanInfo {
     category?: string
     secondary_category?: string
     product_id: string | number
-    quote_rel_product_id?: string
+    quote_product_id?: string
     quote_rel_product_info?: QuotedPriceProduct
     part_data?: PartInfo[]
     process_data?: Array<{
@@ -32,7 +32,7 @@ export interface MaterialPlanInfo {
       size_name?: string
       add_percent: string | number
       order_number: number | string
-      quote_rel_product_id?: string | number
+      quote_product_id?: string | number
       number?: number | string | null // 后台给的不知道有什么软用
       info_data: Array<{
         id?: string

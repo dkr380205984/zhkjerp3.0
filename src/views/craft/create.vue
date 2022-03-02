@@ -3264,12 +3264,14 @@ export default Vue.extend({
           ]) ||
           this.craftInfo.warp_data.color_data.some((item) => {
             return (
-              // this.$formCheck(item, [
-              //   {
-              //     key: 'color_id',
-              //     errMsg: '请选择经向产品配色'
-              //   }
-              // ]) ||
+              (this.colourList.length > 0
+                ? this.$formCheck(item, [
+                    {
+                      key: 'color_id',
+                      errMsg: '请选择经向产品配色'
+                    }
+                  ])
+                : false) ||
               item.color_scheme.some((itemColor) => {
                 return this.$formCheck(itemColor, [
                   {
@@ -3282,12 +3284,14 @@ export default Vue.extend({
           }) ||
           this.craftInfo.weft_data.color_data.some((item) => {
             return (
-              // this.$formCheck(item, [
-              //   {
-              //     key: 'color_id',
-              //     errMsg: '请选择纬向产品配色'
-              //   }
-              // ]) ||
+              (this.colourList.length > 0
+                ? this.$formCheck(item, [
+                    {
+                      key: 'color_id',
+                      errMsg: '请选择纬向产品配色'
+                    }
+                  ])
+                : false) ||
               item.color_scheme.some((itemColor) => {
                 return this.$formCheck(itemColor, [
                   {

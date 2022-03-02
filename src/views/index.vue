@@ -271,6 +271,33 @@ export default Vue.extend({
           }
         })
       }
+    },
+    // 扫码枪监听事件
+    smqListener(e: any) {
+      let curryCode = e.which || e.keyCode
+      const curryTime = new Date().getTime()
+      if (curryCode === 13 && curryTime - this.lastTime <= 30) {
+        // 当按键为enter时调用callback
+        if (!this.code) return
+        if (this.scannerEvent) {
+          this.scannerEvent(this.code)
+        } else {
+          // 默认开新窗口跳转页面
+          this.$openUrl(this.code)
+        }
+        this.code = ''
+      } else if (curryCode === 16) {
+        this.lastTime = curryTime
+      } else if (curryCode === 13) {
+        this.lastTime = curryTime
+      } else {
+        if (curryTime - this.lastTime <= 30) {
+          this.code += e.key
+        } else if (curryTime - this.lastTime > 100) {
+          this.code = e.key
+        }
+        this.lastTime = curryTime
+      }
     }
   },
   computed: {
@@ -300,7 +327,12 @@ export default Vue.extend({
       }
     }
   },
-  mounted() {}
+  mounted() {
+    window.addEventListener('keydown', this.smqListener, false)
+  },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.smqListener, false)
+  }
 })
 </script>
 

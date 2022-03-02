@@ -27,13 +27,42 @@ export interface ProductStockInfo {
   desc: string
   store_id: string | number
   secondary_store_id: string | number
+  store: string
+  secondary_store: string
   store_arr?: number[] // 前端下拉框用
+  tree_data?: string[] | string
   info_data: Array<{
+    product_code?: string
+    name?: string
+    category?: string
+    secondary_category?: string
     product_id: string | number
     size_id: string | number
     color_id: string | number
-    color_size?: string // 前端选尺码颜色用
+    color_name?: string
+    size_name?: string
     price?: number | string
     number: number | string
+    color_size?: string
+  }>
+}
+
+export interface ProductStoreInfo {
+  id: number | string
+  check?: boolean
+  category: string
+  secondary_category: string
+  style_code: string
+  store: string
+  secondary_store: string
+  image_data: string[]
+  product_id: string | number
+  info_data: Array<{
+    check?: boolean
+    color_name: string
+    color_id: string | number
+    size_name: string
+    size_id: string | number
+    number: string | number
   }>
 }

@@ -32,7 +32,7 @@
                 :value="item.value"></el-option>
             </el-select>
           </div>
-          <div class="elCtn">
+          <!-- <div class="elCtn">
             <el-select v-model="order_type"
               @change="changeRouter">
               <el-option label="所有单据"
@@ -42,7 +42,7 @@
               <el-option label="样单"
                 :value="2"></el-option>
             </el-select>
-          </div>
+          </div> -->
           <div class="btn borderBtn"
             @click="reset">重置</div>
         </div>
@@ -125,7 +125,6 @@ export default Vue.extend({
     return {
       loading: true,
       list: [],
-      order_type: null,
       limitList: limitArr,
       limit: 10,
       keyword: '',
@@ -145,8 +144,6 @@ export default Vue.extend({
           name: '单据编号',
           ifShow: true,
           ifLock: true,
-          ifCaogao: 'order_type',
-          caogaoArr: ['订', '样'],
           index: 0
         },
         {
@@ -264,7 +261,6 @@ export default Vue.extend({
       this.status = query.status || '0'
       this.user_id = query.user_id || ''
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
-      this.order_type = Number(query.order_type) || null
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
     },
@@ -280,8 +276,6 @@ export default Vue.extend({
           this.user_id +
           '&group_id=' +
           this.group_id +
-          '&order_type=' +
-          this.order_type +
           '&date=' +
           this.date +
           '&limit=' +
@@ -316,7 +310,7 @@ export default Vue.extend({
       this.loading = true
       order
         .list({
-          order_type: this.order_type,
+          order_type: 1,
           keyword: this.keyword,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           page: this.page,

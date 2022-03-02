@@ -250,7 +250,8 @@
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-cascader placeholder="物料名称"
+                    <el-cascader filterable
+                      placeholder="物料名称"
                       :show-all-levels="false"
                       v-model="itemMat.tree_data"
                       :options="yarnTypeList"

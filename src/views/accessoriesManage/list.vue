@@ -272,7 +272,7 @@ export default Vue.extend({
     },
     changeRouter() {
       this.$router.push(
-        '/materialPlan/list?page=' +
+        '/accessoriesManage/list?page=' +
           this.page +
           '&keyword=' +
           this.keyword +
@@ -392,5 +392,5 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import '~@/assets/css/materialPlan/list.less';
+@import '~@/assets/css/accessoriesManage/list.less';
 </style>

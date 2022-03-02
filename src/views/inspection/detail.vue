@@ -29,6 +29,7 @@
                     <div class="tcol">已入库检验数量</div>
                   </div>
                 </div>
+                <div class="tcol">操作</div>
               </div>
             </div>
             <div class="tbody">
@@ -69,6 +70,13 @@
                     <div class="tcol">已完成数量</div>
                     <div class="tcol">{{itemPro.inspection_number}}</div>
                   </div>
+                </div>
+                <div class="tcol oprCtn">
+                  <div class="opr hoverGreen"
+                    @click="goDeduct(itemChild,3)">扣款</div>
+                  <div class="opr"
+                    :class="itemChild.deduct_data&&itemChild.deduct_data.length>0?'hoverBlue':'gray'"
+                    @click="getDeduct(itemChild.deduct_data)">扣款记录</div>
                 </div>
               </div>
             </div>
@@ -289,6 +297,15 @@
         </div>
       </div>
     </div>
+    <zh-deduct :show="deductFlag"
+      @close="deductFlag = false"
+      :type="deductInfo.type"
+      :id="deductInfo.doc_id"
+      :client_id="deductInfo.client_id"
+      :client_name="deductInfo.client_name"></zh-deduct>
+    <zh-deduct-detail :show="deductDetailFlag"
+      @close="deductDetailFlag = false"
+      :data="deductDetail"></zh-deduct-detail>
   </div>
 </template>
 
@@ -321,6 +338,15 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      deductFlag: false,
+      deductDetailFlag: false,
+      deductDetail: [],
+      deductInfo: {
+        client_id: '',
+        client_name: '',
+        doc_id: '',
+        type: 2
+      },
       orderInfo: {
         id: null,
         client_id: '',
@@ -465,6 +491,22 @@ export default Vue.extend({
         console.log(this.inspectionList)
         this.loading = false
       })
+    },
+    // 扣款
+    goDeduct(info: any, type: 3) {
+      this.deductInfo.client_id = info.client_id
+      this.deductInfo.client_name = info.client_name
+      this.deductInfo.doc_id = info.id
+      this.deductInfo.type = type
+      this.deductFlag = true
+    },
+    getDeduct(info: any[]) {
+      if (!info || info.length === 0) {
+        this.$message.warning('暂无扣款信息')
+      } else {
+        this.deductDetail = info
+        this.deductDetailFlag = true
+      }
     },
     goInspection(type: 1 | 2) {
       if (this.checkList.length === 0) {

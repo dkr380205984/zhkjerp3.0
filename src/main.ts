@@ -49,6 +49,21 @@ Vue.filter('materialStockTypeClassFilter', (val: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
   }
 })
 
+// 产品出入库状态转换
+import { productStockType } from '@/assets/js/dictionary'
+Vue.filter('productStockTypeFilter', (val: 1 | 2 | 3 | 4 | 5 | 6) => {
+  return productStockType.find((item) => item.value === val)?.name
+})
+
+// 产品出入库状态转换 class
+Vue.filter('productStockTypeClassFilter', (val: 1 | 2 | 3 | 4 | 5 | 6) => {
+  if (val === 4 || val === 5 || val === 6) {
+    return 'orange'
+  } else {
+    return 'green'
+  }
+})
+
 // 订单状态
 Vue.filter('orderStatusFilter', (val: 0 | 1 | 2 | 3) => {
   const statusArr = ['', '已创建', '进行中', '已完成', '已结算', '已取消']

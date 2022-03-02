@@ -1,5 +1,5 @@
 export interface ProductInfo {
-  quote_rel_product_id?: number | string
+  quote_product_id?: number | string
   system_code?: string
   product_id?: number | string
   product_type: 1 // 1：产品 2：样品

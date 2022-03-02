@@ -190,27 +190,36 @@ export default Vue.extend({
           errVal: '0'
         },
         {
-          key: 'status',
-          name: '订单状态',
+          key: 'has_weave_plan',
+          name: '生产计划状态',
           ifShow: true,
           ifLock: false,
           index: 6,
-          filterArr: ['', '已创建', '进行中', '已完成', '已结算', '已取消'],
-          classArr: ['', 'orange', 'blue', 'green', 'green', 'red']
+          filterArr: ['', '已添加', '待添加'],
+          classArr: ['', 'green', 'orange']
+        },
+        {
+          key: 'push_progress',
+          name: '生产检验进度',
+          ifShow: true,
+          ifLock: false,
+          index: 7,
+          unit: '%',
+          errVal: '0'
         },
         {
           key: 'group_name',
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 7
+          index: 8
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 8
+          index: 9
         }
       ],
       pickerOptions: {

@@ -1,5 +1,5 @@
 export interface SampleInfo {
-  quote_rel_product_id?: number | string // 绑报价单产品id，通常用于报价转样单
+  quote_product_id?: number | string // 绑报价单产品id，通常用于报价转样单
   system_code?: string
   product_id?: string | number
   product_type: 2 // 1：产品 2：样品

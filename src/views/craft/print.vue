@@ -93,7 +93,7 @@
                 <div class="trow"
                   style="min-height:192px">
                   <div class="tcol w50 horizontal">经向排列</div>
-                  <template v-if="craftInfo.warp_data.warp_rank[0]&&craftInfo.warp_data.warp_rank[0].length>16">
+                  <template v-if="(craftInfo.warp_data.warp_rank[0]&&craftInfo.warp_data.warp_rank[0].length>16)||craftInfo.warp_data.back_status===1">
                     <div class="tcol noPad">
                       <div class="alignCenter">查看附件信息</div>
                     </div>
@@ -319,7 +319,7 @@
                   style="min-height:192px">
                   <div class="tcol w50 horizontal">纬向排列</div>
                   <div class="tcol noPad">
-                    <template v-if="craftInfo.weft_data.weft_rank[0]&&craftInfo.weft_data.weft_rank[0].length>16">
+                    <template v-if="(craftInfo.weft_data.weft_rank[0]&&craftInfo.weft_data.weft_rank[0].length>16)||craftInfo.weft_data.back_status===1">
                       <div class="tcol noPad">
                         <div class="alignCenter">查看附件信息</div>
                       </div>
@@ -382,7 +382,7 @@
                 style="min-height:205px">
                 <template v-if="ifShowColorWeight">
                   <div class="tcol noPad">
-                    <template v-if="colourInfoType===1">
+                    <template v-if="colourInfoType==='1'">
                       <div class="trow">
                         <div class="tcol label bgGray">经纬信息</div>
                         <div class="tcol noPad">
@@ -468,7 +468,7 @@
                         <div class="tcol label">{{itemColour.weave_number}}</div>
                       </div>
                     </template>
-                    <template v-if="colourInfoType===2">
+                    <template v-if="colourInfoType==='2'">
                       <div class="trow">
                         <div class="tcol w50 horizontal bgGray">配色工艺</div>
                         <div class="tcol noPad">
@@ -554,7 +554,7 @@
             </div>
           </div>
         </div>
-        <template v-if="craftInfo.warp_data.warp_rank[0]&&craftInfo.warp_data.warp_rank[0].length>16">
+        <template v-if="(craftInfo.warp_data.warp_rank[0]&&craftInfo.warp_data.warp_rank[0].length>16)||craftInfo.warp_data.back_status===1">
           <div class="tableCtn"
             v-for="(itemFather,indexFather) in $sliceToArray(craftInfo.warp_data.warp_rank[0], 16)"
             :key="indexFather + 'warp_rank'">
@@ -674,7 +674,7 @@
             </div>
           </div>
         </template>
-        <template v-if="craftInfo.weft_data.weft_rank[0]&&craftInfo.weft_data.weft_rank[0].length>16">
+        <template v-if="(craftInfo.weft_data.weft_rank[0]&&craftInfo.weft_data.weft_rank[0].length>16)||craftInfo.weft_data.back_status===1">
           <div class="tableCtn"
             v-for="(itemFather,indexFather) in $sliceToArray(craftInfo.weft_data.weft_rank[0], 16)"
             :key="indexFather + 'weft_rank'">
@@ -794,7 +794,7 @@
             </div>
           </div>
         </template>
-        <template v-if="colourInfoType===3">
+        <template v-if="colourInfoType==='3'">
           <div class="tableCtn">
             <div class="tbody hasTop">
               <div class="trow">
@@ -912,7 +912,7 @@
             </div>
           </div>
         </template>
-        <template v-if="!ifShowColorWeight&&colourInfoType===1">
+        <template v-if="!ifShowColorWeight&&colourInfoType==='1'">
           <div class="tableCtn"
             v-for="index in Math.ceil(maxJia/5)"
             :key="index">
@@ -992,17 +992,17 @@
                           :key="indexChild"
                           :style="indexChild===5?'border-right:0':''"
                           style="min-width:20%;max-width:20%;border-right:1px solid #010101">
-                          <template v-if="colorWeigth.warp_data[0].color_scheme[(indexChild+5*(index-1)-1)]&&colorWeigth.weft_data[0].color_scheme[(indexChild+5*(index-1)-1)]&&colorWeigth.warp_data[0].color_scheme[(indexChild+5*(index-1)-1)].name===colorWeigth.weft_data[0].color_scheme[(indexChild+5*(index-1)-1)].name">
+                          <template v-if="colorWeigth.warp_data[indexColour].color_scheme[(indexChild+5*(index-1)-1)]&&colorWeigth.weft_data[indexColour].color_scheme[(indexChild+5*(index-1)-1)]&&colorWeigth.warp_data[indexColour].color_scheme[(indexChild+5*(index-1)-1)].name===colorWeigth.weft_data[indexColour].color_scheme[(indexChild+5*(index-1)-1)].name">
                             <div class="tcol alignCenter"
                               style="max-width:100%;min-width:auto">
-                              {{colorWeigth.warp_data[0].color_scheme[(indexChild+5*(index-1)-1)].name}}
+                              {{colorWeigth.warp_data[indexColour].color_scheme[(indexChild+5*(index-1)-1)].name}}
                             </div>
                           </template>
                           <template v-else>
                             <div class="tcol alignCenter"
-                              style="max-width:100%;min-width:auto">{{colorWeigth.warp_data[0].color_scheme[(indexChild+5*(index-1)-1)]?colorWeigth.warp_data[0].color_scheme[(indexChild+5*(index-1)-1)].name:'无'}}</div>
+                              style="max-width:100%;min-width:auto">{{colorWeigth.warp_data[indexColour].color_scheme[(indexChild+5*(index-1)-1)]?colorWeigth.warp_data[indexColour].color_scheme[(indexChild+5*(index-1)-1)].name:'无'}}</div>
                             <div class="tcol alignCenter"
-                              style="max-width:100%;min-width:auto;border-right:0">{{colorWeigth.weft_data[0].color_scheme[(indexChild+5*(index-1)-1)]?colorWeigth.weft_data[0].color_scheme[(indexChild+5*(index-1)-1)].name:'无'}}</div>
+                              style="max-width:100%;min-width:auto;border-right:0">{{colorWeigth.weft_data[indexColour].color_scheme[(indexChild+5*(index-1)-1)]?colorWeigth.weft_data[indexColour].color_scheme[(indexChild+5*(index-1)-1)].name:'无'}}</div>
                           </template>
                         </div>
                       </div>
@@ -1115,7 +1115,8 @@
               style="width:8em;padding-top:12px">表格遍数模式：</span>
             <span class="info"
               style="height:auto">
-              <el-radio-group v-model="signType"
+              <el-radio-group @change="(ev)=>{$setLocalStorage('craftSignType',ev)}"
+                v-model="signType"
                 style="display:flex;flex-direction:column;justify-content:space-between;margin-top:10px">
                 <el-radio label="1">
                   <span class="labelCtn">
@@ -1156,12 +1157,13 @@
               style="width:7em;padding-top:12px">配色工艺排列：</span>
             <span class="info"
               style="height:auto">
-              <el-radio-group v-model="colourInfoType"
+              <el-radio-group @change="(ev)=>{$setLocalStorage('craftColourInfoType',ev)}"
+                v-model="colourInfoType"
                 style="display:flex;flex-direction:column;justify-content:space-between;margin-top:10px">
-                <el-radio :label="1"><span class="labelCtn">按主夹排列</span> </el-radio>
-                <el-radio :label="2"
+                <el-radio label="1"><span class="labelCtn">按主夹排列</span> </el-radio>
+                <el-radio label="2"
                   v-if="colorWeigth.warp_data[0].color_scheme.length + colorWeigth.weft_data[0].color_scheme.length <=10"><span class="labelCtn">按经纬排列</span> </el-radio>
-                <el-radio :label="3"><span class="labelCtn">按经纬排列，且不缩小字体</span> </el-radio>
+                <el-radio label="3"><span class="labelCtn">按经纬排列，且不缩小字体</span> </el-radio>
               </el-radio-group>
             </span>
           </div>
@@ -1205,7 +1207,8 @@ export default Vue.extend({
   } {
     return {
       fontSize: 14,
-      signType: '3',
+      signType: this.$getLocalStorage('craftSignType') || '3',
+      colourInfoType: this.$getLocalStorage('craftColourInfoType') || '1',
       qrCodeUrl: '',
       company_name: window.sessionStorage.getItem('company_name'),
       X_position: 0,
@@ -1428,7 +1431,6 @@ export default Vue.extend({
           }
         ]
       },
-      colourInfoType: 1,
       // 工艺单展平信息用于梭数计算
       flatInfo: {
         warp: {
@@ -1776,7 +1778,7 @@ export default Vue.extend({
     // 是否展示配色克重信息
     ifShowColorWeight(): boolean {
       // 按主夹排列
-      if (this.colourInfoType === 1) {
+      if (this.colourInfoType === '1') {
         return (
           this.colorWeigth.warp_data[0].color_scheme &&
           this.colorWeigth.weft_data[0].color_scheme &&
@@ -1785,7 +1787,7 @@ export default Vue.extend({
             this.colorWeigth.weft_data[0].color_scheme.length
           ) <= 5
         )
-      } else if (this.colourInfoType === 2) {
+      } else if (this.colourInfoType === '2') {
         return true
       } else {
         return false
