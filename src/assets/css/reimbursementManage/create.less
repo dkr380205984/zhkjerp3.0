@@ -1,0 +1,42 @@
+@import '../common.less';
+@import '../edit.less';
+@import '../bottomBar.less';
+@import '../list.less';
+#reimbursementManageCreate{
+  .lineInfo{
+    position: relative;
+    height: 1px;
+    background: @borderColor;
+    margin: 20px 0;
+    color: @font65;
+    .text{
+      transform: translateY(-50%);
+      left: 32px;
+      position: absolute;
+      background: #fff;
+      font-size: @fontBig;
+      line-height: 24px;
+      padding: 0 8px;
+      color: @blue;
+    }
+    .deleteIcon{
+      transform: translateY(-50%);
+      right: 32px;
+      position: absolute;
+      cursor: pointer;
+      border: 1px solid;
+      color: @red;
+      background: #FFF1F0;
+      font-size: @fontMiddle;
+      line-height: 24px;
+      padding:0 8px;
+      border-radius: 4px;
+    }
+  }
+  .listCtn{
+    padding:20px 0;
+    .col{
+      margin-right: unset;
+    }
+  }
+}
