@@ -1630,12 +1630,12 @@ export default Vue.extend({
               )
             })
             // 如果是产品转报价，过滤掉其他产品
-            if (this.$route.query.product_id) {
-              this.quotedPriceInfo
-              this.quotedPriceInfo.product_data = this.quotedPriceInfo.product_data.filter(
-                (item) => Number(item.order_product_id) === Number(this.$route.query.order_product_id)
-              )
-            }
+            // if (this.$route.query.product_id) {
+            //   this.quotedPriceInfo
+            //   this.quotedPriceInfo.product_data = this.quotedPriceInfo.product_data.filter(
+            //     (item) => Number(item.order_product_id) === Number(this.$route.query.order_product_id)
+            //   )
+            // }
           }
           this.loading = false
         })

@@ -1226,18 +1226,18 @@ export default Vue.extend({
         })
     },
     saveBindOrder() {
-      quotedPrice
-        .bindOrder({
-          quote_id: Number(this.quotedList[this.quotedIndex]),
-          order_id: Number(this.bindOrderId)
-        })
-        .then((res) => {
-          if (res.data.status) {
-            this.$message.success('绑定成功')
-            this.bindOrderFlag = false
-            this.init()
-          }
-        })
+      // quotedPrice
+      //   .bindOrder({
+          // quote_id: Number(this.quotedList[this.quotedIndex]),
+          // order_id: Number(this.bindOrderId)
+        // })
+        // .then((res) => {
+        //   if (res.data.status) {
+        //     this.$message.success('绑定成功')
+        //     this.bindOrderFlag = false
+        //     this.init()
+        //   }
+        // })
     },
     searchOrder(str: string, cb: any) {
       if (str) {

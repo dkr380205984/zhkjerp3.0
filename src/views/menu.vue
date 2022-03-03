@@ -31,7 +31,7 @@
         </div>
       </div>
     </div>
-    <div class="module">
+    <!-- <div class="module">
       <div class="titleCtn">
         <div class="title">财务管理</div>
       </div>
@@ -43,7 +43,7 @@
           <p class="name">{{ item.name }}</p>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script lang="ts">
@@ -141,12 +141,12 @@ export default Vue.extend({
           }
         ],
         // finance: [
-          // {
-          //   name: '报销单管理',
-          //   id: '18-3',
-          //   icon: 'icon-chexiaodanguanli',
-          //   url: '/reimbursementManage/list?page=1&status=null'
-          // }
+        //   {
+        //     name: '报销单管理',
+        //     id: '18-3',
+        //     icon: 'icon-chexiaodanguanli',
+        //     url: '/reimbursementManage/list?page=1&status=null'
+        //   }
         // ]
       }
     }
