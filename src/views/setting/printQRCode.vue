@@ -1,6 +1,6 @@
 <template>
   <div class="printContainer"
-    id="quotedPricePrint"
+    id="companyLoginCodePrint"
     @click="showMenu = false"
     @click.right="handleClickRight">
     <div class="pmain" style="text-align: center;">
@@ -8,15 +8,9 @@
         <div class="ptitle">{{ company_name + '工厂注册码' }}</div>
       </div>
       <div class="pbody">
-        <div class="tableCtn pageOne">
+        <div class="tableCtn pageOne" style="margin-top:50px">
           <div class="module">
-            <img :src="qrCodeUrl" width="1000px">
-          </div>
-          <div class="phead">
-              <div class="ptitle">织为云外协生产小程序</div>
-          </div>
-          <div class="phead">
-              <div class="ptitle">微信扫一扫，在线管理加工单进度</div>
+            <img :src="qrCodeUrl" style="width:750px">
           </div>
         </div>
       </div>
@@ -35,7 +29,6 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { QuotedPriceInfo } from '@/types/quotedPrice'
 import { clientBind } from '@/assets/js/api'
 export default Vue.extend({
   data(): {
@@ -77,5 +70,5 @@ export default Vue.extend({
 })
 </script>
 <style lang="less" scoped>
-@import '~@/assets/css/quotedPrice/print.less';
+@import '~@/assets/css/setting/printQRCode.less';
 </style>
