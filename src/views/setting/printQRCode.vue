@@ -8,7 +8,7 @@
         <div class="ptitle">{{ company_name + '工厂注册码' }}</div>
       </div>
       <div class="pbody">
-        <div class="tableCtn pageOne" style="margin-top:50px">
+        <div class="tableCtn pageOne" style="margin-top:25px">
           <div class="module">
             <img :src="qrCodeUrl" style="width:750px">
           </div>
