@@ -968,7 +968,7 @@ export default Vue.extend({
           price: 0
         }
       })
-      productInfo.quote_rel_product_id = product.quote_rel_product_id as string
+      // productInfo.quote_rel_product_id = product.quote_rel_product_id as string
       this.orderInfo.time_data.batch_data[0].product_data.push(productInfo)
     },
     getProductDetail(product: ProductInfo) {

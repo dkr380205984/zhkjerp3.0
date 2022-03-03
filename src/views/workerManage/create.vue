@@ -1,5 +1,7 @@
 <template>
-  <div id="workerManageCreate" class="bodyContainer" v-loading="loading">
+  <div id="workerManageCreate"
+    class="bodyContainer"
+    v-loading="loading">
     <div class="module">
       <div class="titleCtn">
         <div class="title">添加员工</div>
@@ -12,7 +14,8 @@
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工姓名" v-model="quotedPriceInfo.title"></el-input>
+              <el-input placeholder="请输入员工姓名"
+                v-model="quotedPriceInfo.title"></el-input>
             </div>
           </div>
           <div class="col">
@@ -20,24 +23,28 @@
               <span class="text">手机号</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工手机号" v-model="quotedPriceInfo.title"></el-input>
+              <el-input placeholder="请输入员工手机号"
+                v-model="quotedPriceInfo.title"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">
               <span class="text">所属部门</span>
               <span class="explanation">(必选)</span>
-              <span class="explanation fr" style="color: #1a95ff" @click="addDepartment()">+ 添加新部门</span>
+              <span class="explanation fr"
+                style="color: #1a95ff"
+                @click="addDepartment()">+ 添加新部门</span>
             </div>
             <div class="info elCtn">
-              <el-select
-                placeholder="请选择部门"
+              <el-select placeholder="请选择部门"
                 v-model="quotedPriceInfo.contacts_id"
                 no-data-text="请先选择询价客户"
                 clearable
-                :disabled="!!$route.query.again"
-              >
-                <el-option v-for="item in contactsList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+                :disabled="!!$route.query.again">
+                <el-option v-for="item in contactsList"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.name"></el-option>
               </el-select>
             </div>
           </div>
@@ -49,13 +56,14 @@
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-select
-                placeholder="请选择员工工种"
+              <el-select placeholder="请选择员工工种"
                 v-model="quotedPriceInfo.group_id"
                 clearable
-                :disabled="!!$route.query.again"
-              >
-                <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+                :disabled="!!$route.query.again">
+                <el-option v-for="item in groupList"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.name"></el-option>
               </el-select>
             </div>
           </div>
@@ -64,7 +72,9 @@
               <span class="text">入职时间</span>
             </div>
             <div class="info elCtn">
-              <el-date-picker v-model="indate" type="date" placeholder="选择日期"> </el-date-picker>
+              <el-date-picker v-model="indate"
+                type="date"
+                placeholder="选择日期"> </el-date-picker>
             </div>
           </div>
           <div class="col">
@@ -72,7 +82,9 @@
               <span class="text">离职时间</span>
             </div>
             <div class="info elCtn">
-              <el-date-picker v-model="outdate" type="date" placeholder="选择日期"> </el-date-picker>
+              <el-date-picker v-model="outdate"
+                type="date"
+                placeholder="选择日期"> </el-date-picker>
             </div>
           </div>
         </div>
@@ -83,7 +95,10 @@
             </div>
             <div class="info elCtn checkbox">
               <el-checkbox-group v-model="chooseProcess">
-                <el-checkbox-button style="margin-left:10px;margin-top:10px" v-for="item in workProcedure" :label="item.label" :key="item.label">{{ item.label }}</el-checkbox-button>
+                <el-checkbox-button style="margin-left:10px;margin-top:10px"
+                  v-for="item in workProcedure"
+                  :label="item.label"
+                  :key="item.label">{{ item.label }}</el-checkbox-button>
               </el-checkbox-group>
             </div>
           </div>
@@ -92,10 +107,13 @@
           <div class="col">
             <div class="info elCtn">
               <div class="row newProcess">
-                <div class="col" style="flex:2">
-                  <el-input placeholder="请输入新工序名称" v-model="quotedPriceInfo.title"></el-input>
+                <div class="col"
+                  style="flex:2">
+                  <el-input placeholder="请输入新工序名称"
+                    v-model="quotedPriceInfo.title"></el-input>
                 </div>
-                <div class="col el-btn" style="flex:1">
+                <div class="col el-btn"
+                  style="flex:1">
                   <el-button>+ 添加新工序</el-button>
                 </div>
               </div>
@@ -107,12 +125,13 @@
       </div>
     </div>
     <div class="module">
-      <div class="titleCtn" style="border-bottom: 0">
+      <div class="titleCtn"
+        style="border-bottom: 0">
         <div class="title">
           其它信息（全部为选填）
-          <span class="orange" style="font-size: 14px" v-if="$route.query.again || $route.query.product_id"
-            >(订单产品转报价/再次报价不能新增或者删除产品)</span
-          >
+          <span class="orange"
+            style="font-size: 14px"
+            v-if="$route.query.again || $route.query.product_id">(订单产品转报价/再次报价不能新增或者删除产品)</span>
         </div>
       </div>
       <div class="editCtn">
@@ -122,19 +141,22 @@
               <span class="text">年龄</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工年龄" v-model="quotedPriceInfo.title"></el-input>
+              <el-input placeholder="请输入员工年龄"
+                v-model="quotedPriceInfo.title"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">性别</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工性别" v-model="client_target_price"></el-input>
+              <el-input placeholder="请输入员工性别"
+                v-model="client_target_price"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">身份证号码</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工身份证号码" v-model="start_order_number"></el-input>
+              <el-input placeholder="请输入员工身份证号码"
+                v-model="start_order_number"></el-input>
             </div>
           </div>
         </div>
@@ -142,19 +164,22 @@
           <div class="col">
             <div class="label">民族</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工民族" v-model="desc"></el-input>
+              <el-input placeholder="请输入员工民族"
+                v-model="desc"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">学历</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工学历" v-model="desc"></el-input>
+              <el-input placeholder="请输入员工学历"
+                v-model="desc"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">健康状况</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工健康状况" v-model="desc"></el-input>
+              <el-input placeholder="请输入员工健康状况"
+                v-model="desc"></el-input>
             </div>
           </div>
         </div>
@@ -162,19 +187,22 @@
           <div class="col">
             <div class="label">工资卡银行</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入卡银行" v-model="desc"></el-input>
+              <el-input placeholder="请输入卡银行"
+                v-model="desc"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">银行卡号</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入银行卡号" v-model="desc"></el-input>
+              <el-input placeholder="请输入银行卡号"
+                v-model="desc"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">是否缴纳社保</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入是否缴纳社保" v-model="desc"></el-input>
+              <el-input placeholder="请输入是否缴纳社保"
+                v-model="desc"></el-input>
             </div>
           </div>
         </div>
@@ -182,7 +210,8 @@
           <div class="col">
             <div class="label">备注</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入其它备注" v-model="desc"></el-input>
+              <el-input placeholder="请输入其它备注"
+                v-model="desc"></el-input>
             </div>
           </div>
         </div>
@@ -190,16 +219,17 @@
     </div>
     <div class="bottomFixBar">
       <div class="main">
-        <div class="fl" style="line-height: 56px">
-          合计：<span class="blue"
-            >{{ realTotalPrice }}元<span v-if="quotedPriceInfo.settle_unit !== '元'">{{
+        <div class="fl"
+          style="line-height: 56px">
+          合计：<span class="blue">{{ realTotalPrice }}元<span v-if="quotedPriceInfo.settle_unit !== '元'">{{
               '/' + realTotalPriceChange + quotedPriceInfo.settle_unit
-            }}</span></span
-          >
+            }}</span></span>
         </div>
         <div class="btnCtn">
-          <div class="borderBtn" @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverBlue" @click="saveQuotedPrice(false)">提交</div>
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
+          <div class="btn backHoverBlue"
+            @click="saveQuotedPrice(false)">提交</div>
         </div>
       </div>
     </div>
@@ -1632,9 +1662,9 @@ export default Vue.extend({
             // 如果是产品转报价，过滤掉其他产品
             if (this.$route.query.product_id) {
               this.quotedPriceInfo
-              this.quotedPriceInfo.product_data = this.quotedPriceInfo.product_data.filter(
-                (item) => Number(item.order_product_id) === Number(this.$route.query.order_product_id)
-              )
+              // this.quotedPriceInfo.product_data = this.quotedPriceInfo.product_data.filter(
+              //   (item) => Number(item.order_product_id) === Number(this.$route.query.order_product_id)
+              // )
             }
           }
           this.loading = false
@@ -1659,24 +1689,24 @@ export default Vue.extend({
     padding: 0;
   }
 
-  .el-checkbox-button .el-checkbox-button__inner{
+  .el-checkbox-button .el-checkbox-button__inner {
     border-radius: 4px;
-    border: 1px solid #D9D9D9;
-    background: #F5F5F5;
+    border: 1px solid #d9d9d9;
+    background: #f5f5f5;
     color: rgba(0, 0, 0, 65%);
     padding: 4px 23px;
   }
-  
-  .el-checkbox-button.is-checked .el-checkbox-button__inner{
+
+  .el-checkbox-button.is-checked .el-checkbox-button__inner {
     border-radius: 4px;
-    border: 1px solid #D9D9D9;
-    color: #FFF;
-    background-color: #409EFF;
-    border-color: #409EFF;
+    border: 1px solid #d9d9d9;
+    color: #fff;
+    background-color: #409eff;
+    border-color: #409eff;
     padding: 4px 23px;
-    box-shadow: unset ;
+    box-shadow: unset;
   }
-  .el-btn .el-button{
+  .el-btn .el-button {
     height: 32px;
     padding: 6px 20px;
   }

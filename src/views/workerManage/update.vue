@@ -32,7 +32,9 @@
             <div class="label">
               <span class="text">所属部门</span>
               <span class="explanation">(必选)</span>
-              <span class="explanation fr" style="color: #1a95ff" @click="addDepartment()">+ 添加新部门</span>
+              <span class="explanation fr"
+                style="color: #1a95ff"
+                @click="addDepartment()">+ 添加新部门</span>
             </div>
             <div class="info elCtn">
               <el-select placeholder="请选择部门"
@@ -66,7 +68,9 @@
               <span class="text">入职时间</span>
             </div>
             <div class="info elCtn">
-              <el-date-picker v-model="indate" type="date" placeholder="选择日期"> </el-date-picker>
+              <el-date-picker v-model="indate"
+                type="date"
+                placeholder="选择日期"> </el-date-picker>
             </div>
           </div>
           <div class="col">
@@ -74,18 +78,23 @@
               <span class="text">离职时间</span>
             </div>
             <div class="info elCtn">
-              <el-date-picker v-model="outdate" type="date" placeholder="选择日期"> </el-date-picker>
+              <el-date-picker v-model="outdate"
+                type="date"
+                placeholder="选择日期"> </el-date-picker>
             </div>
           </div>
         </div>
         <div class="row">
-           <div class="col">
+          <div class="col">
             <div class="label">
               <span class="text">负责工序</span>
             </div>
             <div class="info elCtn checkbox">
               <el-checkbox-group v-model="chooseProcess">
-                <el-checkbox-button style="margin-left:10px;margin-top:10px" v-for="item in workProcedure" :label="item.label" :key="item.label">{{ item.label }}</el-checkbox-button>
+                <el-checkbox-button style="margin-left:10px;margin-top:10px"
+                  v-for="item in workProcedure"
+                  :label="item.label"
+                  :key="item.label">{{ item.label }}</el-checkbox-button>
               </el-checkbox-group>
             </div>
           </div>
@@ -94,10 +103,13 @@
           <div class="col">
             <div class="info elCtn">
               <div class="row newProcess">
-                <div class="col" style="flex:2">
-                  <el-input placeholder="请输入新工序名称" v-model="title"></el-input>
+                <div class="col"
+                  style="flex:2">
+                  <el-input placeholder="请输入新工序名称"
+                    v-model="title"></el-input>
                 </div>
-                <div class="col el-btn" style="flex:1">
+                <div class="col el-btn"
+                  style="flex:1">
                   <el-button>+ 添加新工序</el-button>
                 </div>
               </div>
@@ -109,12 +121,13 @@
       </div>
     </div>
     <div class="module">
-      <div class="titleCtn" style="border-bottom: 0">
+      <div class="titleCtn"
+        style="border-bottom: 0">
         <div class="title">
           其它信息（全部为选填）
-          <span class="orange" style="font-size: 14px" v-if="$route.query.again || $route.query.product_id"
-            >(订单产品转报价/再次报价不能新增或者删除产品)</span
-          >
+          <span class="orange"
+            style="font-size: 14px"
+            v-if="$route.query.again || $route.query.product_id">(订单产品转报价/再次报价不能新增或者删除产品)</span>
         </div>
       </div>
       <div class="editCtn">
@@ -124,19 +137,22 @@
               <span class="text">年龄</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工年龄" v-model="title"></el-input>
+              <el-input placeholder="请输入员工年龄"
+                v-model="title"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">性别</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工性别" v-model="client_target_price"></el-input>
+              <el-input placeholder="请输入员工性别"
+                v-model="client_target_price"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">身份证号码</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工身份证号码" v-model="start_order_number"></el-input>
+              <el-input placeholder="请输入员工身份证号码"
+                v-model="start_order_number"></el-input>
             </div>
           </div>
         </div>
@@ -144,19 +160,22 @@
           <div class="col">
             <div class="label">民族</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工民族" v-model="desc"></el-input>
+              <el-input placeholder="请输入员工民族"
+                v-model="desc"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">学历</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工学历" v-model="desc"></el-input>
+              <el-input placeholder="请输入员工学历"
+                v-model="desc"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">健康状况</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工健康状况" v-model="desc"></el-input>
+              <el-input placeholder="请输入员工健康状况"
+                v-model="desc"></el-input>
             </div>
           </div>
         </div>
@@ -164,19 +183,22 @@
           <div class="col">
             <div class="label">工资卡银行</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入卡银行" v-model="desc"></el-input>
+              <el-input placeholder="请输入卡银行"
+                v-model="desc"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">银行卡号</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入银行卡号" v-model="desc"></el-input>
+              <el-input placeholder="请输入银行卡号"
+                v-model="desc"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">是否缴纳社保</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入是否缴纳社保" v-model="desc"></el-input>
+              <el-input placeholder="请输入是否缴纳社保"
+                v-model="desc"></el-input>
             </div>
           </div>
         </div>
@@ -184,7 +206,8 @@
           <div class="col">
             <div class="label">备注</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入其它备注" v-model="desc"></el-input>
+              <el-input placeholder="请输入其它备注"
+                v-model="desc"></el-input>
             </div>
           </div>
         </div>
@@ -231,10 +254,10 @@ export default Vue.extend({
     return {
       loading: true,
       showTable: true,
-      outdate:'',
-      indate:'',
+      outdate: '',
+      indate: '',
       unitArr: moneyArr,
-           workProcedure: [
+      workProcedure: [
         {
           label: '拉毛',
           value: '0'
@@ -643,46 +666,46 @@ export default Vue.extend({
       }
     },
     getNewProduct(product: ProductInfo) {
-      this.productList.push(product)
-      if (!this.orderInfo.time_data.batch_data[0].product_data[0].product_id) {
-        this.orderInfo.time_data.batch_data[0].product_data = []
-      }
-      let productInfo = {
-        product_id: product.id as number,
-        quote_rel_product_id: '',
-        size_color_list: [], // 用于下拉框选择尺码颜色
-        product_info: [
-          {
-            size_color: '', // 用于下拉框选择尺码颜色
-            size_id: '',
-            color_id: '',
-            number: '',
-            price: ''
-          }
-        ]
-      }
-      product.size_data.forEach((itemSize: any) => {
-        product.color_data.forEach((itemColor: any) => {
-          productInfo.size_color_list.push({
-            // @ts-ignore
-            label: itemSize.name + '/' + itemColor.name,
-            // @ts-ignore
-            value: itemSize.id + '/' + itemColor.id
-          })
-        })
-      })
-      // @ts-ignore
-      productInfo.product_info = productInfo.size_color_list.map((item: any) => {
-        return {
-          size_color: item.value,
-          size_id: item.value.split('/')[0],
-          color_id: item.value.split('/')[1],
-          number: '',
-          price: 0
-        }
-      })
-      productInfo.quote_rel_product_id = product.quote_rel_product_id as string
-      this.orderInfo.time_data.batch_data[0].product_data.push(productInfo)
+      // this.productList.push(product)
+      // if (!this.orderInfo.time_data.batch_data[0].product_data[0].product_id) {
+      //   this.orderInfo.time_data.batch_data[0].product_data = []
+      // }
+      // let productInfo = {
+      //   product_id: product.id as number,
+      //   quote_rel_product_id: '',
+      //   size_color_list: [], // 用于下拉框选择尺码颜色
+      //   product_info: [
+      //     {
+      //       size_color: '', // 用于下拉框选择尺码颜色
+      //       size_id: '',
+      //       color_id: '',
+      //       number: '',
+      //       price: ''
+      //     }
+      //   ]
+      // }
+      // product.size_data.forEach((itemSize: any) => {
+      //   product.color_data.forEach((itemColor: any) => {
+      //     productInfo.size_color_list.push({
+      //       // @ts-ignore
+      //       label: itemSize.name + '/' + itemColor.name,
+      //       // @ts-ignore
+      //       value: itemSize.id + '/' + itemColor.id
+      //     })
+      //   })
+      // })
+      // // @ts-ignore
+      // productInfo.product_info = productInfo.size_color_list.map((item: any) => {
+      //   return {
+      //     size_color: item.value,
+      //     size_id: item.value.split('/')[0],
+      //     color_id: item.value.split('/')[1],
+      //     number: '',
+      //     price: 0
+      //   }
+      // })
+      // productInfo.quote_rel_product_id = product.quote_rel_product_id as string
+      // this.orderInfo.time_data.batch_data[0].product_data.push(productInfo)
     },
     getProductDetail(product: ProductInfo) {
       this.productShow = true
@@ -960,24 +983,24 @@ export default Vue.extend({
     }
   }
 
-  .el-checkbox-button .el-checkbox-button__inner{
+  .el-checkbox-button .el-checkbox-button__inner {
     border-radius: 4px;
-    border: 1px solid #D9D9D9;
-    background: #F5F5F5;
+    border: 1px solid #d9d9d9;
+    background: #f5f5f5;
     color: rgba(0, 0, 0, 65%);
     padding: 4px 23px;
   }
-  
-  .el-checkbox-button.is-checked .el-checkbox-button__inner{
+
+  .el-checkbox-button.is-checked .el-checkbox-button__inner {
     border-radius: 4px;
-    border: 1px solid #D9D9D9;
-    color: #FFF;
-    background-color: #409EFF;
-    border-color: #409EFF;
+    border: 1px solid #d9d9d9;
+    color: #fff;
+    background-color: #409eff;
+    border-color: #409eff;
     padding: 4px 23px;
-    box-shadow: unset ;
+    box-shadow: unset;
   }
-  .el-btn .el-button{
+  .el-btn .el-button {
     height: 32px;
     padding: 6px 20px;
   }
