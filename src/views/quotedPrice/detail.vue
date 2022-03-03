@@ -921,7 +921,7 @@
                 <el-radio v-for="item in orderProList"
                   :key="item.system_code"
                   v-model="bindProId"
-                  :label="item.id">{{item.system_code}}</el-radio>
+                  :label="item.product_id">{{item.product_code}}</el-radio>
               </div>
             </div>
           </div>

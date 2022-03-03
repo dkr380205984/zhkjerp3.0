@@ -744,27 +744,31 @@
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.first_box_number"
-                            placeholder="箱号" />
+                            placeholder="箱号(数字)"
+                            @input="(ev)=>{itemPack.box_count = Number(itemPack.last_box_number)?(Number(itemPack.last_box_number)-Number(itemPack.first_box_number)+1):0}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.last_box_number"
-                            placeholder="箱号" />
+                            placeholder="箱号(数字)"
+                            @input="(ev)=>{itemPack.box_count = Number(itemPack.first_box_number)?(Number(itemPack.last_box_number)-Number(itemPack.first_box_number)+1):0}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.box_count"
-                            placeholder="箱数" />
+                            placeholder="箱数(默认)" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.box_gross_weight"
-                            placeholder="毛重" />
+                            placeholder="毛重"
+                            @input="(ev)=>{itemPack.total_gross_weight = Number(itemPack.box_gross_weight)*Number(itemPack.box_count)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.box_net_weight"
-                            placeholder="净重" />
+                            placeholder="净重"
+                            @input="(ev)=>{itemPack.total_gross_weight = Number(itemPack.box_net_weight)*Number(itemPack.total_net_weight)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
@@ -779,22 +783,26 @@
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.length"
-                            placeholder="长" />
+                            placeholder="长"
+                            @input="(ev)=>{itemPack.single_bulk = Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height);itemPack.total_bulk = Number(itemPack.single_bulk)*Number(itemPack.box_count)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.width"
-                            placeholder="宽" />
+                            placeholder="宽"
+                            @input="(ev)=>{itemPack.single_bulk = Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height);itemPack.total_bulk = Number(itemPack.single_bulk)*Number(itemPack.box_count)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.height"
-                            placeholder="高" />
+                            placeholder="高"
+                            @input="(ev)=>{itemPack.single_bulk = Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height);itemPack.total_bulk = Number(itemPack.single_bulk)*Number(itemPack.box_count)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.single_bulk"
-                            placeholder="单箱体积" />
+                            placeholder="单箱体积"
+                            @change="(ev)=>{itemPack.total_bulk = Number(itemPack.single_bulk)*Number(itemPack.box_count)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
@@ -826,14 +834,59 @@
                 <div class="trow"
                   v-for="(item,index) in packPlanInfo.gather_info"
                   :key="index">
-                  <div class="tcol">包装名称</div>
-                  <div class="tcol">单位</div>
-                  <div class="tcol">{{item.length}}</div>
-                  <div class="tcol">{{item.width}}</div>
-                  <div class="tcol">{{item.height}}</div>
-                  <div class="tcol">{{item.number}}</div>
-                  <div class="tcol">属性或说明</div>
-                  <div class="tcol">图片</div>
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-select v-model="item.pack_material_id"
+                        placeholder="请选择包装辅料名称"
+                        filterable>
+                        <el-option v-for="item in packMaterialList"
+                          :key="item.id"
+                          :value="item.id"
+                          :label="item.name"></el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="tcol">{{item.unit || '默认'}}</div>
+                  <div class="tcol">
+                    <template v-if="item.isPlan">{{item.length}}</template>
+                    <template v-else>
+                      <div class="elCtn">
+                        <el-input placeholder="长"
+                          v-model="item.length"></el-input>
+                      </div>
+                    </template>
+                  </div>
+                  <div class="tcol">
+                    <template v-if="item.isPlan">{{item.width}}</template>
+                    <template v-else>
+                      <div class="elCtn">
+                        <el-input placeholder="宽"
+                          v-model="item.width"></el-input>
+                      </div>
+                    </template>
+                  </div>
+                  <div class="tcol">
+                    <template v-if="item.isPlan">{{item.height}}</template>
+                    <template v-else>
+                      <div class="elCtn">
+                        <el-input placeholder="高"
+                          v-model="item.height"></el-input>
+                      </div>
+                    </template>
+                  </div>
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-input v-model="item.number"
+                        placeholder="数量"></el-input>
+                    </div>
+                  </div>
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-input v-model="item.desc"
+                        placeholder="属性或说明"></el-input>
+                    </div>
+                  </div>
+                  <div class="tcol">暂不支持</div>
                 </div>
               </div>
             </div>
