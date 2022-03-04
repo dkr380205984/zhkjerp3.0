@@ -11,7 +11,7 @@
             <div class="pcol wa">
               <div class="label">系统报价编号：</div>
               <div class="info"
-                style="white-space: nowrap;">{{ quotedPriceInfo.code }}</div>
+                style="white-space: nowrap;">{{ quotedPriceInfo.code }}}}</div>
             </div>
           </div>
           <div class="prow">

@@ -265,6 +265,11 @@
                 <div class="text"
                   :class="item.order_time?'':'gray'">{{item.order_time || '未填写'}}</div>
               </div>
+              <div class="col flex3">
+                <div class="label">打样状态：</div>
+                <div class="text"
+                  :class="item.status|orderTimeStatusClass">{{item.status|orderTimeStatus}}</div>
+              </div>
               <div class="col">
                 <div class="label">备注信息：</div>
                 <div class="text"
@@ -613,6 +618,22 @@
                     <use xlink:href="#icon-dayindingdan"></use>
                   </svg>
                   <span class="text">转报价单</span>
+                </div>
+                <div class="btn backHoverBlue"
+                  @click="checkClient">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-shenhedingdan"></use>
+                  </svg>
+                  <span class="text">客户确认</span>
+                </div>
+                <div class="btn backHoverBlue"
+                  @click="checkComplete">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-shenhedingdan"></use>
+                  </svg>
+                  <span class="text">打样确认</span>
                 </div>
               </div>
             </div>
@@ -1010,6 +1031,16 @@ export default Vue.extend({
       }, 0)
     }
   },
+  filters: {
+    orderTimeStatus(val: number) {
+      const statusArr = ['', '已创建', '进行中', '已完成，待确认', '已完成，已确认', '已结算']
+      return statusArr[val]
+    },
+    orderTimeStatusClass(val: number) {
+      const statusArr = ['', 'orange', 'blue', 'green', 'green', 'green']
+      return statusArr[val]
+    }
+  },
   methods: {
     init() {
       this.loading = true
@@ -1292,6 +1323,56 @@ export default Vue.extend({
           this.init()
         }
       })
+    },
+    // 客户确认
+    checkClient() {
+      this.$confirm('客户是否确认第' + (Number(this.sampleOrderIndex) + 1) + '次打样信息', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          sampleOrder
+            .clientCheck({
+              order_id: this.sampleOrderInfo.time_data[this.sampleOrderIndex].id as number
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message.success('已确认')
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        })
+    },
+    // 打样确认完成
+    checkComplete() {
+      this.$confirm('是否确认第' + (Number(this.sampleOrderIndex) + 1) + '次打样信息已完成', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          sampleOrder
+            .completeCheck({
+              order_id: this.sampleOrderInfo.time_data[this.sampleOrderIndex].id as number
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message.success('已确认')
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        })
     }
   },
   mounted() {

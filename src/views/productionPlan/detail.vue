@@ -117,7 +117,7 @@
         <el-tab-pane v-for="(item,index) in productionPlanList"
           :key="index"
           :name="item.id.toString()"
-          :label="'加工单'+(index+1)">
+          :label="'加工单'+(index+1) +'(' + item.process_name +')'">
           <div class="titleCtn">
             <div class="title">加工单据</div>
           </div>
@@ -154,6 +154,7 @@
               <div class="trow">
                 <div class="tcol">序号</div>
                 <div class="tcol">产品信息</div>
+                <div class="tcol">产品部位</div>
                 <div class="tcol">尺码颜色</div>
                 <div class="tcol">加工数量</div>
                 <div class="tcol">加工单价</div>
@@ -168,6 +169,9 @@
                 <div class="tcol">
                   <span>{{itemPro.product_code||itemPro.system_code}}</span>
                   <span>{{itemPro.category_name}}/{{itemPro.secondary_category_name}}</span>
+                </div>
+                <div class="tcol">
+                  {{itemPro.part_name}}
                 </div>
                 <div class="tcol">{{itemPro.size_name?itemPro.size_name + '/' + itemPro.color_name:'未选择尺码颜色'}}</div>
                 <div class="tcol">{{itemPro.number}}</div>

@@ -1,5 +1,7 @@
 <template>
-  <div id="workerManageCreate" class="bodyContainer" v-loading="loading">
+  <div id="workerManageCreate"
+    class="bodyContainer"
+    v-loading="loading">
     <div class="module">
       <div class="titleCtn">
         <div class="title">添加员工</div>
@@ -20,6 +22,7 @@
               <span class="text">手机号</span>
             </div>
             <div class="info elCtn">
+
               <el-input placeholder="请输入员工手机号" v-model="staffInfo.phone"></el-input>
             </div>
           </div>
@@ -30,12 +33,8 @@
               <span class="explanation fr" style="color: #1a95ff" @click="showAddDepartment()">+ 添加新部门</span>
             </div>
             <div class="info elCtn">
-              <el-select
-                placeholder="请选择部门"
                 v-model="staffInfo.department"
-                no-data-text="请先选择询价客户"
                 clearable
-                :disabled="!!$route.query.again"
               >
                 <el-option
                   v-for="item in departmentList"
@@ -117,9 +116,6 @@
       <div class="titleCtn" style="border-bottom: 0">
         <div class="title">
           其它信息（全部为选填）
-          <span class="orange" style="font-size: 14px" v-if="$route.query.again || $route.query.product_id"
-            >(订单产品转报价/再次报价不能新增或者删除产品)</span
-          >
         </div>
       </div>
       <div class="editCtn">
@@ -129,12 +125,14 @@
               <span class="text">年龄</span>
             </div>
             <div class="info elCtn">
+
               <el-input placeholder="请输入员工年龄" v-model="staffInfo.age"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">性别</div>
             <div class="info elCtn">
+
               <el-select placeholder="请选择员工性别" v-model="staffInfo.sex" clearable>
                 <el-option :value="1" label="男"></el-option>
                 <el-option :value="2" label="女"></el-option>
@@ -151,7 +149,7 @@
         <div class="row">
           <div class="col">
             <div class="label">民族</div>
-            <div class="info elCtn">
+            <div class="info elCtn">>
               <el-input placeholder="请输入员工民族" v-model="staffInfo.nation"></el-input>
             </div>
           </div>
@@ -230,14 +228,17 @@
 </template>
 
 <script lang="ts">
+
 import { PackMaterialInfo, DecorateMaterialInfo } from '@/types/materialSetting'
 import { moneyArr } from '@/assets/js/dictionary'
+
 import { quotedPrice, order, staff } from '@/assets/js/api'
 import Vue from 'vue'
 import { OrderInfo } from '@/types/order'
 export default Vue.extend({
   data(): {
     [propName: string]: any
+
   } {
     return {
       loading: false,
@@ -946,12 +947,7 @@ export default Vue.extend({
               )
             })
             // 如果是产品转报价，过滤掉其他产品
-            // if (this.$route.query.product_id) {
-            //   this.quotedPriceInfo
-            //   this.quotedPriceInfo.product_data = this.quotedPriceInfo.product_data.filter(
-            //     (item) => Number(item.order_product_id) === Number(this.$route.query.order_product_id)
-            //   )
-            // }
+
           }
           this.loading = false
         })
@@ -977,23 +973,29 @@ export default Vue.extend({
     padding: 0;
   }
 
+
   .el-checkbox-button .el-checkbox-button__inner {
     border-radius: 4px;
+
     border: 1px solid #d9d9d9;
     background: #f5f5f5;
     color: rgba(0, 0, 0, 65%);
     padding: 4px 23px;
   }
 
+
   .el-checkbox-button.is-checked .el-checkbox-button__inner {
     border-radius: 4px;
+
     border: 1px solid #d9d9d9;
     color: #fff;
     background-color: #409eff;
     border-color: #409eff;
     padding: 4px 23px;
+
     box-shadow: unset;
   }
+
   .el-btn .el-button {
     height: 32px;
     padding: 6px 20px;

@@ -663,32 +663,6 @@
         </div>
       </div>
     </div>
-    <div class="popup"
-      v-show="chooseIndexFlag">
-      <div class="main">
-        <div class="titleCtn">
-          <div class="text">选择打样次数</div>
-          <div class="closeCtn"
-            @click="getProductionData();chooseIndexFlag=false">
-            <i class="el-icon-close"></i>
-          </div>
-        </div>
-        <div class="contentCtn">
-          <div class="tag"
-            v-for="(item,index) in orderInfo.time_data"
-            :key="index"
-            :class="{'backHoverBlue':index===orderIndex}"
-            @click="orderIndex=index"
-            v-show="item.has_material_plan===2">第{{index+1}}次打样</div>
-        </div>
-        <div class="oprCtn">
-          <div class="btn borderBtn"
-            @click="getProductionData();chooseIndexFlag=false">取消</div>
-          <div class="btn backHoverBlue"
-            @click="getProductionData();chooseIndexFlag=false">确定</div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -715,7 +689,6 @@ export default Vue.extend({
       confirmFlag: 1,
       settingMethod: 1, // 数字取整方式
       orderIndex: 0, // 多张订单/样单
-      chooseIndexFlag: false,
       orderInfo: {
         id: null,
         client_id: '',
@@ -1506,30 +1479,12 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.orderInfo = res.data.data
-          if (this.orderInfo.time_data.length > 1) {
-            if (!this.$route.query.sampleOrderIndex) {
-              const length = this.orderInfo.time_data.filter((item) => item.has_material_plan === 2).length
-              if (length > 1) {
-                this.orderIndex = length - 1
-                this.getProductionData()
-              } else if (length === 1) {
-                this.orderInfo.time_data.forEach((item, index) => {
-                  if (item.has_material_plan === 2) {
-                    this.orderIndex = index
-                    this.getProductionData()
-                  }
-                })
-              } else {
-                this.$message.warning('所有计划单已经全部添加完毕')
-                this.$router.go(-1)
-              }
-            } else {
-              this.orderIndex = this.$route.query.sampleOrderIndex
-              this.getProductionData()
+          this.orderInfo.time_data.forEach((item, index) => {
+            if (item.id === Number(this.$route.query.sampleOrderIndex)) {
+              this.orderIndex = index
             }
-          } else {
-            this.getProductionData()
-          }
+          })
+          this.getProductionData()
           // 别问我添加页面为什么要拿详情接口，因为有继续添加，要计算一个已计划数量值
           this.getMaterialPlan()
           this.loading = false

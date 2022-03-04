@@ -372,10 +372,12 @@ const store = {
     material_type: number
   }) => http.get(`${baseUrl}/search/material/by/name`, params), // 这个接口用于筛选某一类型的物料列表
   searchPro: (params: {
+    [propName: string]: any
     page?: string | number
     limit?: string | number
   }) => http.get(`${baseUrl}/product/store/total/lists`, params),
   proLog: (params: {
+    [propName: string]: any
     page?: string | number
     limit?: string | number
   }) => http.get(`${baseUrl}/product/store/log/lists`, params),
@@ -402,6 +404,8 @@ const sampleOrder = {
   deletePro: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product`, params, 'application/json'), // 删除产品
   materialDetail: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/material/info`, params),
   deleteProChild: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product/info`, params, 'application/json'), // 删除产品子项
+  clientCheck: (params: { order_id: string | number }) => http.post(`${baseUrl}/order/time/client/confirm`, params, 'application/json'), // 客户确认完成
+  completeCheck: (params: { order_id: string | number }) => http.post(`${baseUrl}/order/time/complete`, params, 'application/json'), // 打样次数确认完成
 }
 
 // 产品 产品和样品的接口是同一个，前端方便区分
@@ -417,6 +421,7 @@ import { OrderInfo } from '@/types/order'
 const order = {
   create: (params: OrderInfo) => http.post(`${baseUrl}/order/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrl}/order/lists`, params),
+  timeList: (params?: ListParams) => http.get(`${baseUrl}/order/time/lists`, params), // 根据time_data查询的列表
   detail: (params: DetailParams) => http.get(`${baseUrl}/order/detail`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/order/delete`, params, 'application/json'),
   oprLog: (params: DetailParams) => http.get(`${baseUrl}/order/activity/logs`, params), // 操作记录
@@ -582,10 +587,14 @@ const inspection = {
 }
 
 // 包装
-import { PackOrderInfo } from '@/types/packManage'
+import { PackOrderInfo, PackPlanInfo } from '@/types/packManage'
 const packManage = {
   createOrder: (params: { data: PackOrderInfo[] }) => http.post(`${baseUrl}/pack/order/save`, params, 'application/json'),
   orderList: (params: { order_id: string | number }) => http.get(`${baseUrl}/pack/order/lists`, params),
+  deleteOrder: (params: DeleteParams) => http.get(`${baseUrl}/pack/order/delete`, params),
+  createPlan: (params: PackPlanInfo) => http.post(`${baseUrl}/pack/plan/save`, params, 'application/json'),
+  planList: (params: { order_id: string | number }) => http.get(`${baseUrl}/pack/plan/lists`, params),
+  deletePlan: (params: DeleteParams) => http.get(`${baseUrl}/pack/plan/delete`, params),
 }
 // excel导出
 const exportExcel = {

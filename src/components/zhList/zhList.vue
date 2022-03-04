@@ -150,6 +150,18 @@
                 </el-tooltip>
               </div>
               <div class="process"
+                :class="{'green':item.has_pack_plan===1,'gray':item.has_pack_plan===2}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="'装箱计划'+(item.has_pack_plan===1?'已添加':'未添加')"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-zhuangxiangchuku"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+              <div class="process"
                 :class="{'green':item.has_pack_order===1,'gray':item.has_pack_order===2}">
                 <el-tooltip class="item"
                   effect="dark"
@@ -158,17 +170,6 @@
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-baozhuangcaigou"></use>
-                  </svg>
-                </el-tooltip>
-              </div>
-              <div class="process gray">
-                <el-tooltip class="item"
-                  effect="dark"
-                  content="装箱出库暂不支持"
-                  placement="top">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-zhuangxiangchuku"></use>
                   </svg>
                 </el-tooltip>
               </div>

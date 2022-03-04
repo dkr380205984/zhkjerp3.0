@@ -381,6 +381,14 @@ const plugin = {
   },
   getLocalStorage(name: string) {
     return window.localStorage.getItem(name)
+  },
+  // 设置localstorage
+  setSessionStorage(name: string, info: any) {
+    window.sessionStorage.setItem(name, info)
+    Message.Message.success('已保存')
+  },
+  getsessionStorage(name: string) {
+    return window.sessionStorage.getItem(name)
   }
 }
 const submitLock = () => {
@@ -493,5 +501,7 @@ export default {
     Vue.prototype.$copyInfo = plugin.copyInfo
     Vue.prototype.$setLocalStorage = plugin.setLocalStorage
     Vue.prototype.$getLocalStorage = plugin.getLocalStorage
+    Vue.prototype.$setSessionStorage = plugin.setSessionStorage
+    Vue.prototype.$getsessionStorage = plugin.getsessionStorage
   }
 }

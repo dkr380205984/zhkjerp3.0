@@ -121,66 +121,216 @@
         </div>
       </div>
     </div>
-    <div class="module clearfix">
-      <div class="titleCtn">
-        <div class="title">包装计划信息</div>
-      </div>
-      <div class="tableCtn">
-        <div class="thead">
-          <div class="trow">
-            <div class="tcol">包装名称</div>
-            <div class="tcol">长</div>
-            <div class="tcol">宽</div>
-            <div class="tcol">高</div>
-            <div class="tcol">属性或说明</div>
-            <div class="tcol">图片</div>
-            <div class="tcol">计划数量</div>
-            <div class="tcol">已订购数量</div>
+    <div class="module"
+      v-if="packPlanLog.length>0">
+      <el-tabs type="border-card"
+        v-model="packPlanLogIndex">
+        <el-tab-pane v-for="(item,index) in packPlanLog"
+          :key="index"
+          :name="item.id.toString()"
+          :label="'计划单'+(index+1)">
+          <div class="detailCtn">
+            <div class="row">
+              <div class="col">
+                <div class="label">单据编号：</div>
+                <div class="text">{{item.code}}</div>
+              </div>
+              <div class="col">
+                <div class="label">创建人：</div>
+                <div class="text">{{item.user_name}}</div>
+              </div>
+              <div class="col">
+                <div class="label">更新时间：</div>
+                <div class="text">{{item.created_at.slice(0,10)}}</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="label">发货状态：</div>
+                <div class="text">暂无</div>
+              </div>
+              <div class="col">
+                <div class="label">发货数量：</div>
+                <div class="text">暂无</div>
+              </div>
+              <div class="col">
+                <div class="label">发货批次：</div>
+                <div class="text">{{item.delivery_batch}}</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="label">批次名称：</div>
+                <div class="text">{{item.batch_name}}</div>
+              </div>
+              <div class="col">
+                <div class="label">发货日期：</div>
+                <div class="text">{{item.delivery_time}}</div>
+              </div>
+              <div class="col">
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="tbody">
-          <div class="trow">
-            <div class="tcol">包装名称</div>
-            <div class="tcol">长</div>
-            <div class="tcol">宽</div>
-            <div class="tcol">高</div>
-            <div class="tcol">属性或说明</div>
-            <div class="tcol">图片</div>
-            <div class="tcol">计划数量</div>
-            <div class="tcol">已订购数量</div>
+          <div class="tableCtn specialTable"
+            style="padding:0;margin:0px 32px 20px 32px;max-width: calc(100% - 64px);">
+            <div class="thead">
+              <div class="trow outTrow">
+                <div class="tcol noPad"
+                  style="min-width:220px">
+                  <div class="trow">
+                    <div class="tcol">产品</div>
+                    <div class="tcol">尺码颜色</div>
+                  </div>
+                </div>
+                <div class="tcol">产品装袋说明</div>
+                <div class="tcol noPad"
+                  style="min-width:1650px">
+                  <div class="trow">
+                    <div class="tcol noPad"
+                      style="min-width:110px">
+                      <div class="trow">
+                        <div class="tcol">数量/箱</div>
+                      </div>
+                    </div>
+                    <div class="tcol">头箱号#</div>
+                    <div class="tcol">尾箱号#</div>
+                    <div class="tcol">箱数</div>
+                    <div class="tcol">每箱毛重kg</div>
+                    <div class="tcol">每箱净重kg</div>
+                    <div class="tcol">总毛重kg</div>
+                    <div class="tcol">总净重kg</div>
+                    <div class="tcol">长cm</div>
+                    <div class="tcol">宽cm</div>
+                    <div class="tcol">高cm</div>
+                    <div class="tcol">单箱体积m³</div>
+                    <div class="tcol">总体积m³</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div class="trow outTrow"
+                v-for="(itemChild,indexChild) in item.data"
+                :key="indexChild">
+                <div class="tcol noPad"
+                  style="min-width:220px">
+                  <div class="trow"
+                    v-for="(itemPro,indexPro) in itemChild.product_info"
+                    :key="indexPro">
+                    <div class="tcol">{{itemPro.product_code}}({{itemPro.category}}/{{itemPro.secondary_category}})</div>
+                    <div class="tcol">{{itemPro.size_name}}/{{itemPro.color_name}}</div>
+                  </div>
+                </div>
+                <div class="tcol">{{itemChild.desc}}</div>
+                <div class="tcol noPad"
+                  style="min-width:1650px">
+                  <div class="trow"
+                    v-for="(itemPack,indexPack) in itemChild.info_data"
+                    :key="indexPack">
+                    <div class="tcol noPad"
+                      style="min-width:110px">
+                      <div class="trow"
+                        v-for="(itemChildPro,indexChildPro) in itemPack.product_info"
+                        :key="indexChildPro">
+                        <div class="tcol">{{itemChildPro.pack_number}}</div>
+                      </div>
+                    </div>
+                    <div class="tcol">{{itemPack.first_box_number}}</div>
+                    <div class="tcol">{{itemPack.last_box_number}}</div>
+                    <div class="tcol">{{itemPack.box_count}}</div>
+                    <div class="tcol">{{itemPack.box_gross_weight}}kg</div>
+                    <div class="tcol">{{itemPack.box_net_weight}}kg</div>
+                    <div class="tcol">{{itemPack.total_gross_weight}}kg</div>
+                    <div class="tcol">{{itemPack.total_net_weight}}kg</div>
+                    <div class="tcol">{{itemPack.length}}</div>
+                    <div class="tcol">{{itemPack.width}}</div>
+                    <div class="tcol">{{itemPack.height}}</div>
+                    <div class="tcol">{{itemPack.single_bulk}}</div>
+                    <div class="tcol">{{itemPack.total_bulk}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="trow">
-            <div class="tcol gray"
-              style="text-align:center">暂无计划包装信息</div>
+          <div class="tableCtn">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol">包装名称</div>
+                <div class="tcol">长</div>
+                <div class="tcol">宽</div>
+                <div class="tcol">高</div>
+                <div class="tcol">属性或说明</div>
+                <div class="tcol">图片</div>
+                <div class="tcol">计划数量</div>
+                <div class="tcol">已订购数量</div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div class="trow"
+                v-for="(itemPack,indexPack) in item.gather_info"
+                :key="indexPack">
+                <div class="tcol">
+                  <el-checkbox v-model="itemPack.check">{{itemPack.pack_material}}</el-checkbox>
+                </div>
+                <div class="tcol">{{itemPack.length}}</div>
+                <div class="tcol">{{itemPack.width}}</div>
+                <div class="tcol">{{itemPack.height}}</div>
+                <div class="tcol">{{itemPack.desc}}</div>
+                <div class="tcol">图片</div>
+                <div class="tcol">{{itemPack.number}}</div>
+                <div class="tcol">已订购数量</div>
+              </div>
+              <div class="trow"
+                v-if="item.gather_info.length===0">
+                <div class="tcol gray"
+                  style="text-align:center">暂无计划包装信息</div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="buttonList">
-        <div class="btn backHoverBlue">
-          <i class="el-icon-s-grid"></i>
-          <span class="text">包装订购操作</span>
-        </div>
-        <div class="otherInfoCtn">
-          <div class="otherInfo">
+          <div class="buttonList">
             <div class="btn backHoverBlue">
-              <svg class="iconFont"
-                aria-hidden="true"
-                @click="goOrderPack('plan')">
-                <use xlink:href="#icon-xiugaidingdan"></use>
-              </svg>
-              <span class="text">计划订购</span>
+              <i class="el-icon-s-grid"></i>
+              <span class="text">包装订购操作</span>
             </div>
-            <div class="btn backHoverOrange"
-              @click="goOrderPack('direct')">
-              <svg class="iconFont"
-                aria-hidden="true">
-                <use xlink:href="#icon-xiugaidingdan"></use>
-              </svg>
-              <span class="text">直接订购</span>
+            <div class="otherInfoCtn">
+              <div class="otherInfo">
+                <div class="btn backHoverOrange"
+                  @click="goUpdatePlanPack(item)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">修改计划</span>
+                </div>
+                <div class="btn backHoverRed"
+                  @click="deletePlanPack(item.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-shanchudingdan"></use>
+                  </svg>
+                  <span class="text">删除计划</span>
+                </div>
+                <div class="btn backHoverBlue"
+                  @click="goOrderPack('plan')">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">计划订购</span>
+                </div>
+                <div class="btn backHoverOrange"
+                  @click="goOrderPack('direct')">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">直接订购</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </el-tab-pane>
+      </el-tabs>
     </div>
     <div class="module"
       v-if="packOrderLog.length>0">
@@ -274,6 +424,32 @@
               </div>
             </div>
           </div>
+          <div class="buttonList">
+            <div class="btn backHoverBlue">
+              <i class="el-icon-s-grid"></i>
+              <span class="text">订购单操作</span>
+            </div>
+            <div class="otherInfoCtn">
+              <div class="otherInfo">
+                <div class="btn backHoverOrange"
+                  @click="goUpdatePlanOrder(item)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">修改订购</span>
+                </div>
+                <div class="btn backHoverRed"
+                  @click="deleteOrderPack(item.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-shanchudingdan"></use>
+                  </svg>
+                  <span class="text">删除订购</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -304,7 +480,7 @@
                 </div>
                 <div class="info elCtn">
                   <el-cascader placeholder="请选择订购单位"
-                    v-model="item.client_id_arr"
+                    v-model="item.tree_data"
                     :options="packClientList"
                     @change="(ev)=>{item.client_id=ev[2]}"></el-cascader>
                 </div>
@@ -568,7 +744,7 @@
             style="margin-bottom:16px"
             @click="$addItem(packOrderInfo,{
               order_id: '',
-              client_id_arr:[],
+              tree_data:[],
               client_id: '',
               client_name: '',
               order_time: $getDate(new Date()),
@@ -603,7 +779,7 @@
           <span class="btn borderBtn"
             @click="packOrderFlag = false">取消</span>
           <span class="btn backHoverBlue"
-            @click="saveOrderPack">确认</span>
+            @click="saveOrderPack">{{packorderUpdateFlag?'修改':'确认'}}</span>
         </div>
       </div>
     </div>
@@ -744,27 +920,31 @@
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.first_box_number"
-                            placeholder="箱号" />
+                            placeholder="箱号(数字)"
+                            @input="(ev)=>{itemPack.box_count = Number(itemPack.last_box_number)?(Number(itemPack.last_box_number)-Number(itemPack.first_box_number)+1):0}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.last_box_number"
-                            placeholder="箱号" />
+                            placeholder="箱号(数字)"
+                            @input="(ev)=>{itemPack.box_count = Number(itemPack.first_box_number)?(Number(itemPack.last_box_number)-Number(itemPack.first_box_number)+1):0}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.box_count"
-                            placeholder="箱数" />
+                            placeholder="箱数(默认)" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.box_gross_weight"
-                            placeholder="毛重" />
+                            placeholder="毛重"
+                            @input="(ev)=>{itemPack.total_gross_weight = Number(itemPack.box_gross_weight)*Number(itemPack.box_count)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.box_net_weight"
-                            placeholder="净重" />
+                            placeholder="净重"
+                            @input="(ev)=>{itemPack.total_gross_weight = Number(itemPack.box_net_weight)*Number(itemPack.total_net_weight)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
@@ -779,22 +959,26 @@
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.length"
-                            placeholder="长" />
+                            placeholder="长"
+                            @input="(ev)=>{itemPack.single_bulk = Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height);itemPack.total_bulk = Number(itemPack.single_bulk)*Number(itemPack.box_count)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.width"
-                            placeholder="宽" />
+                            placeholder="宽"
+                            @input="(ev)=>{itemPack.single_bulk = Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height);itemPack.total_bulk = Number(itemPack.single_bulk)*Number(itemPack.box_count)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.height"
-                            placeholder="高" />
+                            placeholder="高"
+                            @input="(ev)=>{itemPack.single_bulk = Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height);itemPack.total_bulk = Number(itemPack.single_bulk)*Number(itemPack.box_count)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.single_bulk"
-                            placeholder="单箱体积" />
+                            placeholder="单箱体积"
+                            @change="(ev)=>{itemPack.total_bulk = Number(itemPack.single_bulk)*Number(itemPack.box_count)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
@@ -809,16 +993,21 @@
             </div>
           </template>
           <template v-else>
-            <div class="tableCtn">
+            <div class="tableCtn"
+              style="padding-right:0;padding-left:0">
               <div class="thead">
                 <div class="trow">
                   <div class="tcol">包装名称</div>
                   <div class="tcol">单位</div>
-                  <div class="tcol">长</div>
-                  <div class="tcol">宽</div>
-                  <div class="tcol">高</div>
+                  <div class="tcol"
+                    style="flex:0.5">长</div>
+                  <div class="tcol"
+                    style="flex:0.5">宽</div>
+                  <div class="tcol"
+                    style="flex:0.5">高</div>
                   <div class="tcol">所需数量</div>
                   <div class="tcol">属性或说明</div>
+                  <div class="tcol">图片</div>
                   <div class="tcol">图片</div>
                 </div>
               </div>
@@ -826,14 +1015,73 @@
                 <div class="trow"
                   v-for="(item,index) in packPlanInfo.gather_info"
                   :key="index">
-                  <div class="tcol">包装名称</div>
-                  <div class="tcol">单位</div>
-                  <div class="tcol">{{item.length}}</div>
-                  <div class="tcol">{{item.width}}</div>
-                  <div class="tcol">{{item.height}}</div>
-                  <div class="tcol">{{item.number}}</div>
-                  <div class="tcol">属性或说明</div>
-                  <div class="tcol">图片</div>
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-select v-model="item.pack_material_id"
+                        placeholder="请选择包装辅料名称"
+                        filterable
+                        @change="(ev)=>{item.unit = packMaterialList.find((item) => item.id === ev).unit}">
+                        <el-option v-for="item in packMaterialList"
+                          :key="item.id"
+                          :value="item.id"
+                          :label="item.name"></el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="tcol">{{item.unit || '默认'}}</div>
+                  <div class="tcol"
+                    style="flex:0.5">
+                    <div class="elCtn">
+                      <el-input :disabled="item.isPlan"
+                        placeholder="长"
+                        v-model="item.length"></el-input>
+                    </div>
+                  </div>
+                  <div class="tcol"
+                    style="flex:0.5">
+                    <div class="elCtn">
+                      <el-input :disabled="item.isPlan"
+                        placeholder="宽"
+                        v-model="item.width"></el-input>
+                    </div>
+                  </div>
+                  <div class="tcol"
+                    style="flex:0.5">
+                    <div class="elCtn">
+                      <el-input :disabled="item.isPlan"
+                        placeholder="高"
+                        v-model="item.height"></el-input>
+                    </div>
+                  </div>
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-input v-model="item.number"
+                        placeholder="数量"></el-input>
+                    </div>
+                  </div>
+                  <div class="tcol">
+                    <div class="elCtn">
+                      <el-input v-model="item.desc"
+                        placeholder="属性或说明"></el-input>
+                    </div>
+                  </div>
+                  <div class="tcol">暂不支持</div>
+                  <div class="tcol oprCtn"
+                    style="justify-content: flex-start;">
+                    <div class="opr hoverBlue"
+                      @click="packPlanInfo.gather_info.push({
+                        unit: '',
+                        number: '',
+                        pack_material_id: '',
+                        length: '',
+                        width: '',
+                        height: '',
+                        desc: '',
+                        file_url: ''
+                     })">添加</div>
+                    <div class="opr hoverRed"
+                      @click="item.isPlan?$message.error('计划包装不能删除'):$deleteItem(packPlanInfo.gather_info,index)">删除</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -846,7 +1094,7 @@
             @click="packPlanStep=1"
             v-if="packPlanStep===2">上一步</span>
           <span class="btn backHoverBlue"
-            @click="packPlanStep===1?computedPackOrder():savePlanPack()">{{packPlanStep===1?'下一步':'确认保存'}}</span>
+            @click="packPlanStep===1?computedPackOrder():savePlanPack()">{{packPlanStep===1?'下一步':packPlanUpdateFlag?'确认修改':'确认保存'}}</span>
         </div>
       </div>
     </div>
@@ -864,6 +1112,7 @@ export default Vue.extend({
   data(): {
     orderInfo: OrderInfo
     packPlanInfo: PackPlanInfo
+    packPlanLog: PackPlanInfo[]
     packOrderLog: PackOrderInfo[]
     packOrderInfo: PackOrderInfo[]
     [propName: string]: any
@@ -932,6 +1181,7 @@ export default Vue.extend({
       },
       packPlanStep: 1,
       packPlanFlag: false,
+      packPlanUpdateFlag: false,
       packPlanInfo: {
         id: '',
         order_id: '',
@@ -993,12 +1243,15 @@ export default Vue.extend({
           }
         ]
       },
+      packPlanLog: [],
+      packPlanLogIndex: '',
       packOrderFlag: false,
+      packorderUpdateFlag: false,
       packOrderInfo: [
         {
           order_id: '',
           client_id: '',
-          client_id_arr: [],
+          tree_data: [],
           client_name: '',
           order_time: this.$getDate(new Date()),
           delivery_time: '',
@@ -1061,8 +1314,12 @@ export default Vue.extend({
   },
   methods: {
     init() {
+      this.loading = true
       Promise.all([
         packManage.orderList({
+          order_id: this.order_id
+        }),
+        packManage.planList({
           order_id: this.order_id
         })
       ]).then((res) => {
@@ -1070,6 +1327,11 @@ export default Vue.extend({
         if (this.packOrderLog.length > 0) {
           this.packOrderLogIndex = this.packOrderLog[0].id!.toString()
         }
+        this.packPlanLog = res[1].data.data
+        if (this.packPlanLog.length > 0) {
+          this.packPlanLogIndex = this.packPlanLog[0].id!.toString()
+        }
+        this.loading = false
       })
       this.loading = false
     },
@@ -1079,7 +1341,7 @@ export default Vue.extend({
           order_id: '',
           client_id: '',
           client_name: '',
-          client_id_arr: [],
+          tree_data: [],
           order_time: this.$getDate(new Date()),
           delivery_time: '',
           desc: '',
@@ -1111,11 +1373,86 @@ export default Vue.extend({
     },
     goOrderPack(type: 'plan' | 'direct') {
       if (type === 'plan') {
-        this.$message.error('请勾选计划信息订购')
+        const finded = this.packPlanLog.find((item) => item.id === Number(this.packPlanLogIndex))
+        const checkArr = finded!.gather_info.filter((item) => item.check)
+        if (checkArr.length === 0) {
+          this.$message.error('请勾选计划信息订购')
+          return
+        }
+        this.resetOrderPack()
+        this.packOrderInfo = [
+          {
+            order_id: '',
+            client_id: '',
+            client_name: '',
+            tree_data: [],
+            order_time: this.$getDate(new Date()),
+            delivery_time: '',
+            desc: '',
+            file_url: '',
+            total_price: '',
+            total_number: '',
+            others_fee_data: [
+              {
+                desc: '', // 额外费用备注
+                name: '',
+                price: ''
+              }
+            ],
+            // @ts-ignore
+            info_data: checkArr.map((item) => {
+              return {
+                price_type: 1,
+                pack_material_id: item.pack_material_id,
+                length: item.length,
+                width: item.width,
+                height: item.height,
+                desc: item.desc,
+                bulk_price: '',
+                count_price: '',
+                number: item.number
+              }
+            })
+          }
+        ]
+        this.packOrderFlag = true
       } else {
         this.resetOrderPack()
         this.packOrderFlag = true
       }
+    },
+    goUpdatePlanOrder(info: PackOrderInfo) {
+      this.packOrderInfo = [info]
+      this.packOrderFlag = true
+      this.packOrderUpdateFlag = true
+    },
+    deleteOrderPack(id: number) {
+      this.$confirm('是否删除该订购单?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          packManage
+            .deleteOrder({
+              id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.init()
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     // 计算数量单个
     getCountPrice(bulkPrice: number, info: any) {
@@ -1340,34 +1677,148 @@ export default Vue.extend({
           }
         ]
       }
+      this.packPlanUpdateFlag = false
     },
     computedPackOrder() {
-      this.packPlanInfo.gather_info = []
-      this.packPlanInfo.data.forEach((item) => {
-        item.info_data.forEach((itemPack) => {
-          const finded = this.packPlanInfo.gather_info.find(
-            (item) =>
-              item.length === itemPack.length && item.width === itemPack.width && item.height === itemPack.height
-          )
-          if (finded) {
-            finded.number = Number(finded.number) + Number(itemPack.box_count)
-          } else {
-            this.packPlanInfo.gather_info.push({
-              unit: '',
-              number: Number(itemPack.box_count),
-              pack_material_id: '',
-              length: itemPack.length,
-              width: itemPack.width,
-              height: itemPack.height,
-              desc: '',
-              file_url: ''
-            })
-          }
+      const formCheck = this.packPlanInfo.data.some((item) => {
+        return item.info_data.some((itemChild) => {
+          return this.$formCheck(itemChild, [
+            {
+              key: 'first_box_number',
+              errMsg: '请填写头箱号'
+            },
+            {
+              key: 'first_box_number',
+              errMsg: '请填写尾箱号'
+            },
+            {
+              key: 'box_count',
+              errMsg: '请填写箱数'
+            },
+            {
+              key: 'length',
+              errMsg: '请填写长'
+            },
+            {
+              key: 'width',
+              errMsg: '请填写宽'
+            },
+            {
+              key: 'height',
+              errMsg: '请填写高'
+            }
+          ])
         })
       })
-      this.packPlanStep = 2
+      if (!formCheck) {
+        // 判断是否修改，修改就把原来的数据的number都清了
+        if (!this.packPlanUpdateFlag) {
+          this.packPlanInfo.gather_info = []
+        } else {
+          this.packPlanInfo.gather_info.forEach((item) => (item.number = 0))
+        }
+        this.packPlanInfo.data.forEach((item) => {
+          item.info_data.forEach((itemPack) => {
+            const finded = this.packPlanInfo.gather_info.find(
+              (item) =>
+                item.length === itemPack.length && item.width === itemPack.width && item.height === itemPack.height
+            )
+            if (finded) {
+              finded.number = Number(finded.number) + Number(itemPack.box_count)
+            } else {
+              this.packPlanInfo.gather_info.push({
+                isPlan: true,
+                unit: '',
+                number: Number(itemPack.box_count),
+                pack_material_id: '',
+                length: itemPack.length,
+                width: itemPack.width,
+                height: itemPack.height,
+                desc: '',
+                file_url: ''
+              })
+            }
+          })
+        })
+        this.packPlanStep = 2
+      }
     },
-    savePlanPack() {}
+    getPlanCmpData() {
+      this.packPlanInfo.order_id = this.order_id
+    },
+    savePlanPack() {
+      const formCheck = this.packPlanInfo.gather_info.some((item) => {
+        return this.$formCheck(item, [
+          {
+            key: 'pack_material_id',
+            errMsg: '请选择包装'
+          },
+          {
+            key: 'length',
+            errMsg: '请输入长'
+          },
+          {
+            key: 'width',
+            errMsg: '请输入宽'
+          },
+          {
+            key: 'number',
+            errMsg: '请输入数量'
+          }
+        ])
+      })
+      if (!formCheck) {
+        this.getPlanCmpData()
+        packManage.createPlan(this.packPlanInfo).then((res) => {
+          if (res.data.status) {
+            this.$message.success('添加成功')
+            this.resetPlanPack()
+            this.packPlanFlag = false
+            this.packPlanStep = 1
+            this.init()
+          }
+        })
+      }
+    },
+    goUpdatePlanPack(info: PackPlanInfo) {
+      this.packPlanInfo = info
+      info.data.forEach((item) => {
+        item.product_info.forEach((itemPro) => {
+          itemPro.product_show_info =
+            itemPro.product_code + '(' + itemPro.category + '/' + itemPro.secondary_category + ')'
+        })
+      })
+      this.packPlanUpdateFlag = true
+      this.packPlanFlag = true
+    },
+    deletePlanPack(id: number) {
+      this.$confirm('是否删除该装箱计划?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          packManage
+            .deletePlan({
+              id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.init()
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    }
   },
   mounted() {
     this.$checkCommonInfo([

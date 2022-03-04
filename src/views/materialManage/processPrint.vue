@@ -34,22 +34,22 @@
           <div class="tableCtn">
             <div class="tbody hasTop">
               <div class="trow">
-                <div class="tcol bgGray headTitle">采购单号</div>
+                <div class="tcol bgGray headTitle">计划单号</div>
+                <div class="tcol">{{materialProcessInfo.plan_code || '暂无' }}</div>
+                <div class="tcol bgGray headTitle">加工单号</div>
                 <div class="tcol">{{materialProcessInfo.code || '暂无' }}</div>
-                <div class="tcol bgGray headTitle">采购单位</div>
-                <div class="tcol">{{ materialProcessInfo.client_name || '暂无' }}</div>
                 <div class="tcol bgGray headTitle">下单日期</div>
                 <div class="tcol">{{ materialProcessInfo.order_time || '暂无' }}</div>
                 <div class="tcol bgGray headTitle">交货日期</div>
                 <div class="tcol">{{ materialProcessInfo.delivery_time || '暂无' }}</div>
               </div>
               <div class="trow">
+                <div class="tcol bgGray headTitle">采购单位</div>
+                <div class="tcol">{{ materialProcessInfo.client_name || '暂无' }}</div>
                 <div class="tcol bgGray headTitle">加工总数</div>
                 <div class="tcol">{{materialProcessInfo.total_number}}</div>
                 <div class="tcol bgGray headTitle">加工总额</div>
                 <div class="tcol">{{materialProcessInfo.total_price}}元</div>
-                <div class="tcol bgGray headTitle"></div>
-                <div class="tcol"></div>
                 <div class="tcol bgGray headTitle"></div>
                 <div class="tcol"></div>
               </div>

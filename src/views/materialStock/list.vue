@@ -50,6 +50,11 @@
         </div>
         <div class="filterCtn">
           <div class="elCtn">
+            <el-input placeholder="搜索计划单号"
+              v-model="plan_code"
+              @keydown.enter.native="changeRouter"></el-input>
+          </div>
+          <div class="elCtn">
             <el-select @change="$setLocalStorage('group_id',group_id);changeRouter()"
               v-model="group_id"
               placeholder="筛选负责小组"
@@ -73,7 +78,8 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
-          <div class="elCtn">
+          <div class="elCtn"
+            style="width:120px">
             <el-select v-model="limit"
               placeholder="每页展示条数"
               @change="changeRouter">
@@ -130,6 +136,7 @@ export default Vue.extend({
       limitList: limitArr,
       order_type: null,
       keyword: '',
+      plan_code: '',
       client_id: [],
       group_id: '',
       user_id: '',
@@ -288,6 +295,7 @@ export default Vue.extend({
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.order_type = Number(query.order_type) || null
       this.date = query.date ? (query.date as string).split(',') : []
+      this.plan_code = query.plan_code || ''
       this.limit = query.limit ? Number(query.limit) : 10
     },
     changeRouter() {
@@ -307,7 +315,9 @@ export default Vue.extend({
           '&status=' +
           this.status +
           '&date=' +
-          this.date
+          this.date +
+          '&plan_code=' +
+          this.plan_code
       )
     },
     reset() {
@@ -323,6 +333,7 @@ export default Vue.extend({
           this.group_id = ''
           this.date = []
           this.status = '0'
+          this.plan_code = ''
           this.order_type = null
           this.limit = 10
           this.changeRouter()
@@ -344,6 +355,7 @@ export default Vue.extend({
           page: this.page,
           limit: this.limit,
           is_check: this.status,
+          plan_code: this.plan_code,
           start_time: this.date.length > 0 ? this.date[0] : '',
           end_time: this.date.length > 0 ? this.date[1] : '',
           user_id: this.user_id,
