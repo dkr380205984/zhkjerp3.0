@@ -14,32 +14,26 @@
             ></el-input>
           </div>
           <div class="elCtn">
-            <el-cascader
-              @change="changeRouter"
-              placeholder="部门筛选"
-              v-model="client_id"
-              :options="clientList"
-              filterable
-              clearable
-            >
-            </el-cascader>
+            <el-select @change="changeRouter" v-model="department" placeholder="部门筛选">
+              <el-option
+                v-for="(item, index) in departmentList"
+                :key="index"
+                :value="item.id"
+                :label="item.name"
+              ></el-option>
+            </el-select>
           </div>
           <div class="elCtn">
             <el-select @change="changeRouter" v-model="status" placeholder="员工状态筛选">
               <el-option value="1" label="在职"></el-option>
-              <el-option value="0" label="离职"></el-option>
+              <el-option value="2" label="离职"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-cascader
-              @change="changeRouter"
-              placeholder="工种筛选"
-              v-model="client_id"
-              :options="clientList"
-              filterable
-              clearable
-            >
-            </el-cascader>
+            <el-select @change="changeRouter" v-model="type" placeholder="工种筛选">
+              <el-option value="1" label="临时工"></el-option>
+              <el-option value="2" label="合同工"></el-option>
+            </el-select>
           </div>
           <div class="btn borderBtn" @click="reset">重置</div>
         </div>
@@ -47,7 +41,15 @@
           <div class="btn backHoverBlue fr" @click="$router.push('/workerManage/create')">添加员工</div>
           <div class="btn backHoverBlue fr" @click="importExcel()">导入Excel模板</div>
           <div class="btn backHoverBlue fr" @click="downloadExcel()">下载Excel模板</div>
-          <div :class="this.multipleSelection.length !== 0 ? 'btn backHoverOrange fl': 'btn backHoverOrange fl noCheckOrange'" @click="moreLeave()" style="margin-left: 0">批量离职</div>
+          <div
+            :class="
+              this.multipleSelection.length !== 0 ? 'btn backHoverOrange fl' : 'btn backHoverOrange fl noCheckOrange'
+            "
+            @click="moreLeave()"
+            style="margin-left: 0"
+          >
+            批量离职
+          </div>
           <div
             :class="this.multipleSelection.length !== 0 ? 'btn backHoverBlue fl' : 'btn backHoverBlue fl noCheck'"
             @click="exportExcel()"
@@ -67,17 +69,27 @@
           >
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
             <el-table-column prop="code" label="员工编号"></el-table-column>
-            <el-table-column prop="order_code" label="员工姓名"></el-table-column>
-            <el-table-column prop="group_name" label="手机号"></el-table-column>
-            <el-table-column prop="total_plan_number" label="所属部门"></el-table-column>
-            <el-table-column prop="total_order_number" label="工种"></el-table-column>
-            <el-table-column prop="material_order_progress" label="员工状态">
-              <template slot-scope="scope"> {{ scope.row.date }} 离职 </template>
+            <el-table-column prop="name" label="员工姓名"></el-table-column>
+            <el-table-column prop="phone" label="手机号"></el-table-column>
+            <el-table-column prop="department" label="所属部门"></el-table-column>
+            <el-table-column prop="type" label="工种">
+              <template slot-scope="scope">
+                {{ scope.row.type === '1' ? '临时工' : scope.row.type === '2' ? '合同工' : '状态有误' }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="status" label="员工状态">
+              <template slot-scope="scope">
+                <div :class="scope.row.status === 1 ? 'blue' : scope.row.status === 2 ? 'orange' : 'red'">
+                  {{ scope.row.status === 1 ? '在职' : scope.row.status === 2 ? '离职' : '状态有误' }}
+                </div>
+              </template>
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <span class="opr hoverBlue" @click="$router.push('/workerManage/detail?id=' + scope.row.id)">详情</span>
-                <span class="opr hoverOrange" @click="$router.push('/workerManage/update?id=' + scope.row.id)">修改</span>
+                <span class="opr hoverOrange" @click="$router.push('/workerManage/update?id=' + scope.row.id)"
+                  >修改</span
+                >
                 <span class="opr hoverRed" @click="deleteWorker(scope.row)">离职</span>
               </template>
             </el-table-column>
@@ -101,7 +113,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { quotedPrice, listSetting, exportExcel } from '@/assets/js/api'
+import { quotedPrice, listSetting, exportExcel, staff } from '@/assets/js/api'
 import { ListSetting } from '@/types/list'
 import { QuotedPriceInfo } from '@/types/quotedPrice'
 import { limitArr } from '@/assets/js/dictionary'
@@ -126,7 +138,8 @@ export default Vue.extend({
       total: 1,
       limit: 10,
       keyword: '',
-      client_id: [],
+      department: '',
+      departmentList: [],
       user_id: '',
       group_id: '',
       status: null,
@@ -231,6 +244,7 @@ export default Vue.extend({
           index: 11
         }
       ],
+      type: '',
       pickerOptions: {
         shortcuts: [
           {
@@ -374,24 +388,28 @@ export default Vue.extend({
     },
     getList() {
       this.loading = true
-      quotedPrice
-        .list({
-          keyword: this.keyword,
-          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
-          page: this.page,
-          limit: this.limit,
-          is_check: this.status,
-          start_time: this.date.length > 0 ? this.date[0] : '',
-          end_time: this.date.length > 0 ? this.date[1] : '',
-          user_id: this.user_id,
-          group_id: this.group_id
+
+      staff
+        .departmentList({
+          keyword: '',
+          limit: ''
         })
         .then((res) => {
-          // 产品信息需要在列表里展示，配合列表设置要把产品信息拿到最外层
-          res.data.data.items.map((item: any) => {
-            this.$set(item, 'isCheck', false)
-            return item
-          })
+          if (res.data.status) {
+            this.departmentList = res.data.data
+          }
+        })
+
+      staff
+        .list({
+          keyword: this.keyword,
+          department: this.department,
+          page: this.page,
+          limit: this.limit,
+          type: this.type,
+          status: this.status
+        })
+        .then((res) => {
           this.list = res.data.data.items
           this.total = res.data.data.total
           this.loading = false

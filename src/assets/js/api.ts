@@ -622,7 +622,16 @@ const clientBind = {
   bind: (params: { client_id: string | number, uuid: string }) => http.post(`${baseUrl}/workshop/client/save`, params, 'application/json'),
   unbind: (params: { client_id: string | number }) => http.post(`${baseUrl}/workshop/client/unbind`, params, 'application/json')
 }
+
+// 员工管理
+const staff = {
+  departmentList: (params?: any) => http.get(`${baseUrl}/staff/department/list`, params),
+  list: (params?: any) => http.get(`${baseUrl}/staff/list`, params),
+  departmentAdd: (params?: any) => http.post(`${baseUrl}/staff/department/save`, params),
+  addStaff: (params?: any) => http.post(`${baseUrl}/staff/save`, params),
+}
 export {
+  staff,
   clientBind,
   systemMessage,
   login,

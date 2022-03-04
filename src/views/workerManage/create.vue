@@ -12,7 +12,7 @@
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工姓名" v-model="quotedPriceInfo.title"></el-input>
+              <el-input placeholder="请输入员工姓名" v-model="staffInfo.name"></el-input>
             </div>
           </div>
           <div class="col">
@@ -20,24 +20,29 @@
               <span class="text">手机号</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工手机号" v-model="quotedPriceInfo.title"></el-input>
+              <el-input placeholder="请输入员工手机号" v-model="staffInfo.phone"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">
               <span class="text">所属部门</span>
               <span class="explanation">(必选)</span>
-              <span class="explanation fr" style="color: #1a95ff" @click="addDepartment()">+ 添加新部门</span>
+              <span class="explanation fr" style="color: #1a95ff" @click="showAddDepartment()">+ 添加新部门</span>
             </div>
             <div class="info elCtn">
               <el-select
                 placeholder="请选择部门"
-                v-model="quotedPriceInfo.contacts_id"
+                v-model="staffInfo.department"
                 no-data-text="请先选择询价客户"
                 clearable
                 :disabled="!!$route.query.again"
               >
-                <el-option v-for="item in contactsList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+                <el-option
+                  v-for="item in departmentList"
+                  :key="item.id"
+                  :value="item.name"
+                  :label="item.name"
+                ></el-option>
               </el-select>
             </div>
           </div>
@@ -49,13 +54,9 @@
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-select
-                placeholder="请选择员工工种"
-                v-model="quotedPriceInfo.group_id"
-                clearable
-                :disabled="!!$route.query.again"
-              >
-                <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+              <el-select placeholder="请选择员工工种" v-model="staffInfo.type" clearable>
+                <el-option :value="1" label="临时工"></el-option>
+                <el-option :value="2" label="合同工"></el-option>
               </el-select>
             </div>
           </div>
@@ -64,7 +65,7 @@
               <span class="text">入职时间</span>
             </div>
             <div class="info elCtn">
-              <el-date-picker v-model="indate" type="date" placeholder="选择日期"> </el-date-picker>
+              <el-date-picker v-model="staffInfo.entry_time" type="date" placeholder="选择日期"> </el-date-picker>
             </div>
           </div>
           <div class="col">
@@ -72,7 +73,7 @@
               <span class="text">离职时间</span>
             </div>
             <div class="info elCtn">
-              <el-date-picker v-model="outdate" type="date" placeholder="选择日期"> </el-date-picker>
+              <el-date-picker v-model="staffInfo.resign_time" type="date" placeholder="选择日期"> </el-date-picker>
             </div>
           </div>
         </div>
@@ -82,8 +83,14 @@
               <span class="text">负责工序</span>
             </div>
             <div class="info elCtn checkbox">
-              <el-checkbox-group v-model="chooseProcess">
-                <el-checkbox-button style="margin-left:10px;margin-top:10px" v-for="item in workProcedure" :label="item.label" :key="item.label">{{ item.label }}</el-checkbox-button>
+              <el-checkbox-group v-model="staffInfo.process">
+                <el-checkbox-button
+                  style="margin-left: 10px; margin-top: 10px"
+                  v-for="item in workProcedure"
+                  :label="item.label"
+                  :key="item.label"
+                  >{{ item.label }}</el-checkbox-button
+                >
               </el-checkbox-group>
             </div>
           </div>
@@ -92,10 +99,10 @@
           <div class="col">
             <div class="info elCtn">
               <div class="row newProcess">
-                <div class="col" style="flex:2">
-                  <el-input placeholder="请输入新工序名称" v-model="quotedPriceInfo.title"></el-input>
+                <div class="col" style="flex: 2">
+                  <el-input placeholder="请输入新工序名称" v-model="newProcessName"></el-input>
                 </div>
-                <div class="col el-btn" style="flex:1">
+                <div class="col el-btn" style="flex: 1">
                   <el-button>+ 添加新工序</el-button>
                 </div>
               </div>
@@ -122,19 +129,22 @@
               <span class="text">年龄</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工年龄" v-model="quotedPriceInfo.title"></el-input>
+              <el-input placeholder="请输入员工年龄" v-model="staffInfo.age"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">性别</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工性别" v-model="client_target_price"></el-input>
+              <el-select placeholder="请选择员工性别" v-model="staffInfo.sex" clearable>
+                <el-option :value="1" label="男"></el-option>
+                <el-option :value="2" label="女"></el-option>
+              </el-select>
             </div>
           </div>
           <div class="col">
             <div class="label">身份证号码</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工身份证号码" v-model="start_order_number"></el-input>
+              <el-input placeholder="请输入员工身份证号码" v-model="staffInfo.id_number"></el-input>
             </div>
           </div>
         </div>
@@ -142,19 +152,19 @@
           <div class="col">
             <div class="label">民族</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工民族" v-model="desc"></el-input>
+              <el-input placeholder="请输入员工民族" v-model="staffInfo.nation"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">学历</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工学历" v-model="desc"></el-input>
+              <el-input placeholder="请输入员工学历" v-model="staffInfo.education"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">健康状况</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工健康状况" v-model="desc"></el-input>
+              <el-input placeholder="请输入员工健康状况" v-model="staffInfo.health"></el-input>
             </div>
           </div>
         </div>
@@ -162,19 +172,22 @@
           <div class="col">
             <div class="label">工资卡银行</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入卡银行" v-model="desc"></el-input>
+              <el-input placeholder="请输入卡银行" v-model="staffInfo.bank"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">银行卡号</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入银行卡号" v-model="desc"></el-input>
+              <el-input placeholder="请输入银行卡号" v-model="staffInfo.card_number"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">是否缴纳社保</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入是否缴纳社保" v-model="desc"></el-input>
+              <el-select placeholder="请选择是否缴纳社保" v-model="staffInfo.sex" clearable>
+                <el-option :value="1" label="否"></el-option>
+                <el-option :value="2" label="是"></el-option>
+              </el-select>
             </div>
           </div>
         </div>
@@ -182,7 +195,7 @@
           <div class="col">
             <div class="label">备注</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入其它备注" v-model="desc"></el-input>
+              <el-input placeholder="请输入其它备注" v-model="staffInfo.desc"></el-input>
             </div>
           </div>
         </div>
@@ -190,16 +203,26 @@
     </div>
     <div class="bottomFixBar">
       <div class="main">
-        <div class="fl" style="line-height: 56px">
-          合计：<span class="blue"
-            >{{ realTotalPrice }}元<span v-if="quotedPriceInfo.settle_unit !== '元'">{{
-              '/' + realTotalPriceChange + quotedPriceInfo.settle_unit
-            }}</span></span
-          >
-        </div>
         <div class="btnCtn">
           <div class="borderBtn" @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverBlue" @click="saveQuotedPrice(false)">提交</div>
+          <div class="btn backHoverBlue" @click="addStaff()">提交</div>
+        </div>
+      </div>
+    </div>
+    <div class="popup" v-show="isAddDepartment">
+      <div class="main" style="width: 1000px">
+        <div class="titleCtn">
+          <span class="text">添加新部门</span>
+          <div class="closeCtn" @click="isAddDepartment = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn" style="min-height: 70px; display: flex; justify-content: center">
+          <el-input v-model="newDepartName" style="height: 32px" placeholder="请输入新部门名字"></el-input>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn" @click="isAddDepartment = false">取消</span>
+          <span class="btn backHoverBlue" @click="addDepartment()">确认</span>
         </div>
       </div>
     </div>
@@ -207,21 +230,41 @@
 </template>
 
 <script lang="ts">
-import { QuotedPriceInfo } from '@/types/quotedPrice'
 import { PackMaterialInfo, DecorateMaterialInfo } from '@/types/materialSetting'
 import { moneyArr } from '@/assets/js/dictionary'
-import { client, quotedPrice, yarn, sampleOrder, order, process } from '@/assets/js/api'
+import { quotedPrice, order, staff } from '@/assets/js/api'
 import Vue from 'vue'
-import { SampleOrderInfo, SampleOrderTime } from '@/types/sampleOrder'
-import { OrderInfo, OrderTime } from '@/types/order'
+import { OrderInfo } from '@/types/order'
 export default Vue.extend({
   data(): {
     [propName: string]: any
-    quotedPriceInfo: QuotedPriceInfo
   } {
     return {
       loading: false,
       unitArr: moneyArr,
+      isAddDepartment: false,
+      departmentList: [],
+      newDepartName: '',
+      staffInfo: {
+        name: '',
+        phone: '',
+        department: '',
+        type: '',
+        entry_time: '',
+        resign_time: '',
+        process: [],
+        age: '',
+        sex: '',
+        id_number: '',
+        nation: '',
+        education: '',
+        health: '',
+        bank: '',
+        card_number: '',
+        social_security: '',
+        desc: '',
+        id:''
+      },
       postData: {
         key: '',
         token: ''
@@ -409,126 +452,8 @@ export default Vue.extend({
         }
       ],
       chooseProcess: [],
-      productIndex: '0', // 目前选中的产品
-      quotedPriceInfo: {
-        id: null,
-        is_draft: 1,
-        title: '',
-        client_id: '',
-        tree_data: [],
-        contacts_id: '',
-        group_id: '',
-        settle_unit: '元',
-        exchange_rate: '100',
-        total_number: '',
-        total_cost_price: '',
-        commission_percentage: '',
-        commission_price: '',
-        rate_taxation: '',
-        rate_price: '',
-        profit_percentage: '',
-        profit_price: '',
-        desc: '',
-        real_quote_price: '',
-        system_total_price: 0,
-        product_data: [
-          {
-            cv_list: [],
-            file_list: [],
-            cvFlag: false,
-            cvImageLength: 1,
-            total_price: '',
-            product_id: '',
-            type: [],
-            category_id: '',
-            secondary_category_id: '',
-            image_data: [],
-            client_target_price: '',
-            start_order_number: '',
-            desc: '',
-            transport_fee_desc: '',
-            transport_fee: '',
-            material_data: [
-              {
-                id: '',
-                tree_data: [],
-                material_id: '',
-                material_name: '',
-                weight: '',
-                loss: '',
-                price: '',
-                total_price: '',
-                unit: 'g',
-                price_info: []
-              }
-            ],
-            assist_material_data: [
-              {
-                id: '',
-                material_id: '',
-                material_name: '',
-                number: '',
-                loss: '',
-                price: '',
-                total_price: '',
-                unit: ''
-              }
-            ],
-            weave_data: [
-              {
-                id: '',
-                name: '',
-                desc: '',
-                total_price: ''
-              }
-            ],
-            semi_product_data: [
-              {
-                id: '',
-                process_id: [],
-                process_name: [],
-                desc: '',
-                total_price: ''
-              }
-            ],
-            production_data: [
-              {
-                id: '',
-                name: [],
-                desc: '',
-                total_price: ''
-              }
-            ],
-            pack_material_data: [
-              {
-                id: '',
-                material_name: '',
-                material_id: '',
-                desc: '',
-                total_price: ''
-              }
-            ],
-            other_fee_data: [
-              {
-                id: '',
-                name: '',
-                desc: '',
-                total_price: ''
-              }
-            ],
-            no_production_fee_data: [
-              {
-                id: '',
-                name: '',
-                desc: '',
-                total_price: ''
-              }
-            ]
-          }
-        ]
-      },
       contactsList: [],
-      weaveList: [{ value: '针织织造' }, { value: '梭织织造' }, { value: '制版费' }],
+      newProcessName: '',
       searchQuotedPrice: '',
       searchQuotedPriceList: [],
       desc: '',
@@ -541,107 +466,11 @@ export default Vue.extend({
     }
   },
   computed: {
-    // 总成本价
-    totalPrice(): string {
-      return this.quotedPriceInfo.product_data
-        .reduce((total, current) => {
-          return (
-            total +
-            Number(current.transport_fee) +
-            current.material_data.reduce((totalChild, currentChild) => {
-              return totalChild + Number(currentChild.total_price)
-            }, 0) +
-            current.assist_material_data.reduce((totalChild, currentChild) => {
-              return totalChild + Number(currentChild.total_price)
-            }, 0) +
-            current.weave_data.reduce((totalChild, currentChild) => {
-              return totalChild + Number(currentChild.total_price)
-            }, 0) +
-            current.semi_product_data.reduce((totalChild, currentChild) => {
-              return totalChild + Number(currentChild.total_price)
-            }, 0) +
-            current.production_data.reduce((totalChild, currentChild) => {
-              return totalChild + Number(currentChild.total_price)
-            }, 0) +
-            current.pack_material_data.reduce((totalChild, currentChild) => {
-              return totalChild + Number(currentChild.total_price)
-            }, 0) +
-            current.other_fee_data.reduce((totalChild, currentChild) => {
-              return totalChild + Number(currentChild.total_price)
-            }, 0) +
-            current.no_production_fee_data.reduce((totalChild, currentChild) => {
-              return totalChild + Number(currentChild.total_price)
-            }, 0)
-          )
-        }, 0)
-        .toFixed(2)
-    },
-    // 总合计——含各种税 quotedPriceInfo.system_total_price
-    realTotalPrice(): string {
-      return (
-        Number(this.totalPrice) /
-        (1 -
-          ((Number(this.quotedPriceInfo.commission_percentage) / 100 || 0) +
-            (Number(this.quotedPriceInfo.profit_percentage) / 100 || 0) +
-            Number(this.quotedPriceInfo.rate_taxation) / 100 || 0))
-      ).toFixed(2)
-    },
-    // 总合计，按照汇率转换后
-    realTotalPriceChange(): string {
-      return ((Number(this.realTotalPrice) / Number(this.quotedPriceInfo.exchange_rate)) * 100).toFixed(2)
-    },
-    // quotedPriceInfo.commission_price
-    commissionPrice(): string {
-      return (Number(this.realTotalPrice) * (Number(this.quotedPriceInfo.commission_percentage) / 100 || 0)).toFixed(2)
-    },
-    // quotedPriceInfo.profit_price
-    profitPrice(): string {
-      return (Number(this.realTotalPrice) * (Number(this.quotedPriceInfo.profit_percentage) / 100 || 0)).toFixed(2)
-    },
-    // quotedPriceInfo.rate_price
-    ratePrice(): string {
-      return (Number(this.realTotalPrice) * (Number(this.quotedPriceInfo.rate_taxation) / 100 || 0)).toFixed(2)
-    },
-    // 产品项总价
-    productTotalPrice(): string[] {
-      return this.quotedPriceInfo.product_data.map((item) => {
-        return (
-          Number(item.transport_fee) +
-          item.material_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.assist_material_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.weave_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.semi_product_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.production_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.pack_material_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.other_fee_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.no_production_fee_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0)
-        ).toFixed(2)
-      })
-    },
     token() {
       return this.$store.state.status.token
     },
     productTypeList() {
       return this.$store.state.api.productType.arr
-    },
-    yarnTypeList() {
-      return this.$store.state.api.yarnType.arr
     },
     packMaterialList(): PackMaterialInfo[] {
       return this.$store.state.api.packMaterial.arr
@@ -679,15 +508,35 @@ export default Vue.extend({
         })
         this.addPasteImage()
       }
-      this.quotedPriceInfo.product_data.forEach((item, index) => {
-        if (index !== mark) {
-          item.cvFlag = false
-        }
-      })
+      // this.quotedPriceInfo.product_data.forEach((item, index) => {
+      //   if (index !== mark) {
+      //     item.cvFlag = false
+      //   }
+      // })
       this.imgId = mark + 'cvImg' + imageLength
       this.$forceUpdate()
     },
-    addDepartment() {},
+    showAddDepartment() {
+      this.isAddDepartment = true
+    },
+    addDepartment() {
+      if (this.newDepartName === '') {
+        this.$message.error('部门名字不能为空')
+        return
+      }
+      staff
+        .departmentAdd({
+          id: '',
+          name: this.newDepartName
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.$message.success('部门添加成功')
+            this.getDepartmentList()
+            this.isAddDepartment = false
+          }
+        })
+    },
     searchOtherFee(str: string, cb: Function) {
       const arr = [
         {
@@ -721,123 +570,6 @@ export default Vue.extend({
       if (type === 'image') {
       }
     },
-    // 获取纱线报价
-    getYarnPrice(ev: number[], info: any) {
-      if (ev) {
-        yarn
-          .detail({
-            id: ev[2]
-          })
-          .then((res) => {
-            if (res.data.status) {
-              info.price_info = res.data.data.rel_price
-            }
-          })
-      }
-    },
-    // 获取报价单模板
-    getModules(ev: number) {
-      const finded = this.searchQuotedPriceList.find((item: any) => item.id === ev)
-      this.quotedPriceInfo.product_data[this.productIndex].weave_data = JSON.parse(finded.weave_data)
-      this.quotedPriceInfo.product_data[this.productIndex].semi_product_data = JSON.parse(finded.semi_product_data)
-      this.quotedPriceInfo.product_data[this.productIndex].production_data = JSON.parse(finded.production_data)
-      this.quotedPriceInfo.product_data[this.productIndex].pack_material_data = JSON.parse(finded.pack_material_data)
-      // this.quotedPriceInfo.product_data[this.productIndex].other_fee_data = JSON.parse(finded.other_fee_data)
-    },
-    addPro() {
-      this.$addItem(this.quotedPriceInfo.product_data, {
-        cv_list: [],
-        file_list: [],
-        cvFlag: false,
-        cvImageLength: 1,
-        total_price: '',
-        product_id: '',
-        type: [],
-        category_id: '',
-        secondary_category_id: '',
-        image_data: [],
-        client_target_price: '',
-        start_order_number: '',
-        desc: '',
-        transport_fee_desc: '',
-        transport_fee: '',
-        material_data: [
-          {
-            id: '',
-            tree_data: [],
-            material_id: '',
-            material_name: '',
-            weight: '',
-            loss: '',
-            price: '',
-            total_price: '',
-            unit: 'g'
-          }
-        ],
-        assist_material_data: [
-          {
-            id: '',
-            material_id: '',
-            material_name: '',
-            number: '',
-            loss: '',
-            price: '',
-            total_price: '',
-            unit: ''
-          }
-        ],
-        weave_data: [
-          {
-            id: '',
-            name: '',
-            desc: '',
-            total_price: ''
-          }
-        ],
-        semi_product_data: [
-          {
-            id: '',
-            process_id: [],
-            process_name: [],
-            desc: '',
-            total_price: ''
-          }
-        ],
-        production_data: [
-          {
-            id: '',
-            name: [],
-            desc: '',
-            total_price: ''
-          }
-        ],
-        pack_material_data: [
-          {
-            id: '',
-            material_id: '',
-            material_name: '',
-            desc: '',
-            total_price: ''
-          }
-        ],
-        other_fee_data: [
-          {
-            id: '',
-            name: '',
-            desc: '',
-            total_price: ''
-          }
-        ],
-        no_production_fee_data: [
-          {
-            id: '',
-            name: '',
-            desc: '',
-            total_price: ''
-          }
-        ]
-      })
-    },
     beforeAvatarUpload(file: any) {
       const fileName = file.name.lastIndexOf('.') // 取到文件名开始到最后一个点的长度
       const fileNameLength = file.name.length // 取到文件名长度
@@ -857,32 +589,16 @@ export default Vue.extend({
       }
     },
     successFile(response: { hash: string; key: string }, index: number) {
-      this.quotedPriceInfo.product_data[index].image_data.push('https://file.zwyknit.com/' + response.key)
+      // this.quotedPriceInfo.product_data[index].image_data.push('https://file.zwyknit.com/' + response.key)
     },
     removeFile(file: { response: { hash: string; key: string } }, index: number) {
-      this.$deleteItem(
-        this.quotedPriceInfo.product_data[index].image_data,
-        this.quotedPriceInfo.product_data[index].image_data.indexOf('https://file.zwyknit.com/' + file.response.key)
-      )
+      // this.$deleteItem(
+      // this.quotedPriceInfo.product_data[index].image_data,
+      // this.quotedPriceInfo.product_data[index].image_data.indexOf('https://file.zwyknit.com/' + file.response.key)
+      // )
     },
     getUnit(ev: string, info: DecorateMaterialInfo) {
       info.unit = this.decorateMaterialList.find((item) => item.id === ev)!.unit
-    },
-    getContacts(ev: number[], init?: boolean) {
-      if (ev) {
-        client
-          .detail({
-            id: ev[2]
-          })
-          .then((res) => {
-            if (res.data.status) {
-              if (!init) {
-                this.quotedPriceInfo.contacts_id = ''
-              }
-              this.contactsList = res.data.data.contacts_data
-            }
-          })
-      }
     },
     // 辅助计算产品原料和装饰辅料的小计，小计本身可直接修改
     cmpTotalPrice(info: {
@@ -905,316 +621,6 @@ export default Vue.extend({
         info.total_price = this.$toFixed(
           (Number(info.weight || info.number) || 0) * (1 + (Number(info.loss) || 0) / 100) * (Number(info.price) || 0)
         )
-      }
-    },
-    // 把通过计算属性得到的价格以及通过级联选择器选到的id赋给表单数据
-    getCmpData() {
-      this.quotedPriceInfo.id = ''
-      this.quotedPriceInfo.total_number = this.quotedPriceInfo.product_data.length
-      this.quotedPriceInfo.commission_price = this.commissionPrice
-      this.quotedPriceInfo.rate_price = this.ratePrice
-      this.quotedPriceInfo.profit_price = this.profitPrice
-      this.quotedPriceInfo.total_cost_price = this.totalPrice
-      this.quotedPriceInfo.system_total_price = this.realTotalPrice
-      this.quotedPriceInfo.client_id = this.quotedPriceInfo.tree_data && (this.quotedPriceInfo.tree_data as number[])[2]
-      this.quotedPriceInfo.tree_data =
-        this.quotedPriceInfo.tree_data && (this.quotedPriceInfo.tree_data as number[]).join(',') // 保存公司原始数据包含一级二级分类
-      this.quotedPriceInfo.product_data.forEach((item) => {
-        item.image_data = item.file_list
-          ? item.image_data.concat(item.file_list!.map((item) => item.url))
-          : item.image_data // 新旧图拼接
-        item.image_data = item.cv_list ? item.cv_list.filter((item) => !!item).concat(item.image_data) : item.image_data // cv图拼接
-        item.category_id = item.type && item.type[0]
-        item.secondary_category_id = item.type && item.type[1]
-        item.material_data.forEach((itemChild) => {
-          itemChild.material_id = itemChild.tree_data && (itemChild.tree_data as number[])[2]
-          itemChild.tree_data = itemChild.tree_data && (itemChild.tree_data as number[]).join(',')
-        })
-        item.total_price =
-          Number(item.transport_fee) +
-          item.material_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.assist_material_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.weave_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.semi_product_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.production_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.pack_material_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0) +
-          item.other_fee_data.reduce((totalChild, currentChild) => {
-            return totalChild + Number(currentChild.total_price)
-          }, 0)
-      })
-    },
-    saveQuotedPrice(ifCaogao: boolean) {
-      this.quotedPriceInfo.is_draft = ifCaogao ? 1 : 2
-      if (!ifCaogao) {
-        const formCheck =
-          this.$formCheck(this.quotedPriceInfo, [
-            {
-              key: 'tree_data',
-              errMsg: '请选择询价客户',
-              regNormal: 'checkArr'
-            },
-            {
-              key: 'commission_percentage',
-              errMsg: '请输入佣金百分比'
-            },
-            {
-              key: 'rate_taxation',
-              errMsg: '请输入税率百分比'
-            },
-            {
-              key: 'profit_percentage',
-              errMsg: '请输入利润百分比'
-            }
-          ]) ||
-          this.quotedPriceInfo.product_data.some((item, index) => {
-            // 选择已有产品和直接添加产品描述验证不同
-            if (item.product_id) {
-              this.$message.error('暂时不支持')
-              return false
-            } else {
-              return (
-                this.$formCheck(item, [
-                  {
-                    key: 'transport_fee',
-                    errMsg: '产品' + (index + 1) + '请输入运费'
-                  },
-                  {
-                    key: 'type',
-                    errMsg: '请选择产品' + (index + 1) + '品类',
-                    regNormal: 'checkArr'
-                  }
-                ]) ||
-                item.material_data.some((itemChild) => {
-                  return (
-                    itemChild.tree_data &&
-                    this.$formCheck(itemChild, [
-                      {
-                        key: 'tree_data',
-                        errMsg: '请选择产品' + (index + 1) + '原料',
-                        regNormal: 'checkArr'
-                      },
-                      {
-                        key: 'weight',
-                        errMsg: '请输入产品' + (index + 1) + '原料预计数量'
-                      },
-                      {
-                        key: 'unit',
-                        errMsg: '物料的单位只能为g，kg或m',
-                        regExp: /^g$|^m$|^kg$/,
-                        regNegate: true
-                      },
-                      {
-                        key: 'price',
-                        errMsg: '请输入产品' + (index + 1) + '原料单价'
-                      }
-                    ])
-                  )
-                }) ||
-                item.assist_material_data.some((itemChild) => {
-                  return (
-                    itemChild.material_id &&
-                    this.$formCheck(itemChild, [
-                      {
-                        key: 'material_id',
-                        errMsg: '请选择产品' + (index + 1) + '装饰辅料'
-                      },
-                      {
-                        key: 'number',
-                        errMsg: '请输入产品' + (index + 1) + '装饰辅料预计数量'
-                      },
-                      {
-                        key: 'unit',
-                        errMsg: '请输入产品' + (index + 1) + '装饰辅料数量单位'
-                      },
-                      {
-                        key: 'price',
-                        errMsg: '请输入产品' + (index + 1) + '装饰辅料单价'
-                      }
-                    ])
-                  )
-                }) ||
-                item.weave_data.some((itemChild) => {
-                  return (
-                    itemChild.name &&
-                    this.$formCheck(itemChild, [
-                      {
-                        key: 'name',
-                        errMsg: '请选择产品' + (index + 1) + '织造明细'
-                      },
-                      {
-                        key: 'total_price',
-                        errMsg: '请输入产品' + (index + 1) + '织造小计'
-                      }
-                    ])
-                  )
-                }) ||
-                item.semi_product_data.some((itemChild) => {
-                  return (
-                    itemChild.process_id!.length > 0 &&
-                    this.$formCheck(itemChild, [
-                      {
-                        key: 'process_id',
-                        errMsg: '请选择产品' + (index + 1) + '半成品加工工序'
-                      },
-                      {
-                        key: 'total_price',
-                        errMsg: '请输入产品' + (index + 1) + '半成品加工小计'
-                      }
-                    ])
-                  )
-                }) ||
-                item.production_data.some((itemChild) => {
-                  return (
-                    itemChild.name!.length > 0 &&
-                    this.$formCheck(itemChild, [
-                      {
-                        key: 'name',
-                        errMsg: '请选择产品' + (index + 1) + '成品加工工序'
-                      },
-                      {
-                        key: 'total_price',
-                        errMsg: '请输入产品' + (index + 1) + '成品加工小计'
-                      }
-                    ])
-                  )
-                }) ||
-                item.pack_material_data.some((itemChild) => {
-                  return (
-                    itemChild.material_id &&
-                    this.$formCheck(itemChild, [
-                      {
-                        key: 'material_id',
-                        errMsg: '请选择产品' + (index + 1) + '包装辅料'
-                      },
-                      {
-                        key: 'total_price',
-                        errMsg: '请输入产品' + (index + 1) + '包装辅料小计'
-                      }
-                    ])
-                  )
-                }) ||
-                item.other_fee_data.some((itemChild) => {
-                  return (
-                    itemChild.name &&
-                    this.$formCheck(itemChild, [
-                      {
-                        key: 'name',
-                        errMsg: '请输入产品' + (index + 1) + '其他费用名称'
-                      },
-                      {
-                        key: 'total_price',
-                        errMsg: '请输入产品' + (index + 1) + '其他费用小计'
-                      }
-                    ])
-                  )
-                }) ||
-                item.no_production_fee_data.some((itemChild) => {
-                  return (
-                    itemChild.name &&
-                    this.$formCheck(itemChild, [
-                      {
-                        key: 'name',
-                        errMsg: '请输入产品' + (index + 1) + '非生产型费用名称'
-                      },
-                      {
-                        key: 'total_price',
-                        errMsg: '请输入产品' + (index + 1) + '非生产型费用小计'
-                      }
-                    ])
-                  )
-                })
-              )
-            }
-          })
-        if (!formCheck) {
-          this.getCmpData()
-          quotedPrice.create(this.quotedPriceInfo).then((res) => {
-            if (res.data.status) {
-              this.$message.success('创建成功')
-              this.$router.push('/quotedPrice/detail?id=' + res.data.data)
-            } else {
-              // 提交不成功把tree_data反复横跳改来改去
-              // @ts-ignore
-              this.quotedPriceInfo.tree_data = this.quotedPriceInfo.tree_data.split(',')
-              this.quotedPriceInfo.product_data.forEach((item) => {
-                item.material_data.forEach((itemChild) => {
-                  // @ts-ignore
-                  itemChild.tree_data = itemChild.tree_data.split(',')
-                })
-              })
-            }
-          })
-        }
-      } else {
-        this.getCmpData()
-        quotedPrice.create(this.quotedPriceInfo).then((res) => {
-          if (res.data.status) {
-            this.$message.success('草稿保存成功')
-          }
-        })
-      }
-    },
-    getUpdateInfo() {
-      this.quotedPriceInfo.product_data.forEach((item) => {
-        item.material_data.forEach((item) => {
-          // @ts-ignore
-          this.getYarnPrice(item.tree_data.split(','), item)
-        })
-      })
-      this.quotedPriceInfo.tree_data = this.quotedPriceInfo.tree_data
-        ? (this.quotedPriceInfo.tree_data as string).split(',').map((item) => Number(item))
-        : []
-      if (this.quotedPriceInfo.tree_data.length > 0) {
-        this.getContacts(this.quotedPriceInfo.tree_data, true) //标记一下是初始化
-      }
-
-      this.quotedPriceInfo.product_data.forEach((item) => {
-        item.file_list = item.image_data.map((itemImage, index) => {
-          return {
-            id: index,
-            url: itemImage
-          }
-        })
-        item.cv_list = []
-        item.image_data = [] // 清空image_data数据，用于存储新的url字符串，提交的时候拼接file_list剩下的就行
-        item.type = item.category_id ? [item.category_id as number, item.secondary_category_id as number] : []
-        item.material_data.forEach((itemMat) => {
-          itemMat.tree_data = itemMat.tree_data
-            ? (itemMat.tree_data as string).split(',').map((item) => Number(item))
-            : []
-        })
-      })
-    },
-    // 查看报价说明
-    lookPriceDetail(type: Number[]) {
-      if (type.length > 0) {
-        quotedPrice
-          .descDetail({
-            category_id: type[0]
-          })
-          .then((res) => {
-            if (res.data.status) {
-              this.quotedImage = res.data.data.type
-              this.desc = res.data.data.desc
-              this.showContent = true
-            } else {
-              this.$message.warning('暂无说明')
-            }
-          })
-      } else {
-        this.$message.error('请先选择产品品类')
       }
     },
     dataURLtoFile(dataurl: string, filename: string) {
@@ -1303,6 +709,46 @@ export default Vue.extend({
       } else {
         this.$message.error('请先上传图片')
       }
+    },
+    // 获取部门信息
+    getDepartmentList() {
+      staff
+        .departmentList({
+          keyword: '',
+          limit: ''
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.departmentList = res.data.data
+          }
+        })
+    },
+
+    // 添加员工
+    addStaff() {
+      let staffInfo = this.staffInfo
+
+      staffInfo.process = staffInfo.process.toString()
+      console.log(staffInfo)
+      if (staffInfo.name === '') {
+        this.$message.error('员工姓名不能为空')
+        return
+      }
+      if (staffInfo.department === '') {
+        this.$message.error('所属部门不能为空')
+        return
+      }
+      if (staffInfo.type === '') {
+        this.$message.error('员工工种不能为空')
+        return
+      }
+
+      staff.addStaff(staffInfo).then((res: any) => {
+        if(res.data.status){
+          this.$message.success('添加成功')
+          return
+        }
+      })
     }
   },
   mounted() {
@@ -1316,11 +762,6 @@ export default Vue.extend({
         checkWhich: 'api/productType',
         getInfoMethed: 'dispatch',
         getInfoApi: 'getProductTypeAsync'
-      },
-      {
-        checkWhich: 'api/yarnType',
-        getInfoMethed: 'dispatch',
-        getInfoApi: 'getYarnTypeAsync'
       },
       {
         checkWhich: 'api/decorateMaterial',
@@ -1381,131 +822,6 @@ export default Vue.extend({
             this.getUpdateInfo()
             this.loading = false
           }
-        })
-    }
-    // 样单转报价单逻辑
-    if (this.$route.query.sampleOrderId) {
-      this.loading = true
-      sampleOrder
-        .detail({
-          id: Number(this.$route.query.sampleOrderId)
-        })
-        .then((res) => {
-          if (res.data.status) {
-            const data: SampleOrderInfo = res.data.data
-            this.quotedPriceInfo.rel_order_id = Number(this.$route.query.sampleOrderId)
-            this.quotedPriceInfo.tree_data = (data.tree_data as string).split(',').map((item: string) => Number(item))
-            this.getContacts(this.quotedPriceInfo.tree_data as number[], true)
-            this.quotedPriceInfo.contacts_id = data.contacts_id
-            this.quotedPriceInfo.group_id = data.group_id
-            this.quotedPriceInfo.product_data = (data.time_data as SampleOrderTime[])[
-              Number(this.$route.query.sampleOrderIndex)
-            ].batch_data[0].product_data
-              .filter((item) => {
-                // 过滤掉多个或同一批次里面相同的产品
-                return !this.quotedPriceInfo.product_data.find((itemFind) => itemFind.product_id === item.product_id)
-              })
-              .map((item) => {
-                return {
-                  cv_list: [],
-                  cvFlag: false,
-                  total_price: '',
-                  product_id: item.product_id,
-                  type: [item.category_id as number, item.secondary_category_id as number],
-                  category_id: item.category_id,
-                  secondary_category_id: item.secondary_category_id,
-                  file_list: (item.image_data as string[]).map((itemImage, index) => {
-                    return {
-                      id: index,
-                      url: itemImage
-                    }
-                  }),
-                  image_data: [],
-                  client_target_price: '',
-                  start_order_number: '',
-                  desc: item.desc,
-                  transport_fee_desc: '',
-                  transport_fee: '',
-                  material_data: [
-                    {
-                      id: '',
-                      tree_data: [],
-                      material_id: '',
-                      material_name: '',
-                      weight: '',
-                      loss: '',
-                      price: '',
-                      total_price: '',
-                      unit: 'g',
-                      price_info: []
-                    }
-                  ],
-                  assist_material_data: [
-                    {
-                      id: '',
-                      material_id: '',
-                      material_name: '',
-                      number: '',
-                      loss: '',
-                      price: '',
-                      total_price: '',
-                      unit: ''
-                    }
-                  ],
-                  weave_data: [
-                    {
-                      id: '',
-                      name: '',
-                      desc: '',
-                      total_price: ''
-                    }
-                  ],
-                  semi_product_data: [
-                    {
-                      id: '',
-                      process_id: [],
-                      process_name: [],
-                      desc: '',
-                      total_price: ''
-                    }
-                  ],
-                  production_data: [
-                    {
-                      id: '',
-                      name: [],
-                      desc: '',
-                      total_price: ''
-                    }
-                  ],
-                  pack_material_data: [
-                    {
-                      id: '',
-                      material_name: '',
-                      material_id: '',
-                      desc: '',
-                      total_price: ''
-                    }
-                  ],
-                  other_fee_data: [
-                    {
-                      id: '',
-                      name: '',
-                      desc: '',
-                      total_price: ''
-                    }
-                  ],
-                  no_production_fee_data: [
-                    {
-                      id: '',
-                      name: '',
-                      desc: '',
-                      total_price: ''
-                    }
-                  ]
-                }
-              })
-          }
-          this.loading = false
         })
     }
     // 订单转报价单逻辑
@@ -1640,6 +956,8 @@ export default Vue.extend({
           this.loading = false
         })
     }
+
+    this.getDepartmentList()
   },
   beforeDestroy() {
     if (this.notify) {
@@ -1659,24 +977,24 @@ export default Vue.extend({
     padding: 0;
   }
 
-  .el-checkbox-button .el-checkbox-button__inner{
+  .el-checkbox-button .el-checkbox-button__inner {
     border-radius: 4px;
-    border: 1px solid #D9D9D9;
-    background: #F5F5F5;
+    border: 1px solid #d9d9d9;
+    background: #f5f5f5;
     color: rgba(0, 0, 0, 65%);
     padding: 4px 23px;
   }
-  
-  .el-checkbox-button.is-checked .el-checkbox-button__inner{
+
+  .el-checkbox-button.is-checked .el-checkbox-button__inner {
     border-radius: 4px;
-    border: 1px solid #D9D9D9;
-    color: #FFF;
-    background-color: #409EFF;
-    border-color: #409EFF;
+    border: 1px solid #d9d9d9;
+    color: #fff;
+    background-color: #409eff;
+    border-color: #409eff;
     padding: 4px 23px;
-    box-shadow: unset ;
+    box-shadow: unset;
   }
-  .el-btn .el-button{
+  .el-btn .el-button {
     height: 32px;
     padding: 6px 20px;
   }
