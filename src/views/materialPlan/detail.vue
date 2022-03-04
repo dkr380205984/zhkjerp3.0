@@ -315,33 +315,6 @@
         </div>
       </div>
     </div>
-    <div class="popup"
-      v-show="chooseIndexFlag">
-      <div class="main"
-        style=" width: 500px;">
-        <div class="titleCtn">
-          <div class="text">选择打样次数</div>
-          <div class="closeCtn"
-            @click="init();chooseIndexFlag=false">
-            <i class="el-icon-close"></i>
-          </div>
-        </div>
-        <div class="contentCtn">
-          <div class="tag"
-            v-for="(item,index) in orderInfo.time_data"
-            :key="index"
-            :class="{'backHoverBlue':index===orderIndex}"
-            @click="orderIndex=index"
-            v-show="item.has_material_plan===2">第{{index+1}}次打样</div>
-        </div>
-        <div class="oprCtn">
-          <div class="btn borderBtn"
-            @click="init();chooseIndexFlag=false">取消</div>
-          <div class="btn backHoverBlue"
-            @click="init();chooseIndexFlag=false">确定</div>
-        </div>
-      </div>
-    </div>
     <associated-page :data="associatedPage"
       @close="showAssociatedPage = false"
       :show="showAssociatedPage"></associated-page>
@@ -352,15 +325,19 @@
 import Vue from 'vue'
 import { materialPlan, order } from '@/assets/js/api'
 import { MaterialPlanInfo } from '@/types/materialPlan'
+import { OrderInfo, OrderTime } from '@/types/order'
+interface OrderDetail extends OrderInfo {
+  time_data: OrderTime[]
+}
 export default Vue.extend({
   data(): {
+    orderInfo: OrderDetail
     materialPlanInfo: MaterialPlanInfo[]
     [propName: string]: any
   } {
     return {
       loading: true,
       orderIndex: 0,
-      chooseIndexFlag: false,
       orderInfo: {
         id: null,
         client_id: '',
@@ -445,7 +422,7 @@ export default Vue.extend({
     init() {
       materialPlan
         .list({
-          order_id: this.orderInfo.time_data[this.orderIndex].id
+          order_id: this.orderInfo.time_data[this.orderIndex].id as number
         })
         .then((res) => {
           if (res.data.status) {
@@ -510,20 +487,12 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.orderInfo = res.data.data
-          if (this.orderInfo.time_data.length > 1) {
-            if (this.orderInfo.time_data.filter((item: any) => item.has_material_plan === 1).length > 1) {
-              this.chooseIndexFlag = true
-            } else {
-              this.orderInfo.time_data.forEach((item: any, index: number) => {
-                if (item.has_material_plan === 1) {
-                  this.orderIndex = index
-                }
-              })
-              this.init()
+          this.orderInfo.time_data.forEach((item, index) => {
+            if (item.id === Number(this.$route.query.sampleOrderIndex)) {
+              this.orderIndex = index
             }
-          } else {
-            this.init()
-          }
+          })
+          this.init()
           if (this.$route.query.ifprint) {
             this.showAssociatedPage = true
           }

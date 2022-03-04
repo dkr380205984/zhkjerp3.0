@@ -8,6 +8,8 @@ export interface PackPlanInfo {
   total_delivery_number: string
   data: PackPlanInfoData[]
   gather_info: Array<{
+    check?: boolean
+    isPlan?: boolean // 标记是否是计划生成的，计划生成的长宽高改不了
     unit: string
     number: string | number
     pack_material_id: number | string
@@ -22,6 +24,9 @@ export interface PackPlanInfo {
 export interface PackPlanInfoData {
   desc: string
   product_info: Array<{
+    product_code?: string
+    category?: string
+    secondary_category?: string
     product_show_info?: string // 前端记录产品展示信息
     product_id: number | string
     size_id: number | string
@@ -60,7 +65,7 @@ export interface PackOrderInfo {
   id?: number | string
   order_id?: string | number
   client_id: string | number
-  client_id_arr?: number[] // 前端用
+  tree_data?: number[] | string // 前端用
   client_name?: string
   order_time: string
   delivery_time: string

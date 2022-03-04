@@ -199,15 +199,10 @@
                   </div>
                   <div class="tcol">
                     <div class="elCtn">
-                      <el-select filterable
-                        placeholder="物料颜色"
-                        v-model="itemChild.material_color">
-                        <el-option v-for="item in yarnColorList"
-                          :key="item.name"
-                          :label="item.name"
-                          :value="item.name">
-                        </el-option>
-                      </el-select>
+                      <el-autocomplete class="inline-input"
+                        v-model="itemChild.material_color"
+                        :fetch-suggestions="searchColor"
+                        placeholder="物料颜色"></el-autocomplete>
                     </div>
                   </div>
                   <div class="tcol"
@@ -353,15 +348,10 @@
                   </div>
                   <div class="tcol">
                     <div class="elCtn">
-                      <el-select filterable
-                        placeholder="物料颜色"
-                        v-model="itemChild.material_color">
-                        <el-option v-for="item in yarnColorList"
-                          :key="item.name"
-                          :label="item.name"
-                          :value="item.name">
-                        </el-option>
-                      </el-select>
+                      <el-autocomplete class="inline-input"
+                        v-model="itemChild.material_color"
+                        :fetch-suggestions="searchColor"
+                        placeholder="物料颜色"></el-autocomplete>
                     </div>
                   </div>
                   <div class="tcol"
@@ -580,7 +570,12 @@ export default Vue.extend({
       return this.$store.state.api.yarnType.arr
     },
     yarnColorList() {
-      return this.$store.state.api.yarnColor.arr
+      return this.$store.state.api.yarnColor.arr.map((item: { name: any }) => {
+        return {
+          value: item.name,
+          label: item.name
+        }
+      })
     }
   },
   watch: {
@@ -632,6 +627,17 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 原料颜色搜索
+    searchColor(str: string, cb: any) {
+      let results = str ? this.yarnColorList.filter(this.createFilter(str)) : this.yarnColorList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    createFilter(queryString: string) {
+      return (restaurant: any) => {
+        return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+      }
+    },
     // 小数点处理方式
     numberAutoMethod(num: number | string) {
       const number = Number(num)

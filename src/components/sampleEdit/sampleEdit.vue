@@ -217,7 +217,7 @@
                   name:''
                 })">添加</div>
               <div class="opr hoverRed"
-                v-if="index>0"
+                v-if="index>0&&(!item.id)"
                 @click="$deleteItem(sampleInfo.color_data,index)">删除</div>
             </div>
             <div class="row">
@@ -401,7 +401,7 @@
                 v-if="index===0"
                 @click="addSize">添加</div>
               <div class="opr hoverRed"
-                v-if="index>0"
+                v-if="index>0&&(!item.id)"
                 @click="deleteSize(index)">删除</div>
             </div>
           </div>
@@ -793,6 +793,7 @@ export default Vue.extend({
         })
         .then((res) => {
           const data = res.data.data
+          data.product_code = '' // 导入产品不要把产品编号导进来
           this.changeDetailToEdit(data)
           this.loading = false
         })

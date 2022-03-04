@@ -51,7 +51,7 @@
               @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
-            <el-input v-model="product_name"
+            <el-input v-model="name"
               placeholder="搜索产品名称"
               @keydown.enter.native="changeRouter"></el-input>
           </div>
@@ -185,10 +185,10 @@
                   </div>
                 </div>
                 <div class="tcol noPad"
-                  style="flex:3"
-                  v-for="(itemChild,indexChild) in item.info_data"
-                  :key="indexChild">
-                  <div class="trow">
+                  style="flex:3">
+                  <div class="trow"
+                    v-for="(itemChild,indexChild) in item.info_data"
+                    :key="indexChild">
                     <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
                     <div class="tcol">{{itemChild.number}}</div>
                     <div class="tcol">
@@ -419,7 +419,7 @@
     <product-edit :show="stockInFlag"
       :ifStore="true"
       @close="stockInFlag=false"
-      @afterStockSave="stockInFlag=false"></product-edit>
+      @afterStockSave="stockInFlag=false;getList()"></product-edit>
   </div>
 </template>
 
@@ -440,7 +440,7 @@ export default Vue.extend({
       secondary_id: '',
       store_arr: [],
       product_code: '',
-      product_name: '',
+      name: '',
       stockFlag: false,
       stockInFlag: false,
       storeLoading: false,
@@ -521,9 +521,27 @@ export default Vue.extend({
       const query = this.$route.query
       this.page = Number(query.page)
       this.listType = query.listType === 'true' ? true : false
+      this.store_id = Number(query.store_id) || ''
+      this.secondary_id = Number(query.secondary_id) || ''
+      this.store_arr = Number(query.store_id) ? [Number(query.store_id), Number(query.secondary_id)] : []
+      this.name = query.name
+      this.product_code = query.product_code
     },
     changeRouter() {
-      this.$router.push('/store/productList?page=' + this.page + '&listType=' + this.listType)
+      this.$router.push(
+        '/store/productList?page=' +
+          this.page +
+          '&listType=' +
+          this.listType +
+          '&store_id=' +
+          this.store_id +
+          '&secondary_id=' +
+          this.secondary_id +
+          '&product_code' +
+          this.product_code +
+          '&name' +
+          this.name
+      )
     },
     reset() {},
     getList() {
@@ -532,6 +550,10 @@ export default Vue.extend({
         store
           .proLog({
             page: this.page,
+            product_code: this.product_code,
+            name: this.name,
+            store_id: this.store_id,
+            secondary_id: this.secondary_id,
             limit: 10
           })
           .then((res) => {
@@ -544,6 +566,10 @@ export default Vue.extend({
       } else {
         store
           .searchPro({
+            product_code: this.product_code,
+            name: this.name,
+            store_id: this.store_id,
+            secondary_id: this.secondary_id,
             page: this.page,
             limit: 10
           })

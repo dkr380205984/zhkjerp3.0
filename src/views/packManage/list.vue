@@ -161,8 +161,8 @@ export default Vue.extend({
           index: 2
         },
         {
-          key: 'has_material_plan',
-          name: '物料计划状态',
+          key: 'has_pack_plan',
+          name: '装箱计划状态',
           filterArr: ['', '已添加', '待添加'],
           classArr: ['', 'blue', 'orange'],
           ifShow: true,
@@ -170,12 +170,21 @@ export default Vue.extend({
           index: 3
         },
         {
+          key: 'has_pack_order',
+          name: '包装订购状态',
+          filterArr: ['', '已添加', '待添加'],
+          classArr: ['', 'blue', 'orange'],
+          ifShow: true,
+          ifLock: false,
+          index: 4
+        },
+        {
           key: 'product_code',
           otherkey: 'system_code',
           name: '产品编号',
           ifShow: true,
           ifLock: false,
-          index: 4,
+          index: 5,
           from: 'product_data',
           mark: true
         },
@@ -185,7 +194,7 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           ifImage: true,
-          index: 5,
+          index: 6,
           from: 'product_data'
         },
         {
@@ -193,21 +202,21 @@ export default Vue.extend({
           name: '下单总数',
           ifShow: true,
           ifLock: false,
-          index: 6
+          index: 7
         },
         {
           key: 'group_name',
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 7
+          index: 8
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 8
+          index: 9
         }
       ],
       pickerOptions: {
@@ -333,7 +342,7 @@ export default Vue.extend({
       this.listKey = []
       listSetting
         .detail({
-          type: 3
+          type: 10
         })
         .then((res) => {
           this.listSettingId = res.data.data ? res.data.data.id : null
