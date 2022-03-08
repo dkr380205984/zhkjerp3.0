@@ -94,6 +94,12 @@ export default Vue.extend({
             id: '10-3',
             icon: 'icon-zhuangxiangjihua',
             url: '/packManage/list?page=1&type=1'
+          },
+          {
+            name: '车间管理',
+            id: '19-3',
+            icon: 'icon-chejianguanli',
+            url: '/workshopManagement/list?page=1&type=1'
           }
           // {
           //   name: '装箱运输——暂无',
@@ -127,12 +133,12 @@ export default Vue.extend({
             icon: 'icon-gongyidanliebiao',
             url: '/craft/list?page=1'
           },
-          // {
-          //   name: '员工管理',
-          //   id: '17-3',
-          //   icon: 'icon-yuangongguanli',
-          //   url: '/workerManage/list?page=1&status=1'
-          // },
+          {
+            name: '员工管理',
+            id: '17-3',
+            icon: 'icon-yuangongguanli',
+            url: '/workerManage/list?page=1&keyword=&department=&status=&type=&limit=10'
+          },
           {
             name: '系统设置',
             id: 16,

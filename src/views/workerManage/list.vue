@@ -18,7 +18,7 @@
               <el-option
                 v-for="(item, index) in departmentList"
                 :key="index"
-                :value="item.id"
+                :value="item.name"
                 :label="item.name"
               ></el-option>
             </el-select>
@@ -39,23 +39,29 @@
         </div>
         <div class="filterCtn" style="height: 33px">
           <div class="btn backHoverBlue fr" @click="$router.push('/workerManage/create')">添加员工</div>
-          <div class="btn backHoverBlue fr" @click="importExcel()">导入Excel模板</div>
+          <div class="btn backHoverBlue fr">
+            <el-upload
+              class="upload-demo"
+              action="/api/import/staff"
+              :headers="headers"
+              :name="excelfile"
+              :show-file-list="false"
+              :on-success="uploadSuccess"
+            >
+              点击上传
+            </el-upload>
+          </div>
           <div class="btn backHoverBlue fr" @click="downloadExcel()">下载Excel模板</div>
           <div
             :class="
               this.multipleSelection.length !== 0 ? 'btn backHoverOrange fl' : 'btn backHoverOrange fl noCheckOrange'
             "
-            @click="moreLeave()"
+            @click="batchResignation()"
             style="margin-left: 0"
           >
             批量离职
           </div>
-          <div
-            :class="this.multipleSelection.length !== 0 ? 'btn backHoverBlue fl' : 'btn backHoverBlue fl noCheck'"
-            @click="exportExcel()"
-          >
-            导出Excel
-          </div>
+          <div class="btn backHoverBlue fl" @click="exportExcel()">导出Excel</div>
         </div>
         <div class="list">
           <!-- 表格 -->
@@ -113,26 +119,15 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { quotedPrice, listSetting, exportExcel, staff } from '@/assets/js/api'
-import { ListSetting } from '@/types/list'
-import { QuotedPriceInfo } from '@/types/quotedPrice'
-import { limitArr } from '@/assets/js/dictionary'
-interface QuotedPriceInfoList extends QuotedPriceInfo {
-  image_data: string[]
-  product_info: string
-}
+import { exportExcel, staff } from '@/assets/js/api'
+
 export default Vue.extend({
   data(): {
-    originalSetting: ListSetting[]
-    list: QuotedPriceInfoList[]
     [propName: string]: any
   } {
     return {
       loading: true,
-      checkAll: false,
-      isIndeterminate: false,
       mainLoading: false,
-      limitList: limitArr,
       list: [],
       page: 1,
       total: 1,
@@ -140,143 +135,8 @@ export default Vue.extend({
       keyword: '',
       department: '',
       departmentList: [],
-      user_id: '',
-      group_id: '',
-      status: null,
-      listSettingId: null,
-      listKey: [],
-      date: [],
-      checkedCount: [],
-      checked: false,
-      originalSetting: [
-        {
-          key: 'code',
-          name: '报价单号',
-          ifShow: true,
-          ifLock: true,
-          ifCaogao: 'is_draft',
-          caogaoArr: ['稿', '整'],
-          index: 0
-        },
-        {
-          key: 'title',
-          name: '报价标题',
-          ifShow: true,
-          ifLock: true,
-          index: 1
-        },
-        {
-          key: 'client_name',
-          name: '询价公司',
-          ifShow: true,
-          ifLock: false,
-          index: 2
-        },
-        {
-          key: 'contacts_name',
-          name: '公司联系人',
-          ifShow: true,
-          ifLock: false,
-          index: 3
-        },
-        {
-          key: 'image',
-          name: '产品图片',
-          ifShow: true,
-          ifLock: false,
-          ifImage: true,
-          index: 4,
-          from: 'product_data'
-        },
-        {
-          key: 'system_total_price',
-          name: '系统合计报价',
-          ifShow: true,
-          ifLock: false,
-          index: 5,
-          errVal: '0',
-          unit: '元'
-        },
-        {
-          key: 'real_quote_price',
-          name: '客户实际报价',
-          ifShow: true,
-          ifLock: false,
-          index: 6,
-          errVal: '0',
-          unit: '元'
-        },
-        {
-          key: 'is_check',
-          name: '审核状态',
-          ifShow: true,
-          ifLock: false,
-          index: 7,
-          filterArr: ['待审核', '已审核', '已驳回'],
-          classArr: ['orange', 'blue', 'red']
-        },
-        {
-          key: 'group_name',
-          name: '负责小组',
-          ifShow: true,
-          ifLock: false,
-          index: 8
-        },
-        {
-          key: 'user_name',
-          name: '创建人',
-          ifShow: true,
-          ifLock: false,
-          index: 9
-        },
-        {
-          key: 'settle_unit',
-          name: '报价币种',
-          ifShow: true,
-          ifLock: false,
-          index: 10
-        },
-        {
-          key: 'created_at',
-          name: '创建日期',
-          ifShow: true,
-          ifLock: false,
-          index: 11
-        }
-      ],
+      status: '',
       type: '',
-      pickerOptions: {
-        shortcuts: [
-          {
-            text: '最近一周',
-            onClick(picker: any) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近一个月',
-            onClick(picker: any) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近三个月',
-            onClick(picker: any) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-              picker.$emit('pick', [start, end])
-            }
-          }
-        ]
-      },
-      showSetting: false,
       multipleSelection: []
     }
   },
@@ -284,70 +144,45 @@ export default Vue.extend({
     $route() {
       this.getFilters()
       this.getList()
-    },
-    checkedCount(newVal) {
-      if (newVal.length > 0) {
-        this.checked = true
-      } else {
-        this.checked = false
-      }
     }
   },
   computed: {
-    clientList() {
-      return this.$store.state.api.clientType.arr.filter((item: { type: any }) => Number(item.type) === 1)
+    headers() {
+      return {
+        Authorization: 'bearer ' + window.sessionStorage.getItem('token')
+      }
     },
-    userList() {
-      return this.$store.state.api.user.arr
-    },
-    groupList() {
-      return this.$store.state.api.group.arr
+    excelfile() {
+      return 'excelfile'
     }
   },
   methods: {
-    getLocalStorage(ev: any, type: string) {
-      if (!ev) {
-        this.$setLocalStorage(type, '')
-      }
-      this.changeRouter()
-    },
     deleteWorker(item: any) {
       console.log(item)
     },
     rowKey(row: { id: any }) {
       return row.id
     },
-    importExcel() {},
-    downloadExcel() {},
+    downloadExcel() {
+      staff.downloadExcel().then((res) => {
+        window.location.href = res.data.data
+      })
+    },
     changeRouter() {
       this.$router.push(
         '/workerManage/list?page=' +
           this.page +
           '&keyword=' +
           this.keyword +
-          '&client_id=' +
-          this.client_id +
-          '&user_id=' +
-          this.user_id +
-          '&group_id=' +
-          this.group_id +
+          '&department=' +
+          this.department +
           '&status=' +
           this.status +
-          '&date=' +
-          this.date +
+          '&type=' +
+          this.type +
           '&limit=' +
           this.limit
       )
-    },
-    toggleSelection(rows: any[]) {
-      let mainInputEl: any = this.$refs.mainInput
-      if (rows) {
-        rows.forEach((row) => {
-          mainInputEl.toggleRowSelection(row)
-        })
-      } else {
-        mainInputEl.clearSelection()
-      }
     },
     handleSelectionChange(val: any) {
       this.multipleSelection = val
@@ -355,13 +190,11 @@ export default Vue.extend({
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)
-      this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.keyword = query.keyword || ''
       this.status = query.status === 'null' ? null : query.status
-      this.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
-      this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
+      this.department = query.department
+      this.type = query.type
       this.limit = Number(query.limit) || 10
-      this.date = query.date ? (query.date as string).split(',') : []
     },
     reset() {
       this.$confirm('是否重置所有筛选条件?', '提示', {
@@ -372,11 +205,10 @@ export default Vue.extend({
         .then(() => {
           this.client_id = []
           this.keyword = ''
-          this.user_id = ''
-          this.group_id = ''
-          this.date = []
+          this.department = ''
+          this.type = ''
           this.limit = 10
-          this.status = null
+          this.status = ''
           this.changeRouter()
         })
         .catch(() => {
@@ -415,66 +247,62 @@ export default Vue.extend({
           this.loading = false
         })
     },
-    exportExcel() {
-      if (this.multipleSelection.length === 0) {
-        return
-      }
-      this.mainLoading = true
-      let idArr: any[] = []
-      this.list.forEach((item) => {
-        // console.log(item)
-        idArr.push(item.id)
+    // 批量离职
+    batchResignation() {
+      let data: Array<{
+        id: number | string
+        status: number | string
+      }> = []
+
+      this.multipleSelection.forEach((item: any) => {
+        data.push({ id: item.id, status: 2 })
       })
-      console.log(idArr)
+
+      staff.changeStaffStatus({ data }).then((res) => {
+        if (res.data.status) {
+          this.$message({
+            type: 'success',
+            message: '批量离职成功'
+          })
+          this.toggleSelection()
+          this.getList()
+        }
+      })
+    },
+    toggleSelection() {
+      let a:any = this.$refs
+      a.multipleTable.clearSelection()
+    },
+    exportExcel() {
+      this.mainLoading = true
       exportExcel
-        .quoteList({
-          client_id: this.client_id,
-          id: idArr
+        .staff({
+          keyword: this.keyword,
+          department: this.department,
+          limit: this.limit,
+          type: this.type,
+          status: this.status
         })
         .then((res: any) => {
-          console.log(this.list)
           if (res.data.status) {
-            console.log(res.data.data)
             this.mainLoading = false
             window.location.href = res.data.data
           }
         })
     },
-    getListSetting() {
-      this.loading = true
-      this.listKey = []
-      listSetting
-        .detail({
-          type: 1
+    uploadSuccess(res: any) {
+      if (res.status) {
+        this.$message({
+          type: 'success',
+          message: '导入成功'
         })
-        .then((res) => {
-          this.listSettingId = res.data.data ? res.data.data.id : null
-          this.listKey = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting)
-          this.loading = false
-        })
+        this.getList()
+      }
     }
   },
   created() {
     this.getFilters()
     this.getList()
-    this.getListSetting()
-    this.$checkCommonInfo([
-      {
-        checkWhich: 'api/group',
-        getInfoMethed: 'dispatch',
-        getInfoApi: 'getGroupAsync'
-      },
-      {
-        checkWhich: 'api/clientType',
-        getInfoMethed: 'dispatch',
-        getInfoApi: 'getClientTypeAsync'
-      },
-      {
-        checkWhich: 'api/user',
-        getInfoMethed: 'dispatch',
-        getInfoApi: 'getUserAsync'
-      }
-    ])
   }
 })
 </script>
