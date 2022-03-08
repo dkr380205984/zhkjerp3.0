@@ -283,7 +283,7 @@ const routes: Array<RouteConfig> = [
       name: '产品仓库列表',
       component: () => import('../views/store/productList.vue')
     }, {
-      meta: { 
+      meta: {
         permissions_id: '12-1',
       },
       path: '/store/create',
@@ -410,6 +410,17 @@ const routes: Array<RouteConfig> = [
       path: '/packManage/detail',
       name: '包装管理详情',
       component: () => import('../views/packManage/detail.vue')
+    }, {
+      meta: {
+        permissions_id: '19-3',
+      },
+      path: '/workshopManagement/list',
+      name: '车间管理列表',
+      component: () => import('../views/workshopManagement/list.vue')
+    }, {
+      path: '/workshopManagement/detail',
+      name: '车间管理详情',
+      component: () => import('../views/workshopManagement/detail.vue')
     }, {
       meta: {
         permissions_id: '14-3',

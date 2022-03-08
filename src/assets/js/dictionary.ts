@@ -299,6 +299,22 @@ const systemModule = [{
     id: '18-4',
     name: '删除报销单',
   }]
+}, {
+  id: 19,
+  name: '车间管理',
+  detail: [{
+    id: '19-1',
+    name: '添加单据',
+  }, {
+    id: '19-2',
+    name: '修改单据',
+  }, {
+    id: '19-3',
+    name: '单据列表',
+  }, {
+    id: '19-4',
+    name: '删除单据',
+  }]
 }]
 
 const yarnAttributeArr: CascaderInfo[] = [{

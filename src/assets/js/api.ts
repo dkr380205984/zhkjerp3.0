@@ -182,8 +182,7 @@ const process = {
 // 工艺单设置
 import { SideInfo, MachineInfo, MethodsInfo } from '@/types/craftSetting'
 const craftSetting = {
-  listSide: () => http.get(`${baseUrl}/craft/side/type/lists`, {}),
-  createSide: (params: { data: SideInfo[] }) => http.post(`${baseUrl}/craft/side/type/save`, params, 'application/json'),
+  listSide: () => http.get(`${baseUrl}/craft/side/type/lists`, {}),createSide: (params: { data: SideInfo[] }) => http.post(`${baseUrl}/craft/side/type/save`, params, 'application/json'),
   deleteSide: (params: DeleteParams) => http.post(`${baseUrl}/craft/side/delete`, params, 'application/json'),
   listMachine: () => http.get(`${baseUrl}/craft/machine/type/lists`, {}),
   createMachine: (params: { data: MachineInfo[] }) => http.post(`${baseUrl}/craft/machine/type/save`, params, 'application/json'),
@@ -622,6 +621,13 @@ const exportExcel = {
     start_time: string
     end_time: string
   }) => http.get(`${baseUrl}/export/order/info`, params),
+  staff: (params: {
+    limit: number | string
+    keyword: string
+    department: string
+    status: string | number
+    type: string | number
+  }) => http.get(`${baseUrl}/export/staff`, params),
 }
 
 // 客户绑定小程序
@@ -634,10 +640,53 @@ const clientBind = {
 
 // 员工管理
 const staff = {
-  departmentList: (params?: any) => http.get(`${baseUrl}/staff/department/list`, params),
-  list: (params?: any) => http.get(`${baseUrl}/staff/list`, params),
-  departmentAdd: (params?: any) => http.post(`${baseUrl}/staff/department/save`, params),
-  addStaff: (params?: any) => http.post(`${baseUrl}/staff/save`, params),
+  departmentList: (params: {
+    limit: string | number
+    keyword: string
+  }) => http.get(`${baseUrl}/staff/department/list`, params),
+  importStaff: (params?: any) => http.post(`${baseUrl}/import/staff`, params),
+  list: (params: {
+    limit: number | string
+    keyword: string
+    department: string
+    status: string | number
+    type: string | number
+    page: number | string
+  }) => http.get(`${baseUrl}/staff/list`, params),
+  departmentAdd: (params: {
+    id: number | string
+    name: string
+  }) => http.post(`${baseUrl}/staff/department/save`, params),
+  downloadExcel: (params?: any) => http.get(`${baseUrl}/staff/download`, params),
+  changeStaffStatus: (params: {
+    data: Array<{
+      id: number | string
+      status: number | string
+    }>
+  }) => http.post(`${baseUrl}/staff/status`, params),
+  addStaff: (params: {
+    name: string
+    phone: string
+    type: number | string
+    entry_time: string
+    resign_time: string
+    department: string
+    age: string
+    id_number: string
+    nation: string
+    bank: string
+    card_number: string
+    social_security: number | string
+    desc: string
+    id: number | string
+    process: string
+    health: string
+    sex: number | string
+    education: string
+  }) => http.post(`${baseUrl}/staff/save`, params),
+  detail: (params: {
+    id: number | string
+  }) => http.get(`${baseUrl}/staff/detail`, params),
 }
 export {
   staff,
