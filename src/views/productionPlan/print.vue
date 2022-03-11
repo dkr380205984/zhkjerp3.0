@@ -77,7 +77,9 @@
                 <span>{{itemPro.category_name}}/{{itemPro.secondary_category_name}}</span>
               </div>
               <div class="tcol">
-                <el-image :src="itemPro.image_data.length>0?(itemPro.image_data[0]+'?imageView2/1/w/80/80'):require('@/assets/image/common/noPic.png')"
+                <el-image class="printImage"
+                  style="max-width:80px;max-height:80px"
+                  :src="itemPro.image_data.length>0?(itemPro.image_data[0]+'?imageView2/1/w/80/80'):require('@/assets/image/common/noPic.png')"
                   :preview-src-list="itemPro.image_data">
                 </el-image>
               </div>
