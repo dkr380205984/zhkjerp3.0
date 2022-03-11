@@ -93,11 +93,8 @@
           <div class="col">
             <div class="info elCtn">
               <div class="row newProcess">
-                <div class="col" style="flex: 2">
-                  <el-input placeholder="请输入新工序名称" v-model="newProcessName"></el-input>
-                </div>
                 <div class="col el-btn" style="flex: 1">
-                  <el-button @click="addNewProcess()">+ 添加新工序</el-button>
+                  <el-button @click="$openUrl('/setting/?pName=工序设置&cName=成品加工工序')">+ 添加新工序</el-button>
                 </div>
               </div>
             </div>
@@ -219,12 +216,8 @@
 </template>
 
 <script lang="ts">
-import { PackMaterialInfo, DecorateMaterialInfo } from '@/types/materialSetting'
-import { moneyArr } from '@/assets/js/dictionary'
-
 import { staff, process } from '@/assets/js/api'
 import Vue from 'vue'
-import { OrderInfo } from '@/types/order'
 export default Vue.extend({
   data(): {
     [propName: string]: any
@@ -239,7 +232,7 @@ export default Vue.extend({
         phone: '',
         department: '',
         type: '',
-        entry_time: '',
+        entry_time: new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate(),
         resign_time: '',
         process: [],
         age: '',
@@ -256,7 +249,7 @@ export default Vue.extend({
       },
       workProcedure: [],
       chooseProcess: [],
-      newProcessName: '',
+      newProcessName: ''
     }
   },
   methods: {
@@ -268,6 +261,16 @@ export default Vue.extend({
         })
         .then((res: any) => {
           this.workProcedure = res.data.data
+        })
+
+      process
+        .list({
+          type: 2
+        })
+        .then((res: any) => {
+          res.data.data.forEach((item: any) => {
+            this.workProcedure.push(item)
+          })
         })
     },
     showAddDepartment() {
@@ -305,11 +308,43 @@ export default Vue.extend({
           }
         })
     },
+    getNowFormatDate() {
+      let date = new Date()
+      let seperator1 = '-'
+      let year = date.getFullYear()
+      let month: any = date.getMonth() + 1
+      let strDate: any = date.getDate()
+      if (month >= 1 && month <= 9) {
+        month = '0' + month
+      }
+      if (strDate >= 0 && strDate <= 9) {
+        strDate = '0' + strDate
+      }
+      let currentdate = year + seperator1 + month + seperator1 + strDate
+      return currentdate
+    },
+
+    dateDiff(a: any) {
+      a = '2022-03-01'
+      let b = this.getNowFormatDate()
+      let arr = a.split('-')
+      let starttime = new Date(arr[0], arr[1], arr[2])
+      let starttimes = starttime.getTime()
+
+      let arrs: any = b.split('-')
+      let lktime = new Date(arrs[0], arrs[1], arrs[2])
+      let lktimes = lktime.getTime()
+
+      if (starttimes >= lktimes) {
+        alert('开始时间大于离开时间，请检查')
+        return false
+      } else return true
+    },
 
     // 添加员工
     addStaff() {
       let staffInfo = this.staffInfo
-      
+
       if (staffInfo.name === '') {
         this.$message.error('员工姓名不能为空')
         return
@@ -323,7 +358,7 @@ export default Vue.extend({
         return
       }
 
-      staffInfo.process = staffInfo.process.toString().replaceAll(',','/')
+      staffInfo.process = staffInfo.process.toString().replaceAll(',', '/')
 
       staff.addStaff(staffInfo).then((res: any) => {
         if (res.data.status) {

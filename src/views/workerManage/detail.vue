@@ -55,7 +55,7 @@
           <div class="col">
             <div class="label">性别：</div>
             <div class="text">
-              {{ userDetailInfo.sex == '1' ? '女' : userDetailInfo.sex === '2' ? '男' : '' }}
+              {{ userDetailInfo.sex == '1' ? '女' : userDetailInfo.sex == '2' ? '男' : '' }}
             </div>
           </div>
           <div class="col">
