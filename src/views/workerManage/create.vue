@@ -93,11 +93,8 @@
           <div class="col">
             <div class="info elCtn">
               <div class="row newProcess">
-                <div class="col" style="flex: 2">
-                  <el-input placeholder="请输入新工序名称" v-model="newProcessName"></el-input>
-                </div>
                 <div class="col el-btn" style="flex: 1">
-                  <el-button @click="addNewProcess()">+ 添加新工序</el-button>
+                  <el-button @click="$openUrl('/setting/?pName=工序设置&cName=成品加工工序')">+ 添加新工序</el-button>
                 </div>
               </div>
             </div>
@@ -264,6 +261,16 @@ export default Vue.extend({
         })
         .then((res: any) => {
           this.workProcedure = res.data.data
+        })
+
+      process
+        .list({
+          type: 2
+        })
+        .then((res: any) => {
+          res.data.data.forEach((item: any) => {
+            this.workProcedure.push(item)
+          })
         })
     },
     showAddDepartment() {
