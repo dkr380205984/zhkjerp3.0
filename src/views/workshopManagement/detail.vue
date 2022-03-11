@@ -524,18 +524,17 @@ export default Vue.extend({
           label: '其它原因'
         }
       ],
-      workerList: [],
       allWorkList: [
+        {
+          value: 3,
+          label: '工序负责人员',
+          children: []
+        },
         {
           value: '',
           label: '所有人员',
           children: []
         },
-        {
-          value: 3,
-          label: '工序负责人员',
-          children: []
-        }
       ],
       productionScheduleUpdate: [
         {
@@ -1020,7 +1019,7 @@ export default Vue.extend({
             label:worker.name
           })
         });
-        this.allWorkList[1].children = arr
+        this.allWorkList[0].children = arr
       })
       staff.list({ keyword: '' }).then((ress: any) => {
         let arr:any = []
@@ -1030,7 +1029,7 @@ export default Vue.extend({
             label:worker.name
           })
         });
-        this.allWorkList[0].children = arr
+        this.allWorkList[1].children = arr
       })
     },
     getColorList(res: any) {
