@@ -39,7 +39,7 @@
           <!-- 图片元素 -->
           <template v-if="!itemKey.from && itemKey.ifImage">
             <div class="imageCtn">
-              <el-image :src="item[itemKey.key].length>0?item[itemKey.key][0]:require('@/assets/image/common/noPic.png')"
+              <el-image :src="item[itemKey.key].length>0?(item[itemKey.key][0]+'?imageView2/1/w/100/100'):require('@/assets/image/common/noPic.png')"
                 :preview-src-list="item[itemKey.key]">
               </el-image>
             </div>
@@ -57,7 +57,7 @@
           </template>
           <template v-if="itemKey.from && itemKey.ifImage">
             <div class="imageCtn">
-              <el-image :src="item[itemKey.from][item.whichIndex||0][itemKey.key].length>0?item[itemKey.from][item.whichIndex||0][itemKey.key][0]:require('@/assets/image/common/noPic.png')"
+              <el-image :src="item[itemKey.from][item.whichIndex||0][itemKey.key].length>0?(item[itemKey.from][item.whichIndex||0][itemKey.key][0]+'?imageView2/1/w/100/100'):require('@/assets/image/common/noPic.png')"
                 :preview-src-list="item[itemKey.from][item.whichIndex||0][itemKey.key]">
               </el-image>
             </div>

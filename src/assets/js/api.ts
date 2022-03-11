@@ -285,6 +285,7 @@ const client = {
     tag_id?: number[] | string[] | null
     client_type_id?: number | string
     workshop_id?: 0
+    only_delete?: number
   }) => http.get(`${baseUrl}/client/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/client/delete`, params, 'application/json'),
   check: (params: DetailParams) => http.post(`${baseUrl}/client/check/status`, params, 'application/json') // 启用/禁用客户
@@ -424,14 +425,17 @@ const order = {
   timeList: (params?: ListParams) => http.get(`${baseUrl}/order/time/lists`, params), // 根据time_data查询的列表
   detail: (params: DetailParams) => http.get(`${baseUrl}/order/detail`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/order/delete`, params, 'application/json'),
+  cancel: (params: DeleteParams) => http.post(`${baseUrl}/order/time/cancel`, params, 'application/json'),
   oprLog: (params: DetailParams) => http.get(`${baseUrl}/order/activity/logs`, params), // 操作记录
   deletePro: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product`, params, 'application/json'), // 删除订单里的产品
   deleteProChild: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product/info`, params, 'application/json'), // 删除订单里的子项
+  deleteBatch: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/batch`, params, 'application/json'), // 删除订单里的批次
   materialDetail: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/material/info`, params), // 物料汇总表
   productionDetail: (params: { order_time_id: string | number }) => http.get(`${baseUrl}/order/weave/info`, params), // 生产汇总表
 }
 
 // 跟单据相关的所有单位
+// 1.下单公司 2.原料采购单位 3.辅料采购单位 4.生产分配单位
 const clientInOrder = (params: { order_id: string | number }) => http.get(`${baseUrl}/order/all/rel/client`, params)
 
 // 物料计划单
@@ -591,10 +595,19 @@ import { PackOrderInfo, PackPlanInfo } from '@/types/packManage'
 const packManage = {
   createOrder: (params: { data: PackOrderInfo[] }) => http.post(`${baseUrl}/pack/order/save`, params, 'application/json'),
   orderList: (params: { order_id: string | number }) => http.get(`${baseUrl}/pack/order/lists`, params),
-  deleteOrder: (params: DeleteParams) => http.get(`${baseUrl}/pack/order/delete`, params),
+  deleteOrder: (params: DeleteParams) => http.post(`${baseUrl}/pack/order/delete`, params, 'application/json'),
   createPlan: (params: PackPlanInfo) => http.post(`${baseUrl}/pack/plan/save`, params, 'application/json'),
-  planList: (params: { order_id: string | number }) => http.get(`${baseUrl}/pack/plan/lists`, params),
-  deletePlan: (params: DeleteParams) => http.get(`${baseUrl}/pack/plan/delete`, params),
+  planList: (params: { order_id?: string | number, [propName: string]: any }) => http.get(`${baseUrl}/pack/plan/lists`, params),
+  deletePlan: (params: DeleteParams) => http.post(`${baseUrl}/pack/plan/delete`, params, 'application/json'),
+  detailPlan: (params: { id: number[] }) => http.get(`${baseUrl}/pack/plan/detail`, params),
+}
+
+// 装箱
+import { BoxInfo } from '@/types/boxManage'
+const boxManage = {
+  create: (params: BoxInfo) => http.post(`${baseUrl}/transport/dispatch/save`, params, 'application/json'),
+  list: (params: any) => http.get(`${baseUrl}/transport/dispatch/lists`, params),
+  detail: (params: any) => http.get(`${baseUrl}/transport/dispatch/detail`, params),
 }
 // excel导出
 const exportExcel = {
@@ -692,6 +705,7 @@ export {
   productionPlan,
   inspection,
   packManage,
+  boxManage,
   exportExcel,
   tutorialSystem,
   materialSupplement,

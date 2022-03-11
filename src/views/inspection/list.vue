@@ -278,7 +278,7 @@ export default Vue.extend({
       this.keyword = query.keyword || ''
       this.status = query.status || '0'
       this.user_id = Number(query.user_id) || ''
-      this.group_id = Number(query.gourp_id) || ''
+      this.group_id = Number(query.group_id) || ''
       this.order_type = Number(query.order_type) || null
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10

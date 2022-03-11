@@ -306,6 +306,7 @@ export default Vue.extend({
     },
     getNewSample(val: any) {
       this.sampleInfo = val
+      this.$emit('afterDetailUpdate', val)
     }
   }
 })

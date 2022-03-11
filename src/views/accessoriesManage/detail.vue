@@ -1179,7 +1179,11 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.orderInfo = res.data.data
-          this.orderIndex = this.orderInfo.time_data.length - 1
+          this.orderInfo.time_data.forEach((item: any, index: number) => {
+            if (item.id === Number(this.$route.query.sampleOrderIndex)) {
+              this.orderIndex = index
+            }
+          })
           this.init()
           this.loading = false
         }

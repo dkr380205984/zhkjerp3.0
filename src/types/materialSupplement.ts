@@ -3,10 +3,13 @@ export interface MaterialSupplementInfo {
   id?: string | number
   order_id: string | number
   rel_doc_id: string | number // 关联加工单
-  bear_client_id: string | number // 承担单位
+  client_data: Array<{
+    bear_price: string | number // 承担金额
+    bear_client_id: string | number // 承担单位
+    bear_client_name?: string
+  }>
   client_name?: string
   client_id: string | number // 补纱单位
-  bear_price: string | number // 承担金额
   desc: string
   info_data: Array<{
     check?: boolean

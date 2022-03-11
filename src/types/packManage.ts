@@ -2,10 +2,11 @@
 export interface PackPlanInfo {
   id?: number | string
   order_id: string | number
+  order_code?: string
   delivery_time: string
-  delivery_batch: string
+  delivery_batch: string | number // 存批次id
   batch_name: string
-  total_delivery_number: string
+  total_delivery_number: string | number
   data: PackPlanInfoData[]
   gather_info: Array<{
     check?: boolean
@@ -23,7 +24,9 @@ export interface PackPlanInfo {
 
 export interface PackPlanInfoData {
   desc: string
+  [propName: string]: any // 装箱出库的时候需要在这里统计一些信息
   product_info: Array<{
+    order_product_info_id?: string | number // 记录批次信息里的产品id
     product_code?: string
     category?: string
     secondary_category?: string
@@ -34,6 +37,8 @@ export interface PackPlanInfoData {
     color_id: number | string
     color_name?: string
     pack_number: string | number
+    pack_number_all?: string | number // 装箱出库的时候这个字段统计一下某一尺码配色总共装了多少件产品
+    transport_number?: string | number // 实际装箱数量，暂时后端没给字段
   }>
   info_data: Array<{
     first_box_number: string
@@ -70,7 +75,6 @@ export interface PackOrderInfo {
   order_time: string
   delivery_time: string
   desc: string
-  file_url: string
   total_price: number | string
   total_number: number | string
   others_fee_data: Array<{
@@ -81,6 +85,7 @@ export interface PackOrderInfo {
   info_data: Array<{
     price_type: 1 | 2 | 3 // 1箱子 2胶带 3其他
     pack_material_id: string
+    file_url: string
     length: string
     width: string
     height: string

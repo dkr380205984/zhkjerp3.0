@@ -69,10 +69,64 @@
         <div class="tableCtn">
           <div class="tbody hasTop">
             <div class="trow">
-              <div class="tcol bgGray label">配色信息</div>
+              <div class="tcol bgGray label">部位</div>
+              <div class="tcol label">大身</div>
+              <div class="tcol bgGray label">成份比例</div>
               <div class="tcol"
-                v-for="item in sampleInfo.color_data"
-                :key="item.id">{{item.name}}</div>
+                style="flex-direction: row;justify-content: start;align-items: center;">
+                <span style="margin-right:12px"
+                  v-for="item in sampleInfo.component_data"
+                  :key="item.id">{{item.name}}{{item.number}}%</span>
+              </div>
+            </div>
+            <div class="trow">
+              <div class="tcol bgGray label">尺码</div>
+              <div class="tcol bgGray label">配色组</div>
+              <div class="tcol bgGray label">克重</div>
+              <div class="tcol bgGray">尺寸描述</div>
+              <div class="tcol bgGray label">打样数量</div>
+            </div>
+            <div class="trow"
+              v-for="item in sampleOrderInfo.time_data[$route.query.sampleOrderIndex].batch_data[0].product_data[sampleIndex].product_info"
+              :key="item.id">
+              <div class="tcol label">{{item.size_name}}</div>
+              <div class="tcol label">{{item.color_name}}</div>
+              <div class="tcol label">{{findSize(sampleInfo.size_data,item.size_name,'weight')}}</div>
+              <div class="tcol">{{findSize(sampleInfo.size_data,item.size_name,'size_info')}}</div>
+              <div class="tcol label">{{item.number}}</div>
+            </div>
+          </div>
+        </div>
+        <div class="tableCtn"
+          v-for="itemPart in sampleInfo.part_data"
+          :key="itemPart.id">
+          <div class="tbody hasTop">
+            <div class="trow">
+              <div class="tcol bgGray label">部位</div>
+              <div class="tcol">{{itemPart.name}}</div>
+              <div class="tcol bgGray label">成份比例</div>
+              <div class="tcol"
+                style="flex-direction: row;justify-content: start;align-items: center;">
+                <span style="margin-right:12px"
+                  v-for="item in itemPart.part_component_data"
+                  :key="item.id">{{item.name}}{{item.number}}%</span>
+              </div>
+            </div>
+            <div class="trow">
+              <div class="tcol bgGray label">尺码</div>
+              <div class="tcol bgGray label">配色组</div>
+              <div class="tcol bgGray label">克重</div>
+              <div class="tcol bgGray">尺寸描述</div>
+              <div class="tcol bgGray label">打样数量</div>
+            </div>
+            <div class="trow"
+              v-for="item in sampleOrderInfo.time_data[$route.query.sampleOrderIndex].batch_data[0].product_data[sampleIndex].product_info"
+              :key="item.id">
+              <div class="tcol label">{{item.size_name}}</div>
+              <div class="tcol label">{{item.color_name}}</div>
+              <div class="tcol label">{{findSize(itemPart.part_size_data,item.size_name,'weight')}}</div>
+              <div class="tcol">{{findSize(itemPart.part_size_data,item.size_name,'size_info')}}</div>
+              <div class="tcol label">/</div>
             </div>
           </div>
         </div>
@@ -98,70 +152,6 @@
                 :key="index">
                 <div class="imageCtn"><img :src="item" /></div>
               </div>
-            </div>
-          </div>
-        </div>
-        <div class="tableCtn">
-          <div class="tbody hasTop">
-            <div class="trow">
-              <div class="tcol bgGray label">部位</div>
-              <div class="tcol">大身</div>
-              <div class="tcol bgGray label">成份比例</div>
-              <div class="tcol"
-                style="flex-direction: row;justify-content: start;align-items: center;">
-                <span style="margin-right:12px"
-                  v-for="item in sampleInfo.component_data"
-                  :key="item.id">{{item.name}}{{item.number}}%</span>
-              </div>
-            </div>
-            <div class="trow"
-              v-for="itemSize in sampleInfo.size_data"
-              :key="itemSize.id">
-              <div class="tcol label">{{itemSize.name}}</div>
-              <div class="tcol">{{itemSize.weight}}</div>
-              <div class="tcol">{{itemSize.size_info}}</div>
-            </div>
-          </div>
-        </div>
-        <div class="tableCtn"
-          v-for="itemPart in sampleInfo.part_data"
-          :key="itemPart.id">
-          <div class="tbody hasTop">
-            <div class="trow">
-              <div class="tcol bgGray label">部位</div>
-              <div class="tcol">{{itemPart.name}}</div>
-              <div class="tcol bgGray label">成份比例</div>
-              <div class="tcol"
-                style="flex-direction: row;justify-content: start;align-items: center;">
-                <span style="margin-right:12px"
-                  v-for="item in itemPart.part_component_data"
-                  :key="item.id">{{item.name}}{{item.number}}%</span>
-              </div>
-            </div>
-            <div class="trow"
-              v-for="itemSize in itemPart.part_size_data"
-              :key="itemSize.id">
-              <div class="tcol label">{{itemSize.name}}</div>
-              <div class="tcol">{{itemSize.weight}}</div>
-              <div class="tcol">{{itemSize.size_info}}</div>
-            </div>
-          </div>
-        </div>
-        <div class="tableCtn">
-          <div class="thead">
-            <div class="trow">
-              <div class="tcol">尺码颜色</div>
-              <div class="tcol">数量</div>
-              <div class="tcol">单价</div>
-            </div>
-          </div>
-          <div class="tbody">
-            <div class="trow"
-              v-for="item in sampleOrderInfo.time_data[$route.query.sampleOrderIndex].batch_data[0].product_data[sampleIndex].product_info"
-              :key="item.id">
-              <div class="tcol">{{item.size_name}}/{{item.color_name}}</div>
-              <div class="tcol">{{item.number}}</div>
-              <div class="tcol">{{item.price}}元</div>
             </div>
           </div>
         </div>
@@ -327,6 +317,9 @@ export default Vue.extend({
           _this.showPrintSettingFlag = true
         }
       })
+    },
+    findSize(sizeArr: any[], sizeName: string, key: string) {
+      return sizeArr.find((item) => item.name === sizeName)[key]
     }
   },
   mounted() {

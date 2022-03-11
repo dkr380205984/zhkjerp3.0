@@ -10,20 +10,20 @@
         <div class="row">
           <div class="col">
             <div class="label">
-              <span class="text">公司全称</span>
+              <span class="text">公司简称</span>
               <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入公司全称"
+              <el-input placeholder="请输入公司简称"
                 v-model="clientInfo.name"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">
-              <span class="text">公司简称</span>
+              <span class="text">公司全称</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入公司简称"
+              <el-input placeholder="请输入公司全称"
                 v-model="clientInfo.alias"></el-input>
             </div>
           </div>

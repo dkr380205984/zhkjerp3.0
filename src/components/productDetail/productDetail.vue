@@ -322,6 +322,7 @@ export default Vue.extend({
     },
     getNewProduct(val: any) {
       this.productInfo = val
+      this.$emit('afterDetailUpdate', val)
     }
   }
 })

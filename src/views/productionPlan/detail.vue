@@ -176,7 +176,7 @@
                 <div class="tcol">{{itemPro.size_name?itemPro.size_name + '/' + itemPro.color_name:'未选择尺码颜色'}}</div>
                 <div class="tcol">{{itemPro.number}}</div>
                 <div class="tcol">{{itemPro.price}}元</div>
-                <div class="tcol">{{itemPro.price*itemPro.number}}元</div>
+                <div class="tcol">{{$toFixed(itemPro.price*itemPro.number)}}元</div>
               </div>
             </div>
           </div>
@@ -194,7 +194,9 @@
               <div class="trow"
                 v-for="(itemMat,indexMat) in item.material_info_data"
                 :key="indexMat">
-                <div class="tcol">{{indexMat+1}}</div>
+                <div class="tcol">
+                  <el-checkbox v-model="itemMat.check">{{indexMat+1}}</el-checkbox>
+                </div>
                 <div class="tcol">{{itemMat.material_name}}</div>
                 <div class="tcol">{{itemMat.material_color}}</div>
                 <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
@@ -257,6 +259,14 @@
                   </svg>
                   <span class="text">拆分单据</span>
                 </div>
+                <div class="btn backHoverOrange"
+                  @click="storeSurplus(item.material_info_data)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">结余入库</span>
+                </div>
               </div>
             </div>
           </div>
@@ -270,9 +280,14 @@
             <div class="thead">
               <div class="trow">
                 <div class="tcol">补纱单编号</div>
-                <div class="tcol">承担单位</div>
-                <div class="tcol">承担金额</div>
-                <div class="tcol"
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow">
+                    <div class="tcol">承担单位</div>
+                    <div class="tcol">承担金额</div>
+                  </div>
+                </div>
+                <div class="tcol noPad"
                   style="flex:3">
                   <div class="trow">
                     <div class="tcol">物料名称</div>
@@ -289,9 +304,16 @@
                 v-for="itemChild in item.sup_data"
                 :key="itemChild.id">
                 <div class="tcol">{{itemChild.code}}</div>
-                <div class="tcol">{{itemChild.bear_client_name}}</div>
-                <div class="tcol">{{itemChild.bear_price}}元</div>
-                <div class="tcol"
+                <div class="tcol noPad"
+                  style="flex:2">
+                  <div class="trow"
+                    v-for="(itemClient,indexClient) in itemChild.client_data"
+                    :key="indexClient">
+                    <div class="tcol">{{itemClient.bear_client_name}}</div>
+                    <div class="tcol">{{itemClient.bear_price}}元</div>
+                  </div>
+                </div>
+                <div class="tcol noPad"
                   style="flex:3">
                   <div class="trow"
                     v-for="itemMat in itemChild.info_data"
@@ -303,6 +325,8 @@
                 </div>
                 <div class="tcol">{{itemChild.desc}}</div>
                 <div class="tcol oprCtn">
+                  <div class="opr hoverBlue"
+                    @click="$openUrl('/materialManage/supPrint?id='+itemChild.id)">打印</div>
                   <div class="opr hoverRed"
                     @click="deleteMaterialSupplement(itemChild.id)">删除</div>
                 </div>
@@ -699,14 +723,21 @@
                     v-model="materialSupplementInfo.client_name"></el-input>
                 </div>
               </div>
+              <div class="col"></div>
+              <div class="col"></div>
+            </div>
+            <div class="row"
+              v-for="(item,index) in materialSupplementInfo.client_data"
+              :key="index+'client_data'">
               <div class="col">
-                <div class="label">
+                <div class="label"
+                  v-if="index===0">
                   <span class="text">承担单位</span>
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
                   <el-select placeholder="请选择承担单位"
-                    v-model="materialSupplementInfo.bear_client_id">
+                    v-model="item.bear_client_id">
                     <el-option :value="materialSupplementInfo.client_id"
                       :label="materialSupplementInfo.client_name"></el-option>
                     <el-option :value="-1"
@@ -719,21 +750,32 @@
                 </div>
               </div>
               <div class="col">
-                <div class="label">
+                <div class="label"
+                  v-if="index===0">
                   <span class="text">承担金额</span>
                   <span class="explanation">(不填默认为0)</span>
                 </div>
                 <div class="info elCtn">
                   <el-input placeholder="请输入承担金额"
-                    v-model="materialSupplementInfo.bear_price">
+                    v-model="item.bear_price">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
               </div>
+              <div class="opr hoverBlue"
+                v-if="index===0"
+                @click="$addItem(materialSupplementInfo.client_data, {
+                  bear_client_id:'',
+                  bear_price:''
+                })">添加</div>
+              <div class="opr hoverRed"
+                v-if="index>0"
+                @click="$deleteItem(materialSupplementInfo.client_data, index)">删除</div>
+              <div class="col"></div>
             </div>
             <div class="row"
               v-for="(item,index) in materialSupplementInfo.info_data"
-              :key="index">
+              :key="index + 'info_data'">
               <div class="col">
                 <div class="label"
                   v-show="index===0">
@@ -1109,6 +1151,7 @@
         </div>
       </div>
     </div>
+    <!-- 扣款 -->
     <zh-deduct :show="deductFlag"
       @close="deductFlag = false"
       :type="deductInfo.type"
@@ -1118,16 +1161,27 @@
     <zh-deduct-detail :show="deductDetailFlag"
       @close="deductDetailFlag = false"
       :data="deductDetail"></zh-deduct-detail>
+    <!-- 结余入库 -->
+    <store-surplus @afterSave="storeSurplusFlag=false;init()"
+      @close="storeSurplusFlag=false"
+      :materialList="storeSurplusInfo.materialList"
+      :orderId="storeSurplusInfo.order_id"
+      :orderCode="storeSurplusInfo.order_code"
+      :show="storeSurplusFlag"></store-surplus>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import { materialPlan, order, productionPlan, materialSupplement, clientInOrder } from '@/assets/js/api'
-import { ProductionPlanInfo } from '@/types/productionPlan'
+import { ProductionMaterialPlanInfo, ProductionPlanInfo } from '@/types/productionPlan'
 import { MaterialPlanInfo, MaterailPlanData } from '@/types/materialPlan'
 import { MaterialSupplementInfo } from '@/types/materialSupplement'
 import { CascaderInfo } from '@/types/vuex'
+import { OrderInfo, OrderTime } from '@/types/order'
+interface OrderDetail extends OrderInfo {
+  time_data: OrderTime[]
+}
 export default Vue.extend({
   data(): {
     materialPlanList: MaterialPlanInfo[]
@@ -1135,10 +1189,17 @@ export default Vue.extend({
     productionDivideInfo: ProductionPlanInfo[]
     productionPlanList: ProductionPlanInfo[]
     materialSupplementInfo: MaterialSupplementInfo
+    orderInfo: OrderDetail
     [propName: string]: any
   } {
     return {
       loading: true,
+      storeSurplusFlag: false,
+      storeSurplusInfo: {
+        materialList: [],
+        order_id: '',
+        order_code: ''
+      },
       deductFlag: false,
       deductDetailFlag: false,
       deductDetail: [],
@@ -1266,10 +1327,14 @@ export default Vue.extend({
       materialSupplementInfo: {
         order_id: '',
         rel_doc_id: '',
-        bear_client_id: '',
         client_id: '',
         client_name: '',
-        bear_price: '',
+        client_data: [
+          {
+            bear_client_id: '',
+            bear_price: ''
+          }
+        ],
         desc: '',
         info_data: [
           {
@@ -1670,12 +1735,14 @@ export default Vue.extend({
     },
     saveMaterialSupplement() {
       const formCheck =
-        this.$formCheck(this.materialSupplementInfo, [
-          {
-            key: 'bear_client_id',
-            errMsg: '请选择承担单位'
-          }
-        ]) ||
+        this.materialSupplementInfo.client_data.some((item) => {
+          return this.$formCheck(item, [
+            {
+              key: 'bear_client_id',
+              errMsg: '请选择承担单位'
+            }
+          ])
+        }) ||
         this.materialSupplementInfo.info_data.some((item) => {
           return this.$formCheck(item, [
             {
@@ -1903,6 +1970,13 @@ export default Vue.extend({
     checkList(): MaterailPlanData[] {
       const finded = this.materialPlanList.find((item) => Number(item.id) === Number(this.materialPlanIndex))
       return finded ? finded.material_plan_data.filter((item) => item.check) : []
+    },
+    // 结余逻辑
+    storeSurplus(materialInfo: ProductionMaterialPlanInfo[]) {
+      this.storeSurplusInfo.materialList = materialInfo.filter((item) => item.check)
+      this.storeSurplusInfo.order_code = this.orderInfo.code
+      this.storeSurplusInfo.order_id = this.orderInfo.id
+      this.storeSurplusFlag = true
     }
   },
   mounted() {
@@ -1911,8 +1985,13 @@ export default Vue.extend({
         id: Number(this.$route.query.id)
       })
       .then((res) => {
-        this.order_id = res.data.data.time_data[this.orderIndex].id
         this.orderInfo = res.data.data
+        this.orderInfo.time_data.forEach((item, index) => {
+          if (item.id === Number(this.$route.query.sampleOrderIndex)) {
+            this.orderIndex = index
+          }
+        })
+        this.order_id = res.data.data.time_data[this.orderIndex].id
         clientInOrder({
           order_id: this.order_id
         }).then((res) => {

@@ -53,7 +53,7 @@
         </div>
       </div>
       <div class="pbody">
-        <div class="tableCtn pageOne">
+        <div class="tableCtn pgAfter">
           <div class="tbody hasTop">
             <div class="trow">
               <div class="tcol bgGray label">产品编号</div>
@@ -557,7 +557,8 @@
         <template v-if="(craftInfo.warp_data.warp_rank[0]&&craftInfo.warp_data.warp_rank[0].length>16)||craftInfo.warp_data.back_status===1">
           <div class="tableCtn"
             v-for="(itemFather,indexFather) in $sliceToArray(craftInfo.warp_data.warp_rank[0], 16)"
-            :key="indexFather + 'warp_rank'">
+            :key="indexFather + 'warp_rank'"
+            :class="{'pgAfter':pageBreak.warp[indexFather]}">
             <div class="tbody hasTop">
               <div class="trow">
                 <div class="tcol w50 horizontal bgGray">原料经向</div>
@@ -612,12 +613,21 @@
                 </div>
               </div>
             </div>
+            <div class="pgAfter"
+              @click="pageBreak.warp[indexFather] = !pageBreak.warp[indexFather];$forceUpdate()"
+              v-if="pageBreakFlag">
+              <span class="left fl">..................</span>
+              <span class="center"
+                :class="{'blue':!pageBreak.warp[indexFather],'green':pageBreak.warp[indexFather]}">{{pageBreak.warp[indexFather]?'已分割':'点击以此为界限分割'}}</span>
+              <span class="right fr">..................</span>
+            </div>
           </div>
         </template>
         <template v-if="craftInfo.warp_data.back_status===1">
           <div class="tableCtn"
             v-for="(itemFather,indexFather) in $sliceToArray(craftInfo.warp_data.warp_rank_back[0], 16)"
-            :key="indexFather + 'warp_rank_back'">
+            :key="indexFather + 'warp_rank_back'"
+            :class="{'pgAfter':pageBreak.warpBack[indexFather]}">
             <div class="tbody hasTop">
               <div class="trow">
                 <div class="tcol w50 horizontal bgGray">原料经向反面</div>
@@ -672,12 +682,21 @@
                 </div>
               </div>
             </div>
+            <div class="pgAfter"
+              @click="pageBreak.warpBack[indexFather] = !pageBreak.warpBack[indexFather];$forceUpdate()"
+              v-if="pageBreakFlag">
+              <span class="left fl">..................</span>
+              <span class="center"
+                :class="{'blue':!pageBreak.warpBack[indexFather],'green':pageBreak.warpBack[indexFather]}">{{pageBreak.warpBack[indexFather]?'已分割':'点击以此为界限分割'}}</span>
+              <span class="right fr">..................</span>
+            </div>
           </div>
         </template>
         <template v-if="(craftInfo.weft_data.weft_rank[0]&&craftInfo.weft_data.weft_rank[0].length>16)||craftInfo.weft_data.back_status===1">
           <div class="tableCtn"
             v-for="(itemFather,indexFather) in $sliceToArray(craftInfo.weft_data.weft_rank[0], 16)"
-            :key="indexFather + 'weft_rank'">
+            :key="indexFather + 'weft_rank'"
+            :class="{'pgAfter':pageBreak.weft[indexFather]}">
             <div class="tbody hasTop">
               <div class="trow">
                 <div class="tcol w50 horizontal bgGray">原料纬向</div>
@@ -732,12 +751,21 @@
                 </div>
               </div>
             </div>
+            <div class="pgAfter"
+              @click="pageBreak.weft[indexFather] = !pageBreak.weft[indexFather];$forceUpdate()"
+              v-if="pageBreakFlag">
+              <span class="left fl">..................</span>
+              <span class="center"
+                :class="{'blue':!pageBreak.weft[indexFather],'green':pageBreak.weft[indexFather]}">{{pageBreak.weft[indexFather]?'已分割':'点击以此为界限分割'}}</span>
+              <span class="right fr">..................</span>
+            </div>
           </div>
         </template>
         <template v-if="craftInfo.weft_data.back_status===1">
           <div class="tableCtn"
             v-for="(itemFather,indexFather) in $sliceToArray(craftInfo.weft_data.weft_rank_back[0], 16)"
-            :key="indexFather + 'weft_rank_back'">
+            :key="indexFather + 'weft_rank_back'"
+            :class="{'pgAfter':pageBreak.weft[indexFather]}">
             <div class="tbody hasTop">
               <div class="trow">
                 <div class="tcol w50 horizontal bgGray">原料纬向反面</div>
@@ -792,10 +820,19 @@
                 </div>
               </div>
             </div>
+            <div class="pgAfter"
+              @click="pageBreak.weftBack[indexFather] = !pageBreak.weftBack[indexFather];$forceUpdate()"
+              v-if="pageBreakFlag">
+              <span class="left fl">..................</span>
+              <span class="center"
+                :class="{'blue':!pageBreak.weftBack[indexFather],'green':pageBreak.weftBack[indexFather]}">{{pageBreak.weftBack[indexFather]?'已分割':'点击以此为界限分割'}}</span>
+              <span class="right fr">..................</span>
+            </div>
           </div>
         </template>
         <template v-if="colourInfoType==='3'">
-          <div class="tableCtn">
+          <div class="tableCtn"
+            :class="{'pgAfter':pageBreak.colour}">
             <div class="tbody hasTop">
               <div class="trow">
                 <div class="tcol w50 horizontal bgGray">配色工艺</div>
@@ -853,7 +890,8 @@
               </div>
             </div>
           </div>
-          <div class="tableCtn">
+          <div class="tableCtn"
+            :class="{'pgAfter':pageBreak.colour}">
             <div class="tbody hasTop">
               <div class="trow">
                 <div class="tcol w50 horizontal bgGray">配色工艺</div>
@@ -915,7 +953,8 @@
         <template v-if="!ifShowColorWeight&&colourInfoType==='1'">
           <div class="tableCtn"
             v-for="index in Math.ceil(maxJia/5)"
-            :key="index">
+            :key="index"
+            :class="{'pgAfter':pageBreak.colour}">
             <div class="tbody hasTop">
               <div class="trow">
                 <div class="tcol w50 horizontal bgGray">配色工艺</div>
@@ -1014,6 +1053,14 @@
             </div>
           </div>
         </template>
+        <div class="pgAfter"
+          @click="pageBreak.colour = !pageBreak.colour;$forceUpdate()"
+          v-if="pageBreakFlag && (!ifShowColorWeight&&colourInfoType==='1'||colourInfoType==='3')">
+          <span class="left fl">..................</span>
+          <span class="center"
+            :class="{'blue':!pageBreak.colour,'green':pageBreak.colour}">{{pageBreak.colour?'已分割':'点击以此为界限分割'}}</span>
+          <span class="right fr">..................</span>
+        </div>
         <div class="tableCtn"
           v-if="!ifShowPM">
           <div class="tbody hasTop">
@@ -1025,6 +1072,14 @@
               </div>
             </div>
           </div>
+        </div>
+        <div class="pgAfter"
+          @click="pageBreak.PM = !pageBreak.PM;$forceUpdate()"
+          v-if="pageBreakFlag && (!ifShowPM)">
+          <span class="left fl">..................</span>
+          <span class="center"
+            :class="{'blue':!pageBreak.PM,'green':pageBreak.PM}">{{pageBreak.PM?'已分割':'点击以此为界限分割'}}</span>
+          <span class="right fr">..................</span>
         </div>
         <div class="tableCtn"
           v-if="!ifShowGL">
@@ -1099,6 +1154,8 @@
         @click="windowMethod(2)">打印</div>
       <div class="setting_item"
         @click="windowMethod(3)">打印设置</div>
+      <div class="setting_item"
+        @click="windowMethod(4)">{{pageBreakFlag?'完成编辑':'自定义分页'}}</div>
     </div>
     <div class="popup"
       v-if="showPrintSettingFlag"
@@ -1213,6 +1270,7 @@ export default Vue.extend({
       company_name: window.sessionStorage.getItem('company_name'),
       X_position: 0,
       Y_position: 0,
+      pageBreakFlag: false,
       showMenu: false,
       showPrintSetting: false,
       showPrintSettingFlag: false,
@@ -1453,6 +1511,16 @@ export default Vue.extend({
           secondArr: [],
           thirdArr: []
         }
+      },
+      // 设置分割线用，为什么分割线的check值不直接用对象里加一个？因为对象是函数返回的加不了key了，再加监听不到
+      pageBreak: {
+        weft: [],
+        warp: [],
+        warpBack: [],
+        weftBack: [],
+        colour: '',
+        PM: '',
+        GL: ''
       }
     }
   },
@@ -1471,9 +1539,14 @@ export default Vue.extend({
         if (type === 1) {
           window.location.reload()
         } else if (type === 2) {
-          window.print()
+          this.pageBreakFlag = false
+          this.$nextTick(() => {
+            window.print()
+          })
         } else if (type === 3) {
           this.showPrintSettingFlag = true
+        } else if (type === 4) {
+          this.pageBreakFlag = !this.pageBreakFlag
         }
       })
     },

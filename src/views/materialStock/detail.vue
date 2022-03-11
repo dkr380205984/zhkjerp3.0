@@ -171,6 +171,7 @@
                     <div class="tcol">调取/已加工数量</div>
                   </div>
                 </div>
+                <div class="tcol">已入库数量</div>
               </div>
             </div>
           </div>
@@ -257,6 +258,7 @@
                     <div class="tcol">{{itemChild.number - itemChild.process_info.filter((item)=>item.process==='染色').reduce((total,cur)=>(total+cur.number),0)}}{{itemChild.unit||'kg'}}</div>
                   </div>
                 </div>
+                <div class="tcol">{{itemChild.final_push_number||0}}{{itemChild.unit||'kg'}}</div>
               </div>
             </div>
           </div>
@@ -617,6 +619,14 @@
         </div>
         <div class="otherInfoCtn">
           <div class="otherInfo">
+            <div class="btn backHoverOrange"
+              @click="goStock(6)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">结余入库</span>
+            </div>
             <div class="btn backHoverBlue"
               @click="goStock(5)">
               <svg class="iconFont"
@@ -1012,32 +1022,6 @@
         </div>
       </div>
     </div>
-    <div class="popup"
-      v-show="chooseIndexFlag">
-      <div class="main"
-        style=" width: 500px;">
-        <div class="titleCtn">
-          <div class="text">选择打样次数</div>
-          <div class="closeCtn"
-            @click="init();chooseIndexFlag=false">
-            <i class="el-icon-close"></i>
-          </div>
-        </div>
-        <div class="contentCtn">
-          <div class="tag"
-            v-for="(item,index) in orderInfo.time_data"
-            :key="index"
-            :class="{'backHoverBlue':index===orderIndex}"
-            @click="orderIndex=index">第{{index+1}}次打样</div>
-        </div>
-        <div class="oprCtn">
-          <div class="btn borderBtn"
-            @click="init();chooseIndexFlag=false">取消</div>
-          <div class="btn backHoverBlue"
-            @click="init();orderIndex=index;chooseIndexFlag=false">确定</div>
-        </div>
-      </div>
-    </div>
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
@@ -1046,6 +1030,13 @@
         </div>
       </div>
     </div>
+    <!-- 结余入库 -->
+    <store-surplus @afterSave="storeSurplusFlag=false;init()"
+      @close="storeSurplusFlag=false"
+      :materialList="storeSurplusInfo.materialList"
+      :orderId="storeSurplusInfo.order_id"
+      :orderCode="storeSurplusInfo.order_code"
+      :show="storeSurplusFlag"></store-surplus>
   </div>
 </template>
 
@@ -1133,8 +1124,8 @@ export default Vue.extend({
           }
         ]
       },
-      orderIndex: 0, // 多张订单/样单
-      chooseIndexFlag: false,
+      orderIndex: 0,
+      order_id: '',
       materialOrderList: [],
       materialProcessList: [],
       stockTypeList: stockType,
@@ -1149,8 +1140,8 @@ export default Vue.extend({
         complete_time: this.$getDate(new Date()),
         client_id: '',
         desc: '',
-        store_id: 1,
-        secondary_store_id: 1,
+        store_id: -1,
+        secondary_store_id: -1,
         info_data: [
           {
             material_id: '',
@@ -1172,7 +1163,13 @@ export default Vue.extend({
       materialBSDQList: [], // 补纱调取单，实际上和出入库日志是同一个接口
       productionPlanList: [],
       storeInList: [],
-      yarnAttributeList: yarnAttributeArr
+      yarnAttributeList: yarnAttributeArr,
+      storeSurplusFlag: false,
+      storeSurplusInfo: {
+        materialList: [],
+        order_id: '',
+        order_code: ''
+      }
     }
   },
   methods: {
@@ -1180,13 +1177,13 @@ export default Vue.extend({
       this.loading = true
       Promise.all([
         materialOrder.list({
-          order_id: Number(this.orderInfo.time_data[this.orderIndex].id)
+          order_id: Number(this.order_id)
         }),
         materialStock.list({
-          order_id: Number(this.orderInfo.time_data[this.orderIndex].id)
+          order_id: Number(this.order_id)
         }),
         productionPlan.list({
-          order_id: Number(this.orderInfo.time_data[this.orderIndex].id)
+          order_id: Number(this.order_id)
         })
       ]).then((res) => {
         this.materialOrderList = res[0].data.data
@@ -1199,6 +1196,7 @@ export default Vue.extend({
           (item: any) => item.action_type !== 10 && item.action_type !== 12
         )
         this.materialJHDQList = res[1].data.data.filter((item: any) => item.action_type === 10) // 计划调取
+        console.log(this.materialJHDQList)
         this.materialBSDQList = res[1].data.data.filter((item: any) => item.action_type === 12) // 补纱调取
         // 统计入库日志用于出库
         const flattenStock = this.$flatten(
@@ -1281,6 +1279,55 @@ export default Vue.extend({
             this.getInspectionInfo()
           } else if (type === 7 || type === 8) {
             this.getDiaoquInfo(type)
+          } else if (type === 6) {
+            // 结余入库用组件的逻辑
+            this.storeSurplusFlag = true
+            this.storeSurplusInfo.order_code = this.orderInfo.code
+            this.storeSurplusInfo.order_id = this.orderInfo.id
+            this.storeSurplusInfo.materialList = []
+            const checkLength = this.productionPlanList.filter((item) => {
+              return (
+                item.material_info_data.some((itemChild) => itemChild.check) ||
+                item.sup_data!.some((itemChild) => {
+                  return itemChild.info_data.some((itemSon) => itemSon.check)
+                })
+              )
+            }).length
+            if (checkLength > 1) {
+              this.$message.error('只能选择一张加工单进行出库操作')
+              return
+            }
+
+            this.productionPlanList.forEach((item) => {
+              item.material_info_data.forEach((itemChild) => {
+                if (itemChild.check) {
+                  // 如果需要记录是那一张加工单结余可能会有用的字段
+                  // this.materialStockInfo.client_id = item.client_id
+                  // this.materialStockInfo.rel_doc_code = item.code
+                  // this.materialStockInfo.rel_doc_id = item.id as number
+                  this.storeSurplusInfo.materialList.push({
+                    material_color: itemChild.material_color,
+                    material_id: itemChild.material_id,
+                    attribute: '筒纱',
+                    number: itemChild.number,
+                    unit: itemChild.unit
+                  })
+                }
+              })
+              item.sup_data!.forEach((itemSup) => {
+                itemSup.info_data.forEach((itemChild) => {
+                  if (itemChild.check) {
+                    this.storeSurplusInfo.materialList.push({
+                      material_color: itemChild.material_color,
+                      material_id: itemChild.material_id,
+                      attribute: '筒纱',
+                      number: itemChild.number,
+                      unit: itemChild.unit
+                    })
+                  }
+                })
+              })
+            })
           }
         })
         .catch(() => {
@@ -1786,7 +1833,7 @@ export default Vue.extend({
       this.materialStockFlag = true
     },
     getCmpData() {
-      this.materialStockInfo.order_id = Number(this.orderInfo.time_data[this.orderIndex].id)
+      this.materialStockInfo.order_id = Number(this.order_id)
       this.materialStockInfo.info_data.forEach((item) => {
         item.batch_code = item.batch_code || '无'
         item.vat_code = item.vat_code || '无'
@@ -1870,12 +1917,13 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.orderInfo = res.data.data
-          if (this.orderInfo.time_data.length > 1) {
-            this.chooseIndexFlag = true
-            this.loading = false
-          } else {
-            this.init()
-          }
+          this.orderInfo.time_data.forEach((item, index) => {
+            if (item.id === Number(this.$route.query.sampleOrderIndex)) {
+              this.orderIndex = index
+            }
+          })
+          this.order_id = res.data.data.time_data[this.orderIndex].id
+          this.init()
         }
       })
   }

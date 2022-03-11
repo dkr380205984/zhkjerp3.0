@@ -363,7 +363,13 @@
                       :key="indexChild">
                       <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
                       <div class="tcol">{{itemChild.number}}</div>
-                      <div class="tcol">0</div>
+                      <div class="tcol"
+                        :class="{'green':itemChild.transport_number&&itemChild.transport_number>=itemChild.number,'orange':itemChild.transport_number&&itemChild.transport_number<itemChild.number}">{{itemChild.transport_number||0}}
+                        <span class="green"
+                          v-if="itemChild.transport_number&&itemChild.transport_number>=itemChild.number">差值+{{itemChild.transport_number-itemChild.number}}</span>
+                        <span class="red"
+                          v-if="itemChild.transport_number&&itemChild.transport_number<itemChild.number">差值-{{itemChild.number - itemChild.transport_number}}</span>
+                      </div>
                     </div>
                   </div>
                   <div class="tcol">暂无</div>
@@ -699,6 +705,22 @@
                   </svg>
                   <span class="text">操作记录</span>
                 </div>
+                <div class="btn backHoverRed"
+                  @click="cancelOrder">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-shanchudingdan"></use>
+                  </svg>
+                  <span class="text">取消订单</span>
+                </div>
+                <div class="btn backHoverGreen"
+                  @click="$router.push('/boxManage/orderDetail?id='+$route.query.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-shanchudingdan"></use>
+                  </svg>
+                  <span class="text">装箱出库</span>
+                </div>
               </div>
             </div>
           </div>
@@ -765,7 +787,7 @@
                     <div class="tcol">
                       <div class="line">
                         <span class="label">批次名称:</span>
-                        <div class="line">{{itemChild.batch_number}}</div>
+                        <div class="line">{{itemChild.batch_title}}</div>
                       </div>
                       <div class="line"
                         v-if="itemChild.update_data">
@@ -816,12 +838,10 @@
 import Vue from 'vue'
 import { order } from '@/assets/js/api'
 import { OrderInfo, OrderTime } from '@/types/order'
-import zhImage from '@/components/zhImage/zhImage.vue'
 interface OrderDetail extends OrderInfo {
   time_data: OrderTime[]
 }
 export default Vue.extend({
-  components: { zhImage },
   data(): {
     orderInfo: OrderDetail
     [propName: string]: any
@@ -940,6 +960,34 @@ export default Vue.extend({
     }
   },
   methods: {
+    cancelOrder() {
+      this.$confirm('是否取消该订单?', '提示', {
+        confirmButtonText: '确认取消',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          order
+            .cancel({
+              id: Number(this.orderInfo.time_data[0].id)
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '取消成功!'
+                })
+                this.$router.push('/order/list?page=1&keyword=&client_id=&user_id=&status=null0&date=')
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        })
+    },
     deleteOrder() {
       this.$confirm('是否删除该订单?', '提示', {
         confirmButtonText: '确认删除',

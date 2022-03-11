@@ -98,6 +98,24 @@
                 :value="item.value"></el-option>
             </el-select>
           </div>
+          <div class="elCtn">
+            <el-select v-model="type"
+              placeholder="订单状态筛选"
+              @change="changeRouter">
+              <el-option label="全部"
+                :value="0"></el-option>
+              <el-option label="已创建"
+                :value="1"></el-option>
+              <el-option label="进行中"
+                :value="2"></el-option>
+              <el-option label="已完成"
+                :value="3"></el-option>
+              <el-option label="已取消"
+                :value="5"></el-option>
+              <el-option label="已延期"
+                :value="6"></el-option>
+            </el-select>
+          </div>
         </div>
         <div class="filterCtn"
           style="height: 33px">
@@ -183,6 +201,7 @@ export default Vue.extend({
       },
       group_id: '',
       user_id: '',
+      type: 0,
       status: '0',
       date: [],
       limit: 10,
@@ -510,6 +529,7 @@ export default Vue.extend({
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.keyword = query.keyword || ''
       this.status = query.status || 'null'
+      this.type = Number(query.type) || 0
       this.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.date = query.date ? (query.date as string).split(',') : []
@@ -563,6 +583,8 @@ export default Vue.extend({
           this.group_id +
           '&status=' +
           this.status +
+          '&type=' +
+          this.type +
           '&date=' +
           this.date +
           '&limit=' +
@@ -581,6 +603,7 @@ export default Vue.extend({
           this.user_id = ''
           this.group_id = ''
           this.date = []
+          this.type = 0
           this.status = 'null'
           this.limit = 10
           this.changeRouter()
@@ -602,6 +625,7 @@ export default Vue.extend({
           page: this.page,
           limit: this.limit,
           is_check: this.status,
+          status: this.type,
           start_time: this.date.length > 0 ? this.date[0] : '',
           end_time: this.date.length > 0 ? this.date[1] : '',
           user_id: this.user_id,

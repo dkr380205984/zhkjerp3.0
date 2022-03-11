@@ -18,7 +18,7 @@
             <div class="pcol wa">
               <div class="label">创建信息：</div>
               <div class="info"
-                style="white-space: nowrap;">{{ productionPlanInfo.created_at?productionPlanInfo.created_at.slice(0, 10):'' }}{{productionPlanInfo.user_name?'，' + productionPlanInfo.user_name:''}}{{user_name?'，' + user_name:''}}</div>
+                style="white-space: nowrap;">{{ productionPlanInfo.created_at?productionPlanInfo.created_at.slice(0, 10):'' }}{{productionPlanInfo.user_name?'，' + productionPlanInfo.user_name:''}}{{productionPlanInfo.user_phone?'，' + productionPlanInfo.user_phone:''}}</div>
             </div>
           </div>
         </div>
@@ -77,7 +77,7 @@
                 <span>{{itemPro.category_name}}/{{itemPro.secondary_category_name}}</span>
               </div>
               <div class="tcol">
-                <el-image :src="itemPro.image_data.length>0?itemPro.image_data[0]:require('@/assets/image/common/noPic.png')"
+                <el-image :src="itemPro.image_data.length>0?(itemPro.image_data[0]+'?imageView2/1/w/80/80'):require('@/assets/image/common/noPic.png')"
                   :preview-src-list="itemPro.image_data">
                 </el-image>
               </div>
@@ -253,9 +253,11 @@ export default Vue.extend({
   },
   computed: {
     totalPrice(): number {
-      return this.productionPlanInfo.product_info_data.reduce((total, item) => {
-        return total + Number(this.$toFixed(Number(item.price) * Number(item.number)))
-      }, 0)
+      return this.$toFixed(
+        this.productionPlanInfo.product_info_data.reduce((total, item) => {
+          return total + Number(this.$toFixed(Number(item.price) * Number(item.number)))
+        }, 0)
+      )
     },
     totalNumber(): number {
       return this.productionPlanInfo.product_info_data.reduce((total, item) => {

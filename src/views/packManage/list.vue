@@ -32,23 +32,12 @@
                 :value="item.value"></el-option>
             </el-select>
           </div>
-          <!-- <div class="elCtn">
-            <el-select v-model="order_type"
-              @change="changeRouter">
-              <el-option label="所有单据"
-                :value="null"></el-option>
-              <el-option label="订单"
-                :value="1"></el-option>
-              <el-option label="样单"
-                :value="2"></el-option>
-            </el-select>
-          </div> -->
           <div class="btn borderBtn"
             @click="reset">重置</div>
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select @change="$setLocalStorage('group_id',group_id);changeRouter()"
+            <el-select @change="changeRouter"
               v-model="group_id"
               placeholder="筛选负责小组"
               clearable>
@@ -269,7 +258,7 @@ export default Vue.extend({
       this.keyword = query.keyword || ''
       this.status = query.status || '0'
       this.user_id = query.user_id || ''
-      this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
+      this.group_id = Number(query.group_id) || ''
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
     },
