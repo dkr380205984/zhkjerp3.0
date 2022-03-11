@@ -74,11 +74,19 @@
             @selection-change="handleSelectionChange"
           >
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-            <el-table-column prop="code" label="员工编号"></el-table-column>
-            <el-table-column prop="name" label="员工姓名"></el-table-column>
+            <el-table-column label="员工编号">
+              <template slot-scope="scope">
+                <div style="cursor: pointer" @click="selectTableRow(scope.row)">{{ scope.row.code }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column label="员工姓名">
+              <template slot-scope="scope">
+                <div style="cursor: pointer" @click="selectTableRow(scope.row)">{{ scope.row.name }}</div>
+              </template>
+            </el-table-column>
             <el-table-column prop="phone" label="手机号"></el-table-column>
             <el-table-column prop="department" label="所属部门"></el-table-column>
-            <el-table-column prop="type" label="工种">
+            <el-table-column label="工种">
               <template slot-scope="scope">
                 {{ scope.row.type === '1' ? '临时工' : scope.row.type === '2' ? '合同工' : '状态有误' }}
               </template>
@@ -158,7 +166,25 @@ export default Vue.extend({
   },
   methods: {
     deleteWorker(item: any) {
-      console.log(item)
+      if (item.status === 2) {
+        this.$message.warning('该员工已经为离职状态')
+        return
+      }
+      staff
+        .changeStaffStatus({
+          data: [
+            {
+              id: item.id,
+              status: 2
+            }
+          ]
+        })
+        .then((res) => {
+          if (res.data.status === true) {
+            this.$message.success('离职成功')
+            this.getList()
+          }
+        })
     },
     rowKey(row: { id: any }) {
       return row.id
@@ -270,8 +296,12 @@ export default Vue.extend({
       })
     },
     toggleSelection() {
-      let a:any = this.$refs
+      let a: any = this.$refs
       a.multipleTable.clearSelection()
+    },
+    selectTableRow(row: any) {
+      let a: any = this.$refs
+      a.multipleTable.toggleRowSelection(row)
     },
     exportExcel() {
       this.mainLoading = true

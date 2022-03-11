@@ -219,12 +219,8 @@
 </template>
 
 <script lang="ts">
-import { PackMaterialInfo, DecorateMaterialInfo } from '@/types/materialSetting'
-import { moneyArr } from '@/assets/js/dictionary'
-
 import { staff, process } from '@/assets/js/api'
 import Vue from 'vue'
-import { OrderInfo } from '@/types/order'
 export default Vue.extend({
   data(): {
     [propName: string]: any
@@ -239,7 +235,7 @@ export default Vue.extend({
         phone: '',
         department: '',
         type: '',
-        entry_time: '',
+        entry_time: new Date().getFullYear()+"-" + (new Date().getMonth()+1) + "-" + new Date().getDate(),
         resign_time: '',
         process: [],
         age: '',

@@ -260,7 +260,7 @@ export default Vue.extend({
         })
         .then((res) => {
           if (res.data.data.process !== null) {
-            let arr:any = []
+            let arr: any = []
             res.data.data.process = res.data.data.process.split('/')
           } else {
             res.data.data.process = []
@@ -296,7 +296,10 @@ export default Vue.extend({
         return
       }
 
-      userDetailInfo.process = userDetailInfo.process.toString().replaceAll(',','/')
+      userDetailInfo.process = userDetailInfo.process.toString().replaceAll(',', '/')
+
+      if (userDetailInfo.resign_time === null) userDetailInfo.status = 1
+      
       staff.addStaff(userDetailInfo).then((res: any) => {
         if (res.data.status) {
           this.$message.success('修改成功')
@@ -324,21 +327,23 @@ export default Vue.extend({
         })
     },
     addNewProcess() {
-      process.create({
-        data: [
-          {
-            type: 3,
-            name: this.newProcessName,
-            id: ''
+      process
+        .create({
+          data: [
+            {
+              type: 3,
+              name: this.newProcessName,
+              id: ''
+            }
+          ]
+        })
+        .then((res: any) => {
+          if (res.data.status) {
+            this.$message.success('工序添加成功')
+            this.newProcessName = ''
+            this.getWorkProcedure()
           }
-        ]
-      }).then((res:any)=>{
-        if(res.data.status){
-          this.$message.success('工序添加成功')
-          this.newProcessName = ''
-          this.getWorkProcedure()
-        }
-      })
+        })
     }
   },
   mounted() {

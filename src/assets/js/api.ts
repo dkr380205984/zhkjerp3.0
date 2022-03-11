@@ -182,7 +182,7 @@ const process = {
 // 工艺单设置
 import { SideInfo, MachineInfo, MethodsInfo } from '@/types/craftSetting'
 const craftSetting = {
-  listSide: () => http.get(`${baseUrl}/craft/side/type/lists`, {}),createSide: (params: { data: SideInfo[] }) => http.post(`${baseUrl}/craft/side/type/save`, params, 'application/json'),
+  listSide: () => http.get(`${baseUrl}/craft/side/type/lists`, {}), createSide: (params: { data: SideInfo[] }) => http.post(`${baseUrl}/craft/side/type/save`, params, 'application/json'),
   deleteSide: (params: DeleteParams) => http.post(`${baseUrl}/craft/side/delete`, params, 'application/json'),
   listMachine: () => http.get(`${baseUrl}/craft/machine/type/lists`, {}),
   createMachine: (params: { data: MachineInfo[] }) => http.post(`${baseUrl}/craft/machine/type/save`, params, 'application/json'),
@@ -645,14 +645,7 @@ const staff = {
     keyword: string
   }) => http.get(`${baseUrl}/staff/department/list`, params),
   importStaff: (params?: any) => http.post(`${baseUrl}/import/staff`, params),
-  list: (params: {
-    limit: number | string
-    keyword: string
-    department: string
-    status: string | number
-    type: string | number
-    page: number | string
-  }) => http.get(`${baseUrl}/staff/list`, params),
+  list: (params: any) => http.get(`${baseUrl}/staff/list`, params),
   departmentAdd: (params: {
     id: number | string
     name: string
@@ -688,7 +681,43 @@ const staff = {
     id: number | string
   }) => http.get(`${baseUrl}/staff/detail`, params),
 }
+
+// 车间管理
+const workshop = {
+  save: (params: {
+    order_id: string | number
+    data: Array<{
+      staff_id: number | string
+      process_name: number | string
+      process_type: number | string
+      order_product_id: number | string
+      product_id: number | string
+      size_id: number | string
+      color_id: number | string
+      number: number | string
+      price: number | string
+      total_price: number | string
+      shoddy_number: number | string
+      shoddy_reason: string
+      complete_time: string
+    }>
+  }) => http.post(`${baseUrl}/production/inspection/save`, params),
+  list: (params: {
+    order_id: string | number
+  }) => http.get(`${baseUrl}/production/inspection/lists`, params),
+  detail: (params: {
+    order_id: number | string
+  }) => http.get(`${baseUrl}/production/inspection/detail`, params),
+  delete: (params: {
+    id: Array<number | string>
+  }) => http.post(`${baseUrl}/production/inspection/delete`, params),
+  check: (params: {
+    id: Array<number | string>
+    is_check: 2 | 3
+  }) => http.post(`${baseUrl}/production/inspection/check`, params),
+}
 export {
+  workshop,
   staff,
   clientBind,
   systemMessage,
