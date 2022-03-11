@@ -79,7 +79,9 @@
                     <div class="tcol">
                       {{ itemChild.number }}
                     </div>
-                    <div :class="(itemChild.number - itemColorSize.number>0)?'green tcol':'red tcol'">{{ itemChild.number - itemColorSize.number }}</div>
+                    <div :class="itemChild.number - itemColorSize.number > 0 ? 'green tcol' : 'red tcol'">
+                      {{ itemChild.number - itemColorSize.number }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -110,7 +112,7 @@
                 <div class="tcol noPad" style="flex: 8.7">
                   <div class="trow">
                     <div class="tcol">结算工序</div>
-                    <div class="tcol">结算单价</div>
+                    <div class="tcol">结算单价(元/件)</div>
                     <div class="tcol noPad" style="flex: 8.7">
                       <div class="trow">
                         <div class="tcol" style="text-align: center; flex: 0.2">
@@ -119,12 +121,12 @@
                         <div class="tcol">尺码颜色</div>
                         <div class="tcol">完成数量</div>
                         <div class="tcol">次品数量</div>
-                        <div class="tcol">结算小计</div>
+                        <div class="tcol">结算小计(元)</div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="tcol">结算合计</div>
+                <div class="tcol">结算合计(元)</div>
               </div>
             </div>
             <div class="tbody">
@@ -233,8 +235,8 @@
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column prop="price" label="结算单价"> </el-table-column>
-          <el-table-column prop="total_price" label="结算总价"> </el-table-column>
+          <el-table-column prop="price" label="结算单价(元/件)"> </el-table-column>
+          <el-table-column prop="total_price" label="结算总价(元)"> </el-table-column>
         </el-table>
         <div class="buttonList" style="margin-bottom: 20px">
           <div style="margin-top: 20px; margin-left: 32px" class="btn backHoverBlue" @click="lostAgree">批量通过</div>
@@ -324,10 +326,17 @@
                 </div>
                 <div class="trow" v-for="(itemSizeColor, indexColorSize) in item.infoData" :key="indexColorSize">
                   <div class="tcol">
-                    <el-select v-model="itemSizeColor.worker" filterable placeholder="请选择员工">
+                    <!-- <el-select v-model="itemSizeColor.worker" filterable placeholder="请选择员工">
                       <el-option v-for="item in workList" :key="item.id" :label="item.name" :value="item.id">
                       </el-option>
-                    </el-select>
+                    </el-select> -->
+                    <el-cascader
+                      :options="allWorkList"
+                      v-model="itemSizeColor.worker"
+                      placeholder="请选择员工"
+                      filterable
+                      :show-all-levels="false"
+                    ></el-cascader>
                   </div>
                   <div class="tcol noPad" :style="{ flex: productionScheduleUpdate.length === 1 ? 5.86 : 5.87 }">
                     <div class="trow" v-for="(el, i) in itemSizeColor.sizeColorList" :key="i">
@@ -516,6 +525,18 @@ export default Vue.extend({
         }
       ],
       workerList: [],
+      allWorkList: [
+        {
+          value: '',
+          label: '所有人员',
+          children: []
+        },
+        {
+          value: 3,
+          label: '工序负责人员',
+          children: []
+        }
+      ],
       productionScheduleUpdate: [
         {
           productNameId: '',
@@ -657,6 +678,7 @@ export default Vue.extend({
         })
       })
 
+      this.getWorkList('')
       this.loading = false
     },
     copyWorkerInfo(item: any, itemSizeColor: any) {
@@ -756,7 +778,6 @@ export default Vue.extend({
             throw Error()
           }
           item.sizeColorList.forEach((itemChild: any) => {
-            console.log(itemChild)
             if (itemChild.complete_time === undefined) {
               this.$message.error('请选择日期')
               throw Error()
@@ -783,7 +804,7 @@ export default Vue.extend({
               order_product_id: items.productNameId,
               product_id: items.productId,
               price: items.unitPrice || 0,
-              staff_id: typeof item.worker === 'number' ? item.worker : item.worker_id,
+              staff_id: typeof item.worker === 'object' ? item.worker[1] : (typeof item.worker === 'number' ? item.worker : item.worker_id),
               size_id: itemChild.chooseId.split(',')[0],
               color_id: itemChild.chooseId.split(',')[1],
               number: itemChild.complete_number || 0,
@@ -990,9 +1011,26 @@ export default Vue.extend({
       return currentdate
     },
     getWorkList(res: any) {
-      console.log(res[1])
+      // console.log(res[1])
       staff.list({ keyword: res[1] }).then((ress: any) => {
-        this.workList = ress.data.data
+        let arr:any = []
+        ress.data.data.forEach((worker:any) => {
+          arr.push({
+            value:worker.id,
+            label:worker.name
+          })
+        });
+        this.allWorkList[1].children = arr
+      })
+      staff.list({ keyword: '' }).then((ress: any) => {
+        let arr:any = []
+        ress.data.data.forEach((worker:any) => {
+          arr.push({
+            value:worker.id,
+            label:worker.name
+          })
+        });
+        this.allWorkList[0].children = arr
       })
     },
     getColorList(res: any) {

@@ -235,7 +235,7 @@ export default Vue.extend({
         phone: '',
         department: '',
         type: '',
-        entry_time: new Date().getFullYear()+"-" + (new Date().getMonth()+1) + "-" + new Date().getDate(),
+        entry_time: new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate(),
         resign_time: '',
         process: [],
         age: '',
@@ -252,7 +252,7 @@ export default Vue.extend({
       },
       workProcedure: [],
       chooseProcess: [],
-      newProcessName: '',
+      newProcessName: ''
     }
   },
   methods: {
@@ -301,11 +301,43 @@ export default Vue.extend({
           }
         })
     },
+    getNowFormatDate() {
+      let date = new Date()
+      let seperator1 = '-'
+      let year = date.getFullYear()
+      let month: any = date.getMonth() + 1
+      let strDate: any = date.getDate()
+      if (month >= 1 && month <= 9) {
+        month = '0' + month
+      }
+      if (strDate >= 0 && strDate <= 9) {
+        strDate = '0' + strDate
+      }
+      let currentdate = year + seperator1 + month + seperator1 + strDate
+      return currentdate
+    },
+
+    dateDiff(a: any) {
+      a = '2022-03-01'
+      let b = this.getNowFormatDate()
+      let arr = a.split('-')
+      let starttime = new Date(arr[0], arr[1], arr[2])
+      let starttimes = starttime.getTime()
+
+      let arrs: any = b.split('-')
+      let lktime = new Date(arrs[0], arrs[1], arrs[2])
+      let lktimes = lktime.getTime()
+
+      if (starttimes >= lktimes) {
+        alert('开始时间大于离开时间，请检查')
+        return false
+      } else return true
+    },
 
     // 添加员工
     addStaff() {
       let staffInfo = this.staffInfo
-      
+
       if (staffInfo.name === '') {
         this.$message.error('员工姓名不能为空')
         return
@@ -319,7 +351,7 @@ export default Vue.extend({
         return
       }
 
-      staffInfo.process = staffInfo.process.toString().replaceAll(',','/')
+      staffInfo.process = staffInfo.process.toString().replaceAll(',', '/')
 
       staff.addStaff(staffInfo).then((res: any) => {
         if (res.data.status) {

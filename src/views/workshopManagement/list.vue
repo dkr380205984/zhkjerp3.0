@@ -266,7 +266,7 @@ export default Vue.extend({
     },
     changeRouter() {
       this.$router.push(
-        '/packManage/list?page=' +
+        '/workshopManagement/list?page=' +
           this.page +
           '&keyword=' +
           this.keyword +
