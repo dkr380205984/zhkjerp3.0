@@ -419,18 +419,18 @@ const routes: Array<RouteConfig> = [
       name: '包装管理详情',
       component: () => import('../views/packManage/detail.vue')
     },
-    //  {
-    //   meta: {
-    //     permissions_id: '19-3',
-    //   },
-    //   path: '/workshopManagement/list',
-    //   name: '车间管理列表',
-    //   component: () => import('../views/workshopManagement/list.vue')
-    // }, {
-    //   path: '/workshopManagement/detail',
-    //   name: '车间管理详情',
-    //   component: () => import('../views/workshopManagement/detail.vue')
-    // }, 
+    {
+      meta: {
+        permissions_id: '19-3',
+      },
+      path: '/workshopManagement/list',
+      name: '车间管理列表',
+      component: () => import('../views/workshopManagement/list.vue')
+    }, {
+      path: '/workshopManagement/detail',
+      name: '车间管理详情',
+      component: () => import('../views/workshopManagement/detail.vue')
+    }, 
     {
       meta: {
         permissions_id: '11-3',
