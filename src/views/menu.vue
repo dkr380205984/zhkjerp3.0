@@ -1,17 +1,17 @@
 <template>
-  <div id="menu" class="bodyContainer">
+  <div id="menu"
+    class="bodyContainer">
     <div class="module">
       <div class="titleCtn">
         <div class="title">生产流程管理</div>
       </div>
       <div class="menuList">
-        <div
-          class="menu_item"
+        <div class="menu_item"
           v-for="(item, index) in menuList.production"
           :key="index"
-          @click="$router.push(item.url)"
-        >
-          <svg class="iconFont" aria-hidden="true">
+          @click="$router.push(item.url)">
+          <svg class="iconFont"
+            aria-hidden="true">
             <use :xlink:href="'#' + item.icon"></use>
           </svg>
           <p class="name">{{ item.name }}</p>
@@ -23,8 +23,12 @@
         <div class="title">其他管理</div>
       </div>
       <div class="menuList">
-        <div class="menu_item" v-for="(item, index) in menuList.other" :key="index" @click="$router.push(item.url)">
-          <svg class="iconFont" aria-hidden="true">
+        <div class="menu_item"
+          v-for="(item, index) in menuList.other"
+          :key="index"
+          @click="$router.push(item.url)">
+          <svg class="iconFont"
+            aria-hidden="true">
             <use :xlink:href="'#' + item.icon"></use>
           </svg>
           <p class="name">{{ item.name }}</p>
@@ -100,13 +104,13 @@ export default Vue.extend({
             id: '19-3',
             icon: 'icon-chejianguanli',
             url: '/workshopManagement/list?page=1&type=1'
+          },
+          {
+            name: '装箱运输',
+            id: '11-3',
+            icon: 'icon-zhuangxiangjihua',
+            url: '/boxManage/list?page=1&type=1'
           }
-          // {
-          //   name: '装箱运输——暂无',
-          //   id: 10,
-          //   icon: 'icon-zhuangxiangjihua',
-          //   url: '/packOut/list?page=1&type=1'
-          // }
         ],
         other: [
           {
@@ -145,7 +149,7 @@ export default Vue.extend({
             icon: 'icon-xitongshezhi',
             url: '/setting?pName=产品设置&cName=品类'
           }
-        ],
+        ]
         // finance: [
         //   {
         //     name: '报销单管理',
@@ -171,7 +175,7 @@ export default Vue.extend({
           ? this.menuList.other
           : this.menuList.other.filter((item) => {
               return JSON.parse(moduleInfo).indexOf(item.id) !== -1
-            }),
+            })
       // finance:
       //   JSON.parse(moduleInfo).length === 0
       //     ? this.menuList.finance

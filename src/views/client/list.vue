@@ -90,11 +90,16 @@
                 :value="item.value"></el-option>
             </el-select>
           </div>
+          <div class="elCtn">
+            <el-checkbox v-model="only_delete"
+              @change="changeRouter"
+              :true-label="1">查询已删除的数据</el-checkbox>
+          </div>
         </div>
         <div class="list">
           <div class="row title">
-            <div class="col">客户名称</div>
-            <div class="col">客户简称</div>
+            <div class="col">公司简称</div>
+            <div class="col">公司全称</div>
             <div class="col">客户类型</div>
             <div class="col">客户标签</div>
             <div class="col">客户状态</div>
@@ -122,7 +127,7 @@
               <span class="opr hoverOrange"
                 @click="$router.push('/client/update?id='+item.id + '&type='+$route.query.type)">修改</span>
               <span class="opr hoverRed"
-                @click="deleteClient(item.id)">删除</span>
+                @click="deleteClient(item.id)">{{only_delete===1?'恢复数据':'删除'}}</span>
             </div>
           </div>
         </div>
@@ -200,7 +205,8 @@ export default Vue.extend({
       tag_id: '',
       bindFlag: false,
       clientTagList: [],
-      limitList: limitArr
+      limitList: limitArr,
+      only_delete: 0
     }
   },
   computed: {
@@ -228,6 +234,7 @@ export default Vue.extend({
       this.status = query.status === 'null' ? null : Number(query.status)
       this.keyword = query.keyword
       this.clientType = Number(query.clientType) || ''
+      this.only_delete = Number(query.only_delete) || 0
       this.clientTagList = this.clientType
         ? this.clientTypeList.find((item: any) => item.id === Number(query.clientType)).public_tag
         : []
@@ -247,7 +254,9 @@ export default Vue.extend({
           '&clientType=' +
           this.clientType +
           '&tag_id=' +
-          this.tag_id
+          this.tag_id +
+          '&only_delete=' +
+          this.only_delete
       )
     },
     reset() {
@@ -260,6 +269,7 @@ export default Vue.extend({
           this.status = 1
           this.clientType = ''
           this.tag_id = ''
+          this.only_delete = 0
           this.changeRouter()
         })
         .catch(() => {
@@ -277,6 +287,7 @@ export default Vue.extend({
           page: this.page,
           name: this.keyword,
           status: this.status,
+          only_delete: this.only_delete,
           tag_id: this.tag_id ? [this.tag_id] : null, // 筛选标签用的，暂时没用到
           client_type_id: this.clientType ? [this.clientType] : this.clientTypeArr.map((item: any) => item.id)
         })

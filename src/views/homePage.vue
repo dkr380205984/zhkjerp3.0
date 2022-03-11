@@ -373,7 +373,7 @@ export default Vue.extend({
         {
           id: '9-3',
           isChecked: false,
-          opr: '产品检验',
+          opr: '检验收发管理',
           icon: 'icon-shengchanpinjianyan',
           url: '/inspection/list?page=1&type=1'
         },

@@ -34,19 +34,21 @@ export interface ProductionPlanInfo {
     image_data?: string[]
     select_arr?: string // 前端用，下拉框选择一个产品尺码配色信息
   }>
-  material_info_data: Array<{
-    id?: number | string
-    check?: boolean // 前端用
-    material_id: number | string
-    material_name: string
-    material_color: string
-    number: number | string
-    unit: string
-  }>
+  material_info_data: ProductionMaterialPlanInfo[]
   sup_data?: MaterialSupplementInfo[]
   others_fee_data: Array<{
     name: string
     price: string | number
     desc: string
   }>
+}
+
+export interface ProductionMaterialPlanInfo {
+  id?: number | string
+  check?: boolean // 前端用
+  material_id: number | string
+  material_name: string
+  material_color: string
+  number: number | string
+  unit: string
 }

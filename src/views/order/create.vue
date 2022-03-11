@@ -277,7 +277,7 @@
         <div class="btn backHoverBlue"
           @click="$addItem(orderInfo.time_data.batch_data, {
             id: '',
-            batch_number: 1,
+            batch_number: orderInfo.time_data.batch_data.length+1,
             batch_title: '',
             batch_type_id: '',
             delivery_time: '',

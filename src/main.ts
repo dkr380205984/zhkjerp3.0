@@ -23,7 +23,7 @@ Vue.filter('checkFilter', (val: 0 | 1 | 2 | null) => {
 })
 // 样品转产品过程中的状态转换
 Vue.filter('productStatusFilter', (val: 1 | 2 | 3 | 4 | 5 | 6) => {
-  const statusArr = ['未知', '待确认', '已确认', '已修改', '已转产品', '已取消', '确认继续打样']
+  const statusArr = ['未知', '待确认', '确认大货生产', '已修改', '已转产品', '已取消', '确认继续打样']
   return statusArr[val]
 })
 

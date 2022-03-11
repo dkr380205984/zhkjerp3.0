@@ -1,21 +1,35 @@
 <template>
-  <div id="productionPlanList"
+  <div id="packManageList"
     class="bodyContainer">
     <div class="topTagCtn">
+      <div class="tag "
+        @click="$router.push('/boxManage/list?page=1')">
+        <div class="iconCtn">
+          <svg class="iconFont"
+            aria-hidden="true">
+            <use xlink:href="#icon-kehuguanli"></use>
+          </svg>
+        </div>
+        <span class="text">装箱计划出库</span>
+      </div>
       <div class="tag active">
-        <svg class="iconFont"
-          aria-hidden="true">
-          <use xlink:href='#icon-zhuangshifuliaocangku'></use>
-        </svg>
-        <span class="text">生产计划</span>
+        <div class="iconCtn">
+          <svg class="iconFont"
+            aria-hidden="true">
+            <use xlink:href="#icon-hezuodanweiguanli"></use>
+          </svg>
+        </div>
+        <span class="text">订单直接出库</span>
       </div>
       <div class="tag"
-        @click="$router.push('/productionPlan/progressList')">
-        <svg class="iconFont"
-          aria-hidden="true">
-          <use xlink:href='#icon-zhuangshifuliaocangku'></use>
-        </svg>
-        <span class="text">生产进度</span>
+        @click="$router.push('/boxManage/boxList?page=1')">
+        <div class="iconCtn">
+          <svg class="iconFont"
+            aria-hidden="true">
+            <use xlink:href="#icon-hezuodanweiguanli"></use>
+          </svg>
+        </div>
+        <span class="text">发货单列表</span>
       </div>
     </div>
     <div class="module">
@@ -39,7 +53,7 @@
             </el-cascader>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter"
+            <el-select @change="$setLocalStorage('create_user',user_id);changeRouter()"
               v-model="user_id"
               placeholder="筛选创建人"
               clearable>
@@ -49,22 +63,11 @@
                 :value="item.value"></el-option>
             </el-select>
           </div>
-          <div class="elCtn">
-            <el-select v-model="order_type"
-              @change="changeRouter">
-              <el-option label="所有单据"
-                :value="null"></el-option>
-              <el-option label="订单"
-                :value="1"></el-option>
-              <el-option label="样单"
-                :value="2"></el-option>
-            </el-select>
-          </div>
           <div class="btn borderBtn"
             @click="reset">重置</div>
         </div>
         <div class="filterCtn">
-          <div class="elCtn hasIcon">
+          <div class="elCtn">
             <el-select @change="changeRouter"
               v-model="group_id"
               placeholder="筛选负责小组"
@@ -74,13 +77,6 @@
                 :value="item.id"
                 :label="item.name"></el-option>
             </el-select>
-            <el-tooltip class="item"
-              effect="dark"
-              content="保存负责小组筛选"
-              placement="top">
-              <i class="el-icon-upload hoverOrange"
-                @click="$setLocalStorage('group_id',group_id)"></i>
-            </el-tooltip>
           </div>
           <div class="elCtn">
             <el-date-picker v-model="date"
@@ -130,7 +126,7 @@
       @afterSave="getListSetting"
       :show="showSetting"
       :id="listSettingId"
-      :type="6"
+      :type="10"
       :data.sync="listKey"
       :originalData="originalSetting"></zh-list-setting>
   </div>
@@ -149,9 +145,9 @@ export default Vue.extend({
     return {
       loading: true,
       list: [],
-      order_type: null,
-      keyword: '',
       limitList: limitArr,
+      limit: 10,
+      keyword: '',
       client_id: [],
       group_id: '',
       user_id: '',
@@ -159,7 +155,6 @@ export default Vue.extend({
       date: [],
       total: 1,
       page: 1,
-      limit: 10,
       showSetting: false,
       listSettingId: null,
       listKey: [],
@@ -169,8 +164,6 @@ export default Vue.extend({
           name: '单据编号',
           ifShow: true,
           ifLock: true,
-          ifCaogao: 'order_type',
-          caogaoArr: ['订', '样'],
           index: 0
         },
         {
@@ -188,12 +181,30 @@ export default Vue.extend({
           index: 2
         },
         {
+          key: 'has_pack_plan',
+          name: '装箱计划状态',
+          filterArr: ['', '已添加', '待添加'],
+          classArr: ['', 'blue', 'orange'],
+          ifShow: true,
+          ifLock: false,
+          index: 3
+        },
+        {
+          key: 'has_pack_order',
+          name: '包装订购状态',
+          filterArr: ['', '已添加', '待添加'],
+          classArr: ['', 'blue', 'orange'],
+          ifShow: true,
+          ifLock: false,
+          index: 4
+        },
+        {
           key: 'product_code',
           otherkey: 'system_code',
           name: '产品编号',
           ifShow: true,
           ifLock: false,
-          index: 3,
+          index: 5,
           from: 'product_data',
           mark: true
         },
@@ -203,7 +214,7 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           ifImage: true,
-          index: 4,
+          index: 6,
           from: 'product_data'
         },
         {
@@ -211,26 +222,7 @@ export default Vue.extend({
           name: '下单总数',
           ifShow: true,
           ifLock: false,
-          index: 5,
-          errVal: '0'
-        },
-        {
-          key: 'has_weave_plan',
-          name: '生产计划状态',
-          ifShow: true,
-          ifLock: false,
-          index: 6,
-          filterArr: ['', '已添加', '待添加'],
-          classArr: ['', 'green', 'orange']
-        },
-        {
-          key: 'has_material_plan',
-          name: '物料计划状态',
-          ifShow: true,
-          ifLock: false,
-          index: 7,
-          filterArr: ['', '已添加', '待添加'],
-          classArr: ['', 'green', 'orange']
+          index: 7
         },
         {
           key: 'group_name',
@@ -280,16 +272,10 @@ export default Vue.extend({
       },
       oprList: [
         {
-          name: (item: any) => {
-            return item.has_material_plan === 1 ? '生产计划' : '待添加物料计划'
-          },
-          class: (item: any) => {
-            return item.has_material_plan === 1 ? 'hoverBlue' : 'gray'
-          },
+          name: '去发货',
+          class: 'hoverBlue',
           fn: (item: any) => {
-            item.has_material_plan === 1
-              ? this.$router.push('/productionPlan/detail?id=' + item.order_id + '&sampleOrderIndex=' + item.id)
-              : this.$message.warning('请先添加物料计划')
+            this.$router.push('/boxManage/orderDetail?id=' + item.id)
           }
         }
       ]
@@ -303,14 +289,13 @@ export default Vue.extend({
       this.keyword = query.keyword || ''
       this.status = query.status || '0'
       this.user_id = query.user_id || ''
-      this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
-      this.order_type = Number(query.order_type) || null
+      this.group_id = Number(query.group_id) || ''
       this.date = query.date ? (query.date as string).split(',') : []
-      this.limit = query.limit ? Number(query.limit) : 10
+      this.limit = Number(query.limit) || 10
     },
     changeRouter() {
       this.$router.push(
-        '/productionPlan/list?page=' +
+        '/packManage/list?page=' +
           this.page +
           '&keyword=' +
           this.keyword +
@@ -320,10 +305,6 @@ export default Vue.extend({
           this.user_id +
           '&group_id=' +
           this.group_id +
-          '&order_type=' +
-          this.order_type +
-          '&status=' +
-          this.status +
           '&date=' +
           this.date +
           '&limit=' +
@@ -357,8 +338,8 @@ export default Vue.extend({
     getList() {
       this.loading = true
       order
-        .timeList({
-          order_type: this.order_type,
+        .list({
+          order_type: 1,
           keyword: this.keyword,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           page: this.page,
@@ -381,7 +362,7 @@ export default Vue.extend({
       this.listKey = []
       listSetting
         .detail({
-          type: 6
+          type: 10
         })
         .then((res) => {
           this.listSettingId = res.data.data ? res.data.data.id : null
@@ -406,7 +387,7 @@ export default Vue.extend({
       return this.$store.state.api.group.arr
     }
   },
-  mounted() {
+  created() {
     this.getFilters()
     this.getList()
     this.getListSetting()
@@ -432,5 +413,5 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import '~@/assets/css/productionPlan/list.less';
+@import '~@/assets/css/boxManage/orderList.less';
 </style>

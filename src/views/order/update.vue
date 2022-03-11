@@ -346,7 +346,7 @@
                                   price: ''
                                 })">新增尺码</div>
                             <div class="opr hoverRed"
-                              @click="itemPro.product_info.length===1?deletePro(itemPro.id,indexChild,item.product_data):deleteProChild(itemProInfo.id,indexPro,itemPro.product_info)">删除</div>
+                              @click="deleteInfo(item,itemPro,itemProInfo,index,indexPro,indexProInfo)">删除</div>
                           </div>
                         </div>
                       </div>
@@ -364,7 +364,7 @@
           <div class="lineInfo">
             <div class="text">批次{{index+1}}</div>
             <div class="deleteIcon"
-              @click="orderInfo.time_data.batch_data.length>1?$deleteItem(orderInfo.time_data.batch_data,index):$message.error('至少有一批')">删除</div>
+              @click="orderInfo.time_data.batch_data.length>1?deleteBatch(item.id,index,orderInfo.time_data.batch_data):$message.error('至少有一批')">删除</div>
           </div>
           <div class="editCtn">
             <div class="row">
@@ -481,12 +481,12 @@
                       <div class="tcol oprCtn">
                         <div class="opr hoverBlue"
                           @click="$addItem(itemChild.product_info,{
-                        size_color: [], // 用于下拉框选择尺码颜色
-                        size_id: '',
-                        color_id: '',
-                        number: '',
-                        price: ''
-                      })">新增尺码</div>
+                            size_color: [], // 用于下拉框选择尺码颜色
+                            size_id: '',
+                            color_id: '',
+                            number: '',
+                            price: ''
+                          })">新增尺码</div>
                         <div class="opr hoverRed"
                           @click="itemChild.product_info.length===1?deletePro(itemChild.id,indexChild,item.product_data):deleteProChild(itemPro.id,indexPro,itemChild.product_info)">删除</div>
                       </div>
@@ -498,18 +498,18 @@
                 style="margin-right:0">
                 <div class="once"
                   @click="$addItem(item.product_data, {
-                product_id: '',
-                size_color_list: [],
-                product_info: [
-                  {
-                    size_color: [], 
-                    size_id: '',
-                    color_id: '',
-                    number: '',
-                    price: ''
-                  }
-                ]
-              })">新增产品
+                    product_id: '',
+                    size_color_list: [],
+                    product_info: [
+                      {
+                        size_color: [], 
+                        size_id: '',
+                        color_id: '',
+                        number: '',
+                        price: ''
+                      }
+                    ]
+                  })">新增产品
                   <i class="el-icon-plus"></i>
                 </div>
               </div>
@@ -1024,7 +1024,58 @@ export default Vue.extend({
         })
       })
     },
+    deleteInfo(itemBatch: any, itemPro: any, itemChild: any, indexBatch: number, indexPro: number, indexChild: number) {
+      if (itemPro.product_info.length === 1) {
+        if (itemBatch.product_data.length === 1) {
+          if (this.orderInfo.time_data.batch_data.length === 1) {
+            this.$message.error('订单至少有一个批次')
+          } else {
+            this.deleteBatch(itemBatch.id, indexBatch, this.orderInfo.time_data.batch_data)
+          }
+        } else {
+          this.deletePro(itemPro.id, indexPro, itemBatch.product_data)
+        }
+      } else {
+        this.deleteProChild(itemChild.id, indexChild, itemPro.product_info)
+      }
+    },
+    deleteBatch(id: number, index: number, info: any[]) {
+      if (!id) {
+        this.$deleteItem(info, index)
+        return
+      }
+      this.$confirm('是否删除该批次?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          order
+            .deleteBatch({
+              id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.$deleteItem(info, index)
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
     deletePro(id: number, index: number, info: any[]) {
+      if (!id) {
+        this.$deleteItem(info, index)
+        return
+      }
       this.$confirm('是否删除该产品?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -1053,6 +1104,10 @@ export default Vue.extend({
         })
     },
     deleteProChild(id: number, index: number, info: any[]) {
+      if (!id) {
+        this.$deleteItem(info, index)
+        return
+      }
       this.$confirm('是否删除该尺码颜色?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

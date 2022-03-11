@@ -732,7 +732,6 @@ export default Vue.extend({
               url: item
             }
           })
-          this.sampleInfo.image_data = []
         } else {
           if (this.data) {
             this.changeDetailToEdit(this.data as SampleInfo)
@@ -742,6 +741,8 @@ export default Vue.extend({
             }
           }
         }
+        this.sampleInfo.image_data = []
+        this.sampleInfo.cv_list = []
       } else {
         if (this.notify) {
           this.notify.close()
@@ -976,7 +977,7 @@ export default Vue.extend({
         this.loading = true
         sample.create(this.sampleInfo).then((res) => {
           if (res.data.status) {
-            this.$message.success(this.eidt ? '修改成功' : '添加成功')
+            this.$message.success(this.edit ? '修改成功' : '添加成功')
             this.$emit('afterSave', res.data.data)
             if (this.afterSaveClear) {
               this.reset()
@@ -1089,13 +1090,18 @@ export default Vue.extend({
         }),
         size_data: data.size_data.map((item: any) => {
           return {
-            id: item.id,
+            id: this.edit ? item.id : '', // 修改的时候不能删除，导入的时候把id去了，前端就可以判断可以删除了
             size_name: item.name,
             size_info: item.size_info,
             weight: item.weight
           }
         }), // 尺码组
-        color_data: data.color_data, // 配色组
+        color_data: data.color_data.map((item: any) => {
+          return {
+            id: this.edit ? item.id : '', // 修改的时候不能删除，导入的时候把id去了，前端就可以判断可以删除了
+            name: item.name
+          }
+        }), // 配色组
         // 配件信息
         part_data: data.part_data.map((item: any) => {
           return {

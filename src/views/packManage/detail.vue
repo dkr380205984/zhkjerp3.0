@@ -155,7 +155,7 @@
               </div>
               <div class="col">
                 <div class="label">发货批次：</div>
-                <div class="text">{{item.delivery_batch}}</div>
+                <div class="text">暂无</div>
               </div>
             </div>
             <div class="row">
@@ -276,9 +276,21 @@
                 <div class="tcol">{{itemPack.width}}</div>
                 <div class="tcol">{{itemPack.height}}</div>
                 <div class="tcol">{{itemPack.desc}}</div>
-                <div class="tcol">图片</div>
+                <div class="tcol">
+                  <div class="imageCtn">
+                    <el-image style="width:100%;height:100%;margin-top:2px"
+                      :src="itemPack.file_url?itemPack.file_url:''"
+                      :preview-src-list="[itemPack.file_url]">
+                      <div slot="error"
+                        class="image-slot">
+                        <i class="el-icon-picture-outline"
+                          style="font-size:42px"></i>
+                      </div>
+                    </el-image>
+                  </div>
+                </div>
                 <div class="tcol">{{itemPack.number}}</div>
-                <div class="tcol">已订购数量</div>
+                <div class="tcol">暂无</div>
               </div>
               <div class="trow"
                 v-if="item.gather_info.length===0">
@@ -318,13 +330,13 @@
                   </svg>
                   <span class="text">计划订购</span>
                 </div>
-                <div class="btn backHoverOrange"
-                  @click="goOrderPack('direct')">
+                <div class="btn backHoverGreen"
+                  @click="$openUrl('/packManage/printPlan?id='+item.id)">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
-                  <span class="text">直接订购</span>
+                  <span class="text">打印计划</span>
                 </div>
               </div>
             </div>
@@ -452,6 +464,16 @@
           </div>
         </el-tab-pane>
       </el-tabs>
+    </div>
+    <div class="bottomFixBar">
+      <div class="main">
+        <div class="btnCtn">
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
+          <div class="btn backHoverOrange"
+            @click="goOrderPack('direct')">直接订购</div>
+        </div>
+      </div>
     </div>
     <!-- 包装订购 -->
     <div class="popup"
@@ -658,6 +680,25 @@
                   v-if="indexChild>0"
                   @click="$deleteItem(item.info_data,indexChild)">删除</div>
               </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">
+                    <span class="text">包装图片</span>
+                  </div>
+                  <el-upload class="avatar-uploader"
+                    action="https://upload.qiniup.com/"
+                    :show-file-list="false"
+                    :data="postData"
+                    :on-success="(ev)=>{return successFile(ev,itemChild)}"
+                    :before-upload="beforeAvatarUpload">
+                    <img v-if="itemChild.file_url"
+                      :src="itemChild.file_url"
+                      class="avatar">
+                    <i v-else
+                      class="el-icon-plus avatar-uploader-icon"></i>
+                  </el-upload>
+                </div>
+              </div>
             </div>
             <div class="row"
               v-for="(itemOther,indexOther) in item.others_fee_data"
@@ -750,7 +791,6 @@
               order_time: $getDate(new Date()),
               delivery_time: '',
               desc: '',
-              file_url: '',
               total_price: '',
               total_number: '',
               others_fee_data: [
@@ -762,6 +802,7 @@
               ],
               info_data: [
                 {
+                  file_url: '',
                   price_type: 1,
                   pack_material_id: '',
                   length: '',
@@ -789,7 +830,8 @@
       <div class="main">
         <div class="titleCtn">
           <span class="text">装箱计划</span>
-          <div class="closeCtn">
+          <div class="closeCtn"
+            @click="packPlanFlag = false;packPlanStep=1">
             <span class="el-icon-close"></span>
           </div>
         </div>
@@ -797,15 +839,6 @@
           <template v-if="packPlanStep===1">
             <div class="editCtn packPlan">
               <div class="row">
-                <div class="col">
-                  <div class="label">
-                    <span class="text">发货批次</span>
-                  </div>
-                  <div class="info">
-                    <el-input v-model="packPlanInfo.delivery_batch"
-                      placeholder="请输入发货批次"></el-input>
-                  </div>
-                </div>
                 <div class="col">
                   <div class="label">
                     <span class="text">批次名称</span>
@@ -826,6 +859,15 @@
                       v-model="packPlanInfo.delivery_time"
                       value-format="yyyy-MM-dd"></el-date-picker>
                   </div>
+                </div>
+                <div class="col">
+                  <!-- <div class="label">
+                    <span class="text">发货批次</span>
+                  </div>
+                  <div class="info">
+                    <el-input v-model="packPlanInfo.delivery_batch"
+                      placeholder="请输入发货批次"></el-input>
+                  </div> -->
                 </div>
               </div>
               <div class="tableCtn specialTable">
@@ -938,13 +980,13 @@
                           <input class="tableInput"
                             v-model="itemPack.box_gross_weight"
                             placeholder="毛重"
-                            @input="(ev)=>{itemPack.total_gross_weight = Number(itemPack.box_gross_weight)*Number(itemPack.box_count)}" />
+                            @input="(ev)=>{itemPack.total_gross_weight = $toFixed(Number(itemPack.box_gross_weight)*Number(itemPack.box_count))}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.box_net_weight"
                             placeholder="净重"
-                            @input="(ev)=>{itemPack.total_gross_weight = Number(itemPack.box_net_weight)*Number(itemPack.total_net_weight)}" />
+                            @input="(ev)=>{itemPack.total_net_weight = $toFixed(Number(itemPack.box_net_weight)*Number(itemPack.box_count))}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
@@ -960,19 +1002,19 @@
                           <input class="tableInput"
                             v-model="itemPack.length"
                             placeholder="长"
-                            @input="(ev)=>{itemPack.single_bulk = Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height);itemPack.total_bulk = Number(itemPack.single_bulk)*Number(itemPack.box_count)}" />
+                            @input="(ev)=>{itemPack.single_bulk = $toFixed(Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height)/1000000);itemPack.total_bulk =  $toFixed(Number(itemPack.single_bulk)*Number(itemPack.box_count))}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.width"
                             placeholder="宽"
-                            @input="(ev)=>{itemPack.single_bulk = Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height);itemPack.total_bulk = Number(itemPack.single_bulk)*Number(itemPack.box_count)}" />
+                            @input="(ev)=>{itemPack.single_bulk = $toFixed(Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height)/1000000);itemPack.total_bulk =  $toFixed(Number(itemPack.single_bulk)*Number(itemPack.box_count))}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.height"
                             placeholder="高"
-                            @input="(ev)=>{itemPack.single_bulk = Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height);itemPack.total_bulk = Number(itemPack.single_bulk)*Number(itemPack.box_count)}" />
+                            @input="(ev)=>{itemPack.single_bulk = $toFixed(Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height)/1000000);itemPack.total_bulk =  $toFixed(Number(itemPack.single_bulk)*Number(itemPack.box_count))}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
@@ -1008,7 +1050,7 @@
                   <div class="tcol">所需数量</div>
                   <div class="tcol">属性或说明</div>
                   <div class="tcol">图片</div>
-                  <div class="tcol">图片</div>
+                  <div class="tcol">操作</div>
                 </div>
               </div>
               <div class="tbody">
@@ -1056,6 +1098,7 @@
                   <div class="tcol">
                     <div class="elCtn">
                       <el-input v-model="item.number"
+                        :disabled="item.isPlan"
                         placeholder="数量"></el-input>
                     </div>
                   </div>
@@ -1065,7 +1108,21 @@
                         placeholder="属性或说明"></el-input>
                     </div>
                   </div>
-                  <div class="tcol">暂不支持</div>
+                  <div class="tcol"
+                    style="padding:10px">
+                    <el-upload class="avatar-uploader"
+                      action="https://upload.qiniup.com/"
+                      :show-file-list="false"
+                      :data="postData"
+                      :on-success="(ev)=>{return successFile(ev,item)}"
+                      :before-upload="beforeAvatarUpload">
+                      <img v-if="item.file_url"
+                        :src="item.file_url"
+                        class="avatar">
+                      <i v-else
+                        class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                  </div>
                   <div class="tcol oprCtn"
                     style="justify-content: flex-start;">
                     <div class="opr hoverBlue"
@@ -1089,7 +1146,7 @@
         </div>
         <div class="oprCtn">
           <span class="btn borderBtn"
-            @click="packPlanFlag = false">取消</span>
+            @click="packPlanFlag = false;packPlanStep=1">取消</span>
           <span class="btn backHoverOrange"
             @click="packPlanStep=1"
             v-if="packPlanStep===2">上一步</span>
@@ -1179,6 +1236,10 @@ export default Vue.extend({
           }
         ]
       },
+      postData: {
+        key: '',
+        token: ''
+      },
       packPlanStep: 1,
       packPlanFlag: false,
       packPlanUpdateFlag: false,
@@ -1256,7 +1317,6 @@ export default Vue.extend({
           order_time: this.$getDate(new Date()),
           delivery_time: '',
           desc: '',
-          file_url: '',
           total_price: '',
           total_number: '',
           others_fee_data: [
@@ -1268,6 +1328,7 @@ export default Vue.extend({
           ],
           info_data: [
             {
+              file_url: '',
               price_type: 1,
               pack_material_id: '',
               length: '',
@@ -1286,6 +1347,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    token(): string {
+      return this.$store.state.status.token
+    },
     packMaterialList(): PackMaterialInfo[] {
       return this.$store.state.api.packMaterial.arr
     },
@@ -1345,7 +1409,6 @@ export default Vue.extend({
           order_time: this.$getDate(new Date()),
           delivery_time: '',
           desc: '',
-          file_url: '',
           total_price: '',
           total_number: '',
           others_fee_data: [
@@ -1357,6 +1420,7 @@ export default Vue.extend({
           ],
           info_data: [
             {
+              file_url: '',
               price_type: 1,
               pack_material_id: '',
               length: '',
@@ -1389,7 +1453,6 @@ export default Vue.extend({
             order_time: this.$getDate(new Date()),
             delivery_time: '',
             desc: '',
-            file_url: '',
             total_price: '',
             total_number: '',
             others_fee_data: [
@@ -1402,6 +1465,7 @@ export default Vue.extend({
             // @ts-ignore
             info_data: checkArr.map((item) => {
               return {
+                file_url: item.file_url,
                 price_type: 1,
                 pack_material_id: item.pack_material_id,
                 length: item.length,
@@ -1415,6 +1479,7 @@ export default Vue.extend({
             })
           }
         ]
+        console.log(this.packOrderInfo)
         this.packOrderFlag = true
       } else {
         this.resetOrderPack()
@@ -1456,7 +1521,6 @@ export default Vue.extend({
     },
     // 计算数量单个
     getCountPrice(bulkPrice: number, info: any) {
-      console.log(info)
       if (info.price_type === 1 && info.length && info.width && info.height) {
         info.count_price = Number(info.length) * Number(info.width) * Number(info.height) * bulkPrice
       } else if (info.price_type === 2 && info.length && info.width) {
@@ -1510,6 +1574,17 @@ export default Vue.extend({
     },
     // 1合并装箱 2单独装箱
     goPlanPack(type: 1 | 2) {
+      const checkArr = (this.orderInfo.time_data as OrderTime[])[0].batch_data.filter((item) => {
+        return item.product_data.some((itemPro) => {
+          return itemPro.product_info.some((itemChild) => {
+            return itemChild.check
+          })
+        })
+      })
+      if (checkArr.length > 1) {
+        this.$message.error('只能选单个批次的产品进行操作')
+        return
+      }
       this.resetPlanPack()
       if (type === 1) {
         this.packPlanInfo.data[0].product_info = []
@@ -1520,11 +1595,14 @@ export default Vue.extend({
         item.product_data.forEach((itemPro) => {
           itemPro.product_info.forEach((itemChild) => {
             if (itemChild.check) {
+              this.packPlanInfo.batch_name = item.batch_title
+              this.packPlanInfo.delivery_batch = item.id as number
               if (type === 1) {
                 this.packPlanInfo.data[0].product_info.push({
                   product_show_info:
                     itemPro.product_code + '(' + itemPro.category + '/' + itemPro.secondary_category + ')',
                   product_id: itemPro.product_id,
+                  order_product_info_id: itemChild.id as number,
                   size_id: itemChild.size_id,
                   size_name: itemChild.size_name,
                   color_id: itemChild.color_id,
@@ -1538,6 +1616,7 @@ export default Vue.extend({
                       product_show_info:
                         itemPro.product_code + '(' + itemPro.category + '/' + itemPro.secondary_category + ')',
                       product_id: itemPro.product_id,
+                      order_product_info_id: itemChild.id as number,
                       size_id: itemChild.size_id,
                       size_name: itemChild.size_name,
                       color_id: itemChild.color_id,
@@ -1581,7 +1660,6 @@ export default Vue.extend({
         this.$message.error('请选择发货信息计划装箱')
         return
       }
-      console.log(this.packPlanInfo)
       this.packPlanInfo.data.forEach((item) => {
         item.info_data = []
         this.addPlanPack(item)
@@ -1745,6 +1823,19 @@ export default Vue.extend({
     },
     getPlanCmpData() {
       this.packPlanInfo.order_id = this.order_id
+      this.packPlanInfo.total_delivery_number = this.packPlanInfo.data.reduce((total, cur) => {
+        return (
+          total +
+          cur.info_data.reduce((totalChild, curChild) => {
+            return (
+              totalChild +
+              curChild.product_info.reduce((totalSon, curSon) => {
+                return totalSon + Number(curSon.pack_number) * Number(curChild.box_count)
+              }, 0)
+            )
+          }, 0)
+        )
+      }, 0)
     },
     savePlanPack() {
       const formCheck = this.packPlanInfo.gather_info.some((item) => {
@@ -1818,10 +1909,49 @@ export default Vue.extend({
             message: '已取消删除'
           })
         })
+    },
+    beforeAvatarUpload(file: any) {
+      const fileName = file.name.lastIndexOf('.') // 取到文件名开始到最后一个点的长度
+      const fileNameLength = file.name.length // 取到文件名长度
+      const fileFormat = file.name.substring(fileName + 1, fileNameLength) // 截
+      this.postData.token = this.token
+      this.postData.key = Date.parse(new Date() + '') + '.' + fileFormat
+      const isJPG = file.type === 'image/jpeg'
+      const isPNG = file.type === 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 10
+      if (!isJPG && !isPNG) {
+        this.$message.error('图片只能是 JPG/PNG 格式!')
+        return false
+      }
+      if (!isLt2M) {
+        this.$message.error('图片大小不能超过 10MB!')
+        return false
+      }
+    },
+    successFile(response: { hash: string; key: string }, info: any) {
+      info.file_url = 'https://file.zwyknit.com/' + response.key
+    },
+    removeFile(file: { response: { hash: string; key: string }; url: string }) {
+      // if (this.productInfo.file_list!.find((item) => item.url === file.url)) {
+      //   this.$deleteItem(
+      //     this.productInfo.file_list!,
+      //     this.productInfo.file_list!.map((item) => item.url).indexOf(file.url)
+      //   )
+      // } else {
+      //   this.$deleteItem(
+      //     this.productInfo.image_data,
+      //     this.productInfo.image_data.indexOf('https://file.zwyknit.com/' + file.response.key)
+      //   )
+      // }
     }
   },
   mounted() {
     this.$checkCommonInfo([
+      {
+        checkWhich: 'status/token',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getTokenAsync'
+      },
       {
         checkWhich: 'api/clientType',
         getInfoMethed: 'dispatch',
@@ -1853,6 +1983,29 @@ export default Vue.extend({
 #packManageDetail {
   .el-tabs__content {
     padding: 0;
+  }
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409eff;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 122px;
+    height: 122px;
+    line-height: 122px;
+    text-align: center;
+  }
+  .avatar {
+    width: 122px;
+    height: 122px;
+    display: block;
   }
 }
 </style>

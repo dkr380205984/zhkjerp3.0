@@ -1,29 +1,26 @@
 <template>
-  <div class="bodyContainer" id="setting">
+  <div class="bodyContainer"
+    id="setting">
     <div class="module">
       <div class="titleCtn">
         <div class="title">系统设置</div>
       </div>
       <div class="settingCtn">
         <div class="navFather">
-          <div
-            class="nav"
+          <div class="nav"
             :class="{ active: pName === key }"
             v-for="(item, key, index) in nav"
             :key="index"
-            @click="pName = key"
-          >
+            @click="pName = key">
             {{ key }}
           </div>
         </div>
         <div class="navSon">
-          <div
-            class="nav"
+          <div class="nav"
             :class="{ active: cName === item }"
             v-for="(item, index) in nav[pName]"
             :key="index"
-            @click="cName = item"
-          >
+            @click="cName = item">
             {{ item }}
           </div>
         </div>
@@ -31,7 +28,8 @@
           <template v-if="cName === '品类'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加新品类</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加新品类</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -41,24 +39,25 @@
                   <div class="col">编号</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in categoryArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in categoryArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">{{ item.secondary_category.map((item) => item.name).join(',') }}</div>
                   <div class="col">{{ item.unit }}</div>
                   <div class="col">{{ item.code }}</div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deleteCategory(item.id)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteCategory(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="categoryTotal"
-                  :current-page.sync="categoryPage"
-                >
+                  :current-page.sync="categoryPage">
                 </el-pagination>
               </div>
             </div>
@@ -66,30 +65,34 @@
           <template v-if="cName === '款式'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加新款式</div>
-                <div class="btn backHoverOrange fr" @click="importExcelData('style')">批量导入</div>
-                <div class="btn backHoverGreen fr" @click="downLoadTemplete('style')">下载导入模板</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加新款式</div>
+                <div class="btn backHoverOrange fr"
+                  @click="importExcelData('style')">批量导入</div>
+                <div class="btn backHoverGreen fr"
+                  @click="downLoadTemplete('style')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
                   <div class="col">款式</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in styleArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in styleArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deleteStyle(item.id)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteStyle(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="styleTotal"
-                  :current-page.sync="stylePage"
-                >
+                  :current-page.sync="stylePage">
                 </el-pagination>
               </div>
             </div>
@@ -97,30 +100,34 @@
           <template v-if="cName === '成分'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加成分</div>
-                <div class="btn backHoverOrange fr" @click="importExcelData('ingredient')">批量导入</div>
-                <div class="btn backHoverGreen fr" @click="downLoadTemplete('ingredient')">下载导入模板</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加成分</div>
+                <div class="btn backHoverOrange fr"
+                  @click="importExcelData('ingredient')">批量导入</div>
+                <div class="btn backHoverGreen fr"
+                  @click="downLoadTemplete('ingredient')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
                   <div class="col">成分</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in ingredientArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in ingredientArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deleteIngredient(item.id)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteIngredient(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="ingredientTotal"
-                  :current-page.sync="ingredientPage"
-                >
+                  :current-page.sync="ingredientPage">
                 </el-pagination>
               </div>
             </div>
@@ -128,30 +135,34 @@
           <template v-if="cName === '配色组'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加配色组</div>
-                <div class="btn backHoverOrange fr" @click="importExcelData('colour')">批量导入</div>
-                <div class="btn backHoverGreen fr" @click="downLoadTemplete('colour')">下载导入模板</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加配色组</div>
+                <div class="btn backHoverOrange fr"
+                  @click="importExcelData('colour')">批量导入</div>
+                <div class="btn backHoverGreen fr"
+                  @click="downLoadTemplete('colour')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
                   <div class="col">配色组</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in colourArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in colourArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deleteColour(item.id)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteColour(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="colourTotal"
-                  :current-page.sync="colourPage"
-                >
+                  :current-page.sync="colourPage">
                 </el-pagination>
               </div>
             </div>
@@ -164,27 +175,30 @@
                   <div class="col">尺码信息</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in sizeArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in sizeArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <span v-for="(itemSize, indexSize) in item.size" :key="indexSize">{{
+                    <span v-for="(itemSize, indexSize) in item.size"
+                      :key="indexSize">{{
                       indexSize > 0 ? '/' + itemSize.name : itemSize.name
                     }}</span>
                   </div>
                   <div class="col">
-                    <span class="opr hoverBlue" @click="addSize(item.id)">新增尺码</span>
-                    <span class="opr hoverRed" @click="delSize(item.child_size)">删除尺码</span>
+                    <span class="opr hoverBlue"
+                      @click="addSize(item.id)">新增尺码</span>
+                    <span class="opr hoverRed"
+                      @click="delSize(item.size)">删除尺码</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="sizeTotal"
-                  :current-page.sync="sizePage"
-                >
+                  :current-page.sync="sizePage">
                 </el-pagination>
               </div>
             </div>
@@ -192,28 +206,30 @@
           <template v-if="cName === '订单类型'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加类型</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加类型</div>
               </div>
               <div class="list">
                 <div class="row title">
                   <div class="col">类型</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in orderTypeArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in orderTypeArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deleteOrderType(item.id)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteOrderType(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="orderTypeTotal"
-                  :current-page.sync="orderTypePage"
-                >
+                  :current-page.sync="orderTypePage">
                 </el-pagination>
               </div>
             </div>
@@ -221,28 +237,30 @@
           <template v-if="cName === '样单类型'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加类型</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加类型</div>
               </div>
               <div class="list">
                 <div class="row title">
                   <div class="col">类型</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in sampleOrderTypeArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in sampleOrderTypeArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deleteSampleOrderType(item.id)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteSampleOrderType(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="sampleOrderTypeTotal"
-                  :current-page.sync="sampleOrderTypePage"
-                >
+                  :current-page.sync="sampleOrderTypePage">
                 </el-pagination>
               </div>
             </div>
@@ -250,30 +268,34 @@
           <template v-if="cName === '原料加工工序'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加原料加工工序</div>
-                <div class="btn backHoverOrange fr" @click="importExcelData('yarnProcess')">批量导入</div>
-                <div class="btn backHoverGreen fr" @click="downLoadTemplete('yarnProcess')">下载导入模板</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加原料加工工序</div>
+                <div class="btn backHoverOrange fr"
+                  @click="importExcelData('yarnProcess')">批量导入</div>
+                <div class="btn backHoverGreen fr"
+                  @click="downLoadTemplete('yarnProcess')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
                   <div class="col">原料加工工序</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in materialProcessArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in materialProcessArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deleteMaterialProcess(item.id)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteMaterialProcess(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="materialProcessTotal"
-                  :current-page.sync="materialProcessPage"
-                >
+                  :current-page.sync="materialProcessPage">
                 </el-pagination>
               </div>
             </div>
@@ -281,30 +303,34 @@
           <template v-if="cName === '半成品加工'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加加工工序</div>
-                <div class="btn backHoverOrange fr" @click="importExcelData('semiProcess')">批量导入</div>
-                <div class="btn backHoverGreen fr" @click="downLoadTemplete('semiProcess')">下载导入模板</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加加工工序</div>
+                <div class="btn backHoverOrange fr"
+                  @click="importExcelData('semiProcess')">批量导入</div>
+                <div class="btn backHoverGreen fr"
+                  @click="downLoadTemplete('semiProcess')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
                   <div class="col">加工工序</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in halfProcessArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in halfProcessArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deleteHalfProcess(item.id)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteHalfProcess(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="halfProcessTotal"
-                  :current-page.sync="halfProcessPage"
-                >
+                  :current-page.sync="halfProcessPage">
                 </el-pagination>
               </div>
             </div>
@@ -312,30 +338,34 @@
           <template v-if="cName === '成品加工工序'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加成品加工工序</div>
-                <div class="btn backHoverOrange fr" @click="importExcelData('staffProcess')">批量导入</div>
-                <div class="btn backHoverGreen fr" @click="downLoadTemplete('staffProcess')">下载导入模板</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加成品加工工序</div>
+                <div class="btn backHoverOrange fr"
+                  @click="importExcelData('staffProcess')">批量导入</div>
+                <div class="btn backHoverGreen fr"
+                  @click="downLoadTemplete('staffProcess')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
                   <div class="col">成品加工工序</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in staffProcessArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in staffProcessArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deleteStaffProcess(item.id)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteStaffProcess(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="staffProcessTotal"
-                  :current-page.sync="staffProcessPage"
-                >
+                  :current-page.sync="staffProcessPage">
                 </el-pagination>
               </div>
             </div>
@@ -343,30 +373,34 @@
           <template v-if="cName === '边型'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加边型</div>
-                <div class="btn backHoverOrange fr" @click="importExcelData('side')">批量导入</div>
-                <div class="btn backHoverGreen fr" @click="downLoadTemplete('side')">下载导入模板</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加边型</div>
+                <div class="btn backHoverOrange fr"
+                  @click="importExcelData('side')">批量导入</div>
+                <div class="btn backHoverGreen fr"
+                  @click="downLoadTemplete('side')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
                   <div class="col">边型</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in sideArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in sideArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deleteSide(item.id)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteSide(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="sideTotal"
-                  :current-page.sync="sidePage"
-                >
+                  :current-page.sync="sidePage">
                 </el-pagination>
               </div>
             </div>
@@ -374,30 +408,34 @@
           <template v-if="cName === '机型'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加机型</div>
-                <div class="btn backHoverOrange fr" @click="importExcelData('machine')">批量导入</div>
-                <div class="btn backHoverGreen fr" @click="downLoadTemplete('machine')">下载导入模板</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加机型</div>
+                <div class="btn backHoverOrange fr"
+                  @click="importExcelData('machine')">批量导入</div>
+                <div class="btn backHoverGreen fr"
+                  @click="downLoadTemplete('machine')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
                   <div class="col">机型</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in machineArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in machineArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deleteMachine(item.id)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteMachine(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="machineTotal"
-                  :current-page.sync="machinePage"
-                >
+                  :current-page.sync="machinePage">
                 </el-pagination>
               </div>
             </div>
@@ -405,30 +443,34 @@
           <template v-if="cName === '组织法'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加组织法</div>
-                <div class="btn backHoverOrange fr" @click="importExcelData('methods')">批量导入</div>
-                <div class="btn backHoverGreen fr" @click="downLoadTemplete('methods')">下载导入模板</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加组织法</div>
+                <div class="btn backHoverOrange fr"
+                  @click="importExcelData('methods')">批量导入</div>
+                <div class="btn backHoverGreen fr"
+                  @click="downLoadTemplete('methods')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
                   <div class="col">组织法</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in methodsArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in methodsArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deleteMethods(item.id)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteMethods(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="methodsTotal"
-                  :current-page.sync="methodsPage"
-                >
+                  :current-page.sync="methodsPage">
                 </el-pagination>
               </div>
             </div>
@@ -436,14 +478,15 @@
           <template v-if="cName === '纱线颜色'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加颜色</div>
-                <div class="btn backHoverOrange fr" @click="importExcelData('yarnColor')">批量导入</div>
-                <div class="btn backHoverGreen fr" @click="downLoadTemplete('yarnColor')">下载导入模板</div>
-                <div
-                  class="hoverBlue fr"
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加颜色</div>
+                <div class="btn backHoverOrange fr"
+                  @click="importExcelData('yarnColor')">批量导入</div>
+                <div class="btn backHoverGreen fr"
+                  @click="downLoadTemplete('yarnColor')">下载导入模板</div>
+                <div class="hoverBlue fr"
                   style="cursor: pointer; line-height: 32px"
-                  @click="$openUrl('http://www.pantone.net.cn/pantone/search/input.htm')"
-                >
+                  @click="$openUrl('http://www.pantone.net.cn/pantone/search/input.htm')">
                   查询潘通色号
                 </div>
               </div>
@@ -453,24 +496,26 @@
                   <div class="col">色块</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in yarnColorArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in yarnColorArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <div class="rect" :style="{ background: item.color_code }"></div>
+                    <div class="rect"
+                      :style="{ background: item.color_code }"></div>
                   </div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deleteYarnColor(item.id)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteYarnColor(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="yarnColorTotal"
-                  :current-page.sync="yarnColorPage"
-                >
+                  :current-page.sync="yarnColorPage">
                 </el-pagination>
               </div>
             </div>
@@ -480,50 +525,51 @@
               <div class="row">
                 <div class="label">公司英文名称(Company Name)：</div>
                 <div class="content">
-                  <el-input placeholder="请输入公司英文名称(Company Name)" class="input-item" v-model="clientEN.name">
+                  <el-input placeholder="请输入公司英文名称(Company Name)"
+                    class="input-item"
+                    v-model="clientEN.name">
                   </el-input>
                 </div>
               </div>
               <div class="row">
                 <div class="label">公司统一社会信用代码(Company Social Credit Code)：</div>
                 <div class="content">
-                  <el-input
-                    placeholder="请输入公司统一社会信用代码(Company Social Credit Code)"
+                  <el-input placeholder="请输入公司统一社会信用代码(Company Social Credit Code)"
                     class="input-item"
-                    v-model="clientEN.code"
-                  >
+                    v-model="clientEN.code">
                   </el-input>
                 </div>
               </div>
               <div class="row">
                 <span class="label">公司英文地址(Company Address)：</span>
                 <div class="content">
-                  <el-input
-                    class="input-item"
+                  <el-input class="input-item"
                     placeholder="请输入公司英文地址(Company Address)"
-                    v-model="clientEN.address"
-                  >
+                    v-model="clientEN.address">
                   </el-input>
                 </div>
               </div>
               <div class="row">
                 <span class="label">公司电话(Telephone)：</span>
                 <div class="content">
-                  <el-input class="input-item" placeholder="请输入公司电话(Telephone)" v-model="clientEN.tel">
+                  <el-input class="input-item"
+                    placeholder="请输入公司电话(Telephone)"
+                    v-model="clientEN.tel">
                   </el-input>
                 </div>
               </div>
               <div class="row">
                 <span class="label">公司传真(Fax)：</span>
                 <div class="content">
-                  <el-input class="input-item" placeholder="请输入公司传真(Fax)" v-model="clientEN.fax"> </el-input>
+                  <el-input class="input-item"
+                    placeholder="请输入公司传真(Fax)"
+                    v-model="clientEN.fax"> </el-input>
                 </div>
               </div>
               <div class="row">
                 <span class="label">公司签章(Company Signature)：</span>
                 <div class="content upload">
-                  <el-upload
-                    :before-upload="beforeUpload"
+                  <el-upload :before-upload="beforeUpload"
                     class="companySignatureUpload"
                     ref="companySignatureUpload"
                     action="https://upload.qiniup.com/"
@@ -531,10 +577,13 @@
                     :data="postData"
                     :file-list="clientEN.signature ? [{ url: clientEN.signature }] : []"
                     :show-file-list="false"
-                    :on-success="uploadSignatureSuccess"
-                  >
-                    <el-image class="showImg" v-if="clientEN.signature" :src="clientEN.signature" fit="fill"></el-image>
-                    <i v-else class="el-icon-plus addIcon"></i>
+                    :on-success="uploadSignatureSuccess">
+                    <el-image class="showImg"
+                      v-if="clientEN.signature"
+                      :src="clientEN.signature"
+                      fit="fill"></el-image>
+                    <i v-else
+                      class="el-icon-plus addIcon"></i>
                   </el-upload>
                   <div class="prompt">点击或拖拽至上传框,只能上传jpg/png文件，且不超过6MB</div>
                 </div>
@@ -542,8 +591,7 @@
               <div class="row">
                 <span class="label">报关专用章：</span>
                 <div class="content upload">
-                  <el-upload
-                    :before-upload="beforeUpload"
+                  <el-upload :before-upload="beforeUpload"
                     class="companySignatureUpload"
                     ref="companyCustomsUpload"
                     action="https://upload.qiniup.com/"
@@ -551,21 +599,20 @@
                     :data="postData"
                     :file-list="clientEN.special_seal ? [{ url: clientEN.special_seal }] : []"
                     :show-file-list="false"
-                    :on-success="uploadCustomsSuccess"
-                  >
-                    <el-image
-                      class="showImg"
+                    :on-success="uploadCustomsSuccess">
+                    <el-image class="showImg"
                       v-if="clientEN.special_seal"
                       :src="clientEN.special_seal"
-                      fit="fill"
-                    ></el-image>
-                    <i v-else class="el-icon-plus addIcon"></i>
+                      fit="fill"></el-image>
+                    <i v-else
+                      class="el-icon-plus addIcon"></i>
                   </el-upload>
                   <div class="prompt">点击或拖拽至上传框,只能上传jpg/png文件，且不超过6MB</div>
                 </div>
               </div>
               <div class="row clearfix">
-                <div class="btn backHoverBlue fl" @click="saveClientEN">保存填写信息</div>
+                <div class="btn backHoverBlue fl"
+                  @click="saveClientEN">保存填写信息</div>
               </div>
             </div>
           </template>
@@ -574,45 +621,52 @@
               <div class="row">
                 <div class="label">开户银行(Bank Name)：</div>
                 <div class="content">
-                  <el-input placeholder="请输入开户银行(Bank Name)" class="input-item" v-model="bankEN.name">
+                  <el-input placeholder="请输入开户银行(Bank Name)"
+                    class="input-item"
+                    v-model="bankEN.name">
                   </el-input>
                 </div>
               </div>
               <div class="row">
                 <div class="label">开户地址(Bank Address)：</div>
                 <div class="content">
-                  <el-input
-                    placeholder="请输入开户地址(Bank Address)"
+                  <el-input placeholder="请输入开户地址(Bank Address)"
                     class="input-item"
                     v-model="bankEN.address"
-                    clearable
-                  >
+                    clearable>
                   </el-input>
                 </div>
               </div>
               <div class="row">
                 <span class="label">银行SWIFT码(SWIFT Code)：</span>
                 <div class="content">
-                  <el-input class="input-item" placeholder="请输入银行SWIFT码(SWIFT Code)" v-model="bankEN.code">
+                  <el-input class="input-item"
+                    placeholder="请输入银行SWIFT码(SWIFT Code)"
+                    v-model="bankEN.code">
                   </el-input>
                 </div>
               </div>
               <div class="row">
                 <span class="label">收款人(Beneficiary)：</span>
                 <div class="content">
-                  <el-input class="input-item" placeholder="请输入收款人(Beneficiary)" v-model="bankEN.beneficiary">
+                  <el-input class="input-item"
+                    placeholder="请输入收款人(Beneficiary)"
+                    v-model="bankEN.beneficiary">
                   </el-input>
                 </div>
               </div>
               <div class="row">
                 <span class="label">开户账号(Account No)：</span>
                 <div class="content">
-                  <el-input class="input-item" placeholder="请输入开户账号(Account No)" v-model="bankEN.account_no">
+                  <el-input class="input-item"
+                    placeholder="请输入开户账号(Account No)"
+                    v-model="bankEN.account_no">
                   </el-input>
                 </div>
               </div>
               <div class="row clearfix">
-                <div class="btn backHoverBlue fl" @click="saveBankEN">保存填写信息</div>
+                <div class="btn backHoverBlue fl"
+                  @click="saveBankEN">保存填写信息</div>
               </div>
             </div>
           </template>
@@ -620,9 +674,12 @@
             <div class="listCtn">
               <div class="filterCtn clearfix">
                 <div class="elCtn fl">
-                  <el-input placeholder="请输入HS编码查询" v-model="searchHSCode" clearable></el-input>
+                  <el-input placeholder="请输入HS编码查询"
+                    v-model="searchHSCode"
+                    clearable></el-input>
                 </div>
-                <div class="btn backHoverBlue fl" @click="getHSCode(1)">点击查询</div>
+                <div class="btn backHoverBlue fl"
+                  @click="getHSCode(1)">点击查询</div>
               </div>
               <div class="fixedTableCtn">
                 <div class="original">
@@ -646,7 +703,9 @@
                     <div class="column">检验检疫类别详细信息</div>
                     <div class="column">申报要素</div>
                   </div>
-                  <div class="row" v-for="(item, index) in HSCodeList" :key="index">
+                  <div class="row"
+                    v-for="(item, index) in HSCodeList"
+                    :key="index">
                     <div class="column">{{ item.hs_code }}</div>
                     <div class="column">
                       <zh-overflow-text :content="item.product_name"></zh-overflow-text>
@@ -664,14 +723,17 @@
                     <div class="column">{{ item.first_legal_unit_code }}</div>
                     <div class="column">{{ item.second_legal_unit_code }}</div>
                     <div class="column">
-                      <zh-overflow-text :content="item.regulatory_condition_info" :line="2"></zh-overflow-text>
+                      <zh-overflow-text :content="item.regulatory_condition_info"
+                        :line="2"></zh-overflow-text>
                     </div>
                     <div class="column">{{ item.quarantine_category_code }}</div>
                     <div class="column">
-                      <zh-overflow-text :content="item.quarantine_category_details" :line="2"></zh-overflow-text>
+                      <zh-overflow-text :content="item.quarantine_category_details"
+                        :line="2"></zh-overflow-text>
                     </div>
                     <div class="column">
-                      <zh-overflow-text :content="item.declaration_elements" :line="2"></zh-overflow-text>
+                      <zh-overflow-text :content="item.declaration_elements"
+                        :line="2"></zh-overflow-text>
                     </div>
                   </div>
                 </div>
@@ -681,24 +743,25 @@
                       <div class="column">HS编码</div>
                       <div class="column">商品名称</div>
                     </div>
-                    <div class="row" v-for="(item, index) in HSCodeList" :key="index">
+                    <div class="row"
+                      v-for="(item, index) in HSCodeList"
+                      :key="index">
                       <div class="column">{{ item.hs_code }}</div>
                       <div class="column">
-                        <zh-overflow-text :content="item.product_name" :line="2"></zh-overflow-text>
+                        <zh-overflow-text :content="item.product_name"
+                          :line="2"></zh-overflow-text>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="HSCodeTotal"
                   :current-page.sync="HSCodePage"
-                  @current-change="getHSCode"
-                >
+                  @current-change="getHSCode">
                 </el-pagination>
               </div>
             </div>
@@ -706,9 +769,12 @@
           <template v-if="cName === '纱线原料'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加纱线</div>
-                <div class="btn backHoverOrange fr" @click="showYarn = true">批量导入</div>
-                <div class="btn backHoverGreen fr" @click="downLoadTemplete('yarn1')">下载导入模板</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加纱线</div>
+                <div class="btn backHoverOrange fr"
+                  @click="showYarn = true">批量导入</div>
+                <div class="btn backHoverGreen fr"
+                  @click="downLoadTemplete('yarn1')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -719,7 +785,9 @@
                   <div class="col">添加时间</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in yarnList1" :key="index">
+                <div class="row"
+                  v-for="(item, index) in yarnList1"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">{{ item.rel_type.join('/') }}</div>
                   <div class="col">{{ item.rel_price | filterPrice }}</div>
@@ -727,8 +795,13 @@
                   <div class="col">{{ item.created_at }}</div>
                   <div class="col">
                     <span class="opr hoverBlue">
-                      <el-popover placement="bottom" title="报价详情" width="600" trigger="manual" v-model="item.look">
-                        <div class="tableCtn" style="padding: 0">
+                      <el-popover placement="bottom"
+                        title="报价详情"
+                        width="600"
+                        trigger="manual"
+                        v-model="item.look">
+                        <div class="tableCtn"
+                          style="padding: 0">
                           <div class="thead">
                             <div class="trow">
                               <div class="tcol">单位名称</div>
@@ -737,31 +810,33 @@
                             </div>
                           </div>
                           <div class="tbody">
-                            <div class="trow" v-for="(itemChild, indexChild) in item.rel_price" :key="indexChild">
+                            <div class="trow"
+                              v-for="(itemChild, indexChild) in item.rel_price"
+                              :key="indexChild">
                               <div class="tcol">{{ itemChild.client_name }}</div>
                               <div class="tcol">{{ itemChild.price }}元/kg</div>
                               <div class="tcol">{{ itemChild.desc || '无' }}</div>
                             </div>
                           </div>
                         </div>
-                        <span slot="reference" @click="item.look = !item.look">{{
+                        <span slot="reference"
+                          @click="item.look = !item.look">{{
                           item.look ? '关闭报价' : '查看报价'
                         }}</span>
                       </el-popover>
                     </span>
-                    <span class="opr hoverRed" @click="deleteYarn(item.id, 1)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteYarn(item.id, 1)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="yarnTotal1"
                   :current-page.sync="yarnPage1"
-                  @current-change="getYarn(1)"
-                >
+                  @current-change="getYarn(1)">
                 </el-pagination>
               </div>
             </div>
@@ -769,9 +844,12 @@
           <template v-if="cName === '面料原料'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加面料</div>
-                <div class="btn backHoverOrange fr" @click="showYarn = true">批量导入</div>
-                <div class="btn backHoverGreen fr" @click="downLoadTemplete('yarn2')">下载导入模板</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加面料</div>
+                <div class="btn backHoverOrange fr"
+                  @click="showYarn = true">批量导入</div>
+                <div class="btn backHoverGreen fr"
+                  @click="downLoadTemplete('yarn2')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -782,7 +860,9 @@
                   <div class="col">添加时间</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in yarnList2" :key="index">
+                <div class="row"
+                  v-for="(item, index) in yarnList2"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">{{ item.rel_type.join('/') }}</div>
                   <div class="col">{{ item.rel_price | filterPrice }}</div>
@@ -790,8 +870,13 @@
                   <div class="col">{{ item.created_at }}</div>
                   <div class="col">
                     <span class="opr hoverBlue">
-                      <el-popover placement="bottom" title="报价详情" width="600" trigger="manual" v-model="item.look">
-                        <div class="tableCtn" style="padding: 0">
+                      <el-popover placement="bottom"
+                        title="报价详情"
+                        width="600"
+                        trigger="manual"
+                        v-model="item.look">
+                        <div class="tableCtn"
+                          style="padding: 0">
                           <div class="thead">
                             <div class="trow">
                               <div class="tcol">单位名称</div>
@@ -800,31 +885,33 @@
                             </div>
                           </div>
                           <div class="tbody">
-                            <div class="trow" v-for="(itemChild, indexChild) in item.rel_price" :key="indexChild">
+                            <div class="trow"
+                              v-for="(itemChild, indexChild) in item.rel_price"
+                              :key="indexChild">
                               <div class="tcol">{{ itemChild.client_name }}</div>
                               <div class="tcol">{{ itemChild.price }}元/kg</div>
                               <div class="tcol">{{ itemChild.desc || '无' }}</div>
                             </div>
                           </div>
                         </div>
-                        <span slot="reference" @click="item.look = !item.look">{{
+                        <span slot="reference"
+                          @click="item.look = !item.look">{{
                           item.look ? '关闭报价' : '查看报价'
                         }}</span>
                       </el-popover>
                     </span>
-                    <span class="opr hoverRed" @click="deleteYarn(item.id, 2)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteYarn(item.id, 2)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="yarnTotal2"
                   :current-page.sync="yarnPage2"
-                  @current-change="getYarn(2)"
-                >
+                  @current-change="getYarn(2)">
                 </el-pagination>
               </div>
             </div>
@@ -832,7 +919,8 @@
           <template v-if="cName === '毛料原料'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加毛料</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加毛料</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -843,7 +931,9 @@
                   <div class="col">添加时间</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in yarnList3" :key="index">
+                <div class="row"
+                  v-for="(item, index) in yarnList3"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">{{ item.rel_type.join('/') }}</div>
                   <div class="col">{{ item.rel_price | filterPrice }}</div>
@@ -855,14 +945,12 @@
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="yarnTotal3"
                   :current-page.sync="yarnPage3"
-                  @current-change="getYarn(1)"
-                >
+                  @current-change="getYarn(1)">
                 </el-pagination>
               </div>
             </div>
@@ -870,9 +958,12 @@
           <template v-if="cName === '装饰辅料'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加辅料</div>
-                <div class="btn backHoverOrange fr" @click="importExcelData('decorateMaterial')">批量导入</div>
-                <div class="btn backHoverGreen fr" @click="downLoadTemplete('decorateMaterial')">下载导入模板</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加辅料</div>
+                <div class="btn backHoverOrange fr"
+                  @click="importExcelData('decorateMaterial')">批量导入</div>
+                <div class="btn backHoverGreen fr"
+                  @click="downLoadTemplete('decorateMaterial')">下载导入模板</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -883,25 +974,26 @@
                   <div class="col">添加时间</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in decorateMaterialArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in decorateMaterialArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">{{ item.unit }}</div>
                   <div class="col">{{ item.rel_price | filterPrice }}</div>
                   <div class="col">{{ item.user_name }}</div>
                   <div class="col">{{ item.created_at }}</div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deleteDecorateMaterial(item.id)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteDecorateMaterial(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="decorateMaterialTotal"
-                  :current-page.sync="decorateMaterialPage"
-                >
+                  :current-page.sync="decorateMaterialPage">
                 </el-pagination>
               </div>
             </div>
@@ -909,7 +1001,8 @@
           <template v-if="cName === '包装辅料'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加辅料</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加辅料</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -921,7 +1014,9 @@
                   <div class="col">添加时间</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in packMaterialArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in packMaterialArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">{{ item.unit }}</div>
                   <div class="col">计价方式</div>
@@ -929,18 +1024,17 @@
                   <div class="col">添加人</div>
                   <div class="col">添加时间</div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deletePackMaterial(item.id)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deletePackMaterial(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="packMaterialTotal"
-                  :current-page.sync="packMaterialPage"
-                >
+                  :current-page.sync="packMaterialPage">
                 </el-pagination>
               </div>
             </div>
@@ -948,14 +1042,16 @@
           <template v-if="cName === '纱线报价'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加报价</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加报价</div>
               </div>
               <div class="list">
                 <div class="tableCtn">
                   <div class="thead">
                     <div class="trow">
                       <div class="tcol">报价单位</div>
-                      <div class="tcol noPad" style="flex: 5">
+                      <div class="tcol noPad"
+                        style="flex: 5">
                         <div class="trow">
                           <div class="tcol">纱线名称</div>
                           <div class="tcol">纱线颜色</div>
@@ -968,10 +1064,15 @@
                     </div>
                   </div>
                   <div class="tbody">
-                    <div class="trow" v-for="item in yarnPriceArr" :key="item.id">
+                    <div class="trow"
+                      v-for="item in yarnPriceArr"
+                      :key="item.id">
                       <div class="tcol">{{ item.client_name }}</div>
-                      <div class="tcol noPad" style="flex: 5">
-                        <div class="trow" v-for="(itemChild, indexChild) in item.info_data" :key="indexChild">
+                      <div class="tcol noPad"
+                        style="flex: 5">
+                        <div class="trow"
+                          v-for="(itemChild, indexChild) in item.info_data"
+                          :key="indexChild">
                           <div class="tcol">{{ itemChild.material_name }}</div>
                           <div class="tcol">{{ itemChild.material_color }}</div>
                           <div class="tcol">{{ itemChild.attribute }}</div>
@@ -980,29 +1081,25 @@
                         </div>
                       </div>
                       <div class="tcol oprCtn">
-                        <span
-                          class="opr hoverOrange"
+                        <span class="opr hoverOrange"
                           @click="
                             yarnPrice = item
                             showPopup = true
                             yarnPriceUpdate = true
-                          "
-                          >修改</span
-                        >
-                        <span class="opr hoverRed" @click="deleteYarnPrice(item.id)">删除</span>
+                          ">修改</span>
+                        <span class="opr hoverRed"
+                          @click="deleteYarnPrice(item.id)">删除</span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="yarnPriceTotal"
-                  :current-page.sync="yarnPricePage"
-                >
+                  :current-page.sync="yarnPricePage">
                 </el-pagination>
               </div>
             </div>
@@ -1010,14 +1107,16 @@
           <template v-if="cName === '面料报价'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加报价</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加报价</div>
               </div>
               <div class="list">
                 <div class="tableCtn">
                   <div class="thead">
                     <div class="trow">
                       <div class="tcol">报价单位</div>
-                      <div class="tcol noPad" style="flex: 5">
+                      <div class="tcol noPad"
+                        style="flex: 5">
                         <div class="trow">
                           <div class="tcol">面料名称</div>
                           <div class="tcol">面料颜色</div>
@@ -1029,10 +1128,15 @@
                     </div>
                   </div>
                   <div class="tbody">
-                    <div class="trow" v-for="item in mianliaoPriceArr" :key="item.id">
+                    <div class="trow"
+                      v-for="item in mianliaoPriceArr"
+                      :key="item.id">
                       <div class="tcol">{{ item.client_name }}</div>
-                      <div class="tcol noPad" style="flex: 5">
-                        <div class="trow" v-for="(itemChild, indexChild) in item.info_data" :key="indexChild">
+                      <div class="tcol noPad"
+                        style="flex: 5">
+                        <div class="trow"
+                          v-for="(itemChild, indexChild) in item.info_data"
+                          :key="indexChild">
                           <div class="tcol">{{ itemChild.material_name }}</div>
                           <div class="tcol">{{ itemChild.material_color }}</div>
                           <div class="tcol">{{ itemChild.price }}元/kg</div>
@@ -1040,29 +1144,25 @@
                         </div>
                       </div>
                       <div class="tcol oprCtn">
-                        <span
-                          class="opr hoverOrange"
+                        <span class="opr hoverOrange"
                           @click="
                             mianliaoPrice = item
                             showPopup = true
                             mianliaoPriceUpdate = true
-                          "
-                          >修改</span
-                        >
-                        <span class="opr hoverRed" @click="deleteMianliaoPrice(item.id)">删除</span>
+                          ">修改</span>
+                        <span class="opr hoverRed"
+                          @click="deleteMianliaoPrice(item.id)">删除</span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="mianliaoPriceTotal"
-                  :current-page.sync="mianliaoPricePage"
-                >
+                  :current-page.sync="mianliaoPricePage">
                 </el-pagination>
               </div>
             </div>
@@ -1075,21 +1175,22 @@
                   <div class="col">添加说明</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in priceRemarkList" :key="index">
+                <div class="row"
+                  v-for="(item, index) in priceRemarkList"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deleteSide(item.id)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteSide(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="sideTotal"
-                  :current-page.sync="sidePage"
-                >
+                  :current-page.sync="sidePage">
                 </el-pagination>
               </div>
             </div>
@@ -1097,28 +1198,30 @@
           <template v-if="cName === '负责小组/人'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加小组/人</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加小组/人</div>
               </div>
               <div class="list">
                 <div class="row title">
                   <div class="col">小组/人</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in groupArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in groupArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deleteGroup(item.id)">删除</span>
+                    <span class="opr hoverRed"
+                      @click="deleteGroup(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="groupTotal"
-                  :current-page.sync="groupPage"
-                >
+                  :current-page.sync="groupPage">
                 </el-pagination>
               </div>
             </div>
@@ -1126,7 +1229,8 @@
           <template v-if="cName === '系统账户管理'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加帐号</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加帐号</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -1138,7 +1242,9 @@
                   <div class="col">审核权限</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in userArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in userArr"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">{{ item.user_name }}</div>
                   <div class="col">{{ item.phone }}</div>
@@ -1146,19 +1252,19 @@
                   <div class="col">{{ item.group_name }}</div>
                   <div class="col">{{ item.has_check === 1 ? '有审核权限' : '无权限' }}</div>
                   <div class="col">
-                    <span class="opr hoverRed" @click="deleteUser(item.id)">删除</span>
-                    <span class="opr hoverOrange" @click="getUpdateUser(item)">修改</span>
+                    <span class="opr hoverRed"
+                      @click="deleteUser(item.id)">删除</span>
+                    <span class="opr hoverOrange"
+                      @click="getUpdateUser(item)">修改</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="userTotal"
-                  :current-page.sync="userPage"
-                >
+                  :current-page.sync="userPage">
                 </el-pagination>
               </div>
             </div>
@@ -1166,7 +1272,8 @@
           <template v-if="cName === '报价模板'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue fr" @click="showPopup = true">添加报价模板</div>
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加报价模板</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -1174,23 +1281,25 @@
                   <div class="col">绑定品类</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in quotedPriceProductArr" :key="index">
+                <div class="row"
+                  v-for="(item, index) in quotedPriceProductArr"
+                  :key="index">
                   <div class="col">{{ item.title }}</div>
                   <div class="col">{{ item.category_name }}</div>
                   <div class="col">
-                    <span class="opr hoverBlue" @click="lookQuotedPriceProduct(item)">查看详情</span>
-                    <span class="opr hoverRed" @click="deleteQuotedPriceProduct(item.id)">删除</span>
+                    <span class="opr hoverBlue"
+                      @click="lookQuotedPriceProduct(item)">查看详情</span>
+                    <span class="opr hoverRed"
+                      @click="deleteQuotedPriceProduct(item.id)">删除</span>
                   </div>
                 </div>
               </div>
               <div class="pageCtn">
-                <el-pagination
-                  background
+                <el-pagination background
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="groupTotal"
-                  :current-page.sync="groupPage"
-                >
+                  :current-page.sync="groupPage">
                 </el-pagination>
               </div>
             </div>
@@ -1202,10 +1311,13 @@
                   <div class="col">品类信息</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="(item, index) in categoryList" :key="index">
+                <div class="row"
+                  v-for="(item, index) in categoryList"
+                  :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <span class="opr hoverBlue" @click="lookQuotedPriceDescDetail(item)">查看</span>
+                    <span class="opr hoverBlue"
+                      @click="lookQuotedPriceDescDetail(item)">查看</span>
                   </div>
                 </div>
               </div>
@@ -1216,8 +1328,7 @@
               <div class="row">
                 <div class="label">企业LOGO：</div>
                 <div class="imgCtn">
-                  <el-upload
-                    class="avatar-uploader"
+                  <el-upload class="avatar-uploader"
                     drag
                     action="https://upload.qiniup.com/"
                     :show-file-list="false"
@@ -1225,34 +1336,33 @@
                     :before-upload="beforeUpload"
                     :data="postData"
                     :file-list="[companyInfo.logo]"
-                    ref="companyLogo"
-                  >
-                    <img
-                      v-if="companyInfo.logo"
+                    ref="companyLogo">
+                    <img v-if="companyInfo.logo"
                       :src="companyInfo.logo"
                       class="logo-img"
-                      style="width: 100%; height: 100%"
-                    />
-                    <i v-else class="el-icon-plus logo-icon"></i>
+                      style="width: 100%; height: 100%" />
+                    <i v-else
+                      class="el-icon-plus logo-icon"></i>
                   </el-upload>
                   <div class="prompt">点击或拖拽图片至上传框,只能上传jpg/png文件，且不超过6MB</div>
                 </div>
               </div>
               <div class="row">
                 <div class="label">公司二维码：</div>
-                <div class="row" style="align-items: flex-end">
-                  <div class="content border tc" style="width:50%">
+                <div class="row"
+                  style="align-items: flex-end">
+                  <div class="content border tc"
+                    style="width:50%">
                     <div>
-                      <img :src="qrCodeUrl" width="50%"/>
+                      <img :src="qrCodeUrl"
+                        width="50%" />
                     </div>
                     <div>织为云外协生产小程序</div>
                     <div>微信扫一扫，在线管理加工单进度</div>
                   </div>
-                  <div
-                    class="btn backHoverBlue fl"
+                  <div class="btn backHoverBlue fl"
                     style="height: 33px; margin-left: 20px"
-                    @click="$openUrl('/setting/printQRCode')"
-                  >
+                    @click="$openUrl('/setting/printQRCode')">
                     点击打印
                   </div>
                 </div>
@@ -1260,63 +1370,69 @@
               <div class="row">
                 <div class="label">公司名称：</div>
                 <div class="content">
-                  <el-input
-                    placeholder="请输入公司名称"
+                  <el-input placeholder="请输入公司名称"
                     class="input-item"
                     v-model="companyInfo.company_name"
                     disabled
-                    clearable
-                  >
+                    clearable>
                   </el-input>
                 </div>
               </div>
               <div class="row">
                 <div class="label">公司简称：</div>
                 <div class="content">
-                  <el-input placeholder="请输入公司简称" class="input-item" v-model="companyInfo.alias" clearable>
+                  <el-input placeholder="请输入公司简称"
+                    class="input-item"
+                    v-model="companyInfo.alias"
+                    clearable>
                   </el-input>
                 </div>
               </div>
               <div class="row">
                 <span class="label">公司简介:</span>
                 <div class="content">
-                  <el-input
-                    class="input-item"
+                  <el-input class="input-item"
                     style="width: 600px"
                     type="textarea"
                     placeholder="公司简介在200字以内..."
                     v-model="companyInfo.introduce"
-                    :rows="7"
-                  >
+                    :rows="7">
                   </el-input>
                 </div>
               </div>
               <div class="row">
                 <span class="label">公司邮箱：</span>
                 <div class="content">
-                  <el-input placeholder="请输入公司邮箱" class="input-item" v-model="companyInfo.email"> </el-input>
+                  <el-input placeholder="请输入公司邮箱"
+                    class="input-item"
+                    v-model="companyInfo.email"> </el-input>
                 </div>
               </div>
               <div class="row">
                 <span class="label">公司地址：</span>
                 <div class="content">
-                  <el-input placeholder="请输入公司地址" class="input-item" v-model="companyInfo.address"> </el-input>
+                  <el-input placeholder="请输入公司地址"
+                    class="input-item"
+                    v-model="companyInfo.address"> </el-input>
                 </div>
               </div>
               <div class="btnCtn">
-                <div class="btn backHoverBlue" @click="saveCompany">保存修改</div>
+                <div class="btn backHoverBlue"
+                  @click="saveCompany">保存修改</div>
               </div>
             </div>
           </template>
         </div>
       </div>
     </div>
-    <div class="popup" v-show="showPopup">
+    <div class="popup"
+      v-show="showPopup">
       <template v-if="cName === '品类'">
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增品类</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1324,25 +1440,25 @@
             <div class="row">
               <div class="label">品类名称：</div>
               <div class="info">
-                <el-input placeholder="请输入品类名称" v-model="categoryInfo.name"></el-input>
+                <el-input placeholder="请输入品类名称"
+                  v-model="categoryInfo.name"></el-input>
               </div>
             </div>
-            <div class="row" v-for="(item, index) in categoryInfo.secondary_category" :key="index">
+            <div class="row"
+              v-for="(item, index) in categoryInfo.secondary_category"
+              :key="index">
               <div class="label">{{ index === 0 ? '二级品类：' : '' }}</div>
               <div class="info">
-                <el-input placeholder="请输入二级品类名称" v-model="item.name"></el-input>
-                <div
-                  class="info_btn hoverBlue"
+                <el-input placeholder="请输入二级品类名称"
+                  v-model="item.name"></el-input>
+                <div class="info_btn hoverBlue"
                   @click="$addItem(categoryInfo.secondary_category, { name: '', id: '' })"
-                  v-if="index === 0"
-                >
+                  v-if="index === 0">
                   添加
                 </div>
-                <div
-                  class="info_btn hoverRed"
+                <div class="info_btn hoverRed"
                   @click="$deleteItem(categoryInfo.secondary_category, index)"
-                  v-if="index > 0"
-                >
+                  v-if="index > 0">
                   删除
                 </div>
               </div>
@@ -1350,7 +1466,8 @@
             <div class="row">
               <div class="label">品类单位：</div>
               <div class="info">
-                <el-input placeholder="请输入品类单位" v-model="categoryInfo.unit"></el-input>
+                <el-input placeholder="请输入品类单位"
+                  v-model="categoryInfo.unit"></el-input>
               </div>
             </div>
             <!-- <div class="row">
@@ -1362,8 +1479,10 @@
             </div> -->
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveCategory">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveCategory">确定</div>
           </div>
         </div>
       </template>
@@ -1371,7 +1490,8 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增款式</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1379,13 +1499,16 @@
             <div class="row">
               <div class="label">款式名称：</div>
               <div class="info">
-                <el-input placeholder="请输入款式名称" v-model="styleInfo.name"></el-input>
+                <el-input placeholder="请输入款式名称"
+                  v-model="styleInfo.name"></el-input>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveStyle">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveStyle">确定</div>
           </div>
         </div>
       </template>
@@ -1393,7 +1516,8 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增成分</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1401,13 +1525,16 @@
             <div class="row">
               <div class="label">成分名称：</div>
               <div class="info">
-                <el-input placeholder="请输入成分名称" v-model="ingredientInfo.name"></el-input>
+                <el-input placeholder="请输入成分名称"
+                  v-model="ingredientInfo.name"></el-input>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveIngredient">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveIngredient">确定</div>
           </div>
         </div>
       </template>
@@ -1415,7 +1542,8 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增配色</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1423,13 +1551,16 @@
             <div class="row">
               <div class="label">配色名称：</div>
               <div class="info">
-                <el-input placeholder="请输入配色名称" v-model="colourInfo.name"></el-input>
+                <el-input placeholder="请输入配色名称"
+                  v-model="colourInfo.name"></el-input>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveColour">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveColour">确定</div>
           </div>
         </div>
       </template>
@@ -1437,7 +1568,8 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增尺码</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1445,13 +1577,16 @@
             <div class="row">
               <div class="label">尺码名称：</div>
               <div class="info">
-                <el-input placeholder="请输入尺码名称" v-model="sizeInfo.name"></el-input>
+                <el-input placeholder="请输入尺码名称"
+                  v-model="sizeInfo.name"></el-input>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveSize">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveSize">确定</div>
           </div>
         </div>
       </template>
@@ -1459,7 +1594,8 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增订单类型</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1467,13 +1603,16 @@
             <div class="row">
               <div class="label">订单类型：</div>
               <div class="info">
-                <el-input placeholder="请输入订单类型" v-model="orderTypeInfo.name"></el-input>
+                <el-input placeholder="请输入订单类型"
+                  v-model="orderTypeInfo.name"></el-input>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveOrderType">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveOrderType">确定</div>
           </div>
         </div>
       </template>
@@ -1481,7 +1620,8 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增样单类型</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1489,13 +1629,16 @@
             <div class="row">
               <div class="label">样单类型：</div>
               <div class="info">
-                <el-input placeholder="请输入样单类型" v-model="sampleOrderTypeInfo.name"></el-input>
+                <el-input placeholder="请输入样单类型"
+                  v-model="sampleOrderTypeInfo.name"></el-input>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveSampleOrderType">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveSampleOrderType">确定</div>
           </div>
         </div>
       </template>
@@ -1503,7 +1646,8 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增原料加工工序</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1511,13 +1655,16 @@
             <div class="row">
               <div class="label">原料加工工序：</div>
               <div class="info">
-                <el-input placeholder="请输入原料加工工序" v-model="materialProcessInfo.name"></el-input>
+                <el-input placeholder="请输入原料加工工序"
+                  v-model="materialProcessInfo.name"></el-input>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveMaterialProcess">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveMaterialProcess">确定</div>
           </div>
         </div>
       </template>
@@ -1525,7 +1672,8 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增加工工序</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1533,13 +1681,16 @@
             <div class="row">
               <div class="label">加工工序：</div>
               <div class="info">
-                <el-input placeholder="请输入加工工序" v-model="halfProcessInfo.name"></el-input>
+                <el-input placeholder="请输入加工工序"
+                  v-model="halfProcessInfo.name"></el-input>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveHalfProcess">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveHalfProcess">确定</div>
           </div>
         </div>
       </template>
@@ -1547,7 +1698,8 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增成品加工工序</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1555,13 +1707,16 @@
             <div class="row">
               <div class="label">成品加工工序：</div>
               <div class="info">
-                <el-input placeholder="请输入成品加工工序" v-model="staffProcessInfo.name"></el-input>
+                <el-input placeholder="请输入成品加工工序"
+                  v-model="staffProcessInfo.name"></el-input>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveStaffProcess">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveStaffProcess">确定</div>
           </div>
         </div>
       </template>
@@ -1569,7 +1724,8 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增边型</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1577,13 +1733,16 @@
             <div class="row">
               <div class="label">边型：</div>
               <div class="info">
-                <el-input placeholder="请输入边型" v-model="sideInfo.name"></el-input>
+                <el-input placeholder="请输入边型"
+                  v-model="sideInfo.name"></el-input>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveSide">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveSide">确定</div>
           </div>
         </div>
       </template>
@@ -1591,7 +1750,8 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增机型</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1599,13 +1759,16 @@
             <div class="row">
               <div class="label">机型：</div>
               <div class="info">
-                <el-input placeholder="请输入机型" v-model="machineInfo.name"></el-input>
+                <el-input placeholder="请输入机型"
+                  v-model="machineInfo.name"></el-input>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveMachine">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveMachine">确定</div>
           </div>
         </div>
       </template>
@@ -1613,7 +1776,8 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增组织法</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1621,13 +1785,16 @@
             <div class="row">
               <div class="label">组织法：</div>
               <div class="info">
-                <el-input placeholder="请输入组织法" v-model="methodsInfo.name"></el-input>
+                <el-input placeholder="请输入组织法"
+                  v-model="methodsInfo.name"></el-input>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveMethods">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveMethods">确定</div>
           </div>
         </div>
       </template>
@@ -1635,7 +1802,8 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增颜色</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1643,7 +1811,8 @@
             <div class="row">
               <div class="label">颜色：</div>
               <div class="info">
-                <el-input placeholder="请输入颜色" v-model="yarnColorInfo.name"></el-input>
+                <el-input placeholder="请输入颜色"
+                  v-model="yarnColorInfo.name"></el-input>
               </div>
             </div>
             <div class="row">
@@ -1654,142 +1823,144 @@
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveYarnColor">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveYarnColor">确定</div>
           </div>
         </div>
       </template>
       <template v-if="cName === '纱线原料'">
-        <div class="main" style="width: 920px">
+        <div class="main"
+          style="width: 920px">
           <div class="titleCtn">
             <div class="text">新增纱线</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
           <div class="contentCtn">
             <div class="row">
               <div class="label">添加方式：</div>
-              <div class="info" style="line-height: 34px">
+              <div class="info"
+                style="line-height: 34px">
                 <el-radio-group v-model="yarnAddType">
                   <el-radio :label="true">名称添加</el-radio>
                   <el-radio :label="false">格式添加</el-radio>
                 </el-radio-group>
               </div>
             </div>
-            <div class="row" v-if="yarnAddType">
+            <div class="row"
+              v-if="yarnAddType">
               <div class="label">纱线名称：</div>
               <div class="info">
-                <el-input placeholder="请输入纱线名称" v-model="yarnInfo1.name"></el-input>
+                <el-input placeholder="请输入纱线名称"
+                  v-model="yarnInfo1.name"></el-input>
               </div>
             </div>
-            <div class="row" v-if="!yarnAddType">
+            <div class="row"
+              v-if="!yarnAddType">
               <div class="label">格式添加：</div>
               <div class="info">
-                <el-input
-                  placeholder="阈值"
+                <el-input placeholder="阈值"
                   v-model="layoutData.thresholdValues"
                   class="specialInput hasMargin"
-                  @change="buildYarnList"
-                ></el-input>
-                <el-input
-                  placeholder="取值"
+                  @change="buildYarnList"></el-input>
+                <el-input placeholder="取值"
                   v-model="layoutData.firstValue"
                   class="specialInput"
-                  @change="buildYarnList"
-                ></el-input>
+                  @change="buildYarnList"></el-input>
                 -
-                <el-input
-                  placeholder="取值"
+                <el-input placeholder="取值"
                   v-model="layoutData.lastValue"
                   class="specialInput hasMargin"
-                  @change="buildYarnList"
-                ></el-input>
-                <el-select
-                  v-model="layoutData.unit"
+                  @change="buildYarnList"></el-input>
+                <el-select v-model="layoutData.unit"
                   class="specialInput hasMargin"
                   placeholder="支/cm/S/公分"
-                  @change="buildYarnList"
-                >
-                  <el-option v-for="item in layoutData.unitArr" :key="item.name" :label="item.name" :value="item.name">
+                  @change="buildYarnList">
+                  <el-option v-for="item in layoutData.unitArr"
+                    :key="item.name"
+                    :label="item.name"
+                    :value="item.name">
                   </el-option>
                 </el-select>
-                <el-input
-                  placeholder="纱线名称"
+                <el-input placeholder="纱线名称"
                   v-model="layoutData.yarnName"
                   class="specialInput hasMargin"
-                  @change="buildYarnList"
-                ></el-input>
-                <el-input
-                  placeholder="#"
+                  @change="buildYarnList"></el-input>
+                <el-input placeholder="#"
                   v-model="layoutData.colorCodeUnit"
                   class="specialInput hasMargin"
-                  @change="buildYarnList"
-                ></el-input>
-                <el-input
-                  placeholder="色号"
+                  @change="buildYarnList"></el-input>
+                <el-input placeholder="色号"
                   v-model="layoutData.firstColorCode"
                   class="specialInput"
-                  @change="buildYarnList"
-                ></el-input>
+                  @change="buildYarnList"></el-input>
                 -
-                <el-input
-                  placeholder="色号"
+                <el-input placeholder="色号"
                   v-model="layoutData.lastColorCode"
                   class="specialInput"
-                  @change="buildYarnList"
-                ></el-input>
+                  @change="buildYarnList"></el-input>
               </div>
             </div>
-            <div class="row" v-if="!yarnAddType">
+            <div class="row"
+              v-if="!yarnAddType">
               <span class="label">名称预览：</span>
               <div class="info tagCtn">
-                <span class="yarnNameTag" v-for="(itemYarn, indexYarn) in layoutData.yarnNameList" :key="indexYarn">
+                <span class="yarnNameTag"
+                  v-for="(itemYarn, indexYarn) in layoutData.yarnNameList"
+                  :key="indexYarn">
                   <span class="name">{{ itemYarn }}</span>
-                  <span class="el-icon-close icon" @click="$deleteItem(layoutData.yarnNameList, indexYarn)"></span>
+                  <span class="el-icon-close icon"
+                    @click="$deleteItem(layoutData.yarnNameList, indexYarn)"></span>
                 </span>
               </div>
             </div>
             <div class="row">
               <div class="label">选择类型：</div>
               <div class="info tagCtn">
-                <span
-                  class="yarnNameTag"
+                <span class="yarnNameTag"
                   :class="{ active: item.check, unactive: !item.check }"
                   v-for="(item, index) in yarnTypeList1"
                   :key="item.id"
                   @click="
                     item.check = !item.check
                     $forceUpdate()
-                  "
-                >
+                  ">
                   <span class="name">{{ item.name }}</span>
-                  <span class="el-icon-close icon" @click.stop="deleteYarnType(item.id, index, 1)"></span>
+                  <span class="el-icon-close icon"
+                    @click.stop="deleteYarnType(item.id, index, 1)"></span>
                 </span>
-                <span class="elCtn" v-show="yarnTypeFlag1">
-                  <el-input placeholder="输入新增类型" v-model="yarnTypeInfo1.name"></el-input>
+                <span class="elCtn"
+                  v-show="yarnTypeFlag1">
+                  <el-input placeholder="输入新增类型"
+                    v-model="yarnTypeInfo1.name"></el-input>
                 </span>
-                <span
-                  class="yarnNameTag"
+                <span class="yarnNameTag"
                   :class="yarnTypeFlag1 ? 'active' : 'addBtn'"
-                  @click="yarnTypeFlag1 ? saveYarnType(1) : (yarnTypeFlag1 = true)"
-                  >{{ yarnTypeFlag1 ? '保存类型' : '新增类型' }}
+                  @click="yarnTypeFlag1 ? saveYarnType(1) : (yarnTypeFlag1 = true)">{{ yarnTypeFlag1 ? '保存类型' : '新增类型' }}
                   <i :class="yarnTypeFlag1 ? 'el-icon-document-checked' : 'el-icon-plus'"></i>
                 </span>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveYarn(1)">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveYarn(1)">确定</div>
           </div>
         </div>
       </template>
       <template v-if="cName === '面料原料'">
-        <div class="main" style="width: 920px">
+        <div class="main"
+          style="width: 920px">
           <div class="titleCtn">
             <div class="text">新增面料</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1797,49 +1968,53 @@
             <div class="row">
               <div class="label">面料名称：</div>
               <div class="info">
-                <el-input placeholder="请输入面料名称" v-model="yarnInfo2.name"></el-input>
+                <el-input placeholder="请输入面料名称"
+                  v-model="yarnInfo2.name"></el-input>
               </div>
             </div>
             <div class="row">
               <div class="label">选择类型：</div>
               <div class="info tagCtn">
-                <span
-                  class="yarnNameTag"
+                <span class="yarnNameTag"
                   :class="{ active: item.check, unactive: !item.check }"
                   v-for="(item, index) in yarnTypeList2"
                   :key="item.id"
                   @click="
                     item.check = !item.check
                     $forceUpdate()
-                  "
-                >
+                  ">
                   <span class="name">{{ item.name }}</span>
-                  <span class="el-icon-close icon" @click.stop="deleteYarnType(item.id, index, 2)"></span>
+                  <span class="el-icon-close icon"
+                    @click.stop="deleteYarnType(item.id, index, 2)"></span>
                 </span>
-                <span class="elCtn" v-show="yarnTypeFlag2">
-                  <el-input placeholder="输入新增类型" v-model="yarnTypeInfo2.name"></el-input>
+                <span class="elCtn"
+                  v-show="yarnTypeFlag2">
+                  <el-input placeholder="输入新增类型"
+                    v-model="yarnTypeInfo2.name"></el-input>
                 </span>
-                <span
-                  class="yarnNameTag"
+                <span class="yarnNameTag"
                   :class="yarnTypeFlag2 ? 'active' : 'addBtn'"
-                  @click="yarnTypeFlag2 ? saveYarnType(2) : (yarnTypeFlag2 = true)"
-                  >{{ yarnTypeFlag2 ? '保存类型' : '新增类型' }}
+                  @click="yarnTypeFlag2 ? saveYarnType(2) : (yarnTypeFlag2 = true)">{{ yarnTypeFlag2 ? '保存类型' : '新增类型' }}
                   <i :class="yarnTypeFlag2 ? 'el-icon-document-checked' : 'el-icon-plus'"></i>
                 </span>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveYarn(2)">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveYarn(2)">确定</div>
           </div>
         </div>
       </template>
       <template v-if="cName === '毛料原料'">
-        <div class="main" style="width: 920px">
+        <div class="main"
+          style="width: 920px">
           <div class="titleCtn">
             <div class="text">新增毛料</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1847,41 +2022,43 @@
             <div class="row">
               <div class="label">毛料名称：</div>
               <div class="info">
-                <el-input placeholder="请输入毛料名称" v-model="yarnInfo3.name"></el-input>
+                <el-input placeholder="请输入毛料名称"
+                  v-model="yarnInfo3.name"></el-input>
               </div>
             </div>
             <div class="row">
               <div class="label">选择类型：</div>
               <div class="info tagCtn">
-                <span
-                  class="yarnNameTag"
+                <span class="yarnNameTag"
                   :class="{ active: item.check, unactive: !item.check }"
                   v-for="(item, index) in yarnTypeList3"
                   :key="item.id"
                   @click="
                     item.check = !item.check
                     $forceUpdate()
-                  "
-                >
+                  ">
                   <span class="name">{{ item.name }}</span>
-                  <span class="el-icon-close icon" @click.stop="deleteYarnType(item.id, index, 3)"></span>
+                  <span class="el-icon-close icon"
+                    @click.stop="deleteYarnType(item.id, index, 3)"></span>
                 </span>
-                <span class="elCtn" v-show="yarnTypeFlag3">
-                  <el-input placeholder="输入新增类型" v-model="yarnTypeInfo3.name"></el-input>
+                <span class="elCtn"
+                  v-show="yarnTypeFlag3">
+                  <el-input placeholder="输入新增类型"
+                    v-model="yarnTypeInfo3.name"></el-input>
                 </span>
-                <span
-                  class="yarnNameTag"
+                <span class="yarnNameTag"
                   :class="yarnTypeFlag3 ? 'active' : 'addBtn'"
-                  @click="yarnTypeFlag3 ? saveYarnType(3) : (yarnTypeFlag3 = true)"
-                  >{{ yarnTypeFlag3 ? '保存类型' : '新增类型' }}
+                  @click="yarnTypeFlag3 ? saveYarnType(3) : (yarnTypeFlag3 = true)">{{ yarnTypeFlag3 ? '保存类型' : '新增类型' }}
                   <i :class="yarnTypeFlag3 ? 'el-icon-document-checked' : 'el-icon-plus'"></i>
                 </span>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveYarn(3)">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveYarn(3)">确定</div>
           </div>
         </div>
       </template>
@@ -1889,7 +2066,8 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增辅料</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1897,19 +2075,23 @@
             <div class="row">
               <div class="label">辅料名称：</div>
               <div class="info">
-                <el-input placeholder="请输入辅料名称" v-model="decorateMaterialInfo.name"></el-input>
+                <el-input placeholder="请输入辅料名称"
+                  v-model="decorateMaterialInfo.name"></el-input>
               </div>
             </div>
             <div class="row">
               <div class="label">计量单位：</div>
               <div class="info">
-                <el-input placeholder="请输入计量单位" v-model="decorateMaterialInfo.unit"></el-input>
+                <el-input placeholder="请输入计量单位"
+                  v-model="decorateMaterialInfo.unit"></el-input>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveDecorateMaterial">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveDecorateMaterial">确定</div>
           </div>
         </div>
       </template>
@@ -1917,7 +2099,8 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增辅料</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1925,18 +2108,21 @@
             <div class="row">
               <div class="label">辅料名称：</div>
               <div class="info">
-                <el-input placeholder="请输入辅料名称" v-model="packMaterialInfo.name"></el-input>
+                <el-input placeholder="请输入辅料名称"
+                  v-model="packMaterialInfo.name"></el-input>
               </div>
             </div>
             <div class="row">
               <div class="label">计量单位：</div>
               <div class="info">
-                <el-input placeholder="请输入计量单位" v-model="packMaterialInfo.unit"></el-input>
+                <el-input placeholder="请输入计量单位"
+                  v-model="packMaterialInfo.unit"></el-input>
               </div>
             </div>
             <div class="row">
               <div class="label">计价方式：</div>
-              <div class="info" style="line-height: 34px">
+              <div class="info"
+                style="line-height: 34px">
                 <el-radio-group v-model="packMaterialInfo.calc_type">
                   <el-radio label="面积">面积</el-radio>
                   <el-radio label="其他">其他</el-radio>
@@ -1945,23 +2131,24 @@
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="savePackMaterial">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="savePackMaterial">确定</div>
           </div>
         </div>
       </template>
       <template v-if="cName === '纱线报价'">
-        <div class="main" style="width: 1000px">
+        <div class="main"
+          style="width: 1000px">
           <div class="titleCtn">
             <div class="text">纱线报价</div>
-            <div
-              class="closeCtn"
+            <div class="closeCtn"
               @click="
                 showPopup = false
                 yarnPriceUpdate = false
                 resetYarnPrice()
-              "
-            >
+              ">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1969,9 +2156,10 @@
             <div class="row">
               <div class="label">报价单位：</div>
               <div class="info">
-                <span class="blue" style="line-height: 32px" v-if="yarnPriceUpdate">{{ yarnPrice.client_name }}</span>
-                <el-cascader
-                  v-else
+                <span class="blue"
+                  style="line-height: 32px"
+                  v-if="yarnPriceUpdate">{{ yarnPrice.client_name }}</span>
+                <el-cascader v-else
                   placeholder="请选择报价单位"
                   v-model="yarnPrice.client_id_arr"
                   :options="yarnClientList"
@@ -1979,72 +2167,79 @@
                     (ev) => {
                       yarnPrice.client_id = ev[2]
                     }
-                  "
-                ></el-cascader>
+                  "></el-cascader>
               </div>
             </div>
             <div class="tableCtn">
               <div class="thead">
                 <div class="trow">
                   <div class="tcol">纱线名称</div>
-                  <div class="tcol" style="flex: 0.5">属性</div>
-                  <div class="tcol" style="flex: 0.5">颜色</div>
-                  <div class="tcol" style="flex: 0.8">报价</div>
+                  <div class="tcol"
+                    style="flex: 0.5">属性</div>
+                  <div class="tcol"
+                    style="flex: 0.5">颜色</div>
+                  <div class="tcol"
+                    style="flex: 0.8">报价</div>
                   <div class="tcol">其它备注</div>
-                  <div class="tcol" style="flex: 0.5">操作</div>
+                  <div class="tcol"
+                    style="flex: 0.5">操作</div>
                 </div>
               </div>
               <div class="tbody">
-                <div class="trow" v-for="(item, index) in yarnPrice.info_data" :key="index">
+                <div class="trow"
+                  v-for="(item, index) in yarnPrice.info_data"
+                  :key="index">
                   <div class="tcol">
                     <div class="elCtn">
-                      <el-select placeholder="选择纱线" v-model="item.material_id" filterable>
-                        <el-option
-                          v-for="item in yarnList1"
+                      <el-select placeholder="选择纱线"
+                        v-model="item.material_id"
+                        filterable>
+                        <el-option v-for="item in yarnList1"
                           :key="item.id"
                           :value="item.id"
-                          :label="item.name"
-                        ></el-option>
+                          :label="item.name"></el-option>
                       </el-select>
                     </div>
                   </div>
-                  <div class="tcol" style="flex: 0.5">
+                  <div class="tcol"
+                    style="flex: 0.5">
                     <div class="elCtn">
-                      <el-select placeholder="属性" v-model="item.attribute">
-                        <el-option
-                          v-for="item in yarnAttributeArr"
+                      <el-select placeholder="属性"
+                        v-model="item.attribute">
+                        <el-option v-for="item in yarnAttributeArr"
                           :key="item.value"
                           :label="item.label"
-                          :value="item.value"
-                        ></el-option>
+                          :value="item.value"></el-option>
                       </el-select>
                     </div>
                   </div>
-                  <div class="tcol" style="flex: 0.5">
+                  <div class="tcol"
+                    style="flex: 0.5">
                     <div class="elCtn">
-                      <el-autocomplete
-                        class="inline-input"
+                      <el-autocomplete class="inline-input"
                         v-model="item.material_color"
                         :fetch-suggestions="searchColor"
-                        placeholder="物料颜色"
-                      ></el-autocomplete>
+                        placeholder="物料颜色"></el-autocomplete>
                     </div>
                   </div>
-                  <div class="tcol" style="flex: 0.8">
+                  <div class="tcol"
+                    style="flex: 0.8">
                     <div class="elCtn">
-                      <el-input v-model="item.price" placeholder="单价">
+                      <el-input v-model="item.price"
+                        placeholder="单价">
                         <template slot="append">元/kg</template>
                       </el-input>
                     </div>
                   </div>
                   <div class="tcol">
                     <div class="elCtn">
-                      <el-input v-model="item.desc" placeholder="备注"> </el-input>
+                      <el-input v-model="item.desc"
+                        placeholder="备注"> </el-input>
                     </div>
                   </div>
-                  <div class="tcol oprCtn" style="flex: 0.5">
-                    <div
-                      class="opr hoverBlue"
+                  <div class="tcol oprCtn"
+                    style="flex: 0.5">
+                    <div class="opr hoverBlue"
                       v-if="index === 0"
                       @click="
                         $addItem(yarnPrice.info_data, {
@@ -2056,11 +2251,12 @@
                           price: '',
                           desc: ''
                         })
-                      "
-                    >
+                      ">
                       添加
                     </div>
-                    <div class="opr hoverRed" v-if="index > 0" @click="$deleteItem(yarnPrice.info_data, index)">
+                    <div class="opr hoverRed"
+                      v-if="index > 0"
+                      @click="$deleteItem(yarnPrice.info_data, index)">
                       删除
                     </div>
                   </div>
@@ -2069,33 +2265,32 @@
             </div>
           </div>
           <div class="oprCtn">
-            <div
-              class="btn borderBtn"
+            <div class="btn borderBtn"
               @click="
                 showPopup = false
                 yarnPriceUpdate = false
-              "
-            >
+              ">
               取消
             </div>
-            <div class="btn" :class="yarnPriceUpdate ? 'backHoverOrange' : 'backHoverBlue'" @click="saveYarnPrice">
+            <div class="btn"
+              :class="yarnPriceUpdate ? 'backHoverOrange' : 'backHoverBlue'"
+              @click="saveYarnPrice">
               {{ yarnPriceUpdate ? '修改' : '确认' }}
             </div>
           </div>
         </div>
       </template>
       <template v-if="cName === '面料报价'">
-        <div class="main" style="width: 1000px">
+        <div class="main"
+          style="width: 1000px">
           <div class="titleCtn">
             <div class="text">面料报价</div>
-            <div
-              class="closeCtn"
+            <div class="closeCtn"
               @click="
                 showPopup = false
                 yarnPriceUpdate = false
                 resetYarnPrice()
-              "
-            >
+              ">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -2103,11 +2298,12 @@
             <div class="row">
               <div class="label">报价单位：</div>
               <div class="info">
-                <span class="blue" style="line-height: 32px" v-if="mianliaoPriceUpdate">{{
+                <span class="blue"
+                  style="line-height: 32px"
+                  v-if="mianliaoPriceUpdate">{{
                   mianliaoPrice.client_name
                 }}</span>
-                <el-cascader
-                  v-else
+                <el-cascader v-else
                   placeholder="请选择报价单位"
                   v-model="mianliaoPrice.client_id_arr"
                   :options="mianliaoClientList"
@@ -2115,8 +2311,7 @@
                     (ev) => {
                       mianliaoPrice.client_id = ev[2]
                     }
-                  "
-                ></el-cascader>
+                  "></el-cascader>
               </div>
             </div>
             <div class="tableCtn">
@@ -2130,44 +2325,44 @@
                 </div>
               </div>
               <div class="tbody">
-                <div class="trow" v-for="(item, index) in mianliaoPrice.info_data" :key="index">
+                <div class="trow"
+                  v-for="(item, index) in mianliaoPrice.info_data"
+                  :key="index">
                   <div class="tcol">
                     <div class="elCtn">
-                      <el-select placeholder="选择面料" v-model="item.material_id">
-                        <el-option
-                          v-for="item in yarnList2"
+                      <el-select placeholder="选择面料"
+                        v-model="item.material_id">
+                        <el-option v-for="item in yarnList2"
                           :key="item.id"
                           :value="item.id"
-                          :label="item.name"
-                        ></el-option>
+                          :label="item.name"></el-option>
                       </el-select>
                     </div>
                   </div>
                   <div class="tcol">
                     <div class="elCtn">
-                      <el-autocomplete
-                        class="inline-input"
+                      <el-autocomplete class="inline-input"
                         v-model="item.material_color"
                         :fetch-suggestions="searchColor"
-                        placeholder="物料颜色"
-                      ></el-autocomplete>
+                        placeholder="物料颜色"></el-autocomplete>
                     </div>
                   </div>
                   <div class="tcol">
                     <div class="elCtn">
-                      <el-input v-model="item.price" placeholder="单价">
+                      <el-input v-model="item.price"
+                        placeholder="单价">
                         <template slot="append">元/kg</template>
                       </el-input>
                     </div>
                   </div>
                   <div class="tcol">
                     <div class="elCtn">
-                      <el-input v-model="item.desc" placeholder="备注"> </el-input>
+                      <el-input v-model="item.desc"
+                        placeholder="备注"> </el-input>
                     </div>
                   </div>
                   <div class="tcol oprCtn">
-                    <div
-                      class="opr hoverBlue"
+                    <div class="opr hoverBlue"
                       v-if="index === 0"
                       @click="
                         $addItem(mianliaoPrice.info_data, {
@@ -2179,11 +2374,12 @@
                           price: '',
                           desc: ''
                         })
-                      "
-                    >
+                      ">
                       添加
                     </div>
-                    <div class="opr hoverRed" v-if="index > 0" @click="$deleteItem(mianliaoPrice.info_data, index)">
+                    <div class="opr hoverRed"
+                      v-if="index > 0"
+                      @click="$deleteItem(mianliaoPrice.info_data, index)">
                       删除
                     </div>
                   </div>
@@ -2192,20 +2388,16 @@
             </div>
           </div>
           <div class="oprCtn">
-            <div
-              class="btn borderBtn"
+            <div class="btn borderBtn"
               @click="
                 showPopup = false
                 mianliaoPriceUpdate = false
-              "
-            >
+              ">
               取消
             </div>
-            <div
-              class="btn"
+            <div class="btn"
               :class="mianliaoPriceUpdate ? 'backHoverOrange' : 'backHoverBlue'"
-              @click="saveMianliaoPrice"
-            >
+              @click="saveMianliaoPrice">
               {{ mianliaoPriceUpdate ? '修改' : '确认' }}
             </div>
           </div>
@@ -2215,7 +2407,8 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增小组/人</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -2223,13 +2416,16 @@
             <div class="row">
               <div class="label">小组/人：</div>
               <div class="info">
-                <el-input placeholder="请输入小组/人" v-model="groupInfo.name"></el-input>
+                <el-input placeholder="请输入小组/人"
+                  v-model="groupInfo.name"></el-input>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div class="btn borderBtn" @click="showPopup = false">取消</div>
-            <div class="btn backHoverBlue" @click="saveGroup">确定</div>
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveGroup">确定</div>
           </div>
         </div>
       </template>
@@ -2237,13 +2433,11 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">{{ userUpdate ? '修改' : '新增' }}用户</div>
-            <div
-              class="closeCtn"
+            <div class="closeCtn"
               @click="
                 showPopup = false
                 resetUser()
-              "
-            >
+              ">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -2251,7 +2445,8 @@
             <div class="row">
               <div class="label">姓名：</div>
               <div class="info">
-                <el-input placeholder="请输入姓名" v-model="userInfo.name"></el-input>
+                <el-input placeholder="请输入姓名"
+                  v-model="userInfo.name"></el-input>
               </div>
             </div>
             <!-- <div class="row">
@@ -2271,15 +2466,20 @@
             <div class="row">
               <div class="label">手机号：</div>
               <div class="info">
-                <el-input placeholder="请输入手机号" v-model="userInfo.phone" :disabled="userUpdate"> </el-input>
+                <el-input placeholder="请输入手机号"
+                  v-model="userInfo.phone"
+                  :disabled="userUpdate"> </el-input>
               </div>
             </div>
-            <div class="row" v-show="!userUpdate">
+            <div class="row"
+              v-show="!userUpdate">
               <div class="label">验证码：</div>
               <div class="info">
-                <el-input placeholder="请输入验证码" v-model="userInfo.sms_code">
+                <el-input placeholder="请输入验证码"
+                  v-model="userInfo.sms_code">
                   <template slot="append">
-                    <span style="cursor: pointer" @click="getSmsCode">{{
+                    <span style="cursor: pointer"
+                      @click="getSmsCode">{{
                       Number(smsIndex) ? Number(smsIndex) + '秒后重新发送' : smsIndex
                     }}</span>
                   </template>
@@ -2289,44 +2489,55 @@
             <div class="row">
               <div class="label">小组：</div>
               <div class="info">
-                <el-select placeholder="请选择小组" v-model="userInfo.group_id">
-                  <el-option
-                    v-for="item in groupInfoList"
+                <el-select placeholder="请选择小组"
+                  v-model="userInfo.group_id">
+                  <el-option v-for="item in groupInfoList"
                     :key="item.id"
                     :value="item.id"
-                    :label="item.name"
-                  ></el-option>
+                    :label="item.name"></el-option>
                 </el-select>
               </div>
             </div>
             <div class="row">
               <div class="label">岗位：</div>
               <div class="info">
-                <el-input placeholder="请输入岗位" v-model="userInfo.station"></el-input>
+                <el-input placeholder="请输入岗位"
+                  v-model="userInfo.station"></el-input>
               </div>
             </div>
             <div class="row">
               <div class="label">审核权限：</div>
-              <div class="info" style="line-height: 32px">
-                <el-radio v-model="userInfo.has_check" :label="1">有</el-radio>
-                <el-radio v-model="userInfo.has_check" :label="2">无</el-radio>
+              <div class="info"
+                style="line-height: 32px">
+                <el-radio v-model="userInfo.has_check"
+                  :label="1">有</el-radio>
+                <el-radio v-model="userInfo.has_check"
+                  :label="2">无</el-radio>
               </div>
             </div>
-            <div class="row" style="height: auto">
+            <div class="row"
+              style="height: auto">
               <div class="label">系统模块：</div>
               <div class="info checkBoxCtn">
-                <div class="checkbox" v-for="item in systemModuleArr" :key="item.id">
-                  <el-checkbox v-model="item.check" @change="getModuleChild($event, item.id, item.detail)">{{
+                <div class="checkbox"
+                  v-for="item in systemModuleArr"
+                  :key="item.id">
+                  <el-checkbox v-model="item.check"
+                    @change="getModuleChild($event, item.id, item.detail)">{{
                     item.name
                   }}</el-checkbox>
                 </div>
               </div>
             </div>
-            <div class="row" style="height: auto">
+            <div class="row"
+              style="height: auto">
               <div class="label">模块细分：</div>
               <div class="info checkBoxCtn">
-                <div class="checkbox" v-for="item in systemModuleChild" :key="item.id">
-                  <el-checkbox v-model="item.check" @change="getModuleChild($event, item.id)">{{
+                <div class="checkbox"
+                  v-for="item in systemModuleChild"
+                  :key="item.id">
+                  <el-checkbox v-model="item.check"
+                    @change="getModuleChild($event, item.id)">{{
                     item.name
                   }}</el-checkbox>
                 </div>
@@ -2334,16 +2545,15 @@
             </div>
           </div>
           <div class="oprCtn">
-            <div
-              class="btn borderBtn"
+            <div class="btn borderBtn"
               @click="
                 showPopup = false
                 resetUser()
-              "
-            >
+              ">
               取消
             </div>
-            <div class="btn backHoverBlue" @click="userUpdate ? updateUser() : saveUser()">确定</div>
+            <div class="btn backHoverBlue"
+              @click="userUpdate ? updateUser() : saveUser()">确定</div>
           </div>
         </div>
       </template>
@@ -2351,13 +2561,11 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增报价模板</div>
-            <div
-              class="closeCtn"
+            <div class="closeCtn"
               @click="
                 showPopup = false
                 quotedPriceProductUpdate = false
-              "
-            >
+              ">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -2369,13 +2577,12 @@
                     <span class="text">绑定品类</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select placeholder="请选择产品品类" v-model="quotedPriceProduct.category_id">
-                      <el-option
-                        v-for="item in categoryList"
+                    <el-select placeholder="请选择产品品类"
+                      v-model="quotedPriceProduct.category_id">
+                      <el-option v-for="item in categoryList"
                         :key="item.id"
                         :value="item.id"
-                        :label="item.name"
-                      ></el-option>
+                        :label="item.name"></el-option>
                     </el-select>
                   </div>
                 </div>
@@ -2384,42 +2591,44 @@
                     <span class="text">模板标题</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input placeholder="请输入模板标题" v-model="quotedPriceProduct.title"></el-input>
+                    <el-input placeholder="请输入模板标题"
+                      v-model="quotedPriceProduct.title"></el-input>
                   </div>
                 </div>
               </div>
-              <div
-                class="row"
+              <div class="row"
                 v-for="(itemWeave, indexWeave) in quotedPriceProduct.weave_data"
-                :key="'Weave' + indexWeave"
-              >
+                :key="'Weave' + indexWeave">
                 <div class="col">
-                  <div class="label" v-if="indexWeave === 0">
+                  <div class="label"
+                    v-if="indexWeave === 0">
                     <span class="text">织造明细</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select v-model="itemWeave.name" placeholder="请选择织造明细" clearable>
-                      <el-option
-                        v-for="item in weaveList"
+                    <el-select v-model="itemWeave.name"
+                      placeholder="请选择织造明细"
+                      clearable>
+                      <el-option v-for="item in weaveList"
                         :key="item.value"
                         :label="item.value"
-                        :value="item.value"
-                      ></el-option>
+                        :value="item.value"></el-option>
                     </el-select>
                   </div>
                 </div>
                 <div class="col">
-                  <div class="label" v-if="indexWeave === 0">
+                  <div class="label"
+                    v-if="indexWeave === 0">
                     <span class="text">小计</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input v-model="itemWeave.total_price" placeholder="小计" :disabled="!itemWeave.name">
+                    <el-input v-model="itemWeave.total_price"
+                      placeholder="小计"
+                      :disabled="!itemWeave.name">
                       <template slot="append">元</template>
                     </el-input>
                   </div>
                 </div>
-                <div
-                  class="opr hoverBlue"
+                <div class="opr hoverBlue"
                   v-if="indexWeave === 0"
                   @click="
                     $addItem(quotedPriceProduct.weave_data, {
@@ -2427,50 +2636,49 @@
                       name: '',
                       total_price: ''
                     })
-                  "
-                >
+                  ">
                   添加
                 </div>
-                <div class="opr hoverRed" v-else @click="$deleteItem(quotedPriceProduct.weave_data, indexWeave)">
+                <div class="opr hoverRed"
+                  v-else
+                  @click="$deleteItem(quotedPriceProduct.weave_data, indexWeave)">
                   删除
                 </div>
               </div>
-              <div
-                class="row"
+              <div class="row"
                 v-for="(itemHalfProcess, indexHalfProcess) in quotedPriceProduct.semi_product_data"
-                :key="'HalfProcess' + indexHalfProcess"
-              >
+                :key="'HalfProcess' + indexHalfProcess">
                 <div class="col">
-                  <div class="label" v-if="indexHalfProcess === 0">
+                  <div class="label"
+                    v-if="indexHalfProcess === 0">
                     <span class="text">半成品加工</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select v-model="itemHalfProcess.process_id" placeholder="请选择加工工序" clearable multiple>
-                      <el-option
-                        v-for="item in halfProcessStore"
+                    <el-select v-model="itemHalfProcess.process_id"
+                      placeholder="请选择加工工序"
+                      clearable
+                      multiple>
+                      <el-option v-for="item in halfProcessStore"
                         :key="item.id"
                         :value="item.id"
-                        :label="item.name"
-                      ></el-option>
+                        :label="item.name"></el-option>
                     </el-select>
                   </div>
                 </div>
                 <div class="col">
-                  <div class="label" v-if="indexHalfProcess === 0">
+                  <div class="label"
+                    v-if="indexHalfProcess === 0">
                     <span class="text">小计</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input
-                      v-model="itemHalfProcess.total_price"
+                    <el-input v-model="itemHalfProcess.total_price"
                       placeholder="小计"
-                      :disabled="itemHalfProcess.process_id.length === 0"
-                    >
+                      :disabled="itemHalfProcess.process_id.length === 0">
                       <template slot="append">元</template>
                     </el-input>
                   </div>
                 </div>
-                <div
-                  class="opr hoverBlue"
+                <div class="opr hoverBlue"
                   v-if="indexHalfProcess === 0"
                   @click="
                     $addItem(quotedPriceProduct.semi_product_data, {
@@ -2478,54 +2686,49 @@
                       process_id: [],
                       total_price: ''
                     })
-                  "
-                >
+                  ">
                   添加
                 </div>
-                <div
-                  class="opr hoverRed"
+                <div class="opr hoverRed"
                   v-else
-                  @click="$deleteItem(quotedPriceProduct.semi_product_data, indexHalfProcess)"
-                >
+                  @click="$deleteItem(quotedPriceProduct.semi_product_data, indexHalfProcess)">
                   删除
                 </div>
               </div>
-              <div
-                class="row"
+              <div class="row"
                 v-for="(itemFinishedProcess, indexFinishedProcess) in quotedPriceProduct.production_data"
-                :key="'FinishedProcess' + indexFinishedProcess"
-              >
+                :key="'FinishedProcess' + indexFinishedProcess">
                 <div class="col">
-                  <div class="label" v-if="indexFinishedProcess === 0">
+                  <div class="label"
+                    v-if="indexFinishedProcess === 0">
                     <span class="text">成品加工</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select v-model="itemFinishedProcess.name" placeholder="请选择加工工序" clearable multiple>
-                      <el-option
-                        v-for="item in finishedList"
+                    <el-select v-model="itemFinishedProcess.name"
+                      placeholder="请选择加工工序"
+                      clearable
+                      multiple>
+                      <el-option v-for="item in finishedList"
                         :key="item.value"
                         :label="item.value"
-                        :value="item.value"
-                      ></el-option>
+                        :value="item.value"></el-option>
                     </el-select>
                   </div>
                 </div>
                 <div class="col">
-                  <div class="label" v-if="indexFinishedProcess === 0">
+                  <div class="label"
+                    v-if="indexFinishedProcess === 0">
                     <span class="text">小计</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input
-                      v-model="itemFinishedProcess.total_price"
+                    <el-input v-model="itemFinishedProcess.total_price"
                       placeholder="小计"
-                      :disabled="itemFinishedProcess.name.length === 0"
-                    >
+                      :disabled="itemFinishedProcess.name.length === 0">
                       <template slot="append">元</template>
                     </el-input>
                   </div>
                 </div>
-                <div
-                  class="opr hoverBlue"
+                <div class="opr hoverBlue"
                   v-if="indexFinishedProcess === 0"
                   @click="
                     $addItem(quotedPriceProduct.production_data, {
@@ -2533,54 +2736,48 @@
                       name: [],
                       total_price: ''
                     })
-                  "
-                >
+                  ">
                   添加
                 </div>
-                <div
-                  class="opr hoverRed"
+                <div class="opr hoverRed"
                   v-else
-                  @click="$deleteItem(quotedPriceProduct.production_data, indexFinishedProcess)"
-                >
+                  @click="$deleteItem(quotedPriceProduct.production_data, indexFinishedProcess)">
                   删除
                 </div>
               </div>
-              <div
-                class="row"
+              <div class="row"
                 v-for="(itemPackMaterial, indexPackMaterial) in quotedPriceProduct.pack_material_data"
-                :key="'PackMaterial' + indexPackMaterial"
-              >
+                :key="'PackMaterial' + indexPackMaterial">
                 <div class="col">
-                  <div class="label" v-if="indexPackMaterial === 0">
+                  <div class="label"
+                    v-if="indexPackMaterial === 0">
                     <span class="text">包装辅料</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select v-model="itemPackMaterial.material_id" placeholder="请选择包装辅料" clearable>
-                      <el-option
-                        v-for="item in packMaterialStore"
+                    <el-select v-model="itemPackMaterial.material_id"
+                      placeholder="请选择包装辅料"
+                      clearable>
+                      <el-option v-for="item in packMaterialStore"
                         :key="item.id"
                         :value="item.id"
-                        :label="item.name"
-                      ></el-option>
+                        :label="item.name"></el-option>
                     </el-select>
                   </div>
                 </div>
                 <div class="col">
-                  <div class="label" v-if="indexPackMaterial === 0">
+                  <div class="label"
+                    v-if="indexPackMaterial === 0">
                     <span class="text">小计</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input
-                      v-model="itemPackMaterial.total_price"
+                    <el-input v-model="itemPackMaterial.total_price"
                       placeholder="小计"
-                      :disabled="!itemPackMaterial.material_id"
-                    >
+                      :disabled="!itemPackMaterial.material_id">
                       <template slot="append">元</template>
                     </el-input>
                   </div>
                 </div>
-                <div
-                  class="opr hoverBlue"
+                <div class="opr hoverBlue"
                   v-if="indexPackMaterial === 0"
                   @click="
                     $addItem(quotedPriceProduct.pack_material_data, {
@@ -2588,43 +2785,42 @@
                       name: '',
                       total_price: ''
                     })
-                  "
-                >
+                  ">
                   添加
                 </div>
-                <div
-                  class="opr hoverRed"
+                <div class="opr hoverRed"
                   v-else
-                  @click="$deleteItem(quotedPriceProduct.pack_material_data, indexPackMaterial)"
-                >
+                  @click="$deleteItem(quotedPriceProduct.pack_material_data, indexPackMaterial)">
                   删除
                 </div>
               </div>
-              <div
-                class="row"
+              <div class="row"
                 v-for="(itemOther, indexOther) in quotedPriceProduct.other_fee_data"
-                :key="'Other' + indexOther"
-              >
+                :key="'Other' + indexOther">
                 <div class="col">
-                  <div class="label" v-if="indexOther === 0">
+                  <div class="label"
+                    v-if="indexOther === 0">
                     <span class="text">其他费用</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input v-model="itemOther.name" placeholder="其他费用"></el-input>
+                    <el-input v-model="itemOther.name"
+                      placeholder="其他费用"></el-input>
                   </div>
                 </div>
                 <div class="col">
-                  <div class="label" v-if="indexOther === 0">
+                  <div class="label"
+                    v-if="indexOther === 0">
                     <span class="text">小计</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input v-model="itemOther.total_price" placeholder="小计" :disabled="!itemOther.name">
+                    <el-input v-model="itemOther.total_price"
+                      placeholder="小计"
+                      :disabled="!itemOther.name">
                       <template slot="append">元</template>
                     </el-input>
                   </div>
                 </div>
-                <div
-                  class="opr hoverBlue"
+                <div class="opr hoverBlue"
                   v-if="indexOther === 0"
                   @click="
                     $addItem(quotedPriceProduct.other_fee_data, {
@@ -2632,31 +2828,28 @@
                       name: '',
                       total_price: ''
                     })
-                  "
-                >
+                  ">
                   添加
                 </div>
-                <div class="opr hoverRed" v-else @click="$deleteItem(quotedPriceProduct.other_fee_data, indexOther)">
+                <div class="opr hoverRed"
+                  v-else
+                  @click="$deleteItem(quotedPriceProduct.other_fee_data, indexOther)">
                   删除
                 </div>
               </div>
             </div>
           </div>
           <div class="oprCtn">
-            <div
-              class="btn borderBtn"
+            <div class="btn borderBtn"
               @click="
                 showPopup = false
                 quotedPriceProductUpdate = false
-              "
-            >
+              ">
               取消
             </div>
-            <div
-              class="btn"
+            <div class="btn"
               :class="quotedPriceProductUpdate ? 'backHoverOrange' : 'backHoverBlue'"
-              @click="saveQuotedPriceProduct"
-            >
+              @click="saveQuotedPriceProduct">
               {{ quotedPriceProductUpdate ? '修改' : '确认' }}
             </div>
           </div>
@@ -2666,7 +2859,8 @@
         <div class="main">
           <div class="titleCtn">
             <div class="text">新增报价说明</div>
-            <div class="closeCtn" @click="showPopup = false">
+            <div class="closeCtn"
+              @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -2678,13 +2872,13 @@
                     <span class="text">品类</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select placeholder="请选择产品品类" v-model="quotedPriceCategoryId" disabled>
-                      <el-option
-                        v-for="item in categoryList"
+                    <el-select placeholder="请选择产品品类"
+                      v-model="quotedPriceCategoryId"
+                      disabled>
+                      <el-option v-for="item in categoryList"
                         :key="item.id"
                         :value="item.id"
-                        :label="item.name"
-                      ></el-option>
+                        :label="item.name"></el-option>
                     </el-select>
                   </div>
                 </div>
@@ -2695,7 +2889,8 @@
                     <span class="text">文字说明</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input v-model="quotedPriceDesc.desc" placeholder="请输入报价说明"></el-input>
+                    <el-input v-model="quotedPriceDesc.desc"
+                      placeholder="请输入报价说明"></el-input>
                   </div>
                 </div>
               </div>
@@ -2705,8 +2900,7 @@
                     <span class="text">图片说明</span>
                   </div>
                   <div class="imgCtn">
-                    <el-upload
-                      class="avatar-uploader"
+                    <el-upload class="avatar-uploader"
                       drag
                       action="https://upload.qiniup.com/"
                       :show-file-list="false"
@@ -2714,15 +2908,13 @@
                       :before-upload="beforeUpload"
                       :data="postData"
                       :file-list="[quotedPriceDesc.type]"
-                      ref="quotedLogo"
-                    >
-                      <img
-                        v-if="quotedPriceDesc.type"
+                      ref="quotedLogo">
+                      <img v-if="quotedPriceDesc.type"
                         :src="quotedPriceDesc.type"
                         class="logo-img"
-                        style="width: 100%; height: 100%"
-                      />
-                      <i v-else class="el-icon-plus logo-icon"></i>
+                        style="width: 100%; height: 100%" />
+                      <i v-else
+                        class="el-icon-plus logo-icon"></i>
                     </el-upload>
                     <div class="prompt">点击或拖拽图片至上传框,只能上传jpg/png文件，且不超过6MB</div>
                   </div>
@@ -2731,26 +2923,27 @@
             </div>
           </div>
           <div class="oprCtn">
-            <div
-              class="btn borderBtn"
+            <div class="btn borderBtn"
               @click="
                 showPopup = false
                 quotedPriceProductUpdate = false
-              "
-            >
+              ">
               取消
             </div>
-            <div class="btn backHoverBlue" @click="saveQuotedPriceDesc">确认</div>
+            <div class="btn backHoverBlue"
+              @click="saveQuotedPriceDesc">确认</div>
           </div>
         </div>
       </template>
     </div>
     <!-- 选择物料类型上传excel -->
-    <div class="popup" v-show="showYarn">
+    <div class="popup"
+      v-show="showYarn">
       <div class="main">
         <div class="titleCtn">
           <div class="text">导入物料</div>
-          <div class="closeCtn" @click="showYarn = false">
+          <div class="closeCtn"
+            @click="showYarn = false">
             <i class="el-icon-close"></i>
           </div>
         </div>
@@ -2758,44 +2951,47 @@
           <div class="row">
             <div class="label">选择类型：</div>
             <div class="info tagCtn">
-              <span
-                class="yarnNameTag"
+              <span class="yarnNameTag"
                 :class="{ active: item.check, unactive: !item.check }"
                 v-for="(item, index) in cName === '纱线原料' ? yarnTypeList1 : yarnTypeList2"
                 :key="item.id"
                 @click="
                   item.check = !item.check
                   $forceUpdate()
-                "
-              >
+                ">
                 <span class="name">{{ item.name }}</span>
-                <span class="el-icon-close icon" @click.stop="deleteYarnType(item.id, index, 1)"></span>
+                <span class="el-icon-close icon"
+                  @click.stop="deleteYarnType(item.id, index, 1)"></span>
               </span>
-              <span class="elCtn" v-show="yarnTypeFlag1">
-                <el-input placeholder="输入新增类型" v-model="yarnTypeInfo1.name"></el-input>
+              <span class="elCtn"
+                v-show="yarnTypeFlag1">
+                <el-input placeholder="输入新增类型"
+                  v-model="yarnTypeInfo1.name"></el-input>
               </span>
-              <span
-                class="yarnNameTag"
+              <span class="yarnNameTag"
                 :class="yarnTypeFlag1 ? 'active' : 'addBtn'"
-                @click="yarnTypeFlag1 ? saveYarnType(1) : (yarnTypeFlag1 = true)"
-                >{{ yarnTypeFlag1 ? '保存类型' : '新增类型' }}
+                @click="yarnTypeFlag1 ? saveYarnType(1) : (yarnTypeFlag1 = true)">{{ yarnTypeFlag1 ? '保存类型' : '新增类型' }}
                 <i :class="yarnTypeFlag1 ? 'el-icon-document-checked' : 'el-icon-plus'"></i>
               </span>
             </div>
           </div>
         </div>
         <div class="oprCtn">
-          <div class="btn borderBtn" @click="showYarn = false">取消</div>
-          <div class="btn backHoverBlue" @click="importExcelData('yarn1')">确定</div>
+          <div class="btn borderBtn"
+            @click="showYarn = false">取消</div>
+          <div class="btn backHoverBlue"
+            @click="importExcelData('yarn1')">确定</div>
         </div>
       </div>
     </div>
     <!-- 删除尺码 -->
-    <div class="popup" v-show="deleteSizeFLag">
+    <div class="popup"
+      v-show="deleteSizeFLag">
       <div class="main">
         <div class="titleCtn">
           <div class="text">新增成分</div>
-          <div class="closeCtn" @click="deleteSizeFLag = false">
+          <div class="closeCtn"
+            @click="deleteSizeFLag = false">
             <i class="el-icon-close"></i>
           </div>
         </div>
@@ -2803,15 +2999,21 @@
           <div class="row">
             <div class="label">选择尺码：</div>
             <div class="info">
-              <el-select v-model="deleteSizeId" placeholder="请选择删除尺码">
-                <el-option v-for="item in deleteSizeArr" :key="item.id" :label="item.name" :value="item.id"></el-option>
+              <el-select v-model="deleteSizeId"
+                placeholder="请选择删除尺码">
+                <el-option v-for="item in deleteSizeArr"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"></el-option>
               </el-select>
             </div>
           </div>
         </div>
         <div class="oprCtn">
-          <div class="btn borderBtn" @click="deleteSizeFLag = false">取消</div>
-          <div class="btn backHoverBlue" @click="deleteSize">确定</div>
+          <div class="btn borderBtn"
+            @click="deleteSizeFLag = false">取消</div>
+          <div class="btn backHoverBlue"
+            @click="deleteSize">确定</div>
         </div>
       </div>
     </div>
@@ -5124,7 +5326,34 @@ export default Vue.extend({
         })
       }
     },
-    deleteGroup(id: number) {},
+    deleteGroup(id: number) {
+      this.$confirm('是否删除该小组?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          group
+            .delete({
+              id: id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.getGroup()
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
     getUser() {
       user.list().then((res) => {
         if (res.data.status) {
@@ -5418,7 +5647,7 @@ export default Vue.extend({
     },
     getCompany() {
       let _this = this
-      
+
       companyInfo.detail().then((res) => {
         if (res.data.status) {
           this.companyInfo = res.data.data

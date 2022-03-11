@@ -61,6 +61,14 @@ const routes: Array<RouteConfig> = [
     name: '生产计划单打印',
     component: () => import('../views/productionPlan/print.vue')
   }, {
+    path: '/materialManage/supPrint',
+    name: '补纱单打印',
+    component: () => import('../views/materialManage/supPrint.vue')
+  }, {
+    path: '/packManage/printPlan',
+    name: '装箱计划单打印',
+    component: () => import('../views/packManage/printPlan.vue')
+  }, {
     path: '/setting/printQRCode',
     name: '公司二维码打印',
     component: () => import('../views/setting/printQRCode.vue')
@@ -410,17 +418,49 @@ const routes: Array<RouteConfig> = [
       path: '/packManage/detail',
       name: '包装管理详情',
       component: () => import('../views/packManage/detail.vue')
+    },
+    //  {
+    //   meta: {
+    //     permissions_id: '19-3',
+    //   },
+    //   path: '/workshopManagement/list',
+    //   name: '车间管理列表',
+    //   component: () => import('../views/workshopManagement/list.vue')
+    // }, {
+    //   path: '/workshopManagement/detail',
+    //   name: '车间管理详情',
+    //   component: () => import('../views/workshopManagement/detail.vue')
+    // }, 
+    {
+      meta: {
+        permissions_id: '11-3',
+      },
+      path: '/boxManage/list',
+      name: '装箱计划列表',
+      component: () => import('../views/boxManage/list.vue')
     }, {
       meta: {
-        permissions_id: '19-3',
+        permissions_id: '11-3',
       },
-      path: '/workshopManagement/list',
-      name: '车间管理列表',
-      component: () => import('../views/workshopManagement/list.vue')
+      path: '/boxManage/orderList',
+      name: '装箱管理列表',
+      component: () => import('../views/boxManage/orderList.vue')
     }, {
-      path: '/workshopManagement/detail',
-      name: '车间管理详情',
-      component: () => import('../views/workshopManagement/detail.vue')
+      path: '/boxManage/detail',
+      name: '装箱计划详情',
+      component: () => import('../views/boxManage/detail.vue')
+    }, {
+      path: '/boxManage/orderDetail',
+      name: '装箱管理详情',
+      component: () => import('../views/boxManage/orderDetail.vue')
+    }, {
+      path: '/boxManage/boxList',
+      name: '发货单列表',
+      component: () => import('../views/boxManage/boxList.vue')
+    }, {
+      path: '/boxManage/boxDetail',
+      name: '发货单详情',
+      component: () => import('../views/boxManage/boxDetail.vue')
     }, {
       meta: {
         permissions_id: '14-3',

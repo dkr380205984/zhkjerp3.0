@@ -124,87 +124,6 @@
           <span class="el-icon-view icon hoverBlue"
             @click="sampleDetail=item;sampleShow=true"></span>
         </div>
-        <!-- <div class="thead">
-          <div class="trow">
-            <div class="tcol noPad"
-              style="flex:7">
-              <div class="trow">
-                <div class="tcol">样品编号</div>
-                <div class="tcol">样品名称</div>
-                <div class="tcol">样品图片</div>
-                <div class="tcol noPad"
-                  style="flex:2">
-                  <div class="trow">
-                    <div class="tcol">尺码颜色</div>
-                    <div class="tcol">单价</div>
-                    <div class="tcol">打样数量</div>
-                  </div>
-                </div>
-                <div class="tcol">样品单据</div>
-                <div class="tcol">样品描述</div>
-              </div>
-            </div>
-            <div class="tcol">
-              操作
-            </div>
-          </div>
-        </div>
-        <div class="tbody">
-          <div class="trow">
-            <div class="tcol noPad"
-              style="flex:7">
-              <div class="trow"
-                v-for="(item,index) in confirmSampleInfo"
-                :key="index">
-                <div class="tcol">
-                  <span class="blue"
-                    style="cursor:pointer"
-                    @click="sampleDetail=item;sampleShow=true">{{item.product_code||item.system_code}}</span>
-                  <span class="gray">({{item.category}}/{{item.type}})</span>
-                </div>
-                <div class="tcol">{{item.name}}</div>
-                <div class="tcol">
-                  <div class="imageCtn">
-                    <el-image style="width:100%;height:100%"
-                      :src="item.image_data.length>0?item.image_data[0]:''"
-                      :preview-src-list="item.image_data">
-                      <div slot="error"
-                        class="image-slot">
-                        <i class="el-icon-picture-outline"
-                          style="font-size:42px"></i>
-                      </div>
-                    </el-image>
-                  </div>
-                </div>
-                <div class="tcol noPad"
-                  style="flex:2">
-                  <div class="trow"
-                    v-for="(itemChild,indexChild) in item.product_info"
-                    :key="indexChild">
-                    <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                    <div class="tcol">{{itemChild.price}}元</div>
-                    <div class="tcol">{{itemChild.number}}</div>
-                  </div>
-                </div>
-                <div class="tcol stateCtn">
-                  <div class="state"
-                    @click="item.craft_list_id?$router.push('/craft/detail?id='+item.craft_list_id):$router.push('/craft/create?id=' + item.product_id)">
-                    <div v-if="item.category==='围巾'"
-                      class="circle"
-                      :class="{'backGray':!item.craft_list_id,'backBlue':item.craft_list_id}">工</div>
-                    <div v-else
-                      class="gray">无需工艺单</div>
-                  </div>
-                </div>
-                <div class="tcol">{{item.desc}}</div>
-              </div>
-            </div>
-            <div class="tcol oprCtn">
-              <div class="opr hoverBlue"
-                @click="changeToOrder">大货生产</div>
-            </div>
-          </div>
-        </div> -->
       </div>
     </div>
     <div class="module">
@@ -619,21 +538,21 @@
                   </svg>
                   <span class="text">转报价单</span>
                 </div>
-                <div class="btn backHoverBlue"
+                <!-- <div class="btn backHoverBlue"
                   @click="checkClient">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-shenhedingdan"></use>
                   </svg>
                   <span class="text">客户确认</span>
-                </div>
+                </div> -->
                 <div class="btn backHoverBlue"
                   @click="checkComplete">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-shenhedingdan"></use>
                   </svg>
-                  <span class="text">打样确认</span>
+                  <span class="text">完成打样</span>
                 </div>
               </div>
             </div>
@@ -755,14 +674,15 @@
                         style="justify-content: flex-start;">
                         <div class="opr hoverBlue"
                           @click="$addItem(item.product_info,{
-                            size_color: [], // 用于下拉框选择尺码颜色
+                            ifNew:true,
+                            size_color: '', // 用于下拉框选择尺码颜色
                             size_id: '',
                             color_id: '',
                             number: '',
                             price: ''
                           })">新增尺码</div>
                         <div class="opr hoverRed"
-                          @click="item.product_info.length>1?deleteProChild(itemChild.id,indexChild,item.product_info):deletePro(item.id,index,sampleOrderTime.batch_data[0].product_data)">删除</div>
+                          @click="deleteSampleSizeColor(item,itemChild,index,indexChild)">删除</div>
                       </div>
                     </div>
                   </div>
@@ -814,12 +734,10 @@
         </div>
       </div>
     </div>
-    <sample-edit :show="addSampleFlag"
-      @close="addSampleFlag = false"
-      @afterSave="getNewSample"></sample-edit>
     <sample-detail :data="sampleDetail"
       :show="sampleShow"
-      @close="sampleShow = false"></sample-detail>
+      @close="sampleShow = false"
+      @afterDetailUpdate="afterSampleUpdate"></sample-detail>
     <zh-check @close="checkFlag=false"
       @afterCheck="(ev)=>{sampleOrderInfo.time_data[sampleOrderIndex].is_check=ev;$forceUpdate()}"
       :show="checkFlag"
@@ -1033,11 +951,11 @@ export default Vue.extend({
   },
   filters: {
     orderTimeStatus(val: number) {
-      const statusArr = ['', '已创建', '进行中', '已完成，待确认', '已完成，已确认', '已结算']
+      const statusArr = ['', '已创建', '进行中', '已完成', '已结算', '已逾期', '已取消']
       return statusArr[val]
     },
     orderTimeStatusClass(val: number) {
-      const statusArr = ['', 'orange', 'blue', 'green', 'green', 'green']
+      const statusArr = ['', 'orange', 'blue', 'green', 'green', 'red', 'gray']
       return statusArr[val]
     }
   },
@@ -1132,6 +1050,21 @@ export default Vue.extend({
             message: '已取消删除'
           })
         })
+    },
+    deleteSampleSizeColor(item: any, itemChild: any, index: number, indexChild: number) {
+      if (item.product_info.length > 1) {
+        if (itemChild.ifNew) {
+          this.$deleteItem(item.product_info, indexChild)
+        } else {
+          this.deleteProChild(itemChild.id, indexChild, item.product_info)
+        }
+      } else {
+        if (this.sampleOrderTime.batch_data[0].product_data.length > 1) {
+          this.deletePro(item.id, index, this.sampleOrderTime.batch_data[0].product_data)
+        } else {
+          this.$message.error('不能删除最后一个样品')
+        }
+      }
     },
     // 审核
     checkTimeData() {
@@ -1302,8 +1235,9 @@ export default Vue.extend({
       })
       this.sampleOrderUpdateFlag = true
     },
-    getNewSample(sample: SampleInfo) {
-      // this.sampleList.push(sample)
+    afterSampleUpdate(sample: SampleInfo) {
+      console.log('修改过了')
+      this.init()
     },
     saveUpdate() {
       const formData = this.$clone(this.sampleOrderInfo)
@@ -1325,30 +1259,31 @@ export default Vue.extend({
       })
     },
     // 客户确认
-    checkClient() {
-      this.$confirm('客户是否确认第' + (Number(this.sampleOrderIndex) + 1) + '次打样信息', '提示', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          sampleOrder
-            .clientCheck({
-              order_id: this.sampleOrderInfo.time_data[this.sampleOrderIndex].id as number
-            })
-            .then((res) => {
-              if (res.data.status) {
-                this.$message.success('已确认')
-              }
-            })
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消'
-          })
-        })
-    },
+    // checkClient() {
+    //   this.$confirm('客户是否确认第' + (Number(this.sampleOrderIndex) + 1) + '次打样信息', '提示', {
+    //     confirmButtonText: '确认',
+    //     cancelButtonText: '取消',
+    //     type: 'warning'
+    //   })
+    //     .then(() => {
+    //       sampleOrder
+    //         .clientCheck({
+    //           order_id: this.sampleOrderInfo.time_data[this.sampleOrderIndex].id as number
+    //         })
+    //         .then((res) => {
+    //           if (res.data.status) {
+    //             this.$message.success('已确认')
+    //             this.init()
+    //           }
+    //         })
+    //     })
+    //     .catch(() => {
+    //       this.$message({
+    //         type: 'info',
+    //         message: '已取消'
+    //       })
+    //     })
+    // },
     // 打样确认完成
     checkComplete() {
       this.$confirm('是否确认第' + (Number(this.sampleOrderIndex) + 1) + '次打样信息已完成', '提示', {
@@ -1364,6 +1299,7 @@ export default Vue.extend({
             .then((res) => {
               if (res.data.status) {
                 this.$message.success('已确认')
+                this.init()
               }
             })
         })

@@ -82,7 +82,7 @@
             <div class="col">合计计划数量</div>
             <div class="col">合计采购数量</div>
             <div class="col">合计加工数量</div>
-            <div class="col">采购比例</div>
+            <div class="col">采购调取比例</div>
             <div class="col">审核状态</div>
             <div class="col">创建人</div>
             <div class="col">创建日期</div>
@@ -96,7 +96,7 @@
             <div class="col">{{item.group_name}}</div>
             <div class="col">{{item.total_plan_number}}</div>
             <div class="col">{{item.total_order_number}}</div>
-            <div class="col">{{item.material_order_progress || 0}}</div>
+            <div class="col">{{item.total_process_number || 0}}</div>
             <div class="col"
               :class="item.total_plan_number>item.total_order_number?'orange':'green'">{{$toFixed(item.total_order_number/item.total_plan_number*100)}}%</div>
             <div class="col"

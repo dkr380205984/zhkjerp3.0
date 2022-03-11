@@ -206,8 +206,22 @@
                     </div>
                   </div>
                   <div class="tcol"
-                    :class="itemChild.production_number?'blue':'gray'">{{itemChild.production_number||'无计划值'}}</div>
-                  <div class="tcol">{{itemChild.need_number}}{{itemChild.unit}}</div>
+                    :class="itemChild.production_number?'blue':'gray'">
+                    <div class="elCtn">
+                      <el-input v-model="itemChild.production_number"
+                        placeholder="无计划值"
+                        @input="(ev)=>{
+                        itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='g'||itemChild.unit==='kg'?1000:1));
+                        itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)}">
+                        <template slot="append">
+                          {{itemChild.unit==='kg'?'g':itemChild.unit}}
+                        </template>
+                      </el-input>
+                    </div>
+                  </div>
+                  <div class="tcol">
+                    {{itemChild.need_number}}{{itemChild.unit}}
+                  </div>
                   <div class="tcol">
                     <div class="elCtn">
                       <el-input v-model="itemChild.loss"
@@ -355,7 +369,17 @@
                     </div>
                   </div>
                   <div class="tcol"
-                    :class="itemChild.production_number?'blue':'gray'">{{itemChild.production_number||'无计划值'}}</div>
+                    :class="itemChild.production_number?'blue':'gray'">
+                    <el-input v-model="itemChild.production_number"
+                      placeholder="无计划值"
+                      @input="(ev)=>{
+                        itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='g'||itemChild.unit==='kg'?1000:1));
+                        itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)}">
+                      <template slot="append">
+                        {{itemChild.unit==='kg'?'g':itemChild.unit}}
+                      </template>
+                    </el-input>
+                  </div>
                   <div class="tcol">{{itemChild.need_number}}{{itemChild.unit}}</div>
                   <div class="tcol">
                     <div class="elCtn">

@@ -17,6 +17,7 @@ import zhDeductDetail from './zhDeduct/zhDeductDetail.vue'
 import associatedPage from './associatedPage/associatedPage.vue'
 import zhImage from './zhImage/zhImage.vue'
 import todayIsHoliday from './todayIsHoliday/todayIsHoliday.vue'
+import storeSurplus from './storeSurplus/storeSurplus.vue'
 import vue from '@handsontable/vue'
 export default {
   install: (Vue: any) => {
@@ -39,5 +40,6 @@ export default {
     Vue.component('associatedPage', associatedPage)
     Vue.component('zhImage', zhImage)
     Vue.component('todayIsHoliday', todayIsHoliday)
+    Vue.component('storeSurplus', storeSurplus)
   }
 }

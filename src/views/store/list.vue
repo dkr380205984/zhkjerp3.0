@@ -140,7 +140,8 @@
             @click="item.check=!item.check;$forceUpdate()">
             <div class="col">
               <el-checkbox v-model="item.check"
-                disabled>{{item.store}}/{{item.secondary_store}}</el-checkbox>
+                disabled
+                style="white-space: normal;display: flex;align-items: center;">{{item.store}}/{{item.secondary_store}}</el-checkbox>
             </div>
             <div class="col">{{item.material_name}}</div>
             <div class="col">{{item.material_color}}</div>

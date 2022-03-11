@@ -252,7 +252,7 @@ export default Vue.extend({
             return 'hoverBlue'
           },
           fn: (item: any) => {
-            this.$router.push('/accessoriesManage/detail?id=' + item.id)
+            this.$router.push('/accessoriesManage/detail?id=' + item.order_id + '&sampleOrderIndex=' + item.id)
           }
         }
       ]
@@ -317,7 +317,7 @@ export default Vue.extend({
     getList() {
       this.loading = true
       order
-        .list({
+        .timeList({
           order_type: this.order_type,
           keyword: this.keyword,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',

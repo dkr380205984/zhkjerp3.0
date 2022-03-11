@@ -328,7 +328,7 @@
                     style="flex:1.3">
                     <div class="oprCtn">
                       <div class="opr hoverOrange"
-                        @click="materialProcessUpdataInfo=$clone(itemProcess);materialProcessUpdataFlag=true">修改</div>
+                        @click="goUpdateMaterialProcess(itemProcess);materialProcessUpdataFlag=true">修改</div>
                       <div class="opr hoverGreen"
                         @click="$openUrl('/materialManage/processPrint?id='+itemProcess.id)">打印</div>
                       <div class="opr hoverRed"
@@ -1685,7 +1685,6 @@
           </div>
         </div>
         <div class="contentCtn">
-          <div class="description">加工单不能修改加工单位,加工工序以及需要加工的物料名称</div>
           <div class="editCtn">
             <div class="row">
               <div class="col">
@@ -1694,9 +1693,9 @@
                   <span class="explanation">(默认)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请选择加工单位"
-                    v-model="materialProcessUpdataInfo.client_name"
-                    disabled></el-input>
+                  <el-cascader placeholder="请选择加工单位"
+                    v-model="materialProcessUpdataInfo.client_id_arr"
+                    :options="prcessClientList"></el-cascader>
                 </div>
               </div>
               <div class="col">
@@ -1750,8 +1749,7 @@
                 </div>
                 <div class="info elCtn">
                   <el-input placeholder="请选择订购物料"
-                    v-model="itemMat.material_order_name"
-                    disabled>
+                    v-model="itemMat.material_order_name">
                   </el-input>
                 </div>
               </div>
@@ -2033,10 +2031,14 @@ export default Vue.extend({
       materialSupplementInfo: {
         order_id: '',
         rel_doc_id: '',
-        bear_client_id: '',
         client_id: '',
         client_name: '',
-        bear_price: '',
+        client_data: [
+          {
+            bear_client_id: '',
+            bear_price: ''
+          }
+        ],
         desc: '',
         info_data: [
           {
@@ -2884,6 +2886,19 @@ export default Vue.extend({
           }
         })
       }
+    },
+    goUpdateMaterialProcess(itemProcess: MaterialProcessInfo) {
+      this.materialProcessUpdataInfo = this.$clone(itemProcess)
+      this.prcessClientList.forEach((item) => {
+        item.children!.forEach((itemChild) => {
+          itemChild.children!.forEach((itemSon) => {
+            if (itemSon.value === this.materialProcessUpdataInfo.client_id) {
+              // @ts-ignore
+              this.materialProcessUpdataInfo.client_id_arr = [item.value, itemChild.value, itemSon.value]
+            }
+          })
+        })
+      })
     },
     updataMaterialProcess() {
       const formCheck = this.materialProcessUpdataInfo.info_data.some((itemChild) => {

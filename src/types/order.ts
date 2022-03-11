@@ -39,6 +39,7 @@ export interface OrderBatch {
       process_name: string
     }>
     product_info: Array<{
+      id?: string | number
       check?: boolean // 前端用
       material_info?: CraftMaterialInfo[] //有工艺单就有物料信息
       size_color?: string // 前端使用
@@ -49,6 +50,7 @@ export interface OrderBatch {
       number: string | number
       price: string | number
       plan_number?: string | number
+      real_number?: string | number
     }>
   }>
 }

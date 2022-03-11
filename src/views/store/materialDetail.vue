@@ -182,6 +182,7 @@
                   <div class="tcol">数量</div>
                 </div>
               </div>
+              <div class="tcol">关联单据</div>
               <div class="tcol">日期</div>
               <div class="tcol">操作</div>
             </div>
@@ -246,6 +247,9 @@
                     :class="itemChild.batch_code||itemChild.vat_code?'':'gray'">{{itemChild.batch_code||'无'}}/{{itemChild.vat_code||'无'}}/{{itemChild.color_code||'无'}}</div>
                   <div class="tcol">{{itemChild.number}}kg</div>
                 </div>
+              </div>
+              <div class="tcol">
+                {{item.rel_doc_info.code || '无'}}
               </div>
               <div class="tcol">{{item.complete_time}}</div>
               <div class="tcol oprCtn">
@@ -676,7 +680,6 @@ import { store, materialStock, exportExcel } from '@/assets/js/api'
 import { yarnAttributeArr } from '@/assets/js/dictionary'
 import { StoreDetail } from '@/types/store'
 import { MaterialStockInfo, MaterialStockLog } from '@/types/materialStock'
-import { CascaderInfo } from '@/types/vuex'
 import { stockType } from '@/assets/js/dictionary'
 export default Vue.extend({
   data(): {
