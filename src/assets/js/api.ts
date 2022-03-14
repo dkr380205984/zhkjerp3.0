@@ -703,6 +703,8 @@ const workshop = {
       staff_id: number | string
       process_name: number | string
       process_type: number | string
+      process_desc: string
+      extra_number: number | string
       order_product_id: number | string
       product_id: number | string
       size_id: number | string
