@@ -1,45 +1,54 @@
 @import '../printEasy.less';
 @import '../printMenu.less';
 @import '../popup.less';
-#printTag{
+
+#printTag {
   page-break-before: always;
   page-break-after: always;
   height: auto;
   max-height: 330px;
-  max-width: 226px;
-  padding: 20px;
+  max-width: 148px;
+  padding-left: 17px;
+  padding-top: 12px;
   box-sizing: border-box;
-  font-size: 12px;
-  overflow: hidden;
-  line-height: 1em;
-  .tag_item{
+  line-height: 10px;
+  font-size: 8px;
+
+  .tag_item {
     height: auto;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
     width: 100%;
     display: flex;
     align-items: flex-start;
   }
-  .tag_label{
+
+  .tag_label {
     min-width: 5em;
     text-align: left;
   }
-  .tag_info{
+
+  .tag_info {
     width: 100%;
     word-break: break-all;
   }
-  .col{
+
+  .col {
     flex-direction: column;
   }
-  .tag_qrCode{
-    width: 80px;
-    height: 80px;
+
+  .tag_qrCode {
+    width: 50px;
+    height: 50px;
     margin: 0 auto;
   }
-  .tag_text{
+
+  .tag_text {
     margin: 0 auto;
+    line-height: 15px;
   }
 }
-.setting_sign_style{
+
+.setting_sign_style {
   position: fixed;
   top: 0;
   left: 0;
@@ -51,7 +60,8 @@
   display: flex;
   flex-direction: column;
   padding: 4px 0;
-  .setting_item{
+
+  .setting_item {
     width: 100%;
     min-height: 32px;
     display: flex;
@@ -60,12 +70,14 @@
     padding: 0 16px;
     box-sizing: border-box;
     cursor: pointer;
-    &:hover{
+
+    &:hover {
       background-color: #CCC;
     }
-    &.checked::after{
+
+    &.checked::after {
       content: '当前模式';
-      color: rgba(0,0,0,0.4);
+      color: rgba(0, 0, 0, 0.4);
     }
   }
 }

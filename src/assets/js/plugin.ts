@@ -294,6 +294,20 @@ const plugin = {
 
     })
   },
+  checkPhone(phoneNumber: string) {
+    if (!(/^1[34578]\d{9}$/.test(phoneNumber))) {
+      return false;
+    }
+    return true
+  },
+  checkIdCardNumber(idCardNumber: string) {
+    // 身份证号码为15位或者18位，15位时全为数字，18位前17位为数字，最后一位是校验位，可能为数字或字符X 
+    let reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+    if (reg.test(idCardNumber) === false) {
+      return false;
+    }
+    return true
+  },
   addItem<T>(father: T[], son: T): void {
     father.push(son)
   },
@@ -485,6 +499,8 @@ export default {
     Vue.prototype.$downloadExcel = plugin.downloadExcel
     Vue.prototype.$checkCommonInfo = plugin.checkCommonInfo
     Vue.prototype.$addItem = plugin.addItem
+    Vue.prototype.$checkPhone = plugin.checkPhone
+    Vue.prototype.$checkIdCardNumber = plugin.checkIdCardNumber
     Vue.prototype.$deleteItem = plugin.deleteItem
     Vue.prototype.$submitLock = submitLock()
     Vue.prototype.$goElView = goElView
