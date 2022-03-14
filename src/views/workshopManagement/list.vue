@@ -161,7 +161,7 @@ export default Vue.extend({
           index: 2
         },
         {
-          key: 'has_material_plan',
+          key: 'has_production_inspection',
           name: '管理添加状态',
           filterArr: ['', '已添加', '待添加'],
           classArr: ['', 'blue', 'orange'],

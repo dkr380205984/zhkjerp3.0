@@ -622,6 +622,7 @@ export default Vue.extend({
   methods: {
     init() {
       this.loading = true
+      this.processList = []
       this.order_id = this.$route.query.id
       workshop.detail({ order_id: this.order_id }).then((res) => {
         res.data.data.forEach((items: any) => {
@@ -803,7 +804,7 @@ export default Vue.extend({
               order_product_id: items.productNameId,
               product_id: items.productId,
               price: items.unitPrice || 0,
-              staff_id: typeof item.worker === 'object' ? item.worker[1] : (typeof item.worker === 'number' ? item.worker : item.worker_id),
+              staff_id: item.worker[1],
               size_id: itemChild.chooseId.split(',')[0],
               color_id: itemChild.chooseId.split(',')[1],
               number: itemChild.complete_number || 0,
@@ -928,8 +929,7 @@ export default Vue.extend({
                     itemColor.complete_time = this.getNowFormatDate()
                     itemColor.size_name = itemSize.size_name
                     obj.infoData[0].sizeColorList.push(itemColor)
-                    obj.infoData[0].worker = staffNameItem.staff_name
-                    obj.infoData[0].worker_id = itemColor.staff_id
+                    obj.infoData[0].worker = ["",itemColor.info.staff_id]
 
                     // console.log(sizeColorItem)
                     // item.product_info.forEach((itemColor: any, itemIndex: any) => {
