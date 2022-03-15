@@ -392,7 +392,10 @@ export default Vue.extend({
       }
       this.changeRouter()
     },
-    changeRouter() {
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
       this.$router.push(
         '/quotedPrice/list?page=' +
           this.page +

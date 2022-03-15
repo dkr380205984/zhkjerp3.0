@@ -98,7 +98,10 @@ export default Vue.extend({
     }
   },
   methods: {
-    changeRouter() {
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
       this.getList()
     },
     getList() {

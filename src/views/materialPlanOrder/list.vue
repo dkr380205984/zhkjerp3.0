@@ -227,7 +227,10 @@ export default Vue.extend({
       this.material_name = query.material_name || ''
       this.year = query.year || ''
     },
-    changeRouter() {
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
       this.$router.push(
         '/materialPlanOrder/list?page=' +
           this.page +

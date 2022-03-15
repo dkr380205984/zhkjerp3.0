@@ -141,5 +141,32 @@
         }
       }
     }
+    .priceCtn{
+      float: left;
+      display: flex;
+      align-items: center;
+      height: 100%;
+      position: relative;
+      .priceTable{
+        box-shadow:1px 1px 2px rgba(0,0,0,0.03);
+        position: absolute;
+        width: 600px;
+        height: 400px;
+        bottom: 100%;
+        z-index: 1;
+        .module{
+          background: #fff;
+          margin-bottom: 0;
+          height: 100%;
+          .titleCtn{
+            padding: 0 12px;
+          }
+          .contentCtn{
+            height: 345px;
+            overflow: auto;
+          }
+        }
+      }
+    }
   }
 }

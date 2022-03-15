@@ -88,7 +88,7 @@ export default Vue.extend({
             url: '/productionPlan/list?page=1&type=1'
           },
           {
-            name: '产品检验',
+            name: '检验收发',
             id: '9-3',
             icon: 'icon-shengchanpinjianyan',
             url: '/inspection/list?page=1&type=1'
@@ -147,7 +147,7 @@ export default Vue.extend({
             name: '系统设置',
             id: 16,
             icon: 'icon-xitongshezhi',
-            url: '/setting?pName=产品设置&cName=品类'
+            url: '/setting'
           }
         ]
         // finance: [

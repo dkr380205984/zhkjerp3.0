@@ -337,6 +337,7 @@ const quotedPrice = {
   oprLog: (params: DetailParams) => http.get(`${baseUrl}/quote/activity/logs`, params), // 操作记录
   descCreate: (params: { name?: string, type: string, desc: string, category_id: string | number }) => http.post(`${baseUrl}/quote/explain/save`, params, 'application/json'),
   descDetail: (params: any) => http.get(`${baseUrl}/quote/explain/detail`, params),
+  detailByOrder: (params: { order_id?: string | number, order_time_id?: string | number }) => http.get(`${baseUrl}/quote/by/order`, params),
 }
 
 // 列表设置信息 type 1:报价单列表 , 2:样单列表
@@ -648,7 +649,8 @@ const clientBind = {
   list: (params?: ListParams) => http.get(`${baseUrl}/workshop/apply/list`, params),
   qrCode: (params?: ListParams) => http.get(`${baseUrl}/workshop/qrcode`, params),
   bind: (params: { client_id: string | number, uuid: string }) => http.post(`${baseUrl}/workshop/client/save`, params, 'application/json'),
-  unbind: (params: { client_id: string | number }) => http.post(`${baseUrl}/workshop/client/unbind`, params, 'application/json')
+  unbind: (params: { client_id: string | number }) => http.post(`${baseUrl}/workshop/client/unbind`, params, 'application/json'),
+  cancel: (params: { uuid: string }) => http.post(`${baseUrl}//workshop/client/cancel`, params, 'application/json'),
 }
 
 // 员工管理

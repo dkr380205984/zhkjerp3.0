@@ -156,6 +156,8 @@
           <div class="box"
             v-for="item in clientBindList"
             :key="item.id">
+            <div class="close hoverRed"
+              @click="cancelBind(item.uuid)">忽略</div>
             <div class="userName">{{item.user.name}}</div>
             <div class="phone">{{item.user.user_name}}</div>
             <div class="elCtn client">
@@ -239,7 +241,10 @@ export default Vue.extend({
         ? this.clientTypeList.find((item: any) => item.id === Number(query.clientType)).public_tag
         : []
     },
-    changeRouter() {
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
       this.$router.push(
         '/client/list?page=' +
           this.page +
@@ -404,6 +409,36 @@ export default Vue.extend({
       } else if (!info.client_id) {
         this.$message.error('请选择需要绑定的单位')
       }
+    },
+    // 忽略消息
+    cancelBind(uuid: string, index: number) {
+      this.$confirm('是否忽略该用户申请绑定消息，忽略后将从申请列表删除此消息', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          clientBind
+            .cancel({
+              uuid: uuid
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message.success('操作成功')
+                clientBind.list().then((res) => {
+                  if (res.data.status) {
+                    this.clientBindList = res.data.data
+                  }
+                })
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        })
     }
   },
   created() {
@@ -416,7 +451,6 @@ export default Vue.extend({
     clientBind.list().then((res) => {
       if (res.data.status) {
         this.clientBindList = res.data.data
-        console.log(this.clientBindList)
         this.getUnBindClient()
       }
     })

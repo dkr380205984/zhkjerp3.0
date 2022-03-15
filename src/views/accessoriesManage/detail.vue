@@ -701,6 +701,38 @@
     </div>
     <div class="bottomFixBar">
       <div class="main">
+        <!-- 报价单表格 -->
+        <div class="priceCtn fl">
+          <div class="btn"
+            :class="{'backHoverBlue':priceMaterialList.length>0,'backGray':priceMaterialList.length===0}"
+            @click="showPrice=!showPrice">{{priceMaterialList.length>0?(showPrice?'关闭报价':'查看报价'):'暂无报价'}}</div>
+          <div class="priceTable"
+            v-show="showPrice && priceMaterialList.length>0">
+            <div class="module">
+              <div class="titleCtn">
+                <div class="title">报价信息</div>
+              </div>
+              <div class="contentCtn">
+                <div class="tableCtn">
+                  <div class="thead">
+                    <div class="trow">
+                      <div class="tcol">原料名称</div>
+                      <div class="tcol">单价</div>
+                    </div>
+                  </div>
+                  <div class="tbody">
+                    <div class="trow"
+                      v-for="item in priceMaterialList"
+                      :key="item">
+                      <div class="tcol">{{item.material_name}}</div>
+                      <div class="tcol">{{item.price}}元/{{item.unit==='g'?'kg':item.unit}}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="btnCtn">
           <div class="btn backHoverBlue"
             @click="materialOrderFlag = true">订购辅料</div>
@@ -714,12 +746,13 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { order, materialOrder, materialStock, store } from '@/assets/js/api'
+import { order, materialOrder, materialStock, store, quotedPrice } from '@/assets/js/api'
 import { CascaderInfo } from '@/types/vuex'
 import { MaterialOrderInfo, MaterialListInfo } from '@/types/materialOrder'
 import { yarnAttributeArr, yarnProcessArr } from '@/assets/js/dictionary'
 import { MaterialProcessInfo } from '@/types/materialProcess'
 import { MaterialStockInfo } from '@/types/materialStock'
+import { QuotedPriceInfo } from '@/types/quotedPrice'
 export default Vue.extend({
   data(): {
     materialOrderInfo: MaterialOrderInfo[]
@@ -878,7 +911,9 @@ export default Vue.extend({
         ]
       },
       orderIndex: 0,
-      storeList: []
+      storeList: [],
+      showPrice: false,
+      priceMaterialList: [] // 报价单报价信息
     }
   },
   computed: {
@@ -1205,6 +1240,24 @@ export default Vue.extend({
             })
           }
         })
+      })
+    // 优化报价信息
+    quotedPrice
+      .detailByOrder({
+        order_time_id: Number(this.$route.query.sampleOrderIndex)
+      })
+      .then((res) => {
+        if (res.data.status) {
+          if (res.data.data.length > 0) {
+            res.data.data.forEach((item: QuotedPriceInfo) => {
+              item.product_data.forEach((itemPro) => {
+                itemPro.assist_material_data.forEach((itemMat) => {
+                  this.priceMaterialList.push(itemMat)
+                })
+              })
+            })
+          }
+        }
       })
   }
 })

@@ -1964,6 +1964,38 @@
     </div>
     <div class="bottomFixBar">
       <div class="main">
+        <!-- 报价单表格 -->
+        <div class="priceCtn fl">
+          <div class="btn"
+            :class="{'backHoverBlue':priceMaterialList.length>0,'backGray':priceMaterialList.length===0}"
+            @click="showPrice=!showPrice">{{priceMaterialList.length>0?(showPrice?'关闭报价':'查看报价'):'暂无报价'}}</div>
+          <div class="priceTable"
+            v-show="showPrice && priceMaterialList.length>0">
+            <div class="module">
+              <div class="titleCtn">
+                <div class="title">报价信息</div>
+              </div>
+              <div class="contentCtn">
+                <div class="tableCtn">
+                  <div class="thead">
+                    <div class="trow">
+                      <div class="tcol">原料名称</div>
+                      <div class="tcol">单价</div>
+                    </div>
+                  </div>
+                  <div class="tbody">
+                    <div class="trow"
+                      v-for="item in priceMaterialList"
+                      :key="item">
+                      <div class="tcol">{{item.material_name}}</div>
+                      <div class="tcol">{{item.price}}元/{{item.unit==='g'?'kg':item.unit}}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
@@ -1987,11 +2019,20 @@ import Vue from 'vue'
 import { MaterialOrderInfo, MaterialListInfo } from '@/types/materialOrder'
 import { MaterialProcessInfo } from '@/types/materialProcess'
 import { MaterialPlanInfo, MaterialPlanGatherData } from '@/types/materialPlan'
-import { materialPlan, materialOrder, materialProcess, store, materialStock, materialSupplement } from '@/assets/js/api'
+import {
+  materialPlan,
+  materialOrder,
+  materialProcess,
+  store,
+  materialStock,
+  materialSupplement,
+  quotedPrice
+} from '@/assets/js/api'
 import { CascaderInfo } from '@/types/vuex'
 import { yarnAttributeArr, yarnProcessArr } from '@/assets/js/dictionary'
 import { MaterialStockInfo } from '@/types/materialStock'
 import { MaterialSupplementInfo } from '@/types/materialSupplement'
+import { QuotedPriceInfo } from '@/types/quotedPrice'
 export default Vue.extend({
   data(): {
     materialSupplementInfo: MaterialSupplementInfo
@@ -2237,7 +2278,9 @@ export default Vue.extend({
       materialOrderIndex: '0', // el-tab-pane组件需要字符串
       materialStockIndex: '0',
       yarnAttributeList: yarnAttributeArr,
-      yarnProcessList: yarnProcessArr
+      yarnProcessList: yarnProcessArr,
+      showPrice: false,
+      priceMaterialList: [] // 报价单报价信息
     }
   },
   methods: {
@@ -2274,7 +2317,6 @@ export default Vue.extend({
         } else {
           this.materialPlanInfo = res[0].data.data
         }
-
         this.materialOrderList = res[1].data.data
         if (this.materialOrderList.length > 0) {
           this.materialOrderIndex = this.materialOrderList[0].id!.toString()
@@ -2284,6 +2326,27 @@ export default Vue.extend({
           this.materialStockIndex = this.materialStockLog[0].id!.toString()
         }
         this.loading = false
+
+        // 优化报价信息
+        quotedPrice
+          .detailByOrder({
+            order_time_id: this.$route.query.supFlag
+              ? this.materialSupplementInfo.order_id
+              : this.materialPlanInfo.order_id
+          })
+          .then((res) => {
+            if (res.data.status) {
+              if (res.data.data.length > 0) {
+                res.data.data.forEach((item: QuotedPriceInfo) => {
+                  item.product_data.forEach((itemPro) => {
+                    itemPro.material_data.forEach((itemMat) => {
+                      this.priceMaterialList.push(itemMat)
+                    })
+                  })
+                })
+              }
+            }
+          })
       })
     },
     // 原料颜色搜索

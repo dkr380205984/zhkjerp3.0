@@ -50,32 +50,43 @@
         </div>
         <div class="list">
           <!-- 表格 -->
-          <el-table
-            ref="multipleTable"
+          <el-table ref="multipleTable"
             :data="list"
             tooltip-effect="dark"
             :row-key="rowKey"
             style="width: 100%"
-            @selection-change="handleSelectionChange"
-          >
-            <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-            <el-table-column prop="code" label="报销单编号"></el-table-column>
-            <el-table-column prop="order_code" label="报销人"></el-table-column>
-            <el-table-column prop="group_name" label="所属小组"></el-table-column>
-            <el-table-column prop="total_plan_number" label="报销金额"></el-table-column>
-            <el-table-column prop="total_order_number" label="相关凭证"></el-table-column>
-            <el-table-column prop="material_order_progress" label="审核状态"></el-table-column>
-            <el-table-column prop="material_order_progress" label="审核人"></el-table-column>
+            @selection-change="handleSelectionChange">
+            <el-table-column type="selection"
+              width="55"
+              :reserve-selection="true"></el-table-column>
+            <el-table-column prop="code"
+              label="报销单编号"></el-table-column>
+            <el-table-column prop="order_code"
+              label="报销人"></el-table-column>
+            <el-table-column prop="group_name"
+              label="所属小组"></el-table-column>
+            <el-table-column prop="total_plan_number"
+              label="报销金额"></el-table-column>
+            <el-table-column prop="total_order_number"
+              label="相关凭证"></el-table-column>
+            <el-table-column prop="material_order_progress"
+              label="审核状态"></el-table-column>
+            <el-table-column prop="material_order_progress"
+              label="审核人"></el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <span class="opr hoverBlue" @click="$router.push('/reimbursementManage/detail?id=' + scope.row.id)">详情</span>
-                <span class="opr hoverOrange" @click="$router.push('/reimbursementManage/create?id=' + scope.row.id+'&isEdit=1')">修改</span>
-                <span class="opr hoverRed" @click="deleteReimbursement(scope.row)">删除</span>
+                <span class="opr hoverBlue"
+                  @click="$router.push('/reimbursementManage/detail?id=' + scope.row.id)">详情</span>
+                <span class="opr hoverOrange"
+                  @click="$router.push('/reimbursementManage/create?id=' + scope.row.id+'&isEdit=1')">修改</span>
+                <span class="opr hoverRed"
+                  @click="deleteReimbursement(scope.row)">删除</span>
               </template>
             </el-table-column>
           </el-table>
         </div>
-        <div class="pageCtn" style="align-items: center;justify-content: space-between;">
+        <div class="pageCtn"
+          style="align-items: center;justify-content: space-between;">
           <div>报销金额 <span style="margin-left:50px">{{1111111111111111}}</span> 元</div>
           <el-pagination background
             :page-size="limit"
@@ -127,7 +138,6 @@ export default Vue.extend({
       checkedCount: [],
       checked: false,
       originalSetting: [
-
         {
           key: 'is_check',
           name: '审核状态',
@@ -143,7 +153,7 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 9
-        },
+        }
       ],
       pickerOptions: {
         shortcuts: [
@@ -230,7 +240,7 @@ export default Vue.extend({
           }
         }
       ],
-      multipleSelection: [],
+      multipleSelection: []
     }
   },
   watch: {
@@ -270,10 +280,13 @@ export default Vue.extend({
     rowKey(row: { id: any }) {
       return row.id
     },
-    deleteReimbursement(item: any){
+    deleteReimbursement(item: any) {
       console.log(item)
     },
-    changeRouter() {
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
       this.$router.push(
         '/reimbursementManage/list?page=' +
           this.page +

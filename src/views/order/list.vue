@@ -103,7 +103,7 @@
               placeholder="订单状态筛选"
               @change="changeRouter">
               <el-option label="全部"
-                :value="0"></el-option>
+                value="null"></el-option>
               <el-option label="已创建"
                 :value="1"></el-option>
               <el-option label="进行中"
@@ -201,8 +201,8 @@ export default Vue.extend({
       },
       group_id: '',
       user_id: '',
-      type: 0,
-      status: '0',
+      type: 'null',
+      status: 'null',
       date: [],
       limit: 10,
       total: 1,
@@ -340,8 +340,8 @@ export default Vue.extend({
       ],
       originalSetting: [
         {
-          key: 'code',
-          name: '订单号',
+          key: 'system_code',
+          name: '系统编号',
           ifShow: true,
           ifLock: true,
           ifCaogao: 'is_draft',
@@ -349,18 +349,25 @@ export default Vue.extend({
           index: 0
         },
         {
+          key: 'code',
+          name: '订单号',
+          ifShow: true,
+          ifLock: true,
+          index: 1
+        },
+        {
           key: 'client_name',
           name: '下单公司',
           ifShow: true,
           ifLock: true,
-          index: 1
+          index: 2
         },
         {
           key: 'contacts_name',
           name: '公司联系人',
           ifShow: true,
           ifLock: false,
-          index: 2
+          index: 3
         },
         {
           key: 'product_code',
@@ -368,7 +375,7 @@ export default Vue.extend({
           name: '产品编号',
           ifShow: true,
           ifLock: false,
-          index: 3,
+          index: 4,
           from: 'product_data',
           mark: true
         },
@@ -378,7 +385,7 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           ifImage: true,
-          index: 4,
+          index: 5,
           from: 'product_data'
         },
         {
@@ -386,7 +393,7 @@ export default Vue.extend({
           name: '流程进度',
           ifShow: true,
           ifLock: false,
-          index: 5,
+          index: 6,
           specialForOrderPrcess: 'order'
         },
         {
@@ -394,7 +401,7 @@ export default Vue.extend({
           name: '订单状态',
           ifShow: true,
           ifLock: false,
-          index: 6,
+          index: 7,
           filterArr: ['', '已创建', '进行中', '已完成', '已结算', '已取消'],
           classArr: ['', 'orange', 'blue', 'green', 'green', 'red']
         },
@@ -403,7 +410,7 @@ export default Vue.extend({
           name: '下单总数',
           ifShow: true,
           ifLock: false,
-          index: 7,
+          index: 8,
           errVal: '0'
         },
         {
@@ -411,7 +418,7 @@ export default Vue.extend({
           name: '下单总额',
           ifShow: true,
           ifLock: false,
-          index: 8,
+          index: 9,
           unit: '元',
           errVal: '0'
         },
@@ -420,14 +427,14 @@ export default Vue.extend({
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 9
+          index: 10
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 10
+          index: 11
         }
       ],
       pickerOptions: {
@@ -529,7 +536,7 @@ export default Vue.extend({
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.keyword = query.keyword || ''
       this.status = query.status || 'null'
-      this.type = Number(query.type) || 0
+      this.type = Number(query.type) || 'null'
       this.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.date = query.date ? (query.date as string).split(',') : []
@@ -569,7 +576,10 @@ export default Vue.extend({
         this.mainLoading = false
       }, 10000)
     },
-    changeRouter() {
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
       this.$router.push(
         '/order/list?page=' +
           this.page +
@@ -603,7 +613,7 @@ export default Vue.extend({
           this.user_id = ''
           this.group_id = ''
           this.date = []
-          this.type = 0
+          this.type = 'null'
           this.status = 'null'
           this.limit = 10
           this.changeRouter()

@@ -185,7 +185,10 @@ export default Vue.extend({
       this.limit = Number(query.limit) || 10
       this.user_id = query.user_id || ''
     },
-    changeRouter() {
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
       this.$router.push(
         '/materialManage/supList?page=' +
           this.page +

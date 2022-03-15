@@ -155,7 +155,10 @@ export default Vue.extend({
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
     },
-    changeRouter() {
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
       this.$router.push(
         '/packManage/list?page=' +
           this.page +

@@ -868,7 +868,10 @@ export default Vue.extend({
         return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
       }
     },
-    changeRouter() {
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
       this.$router.push(
         '/store/list?page=' +
           this.page +

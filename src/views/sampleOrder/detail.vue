@@ -30,7 +30,7 @@
         <div class="row">
           <div class="col">
             <div class="label">创建人：</div>
-            <div class="text">{{sampleOrderInfo.group_name}}</div>
+            <div class="text">{{sampleOrderInfo.user_name}}</div>
           </div>
           <div class="col">
             <div class="label">创建时间：</div>
@@ -211,7 +211,7 @@
                     <div class="tcol">打样数量</div>
                   </div>
                 </div>
-                <div class="tcol">工艺单状态</div>
+                <div class="tcol">关联单据</div>
                 <!-- <div class="tcol">样品描述</div> -->
                 <div class="tcol">客户确认状态</div>
                 <div class="tcol">客户确认操作</div>
@@ -256,7 +256,7 @@
                   </div>
                   <div class="tcol stateCtn">
                     <div class="state"
-                      @click="item.craft_list_id?$router.push('/craft/detail?id='+item.craft_list_id):$router.push('/craft/create?id=' + item.product_id)">
+                      @click="item.craft_list_id?$openUrl('/craft/detail?id='+item.craft_list_id):$openUrl('/craft/create?id=' + item.product_id)">
                       <div v-if="item.category==='围巾'"
                         class="circle"
                         :class="{'backGray':!item.craft_list_id,'backBlue':item.craft_list_id}">工</div>
@@ -264,7 +264,7 @@
                         class="gray">无需工艺单</div>
                     </div>
                     <div class="state"
-                      @click="item.rel_quote_info.quote_id?$router.push('/quotedPrice/detail?id='+item.rel_quote_info.quote_id):$router.push('/quotedPrice/create?sampleOrderId=' + $route.query.id + '&product_id='+item.product_id +'&sampleOrderIndex='+ sampleOrderIndex)">
+                      @click="item.rel_quote_info.quote_id?$openUrl('/quotedPrice/detail?id='+item.rel_quote_info.quote_id):$openUrl('/quotedPrice/create?sampleOrderId=' + $route.query.id + '&product_id='+item.product_id +'&sampleOrderIndex='+ sampleOrderIndex)">
                       <div class="circle"
                         :class="{'backGray':!item.rel_quote_info.quote_id,'backBlue':item.rel_quote_info.quote_id}">报</div>
                     </div>

@@ -527,7 +527,10 @@ export default Vue.extend({
       this.name = query.name
       this.product_code = query.product_code
     },
-    changeRouter() {
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
       this.$router.push(
         '/store/productList?page=' +
           this.page +

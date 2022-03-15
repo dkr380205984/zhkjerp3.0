@@ -1,97 +1,112 @@
 <template>
-  <div id="workerManage" class="bodyContainer">
-    <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
+  <div id="workerManage"
+    class="bodyContainer">
+    <div class="module"
+      v-loading="mainLoading"
+      element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">员工列表</div>
       </div>
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input
-              v-model="keyword"
+            <el-input v-model="keyword"
               placeholder="员工编号、姓名搜索"
-              @keydown.enter.native="changeRouter"
-            ></el-input>
+              @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter" v-model="department" placeholder="部门筛选">
-              <el-option
-                v-for="(item, index) in departmentList"
+            <el-select @change="changeRouter"
+              v-model="department"
+              placeholder="部门筛选">
+              <el-option v-for="(item, index) in departmentList"
                 :key="index"
                 :value="item.name"
-                :label="item.name"
-              ></el-option>
+                :label="item.name"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter" v-model="status" placeholder="员工状态筛选">
-              <el-option value="1" label="在职"></el-option>
-              <el-option value="2" label="离职"></el-option>
+            <el-select @change="changeRouter"
+              v-model="status"
+              placeholder="员工状态筛选">
+              <el-option value="1"
+                label="在职"></el-option>
+              <el-option value="2"
+                label="离职"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter" v-model="type" placeholder="工种筛选">
-              <el-option value="1" label="临时工"></el-option>
-              <el-option value="2" label="合同工"></el-option>
+            <el-select @change="changeRouter"
+              v-model="type"
+              placeholder="工种筛选">
+              <el-option value="1"
+                label="临时工"></el-option>
+              <el-option value="2"
+                label="合同工"></el-option>
             </el-select>
           </div>
-          <div class="btn borderBtn" @click="reset">重置</div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
         </div>
-        <div class="filterCtn" style="height: 33px">
-          <div class="btn backHoverBlue fr" @click="$router.push('/workerManage/create')">添加员工</div>
+        <div class="filterCtn"
+          style="height: 33px">
+          <div class="btn backHoverBlue fr"
+            @click="$router.push('/workerManage/create')">添加员工</div>
           <div class="btn backHoverBlue fr">
-            <el-upload
-              class="upload-demo"
+            <el-upload class="upload-demo"
               action="/api/import/staff"
               :headers="headers"
               :name="excelfile"
               :show-file-list="false"
-              :on-success="uploadSuccess"
-            >
+              :on-success="uploadSuccess">
               点击上传
             </el-upload>
           </div>
-          <div class="btn backHoverBlue fr" @click="downloadExcel()">下载Excel模板</div>
-          <div
-            :class="
+          <div class="btn backHoverBlue fr"
+            @click="downloadExcel()">下载Excel模板</div>
+          <div :class="
               this.multipleSelection.length !== 0 ? 'btn backHoverOrange fl' : 'btn backHoverOrange fl noCheckOrange'
             "
             @click="batchResignation()"
-            style="margin-left: 0"
-          >
+            style="margin-left: 0">
             批量离职
           </div>
-          <div class="btn backHoverBlue fl" @click="exportExcel()">导出Excel</div>
+          <div class="btn backHoverBlue fl"
+            @click="exportExcel()">导出Excel</div>
         </div>
         <div class="list">
           <!-- 表格 -->
-          <el-table
-            ref="multipleTable"
+          <el-table ref="multipleTable"
             :data="list"
             tooltip-effect="dark"
             :row-key="rowKey"
             style="width: 100%"
-            @selection-change="handleSelectionChange"
-          >
-            <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
+            @selection-change="handleSelectionChange">
+            <el-table-column type="selection"
+              width="55"
+              :reserve-selection="true"></el-table-column>
             <el-table-column label="员工编号">
               <template slot-scope="scope">
-                <div style="cursor: pointer" @click="selectTableRow(scope.row)">{{ scope.row.code }}</div>
+                <div style="cursor: pointer"
+                  @click="selectTableRow(scope.row)">{{ scope.row.code }}</div>
               </template>
             </el-table-column>
             <el-table-column label="员工姓名">
               <template slot-scope="scope">
-                <div style="cursor: pointer" @click="selectTableRow(scope.row)">{{ scope.row.name }}</div>
+                <div style="cursor: pointer"
+                  @click="selectTableRow(scope.row)">{{ scope.row.name }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="phone" label="手机号"></el-table-column>
-            <el-table-column prop="department" label="所属部门"></el-table-column>
+            <el-table-column prop="phone"
+              label="手机号"></el-table-column>
+            <el-table-column prop="department"
+              label="所属部门"></el-table-column>
             <el-table-column label="工种">
               <template slot-scope="scope">
                 {{ scope.row.type === '1' ? '临时工' : scope.row.type === '2' ? '合同工' : '状态有误' }}
               </template>
             </el-table-column>
-            <el-table-column prop="status" label="员工状态">
+            <el-table-column prop="status"
+              label="员工状态">
               <template slot-scope="scope">
                 <div :class="scope.row.status === 1 ? 'blue' : scope.row.status === 2 ? 'orange' : 'red'">
                   {{ scope.row.status === 1 ? '在职' : scope.row.status === 2 ? '离职' : '状态有误' }}
@@ -100,24 +115,23 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <span class="opr hoverBlue" @click="$router.push('/workerManage/detail?id=' + scope.row.id)">详情</span>
-                <span class="opr hoverOrange" @click="$router.push('/workerManage/update?id=' + scope.row.id)"
-                  >修改</span
-                >
-                <span class="opr hoverRed" @click="deleteWorker(scope.row)">离职</span>
+                <span class="opr hoverBlue"
+                  @click="$router.push('/workerManage/detail?id=' + scope.row.id)">详情</span>
+                <span class="opr hoverOrange"
+                  @click="$router.push('/workerManage/update?id=' + scope.row.id)">修改</span>
+                <span class="opr hoverRed"
+                  @click="deleteWorker(scope.row)">离职</span>
               </template>
             </el-table-column>
           </el-table>
         </div>
         <div class="pageCtn">
-          <el-pagination
-            background
+          <el-pagination background
             :page-size="limit"
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
-            @current-change="changeRouter"
-          >
+            @current-change="changeRouter">
           </el-pagination>
         </div>
       </div>
@@ -194,7 +208,10 @@ export default Vue.extend({
         window.location.href = res.data.data
       })
     },
-    changeRouter() {
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
       this.$router.push(
         '/workerManage/list?page=' +
           this.page +

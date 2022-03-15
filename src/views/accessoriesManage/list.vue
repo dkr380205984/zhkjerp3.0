@@ -270,7 +270,10 @@ export default Vue.extend({
       this.order_type = Number(query.order_type) || null
       this.date = query.date ? (query.date as string).split(',') : []
     },
-    changeRouter() {
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
       this.$router.push(
         '/accessoriesManage/list?page=' +
           this.page +

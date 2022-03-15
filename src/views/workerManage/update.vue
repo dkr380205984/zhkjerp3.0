@@ -309,16 +309,15 @@ export default Vue.extend({
         })
         .then((res: any) => {
           this.workProcedure = res.data.data
-        })
-
-      process
-        .list({
-          type: 2
-        })
-        .then((res: any) => {
-          res.data.data.forEach((item: any) => {
-            this.workProcedure.push(item)
-          })
+          process
+            .list({
+              type: 2
+            })
+            .then((ress: any) => {
+              ress.data.data.forEach((item: any) => {
+                this.workProcedure.push(item)
+              })
+            })
         })
     },
     // 保存修改

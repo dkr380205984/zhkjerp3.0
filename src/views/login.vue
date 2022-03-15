@@ -250,8 +250,8 @@ export default Vue.extend({
       }
       login(this.loginInfo).then((res) => {
         if (res.data.code === 200) {
-          window.sessionStorage.setItem('token', res.data.data.access_token)
-          window.sessionStorage.setItem('token_type', res.data.data.token_type)
+          // window.sessionStorage.setItem('token', res.data.data.access_token)
+          // window.sessionStorage.setItem('token_type', res.data.data.token_type)
           getAuthorization().then((res) => {
             // 用户信息里的公司信息先保存了，方便后续切换的时候使用
             // window.sessionStorage.setItem('user_company', JSON.stringify(res.data.data.company_info))

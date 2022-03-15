@@ -1239,7 +1239,7 @@
                   <div class="col">手机号</div>
                   <div class="col">岗位</div>
                   <div class="col">小组</div>
-                  <div class="col">审核权限</div>
+                  <div class="col">管理员权限</div>
                   <div class="col">操作</div>
                 </div>
                 <div class="row"
@@ -1250,7 +1250,7 @@
                   <div class="col">{{ item.phone }}</div>
                   <div class="col">{{ item.station }}</div>
                   <div class="col">{{ item.group_name }}</div>
-                  <div class="col">{{ item.has_check === 1 ? '有审核权限' : '无权限' }}</div>
+                  <div class="col">{{ item.has_check === 1 ? '管理员' : '普通用户' }}</div>
                   <div class="col">
                     <span class="opr hoverRed"
                       @click="deleteUser(item.id)">删除</span>
@@ -1335,7 +1335,6 @@
                     :on-success="uploadCompanySuccess"
                     :before-upload="beforeUpload"
                     :data="postData"
-                    :file-list="[companyInfo.logo]"
                     ref="companyLogo">
                     <img v-if="companyInfo.logo"
                       :src="companyInfo.logo"
@@ -2506,13 +2505,33 @@
               </div>
             </div>
             <div class="row">
-              <div class="label">审核权限：</div>
+              <div class="label">
+                <el-tooltip content="是否只能查看/搜索个人创建的订单、样单、报价单等,不能查看其他人创建的单据。">
+                  <i class="el-icon-question"></i>
+                </el-tooltip>
+                查看权限：
+              </div>
+              <div class="info"
+                style="line-height: 32px">
+                <el-radio v-model="userInfo.only_search_self"
+                  :label="1">查看所有</el-radio>
+                <el-radio v-model="userInfo.only_search_self"
+                  :label="2">仅能查看本人</el-radio>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">
+                <el-tooltip content="管理员拥有以下权限：所有单据审核、修改、删除权限；所有订单、样单详细信息查看权限。">
+                  <i class="el-icon-question"></i>
+                </el-tooltip>
+                管理权限：
+              </div>
               <div class="info"
                 style="line-height: 32px">
                 <el-radio v-model="userInfo.has_check"
-                  :label="1">有</el-radio>
+                  :label="1">管理员</el-radio>
                 <el-radio v-model="userInfo.has_check"
-                  :label="2">无</el-radio>
+                  :label="2">普通用户</el-radio>
               </div>
             </div>
             <div class="row"
@@ -3388,6 +3407,7 @@ export default Vue.extend({
         user_name: '',
         password: '',
         phone: '',
+        only_search_self: 1,
         is_admin: 2, // 1：超管 2：普通用户
         module_info: [],
         has_check: 2,
@@ -5985,6 +6005,34 @@ export default Vue.extend({
   mounted() {
     this.getFilters()
     this.getList()
+    // @ts-ignore 根据权限开放菜单
+    if (this.$getsessionStorage('module_id') && JSON.parse(this.$getsessionStorage('module_id')).length > 0) {
+      const arr = JSON.parse(this.$getsessionStorage('module_id'))
+      if (arr.indexOf('16-1') === -1) {
+        delete this.nav['产品设置']
+      }
+      if (arr.indexOf('16-2') === -1) {
+        delete this.nav['订单设置']
+      }
+      if (arr.indexOf('16-3') === -1) {
+        delete this.nav['报价单设置']
+      }
+      if (arr.indexOf('16-4') === -1) {
+        delete this.nav['工序设置']
+      }
+      if (arr.indexOf('16-5') === -1) {
+        delete this.nav['工艺单设置']
+      }
+      if (arr.indexOf('16-6') === -1) {
+        delete this.nav['物料设置']
+      }
+      if (arr.indexOf('16-7') === -1) {
+        delete this.nav['工厂信息设置']
+      }
+      if (arr.indexOf('16-8') === -1) {
+        delete this.nav['系统账户管理']
+      }
+    }
   }
 })
 </script>

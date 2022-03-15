@@ -298,7 +298,10 @@ export default Vue.extend({
       this.plan_code = query.plan_code || ''
       this.limit = query.limit ? Number(query.limit) : 10
     },
-    changeRouter() {
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
       this.$router.push(
         '/materialStock/list?page=' +
           this.page +
