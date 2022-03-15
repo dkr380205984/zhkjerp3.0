@@ -313,6 +313,7 @@
               <div class="list">
                 <div class="row title">
                   <div class="col">加工工序</div>
+                  <div class="col">工序说明</div>
                   <div class="col">操作</div>
                 </div>
                 <div class="row"
@@ -320,6 +321,13 @@
                   :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
+                    <el-tooltip class="item" effect="dark" :content="item.process_desc || '暂无工序说明'" placement="top">
+                      <div class="blue" style="cursor:pointer">查看</div>
+                    </el-tooltip>
+                  </div>
+                  <div class="col">
+                    <span class="opr hoverOrange"
+                      @click="updateHalfProcess(item)">修改</span>
                     <span class="opr hoverRed"
                       @click="deleteHalfProcess(item.id)">删除</span>
                   </div>
@@ -348,6 +356,7 @@
               <div class="list">
                 <div class="row title">
                   <div class="col">成品加工工序</div>
+                  <div class="col">工序说明</div>
                   <div class="col">操作</div>
                 </div>
                 <div class="row"
@@ -355,6 +364,13 @@
                   :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
+                    <el-tooltip class="item" effect="dark" :content="item.process_desc || '暂无工序说明'" placement="top">
+                      <div class="blue" style="cursor:pointer">查看</div>
+                    </el-tooltip>
+                  </div>
+                  <div class="col">
+                    <span class="opr hoverOrange"
+                      @click="updateStaffProcess(item)">修改</span>
                     <span class="opr hoverRed"
                       @click="deleteStaffProcess(item.id)">删除</span>
                   </div>
@@ -1670,9 +1686,9 @@
       <template v-if="cName === '半成品加工'">
         <div class="main">
           <div class="titleCtn">
-            <div class="text">新增加工工序</div>
+            <div class="text">{{isHalfUpdate?'修改加工工序':'新增加工工序'}}</div>
             <div class="closeCtn"
-              @click="showPopup = false">
+              @click="cancelHalfProcess">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1684,10 +1700,21 @@
                   v-model="halfProcessInfo.name"></el-input>
               </div>
             </div>
+            <div class="row" v-for="item,index in processHalfDescList" :key="'processHalfDescList'+index">
+              <div class="label">工序说明{{index+1}}：</div>
+              <div class="info">
+                <el-input 
+                  placeholder="请输入工序说明"
+                  v-model="processHalfDescList[index]"
+                  :style="{width:(index === processHalfDescList.length - 1)?'70%':'100%'}"
+                ></el-input>
+                <el-button style="margin-left:20px" v-if="index === processHalfDescList.length - 1" @click="$addItem(processHalfDescList,'')">添加</el-button>
+              </div>
+            </div>
           </div>
           <div class="oprCtn">
             <div class="btn borderBtn"
-              @click="showPopup = false">取消</div>
+              @click="cancelHalfProcess">取消</div>
             <div class="btn backHoverBlue"
               @click="saveHalfProcess">确定</div>
           </div>
@@ -1696,9 +1723,9 @@
       <template v-if="cName === '成品加工工序'">
         <div class="main">
           <div class="titleCtn">
-            <div class="text">新增成品加工工序</div>
+            <div class="text">{{isStaffProcessUpdate?'修改成品加工工序':'新增成品加工工序'}}</div>
             <div class="closeCtn"
-              @click="showPopup = false">
+              @click="cancelStaffProcess">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -1710,10 +1737,21 @@
                   v-model="staffProcessInfo.name"></el-input>
               </div>
             </div>
+            <div class="row" v-for="item,index in processStaffDescList" :key="'processStaffDescList'+index">
+              <div class="label">工序说明{{index+1}}：</div>
+              <div class="info">
+                <el-input 
+                  placeholder="请输入工序说明"
+                  v-model="processStaffDescList[index]"
+                  :style="{width:(index === processStaffDescList.length - 1)?'70%':'100%'}"
+                ></el-input>
+                <el-button style="margin-left:20px" v-if="index === processStaffDescList.length - 1" @click="$addItem(processStaffDescList,'')">添加</el-button>
+              </div>
+            </div>
           </div>
           <div class="oprCtn">
             <div class="btn borderBtn"
-              @click="showPopup = false">取消</div>
+              @click="cancelStaffProcess">取消</div>
             <div class="btn backHoverBlue"
               @click="saveStaffProcess">确定</div>
           </div>
@@ -3177,6 +3215,7 @@ export default Vue.extend({
       cName: '',
       showPopup: false,
       showYarn: false,
+      showUpdateProcess: false,
       categoryInfo: {
         id: '',
         name: '',
@@ -3244,6 +3283,7 @@ export default Vue.extend({
       materialProcessList: [],
       materialProcessInfo: {
         type: 1,
+        process_desc:'',
         name: '',
         id: null
       },
@@ -3253,18 +3293,24 @@ export default Vue.extend({
       halfProcessInfo: {
         type: 2,
         name: '',
+        process_desc:'',
         id: null
       },
       halfProcessTotal: 1,
       halfProcessPage: 1,
+      isHalfUpdate:false,
       staffProcessList: [],
+      processHalfDescList: [''],
       staffProcessInfo: {
         type: 3,
         name: '',
+        process_desc:'',
         id: null
       },
       staffProcessTotal: 1,
       staffProcessPage: 1,
+      isStaffProcessUpdate:false,
+      processStaffDescList: [''],
       sideList: [],
       sideInfo: {
         id: null,
@@ -4619,6 +4665,13 @@ export default Vue.extend({
           errMsg: '请输入加工工序'
         }
       ])
+
+      this.halfProcessInfo.process_desc = this.processHalfDescList.toString();
+      this.halfProcessInfo.process_desc =
+        this.halfProcessInfo.process_desc.substring(this.halfProcessInfo.process_desc.length - 1) == ','
+          ? this.halfProcessInfo.process_desc.substring(0, this.halfProcessInfo.process_desc.length - 1)
+          : this.halfProcessInfo.process_desc
+
       if (!formCheck) {
         process
           .create({
@@ -4629,13 +4682,28 @@ export default Vue.extend({
               this.$message.success('添加成功')
               this.halfProcessInfo = {
                 type: 2,
+                process_desc:'',
                 name: '',
                 id: null
               }
+              this.processHalfDescList = ['']
+              this.showPopup = false
+              this.isHalfUpdate = false
               this.getHalfProcess()
             }
           })
       }
+    },
+    cancelHalfProcess(){
+      this.showPopup = false
+      this.isHalfUpdate = false
+      this.halfProcessInfo = {
+        type: 2,
+        process_desc:'',
+        name: '',
+        id: null
+      }
+      this.processHalfDescList = ['']
     },
     deleteHalfProcess(id: number) {
       this.$confirm('是否删除该工序?', '提示', {
@@ -4682,6 +4750,13 @@ export default Vue.extend({
           errMsg: '请输入加工工序'
         }
       ])
+
+      this.staffProcessInfo.process_desc = this.processStaffDescList.toString();
+      this.staffProcessInfo.process_desc =
+        this.staffProcessInfo.process_desc.substring(this.staffProcessInfo.process_desc.length - 1) == ','
+          ? this.staffProcessInfo.process_desc.substring(0, this.staffProcessInfo.process_desc.length - 1)
+          : this.staffProcessInfo.process_desc
+
       if (!formCheck) {
         process
           .create({
@@ -4692,13 +4767,28 @@ export default Vue.extend({
               this.$message.success('添加成功')
               this.staffProcessInfo = {
                 type: 3,
+                process_desc:'',
                 name: '',
                 id: null
               }
+              this.processStaffDescList = ['']
+              this.showPopup = false
+              this.isStaffProcessUpdate = false
               this.getStaffProcess()
             }
           })
       }
+    },
+    cancelStaffProcess(){
+      this.showPopup = false
+      this.isStaffProcessUpdate = false
+      this.staffProcessInfo = {
+        type: 3,
+        process_desc:'',
+        name: '',
+        id: null
+      }
+      this.processStaffDescList = ['']
     },
     deleteStaffProcess(id: number) {
       this.$confirm('是否删除该工序?', '提示', {
@@ -4727,6 +4817,24 @@ export default Vue.extend({
             message: '已取消删除'
           })
         })
+    },
+    updateHalfProcess(item:any){
+      this.isHalfUpdate = true
+      this.showPopup = true
+      this.halfProcessInfo.name = item.name
+      this.halfProcessInfo.id = item.id
+      if( item.process_desc!==null ){
+        this.processHalfDescList = item.process_desc.split(',')
+      }
+    },
+    updateStaffProcess(item:any){
+      this.isStaffProcessUpdate = true
+      this.showPopup = true
+      this.staffProcessInfo.name = item.name
+      this.staffProcessInfo.id = item.id
+      if( item.process_desc!==null ){
+        this.processStaffDescList = item.process_desc.split(',')
+      }
     },
     getSide() {
       craftSetting.listSide().then((res) => {

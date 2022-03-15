@@ -1080,7 +1080,7 @@ export default Vue.extend({
         ress.data.data.forEach((worker: any) => {
           arr.push({
             value: worker.id,
-            label: worker.name
+            label: worker.code.substring(worker.code.length - 4) + ' ' +  worker.name
           })
         })
         this.allWorkList[0].children = arr

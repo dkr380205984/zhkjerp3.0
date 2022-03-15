@@ -420,6 +420,7 @@ export default Vue.extend({
             {
               type: 3,
               name: this.newProcessName,
+              process_desc:'',
               id: ''
             }
           ]
