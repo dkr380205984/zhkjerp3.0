@@ -281,12 +281,12 @@ export default Vue.extend({
         if (!this.code) return
         if(this.code.substring(0, 40)==='https://knit-m-api.zwyknit.com/bindOrder'){
           let params = this.$getQueryArgs(this.code)
-          console.log(params)
           productionProgress.codeInfo({
             hash:params.hash
           }).then((res) => {
             if(res.data.status){
               console.log(res.data)
+              console.log(params)
             }
           })
           return
