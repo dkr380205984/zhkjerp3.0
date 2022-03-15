@@ -552,6 +552,9 @@ const productionProgress = {
     user_id?: string | number
   }) => http.get(`${baseUrl}/production/list`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/production/detail`, params),
+  codeInfo: (params: {
+    hash: number | string
+  }) => http.get(`${baseUrl}/production/code/info`, params),
 }
 
 // 补纱

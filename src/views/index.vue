@@ -145,7 +145,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { navInfo } from '@/types/nav'
-import { changePassword, getCoder } from '@/assets/js/api'
+import { changePassword, getCoder, productionProgress } from '@/assets/js/api'
 export default Vue.extend({
   data(): {
     navData: navInfo[]
@@ -279,6 +279,18 @@ export default Vue.extend({
       if (curryCode === 13 && curryTime - this.lastTime <= 30) {
         // 当按键为enter时调用callback
         if (!this.code) return
+        if(this.code.substring(0, 40)==='https://knit-m-api.zwyknit.com/bindOrder'){
+          let params = this.$getQueryArgs(this.code)
+          console.log(params)
+          productionProgress.codeInfo({
+            hash:params.hash
+          }).then((res) => {
+            if(res.data.status){
+              console.log(res.data)
+            }
+          })
+          return
+        }
         if (this.scannerEvent) {
           this.scannerEvent(this.code)
         } else {

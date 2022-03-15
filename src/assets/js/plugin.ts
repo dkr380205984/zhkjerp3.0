@@ -308,6 +308,28 @@ const plugin = {
     }
     return true
   },
+  getQueryArgs(url: string) {
+    let qs = (url.length > 0 ? url.substring(url.indexOf('?')).substr(1) : ''),
+      //保存每一项
+      args: any = {},
+      //得到每一项
+      items = qs.length ? qs.split('&') : [],
+      item = null,
+      name = null,
+      value = null,
+      i = 0,
+      len = items.length;
+
+    for (i = 0; i < len; i++) {
+      item = items[i].split('='),
+        name = decodeURIComponent(item[0])
+      value = decodeURIComponent(item[1])
+      if (name.length) {
+        args[name] = value;
+      }
+    }
+    return args;
+  },
   addItem<T>(father: T[], son: T): void {
     father.push(son)
   },
@@ -501,6 +523,7 @@ export default {
     Vue.prototype.$addItem = plugin.addItem
     Vue.prototype.$checkPhone = plugin.checkPhone
     Vue.prototype.$checkIdCardNumber = plugin.checkIdCardNumber
+    Vue.prototype.$getQueryArgs = plugin.getQueryArgs
     Vue.prototype.$deleteItem = plugin.deleteItem
     Vue.prototype.$submitLock = submitLock()
     Vue.prototype.$goElView = goElView
