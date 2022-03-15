@@ -692,7 +692,7 @@ export default Vue.extend({
           })
         })
         this.processWorkerList = res.data.data
-        this.tabChoose = res.data.data[0].process_name
+        this.tabChoose = res.data.data[0]?.process_name
       })
 
       workshop.list({ order_id: this.order_id }).then((res) => {
