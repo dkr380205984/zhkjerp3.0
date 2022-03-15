@@ -260,6 +260,34 @@ export default Vue.extend({
     }
   },
   methods: {
+    init() {
+      this.departmentList = []
+      this.newDepartName = ''
+      this.staffInfo = {
+        name: '',
+        phone: '',
+        department: '',
+        type: '',
+        entry_time: new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate(),
+        resign_time: '',
+        process: [],
+        age: '',
+        sex: '',
+        id_number: '',
+        nation: '',
+        education: '',
+        health: '',
+        bank: '',
+        card_number: '',
+        social_security: '',
+        desc: '',
+        id: ''
+      }
+      this.workProcedure = []
+      this.chooseProcess = []
+      this.getWorkProcedure()
+      this.getDepartmentList()
+    },
     // 工序列表
     getWorkProcedure() {
       this.loading = true
@@ -380,6 +408,7 @@ export default Vue.extend({
       staff.addStaff(staffInfo).then((res: any) => {
         if (res.data.status) {
           this.$message.success('添加成功')
+          this.init()
           return
         }
       })
@@ -405,8 +434,7 @@ export default Vue.extend({
     }
   },
   mounted() {
-    this.getWorkProcedure()
-    this.getDepartmentList()
+    this.init()
   }
 })
 </script>
