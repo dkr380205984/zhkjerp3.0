@@ -1,21 +1,19 @@
 <template>
-  <div class="printContainer"
-    @click="showMenu = false"
-    @click.right="handleClickRight">
+  <div class="printContainer" @click="showMenu = false" @click.right="handleClickRight">
     <div class="printTag">
       <div class="pbody">
-        <div class="module"
-          v-for="(item,index) in productInfo"
-          :key="index">
-          <div v-if="item.isCheck"
-            id="printTag">
+        <div class="module" v-for="(item, index) in productInfo" :key="index">
+          <div v-if="item.isCheck" id="printTag">
             <div class="tag_item">
-              <span class="tag_label">公司：</span>
-              <span class="tag_info">{{ item.client_name }}</span>
+              <span
+                class="tag_info"
+                style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; height: 15px; font-weight: bold"
+                >{{ item.client_name }}</span
+              >
             </div>
             <div class="tag_item">
               <span class="tag_label">编号：</span>
-              <span class="tag_info">{{ item.product_code || item.system_code}}</span>
+              <span class="tag_info">{{ item.product_code || item.system_code }}</span>
             </div>
             <div class="tag_item">
               <span class="tag_label">名称：</span>
@@ -23,15 +21,11 @@
             </div>
             <div class="tag_item">
               <span class="tag_label">色组：</span>
-              <span class="tag_info">{{ item.color_data.name }}</span>
+              <span class="tag_info">{{ item.size_data.name + ' / ' + item.color_data.name }}</span>
             </div>
             <div class="tag_item">
               <span class="tag_label">成分：</span>
               <span class="tag_info">{{ item.component_data }}</span>
-            </div>
-            <div class="tag_item">
-              <span class="tag_label">规格：</span>
-              <span class="tag_info">{{ item.size_data.name }}</span>
             </div>
             <div class="tag_item">
               <span class="tag_label">尺寸：</span>
@@ -43,26 +37,27 @@
             </div>
             <div class="tag_item">
               <span class="tag_label">描述：</span>
-              <span class="tag_info">{{ item.product_desc || '无'}}</span>
+              <span class="tag_info" style="line-height: 15px">{{ item.product_desc || '无' }}</span>
             </div>
             <div class="tag_item col">
-              <img :src="qrCodeUrl"
-                class="tag_qrCode" />
-              <div class="tag_text">打印时间：{{ new Date().getFullYear() +'-'+ ((new Date().getMonth()+1) &lt; 10?('0'+(new Date().getMonth()+1)):(new Date().getMonth()+1)) +'-'+ ((new Date().getDate()) &lt; 10?'0'+(new Date().getDate()):(new Date().getDate())) }}</div>
-              <div class="tag_text">打印员工：{{ user_name }}</div>
+              <img :src="qrCodeUrl" class="tag_qrCode" />
+              <div class="tag_text">
+                {{ new Date().getFullYear() +'-'+ ((new Date().getMonth()+1) &lt; 10?('0'+(new Date().getMonth()+1)):(new Date().getMonth()+1)) +'-'+ ((new Date().getDate()) &lt; 10?'0'+(new Date().getDate()):(new Date().getDate())) }}
+              </div>
+              <div class="tag_text">{{ user_name }}</div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="setting_sign_style"
+    <div
+      class="setting_sign_style"
       v-if="showMenu"
       :style="`left:${X_position || 0}px;top:${Y_position}px`"
-      @click.stop>
-      <div class="setting_item"
-        @click="windowMethod(1)">刷新</div>
-      <div class="setting_item"
-        @click="windowMethod(2)">打印</div>
+      @click.stop
+    >
+      <div class="setting_item" @click="windowMethod(1)">刷新</div>
+      <div class="setting_item" @click="windowMethod(2)">打印</div>
     </div>
   </div>
 </template>

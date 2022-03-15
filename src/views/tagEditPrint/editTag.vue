@@ -1,7 +1,5 @@
 <template>
-  <div id="editTag"
-    class="bodyContainer"
-    v-loading="loading">
+  <div id="editTag" class="bodyContainer" v-loading="loading">
     <div class="module">
       <div class="titleCtn">
         <div class="title">编辑标签</div>
@@ -11,9 +9,11 @@
           <div class="col">
             <div>尺码：</div>
             <el-checkbox-group v-model="sizeData">
-              <el-checkbox v-for="(item, index) in productDetail.size_data"
+              <el-checkbox
+                v-for="(item, index) in productDetail.size_data"
                 :key="`sizeData_${index}`"
-                :label="item.name"></el-checkbox>
+                :label="item.name"
+              ></el-checkbox>
             </el-checkbox-group>
           </div>
         </div>
@@ -21,76 +21,60 @@
           <div class="col">
             <div>色组：</div>
             <el-checkbox-group v-model="colorData">
-              <el-checkbox v-for="(item, index) in productDetail.color_data"
+              <el-checkbox
+                v-for="(item, index) in productDetail.color_data"
                 :key="`colorData_${index}`"
-                :label="item.name"></el-checkbox>
+                :label="item.name"
+              ></el-checkbox>
             </el-checkbox-group>
           </div>
         </div>
       </div>
       <div class="detailCtn noPadTop">
         <div class="flex">
-          <div v-for="(item, index) in chooseData"
-            :key="`editTag_${index}`">
-            <div class="border"
-              v-show="item.isCheck"
-              :key="`editTag_${index}`">
+          <div v-for="(item, index) in chooseData" :key="`editTag_${index}`">
+            <div class="border" v-show="item.isCheck" :key="`editTag_${index}`">
               <div class="tag_item">
                 <span class="tag_label">公司：</span>
-                <el-input class="tag_info"
-                  v-model="company_name"
-                  disabled />
+                <el-input class="tag_info" v-model="company_name" disabled />
               </div>
               <div class="tag_item">
                 <span class="tag_label">编号：</span>
-                <el-input class="tag_info"
-                  v-model="item.product_code"
-                  disabled />
+                <el-input class="tag_info" v-model="item.product_code" disabled />
               </div>
               <div class="tag_item">
                 <span class="tag_label">名称：</span>
-                <el-input class="tag_info"
-                  v-model="item.name" />
+                <el-input class="tag_info" v-model="item.name" maxlength="7" />
               </div>
               <div class="tag_item">
                 <span class="tag_label">色组：</span>
-                <el-input class="tag_info"
-                  v-model="item.color_data.name"
-                  disabled />
+                <el-input class="tag_info" v-model="item.color_data.name" disabled />
               </div>
               <div class="tag_item">
                 <span class="tag_label">成分：</span>
-                <el-input class="tag_info"
-                  v-model="item.component_data" />
+                <el-input class="tag_info" v-model="item.component_data" />
               </div>
               <div class="tag_item">
                 <span class="tag_label">规格：</span>
-                <el-input class="tag_info"
-                  v-model="item.size_data.name"
-                  disabled />
+                <el-input class="tag_info" v-model="item.size_data.name" disabled />
               </div>
               <div class="tag_item">
                 <span class="tag_label">尺寸：</span>
-                <el-input class="tag_info"
-                  v-model="item.size_data.size_info" />
+                <el-input class="tag_info" v-model="item.size_data.size_info" />
               </div>
               <div class="tag_item">
                 <span class="tag_label">克重：</span>
-                <el-input class="tag_info"
-                  v-model="item.size_data.weight" />
+                <el-input class="tag_info" v-model="item.size_data.weight" />
               </div>
               <div class="tag_item">
                 <span class="tag_label">描述</span>
-                <el-input maxlength="30"
-                  show-word-limit
-                  type="textarea"
-                  class="tag_info"
-                  v-model="item.product_desc" />
+                <el-input show-word-limit type="textarea" class="tag_info" v-model="item.product_desc" maxlength="14" />
               </div>
               <div class="tag_item col">
-                <img :src="qrCodeUrl"
-                  class="tag_qrCode" />
-                <div class="tag_text">打印时间：{{ new Date().getFullYear() +'-'+ ((new Date().getMonth()+1) &lt; 10?('0'+(new Date().getMonth()+1)):(new Date().getMonth()+1)) +'-'+ ((new Date().getDate()) &lt; 10?'0'+(new Date().getDate()):(new Date().getDate())) }}</div>
+                <img :src="qrCodeUrl" class="tag_qrCode" />
+                <div class="tag_text">
+                  打印时间：{{ new Date().getFullYear() +'-'+ ((new Date().getMonth()+1) &lt; 10?('0'+(new Date().getMonth()+1)):(new Date().getMonth()+1)) +'-'+ ((new Date().getDate()) &lt; 10?'0'+(new Date().getDate()):(new Date().getDate())) }}
+                </div>
                 <div class="tag_text">打印员工：{{ user_name }}</div>
               </div>
             </div>
@@ -101,12 +85,9 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="borderBtn"
-            @click="$router.go(-1)">返回</div>
-          <div class="buttonList"
-            style="margin-left: 12px">
-            <div class="btn backHoverBlue"
-              @click="openUrl()">打印标签</div>
+          <div class="borderBtn" @click="$router.go(-1)">返回</div>
+          <div class="buttonList" style="margin-left: 12px">
+            <div class="btn backHoverBlue" @click="openUrl()">打印标签</div>
           </div>
         </div>
       </div>

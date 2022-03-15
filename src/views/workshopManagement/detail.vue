@@ -120,6 +120,7 @@
                         </div>
                         <div class="tcol">尺码颜色</div>
                         <div class="tcol">完成数量</div>
+                        <div class="tcol">额外数量</div>
                         <div class="tcol">次品数量</div>
                         <div class="tcol">结算小计(元)</div>
                       </div>
@@ -136,7 +137,10 @@
                   v-for="(itemInfoChild, itemInfoChildIndex) in itemInfo.info"
                   :key="itemInfoChildIndex"
                 >
-                  <div class="tcol">{{ itemInfo.staff_name }}</div>
+                  <div class="tcol">
+                    <div>{{ itemInfo.staff_code.substring(itemInfo.staff_code.length - 4) }}</div>
+                    <div>{{ itemInfo.staff_name }}</div>
+                  </div>
                   <div class="tcol" style="flex: 1.5">{{ itemInfoChild.product_code }}</div>
                   <div class="tcol noPad" style="flex: 8.7">
                     <div
@@ -144,37 +148,50 @@
                       v-for="(itemGrandSon, itemGrandSonIndex) in itemInfoChild.info"
                       :key="itemGrandSonIndex"
                     >
-                      <div class="trow" v-for="(itemPrice, itemPriceIndex) in itemGrandSon.info" :key="itemPriceIndex">
-                        <div class="tcol">
-                          {{ item.process_name }}
-                        </div>
-                        <div class="tcol">
-                          {{ itemGrandSon.price }}
-                        </div>
-                        <div class="tcol noPad" style="flex: 8.7">
-                          <div
-                            class="trowContainer"
-                            v-for="(itemSize, sizeIndex) in itemPrice.info"
-                            :key="sizeIndex + 'sizeIndex'"
-                          >
-                            <div class="trow">
-                              <div class="tcol" style="text-align: center; flex: 0.2">
-                                <el-checkbox
-                                  v-model="itemSize.checked"
-                                  @change="completeTable(itemSize.checked, item, itemGrandSon)"
-                                ></el-checkbox>
-                              </div>
-                              <div class="tcol">
-                                {{ itemPrice.size_name + '/' + itemSize.color_name || '无' }}
-                              </div>
-                              <div class="tcol">
-                                {{ itemSize.info.number }}
-                              </div>
-                              <div class="tcol">
-                                {{ itemSize.info.shoddy_number }}
-                              </div>
-                              <div class="tcol">
-                                {{ itemSize.info.total_price }}
+                      <div
+                        class="trowContainer"
+                        v-for="(itemProcessDesc, itemProcessDescIndex) in itemGrandSon.info"
+                        :key="itemProcessDescIndex"
+                      >
+                        <div
+                          class="trow"
+                          v-for="(itemPrice, itemPriceIndex) in itemProcessDesc.info"
+                          :key="itemPriceIndex"
+                        >
+                          <div class="tcol">
+                            {{ item.process_name }}
+                          </div>
+                          <div class="tcol">
+                            {{ itemProcessDesc.price }}
+                          </div>
+                          <div class="tcol noPad" style="flex: 8.7">
+                            <div
+                              class="trowContainer"
+                              v-for="(itemSize, sizeIndex) in itemPrice.info"
+                              :key="sizeIndex + 'sizeIndex'"
+                            >
+                              <div class="trow">
+                                <div class="tcol" style="text-align: center; flex: 0.2">
+                                  <el-checkbox
+                                    v-model="itemSize.checked"
+                                    @change="completeTable(itemSize.checked, item, itemProcessDesc)"
+                                  ></el-checkbox>
+                                </div>
+                                <div class="tcol">
+                                  {{ itemPrice.size_name + '/' + itemSize.color_name || '无' }}
+                                </div>
+                                <div class="tcol">
+                                  {{ itemSize.info.number }}
+                                </div>
+                                <div class="tcol">
+                                  {{ itemSize.info.extra_number }}
+                                </div>
+                                <div class="tcol">
+                                  {{ itemSize.info.shoddy_number }}
+                                </div>
+                                <div class="tcol">
+                                  {{ itemSize.info.total_price }}
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -202,11 +219,11 @@
           tooltip-effect="dark"
           style="width: 100%"
         >
-          <el-table-column type="selection" width="55"> </el-table-column>
-          <el-table-column prop="id" label="序号" width="70"></el-table-column>
-          <el-table-column prop="created_at" label="添加时间" width="110"> </el-table-column>
-          <el-table-column prop="user_name" label="操作人" width="110"> </el-table-column>
-          <el-table-column label="审核状态">
+          <el-table-column type="selection" width="55" fixed> </el-table-column>
+          <el-table-column prop="id" label="序号" width="70" fixed></el-table-column>
+          <el-table-column prop="created_at" label="添加时间" width="110" fixed> </el-table-column>
+          <el-table-column prop="user_name" label="操作人" width="110" fixed> </el-table-column>
+          <el-table-column label="审核状态" width="120">
             <template slot-scope="scope">
               <div v-if="scope.row.is_check === 1" class="orange">审核中</div>
               <div v-if="scope.row.is_check === 2" class="blue">通过</div>
@@ -214,16 +231,34 @@
             </template>
           </el-table-column>
           <el-table-column prop="process_name" label="工序"> </el-table-column>
-          <el-table-column prop="staff_name" label="人员"> </el-table-column>
-          <el-table-column prop="product_code" label="产品编号"> </el-table-column>
-          <el-table-column label="颜色尺码">
+          <el-table-column label="工序说明" width="120">
+            <template slot-scope="scope">
+              <el-tooltip
+                class="item"
+                effect="dark"
+                :content="scope.row.process_desc || '无工序说明'"
+                placement="top-start"
+              >
+                <span class="blue" style="cursor: pointer">查看</span>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+          <el-table-column prop="staff_name" label="人员" width="120">
+            <template slot-scope="scope">
+              <div>{{ scope.row.staff_code.substring(scope.row.staff_code.length - 4) }}</div>
+              <div>{{ scope.row.staff_name }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="product_code" label="产品编号" width="120"> </el-table-column>
+          <el-table-column label="颜色尺码" width="120">
             <template slot-scope="scope">{{
               (scope.row.size_name || '无尺码数据') + '/' + (scope.row.color_name || '无颜色数据')
             }}</template>
           </el-table-column>
-          <el-table-column prop="number" label="完成数量"> </el-table-column>
-          <el-table-column prop="shoddy_number" label="次品数量"> </el-table-column>
-          <el-table-column label="次品原因">
+          <el-table-column prop="number" label="完成数量" width="120"> </el-table-column>
+          <el-table-column prop="extra_number" label="额外数量" width="120"> </el-table-column>
+          <el-table-column prop="shoddy_number" label="次品数量" width="120"> </el-table-column>
+          <el-table-column label="次品原因" width="120">
             <template slot-scope="scope">
               <el-tooltip
                 class="item"
@@ -235,8 +270,8 @@
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column prop="price" label="结算单价(元/件)"> </el-table-column>
-          <el-table-column prop="total_price" label="结算总价(元)"> </el-table-column>
+          <el-table-column prop="price" label="结算单价(元/件)" width="150"> </el-table-column>
+          <el-table-column prop="total_price" label="结算总价(元)" fixed="right" width="120"> </el-table-column>
         </el-table>
         <div class="buttonList" style="margin-bottom: 20px">
           <div style="margin-top: 20px; margin-left: 32px" class="btn backHoverBlue" @click="lostAgree">批量通过</div>
@@ -258,8 +293,8 @@
             >结算工资去除次品数量
             <el-tooltip class="item" effect="dark" placement="top">
               <div slot="content">
-                勾选前，工资计算公式 = 结算单价 * 完成数量<br />勾选后，工资计算公式 = 结算单价 * （完成数量 -
-                次品数量）
+                勾选前，工资计算公式 = 结算单价 * （完成数量 + 额外数量）<br />勾选后，工资计算公式 = 结算单价 *
+                （完成数量 + 额外数量 - 次品数量）
               </div>
               <i class="el-icon-question"></i> </el-tooltip
           ></el-checkbox>
@@ -306,6 +341,10 @@
                       placeholder="请选择加工工序"
                     ></el-cascader>
                   </div>
+                  <div class="tcol bgGray">工序说明</div>
+                  <div class="tcol">
+                    <el-input v-model="item.process_desc" placeholder="请填写工序说明"></el-input>
+                  </div>
                   <div class="tcol bgGray">结算单价</div>
                   <div class="tcol">
                     <el-input
@@ -319,6 +358,7 @@
                   <div class="tcol bgGray">员工</div>
                   <div class="tcol bgGray">尺码颜色</div>
                   <div class="tcol bgGray">完成数量</div>
+                  <div class="tcol bgGray">额外数量</div>
                   <div class="tcol bgGray">次品数量</div>
                   <div class="tcol bgGray">次品原因</div>
                   <div class="tcol bgGray">日期</div>
@@ -338,7 +378,7 @@
                       :show-all-levels="false"
                     ></el-cascader>
                   </div>
-                  <div class="tcol noPad" :style="{ flex: productionScheduleUpdate.length === 1 ? 5.86 : 5.87 }">
+                  <div class="tcol noPad" :style="{ flex: productionScheduleUpdate.length === 1 ? 7.25 : 7.23 }">
                     <div class="trow" v-for="(el, i) in itemSizeColor.sizeColorList" :key="i">
                       <div class="tcol">
                         <el-select
@@ -363,6 +403,13 @@
                         <el-input
                           placeholder="请输入完成数量"
                           v-model="el.complete_number"
+                          oninput="value=value.replace(/[^0-9.]/g,'')"
+                        ></el-input>
+                      </div>
+                      <div class="tcol">
+                        <el-input
+                          placeholder="请输入额外数量"
+                          v-model="el.extra_number"
                           oninput="value=value.replace(/[^0-9.]/g,'')"
                         ></el-input>
                       </div>
@@ -430,6 +477,7 @@
                 productNameId: '',
                 productId: '',
                 process: '',
+                process_desc: '',
                 unitPrice: 0,
                 infoData: [
                   {
@@ -534,13 +582,14 @@ export default Vue.extend({
           value: '',
           label: '所有人员',
           children: []
-        },
+        }
       ],
       productionScheduleUpdate: [
         {
           productNameId: '',
           productId: '',
           process: '',
+          process_desc: '',
           unitPrice: 0,
           infoData: [
             {
@@ -622,6 +671,7 @@ export default Vue.extend({
   methods: {
     init() {
       this.loading = true
+      this.processList = []
       this.order_id = this.$route.query.id
       workshop.detail({ order_id: this.order_id }).then((res) => {
         res.data.data.forEach((items: any) => {
@@ -629,9 +679,11 @@ export default Vue.extend({
             item.info.forEach((itemSon: any) => {
               let number = 0
               itemSon.info.forEach((itemGrandSon: any) => {
-                itemGrandSon.info.forEach((itemPrice: any) => {
-                  itemPrice.info.forEach((itemSize: any) => {
-                    number += itemSize.info.total_price
+                itemGrandSon.info.forEach((itemProcessDesc: any) => {
+                  itemProcessDesc.info.forEach((itemPrice: any) => {
+                    itemPrice.info.forEach((itemSize: any) => {
+                      number += itemSize.info.total_price
+                    })
                   })
                 })
               })
@@ -713,23 +765,25 @@ export default Vue.extend({
         if (processWorkerItem.process_name === this.tabChoose) {
           processWorkerItem.info.forEach((staffNameItem: any) => {
             staffNameItem.info.forEach((productCodeItem: any) => {
-              productCodeItem.info.forEach((item: any) => {
-                item.info.forEach((itemPrice: any) => {
-                  itemPrice.info.forEach((itemSize: any) => {
-                    itemSize.checked = bol
-                    if (bol) {
-                      if (processWorkerItem.checked === undefined) {
-                        processWorkerItem.checked = []
+              productCodeItem.info.forEach((process_desc: any) => {
+                process_desc.info.forEach((item: any) => {
+                  item.info.forEach((itemPrice: any) => {
+                    itemPrice.info.forEach((itemSize: any) => {
+                      itemSize.checked = bol
+                      if (bol) {
+                        if (processWorkerItem.checked === undefined) {
+                          processWorkerItem.checked = []
+                        }
+                        if (item.checked === undefined) {
+                          item.checked = []
+                        }
+                        processWorkerItem.checked.push(bol)
+                        item.checked.push(bol)
+                      } else {
+                        this.$deleteItem(processWorkerItem.checked, 0)
+                        this.$deleteItem(item.checked, 0)
                       }
-                      if (item.checked === undefined) {
-                        item.checked = []
-                      }
-                      processWorkerItem.checked.push(bol)
-                      item.checked.push(bol)
-                    } else {
-                      this.$deleteItem(processWorkerItem.checked, 0)
-                      this.$deleteItem(item.checked, 0)
-                    }
+                    })
                   })
                 })
               })
@@ -745,6 +799,8 @@ export default Vue.extend({
           staff_id: number | string
           process_name: number | string
           process_type: number | string
+          process_desc: string
+          extra_number: number | string
           order_product_id: number | string
           product_id: number | string
           size_id: number | string
@@ -785,8 +841,10 @@ export default Vue.extend({
               id: number | string
               staff_id: number | string
               process_name: string | number
+              process_desc: string
               process_type: string | number
               order_product_id: string | number
+              extra_number: number | string
               product_id: number | string
               size_id: number | string
               color_id: number | string
@@ -800,16 +858,19 @@ export default Vue.extend({
               id: '',
               process_name: items.process[1],
               process_type: items.process[0],
+              process_desc: items.process_desc,
               order_product_id: items.productNameId,
               product_id: items.productId,
               price: items.unitPrice || 0,
-              staff_id: typeof item.worker === 'object' ? item.worker[1] : (typeof item.worker === 'number' ? item.worker : item.worker_id),
+              staff_id: item.worker[1],
               size_id: itemChild.chooseId.split(',')[0],
+              extra_number: itemChild.extra_number || 0,
               color_id: itemChild.chooseId.split(',')[1],
               number: itemChild.complete_number || 0,
               total_price: this.outCiPin
-                ? ((itemChild.complete_number || 0) - (itemChild.shoddy_number || 0)) * (items.unitPrice || 0)
-                : (itemChild.complete_number || 0) * (items.unitPrice || 0),
+                ? ((itemChild.complete_number || 0 + itemChild.extra_number || 0) - (itemChild.shoddy_number || 0)) *
+                  (items.unitPrice || 0)
+                : (itemChild.complete_number || 0 + itemChild.extra_number || 0) * (items.unitPrice || 0),
               shoddy_number: itemChild.shoddy_number || 0,
               shoddy_reason: itemChild.shoddy_reason ? itemChild.shoddy_reason.toString() : '',
               complete_time: itemChild.complete_time
@@ -824,7 +885,7 @@ export default Vue.extend({
         if (res.data.status) {
           this.$message.success('提交成功')
           this.numberUpdate = false
-          this.init()
+          location.reload()
         }
       })
     },
@@ -912,45 +973,48 @@ export default Vue.extend({
         if (processWorker.process_name === this.tabChoose) {
           processWorker.info.forEach((staffNameItem: any) => {
             staffNameItem.info.forEach((productCodeItem: any) => {
-              productCodeItem.info.forEach((itemPrice: any, priceIndex: any) => {
-                let obj: any = {}
-                obj.infoData = [{ worker: '', sizeColorList: [] }]
-                itemPrice.info.forEach((itemSize: any) => {
-                  itemSize.info.forEach((itemColor: any) => {
-                    // console.log(itemColor)
-                    if (itemColor.checked === undefined || itemColor.checked === false) return
-                    obj.productNameId = itemColor.info.order_product_id
-                    obj.process = [+itemColor.info.process_type, processWorker.process_name]
-                    obj.productId = itemColor.info.product_id
-                    obj.unitPrice = productCodeItem.info[priceIndex].price
-                    // console.log(itemPrice.price,)
-                    itemColor.chooseId = itemColor.size_id + ',' + itemColor.color_id
-                    itemColor.complete_time = this.getNowFormatDate()
-                    itemColor.size_name = itemSize.size_name
-                    obj.infoData[0].sizeColorList.push(itemColor)
-                    obj.infoData[0].worker = staffNameItem.staff_name
-                    obj.infoData[0].worker_id = itemColor.staff_id
+              productCodeItem.info.forEach((process_desc: any) => {
+                process_desc.info.forEach((itemPrice: any, priceIndex: any) => {
+                  itemPrice.info.forEach((itemSize: any) => {
+                    let obj: any = {}
+                    obj.infoData = [{ worker: '', sizeColorList: [] }]
+                    itemSize.info.forEach((itemColor: any) => {
+                      // console.log(itemColor)
+                      if (itemColor.checked === undefined || itemColor.checked === false) return
+                      obj.productNameId = itemColor.info.order_product_id
+                      obj.process = [+itemColor.info.process_type, processWorker.process_name]
+                      obj.process_desc = process_desc.process_desc
+                      obj.productId = itemColor.info.product_id
+                      obj.unitPrice = process_desc.info[priceIndex].price
+                      itemColor.chooseId = itemColor.info.size_id + ',' + itemColor.info.color_id
+                      itemColor.complete_time = this.getNowFormatDate()
+                      itemColor.size_name = itemSize.size_name
+                      itemColor.size_id = itemColor.info.size_id
+                      itemColor.color_id = itemColor.info.color_id
+                      obj.infoData[obj.infoData.length - 1].sizeColorList.push(itemColor)
+                      obj.infoData[obj.infoData.length - 1].worker = ['', itemColor.info.staff_id]
 
-                    // console.log(sizeColorItem)
-                    // item.product_info.forEach((itemColor: any, itemIndex: any) => {
-                    //   if (itemIndex === 0) {
-                    //     obj.infoData.push({
-                    //       sizeColorList: []
-                    //     })
-                    //   }
-                    //   console.log(itemColor)
-                    //   if (itemColor.checkSizeColor) {
-                    //     itemColor.chooseId = itemColor.size_id + ',' + itemColor.color_id
-                    //     obj.infoData[0].sizeColorList.push(itemColor)
-                    //   }
-                    // })
+                      // console.log(sizeColorItem)
+                      // item.product_info.forEach((itemColor: any, itemIndex: any) => {
+                      //   if (itemIndex === 0) {
+                      //     obj.infoData.push({
+                      //       sizeColorList: []
+                      //     })
+                      //   }
+                      //   console.log(itemColor)
+                      //   if (itemColor.checkSizeColor) {
+                      //     itemColor.chooseId = itemColor.size_id + ',' + itemColor.color_id
+                      //     obj.infoData[0].sizeColorList.push(itemColor)
+                      //   }
+                      // })
+                    })
+                    if (itemPrice.checked === undefined || itemPrice.checked.length === 0 || !obj.productId) return
+                    arr.push(obj)
                   })
-                  if (itemPrice.checked === undefined || itemPrice.checked.length === 0) return
-                  arr.push(obj)
+                  // arr.forEach((price:any) => {
+                  //   console.log(price.unitPrice)
+                  // });
                 })
-                // arr.forEach((price:any) => {
-                //   console.log(price.unitPrice)
-                // });
               })
             })
           })
@@ -1012,23 +1076,23 @@ export default Vue.extend({
     getWorkList(res: any) {
       // console.log(res[1])
       staff.list({ keyword: res[1] }).then((ress: any) => {
-        let arr:any = []
-        ress.data.data.forEach((worker:any) => {
+        let arr: any = []
+        ress.data.data.forEach((worker: any) => {
           arr.push({
-            value:worker.id,
-            label:worker.name
+            value: worker.id,
+            label: worker.name
           })
-        });
+        })
         this.allWorkList[0].children = arr
       })
       staff.list({ keyword: '' }).then((ress: any) => {
-        let arr:any = []
-        ress.data.data.forEach((worker:any) => {
+        let arr: any = []
+        ress.data.data.forEach((worker: any) => {
           arr.push({
-            value:worker.id,
-            label:worker.name
+            value: worker.id,
+            label: worker.code.substring(worker.code.length - 4) + ' ' + worker.name
           })
-        });
+        })
         this.allWorkList[1].children = arr
       })
     },
@@ -1085,6 +1149,7 @@ export default Vue.extend({
           productName: '',
           process: '',
           unitPrice: 0,
+          process_desc: '',
           infoData: [
             {
               date: '',

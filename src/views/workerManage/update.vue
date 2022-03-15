@@ -10,22 +10,21 @@
         <div class="row">
           <div class="col">
             <div class="label">
-              <span class="text">员工编号</span>
+              <span class="text">员工姓名</span>
               <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工编号"
+              <el-input placeholder="请输入员工姓名"
                 v-model="userDetailInfo.name"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">
-              <span class="text">员工姓名</span>
-              <span class="explanation">(必选)</span>
+              <span class="text">手机号</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工姓名"
-                v-model="userDetailInfo.name"></el-input>
+              <el-input placeholder="请输入手机号"
+                v-model="userDetailInfo.phone"></el-input>
             </div>
           </div>
           <div class="col">
@@ -76,6 +75,15 @@
           <div class="col">
             <div class="label">
               <span class="text">离职时间</span>
+              <el-tooltip class="item"
+                effect="dark"
+                placement="top">
+                <div slot="content">
+                  合同工不填写离职时间默认为长期员工，<br />
+                  临时工不填写离职时间默认一个月后离职
+                </div>
+                <i class="el-icon-question"></i>
+              </el-tooltip>
             </div>
             <div class="info elCtn">
               <el-date-picker v-model="userDetailInfo.resign_time"
@@ -308,15 +316,12 @@ export default Vue.extend({
           type: 3
         })
         .then((res: any) => {
-          this.workProcedure = res.data.data
           process
             .list({
               type: 2
             })
             .then((ress: any) => {
-              ress.data.data.forEach((item: any) => {
-                this.workProcedure.push(item)
-              })
+              this.workProcedure = res.data.data.concat(ress.data.data)
             })
         })
     },
@@ -335,6 +340,18 @@ export default Vue.extend({
       if (userDetailInfo.type === '') {
         this.$message.error('员工工种不能为空')
         return
+      }
+      if (userDetailInfo.phone) {
+        if (!this.$checkPhone(userDetailInfo.phone)) {
+          this.$message.error('输入的手机号格式不正确')
+          return
+        }
+      }
+      if (userDetailInfo.id_number) {
+        if (!this.$checkIdCardNumber(userDetailInfo.id_number)) {
+          this.$message.error('输入的身份证号不合法')
+          return
+        }
       }
 
       userDetailInfo.process = userDetailInfo.process.toString().replaceAll(',', '/')
