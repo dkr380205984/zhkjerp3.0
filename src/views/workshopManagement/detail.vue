@@ -103,6 +103,7 @@
           </div>
           <div class="tableCtn">
             <div class="filterCtn" style="height: 50px">
+              <span>{{ item.allProcessDesc }}</span>
               <div class="btn backHoverBlue fr" @click="secondDataChance()">数量更新</div>
             </div>
             <div class="thead">
@@ -675,10 +676,12 @@ export default Vue.extend({
       this.order_id = this.$route.query.id
       workshop.detail({ order_id: this.order_id }).then((res) => {
         res.data.data.forEach((items: any) => {
+          items.allProcessDesc = []
           items.info.forEach((item: any) => {
             item.info.forEach((itemSon: any) => {
               let number = 0
               itemSon.info.forEach((itemGrandSon: any) => {
+                items.allProcessDesc.push(itemGrandSon.process_desc)
                 itemGrandSon.info.forEach((itemProcessDesc: any) => {
                   itemProcessDesc.info.forEach((itemPrice: any) => {
                     itemPrice.info.forEach((itemSize: any) => {
@@ -690,6 +693,7 @@ export default Vue.extend({
               itemSon.allColorSizePrice = number
             })
           })
+          items.allProcessDesc = items.allProcessDesc.toString().replaceAll(',',' ')
         })
         this.processWorkerList = res.data.data
         this.tabChoose = res.data.data[0]?.process_name
@@ -1080,7 +1084,7 @@ export default Vue.extend({
         ress.data.data.forEach((worker: any) => {
           arr.push({
             value: worker.id,
-            label: worker.code.substring(worker.code.length - 4) + ' ' +  worker.name
+            label: worker.code.substring(worker.code.length - 4) + ' ' + worker.name
           })
         })
         this.allWorkList[0].children = arr
