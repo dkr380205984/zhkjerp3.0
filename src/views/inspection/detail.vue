@@ -480,9 +480,18 @@ export default Vue.extend({
         this.productionPlanList = res[0].data.data
         if (this.productionPlanList.length > 0) {
           this.productionPlanMergeList = this.$mergeData(this.productionPlanList, {
-            mainRule: ['process_name']
+            mainRule: ['process_name']  
           })
           this.productionPlanIndex = this.productionPlanMergeList[0].process_name
+          if(this.$route.query.isBarcodeScanner==="true"){
+            const finded:any = this.productionPlanMergeList.find((itemFind) => itemFind.process_name === this.productionPlanIndex)
+            const findChild = finded.childrenMergeInfo.find((itemChild:any) => itemChild.code === this.$route.query.code)
+            const findPro = findChild.product_info_data.find((itemPro:any) => itemPro.product_id == this.$route.query.product_id)
+            findChild.checkAll = true
+            findPro.check=true
+            this.$forceUpdate()
+            this.goInspection(1)
+          }
         } else {
           this.$message.warning('该订单还未创建生产计划信息，请先填写生产计划')
           this.$router.push('/productionPlan/detail?id=' + this.$route.query.id)

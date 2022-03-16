@@ -285,8 +285,18 @@ export default Vue.extend({
             hash:params.hash
           }).then((res) => {
             if(res.data.status){
-              console.log(res.data)
-              console.log(params)
+              this.$router.push('/inspection/detail?id=' + res.data.data.order_id + '&code=' + res.data.data.code_product_info[0].weave_plan.code + '&product_id=' + res.data.data.product.id + 'isBarcodeScanner=true')
+            }
+          })
+          return
+        }
+        if(this.code.substring(0, 39)==='https://knit_beta.zwyknit.com/bindOrder'){
+          let params = this.$getQueryArgs(this.code)
+          productionProgress.codeInfo({
+            hash:params.hash
+          }).then((res) => {
+            if(res.data.status){
+              this.$router.push('/inspection/detail?id=' + res.data.data.order_id + '&code=' + res.data.data.code_product_info[0].weave_plan.code + '&product_id=' + res.data.data.product.id + '&isBarcodeScanner=true')
             }
           })
           return
