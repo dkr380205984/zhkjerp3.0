@@ -279,24 +279,13 @@ export default Vue.extend({
       if (curryCode === 13 && curryTime - this.lastTime <= 30) {
         // 当按键为enter时调用callback
         if (!this.code) return
-        if(this.code.substring(0, 40)==='https://knit-m-api.zwyknit.com/bindOrder'){
+        if(this.code.substring(0, 40)==='https://knit-m-api.zwyknit.com/bindOrder' || this.code.substring(0, 39)==='https://knit_beta.zwyknit.com/bindOrder'){
           let params = this.$getQueryArgs(this.code)
           productionProgress.codeInfo({
             hash:params.hash
           }).then((res) => {
             if(res.data.status){
               this.$router.push('/inspection/detail?id=' + res.data.data.order_id + '&code=' + res.data.data.code_product_info[0].weave_plan.code + '&product_id=' + res.data.data.product.id + 'isBarcodeScanner=true')
-            }
-          })
-          return
-        }
-        if(this.code.substring(0, 39)==='https://knit_beta.zwyknit.com/bindOrder'){
-          let params = this.$getQueryArgs(this.code)
-          productionProgress.codeInfo({
-            hash:params.hash
-          }).then((res) => {
-            if(res.data.status){
-              this.$router.push('/inspection/detail?id=' + res.data.data.order_id + '&code=' + res.data.data.code_product_info[0].weave_plan.code + '&product_id=' + res.data.data.product.id + '&isBarcodeScanner=true')
             }
           })
           return
