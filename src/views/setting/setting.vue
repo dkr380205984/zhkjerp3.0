@@ -321,9 +321,7 @@
                   :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <el-tooltip class="item" effect="dark" :content="item.process_desc || '暂无工序说明'" placement="top">
-                      <div class="blue" style="cursor:pointer">查看</div>
-                    </el-tooltip>
+                    {{item.process_desc || "暂无工序说明"}}
                   </div>
                   <div class="col">
                     <span class="opr hoverOrange"
@@ -364,9 +362,7 @@
                   :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
-                    <el-tooltip class="item" effect="dark" :content="item.process_desc || '暂无工序说明'" placement="top">
-                      <div class="blue" style="cursor:pointer">查看</div>
-                    </el-tooltip>
+                    {{item.process_desc || "暂无工序说明"}}
                   </div>
                   <div class="col">
                     <span class="opr hoverOrange"
