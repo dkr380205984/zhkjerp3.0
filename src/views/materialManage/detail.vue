@@ -991,6 +991,17 @@
                     <div class="once">
                       <span class="text">调取单价</span>
                       <span class="explanation">(选填)</span>
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一单价"
+                        placement="top">
+                        <svg class="iconFont copyIcon hoverBlue"
+                          style="width:16px;height:16px"
+                          aria-hidden="true"
+                          @click="$copyInfo(materialStockInfo.info_data,['price']);$forceUpdate()">
+                          <use xlink:href='#icon-tongbushuju1'></use>
+                        </svg>
+                      </el-tooltip>
                     </div>
                     <div class="once">
                       <span class="text">调取数量</span>
@@ -1985,8 +1996,8 @@
                   </div>
                   <div class="tbody">
                     <div class="trow"
-                      v-for="item in priceMaterialList"
-                      :key="item">
+                      v-for="(item,index) in priceMaterialList"
+                      :key="index">
                       <div class="tcol">{{item.material_name}}</div>
                       <div class="tcol">{{item.price}}元/{{item.unit==='g'?'kg':item.unit}}</div>
                     </div>
@@ -2615,6 +2626,7 @@ export default Vue.extend({
             vat_code: '',
             attribute: '',
             number: item.final_number,
+            price: '',
             item: '', // 件数
             unit: item.unit,
             rel_doc_info_id: item.id // 采购单调取单加工单子项id

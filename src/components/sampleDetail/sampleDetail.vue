@@ -60,7 +60,8 @@
                         <div class="col"
                           style="min-height:32px;height:auto">
                           <div class="label">样品描述：</div>
-                          <div class="text">{{sampleInfo.desc}}</div>
+                          <div class="text"
+                            v-html="sampleInfo.desc"></div>
                         </div>
                       </div>
                     </div>

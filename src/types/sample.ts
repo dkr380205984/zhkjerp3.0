@@ -25,6 +25,7 @@ export interface SampleInfo {
   cvFlag?: boolean
   cvImageLength?: number
   desc: string
+  editor?: any
   style_data: string[] // 款式
   component_data: Array<{
     component_id: string | number

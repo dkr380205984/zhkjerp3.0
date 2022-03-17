@@ -60,7 +60,8 @@
                         <div class="col"
                           style="min-height:32px;height:auto">
                           <div class="label">产品描述：</div>
-                          <div class="text">{{productInfo.desc}}</div>
+                          <div class="text"
+                            v-html="productInfo.desc"></div>
                         </div>
                       </div>
                     </div>
@@ -224,6 +225,7 @@ export default Vue.extend({
     data: {
       required: false
     },
+    // <!-- 任何有编辑页面的detail组件请务必去掉编辑功能，noOpr = true,因为wangeditor组件是填充到id里，新增和修改的editor重复了 -->
     // 页面只看详情不需要操作
     noOpr: {
       type: Boolean,

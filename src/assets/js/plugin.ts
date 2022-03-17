@@ -2,6 +2,8 @@ import store from '../../store/index'
 import Message from 'element-ui'
 import { CheckCommonInfo } from '@/types/vuex'
 import { OrderInfo } from '@/types/order'
+import E from 'wangeditor'
+import Vue from 'vue'
 interface MapTitle {
   title: string
   key: string
@@ -341,7 +343,7 @@ const plugin = {
     info.forEach((item: any, index: number) => {
       if (index !== 0) {
         keyArr.forEach((key) => {
-          item[key] = info[0][key]
+          item[key] = plugin.clone(info[0][key])
         })
       }
     })
@@ -453,6 +455,38 @@ const unique = (arr: any[], key: string) => {
     return [...new Set(arr)]
   }
 }
+// 编辑器通用创建
+const initEditor = (item: any, index?: number) => {
+  const id = index === 0 ? '#editor0' : ('#editor' + index || '')
+  item.editor = new E(id)
+  item.editor.config.menus = [
+    'head', // 标题
+    'bold', // 粗体
+    'fontSize', // 字号
+    'fontName', // 字体
+    'italic', // 斜体
+    'underline', // 下划线
+    'strikeThrough', // 删除线
+    'foreColor', // 文字颜色
+    'backColor', // 背景颜色
+    'link', // 插入链接
+    'list', // 列表
+    'justify', // 对齐方式
+    'quote', // 引用
+    'undo', // 撤销
+    'redo' // 重复
+  ]
+  item.editor.config.onchange = (html: any) => {
+    item.desc = html // 绑定当前逐渐地值
+  }
+  item.editor.config.height = 100
+  item.editor.create()
+  if (item.desc) {
+    Vue.nextTick(() => {
+      item.editor.txt.html(item.desc)
+    })
+  }
+}
 /**
  * @param {string} el 到达其视图的id
  * @returns {void|boolean}
@@ -542,5 +576,6 @@ export default {
     Vue.prototype.$getLocalStorage = plugin.getLocalStorage
     Vue.prototype.$setSessionStorage = plugin.setSessionStorage
     Vue.prototype.$getsessionStorage = plugin.getsessionStorage
+    Vue.prototype.$initEditor = initEditor
   }
 }

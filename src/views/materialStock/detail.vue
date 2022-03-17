@@ -523,7 +523,7 @@
                 <div class="tcol">纱线颜色</div>
                 <div class="tcol">所需数量</div>
                 <div class="tcol">出库数量</div>
-                <!-- <div class="tcol">操作</div> -->
+                <div class="tcol">结余入库数</div>
               </div>
             </div>
           </div>
@@ -569,6 +569,7 @@
                 <div class="tcol">{{itemMat.material_color}}</div>
                 <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
                 <div class="tcol">{{itemMat.final_pop_number||0}}{{itemMat.unit}}</div>
+                <div class="tcol">暂无数据</div>
                 <!-- <div class="tcol oprCtn">
                   <div class="opr hoverBlue">出库</div>
                 </div> -->

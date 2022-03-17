@@ -1,3 +1,5 @@
+import { ProductInfo } from "./product";
+
 // 报价单数据结构
 export interface QuotedPriceInfo {
   code?: string
@@ -39,12 +41,14 @@ export interface QuotedPriceInfo {
 // 报价单产品信息
 export interface QuotedPriceProduct {
   id?: string | number
+  rel_product_info?: ProductInfo
   cv_list?: string[]
   cvFlag?: boolean // 复制粘贴图片开关
   cvImageLength?: number // 复制粘贴图片张数
   total_price?: number | string // 统计产品的价格信息
   product_id?: string | number // 有id传id，无id传下面'
   type?: number[] // 品类下拉框
+  category_name?: string
   category_id?: string | number
   category?: string
   secondary_category_id?: string | number
@@ -57,6 +61,7 @@ export interface QuotedPriceProduct {
   client_target_price?: number | string //客户目标价
   start_order_number?: number | string //起订量
   desc?: string
+  editor?: any // 前端用的备注信息的编辑器
   transport_fee_desc?: string // 运费
   transport_fee?: string
   material_data: Array<{

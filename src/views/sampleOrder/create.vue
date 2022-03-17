@@ -149,7 +149,8 @@
               </div>
             </div>
             <div class="tcol">{{item.client_target_price}}元</div>
-            <div class="tcol">{{item.desc}}</div>
+            <div class="tcol"
+              v-html="item.desc"></div>
             <div class="tcol oprCtn">
               <div class="opr hoverBlue"
                 @click="supplementInfo(item)"
@@ -412,7 +413,8 @@
       :quote_rel_product_data="quotedPriceProductInfo"
       @close="addSampleFlag = false"
       @afterSave="getNewSample"></sample-edit>
-    <sample-detail :data="sampleDetail"
+    <sample-detail :noOpr="true"
+      :data="sampleDetail"
       :show="sampleShow"
       @close="sampleShow = false"></sample-detail>
   </div>

@@ -104,6 +104,7 @@ declare module 'vue/types/vue' {
     $setSessionStorage(name: string, info: any): void
     $getsessionStorage(name: string): string
     $openUrl(url: string): void
+    $initEditor(item: any, index?: number): void
   }
 }
 new Vue({

@@ -245,7 +245,8 @@
               </div>
             </div>
             <div class="tcol">{{item.client_target_price}}元</div>
-            <div class="tcol">{{item.desc}}</div>
+            <div class="tcol"
+              v-html="item.desc"></div>
             <div class="tcol oprCtn">
               <div class="opr hoverBlue"
                 @click="supplementInfo(item)"
@@ -806,7 +807,9 @@
       @afterSave="getNewProduct"
       :quote_product_id="quotedPriceProductInfo.id"
       :quote_rel_product_data="quotedPriceProductInfo"></product-edit>
-    <product-detail :data="productDetail"
+    <!-- 任何有编辑页面的detail组件请务必去掉编辑功能，noOpr = true,因为wangeditor组件是填充到id里，新增和修改的editor重复了 -->
+    <product-detail :noOpr="true"
+      :data="productDetail"
       :show="productShow"
       @close="productShow = false"></product-detail>
   </div>

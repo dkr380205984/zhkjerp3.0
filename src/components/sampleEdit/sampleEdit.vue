@@ -268,9 +268,8 @@
                 <div class="label">
                   <span class="text">样品其它描述或备注</span>
                 </div>
-                <div class="info elCtn">
-                  <el-input v-model="sampleInfo.desc"
-                    placeholder="请输入样品其它描述或备注"></el-input>
+                <div id='editor'
+                  style="z-index: 0;position: relative;">
                 </div>
               </div>
             </div>
@@ -430,7 +429,8 @@
                         v-if="sampleInfo.part_data.length>1">{{index+1}}</span>配件名称</span>
                     <span class="explanation">(必填)</span>
                     <span class="fr hoverRed"
-                      @click="$deleteItem(sampleInfo.part_data,index)">删除此配件</span>
+                      @click="$deleteItem(sampleInfo.part_data,index)"
+                      v-if="!item.id">删除此配件</span>
                   </div>
                   <div class="info elCtn">
                     <el-input placeholder="请输入配件名称"
@@ -518,7 +518,6 @@
                 </div>
                 <div class="col">
                   <div class="spaceBetween">
-
                     <div class="once">
                       <div class="label"
                         v-if="index===1">
@@ -647,6 +646,7 @@ export default Vue.extend({
         cvFlag: false,
         cvImageLength: 1,
         desc: '',
+        editor: '',
         style_data: [], // 款式
         component_data: [
           {
@@ -731,6 +731,9 @@ export default Vue.extend({
               id: index,
               url: item
             }
+          })
+          this.$nextTick(() => {
+            this.$initEditor(this.sampleInfo)
           })
         } else {
           if (this.data) {
@@ -975,6 +978,7 @@ export default Vue.extend({
       this.getCmpData()
       if (!formCheck && !partFormCheck) {
         this.loading = true
+        this.sampleInfo.editor = ''
         sample.create(this.sampleInfo).then((res) => {
           if (res.data.status) {
             this.$message.success(this.edit ? '修改成功' : '添加成功')
@@ -1077,6 +1081,7 @@ export default Vue.extend({
             url: item
           }
         }),
+
         cv_list: [],
         cvFlag: false,
         cvImageLength: 1,
@@ -1126,6 +1131,7 @@ export default Vue.extend({
       }
       this.have_part = this.sampleInfo.part_data.length > 0
       this.getUnit([data.category_id as number, data.secondary_category_id as number])
+      this.$initEditor(this.sampleInfo)
     },
     // 打开复制粘贴图片功能
     changeCVOpration(flag: boolean) {

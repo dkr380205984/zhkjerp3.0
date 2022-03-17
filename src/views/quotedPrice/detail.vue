@@ -14,14 +14,14 @@
             <div class="title">基本信息</div>
           </div>
           <div class="detailCtn">
-            <div class="checkCtn">
-              <!-- <el-tooltip class="item"
+            <div class="checkCtn"
+              @click="checkDetailFlag = true">
+              <el-tooltip class="item"
                 effect="dark"
                 content="点击查看审核日志"
                 placement="bottom">
                 <img :src="quotedPriceInfo.is_check|checkFilter" />
-              </el-tooltip> -->
-              <img :src="quotedPriceInfo.is_check|checkFilter" />
+              </el-tooltip>
             </div>
             <div class="row">
               <div class="col flex3">
@@ -115,10 +115,14 @@
           <div class="tableCtn">
             <div class="thead">
               <div class="trow">
-                <div class="tcol">产品品类</div>
-                <div class="tcol">产品图片</div>
-                <div class="tcol">客户目标价格</div>
-                <div class="tcol">客户最低起订量</div>
+                <div class="tcol"
+                  style="flex:0.5">产品品类</div>
+                <div class="tcol"
+                  style="flex:0.5">产品图片</div>
+                <div class="tcol"
+                  style="flex:0.5">客户目标价格</div>
+                <div class="tcol"
+                  style="flex:0.5">客户最低起订量</div>
                 <div class="tcol">产品描述/客户要求</div>
                 <div class="tcol">是否已绑订单</div>
               </div>
@@ -127,8 +131,10 @@
               <div class="trow"
                 v-for="(item) in quotedPriceInfo.product_data"
                 :key="item.id">
-                <div class="tcol">{{item.category_name}}/{{item.secondary_category}}</div>
-                <div class="tcol">
+                <div class="tcol"
+                  style="flex:0.5">{{item.category_name}}/{{item.secondary_category}}</div>
+                <div class="tcol"
+                  style="flex:0.5">
                   <div class="imageCtn">
                     <el-image style="width:100%;height:100%"
                       :src="item.image_data.length>0?item.image_data[0]:''"
@@ -141,13 +147,21 @@
                     </el-image>
                   </div>
                 </div>
-                <div class="tcol">{{item.client_target_price}}元</div>
-                <div class="tcol">{{item.start_order_number}}</div>
-                <div class="tcol">{{item.desc}}</div>
                 <div class="tcol"
-                  style="cursor:pointer"
-                  :class="{'green':item.rel_product_info.product_id,'blue':!item.rel_product_info.product_id}"
-                  @click="item.rel_product_info.product_id?$openUrl(item.rel_order_info.order_type===1?'/order/detail?id='+item.rel_order_info.order_id:'/sampleOrder/detail?id='+item.rel_order_info.order_id):bindOrderFlag=true;bindQuoteId=item.id">{{item.rel_product_info.product_id?item.rel_order_info.order_code:'去绑定'}}</div>
+                  style="flex:0.5">{{item.client_target_price}}元</div>
+                <div class="tcol"
+                  style="flex:0.5">{{item.start_order_number}}</div>
+                <div class="tcol"
+                  v-html="item.desc"></div>
+                <div class="tcol oprCtn">
+                  <span class="opr"
+                    style="cursor:pointer"
+                    :class="{'green':item.rel_product_info.product_id,'blue':!item.rel_product_info.product_id}"
+                    @click="item.rel_product_info.product_id?$openUrl(item.rel_order_info.order_type===1?'/order/detail?id='+item.rel_order_info.order_id:'/sampleOrder/detail?id='+item.rel_order_info.order_id):bindOrderFlag=true;bindQuoteId=item.id">{{item.rel_product_info.product_id?item.rel_order_info.order_code:'去绑定'}}</span>
+                  <span v-if="item.rel_product_info.product_id"
+                    class="opr orange"
+                    @click="bindOrderFlag=true;bindQuoteId=item.id">修改绑定</span>
+                </div>
               </div>
               <template v-if="showCompareInfo">
                 <div class="trow"
@@ -581,7 +595,7 @@
                 </div>
                 <div class="col"></div>
                 <div class="col"></div>
-                <div class="col">{{quotedPriceInfo.commission_price}}元
+                <div class="col">{{$toFixed(quotedPriceInfo.commission_price)}}元
                   <div class="tips"
                     v-if="showCompareInfo && quotedPriceInfo.commission_price!==compareInfo.commission_price">
                     <span :class="{'lightGreen':quotedPriceInfo.commission_price>compareInfo.commission_price,'lightRed':quotedPriceInfo.commission_price<compareInfo.commission_price}">
@@ -602,7 +616,7 @@
                 </div>
                 <div class="col"></div>
                 <div class="col"></div>
-                <div class="col">{{quotedPriceInfo.rate_price}}元
+                <div class="col">{{$toFixed(quotedPriceInfo.rate_price)}}元
                   <div class="tips"
                     v-if="showCompareInfo && quotedPriceInfo.rate_price!==compareInfo.rate_price">
                     <span :class="{'lightGreen':quotedPriceInfo.rate_price>compareInfo.rate_price,'lightRed':quotedPriceInfo.rate_price<compareInfo.rate_price}">
@@ -623,7 +637,7 @@
                 </div>
                 <div class="col"></div>
                 <div class="col"></div>
-                <div class="col">{{quotedPriceInfo.profit_price}}元
+                <div class="col">{{$toFixed(quotedPriceInfo.profit_price)}}元
                   <div class="tips"
                     v-if="showCompareInfo && quotedPriceInfo.profit_price!==compareInfo.profit_price">
                     <span :class="{'lightGreen':quotedPriceInfo.profit_price<compareInfo.profit_price,'lightRed':quotedPriceInfo.profit_price>compareInfo.profit_price}">
@@ -969,6 +983,10 @@
       :pid="quotedList[quotedIndex]"
       :check_type="5"
       :reason="['物料价格偏低','织造费用偏低','加工费用偏低','包装费用偏低','人工费用偏低','运输费用偏低','基本利润偏低','整体报价偏低']"></zh-check>
+    <zh-check-detail :pid="quotedList[quotedIndex] || 0"
+      :check_type="5"
+      :show="checkDetailFlag"
+      @close="checkDetailFlag=false"></zh-check-detail>
   </div>
 </template>
 
@@ -985,6 +1003,7 @@ export default Vue.extend({
     return {
       loading: true,
       checkFlag: false,
+      checkDetailFlag: false,
       compareFlag: false,
       compareIndex: 0,
       showCompareInfo: false, // 是否展示对比数据

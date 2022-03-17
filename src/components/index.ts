@@ -10,6 +10,7 @@ import colorPicker from './colorPicker/colorPicker.vue'
 import orderDetail from './orderDetail/orderDetail.vue'
 import zhList from './zhList/zhList.vue'
 import zhCheck from './zhCheck/zhCheck.vue'
+import zhCheckDetail from './zhCheck/zhCheckDetail.vue'
 import othersFeeData from './othersFeeData/othersFeeData.vue'
 import usingTutorials from './usingTutorials/usingTutorials.vue'
 import zhDeduct from './zhDeduct/zhDeduct.vue'
@@ -41,5 +42,6 @@ export default {
     Vue.component('zhImage', zhImage)
     Vue.component('todayIsHoliday', todayIsHoliday)
     Vue.component('storeSurplus', storeSurplus)
+    Vue.component('zhCheckDetail', zhCheckDetail)
   }
 }

@@ -205,7 +205,8 @@
                       :class="{'backGray':!item.craft_list_id,'backBlue':item.craft_list_id}">工</div>
                   </div>
                 </div>
-                <div class="tcol">{{item.desc||'无'}}</div>
+                <div class="tcol"
+                  v-html="item.desc"></div>
                 <div class="tcol">{{item.client_edit_idea||'无'}}</div>
               </div>
             </div>
@@ -292,7 +293,7 @@
                           :key="indexChild">
                           <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
                           <div class="tcol">{{itemChild.number}}</div>
-                          <div class="tcol">0</div>
+                          <div class="tcol">{{itemChild.transport_number||0}}</div>
                         </div>
                       </div>
                       <div class="tcol">暂无</div>
@@ -358,7 +359,8 @@
                         <div class="tcol">{{itemChild.number}}</div>
                       </div>
                     </div>
-                    <div class="tcol">{{item.desc}}</div>
+                    <div class="tcol"
+                      v-html="item.desc"></div>
                     <div class="tcol">
                       <span :class="item.status|productStatusClassFilter">{{item.status|productStatusFilter}}</span>
                     </div>

@@ -135,14 +135,14 @@
           :name="index.toString()">
           <div class="detailCtn">
             <div class="checkCtn"
-              style="top: 0px;">
-              <!-- <el-tooltip class="item"
+              style="top: 0px;"
+              @click="checkDetailFlag=true">
+              <el-tooltip class="item"
                 effect="dark"
                 content="点击查看审核日志"
                 placement="bottom">
-                <img :src="quotedPriceInfo.is_check|checkFilter" />
-              </el-tooltip> -->
-              <img :src="item.is_check|checkFilter" />
+                <img :src="item.is_check|checkFilter" />
+              </el-tooltip>
             </div>
             <div class="row">
               <div class="col">
@@ -744,6 +744,10 @@
       :pid="sampleOrderInfo.time_data[sampleOrderIndex].id"
       :check_type="1"
       :reason="[]"></zh-check>
+    <zh-check-detail :pid="sampleOrderInfo.time_data[sampleOrderIndex].id"
+      :check_type="1"
+      :show="checkDetailFlag"
+      @close="checkDetailFlag=false"></zh-check-detail>
   </div>
 </template>
 
@@ -766,6 +770,7 @@ export default Vue.extend({
       loading: true,
       sampleShow: false,
       checkFlag: false,
+      checkDetailFlag: false,
       sampleDetail: {
         product_type: 2,
         name: '',
@@ -1190,11 +1195,17 @@ export default Vue.extend({
       }
     },
     deleteSampleOrder() {
-      this.$confirm('只能删除还未进行任何后续操作的样单?', '提示', {
-        confirmButtonText: '确认删除',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
+      this.$confirm(
+        this.sampleOrderInfo.status === 1
+          ? '是否删除该订单？'
+          : '该样单已在进行中，删除样单会将后续所有关联单据同步删除，是否继续？?',
+        '提示',
+        {
+          confirmButtonText: '确认删除',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
         .then(() => {
           sampleOrder
             .delete({

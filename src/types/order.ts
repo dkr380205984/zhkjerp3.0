@@ -87,6 +87,7 @@ export interface OrderInfo {
   contacts_id: number | string
   public_files: string[]
   private_files: string[]
+  status?: number //订单状态
   settle_tax: string // 结算税率
   settle_unit: string // 报价币种
   exchange_rate?: string | number//汇率

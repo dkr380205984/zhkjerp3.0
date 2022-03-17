@@ -1145,6 +1145,56 @@
     </div>
     <div class="bottomFixBar">
       <div class="main">
+        <!-- 报价单表格 -->
+        <div class="priceCtn fl">
+          <div class="btn"
+            :class="{'backHoverBlue':priceProcessList.length>0,'backGray':priceProcessList.length===0}"
+            @click="showPrice=!showPrice">{{priceProcessList.length>0?(showPrice?'关闭报价':'查看报价'):'暂无报价'}}</div>
+          <div class="priceTable"
+            v-show="showPrice && priceProcessList.length>0">
+            <div class="module">
+              <div class="titleCtn">
+                <div class="title">报价信息</div>
+              </div>
+              <div class="contentCtn">
+                <div class="tableCtn">
+                  <div class="thead">
+                    <div class="trow">
+                      <div class="tcol">产品信息</div>
+                      <div class="tcol noPad"
+                        style="flex:4">
+                        <div class="trow">
+                          <div class="tcol">加工类型</div>
+                          <div class="tcol">加工工序</div>
+                          <div class="tcol">备注信息</div>
+                          <div class="tcol">单价</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tbody">
+                    <div class="trow"
+                      v-for="(item,index) in priceProcessList"
+                      :key="index">
+                      <div class="tcol">{{item.productInfo}}</div>
+                      <div class="tcol noPad"
+                        style="flex:4">
+                        <div class="trow"
+                          v-for="(itemChild,indexChild) in item.childrenMergeInfo"
+                          :key="indexChild">
+                          <div class="tcol">{{itemChild.type}}</div>
+                          <div class="tcol">{{itemChild.process}}</div>
+                          <div class="tcol">{{itemChild.desc}}</div>
+                          <div class="tcol">{{itemChild.price}}元</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
@@ -1173,12 +1223,13 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { materialPlan, order, productionPlan, materialSupplement, clientInOrder } from '@/assets/js/api'
+import { materialPlan, order, productionPlan, materialSupplement, clientInOrder, quotedPrice } from '@/assets/js/api'
 import { ProductionMaterialPlanInfo, ProductionPlanInfo } from '@/types/productionPlan'
 import { MaterialPlanInfo, MaterailPlanData } from '@/types/materialPlan'
 import { MaterialSupplementInfo } from '@/types/materialSupplement'
 import { CascaderInfo } from '@/types/vuex'
 import { OrderInfo, OrderTime } from '@/types/order'
+import { QuotedPriceInfo } from '@/types/quotedPrice'
 interface OrderDetail extends OrderInfo {
   time_data: OrderTime[]
 }
@@ -1349,7 +1400,9 @@ export default Vue.extend({
         ]
       },
       productionDivideInfo: [],
-      bearClientArr: [] // 所有的相关承担单位，包括纱线订购厂，加工厂之类的
+      bearClientArr: [], // 所有的相关承担单位，包括纱线订购厂，加工厂之类的
+      showPrice: false,
+      priceProcessList: [] // 报价单报价信息
     }
   },
   computed: {
@@ -1998,6 +2051,73 @@ export default Vue.extend({
           this.bearClientArr = res.data.data[2].concat(res.data.data[3])
         })
         this.init()
+      })
+
+    // 优化报价信息
+    quotedPrice
+      .detailByOrder({
+        order_time_id: Number(this.$route.query.sampleOrderIndex)
+      })
+      .then((res) => {
+        if (res.data.status) {
+          if (res.data.data.length > 0) {
+            res.data.data.forEach((item: QuotedPriceInfo) => {
+              item.product_data.forEach((itemPro) => {
+                itemPro.weave_data.forEach((itemProcess) => {
+                  this.priceProcessList.push({
+                    type: '织造工序',
+                    productInfo: itemPro.rel_product_info
+                      ? itemPro.rel_product_info.product_code +
+                        '(' +
+                        itemPro.category_name +
+                        '/' +
+                        itemPro.secondary_category +
+                        ')'
+                      : itemPro.category_name + '/' + itemPro.secondary_category,
+                    process: itemProcess.name,
+                    desc: itemProcess.desc,
+                    price: itemProcess.total_price
+                  })
+                })
+                itemPro.semi_product_data.forEach((itemProcess) => {
+                  this.priceProcessList.push({
+                    type: '半成品加工工序',
+                    productInfo: itemPro.rel_product_info
+                      ? itemPro.rel_product_info.product_code +
+                        '(' +
+                        itemPro.category_name +
+                        '/' +
+                        itemPro.secondary_category +
+                        ')'
+                      : itemPro.category_name + '/' + itemPro.secondary_category,
+                    process: itemProcess.process_name!.join(','),
+                    desc: itemProcess.desc,
+                    price: itemProcess.total_price
+                  })
+                })
+                itemPro.production_data.forEach((itemProcess) => {
+                  this.priceProcessList.push({
+                    type: '成品加工工序',
+                    productInfo: itemPro.rel_product_info
+                      ? itemPro.rel_product_info.product_code +
+                        '(' +
+                        itemPro.category_name +
+                        '/' +
+                        itemPro.secondary_category +
+                        ')'
+                      : itemPro.category_name + '/' + itemPro.secondary_category,
+                    process: itemProcess.name!.join(','),
+                    desc: itemProcess.desc,
+                    price: itemProcess.total_price
+                  })
+                })
+              })
+            })
+            this.priceProcessList = this.$mergeData(this.priceProcessList, {
+              mainRule: 'productInfo'
+            })
+          }
+        }
       })
 
     this.$checkCommonInfo([
