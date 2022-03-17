@@ -200,10 +200,12 @@
           </div>
           <div class="row">
             <div class="col">
-              <div class="label">产品描述</div>
-              <div class="info elCtn">
-                <el-input placeholder="请输入产品描述，如产品的尺寸、克重、成分、工艺、配料等信息"
-                  v-model="item.desc"></el-input>
+              <div class="label">产品描述
+                <span class="explanation">(请输入产品描述，如产品的尺寸、克重、成分、工艺、配料等信息)</span>
+              </div>
+              <div class="info"
+                :id="'editor'+index"
+                style="z-index: 0;position: relative;">
               </div>
             </div>
           </div>
@@ -975,7 +977,8 @@
           <div class="col flex3">
             <div class="label">产品成本价合计</div>
             <div class="info elCtn">
-              <el-input v-model="totalPrice"
+              <el-input style="font-size:20px;"
+                v-model="totalPrice"
                 disabled
                 placeholder="请输入产品成本价合计">
                 <template slot="append">元</template>
@@ -999,7 +1002,8 @@
           <div class="col flex3">
             <div class="label">佣金费用</div>
             <div class="info elCtn">
-              <el-input v-model="commissionPrice"
+              <el-input style="font-size:20px;"
+                v-model="commissionPrice"
                 placeholder="请输入佣金费用"
                 disabled>
                 <template slot="append">元</template>
@@ -1023,7 +1027,8 @@
           <div class="col flex3">
             <div class="label">税费</div>
             <div class="info elCtn">
-              <el-input v-model="ratePrice"
+              <el-input style="font-size:20px;"
+                v-model="ratePrice"
                 disabled
                 placeholder="请输入税费">
                 <template slot="append">元</template>
@@ -1047,7 +1052,8 @@
           <div class="col flex3">
             <div class="label">利润</div>
             <div class="info elCtn">
-              <el-input v-model="profitPrice"
+              <el-input style="font-size:20px;"
+                v-model="profitPrice"
                 disabled
                 placeholder="请输入利润">
                 <template slot="append">元</template>
@@ -1139,101 +1145,7 @@ export default Vue.extend({
         desc: '',
         real_quote_price: '',
         system_total_price: 0,
-        product_data: [
-          {
-            cv_list: [],
-            file_list: [],
-            cvFlag: false,
-            cvImageLength: 1,
-            total_price: '',
-            product_id: '',
-            type: [],
-            category_id: '',
-            secondary_category_id: '',
-            image_data: [],
-            client_target_price: '',
-            start_order_number: '',
-            desc: '',
-            transport_fee_desc: '',
-            transport_fee: '',
-            material_data: [
-              {
-                id: '',
-                tree_data: [],
-                material_id: '',
-                material_name: '',
-                weight: '',
-                loss: '',
-                price: '',
-                total_price: '',
-                unit: 'g',
-                price_info: []
-              }
-            ],
-            assist_material_data: [
-              {
-                id: '',
-                material_id: '',
-                material_name: '',
-                number: '',
-                loss: '',
-                price: '',
-                total_price: '',
-                unit: ''
-              }
-            ],
-            weave_data: [
-              {
-                id: '',
-                name: '',
-                desc: '',
-                total_price: ''
-              }
-            ],
-            semi_product_data: [
-              {
-                id: '',
-                process_id: [],
-                process_name: [],
-                desc: '',
-                total_price: ''
-              }
-            ],
-            production_data: [
-              {
-                id: '',
-                name: [],
-                desc: '',
-                total_price: ''
-              }
-            ],
-            pack_material_data: [
-              {
-                id: '',
-                material_name: '',
-                material_id: '',
-                desc: '',
-                total_price: ''
-              }
-            ],
-            other_fee_data: [
-              {
-                id: '',
-                name: '',
-                desc: '',
-                total_price: ''
-              }
-            ],
-            no_production_fee_data: [
-              {
-                id: '',
-                name: '',
-                desc: '',
-                total_price: ''
-              }
-            ]
-          }
-        ]
+        product_data: []
       },
       contactsList: [],
       weaveList: [{ value: '针织织造' }, { value: '梭织织造' }, { value: '制版费' }],
@@ -1464,6 +1376,7 @@ export default Vue.extend({
         client_target_price: '',
         start_order_number: '',
         desc: '',
+        editor: '',
         transport_fee_desc: '',
         transport_fee: '',
         material_data: [
@@ -1541,6 +1454,10 @@ export default Vue.extend({
             total_price: ''
           }
         ]
+      })
+      const index = Number(this.quotedPriceInfo.product_data.length - 1)
+      this.$nextTick(() => {
+        this.$initEditor(this.quotedPriceInfo.product_data[index], index)
       })
     },
     beforeAvatarUpload(file: any) {
@@ -1625,6 +1542,7 @@ export default Vue.extend({
       this.quotedPriceInfo.tree_data =
         this.quotedPriceInfo.tree_data && (this.quotedPriceInfo.tree_data as number[]).join(',') // 保存公司原始数据包含一级二级分类
       this.quotedPriceInfo.product_data.forEach((item) => {
+        item.editor = '' // 把editor清空，这里有个死循环，我都不知道死循环代码是怎么执行的，反正这个死循环提交了绝对有问题
         item.image_data = item.file_list
           ? item.image_data.concat(item.file_list!.map((item) => item.url))
           : item.image_data // 新旧图拼接
@@ -1845,6 +1763,7 @@ export default Vue.extend({
           })
         if (!formCheck) {
           this.getCmpData()
+          console.log(this.quotedPriceInfo)
           quotedPrice.create(this.quotedPriceInfo).then((res) => {
             if (res.data.status) {
               this.$message.success('创建成功')
@@ -2345,6 +2264,11 @@ export default Vue.extend({
           }
           this.loading = false
         })
+    }
+
+    // 初始化编辑器
+    if (this.quotedPriceInfo.product_data.length === 0) {
+      this.addPro()
     }
   },
   beforeDestroy() {

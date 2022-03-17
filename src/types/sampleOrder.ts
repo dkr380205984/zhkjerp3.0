@@ -66,6 +66,7 @@ export interface SampleOrderInfo {
   contacts_id: number | string
   public_files: string[]
   private_files: string[]
+  status?: number
   settle_tax: string // 结算税率
   settle_unit: string // 报价币种
   rel_quote_id?: number | string

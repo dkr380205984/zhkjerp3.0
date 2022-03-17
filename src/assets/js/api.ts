@@ -99,6 +99,7 @@ const check = {
       is_check: 1 | 2 // 1通过 2没通过
       desc: string
     }) => http.post(`${baseUrl}/doc/check`, params, 'application/json'),
+  list: (params: { pid: string | number, check_type: number }) => http.get(`${baseUrl}/doc/check/lists`, params),
 }
 
 // 单据扣款

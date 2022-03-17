@@ -86,7 +86,13 @@
                       <el-checkbox v-model="itemChild.check">{{itemChild.size_name}}/{{itemChild.color_name}}</el-checkbox>
                     </div>
                     <div class="tcol">{{itemChild.number}}</div>
-                    <div class="tcol">0</div>
+                    <div class="tcol"
+                      :class="{'green':itemChild.transport_number&&itemChild.transport_number>=itemChild.number,'orange':itemChild.transport_number&&itemChild.transport_number<itemChild.number}">{{itemChild.transport_number||0}}
+                      <span class="green"
+                        v-if="itemChild.transport_number&&itemChild.transport_number>=itemChild.number">差值+{{itemChild.transport_number-itemChild.number}}</span>
+                      <span class="red"
+                        v-if="itemChild.transport_number&&itemChild.transport_number<itemChild.number">差值-{{itemChild.number - itemChild.transport_number}}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -467,6 +473,37 @@
     </div>
     <div class="bottomFixBar">
       <div class="main">
+        <div class="priceCtn fl">
+          <div class="btn"
+            :class="{'backHoverBlue':priceMaterialList.length>0,'backGray':priceMaterialList.length===0}"
+            @click="showPrice=!showPrice">{{priceMaterialList.length>0?(showPrice?'关闭报价':'查看报价'):'暂无报价'}}</div>
+          <div class="priceTable"
+            v-show="showPrice && priceMaterialList.length>0">
+            <div class="module">
+              <div class="titleCtn">
+                <div class="title">报价信息</div>
+              </div>
+              <div class="contentCtn">
+                <div class="tableCtn">
+                  <div class="thead">
+                    <div class="trow">
+                      <div class="tcol">原料名称</div>
+                      <div class="tcol">单价</div>
+                    </div>
+                  </div>
+                  <div class="tbody">
+                    <div class="trow"
+                      v-for="(item,index) in priceMaterialList"
+                      :key="index">
+                      <div class="tcol">{{item.material_name}}</div>
+                      <div class="tcol">{{item.total_price}}元</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
@@ -593,7 +630,7 @@
                 <div class="col">
                   <div class="label">
                     <span class="text">包装尺寸</span>
-                    <span class="explanation">(必填)</span>
+                    <span class="explanation">(必填,单位:cm)</span>
                   </div>
                   <div class="info elCtn"
                     style="flex-direction:row;display: flex;">
@@ -629,14 +666,13 @@
                   <div class="spaceBetween">
                     <div class="once">
                       <div class="label">
-                        <span class="text">体积单价（元/平米）</span>
-                        <span class="explanation">(必选)</span>
+                        <span class="text">体积/面积单价（元）</span>
                       </div>
                       <div class="info elCtn">
                         <el-input v-model="itemChild.bulk_price"
                           placeholder="单价"
                           @input="(ev)=>{return getCountPrice(ev,itemChild)}">
-                          <template slot="append">元/㎡</template>
+                          <template slot="append">元</template>
                         </el-input>
                       </div>
                     </div>
@@ -1160,11 +1196,12 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { order, packManage } from '@/assets/js/api'
+import { order, packManage, quotedPrice } from '@/assets/js/api'
 import { PackOrderInfo, PackPlanInfo, PackPlanInfoData } from '@/types/packManage'
 import { PackMaterialInfo } from '@/types/materialSetting'
 import { CascaderInfo } from '@/types/vuex'
 import { OrderInfo, OrderTime } from '@/types/order'
+import { QuotedPriceInfo } from '@/types/quotedPrice'
 export default Vue.extend({
   data(): {
     orderInfo: OrderInfo
@@ -1343,7 +1380,9 @@ export default Vue.extend({
         }
       ],
       packOrderLog: [],
-      packOrderLogIndex: ''
+      packOrderLogIndex: '',
+      showPrice: false,
+      priceMaterialList: [] // 报价单报价信息
     }
   },
   computed: {
@@ -1522,9 +1561,11 @@ export default Vue.extend({
     // 计算数量单个
     getCountPrice(bulkPrice: number, info: any) {
       if (info.price_type === 1 && info.length && info.width && info.height) {
-        info.count_price = Number(info.length) * Number(info.width) * Number(info.height) * bulkPrice
+        info.count_price = this.$toFixed(
+          (Number(info.length) * Number(info.width) * Number(info.height) * bulkPrice) / 1000000
+        )
       } else if (info.price_type === 2 && info.length && info.width) {
-        info.count_price = Number(info.length) * Number(info.width) * bulkPrice
+        info.count_price = this.$toFixed((Number(info.length) * Number(info.width) * bulkPrice) / 10000)
       }
     },
     getOrderCmpData() {
@@ -1971,6 +2012,24 @@ export default Vue.extend({
         this.order_id = res.data.data.time_data[this.orderIndex].id
         this.orderInfo = res.data.data
         this.init()
+      })
+    // 优化报价信息
+    quotedPrice
+      .detailByOrder({
+        order_id: Number(this.$route.query.id)
+      })
+      .then((res) => {
+        if (res.data.status) {
+          if (res.data.data.length > 0) {
+            res.data.data.forEach((item: QuotedPriceInfo) => {
+              item.product_data.forEach((itemPro) => {
+                itemPro.pack_material_data.forEach((itemMat) => {
+                  this.priceMaterialList.push(itemMat)
+                })
+              })
+            })
+          }
+        }
       })
   }
 })

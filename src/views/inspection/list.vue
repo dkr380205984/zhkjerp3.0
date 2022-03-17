@@ -199,7 +199,7 @@ export default Vue.extend({
           classArr: ['', 'green', 'orange']
         },
         {
-          key: 'push_progress',
+          key: 'inspection_push_progress',
           name: '生产检验进度',
           ifShow: true,
           ifLock: false,

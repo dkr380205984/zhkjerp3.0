@@ -722,8 +722,8 @@
                   </div>
                   <div class="tbody">
                     <div class="trow"
-                      v-for="item in priceMaterialList"
-                      :key="item">
+                      v-for="(item,index) in priceMaterialList"
+                      :key="index">
                       <div class="tcol">{{item.material_name}}</div>
                       <div class="tcol">{{item.price}}元/{{item.unit==='g'?'kg':item.unit}}</div>
                     </div>

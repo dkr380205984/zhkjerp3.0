@@ -36,7 +36,8 @@ axios.interceptors.response.use(
   },
   // 请求失败回调
   (error) => {
-    router.push({ path: '/index/error/' + error.response.status })
+    console.log(error)
+    // router.push({ path: '/index/error/' + error.response.status })
     return Promise.reject(error)
   }
 )

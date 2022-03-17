@@ -15,7 +15,7 @@
               @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
-            <el-cascader @change="changeRouter"
+            <el-cascader @change="getContacts($event);changeRouter()"
               placeholder="筛选下单公司"
               v-model="client_id"
               :options="clientList"
@@ -23,23 +23,18 @@
               clearable>
             </el-cascader>
           </div>
-          <div class="elCtn hasIcon">
-            <el-select @change="(ev)=>getLocalStorage(ev,'create_user')"
-              v-model="user_id"
-              placeholder="筛选创建人"
-              clearable>
-              <el-option v-for="item in userList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"></el-option>
+          <div class="elCtn">
+            <el-select placeholder="请选择公司联系人"
+              v-model="contacts_id"
+              no-data-text="请先选择下单公司"
+              filterable
+              clearable
+              @change="changeRouter">
+              <el-option v-for="item in contactsList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
             </el-select>
-            <el-tooltip class="item"
-              effect="dark"
-              content="保存创建人筛选"
-              placement="top">
-              <i class="el-icon-upload hoverOrange"
-                @click="$setLocalStorage('create_user',user_id)"></i>
-            </el-tooltip>
           </div>
           <div class="elCtn">
             <el-select @change="changeRouter"
@@ -59,6 +54,24 @@
             @click="reset">重置</div>
         </div>
         <div class="filterCtn">
+          <div class="elCtn hasIcon">
+            <el-select @change="(ev)=>getLocalStorage(ev,'create_user')"
+              v-model="user_id"
+              placeholder="筛选创建人"
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
+            </el-select>
+            <el-tooltip class="item"
+              effect="dark"
+              content="保存创建人筛选"
+              placement="top">
+              <i class="el-icon-upload hoverOrange"
+                @click="$setLocalStorage('create_user',user_id)"></i>
+            </el-tooltip>
+          </div>
           <div class="elCtn hasIcon">
             <el-select @change="(ev)=>getLocalStorage(ev,'group_id')"
               v-model="group_id"
@@ -150,7 +163,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { sampleOrder, listSetting, exportExcel } from '@/assets/js/api'
+import { sampleOrder, listSetting, exportExcel, client } from '@/assets/js/api'
 import { SampleOrderInfo } from '@/types/sampleOrder'
 import { limitArr } from '@/assets/js/dictionary'
 import zhExportSetting from '@/components/zhExportSetting/zhExportSetting.vue'
@@ -164,6 +177,8 @@ export default Vue.extend({
       mainLoading: false,
       loading: false,
       list: [],
+      contacts_id: '',
+      contactsList: [],
       limitList: limitArr,
       limit: 10,
       total: 1,
@@ -519,6 +534,21 @@ export default Vue.extend({
     }
   },
   methods: {
+    getContacts(ev: number[]) {
+      if (ev && ev.length) {
+        client
+          .detail({
+            id: ev[2]
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.contactsList = res.data.data.contacts_data
+            }
+          })
+      } else {
+        this.contacts_id = ''
+      }
+    },
     getLocalStorage(ev: any, type: string) {
       if (!ev) {
         this.$setLocalStorage(type, '')
@@ -561,6 +591,10 @@ export default Vue.extend({
       const query = this.$route.query
       this.page = Number(query.page)
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
+      this.contacts_id = Number(query.contacts_id) || ''
+      if (this.client_id && this.client_id.length) {
+        this.getContacts(this.client_id)
+      }
       this.keyword = query.keyword || ''
       this.status = query.status === 'null' ? null : query.status
       this.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
@@ -588,7 +622,9 @@ export default Vue.extend({
           '&date=' +
           this.date +
           '&limit=' +
-          this.limit
+          this.limit +
+          '&contacts_id=' +
+          this.contacts_id
       )
     },
     reset() {
@@ -603,6 +639,7 @@ export default Vue.extend({
           this.user_id = ''
           this.group_id = ''
           this.date = []
+          this.contacts_id = ''
           this.status = '0'
           this.limit = 10
           this.changeRouter()
@@ -627,7 +664,8 @@ export default Vue.extend({
           end_time: this.date.length > 0 ? this.date[1] : '',
           user_id: this.user_id,
           group_id: this.group_id,
-          order_type: 2
+          order_type: 2,
+          contacts_id: this.contacts_id
         })
         .then((res) => {
           if (res.data.status) {

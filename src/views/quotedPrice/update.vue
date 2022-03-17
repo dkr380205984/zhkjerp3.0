@@ -147,10 +147,12 @@
           </div>
           <div class="row">
             <div class="col">
-              <div class="label">产品描述</div>
-              <div class="info elCtn">
-                <el-input placeholder="请输入产品描述，如产品的尺寸、克重、成分、工艺、配料等信息"
-                  v-model="item.desc"></el-input>
+              <div class="label">产品描述
+                <span class="explanation">(请输入产品描述，如产品的尺寸、克重、成分、工艺、配料等信息)</span>
+              </div>
+              <div class="info"
+                :id="'editor'+index"
+                style="z-index: 0;position: relative;">
               </div>
             </div>
           </div>
@@ -1099,6 +1101,7 @@ export default Vue.extend({
         desc: '',
         transport_fee_desc: '',
         transport_fee: '',
+        editor: '',
         material_data: [
           {
             id: '',
@@ -1175,6 +1178,10 @@ export default Vue.extend({
           }
         ]
       })
+      const index = Number(this.quotedPriceInfo.product_data.length - 1)
+      this.$nextTick(() => {
+        this.$initEditor(this.quotedPriceInfo.product_data[index], index)
+      })
     },
     beforeAvatarUpload(file: any) {
       const fileName = file.name.lastIndexOf('.') // 取到文件名开始到最后一个点的长度
@@ -1230,7 +1237,6 @@ export default Vue.extend({
       }
     },
     // 辅助计算产品原料和装饰辅料的小计，小计本身可直接修改
-    // 辅助计算产品原料和装饰辅料的小计，小计本身可直接修改
     cmpTotalPrice(info: {
       total_price: number
       weight: number
@@ -1266,6 +1272,7 @@ export default Vue.extend({
       this.quotedPriceInfo.tree_data =
         this.quotedPriceInfo.tree_data && (this.quotedPriceInfo.tree_data as number[]).join(',') // 保存公司原始数据包含一级二级分类
       this.quotedPriceInfo.product_data.forEach((item) => {
+        item.editor = ''
         item.image_data = item.image_data.concat(item.file_list!.map((item) => item.url)) // 新旧图拼接
         item.category_id = item.type && item.type[0]
         item.secondary_category_id = item.type && item.type[1]
@@ -1523,7 +1530,8 @@ export default Vue.extend({
         this.getContacts(this.quotedPriceInfo.tree_data, true) //标记一下是初始化
       }
 
-      this.quotedPriceInfo.product_data.forEach((item) => {
+      this.quotedPriceInfo.product_data.forEach((item, index) => {
+        this.$initEditor(item, index)
         item.file_list = item.image_data.map((itemImage, index) => {
           return {
             id: index,

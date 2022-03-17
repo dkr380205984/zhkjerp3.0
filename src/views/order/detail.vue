@@ -7,7 +7,8 @@
         <div class="title">基本信息</div>
       </div>
       <div class="detailCtn">
-        <div class="checkCtn">
+        <div class="checkCtn"
+          @click="checkDetailFlag=true">
           <el-tooltip class="item"
             effect="dark"
             content="点击查看审核日志"
@@ -276,7 +277,8 @@
                   :class="{'backGray':!item.rel_quote_info.quote_id,'backBlue':item.rel_quote_info.quote_id}">报</div>
               </div>
             </div>
-            <div class="tcol">{{item.desc||'无'}}</div>
+            <div class="tcol"
+              v-html="item.desc"></div>
             <div class="tcol">{{item.client_edit_idea||'无'}}</div>
           </div>
         </div>
@@ -831,6 +833,10 @@
       :pid="orderInfo.time_data[0].id"
       :check_type="1"
       :reason="[]"></zh-check>
+    <zh-check-detail :pid="orderInfo.time_data[0].id"
+      :check_type="1"
+      :show="checkDetailFlag"
+      @close="checkDetailFlag=false"></zh-check-detail>
   </div>
 </template>
 
@@ -838,10 +844,12 @@
 import Vue from 'vue'
 import { order } from '@/assets/js/api'
 import { OrderInfo, OrderTime } from '@/types/order'
+import zhCheckDetail from '@/components/zhCheck/zhCheckDetail.vue'
 interface OrderDetail extends OrderInfo {
   time_data: OrderTime[]
 }
 export default Vue.extend({
+  components: { zhCheckDetail },
   data(): {
     orderInfo: OrderDetail
     [propName: string]: any
@@ -849,6 +857,7 @@ export default Vue.extend({
     return {
       loading: true,
       checkFlag: false,
+      checkDetailFlag: false,
       orderInfo: {
         id: null,
         client_id: '',
@@ -989,11 +998,17 @@ export default Vue.extend({
         })
     },
     deleteOrder() {
-      this.$confirm('是否删除该订单?', '提示', {
-        confirmButtonText: '确认删除',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
+      this.$confirm(
+        this.orderInfo.status === 1
+          ? '是否删除该订单？'
+          : '该订单已在进行中，删除订单会将后续所有关联单据同步删除，是否继续？',
+        '提示',
+        {
+          confirmButtonText: '确认删除',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
         .then(() => {
           order
             .delete({

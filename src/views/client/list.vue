@@ -380,14 +380,26 @@ export default Vue.extend({
         })
     },
     // 获取未绑定过用户的合作单位
-    getUnBindClient() {
+    getUnBindClient(getClient?: boolean) {
       client
         .list({
+          client_type_id: this.clientTypeArr
+            .filter((item: any) => item.name === '生产织造单位' || item.name === '生产加工单位')
+            .map((item: any) => item.id),
           workshop_id: 0
         })
         .then((res) => {
           if (res.data.status) {
             this.unBindClient = res.data.data
+            // 初始化的时候找一下有没有名字跟用户申请名字一样得单位
+            if (getClient) {
+              this.clientBindList.forEach((item: any) => {
+                const finded = this.unBindClient.find((itemFind: any) => itemFind.name === item.user.name)
+                if (finded) {
+                  item.client_id = finded.id
+                }
+              })
+            }
           }
         })
     },
@@ -447,12 +459,12 @@ export default Vue.extend({
       this.clientTypeList = res.data.data
       this.getFilters()
       this.getList()
-    })
-    clientBind.list().then((res) => {
-      if (res.data.status) {
-        this.clientBindList = res.data.data
-        this.getUnBindClient()
-      }
+      clientBind.list().then((res) => {
+        if (res.data.status) {
+          this.clientBindList = res.data.data
+          this.getUnBindClient(true)
+        }
+      })
     })
   }
 })

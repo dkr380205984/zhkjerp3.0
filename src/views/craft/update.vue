@@ -2,69 +2,104 @@
   <div id="craftCreate"
     class="bodyContainer"
     v-loading="loading">
-    <!-- <div class="module">
+    <div class="module"
+      v-if="craftInfo.product_id">
       <div class="titleCtn">
         <div class="title">基本信息</div>
       </div>
       <div class="detailCtn">
-        <div class="checkCtn">
-          <el-tooltip class="item"
-            effect="dark"
-            content="点击查看审核日志"
-            placement="bottom">
-            <img :src="null|checkFilter" />
-          </el-tooltip>
-        </div>
         <div class="row">
           <div class="col">
             <div class="label">产品编号：</div>
-            <div class="text blue"></div>
+            <div class="text">{{productInfo.product_code||productInfo.system_code}}</div>
           </div>
           <div class="col">
             <div class="label">产品名称：</div>
-            <div class="text blue"></div>
+            <div class="text">{{productInfo.name||'无'}}</div>
           </div>
           <div class="col">
             <div class="label">产品品类：</div>
-            <div class="text blue"></div>
+            <div class="text">{{productInfo.category_name}}/{{productInfo.secondary_category_name}}</div>
           </div>
         </div>
         <div class="row">
-          <div class="col">
-            <div class="label">产品编号：</div>
-            <div class="text blue"></div>
-          </div>
-          <div class="col">
-            <div class="label">产品名称：</div>
-            <div class="text blue"></div>
-          </div>
-          <div class="col">
-            <div class="label">产品品类：</div>
-            <div class="text blue"></div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="label">产品成分：</div>
-            <div class="text blue"></div>
-          </div>
-          <div class="col">
+          <div class="col flex3">
             <div class="label">产品配色：</div>
-            <div class="text blue"></div>
+            <div class="text">
+              <span v-for="(item,index) in productInfo.color_data"
+                :key="item.id"
+                style="margin-right:12px">{{index+1}}.{{item.name}}</span>
+            </div>
           </div>
           <div class="col">
-            <div class="label">产品规格：</div>
-            <div class="text blue"></div>
+            <div class="label">产品描述：</div>
+            <div class="text"
+              v-html="productInfo.desc"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col flex3">
+            <div class="label">大身成分：</div>
+            <div class="text">
+              <span style="margin-right:12px"
+                v-for="item in productInfo.component_data"
+                :key="item.id">{{item.name}}{{item.number}}%</span>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">尺码信息：</div>
+            <div class="text">
+              <span v-for="(item,index) in productInfo.size_data"
+                :key="item.id"
+                style="margin-right:12px"> {{index+1}}.&nbsp;{{item.name}}&nbsp;{{item.weight}}g&nbsp;{{item.size_info}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row"
+          v-for="(item) in productInfo.part_data"
+          :key="item.id">
+          <div class="col">
+            <div class="label">配件名称：</div>
+            <div class="text">
+              <span style="margin-right:12px">{{item.name}}(单位:{{item.unit}})</span>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">配件成分：</div>
+            <div class="text">
+              <span style="margin-right:12px"
+                v-for="itemChild in item.part_component_data"
+                :key="itemChild.id">{{itemChild.name}}{{itemChild.number}}%</span>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">尺码信息：</div>
+            <div class="text">
+              <span v-for="(itemChild,indexChild) in item.part_size_data"
+                :key="itemChild.id"
+                style="margin-right:12px"> {{indexChild+1}}.&nbsp;{{itemChild.name}}&nbsp;{{itemChild.weight}}g&nbsp;{{itemChild.size_info}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col flex3">
+            <div class="label">产品图片：</div>
+            <div class="imgCtn">
+              <img v-for="(item,index) in productInfo.image_data"
+                :key="index"
+                class="img"
+                :src="item" />
+            </div>
           </div>
         </div>
         <div class="row">
           <div class="col">
             <div class="label">备注信息：</div>
-            <div class="text blue"></div>
+            <div class="text">{{productInfo.desc}}</div>
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
     <div class="module">
       <div class="titleCtn">
         <div class="title">原料经向</div>
@@ -117,9 +152,31 @@
         </div>
         <div class="row">
           <div class="col">
-            <div class="label">
+            <div class="label"
+              style="width:220px">
               <span class="text">主要原料</span>
               <span class="explanation">(必选)</span>
+              <el-tooltip class="item"
+                effect="dark"
+                content="设置成功后请点击此按钮刷新数据"
+                placement="top">
+                <i class="el-icon-refresh hoverGreen fr"
+                  style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                  @click="$checkCommonInfo([{
+                    checkWhich: 'api/material',
+                    getInfoMethed: 'dispatch',
+                    getInfoApi: 'getMaterialAsync',
+                    forceUpdate:true
+                  }])"></i>
+              </el-tooltip>
+              <el-tooltip class="item"
+                effect="dark"
+                content="添加新原料"
+                placement="top">
+                <i class="el-icon-upload hoverOrange fr"
+                  style="line-height:38px;font-size:18px;cursor:pointer;"
+                  @click="$openUrl('/setting/?pName=物料设置&cName=纱线原料')"></i>
+              </el-tooltip>
             </div>
             <div class="elCtn">
               <el-select placeholder="请选择主要原料"
@@ -913,9 +970,31 @@
         </div>
         <div class="row">
           <div class="col">
-            <div class="label">
+            <div class="label"
+              style="width:220px">
               <span class="text">主要原料</span>
               <span class="explanation">(必选)</span>
+              <el-tooltip class="item"
+                effect="dark"
+                content="设置成功后请点击此按钮刷新数据"
+                placement="top">
+                <i class="el-icon-refresh hoverGreen fr"
+                  style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                  @click="$checkCommonInfo([{
+                    checkWhich: 'api/material',
+                    getInfoMethed: 'dispatch',
+                    getInfoApi: 'getMaterialAsync',
+                    forceUpdate:true
+                  }])"></i>
+              </el-tooltip>
+              <el-tooltip class="item"
+                effect="dark"
+                content="添加新原料"
+                placement="top">
+                <i class="el-icon-upload hoverOrange fr"
+                  style="line-height:38px;font-size:18px;cursor:pointer;"
+                  @click="$openUrl('/setting/?pName=物料设置&cName=纱线原料')"></i>
+              </el-tooltip>
             </div>
             <div class="elCtn">
               <el-select placeholder="请选择主要原料"
@@ -1296,6 +1375,54 @@ export default Vue.extend({
     return {
       testValue: '',
       loading: false,
+      productInfo: {
+        product_type: 1,
+        name: '',
+        product_code: '',
+        style_code: '', // 客户款号
+        unit: '',
+        category: '',
+        type: '',
+        image_data: [],
+        desc: '',
+        style_data: [], // 款式
+        component_data: [
+          {
+            component_id: '',
+            number: '' // 成分信息
+          }
+        ],
+        size_data: [
+          {
+            id: '',
+            size_id: '',
+            size_info: '',
+            weight: ''
+          }
+        ], // 尺码组
+        color_data: [], // 配色组
+        // 配件信息
+        part_data: [
+          {
+            name: '',
+            unit: '',
+            part_size_data: [
+              {
+                id: '',
+                size_id: '',
+                size_info: '',
+                weight: ''
+              }
+            ],
+            part_component_data: [
+              {
+                component_id: '',
+                number: '' // 成分信息
+              }
+            ]
+          }
+        ]
+      },
       searchCraftKey: '',
       searchList: [],
       sideList: [],
@@ -3053,6 +3180,9 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.craftInfo = res.data.data
+
+          this.productInfo = this.craftInfo.product_info
+
           this.colourList = this.craftInfo.product_info ? this.craftInfo.product_info.color_data : []
 
           this.tableData.warp.mergeCells = this.craftInfo.warp_data.merge_data
