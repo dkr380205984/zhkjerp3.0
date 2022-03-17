@@ -4,11 +4,13 @@
 @import '../bottomBar.less';
 @import '../popup.less';
 @import '../table.less';
-#reimbursementManageUpdate{
-  .tcol{
+
+#reimbursementManageUpdate {
+  .tcol {
     position: relative;
   }
-  .copyIcon{
+
+  .copyIcon {
     position: absolute;
     right: 12px;
     top: 0;
@@ -18,7 +20,8 @@
     width: 24px;
     height: 24px;
   }
-  .notes{
+
+  .notes {
     padding: 20px 32px;
     background: #f0f0f0;
     color: @font85;
@@ -27,13 +30,15 @@
     margin: 20px 32px 0 32px;
     border-radius: 4px;
   }
-  .lineInfo{
+
+  .lineInfo {
     position: relative;
     height: 1px;
     background: @borderColor;
     margin: 20px 0;
     color: @font65;
-    .text{
+
+    .text {
       transform: translateY(-50%);
       left: 32px;
       position: absolute;
@@ -43,7 +48,8 @@
       padding: 0 8px;
       color: @blue;
     }
-    .deleteIcon{
+
+    .deleteIcon {
       transform: translateY(-50%);
       right: 32px;
       position: absolute;
@@ -53,24 +59,28 @@
       background: #FFF1F0;
       font-size: @fontMiddle;
       line-height: 24px;
-      padding:0 8px;
+      padding: 0 8px;
       border-radius: 4px;
     }
   }
-  .noDate{
+
+  .noDate {
     line-height: 55px;
     font-size: @fontBig;
     color: @font45;
     text-align: center;
   }
-  .checkList{
+
+  .checkList {
     padding: 20px 32px;
-    .label{
+
+    .label {
       color: @font65;
       font-size: @fontMiddle;
       margin-bottom: 12px;
     }
-    .once{
+
+    .once {
       width: 360px;
       margin-right: 72px;
       display: inline-block;
@@ -84,14 +94,16 @@
       background: #F8F8F8;
       margin-bottom: 12px;
       position: relative;
-      .detailIcon{
+
+      .detailIcon {
         position: absolute;
         line-height: 30px;
         right: -28px;
         cursor: pointer;
         font-size: 16px;
       }
-      .deleteIcon{
+
+      .deleteIcon {
         position: absolute;
         line-height: 30px;
         right: -56px;
@@ -100,20 +112,32 @@
       }
     }
   }
-  .editCtn{
-    .tableCtn{
+
+  .editCtn {
+    .tableCtn {
       padding: 0;
       margin: 20px 0;
     }
   }
-  .elCtn.checkbox{
+
+  .elCtn.checkbox {
     height: unset;
   }
-  .row.newProcess{
+
+  .row.newProcess {
     margin-left: 10px;
     height: 32px;
   }
-  .row.newProcess .col{
+
+  .row.newProcess .col {
     margin-right: 15px;
+  }
+
+  .listCtn {
+    padding: 20px 0;
+
+    .col {
+      margin-right: unset;
+    }
   }
 }
