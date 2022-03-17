@@ -103,7 +103,7 @@
           </div>
           <div class="tableCtn">
             <div class="filterCtn" style="height: 50px">
-              <span>{{ item.allProcessDesc }}</span>
+              <span>工序说明：{{ item.allProcessDesc }}</span>
               <div class="btn backHoverBlue fr" @click="secondDataChance()">数量更新</div>
             </div>
             <div class="thead">
@@ -281,7 +281,7 @@
       </div>
     </div>
     <!-- 生产进度 -->
-    <div class="popup" v-show="numberUpdate">
+    <div class="popup" v-show="numberUpdate" v-loading="showPopupLoading" element-loading-target>
       <div class="main">
         <div class="titleCtn">
           <span class="text">生产进度更新</span>
@@ -337,14 +337,17 @@
                     <el-cascader
                       v-model="item.process"
                       :options="processList"
-                      @change="getWorkList"
+                      @change="getWorkList(item)"
                       :show-all-levels="false"
                       placeholder="请选择加工工序"
                     ></el-cascader>
                   </div>
                   <div class="tcol bgGray">工序说明</div>
                   <div class="tcol">
-                    <el-input v-model="item.process_desc" placeholder="请填写工序说明"></el-input>
+                    <el-select v-model="item.process_desc" filterable placeholder="请选择">
+                      <el-option v-for="item in item.processDescList" :key="item" :label="item" :value="item">
+                      </el-option>
+                    </el-select>
                   </div>
                   <div class="tcol bgGray">结算单价</div>
                   <div class="tcol">
@@ -521,6 +524,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      showPopupLoading: false,
       orderIndex: '0',
       openWindowKey: false,
       autoAssignSizeColor: false,
@@ -693,7 +697,7 @@ export default Vue.extend({
               itemSon.allColorSizePrice = number
             })
           })
-          items.allProcessDesc = items.allProcessDesc.toString().replaceAll(',',' ')
+          items.allProcessDesc = items.allProcessDesc.toString().replace(/^,+/, '').replace(/,+$/, '')
         })
         this.processWorkerList = res.data.data
         this.tabChoose = res.data.data[0]?.process_name
@@ -960,6 +964,7 @@ export default Vue.extend({
       this.numberUpdate = true
     },
     secondDataChance() {
+      this.showPopupLoading = true
       if (
         !this.processWorkerList.some(
           (res: any) => res.checked !== undefined && res.checked.length !== 0 //||
@@ -975,53 +980,64 @@ export default Vue.extend({
 
       this.processWorkerList.forEach((processWorker: any) => {
         if (processWorker.process_name === this.tabChoose) {
-          processWorker.info.forEach((staffNameItem: any) => {
-            staffNameItem.info.forEach((productCodeItem: any) => {
-              productCodeItem.info.forEach((process_desc: any) => {
-                process_desc.info.forEach((itemPrice: any, priceIndex: any) => {
-                  itemPrice.info.forEach((itemSize: any) => {
-                    let obj: any = {}
-                    obj.infoData = [{ worker: '', sizeColorList: [] }]
-                    itemSize.info.forEach((itemColor: any) => {
-                      // console.log(itemColor)
-                      if (itemColor.checked === undefined || itemColor.checked === false) return
-                      obj.productNameId = itemColor.info.order_product_id
-                      obj.process = [+itemColor.info.process_type, processWorker.process_name]
-                      obj.process_desc = process_desc.process_desc
-                      obj.productId = itemColor.info.product_id
-                      obj.unitPrice = process_desc.info[priceIndex].price
-                      itemColor.chooseId = itemColor.info.size_id + ',' + itemColor.info.color_id
-                      itemColor.complete_time = this.getNowFormatDate()
-                      itemColor.size_name = itemSize.size_name
-                      itemColor.size_id = itemColor.info.size_id
-                      itemColor.color_id = itemColor.info.color_id
-                      obj.infoData[obj.infoData.length - 1].sizeColorList.push(itemColor)
-                      obj.infoData[obj.infoData.length - 1].worker = ['', itemColor.info.staff_id]
+          process
+            .list({
+              name: processWorker.process_name
+            })
+            .then((ress) => {
+              if (ress.data.data[0]?.process_desc) {
+                processWorker.processDescList = ress.data.data[0].process_desc.split(',')
+              }
+              processWorker.info.forEach((staffNameItem: any) => {
+                staffNameItem.info.forEach((productCodeItem: any) => {
+                  productCodeItem.info.forEach((process_desc: any) => {
+                    process_desc.info.forEach((itemPrice: any, priceIndex: any) => {
+                      itemPrice.info.forEach((itemSize: any) => {
+                        let obj: any = {}
+                        obj.infoData = [{ worker: '', sizeColorList: [] }]
+                        itemSize.info.forEach((itemColor: any) => {
+                          // console.log(itemColor)
+                          if (itemColor.checked === undefined || itemColor.checked === false) return
+                          obj.productNameId = itemColor.info.order_product_id
+                          obj.process = [+itemColor.info.process_type, processWorker.process_name]
+                          obj.process_desc = process_desc.process_desc
+                          obj.processDescList = processWorker.processDescList
+                          obj.productId = itemColor.info.product_id
+                          obj.unitPrice = process_desc.info[priceIndex].price
+                          itemColor.chooseId = itemColor.info.size_id + ',' + itemColor.info.color_id
+                          itemColor.complete_time = this.getNowFormatDate()
+                          itemColor.size_name = itemSize.size_name
+                          itemColor.size_id = itemColor.info.size_id
+                          itemColor.color_id = itemColor.info.color_id
+                          obj.infoData[obj.infoData.length - 1].sizeColorList.push(itemColor)
+                          obj.infoData[obj.infoData.length - 1].worker = ['', itemColor.info.staff_id]
 
-                      // console.log(sizeColorItem)
-                      // item.product_info.forEach((itemColor: any, itemIndex: any) => {
-                      //   if (itemIndex === 0) {
-                      //     obj.infoData.push({
-                      //       sizeColorList: []
-                      //     })
-                      //   }
-                      //   console.log(itemColor)
-                      //   if (itemColor.checkSizeColor) {
-                      //     itemColor.chooseId = itemColor.size_id + ',' + itemColor.color_id
-                      //     obj.infoData[0].sizeColorList.push(itemColor)
-                      //   }
-                      // })
+                          // console.log(sizeColorItem)
+                          // item.product_info.forEach((itemColor: any, itemIndex: any) => {
+                          //   if (itemIndex === 0) {
+                          //     obj.infoData.push({
+                          //       sizeColorList: []
+                          //     })
+                          //   }
+                          //   console.log(itemColor)
+                          //   if (itemColor.checkSizeColor) {
+                          //     itemColor.chooseId = itemColor.size_id + ',' + itemColor.color_id
+                          //     obj.infoData[0].sizeColorList.push(itemColor)
+                          //   }
+                          // })
+                        })
+                        if (itemPrice.checked === undefined || itemPrice.checked.length === 0 || !obj.productId) return
+                        arr.push(obj)
+                      })
+                      // arr.forEach((price:any) => {
+                      //   console.log(price.unitPrice)
+                      // });
                     })
-                    if (itemPrice.checked === undefined || itemPrice.checked.length === 0 || !obj.productId) return
-                    arr.push(obj)
                   })
-                  // arr.forEach((price:any) => {
-                  //   console.log(price.unitPrice)
-                  // });
                 })
               })
+              this.showPopupLoading = false
             })
-          })
         }
       })
 
@@ -1078,8 +1094,19 @@ export default Vue.extend({
       return currentdate
     },
     getWorkList(res: any) {
+      process
+        .list({
+          name: res === '' ? res : res.process[1]
+        })
+        .then((ress) => {
+          res.processDescList = []
+          if (ress.data.data[0]?.process_desc) {
+            res.processDescList = ress.data.data[0].process_desc.split(',')
+          }
+          this.$forceUpdate()
+        })
       // console.log(res[1])
-      staff.list({ keyword: res[1] }).then((ress: any) => {
+      staff.list({ keyword: res === '' ? res : res.process[1] }).then((ress: any) => {
         let arr: any = []
         ress.data.data.forEach((worker: any) => {
           arr.push({

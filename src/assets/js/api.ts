@@ -176,7 +176,10 @@ import { ProcessInfo } from '@/types/processSetting'
 const process = {
   create: (params: { data: ProcessInfo[] }) => http.post(`${baseUrl}/process/save`, params, 'application/json'),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/process/delete`, params, 'application/json'),
-  list: (params?: { type: 1 | 2 | 3 }) => http.get(`${baseUrl}/process/lists`, params)
+  list: (params?: {
+    type?: 1 | 2 | 3
+    name?: String
+  }) => http.get(`${baseUrl}/process/lists`, params)
 }
 
 // 工艺单设置
@@ -645,6 +648,12 @@ const exportExcel = {
     status: string | number
     type: string | number
   }) => http.get(`${baseUrl}/export/staff`, params),
+  receipt: (params: {
+    limit: number | string
+    keyword: string
+    group: string
+    status: string | number
+  }) => http.get(`${baseUrl}/export/receipt`, params),
 }
 
 // 客户绑定小程序
@@ -736,7 +745,37 @@ const workshop = {
     is_check: 2 | 3
   }) => http.post(`${baseUrl}/production/inspection/check`, params),
 }
+
+// 报销单管理
+const receipt = {
+  save: (params: {
+    name: string
+    staff_id: number | string
+    group: string
+    certificate: string
+    id: number | string
+    amount: number | string
+    staff_departments: Array<{
+      name: string
+      amount: number | string
+    }>
+  }) => http.post(`${baseUrl}/receipt/save`, params),
+  list: (params: {
+    limit: number | string
+    page: number | string
+    keyword: string
+    group: string
+    status: string | number
+  }) => http.get(`${baseUrl}/receipt/list`, params),
+  detail: (params: {
+    id: number | string
+  }) => http.get(`${baseUrl}/receipt/detail`, params),
+  delete: (params: {
+    id: Array<number | string>
+  }) => http.post(`${baseUrl}/receipt/delete`, params),
+}
 export {
+  receipt,
   workshop,
   staff,
   clientBind,
