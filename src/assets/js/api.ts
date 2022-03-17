@@ -650,7 +650,6 @@ const exportExcel = {
     type: string | number
   }) => http.get(`${baseUrl}/export/staff`, params),
   receipt: (params: {
-    limit: number | string
     keyword: string
     group: string
     status: string | number
@@ -774,6 +773,7 @@ const receipt = {
   delete: (params: {
     id: Array<number | string>
   }) => http.post(`${baseUrl}/receipt/delete`, params),
+  total: () => http.get(`${baseUrl}/receipt/total`),
 }
 export {
   receipt,
