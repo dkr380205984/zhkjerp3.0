@@ -236,7 +236,7 @@ export default Vue.extend({
             status: data.status - 1,
             created_at: data.created_at,
             staff_departments: data.receipt_contents,
-            certificate: data.certificate.split(','),
+            certificate: data.certificate?data.certificate.split(','):[],
             user: data.user.name
           }
           this.loading = false
