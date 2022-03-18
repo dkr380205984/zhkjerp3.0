@@ -413,7 +413,7 @@
               <div class="trow">
                 <div class="tcol">包装名称</div>
                 <div class="tcol">包装规格</div>
-                <div class="tcol">体积单价</div>
+                <!-- <div class="tcol">体积单价</div> -->
                 <div class="tcol">数量单价</div>
                 <div class="tcol">订购数量</div>
                 <div class="tcol">备注信息</div>
@@ -435,7 +435,7 @@
                     {{itemChild.length}}
                   </template>
                 </div>
-                <div class="tcol">{{itemChild.bulk_price}}元</div>
+                <!-- <div class="tcol">{{itemChild.bulk_price}}元</div> -->
                 <div class="tcol">{{itemChild.count_price}}元</div>
                 <div class="tcol">{{itemChild.number}}</div>
                 <div class="tcol">{{itemChild.desc}}</div>
@@ -520,7 +520,7 @@
           <span class="text">包装订购信息</span>
           <div class="closeCtn">
             <span class="el-icon-close"
-              @click="packOrderFlag = false"></span>
+              @click="packOrderFlag = false;packOrderUpdateFlag=false"></span>
           </div>
         </div>
         <div class="contentCtn">
@@ -580,7 +580,8 @@
                   </div>
                   <div class="info elCtn">
                     <el-select v-model="itemChild.price_type"
-                      placeholder="请选择计价类型">
+                      placeholder="请选择计价类型"
+                      disabled>
                       <el-option :value="1"
                         label="纸箱:面积"></el-option>
                       <el-option :value="2"
@@ -619,7 +620,8 @@
                   <div class="info elCtn">
                     <el-select v-model="itemChild.pack_material_id"
                       placeholder="请选择包装辅料名称"
-                      filterable>
+                      filterable
+                      @change="getPackUnit($event,itemChild)">
                       <el-option v-for="item in packMaterialList"
                         :key="item.id"
                         :value="item.id"
@@ -664,7 +666,7 @@
                 </div>
                 <div class="col">
                   <div class="spaceBetween">
-                    <div class="once">
+                    <!-- <div class="once">
                       <div class="label">
                         <span class="text">体积/面积单价（元）</span>
                       </div>
@@ -675,7 +677,7 @@
                           <template slot="append">元</template>
                         </el-input>
                       </div>
-                    </div>
+                    </div> -->
                     <div class="once">
                       <div class="label">
                         <span class="text">数量单价（元/个）</span>
@@ -850,13 +852,14 @@
                   number: ''
                 }
               ]
-            })">添加订购单位</div>
+            })"
+            v-if="!packOrderUpdateFlag">添加订购单位</div>
         </div>
         <div class="oprCtn">
           <span class="btn borderBtn"
-            @click="packOrderFlag = false">取消</span>
+            @click="packOrderFlag = false;packOrderUpdateFlag=false">取消</span>
           <span class="btn backHoverBlue"
-            @click="saveOrderPack">{{packorderUpdateFlag?'修改':'确认'}}</span>
+            @click="saveOrderPack">{{packOrderUpdateFlag?'修改':'确认'}}</span>
         </div>
       </div>
     </div>
@@ -1344,7 +1347,7 @@ export default Vue.extend({
       packPlanLog: [],
       packPlanLogIndex: '',
       packOrderFlag: false,
-      packorderUpdateFlag: false,
+      packOrderUpdateFlag: false,
       packOrderInfo: [
         {
           order_id: '',
@@ -1526,7 +1529,9 @@ export default Vue.extend({
       }
     },
     goUpdatePlanOrder(info: PackOrderInfo) {
-      this.packOrderInfo = [info]
+      const updateInfo = this.$clone(info)
+      updateInfo.tree_data = JSON.parse(updateInfo.tree_data as string)
+      this.packOrderInfo = [updateInfo]
       this.packOrderFlag = true
       this.packOrderUpdateFlag = true
     },
@@ -1573,6 +1578,7 @@ export default Vue.extend({
         item.order_id = this.order_id
         item.total_number = this.totalOrderNumberList[index]
         item.total_price = this.totalOrderPriceList[index]
+        item.tree_data = JSON.stringify(item.tree_data)
       })
     },
     saveOrderPack() {
@@ -1604,13 +1610,24 @@ export default Vue.extend({
       })
       if (!formCheck) {
         this.getOrderCmpData()
-        packManage.createOrder({ data: this.packOrderInfo }).then((res) => {
-          if (res.data.status) {
-            this.$message.success('订购成功')
-            this.packOrderFlag = false
-            this.init()
-          }
-        })
+        if (this.packOrderUpdateFlag) {
+          packManage.UpdateOrder(this.packOrderInfo[0]).then((res) => {
+            if (res.data.status) {
+              this.$message.success('修改成功')
+              this.packOrderFlag = false
+              this.packorderUpdateFlag = false
+              this.init()
+            }
+          })
+        } else {
+          packManage.createOrder({ data: this.packOrderInfo }).then((res) => {
+            if (res.data.status) {
+              this.$message.success('订购成功')
+              this.packOrderFlag = false
+              this.init()
+            }
+          })
+        }
       }
     },
     // 1合并装箱 2单独装箱
@@ -1984,6 +2001,12 @@ export default Vue.extend({
       //     this.productInfo.image_data.indexOf('https://file.zwyknit.com/' + file.response.key)
       //   )
       // }
+    },
+    // 选择包装辅料优化单位和计价方式
+    getPackUnit(ev: number, info: any) {
+      const finded = this.packMaterialList.find((item) => item.id === ev)
+      info.price_type = Number(finded!.calc_type)
+      info.unit = finded!.unit
     }
   },
   mounted() {

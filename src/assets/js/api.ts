@@ -468,6 +468,7 @@ const materialPlan = {
 import { MaterialOrderInfo } from '@/types/materialOrder'
 const materialOrder = {
   create: (params: { data: MaterialOrderInfo[] }) => http.post(`${baseUrl}/material/order/save`, params, 'application/json'),
+  update: (params: MaterialOrderInfo) => http.post(`${baseUrl}/material/order/edit`, params, 'application/json'),
   list: (params: {
     plan_id?: string | number
     order_id?: string | number
@@ -499,6 +500,7 @@ const materialPlanOrder = {
 import { MaterialProcessInfo } from '@/types/materialProcess'
 const materialProcess = {
   create: (params: { data: MaterialProcessInfo[] }) => http.post(`${baseUrl}/material/process/save`, params, 'application/json'),
+  update: (params: MaterialProcessInfo) => http.post(`${baseUrl}/material/process/edit`, params, 'application/json'),
   list: (params: {
     plan_id?: string | number
     order_id?: string | number
@@ -600,6 +602,7 @@ const inspection = {
 // 包装
 import { PackOrderInfo, PackPlanInfo } from '@/types/packManage'
 const packManage = {
+  UpdateOrder: (params: PackOrderInfo) => http.post(`${baseUrl}/pack/order/edit`, params, 'application/json'),
   createOrder: (params: { data: PackOrderInfo[] }) => http.post(`${baseUrl}/pack/order/save`, params, 'application/json'),
   orderList: (params: { order_id: string | number }) => http.get(`${baseUrl}/pack/order/lists`, params),
   deleteOrder: (params: DeleteParams) => http.post(`${baseUrl}/pack/order/delete`, params, 'application/json'),
@@ -662,7 +665,7 @@ const clientBind = {
   qrCode: (params?: ListParams) => http.get(`${baseUrl}/workshop/qrcode`, params),
   bind: (params: { client_id: string | number, uuid: string }) => http.post(`${baseUrl}/workshop/client/save`, params, 'application/json'),
   unbind: (params: { client_id: string | number }) => http.post(`${baseUrl}/workshop/client/unbind`, params, 'application/json'),
-  cancel: (params: { uuid: string }) => http.post(`${baseUrl}//workshop/client/cancel`, params, 'application/json'),
+  cancel: (params: { uuid: string }) => http.post(`${baseUrl}/workshop/client/cancel`, params, 'application/json'),
 }
 
 // 员工管理

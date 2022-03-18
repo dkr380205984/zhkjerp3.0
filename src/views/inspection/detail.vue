@@ -301,6 +301,7 @@
       @close="deductFlag = false"
       :type="deductInfo.type"
       :id="deductInfo.doc_id"
+      :order_id="$route.query.id"
       :client_id="deductInfo.client_id"
       :client_name="deductInfo.client_name"></zh-deduct>
     <zh-deduct-detail :show="deductDetailFlag"
@@ -480,15 +481,21 @@ export default Vue.extend({
         this.productionPlanList = res[0].data.data
         if (this.productionPlanList.length > 0) {
           this.productionPlanMergeList = this.$mergeData(this.productionPlanList, {
-            mainRule: ['process_name']  
+            mainRule: ['process_name']
           })
           this.productionPlanIndex = this.productionPlanMergeList[0].process_name
-          if(this.$route.query.isBarcodeScanner==="true"){
-            const finded:any = this.productionPlanMergeList.find((itemFind) => itemFind.process_name === this.productionPlanIndex)
-            const findChild = finded.childrenMergeInfo.find((itemChild:any) => itemChild.code === this.$route.query.code)
-            const findPro = findChild.product_info_data.find((itemPro:any) => itemPro.product_id == this.$route.query.product_id)
+          if (this.$route.query.isBarcodeScanner === 'true') {
+            const finded: any = this.productionPlanMergeList.find(
+              (itemFind) => itemFind.process_name === this.productionPlanIndex
+            )
+            const findChild = finded.childrenMergeInfo.find(
+              (itemChild: any) => itemChild.code === this.$route.query.code
+            )
+            const findPro = findChild.product_info_data.find(
+              (itemPro: any) => itemPro.product_id == this.$route.query.product_id
+            )
             findChild.checkAll = true
-            findPro.check=true
+            findPro.check = true
             this.$forceUpdate()
             this.goInspection(1)
           }

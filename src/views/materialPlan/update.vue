@@ -158,13 +158,68 @@
               <div class="childrenCtn"
                 v-if="item.info_data.length>0">
                 <div class="trow">
-                  <div class="tcol">计划工序</div>
-                  <div class="tcol">原料名称</div>
-                  <div class="tcol">原料颜色</div>
+                  <div class="tcol">计划工序
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="统一工序"
+                      placement="top">
+                      <svg class="iconFont copyIcon hoverBlue"
+                        aria-hidden="true"
+                        @click="copyInfo(item.info_data,['process_name_arr','process_name','process_type'])">
+                        <use xlink:href='#icon-tongbushuju1'></use>
+                      </svg>
+                    </el-tooltip>
+                  </div>
+                  <div class="tcol">原料名称
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="统一原料"
+                      placement="top">
+                      <svg class="iconFont copyIcon hoverBlue"
+                        aria-hidden="true"
+                        @click="copyInfo(item.info_data,['tree_data','material_name','material_id'])">
+                        <use xlink:href='#icon-tongbushuju1'></use>
+                      </svg>
+                    </el-tooltip>
+                  </div>
+                  <div class="tcol">原料颜色
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="统一颜色"
+                      placement="top">
+                      <svg class="iconFont copyIcon hoverBlue"
+                        aria-hidden="true"
+                        @click="copyInfo(item.info_data,['material_color'])">
+                        <use xlink:href='#icon-tongbushuju1'></use>
+                      </svg>
+                    </el-tooltip>
+                  </div>
                   <div class="tcol">单个数量</div>
                   <div class="tcol">所需数量</div>
-                  <div class="tcol">原料损耗</div>
-                  <div class="tcol">最终数量</div>
+                  <div class="tcol">原料损耗
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="统一损耗"
+                      placement="top">
+                      <svg class="iconFont copyIcon hoverBlue"
+                        aria-hidden="true"
+                        @click="copyInfo(item.info_data,['loss']);changeAllLoss(item.info_data)">
+                        <use xlink:href='#icon-tongbushuju1'></use>
+                      </svg>
+                    </el-tooltip>
+                  </div>
+                  <div class="tcol">最终数量
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="统一数量"
+                      placement="top">
+                      <svg class="iconFont copyIcon hoverBlue"
+                        aria-hidden="true"
+                        @click="copyInfo(item.info_data,['final_number','unit'])">
+                        <use xlink:href='#icon-tongbushuju1'></use>
+                      </svg>
+                    </el-tooltip>
+                  </div>
                   <div class="tcol">操作</div>
                 </div>
                 <div class="trow"
@@ -259,6 +314,21 @@
                           final_number: '',
                           unit: 'kg'
                         })">添加</span>
+                      <span class="opr orange"
+                        @click="$addItem(item.info_data,{
+                          process_name_arr:itemChild.process_name_arr,
+                          process_name: itemChild.process_name,
+                          tree_data: itemChild.tree_data,
+                          material_id: itemChild.material_id,
+                          material_type: itemChild.material_type,
+                          material_color: itemChild.material_color,
+                          assist_material_number: itemChild.assist_material_number,
+                          need_number: itemChild.need_number,
+                          production_number: itemChild.production_number,
+                          loss: itemChild.loss,
+                          final_number: itemChild.final_number,
+                          unit: itemChild.unit
+                        })">复制</span>
                       <span class="opr red"
                         @click="item.info_data.length>1?$deleteItem(item.info_data,indexChild):$message.error('至少有一项，可以不填')">删除</span>
                     </div>
@@ -661,6 +731,23 @@ export default Vue.extend({
       return (restaurant: any) => {
         return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
       }
+    },
+    // 统一输入行逻辑
+    copyInfo(info: any, keyArr: string[]) {
+      info.forEach((item: any, index: number) => {
+        if (index !== 0) {
+          keyArr.forEach((key) => {
+            item[key] = info[0][key]
+          })
+        }
+      })
+      this.justWatch = !this.justWatch
+    },
+    // 统一损耗逻辑
+    changeAllLoss(info: any) {
+      info.forEach((itemChild: any) => {
+        itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number)
+      })
     },
     // 小数点处理方式
     numberAutoMethod(num: number | string) {
