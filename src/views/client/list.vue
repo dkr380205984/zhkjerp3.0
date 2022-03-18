@@ -383,7 +383,7 @@ export default Vue.extend({
     getUnBindClient(getClient?: boolean) {
       client
         .list({
-          client_type_id: this.clientTypeArr
+          client_type_id: this.clientTypeList
             .filter((item: any) => item.name === '生产织造单位' || item.name === '生产加工单位')
             .map((item: any) => item.id),
           workshop_id: 0

@@ -990,7 +990,6 @@ export default Vue.extend({
       return mergeArr
     },
     getProductionData() {
-      console.log(this.getOrderProduct(this.orderInfo))
       this.materialPlanInfo.production_plan_data = this.getOrderProduct(this.orderInfo).map((item) => {
         const cloneItem: any = this.$clone(item)
         cloneItem.product_data = item.childrenMergeInfo.map((itemChild) => {
@@ -998,19 +997,26 @@ export default Vue.extend({
           itemChild.add_percent = 0
           // @ts-ignore
           itemChild.info_data = item.part_data.map((itemPart) => {
+            // 计算剩余计划生产数量
+            const number =
+              itemPart.id === 0
+                ? // @ts-ignore
+                  Number(itemChild.order_number) -
+                  // @ts-ignore
+                  Number(this.getHasPlanNumber(item.product_id, itemChild.color_name, itemChild.size_name))
+                : ''
             return {
               unit: itemPart.unit,
               name: itemPart.name,
               part_id: itemPart.id, // 下拉框选id用
               // @ts-ignore
-              number: itemPart.id === 0 ? itemChild.order_number : ''
+              number: number < 0 ? 0 : number
             }
           })
           return itemChild
         })
         return cloneItem
       })
-      console.log(this.materialPlanInfo.production_plan_data)
     },
     // 计算所需物料--按尺码颜色
     getMaterialPlanDetail(partId?: number, number?: number, proInfo?: any) {
@@ -1208,7 +1214,6 @@ export default Vue.extend({
           })
         })
       }
-      console.log(this.materialPlanInfo)
       this.confirmFlag = 2
     },
     // 工序信息
@@ -1414,7 +1419,6 @@ export default Vue.extend({
     },
     // 因为多批次产品合并问题导致后端无法计算plan_number，所需前端根据物料计划单列表累加已计划的数量
     getHasPlanNumber(id: number, color: string, size: string) {
-      console.log(this.materialDetialInfo)
       if (this.materialDetialInfo.length === 0) {
         return 0
       } else {
@@ -1440,6 +1444,7 @@ export default Vue.extend({
         .then((res) => {
           if (res.data.status) {
             this.materialDetialInfo = res.data.data
+            this.getProductionData()
           }
         })
     }

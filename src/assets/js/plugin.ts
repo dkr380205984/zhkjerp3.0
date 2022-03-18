@@ -457,7 +457,8 @@ const unique = (arr: any[], key: string) => {
 }
 // 编辑器通用创建
 const initEditor = (item: any, index?: number) => {
-  const id = index === 0 ? '#editor0' : ('#editor' + index || '')
+  const id = index === 0 ? '#editor0' : ('#editor' + (index || ''))
+  console.log(id)
   item.editor = new E(id)
   item.editor.config.menus = [
     'head', // 标题

@@ -1031,10 +1031,10 @@
                   :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">{{ item.unit }}</div>
-                  <div class="col">计价方式</div>
+                  <div class="col">{{item.calc_type|packCalcFilter}}</div>
                   <div class="col">参考报价</div>
-                  <div class="col">添加人</div>
-                  <div class="col">添加时间</div>
+                  <div class="col">{{item.user_name}}</div>
+                  <div class="col">{{item.created_at}}</div>
                   <div class="col">
                     <span class="opr hoverRed"
                       @click="deletePackMaterial(item.id)">删除</span>
@@ -1696,15 +1696,17 @@
                   v-model="halfProcessInfo.name"></el-input>
               </div>
             </div>
-            <div class="row" v-for="item,index in processHalfDescList" :key="'processHalfDescList'+index">
+            <div class="row"
+              v-for="item,index in processHalfDescList"
+              :key="'processHalfDescList'+index">
               <div class="label">工序说明{{index+1}}：</div>
               <div class="info">
-                <el-input 
-                  placeholder="请输入工序说明"
+                <el-input placeholder="请输入工序说明"
                   v-model="processHalfDescList[index]"
-                  :style="{width:(index === processHalfDescList.length - 1)?'70%':'100%'}"
-                ></el-input>
-                <el-button style="margin-left:20px" v-if="index === processHalfDescList.length - 1" @click="$addItem(processHalfDescList,'')">添加</el-button>
+                  :style="{width:(index === processHalfDescList.length - 1)?'70%':'100%'}"></el-input>
+                <el-button style="margin-left:20px"
+                  v-if="index === processHalfDescList.length - 1"
+                  @click="$addItem(processHalfDescList,'')">添加</el-button>
               </div>
             </div>
           </div>
@@ -1733,15 +1735,17 @@
                   v-model="staffProcessInfo.name"></el-input>
               </div>
             </div>
-            <div class="row" v-for="item,index in processStaffDescList" :key="'processStaffDescList'+index">
+            <div class="row"
+              v-for="item,index in processStaffDescList"
+              :key="'processStaffDescList'+index">
               <div class="label">工序说明{{index+1}}：</div>
               <div class="info">
-                <el-input 
-                  placeholder="请输入工序说明"
+                <el-input placeholder="请输入工序说明"
                   v-model="processStaffDescList[index]"
-                  :style="{width:(index === processStaffDescList.length - 1)?'70%':'100%'}"
-                ></el-input>
-                <el-button style="margin-left:20px" v-if="index === processStaffDescList.length - 1" @click="$addItem(processStaffDescList,'')">添加</el-button>
+                  :style="{width:(index === processStaffDescList.length - 1)?'70%':'100%'}"></el-input>
+                <el-button style="margin-left:20px"
+                  v-if="index === processStaffDescList.length - 1"
+                  @click="$addItem(processStaffDescList,'')">添加</el-button>
               </div>
             </div>
           </div>
@@ -2157,8 +2161,9 @@
               <div class="info"
                 style="line-height: 34px">
                 <el-radio-group v-model="packMaterialInfo.calc_type">
-                  <el-radio label="面积">面积</el-radio>
-                  <el-radio label="其他">其他</el-radio>
+                  <el-radio label="1">纸箱:面积</el-radio>
+                  <el-radio label="2">胶袋:面积</el-radio>
+                  <el-radio label="3">其他</el-radio>
                 </el-radio-group>
               </div>
             </div>
@@ -3279,7 +3284,7 @@ export default Vue.extend({
       materialProcessList: [],
       materialProcessInfo: {
         type: 1,
-        process_desc:'',
+        process_desc: '',
         name: '',
         id: null
       },
@@ -3289,23 +3294,23 @@ export default Vue.extend({
       halfProcessInfo: {
         type: 2,
         name: '',
-        process_desc:'',
+        process_desc: '',
         id: null
       },
       halfProcessTotal: 1,
       halfProcessPage: 1,
-      isHalfUpdate:false,
+      isHalfUpdate: false,
       staffProcessList: [],
       processHalfDescList: [''],
       staffProcessInfo: {
         type: 3,
         name: '',
-        process_desc:'',
+        process_desc: '',
         id: null
       },
       staffProcessTotal: 1,
       staffProcessPage: 1,
-      isStaffProcessUpdate:false,
+      isStaffProcessUpdate: false,
       processStaffDescList: [''],
       sideList: [],
       sideInfo: {
@@ -3431,7 +3436,7 @@ export default Vue.extend({
       packMaterialInfo: {
         id: null,
         name: '',
-        calc_type: '面积',
+        calc_type: '1',
         unit: ''
       },
       packMaterialList: [],
@@ -4662,7 +4667,7 @@ export default Vue.extend({
         }
       ])
 
-      this.halfProcessInfo.process_desc = this.processHalfDescList.toString();
+      this.halfProcessInfo.process_desc = this.processHalfDescList.toString()
       this.halfProcessInfo.process_desc =
         this.halfProcessInfo.process_desc.substring(this.halfProcessInfo.process_desc.length - 1) == ','
           ? this.halfProcessInfo.process_desc.substring(0, this.halfProcessInfo.process_desc.length - 1)
@@ -4678,7 +4683,7 @@ export default Vue.extend({
               this.$message.success('添加成功')
               this.halfProcessInfo = {
                 type: 2,
-                process_desc:'',
+                process_desc: '',
                 name: '',
                 id: null
               }
@@ -4690,12 +4695,12 @@ export default Vue.extend({
           })
       }
     },
-    cancelHalfProcess(){
+    cancelHalfProcess() {
       this.showPopup = false
       this.isHalfUpdate = false
       this.halfProcessInfo = {
         type: 2,
-        process_desc:'',
+        process_desc: '',
         name: '',
         id: null
       }
@@ -4747,7 +4752,7 @@ export default Vue.extend({
         }
       ])
 
-      this.staffProcessInfo.process_desc = this.processStaffDescList.toString();
+      this.staffProcessInfo.process_desc = this.processStaffDescList.toString()
       this.staffProcessInfo.process_desc =
         this.staffProcessInfo.process_desc.substring(this.staffProcessInfo.process_desc.length - 1) == ','
           ? this.staffProcessInfo.process_desc.substring(0, this.staffProcessInfo.process_desc.length - 1)
@@ -4763,7 +4768,7 @@ export default Vue.extend({
               this.$message.success('添加成功')
               this.staffProcessInfo = {
                 type: 3,
-                process_desc:'',
+                process_desc: '',
                 name: '',
                 id: null
               }
@@ -4775,12 +4780,12 @@ export default Vue.extend({
           })
       }
     },
-    cancelStaffProcess(){
+    cancelStaffProcess() {
       this.showPopup = false
       this.isStaffProcessUpdate = false
       this.staffProcessInfo = {
         type: 3,
-        process_desc:'',
+        process_desc: '',
         name: '',
         id: null
       }
@@ -4814,21 +4819,21 @@ export default Vue.extend({
           })
         })
     },
-    updateHalfProcess(item:any){
+    updateHalfProcess(item: any) {
       this.isHalfUpdate = true
       this.showPopup = true
       this.halfProcessInfo.name = item.name
       this.halfProcessInfo.id = item.id
-      if( item.process_desc!==null ){
+      if (item.process_desc !== null) {
         this.processHalfDescList = item.process_desc.split(',')
       }
     },
-    updateStaffProcess(item:any){
+    updateStaffProcess(item: any) {
       this.isStaffProcessUpdate = true
       this.showPopup = true
       this.staffProcessInfo.name = item.name
       this.staffProcessInfo.id = item.id
-      if( item.process_desc!==null ){
+      if (item.process_desc !== null) {
         this.processStaffDescList = item.process_desc.split(',')
       }
     },
