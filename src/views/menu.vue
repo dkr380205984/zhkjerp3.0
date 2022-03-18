@@ -35,7 +35,7 @@
         </div>
       </div>
     </div>
-    <!-- <div class="module">
+    <div class="module">
       <div class="titleCtn">
         <div class="title">财务管理</div>
       </div>
@@ -47,7 +47,7 @@
           <p class="name">{{ item.name }}</p>
         </div>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -149,15 +149,15 @@ export default Vue.extend({
             icon: 'icon-xitongshezhi',
             url: '/setting'
           }
+        ],
+        finance: [
+          {
+            name: '报销单管理',
+            id: '18-3',
+            icon: 'icon-chexiaodanguanli',
+            url: '/reimbursementManage/list?page=1&status='
+          }
         ]
-        // finance: [
-        //   {
-        //     name: '报销单管理',
-        //     id: '18-3',
-        //     icon: 'icon-chexiaodanguanli',
-        //     url: '/reimbursementManage/list?page=1&status=null'
-        //   }
-        // ]
       }
     }
   },
@@ -175,13 +175,13 @@ export default Vue.extend({
           ? this.menuList.other
           : this.menuList.other.filter((item) => {
               return JSON.parse(moduleInfo).indexOf(item.id) !== -1
+            }),
+      finance:
+        JSON.parse(moduleInfo).length === 0
+          ? this.menuList.finance
+          : this.menuList.finance.filter((item) => {
+              return JSON.parse(moduleInfo).indexOf(item.id) !== -1
             })
-      // finance:
-      //   JSON.parse(moduleInfo).length === 0
-      //     ? this.menuList.finance
-      //     : this.menuList.finance.filter((item) => {
-      //         return JSON.parse(moduleInfo).indexOf(item.id) !== -1
-      //       })
     }
   }
 })
