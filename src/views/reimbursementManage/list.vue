@@ -157,8 +157,6 @@ export default Vue.extend({
           this.group +
           '&status=' +
           this.status +
-          '&date=' +
-          this.date +
           '&limit=' +
           this.limit
       )
