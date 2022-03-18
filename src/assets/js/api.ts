@@ -773,6 +773,16 @@ const receipt = {
   delete: (params: {
     id: Array<number | string>
   }) => http.post(`${baseUrl}/receipt/delete`, params),
+  reviewer: (params: {
+    id: number | string
+    status: number | string
+    content: string
+    desc: string
+  }) => http.post(`${baseUrl}/receipt/reviewer`, params),
+  reviewerList: (params: {
+    limit?: string
+    receipt_id: string
+  }) => http.get(`${baseUrl}/receipt/reviewer/list`, params),
   total: () => http.get(`${baseUrl}/receipt/total`),
 }
 export {
