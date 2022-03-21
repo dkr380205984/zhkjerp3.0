@@ -692,7 +692,7 @@
                   <span>{{item.client_name}}</span>
                 </div>
               </template>
-              <template v-else-if="item.action_type===4 || item.action_type===6 || item.action_type===9 || item.action_type===10">
+              <template v-else-if="item.action_type===4 || item.action_type===6 || item.action_type===9 || item.action_type===10 || item.action_type===11 || item.action_type===12">
                 <div class="changeCtn">
                   <span>{{item.store}}/{{item.secondary_store}}</span>
                 </div>

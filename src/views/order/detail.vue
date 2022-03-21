@@ -632,7 +632,7 @@
         </div>
       </div>
     </div>
-    <div class="module">
+    <!-- <div class="module">
       <div class="titleCtn">
         <div class="title">产品费用</div>
       </div>
@@ -1064,7 +1064,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
