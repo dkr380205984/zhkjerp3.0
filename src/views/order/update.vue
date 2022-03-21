@@ -1150,6 +1150,10 @@ export default Vue.extend({
         const formCheck =
           this.$formCheck(this.orderInfo, [
             {
+              key: 'code',
+              errMsg: '请输入订单号'
+            },
+            {
               key: 'tree_data',
               errMsg: '请选择下单公司',
               regNormal: 'checkArr'

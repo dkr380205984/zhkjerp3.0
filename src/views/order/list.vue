@@ -419,8 +419,8 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 7,
-          filterArr: ['', '已创建', '进行中', '已完成', '已结算', '已取消'],
-          classArr: ['', 'orange', 'blue', 'green', 'green', 'red']
+          filterArr: ['', '已创建', '进行中', '已完成', '已结算', '已逾期', '已取消'],
+          classArr: ['', 'orange', 'blue', 'green', 'green', 'red', 'gray']
         },
         {
           key: 'total_number',
