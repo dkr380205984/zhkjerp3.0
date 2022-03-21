@@ -534,7 +534,7 @@
                     style="flex:1.3">
                     <div class="oprCtn">
                       <div class="opr hoverOrange"
-                        @click="materialProcessUpdataInfo=$clone(itemProcess);materialProcessUpdataFlag=true">修改</div>
+                        @click="goUpdateMaterialProcess(itemProcess);materialProcessUpdataFlag=true">修改</div>
                       <div class="opr hoverGreen"
                         @click="$openUrl('/materialManage/processPrint?id='+itemProcess.id)">打印</div>
                       <div class="opr hoverRed"
@@ -1259,7 +1259,8 @@
                     <el-autocomplete class="once"
                       v-model="itemMat.before_attribute"
                       :fetch-suggestions="searchAttribute"
-                      placeholder="物料属性"></el-autocomplete>
+                      placeholder="物料属性"
+                      @select="getProcessAttribute($event,itemMat)"></el-autocomplete>
                     <el-autocomplete class="once"
                       v-model="itemMat.after_attribute"
                       :fetch-suggestions="searchAttribute"
@@ -1759,8 +1760,15 @@
                   <span class="explanation">(默认)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请选择订购物料"
-                    v-model="itemMat.material_order_name">
+                  <el-input v-if="itemMat.material_order_name"
+                    placeholder="请选择订购物料"
+                    v-model="itemMat.material_order_name"
+                    disabled>
+                  </el-input>
+                  <el-input v-else
+                    placeholder="请选择订购物料"
+                    v-model="itemMat.material_transfer_name"
+                    disabled>
                   </el-input>
                 </div>
               </div>
@@ -2017,6 +2025,7 @@
       @close="deductFlag = false"
       :type="deductInfo.type"
       :id="deductInfo.doc_id"
+      :order_id="$route.query.supFlag?materialSupplementInfo.top_order_id:materialPlanInfo.top_order_id"
       :client_id="deductInfo.client_id"
       :client_name="deductInfo.client_name"></zh-deduct>
     <zh-deduct-detail :show="deductDetailFlag"
@@ -2391,6 +2400,22 @@ export default Vue.extend({
     // 加工工序优化
     getProcess(ev: string, info: MaterialProcessInfo) {
       if (ev === '染色') {
+        // 染色逻辑已经写死了，只能染成计划单颜色
+      } else if (ev === '倒纱') {
+        info.info_data.forEach((item) => {
+          if (item.before_attribute === '筒纱') {
+            item.after_attribute = '绞纱'
+          } else if (item.before_attribute === '绞纱') {
+            item.after_attribute = '筒纱'
+          }
+        })
+      }
+    },
+    getProcessAttribute(str: any, info: any) {
+      if (str.value === '筒纱') {
+        info.after_attribute = '绞纱'
+      } else if (str.value === '绞纱') {
+        info.after_attribute = '筒纱'
       }
     },
     goOrderMaterial(type: '白胚' | '色纱') {
@@ -2606,7 +2631,7 @@ export default Vue.extend({
       if (!formCheck) {
         this.loading = true
         this.materialOrderUpdataInfo.order_id = this.materialPlanInfo.order_id
-        materialOrder.create({ data: [this.materialOrderUpdataInfo] }).then((res) => {
+        materialOrder.update(this.materialOrderUpdataInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('修改成功')
             this.materialOrderUpdataFlag = false
@@ -2990,7 +3015,7 @@ export default Vue.extend({
       })
       if (!formCheck) {
         this.materialProcessUpdataInfo.order_id = this.materialPlanInfo.order_id
-        materialProcess.create({ data: [this.materialProcessUpdataInfo] }).then((res) => {
+        materialProcess.update(this.materialProcessUpdataInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('修改成功')
             this.materialProcessUpdataFlag = false

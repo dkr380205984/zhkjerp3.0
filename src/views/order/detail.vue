@@ -632,6 +632,439 @@
         </div>
       </div>
     </div>
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">产品费用</div>
+      </div>
+      <div class="tableCtn">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol">产品编号</div>
+            <div class="tcol">下单数量</div>
+            <div class="tcol">平均单价</div>
+            <div class="tcol">下单合计</div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow">
+            <div class="tcol">产品编号</div>
+            <div class="tcol">下单数量</div>
+            <div class="tcol">平均单价</div>
+            <div class="tcol">下单合计</div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="thead"
+          style="border-top:0">
+          <div class="trow">
+            <div class="tcol">尺码颜色</div>
+            <div class="tcol">数量</div>
+            <div class="tcol">单价</div>
+            <div class="tcol">总价</div>
+            <div class="tcol"></div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow">
+            <div class="tcol">尺码颜色</div>
+            <div class="tcol">数量</div>
+            <div class="tcol">单价</div>
+            <div class="tcol">总价</div>
+            <div class="tcol"></div>
+          </div>
+        </div>
+        <div class="thead"
+          style="border-top:0">
+          <div class="trow">
+            <div class="tcol">报价费用</div>
+            <div class="tcol">-</div>
+            <div class="tcol">单价</div>
+            <div class="tcol">总价</div>
+            <div class="tcol">同比增长 2.13%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">原料费用</div>
+      </div>
+      <div class="tableCtn">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol">费用类型</div>
+            <div class="tcol">采购合计数量</div>
+            <div class="tcol">调取合计数量</div>
+            <div class="tcol">加工合计数量</div>
+            <div class="tcol">计划合计费用</div>
+            <div class="tcol">实际合计费用</div>
+            <div class="tcol">费用平均单价</div>
+            <div class="tcol">产品平均单价</div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow">
+            <div class="tcol">
+              <div>计划：</div>
+              <div>实际：</div>
+            </div>
+            <div class="tcol">
+              <div>计划：</div>
+              <div>实际：</div>
+            </div>
+            <div class="tcol">
+              <div>计划：</div>
+              <div>实际：</div>
+            </div>
+            <div class="tcol">
+              <div>计划：</div>
+              <div>实际：</div>
+            </div>
+            <div class="tcol">计划合计费用</div>
+            <div class="tcol">实际合计费用</div>
+            <div class="tcol">费用平均单价</div>
+            <div class="tcol">产品平均单价</div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="thead"
+          style="border-top:0">
+          <div class="trow">
+            <div class="tcol">类型</div>
+            <div class="tcol">单位/仓库</div>
+            <div class="tcol">原料名称</div>
+            <div class="tcol">属性颜色</div>
+            <div class="tcol">计划数量</div>
+            <div class="tcol">最终入库数量</div>
+            <div class="tcol">单价</div>
+            <div class="tcol">总价</div>
+            <div class="tcol"></div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow">
+            <div class="tcol">类型</div>
+            <div class="tcol">单位/仓库</div>
+            <div class="tcol">原料名称</div>
+            <div class="tcol">属性颜色</div>
+            <div class="tcol">计划数量</div>
+            <div class="tcol">最终入库数量</div>
+            <div class="tcol">单价</div>
+            <div class="tcol">总价</div>
+            <div class="tcol"></div>
+          </div>
+        </div>
+        <div class="thead"
+          style="border-top:0">
+          <div class="trow">
+            <div class="tcol">报价费用</div>
+            <div class="tcol">-</div>
+            <div class="tcol">-</div>
+            <div class="tcol">-</div>
+            <div class="tcol">0</div>
+            <div class="tcol">-</div>
+            <div class="tcol">0</div>
+            <div class="tcol">0</div>
+            <div class="tcol">同比增长 2.13%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">生产费用</div>
+      </div>
+      <div class="tableCtn">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol">费用工序</div>
+            <div class="tcol">工序说明</div>
+            <div class="tcol">生产数量</div>
+            <div class="tcol">实际完成数量</div>
+            <div class="tcol">计划合计费用</div>
+            <div class="tcol">费用平均单价</div>
+            <div class="tcol">产品平均单价</div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow">
+            <div class="tcol">费用工序</div>
+            <div class="tcol">工序说明</div>
+            <div class="tcol">生产数量</div>
+            <div class="tcol">实际完成数量</div>
+            <div class="tcol">计划合计费用</div>
+            <div class="tcol">费用平均单价</div>
+            <div class="tcol">产品平均单价</div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="thead"
+          style="border-top:0">
+          <div class="trow">
+            <div class="tcol">单位名称</div>
+            <div class="tcol">产品信息</div>
+            <div class="tcol">尺码颜色</div>
+            <div class="tcol">计划数量</div>
+            <div class="tcol">完成数量</div>
+            <div class="tcol">单价</div>
+            <div class="tcol">计划小计</div>
+            <div class="tcol"></div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow">
+            <div class="tcol">单位名称</div>
+            <div class="tcol">产品信息</div>
+            <div class="tcol">尺码颜色</div>
+            <div class="tcol">计划数量</div>
+            <div class="tcol">完成数量</div>
+            <div class="tcol">单价</div>
+            <div class="tcol">计划小计</div>
+            <div class="tcol"></div>
+          </div>
+        </div>
+        <div class="thead"
+          style="border-top:0">
+          <div class="trow">
+            <div class="tcol">报价费用</div>
+            <div class="tcol">-</div>
+            <div class="tcol">-</div>
+            <div class="tcol">-</div>
+            <div class="tcol">完成数量</div>
+            <div class="tcol">单价</div>
+            <div class="tcol">计划小计</div>
+            <div class="tcol">同比增长20%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">包装辅料</div>
+      </div>
+      <div class="tableCtn">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol">费用类型</div>
+            <div class="tcol">计划订购数量</div>
+            <div class="tcol">计划费用合计</div>
+            <div class="tcol">费用平均单价</div>
+            <div class="tcol">产品平均单价</div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow">
+            <div class="tcol">费用类型</div>
+            <div class="tcol">计划订购数量</div>
+            <div class="tcol">计划费用合计</div>
+            <div class="tcol">费用平均单价</div>
+            <div class="tcol">产品平均单价</div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="thead"
+          style="border-top:0">
+          <div class="trow">
+            <div class="tcol">辅料名称</div>
+            <div class="tcol">尺寸</div>
+            <div class="tcol">属性或说明</div>
+            <div class="tcol">计划订购数量</div>
+            <div class="tcol">单价</div>
+            <div class="tcol">总价</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow">
+            <div class="tcol">辅料名称</div>
+            <div class="tcol">尺寸</div>
+            <div class="tcol">属性或说明</div>
+            <div class="tcol">计划订购数量</div>
+            <div class="tcol">单价</div>
+            <div class="tcol">总价</div>
+          </div>
+        </div>
+        <div class="thead"
+          style="border-top:0">
+          <div class="trow">
+            <div class="tcol">报价费用</div>
+            <div class="tcol">-</div>
+            <div class="tcol">0</div>
+            <div class="tcol">0</div>
+            <div class="tcol">0</div>
+            <div class="tcol">同比增长</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">车间工资</div>
+      </div>
+      <div class="tableCtn">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol">费用工序</div>
+            <div class="tcol">工序说明</div>
+            <div class="tcol">完成数量</div>
+            <div class="tcol">额外数量</div>
+            <div class="tcol">合计结算总价</div>
+            <div class="tcol">费用平均单价</div>
+            <div class="tcol">产品平均单价</div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow">
+            <div class="tcol">费用工序</div>
+            <div class="tcol">工序说明</div>
+            <div class="tcol">完成数量</div>
+            <div class="tcol">额外数量</div>
+            <div class="tcol">合计结算总价</div>
+            <div class="tcol">费用平均单价</div>
+            <div class="tcol">产品平均单价</div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="thead"
+          style="border-top:0">
+          <div class="trow">
+            <div class="tcol">员工姓名</div>
+            <div class="tcol">产品信息</div>
+            <div class="tcol">尺码颜色</div>
+            <div class="tcol">结算单价</div>
+            <div class="tcol">完成数量</div>
+            <div class="tcol">额外数量</div>
+            <div class="tcol">次品数量</div>
+            <div class="tcol">结算小计</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow">
+            <div class="tcol">员工姓名</div>
+            <div class="tcol">产品信息</div>
+            <div class="tcol">尺码颜色</div>
+            <div class="tcol">结算单价</div>
+            <div class="tcol">完成数量</div>
+            <div class="tcol">额外数量</div>
+            <div class="tcol">次品数量</div>
+            <div class="tcol">结算小计</div>
+          </div>
+        </div>
+        <div class="thead"
+          style="border-top:0">
+          <div class="trow">
+            <div class="tcol">报价费用</div>
+            <div class="tcol">-</div>
+            <div class="tcol">-</div>
+            <div class="tcol">-</div>
+            <div class="tcol">0</div>
+            <div class="tcol">0</div>
+            <div class="tcol">0</div>
+            <div class="tcol">同比增长</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">装箱运输</div>
+      </div>
+      <div class="tableCtn">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol">费用类型</div>
+            <div class="tcol">运输立方</div>
+            <div class="tcol noPad">计划费用合计</div>
+            <div class="tcol">费用平均单价</div>
+            <div class="tcol">产品平均单价</div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow">
+            <div class="tcol">费用类型</div>
+            <div class="tcol">运输立方</div>
+            <div class="tcol noPad">计划费用合计</div>
+            <div class="tcol">费用平均单价</div>
+            <div class="tcol">产品平均单价</div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="thead"
+          style="border-top:0">
+          <div class="trow">
+            <div class="tcol">运输单位</div>
+            <div class="tcol">运输城市/地址</div>
+            <div class="tcol noPad">
+              <div class="trow">
+                <div class="tcol">总箱数</div>
+                <div class="tcol">毛重</div>
+                <div class="tcol">净重</div>
+              </div>
+            </div>
+            <div class="tcol">总体积</div>
+            <div class="tcol">运输单价</div>
+            <div class="tcol">运输总价</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow">
+            <div class="tcol">运输单位</div>
+            <div class="tcol">运输城市/地址</div>
+            <div class="tcol noPad">
+              <div class="trow">
+                <div class="tcol">总箱数</div>
+                <div class="tcol">毛重</div>
+                <div class="tcol">净重</div>
+              </div>
+            </div>
+            <div class="tcol">总体积</div>
+            <div class="tcol">运输单价</div>
+            <div class="tcol">运输总价</div>
+          </div>
+        </div>
+        <div class="thead"
+          style="border-top:0">
+          <div class="trow">
+            <div class="tcol">报价费用</div>
+            <div class="tcol">-</div>
+            <div class="tcol noPad">0</div>
+            <div class="tcol">-f</div>
+            <div class="tcol">0</div>
+            <div class="tcol">同比增长</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">扣款费用</div>
+      </div>
+      <div class="tableCtn">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol">扣款项目</div>
+            <div class="tcol">扣款单位</div>
+            <div class="tcol">扣款原因</div>
+            <div class="tcol">扣款金额</div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow">
+            <div class="tcol">扣款项目</div>
+            <div class="tcol">扣款单位</div>
+            <div class="tcol">扣款原因</div>
+            <div class="tcol">扣款金额</div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">

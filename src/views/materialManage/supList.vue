@@ -67,7 +67,6 @@
             <div class="col">补纱单号</div>
             <div class="col">关联订单</div>
             <div class="col">补纱单位</div>
-            <div class="col">承担单位</div>
             <div class="col">计划数量</div>
             <div class="col">采购数量</div>
             <div class="col">加工数量</div>
@@ -83,7 +82,6 @@
             <div class="col">{{item.code}}</div>
             <div class="col">{{item.order_code}}</div>
             <div class="col">{{item.client_name}}</div>
-            <div class="col">{{item.bear_client_name}}</div>
             <div class="col">{{item.total_plan_number}}</div>
             <div class="col">{{item.total_order_number}}</div>
             <div class="col">{{item.material_order_progress || 0}}</div>

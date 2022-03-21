@@ -1206,6 +1206,7 @@
       @close="deductFlag = false"
       :type="deductInfo.type"
       :id="deductInfo.doc_id"
+      :order_id="$route.query.id"
       :client_id="deductInfo.client_id"
       :client_name="deductInfo.client_name"></zh-deduct>
     <zh-deduct-detail :show="deductDetailFlag"

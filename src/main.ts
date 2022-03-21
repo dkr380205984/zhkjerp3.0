@@ -65,16 +65,21 @@ Vue.filter('productStockTypeClassFilter', (val: 1 | 2 | 3 | 4 | 5 | 6) => {
 })
 
 // 订单状态
-Vue.filter('orderStatusFilter', (val: 0 | 1 | 2 | 3) => {
-  const statusArr = ['', '已创建', '进行中', '已完成', '已结算', '已取消']
+Vue.filter('orderStatusFilter', (val: 0 | 1 | 2 | 3 | 4 | 5) => {
+  const statusArr = ['', '已创建', '进行中', '已完成', '已结算', '已预期', '已取消']
   return statusArr[val]
 })
 // 订单状态 class
-Vue.filter('orderStatusClassFilter', (val: 0 | 1 | 2 | 3) => {
-  const statusArr = ['', 'orange', 'blue', 'green', 'green', 'red']
+Vue.filter('orderStatusClassFilter', (val: 0 | 1 | 2 | 3 | 4 | 5) => {
+  const statusArr = ['', 'orange', 'blue', 'green', 'green', 'red', 'gray']
   return statusArr[val]
 })
 
+// 计价方式
+Vue.filter('packCalcFilter', (val: 0 | 1 | 2 | 3) => {
+  const statusArr = ['', '纸箱:面积', '胶袋:面积', '其他']
+  return statusArr[val]
+})
 
 import { CheckCommonInfo } from '@/types/vuex'
 declare module 'vue/types/vue' {

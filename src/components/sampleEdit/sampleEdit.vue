@@ -741,6 +741,8 @@ export default Vue.extend({
           } else {
             if (this.id) {
               this.getImport(Number(this.id))
+            } else {
+              this.$initEditor(this.sampleInfo)
             }
           }
         }

@@ -81,6 +81,7 @@
 import Vue from 'vue'
 import { deduct } from '@/assets/js/api'
 interface deductInfo {
+  order_id: number | string
   rel_doc_id: number | string
   doc_type: number
   reason: string[]
@@ -91,6 +92,9 @@ interface deductInfo {
 export default Vue.extend({
   props: {
     id: {
+      default: ''
+    },
+    order_id: {
       default: ''
     },
     client_name: {
@@ -125,6 +129,7 @@ export default Vue.extend({
   } {
     return {
       deductInfo: {
+        order_id: '',
         rel_doc_id: '',
         doc_type: 0,
         reason: [''],
@@ -201,6 +206,7 @@ export default Vue.extend({
       )
     },
     saveDeduct() {
+      this.deductInfo.order_id = this.order_id
       this.deductInfo.rel_doc_id = this.id
       this.deductInfo.client_id = this.client_id
       this.deductInfo.doc_type = this.type

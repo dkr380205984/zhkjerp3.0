@@ -167,7 +167,7 @@
         </div>
       </div>
       <div class="oprCtn"
-        v-show="!noOpr">
+        v-if="!noOpr">
         <span class="btn borderBtn"
           @click="close">取消</span>
         <span class="btn backHoverBlue"
