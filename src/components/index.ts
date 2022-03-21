@@ -17,6 +17,7 @@ import zhDeduct from './zhDeduct/zhDeduct.vue'
 import zhDeductDetail from './zhDeduct/zhDeductDetail.vue'
 import associatedPage from './associatedPage/associatedPage.vue'
 import zhImage from './zhImage/zhImage.vue'
+import zhInput from './zhInput/zhInput.vue'
 import todayIsHoliday from './todayIsHoliday/todayIsHoliday.vue'
 import storeSurplus from './storeSurplus/storeSurplus.vue'
 import vue from '@handsontable/vue'
@@ -37,6 +38,7 @@ export default {
     Vue.component('othersFeeData', othersFeeData)
     Vue.component('usingTutorials', usingTutorials)
     Vue.component('zhDeduct', zhDeduct)
+    Vue.component('zhInput', zhInput)
     Vue.component('zhDeductDetail', zhDeductDetail)
     Vue.component('associatedPage', associatedPage)
     Vue.component('zhImage', zhImage)
