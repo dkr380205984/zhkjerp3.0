@@ -520,53 +520,6 @@
     </div>
     <div class="bottomFixBar">
       <div class="main">
-        <!-- 报价单表格 -->
-        <div class="priceCtn fl">
-          <div
-            class="btn"
-            :class="{ backHoverBlue: priceProcessList.length > 0, backGray: priceProcessList.length === 0 }"
-            @click="showPrice = !showPrice"
-          >
-            {{ priceProcessList.length > 0 ? (showPrice ? '关闭报价' : '查看报价') : '暂无报价' }}
-          </div>
-          <div class="priceTable" v-show="showPrice && priceProcessList.length > 0">
-            <div class="module">
-              <div class="titleCtn">
-                <div class="title">报价信息</div>
-              </div>
-              <div class="contentCtn">
-                <div class="tableCtn">
-                  <div class="thead">
-                    <div class="trow">
-                      <div class="tcol">产品信息</div>
-                      <div class="tcol noPad" style="flex: 4">
-                        <div class="trow">
-                          <div class="tcol">加工类型</div>
-                          <div class="tcol">加工工序</div>
-                          <div class="tcol">备注信息</div>
-                          <div class="tcol">单价</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="tbody">
-                    <div class="trow" v-for="(item, index) in priceProcessList" :key="index">
-                      <div class="tcol">{{ item.productInfo }}</div>
-                      <div class="tcol noPad" style="flex: 4">
-                        <div class="trow" v-for="(itemChild, indexChild) in item.childrenMergeInfo" :key="indexChild">
-                          <div class="tcol">{{ itemChild.type }}</div>
-                          <div class="tcol">{{ itemChild.process }}</div>
-                          <div class="tcol">{{ itemChild.desc }}</div>
-                          <div class="tcol">{{ itemChild.price }}元</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
         <div class="btnCtn">
           <div class="borderBtn" @click="$router.go(-1)">返回</div>
         </div>
@@ -1065,29 +1018,45 @@ export default Vue.extend({
               if (ress.data.data[0]?.process_desc) {
                 processWorker.processDescList = ress.data.data[0].process_desc.split(',')
               }
-              processWorker.info.forEach((staffNameItem: any) => {
+              let oldObj: any = {}
+              processWorker.info.forEach((staffNameItem: any, staffIndex: number) => {
                 staffNameItem.info.forEach((productCodeItem: any) => {
                   productCodeItem.info.forEach((process_desc: any) => {
                     process_desc.info.forEach((itemPrice: any, priceIndex: any) => {
                       itemPrice.info.forEach((itemSize: any) => {
                         let obj: any = {}
                         obj.infoData = [{ worker: '', sizeColorList: [] }]
-                        itemSize.info.forEach((itemColor: any) => {
+                        itemSize.info.forEach((itemColor: any, colorIndex: number) => {
                           // console.log(itemColor)
                           if (itemColor.checked === undefined || itemColor.checked === false) return
-                          obj.productNameId = itemColor.info.order_product_id
-                          obj.process = [+itemColor.info.process_type, processWorker.process_name]
-                          obj.process_desc = process_desc.process_desc
-                          obj.processDescList = processWorker.processDescList
-                          obj.productId = itemColor.info.product_id
-                          obj.unitPrice = process_desc.info[priceIndex].price
-                          itemColor.chooseId = itemColor.info.size_id + ',' + itemColor.info.color_id
-                          itemColor.complete_time = this.getNowFormatDate()
-                          itemColor.size_name = itemSize.size_name
-                          itemColor.size_id = itemColor.info.size_id
-                          itemColor.color_id = itemColor.info.color_id
-                          obj.infoData[obj.infoData.length - 1].sizeColorList.push(itemColor)
-                          obj.infoData[obj.infoData.length - 1].worker = ['', itemColor.info.staff_id]
+
+                          if (staffIndex > 0) {
+                            if (colorIndex === 0) {
+                              oldObj.infoData.push({ worker: '', sizeColorList: [] })
+                              oldObj.infoData[oldObj.infoData.length - 1].worker = ['', itemColor.info.staff_id]
+                            }
+                            itemColor.chooseId = itemColor.info.size_id + ',' + itemColor.info.color_id
+                            itemColor.complete_time = this.getNowFormatDate()
+                            itemColor.size_name = itemSize.size_name
+                            itemColor.size_id = itemColor.info.size_id
+                            itemColor.color_id = itemColor.info.color_id
+                            oldObj.infoData[oldObj.infoData.length - 1].sizeColorList.push(itemColor)
+                          } else {
+                            obj.productNameId = itemColor.info.order_product_id
+                            obj.process = [+itemColor.info.process_type, processWorker.process_name]
+                            obj.process_desc = process_desc.process_desc
+                            obj.processDescList = processWorker.processDescList
+                            obj.productId = itemColor.info.product_id
+                            obj.unitPrice = process_desc.info[priceIndex].price
+                            itemColor.chooseId = itemColor.info.size_id + ',' + itemColor.info.color_id
+                            itemColor.complete_time = this.getNowFormatDate()
+                            itemColor.size_name = itemSize.size_name
+                            itemColor.size_id = itemColor.info.size_id
+                            itemColor.color_id = itemColor.info.color_id
+                            obj.infoData[obj.infoData.length - 1].sizeColorList.push(itemColor)
+                            obj.infoData[obj.infoData.length - 1].worker = ['', itemColor.info.staff_id]
+                            oldObj = obj
+                          }
 
                           // console.log(sizeColorItem)
                           // item.product_info.forEach((itemColor: any, itemIndex: any) => {
@@ -1103,7 +1072,14 @@ export default Vue.extend({
                           //   }
                           // })
                         })
-                        if (itemPrice.checked === undefined || itemPrice.checked.length === 0 || !obj.productId) return
+                        if (
+                          itemPrice.checked === undefined ||
+                          itemPrice.checked.length === 0 ||
+                          !obj.productId ||
+                          staffIndex > 0
+                        ){
+                          return
+                        }
                         arr.push(obj)
                       })
                       // arr.forEach((price:any) => {
