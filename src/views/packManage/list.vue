@@ -32,10 +32,6 @@
                 :value="item.value"></el-option>
             </el-select>
           </div>
-          <div class="btn borderBtn"
-            @click="reset">重置</div>
-        </div>
-        <div class="filterCtn">
           <div class="elCtn">
             <el-select @change="changeRouter"
               v-model="group_id"
@@ -47,6 +43,10 @@
                 :label="item.name"></el-option>
             </el-select>
           </div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
+        </div>
+        <div class="filterCtn">
           <div class="elCtn">
             <el-date-picker v-model="date"
               type="daterange"
@@ -308,6 +308,7 @@ export default Vue.extend({
       this.loading = true
       order
         .list({
+          is_draft: 2,
           order_type: 1,
           keyword: this.keyword,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',

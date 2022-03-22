@@ -308,7 +308,7 @@
           <div class="buttonList">
             <div class="btn backHoverBlue">
               <i class="el-icon-s-grid"></i>
-              <span class="text">包装订购操作</span>
+              <span class="text">包装计划操作</span>
             </div>
             <div class="otherInfoCtn">
               <div class="otherInfo">
@@ -536,6 +536,27 @@
                 <div class="label">
                   <span class="text">订购单位</span>
                   <span class="explanation">(必选)</span>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="设置成功后请点击此按钮刷新数据"
+                    placement="top">
+                    <i class="el-icon-refresh hoverGreen fr"
+                      style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                      @click="$checkCommonInfo([{
+                    checkWhich: 'api/clientType',
+                    getInfoMethed: 'dispatch',
+                    getInfoApi: 'getClientTypeAsync',
+                    forceUpdate:true
+                  }])"></i>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="添加新单位"
+                    placement="top">
+                    <i class="el-icon-upload hoverOrange fr"
+                      style="line-height:38px;font-size:18px;cursor:pointer;"
+                      @click="$openUrl('/client/create?type=2')"></i>
+                  </el-tooltip>
                 </div>
                 <div class="info elCtn">
                   <el-cascader placeholder="请选择订购单位"
@@ -569,28 +590,11 @@
                 </div>
               </div>
             </div>
-            <div class="rowCtn"
+            <div :style="{'border-top':indexChild===0?'1px dotted #aaa':'0px'}"
+              class="rowCtn"
               v-for="(itemChild,indexChild) in item.info_data"
               :key="indexChild">
               <div class="row">
-                <div class="col">
-                  <div class="label">
-                    <span class="text">计价类型</span>
-                    <span class="explanation">(必选)</span>
-                  </div>
-                  <div class="info elCtn">
-                    <el-select v-model="itemChild.price_type"
-                      placeholder="请选择计价类型"
-                      disabled>
-                      <el-option :value="1"
-                        label="纸箱:面积"></el-option>
-                      <el-option :value="2"
-                        label="胶袋:面积"></el-option>
-                      <el-option :value="3"
-                        label="其他"></el-option>
-                    </el-select>
-                  </div>
-                </div>
                 <div class="col">
                   <div class="label">
                     <span class="text">包装辅料名称</span>
@@ -631,6 +635,45 @@
                 </div>
                 <div class="col">
                   <div class="label">
+                    <span class="text">计价类型</span>
+                    <span class="explanation">(必选)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-select v-model="itemChild.price_type"
+                      placeholder="请选择计价类型"
+                      disabled>
+                      <el-option :value="1"
+                        label="纸箱:面积"></el-option>
+                      <el-option :value="2"
+                        label="胶袋:面积"></el-option>
+                      <el-option :value="3"
+                        label="其他"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
+                    <span class="text">包装图片</span>
+                  </div>
+                  <div style="position: absolute;z-index:1">
+                    <el-upload class="avatar-uploader"
+                      action="https://upload.qiniup.com/"
+                      :show-file-list="false"
+                      :data="postData"
+                      :on-success="(ev)=>{return successFile(ev,itemChild)}"
+                      :before-upload="beforeAvatarUpload">
+                      <img v-if="itemChild.file_url"
+                        :src="itemChild.file_url"
+                        class="avatar">
+                      <i v-else
+                        class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">
                     <span class="text">包装尺寸</span>
                     <span class="explanation">(必填,单位:cm)</span>
                   </div>
@@ -653,8 +696,6 @@
                     </template>
                   </div>
                 </div>
-              </div>
-              <div class="row">
                 <div class="col">
                   <div class="label">
                     <span class="text">包装属性或说明</span>
@@ -664,6 +705,9 @@
                       placeholder="包装属性或说明"></el-input>
                   </div>
                 </div>
+                <div class="col"></div>
+              </div>
+              <div class="row">
                 <div class="col">
                   <div class="spaceBetween">
                     <!-- <div class="once">
@@ -701,9 +745,11 @@
                       placeholder="订购数量"></el-input>
                   </div>
                 </div>
-                <div class="opr hoverBlue"
-                  v-if="indexChild===0"
-                  @click="$addItem(item.info_data,{
+                <div class="col">
+                  <div class="btn backHoverBlue"
+                    style="height:32px;margin-top:38px"
+                    v-if="indexChild===0"
+                    @click="$addItem(item.info_data,{
                     price_type: 1,
                     pack_material_id: '',
                     length: '',
@@ -713,28 +759,11 @@
                     bulk_price: '',
                     count_price: '',
                     number: ''
-                  })">添加</div>
-                <div class="opr hoverRed"
-                  v-if="indexChild>0"
-                  @click="$deleteItem(item.info_data,indexChild)">删除</div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">
-                    <span class="text">包装图片</span>
-                  </div>
-                  <el-upload class="avatar-uploader"
-                    action="https://upload.qiniup.com/"
-                    :show-file-list="false"
-                    :data="postData"
-                    :on-success="(ev)=>{return successFile(ev,itemChild)}"
-                    :before-upload="beforeAvatarUpload">
-                    <img v-if="itemChild.file_url"
-                      :src="itemChild.file_url"
-                      class="avatar">
-                    <i v-else
-                      class="el-icon-plus avatar-uploader-icon"></i>
-                  </el-upload>
+                  })">添加包装</div>
+                  <div class="btn backHoverRed"
+                    style="height:32px;margin-top:38px"
+                    v-if="indexChild>0"
+                    @click="$deleteItem(item.info_data,indexChild)">删除包装</div>
                 </div>
               </div>
             </div>
@@ -1851,7 +1880,10 @@ export default Vue.extend({
         if (!this.packPlanUpdateFlag) {
           this.packPlanInfo.gather_info = []
         } else {
-          this.packPlanInfo.gather_info.forEach((item) => (item.number = 0))
+          this.packPlanInfo.gather_info.forEach((item) => {
+            item.number = 0
+            item.isPlan = true
+          })
         }
         this.packPlanInfo.data.forEach((item) => {
           item.info_data.forEach((itemPack) => {
@@ -1920,7 +1952,7 @@ export default Vue.extend({
         this.getPlanCmpData()
         packManage.createPlan(this.packPlanInfo).then((res) => {
           if (res.data.status) {
-            this.$message.success('添加成功')
+            this.$message.success(this.packPlanUpdateFlag ? '修改成功' : '添加成功')
             this.resetPlanPack()
             this.packPlanFlag = false
             this.packPlanStep = 1
@@ -2067,7 +2099,7 @@ export default Vue.extend({
     padding: 0;
   }
   .avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
+    border: 1px dashed #aaa;
     border-radius: 6px;
     cursor: pointer;
     position: relative;

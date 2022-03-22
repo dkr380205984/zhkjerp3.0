@@ -313,6 +313,7 @@ export default Vue.extend({
       this.loading = true
       order
         .list({
+          is_draft: 2,
           order_type: 1,
           keyword: this.keyword,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',

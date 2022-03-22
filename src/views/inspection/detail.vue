@@ -65,10 +65,10 @@
                     <div class="tcol">{{itemPro.size_name+'/'+itemPro.color_name}}</div>
                     <div class="tcol">
                       <span>{{itemPro.part_name}}</span>
-                      <span>{{itemPro.number}}</span>
+                      <span class="blue">{{itemPro.number}}</span>
                     </div>
-                    <div class="tcol">已完成数量</div>
-                    <div class="tcol">{{itemPro.inspection_number}}</div>
+                    <div class="tcol gray">未统计</div>
+                    <div class="tcol green">{{itemPro.inspection_number}}</div>
                   </div>
                 </div>
                 <div class="tcol oprCtn">
@@ -126,6 +126,7 @@
             <div class="col">检验数量</div>
             <div class="col">次品数量</div>
             <div class="col">次品原因</div>
+            <div class="col">创建人</div>
             <div class="col">操作</div>
           </div>
           <div class="row"
@@ -136,10 +137,11 @@
             <div class="col">{{item.complete_time}}</div>
             <div class="col">{{item.product_code}}</div>
             <div class="col">{{item.part_name}}</div>
-            <div class="col">{{item.color_name}}/{{item.size_name}}</div>
+            <div class="col">{{item.color}}/{{item.size}}</div>
             <div class="col">{{item.number}}</div>
             <div class="col">{{item.shoddy_number}}</div>
             <div class="col">{{item.shoddy_reason}}</div>
+            <div class="col">{{item.user_name}}</div>
             <div class="col">
               <div class="oprCtn">
                 <span class="opr hoverRed"

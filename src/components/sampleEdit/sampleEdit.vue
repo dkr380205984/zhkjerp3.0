@@ -792,6 +792,10 @@ export default Vue.extend({
       }
     },
     getImport(ev: number) {
+      // 编辑器防止重复创建报错
+      if (this.sampleInfo.editor) {
+        this.sampleInfo.editor.destroy()
+      }
       this.loading = true
       sample
         .detail({
