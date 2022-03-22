@@ -1,0 +1,51 @@
+<template>
+  <div class="charts"></div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue'
+let echarts = require('echarts')
+export default Vue.extend({
+  props: {
+    option: {
+      required: true,
+      type: Object
+    }
+  },
+  data(): {
+    [propName: string]: any
+  } {
+    return {}
+  },
+  watch: {
+    options: {
+      handler(options) {
+        this.chart.setOption(this.options)
+      },
+      deep: true
+    }
+  },
+  computed: {
+    token(): string {
+      return this.$store.state.status.token
+    }
+  },
+  methods: {
+    initCharts() {
+      this.chart = echarts.init(this.$el)
+      this.setOptions()
+    },
+    setOptions() {
+      this.chart.setOption(this.option)
+    }
+  },
+  mounted() {
+    this.option.color = ['#229CFB', '#1FB48C', '#8E44AD', '#696969', '#28AE60', '#F39C25', '#D3541A', '#21BC9C']
+    this.initCharts()
+  }
+})
+</script>
+
+<style lang="less" scoped>
+@import './zhCharts.less';
+</style>

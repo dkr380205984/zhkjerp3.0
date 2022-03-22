@@ -9,6 +9,7 @@ import sampleDetail from './sampleDetail/sampleDetail.vue'
 import colorPicker from './colorPicker/colorPicker.vue'
 import orderDetail from './orderDetail/orderDetail.vue'
 import zhList from './zhList/zhList.vue'
+import zhCharts from './zhCharts/zhCharts.vue'
 import zhCheck from './zhCheck/zhCheck.vue'
 import zhCheckDetail from './zhCheck/zhCheckDetail.vue'
 import othersFeeData from './othersFeeData/othersFeeData.vue'
@@ -34,6 +35,7 @@ export default {
     Vue.component('zhColorPicker', colorPicker) //和elment-ui区分
     Vue.component('orderDetail', orderDetail)
     Vue.component('zhList', zhList)
+    Vue.component('zhCharts', zhCharts)
     Vue.component('zhCheck', zhCheck)
     Vue.component('othersFeeData', othersFeeData)
     Vue.component('usingTutorials', usingTutorials)

@@ -788,7 +788,19 @@ const receipt = {
   }) => http.get(`${baseUrl}/receipt/reviewer/list`, params),
   total: () => http.get(`${baseUrl}/receipt/total`),
 }
+
+const statistics = {
+  order:(params?:{
+    start_time:string
+    end_time:string
+    client_id:number | string
+    contacts_id:number | string
+    group_id:number | string
+    settle_unit:number | string
+  })=>http.get(`${baseUrl}/statistics/financial/order`,params)
+}
 export {
+  statistics,
   receipt,
   workshop,
   staff,
