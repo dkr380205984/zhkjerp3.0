@@ -300,7 +300,7 @@
               <i class="el-icon-question"></i>
             </el-tooltip>
           </el-checkbox>
-          <el-checkbox v-model="keyBoard">打开页面键盘</el-checkbox>
+          <el-checkbox v-model="keyBoard" @change="changeKeyBoard">打开页面键盘</el-checkbox>
           <!-- <el-checkbox v-model="autoAssignSizeColor">自动分配尺码颜色</el-checkbox> -->
           <div class="editCtn packOrder" v-for="(item, index) in productionScheduleUpdate" :key="index">
             <div
@@ -542,7 +542,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
-      keyBoard: true,
+      keyBoard: localStorage.showWorkShopKeyBoard === 'true',
       showPopupLoading: false,
       orderIndex: '0',
       openWindowKey: false,
@@ -1003,6 +1003,7 @@ export default Vue.extend({
       ) {
         this.resetProductionScheduleUpdate()
         this.numberUpdate = true
+        this.showPopupLoading = false
         return
       }
 
@@ -1077,7 +1078,7 @@ export default Vue.extend({
                           itemPrice.checked.length === 0 ||
                           !obj.productId ||
                           staffIndex > 0
-                        ){
+                        ) {
                           return
                         }
                         arr.push(obj)
@@ -1152,6 +1153,9 @@ export default Vue.extend({
           name: res === '' ? res : res.process[1]
         })
         .then((ress) => {
+          if (res === '') {
+            res = {}
+          }
           res.processDescList = []
           if (ress.data.data[0]?.process_desc) {
             res.processDescList = ress.data.data[0].process_desc.split(',')
@@ -1299,6 +1303,9 @@ export default Vue.extend({
     },
     handleSelectionChange(val: any) {
       this.chooseSettlementLogList = val
+    },
+    changeKeyBoard(val: boolean) {
+      localStorage.showWorkShopKeyBoard = val + ''
     }
   },
   mounted() {
