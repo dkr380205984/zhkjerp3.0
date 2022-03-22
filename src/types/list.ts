@@ -17,5 +17,6 @@ export interface ListSetting {
   classArr?: string[] // 一般配合filterArr一起用，不同状态用不同颜色标记
   isCheck?: boolean
   isStatus?: boolean // 给订单状态专门设置的
+  isProgress?: boolean // 给订单进度专门设置的
   specialForOrderPrcess?: 'order' | 'sampleOrder' // 订单样单流程专用，理论上不应该出现在组件里
 }

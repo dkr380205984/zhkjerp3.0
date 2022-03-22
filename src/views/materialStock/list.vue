@@ -199,47 +199,40 @@ export default Vue.extend({
           errVal: '0'
         },
         {
-          key: 'status',
-          name: '订单状态',
-          ifShow: true,
-          ifLock: false,
-          index: 6,
-          filterArr: ['', '已创建', '进行中', '已完成', '已结算', '已取消'],
-          classArr: ['', 'orange', 'blue', 'green', 'green', 'red']
-        },
-        {
           key: 'push_progress',
           name: '入库进度',
           ifShow: true,
           ifLock: false,
-          index: 7,
+          index: 6,
           unit: '%',
           errVal: '0',
-          class: 'green'
+          class: 'green',
+          isProgress: true
         },
         {
           key: 'pop_progress',
           name: '出库进度',
           ifShow: true,
           ifLock: false,
-          index: 8,
+          index: 7,
           unit: '%',
           errVal: '0',
-          class: 'green'
+          class: 'orange',
+          isProgress: true
         },
         {
           key: 'group_name',
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 9
+          index: 8
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 10
+          index: 9
         }
       ],
       pickerOptions: {

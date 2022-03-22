@@ -28,13 +28,29 @@
           :class="{'orderProcess':itemKey.specialForOrderPrcess==='order','sampleOrderProcess':itemKey.specialForOrderPrcess==='sampleOrder'}">
           <!-- 普通元素 -->
           <template v-if="!itemKey.from && !itemKey.ifImage && !itemKey.specialForOrderPrcess">
-            <!-- 草稿标记 -->
-            <span class="circle"
-              v-if="itemKey.ifCaogao"
-              :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?'是':'否'}}</span>
-            <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')"
-              class="text">
-              {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unit}}</span>
+            <!-- 订单状态专用 -->
+            <template v-if="itemKey.isStatus">
+              <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key].status]:'')"
+                class="text">
+                {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key].status]:item[itemKey.key].status}}
+                {{item[itemKey.key].count?('('+item[itemKey.key].count+'张)'):''}}
+              </span>
+            </template>
+            <!-- 订单进度专用 -->
+            <template v-else-if="itemKey.isProgress">
+              <span :class="itemKey.class"
+                class="text">
+                {{item[itemKey.key].progress || itemKey.errVal}}%</span>
+            </template>
+            <template v-else>
+              <!-- 草稿标记 -->
+              <span class="circle"
+                v-if="itemKey.ifCaogao"
+                :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?'是':'否'}}</span>
+              <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')"
+                class="text">
+                {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unit}}</span>
+            </template>
           </template>
           <!-- 图片元素 -->
           <template v-if="!itemKey.from && itemKey.ifImage">
@@ -298,17 +314,26 @@
             v-show="itemKey.ifShow && itemKey.ifLock">
             <!-- 普通元素 -->
             <template v-if="!itemKey.from && !item.ifImage">
-              <span class="circle"
-                v-if="itemKey.ifCaogao"
-                :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?itemKey.caogaoArr[0]:itemKey.caogaoArr[1]}}</span>
-              <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')"
-                class="text">
-                {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] || item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unit}}</span>
               <!-- 订单状态专用 -->
               <template v-if="itemKey.isStatus">
                 <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key].status]:'')"
                   class="text">
-                  {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key].status]:item[itemKey.key].status || item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unit}}</span>
+                  {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key].status]:item[itemKey.key].status}}</span>
+              </template>
+              <!-- 订单进度专用 -->
+              <template v-else-if="itemKey.isProgress">
+                <span :class="itemKey.class"
+                  class="text">
+                  {{item[itemKey.key].progress || itemKey.errVal}}%</span>
+              </template>
+              <template v-else>
+                <!-- 草稿标记 -->
+                <span class="circle"
+                  v-if="itemKey.ifCaogao"
+                  :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?'是':'否'}}</span>
+                <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')"
+                  class="text">
+                  {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unit}}</span>
               </template>
             </template>
           </div>

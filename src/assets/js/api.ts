@@ -431,6 +431,7 @@ const order = {
   delete: (params: DeleteParams) => http.post(`${baseUrl}/order/delete`, params, 'application/json'),
   cancel: (params: DeleteParams) => http.post(`${baseUrl}/order/time/cancel`, params, 'application/json'),
   oprLog: (params: DetailParams) => http.get(`${baseUrl}/order/activity/logs`, params), // 操作记录
+  financial: (params: { order_id: string | number, product_id: string | number }) => http.get(`${baseUrl}/financial/order/detail`, params), // 操作记录
   deletePro: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product`, params, 'application/json'), // 删除订单里的产品
   deleteProChild: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product/info`, params, 'application/json'), // 删除订单里的子项
   deleteBatch: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/batch`, params, 'application/json'), // 删除订单里的批次

@@ -170,7 +170,8 @@ export default Vue.extend({
           classArr: ['', 'blue', 'orange'],
           ifShow: true,
           ifLock: false,
-          index: 3
+          index: 3,
+          isStatus: true
         },
         {
           key: 'product_code',

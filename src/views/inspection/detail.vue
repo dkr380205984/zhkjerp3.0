@@ -67,7 +67,7 @@
                       <span>{{itemPro.part_name}}</span>
                       <span class="blue">{{itemPro.number}}</span>
                     </div>
-                    <div class="tcol gray">未统计</div>
+                    <div class="tcol">{{itemPro.real_number || 0}}</div>
                     <div class="tcol green">{{itemPro.inspection_number}}</div>
                   </div>
                 </div>
@@ -280,6 +280,8 @@
                   </div>
                 </div>
               </div>
+              <div class="opr hoverRed"
+                @click="item.child_data.length>1?$deleteItem(item.child_data,indexChild):$message.error('至少有一项')">删除</div>
             </div>
           </div>
         </div>
@@ -450,24 +452,6 @@ export default Vue.extend({
       ]
     }
   },
-  computed: {
-    checkList(): ProductionPlanInfo[] {
-      const finded = this.productionPlanMergeList.find((itemFind) => itemFind.process_name === this.productionPlanIndex)
-      const checkInfo = finded
-        ? finded.childrenMergeInfo.filter((item) => {
-            return item.product_info_data.filter((itemChild) => itemChild.check).length > 0
-          })
-        : []
-      if (checkInfo.length === 0) {
-        return []
-      } else {
-        return checkInfo.map((item) => {
-          item.product_info_data = item.product_info_data.filter((item) => item.check)
-          return item
-        })
-      }
-    }
-  },
   methods: {
     init() {
       this.loading = true
@@ -482,8 +466,15 @@ export default Vue.extend({
       ]).then((res) => {
         this.productionPlanList = res[0].data.data
         if (this.productionPlanList.length > 0) {
+          // 类型为梭织织造、针织织造的永远排在切换按钮的最前面
           this.productionPlanMergeList = this.$mergeData(this.productionPlanList, {
             mainRule: ['process_name']
+          }).sort((a: any, b: any) => {
+            if (a.process_name === '针织织造' || a.name === '梭织织造') {
+              return 1
+            } else {
+              return -1
+            }
           })
           this.productionPlanIndex = this.productionPlanMergeList[0].process_name
           if (this.$route.query.isBarcodeScanner === 'true') {
@@ -506,7 +497,6 @@ export default Vue.extend({
           this.$router.push('/productionPlan/detail?id=' + this.$route.query.id)
         }
         this.inspectionList = res[1].data.data
-        console.log(this.inspectionList)
         this.loading = false
       })
     },
@@ -526,13 +516,30 @@ export default Vue.extend({
         this.deductDetailFlag = true
       }
     },
+    checkList(): ProductionPlanInfo[] {
+      const finded = this.productionPlanMergeList.find((itemFind) => itemFind.process_name === this.productionPlanIndex)
+      const checkInfo = finded
+        ? finded.childrenMergeInfo.filter((item) => {
+            return item.product_info_data.filter((itemChild) => itemChild.check).length > 0
+          })
+        : []
+      if (checkInfo.length === 0) {
+        return []
+      } else {
+        return checkInfo.map((item) => {
+          item.product_info_data = item.product_info_data.filter((item) => item.check)
+          return item
+        })
+      }
+    },
     goInspection(type: 1 | 2) {
-      if (this.checkList.length === 0) {
+      const checkList = this.$clone(this.checkList())
+      if (checkList.length === 0) {
         this.$message.error('请选择产品信息进行检验操作')
         return
       }
       this.InspectionInfo = []
-      this.checkList.forEach((item) => {
+      checkList.forEach((item) => {
         this.inspectionInfo.push({
           type: type,
           order_id: this.order_id,
@@ -571,15 +578,27 @@ export default Vue.extend({
       )
     },
     saveInspection() {
-      this.getCmpData()
-      const formData: InspectionInfo[] = this.$flatten(this.$flatten(this.inspectionInfo))
-      inspection.create({ data: formData }).then((res) => {
-        if (res.data.status) {
-          this.$message.success('检验成功')
-          this.closeInspection()
-          this.init()
-        }
+      const formCheck = this.inspectionInfo.some((item) => {
+        return item.child_data.some((itemChild) => {
+          return this.$formCheck(itemChild, [
+            {
+              key: 'number',
+              errMsg: '请填写数量'
+            }
+          ])
+        })
       })
+      if (!formCheck) {
+        this.getCmpData()
+        const formData: InspectionInfo[] = this.$flatten(this.$flatten(this.inspectionInfo))
+        inspection.create({ data: formData }).then((res) => {
+          if (res.data.status) {
+            this.$message.success('检验成功')
+            this.closeInspection()
+            this.init()
+          }
+        })
+      }
     },
     deleteInspection(id: number) {
       this.$confirm('是否删除该检验日志?', '提示', {

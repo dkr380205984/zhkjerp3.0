@@ -758,7 +758,8 @@
                     desc: '',
                     bulk_price: '',
                     count_price: '',
-                    number: ''
+                    number: '',
+                    file_url:''
                   })">添加包装</div>
                   <div class="btn backHoverRed"
                     style="height:32px;margin-top:38px"
