@@ -61,7 +61,7 @@
           <div class="btn backHoverGreen fr"
             @click="goStock(9)">物料入库</div>
           <div class="btn backHoverOrange fr"
-            @click="goStock(10)">物料出库</div>
+            @click="goStock(13)">物料出库</div>
           <div class="btn backHoverBlue fr"
             @click="goStock(7)">物料移库</div>
         </div>
@@ -93,7 +93,7 @@
                 <span class="opr hoverGreen"
                   @click="goStock(9,item)">入库</span>
                 <span class="opr hoverOrange"
-                  @click="goStock(10,item)">出库</span>
+                  @click="goStock(13,item)">出库</span>
                 <span class="opr hoverBlue"
                   @click="goStock(7,item)">移库</span>
               </div>
@@ -202,21 +202,21 @@
                     <span>{{item.store}}/{{item.secondary_store}}</span>
                   </div>
                 </template>
-                <template v-else-if="item.action_type===2 || item.action_type===4 || item.action_type===9">
+                <template v-else-if="item.action_type===2 || item.action_type===4">
                   <div class="changeCtn">
                     <span>{{item.client_name}}</span>
                     <span class="el-icon-s-unfold green"></span>
                     <span>{{item.store}}/{{item.secondary_store}}</span>
                   </div>
                 </template>
-                <template v-else-if="item.action_type===3 || item.action_type===5 || item.action_type===10">
+                <template v-else-if="item.action_type===3 || item.action_type===5 || item.action_type===10 || item.action_type===13">
                   <div class="changeCtn">
                     <span>{{item.store}}/{{item.secondary_store}}</span>
                     <span class="el-icon-s-unfold orange"></span>
                     <span>{{item.client_name}}</span>
                   </div>
                 </template>
-                <template v-else-if=" item.action_type===6">
+                <template v-else-if="item.action_type===6 || item.action_type===9 || item.action_type===10 || item.action_type===11 || item.action_type===12">
                   <div class="changeCtn">
                     <span>{{item.store}}/{{item.secondary_store}}</span>
                   </div>
@@ -1099,7 +1099,7 @@ export default Vue.extend({
         return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
       }
     },
-    goStock(type: 9 | 10, info?: MaterialStockLog) {
+    goStock(type: 9 | 13, info?: MaterialStockLog) {
       this.materialStockInfo.secondary_store_id = this.defaultSecondaryId || ''
       this.materialStockInfo.action_type = type
       if (info) {

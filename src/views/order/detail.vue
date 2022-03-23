@@ -632,7 +632,7 @@
         </div>
       </div>
     </div>
-    <!-- <div class="module">
+    <div class="module">
       <div class="titleCtn">
         <div class="title">产品费用</div>
       </div>
@@ -646,129 +646,378 @@
             <div class="tcol">操作</div>
           </div>
         </div>
-        <div class="tbody">
+        <div class="tbody"
+          v-for="(item,index) in financialInfo.product"
+          :key="index">
           <div class="trow">
-            <div class="tcol">产品编号</div>
-            <div class="tcol">下单数量</div>
-            <div class="tcol">平均单价</div>
-            <div class="tcol">下单合计</div>
-            <div class="tcol">操作</div>
+            <div class="tcol">{{item.product_code}}</div>
+            <div class="tcol">{{item.total_number}}</div>
+            <div class="tcol">{{item.pre_price}}元</div>
+            <div class="tcol">{{item.total_price}}元</div>
+            <div class="tcol oprCtn">
+              <div class="opr hoverBlue">展开详情</div>
+            </div>
           </div>
-        </div>
-        <div class="thead"
-          style="border-top:0">
-          <div class="trow">
-            <div class="tcol">尺码颜色</div>
-            <div class="tcol">数量</div>
-            <div class="tcol">单价</div>
-            <div class="tcol">总价</div>
-            <div class="tcol"></div>
+          <div class="thead"
+            style="border-top:0">
+            <div class="trow">
+              <div class="tcol">尺码颜色</div>
+              <div class="tcol">数量</div>
+              <div class="tcol">单价</div>
+              <div class="tcol">总价</div>
+              <div class="tcol"></div>
+            </div>
           </div>
-        </div>
-        <div class="tbody">
-          <div class="trow">
-            <div class="tcol">尺码颜色</div>
-            <div class="tcol">数量</div>
-            <div class="tcol">单价</div>
-            <div class="tcol">总价</div>
-            <div class="tcol"></div>
+          <div class="tbody">
+            <div class="trow"
+              v-for="(itemChild,indexChild) in item.detail"
+              :key="indexChild">
+              <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
+              <div class="tcol">{{itemChild.number}}</div>
+              <div class="tcol">{{itemChild.price}}元</div>
+              <div class="tcol">{{itemChild.total_price}}元</div>
+              <div class="tcol"></div>
+            </div>
           </div>
-        </div>
-        <div class="thead"
-          style="border-top:0">
-          <div class="trow">
-            <div class="tcol">报价费用</div>
-            <div class="tcol">-</div>
-            <div class="tcol">单价</div>
-            <div class="tcol">总价</div>
-            <div class="tcol">同比增长 2.13%</div>
-          </div>
+          <!-- <div class="thead"
+            style="border-top:0">
+            <div class="trow">
+              <div class="tcol">报价费用</div>
+              <div class="tcol">-</div>
+              <div class="tcol">单价</div>
+              <div class="tcol">总价</div>
+              <div class="tcol">同比增长 2.13%</div>
+            </div>
+          </div> -->
         </div>
       </div>
     </div>
     <div class="module">
       <div class="titleCtn">
-        <div class="title">原料费用</div>
+        <div class="title">物料费用</div>
       </div>
       <div class="tableCtn">
         <div class="thead">
           <div class="trow">
             <div class="tcol">费用类型</div>
             <div class="tcol">采购合计数量</div>
-            <div class="tcol">调取合计数量</div>
-            <div class="tcol">加工合计数量</div>
-            <div class="tcol">计划合计费用</div>
-            <div class="tcol">实际合计费用</div>
-            <div class="tcol">费用平均单价</div>
-            <div class="tcol">产品平均单价</div>
+            <div class="tcol noPad"
+              style="flex:6">
+              <div class="trow">
+                <div class="tcol">调取合计数量</div>
+                <div class="tcol">加工合计数量</div>
+                <div class="tcol">计划合计费用</div>
+                <div class="tcol">实际合计费用</div>
+                <div class="tcol">费用平均单价</div>
+                <div class="tcol">产品平均单价</div>
+              </div>
+            </div>
             <div class="tcol">操作</div>
           </div>
         </div>
         <div class="tbody">
           <div class="trow">
             <div class="tcol">
-              <div>计划：</div>
-              <div>实际：</div>
+              <div>原料费用</div>
             </div>
             <div class="tcol">
-              <div>计划：</div>
-              <div>实际：</div>
+              <div>计划：{{financialInfo.material.material.gather.material_order.plan}}</div>
+              <div>实际：{{financialInfo.material.material.gather.material_order.plan}}</div>
             </div>
-            <div class="tcol">
-              <div>计划：</div>
-              <div>实际：</div>
+            <div class="tcol noPad"
+              style="flex:6">
+              <div class="trow">
+                <div class="tcol">
+                  <div>计划：{{financialInfo.material.material.gather.material_transfer.plan}}</div>
+                  <div>实际：{{financialInfo.material.material.gather.material_transfer.plan}}</div>
+                </div>
+                <div class="tcol">
+                  <div>计划：{{financialInfo.material.material.gather.material_process.plan}}</div>
+                  <div>实际：{{financialInfo.material.material.gather.material_process.plan}}</div>
+                </div>
+                <div class="tcol">{{financialInfo.material.material.gather.plan_price}}元</div>
+                <div class="tcol">{{financialInfo.material.material.gather.real_price}}元</div>
+                <div class="tcol">{{financialInfo.material.material.gather.pre_price}}元</div>
+                <div class="tcol">{{financialInfo.material.material.gather.product_pre_price}}元</div>
+              </div>
             </div>
-            <div class="tcol">
-              <div>计划：</div>
-              <div>实际：</div>
+            <div class="tcol oprCtn">
+              <div class="opr hoverBlue">展开详情</div>
             </div>
-            <div class="tcol">计划合计费用</div>
-            <div class="tcol">实际合计费用</div>
-            <div class="tcol">费用平均单价</div>
-            <div class="tcol">产品平均单价</div>
-            <div class="tcol">操作</div>
           </div>
+          <div class="thead"
+            style="border-top:0">
+            <div class="trow">
+              <div class="tcol">类型</div>
+              <div class="tcol">单位/仓库</div>
+              <div class="tcol noPad"
+                style="flex:6">
+                <div class="trow">
+                  <div class="tcol">原料名称</div>
+                  <div class="tcol">属性颜色</div>
+                  <div class="tcol">计划数量</div>
+                  <div class="tcol">最终入库数量</div>
+                  <div class="tcol">单价</div>
+                  <div class="tcol">总价</div>
+                </div>
+              </div>
+              <div class="tcol"></div>
+            </div>
+          </div>
+          <div class="tbody">
+            <div class="trow"
+              v-for="(itemOrder,indexOrder) in financialInfo.material.material.detail.material_order"
+              :key="'order' + indexOrder">
+              <div class="tcol">订购</div>
+              <div class="tcol">{{itemOrder.client_name}}</div>
+              <div class="tcol noPad"
+                style="flex:6">
+                <div class="trow"
+                  v-for="(itemMat,indexMat) in itemOrder.info"
+                  :key="indexMat">
+                  <div class="tcol">{{itemMat.material_name}}</div>
+                  <div class="tcol">{{itemMat.attribute}}/{{itemMat.material_color}}</div>
+                  <div class="tcol">{{itemMat.number}}</div>
+                  <div class="tcol">{{itemMat.real_number}}</div>
+                  <div class="tcol">{{itemMat.price}}元</div>
+                  <div class="tcol">{{itemMat.total_price}}元</div>
+                </div>
+              </div>
+              <div class="tcol"></div>
+            </div>
+            <div class="trow"
+              v-for="(itemTransfer,indexTransfer) in financialInfo.material.material.detail.material_transfer"
+              :key="'transfer' + indexTransfer">
+              <div class="tcol">调取</div>
+              <div class="tcol">{{itemTransfer.store}}</div>
+              <div class="tcol noPad"
+                style="flex:6">
+                <div class="trow"
+                  v-for="(itemMat,indexMat) in itemTransfer.info"
+                  :key="indexMat">
+                  <div class="tcol">{{itemMat.material_name}}</div>
+                  <div class="tcol">{{itemMat.attribute}}/{{itemMat.material_color}}</div>
+                  <div class="tcol">{{itemMat.number}}</div>
+                  <div class="tcol">{{itemMat.real_number}}</div>
+                  <div class="tcol">{{itemMat.price}}元</div>
+                  <div class="tcol">{{itemMat.total_price}}元</div>
+                </div>
+              </div>
+              <div class="tcol"></div>
+            </div>
+            <div class="trow"
+              v-for="(itemProcess,indexProcess) in financialInfo.material.material.detail.material_process"
+              :key="'process' + indexProcess">
+              <div class="tcol">{{itemProcess.process}}</div>
+              <div class="tcol">{{itemProcess.client_name}}</div>
+              <div class="tcol noPad"
+                style="flex:6">
+                <div class="trow"
+                  v-for="(itemMat,indexMat) in itemProcess.info"
+                  :key="indexMat">
+                  <div class="tcol">{{itemMat.material_order_name || itemMat.material_transfer_name}}</div>
+                  <div class="tcol">
+                    <template v-if="itemProcess.process==='染色'">
+                      <div class="changeCtn">
+                        <span>白胚</span>
+                        <span class="el-icon-s-unfold blue"></span>
+                        <span>{{itemMat.after_color}}</span>
+                      </div>
+                    </template>
+                    <template v-if="itemProcess.process==='倒纱'">
+                      <span>{{itemMat.before_attribute}}</span>
+                      <span class="el-icon-s-unfold blue"></span>
+                      <span>{{itemMat.after_attribute}}</span>
+                    </template>
+                    <template v-if="itemProcess.process==='并线'">
+                      <span>{{itemMat.bingxian_desc}}</span>
+                    </template>
+                    <template v-if="itemProcess.process==='膨纱'">
+                      <span>{{itemMat.pengsha_desc}}</span>
+                    </template>
+                    <template v-if="itemProcess.process==='切割'">
+                      <span>{{itemMat.qiege_desc}}</span>
+                    </template>
+                  </div>
+                  <div class="tcol">{{itemMat.number}}</div>
+                  <div class="tcol">{{itemMat.real_number}}</div>
+                  <div class="tcol">{{itemMat.price}}元</div>
+                  <div class="tcol">{{itemMat.total_price}}元</div>
+                </div>
+              </div>
+              <div class="tcol"></div>
+            </div>
+          </div>
+          <!-- <div class="thead"
+            style="border-top:0">
+            <div class="trow">
+              <div class="tcol">报价费用</div>
+              <div class="tcol">-</div>
+              <div class="tcol noPad"
+                style="flex:6">
+                <div class="trow">
+                  <div class="tcol">-</div>
+                  <div class="tcol">-</div>
+                  <div class="tcol">0</div>
+                  <div class="tcol">-</div>
+                  <div class="tcol">0</div>
+                  <div class="tcol">0</div>
+                </div>
+              </div>
+              <div class="tcol">同比增长 2.13%</div>
+            </div>
+          </div> -->
         </div>
-        <div class="thead"
-          style="border-top:0">
+      </div>
+      <div class="tableCtn">
+        <div class="thead">
           <div class="trow">
-            <div class="tcol">类型</div>
-            <div class="tcol">单位/仓库</div>
-            <div class="tcol">原料名称</div>
-            <div class="tcol">属性颜色</div>
-            <div class="tcol">计划数量</div>
-            <div class="tcol">最终入库数量</div>
-            <div class="tcol">单价</div>
-            <div class="tcol">总价</div>
-            <div class="tcol"></div>
+            <div class="tcol">费用类型</div>
+            <div class="tcol">采购合计数量</div>
+            <div class="tcol noPad"
+              style="flex:6">
+              <div class="trow">
+                <div class="tcol">调取合计数量</div>
+                <div class="tcol">加工合计数量</div>
+                <div class="tcol">计划合计费用</div>
+                <div class="tcol">实际合计费用</div>
+                <div class="tcol">费用平均单价</div>
+                <div class="tcol">产品平均单价</div>
+              </div>
+            </div>
+            <div class="tcol">操作</div>
           </div>
         </div>
         <div class="tbody">
           <div class="trow">
-            <div class="tcol">类型</div>
-            <div class="tcol">单位/仓库</div>
-            <div class="tcol">原料名称</div>
-            <div class="tcol">属性颜色</div>
-            <div class="tcol">计划数量</div>
-            <div class="tcol">最终入库数量</div>
-            <div class="tcol">单价</div>
-            <div class="tcol">总价</div>
-            <div class="tcol"></div>
+            <div class="tcol">
+              <div>辅料费用</div>
+            </div>
+            <div class="tcol">
+              <div>计划：{{financialInfo.material.decorate.gather.material_order.plan}}</div>
+              <div>实际：{{financialInfo.material.decorate.gather.material_order.plan}}</div>
+            </div>
+            <div class="tcol noPad"
+              style="flex:6">
+              <div class="trow">
+                <div class="tcol">
+                  <div>计划：{{financialInfo.material.decorate.gather.material_transfer.plan}}</div>
+                  <div>实际：{{financialInfo.material.decorate.gather.material_transfer.plan}}</div>
+                </div>
+                <div class="tcol">
+                  <div>计划：{{financialInfo.material.decorate.gather.material_process.plan}}</div>
+                  <div>实际：{{financialInfo.material.decorate.gather.material_process.plan}}</div>
+                </div>
+                <div class="tcol">{{financialInfo.material.decorate.gather.plan_price}}元</div>
+                <div class="tcol">{{financialInfo.material.decorate.gather.real_price}}元</div>
+                <div class="tcol">{{financialInfo.material.decorate.gather.pre_price}}元</div>
+                <div class="tcol">{{financialInfo.material.decorate.gather.product_pre_price}}元</div>
+              </div>
+            </div>
+            <div class="tcol oprCtn">
+              <div class="opr hoverBlue">展开详情</div>
+            </div>
           </div>
-        </div>
-        <div class="thead"
-          style="border-top:0">
-          <div class="trow">
-            <div class="tcol">报价费用</div>
-            <div class="tcol">-</div>
-            <div class="tcol">-</div>
-            <div class="tcol">-</div>
-            <div class="tcol">0</div>
-            <div class="tcol">-</div>
-            <div class="tcol">0</div>
-            <div class="tcol">0</div>
-            <div class="tcol">同比增长 2.13%</div>
+          <div class="thead"
+            style="border-top:0">
+            <div class="trow">
+              <div class="tcol">类型</div>
+              <div class="tcol">单位/仓库</div>
+              <div class="tcol noPad"
+                style="flex:6">
+                <div class="trow">
+                  <div class="tcol">原料名称</div>
+                  <div class="tcol">属性颜色</div>
+                  <div class="tcol">计划数量</div>
+                  <div class="tcol">最终入库数量</div>
+                  <div class="tcol">单价</div>
+                  <div class="tcol">总价</div>
+                </div>
+              </div>
+              <div class="tcol"></div>
+            </div>
           </div>
+          <div class="tbody">
+            <div class="trow"
+              v-for="(itemOrder,indexOrder) in financialInfo.material.decorate.detail.material_order"
+              :key="'order' + indexOrder">
+              <div class="tcol">订购</div>
+              <div class="tcol">{{itemOrder.client_name}}</div>
+              <div class="tcol noPad"
+                style="flex:6">
+                <div class="trow"
+                  v-for="(itemMat,indexMat) in itemOrder.info"
+                  :key="indexMat">
+                  <div class="tcol">{{itemMat.material_name}}</div>
+                  <div class="tcol">{{itemMat.attribute}}/{{itemMat.material_color}}</div>
+                  <div class="tcol">{{itemMat.number}}</div>
+                  <div class="tcol">{{itemMat.real_number}}</div>
+                  <div class="tcol">{{itemMat.price}}元</div>
+                  <div class="tcol">{{itemMat.total_price}}元</div>
+                </div>
+              </div>
+              <div class="tcol"></div>
+            </div>
+            <div class="trow"
+              v-for="(itemTransfer,indexTransfer) in financialInfo.material.decorate.detail.material_transfer"
+              :key="'transfer' + indexTransfer">
+              <div class="tcol">调取</div>
+              <div class="tcol">{{itemTransfer.store}}</div>
+              <div class="tcol noPad"
+                style="flex:6">
+                <div class="trow"
+                  v-for="(itemMat,indexMat) in itemTransfer.info"
+                  :key="indexMat">
+                  <div class="tcol">{{itemMat.material_name}}</div>
+                  <div class="tcol">{{itemMat.attribute}}/{{itemMat.material_color}}</div>
+                  <div class="tcol">{{itemMat.number}}</div>
+                  <div class="tcol">{{itemMat.real_number}}</div>
+                  <div class="tcol">{{itemMat.price}}元</div>
+                  <div class="tcol">{{itemMat.total_price}}元</div>
+                </div>
+              </div>
+              <div class="tcol"></div>
+            </div>
+            <div class="trow"
+              v-for="(itemProcess,indexProcess) in financialInfo.material.decorate.detail.material_process"
+              :key="'process' + indexProcess">
+              <div class="tcol">{{itemProcess.process}}</div>
+              <div class="tcol">{{itemProcess.client_name}}</div>
+              <div class="tcol noPad"
+                style="flex:6">
+                <div class="trow"
+                  v-for="(itemMat,indexMat) in itemProcess.info"
+                  :key="indexMat">
+                  <div class="tcol">{{itemMat.material_order_name || itemMat.material_transfer_name}}</div>
+                  <div class="tcol">{{itemMat.after_attribute}}/{{itemMat.after_color}}</div>
+                  <div class="tcol">{{itemMat.number}}</div>
+                  <div class="tcol">{{itemMat.real_number}}</div>
+                  <div class="tcol">{{itemMat.price}}元</div>
+                  <div class="tcol">{{itemMat.total_price}}元</div>
+                </div>
+              </div>
+              <div class="tcol"></div>
+            </div>
+          </div>
+          <!-- <div class="thead"
+            style="border-top:0">
+            <div class="trow">
+              <div class="tcol">报价费用</div>
+              <div class="tcol">-</div>
+              <div class="tcol noPad"
+                style="flex:6">
+                <div class="trow">
+                  <div class="tcol">-</div>
+                  <div class="tcol">-</div>
+                  <div class="tcol">0</div>
+                  <div class="tcol">-</div>
+                  <div class="tcol">0</div>
+                  <div class="tcol">0</div>
+                </div>
+              </div>
+              <div class="tcol">同比增长 2.13%</div>
+            </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -780,64 +1029,99 @@
         <div class="thead">
           <div class="trow">
             <div class="tcol">费用工序</div>
-            <div class="tcol">工序说明</div>
-            <div class="tcol">生产数量</div>
-            <div class="tcol">实际完成数量</div>
-            <div class="tcol">计划合计费用</div>
-            <div class="tcol">费用平均单价</div>
-            <div class="tcol">产品平均单价</div>
+            <div class="tcol naPad"
+              style="flex:6">
+              <div class="trow">
+                <div class="tcol">工序说明</div>
+                <div class="tcol">生产数量</div>
+                <div class="tcol">实际完成数量</div>
+                <div class="tcol">计划合计费用</div>
+                <div class="tcol">费用平均单价</div>
+                <div class="tcol">产品平均单价</div>
+              </div>
+            </div>
             <div class="tcol">操作</div>
           </div>
         </div>
-        <div class="tbody">
+        <div class="tbody"
+          v-for="(item,index) in financialInfo.weave"
+          :key="index">
           <div class="trow">
-            <div class="tcol">费用工序</div>
-            <div class="tcol">工序说明</div>
-            <div class="tcol">生产数量</div>
-            <div class="tcol">实际完成数量</div>
-            <div class="tcol">计划合计费用</div>
-            <div class="tcol">费用平均单价</div>
-            <div class="tcol">产品平均单价</div>
-            <div class="tcol">操作</div>
+            <div class="tcol">{{item.process_name}}</div>
+            <div class="tcol naPad"
+              style="flex:6">
+              <div class="trow">
+                <div class="tcol">{{item.process_desc}}</div>
+                <div class="tcol">{{item.number}}</div>
+                <div class="tcol">{{item.real_number}}</div>
+                <div class="tcol">{{item.total_price}}元</div>
+                <div class="tcol">费用平均单价</div>
+                <div class="tcol">产品平均单价</div>
+              </div>
+            </div>
+            <div class="tcol oprCtn">
+              <div class="opr hoverBlue">展开详情</div>
+            </div>
           </div>
-        </div>
-        <div class="thead"
-          style="border-top:0">
-          <div class="trow">
-            <div class="tcol">单位名称</div>
-            <div class="tcol">产品信息</div>
-            <div class="tcol">尺码颜色</div>
-            <div class="tcol">计划数量</div>
-            <div class="tcol">完成数量</div>
-            <div class="tcol">单价</div>
-            <div class="tcol">计划小计</div>
-            <div class="tcol"></div>
+          <div class="thead">
+            <div class="trow">
+              <div class="tcol">单位名称</div>
+              <div class="tcol naPad"
+                style="flex:6">
+                <div class="trow">
+                  <div class="tcol">产品信息</div>
+                  <div class="tcol">尺码颜色</div>
+                  <div class="tcol">计划数量</div>
+                  <div class="tcol">完成数量</div>
+                  <div class="tcol">单价</div>
+                  <div class="tcol">计划小计</div>
+                </div>
+              </div>
+              <div class="tcol"></div>
+            </div>
           </div>
-        </div>
-        <div class="tbody">
-          <div class="trow">
-            <div class="tcol">单位名称</div>
-            <div class="tcol">产品信息</div>
-            <div class="tcol">尺码颜色</div>
-            <div class="tcol">计划数量</div>
-            <div class="tcol">完成数量</div>
-            <div class="tcol">单价</div>
-            <div class="tcol">计划小计</div>
-            <div class="tcol"></div>
+          <div class="tbody">
+            <div class="trow"
+              v-for="(itemClient,indexClient) in item.detail"
+              :key="indexClient">
+              <div class="tcol">{{itemClient.client}}</div>
+              <div class="tcol naPad"
+                style="flex:6">
+                <div class="trow"
+                  v-for="(itemPro,indexPro) in itemClient.product_info"
+                  :key="indexPro">
+                  <div class="tcol">
+                    <span>{{itemPro.product_code}}</span>
+                    <span>({{itemPro.category_name}}/{{itemPro.secondary_category_name}})</span>
+                  </div>
+                  <div class="tcol">{{itemPro.size_name}}/{{itemPro.color_name}}</div>
+                  <div class="tcol">{{itemPro.number}}</div>
+                  <div class="tcol">{{itemPro.real_number}}</div>
+                  <div class="tcol">{{itemPro.price}}元</div>
+                  <div class="tcol">{{itemPro.total_price}}元</div>
+                </div>
+              </div>
+              <div class="tcol"></div>
+            </div>
           </div>
-        </div>
-        <div class="thead"
-          style="border-top:0">
-          <div class="trow">
-            <div class="tcol">报价费用</div>
-            <div class="tcol">-</div>
-            <div class="tcol">-</div>
-            <div class="tcol">-</div>
-            <div class="tcol">完成数量</div>
-            <div class="tcol">单价</div>
-            <div class="tcol">计划小计</div>
-            <div class="tcol">同比增长20%</div>
-          </div>
+          <!-- <div class="thead"
+            style="border-top:0">
+            <div class="trow">
+              <div class="tcol">报价费用</div>
+              <div class="tcol naPad"
+                style="flex:6">
+                <div class="trow">
+                  <div class="tcol">-</div>
+                  <div class="tcol">-</div>
+                  <div class="tcol">-</div>
+                  <div class="tcol">完成数量</div>
+                  <div class="tcol">单价</div>
+                  <div class="tcol">计划小计</div>
+                </div>
+              </div>
+              <div class="tcol">同比增长20%</div>
+            </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -849,54 +1133,84 @@
         <div class="thead">
           <div class="trow">
             <div class="tcol">费用类型</div>
-            <div class="tcol">计划订购数量</div>
-            <div class="tcol">计划费用合计</div>
-            <div class="tcol">费用平均单价</div>
-            <div class="tcol">产品平均单价</div>
-            <div class="tcol">操作</div>
+            <div class="tcol noPad"
+              style="flex:6">
+              <div class="trow">
+                <div class="tcol">计划订购数量</div>
+                <div class="tcol">计划费用合计</div>
+                <div class="tcol">费用平均单价</div>
+                <div class="tcol">产品平均单价</div>
+                <div class="tcol">操作</div>
+                <div class="tcol"></div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="tbody">
           <div class="trow">
-            <div class="tcol">费用类型</div>
-            <div class="tcol">计划订购数量</div>
-            <div class="tcol">计划费用合计</div>
-            <div class="tcol">费用平均单价</div>
-            <div class="tcol">产品平均单价</div>
-            <div class="tcol">操作</div>
+            <div class="tcol">包装辅料</div>
+            <div class="tcol noPad"
+              style="flex:6">
+              <div class="trow">
+                <div class="tcol">{{financialInfo.pack.gather.plan_number}}</div>
+                <div class="tcol">{{financialInfo.pack.gather.total_price}}元</div>
+                <div class="tcol">{{financialInfo.pack.gather.pre_price}}元</div>
+                <div class="tcol">{{financialInfo.pack.gather.product_pre_price}}元</div>
+                <div class="tcol oprCtn">
+                  <div class="opr hoverBlue">展开详情</div>
+                </div>
+                <div class="tcol"></div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="thead"
-          style="border-top:0">
-          <div class="trow">
-            <div class="tcol">辅料名称</div>
-            <div class="tcol">尺寸</div>
-            <div class="tcol">属性或说明</div>
-            <div class="tcol">计划订购数量</div>
-            <div class="tcol">单价</div>
-            <div class="tcol">总价</div>
+          <div class="thead"
+            style="border-top:0">
+            <div class="trow">
+              <div class="tcol">采购单位</div>
+              <div class="tcol noPad"
+                style="flex:6">
+                <div class="trow">
+                  <div class="tcol">辅料名称</div>
+                  <div class="tcol">尺寸</div>
+                  <div class="tcol">属性或说明</div>
+                  <div class="tcol">计划订购数量</div>
+                  <div class="tcol">单价</div>
+                  <div class="tcol">总价</div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="tbody">
-          <div class="trow">
-            <div class="tcol">辅料名称</div>
-            <div class="tcol">尺寸</div>
-            <div class="tcol">属性或说明</div>
-            <div class="tcol">计划订购数量</div>
-            <div class="tcol">单价</div>
-            <div class="tcol">总价</div>
+          <div class="tbody">
+            <div class="trow"
+              v-for="(item,index) in financialInfo.pack.detail"
+              :key="index">
+              <div class="tcol">{{item.client_name}}</div>
+              <div class="tcol noPad"
+                style="flex:6">
+                <div class="trow"
+                  v-for="(itemPack,indexPack) in item.info"
+                  :key="indexPack">
+                  <div class="tcol">{{itemPack.pack_material_name}}</div>
+                  <div class="tcol">{{itemPack.length}}cm*{{itemPack.width}}cm*{{itemPack.height}}cm</div>
+                  <div class="tcol">{{itemPack.desc}}</div>
+                  <div class="tcol">{{itemPack.number}}</div>
+                  <div class="tcol">{{itemPack.count_price}}元</div>
+                  <div class="tcol">总价</div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="thead"
-          style="border-top:0">
-          <div class="trow">
-            <div class="tcol">报价费用</div>
-            <div class="tcol">-</div>
-            <div class="tcol">0</div>
-            <div class="tcol">0</div>
-            <div class="tcol">0</div>
-            <div class="tcol">同比增长</div>
-          </div>
+          <!-- <div class="thead"
+            style="border-top:0">
+            <div class="trow">
+              <div class="tcol">报价费用</div>
+              <div class="tcol">-</div>
+              <div class="tcol">0</div>
+              <div class="tcol">0</div>
+              <div class="tcol">0</div>
+              <div class="tcol">同比增长</div>
+            </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -908,68 +1222,118 @@
         <div class="thead">
           <div class="trow">
             <div class="tcol">费用工序</div>
-            <div class="tcol">工序说明</div>
-            <div class="tcol">完成数量</div>
-            <div class="tcol">额外数量</div>
-            <div class="tcol">合计结算总价</div>
-            <div class="tcol">费用平均单价</div>
-            <div class="tcol">产品平均单价</div>
-            <div class="tcol">操作</div>
+            <div class="tcol noPad"
+              style="flex:7">
+              <div class="trow">
+                <div class="tcol">工序说明</div>
+                <div class="tcol noPad"
+                  style="flex:6">
+                  <div class="trow">
+                    <div class="tcol">完成数量</div>
+                    <div class="tcol">额外数量</div>
+                    <div class="tcol">合计结算总价</div>
+                    <div class="tcol">费用平均单价</div>
+                    <div class="tcol">产品平均单价</div>
+                    <div class="tcol">操作</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="tbody">
+        <div class="tbody"
+          v-for="(item,index) in financialInfo.production_inspection"
+          :key="index">
           <div class="trow">
-            <div class="tcol">费用工序</div>
-            <div class="tcol">工序说明</div>
-            <div class="tcol">完成数量</div>
-            <div class="tcol">额外数量</div>
-            <div class="tcol">合计结算总价</div>
-            <div class="tcol">费用平均单价</div>
-            <div class="tcol">产品平均单价</div>
-            <div class="tcol">操作</div>
+            <div class="tcol">{{item.process_name}}</div>
+            <div class="tcol noPad"
+              style="flex:7">
+              <div class="trow">
+                <div class="tcol">{{item.desc}}</div>
+                <div class="tcol noPad"
+                  style="flex:6">
+                  <div class="trow">
+                    <div class="tcol">{{item.number}}</div>
+                    <div class="tcol">{{item.extra_number}}</div>
+                    <div class="tcol">{{item.total_price}}元</div>
+                    <div class="tcol">{{item.pre_price}}元</div>
+                    <div class="tcol">{{item.product_pre_price}}元</div>
+                    <div class="tcol oprCtn">
+                      <div class="opr hoverBlue">展开详情</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="thead"
-          style="border-top:0">
-          <div class="trow">
-            <div class="tcol">员工姓名</div>
-            <div class="tcol">产品信息</div>
-            <div class="tcol">尺码颜色</div>
-            <div class="tcol">结算单价</div>
-            <div class="tcol">完成数量</div>
-            <div class="tcol">额外数量</div>
-            <div class="tcol">次品数量</div>
-            <div class="tcol">结算小计</div>
+          <div class="thead"
+            style="border-top:0">
+            <div class="trow">
+              <div class="tcol">员工姓名</div>
+              <div class="tcol noPad"
+                style="flex:7">
+                <div class="trow">
+                  <div class="tcol">产品信息</div>
+                  <div class="tcol noPad"
+                    style="flex:6">
+                    <div class="trow">
+                      <div class="tcol">尺码颜色</div>
+                      <div class="tcol">结算单价</div>
+                      <div class="tcol">完成数量</div>
+                      <div class="tcol">额外数量</div>
+                      <div class="tcol">次品数量</div>
+                      <div class="tcol">结算小计</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="tbody">
-          <div class="trow">
-            <div class="tcol">员工姓名</div>
-            <div class="tcol">产品信息</div>
-            <div class="tcol">尺码颜色</div>
-            <div class="tcol">结算单价</div>
-            <div class="tcol">完成数量</div>
-            <div class="tcol">额外数量</div>
-            <div class="tcol">次品数量</div>
-            <div class="tcol">结算小计</div>
+          <div class="tbody">
+            <div class="trow"
+              v-for="(itemStaff,indexStaff) in item.detail"
+              :key="indexStaff">
+              <div class="tcol">{{itemStaff.staff_name}}</div>
+              <div class="tcol noPad"
+                style="flex:7">
+                <div class="trow"
+                  v-for="(itemPro,indexPro) in itemStaff.info"
+                  :key="indexPro">
+                  <div class="tcol">{{itemPro.product_code}}</div>
+                  <div class="tcol noPad"
+                    style="flex:6">
+                    <div class="trow"
+                      v-for="(itemChild,indexChild) in itemPro.info"
+                      :key="indexChild">
+                      <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
+                      <div class="tcol">{{itemChild.price}}元</div>
+                      <div class="tcol">{{itemChild.number}}</div>
+                      <div class="tcol">{{itemChild.extra_number}}</div>
+                      <div class="tcol red">{{itemChild.shoddy_number}}</div>
+                      <div class="tcol">{{itemChild.total_price}}元</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="thead"
-          style="border-top:0">
-          <div class="trow">
-            <div class="tcol">报价费用</div>
-            <div class="tcol">-</div>
-            <div class="tcol">-</div>
-            <div class="tcol">-</div>
-            <div class="tcol">0</div>
-            <div class="tcol">0</div>
-            <div class="tcol">0</div>
-            <div class="tcol">同比增长</div>
-          </div>
+          <!-- <div class="thead"
+            style="border-top:0">
+            <div class="trow">
+              <div class="tcol">报价费用</div>
+              <div class="tcol">-</div>
+              <div class="tcol">-</div>
+              <div class="tcol">-</div>
+              <div class="tcol">0</div>
+              <div class="tcol">0</div>
+              <div class="tcol">0</div>
+              <div class="tcol">同比增长</div>
+            </div>
+          </div> -->
         </div>
       </div>
     </div>
-    <div class="module">
+    <!-- <div class="module">
       <div class="titleCtn">
         <div class="title">装箱运输</div>
       </div>
@@ -1039,8 +1403,8 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="module">
+    </div> -->
+    <!-- <div class="module">
       <div class="titleCtn">
         <div class="title">扣款费用</div>
       </div>
@@ -1398,7 +1762,71 @@ export default Vue.extend({
       oprLog: [],
       materialDetail: [],
       productionDetail: [],
-      productShow: false
+      productShow: false,
+      financialInfo: {
+        product: [],
+        material: {
+          decorate: {
+            detail: {
+              material_order: [],
+              material_process: [],
+              material_transfer: []
+            },
+            gather: {
+              plan_price: 0,
+              pre_price: 0,
+              product_pre_price: 0,
+              real_price: 0,
+              material_order: {
+                plan: 0,
+                real: 0
+              },
+              material_process: {
+                plan: 0,
+                real: 0
+              },
+              material_transfer: {
+                plan: 0,
+                real: 0
+              }
+            }
+          },
+          material: {
+            detail: {
+              material_order: [],
+              material_process: [],
+              material_transfer: []
+            },
+            gather: {
+              plan_price: 0,
+              pre_price: 0,
+              product_pre_price: 0,
+              real_price: 0,
+              material_order: {
+                plan: 0,
+                real: 0
+              },
+              material_process: {
+                plan: 0,
+                real: 0
+              },
+              material_transfer: {
+                plan: 0,
+                real: 0
+              }
+            }
+          }
+        },
+        pack: {
+          detail: [],
+          gather: {
+            plan_number: 0,
+            pre_price: 0,
+            product_pre_price: 0,
+            total_price: 0
+          }
+        }
+      }
     }
   },
   methods: {
@@ -1521,6 +1949,17 @@ export default Vue.extend({
             this.productionDetail = res[1].data.data
             this.loading = false
           })
+        }
+      })
+
+    order
+      .financial({
+        order_id: Number(this.$route.query.id),
+        product_id: ''
+      })
+      .then((res) => {
+        if (res.data.status) {
+          this.financialInfo = res.data.data
         }
       })
   }

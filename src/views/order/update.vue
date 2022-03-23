@@ -270,7 +270,8 @@
                           <el-select v-model="itemPro.product_id"
                             placeholder="选择产品"
                             @change="getColour($event,itemPro)"
-                            no-data-text="请先添加/导入产品">
+                            no-data-text="请先添加/导入产品"
+                            clearable>
                             <el-option v-for="itemProduct in productList"
                               :key="itemProduct.id"
                               :value="itemProduct.id"

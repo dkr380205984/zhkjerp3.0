@@ -167,7 +167,8 @@ export default Vue.extend({
           classArr: ['', 'blue', 'orange'],
           ifShow: true,
           ifLock: false,
-          index: 4
+          index: 4,
+          isStatus: true
         },
         {
           key: 'product_code',
@@ -313,6 +314,7 @@ export default Vue.extend({
       this.loading = true
       order
         .list({
+          is_draft: 2,
           order_type: 1,
           keyword: this.keyword,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',

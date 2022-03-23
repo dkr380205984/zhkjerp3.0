@@ -204,6 +204,7 @@ export default Vue.extend({
       this.loading = true
       packManage
         .planList({
+          is_draft: 2,
           keyword: this.keyword,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           page: this.page,
