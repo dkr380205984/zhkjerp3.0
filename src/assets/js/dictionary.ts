@@ -369,7 +369,7 @@ const stockType = [{
   name: '中转出库', // 物料加工出库
   value: 3
 }, {
-  name: '最终入库', // 采购单，以4为准统计入库值
+  name: '订购最终入库', // 采购单，以4为准统计入库值
   value: 4
 }, {
   name: '单据生产出库', // 织造半成品单位出库
@@ -387,7 +387,7 @@ const stockType = [{
   name: '仓库入库',
   value: 9
 }, {
-  name: '仓库出库',
+  name: '调取出库',
   value: 10
 }, {
   name: '调取最终入库',
@@ -395,6 +395,9 @@ const stockType = [{
 }, {
   name: '补纱调取出库',
   value: 12
+}, {
+  name: '仓库出库',
+  value: 13
 }]
 
 const productStockType = [{

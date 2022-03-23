@@ -5,6 +5,9 @@ export interface InspectionInfo {
   doc_info_id?: string | number
   complete_time?: string
   number: string
+  size?: string
+  color?: string
+  part_name?: string
   shoddy_number: string
   shoddy_reason: string | string[]
 }

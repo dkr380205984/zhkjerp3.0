@@ -267,6 +267,7 @@ export default Vue.extend({
       this.loading = true
       materialPlanOrder
         .list({
+          is_draft: 2,
           order_type: 1,
           keyword: this.keyword,
           client_id: this.search_client_id.length > 0 ? this.search_client_id[2] : '',

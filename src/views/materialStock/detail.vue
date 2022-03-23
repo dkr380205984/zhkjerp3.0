@@ -660,6 +660,8 @@
                 <div class="tcol">数量</div>
               </div>
             </div>
+            <div class="tcol">操作人</div>
+            <div class="tcol">操作日期</div>
             <div class="tcol">操作</div>
           </div>
         </div>
@@ -678,21 +680,21 @@
                   <span>{{item.store}}/{{item.secondary_store}}</span>
                 </div>
               </template>
-              <template v-else-if="item.action_type===2">
+              <template v-else-if="item.action_type===2 || item.action_type===4">
                 <div class="changeCtn">
                   <span>{{item.client_name}}</span>
                   <span class="el-icon-s-unfold green"></span>
                   <span>{{item.store}}/{{item.secondary_store}}</span>
                 </div>
               </template>
-              <template v-else-if="item.action_type===3 || item.action_type===5">
+              <template v-else-if="item.action_type===3 || item.action_type===5 || item.action_type===10">
                 <div class="changeCtn">
                   <span>{{item.store}}/{{item.secondary_store}}</span>
                   <span class="el-icon-s-unfold orange"></span>
                   <span>{{item.client_name}}</span>
                 </div>
               </template>
-              <template v-else-if="item.action_type===4 || item.action_type===6 || item.action_type===9 || item.action_type===10 || item.action_type===11 || item.action_type===12">
+              <template v-else-if="item.action_type===6 || item.action_type===9 || item.action_type===11 || item.action_type===12">
                 <div class="changeCtn">
                   <span>{{item.store}}/{{item.secondary_store}}</span>
                 </div>
@@ -726,6 +728,8 @@
                 <div class="tcol">{{itemChild.number}}{{itemChild.unit || 'kg'}}</div>
               </div>
             </div>
+            <div class="tcol">{{item.user_name}}</div>
+            <div class="tcol">{{item.created_at.slice(0,10)}}</div>
             <div class="tcol oprCtn">
               <div class="opr hoverRed"
                 @click="deleteMaterialStockList(item.id)">删除</div>

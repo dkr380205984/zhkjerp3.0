@@ -1036,6 +1036,8 @@
                   <div class="col">{{item.user_name}}</div>
                   <div class="col">{{item.created_at}}</div>
                   <div class="col">
+                    <span class="opr hoverOrange"
+                      @click="updatePackMaterial(item)">修改</span>
                     <span class="opr hoverRed"
                       @click="deletePackMaterial(item.id)">删除</span>
                   </div>
@@ -2553,9 +2555,9 @@
               <div class="info"
                 style="line-height: 32px">
                 <el-radio v-model="userInfo.only_search_self"
-                  :label="1">查看所有</el-radio>
+                  :label="1">仅能查看本人</el-radio>
                 <el-radio v-model="userInfo.only_search_self"
-                  :label="2">仅能查看本人</el-radio>
+                  :label="2">查看所有</el-radio>
               </div>
             </div>
             <div class="row">
@@ -5402,6 +5404,10 @@ export default Vue.extend({
           }
         })
       }
+    },
+    updatePackMaterial(info: PackMaterialInfo) {
+      this.packMaterialInfo = info
+      this.showPopup = true
     },
     deletePackMaterial(id: number) {
       this.$confirm('是否删除该包装辅料?', '提示', {

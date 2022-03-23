@@ -114,7 +114,7 @@
           <div class="btn backHoverGreen fr"
             @click="goStock(9)">物料入库</div>
           <div class="btn backHoverOrange fr"
-            @click="goStock(10)">物料出库</div>
+            @click="goStock(13)">物料出库</div>
           <div class="btn backHoverBlue fr"
             @click="goStock(7)">物料移库</div>
           <div class="btn backHoverBlue fr"
@@ -154,7 +154,7 @@
                 <span class="opr hoverGreen"
                   @click.stop="goStock(9,item)">入库</span>
                 <span class="opr hoverOrange"
-                  @click.stop="goStock(10,item)">出库</span>
+                  @click.stop="goStock(13,item)">出库</span>
                 <span class="opr hoverBlue"
                   @click.stop="goStock(7,item)">移库</span>
               </div>
@@ -308,7 +308,7 @@
                     filterable
                     clearable>
                   </el-cascader>
-                  <el-cascader v-if="itemStock.action_type===10"
+                  <el-cascader v-if="itemStock.action_type===13"
                     v-model="itemStock.tree_data"
                     placeholder="请选择单位信息"
                     :options="yarnClientOutList"
@@ -942,7 +942,7 @@ export default Vue.extend({
           }
         })
     },
-    goStock(type: 9 | 10, info?: StoreTotalInfo) {
+    goStock(type: 9 | 13, info?: StoreTotalInfo) {
       if (info) {
         this.materialStockInfo.length = 1
         this.materialStockInfo[0].store_arr = [info.store_id, info.secondary_store_id]
