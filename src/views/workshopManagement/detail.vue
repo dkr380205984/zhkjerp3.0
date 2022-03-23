@@ -1,5 +1,5 @@
 <template>
-  <div id="packManageDetail" class="bodyContainer" v-loading="loading">
+  <div id="workshopManagementDetail" class="bodyContainer" v-loading="loading">
     <order-detail :data="orderInfo"></order-detail>
     <div class="module clearfix">
       <div class="titleCtn">
@@ -334,7 +334,7 @@
                     </el-select>
                   </div>
                   <div class="tcol bgGray">加工工序</div>
-                  <div class="tcol">
+                  <div class="tcol" style="flex:0.6">
                     <el-cascader
                       v-model="item.process"
                       :options="processList"
@@ -344,7 +344,7 @@
                     ></el-cascader>
                   </div>
                   <div class="tcol bgGray">工序说明</div>
-                  <div class="tcol">
+                  <div class="tcol" style="flex:1.9">
                     <el-autocomplete
                       class="inline-input"
                       v-model="item.process_desc"
@@ -353,7 +353,7 @@
                     ></el-autocomplete>
                   </div>
                   <div class="tcol bgGray">结算单价</div>
-                  <div class="tcol">
+                  <div class="tcol" style="flex:0.5">
                     <zh-input
                       class="inputs"
                       :keyBoard="keyBoard"
@@ -388,7 +388,7 @@
                       :show-all-levels="false"
                     ></el-cascader>
                   </div>
-                  <div class="tcol noPad" :style="{ flex: productionScheduleUpdate.length === 1 ? 7.25 : 7.23 }">
+                  <div class="tcol noPad" style="flex:6.7">
                     <div class="trow" v-for="(el, i) in itemSizeColor.sizeColorList" :key="i">
                       <div class="tcol">
                         <el-select
@@ -763,7 +763,7 @@ export default Vue.extend({
       this.loading = false
     },
     querySearch(queryString: string, cb: any) {
-      if (this.processDescList === undefined) {
+      if (this.processDescList === undefined || this.processDescList.length === 0) {
         cb([])
         return
       }
@@ -1032,16 +1032,33 @@ export default Vue.extend({
                           if (itemColor.checked === undefined || itemColor.checked === false) return
 
                           if (staffIndex > 0) {
-                            if (colorIndex === 0) {
-                              oldObj.infoData.push({ worker: '', sizeColorList: [] })
-                              oldObj.infoData[oldObj.infoData.length - 1].worker = ['', itemColor.info.staff_id]
+                            if (!oldObj.infoData) {
+                              obj.productNameId = itemColor.info.order_product_id
+                              obj.process = [+itemColor.info.process_type, processWorker.process_name]
+                              obj.process_desc = process_desc.process_desc
+                              obj.processDescList = processWorker.processDescList
+                              obj.productId = itemColor.info.product_id
+                              obj.unitPrice = process_desc.info[priceIndex].price
+                              itemColor.chooseId = itemColor.info.size_id + ',' + itemColor.info.color_id
+                              itemColor.complete_time = this.getNowFormatDate()
+                              itemColor.size_name = itemSize.size_name
+                              itemColor.size_id = itemColor.info.size_id
+                              itemColor.color_id = itemColor.info.color_id
+                              obj.infoData[obj.infoData.length - 1].sizeColorList.push(itemColor)
+                              obj.infoData[obj.infoData.length - 1].worker = ['', itemColor.info.staff_id]
+                              oldObj = obj
+                            } else {
+                              if (colorIndex === 0) {
+                                oldObj.infoData.push({ worker: '', sizeColorList: [] })
+                                oldObj.infoData[oldObj.infoData.length - 1].worker = ['', itemColor.info.staff_id]
+                              }
+                              itemColor.chooseId = itemColor.info.size_id + ',' + itemColor.info.color_id
+                              itemColor.complete_time = this.getNowFormatDate()
+                              itemColor.size_name = itemSize.size_name
+                              itemColor.size_id = itemColor.info.size_id
+                              itemColor.color_id = itemColor.info.color_id
+                              oldObj.infoData[oldObj.infoData.length - 1].sizeColorList.push(itemColor)
                             }
-                            itemColor.chooseId = itemColor.info.size_id + ',' + itemColor.info.color_id
-                            itemColor.complete_time = this.getNowFormatDate()
-                            itemColor.size_name = itemSize.size_name
-                            itemColor.size_id = itemColor.info.size_id
-                            itemColor.color_id = itemColor.info.color_id
-                            oldObj.infoData[oldObj.infoData.length - 1].sizeColorList.push(itemColor)
                           } else {
                             obj.productNameId = itemColor.info.order_product_id
                             obj.process = [+itemColor.info.process_type, processWorker.process_name]
@@ -1077,7 +1094,7 @@ export default Vue.extend({
                           itemPrice.checked === undefined ||
                           itemPrice.checked.length === 0 ||
                           !obj.productId ||
-                          staffIndex > 0
+                          (staffIndex > 0 && !oldObj.infoData)
                         ) {
                           return
                         }
@@ -1148,6 +1165,7 @@ export default Vue.extend({
       return currentdate
     },
     getWorkList(res: any) {
+      this.processDescList = []
       process
         .list({
           name: res === '' ? res : res.process[1]
@@ -1169,7 +1187,7 @@ export default Vue.extend({
           }
           this.$forceUpdate()
         })
-      // console.log(res[1])
+      
       staff.list({ keyword: res === '' ? res : res.process[1] }).then((ress: any) => {
         let arr: any = []
         ress.data.data.forEach((worker: any) => {
@@ -1381,7 +1399,7 @@ export default Vue.extend({
 @import '~@/assets/css/workshopManagement/detail.less';
 </style>
 <style lang="less">
-#packManageDetail {
+#workshopManagementDetail {
   .el-tabs__content {
     padding: 0;
   }

@@ -939,6 +939,10 @@ export default Vue.extend({
     },
     getImport(ev: number) {
       this.loading = true
+      // 编辑器防止重复创建报错
+      if (this.productInfo.editor) {
+        this.productInfo.editor.destroy()
+      }
       product
         .detail({
           id: ev

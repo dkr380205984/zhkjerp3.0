@@ -28,13 +28,29 @@
           :class="{'orderProcess':itemKey.specialForOrderPrcess==='order','sampleOrderProcess':itemKey.specialForOrderPrcess==='sampleOrder'}">
           <!-- 普通元素 -->
           <template v-if="!itemKey.from && !itemKey.ifImage && !itemKey.specialForOrderPrcess">
-            <!-- 草稿标记 -->
-            <span class="circle"
-              v-if="itemKey.ifCaogao"
-              :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?'是':'否'}}</span>
-            <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')"
-              class="text">
-              {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unit}}</span>
+            <!-- 订单状态专用 -->
+            <template v-if="itemKey.isStatus">
+              <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key].status]:'')"
+                class="text">
+                {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key].status]:item[itemKey.key].status}}
+                {{item[itemKey.key].count?('('+item[itemKey.key].count+'张)'):''}}
+              </span>
+            </template>
+            <!-- 订单进度专用 -->
+            <template v-else-if="itemKey.isProgress">
+              <span :class="itemKey.class"
+                class="text">
+                {{item[itemKey.key].progress || itemKey.errVal}}%</span>
+            </template>
+            <template v-else>
+              <!-- 草稿标记 -->
+              <span class="circle"
+                v-if="itemKey.ifCaogao"
+                :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?'是':'否'}}</span>
+              <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')"
+                class="text">
+                {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unit}}</span>
+            </template>
           </template>
           <!-- 图片元素 -->
           <template v-if="!itemKey.from && itemKey.ifImage">
@@ -66,10 +82,10 @@
           <template v-if="itemKey.specialForOrderPrcess === 'order'">
             <div class="processCtn">
               <div class="process"
-                :class="{'green':item.has_quote===1,'gray':item.has_quote===2}">
+                :class="{'green':item.has_quote.status===1,'gray':item.has_quote.status===2}">
                 <el-tooltip class="item"
                   effect="dark"
-                  :content="'报价单'+(item.has_quote===1?'已添加':'未添加')"
+                  :content="'报价单'+(item.has_quote.status===1?('已添加(更新日期:'+item.has_quote.update_time +')'):'未添加')"
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
@@ -78,10 +94,10 @@
                 </el-tooltip>
               </div>
               <div class="process"
-                :class="{'green':item.has_material_plan===1,'gray':item.has_material_plan===2}">
+                :class="{'green':item.has_material_plan.status===1,'gray':item.has_material_plan.status===2}">
                 <el-tooltip class="item"
                   effect="dark"
-                  :content="'原料计划'+(item.has_material_plan===1?'已添加':'未添加')"
+                  :content="'原料计划'+(item.has_material_plan.status===1?('已添加(更新日期:'+item.has_material_plan.update_time +')'):'未添加')"
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
@@ -90,10 +106,10 @@
                 </el-tooltip>
               </div>
               <div class="process"
-                :class="{'green':item.has_material_order===1,'gray':item.has_material_order===2}">
+                :class="{'green':item.has_material_order.status===1,'gray':item.has_material_order.status===2}">
                 <el-tooltip class="item"
                   effect="dark"
-                  :content="'原料采购'+(item.has_material_order===1?'已添加':'未添加')"
+                  :content="'原料采购'+(item.has_material_order.status===1?('已添加(更新日期:'+item.has_material_order.update_time +')'):'未添加')"
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
@@ -102,10 +118,10 @@
                 </el-tooltip>
               </div>
               <div class="process"
-                :class="{'green':item.push_progress===100||item.push_progress>100,'orange':item.push_progress>0 && item.push_progress<100,'gray':!item.push_progress}">
+                :class="{'green':item.push_progress.progress===100||item.push_progress.progress>100,'orange':item.push_progress.progress>0 && item.push_progress.progress<100,'gray':!item.push_progress.progress}">
                 <el-tooltip class="item"
                   effect="dark"
-                  :content="'原料入库进度'+(item.push_progress||0)+'%'"
+                  :content="'原料入库进度'+(item.push_progress.progress||0)+'%(更新日期:'+(item.push_progress.update_time||'无') + ')'"
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
@@ -114,10 +130,10 @@
                 </el-tooltip>
               </div>
               <div class="process"
-                :class="{'green':item.pop_progress===100||item.pop_progress>100,'orange':item.pop_progress>0 && item.pop_progress<100,'gray':!item.pop_progress}">
+                :class="{'green':item.pop_progress.progress===100||item.pop_progress.progress>100,'orange':item.pop_progress.progress>0 && item.pop_progress.progress<100,'gray':!item.pop_progress.progress}">
                 <el-tooltip class="item"
                   effect="dark"
-                  :content="'原料出库进度'+(item.pop_progress||0)+'%'"
+                  :content="'原料出库进度'+(item.pop_progress.progress||0)+'%(更新日期:'+(item.pop_progress.update_time||'无') + ')'"
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
@@ -126,10 +142,10 @@
                 </el-tooltip>
               </div>
               <div class="process"
-                :class="{'green':item.has_weave_plan===1,'gray':item.has_weave_plan===2}">
+                :class="{'green':item.has_weave_plan.status===1,'gray':item.has_weave_plan.status===2}">
                 <el-tooltip class="item"
                   effect="dark"
-                  :content="'生产计划'+(item.has_weave_plan===1?'已添加':'未添加')"
+                  :content="'生产计划'+(item.has_weave_plan.status===1?('已添加(更新日期:'+item.has_weave_plan.update_time +')'):'未添加')"
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
@@ -138,10 +154,10 @@
                 </el-tooltip>
               </div>
               <div class="process"
-                :class="{'green':item.inspection_push_progress===100||item.inspection_push_progress>100,'orange':item.inspection_push_progress>0 && item.inspection_push_progress<100,'gray':!item.inspection_push_progress}">
+                :class="{'green':item.inspection_push_progress.progress===100||item.inspection_push_progress.progress>100,'orange':item.inspection_push_progress.progress>0 && item.inspection_push_progress.progress<100,'gray':!item.inspection_push_progress.progress}">
                 <el-tooltip class="item"
                   effect="dark"
-                  :content="'生产检验进度'+(item.inspection_push_progress||0)+'%'"
+                  :content="'生产检验进度'+(item.inspection_push_progress.progress||0)+'%(更新日期:'+(item.inspection_push_progress.update_time||'无') + ')'"
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
@@ -150,10 +166,10 @@
                 </el-tooltip>
               </div>
               <div class="process"
-                :class="{'green':item.has_pack_plan===1,'gray':item.has_pack_plan===2}">
+                :class="{'green':item.has_pack_plan.status===1,'gray':item.has_pack_plan.status===2}">
                 <el-tooltip class="item"
                   effect="dark"
-                  :content="'装箱计划'+(item.has_pack_plan===1?'已添加':'未添加')"
+                  :content="'装箱计划'+(item.has_pack_plan.status===1?('已添加(更新日期:'+item.has_pack_plan.update_time +')'):'未添加')"
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
@@ -162,10 +178,10 @@
                 </el-tooltip>
               </div>
               <div class="process"
-                :class="{'green':item.has_pack_order===1,'gray':item.has_pack_order===2}">
+                :class="{'green':item.has_pack_order.status===1,'gray':item.has_pack_order.status===2}">
                 <el-tooltip class="item"
                   effect="dark"
-                  :content="'包装订购'+(item.has_pack_order===1?'已添加':'未添加')"
+                  :content="'包装订购'+(item.has_pack_order.status===1?('已添加(更新日期:'+item.has_pack_order.update_time +')'):'未添加')"
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
@@ -188,77 +204,79 @@
           </template>
           <template v-if="itemKey.specialForOrderPrcess === 'sampleOrder'">
             <div class="processCtn">
-              <div class="process"
-                :class="{'green':item.has_quote===1,'gray':item.has_quote===2}">
-                <el-tooltip class="item"
-                  effect="dark"
-                  :content="'报价单'+(item.has_quote===1?'已添加':'未添加')"
-                  placement="top">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-baojiadan"></use>
-                  </svg>
-                </el-tooltip>
-              </div>
-              <div class="process"
-                :class="{'green':item.has_material_plan===1,'gray':item.has_material_plan===2}">
-                <el-tooltip class="item"
-                  effect="dark"
-                  :content="'原料计划'+(item.has_material_plan===1?'已添加':'未添加')"
-                  placement="top">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-yuanliaojihua"></use>
-                  </svg>
-                </el-tooltip>
-              </div>
-              <div class="process"
-                :class="{'green':item.has_material_order===1,'gray':item.has_material_order===2}">
-                <el-tooltip class="item"
-                  effect="dark"
-                  :content="'原料采购'+(item.has_material_order===1?'已添加':'未添加')"
-                  placement="top">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-yuanliaocaigou"></use>
-                  </svg>
-                </el-tooltip>
-              </div>
-              <div class="process"
-                :class="{'green':item.push_progress===100||item.push_progress>100,'orange':item.push_progress>0 && item.push_progress<100,'gray':!item.push_progress}">
-                <el-tooltip class="item"
-                  effect="dark"
-                  :content="'原料入库进度'+(item.push_progress||0)+'%'"
-                  placement="top">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-yuanliaoruku"></use>
-                  </svg>
-                </el-tooltip>
-              </div>
-              <div class="process"
-                :class="{'green':item.pop_progress===100||item.pop_progress>100,'orange':item.pop_progress>0 && item.pop_progress<100,'gray':!item.pop_progress}">
-                <el-tooltip class="item"
-                  effect="dark"
-                  :content="'原料出库进度'+(item.pop_progress||0)+'%'"
-                  placement="top">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-yuanliaochuku"></use>
-                  </svg>
-                </el-tooltip>
-              </div>
-              <div class="process"
-                :class="{'green':item.has_weave_plan===1,'gray':item.has_weave_plan===2}">
-                <el-tooltip class="item"
-                  effect="dark"
-                  :content="'生产计划'+(item.has_weave_plan===1?'已添加':'未添加')"
-                  placement="top">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-shengchanjihua1"></use>
-                  </svg>
-                </el-tooltip>
+              <div class="processCtn">
+                <div class="process"
+                  :class="{'green':item.has_quote.status===1,'gray':item.has_quote.status===2}">
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'报价单'+(item.has_quote.status===1?('已添加(更新日期:'+item.has_quote.update_time +')'):'未添加')"
+                    placement="top">
+                    <svg class="iconFont"
+                      aria-hidden="true">
+                      <use xlink:href="#icon-baojiadan"></use>
+                    </svg>
+                  </el-tooltip>
+                </div>
+                <div class="process"
+                  :class="{'green':item.has_material_plan.status===1,'gray':item.has_material_plan.status===2}">
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'原料计划'+(item.has_material_plan.status===1?('已添加(更新日期:'+item.has_material_plan.update_time +')'):'未添加')"
+                    placement="top">
+                    <svg class="iconFont"
+                      aria-hidden="true">
+                      <use xlink:href="#icon-yuanliaojihua"></use>
+                    </svg>
+                  </el-tooltip>
+                </div>
+                <div class="process"
+                  :class="{'green':item.has_material_order.status===1,'gray':item.has_material_order.status===2}">
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'原料采购'+(item.has_material_order.status===1?('已添加(更新日期:'+item.has_material_order.update_time +')'):'未添加')"
+                    placement="top">
+                    <svg class="iconFont"
+                      aria-hidden="true">
+                      <use xlink:href="#icon-yuanliaocaigou"></use>
+                    </svg>
+                  </el-tooltip>
+                </div>
+                <div class="process"
+                  :class="{'green':item.push_progress.progress===100||item.push_progress.progress>100,'orange':item.push_progress.progress>0 && item.push_progress.progress<100,'gray':!item.push_progress.progress}">
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'原料入库进度'+(item.push_progress.progress||0)+'%(更新日期:'+(item.push_progress.update_time||'无') + ')'"
+                    placement="top">
+                    <svg class="iconFont"
+                      aria-hidden="true">
+                      <use xlink:href="#icon-yuanliaoruku"></use>
+                    </svg>
+                  </el-tooltip>
+                </div>
+                <div class="process"
+                  :class="{'green':item.pop_progress.progress===100||item.pop_progress.progress>100,'orange':item.pop_progress.progress>0 && item.pop_progress.progress<100,'gray':!item.pop_progress.progress}">
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'原料出库进度'+(item.pop_progress.progress||0)+'%(更新日期:'+(item.pop_progress.update_time||'无') + ')'"
+                    placement="top">
+                    <svg class="iconFont"
+                      aria-hidden="true">
+                      <use xlink:href="#icon-yuanliaochuku"></use>
+                    </svg>
+                  </el-tooltip>
+                </div>
+                <div class="process"
+                  :class="{'green':item.has_weave_plan.status===1,'gray':item.has_weave_plan.status===2}">
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'生产计划'+(item.has_weave_plan.status===1?('已添加(更新日期:'+item.has_weave_plan.update_time +')'):'未添加')"
+                    placement="top">
+                    <svg class="iconFont"
+                      aria-hidden="true">
+                      <use xlink:href="#icon-shengchanjihua1"></use>
+                    </svg>
+                  </el-tooltip>
+                </div>
               </div>
             </div>
           </template>
@@ -296,12 +314,27 @@
             v-show="itemKey.ifShow && itemKey.ifLock">
             <!-- 普通元素 -->
             <template v-if="!itemKey.from && !item.ifImage">
-              <span class="circle"
-                v-if="itemKey.ifCaogao"
-                :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?itemKey.caogaoArr[0]:itemKey.caogaoArr[1]}}</span>
-              <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')"
-                class="text">
-                {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] || item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unit}}</span>
+              <!-- 订单状态专用 -->
+              <template v-if="itemKey.isStatus">
+                <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key].status]:'')"
+                  class="text">
+                  {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key].status]:item[itemKey.key].status}}</span>
+              </template>
+              <!-- 订单进度专用 -->
+              <template v-else-if="itemKey.isProgress">
+                <span :class="itemKey.class"
+                  class="text">
+                  {{item[itemKey.key].progress || itemKey.errVal}}%</span>
+              </template>
+              <template v-else>
+                <!-- 草稿标记 -->
+                <span class="circle"
+                  v-if="itemKey.ifCaogao"
+                  :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?'是':'否'}}</span>
+                <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')"
+                  class="text">
+                  {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unit}}</span>
+              </template>
             </template>
           </div>
         </div>

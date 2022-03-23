@@ -221,16 +221,18 @@ export default Vue.extend({
           ifLock: false,
           index: 6,
           filterArr: ['', '已添加', '待添加'],
-          classArr: ['', 'green', 'orange']
+          classArr: ['', 'green', 'orange'],
+          isStatus: true
         },
         {
           key: 'has_material_plan',
           name: '物料计划状态',
+          filterArr: ['', '已添加', '待添加'],
+          classArr: ['', 'blue', 'orange'],
           ifShow: true,
           ifLock: false,
           index: 7,
-          filterArr: ['', '已添加', '待添加'],
-          classArr: ['', 'green', 'orange']
+          isStatus: true
         },
         {
           key: 'group_name',
@@ -281,13 +283,13 @@ export default Vue.extend({
       oprList: [
         {
           name: (item: any) => {
-            return item.has_material_plan === 1 ? '生产计划' : '待添加物料计划'
+            return item.has_material_plan.status === 1 ? '生产计划' : '待添加物料计划'
           },
           class: (item: any) => {
-            return item.has_material_plan === 1 ? 'hoverBlue' : 'gray'
+            return item.has_material_plan.status === 1 ? 'hoverBlue' : 'gray'
           },
           fn: (item: any) => {
-            item.has_material_plan === 1
+            item.has_material_plan.status === 1
               ? this.$router.push('/productionPlan/detail?id=' + item.order_id + '&sampleOrderIndex=' + item.id)
               : this.$message.warning('请先添加物料计划')
           }
@@ -361,6 +363,7 @@ export default Vue.extend({
       this.loading = true
       order
         .timeList({
+          is_draft: 2,
           order_type: this.order_type,
           keyword: this.keyword,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',

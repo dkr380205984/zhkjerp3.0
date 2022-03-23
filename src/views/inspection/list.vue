@@ -196,7 +196,8 @@ export default Vue.extend({
           ifLock: false,
           index: 6,
           filterArr: ['', '已添加', '待添加'],
-          classArr: ['', 'green', 'orange']
+          classArr: ['', 'green', 'orange'],
+          isStatus: true
         },
         {
           key: 'inspection_push_progress',
@@ -205,7 +206,9 @@ export default Vue.extend({
           ifLock: false,
           index: 7,
           unit: '%',
-          errVal: '0'
+          errVal: '0',
+          class: 'green',
+          isProgress: true
         },
         {
           key: 'group_name',
@@ -256,13 +259,13 @@ export default Vue.extend({
       oprList: [
         {
           name: (item: any) => {
-            return item.has_weave_plan === 1 ? '产品检验' : '待添加生产计划'
+            return item.has_weave_plan.status === 1 ? '产品检验' : '待添加生产计划'
           },
           class: (item: any) => {
-            return item.has_weave_plan === 1 ? 'hoverBlue' : 'gray'
+            return item.has_weave_plan.status === 1 ? 'hoverBlue' : 'gray'
           },
           fn: (item: any) => {
-            item.has_weave_plan === 1
+            item.has_weave_plan.status === 1
               ? this.$router.push('/inspection/detail?id=' + item.id)
               : this.$message.warning('请先添加生产计划')
           }
@@ -336,6 +339,7 @@ export default Vue.extend({
       this.loading = true
       order
         .list({
+          is_draft: 2,
           order_type: this.order_type,
           keyword: this.keyword,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
