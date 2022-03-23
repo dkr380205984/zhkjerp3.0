@@ -18,9 +18,9 @@ export default Vue.extend({
     return {}
   },
   watch: {
-    options: {
-      handler(options) {
-        this.chart.setOption(this.options)
+    option: {
+      handler(option) {
+        this.chart.setOption(this.option)
       },
       deep: true
     }

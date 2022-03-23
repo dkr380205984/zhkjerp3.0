@@ -790,14 +790,14 @@ const receipt = {
 }
 
 const statistics = {
-  order:(params?:{
-    start_time:string
-    end_time:string
-    client_id:number | string
-    contacts_id:number | string
-    group_id:number | string
-    settle_unit:number | string
-  })=>http.get(`${baseUrl}/statistics/financial/order`,params)
+  order: (params?: {
+    start_time: string
+    end_time: string
+    client_id: number | string
+    user_id: number | string
+    group_id: number | string
+    settle_unit: number | string
+  }) => http.get(`${baseUrl}/statistics/financial/order`, params)
 }
 export {
   statistics,
