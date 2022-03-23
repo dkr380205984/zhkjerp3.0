@@ -315,6 +315,16 @@ const systemModule = [{
     id: '19-4',
     name: '删除单据',
   }]
+}, {
+  id: 20,
+  name: '数据报表',
+  detail: [{
+    id: '20-1',
+    name: '订单数据统计',
+  }, {
+    id: '20-2',
+    name: '样单数据统计',
+  }]
 }]
 
 const yarnAttributeArr: CascaderInfo[] = [{
