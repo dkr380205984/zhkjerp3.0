@@ -798,7 +798,13 @@ const statistics = {
     user_id: number | string
     group_id: number | string
     settle_unit: number | string
-  }) => http.get(`${baseUrl}/statistics/financial/order`, params)
+  }) => http.get(`${baseUrl}/statistics/financial/order`, params),
+  sampleOrder:(params?:{
+    start_time: string
+    end_time: string
+    client_id: number | string
+    group_id: number | string
+  }) => http.get(`${baseUrl}/statistics/financial/sample_order`,params)
 }
 export {
   statistics,
