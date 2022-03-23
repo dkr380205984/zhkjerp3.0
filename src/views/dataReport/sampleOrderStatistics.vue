@@ -1,70 +1,79 @@
 <template>
-  <div id="sampleOrderStatistics" class="bodyContainer">
+  <div id="sampleOrderStatistics" class="bodyContainer" v-loading="loading">
     <div class="topTagCtn">
       <div class="tag" @click="$router.push('/dataReport/orderStatistics')">
         <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-dingdancaiwutongji"></use>
+          <use xlink:href="#icon-dingdancaiwutongji1"></use>
         </svg>
-        <span class="text">订单财务统计</span>
+        <span class="text">订单数据图表</span>
       </div>
       <div class="tag active">
         <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-yangdancaiwutongji"></use>
+          <use xlink:href="#icon-yangdancaiwutongji1"></use>
         </svg>
-        <span class="text">样单财务统计</span>
-      </div>
-      <!-- <div class="tag">
-        <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-yangdancaiwutongji"></use>
-        </svg>
-        <span class="text">原料使用统计</span>
+        <span class="text">样单数据图表</span>
       </div>
       <div class="tag">
         <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-yangdancaiwutongji"></use>
+          <use xlink:href="#icon-yuanliaoshiyongtongji"></use>
         </svg>
-        <span class="text">原料使用统计</span>
+        <span class="text">原料使用图表</span>
       </div>
       <div class="tag">
         <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-yangdancaiwutongji"></use>
+          <use xlink:href="#icon-fuliaoshiyongtongji"></use>
         </svg>
-        <span class="text">生产数据统计</span>
+        <span class="text">辅料使用图表</span>
       </div>
       <div class="tag">
         <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-yangdancaiwutongji"></use>
+          <use xlink:href="#icon-shengchanshujutongji"></use>
         </svg>
-        <span class="text">其它费用统计</span>
-      </div> -->
+        <span class="text">生产数据图表</span>
+      </div>
+      <div class="tag">
+        <svg class="iconFont" aria-hidden="true">
+          <use xlink:href="#icon-qitafeiyongtongji"></use>
+        </svg>
+        <span class="text">其它费用图表</span>
+      </div>
     </div>
     <div class="module noBackColor">
       <div class="cardCtn">
         <div class="card noBackColor noPad">
           <div class="screenCtn">
             <div class="screen">
-              <el-date-picker v-model="filterData.start_time" type="year" placeholder="筛选下单年份"> </el-date-picker>
+              <el-date-picker
+                v-model="filterData.start_time"
+                type="year"
+                @change="changeDate"
+                placeholder="筛选下单年份"
+              >
+              </el-date-picker>
             </div>
             <div class="screen">
-              <el-select v-model="filterData.client_id" filterable placeholder="筛选下单公司">
-                <el-option
-                  v-for="item in filterCondition.companyList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select>
+              <el-cascader
+                @change="
+                  getContacts($event)
+                  changeRouter()
+                "
+                placeholder="筛选下单公司"
+                v-model="filterData.client_id"
+                :show-all-levels="false"
+                filterable
+                :options="clientList"
+                clearable
+              >
+              </el-cascader>
             </div>
             <div class="screen">
-              <el-select v-model="filterData.group_id" placeholder="筛选组">
-                <el-option
-                  v-for="item in filterCondition.groupList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
+              <el-select
+                @change="(ev) => getLocalStorage(ev, 'group_id')"
+                v-model="filterData.group_id"
+                placeholder="筛选负责小组"
+                clearable
+              >
+                <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
               </el-select>
             </div>
             <div class="screen"></div>
@@ -73,11 +82,19 @@
         <div class="card">
           <div class="contentGrid">
             <h3>当前统计默认值</h3>
-            <div class="item2">订单下单时间：<span class="blue">2021年1月1日-2021年12月31日</span></div>
+            <div class="item2">
+              订单下单时间：<span class="blue"
+                >{{ formatDate2(filterData.start_time) }}-{{ formatDate2(filterData.end_time) }}</span
+              >
+            </div>
           </div>
           <div class="contentGrid">
-            <div>下单小组：<span class="blue">所有</span></div>
-            <div>下单公司：<span class="blue">所有</span></div>
+            <div>
+              下单小组：<span class="blue">{{ groupName || '所有' }}</span>
+            </div>
+            <div>
+              下单公司：<span class="blue">{{ alias || '所有' }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -86,7 +103,7 @@
           <h3>打样数量</h3>
           <div class="content">
             <span class="blue">
-              <h2>937</h2>
+              <h2>{{ this.reportData.number }}</h2>
             </span>
             <h2 class="unit">件</h2>
           </div>
@@ -95,7 +112,7 @@
           <h3>确认数量</h3>
           <div class="content">
             <span class="blue">
-              <h2>50</h2>
+              <h2>{{ this.reportData.real_number }}</h2>
             </span>
             <h2 class="unit">件</h2>
           </div>
@@ -103,8 +120,8 @@
         <div class="card">
           <h3>确认比例</h3>
           <div class="content">
-            <span class="green">
-              <h2>5</h2>
+            <span class="blue">
+              <h2>{{ this.reportData.proportion }}</h2>
             </span>
             <h2 class="unit">%</h2>
           </div>
@@ -114,8 +131,8 @@
         <div class="card">
           <h3>原料采购成本</h3>
           <div class="content">
-            <span class="blue">
-              <h2>0.44</h2>
+            <span class="green">
+              <h2>{{ this.reportData.purchase }}</h2>
             </span>
             <h2 class="unit">万元</h2>
           </div>
@@ -123,8 +140,8 @@
         <div class="card">
           <h3>原料加工成本</h3>
           <div class="content">
-            <span class="blue">
-              <h2>0</h2>
+            <span class="green">
+              <h2>{{ this.reportData.process }}</h2>
             </span>
             <h2 class="unit">万元</h2>
           </div>
@@ -133,297 +150,37 @@
           <h3>生产成本</h3>
           <div class="content">
             <span class="green">
-              <h2>0.15</h2>
+              <h2>{{ this.reportData.weave_plan }}</h2>
             </span>
             <h2 class="unit">万元</h2>
           </div>
         </div>
       </div>
       <div class="cardCtn">
-        <div class="card">
-          <el-tabs v-model="activeName">
-            <el-tab-pane label="用户管理" name="first">
-              <zh-charts
-                v-if="activeName === 'first'"
-                :option="{
-                  tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                      type: 'cross',
-                      crossStyle: {
-                        color: '#999'
-                      }
-                    }
-                  },
-                  toolbox: optionData.toolbox,
-                  legend: {
-                    data: ['每月下单总额', '每月下单总数']
-                  },
-                  xAxis: [
-                    {
-                      type: 'category',
-                      data: [
-                        '一月',
-                        '二月',
-                        '三月',
-                        '四月',
-                        '五月',
-                        '六月',
-                        '七月',
-                        '八月',
-                        '九月',
-                        '十月',
-                        '十一月',
-                        '十二月'
-                      ],
-                      axisPointer: {
-                        type: 'shadow'
-                      }
-                    }
-                  ],
-                  yAxis: [
-                    {
-                      type: 'value',
-                      name: '下单总额',
-                      min: 0,
-                      max: 250,
-                      interval: 50,
-                      axisLabel: {
-                        formatter: '{value} 万元'
-                      }
-                    },
-                    {
-                      type: 'value',
-                      name: '下单总数',
-                      min: 0,
-                      max: 25,
-                      interval: 5,
-                      axisLabel: {
-                        formatter: '{value} 万件'
-                      }
-                    }
-                  ],
-                  series: [
-                    {
-                      name: '每月下单总额',
-                      type: 'bar',
-                      tooltip: {
-                        valueFormatter: function (value) {
-                          return value + ' 万元'
-                        }
-                      },
-                      data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
-                    },
-                    {
-                      name: '每月下单总数',
-                      type: 'line',
-                      yAxisIndex: 1,
-                      tooltip: {
-                        valueFormatter: function (value) {
-                          return value + '万件'
-                        }
-                      },
-                      data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
-                    }
-                  ]
-                }"
-              ></zh-charts>
-            </el-tab-pane>
-            <el-tab-pane label="配置管理" name="second"
-              ><zh-charts
-                v-if="activeName === 'second'"
-                :option="{
-                  tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                      type: 'cross',
-                      crossStyle: {
-                        color: '#999'
-                      }
-                    }
-                  },
-                  toolbox: optionData.toolbox,
-                  legend: {
-                    data: ['每月下单总额', '每月下单总数']
-                  },
-                  xAxis: [
-                    {
-                      type: 'category',
-                      data: [
-                        '一月',
-                        '二月',
-                        '三月',
-                        '四月',
-                        '五月',
-                        '六月',
-                        '七月',
-                        '八月',
-                        '九月',
-                        '十月',
-                        '十一月',
-                        '十二月'
-                      ],
-                      axisPointer: {
-                        type: 'shadow'
-                      }
-                    }
-                  ],
-                  yAxis: [
-                    {
-                      type: 'value',
-                      name: '下单总额',
-                      min: 0,
-                      max: 250,
-                      interval: 50,
-                      axisLabel: {
-                        formatter: '{value} 万元'
-                      }
-                    },
-                    {
-                      type: 'value',
-                      name: '下单总数',
-                      min: 0,
-                      max: 25,
-                      interval: 5,
-                      axisLabel: {
-                        formatter: '{value} 万件'
-                      }
-                    }
-                  ],
-                  series: [
-                    {
-                      name: '每月下单总额',
-                      type: 'bar',
-                      tooltip: {
-                        valueFormatter: function (value) {
-                          return value + ' 万元'
-                        }
-                      },
-                      data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 55555, 32.6, 20.0, 6.4, 3.3]
-                    },
-                    {
-                      name: '每月下单总数',
-                      type: 'line',
-                      yAxisIndex: 1,
-                      tooltip: {
-                        valueFormatter: function (value) {
-                          return value + '万件'
-                        }
-                      },
-                      data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
-                    }
-                  ]
-                }"
-              ></zh-charts
-            ></el-tab-pane>
-          </el-tabs>
+        <div class="card" style="padding-top:60px">
+          <zh-charts :option="option1"></zh-charts>
         </div>
       </div>
       <div class="cardCtn">
-        <div class="card">
-          <div style="transform: translateY(5%)">
-            <zh-charts
-              :option="{
-                tooltip: {
-                  trigger: 'item'
-                },
-                legend: {
-                  top: '5%',
-                  left: 'center'
-                },
-                series: [
-                  {
-                    name: 'Access From',
-                    type: 'pie',
-                    radius: ['40%', '70%'],
-                    avoidLabelOverlap: false,
-                    label: {
-                      show: false,
-                      position: 'center'
-                    },
-                    emphasis: {
-                      label: {
-                        show: true,
-                        fontSize: '40',
-                        fontWeight: 'bold'
-                      }
-                    },
-                    labelLine: {
-                      show: false
-                    },
-                    data: [
-                      { value: 1048, name: '一组' },
-                      { value: 735, name: '二组' },
-                      { value: 580, name: '三组' }
-                    ]
-                  }
-                ]
-              }"
-            ></zh-charts>
+            <div class="card">
+              <zh-charts :option="groupOption"></zh-charts>
+            </div>
+            <div class="card">
+              <zh-charts :option="companyOption"></zh-charts>
+            </div>
           </div>
-        </div>
-        <div class="card">
-          <div style="transform: translateY(5%)">
-            <zh-charts
-              :option="{
-                tooltip: {
-                  trigger: 'item'
-                },
-                legend: {
-                  top: '5%',
-                  left: 'center'
-                },
-                series: [
-                  {
-                    name: 'Access From',
-                    type: 'pie',
-                    radius: ['40%', '70%'],
-                    avoidLabelOverlap: false,
-                    label: {
-                      show: false,
-                      position: 'center'
-                    },
-                    emphasis: {
-                      label: {
-                        show: true,
-                        fontSize: '40',
-                        fontWeight: 'bold'
-                      }
-                    },
-                    labelLine: {
-                      show: false
-                    },
-                    data: [
-                      { value: 1048, name: '1' },
-                      { value: 735, name: '2' },
-                      { value: 580, name: '3' },
-                      { value: 580, name: '4' },
-                      { value: 580, name: '5' },
-                      { value: 580, name: '6' },
-                      { value: 580, name: '7' },
-                      { value: 580, name: '8' }
-                    ]
-                  }
-                ]
-              }"
-            ></zh-charts>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { materialPlan } from '@/assets/js/api'
-import { limitArr } from '@/assets/js/dictionary'
-import { MaterialPlanInfo } from '@/types/materialPlan'
+import { statistics, client } from '@/assets/js/api'
+import { moneyArr } from '@/assets/js/dictionary'
 import zhCharts from '@/components/zhCharts/zhCharts.vue'
 export default Vue.extend({
   components: { zhCharts },
   data(): {
-    list: MaterialPlanInfo[]
     [porpName: string]: any
   } {
     return {
@@ -439,189 +196,453 @@ export default Vue.extend({
           }
         }
       },
+      alias: '',
+      option1: {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross',
+            crossStyle: {
+              color: '#999'
+            }
+          },
+          formatter: function (params: any) {
+            var htmlStr = '<div>'
+            htmlStr += params[0].name + '<br/>' //x轴的名称
+            params.forEach((param: any, index: number) => {
+              var color = param.color //图例颜色
+
+              //为了保证和原来的效果一样，这里自己实现了一个点的效果
+              htmlStr +=
+                '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:' +
+                color +
+                ';"></span>'
+
+              //添加一个汉字，这里你可以格式你的数字或者自定义文本内容
+              htmlStr += param.seriesName + '：' + param.value + (index === 1 ? '万件' : '万元')
+
+              htmlStr += '</div>'
+            })
+
+            return htmlStr
+          }
+        },
+        // toolbox: this.optionData.toolbox,
+        legend: {
+          data: []
+        },
+        xAxis: [
+          {
+            type: 'category',
+            data: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            axisPointer: {
+              type: 'shadow'
+            }
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            name: '',
+            min: 0,
+            max: 25,
+            interval: 5,
+            axisLabel: {
+              formatter: '{value} 万元'
+            }
+          },
+          {
+            type: 'value',
+            name: '下单总数',
+            min: 0,
+            max: 500,
+            interval: 100,
+            axisLabel: {
+              formatter: '{value} 万件'
+            }
+          }
+        ],
+        series: [
+          {
+            type: 'bar',
+            data: []
+          },
+          {
+            type: 'line',
+            yAxisIndex: 1,
+            data: []
+          }
+        ]
+      },
+      groupOption: {
+        tooltip: {
+          trigger: 'item',
+          formatter: function (params: any) {
+            return `
+                <div>
+                    ${params.marker}<span style="margin-left:10px;color:black;font-weight:bold">${params.data.name}：<span style="color:${params.color};font-weight:normal">${params.data.value}万元</span></span>
+                </div>
+              `
+          }
+        },
+        legend: {
+          top: '5%',
+          left: 'center'
+        },
+        series: [
+          {
+            type: 'pie',
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: false,
+            label: {
+              show: false,
+              position: 'center'
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: '40',
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: false
+            },
+            data: []
+          }
+        ]
+      },
+      companyOption: {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          },
+          formatter: function (params: any) {
+            return `
+                <h4 style='color:#000000;margin:5px 0'>${params[0].axisValue}</h4>
+                <span style='color:#A3A3A3;font-size:10px'>CNY：</span>
+                <span style='color:#229CFB;font-size:14px;'>￥${params[0].value}</span>
+            `
+          }
+        },
+
+        dataZoom: [
+          //给y轴设置滚动条
+          {
+            start: 0, //默认为0
+            end: 100 - 1500 / 31, //默认为100
+            type: 'slider',
+            maxValueSpan: 10, //窗口的大小，显示数据的条数的
+            show: true,
+            handleSize: 0, //滑动条的 左右2个滑动条的大小
+            height: '70%', //组件高度
+            left: 650,
+            right: 15,
+            top: 50,
+            borderColor: 'rgba(43,48,67,.8)',
+            fillerColor: '#33384b',
+            zoomLock: true,
+            brushSelect: false,
+            backgroundColor: 'rgba(43,48,67,.8)', //两边未选中的滑动条区域的颜色
+            showDataShadow: false, //是否显示数据阴影 默认auto
+            showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
+            realtime: true, //是否实时更新
+            yAxisIndex: [0, 1] //控制的 y轴
+          }
+        ],
+        yAxis: {
+          type: 'category',
+          inverse: true,
+          data: []
+        },
+        xAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            data: [],
+            type: 'bar'
+          }
+        ]
+      },
+      groupName: '',
       filterData: {
         start_time: '',
+        end_time: '',
         client_id: '',
         contacts_id: '',
         group_id: '',
-        settle_unit: '',
-        end_time: ''
+      },
+      reportData: {
+        number:0,
+        real_number:0,
+        proportion:0,
+        purchase:0,
+        process:0,
+        weave_plan:0,
+        client:[],
+        group:[]
       },
       filterCondition: {
-        currency: [
-          {
-            label: '人民币',
-            value: '人民币'
-          },
-          {
-            label: '美元',
-            value: '美元'
-          }
-        ],
-        directorList: [
-          {
-            label: '人民币',
-            value: '人民币'
-          },
-          {
-            label: '美元',
-            value: '美元'
-          }
-        ],
-        groupList: [
-          {
-            label: '人民币',
-            value: '人民币'
-          },
-          {
-            label: '美元',
-            value: '美元'
-          }
-        ],
-        companyList: [
-          {
-            label: '人民币',
-            value: '人民币'
-          },
-          {
-            label: '美元',
-            value: '美元'
-          }
-        ]
+        contactsList: [],
+        currency: moneyArr
       },
-      activeName: 'first',
-      limitList: limitArr,
-      total: 1,
-      page: 1,
-      limit: 10,
-      code: '',
-      order_code: '',
-      date: [],
-      user_id: '',
-      pickerOptions: {
-        shortcuts: [
-          {
-            text: '最近一周',
-            onClick(picker: any) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近一个月',
-            onClick(picker: any) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近三个月',
-            onClick(picker: any) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-              picker.$emit('pick', [start, end])
-            }
-          }
-        ]
-      }
-    }
-  },
-  filters: {
-    filterCheck(type: 0 | 1 | 2) {
-      return ['待审核', '已审核', '已驳回'][type]
-    },
-    filterCheckClass(type: 0 | 1 | 2) {
-      return ['orange', 'green', 'red'][type]
     }
   },
   methods: {
+    getContacts(ev: number[]) {
+      if (ev && ev.length) {
+        client
+          .detail({
+            id: ev[2]
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.filterCondition.contactsList = res.data.data.contacts_data
+              this.alias = res.data.data.alias
+            }
+          })
+      } else {
+        this.contacts_id = ''
+      }
+    },
+    getLocalStorage(ev: any, type: string) {
+      let groupInfo = this.groupList.find((item: any) => {
+        return this.filterData.group_id === item.id
+      })
+      if (groupInfo) {
+        this.groupName = groupInfo.name
+      }
+      this.changeRouter()
+    },
     getFilters() {
       const query = this.$route.query
-      this.page = Number(query.page)
-      this.code = query.code
-      this.order_code = query.order_code
-      this.date = query.date ? (query.date as string).split(',') : []
-      this.limit = Number(query.limit) || 10
-      this.user_id = query.user_id || ''
-    },
-    changeRouter(ev?: any) {
-      if (ev !== this.page) {
-        this.page = 1
+      if (query.start_time === '' || query.start_time === undefined) {
+        let date = new Date()
+        let nowYear = date.getFullYear() + '-01-01'
+        this.filterData.start_time = nowYear
+        this.filterData.end_time = this.formatDate(new Date())
+      } else {
+        this.filterData.start_time = query.start_time
+        this.filterData.end_time = query.end_time
       }
-      this.$router.push(
-        '/materialManage/list?page=' +
-          this.page +
-          '&code=' +
-          this.code +
-          '&order_code=' +
-          this.order_code +
-          '&date=' +
-          this.date +
-          '&limit=' +
-          this.limit +
-          '&user_id' +
-          this.user_id
+      this.filterData.client_id = query.client_id
+        ? (query.client_id as string).split(',').map((item) => Number(item))
+        : []
+      this.filterData.contacts_id = query.contacts_id || this.$getLocalStorage('create_user') || ''
+      this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
+    },
+    formatDate(date: Date) {
+      return (
+        date.getFullYear() +
+        '-' +
+        (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) +
+        '-' +
+        (date.getDate() < 10 ? '0' + date.getDate() : date.getDate())
       )
     },
-    reset() {
-      this.$confirm('是否重置所有筛选条件?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          this.code = ''
-          this.order_code = ''
-          this.date = []
-          this.limit = 10
-          this.user_id = ''
-          this.changeRouter()
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消重置'
-          })
-        })
+    formatDate2(date: string | Date) {
+      if (typeof date === 'object') {
+        this.formatDate(date)
+      } else {
+        return date.split('-')[0] + '年' + date.split('-')[1] + '月' + date.split('-')[2] + '日'
+      }
+    },
+    changeDate(res: any) {
+      if (res !== null) {
+        this.filterData.start_time = res.getFullYear() + '-01-01'
+        if (res.getFullYear() === new Date().getFullYear()) {
+          this.filterData.end_time = this.formatDate(new Date())
+        } else {
+          this.filterData.end_time = res.getFullYear() + '-12-31'
+        }
+      } else {
+        this.filterData.start_time = new Date().getFullYear() + '-01-01'
+        this.filterData.end_time = this.formatDate(new Date())
+      }
+      this.changeRouter()
+    },
+    changeRouter() {
+      this.$router.push(
+        '/dataReport/sampleOrderStatistics?' +
+          '&client_id=' +
+          (this.filterData.client_id || '') +
+          '&group_id=' +
+          (this.filterData.group_id || '') +
+          '&start_time=' +
+          (this.filterData.start_time || '') +
+          '&end_time=' +
+          (this.filterData.end_time || '')
+      )
     },
     getList() {
       this.loading = true
-      materialPlan
-        .list({
-          limit: this.limit,
-          page: this.page,
-          code: this.code,
-          order_code: this.order_code,
-          start_time: this.date.length > 0 ? this.date[0] : '',
-          end_time: this.date.length > 0 ? this.date[1] : '',
-          user_id: this.user_id
+      
+      statistics
+        .sampleOrder({
+          start_time: this.filterData.start_time,
+          client_id: this.filterData.client_id.length > 0 ? this.filterData.client_id[2] : '',
+          group_id: this.filterData.group_id,
+          end_time: this.filterData.end_time
         })
         .then((res) => {
-          this.list = res.data.data.items
-          this.total = res.data.data.total
+          if(!res.data.status) {
+            this.loading = false
+            return
+          }
+          let data = res.data.data
+          data.number = this.$formatNum(data.number)
+          data.real_number = this.$formatNum(data.real_number)
+          data.process = this.$formatNum(data.process.toFixed(2))
+          data.purchase = this.$formatNum(data.purchase.toFixed(2))
+          data.weave_plan = this.$formatNum(data.weave_plan.toFixed(2))
+          data.proportion = this.$formatNum(data.proportion.toFixed(2))
+          this.reportData = data
+          console.log(data)
+          /*
+          this.option1.series[0].data = []
+          this.option1.series[1].data = []
+          this.groupOption.series[0].data = []
+          this.companyOption.yAxis.data = []
+          this.companyOption.series[0].data = []
+
+          let orderPriceMax: any,
+            orderPriceMin: any,
+            orderNumberMax: any,
+            orderNumberMin: any,
+            outPriceMax: any,
+            outPriceMin: any,
+            outNumberMax: any,
+            outNumberMin: any = 0
+
+          if (data.order.report.month.length !== 0) {
+            //  每月下单总额
+            orderPriceMax = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
+              return +num1.total_price > +num2.total_price ? num1 : num2
+            })
+            orderPriceMin = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
+              return +num1.total_price < +num2.total_price ? num1 : num2
+            })
+
+            // 每月下单总数
+            orderNumberMax = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
+              return +num1.total_number > +num2.total_number ? num1 : num2
+            })
+            orderNumberMin = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
+              return +num1.total_number < +num2.total_number ? num1 : num2
+            })
+
+            // 拿到每月下单总额的最大值和最小值
+            orderPriceMax = +orderPriceMax.total_price
+            orderPriceMin = +orderPriceMin.total_price
+
+            // 拿到每月下单总数的最大值和最小值
+            orderNumberMax = +orderNumberMax.total_number
+            orderNumberMin = +orderNumberMin.total_number
+          }
+
+          if (data.transport.report.month.length !== 0) {
+            //  每月出库总额
+            outPriceMax = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
+              return +num1.price > +num2.price ? num1 : num2
+            })
+            outPriceMin = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
+              return +num1.price < +num2.price ? num1 : num2
+            })
+
+            // 每月出库总数
+            outNumberMax = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
+              return +num1.transport_number > +num2.transport_number ? num1 : num2
+            })
+            outNumberMin = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
+              return +num1.transport_number < +num2.transport_number ? num1 : num2
+            })
+
+            // 拿到每月出库总额的最大值和最小值
+            outPriceMax = +outPriceMax.price
+            outPriceMin = +outPriceMin.price
+
+            // 拿到出库下单总数的最大值和最小值
+            outNumberMax = +outNumberMax.transport_number
+            outNumberMin = +outNumberMin.transport_number
+          }
+
+          if (this.activeName === 'first') {
+            this.option1.series[0].name = '每月下单总额'
+            this.option1.series[1].name = '每月下单总数'
+            this.option1.legend.data = ['每月下单总额', '每月下单总数']
+            this.option1.yAxis[0].name = '下单总额'
+            this.option1.yAxis[1].name = '下单总数'
+
+            // 每月下单总数 图表更新
+            this.option1.yAxis[0].max = Math.ceil(Math.ceil(orderPriceMax / 10000 / 5)) * 5 || 10
+            this.option1.yAxis[0].min = orderPriceMin && orderPriceMin < 0 ? Math.ceil(orderPriceMin / 10000) : 0
+            this.option1.yAxis[0].interval = Math.ceil(orderPriceMax / 10000 / 5) || 10
+
+            // 每月下单总额 图表更新
+            this.option1.yAxis[1].max = Math.ceil(Math.ceil(orderNumberMax / 10000 / 5)) * 5 || 10
+            this.option1.yAxis[1].min = orderNumberMin && orderNumberMin < 0 ? Math.ceil(orderNumberMin / 10000) : 0
+            this.option1.yAxis[1].interval = Math.ceil(orderNumberMax / 10000 / 5) || 10
+
+            this.option1.xAxis[0].data.forEach((itemMouth: any) => {
+              let mouth = this.reportData.order.report.month.find((item: any) => {
+                return item.mouth === itemMouth
+              })
+              if (mouth) {
+                this.option1.series[0].data.push(+(+mouth.total_price / 10000).toFixed(2))
+                this.option1.series[1].data.push(+(+mouth.total_number / 10000).toFixed(2))
+              } else {
+                this.option1.series[0].data.push(0)
+                this.option1.series[1].data.push(0)
+              }
+            })
+
+            // 饼图
+            data.order.report.group.forEach((group: any) => {
+              this.groupOption.series[0].data.push({
+                name: group.group_name || '其它',
+                value: group.total_price
+              })
+            })
+
+            // 横向柱状图
+            data.order.report.client.forEach((client: any) => {
+              this.companyOption.yAxis.data.push(client.client_name)
+              this.companyOption.series[0].data.push(client.total_price)
+            })
+          } else if (this.activeName === 'second') {
+            this.option1.series[0].name = '每月出库总额'
+            this.option1.series[1].name = '每月出库总数'
+            this.option1.legend.data = ['每月出库总额', '每月出库总数']
+            this.option1.yAxis[0].name = '出库总额'
+            this.option1.yAxis[1].name = '出库总数'
+
+            // 每月出库总数 图表更新
+            this.option1.yAxis[0].max = Math.ceil(Math.ceil(outPriceMax / 10000 / 5)) * 5 || 10
+            this.option1.yAxis[0].min = outPriceMin && outPriceMin < 0 ? Math.ceil(outPriceMin / 10000) : 0
+            this.option1.yAxis[0].interval = Math.ceil(outPriceMax / 10000 / 5) || 10
+
+            // 每月出库总额 图表更新
+            this.option1.yAxis[1].max = Math.ceil(Math.ceil(outNumberMax / 10000 / 5)) * 5 || 10
+            this.option1.yAxis[1].min = outNumberMin && outNumberMin < 0 ? Math.ceil(outNumberMin / 10000) : 0
+            this.option1.yAxis[1].interval = Math.ceil(outNumberMax / 10000 / 5) || 10
+
+            this.option1.xAxis[0].data.forEach((itemMouth: any) => {
+              let mouth = this.reportData.transport.report.month.find((item: any) => {
+                return item.mouth === itemMouth
+              })
+              if (mouth) {
+                this.option1.series[0].data.push(+(+mouth.price / 10000).toFixed(2))
+                this.option1.series[1].data.push(+(+mouth.transport_number / 10000).toFixed(2))
+              } else {
+                this.option1.series[0].data.push(0)
+                this.option1.series[1].data.push(0)
+              }
+            })
+          }*/
           this.loading = false
         })
-    }
-    // getListSetting() {
-    //   this.listKey = []
-    //   listSetting
-    //     .detail({
-    //       type: 5
-    //     })
-    //     .then((res) => {
-    //       this.listSettingId = res.data.data ? res.data.data.id : null
-    //       this.listKey = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting)
-    //     })
-    // }
-  },
-  computed: {
-    userList() {
-      return this.$store.state.api.user.arr
     }
   },
   watch: {
@@ -630,11 +651,37 @@ export default Vue.extend({
       this.getList()
     }
   },
+  computed: {
+    clientList() {
+      return this.$store.state.api.clientType.arr.filter((item: { type: any }) => Number(item.type) === 1)
+    },
+    groupList() {
+      let groupInfo = this.$store.state.api.group.arr.find((item: any) => {
+        return this.filterData.group_id === item.id
+      })
+      if (groupInfo) {
+        this.groupName = groupInfo.name
+      }
+      return this.$store.state.api.group.arr
+    },
+    userList() {
+      return this.$store.state.api.user.arr
+    }
+  },
   created() {
     this.getFilters()
     this.getList()
-    // this.getListSetting()
     this.$checkCommonInfo([
+      {
+        checkWhich: 'api/group',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getGroupAsync'
+      },
+      {
+        checkWhich: 'api/clientType',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getClientTypeAsync'
+      },
       {
         checkWhich: 'api/user',
         getInfoMethed: 'dispatch',
@@ -654,7 +701,7 @@ export default Vue.extend({
   .screen {
     overflow: hidden;
   }
-  .el-input .el-input__inner {
+  .el-input__inner {
     height: 100% !important;
     line-height: 30px;
     border: 0px;

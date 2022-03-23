@@ -186,12 +186,12 @@ export default Vue.extend({
           icon: 'icon-dingdanguanli1',
           url: '/order/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
-        // {
-        //   name: '数据报表',
-        //   id: 4,
-        //   icon: 'icon-shujubaobiao',
-        //   url: '/dataReport/orderStatistics'
-        // },
+        {
+          name: '数据报表',
+          id: 4,
+          icon: 'icon-shujubaobiao',
+          url: '/dataReport/orderStatistics'
+        },
         {
           name: '其它管理',
           id: null,

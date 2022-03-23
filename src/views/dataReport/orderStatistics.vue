@@ -3,40 +3,40 @@
     <div class="topTagCtn">
       <div class="tag active">
         <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-dingdancaiwutongji"></use>
+          <use xlink:href="#icon-dingdancaiwutongji1"></use>
         </svg>
-        <span class="text">订单财务统计</span>
+        <span class="text">订单数据图表</span>
       </div>
       <div class="tag" @click="$router.push('/dataReport/sampleOrderStatistics')">
         <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-yangdancaiwutongji"></use>
+          <use xlink:href="#icon-yangdancaiwutongji1"></use>
         </svg>
-        <span class="text">样单财务统计</span>
-      </div>
-      <!-- <div class="tag">
-        <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-yangdancaiwutongji"></use>
-        </svg>
-        <span class="text">原料使用统计</span>
+        <span class="text">样单数据图表</span>
       </div>
       <div class="tag">
         <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-yangdancaiwutongji"></use>
+          <use xlink:href="#icon-yuanliaoshiyongtongji"></use>
         </svg>
-        <span class="text">原料使用统计</span>
+        <span class="text">原料使用图表</span>
       </div>
       <div class="tag">
         <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-yangdancaiwutongji"></use>
+          <use xlink:href="#icon-fuliaoshiyongtongji"></use>
         </svg>
-        <span class="text">生产数据统计</span>
+        <span class="text">辅料使用图表</span>
       </div>
       <div class="tag">
         <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-yangdancaiwutongji"></use>
+          <use xlink:href="#icon-shengchanshujutongji"></use>
         </svg>
-        <span class="text">其它费用统计</span>
-      </div> -->
+        <span class="text">生产数据图表</span>
+      </div>
+      <div class="tag">
+        <svg class="iconFont" aria-hidden="true">
+          <use xlink:href="#icon-qitafeiyongtongji"></use>
+        </svg>
+        <span class="text">其它费用图表</span>
+      </div>
     </div>
     <div class="module noBackColor">
       <div class="cardCtn">
@@ -337,7 +337,7 @@ export default Vue.extend({
           axisPointer: {
             type: 'shadow'
           },
-          formatter: function (params:any) {
+          formatter: function (params: any) {
             return `
                 <h4 style='color:#000000;margin:5px 0'>${params[0].axisValue}</h4>
                 <span style='color:#A3A3A3;font-size:10px'>CNY：</span>
@@ -501,15 +501,6 @@ export default Vue.extend({
           (this.filterData.end_time || '')
       )
     },
-    // reset() {
-    //   this.filterData = {
-    //     start_time: '',
-    //     client_id: '',
-    //     contacts_id: '',
-    //     group_id: '',
-    //     settle_unit: ''
-    //   }
-    // },
     getList() {
       this.loading = true
       statistics
@@ -522,6 +513,10 @@ export default Vue.extend({
           end_time: this.filterData.end_time
         })
         .then((res) => {
+          if (!res.data.status) {
+            this.loading = false
+            return
+          }
           let data = res.data.data
           data.order.total_number = this.$formatNum(+(data.order.total_number / 10000).toFixed(2))
           data.order.total_price = this.$formatNum(+(data.order.total_price / 10000).toFixed(2))
@@ -633,11 +628,11 @@ export default Vue.extend({
                 value: group.total_price
               })
             })
-            
+
             // 横向柱状图
             data.order.report.client.forEach((client: any) => {
-                this.companyOption.yAxis.data.push(client.client_name)
-                this.companyOption.series[0].data.push(client.total_price)
+              this.companyOption.yAxis.data.push(client.client_name)
+              this.companyOption.series[0].data.push(client.total_price)
             })
           } else if (this.activeName === 'second') {
             this.option1.series[0].name = '每月出库总额'
