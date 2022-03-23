@@ -157,18 +157,18 @@
         </div>
       </div>
       <div class="cardCtn">
-        <div class="card" style="padding-top:60px">
+        <div class="card" style="padding-top: 60px">
           <zh-charts :option="option1"></zh-charts>
         </div>
       </div>
       <div class="cardCtn">
-            <div class="card">
-              <zh-charts :option="groupOption"></zh-charts>
-            </div>
-            <div class="card">
-              <zh-charts :option="companyOption"></zh-charts>
-            </div>
-          </div>
+        <div class="card">
+          <zh-charts :option="groupOption"></zh-charts>
+        </div>
+        <div class="card">
+          <zh-charts :option="categoryOption"></zh-charts>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -312,57 +312,41 @@ export default Vue.extend({
           }
         ]
       },
-      companyOption: {
+      categoryOption: {
         tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow'
-          },
+          trigger: 'item',
           formatter: function (params: any) {
             return `
-                <h4 style='color:#000000;margin:5px 0'>${params[0].axisValue}</h4>
-                <span style='color:#A3A3A3;font-size:10px'>CNY：</span>
-                <span style='color:#229CFB;font-size:14px;'>￥${params[0].value}</span>
-            `
+                <div>
+                    ${params.marker}<span style="margin-left:10px;color:black;font-weight:bold">${params.data.name}：<span style="color:${params.color};font-weight:normal">${params.data.value}</span></span>
+                </div>
+              `
           }
         },
-
-        dataZoom: [
-          //给y轴设置滚动条
-          {
-            start: 0, //默认为0
-            end: 100 - 1500 / 31, //默认为100
-            type: 'slider',
-            maxValueSpan: 10, //窗口的大小，显示数据的条数的
-            show: true,
-            handleSize: 0, //滑动条的 左右2个滑动条的大小
-            height: '70%', //组件高度
-            left: 650,
-            right: 15,
-            top: 50,
-            borderColor: 'rgba(43,48,67,.8)',
-            fillerColor: '#33384b',
-            zoomLock: true,
-            brushSelect: false,
-            backgroundColor: 'rgba(43,48,67,.8)', //两边未选中的滑动条区域的颜色
-            showDataShadow: false, //是否显示数据阴影 默认auto
-            showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
-            realtime: true, //是否实时更新
-            yAxisIndex: [0, 1] //控制的 y轴
-          }
-        ],
-        yAxis: {
-          type: 'category',
-          inverse: true,
-          data: []
-        },
-        xAxis: {
-          type: 'value'
+        legend: {
+          top: '5%',
+          left: 'center'
         },
         series: [
           {
-            data: [],
-            type: 'bar'
+            type: 'pie',
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: false,
+            label: {
+              show: false,
+              position: 'center'
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: '40',
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: false
+            },
+            data: []
           }
         ]
       },
@@ -372,22 +356,22 @@ export default Vue.extend({
         end_time: '',
         client_id: '',
         contacts_id: '',
-        group_id: '',
+        group_id: ''
       },
       reportData: {
-        number:0,
-        real_number:0,
-        proportion:0,
-        purchase:0,
-        process:0,
-        weave_plan:0,
-        client:[],
-        group:[]
+        number: 0,
+        real_number: 0,
+        proportion: 0,
+        purchase: 0,
+        process: 0,
+        weave_plan: 0,
+        client: [],
+        group: []
       },
       filterCondition: {
         contactsList: [],
         currency: moneyArr
-      },
+      }
     }
   },
   methods: {
@@ -478,7 +462,7 @@ export default Vue.extend({
     },
     getList() {
       this.loading = true
-      
+
       statistics
         .sampleOrder({
           start_time: this.filterData.start_time,
@@ -487,10 +471,14 @@ export default Vue.extend({
           end_time: this.filterData.end_time
         })
         .then((res) => {
-          if(!res.data.status) {
+          if (!res.data.status) {
             this.loading = false
             return
           }
+
+          this.categoryOption.series[0].data = []
+          this.option1.xAxis[0].data = []
+
           let data = res.data.data
           data.number = this.$formatNum(data.number)
           data.real_number = this.$formatNum(data.real_number)
@@ -499,7 +487,18 @@ export default Vue.extend({
           data.weave_plan = this.$formatNum(data.weave_plan.toFixed(2))
           data.proportion = this.$formatNum(data.proportion.toFixed(2))
           this.reportData = data
-          console.log(data)
+
+          data.category.forEach((category: any) => {
+            this.categoryOption.series[0].data.push({
+              name: category.name || '其它',
+              value: category.number
+            })
+          })
+
+          data.client.forEach((client:any) => {
+            this.option1.xAxis[0].data.push(client.name)
+            console.log(client,this.option1)
+          });
           /*
           this.option1.series[0].data = []
           this.option1.series[1].data = []
