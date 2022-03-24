@@ -157,18 +157,18 @@
         </div>
       </div>
       <div class="cardCtn">
-        <div class="card" style="padding-top:60px">
+        <div class="card" style="padding-top: 60px">
           <zh-charts :option="option1"></zh-charts>
         </div>
       </div>
       <div class="cardCtn">
-            <div class="card">
-              <zh-charts :option="groupOption"></zh-charts>
-            </div>
-            <div class="card">
-              <zh-charts :option="companyOption"></zh-charts>
-            </div>
-          </div>
+        <div class="card">
+          <zh-charts :option="groupOption"></zh-charts>
+        </div>
+        <div class="card">
+          <zh-charts :option="categoryOption"></zh-charts>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -176,7 +176,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import { statistics, client } from '@/assets/js/api'
-import { moneyArr } from '@/assets/js/dictionary'
 import zhCharts from '@/components/zhCharts/zhCharts.vue'
 export default Vue.extend({
   components: { zhCharts },
@@ -185,7 +184,6 @@ export default Vue.extend({
   } {
     return {
       loading: false,
-      list: [],
       optionData: {
         toolbox: {
           right: '15%',
@@ -207,8 +205,8 @@ export default Vue.extend({
             }
           },
           formatter: function (params: any) {
-            var htmlStr = '<div>'
-            htmlStr += params[0].name + '<br/>' //x轴的名称
+            var htmlStr = '<div style="color:black">'
+            htmlStr += '<span style="font-weight:bold">' + params[0].name + '</span>' + '<br/>' //x轴的名称
             params.forEach((param: any, index: number) => {
               var color = param.color //图例颜色
 
@@ -219,7 +217,15 @@ export default Vue.extend({
                 ';"></span>'
 
               //添加一个汉字，这里你可以格式你的数字或者自定义文本内容
-              htmlStr += param.seriesName + '：' + param.value + (index === 1 ? '万件' : '万元')
+              htmlStr +=
+                '<span style="color:black">' +
+                param.seriesName +
+                '：' +
+                '<span style="color:' +
+                color +
+                ';">' +
+                param.value +
+                '</span></span>'
 
               htmlStr += '</div>'
             })
@@ -227,14 +233,21 @@ export default Vue.extend({
             return htmlStr
           }
         },
-        // toolbox: this.optionData.toolbox,
+        toolbox: {
+          right: '15%',
+          feature: {
+            magicType: { show: true, type: ['line', 'bar'] },
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
+        },
         legend: {
-          data: []
+          data: ['打样数量', '打样成本']
         },
         xAxis: [
           {
             type: 'category',
-            data: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            data: [],
             axisPointer: {
               type: 'shadow'
             }
@@ -243,32 +256,28 @@ export default Vue.extend({
         yAxis: [
           {
             type: 'value',
-            name: '',
+            name: '打样数量',
             min: 0,
             max: 25,
-            interval: 5,
-            axisLabel: {
-              formatter: '{value} 万元'
-            }
+            interval: 5
           },
           {
             type: 'value',
-            name: '下单总数',
+            name: '打样成本',
             min: 0,
             max: 500,
-            interval: 100,
-            axisLabel: {
-              formatter: '{value} 万件'
-            }
+            interval: 100
           }
         ],
         series: [
           {
             type: 'bar',
+            name: '打样数量',
             data: []
           },
           {
             type: 'line',
+            name: '打样成本',
             yAxisIndex: 1,
             data: []
           }
@@ -280,7 +289,7 @@ export default Vue.extend({
           formatter: function (params: any) {
             return `
                 <div>
-                    ${params.marker}<span style="margin-left:10px;color:black;font-weight:bold">${params.data.name}：<span style="color:${params.color};font-weight:normal">${params.data.value}万元</span></span>
+                    ${params.marker}<span style="margin-left:10px;color:black;font-weight:bold">${params.data.name}：<span style="color:${params.color};font-weight:normal">${params.data.value}</span></span>
                 </div>
               `
           }
@@ -312,57 +321,41 @@ export default Vue.extend({
           }
         ]
       },
-      companyOption: {
+      categoryOption: {
         tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow'
-          },
+          trigger: 'item',
           formatter: function (params: any) {
             return `
-                <h4 style='color:#000000;margin:5px 0'>${params[0].axisValue}</h4>
-                <span style='color:#A3A3A3;font-size:10px'>CNY：</span>
-                <span style='color:#229CFB;font-size:14px;'>￥${params[0].value}</span>
-            `
+                <div>
+                    ${params.marker}<span style="margin-left:10px;color:black;font-weight:bold">${params.data.name}：<span style="color:${params.color};font-weight:normal">${params.data.value}</span></span>
+                </div>
+              `
           }
         },
-
-        dataZoom: [
-          //给y轴设置滚动条
-          {
-            start: 0, //默认为0
-            end: 100 - 1500 / 31, //默认为100
-            type: 'slider',
-            maxValueSpan: 10, //窗口的大小，显示数据的条数的
-            show: true,
-            handleSize: 0, //滑动条的 左右2个滑动条的大小
-            height: '70%', //组件高度
-            left: 650,
-            right: 15,
-            top: 50,
-            borderColor: 'rgba(43,48,67,.8)',
-            fillerColor: '#33384b',
-            zoomLock: true,
-            brushSelect: false,
-            backgroundColor: 'rgba(43,48,67,.8)', //两边未选中的滑动条区域的颜色
-            showDataShadow: false, //是否显示数据阴影 默认auto
-            showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
-            realtime: true, //是否实时更新
-            yAxisIndex: [0, 1] //控制的 y轴
-          }
-        ],
-        yAxis: {
-          type: 'category',
-          inverse: true,
-          data: []
-        },
-        xAxis: {
-          type: 'value'
+        legend: {
+          top: '5%',
+          left: 'center'
         },
         series: [
           {
-            data: [],
-            type: 'bar'
+            type: 'pie',
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: false,
+            label: {
+              show: false,
+              position: 'center'
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: '40',
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: false
+            },
+            data: []
           }
         ]
       },
@@ -372,22 +365,21 @@ export default Vue.extend({
         end_time: '',
         client_id: '',
         contacts_id: '',
-        group_id: '',
+        group_id: ''
       },
       reportData: {
-        number:0,
-        real_number:0,
-        proportion:0,
-        purchase:0,
-        process:0,
-        weave_plan:0,
-        client:[],
-        group:[]
+        number: 0,
+        real_number: 0,
+        proportion: 0,
+        purchase: 0,
+        process: 0,
+        weave_plan: 0,
+        client: [],
+        group: []
       },
       filterCondition: {
-        contactsList: [],
-        currency: moneyArr
-      },
+        contactsList: []
+      }
     }
   },
   methods: {
@@ -478,7 +470,7 @@ export default Vue.extend({
     },
     getList() {
       this.loading = true
-      
+
       statistics
         .sampleOrder({
           start_time: this.filterData.start_time,
@@ -487,10 +479,14 @@ export default Vue.extend({
           end_time: this.filterData.end_time
         })
         .then((res) => {
-          if(!res.data.status) {
+          if (!res.data.status) {
             this.loading = false
             return
           }
+
+          this.categoryOption.series[0].data = []
+          this.option1.xAxis[0].data = []
+
           let data = res.data.data
           data.number = this.$formatNum(data.number)
           data.real_number = this.$formatNum(data.real_number)
@@ -499,148 +495,67 @@ export default Vue.extend({
           data.weave_plan = this.$formatNum(data.weave_plan.toFixed(2))
           data.proportion = this.$formatNum(data.proportion.toFixed(2))
           this.reportData = data
-          console.log(data)
-          /*
-          this.option1.series[0].data = []
-          this.option1.series[1].data = []
-          this.groupOption.series[0].data = []
-          this.companyOption.yAxis.data = []
-          this.companyOption.series[0].data = []
 
-          let orderPriceMax: any,
-            orderPriceMin: any,
-            orderNumberMax: any,
-            orderNumberMin: any,
-            outPriceMax: any,
-            outPriceMin: any,
-            outNumberMax: any,
-            outNumberMin: any = 0
-
-          if (data.order.report.month.length !== 0) {
-            //  每月下单总额
-            orderPriceMax = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
-              return +num1.total_price > +num2.total_price ? num1 : num2
+          data.category.forEach((category: any) => {
+            this.categoryOption.series[0].data.push({
+              name: category.name || '其它',
+              value: category.number
             })
-            orderPriceMin = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
-              return +num1.total_price < +num2.total_price ? num1 : num2
+          })
+
+          data.group.forEach((group: any) => {
+            this.groupOption.series[0].data.push({
+              name: group.name || '其它',
+              value: group.number
+            })
+          })
+
+          data.client.forEach((client: any) => {
+            this.option1.xAxis[0].data.push(client.name)
+            this.option1.series[0].data.push(client.number)
+            this.option1.series[1].data.push(client.price)
+          })
+
+          let simpleNumberMax: any,
+            simpleNumberMin: any,
+            simplePriceMax: any,
+            simplePriceMin: any = 0
+
+          if (data.client.length !== 0) {
+            //  打样数量
+            simpleNumberMax = Object.values(data.client).reduce((num1: any, num2: any) => {
+              return +num1.number > +num2.number ? num1 : num2
+            })
+            simpleNumberMin = Object.values(data.client).reduce((num1: any, num2: any) => {
+              return +num1.number < +num2.number ? num1 : num2
             })
 
-            // 每月下单总数
-            orderNumberMax = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
-              return +num1.total_number > +num2.total_number ? num1 : num2
-            })
-            orderNumberMin = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
-              return +num1.total_number < +num2.total_number ? num1 : num2
-            })
-
-            // 拿到每月下单总额的最大值和最小值
-            orderPriceMax = +orderPriceMax.total_price
-            orderPriceMin = +orderPriceMin.total_price
-
-            // 拿到每月下单总数的最大值和最小值
-            orderNumberMax = +orderNumberMax.total_number
-            orderNumberMin = +orderNumberMin.total_number
-          }
-
-          if (data.transport.report.month.length !== 0) {
-            //  每月出库总额
-            outPriceMax = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
+            // 打样成本
+            simplePriceMax = Object.values(data.client).reduce((num1: any, num2: any) => {
               return +num1.price > +num2.price ? num1 : num2
             })
-            outPriceMin = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
+            simplePriceMin = Object.values(data.client).reduce((num1: any, num2: any) => {
               return +num1.price < +num2.price ? num1 : num2
             })
 
-            // 每月出库总数
-            outNumberMax = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
-              return +num1.transport_number > +num2.transport_number ? num1 : num2
-            })
-            outNumberMin = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
-              return +num1.transport_number < +num2.transport_number ? num1 : num2
-            })
+            // 拿到打样数量的最大值和最小值
+            simpleNumberMax = +simpleNumberMax.number
+            simpleNumberMin = +simpleNumberMin.number
 
-            // 拿到每月出库总额的最大值和最小值
-            outPriceMax = +outPriceMax.price
-            outPriceMin = +outPriceMin.price
-
-            // 拿到出库下单总数的最大值和最小值
-            outNumberMax = +outNumberMax.transport_number
-            outNumberMin = +outNumberMin.transport_number
+            // 拿到打样成本的最大值和最小值
+            simplePriceMax = +simplePriceMax.price
+            simplePriceMin = +simplePriceMin.price
           }
 
-          if (this.activeName === 'first') {
-            this.option1.series[0].name = '每月下单总额'
-            this.option1.series[1].name = '每月下单总数'
-            this.option1.legend.data = ['每月下单总额', '每月下单总数']
-            this.option1.yAxis[0].name = '下单总额'
-            this.option1.yAxis[1].name = '下单总数'
+          // 每月出库总数 图表更新
+          this.option1.yAxis[0].max = Math.ceil(Math.ceil(simpleNumberMax / 5)) * 5 || 10
+          this.option1.yAxis[0].min = simpleNumberMax && simpleNumberMax < 0 ? Math.ceil(simpleNumberMax) : 0
+          this.option1.yAxis[0].interval = Math.ceil(simpleNumberMax / 5) || 10
 
-            // 每月下单总数 图表更新
-            this.option1.yAxis[0].max = Math.ceil(Math.ceil(orderPriceMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[0].min = orderPriceMin && orderPriceMin < 0 ? Math.ceil(orderPriceMin / 10000) : 0
-            this.option1.yAxis[0].interval = Math.ceil(orderPriceMax / 10000 / 5) || 10
-
-            // 每月下单总额 图表更新
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(orderNumberMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[1].min = orderNumberMin && orderNumberMin < 0 ? Math.ceil(orderNumberMin / 10000) : 0
-            this.option1.yAxis[1].interval = Math.ceil(orderNumberMax / 10000 / 5) || 10
-
-            this.option1.xAxis[0].data.forEach((itemMouth: any) => {
-              let mouth = this.reportData.order.report.month.find((item: any) => {
-                return item.mouth === itemMouth
-              })
-              if (mouth) {
-                this.option1.series[0].data.push(+(+mouth.total_price / 10000).toFixed(2))
-                this.option1.series[1].data.push(+(+mouth.total_number / 10000).toFixed(2))
-              } else {
-                this.option1.series[0].data.push(0)
-                this.option1.series[1].data.push(0)
-              }
-            })
-
-            // 饼图
-            data.order.report.group.forEach((group: any) => {
-              this.groupOption.series[0].data.push({
-                name: group.group_name || '其它',
-                value: group.total_price
-              })
-            })
-
-            // 横向柱状图
-            data.order.report.client.forEach((client: any) => {
-              this.companyOption.yAxis.data.push(client.client_name)
-              this.companyOption.series[0].data.push(client.total_price)
-            })
-          } else if (this.activeName === 'second') {
-            this.option1.series[0].name = '每月出库总额'
-            this.option1.series[1].name = '每月出库总数'
-            this.option1.legend.data = ['每月出库总额', '每月出库总数']
-            this.option1.yAxis[0].name = '出库总额'
-            this.option1.yAxis[1].name = '出库总数'
-
-            // 每月出库总数 图表更新
-            this.option1.yAxis[0].max = Math.ceil(Math.ceil(outPriceMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[0].min = outPriceMin && outPriceMin < 0 ? Math.ceil(outPriceMin / 10000) : 0
-            this.option1.yAxis[0].interval = Math.ceil(outPriceMax / 10000 / 5) || 10
-
-            // 每月出库总额 图表更新
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(outNumberMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[1].min = outNumberMin && outNumberMin < 0 ? Math.ceil(outNumberMin / 10000) : 0
-            this.option1.yAxis[1].interval = Math.ceil(outNumberMax / 10000 / 5) || 10
-
-            this.option1.xAxis[0].data.forEach((itemMouth: any) => {
-              let mouth = this.reportData.transport.report.month.find((item: any) => {
-                return item.mouth === itemMouth
-              })
-              if (mouth) {
-                this.option1.series[0].data.push(+(+mouth.price / 10000).toFixed(2))
-                this.option1.series[1].data.push(+(+mouth.transport_number / 10000).toFixed(2))
-              } else {
-                this.option1.series[0].data.push(0)
-                this.option1.series[1].data.push(0)
-              }
-            })
-          }*/
+          // 每月出库总额 图表更新
+          this.option1.yAxis[1].max = Math.ceil(Math.ceil(simplePriceMax / 5)) * 5 || 10
+          this.option1.yAxis[1].min = simplePriceMin && simplePriceMin < 0 ? simplePriceMin : 0
+          this.option1.yAxis[1].interval = Math.ceil(simplePriceMax / 5) || 10
           this.loading = false
         })
     }
