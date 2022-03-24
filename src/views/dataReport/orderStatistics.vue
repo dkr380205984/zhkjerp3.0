@@ -454,6 +454,15 @@ export default Vue.extend({
                 </div>
               `
       }
+      this.companyOption.tooltip.formatter = (params: any) => {
+        return `
+                <h4 style='color:#000000;margin:5px 0'>${params[0].axisValue}</h4>
+                <span style='color:#A3A3A3;font-size:10px'>CNY：</span>
+                <span style='color:#229CFB;font-size:14px;'>${this.filterData.settle_unit === '美元' ? '$' : '￥'}${
+          params[0].value
+        }</span>
+            `
+      }
     },
     getFilters() {
       const query = this.$route.query
