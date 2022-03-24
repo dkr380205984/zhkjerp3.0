@@ -40,9 +40,9 @@
     </div>
     <div class="module noBackColor">
       <div class="cardCtn">
-        <div class="card noBackColor noPad">
+        <div class="card noBackColor noPad" style="width: 106%">
           <div class="screenCtn">
-            <div class="screen">
+            <div class="screen" style="width: 66%">
               <el-date-picker
                 v-model="filterData.start_time"
                 type="year"
@@ -66,7 +66,7 @@
               >
               </el-cascader>
             </div>
-            <div class="screen">
+            <div class="screen" style="margin-bottom: 0">
               <el-select
                 @change="(ev) => getLocalStorage(ev, 'group_id')"
                 v-model="filterData.group_id"
@@ -76,13 +76,8 @@
                 <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
               </el-select>
             </div>
-            <div class="screen">
-              <el-select
-                @change="(ev) => getLocalStorage(ev, 'create_user')"
-                v-model="filterData.contacts_id"
-                placeholder="筛选创建人"
-                clearable
-              >
+            <div class="screen" style="margin-bottom: 0">
+              <el-select @change="changePeople" v-model="filterData.contacts_id" placeholder="筛选创建人" clearable>
                 <el-option
                   v-for="item in userList"
                   :key="item.value"
@@ -91,7 +86,7 @@
                 ></el-option>
               </el-select>
             </div>
-            <div class="screen">
+            <div class="screen" style="margin-bottom: 0">
               <el-select placeholder="筛选币种" clearable v-model="filterData.settle_unit" @change="changeRouter">
                 <el-option
                   v-for="item in filterCondition.currency"
@@ -105,10 +100,9 @@
                 </el-option>
               </el-select>
             </div>
-            <div class="screen"></div>
           </div>
         </div>
-        <div class="card">
+        <div class="card" style="margin-left: 4px">
           <div class="contentGrid">
             <h3>当前统计默认值</h3>
             <div class="item2">
@@ -126,6 +120,9 @@
             </div>
             <div>
               币种：<span class="blue">{{ filterData.settle_unit || '所有' }}</span>
+            </div>
+            <div>
+              创建人：<span class="blue">{{ createPeople || '所有' }}</span>
             </div>
           </div>
         </div>
@@ -340,6 +337,7 @@ export default Vue.extend({
         ]
       },
       groupName: '',
+      createPeople: '',
       filterData: {
         start_time: '',
         end_time: '',
@@ -387,6 +385,21 @@ export default Vue.extend({
       this.groupName = '所有'
       if (groupInfo) {
         this.groupName = groupInfo.name
+      }
+      this.changeRouter()
+    },
+    changePeople(user_id: any) {
+      this.createPeople = '所有'
+
+      let obj = this.userList.find((item: any) => {
+        return item.value === user_id
+      })
+
+      localStorage.create_user_name = ''
+
+      if(obj){
+        localStorage.create_user_name = obj.label
+        this.createPeople = obj.label
       }
       this.changeRouter()
     },
@@ -458,6 +471,7 @@ export default Vue.extend({
       this.filterData.contacts_id = query.contacts_id || this.$getLocalStorage('create_user') || ''
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.filterData.settle_unit = query.settle_unit
+      this.createPeople = this.$getLocalStorage('create_user_name')
       this.changeUnit()
       this.getContacts(this.filterData.client_id)
     },
@@ -718,6 +732,9 @@ export default Vue.extend({
         getInfoApi: 'getUserAsync'
       }
     ])
+  },
+  beforeDestroy(){
+    localStorage.create_user_name = ''
   }
 })
 </script>

@@ -40,9 +40,9 @@
     </div>
     <div class="module noBackColor">
       <div class="cardCtn">
-        <div class="card noBackColor noPad">
+        <div class="card noBackColor noPad" style="width: 106%">
           <div class="screenCtn">
-            <div class="screen">
+            <div class="screen" style="width: 100%">
               <el-date-picker
                 v-model="filterData.start_time"
                 type="year"
@@ -51,7 +51,7 @@
               >
               </el-date-picker>
             </div>
-            <div class="screen">
+            <div class="screen" style="margin-bottom: 0">
               <el-cascader
                 @change="
                   getContacts($event)
@@ -66,7 +66,7 @@
               >
               </el-cascader>
             </div>
-            <div class="screen">
+            <div class="screen" style="margin-bottom: 0">
               <el-select
                 @change="(ev) => getLocalStorage(ev, 'group_id')"
                 v-model="filterData.group_id"
@@ -76,10 +76,19 @@
                 <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
               </el-select>
             </div>
-            <div class="screen"></div>
+            <div class="screen" style="margin-bottom: 0">
+              <el-select @change="changePeople" v-model="filterData.contacts_id" placeholder="筛选创建人" clearable>
+                <el-option
+                  v-for="item in userList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </div>
           </div>
         </div>
-        <div class="card">
+        <div class="card" style="margin-left: 4px">
           <div class="contentGrid">
             <h3>当前统计默认值</h3>
             <div class="item2">
@@ -94,6 +103,9 @@
             </div>
             <div>
               下单公司：<span class="blue">{{ alias || '所有' }}</span>
+            </div>
+            <div>
+              创建人：<span class="blue">{{ createPeople || '所有' }}</span>
             </div>
           </div>
         </div>
@@ -195,6 +207,7 @@ export default Vue.extend({
         }
       },
       alias: '',
+      createPeople: '',
       option1: {
         tooltip: {
           trigger: 'axis',
@@ -231,14 +244,6 @@ export default Vue.extend({
             })
 
             return htmlStr
-          }
-        },
-        toolbox: {
-          right: '15%',
-          feature: {
-            magicType: { show: true, type: ['line', 'bar'] },
-            restore: { show: true },
-            saveAsImage: { show: true }
           }
         },
         legend: {
@@ -398,6 +403,21 @@ export default Vue.extend({
         this.alias = '所有'
       }
     },
+    changePeople(user_id: any) {
+      this.createPeople = '所有'
+
+      let obj = this.userList.find((item: any) => {
+        return item.value === user_id
+      })
+
+      localStorage.create_user_name = ''
+
+      if (obj) {
+        localStorage.create_user_name = obj.label
+        this.createPeople = obj.label
+      }
+      this.changeRouter()
+    },
     getLocalStorage(ev: any, type: string) {
       let groupInfo = this.groupList.find((item: any) => {
         return this.filterData.group_id === item.id
@@ -424,6 +444,7 @@ export default Vue.extend({
         : []
       this.filterData.contacts_id = query.contacts_id || this.$getLocalStorage('create_user') || ''
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
+      this.createPeople = this.$getLocalStorage('create_user_name')
       this.getContacts(this.filterData.client_id)
     },
     formatDate(date: Date) {
@@ -463,6 +484,8 @@ export default Vue.extend({
           (this.filterData.client_id || '') +
           '&group_id=' +
           (this.filterData.group_id || '') +
+          '&contacts_id=' +
+          (this.filterData.contacts_id || '') +
           '&start_time=' +
           (this.filterData.start_time || '') +
           '&end_time=' +
@@ -477,7 +500,8 @@ export default Vue.extend({
           start_time: this.filterData.start_time,
           client_id: this.filterData.client_id.length > 0 ? this.filterData.client_id[2] : '',
           group_id: this.filterData.group_id,
-          end_time: this.filterData.end_time
+          end_time: this.filterData.end_time,
+          user_id: this.filterData.contacts_id
         })
         .then((res) => {
           if (!res.data.status) {
@@ -607,6 +631,9 @@ export default Vue.extend({
         getInfoApi: 'getUserAsync'
       }
     ])
+  },
+  beforeDestroy() {
+    localStorage.create_user_name = ''
   }
 })
 </script>
