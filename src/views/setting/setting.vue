@@ -29,7 +29,7 @@
             <div class="listCtn">
               <div class="filterCtn clearfix">
                 <div class="btn backHoverBlue fr"
-                  @click="showPopup = true">添加新品类</div>
+                  @click="showPopup = true;categoryInfo.id=''">添加新品类</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -47,6 +47,8 @@
                   <div class="col">{{ item.unit }}</div>
                   <div class="col">{{ item.code }}</div>
                   <div class="col">
+                    <span class="opr hoverOrange"
+                      @click="updateCategory(item)">修改</span>
                     <span class="opr hoverRed"
                       @click="deleteCategory(item.id)">删除</span>
                   </div>
@@ -782,7 +784,7 @@
             <div class="listCtn">
               <div class="filterCtn clearfix">
                 <div class="btn backHoverBlue fr"
-                  @click="showPopup = true">添加纱线</div>
+                  @click="showPopup = true;yarnInfo1.id=''">添加纱线</div>
                 <div class="btn backHoverOrange fr"
                   @click="showYarn = true">批量导入</div>
                 <div class="btn backHoverGreen fr"
@@ -795,7 +797,8 @@
                   <div class="col">参考报价</div>
                   <div class="col">添加人</div>
                   <div class="col">添加时间</div>
-                  <div class="col">操作</div>
+                  <div class="col"
+                    style="flex:2">操作</div>
                 </div>
                 <div class="row"
                   v-for="(item, index) in yarnList1"
@@ -805,7 +808,8 @@
                   <div class="col">{{ item.rel_price | filterPrice }}</div>
                   <div class="col">{{ item.user_name }}</div>
                   <div class="col">{{ item.created_at }}</div>
-                  <div class="col">
+                  <div class="col"
+                    style="flex:2">
                     <span class="opr hoverBlue">
                       <el-popover placement="bottom"
                         title="报价详情"
@@ -837,6 +841,8 @@
                         }}</span>
                       </el-popover>
                     </span>
+                    <span class="opr hoverOrange"
+                      @click="updateYarn(item, 1)">修改</span>
                     <span class="opr hoverRed"
                       @click="deleteYarn(item.id, 1)">删除</span>
                   </div>
@@ -857,7 +863,7 @@
             <div class="listCtn">
               <div class="filterCtn clearfix">
                 <div class="btn backHoverBlue fr"
-                  @click="showPopup = true">添加面料</div>
+                  @click="showPopup = true;;yarnInfo2.id=''">添加面料</div>
                 <div class="btn backHoverOrange fr"
                   @click="showYarn = true">批量导入</div>
                 <div class="btn backHoverGreen fr"
@@ -870,7 +876,8 @@
                   <div class="col">参考报价</div>
                   <div class="col">添加人</div>
                   <div class="col">添加时间</div>
-                  <div class="col">操作</div>
+                  <div class="col"
+                    style="flex:2">操作</div>
                 </div>
                 <div class="row"
                   v-for="(item, index) in yarnList2"
@@ -880,7 +887,8 @@
                   <div class="col">{{ item.rel_price | filterPrice }}</div>
                   <div class="col">{{ item.user_name }}</div>
                   <div class="col">{{ item.created_at }}</div>
-                  <div class="col">
+                  <div class="col"
+                    style="flex:2">
                     <span class="opr hoverBlue">
                       <el-popover placement="bottom"
                         title="报价详情"
@@ -912,6 +920,8 @@
                         }}</span>
                       </el-popover>
                     </span>
+                    <span class="opr hoverOrange"
+                      @click="updateYarn(item, 2)">修改</span>
                     <span class="opr hoverRed"
                       @click="deleteYarn(item.id, 2)">删除</span>
                   </div>
@@ -971,7 +981,7 @@
             <div class="listCtn">
               <div class="filterCtn clearfix">
                 <div class="btn backHoverBlue fr"
-                  @click="showPopup = true">添加辅料</div>
+                  @click="showPopup = true;decorateMaterialInfo.id=''">添加辅料</div>
                 <div class="btn backHoverOrange fr"
                   @click="importExcelData('decorateMaterial')">批量导入</div>
                 <div class="btn backHoverGreen fr"
@@ -995,6 +1005,8 @@
                   <div class="col">{{ item.user_name }}</div>
                   <div class="col">{{ item.created_at }}</div>
                   <div class="col">
+                    <span class="opr hoverOrange"
+                      @click="decorateMaterialInfo=item;showPopup=true">修改</span>
                     <span class="opr hoverRed"
                       @click="deleteDecorateMaterial(item.id)">删除</span>
                   </div>
@@ -1443,7 +1455,7 @@
       <template v-if="cName === '品类'">
         <div class="main">
           <div class="titleCtn">
-            <div class="text">新增品类</div>
+            <div class="text">{{categoryInfo.id?'修改':'新增'}}品类</div>
             <div class="closeCtn"
               @click="showPopup = false">
               <i class="el-icon-close"></i>
@@ -1470,7 +1482,7 @@
                   添加
                 </div>
                 <div class="info_btn hoverRed"
-                  @click="$deleteItem(categoryInfo.secondary_category, index)"
+                  @click="item.id?deleteSecondCategory(item.id,index):$deleteItem(categoryInfo.secondary_category, index)"
                   v-if="index > 0">
                   删除
                 </div>
@@ -1873,14 +1885,15 @@
         <div class="main"
           style="width: 920px">
           <div class="titleCtn">
-            <div class="text">新增纱线</div>
+            <div class="text">{{yarnInfo1.id?'修改':'新增'}}纱线</div>
             <div class="closeCtn"
               @click="showPopup = false">
               <i class="el-icon-close"></i>
             </div>
           </div>
           <div class="contentCtn">
-            <div class="row">
+            <div class="row"
+              v-if="!yarnInfo1.id">
               <div class="label">添加方式：</div>
               <div class="info"
                 style="line-height: 34px">
@@ -1997,7 +2010,7 @@
         <div class="main"
           style="width: 920px">
           <div class="titleCtn">
-            <div class="text">新增面料</div>
+            <div class="text">{{yarnInfo2.id?'修改':'新增'}}面料</div>
             <div class="closeCtn"
               @click="showPopup = false">
               <i class="el-icon-close"></i>
@@ -4233,6 +4246,10 @@ export default Vue.extend({
         })
       }
     },
+    updateCategory(info: any) {
+      this.categoryInfo = info
+      this.showPopup = true
+    },
     deleteCategory(id: number) {
       this.$confirm('是否删除该品类?', '提示', {
         confirmButtonText: '确定',
@@ -4247,6 +4264,30 @@ export default Vue.extend({
                 message: '删除成功!'
               })
               this.getCategory()
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    deleteSecondCategory(id: number, index: number) {
+      this.$confirm('是否删除该二级品类?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          category.deleteSecond({ id }).then((res) => {
+            if (res.data.status) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+              this.$deleteItem(this.categoryInfo.secondary_category, index)
             }
           })
         })
@@ -5285,17 +5326,27 @@ export default Vue.extend({
       }
       yarn
         .create({
-          id: null,
+          id: this['yarnInfo' + type].id,
           name: this['yarnInfo' + type].name || this.layoutData.yarnNameList,
           type: type,
           yarn_rel_type: realType as number[]
         })
         .then((res) => {
           if (res.data.status) {
-            this.$message.success('添加成功')
+            this.$message.success('操作成功')
             this.getYarn(type)
+            this.showPopup = false
           }
         })
+    },
+    updateYarn(info: any, type: 1 | 2 | 3) {
+      this['yarnTypeList' + type].forEach((item: any) => {
+        if (info.rel_type.indexOf(item.name) !== -1) {
+          item.check = true
+        }
+      })
+      this['yarnInfo' + type] = info
+      this.showPopup = true
     },
     deleteYarn(id: number, type: 1 | 2 | 3) {
       this.$confirm('是否删除该纱线?', '提示', {
@@ -5345,8 +5396,9 @@ export default Vue.extend({
       if (!formCheck) {
         decorateMaterial.create({ data: [this.decorateMaterialInfo] }).then((res) => {
           if (res.data.status) {
-            this.$message.success('添加成功')
+            this.$message.success('操作成功')
             this.getDecorateMaterial()
+            this.showPopup = false
           }
         })
       }

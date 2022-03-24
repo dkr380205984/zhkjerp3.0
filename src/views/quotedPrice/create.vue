@@ -1628,20 +1628,20 @@ export default Vue.extend({
                         errMsg: '请选择产品' + (index + 1) + '原料',
                         regNormal: 'checkArr'
                       },
-                      {
-                        key: 'weight',
-                        errMsg: '请输入产品' + (index + 1) + '原料预计数量'
-                      },
+                      // {
+                      //   key: 'weight',
+                      //   errMsg: '请输入产品' + (index + 1) + '原料预计数量'
+                      // },
                       {
                         key: 'unit',
                         errMsg: '物料的单位只能为g，kg或m',
                         regExp: /^g$|^m$|^kg$/,
                         regNegate: true
-                      },
-                      {
-                        key: 'price',
-                        errMsg: '请输入产品' + (index + 1) + '原料单价'
                       }
+                      // {
+                      //   key: 'price',
+                      //   errMsg: '请输入产品' + (index + 1) + '原料单价'
+                      // }
                     ])
                   )
                 }) ||
@@ -1653,18 +1653,18 @@ export default Vue.extend({
                         key: 'material_id',
                         errMsg: '请选择产品' + (index + 1) + '装饰辅料'
                       },
-                      {
-                        key: 'number',
-                        errMsg: '请输入产品' + (index + 1) + '装饰辅料预计数量'
-                      },
+                      // {
+                      //   key: 'number',
+                      //   errMsg: '请输入产品' + (index + 1) + '装饰辅料预计数量'
+                      // },
                       {
                         key: 'unit',
                         errMsg: '请输入产品' + (index + 1) + '装饰辅料数量单位'
-                      },
-                      {
-                        key: 'price',
-                        errMsg: '请输入产品' + (index + 1) + '装饰辅料单价'
                       }
+                      // {
+                      //   key: 'price',
+                      //   errMsg: '请输入产品' + (index + 1) + '装饰辅料单价'
+                      // }
                     ])
                   )
                 }) ||

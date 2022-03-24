@@ -52,6 +52,8 @@
         <div class="list"
           v-loading="loading">
           <div class="row title">
+            <div class="col check"
+              style="max-width: 20px!important;min-width: 20px!important;"></div>
             <div class="col">计划单号</div>
             <div class="col">发货时间</div>
             <div class="col">关联订单</div>
@@ -65,16 +67,18 @@
           <div class="row"
             v-for="item in list"
             :key="item.id">
-            <div class="col">
+            <div class="col check"
+              style="max-width: 20px!important;min-width: 20px!important;">
               <el-checkbox v-model="item.check"
-                @change="(ev)=>{getPlan(ev,item)}">{{item.code}}</el-checkbox>
+                @change="(ev)=>{getPlan(ev,item)}"></el-checkbox>
             </div>
+            <div class="col">{{item.code}}</div>
             <div class="col">{{item.delivery_time}}</div>
             <div class="col">{{item.order_code}}</div>
             <div class="col">{{item.group_name}}</div>
             <div class="col">{{item.total_delivery_number}}</div>
-            <div class="col">合计发货数量</div>
-            <div class="col">发货比例</div>
+            <div class="col">{{item.total_delivery_number}}</div>
+            <div class="col">{{item.delivery_pre}}%</div>
             <div class="col">{{item.user_name}}</div>
             <div class="col">
               <div class="opr hoverBlue"
