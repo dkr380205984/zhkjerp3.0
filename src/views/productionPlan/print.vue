@@ -315,7 +315,7 @@ export default Vue.extend({
         if (res.data.status) {
           this.productionPlanInfo = res.data.data
           const QRCode = require('qrcode')
-          QRCode.toDataURL(`${this.productionPlanInfo.id}`)
+          QRCode.toDataURL(`/inspection/detail?id=${this.$route.query.order_id}&code=${res.data.data.code}&product_id=${res.data.data.product_info_data[0].product_id}&isBarcodeScanner=true`)
             .then((url: any) => {
               this.qrCodeUrl = url
             })

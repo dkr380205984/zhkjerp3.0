@@ -211,7 +211,7 @@
             <div class="otherInfoCtn">
               <div class="otherInfo">
                 <div class="btn backHoverBlue"
-                  @click="$openUrl('/productionPlan/print?id='+item.id)">
+                  @click="$openUrl('/productionPlan/print?id='+item.id+'&order_id='+$route.query.id)">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
