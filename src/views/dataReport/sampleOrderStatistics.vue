@@ -13,25 +13,25 @@
         </svg>
         <span class="text">样单数据图表</span>
       </div>
-      <div class="tag">
+      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-yuanliaoshiyongtubiao"></use>
         </svg>
         <span class="text">原料使用图表</span>
       </div>
-      <div class="tag">
+      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-fuliaoshiyongtubiao"></use>
         </svg>
         <span class="text">辅料使用图表</span>
       </div>
-      <div class="tag">
+      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-shengchanshujutubiao"></use>
         </svg>
         <span class="text">生产数据图表</span>
       </div>
-      <div class="tag">
+      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-qitafeiyongtubiao"></use>
         </svg>
@@ -170,6 +170,16 @@
       </div>
       <div class="cardCtn">
         <div class="card" style="padding-top: 60px">
+          <!-- <div style="display: flex; justify-content: end; padding-right: 50px">
+            <div style="width:150px">
+              <el-select v-model="sortWay">
+                <el-option label="打样数量排序" :value="1">
+                </el-option>
+                <el-option label="打样成本排序" :value="2">
+                </el-option>
+              </el-select>
+            </div>
+          </div> -->
           <zh-charts :option="option1"></zh-charts>
         </div>
       </div>
@@ -208,6 +218,7 @@ export default Vue.extend({
       },
       alias: '',
       createPeople: '',
+      sortWay:1,
       option1: {
         tooltip: {
           trigger: 'axis',
@@ -518,9 +529,9 @@ export default Vue.extend({
           let data = res.data.data
           data.number = this.$formatNum(data.number)
           data.real_number = this.$formatNum(data.real_number)
-          data.process = this.$formatNum(data.process.toFixed(2))
-          data.purchase = this.$formatNum(data.purchase.toFixed(2))
-          data.weave_plan = this.$formatNum(data.weave_plan.toFixed(2))
+          data.process = this.$formatNum((data.process / 10000).toFixed(2))
+          data.purchase = this.$formatNum((data.purchase / 10000).toFixed(2))
+          data.weave_plan = this.$formatNum((data.weave_plan / 10000).toFixed(2))
           data.proportion = this.$formatNum(data.proportion.toFixed(2))
           this.reportData = data
 
