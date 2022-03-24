@@ -298,7 +298,7 @@
                       <zh-input class="inputs"
                         :keyBoard="keyBoard"
                         v-model="itemChild.number"
-                        placeholder="请输入结算单价"
+                        placeholder="请输入检验数量"
                         type="number">
                       </zh-input>
                     </div>
