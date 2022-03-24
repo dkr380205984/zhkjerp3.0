@@ -984,6 +984,7 @@ export default Vue.extend({
       this.getCmpData()
       if (!formCheck && !partFormCheck) {
         this.loading = true
+        this.sampleInfo.editor.destroy()
         this.sampleInfo.editor = ''
         sample.create(this.sampleInfo).then((res) => {
           if (res.data.status) {
@@ -1116,6 +1117,7 @@ export default Vue.extend({
         // 配件信息
         part_data: data.part_data.map((item: any) => {
           return {
+            id: this.edit ? item.id : '',
             name: item.name,
             unit: item.unit,
             part_size_data: item.part_size_data.map((item: any) => {

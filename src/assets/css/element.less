@@ -64,6 +64,17 @@
     }
   }
 }
+input{
+  &::placeholder{
+    color: #888!important;
+  }
+}
+input:disabled {
+  background: #f8f8f8!important;
+  &::placeholder{
+    color: #777!important;
+  }
+}
 
 // 所有分页组件
 .el-pagination{

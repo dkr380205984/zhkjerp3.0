@@ -63,18 +63,16 @@
                   <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
                 </div>
                 <div class="tcol">
-                  <div class="trow">
-                    <div class="imageCtn">
-                      <el-image style="width:100%;height:100%;margin-top:2px"
-                        :src="itemPro.image_data.length>0?itemPro.image_data[0]:''"
-                        :preview-src-list="itemPro.image_data">
-                        <div slot="error"
-                          class="image-slot">
-                          <i class="el-icon-picture-outline"
-                            style="font-size:42px"></i>
-                        </div>
-                      </el-image>
-                    </div>
+                  <div class="imageCtn">
+                    <el-image style="width:100%;height:100%;margin-top:2px"
+                      :src="itemPro.image_data.length>0?itemPro.image_data[0]:''"
+                      :preview-src-list="itemPro.image_data">
+                      <div slot="error"
+                        class="image-slot">
+                        <i class="el-icon-picture-outline"
+                          style="font-size:42px"></i>
+                      </div>
+                    </el-image>
                   </div>
                 </div>
                 <div class="tcol noPad"
@@ -157,11 +155,11 @@
               </div>
               <div class="col">
                 <div class="label">发货数量：</div>
-                <div class="text">暂无</div>
+                <div class="text">{{item.total_delivery_number}}</div>
               </div>
               <div class="col">
                 <div class="label">发货批次：</div>
-                <div class="text">暂无</div>
+                <div class="text">{{item.delivery_batch}}</div>
               </div>
             </div>
             <div class="row">
@@ -207,7 +205,7 @@
                     <div class="tcol">总净重kg</div>
                     <div class="tcol">长cm</div>
                     <div class="tcol">宽cm</div>
-                    <div class="tcol">高cm</div>
+                    <div class="tcol">高cm/封口</div>
                     <div class="tcol">单箱体积m³</div>
                     <div class="tcol">总体积m³</div>
                   </div>
@@ -264,7 +262,7 @@
                 <div class="tcol">包装名称</div>
                 <div class="tcol">长</div>
                 <div class="tcol">宽</div>
-                <div class="tcol">高</div>
+                <div class="tcol">高/封口</div>
                 <div class="tcol">属性或说明</div>
                 <div class="tcol">图片</div>
                 <div class="tcol">计划数量</div>
@@ -413,7 +411,7 @@
               <div class="trow">
                 <div class="tcol">包装名称</div>
                 <div class="tcol">包装规格</div>
-                <!-- <div class="tcol">体积单价</div> -->
+                <div class="tcol">面积单价</div>
                 <div class="tcol">数量单价</div>
                 <div class="tcol">订购数量</div>
                 <div class="tcol">备注信息</div>
@@ -435,8 +433,8 @@
                     {{itemChild.length}}
                   </template>
                 </div>
-                <!-- <div class="tcol">{{itemChild.bulk_price}}元</div> -->
-                <div class="tcol">{{itemChild.count_price}}元</div>
+                <div class="tcol">{{itemChild.bulk_price?(itemChild.bulk_price +'元'):'-'}}</div>
+                <div class="tcol">{{itemChild.count_price?(itemChild.count_price +'元'):'-'}}</div>
                 <div class="tcol">{{itemChild.number}}</div>
                 <div class="tcol">{{itemChild.desc}}</div>
               </div>
@@ -686,9 +684,8 @@
                       <el-input style="margin-right:12px"
                         v-model="itemChild.width"
                         placeholder="宽"></el-input>
-                      <el-input v-if="itemChild.price_type!==2"
-                        v-model="itemChild.height"
-                        placeholder="高"></el-input>
+                      <el-input v-model="itemChild.height"
+                        :placeholder="itemChild.price_type!==2?'高':'封口'"></el-input>
                     </template>
                     <template v-else>
                       <el-input v-model="itemChild.length"
@@ -710,18 +707,17 @@
               <div class="row">
                 <div class="col">
                   <div class="spaceBetween">
-                    <!-- <div class="once">
+                    <div class="once">
                       <div class="label">
-                        <span class="text">体积/面积单价（元）</span>
+                        <span class="text">面积单价（元）</span>
                       </div>
                       <div class="info elCtn">
                         <el-input v-model="itemChild.bulk_price"
-                          placeholder="单价"
-                          @input="(ev)=>{return getCountPrice(ev,itemChild)}">
+                          placeholder="单价">
                           <template slot="append">元</template>
                         </el-input>
                       </div>
-                    </div> -->
+                    </div>
                     <div class="once">
                       <div class="label">
                         <span class="text">数量单价（元/个）</span>
@@ -910,6 +906,15 @@
               <div class="row">
                 <div class="col">
                   <div class="label">
+                    <span class="text">发货批次</span>
+                  </div>
+                  <div class="info">
+                    <el-input v-model="packPlanInfo.delivery_batch"
+                      placeholder="请输入发货批次"></el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
                     <span class="text">批次名称</span>
                   </div>
                   <div class="info">
@@ -928,15 +933,6 @@
                       v-model="packPlanInfo.delivery_time"
                       value-format="yyyy-MM-dd"></el-date-picker>
                   </div>
-                </div>
-                <div class="col">
-                  <!-- <div class="label">
-                    <span class="text">发货批次</span>
-                  </div>
-                  <div class="info">
-                    <el-input v-model="packPlanInfo.delivery_batch"
-                      placeholder="请输入发货批次"></el-input>
-                  </div> -->
                 </div>
               </div>
               <div class="tableCtn specialTable">
@@ -1115,7 +1111,7 @@
                   <div class="tcol"
                     style="flex:0.5">宽</div>
                   <div class="tcol"
-                    style="flex:0.5">高</div>
+                    style="flex:0.5">高/封口</div>
                   <div class="tcol">所需数量</div>
                   <div class="tcol">属性或说明</div>
                   <div class="tcol">图片</div>
@@ -1160,7 +1156,7 @@
                     style="flex:0.5">
                     <div class="elCtn">
                       <el-input :disabled="item.isPlan"
-                        placeholder="高"
+                        placeholder="高/封口"
                         v-model="item.height"></el-input>
                     </div>
                   </div>
@@ -1593,16 +1589,16 @@ export default Vue.extend({
           })
         })
     },
-    // 计算数量单个
-    getCountPrice(bulkPrice: number, info: any) {
-      if (info.price_type === 1 && info.length && info.width && info.height) {
-        info.count_price = this.$toFixed(
-          (Number(info.length) * Number(info.width) * Number(info.height) * bulkPrice) / 1000000
-        )
-      } else if (info.price_type === 2 && info.length && info.width) {
-        info.count_price = this.$toFixed((Number(info.length) * Number(info.width) * bulkPrice) / 10000)
-      }
-    },
+    // 计算数量单个,本来给面积单价用的，现在不知道怎么用
+    // getCountPrice(bulkPrice: number, info: any) {
+    //   if (info.price_type === 1 && info.length && info.width && info.height) {
+    //     info.count_price = this.$toFixed(
+    //       (Number(info.length) * Number(info.width) * Number(info.height) * bulkPrice) / 1000000
+    //     )
+    //   } else if (info.price_type === 2 && info.length && info.width) {
+    //     info.count_price = this.$toFixed((Number(info.length) * Number(info.width) * bulkPrice) / 10000)
+    //   }
+    // },
     getOrderCmpData() {
       this.packOrderInfo.forEach((item, index) => {
         item.order_id = this.order_id
@@ -1877,6 +1873,17 @@ export default Vue.extend({
         })
       })
       if (!formCheck) {
+        // 算一下发货产品总数量
+        this.packPlanInfo.total_delivery_number = 0
+        this.packPlanInfo.data.forEach((item) => {
+          item.info_data.forEach((itemChild) => {
+            itemChild.product_info.forEach((itemPro) => {
+              this.packPlanInfo.total_delivery_number =
+                Number(this.packPlanInfo.total_delivery_number) +
+                Number(itemPro.pack_number) * Number(itemChild.box_count)
+            })
+          })
+        })
         // 判断是否修改，修改就把原来的数据的number都清了
         if (!this.packPlanUpdateFlag) {
           this.packPlanInfo.gather_info = []

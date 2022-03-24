@@ -825,6 +825,8 @@ export default Vue.extend({
       yarnAttributeList: yarnAttributeArr,
       materialOrderInfo: [
         {
+          total_number: 0,
+          total_price: 0,
           material_type: 2,
           order_id: '',
           plan_id: '',
@@ -861,6 +863,8 @@ export default Vue.extend({
         plan_id: '',
         client_id: '',
         client_id_arr: [],
+        total_price: 0,
+        total_number: 0,
         order_time: this.$getDate(new Date()),
         delivery_time: '',
         others_fee_data: [
@@ -1004,6 +1008,8 @@ export default Vue.extend({
           client_id_arr: [],
           order_time: this.$getDate(new Date()),
           delivery_time: '',
+          total_number: 0,
+          total_price: 0,
           others_fee_data: [
             {
               desc: '', // 额外费用备注

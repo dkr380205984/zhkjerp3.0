@@ -121,6 +121,7 @@ import { CategoryInfo } from '@/types/productSetting'
 const category = {
   create: (params: CategoryInfo) => http.post(`${baseUrl}/product/category/save`, params, 'application/json'),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/product/category/delete`, params, 'application/json'),
+  deleteSecond: (params: DeleteParams) => http.post(`${baseUrl}/product/secondary/category/delete`, params, 'application/json'), // 删除二级品类
   list: (params?: ListParams) => http.get(`${baseUrl}/product/category/lists`, params)
 }
 // 产品款式
@@ -799,12 +800,12 @@ const statistics = {
     group_id: number | string
     settle_unit: number | string
   }) => http.get(`${baseUrl}/statistics/financial/order`, params),
-  sampleOrder:(params?:{
+  sampleOrder: (params?: {
     start_time: string
     end_time: string
     client_id: number | string
     group_id: number | string
-  }) => http.get(`${baseUrl}/statistics/financial/sample_order`,params)
+  }) => http.get(`${baseUrl}/statistics/financial/sample_order`, params)
 }
 export {
   statistics,

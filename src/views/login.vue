@@ -291,6 +291,7 @@ export default Vue.extend({
       })
     },
     checkLogin(res: any, companyInfo: any) {
+      console.log(res)
       this.$message.success({ message: '登录成功', showClose: true })
       // const moduleId = (companyInfo.module_info ? JSON.parse(companyInfo.module_info) : []).concat(
       //   companyInfo.module_id_detail ? JSON.parse(companyInfo.module_id_detail) : []
@@ -302,7 +303,7 @@ export default Vue.extend({
       window.sessionStorage.setItem('full_name', companyInfo.full_name)
       window.sessionStorage.setItem('module_id', JSON.stringify(companyInfo.module_info))
       window.sessionStorage.setItem('logo', companyInfo.logo)
-      window.sessionStorage.setItem('has_check', companyInfo.has_check)
+      window.sessionStorage.setItem('has_check', res.data.data.has_check)
       // window.sessionStorage.setItem('user_id', res.data.data.user_id)
       // window.sessionStorage.setItem('group_name', res.data.data.group_name)
       window.sessionStorage.setItem('telephone', res.data.data.telephone || this.loginInfo.user_name)
