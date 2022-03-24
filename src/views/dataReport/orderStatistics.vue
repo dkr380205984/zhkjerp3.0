@@ -53,7 +53,10 @@
             </div>
             <div class="screen">
               <el-cascader
-                @change="changeRouter()"
+                @change="
+                  getContacts($event)
+                  changeRouter()
+                "
                 placeholder="筛选下单公司"
                 v-model="filterData.client_id"
                 :show-all-levels="false"
@@ -210,34 +213,6 @@ export default Vue.extend({
             crossStyle: {
               color: '#999'
             }
-          },
-          formatter: function (params: any) {
-            var htmlStr = '<div>'
-            htmlStr += params[0].name + '<br/>' //x轴的名称
-            params.forEach((param: any, index: number) => {
-              var color = param.color //图例颜色
-
-              //为了保证和原来的效果一样，这里自己实现了一个点的效果
-              htmlStr +=
-                '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:' +
-                color +
-                ';"></span>'
-
-              //添加一个汉字，这里你可以格式你的数字或者自定义文本内容
-              htmlStr +=
-                param.seriesName +
-                '：' +
-                '<span style="color:' +
-                color +
-                ';margin-right:10px">' +
-                param.value +
-                '</span>' +
-                (index === 1 ? '万件' : '万元')
-
-              htmlStr += '</div>'
-            })
-
-            return htmlStr
           }
         },
         legend: {
@@ -288,14 +263,7 @@ export default Vue.extend({
       },
       groupOption: {
         tooltip: {
-          trigger: 'item',
-          formatter: function (params: any) {
-            return `
-                <div>
-                    ${params.marker}<span style="margin-left:10px;color:black;font-weight:bold">${params.data.name}：<span style="color:${params.color};font-weight:normal">${params.data.value}万元</span></span>
-                </div>
-              `
-          }
+          trigger: 'item'
         },
         legend: {
           top: '5%',
@@ -329,13 +297,6 @@ export default Vue.extend({
           trigger: 'axis',
           axisPointer: {
             type: 'shadow'
-          },
-          formatter: function (params: any) {
-            return `
-                <h4 style='color:#000000;margin:5px 0'>${params[0].axisValue}</h4>
-                <span style='color:#A3A3A3;font-size:10px'>CNY：</span>
-                <span style='color:#229CFB;font-size:14px;'>￥${params[0].value}</span>
-            `
           }
         },
 
@@ -404,10 +365,26 @@ export default Vue.extend({
     }
   },
   methods: {
+    getContacts(ev: number[]) {
+      if (ev && ev.length) {
+        client
+          .detail({
+            id: ev[2]
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.alias = res.data.data.alias
+            }
+          })
+      } else {
+        this.alias = '所有'
+      }
+    },
     getLocalStorage(ev: any, type: string) {
       let groupInfo = this.groupList.find((item: any) => {
         return this.filterData.group_id === item.id
       })
+      this.groupName = '所有'
       if (groupInfo) {
         this.groupName = groupInfo.name
       }
@@ -482,6 +459,7 @@ export default Vue.extend({
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.filterData.settle_unit = query.settle_unit
       this.changeUnit()
+      this.getContacts(this.filterData.client_id)
     },
     formatDate(date: Date) {
       return (

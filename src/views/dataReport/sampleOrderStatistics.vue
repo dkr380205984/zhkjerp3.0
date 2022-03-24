@@ -391,18 +391,18 @@ export default Vue.extend({
           })
           .then((res) => {
             if (res.data.status) {
-              this.filterCondition.contactsList = res.data.data.contacts_data
               this.alias = res.data.data.alias
             }
           })
       } else {
-        this.contacts_id = ''
+        this.alias = '所有'
       }
     },
     getLocalStorage(ev: any, type: string) {
       let groupInfo = this.groupList.find((item: any) => {
         return this.filterData.group_id === item.id
       })
+      this.groupName = '所有'
       if (groupInfo) {
         this.groupName = groupInfo.name
       }
@@ -424,6 +424,7 @@ export default Vue.extend({
         : []
       this.filterData.contacts_id = query.contacts_id || this.$getLocalStorage('create_user') || ''
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
+      this.getContacts(this.filterData.client_id)
     },
     formatDate(date: Date) {
       return (
@@ -485,7 +486,10 @@ export default Vue.extend({
           }
 
           this.categoryOption.series[0].data = []
+          this.groupOption.series[0].data = []
           this.option1.xAxis[0].data = []
+          this.option1.series[0].data = []
+          this.option1.series[1].data = []
 
           let data = res.data.data
           data.number = this.$formatNum(data.number)
