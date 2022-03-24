@@ -3,37 +3,37 @@
     <div class="topTagCtn">
       <div class="tag" @click="$router.push('/dataReport/orderStatistics')">
         <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-dingdancaiwutongji1"></use>
+          <use xlink:href="#icon-dingdanshujutubiao"></use>
         </svg>
         <span class="text">订单数据图表</span>
       </div>
       <div class="tag active">
         <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-yangdancaiwutongji1"></use>
+          <use xlink:href="#icon-yangdanshujutubiao"></use>
         </svg>
         <span class="text">样单数据图表</span>
       </div>
       <div class="tag">
         <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-yuanliaoshiyongtongji"></use>
+          <use xlink:href="#icon-yuanliaoshiyongtubiao"></use>
         </svg>
         <span class="text">原料使用图表</span>
       </div>
       <div class="tag">
         <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-fuliaoshiyongtongji"></use>
+          <use xlink:href="#icon-fuliaoshiyongtubiao"></use>
         </svg>
         <span class="text">辅料使用图表</span>
       </div>
       <div class="tag">
         <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-shengchanshujutongji"></use>
+          <use xlink:href="#icon-shengchanshujutubiao"></use>
         </svg>
         <span class="text">生产数据图表</span>
       </div>
       <div class="tag">
         <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-qitafeiyongtongji"></use>
+          <use xlink:href="#icon-qitafeiyongtubiao"></use>
         </svg>
         <span class="text">其它费用图表</span>
       </div>
