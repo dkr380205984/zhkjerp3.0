@@ -176,7 +176,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import { statistics, client } from '@/assets/js/api'
-import { moneyArr } from '@/assets/js/dictionary'
 import zhCharts from '@/components/zhCharts/zhCharts.vue'
 export default Vue.extend({
   components: { zhCharts },
@@ -185,7 +184,6 @@ export default Vue.extend({
   } {
     return {
       loading: false,
-      list: [],
       optionData: {
         toolbox: {
           right: '15%',
@@ -380,8 +378,7 @@ export default Vue.extend({
         group: []
       },
       filterCondition: {
-        contactsList: [],
-        currency: moneyArr
+        contactsList: []
       }
     }
   },

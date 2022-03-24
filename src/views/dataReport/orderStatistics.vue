@@ -54,7 +54,6 @@
             <div class="screen">
               <el-cascader
                 @change="
-                  getContacts($event)
                   changeRouter()
                 "
                 placeholder="筛选下单公司"
@@ -204,17 +203,6 @@ export default Vue.extend({
   } {
     return {
       loading: false,
-      list: [],
-      optionData: {
-        toolbox: {
-          right: '15%',
-          feature: {
-            magicType: { show: true, type: ['line', 'bar'] },
-            restore: { show: true },
-            saveAsImage: { show: true }
-          }
-        }
-      },
       alias: '',
       option1: {
         tooltip: {
@@ -254,7 +242,6 @@ export default Vue.extend({
             return htmlStr
           }
         },
-        // toolbox: this.optionData.toolbox,
         legend: {
           data: []
         },
@@ -419,22 +406,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    getContacts(ev: number[]) {
-      if (ev && ev.length) {
-        client
-          .detail({
-            id: ev[2]
-          })
-          .then((res) => {
-            if (res.data.status) {
-              this.filterCondition.contactsList = res.data.data.contacts_data
-              this.alias = res.data.data.alias
-            }
-          })
-      } else {
-        this.contacts_id = ''
-      }
-    },
     getLocalStorage(ev: any, type: string) {
       let groupInfo = this.groupList.find((item: any) => {
         return this.filterData.group_id === item.id
