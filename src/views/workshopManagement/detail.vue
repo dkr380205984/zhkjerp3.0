@@ -381,22 +381,22 @@
                     </el-select>
                   </div>
                   <div class="tcol bgGray">加工工序</div>
-                  <div class="tcol">
+                  <div class="tcol" style="flex:0.6">
                     <el-cascader v-model="item.process"
                       :options="processList"
                       @change="getWorkList(item)"
                       :show-all-levels="false"
-                      placeholder="请选择加工工序"></el-cascader>
+                      placeholder="加工工序"></el-cascader>
                   </div>
                   <div class="tcol bgGray">工序说明</div>
-                  <div class="tcol">
+                  <div class="tcol" style="flex:1.9">
                     <el-autocomplete class="inline-input"
                       v-model="item.process_desc"
                       :fetch-suggestions="querySearch"
                       placeholder="请选择工序"></el-autocomplete>
                   </div>
                   <div class="tcol bgGray">结算单价</div>
-                  <div class="tcol">
+                  <div class="tcol" style="flex:0.5">
                     <zh-input class="inputs"
                       :keyBoard="keyBoard"
                       v-model="item.unitPrice"
