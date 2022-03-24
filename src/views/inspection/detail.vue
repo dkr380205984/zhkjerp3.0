@@ -114,33 +114,80 @@
       <div class="titleCtn">
         <div class="title">收发检验日志</div>
       </div>
-      <div class="listCtn">
-        <div class="list">
+      <div class="listCtn"
+        v-if="inspectionList.filter((item)=>item.type===1).length>0">
+        <div class="list"
+          style="min-height: 0px;">
           <div class="row title">
+            <div class="col">单据类型</div>
             <div class="col">单据编号</div>
             <div class="col">检验单位</div>
-            <div class="col">入库时间</div>
-            <div class="col">产品编号</div>
-            <div class="col">产品部位</div>
+            <div class="col">产品信息</div>
             <div class="col">尺码颜色</div>
             <div class="col">检验数量</div>
             <div class="col">次品数量</div>
             <div class="col">次品原因</div>
+            <div class="col">操作时间</div>
             <div class="col">创建人</div>
             <div class="col">操作</div>
           </div>
-          <div class="row"
-            v-for="item in inspectionList"
+          <div class="row fontSmall"
+            v-for="item in inspectionList.filter((item)=>item.type===1)"
             :key="item.id">
+            <div class="col"
+              :class="{'blue':item.type===1,'orange':item.type===2}">{{item.type===1?'检验入库':'生产出库'}}</div>
             <div class="col">{{item.doc_code}}</div>
             <div class="col">{{item.client_name}}</div>
-            <div class="col">{{item.complete_time}}</div>
-            <div class="col">{{item.product_code}}</div>
-            <div class="col">{{item.part_name}}</div>
+            <div class="col">{{item.product_code}}/{{item.part_name}}
+            </div>
             <div class="col">{{item.color}}/{{item.size}}</div>
-            <div class="col">{{item.number}}</div>
-            <div class="col">{{item.shoddy_number}}</div>
-            <div class="col">{{item.shoddy_reason}}</div>
+            <div class="col"
+              :class="{'blue':item.type===1,'orange':item.type===2}">{{item.number}}</div>
+            <div class="col"
+              :class="{'gray':!item.shoddy_number,'red':item.shoddy_number}">{{item.shoddy_number||'未填写'}}</div>
+            <div class="col"
+              :class="{'gray':!item.shoddy_reason}">{{item.shoddy_reason||'无'}}</div>
+            <div class="col">{{item.complete_time}}</div>
+            <div class="col">{{item.user_name}}</div>
+            <div class="col">
+              <div class="oprCtn">
+                <span class="opr hoverRed"
+                  @click="deleteInspection(item.id)">删除</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="listCtn"
+        style="min-height: 0px;"
+        v-if="inspectionList.filter((item)=>item.type===2).length>0">
+        <div class="list">
+          <div class="row title">
+            <div class="col">单据类型</div>
+            <div class="col">单据编号</div>
+            <div class="col">检验单位</div>
+            <div class="col">产品信息</div>
+            <div class="col">尺码颜色</div>
+            <div class="col">出库数量</div>
+            <div class="col">出库单位</div>
+            <div class="col">操作时间</div>
+            <div class="col">创建人</div>
+            <div class="col">操作</div>
+          </div>
+          <div class="row fontSmall"
+            v-for="item in inspectionList.filter((item)=>item.type===2)"
+            :key="item.id">
+            <div class="col"
+              :class="{'blue':item.type===1,'orange':item.type===2}">{{item.type===1?'检验入库':'生产出库'}}</div>
+            <div class="col">{{item.doc_code}}</div>
+            <div class="col">{{item.client_name}}</div>
+            <div class="col">{{item.product_code}}/{{item.part_name}}
+            </div>
+            <div class="col">{{item.color}}/{{item.size}}</div>
+            <div class="col"
+              :class="{'blue':item.type===1,'orange':item.type===2}">{{item.number}}</div>
+            <div class="col">{{item.client}}</div>
+            <div class="col">{{item.complete_time}}</div>
             <div class="col">{{item.user_name}}</div>
             <div class="col">
               <div class="oprCtn">
@@ -211,7 +258,8 @@
               v-for="(itemChild,indexChild) in item.child_data"
               :key="indexChild">
               <div class="col">
-                <div class="label">
+                <div class="label"
+                  v-if="indexChild===0">
                   <span class="text">产品信息</span>
                   <span class="explanation">(默认)</span>
                 </div>
@@ -224,7 +272,8 @@
               <div class="col">
                 <div class="spaceBetween">
                   <div class="once">
-                    <div class="label">
+                    <div class="label"
+                      v-if="indexChild===0">
                       <span class="text">分配数量</span>
                       <span class="explanation">(默认)</span>
                     </div>
@@ -235,7 +284,8 @@
                     </div>
                   </div>
                   <div class="once">
-                    <div class="label">
+                    <div class="label"
+                      v-if="indexChild===0">
                       <span class="text">{{item.type===1?'检验数量':'出库数量'}}</span>
                       <span class="explanation">(必填)</span>
                     </div>
@@ -246,40 +296,73 @@
                   </div>
                 </div>
               </div>
-              <div class="col">
-                <div class="spaceBetween">
-                  <div class="once">
-                    <div class="label">
-                      <span class="text">次品数量</span>
-                      <span class="explanation"
-                        v-if="item.type===2">(无)</span>
+              <template v-if="item.type===1">
+                <div class="col">
+                  <div class="spaceBetween">
+                    <div class="once">
+                      <div class="label"
+                        v-if="indexChild===0">
+                        <span class="text">次品数量</span>
+                        <span class="explanation"
+                          v-if="item.type===2">(无)</span>
+                      </div>
+                      <div class="info elCtn">
+                        <el-input placeholder="请填写次品数量"
+                          v-model="itemChild.shoddy_number"
+                          :disabled="item.type===2"></el-input>
+                      </div>
                     </div>
-                    <div class="info elCtn">
-                      <el-input placeholder="请填写次品数量"
-                        v-model="itemChild.shoddy_number"
-                        :disabled="item.type===2"></el-input>
-                    </div>
-                  </div>
-                  <div class="once">
-                    <div class="label">
-                      <span class="text">次品原因</span>
-                      <span class="explanation"
-                        v-if="item.type===2">(无)</span>
-                    </div>
-                    <div class="info elCtn">
-                      <el-select placeholder="请填写次品原因"
-                        v-model="itemChild.shoddy_reason"
-                        multiple
-                        :disabled="item.type===2">
-                        <el-option v-for="item in shoddy_reason"
-                          :key="item.value"
-                          :label="item.label"
-                          :value="item.value"></el-option>
-                      </el-select>
+                    <div class="once">
+                      <div class="label"
+                        v-if="indexChild===0">
+                        <span class="text">次品原因</span>
+                        <span class="explanation"
+                          v-if="item.type===2">(无)</span>
+                      </div>
+                      <div class="info elCtn">
+                        <el-select placeholder="请填写次品原因"
+                          v-model="itemChild.shoddy_reason"
+                          multiple
+                          :disabled="item.type===2">
+                          <el-option v-for="item in shoddy_reason"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </template>
+              <template v-else>
+                <div class="col">
+                  <div class="label"
+                    v-if="indexChild===0">
+                    <span class="text">出库单位
+                      <el-tooltip effect="dark"
+                        content="统一出库单位"
+                        placement="top">
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true"
+                          @click="$copyInfo(item.child_data,['client'])">
+                          <use xlink:href='#icon-tongbushuju1'></use>
+                        </svg>
+                      </el-tooltip>
+                    </span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-select placeholder="请选择出库单位"
+                      multiple
+                      clearable
+                      v-model="itemChild.client">
+                      <el-option v-for="item in bearClientArr"
+                        :key="item.client_name"
+                        :value="item.client_name"
+                        :label="item.client_name"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+              </template>
               <div class="opr hoverRed"
                 @click="item.child_data.length>1?$deleteItem(item.child_data,indexChild):$message.error('至少有一项')">删除</div>
             </div>
@@ -316,7 +399,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { order, productionPlan } from '@/assets/js/api'
+import { order, productionPlan, clientInOrder } from '@/assets/js/api'
 import { ProductionPlanInfo } from '@/types/productionPlan'
 import { InspectionInfo } from '@/types/inspection'
 import { inspection } from '@/assets/js/api'
@@ -418,6 +501,7 @@ export default Vue.extend({
       inspectionFlag: false,
       inspectionInfo: [],
       inspectionList: [],
+      bearClientArr: [],
       shoddy_reason: [
         {
           value: '织造原因'
@@ -559,7 +643,8 @@ export default Vue.extend({
               production_number: itemChild.number,
               number: '',
               shoddy_number: '',
-              shoddy_reason: []
+              shoddy_reason: [],
+              client: []
             }
           })
         })
@@ -572,9 +657,10 @@ export default Vue.extend({
     },
     getCmpData() {
       this.inspectionInfo.forEach((item) =>
-        item.child_data.forEach(
-          (itemChild) => (itemChild.shoddy_reason = (itemChild.shoddy_reason as string[]).join(','))
-        )
+        item.child_data.forEach((itemChild) => {
+          itemChild.shoddy_reason = (itemChild.shoddy_reason as string[]).join(',')
+          itemChild.client = (itemChild.client as string[]).join(',')
+        })
       )
     },
     saveInspection() {
@@ -635,6 +721,14 @@ export default Vue.extend({
         this.order_id = res.data.data.time_data[this.orderIndex].id
         this.orderInfo = res.data.data
         this.init()
+        // 订单相关单位，用于检验出库
+        clientInOrder({
+          order_id: this.order_id
+        }).then((res) => {
+          if (res.data.status) {
+            this.bearClientArr = res.data.data[4]
+          }
+        })
       })
   }
 })

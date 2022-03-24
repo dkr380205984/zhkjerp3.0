@@ -1117,6 +1117,7 @@ export default Vue.extend({
       }
       this.getCmpData()
       if (!formCheck && !partFormCheck) {
+        this.productInfo.editor.destroy()
         this.productInfo.editor = ''
         this.loading = true
         product.create(this.productInfo).then((res) => {

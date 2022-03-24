@@ -324,7 +324,17 @@
                 <div class="tcol noPad"
                   style="flex:2">
                   <div class="trow">
-                    <div class="tcol center">调取信息</div>
+                    <div class="tcol center">
+                      <span>
+                        调取信息
+                        <el-tooltip class="item"
+                          effect="dark"
+                          :content="'更新日期:'+(materialUpdateTime.transfer?materialUpdateTime.transfer:'暂无')"
+                          placement="top">
+                          <i class="el-icon-info blue"></i>
+                        </el-tooltip>
+                      </span>
+                    </div>
                   </div>
                   <div class="trow">
                     <div class="tcol">调取仓库</div>
@@ -334,7 +344,17 @@
                 <div class="tcol noPad"
                   style="flex:2">
                   <div class="trow">
-                    <div class="tcol center">采购信息</div>
+                    <div class="tcol center">
+                      <span>
+                        采购信息
+                        <el-tooltip class="item"
+                          effect="dark"
+                          :content="'更新日期:'+(materialUpdateTime.order?materialUpdateTime.order:'暂无')"
+                          placement="top">
+                          <i class="el-icon-info blue"></i>
+                        </el-tooltip>
+                      </span>
+                    </div>
                   </div>
                   <div class="trow">
                     <div class="tcol">采购单位</div>
@@ -344,7 +364,17 @@
                 <div class="tcol noPad"
                   style="flex:3">
                   <div class="trow">
-                    <div class="tcol center">加工信息</div>
+                    <div class="tcol center">
+                      <span>
+                        加工信息
+                        <el-tooltip class="item"
+                          effect="dark"
+                          :content="'更新日期:'+(materialUpdateTime.process?materialUpdateTime.process:'暂无')"
+                          placement="top">
+                          <i class="el-icon-info blue"></i>
+                        </el-tooltip>
+                      </span>
+                    </div>
                   </div>
                   <div class="trow">
                     <div class="tcol">加工单位</div>
@@ -355,21 +385,41 @@
                 <div class="tcol noPad"
                   style="flex:2">
                   <div class="trow">
-                    <div class="tcol center">加工信息</div>
+                    <div class="tcol center">
+                      <span>
+                        入库信息
+                        <el-tooltip class="item"
+                          effect="dark"
+                          :content="'更新日期:'+(materialUpdateTime.push?materialUpdateTime.push:'暂无')"
+                          placement="top">
+                          <i class="el-icon-info blue"></i>
+                        </el-tooltip>
+                      </span>
+                    </div>
                   </div>
                   <div class="trow">
-                    <div class="tcol">出库单位</div>
-                    <div class="tcol">出库数量</div>
+                    <div class="tcol">入库仓库</div>
+                    <div class="tcol">入库数量</div>
                   </div>
                 </div>
                 <div class="tcol noPad"
                   style="flex:2">
                   <div class="trow">
-                    <div class="tcol center">入库/结余信息</div>
+                    <div class="tcol center">
+                      <span>
+                        出库信息
+                        <el-tooltip class="item"
+                          effect="dark"
+                          :content="'更新日期:'+(materialUpdateTime.pop?materialUpdateTime.pop:'暂无')"
+                          placement="top">
+                          <i class="el-icon-info blue"></i>
+                        </el-tooltip>
+                      </span>
+                    </div>
                   </div>
                   <div class="trow">
-                    <div class="tcol">入库数</div>
-                    <div class="tcol">结余数量</div>
+                    <div class="tcol">出库单位</div>
+                    <div class="tcol">出库数量</div>
                   </div>
                 </div>
               </div>
@@ -921,6 +971,13 @@ export default Vue.extend({
         ]
       },
       sampleId: '',
+      materialUpdateTime: {
+        order: '',
+        pop: '',
+        process: '',
+        push: '',
+        transfer: ''
+      },
       materialDetail: [],
       confirmSampleInfo: [], // 已经确认的样品信息
       unConfirmSampleInfo: [] // 除了已确认的其他样品信息
@@ -993,7 +1050,8 @@ export default Vue.extend({
           })
           .then((res) => {
             if (res.data.status) {
-              this.materialDetail = res.data.data
+              this.materialDetail = res.data.data.data
+              this.materialUpdateTime = res.data.data.update_time
             }
             this.loading = false
           })

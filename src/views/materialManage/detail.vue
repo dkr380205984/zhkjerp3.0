@@ -2133,6 +2133,8 @@ export default Vue.extend({
           client_id_arr: [],
           order_time: this.$getDate(new Date()),
           delivery_time: '',
+          total_number: 0,
+          total_price: 0,
           others_fee_data: [
             {
               desc: '', // 额外费用备注
@@ -2162,6 +2164,8 @@ export default Vue.extend({
         client_id_arr: [],
         order_time: this.$getDate(new Date()),
         delivery_time: '',
+        total_number: 0,
+        total_price: 0,
         others_fee_data: [
           {
             desc: '', // 额外费用备注
@@ -2484,6 +2488,8 @@ export default Vue.extend({
           client_id_arr: [],
           order_time: this.$getDate(new Date()),
           delivery_time: '',
+          total_number: 0,
+          total_price: 0,
           others_fee_data: [
             {
               desc: '', // 额外费用备注
@@ -2524,9 +2530,11 @@ export default Vue.extend({
         })
     },
     getMatOrderCmpData() {
-      this.materialOrderInfo.forEach((item) => {
+      this.materialOrderInfo.forEach((item, index) => {
         item.client_id = item.client_id_arr![2]
         item.order_id = this.materialPlanInfo.order_id
+        item.total_price = this.totalOrderPriceList[index]
+        item.total_number = this.totalOrderNumberList[index]
         if (this.$route.query.supFlag) {
           item.sup_id = this.$route.query.id
         } else {

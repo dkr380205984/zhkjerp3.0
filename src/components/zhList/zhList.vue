@@ -46,7 +46,7 @@
               <!-- 草稿标记 -->
               <span class="circle"
                 v-if="itemKey.ifCaogao"
-                :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?'是':'否'}}</span>
+                :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?itemKey.caogaoArr[0]:itemKey.caogaoArr[1]}}</span>
               <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')"
                 class="text">
                 {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unit}}</span>
@@ -330,7 +330,7 @@
                 <!-- 草稿标记 -->
                 <span class="circle"
                   v-if="itemKey.ifCaogao"
-                  :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?'是':'否'}}</span>
+                  :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?itemKey.caogaoArr[0]:itemKey.caogaoArr[1]}}</span>
                 <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')"
                   class="text">
                   {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unit}}</span>

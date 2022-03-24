@@ -391,6 +391,8 @@ export default Vue.extend({
         client_id_arr: [],
         order_time: this.$getDate(new Date()),
         delivery_time: '',
+        total_number: 0,
+        total_price: 0,
         others_fee_data: [
           {
             desc: '', // 额外费用备注

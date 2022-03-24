@@ -40,8 +40,12 @@
         <div class="title">财务管理</div>
       </div>
       <div class="menuList">
-        <div class="menu_item" v-for="(item, index) in menuList.finance" :key="index" @click="$router.push(item.url)">
-          <svg class="iconFont" aria-hidden="true">
+        <div class="menu_item"
+          v-for="(item, index) in menuList.finance"
+          :key="index"
+          @click="$router.push(item.url)">
+          <svg class="iconFont"
+            aria-hidden="true">
             <use :xlink:href="'#' + item.icon"></use>
           </svg>
           <p class="name">{{ item.name }}</p>
@@ -95,7 +99,7 @@ export default Vue.extend({
           },
           {
             name: '包装管理',
-            id: '10-3',
+            id: '11-3',
             icon: 'icon-zhuangxiangjihua',
             url: '/packManage/list?page=1&type=1'
           },
@@ -107,7 +111,7 @@ export default Vue.extend({
           },
           {
             name: '装箱运输',
-            id: '11-3',
+            id: '10-3',
             icon: 'icon-zhuangxiangjihua',
             url: '/boxManage/list?page=1&type=1'
           }
