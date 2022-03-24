@@ -53,9 +53,7 @@
             </div>
             <div class="screen">
               <el-cascader
-                @change="
-                  changeRouter()
-                "
+                @change="changeRouter()"
                 placeholder="筛选下单公司"
                 v-model="filterData.client_id"
                 :show-all-levels="false"
@@ -136,7 +134,7 @@
             <span class="blue">
               <h2>{{ this.reportData.order.total_price }}</h2>
             </span>
-            <h2 class="unit">万元</h2>
+            <h2 class="unit">万{{ filterData.settle_unit || '元' }}</h2>
           </div>
         </div>
         <div class="card">
@@ -154,7 +152,7 @@
             <span class="green">
               <h2>{{ this.reportData.transport.price }}</h2>
             </span>
-            <h2 class="unit">万元</h2>
+            <h2 class="unit">万{{ filterData.settle_unit || '元' }}</h2>
           </div>
         </div>
         <div class="card">
@@ -415,6 +413,48 @@ export default Vue.extend({
       }
       this.changeRouter()
     },
+    changeUnit() {
+      this.option1.tooltip.formatter = (params: any) => {
+        var htmlStr = '<div>'
+        htmlStr += params[0].name + '<br/>' //x轴的名称
+        params.forEach((param: any, index: number) => {
+          var color = param.color //图例颜色
+
+          //为了保证和原来的效果一样，这里自己实现了一个点的效果
+          htmlStr +=
+            '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:' +
+            color +
+            ';"></span>'
+
+          //添加一个汉字，这里你可以格式你的数字或者自定义文本内容
+          htmlStr +=
+            param.seriesName +
+            '：' +
+            '<span style="color:' +
+            color +
+            ';margin-right:10px">' +
+            param.value +
+            '</span>' +
+            (index === 1 ? '万件' : '万' + (this.filterData.settle_unit || '元'))
+
+          htmlStr += '</div>'
+        })
+
+        return htmlStr
+      }
+      this.option1.yAxis[0].axisLabel.formatter = '{value} 万' + (this.filterData.settle_unit || '元')
+      this.groupOption.tooltip.formatter = (params: any) => {
+        return `
+                <div>
+                    ${params.marker}<span style="margin-left:10px;color:black;font-weight:bold">${
+          params.data.name
+        }：<span style="color:${params.color};font-weight:normal">${params.data.value}万${
+          this.filterData.settle_unit || '元'
+        }</span></span>
+                </div>
+              `
+      }
+    },
     getFilters() {
       const query = this.$route.query
       if (query.start_time === '' || query.start_time === undefined) {
@@ -432,6 +472,7 @@ export default Vue.extend({
       this.filterData.contacts_id = query.contacts_id || this.$getLocalStorage('create_user') || ''
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.filterData.settle_unit = query.settle_unit
+      this.changeUnit()
     },
     formatDate(date: Date) {
       return (
