@@ -1170,7 +1170,7 @@ export default Vue.extend({
           this.$forceUpdate()
         })
       // console.log(res[1])
-      staff.list({ keyword: res === '' ? res : res.process[1] }).then((ress: any) => {
+      staff.list({ keyword: res === '' ? res : res.process[1], status: 1 }).then((ress: any) => {
         let arr: any = []
         ress.data.data.forEach((worker: any) => {
           arr.push({
