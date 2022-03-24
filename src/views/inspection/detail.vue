@@ -163,6 +163,7 @@
           </div>
         </div>
         <div class="contentCtn">
+          <el-checkbox v-model="keyBoard" @change="changeKeyBoard" style="margin-top:15px">开启小数字键盘</el-checkbox>
           <div class="editCtn"
             v-for="(item,index) in inspectionInfo"
             :key="index">
@@ -240,8 +241,16 @@
                       <span class="explanation">(必填)</span>
                     </div>
                     <div class="info elCtn">
-                      <el-input placeholder="请填写数量"
-                        v-model="itemChild.number"></el-input>
+                      <!-- <el-input placeholder="请填写数量"
+                        v-model="itemChild.number"></el-input> -->
+                        <zh-input
+                          class="inputs"
+                          :keyBoard="keyBoard"
+                          v-model="itemChild.number"
+                          placeholder="请输入结算单价"
+                          type="number"
+                        >
+                        </zh-input>
                     </div>
                   </div>
                 </div>
@@ -255,9 +264,17 @@
                         v-if="item.type===2">(无)</span>
                     </div>
                     <div class="info elCtn">
-                      <el-input placeholder="请填写次品数量"
+                      <!-- <el-input placeholder="请填写次品数量"
                         v-model="itemChild.shoddy_number"
-                        :disabled="item.type===2"></el-input>
+                        :disabled="item.type===2"></el-input> -->
+                      <zh-input 
+                        placeholder="请填写次品数量"
+                        class="inputs"
+                        :keyBoard="keyBoard"
+                        type="number"
+                        v-model="itemChild.shoddy_number"
+                        :disabled="item.type===2">
+                      </zh-input>
                     </div>
                   </div>
                   <div class="once">
@@ -320,6 +337,7 @@ import { order, productionPlan } from '@/assets/js/api'
 import { ProductionPlanInfo } from '@/types/productionPlan'
 import { InspectionInfo } from '@/types/inspection'
 import { inspection } from '@/assets/js/api'
+import zhInput from '@/components/zhInput/zhInput.vue'
 interface ProductionPlanInfoMerge {
   process_id: number
   process_name: string
@@ -334,6 +352,7 @@ interface InspectionInfoMerge {
   child_data: InspectionInfo[]
 }
 export default Vue.extend({
+  components: { zhInput },
   data(): {
     productionPlanMergeList: ProductionPlanInfoMerge[]
     productionPlanList: ProductionPlanInfo[]
@@ -345,6 +364,7 @@ export default Vue.extend({
       loading: true,
       deductFlag: false,
       deductDetailFlag: false,
+      keyBoard:localStorage.showWorkShopKeyBoard === 'true',
       deductDetail: [],
       deductInfo: {
         client_id: '',
@@ -453,6 +473,10 @@ export default Vue.extend({
     }
   },
   methods: {
+    changeKeyBoard(bol:any){
+      localStorage.showWorkShopKeyBoard = bol
+      console.log(localStorage.showWorkShopKeyBoard)
+    },
     init() {
       this.loading = true
       Promise.all([
