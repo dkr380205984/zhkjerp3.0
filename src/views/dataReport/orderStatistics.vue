@@ -238,7 +238,15 @@ export default Vue.extend({
                 ';"></span>'
 
               //添加一个汉字，这里你可以格式你的数字或者自定义文本内容
-              htmlStr += param.seriesName + '：' + param.value + (index === 1 ? '万件' : '万元')
+              htmlStr +=
+                param.seriesName +
+                '：' +
+                '<span style="color:' +
+                color +
+                ';margin-right:10px">' +
+                param.value +
+                '</span>' +
+                (index === 1 ? '万件' : '万元')
 
               htmlStr += '</div>'
             })
@@ -272,7 +280,7 @@ export default Vue.extend({
           },
           {
             type: 'value',
-            name: '下单总数',
+            name: '',
             min: 0,
             max: 500,
             interval: 100,
