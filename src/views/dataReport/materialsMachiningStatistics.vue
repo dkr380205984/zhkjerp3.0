@@ -1,5 +1,5 @@
 <template>
-  <div id="materialsTransferStatistics" class="bodyContainer" v-loading="loading">
+  <div id="materialsMachiningStatistics" class="bodyContainer" v-loading="loading">
     <div class="topTagCtn">
       <div class="tag" @click="$router.push('/dataReport/orderStatistics')">
         <svg class="iconFont" aria-hidden="true">
@@ -42,8 +42,8 @@
       <div style="display: flex; width: 49%; justify-content: space-between">
         <div class="tab" @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">计划数据统计</div>
         <div class="tab" @click="$router.push('/dataReport/materialsOrderingStatistics')">订购数据统计</div>
-        <div class="tab active">调取数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
+        <div class="tab" @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
+        <div class="tab active">加工数据统计</div>
         <div class="tab" @click="$message.info('功能正在开发中，即将上线')">原料库存数据统计</div>
       </div>
       <div class="cardCtn">
@@ -131,7 +131,7 @@
               负责小组：<span class="blue">{{ groupName || '所有' }}</span>
             </div>
             <div>
-              调取仓库：<span class="blue">{{ alias || '所有' }}</span>
+              下单公司：<span class="blue">{{ alias || '所有' }}</span>
             </div>
           </div>
         </div>
@@ -139,25 +139,12 @@
       <div class="cardCtn">
         <div class="card noPad" style="overflow:hidden">
           <div class="screen">
-            <!-- <el-cascader
-              @change="
-                getContacts($event)
-                changeRouter()
-              "
-              placeholder="筛选下单公司"
-              v-model="filterData.client_id"
-              :show-all-levels="false"
-              filterable
-              :options="clientList"
-              clearable
-            >
-            </el-cascader> -->
             <el-cascader
               @change="
                 getContacts($event)
                 changeRouter()
               "
-              placeholder="筛选调取仓库"
+              placeholder="筛选下单公司"
               v-model="filterData.client_id"
               :show-all-levels="false"
               filterable
@@ -191,7 +178,7 @@
       </div>
       <div class="cardCtn">
         <div class="card">
-          <h3>合计调取数量</h3>
+          <h3>合计加工数量</h3>
           <div class="content">
             <span class="blue">
               <h2>{{ this.reportData.order.total_price }}</h2>
@@ -200,7 +187,7 @@
           </div>
         </div>
         <div class="card">
-          <h3>合计调取金额</h3>
+          <h3>合计加工金额</h3>
           <div class="content">
             <span class="blue">
               <h2>{{ this.reportData.order.total_number }}</h2>
@@ -209,7 +196,7 @@
           </div>
         </div>
         <div class="card">
-          <h3>最终调取数量</h3>
+          <h3>最终加工数量</h3>
           <div class="content">
             <span class="green">
               <h2>{{ this.reportData.order.total_number }}</h2>
@@ -218,7 +205,7 @@
           </div>
         </div>
         <div class="card">
-          <h3>最终调取金额</h3>
+          <h3>最终加工金额</h3>
           <div class="content">
             <span class="green">
               <h2>{{ this.reportData.order.total_number }}</h2>
@@ -230,7 +217,7 @@
       <div class="cardCtn">
         <div class="card">
           <el-tabs v-model="activeName" @tab-click="getList">
-            <el-tab-pane label="计划调取" name="first">
+            <el-tab-pane label="计划加工" name="first">
               <div style="display: flex; justify-content: end; padding-right: 50px">
                 <div style="width: 150px">
                   <el-select v-model="sortWay" @change="changeRouter">
@@ -241,12 +228,12 @@
               </div>
               <zh-charts v-if="activeName === 'first'" :option="option1"></zh-charts>
             </el-tab-pane>
-            <el-tab-pane label="实际调取" name="second">
+            <el-tab-pane label="实际加工" name="second">
               <div style="display: flex; justify-content: end; padding-right: 50px">
                 <div style="width: 150px">
                   <el-select v-model="sortWay" @change="changeRouter">
                     <el-option label="按数量排序" :value="1"> </el-option>
-                    <el-option label="按损耗排序%" :value="2"> </el-option>
+                    <el-option label="按金额排序" :value="2"> </el-option>
                   </el-select>
                 </div>
               </div>
@@ -259,7 +246,7 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue">查看调取单据</div>
+          <div class="btn backHoverBlue">查看加工单据</div>
         </div>
       </div>
     </div>
@@ -819,11 +806,11 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import '~@/assets/css/dataReport/materialsTransferStatistics.less';
+@import '~@/assets/css/dataReport/materialsMachiningStatistics.less';
 </style>
 
 <style lang="less">
-#materialsTransferStatistics {
+#materialsMachiningStatistics {
   .screen {
     overflow: hidden;
   }
