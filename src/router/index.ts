@@ -229,15 +229,22 @@ const routes: Array<RouteConfig> = [
         permissions_id: '20-1',
       },
       path: '/dataReport/orderStatistics',
-      name: '订单财务统计',
+      name: '订单数据图表',
       component: () => import('../views/dataReport/orderStatistics.vue')
     }, {
       meta: {
         permissions_id: '20-2',
       },
       path: '/dataReport/sampleOrderStatistics',
-      name: '样单财务统计',
+      name: '样单数据图表',
       component: () => import('../views/dataReport/sampleOrderStatistics.vue')
+    }, {
+      meta: {
+        permissions_id: '20-3',
+      },
+      path: '/dataReport/materialsUsePlanDataStatistics',
+      name: '计划数据统计',
+      component: () => import('../views/dataReport/materialsUsePlanDataStatistics.vue')
     }, {
       meta: {
         permissions_id: '17-1',

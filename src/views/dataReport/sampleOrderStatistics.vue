@@ -19,6 +19,12 @@
         </svg>
         <span class="text">原料使用图表</span>
       </div>
+      <!-- <div class="tag" @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">
+        <svg class="iconFont" aria-hidden="true">
+          <use xlink:href="#icon-yuanliaoshiyongtubiao"></use>
+        </svg>
+        <span class="text">原料使用图表</span>
+      </div> -->
       <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-fuliaoshiyongtubiao"></use>
@@ -170,16 +176,14 @@
       </div>
       <div class="cardCtn">
         <div class="card" style="padding-top: 60px">
-          <!-- <div style="display: flex; justify-content: end; padding-right: 50px">
-            <div style="width:150px">
-              <el-select v-model="sortWay">
-                <el-option label="打样数量排序" :value="1">
-                </el-option>
-                <el-option label="打样成本排序" :value="2">
-                </el-option>
+          <div style="display: flex; justify-content: end; padding-right: 50px">
+            <div style="width: 150px">
+              <el-select v-model="sortWay" @change="changeRouter">
+                <el-option label="打样数量排序" :value="1"> </el-option>
+                <el-option label="打样成本排序" :value="2"> </el-option>
               </el-select>
             </div>
-          </div> -->
+          </div>
           <zh-charts :option="option1"></zh-charts>
         </div>
       </div>
@@ -218,7 +222,7 @@ export default Vue.extend({
       },
       alias: '',
       createPeople: '',
-      sortWay:1,
+      sortWay: 1,
       option1: {
         tooltip: {
           trigger: 'axis',
@@ -455,6 +459,7 @@ export default Vue.extend({
         : []
       this.filterData.contacts_id = query.contacts_id || this.$getLocalStorage('create_user') || ''
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
+      this.sortWay = Number(query.sortWay) || 1
       this.createPeople = this.$getLocalStorage('create_user_name')
       this.getContacts(this.filterData.client_id)
     },
@@ -500,7 +505,9 @@ export default Vue.extend({
           '&start_time=' +
           (this.filterData.start_time || '') +
           '&end_time=' +
-          (this.filterData.end_time || '')
+          (this.filterData.end_time || '') +
+          '&sortWay=' +
+          (this.sortWay || 1)
       )
     },
     getList() {
@@ -548,6 +555,16 @@ export default Vue.extend({
               value: group.number
             })
           })
+
+          if (this.sortWay === 1) {
+            data.client.sort(function (a: any, b: any) {
+              return b.number - a.number
+            })
+          } else if (this.sortWay === 2) {
+            data.client.sort(function (a: any, b: any) {
+              return b.price - a.price
+            })
+          }
 
           data.client.forEach((client: any) => {
             this.option1.xAxis[0].data.push(client.name)

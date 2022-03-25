@@ -1,8 +1,9 @@
 @import '../common.less';
 @import '../card.less';
 @import '../list.less';
+@import '../bottomBar.less';
 
-#orderStatistics {
+#materialsUsePlanDataStatistics {
     .contentGrid {
         display: grid;
         grid-template-columns: 33.33% 33.33% 33.33%;
@@ -27,6 +28,19 @@
 
     .tag {
         border-radius: 18px;
+    }
+
+    .tab{
+        color:#A3A3A3;
+        font-size: 16px;
+        font-weight: normal;
+        padding-bottom: 5px;
+        cursor: pointer;
+    }
+
+    .tab.active{
+        color:#229CFB;
+        border-bottom: 2px solid #229CFB;
     }
 
     .unit {
