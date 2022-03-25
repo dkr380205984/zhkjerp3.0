@@ -202,7 +202,7 @@ export default Vue.extend({
         order_type: 2
       },
       option: {
-        color: ['#229CFB', '#6ED8FF', '#FCCA24', '#000000'],
+        color: ['#229CFB', '#2DD59A', '#FCCA24', '#000000'],
         tooltip: {
           trigger: 'axis',
           axisPointer: {

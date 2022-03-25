@@ -547,57 +547,6 @@
     </div>
     <div class="bottomFixBar">
       <div class="main">
-        <div class="priceCtn fl">
-          <div class="btn"
-            :class="{ backHoverBlue: priceProcessList.length > 0, backGray: priceProcessList.length === 0 }"
-            @click="showPrice = !showPrice">
-            {{ priceProcessList.length > 0 ? (showPrice ? '关闭报价' : '查看报价') : '暂无报价' }}
-          </div>
-          <div class="priceTable"
-            v-show="showPrice && priceProcessList.length > 0">
-            <div class="module">
-              <div class="titleCtn">
-                <div class="title">报价信息</div>
-              </div>
-              <div class="contentCtn">
-                <div class="tableCtn">
-                  <div class="thead">
-                    <div class="trow">
-                      <div class="tcol">产品信息</div>
-                      <div class="tcol noPad"
-                        style="flex: 4">
-                        <div class="trow">
-                          <div class="tcol">加工类型</div>
-                          <div class="tcol">加工工序</div>
-                          <div class="tcol">备注信息</div>
-                          <div class="tcol">单价</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="tbody">
-                    <div class="trow"
-                      v-for="(item, index) in priceProcessList"
-                      :key="index">
-                      <div class="tcol">{{ item.productInfo }}</div>
-                      <div class="tcol noPad"
-                        style="flex: 4">
-                        <div class="trow"
-                          v-for="(itemChild, indexChild) in item.childrenMergeInfo"
-                          :key="indexChild">
-                          <div class="tcol">{{ itemChild.type }}</div>
-                          <div class="tcol">{{ itemChild.process }}</div>
-                          <div class="tcol">{{ itemChild.desc }}</div>
-                          <div class="tcol">{{ itemChild.price }}元</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
