@@ -817,7 +817,7 @@ const statistics = {
     group_id: number | string
     is_check: number | string
     status: number | string
-  }) => http.get(`${baseUrl}/statistics/financial/sample_order`, params)
+  }) => http.get(`${baseUrl}/statistics/order`, params)
 }
 export {
   statistics,
