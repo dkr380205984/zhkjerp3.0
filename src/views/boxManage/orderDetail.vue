@@ -20,7 +20,6 @@
                 style="flex:8.7">
                 <div class="trow">
                   <div class="tcol">产品品类</div>
-                  <!-- <div class="tcol">产品图片</div> -->
                   <div class="tcol noPad"
                     style="flex:3">
                     <div class="trow">
@@ -55,19 +54,6 @@
                     <span>{{itemPro.product_code||itemPro.system_code||'无编号'}}</span>
                     <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
                   </div>
-                  <!-- <div class="tcol">
-                    <div class="imageCtn">
-                      <el-image style="width:100%;height:100%"
-                        :src="itemPro.image_data&&itemPro.image_data.length>0?itemPro.image_data[0]:''"
-                        :preview-src-list="itemPro.image_data">
-                        <div slot="error"
-                          class="image-slot">
-                          <i class="el-icon-picture-outline"
-                            style="font-size:42px"></i>
-                        </div>
-                      </el-image>
-                    </div>
-                  </div> -->
                   <div class="tcol noPad"
                     style="flex:3">
                     <div class="trow"
@@ -85,10 +71,38 @@
                   </div>
                 </div>
               </div>
-              <div class="tcol">箱数</div>
-              <div class="tcol">总毛重kg</div>
-              <div class="tcol">总净重kg</div>
-              <div class="tcol">总体积m³</div>
+              <div class="tcol">
+                <div class="elCtn">
+                  <el-input @input="computedEverything"
+                    v-model="itemBatch.total_box_count"
+                    placeholder="总箱数">
+                  </el-input>
+                </div>
+              </div>
+              <div class="tcol">
+                <div class="elCtn">
+                  <el-input @input="computedEverything"
+                    v-model="itemBatch.total_gross_weight"
+                    placeholder="总毛重">
+                  </el-input>
+                </div>
+              </div>
+              <div class="tcol">
+                <div class="elCtn">
+                  <el-input @input="computedEverything"
+                    v-model="itemBatch.total_net_weight"
+                    placeholder="总净重">
+                  </el-input>
+                </div>
+              </div>
+              <div class="tcol">
+                <div class="elCtn">
+                  <el-input @input="computedEverything"
+                    v-model="itemBatch.total_bulk"
+                    placeholder="总体积">
+                  </el-input>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -168,7 +182,8 @@
             </div>
             <div class="info elCtn">
               <el-input v-model="boxInfo.total_box"
-                placeholder="请输入总箱数">
+                placeholder="请输入总箱数"
+                disabled>
                 <template slot="append">箱</template>
               </el-input>
             </div>
@@ -180,7 +195,8 @@
             </div>
             <div class="info elCtn">
               <el-input v-model="boxInfo.total_gross_weight"
-                placeholder="请输入总毛重">
+                placeholder="请输入总毛重"
+                disabled>
                 <template slot="append">kg</template>
               </el-input>
             </div>
@@ -192,7 +208,8 @@
             </div>
             <div class="info elCtn">
               <el-input v-model="boxInfo.total_net_weight"
-                placeholder="请输入总净重">
+                placeholder="请输入总净重"
+                disabled>
                 <template slot="append">kg</template>
               </el-input>
             </div>
@@ -204,7 +221,8 @@
             </div>
             <div class="info elCtn">
               <el-input v-model="boxInfo.total_bulk"
-                placeholder="请输入总体积">
+                placeholder="请输入总体积"
+                disabled>
                 <template slot="append">m³</template>
               </el-input>
             </div>
@@ -218,8 +236,11 @@
             <div class="info elCtn">
               <el-input v-model="boxInfo.price"
                 placeholder="请输入运输单价"
-                @change="(ev)=>{boxInfo.total_price = $toFixed(Number(ev)*Number(boxInfo.total_box) + Number(boxInfo.others_fee))}">
-                <template slot="append">元/箱</template>
+                @input="(ev)=>{
+                  boxInfo.price_bulk = $toFixed(Number(ev)*Number(boxInfo.total_bulk));
+                  boxInfo.total_price = $toFixed(Number(boxInfo.price_bulk)+ Number(boxInfo.others_fee))
+                }">
+                <template slot="append">元/m³</template>
               </el-input>
             </div>
           </div>
@@ -230,8 +251,8 @@
             <div class="info elCtn">
               <el-input v-model="boxInfo.price_bulk"
                 placeholder="运输体积价"
-                @change="(ev)=>{boxInfo.total_price = $toFixed(Number(ev)*Number(boxInfo.total_bulk)+ Number(boxInfo.others_fee))}">
-                <template slot="append">元/m³</template>
+                disabled>
+                <template slot="append">元</template>
               </el-input>
             </div>
           </div>
@@ -242,7 +263,7 @@
             <div class="info elCtn">
               <el-input v-model="boxInfo.others_fee"
                 placeholder="请输入额外费用"
-                @change="(ev)=>{boxInfo.total_price = $toFixed(Number(ev)+Number(boxInfo.total_price))}">
+                @input="(ev)=>{boxInfo.total_price = $toFixed(Number(ev)+Number(boxInfo.total_price))}">
                 <template slot="append">元</template>
               </el-input>
             </div>
@@ -253,7 +274,8 @@
               <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
-              <el-input v-model="boxInfo.total_price"
+              <el-input disabled
+                v-model="boxInfo.total_price"
                 placeholder="请输入运输总价">
                 <template slot="append">元</template>
               </el-input>
@@ -362,6 +384,7 @@ export default Vue.extend({
         others_fee: '',
         total_price: '',
         price_bulk: '',
+        order_transport_info: '',
         transport_number_data: [
           {
             order_product_info_id: '',
@@ -398,6 +421,7 @@ export default Vue.extend({
       cb(results)
     },
     getCmpData() {
+      this.boxInfo.order_transport_info = JSON.stringify(this.orderInfo.time_data[0])
       this.boxInfo.transport_number_data = []
       this.orderInfo.time_data[0].batch_data.forEach((item) => {
         item.product_data.forEach((itemPro) => {
@@ -454,9 +478,35 @@ export default Vue.extend({
         boxManage.create(this.boxInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
+            this.$router.push('/boxManage/boxDetail?id=' + res.data.data)
           }
         })
       }
+    },
+    computedEverything() {
+      const totalData = this.orderInfo.time_data[0].batch_data.reduce(
+        (total, cur: any) => {
+          return {
+            total_box: Number(cur.total_box_count) + total.total_box,
+            total_gross_weight: Number(cur.total_gross_weight) + total.total_gross_weight,
+            total_net_weight: Number(cur.total_net_weight) + total.total_net_weight,
+            total_bulk: Number(cur.total_bulk) + total.total_bulk
+          }
+        },
+        {
+          total_box: 0,
+          total_gross_weight: 0,
+          total_net_weight: 0,
+          total_bulk: 0
+        }
+      )
+      this.boxInfo.total_box = totalData.total_box
+      this.boxInfo.total_gross_weight = this.$toFixed(totalData.total_gross_weight)
+      this.boxInfo.total_net_weight = this.$toFixed(totalData.total_net_weight)
+      this.boxInfo.total_bulk = this.$toFixed(totalData.total_bulk)
+      this.boxInfo.price_bulk = this.$toFixed(Number(this.boxInfo.price) * Number(this.boxInfo.total_bulk))
+      this.boxInfo.total_price = this.$toFixed(Number(this.boxInfo.price_bulk) + Number(this.boxInfo.others_fee))
+      this.$forceUpdate()
     }
   },
   mounted() {
@@ -474,6 +524,17 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.orderInfo = res.data.data
+          this.orderInfo.time_data[0].batch_data.forEach((item) => {
+            // @ts-ignore 给批次新增一些发货信息
+            item.total_box_count = ''
+            // @ts-ignore
+            item.total_gross_weight = ''
+            // @ts-ignore
+            item.total_net_weight = ''
+            // @ts-ignore
+            item.total_bulk = ''
+          })
+          this.computedEverything()
         }
         this.loading = false
       })

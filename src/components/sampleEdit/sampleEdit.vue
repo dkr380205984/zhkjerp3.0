@@ -1,6 +1,6 @@
 <template>
   <div class="sampleEdit sidePopup"
-    v-show="show">
+    v-if="show">
     <div :class="inDetail?'inDetailMain main':'main'"
       v-loading="loading">
       <div class="titleCtn">
@@ -633,6 +633,7 @@ export default Vue.extend({
         pid_status: null,
         quote_product_id: '',
         product_type: 2,
+        editor: '',
         name: '',
         product_code: '',
         style_code: '', // 客户款号
@@ -646,7 +647,7 @@ export default Vue.extend({
         cvFlag: false,
         cvImageLength: 1,
         desc: '',
-        editor: '',
+
         style_data: [], // 款式
         component_data: [
           {
@@ -742,7 +743,9 @@ export default Vue.extend({
             if (this.id) {
               this.getImport(Number(this.id))
             } else {
-              this.$initEditor(this.sampleInfo)
+              this.$nextTick(() => {
+                this.$initEditor(this.sampleInfo)
+              })
             }
           }
         }
@@ -792,10 +795,6 @@ export default Vue.extend({
       }
     },
     getImport(ev: number) {
-      // 编辑器防止重复创建报错
-      if (this.sampleInfo.editor) {
-        this.sampleInfo.editor.destroy()
-      }
       this.loading = true
       sample
         .detail({
@@ -1002,6 +1001,7 @@ export default Vue.extend({
       }
     },
     reset() {
+      this.sampleId = ''
       this.need_import = false
       this.searchList = []
       this.sampleInfo = {
@@ -1069,6 +1069,11 @@ export default Vue.extend({
       this.deletePasteImage()
     },
     changeDetailToEdit(data: any) {
+      // 编辑器防止重复创建报错
+      if (this.sampleInfo.editor) {
+        this.sampleInfo.editor.destroy()
+        this.sampleInfo.editor = null
+      }
       this.sampleInfo = {
         id: this.pid ? null : this.id, // 打样的时候id用于查询样品，还得新建产品
         pid: this.pid,
@@ -1088,7 +1093,6 @@ export default Vue.extend({
             url: item
           }
         }),
-
         cv_list: [],
         cvFlag: false,
         cvImageLength: 1,
@@ -1139,7 +1143,9 @@ export default Vue.extend({
       }
       this.have_part = this.sampleInfo.part_data.length > 0
       this.getUnit([data.category_id as number, data.secondary_category_id as number])
-      this.$initEditor(this.sampleInfo)
+      this.$nextTick(() => {
+        this.$initEditor(this.sampleInfo)
+      })
     },
     // 打开复制粘贴图片功能
     changeCVOpration(flag: boolean) {

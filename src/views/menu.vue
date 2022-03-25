@@ -110,7 +110,7 @@ export default Vue.extend({
             url: '/workshopManagement/list?page=1&type=1'
           },
           {
-            name: '装箱运输',
+            name: '发货管理',
             id: '10-3',
             icon: 'icon-zhuangxiangjihua',
             url: '/boxManage/list?page=1&type=1'

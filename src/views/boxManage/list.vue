@@ -19,7 +19,7 @@
             <use xlink:href="#icon-hezuodanweiguanli"></use>
           </svg>
         </div>
-        <span class="text">订单直接出库</span>
+        <span class="text">订单直接发货</span>
       </div>
       <div class="tag"
         @click="$router.push('/boxManage/boxList?page=1')">
@@ -46,8 +46,9 @@
             <el-input v-model="item.code"
               disabled></el-input>
           </div>
-          <div class="btn backHoverBlue fr"
-            @click="$router.push('/boxManage/detail?id='+JSON.stringify(checkList.map((item)=>item.id)))">去发货</div>
+          <div class="btn fr"
+            :class="{'backHoverBlue':checkList.length>0,'backGray':checkList.length===0}"
+            @click="checkList.length>0?$router.push('/boxManage/detail?id='+JSON.stringify(checkList.map((item)=>item.id))):$message.error('请选择列表中的计划单去发货')">去发货</div>
         </div>
         <div class="list"
           v-loading="loading">
@@ -77,7 +78,7 @@
             <div class="col">{{item.order_code}}</div>
             <div class="col">{{item.group_name}}</div>
             <div class="col">{{item.total_delivery_number}}</div>
-            <div class="col">{{item.total_delivery_number}}</div>
+            <div class="col">{{item.real_delivery_number}}</div>
             <div class="col">{{item.delivery_pre}}%</div>
             <div class="col">{{item.user_name}}</div>
             <div class="col">
@@ -164,7 +165,7 @@ export default Vue.extend({
         this.page = 1
       }
       this.$router.push(
-        '/packManage/list?page=' +
+        '/boxManage/list?page=' +
           this.page +
           '&keyword=' +
           this.keyword +
@@ -245,7 +246,13 @@ export default Vue.extend({
       }
     }
   },
-  mounted() {
+  watch: {
+    $route() {
+      this.getFilters()
+      this.getList()
+    }
+  },
+  created() {
     this.getFilters()
     this.getList()
   }

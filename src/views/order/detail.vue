@@ -396,7 +396,7 @@
                 下单信息
                 <el-tooltip class="item"
                   effect="dark"
-                  content="更新日期"
+                  :content="'更新日期:'+(productionUpdateTime.order?productionUpdateTime.order:'暂无')"
                   placement="top">
                   <i class="el-icon-info blue"></i>
                 </el-tooltip>
@@ -408,7 +408,7 @@
                 计划信息
                 <el-tooltip class="item"
                   effect="dark"
-                  :content="'更新日期'"
+                  :content="'更新日期:'+(productionUpdateTime.plan?productionUpdateTime.plan:'暂无')"
                   placement="top">
                   <i class="el-icon-info blue"></i>
                 </el-tooltip>
@@ -1885,7 +1885,9 @@ export default Vue.extend({
       productionUpdateTime: {
         complete: '',
         inspection: '',
-        weave: ''
+        weave: '',
+        order: '',
+        plan: ''
       },
       productShow: false,
       financialInfo: {
