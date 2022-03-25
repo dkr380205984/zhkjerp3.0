@@ -1,5 +1,5 @@
 <template>
-  <div id="materialsUsePlanDataStatistics" class="bodyContainer" v-loading="loading">
+  <div id="materialsOrderingStatistics" class="bodyContainer" v-loading="loading">
     <div class="topTagCtn">
       <div class="tag" @click="$router.push('/dataReport/orderStatistics')">
         <svg class="iconFont" aria-hidden="true">
@@ -40,8 +40,8 @@
     </div>
     <div class="module noBackColor">
       <div style="display: flex; width: 49%; justify-content: space-between">
-        <div class="tab active">计划数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsOrderingStatistics')">订购数据统计</div>
+        <div class="tab" @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">计划数据统计</div>
+        <div class="tab active">订购数据统计</div>
         <div class="tab" @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
         <div class="tab" @click="$message.info('功能正在开发中，即将上线')">加工数据统计</div>
         <div class="tab" @click="$message.info('功能正在开发中，即将上线')">原料库存数据统计</div>
@@ -130,17 +130,37 @@
             <div>
               负责小组：<span class="blue">{{ groupName || '所有' }}</span>
             </div>
+            <div>
+              下单公司：<span class="blue">{{ alias || '所有' }}</span>
+            </div>
           </div>
         </div>
       </div>
       <div class="cardCtn">
+        <div class="card noPad" style="overflow:hidden">
+          <div class="screen">
+            <el-cascader
+              @change="
+                getContacts($event)
+                changeRouter()
+              "
+              placeholder="筛选下单公司"
+              v-model="filterData.client_id"
+              :show-all-levels="false"
+              filterable
+              :options="clientList"
+              clearable
+            >
+            </el-cascader>
+          </div>
+        </div>
         <div class="card noPad" style="overflow: hidden">
           <div class="screen">
             <el-input v-model="filterData.yuanliaomingcheng" placeholder="输入原料名称查询" clearable></el-input>
           </div>
         </div>
-        <div class="cardCtn" style="width: 100%; margin-top: 0">
-          <div class="card noPad" style="overflow: hidden; width: 210%">
+        <div class="cardCtn" style="width: 206%; margin-top: 0">
+          <div class="card noPad" style="overflow: hidden;">
             <div class="screen">
               <el-date-picker
                 v-model="filterData.start_time"
@@ -158,7 +178,7 @@
       </div>
       <div class="cardCtn">
         <div class="card">
-          <h3>合计计划数量</h3>
+          <h3>合计订购数量</h3>
           <div class="content">
             <span class="blue">
               <h2>{{ this.reportData.order.total_price }}</h2>
@@ -167,30 +187,48 @@
           </div>
         </div>
         <div class="card">
-          <h3>平均计划损耗</h3>
+          <h3>合计订购金额</h3>
           <div class="content">
             <span class="blue">
               <h2>{{ this.reportData.order.total_number }}</h2>
             </span>
-            <h2 class="unit">%</h2>
+            <h2 class="unit">万元</h2>
+          </div>
+        </div>
+        <div class="card">
+          <h3>最终入库数量</h3>
+          <div class="content">
+            <span class="green">
+              <h2>{{ this.reportData.order.total_number }}</h2>
+            </span>
+            <h2 class="unit">吨或千米</h2>
+          </div>
+        </div>
+        <div class="card">
+          <h3>最终入库金额</h3>
+          <div class="content">
+            <span class="green">
+              <h2>{{ this.reportData.order.total_number }}</h2>
+            </span>
+            <h2 class="unit">万元</h2>
           </div>
         </div>
       </div>
       <div class="cardCtn">
         <div class="card">
           <el-tabs v-model="activeName" @tab-click="getList">
-            <el-tab-pane label="查看所有" name="first">
+            <el-tab-pane label="计划订购" name="first">
               <div style="display: flex; justify-content: end; padding-right: 50px">
                 <div style="width: 150px">
                   <el-select v-model="sortWay" @change="changeRouter">
                     <el-option label="按数量排序" :value="1"> </el-option>
-                    <el-option label="按损耗排序" :value="2"> </el-option>
+                    <el-option label="按金额排序" :value="2"> </el-option>
                   </el-select>
                 </div>
               </div>
               <zh-charts v-if="activeName === 'first'" :option="option1"></zh-charts>
             </el-tab-pane>
-            <el-tab-pane label="原料计划" name="second">
+            <el-tab-pane label="实际订购" name="second">
               <div style="display: flex; justify-content: end; padding-right: 50px">
                 <div style="width: 150px">
                   <el-select v-model="sortWay" @change="changeRouter">
@@ -201,17 +239,6 @@
               </div>
               <zh-charts v-if="activeName === 'second'" :option="option1"></zh-charts
             ></el-tab-pane>
-            <el-tab-pane label="补原料单据" name="third">
-              <div style="display: flex; justify-content: end; padding-right: 50px">
-                <div style="width: 150px">
-                  <el-select v-model="sortWay" @change="changeRouter">
-                    <el-option label="按数量排序" :value="1"> </el-option>
-                    <el-option label="按损耗排序%" :value="2"> </el-option>
-                  </el-select>
-                </div>
-              </div>
-              <zh-charts v-if="activeName === 'third'" :option="option1"></zh-charts
-            ></el-tab-pane>
           </el-tabs>
         </div>
       </div>
@@ -219,8 +246,7 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue">查看原料计划单据</div>
-          <div class="btn backHoverBlue">查看补原料单据</div>
+          <div class="btn backHoverBlue">查看订购单据</div>
         </div>
       </div>
     </div>
@@ -547,7 +573,7 @@ export default Vue.extend({
     },
     changeRouter() {
       this.$router.push(
-        '/dataReport/materialsUsePlanDataStatistics?' +
+        '/dataReport/materialsOrderingStatistics?' +
           '&client_id=' +
           (this.filterData.client_id || '') +
           '&contacts_id=' +
@@ -724,35 +750,6 @@ export default Vue.extend({
                 this.option1.series[1].data.push(0)
               }
             })
-          } else if (this.activeName === 'third') {
-            this.option1.series[0].name = '每月出库总额'
-            this.option1.series[1].name = '每月出库总数'
-            this.option1.legend.data = ['每月出库总额', '每月出库总数']
-            this.option1.yAxis[0].name = '出库总额'
-            this.option1.yAxis[1].name = '出库总数'
-
-            // 每月出库总数 图表更新
-            this.option1.yAxis[0].max = Math.ceil(Math.ceil(outPriceMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[0].min = outPriceMin && outPriceMin < 0 ? Math.ceil(outPriceMin / 10000) : 0
-            this.option1.yAxis[0].interval = Math.ceil(outPriceMax / 10000 / 5) || 10
-
-            // 每月出库总额 图表更新
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(outNumberMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[1].min = outNumberMin && outNumberMin < 0 ? Math.ceil(outNumberMin / 10000) : 0
-            this.option1.yAxis[1].interval = Math.ceil(outNumberMax / 10000 / 5) || 10
-
-            this.option1.xAxis[0].data.forEach((itemMouth: any) => {
-              let mouth = this.reportData.transport.report.month.find((item: any) => {
-                return item.mouth === itemMouth
-              })
-              if (mouth) {
-                this.option1.series[0].data.push(+(+mouth.price / 10000).toFixed(2))
-                this.option1.series[1].data.push(+(+mouth.transport_number / 10000).toFixed(2))
-              } else {
-                this.option1.series[0].data.push(0)
-                this.option1.series[1].data.push(0)
-              }
-            })
           }
           this.loading = false
         })
@@ -809,11 +806,11 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import '~@/assets/css/dataReport/materialsUsePlanDataStatistics.less';
+@import '~@/assets/css/dataReport/materialsOrderingStatistics.less';
 </style>
 
 <style lang="less">
-#materialsUsePlanDataStatistics {
+#materialsOrderingStatistics {
   .screen {
     overflow: hidden;
   }
