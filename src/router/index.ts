@@ -229,15 +229,43 @@ const routes: Array<RouteConfig> = [
         permissions_id: '20-1',
       },
       path: '/dataReport/orderStatistics',
-      name: '订单财务统计',
+      name: '订单数据图表',
       component: () => import('../views/dataReport/orderStatistics.vue')
     }, {
       meta: {
         permissions_id: '20-2',
       },
       path: '/dataReport/sampleOrderStatistics',
-      name: '样单财务统计',
+      name: '样单数据图表',
       component: () => import('../views/dataReport/sampleOrderStatistics.vue')
+    }, {
+      meta: {
+        permissions_id: '20-3',
+      },
+      path: '/dataReport/materialsUsePlanDataStatistics',
+      name: '计划数据统计',
+      component: () => import('../views/dataReport/materialsUsePlanDataStatistics.vue')
+    }, {
+      meta: {
+        permissions_id: '20-4',
+      },
+      path: '/dataReport/materialsOrderingStatistics',
+      name: '订购数据统计',
+      component: () => import('../views/dataReport/materialsOrderingStatistics.vue')
+    }, {
+      meta: {
+        permissions_id: '20-5',
+      },
+      path: '/dataReport/materialsTransferStatistics',
+      name: '调取数据统计',
+      component: () => import('../views/dataReport/materialsTransferStatistics.vue')
+    }, {
+      meta: {
+        permissions_id: '20-6',
+      },
+      path: '/dataReport/materialsMachiningStatistics',
+      name: '加工数据统计',
+      component: () => import('../views/dataReport/materialsMachiningStatistics.vue')
     }, {
       meta: {
         permissions_id: '17-1',

@@ -543,6 +543,91 @@ const sliceToArray = (arr: any[], num: number) => {
 const ifRepeatArray = (arr: string[]): boolean => {
   return Array.from(new Set(arr)).length !== arr.length
 }
+
+const formatDate = (formatStr: string, date: Date) => {
+  var str = formatStr;
+  var Week = ["日", "一", "二", "三", "四", "五", "六"];
+  str = str.replace(/yyyy|YYYY/, date.getFullYear() + '');
+  str = str.replace(
+    /yy|YY/,
+    //@ts-ignore
+    date.getYear() % 100 > 9
+      //@ts-ignore
+      ? (date.getYear() % 100).toString()
+      //@ts-ignore
+      : "0" + (date.getYear() % 100)
+  );
+  str = str.replace(
+    /MM/,
+    date.getMonth() + 1 > 9
+      ? (date.getMonth() + 1).toString()
+      : "0" + (date.getMonth() + 1)
+  );
+  str = str.replace(/M/g, date.getMonth() + 1 + '');
+  str = str.replace(/w|W/g, Week[date.getDay()]);
+  str = str.replace(
+    /dd|DD/,
+    date.getDate() > 9 ? date.getDate().toString() : "0" + date.getDate()
+  );
+  str = str.replace(/d|D/g, date.getDate() + '');
+  str = str.replace(
+    /hh|HH/,
+    date.getHours() > 9 ? date.getHours().toString() : "0" + date.getHours()
+  );
+  str = str.replace(/h|H/g, date.getHours() + '');
+  str = str.replace(
+    /mm/,
+    date.getMinutes() > 9
+      ? date.getMinutes().toString()
+      : "0" + date.getMinutes()
+  );
+  str = str.replace(/m/g, date.getMinutes() + '');
+  str = str.replace(
+    /ss|SS/,
+    date.getSeconds() > 9
+      ? date.getSeconds().toString()
+      : "0" + date.getSeconds()
+  );
+  str = str.replace(/s|S/g, date.getSeconds() + '');
+  return str;
+};
+
+/**
+ *获取日期区间的每一个日期，返回日期数组
+ *@method getEveryDayDateByBetweenDate
+ *@start_date {date} 开始日期 YYYY-MM-DD
+ *@end_date   {date} 结束日期 YYYY-MM-DD
+ *@return {arr} 返回日期数组
+*/
+function getEveryDayDateByBetweenDate(start_date: string, end_date: string, formatStr: string = 'YYYY-MM-DD') {
+  var dateList = [start_date];
+  if (start_date == end_date) return dateList;
+  var i = 1;
+  while (true) {
+    let dateTime: any = new Date(dateList[i - 1]);
+    dateTime = dateTime.setDate(dateTime.getDate() + 1);
+    var date = formatDate(formatStr, new Date(dateTime))
+    dateList.push(date);
+    if (date == end_date) {
+      break;
+    }
+    i++;
+  }
+  return dateList;
+}
+
+/**
+ *获取前后N天的日期，返回一个字符串
+ *@method GetDateStr
+ *@AddDayCount {number} AddDayCount天后
+ *@formatStr   {string} 日期格式
+ *@return {str} 返回AddDayCount天后的日期
+*/
+function GetDateStr(AddDayCount: number, formatStr: string = 'YYYY-MM-DD') {
+  var dd = new Date();
+  dd.setDate(dd.getDate() + AddDayCount);//获取AddDayCount天后的日期
+  return formatDate(formatStr, dd)
+}
 export default {
   install: (Vue: any) => {
     Vue.prototype.$getHash = plugin.getHash
@@ -577,5 +662,8 @@ export default {
     Vue.prototype.$setSessionStorage = plugin.setSessionStorage
     Vue.prototype.$getsessionStorage = plugin.getsessionStorage
     Vue.prototype.$initEditor = initEditor
+    Vue.prototype.$formatDate = formatDate
+    Vue.prototype.$getEveryDayDateByBetweenDate = getEveryDayDateByBetweenDate
+    Vue.prototype.$GetDateStr = GetDateStr
   }
 }

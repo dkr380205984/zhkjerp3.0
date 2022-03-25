@@ -6,7 +6,7 @@
         <div class="iconCtn">
           <svg class="iconFont"
             aria-hidden="true">
-            <use xlink:href="#icon-kehuguanli"></use>
+            <use xlink:href="#icon-zhuangxiangjihuachuku"></use>
           </svg>
         </div>
         <span class="text">装箱计划出库</span>
@@ -16,7 +16,7 @@
         <div class="iconCtn">
           <svg class="iconFont"
             aria-hidden="true">
-            <use xlink:href="#icon-hezuodanweiguanli"></use>
+            <use xlink:href="#icon-dingdanzhijiechuku"></use>
           </svg>
         </div>
         <span class="text">订单直接发货</span>
@@ -26,7 +26,7 @@
         <div class="iconCtn">
           <svg class="iconFont"
             aria-hidden="true">
-            <use xlink:href="#icon-hezuodanweiguanli"></use>
+            <use xlink:href="#icon-fahuodanliebiao"></use>
           </svg>
         </div>
         <span class="text">发货单列表</span>

@@ -40,7 +40,9 @@ export default Vue.extend({
     }
   },
   mounted() {
-    this.option.color = ['#229CFB', '#1FB48C', '#8E44AD', '#696969', '#28AE60', '#F39C25', '#D3541A', '#21BC9C']
+    this.option.color
+      ? this.option.color
+      : (this.option.color = ['#229CFB', '#1FB48C', '#8E44AD', '#696969', '#28AE60', '#F39C25', '#D3541A', '#21BC9C'])
     this.initCharts()
   }
 })

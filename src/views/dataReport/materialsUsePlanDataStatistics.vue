@@ -1,7 +1,7 @@
 <template>
-  <div id="orderStatistics" class="bodyContainer" v-loading="loading">
+  <div id="materialsUsePlanDataStatistics" class="bodyContainer" v-loading="loading">
     <div class="topTagCtn">
-      <div class="tag active">
+      <div class="tag" @click="$router.push('/dataReport/orderStatistics')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-dingdanshujutubiao"></use>
         </svg>
@@ -13,18 +13,12 @@
         </svg>
         <span class="text">样单数据图表</span>
       </div>
-      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
+      <div class="tag active">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-yuanliaoshiyongtubiao"></use>
         </svg>
         <span class="text">原料使用图表</span>
       </div>
-      <!-- <div class="tag" @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">
-        <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-yuanliaoshiyongtubiao"></use>
-        </svg>
-        <span class="text">原料使用图表</span>
-      </div> -->
       <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-fuliaoshiyongtubiao"></use>
@@ -45,44 +39,43 @@
       </div>
     </div>
     <div class="module noBackColor">
+      <div style="display: flex; width: 49%; justify-content: space-between">
+        <div class="tab active">计划数据统计</div>
+        <div class="tab" @click="$router.push('/dataReport/materialsOrderingStatistics')">订购数据统计</div>
+        <div class="tab" @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
+        <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
+        <div class="tab" @click="$message.info('功能正在开发中，即将上线')">原料库存数据统计</div>
+      </div>
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">
           <div class="screenCtn">
-            <div class="screen" style="width: 66%">
-              <el-date-picker
-                v-model="filterData.start_time"
-                type="year"
-                @change="changeDate"
-                placeholder="筛选下单年份"
-              >
-              </el-date-picker>
-            </div>
-            <div class="screen">
-              <el-cascader
-                @change="
-                  getContacts($event)
-                  changeRouter()
-                "
-                placeholder="筛选下单公司"
-                v-model="filterData.client_id"
-                :show-all-levels="false"
-                filterable
-                :options="clientList"
-                clearable
-              >
-              </el-cascader>
-            </div>
-            <div class="screen" style="margin-bottom: 0">
+            <div class="screen" style="width: 48.5%">
               <el-select
-                @change="(ev) => getLocalStorage(ev, 'group_id')"
-                v-model="filterData.group_id"
-                placeholder="筛选负责小组"
+                @change="changeRouter"
+                filterable
+                v-model="filterData.orderOrSimpleOrder"
+                placeholder="筛选原料"
                 clearable
               >
-                <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+                <el-option label="订单/样单" :value="''"></el-option>
+                <el-option label="订单" :value="1"></el-option>
+                <el-option label="样单" :value="2"></el-option>
               </el-select>
             </div>
-            <div class="screen" style="margin-bottom: 0">
+            <div class="screen" style="width: 48.5%">
+              <el-select
+                @change="changeRouter"
+                filterable
+                v-model="filterData.shaxianmianliao"
+                placeholder="筛选原料"
+                clearable
+              >
+                <el-option label="纱线/面料" :value="''"></el-option>
+                <el-option label="纱线" :value="1"></el-option>
+                <el-option label="面料" :value="2"></el-option>
+              </el-select>
+            </div>
+            <div class="screen" style="margin-bottom: 0; width: 48.5%">
               <el-select @change="changePeople" v-model="filterData.contacts_id" placeholder="筛选创建人" clearable>
                 <el-option
                   v-for="item in userList"
@@ -92,18 +85,14 @@
                 ></el-option>
               </el-select>
             </div>
-            <div class="screen" style="margin-bottom: 0">
-              <el-select placeholder="筛选币种" clearable v-model="filterData.settle_unit" @change="changeRouter">
-                <el-option
-                  v-for="item in filterCondition.currency"
-                  :key="item.name"
-                  :label="item.name"
-                  :value="item.name"
-                  class="between"
-                >
-                  <span>{{ item.name }}</span>
-                  <span class="gray">({{ item.short }})</span>
-                </el-option>
+            <div class="screen" style="margin-bottom: 0; width: 48.5%">
+              <el-select
+                @change="(ev) => getLocalStorage(ev, 'group_id')"
+                v-model="filterData.group_id"
+                placeholder="筛选负责小组"
+                clearable
+              >
+                <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
               </el-select>
             </div>
           </div>
@@ -119,76 +108,119 @@
           </div>
           <div class="contentGrid">
             <div>
-              下单小组：<span class="blue">{{ groupName || '所有' }}</span>
+              订单类型：<span class="blue">{{
+                filterData.orderOrSimpleOrder === ''
+                  ? '订单/样单'
+                  : filterData.orderOrSimpleOrder === 1
+                  ? '订单'
+                  : '样单'
+              }}</span>
             </div>
             <div>
-              下单公司：<span class="blue">{{ alias || '所有' }}</span>
+              原料类型：<span class="blue">{{
+                filterData.shaxianmianliao === '' ? '纱线/面料' : filterData.shaxianmianliao === 1 ? '纱线' : '面料'
+              }}</span>
             </div>
             <div>
-              币种：<span class="blue">{{ filterData.settle_unit || '所有' }}</span>
+              原料名称：<span class="blue">{{ filterData.yuanliaomingcheng || '所有' }}</span>
             </div>
             <div>
               创建人：<span class="blue">{{ createPeople || '所有' }}</span>
+            </div>
+            <div>
+              负责小组：<span class="blue">{{ groupName || '所有' }}</span>
             </div>
           </div>
         </div>
       </div>
       <div class="cardCtn">
+        <div class="card noPad" style="overflow: hidden">
+          <div class="screen">
+            <el-input v-model="filterData.yuanliaomingcheng" placeholder="输入原料名称查询" clearable></el-input>
+          </div>
+        </div>
+        <div class="cardCtn" style="width: 100%; margin-top: 0">
+          <div class="card noPad" style="overflow: hidden; width: 210%">
+            <div class="screen">
+              <el-date-picker
+                v-model="filterData.start_time"
+                type="year"
+                @change="changeDate"
+                placeholder="筛选下单年份"
+              >
+              </el-date-picker>
+            </div>
+          </div>
+          <div class="card noPad" style="overflow: hidden">
+            <el-button style="width: 100%; height: 63px">重置</el-button>
+          </div>
+        </div>
+      </div>
+      <div class="cardCtn">
         <div class="card">
-          <h3>下单总额</h3>
+          <h3>合计计划数量</h3>
           <div class="content">
             <span class="blue">
               <h2>{{ this.reportData.order.total_price }}</h2>
             </span>
-            <h2 class="unit">万{{ filterData.settle_unit || '元' }}</h2>
+            <h2 class="unit">吨或千米</h2>
           </div>
         </div>
         <div class="card">
-          <h3>下单总数</h3>
+          <h3>平均计划损耗</h3>
           <div class="content">
             <span class="blue">
               <h2>{{ this.reportData.order.total_number }}</h2>
             </span>
-            <h2 class="unit">万件</h2>
-          </div>
-        </div>
-        <div class="card">
-          <h3>出库总额</h3>
-          <div class="content">
-            <span class="green">
-              <h2>{{ this.reportData.transport.price }}</h2>
-            </span>
-            <h2 class="unit">万{{ filterData.settle_unit || '元' }}</h2>
-          </div>
-        </div>
-        <div class="card">
-          <h3>出库总数</h3>
-          <div class="content">
-            <span class="green">
-              <h2>{{ this.reportData.transport.transport_number }}</h2>
-            </span>
-            <h2 class="unit">万件</h2>
+            <h2 class="unit">%</h2>
           </div>
         </div>
       </div>
       <div class="cardCtn">
         <div class="card">
           <el-tabs v-model="activeName" @tab-click="getList">
-            <el-tab-pane label="下单数据" name="first">
-              <zh-charts v-if="activeName === 'first'" :option="option1"></zh-charts>
-              <div class="cardCtn">
-                <div class="card">
-                  <zh-charts :option="groupOption"></zh-charts>
-                </div>
-                <div class="card">
-                  <zh-charts :option="companyOption"></zh-charts>
+            <el-tab-pane label="查看所有" name="first">
+              <div style="display: flex; justify-content: end; padding-right: 50px">
+                <div style="width: 150px">
+                  <el-select v-model="sortWay" @change="changeRouter">
+                    <el-option label="按数量排序" :value="1"> </el-option>
+                    <el-option label="按损耗排序" :value="2"> </el-option>
+                  </el-select>
                 </div>
               </div>
+              <zh-charts v-if="activeName === 'first'" :option="option1"></zh-charts>
             </el-tab-pane>
-            <el-tab-pane label="出库数据" name="second"
-              ><zh-charts v-if="activeName === 'second'" :option="option1"></zh-charts
+            <el-tab-pane label="原料计划" name="second">
+              <div style="display: flex; justify-content: end; padding-right: 50px">
+                <div style="width: 150px">
+                  <el-select v-model="sortWay" @change="changeRouter">
+                    <el-option label="按数量排序" :value="1"> </el-option>
+                    <el-option label="按损耗排序%" :value="2"> </el-option>
+                  </el-select>
+                </div>
+              </div>
+              <zh-charts v-if="activeName === 'second'" :option="option1"></zh-charts
+            ></el-tab-pane>
+            <el-tab-pane label="补原料单据" name="third">
+              <div style="display: flex; justify-content: end; padding-right: 50px">
+                <div style="width: 150px">
+                  <el-select v-model="sortWay" @change="changeRouter">
+                    <el-option label="按数量排序" :value="1"> </el-option>
+                    <el-option label="按损耗排序%" :value="2"> </el-option>
+                  </el-select>
+                </div>
+              </div>
+              <zh-charts v-if="activeName === 'third'" :option="option1"></zh-charts
             ></el-tab-pane>
           </el-tabs>
+        </div>
+      </div>
+    </div>
+    <div class="bottomFixBar">
+      <div class="main">
+        <div class="btnCtn">
+          <div class="btn backHoverBlue">查看原料计划单据</div>
+          <div class="btn backHoverBlue">查看补原料单据</div>
         </div>
       </div>
     </div>
@@ -208,6 +240,7 @@ export default Vue.extend({
     return {
       loading: false,
       alias: '',
+      sortWay: 1,
       option1: {
         tooltip: {
           trigger: 'axis',
@@ -350,7 +383,8 @@ export default Vue.extend({
         client_id: '',
         contacts_id: '',
         group_id: '',
-        settle_unit: ''
+        orderOrSimpleOrder: '',
+        shaxianmianliao: ''
       },
       reportData: {
         order: {
@@ -456,7 +490,7 @@ export default Vue.extend({
                 <span style='color:#A3A3A3;font-size:10px'>CNY：</span>
                 <span style='color:#229CFB;font-size:14px;'>${this.filterData.settle_unit === '美元' ? '$' : '￥'}${
           params[0].value
-        }万元</span>
+        }</span>
             `
       }
     },
@@ -513,7 +547,7 @@ export default Vue.extend({
     },
     changeRouter() {
       this.$router.push(
-        '/dataReport/orderStatistics?' +
+        '/dataReport/materialsUsePlanDataStatistics?' +
           '&client_id=' +
           (this.filterData.client_id || '') +
           '&contacts_id=' +
@@ -652,16 +686,45 @@ export default Vue.extend({
             data.order.report.group.forEach((group: any) => {
               this.groupOption.series[0].data.push({
                 name: group.group_name || '其它',
-                value: (group.total_price / 10000).toFixed(2)
+                value: group.total_price
               })
             })
 
             // 横向柱状图
             data.order.report.client.forEach((client: any) => {
               this.companyOption.yAxis.data.push(client.client_name)
-              this.companyOption.series[0].data.push((client.total_price/10000).toFixed(2))
+              this.companyOption.series[0].data.push(client.total_price)
             })
           } else if (this.activeName === 'second') {
+            this.option1.series[0].name = '每月出库总额'
+            this.option1.series[1].name = '每月出库总数'
+            this.option1.legend.data = ['每月出库总额', '每月出库总数']
+            this.option1.yAxis[0].name = '出库总额'
+            this.option1.yAxis[1].name = '出库总数'
+
+            // 每月出库总数 图表更新
+            this.option1.yAxis[0].max = Math.ceil(Math.ceil(outPriceMax / 10000 / 5)) * 5 || 10
+            this.option1.yAxis[0].min = outPriceMin && outPriceMin < 0 ? Math.ceil(outPriceMin / 10000) : 0
+            this.option1.yAxis[0].interval = Math.ceil(outPriceMax / 10000 / 5) || 10
+
+            // 每月出库总额 图表更新
+            this.option1.yAxis[1].max = Math.ceil(Math.ceil(outNumberMax / 10000 / 5)) * 5 || 10
+            this.option1.yAxis[1].min = outNumberMin && outNumberMin < 0 ? Math.ceil(outNumberMin / 10000) : 0
+            this.option1.yAxis[1].interval = Math.ceil(outNumberMax / 10000 / 5) || 10
+
+            this.option1.xAxis[0].data.forEach((itemMouth: any) => {
+              let mouth = this.reportData.transport.report.month.find((item: any) => {
+                return item.mouth === itemMouth
+              })
+              if (mouth) {
+                this.option1.series[0].data.push(+(+mouth.price / 10000).toFixed(2))
+                this.option1.series[1].data.push(+(+mouth.transport_number / 10000).toFixed(2))
+              } else {
+                this.option1.series[0].data.push(0)
+                this.option1.series[1].data.push(0)
+              }
+            })
+          } else if (this.activeName === 'third') {
             this.option1.series[0].name = '每月出库总额'
             this.option1.series[1].name = '每月出库总数'
             this.option1.legend.data = ['每月出库总额', '每月出库总数']
@@ -746,11 +809,11 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import '~@/assets/css/dataReport/orderStatistics.less';
+@import '~@/assets/css/dataReport/materialsUsePlanDataStatistics.less';
 </style>
 
 <style lang="less">
-#orderStatistics {
+#materialsUsePlanDataStatistics {
   .screen {
     overflow: hidden;
   }
@@ -761,6 +824,9 @@ export default Vue.extend({
   }
   .el-tabs__nav-wrap::after {
     background-color: white;
+  }
+  .el-button {
+    border: none;
   }
 }
 </style>

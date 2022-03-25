@@ -320,11 +320,23 @@ const systemModule = [{
   name: '数据报表',
   detail: [{
     id: '20-1',
-    name: '订单数据统计',
+    name: '订单数据图表',
   }, {
     id: '20-2',
-    name: '样单数据统计',
-  }]
+    name: '样单数据图表',
+  }, /*{
+    id: '20-3',
+    name: '计划数据统计',
+  }, {
+    id: '20-4',
+    name: '订购数据统计',
+  }, {
+    id: '20-5',
+    name: '调取数据统计',
+  }, {
+    id: '20-6',
+    name: '加工数据统计',
+  },*/]
 }]
 
 const yarnAttributeArr: CascaderInfo[] = [{

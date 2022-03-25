@@ -13,25 +13,31 @@
         </svg>
         <span class="text">样单数据图表</span>
       </div>
-      <div class="tag">
+      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-yuanliaoshiyongtubiao"></use>
         </svg>
         <span class="text">原料使用图表</span>
       </div>
-      <div class="tag">
+      <!-- <div class="tag" @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">
+        <svg class="iconFont" aria-hidden="true">
+          <use xlink:href="#icon-yuanliaoshiyongtubiao"></use>
+        </svg>
+        <span class="text">原料使用图表</span>
+      </div> -->
+      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-fuliaoshiyongtubiao"></use>
         </svg>
         <span class="text">辅料使用图表</span>
       </div>
-      <div class="tag">
+      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-shengchanshujutubiao"></use>
         </svg>
         <span class="text">生产数据图表</span>
       </div>
-      <div class="tag">
+      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-qitafeiyongtubiao"></use>
         </svg>
@@ -40,9 +46,9 @@
     </div>
     <div class="module noBackColor">
       <div class="cardCtn">
-        <div class="card noBackColor noPad">
+        <div class="card noBackColor noPad" style="width: 106%">
           <div class="screenCtn">
-            <div class="screen">
+            <div class="screen" style="width: 100%">
               <el-date-picker
                 v-model="filterData.start_time"
                 type="year"
@@ -51,7 +57,7 @@
               >
               </el-date-picker>
             </div>
-            <div class="screen">
+            <div class="screen" style="margin-bottom: 0">
               <el-cascader
                 @change="
                   getContacts($event)
@@ -66,7 +72,7 @@
               >
               </el-cascader>
             </div>
-            <div class="screen">
+            <div class="screen" style="margin-bottom: 0">
               <el-select
                 @change="(ev) => getLocalStorage(ev, 'group_id')"
                 v-model="filterData.group_id"
@@ -76,10 +82,19 @@
                 <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
               </el-select>
             </div>
-            <div class="screen"></div>
+            <div class="screen" style="margin-bottom: 0">
+              <el-select @change="changePeople" v-model="filterData.contacts_id" placeholder="筛选创建人" clearable>
+                <el-option
+                  v-for="item in userList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </div>
           </div>
         </div>
-        <div class="card">
+        <div class="card" style="margin-left: 4px">
           <div class="contentGrid">
             <h3>当前统计默认值</h3>
             <div class="item2">
@@ -94,6 +109,9 @@
             </div>
             <div>
               下单公司：<span class="blue">{{ alias || '所有' }}</span>
+            </div>
+            <div>
+              创建人：<span class="blue">{{ createPeople || '所有' }}</span>
             </div>
           </div>
         </div>
@@ -158,6 +176,14 @@
       </div>
       <div class="cardCtn">
         <div class="card" style="padding-top: 60px">
+          <div style="display: flex; justify-content: end; padding-right: 50px">
+            <div style="width: 150px">
+              <el-select v-model="sortWay" @change="changeRouter">
+                <el-option label="打样数量排序" :value="1"> </el-option>
+                <el-option label="打样成本排序" :value="2"> </el-option>
+              </el-select>
+            </div>
+          </div>
           <zh-charts :option="option1"></zh-charts>
         </div>
       </div>
@@ -195,6 +221,8 @@ export default Vue.extend({
         }
       },
       alias: '',
+      createPeople: '',
+      sortWay: 1,
       option1: {
         tooltip: {
           trigger: 'axis',
@@ -231,14 +259,6 @@ export default Vue.extend({
             })
 
             return htmlStr
-          }
-        },
-        toolbox: {
-          right: '15%',
-          feature: {
-            magicType: { show: true, type: ['line', 'bar'] },
-            restore: { show: true },
-            saveAsImage: { show: true }
           }
         },
         legend: {
@@ -391,18 +411,33 @@ export default Vue.extend({
           })
           .then((res) => {
             if (res.data.status) {
-              this.filterCondition.contactsList = res.data.data.contacts_data
               this.alias = res.data.data.alias
             }
           })
       } else {
-        this.contacts_id = ''
+        this.alias = '所有'
       }
+    },
+    changePeople(user_id: any) {
+      this.createPeople = '所有'
+
+      let obj = this.userList.find((item: any) => {
+        return item.value === user_id
+      })
+
+      localStorage.create_user_name = ''
+
+      if (obj) {
+        localStorage.create_user_name = obj.label
+        this.createPeople = obj.label
+      }
+      this.changeRouter()
     },
     getLocalStorage(ev: any, type: string) {
       let groupInfo = this.groupList.find((item: any) => {
         return this.filterData.group_id === item.id
       })
+      this.groupName = '所有'
       if (groupInfo) {
         this.groupName = groupInfo.name
       }
@@ -424,6 +459,9 @@ export default Vue.extend({
         : []
       this.filterData.contacts_id = query.contacts_id || this.$getLocalStorage('create_user') || ''
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
+      this.sortWay = Number(query.sortWay) || 1
+      this.createPeople = this.$getLocalStorage('create_user_name')
+      this.getContacts(this.filterData.client_id)
     },
     formatDate(date: Date) {
       return (
@@ -462,10 +500,14 @@ export default Vue.extend({
           (this.filterData.client_id || '') +
           '&group_id=' +
           (this.filterData.group_id || '') +
+          '&contacts_id=' +
+          (this.filterData.contacts_id || '') +
           '&start_time=' +
           (this.filterData.start_time || '') +
           '&end_time=' +
-          (this.filterData.end_time || '')
+          (this.filterData.end_time || '') +
+          '&sortWay=' +
+          (this.sortWay || 1)
       )
     },
     getList() {
@@ -476,7 +518,8 @@ export default Vue.extend({
           start_time: this.filterData.start_time,
           client_id: this.filterData.client_id.length > 0 ? this.filterData.client_id[2] : '',
           group_id: this.filterData.group_id,
-          end_time: this.filterData.end_time
+          end_time: this.filterData.end_time,
+          user_id: this.filterData.contacts_id
         })
         .then((res) => {
           if (!res.data.status) {
@@ -485,14 +528,17 @@ export default Vue.extend({
           }
 
           this.categoryOption.series[0].data = []
+          this.groupOption.series[0].data = []
           this.option1.xAxis[0].data = []
+          this.option1.series[0].data = []
+          this.option1.series[1].data = []
 
           let data = res.data.data
           data.number = this.$formatNum(data.number)
           data.real_number = this.$formatNum(data.real_number)
-          data.process = this.$formatNum(data.process.toFixed(2))
-          data.purchase = this.$formatNum(data.purchase.toFixed(2))
-          data.weave_plan = this.$formatNum(data.weave_plan.toFixed(2))
+          data.process = this.$formatNum((data.process / 10000).toFixed(2))
+          data.purchase = this.$formatNum((data.purchase / 10000).toFixed(2))
+          data.weave_plan = this.$formatNum((data.weave_plan / 10000).toFixed(2))
           data.proportion = this.$formatNum(data.proportion.toFixed(2))
           this.reportData = data
 
@@ -509,6 +555,16 @@ export default Vue.extend({
               value: group.number
             })
           })
+
+          if (this.sortWay === 1) {
+            data.client.sort(function (a: any, b: any) {
+              return b.number - a.number
+            })
+          } else if (this.sortWay === 2) {
+            data.client.sort(function (a: any, b: any) {
+              return b.price - a.price
+            })
+          }
 
           data.client.forEach((client: any) => {
             this.option1.xAxis[0].data.push(client.name)
@@ -603,6 +659,9 @@ export default Vue.extend({
         getInfoApi: 'getUserAsync'
       }
     ])
+  },
+  beforeDestroy() {
+    localStorage.create_user_name = ''
   }
 })
 </script>

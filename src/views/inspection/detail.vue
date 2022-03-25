@@ -298,7 +298,7 @@
                       <zh-input class="inputs"
                         :keyBoard="keyBoard"
                         v-model="itemChild.number"
-                        placeholder="请输入结算单价"
+                        placeholder="请输入检验数量"
                         type="number">
                       </zh-input>
                     </div>
@@ -584,11 +584,12 @@ export default Vue.extend({
             const findChild = finded.childrenMergeInfo.find(
               (itemChild: any) => itemChild.code === this.$route.query.code
             )
-            const findPro = findChild.product_info_data.find(
-              (itemPro: any) => itemPro.product_id == this.$route.query.product_id
-            )
+            findChild.product_info_data.forEach((itemPro: any) => {
+              if (itemPro.product_id == this.$route.query.product_id) {
+                itemPro.check = true
+              }
+            })
             findChild.checkAll = true
-            findPro.check = true
             this.$forceUpdate()
             this.goInspection(1)
           }
