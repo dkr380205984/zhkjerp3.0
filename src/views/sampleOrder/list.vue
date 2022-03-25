@@ -4,9 +4,9 @@
       <div class="titleCtn">
         <div class="title">样单列表</div>
       </div>
-      <div style="height: 200px; width: 1580px; transform: translateX(-111px)">
+      <!-- <div style="height: 200px; width: 1580px; transform: translateX(-111px)">
         <zh-charts :option="option" style="height: 200px"></zh-charts>
-      </div>
+      </div> -->
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">

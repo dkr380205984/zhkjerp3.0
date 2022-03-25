@@ -253,7 +253,8 @@ export default Vue.extend({
                 color +
                 ';">' +
                 param.value +
-                '</span></span>'
+                (index === 0 ? '件' : '万元')
+              ;('</span></span>')
 
               htmlStr += '</div>'
             })
@@ -309,7 +310,7 @@ export default Vue.extend({
           formatter: function (params: any) {
             return `
                 <div>
-                    ${params.marker}<span style="margin-left:10px;color:black;font-weight:bold">${params.data.name}：<span style="color:${params.color};font-weight:normal">${params.data.value}</span></span>
+                    ${params.marker}<span style="margin-left:10px;color:black;font-weight:bold">${params.data.name}：<span style="color:${params.color};font-weight:normal">${params.data.value}件</span></span>
                 </div>
               `
           }
@@ -347,7 +348,7 @@ export default Vue.extend({
           formatter: function (params: any) {
             return `
                 <div>
-                    ${params.marker}<span style="margin-left:10px;color:black;font-weight:bold">${params.data.name}：<span style="color:${params.color};font-weight:normal">${params.data.value}</span></span>
+                    ${params.marker}<span style="margin-left:10px;color:black;font-weight:bold">${params.data.name}：<span style="color:${params.color};font-weight:normal">${params.data.value}件</span></span>
                 </div>
               `
           }
@@ -569,7 +570,7 @@ export default Vue.extend({
           data.client.forEach((client: any) => {
             this.option1.xAxis[0].data.push(client.name)
             this.option1.series[0].data.push(client.number)
-            this.option1.series[1].data.push(client.price)
+            this.option1.series[1].data.push((client.price / 10000).toFixed(2))
           })
 
           let simpleNumberMax: any,
@@ -603,15 +604,15 @@ export default Vue.extend({
             simplePriceMin = +simplePriceMin.price
           }
 
-          // 每月出库总数 图表更新
+          // 打样总数 图表更新
           this.option1.yAxis[0].max = Math.ceil(Math.ceil(simpleNumberMax / 5)) * 5 || 10
           this.option1.yAxis[0].min = simpleNumberMax && simpleNumberMax < 0 ? Math.ceil(simpleNumberMax) : 0
           this.option1.yAxis[0].interval = Math.ceil(simpleNumberMax / 5) || 10
 
-          // 每月出库总额 图表更新
-          this.option1.yAxis[1].max = Math.ceil(Math.ceil(simplePriceMax / 5)) * 5 || 10
-          this.option1.yAxis[1].min = simplePriceMin && simplePriceMin < 0 ? simplePriceMin : 0
-          this.option1.yAxis[1].interval = Math.ceil(simplePriceMax / 5) || 10
+          // 打样总额 图表更新
+          this.option1.yAxis[1].max = Math.ceil(Math.ceil(simplePriceMax / 10000 / 5)) * 5 || 10
+          this.option1.yAxis[1].min = simplePriceMin && simplePriceMin < 0 ? Math.ceil(simplePriceMin / 10000) : 0
+          this.option1.yAxis[1].interval = Math.ceil(simplePriceMax / 10000 / 5) || 10
           this.loading = false
         })
     }
