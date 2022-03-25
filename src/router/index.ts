@@ -264,7 +264,7 @@ const routes: Array<RouteConfig> = [
         permissions_id: '20-6',
       },
       path: '/dataReport/materialsMachiningStatistics',
-      name: '调取数据统计',
+      name: '加工数据统计',
       component: () => import('../views/dataReport/materialsMachiningStatistics.vue')
     }, {
       meta: {
