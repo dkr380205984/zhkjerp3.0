@@ -4,7 +4,27 @@
     v-loading="loading">
     <div class="module">
       <div class="titleCtn">
-        <div class="title">添加报价单</div>
+        <div class="title">添加报价单
+          <div class="elCtn fr">
+            <el-select v-model="searchQuotedPriceKey"
+              filterable
+              remote
+              reserve-keyword
+              placeholder="输入编号导入报价单"
+              :remote-method="searchQuotedPriceFn"
+              :loading="searchLoading"
+              @change="getImportDetail">
+              <el-option v-for="item in searchList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.code">
+                <span style="float:left"
+                  class="blue">{{item.code}}</span>
+                <span style="float:right;color:#8492a6;font-size:12px">{{item.title}}</span>
+              </el-option>
+            </el-select>
+          </div>
+        </div>
       </div>
       <div class="editCtn">
         <div class="row">
@@ -1119,6 +1139,9 @@ export default Vue.extend({
     return {
       loading: false,
       unitArr: moneyArr,
+      searchQuotedPriceKey: '',
+      searchLoading: false,
+      searchList: [],
       postData: {
         key: '',
         token: ''
@@ -1281,6 +1304,39 @@ export default Vue.extend({
     }
   },
   methods: {
+    searchQuotedPriceFn(key: string) {
+      if (key) {
+        this.seachLoading = true
+        quotedPrice
+          .list({
+            page: 1,
+            limit: 10,
+            keyword: key
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.searchList = res.data.data.items
+            }
+            this.searchLoading = false
+          })
+      }
+    },
+    getImportDetail(id: number) {
+      this.loading = true
+      quotedPrice
+        .detail({
+          id: id
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.quotedPriceInfo = res.data.data
+            this.quotedPriceInfo.id = ''
+            this.quotedPriceInfo.pid = ''
+            this.getUpdateInfo()
+            this.loading = false
+          }
+        })
+    },
     changeCVOpration(flag: boolean, mark: number, imageLength: number) {
       if (this.notify) {
         this.notify.close()
@@ -2150,108 +2206,114 @@ export default Vue.extend({
             this.quotedPriceInfo.contacts_id = data.contacts_id
             this.quotedPriceInfo.group_id = data.group_id
             this.quotedPriceInfo.product_data = []
-            // @ts-ignore
+            // @ts-ignore filter过滤多批次重复产品
             data.time_data[0].batch_data.forEach((item) => {
               this.quotedPriceInfo.product_data = this.quotedPriceInfo.product_data.concat(
-                item.product_data.map((item: any) => {
-                  return {
-                    cv_list: [],
-                    cvFlag: false,
-                    total_price: '',
-                    product_id: item.product_id,
-                    type: [item.category_id as number, item.secondary_category_id as number],
-                    category_id: item.category_id,
-                    secondary_category_id: item.secondary_category_id,
-                    file_list: (item.image_data as string[]).map((itemImage, index) => {
-                      return {
-                        id: index,
-                        url: itemImage
-                      }
-                    }),
-                    image_data: [],
-                    client_target_price: '',
-                    start_order_number: '',
-                    desc: item.desc,
-                    transport_fee_desc: '',
-                    transport_fee: '',
-                    material_data: [
-                      {
-                        id: '',
-                        tree_data: [],
-                        material_id: '',
-                        material_name: '',
-                        weight: '',
-                        loss: '',
-                        price: '',
-                        total_price: '',
-                        unit: 'g',
-                        price_info: []
-                      }
-                    ],
-                    assist_material_data: [
-                      {
-                        id: '',
-                        material_id: '',
-                        material_name: '',
-                        number: '',
-                        loss: '',
-                        price: '',
-                        total_price: '',
-                        unit: ''
-                      }
-                    ],
-                    weave_data: [
-                      {
-                        id: '',
-                        name: '',
-                        desc: '',
-                        total_price: ''
-                      }
-                    ],
-                    semi_product_data: [
-                      {
-                        id: '',
-                        process_id: [],
-                        process_name: [],
-                        desc: '',
-                        total_price: ''
-                      }
-                    ],
-                    production_data: [
-                      {
-                        id: '',
-                        name: [],
-                        desc: '',
-                        total_price: ''
-                      }
-                    ],
-                    pack_material_data: [
-                      {
-                        id: '',
-                        material_name: '',
-                        material_id: '',
-                        desc: '',
-                        total_price: ''
-                      }
-                    ],
-                    other_fee_data: [
-                      {
-                        id: '',
-                        name: '',
-                        desc: '',
-                        total_price: ''
-                      }
-                    ],
-                    no_production_fee_data: [
-                      {
-                        id: '',
-                        name: '',
-                        desc: '',
-                        total_price: ''
-                      }
-                    ]
-                  }
-                })
+                item.product_data
+                  .filter((itemCheck: any) => {
+                    return !this.quotedPriceInfo.product_data.find(
+                      (itemFind) => itemCheck.product_id === itemFind.product_id
+                    )
+                  })
+                  .map((item: any) => {
+                    return {
+                      cv_list: [],
+                      cvFlag: false,
+                      total_price: '',
+                      product_id: item.product_id,
+                      type: [item.category_id as number, item.secondary_category_id as number],
+                      category_id: item.category_id,
+                      secondary_category_id: item.secondary_category_id,
+                      file_list: (item.image_data as string[]).map((itemImage, index) => {
+                        return {
+                          id: index,
+                          url: itemImage
+                        }
+                      }),
+                      image_data: [],
+                      client_target_price: '',
+                      start_order_number: '',
+                      desc: item.desc,
+                      transport_fee_desc: '',
+                      transport_fee: '',
+                      material_data: [
+                        {
+                          id: '',
+                          tree_data: [],
+                          material_id: '',
+                          material_name: '',
+                          weight: '',
+                          loss: '',
+                          price: '',
+                          total_price: '',
+                          unit: 'g',
+                          price_info: []
+                        }
+                      ],
+                      assist_material_data: [
+                        {
+                          id: '',
+                          material_id: '',
+                          material_name: '',
+                          number: '',
+                          loss: '',
+                          price: '',
+                          total_price: '',
+                          unit: ''
+                        }
+                      ],
+                      weave_data: [
+                        {
+                          id: '',
+                          name: '',
+                          desc: '',
+                          total_price: ''
+                        }
+                      ],
+                      semi_product_data: [
+                        {
+                          id: '',
+                          process_id: [],
+                          process_name: [],
+                          desc: '',
+                          total_price: ''
+                        }
+                      ],
+                      production_data: [
+                        {
+                          id: '',
+                          name: [],
+                          desc: '',
+                          total_price: ''
+                        }
+                      ],
+                      pack_material_data: [
+                        {
+                          id: '',
+                          material_name: '',
+                          material_id: '',
+                          desc: '',
+                          total_price: ''
+                        }
+                      ],
+                      other_fee_data: [
+                        {
+                          id: '',
+                          name: '',
+                          desc: '',
+                          total_price: ''
+                        }
+                      ],
+                      no_production_fee_data: [
+                        {
+                          id: '',
+                          name: '',
+                          desc: '',
+                          total_price: ''
+                        }
+                      ]
+                    }
+                  })
               )
             })
             // 如果是订单产品转报价，过滤掉其他产品

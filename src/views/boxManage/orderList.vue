@@ -19,7 +19,7 @@
             <use xlink:href="#icon-hezuodanweiguanli"></use>
           </svg>
         </div>
-        <span class="text">订单直接出库</span>
+        <span class="text">订单直接发货</span>
       </div>
       <div class="tag"
         @click="$router.push('/boxManage/boxList?page=1')">

@@ -20,7 +20,7 @@
             <use xlink:href="#icon-hezuodanweiguanli"></use>
           </svg>
         </div>
-        <span class="text">订单直接出库</span>
+        <span class="text">订单直接发货</span>
       </div>
       <div class="tag active">
         <div class="iconCtn">
@@ -44,9 +44,9 @@
             <div class="col">出库单号</div>
             <div class="col">运输单位</div>
             <div class="col">运输城市</div>
-            <div class="col">合计箱数</div>
-            <div class="col">合计毛重</div>
-            <div class="col">合计体积</div>
+            <div class="col">合计箱数/箱</div>
+            <div class="col">合计毛重/kg</div>
+            <div class="col">合计体积/m³</div>
             <div class="col">创建人</div>
             <div class="col">创建时间</div>
             <div class="col">操作</div>
@@ -57,11 +57,11 @@
             <div class="col">{{item.code}}</div>
             <div class="col">{{item.client_id}}</div>
             <div class="col">{{item.city}}</div>
-            <div class="col">{{item.total_box}}箱</div>
-            <div class="col">{{item.total_gross_weight}}kg</div>
+            <div class="col">{{item.total_box}}</div>
+            <div class="col">{{item.total_gross_weight}}</div>
             <div class="col">{{item.total_net_weight}}</div>
             <div class="col">{{item.user_name}}</div>
-            <div class="col">创建时间</div>
+            <div class="col">{{item.created_at.slice(0,10)}}</div>
             <div class="col oprCtn">
               <span class="opr hoverBlue"
                 @click="$router.push('/boxManage/boxDetail?id='+item.id)">详情</span>

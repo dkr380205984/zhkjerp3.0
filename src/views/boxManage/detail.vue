@@ -7,6 +7,14 @@
         <div class="title">计划单信息</div>
       </div>
       <div class="detailCtn">
+        <div class="description">
+          <span>可调整部分计划单数值用于发货单填写，调整的数值除
+            <span class="blue">实际发货数量</span>
+            均不会影响发货计划单的信息。
+            <span class="red">注意：</span>
+            这可能会导致发货单的信息与计划单有出入。
+          </span>
+        </div>
         <div class="tableCtn"
           v-for="item in packPlanLog"
           :key="item.id"
@@ -28,21 +36,19 @@
                     </div>
                   </div>
                   <div class="tcol"
-                    style="flex:0.5">总箱数</div>
+                    style="flex:0.5">总箱数/箱</div>
                   <div class="tcol"
-                    style="flex:0.5">总毛重</div>
+                    style="flex:0.5">总毛重/kg</div>
                   <div class="tcol"
-                    style="flex:0.5">总净重</div>
+                    style="flex:0.5">总净重/kg</div>
                   <div class="tcol"
-                    style="flex:0.5">总体积</div>
+                    style="flex:0.5">总体积/m³</div>
                 </div>
               </div>
             </div>
           </div>
           <div class="tbody">
-            <div class="trow"
-              v-for="item in packPlanLog"
-              :key="item.id">
+            <div class="trow">
               <div class="tcol">{{item.code}}</div>
               <div class="tcol">{{item.order_code}}</div>
               <div class="tcol noPad"
@@ -70,13 +76,41 @@
                     </div>
                   </div>
                   <div class="tcol"
-                    style="flex:0.5">{{itemData.total_box_count}}箱</div>
+                    style="flex:0.5">
+                    <div class="elCtn">
+                      <el-input @input="computedEverything"
+                        v-model="itemData.total_box_count"
+                        placeholder="总箱数">
+                      </el-input>
+                    </div>
+                  </div>
                   <div class="tcol"
-                    style="flex:0.5">{{itemData.total_gross_weight}}kg</div>
+                    style="flex:0.5">
+                    <div class="elCtn">
+                      <el-input @input="computedEverything"
+                        v-model="itemData.total_gross_weight"
+                        placeholder="总毛重">
+                      </el-input>
+                    </div>
+                  </div>
                   <div class="tcol"
-                    style="flex:0.5">{{itemData.total_net_weight}}kg</div>
+                    style="flex:0.5">
+                    <div class="elCtn">
+                      <el-input @input="computedEverything"
+                        v-model="itemData.total_net_weight"
+                        placeholder="总净重">
+                      </el-input>
+                    </div>
+                  </div>
                   <div class="tcol"
-                    style="flex:0.5">{{itemData.total_bulk}}m³</div>
+                    style="flex:0.5">
+                    <div class="elCtn">
+                      <el-input @input="computedEverything"
+                        v-model="itemData.total_bulk"
+                        placeholder="总体积">
+                      </el-input>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -158,7 +192,8 @@
             </div>
             <div class="info elCtn">
               <el-input v-model="boxInfo.total_box"
-                placeholder="请输入总箱数">
+                placeholder="请输入总箱数"
+                disabled>
                 <template slot="append">箱</template>
               </el-input>
             </div>
@@ -170,7 +205,8 @@
             </div>
             <div class="info elCtn">
               <el-input v-model="boxInfo.total_gross_weight"
-                placeholder="请输入总毛重">
+                placeholder="请输入总毛重"
+                disabled>
                 <template slot="append">kg</template>
               </el-input>
             </div>
@@ -182,7 +218,8 @@
             </div>
             <div class="info elCtn">
               <el-input v-model="boxInfo.total_net_weight"
-                placeholder="请输入总净重">
+                placeholder="请输入总净重"
+                disabled>
                 <template slot="append">kg</template>
               </el-input>
             </div>
@@ -194,7 +231,8 @@
             </div>
             <div class="info elCtn">
               <el-input v-model="boxInfo.total_bulk"
-                placeholder="请输入总体积">
+                placeholder="请输入总体积"
+                disabled>
                 <template slot="append">m³</template>
               </el-input>
             </div>
@@ -208,8 +246,11 @@
             <div class="info elCtn">
               <el-input v-model="boxInfo.price"
                 placeholder="请输入运输单价"
-                @change="(ev)=>{boxInfo.total_price = $toFixed(Number(ev)*Number(boxInfo.total_box) + Number(boxInfo.others_fee))}">
-                <template slot="append">元/箱</template>
+                @input="(ev)=>{
+                  boxInfo.price_bulk = $toFixed(Number(ev)*Number(boxInfo.total_bulk));
+                  boxInfo.total_price = $toFixed(Number(boxInfo.price_bulk)+ Number(boxInfo.others_fee))
+                }">
+                <template slot="append">元/m³</template>
               </el-input>
             </div>
           </div>
@@ -220,8 +261,8 @@
             <div class="info elCtn">
               <el-input v-model="boxInfo.price_bulk"
                 placeholder="运输体积价"
-                @change="(ev)=>{boxInfo.total_price = $toFixed(Number(ev)*Number(boxInfo.total_bulk)+ Number(boxInfo.others_fee))}">
-                <template slot="append">元/m³</template>
+                disabled>
+                <template slot="append">元</template>
               </el-input>
             </div>
           </div>
@@ -232,7 +273,7 @@
             <div class="info elCtn">
               <el-input v-model="boxInfo.others_fee"
                 placeholder="请输入额外费用"
-                @change="(ev)=>{boxInfo.total_price = $toFixed(Number(ev)+Number(boxInfo.total_price))}">
+                @input="(ev)=>{boxInfo.total_price = $toFixed(Number(ev)+Number(boxInfo.total_price))}">
                 <template slot="append">元</template>
               </el-input>
             </div>
@@ -243,7 +284,8 @@
               <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
-              <el-input v-model="boxInfo.total_price"
+              <el-input disabled
+                v-model="boxInfo.total_price"
                 placeholder="请输入运输总价">
                 <template slot="append">元</template>
               </el-input>
@@ -330,7 +372,12 @@ export default Vue.extend({
       cb(results)
     },
     getCmpData() {
-      this.boxInfo.rel_plan = JSON.parse(this.$route.query.id as string) as number[]
+      this.boxInfo.rel_plan = this.packPlanLog.map((item) => {
+        return {
+          plan_id: item.id as number,
+          transport_info: JSON.stringify(item)
+        }
+      })
       this.boxInfo.transport_number_data = []
       this.packPlanLog.forEach((item) => {
         item.data.forEach((itemChild) => {
@@ -385,9 +432,52 @@ export default Vue.extend({
         boxManage.create(this.boxInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
+            this.$router.push('/boxManage/boxDetail?id=' + res.data.data)
           }
         })
       }
+    },
+    // 懒得去分了，反正改任何值全部重新算一遍总的没错的
+    computedEverything() {
+      const totalData = this.packPlanLog.reduce(
+        (totalPlan, curPlan) => {
+          return {
+            total_box:
+              totalPlan.total_box +
+              curPlan.data.reduce((total, cur) => {
+                return total + Number(cur.total_box_count)
+              }, 0),
+            total_gross_weight:
+              totalPlan.total_gross_weight +
+              curPlan.data.reduce((total, cur) => {
+                return total + Number(cur.total_gross_weight)
+              }, 0),
+            total_net_weight:
+              totalPlan.total_net_weight +
+              curPlan.data.reduce((total, cur) => {
+                return total + Number(cur.total_net_weight)
+              }, 0),
+            total_bulk:
+              totalPlan.total_bulk +
+              curPlan.data.reduce((total, cur) => {
+                return total + Number(cur.total_bulk)
+              }, 0)
+          }
+        },
+        {
+          total_box: 0,
+          total_gross_weight: 0,
+          total_net_weight: 0,
+          total_bulk: 0
+        }
+      )
+      this.boxInfo.total_box = totalData.total_box
+      this.boxInfo.total_gross_weight = this.$toFixed(totalData.total_gross_weight)
+      this.boxInfo.total_net_weight = this.$toFixed(totalData.total_net_weight)
+      this.boxInfo.total_bulk = this.$toFixed(totalData.total_bulk)
+      this.boxInfo.price_bulk = this.$toFixed(Number(this.boxInfo.price) * Number(this.boxInfo.total_bulk))
+      this.boxInfo.total_price = this.$toFixed(Number(this.boxInfo.price_bulk) + Number(this.boxInfo.others_fee))
+      this.$forceUpdate()
     }
   },
   mounted() {
@@ -410,15 +500,21 @@ export default Vue.extend({
               itemData.total_box_count = itemData.info_data.reduce((total, cur) => {
                 return total + Number(cur.box_count)
               }, 0)
-              itemData.total_bulk = itemData.info_data.reduce((total, cur) => {
-                return total + Number(cur.total_bulk)
-              }, 0)
-              itemData.total_gross_weight = itemData.info_data.reduce((total, cur) => {
-                return total + Number(cur.total_gross_weight)
-              }, 0)
-              itemData.total_net_weight = itemData.info_data.reduce((total, cur) => {
-                return total + Number(cur.total_net_weight)
-              }, 0)
+              itemData.total_bulk = this.$toFixed(
+                itemData.info_data.reduce((total, cur) => {
+                  return total + Number(cur.total_bulk)
+                }, 0)
+              )
+              itemData.total_gross_weight = this.$toFixed(
+                itemData.info_data.reduce((total, cur) => {
+                  return total + Number(cur.total_gross_weight)
+                }, 0)
+              )
+              itemData.total_net_weight = this.$toFixed(
+                itemData.info_data.reduce((total, cur) => {
+                  return total + Number(cur.total_net_weight)
+                }, 0)
+              )
               itemData.product_info.forEach((itemPro) => {
                 itemPro.pack_number_all = 0
                 itemData.info_data.forEach((itemInfo) => {
@@ -436,42 +532,8 @@ export default Vue.extend({
               })
             })
           })
-          const totalData = this.packPlanLog.reduce(
-            (totalPlan, curPlan) => {
-              return {
-                total_box:
-                  totalPlan.total_box +
-                  curPlan.data.reduce((total, cur) => {
-                    return total + Number(cur.total_box_count)
-                  }, 0),
-                total_gross_weight:
-                  totalPlan.total_gross_weight +
-                  curPlan.data.reduce((total, cur) => {
-                    return total + Number(cur.total_gross_weight)
-                  }, 0),
-                total_net_weight:
-                  totalPlan.total_net_weight +
-                  curPlan.data.reduce((total, cur) => {
-                    return total + Number(cur.total_net_weight)
-                  }, 0),
-                total_bulk:
-                  totalPlan.total_bulk +
-                  curPlan.data.reduce((total, cur) => {
-                    return total + Number(cur.total_bulk)
-                  }, 0)
-              }
-            },
-            {
-              total_box: 0,
-              total_gross_weight: 0,
-              total_net_weight: 0,
-              total_bulk: 0
-            }
-          )
-          this.boxInfo.total_box = totalData.total_box
-          this.boxInfo.total_gross_weight = totalData.total_gross_weight
-          this.boxInfo.total_net_weight = totalData.total_net_weight
-          this.boxInfo.total_bulk = totalData.total_bulk
+          this.computedEverything()
+          console.log(this.packPlanLog)
         }
         this.loading = false
       })

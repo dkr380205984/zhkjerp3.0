@@ -42,7 +42,7 @@
           </div>
           <div class="col">
             <div class="label">运输单价：</div>
-            <div class="text">{{boxInfo.price}}元</div>
+            <div class="text">{{boxInfo.price}}元/m³</div>
           </div>
           <div class="col">
             <div class="label">体积价：</div>
@@ -78,7 +78,7 @@
         </div>
       </div>
       <div class="tableCtn"
-        v-for="item in packPlanLog"
+        v-for="item in packPlanLogCopy"
         :key="item.id">
         <div class="thead">
           <div class="trow">
@@ -109,9 +109,7 @@
           </div>
         </div>
         <div class="tbody">
-          <div class="trow"
-            v-for="item in packPlanLog"
-            :key="item.id">
+          <div class="trow">
             <div class="tcol">{{item.code}}</div>
             <div class="tcol">{{item.order_code}}</div>
             <div class="tcol noPad"
@@ -141,6 +139,82 @@
                   style="flex:0.5">{{itemData.total_net_weight}}kg</div>
                 <div class="tcol"
                   style="flex:0.5">{{itemData.total_bulk}}m³</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="detailCtn"
+        v-for="(itemBatch,indexBatch) in orderBatchCopy"
+        :key="indexBatch">
+        <div class="tableCtn noPadBtm"
+          style="padding-left:0;padding-right:0">
+          <div class="thead">
+            <div class="trow">
+              <div class="tcol"
+                style="flex:0.72">批次序号</div>
+              <div class="tcol">发货时间</div>
+              <div class="tcol noPad"
+                style="flex:8.7">
+                <div class="trow">
+                  <div class="tcol">产品品类</div>
+                  <div class="tcol noPad"
+                    style="flex:3">
+                    <div class="trow">
+                      <div class="tcol">尺码颜色</div>
+                      <div class="tcol">计划发货数量</div>
+                      <div class="tcol">实际发货数量</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tcol">箱数</div>
+              <div class="tcol">总毛重kg</div>
+              <div class="tcol">总净重kg</div>
+              <div class="tcol">总体积m³</div>
+            </div>
+          </div>
+          <div class="tbody">
+            <div class="trow">
+              <div class="tcol"
+                style="flex:0.72">
+                <span>第{{itemBatch.batch_number}}批</span>
+              </div>
+              <div class="tcol">
+                <span class="green">{{itemBatch.delivery_time}}</span>
+              </div>
+              <div class="tcol noPad"
+                style="flex:8.7">
+                <div class="trow"
+                  v-for="itemPro in itemBatch.product_data"
+                  :key="itemPro.id">
+                  <div class="tcol">
+                    <span>{{itemPro.product_code||itemPro.system_code||'无编号'}}</span>
+                    <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
+                  </div>
+                  <div class="tcol noPad"
+                    style="flex:3">
+                    <div class="trow"
+                      v-for="(itemChild,indexChild) in itemPro.product_info"
+                      :key="indexChild">
+                      <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
+                      <div class="tcol">{{itemChild.number}}</div>
+                      <div class="tcol">{{itemChild.real_number}}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tcol">
+                {{itemBatch.total_box_count}}箱
+              </div>
+              <div class="tcol">
+                {{itemBatch.total_gross_weight}}kg
+              </div>
+              <div class="tcol">
+                {{itemBatch.total_net_weight}}kg
+              </div>
+              <div class="tcol">
+                {{itemBatch.total_bulk}}m³
               </div>
             </div>
           </div>
@@ -188,13 +262,20 @@ import Vue from 'vue'
 export default Vue.extend({
   data(): {
     boxInfo: BoxInfo
-    packPlanLog: PackPlanInfo[]
+    packPlanLog: Array<{
+      transport_info: string // 记录一个字符串保存N多信息
+      plan_id: number | string
+      plan_info: PackPlanInfo
+    }>
+    packPlanLogCopy: PackPlanInfo[]
     [propName: string]: any
   } {
     return {
       loading: true,
+      packPlanLogCopy: [], // 前端保存的发货单具体信息，只能看，不能做任何操作
       packPlanLog: [],
       batchInfo: [],
+      orderBatchCopy: [], // 前端保存的订单发货具体信息，只能看，不能做任何操作
       boxInfo: {
         code: '',
         user_name: '',
@@ -232,7 +313,8 @@ export default Vue.extend({
           // @ts-ignore
           this.packPlanLog = this.boxInfo.rel_plan
           this.packPlanLog.forEach((itemPack) => {
-            itemPack.data.forEach((itemData) => {
+            itemPack.transport_info = JSON.parse(itemPack.transport_info)
+            itemPack.plan_info.data.forEach((itemData) => {
               itemData.total_box_count = itemData.info_data.reduce((total, cur) => {
                 return total + Number(cur.box_count)
               }, 0)
@@ -263,8 +345,14 @@ export default Vue.extend({
             })
           })
           // @ts-ignore
+          this.packPlanLogCopy = this.packPlanLog.map((item) => item.transport_info)
+          // @ts-ignore
           this.batchInfo = this.boxInfo.rel_batch
+          this.orderBatchCopy = this.boxInfo.order_transport_info
+            ? JSON.parse(this.boxInfo.order_transport_info).batch_data
+            : []
         }
+        console.log(this.packPlanLog)
         this.loading = false
       })
   }

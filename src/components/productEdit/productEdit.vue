@@ -1,6 +1,6 @@
 <template>
   <div class="productEdit sidePopup"
-    v-show="show">
+    v-if="show">
     <div :class="inDetail?'inDetailMain main':'main'"
       v-loading="loading">
       <div class="titleCtn">
@@ -863,6 +863,7 @@ export default Vue.extend({
     // 打开产品详情窗口之前需要获取产品详情
     show(val) {
       if (val) {
+        this.productId = ''
         if (this.quote_product_id) {
           this.productInfo.quote_product_id = this.quote_product_id
           const quotedPriceProductInfo = this.quote_rel_product_data as ProductInfo
@@ -888,7 +889,9 @@ export default Vue.extend({
             if (this.id) {
               this.getImport(Number(this.id))
             } else {
-              this.$initEditor(this.productInfo)
+              this.$nextTick(() => {
+                this.$initEditor(this.productInfo)
+              })
             }
           }
         }
@@ -939,10 +942,6 @@ export default Vue.extend({
     },
     getImport(ev: number) {
       this.loading = true
-      // 编辑器防止重复创建报错
-      if (this.productInfo.editor) {
-        this.productInfo.editor.destroy()
-      }
       product
         .detail({
           id: ev
@@ -1118,7 +1117,7 @@ export default Vue.extend({
       this.getCmpData()
       if (!formCheck && !partFormCheck) {
         this.productInfo.editor.destroy()
-        this.productInfo.editor = ''
+        this.productInfo.editor = null
         this.loading = true
         product.create(this.productInfo).then((res) => {
           if (res.data.status) {
@@ -1152,6 +1151,11 @@ export default Vue.extend({
       }
     },
     reset() {
+      if (this.productInfo.editor) {
+        this.productInfo.editor.destroy()
+        this.productInfo.editor = null
+      }
+      this.productId = ''
       this.need_import = false
       this.searchList = []
       this.productInfo = {
@@ -1221,6 +1225,11 @@ export default Vue.extend({
       this.deletePasteImage()
     },
     changeDetailToEdit(data: any) {
+      // 编辑器防止重复创建报错
+      if (this.productInfo.editor) {
+        this.productInfo.editor.destroy()
+        this.productInfo.editor = null
+      }
       this.productInfo = {
         id: this.pid ? null : this.id, // 打样的时候id用于查询样品，还得新建产品
         pid: this.pid,
@@ -1306,7 +1315,9 @@ export default Vue.extend({
       }
       this.have_part = this.productInfo.part_data.length > 0
       this.getUnit([data.category_id as number, data.secondary_category_id as number])
-      this.$initEditor(this.productInfo)
+      this.$nextTick(() => {
+        this.$initEditor(this.productInfo)
+      })
     },
     getCmpStockData() {
       this.productStockInfo.info_data.forEach((item) => {
