@@ -19,7 +19,7 @@
         </svg>
         <span class="text">原料使用图表</span>
       </div>
-      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
+      <div class="tag" @click="$router.push('/dataReport/accessoriesDecorationOrderStatistics')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-fuliaoshiyongtubiao"></use>
         </svg>
@@ -44,7 +44,7 @@
         <div class="tab" @click="$router.push('/dataReport/materialsOrderingStatistics')">订购数据统计</div>
         <div class="tab" @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
         <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
-        <div class="tab" @click="$message.info('功能正在开发中，即将上线')">原料库存数据统计</div>
+        <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">原料库存数据统计</div>
       </div>
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">

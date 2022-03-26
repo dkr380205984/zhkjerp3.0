@@ -1,5 +1,5 @@
 <template>
-  <div id="materialsOrderingStatistics" class="bodyContainer" v-loading="loading">
+  <div id="accessoriesDecorationOrderStatistics" class="bodyContainer" v-loading="loading">
     <div class="topTagCtn">
       <div class="tag" @click="$router.push('/dataReport/orderStatistics')">
         <svg class="iconFont" aria-hidden="true">
@@ -13,13 +13,13 @@
         </svg>
         <span class="text">样单数据图表</span>
       </div>
-      <div class="tag active">
+      <div class="tag" @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-yuanliaoshiyongtubiao"></use>
         </svg>
         <span class="text">原料使用图表</span>
       </div>
-      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
+      <div class="tag active">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-fuliaoshiyongtubiao"></use>
         </svg>
@@ -39,12 +39,9 @@
       </div>
     </div>
     <div class="module noBackColor">
-      <div style="display: flex; width: 49%; justify-content: space-between">
-        <div class="tab" @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">计划数据统计</div>
-        <div class="tab active">订购数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">原料库存数据统计</div>
+      <div style="display: flex; width: 22%; justify-content: space-between">
+        <div class="tab active">装饰辅料订购图表</div>
+        <div class="tab" @click="$router.push('/dataReport/accessoriesPackagingOrderStatistics')">包装辅料订购图表</div>
       </div>
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">
@@ -63,17 +60,19 @@
               </el-select>
             </div>
             <div class="screen" style="width: 48.5%">
-              <el-select
-                @change="changeRouter"
+              <el-cascader
+                @change="
+                  getContacts($event)
+                  changeRouter()
+                "
+                placeholder="筛选下单公司"
+                v-model="filterData.client_id"
+                :show-all-levels="false"
                 filterable
-                v-model="filterData.shaxianmianliao"
-                placeholder="筛选原料"
+                :options="clientList"
                 clearable
               >
-                <el-option label="纱线/面料" :value="''"></el-option>
-                <el-option label="纱线" :value="1"></el-option>
-                <el-option label="面料" :value="2"></el-option>
-              </el-select>
+              </el-cascader>
             </div>
             <div class="screen" style="margin-bottom: 0; width: 48.5%">
               <el-select @change="changePeople" v-model="filterData.contacts_id" placeholder="筛选创建人" clearable>
@@ -137,30 +136,13 @@
         </div>
       </div>
       <div class="cardCtn">
-        <div class="card noPad" style="overflow:hidden">
-          <div class="screen">
-            <el-cascader
-              @change="
-                getContacts($event)
-                changeRouter()
-              "
-              placeholder="筛选下单公司"
-              v-model="filterData.client_id"
-              :show-all-levels="false"
-              filterable
-              :options="clientList"
-              clearable
-            >
-            </el-cascader>
-          </div>
-        </div>
         <div class="card noPad" style="overflow: hidden">
           <div class="screen">
             <el-input v-model="filterData.yuanliaomingcheng" placeholder="输入原料名称查询" clearable></el-input>
           </div>
         </div>
-        <div class="cardCtn" style="width: 206%; margin-top: 0">
-          <div class="card noPad" style="overflow: hidden;">
+        <div class="cardCtn" style="width: 100%; margin-top: 0">
+          <div class="card noPad" style="overflow: hidden">
             <div class="screen">
               <el-date-picker
                 v-model="filterData.start_time"
@@ -806,11 +788,11 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import '~@/assets/css/dataReport/materialsOrderingStatistics.less';
+@import '~@/assets/css/dataReport/accessoriesDecorationOrderStatistics.less';
 </style>
 
 <style lang="less">
-#materialsOrderingStatistics {
+#accessoriesDecorationOrderStatistics {
   .screen {
     overflow: hidden;
   }
