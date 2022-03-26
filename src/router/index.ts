@@ -324,7 +324,7 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/reimbursementManage/create.vue')
     }, {
       meta: {
-        permissions_id: '18-2',
+        permissions_id: '18-3',
       },
       path: '/reimbursementManage/detail',
       name: '报销单详情',
@@ -338,7 +338,7 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/reimbursementManage/list.vue')
     }, {
       meta: {
-        permissions_id: '18-3',
+        permissions_id: '18-2',
       },
       path: '/reimbursementManage/update',
       name: '修改报销单',
