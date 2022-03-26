@@ -1403,6 +1403,11 @@ export default Vue.extend({
       productionDivideInfo: [],
       bearClientArr: [], // 所有的相关承担单位，包括纱线订购厂，加工厂之类的
       showPrice: false,
+      orderProcess: {
+        label: '推荐工序',
+        value: '推荐工序',
+        children: []
+      },
       priceProcessList: [] // 报价单报价信息
     }
   },
@@ -1412,8 +1417,8 @@ export default Vue.extend({
         (item: { label: string }) => item.label === '生产织造单位' || item.label === '生产加工单位'
       )
     },
-    processList() {
-      return [
+    processList(): any[] {
+      const normalProcessList = [
         {
           label: '织造工序',
           value: '织造工序',
@@ -1444,6 +1449,7 @@ export default Vue.extend({
           })
         }
       ]
+      return this.orderProcess.children.length > 0 ? [this.orderProcess].concat(normalProcessList) : normalProcessList
     },
     // 被选中的产品的物料信息展开
     checkMaterialFlattenList(): any[] {
@@ -2054,6 +2060,21 @@ export default Vue.extend({
         this.init()
       })
 
+    // 优化工序信息
+    order
+      .processList({
+        order_id: Number(this.$route.query.id)
+      })
+      .then((res) => {
+        if (res.data.status) {
+          this.orderProcess.children = res.data.data.map((item: any) => {
+            return {
+              value: item,
+              label: item
+            }
+          })
+        }
+      })
     // 优化报价信息
     quotedPrice
       .detailByOrder({
