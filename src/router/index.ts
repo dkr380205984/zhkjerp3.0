@@ -268,6 +268,13 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/dataReport/materialsMachiningStatistics.vue')
     }, {
       meta: {
+        permissions_id: '20-7',
+      },
+      path: '/dataReport/materialsStockStatistics',
+      name: '原料库存数据统计',
+      component: () => import('../views/dataReport/materialsStockStatistics.vue')
+    }, {
+      meta: {
         permissions_id: '17-1',
       },
       path: '/workerManage/create',
