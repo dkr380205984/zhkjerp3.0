@@ -269,7 +269,7 @@
                         </span>
                       </div>
                     </div>
-                    <div class="col">{{itemYarn.total_price}}元
+                    <div class="col">{{itemYarn.total_price.toFixed(2)}}元
                       <div class="tips"
                         v-if="compareDesc[index] && compareDesc[index].material_data[indexYarn].totalPriceChange">
                         <span :class="{'lightRed':compareDesc[index].material_data[indexYarn].totalPriceChange==='up','lightGreen':compareDesc[index].material_data[indexYarn].totalPriceChange==='down'}">
