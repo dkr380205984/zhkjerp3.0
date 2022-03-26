@@ -21,6 +21,28 @@
             <div class="text">{{materialPlanInfo.user_name||materialSupplementInfo.user_name}}</div>
           </div>
         </div>
+        <div class="row">
+          <div class="col">
+            <div class="label">总计划数：</div>
+            <div class="text">{{materialPlanInfo.total_plan_number||materialSupplementInfo.total_plan_number}}</div>
+          </div>
+          <div class="col">
+            <div class="label">总订购数：</div>
+            <div class="text">{{materialPlanInfo.total_order_number||materialSupplementInfo.total_order_number}}</div>
+          </div>
+          <div class="col">
+            <div class="label">总加工数：</div>
+            <div class="text">{{materialPlanInfo.total_process_number||materialSupplementInfo.total_process_number}}</div>
+          </div>
+        </div>
+        <div class="row"
+          v-if="$route.query.supFlag">
+          <div class="col">
+            <div class="label">补纱原因：</div>
+            <div class="text"
+              :class="{'gray':!materialSupplementInfo.desc}">{{materialSupplementInfo.desc || '无'}}</div>
+          </div>
+        </div>
       </div>
       <div class="tableCtn"
         style="padding-top:0">

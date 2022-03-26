@@ -1223,7 +1223,7 @@ export default Vue.extend({
         processArr.push(item.name)
       })
       info.semi_product_data.forEach((item) => {
-        processArr = processArr.concat(item.process_name)
+        processArr = processArr.concat(item.name)
       })
       info.production_data.forEach((item) => {
         processArr = processArr.concat(item.name)

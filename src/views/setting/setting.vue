@@ -2727,13 +2727,12 @@
                     <span class="text">半成品加工</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select v-model="itemHalfProcess.process_id"
+                    <el-select v-model="itemHalfProcess.name"
                       placeholder="请选择加工工序"
-                      clearable
-                      multiple>
+                      clearable>
                       <el-option v-for="item in halfProcessStore"
-                        :key="item.id"
-                        :value="item.id"
+                        :key="item.name"
+                        :value="item.name"
                         :label="item.name"></el-option>
                     </el-select>
                   </div>
@@ -2746,7 +2745,7 @@
                   <div class="info elCtn">
                     <el-input v-model="itemHalfProcess.total_price"
                       placeholder="小计"
-                      :disabled="itemHalfProcess.process_id.length === 0">
+                      :disabled="!itemHalfProcess.name">
                       <template slot="append">元</template>
                     </el-input>
                   </div>
@@ -2756,7 +2755,7 @@
                   @click="
                     $addItem(quotedPriceProduct.semi_product_data, {
                       desc: '',
-                      process_id: [],
+                      name:'',
                       total_price: ''
                     })
                   ">
@@ -2779,8 +2778,7 @@
                   <div class="info elCtn">
                     <el-select v-model="itemFinishedProcess.name"
                       placeholder="请选择加工工序"
-                      clearable
-                      multiple>
+                      clearable>
                       <el-option v-for="item in finishedList"
                         :key="item.value"
                         :label="item.value"
@@ -2796,7 +2794,7 @@
                   <div class="info elCtn">
                     <el-input v-model="itemFinishedProcess.total_price"
                       placeholder="小计"
-                      :disabled="itemFinishedProcess.name.length === 0">
+                      :disabled="!itemFinishedProcess.name">
                       <template slot="append">元</template>
                     </el-input>
                   </div>
@@ -2806,7 +2804,7 @@
                   @click="
                     $addItem(quotedPriceProduct.production_data, {
                       desc: '',
-                      name: [],
+                      name:'',
                       total_price: ''
                     })
                   ">
@@ -3522,15 +3520,14 @@ export default Vue.extend({
         ],
         semi_product_data: [
           {
-            process_id: [],
-            process_name: [],
+            name: '',
             desc: '',
             total_price: ''
           }
         ],
         production_data: [
           {
-            name: [],
+            name: '',
             desc: '',
             total_price: ''
           }
@@ -5717,15 +5714,14 @@ export default Vue.extend({
             ],
             semi_product_data: [
               {
-                process_id: [],
-                process_name: [],
+                name: '',
                 desc: '',
                 total_price: ''
               }
             ],
             production_data: [
               {
-                name: [],
+                name: '',
                 desc: '',
                 total_price: ''
               }

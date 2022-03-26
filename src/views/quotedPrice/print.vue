@@ -142,10 +142,10 @@
                   :key="'HalfProcess' + indexHalfProcess">
                   <div class="tcol circlrParent f0922">
                     <div class="circle"
-                      :class="{ backHoverBlue: itemHalfProcess.process_name, backGray: !itemHalfProcess.process_name }">
+                      :class="{ backHoverBlue: itemHalfProcess.name, backGray: !itemHalfProcess.name }">
                       半
                     </div>
-                    {{ itemHalfProcess.process_name.join(',') || '无' }}
+                    {{ itemHalfProcess.name || '无' }}
                   </div>
                   <div class="tcol f3">{{ itemHalfProcess.desc || '无' }}</div>
                   <div class="tcol f0922">{{  $toFixed(itemHalfProcess.total_price) }}元</div>
@@ -158,7 +158,7 @@
                       :class="{ backHoverBlue: itemFinishedProcess.name, backGray: !itemFinishedProcess.name }">
                       成
                     </div>
-                    {{ itemFinishedProcess.name.join(',') || '无' }}
+                    {{ itemFinishedProcess.name || '无' }}
                   </div>
                   <div class="tcol f3">{{ itemFinishedProcess.desc || '无' }}</div>
                   <div class="tcol f0922">{{$toFixed(itemFinishedProcess.total_price)}}元</div>
@@ -357,14 +357,14 @@ export default Vue.extend({
             ],
             semi_product_data: [
               {
-                process_name: [],
+                name: '',
                 desc: '',
                 total_price: ''
               }
             ],
             production_data: [
               {
-                name: [],
+                name: '',
                 desc: '',
                 total_price: ''
               }

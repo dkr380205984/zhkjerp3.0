@@ -624,14 +624,13 @@
                   </el-tooltip>
                 </div>
                 <div class="info elCtn">
-                  <el-select v-model="itemHalfProcess.process_id"
+                  <el-select v-model="itemHalfProcess.name"
                     placeholder="请选择加工工序"
                     clearable
-                    filterable
-                    multiple>
+                    filterable>
                     <el-option v-for="item in halfProcessList"
-                      :key="item.id"
-                      :value="item.id"
+                      :key="item.name"
+                      :value="item.name"
                       :label="item.name"></el-option>
                   </el-select>
                 </div>
@@ -644,7 +643,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemHalfProcess.desc"
                     placeholder="加工说明"
-                    :disabled="!itemHalfProcess.process_id.length>0">
+                    :disabled="!itemHalfProcess.name">
                   </el-input>
                 </div>
               </div>
@@ -656,7 +655,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemHalfProcess.total_price"
                     placeholder="小计"
-                    :disabled="!itemHalfProcess.process_id.length>0">
+                    :disabled="!itemHalfProcess.name">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -665,7 +664,6 @@
                 v-if="indexHalfProcess===0"
                 @click="$addItem(item.semi_product_data,{
                  id:'',
-                 process_id:[],
                  desc:'',
                  name:'',
                  total_price:''
@@ -707,8 +705,7 @@
                   <el-select v-model="itemFinishedProcess.name"
                     placeholder="请选择加工工序"
                     clearable
-                    filterable
-                    multiple>
+                    filterable>
                     <el-option v-for="item in finishedList"
                       :key="item.name"
                       :label="item.name"
@@ -724,7 +721,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemFinishedProcess.desc"
                     placeholder="加工说明"
-                    :disabled="!itemFinishedProcess.name.length>0">
+                    :disabled="!itemFinishedProcess.name">
                   </el-input>
                 </div>
               </div>
@@ -736,7 +733,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemFinishedProcess.total_price"
                     placeholder="小计"
-                    :disabled="!itemFinishedProcess.name.length>0">
+                    :disabled="!itemFinishedProcess.name">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -1471,8 +1468,7 @@ export default Vue.extend({
         semi_product_data: [
           {
             id: '',
-            process_id: [],
-            process_name: [],
+            name: '',
             desc: '',
             total_price: ''
           }
@@ -1480,7 +1476,7 @@ export default Vue.extend({
         production_data: [
           {
             id: '',
-            name: [],
+            name: '',
             desc: '',
             total_price: ''
           }
@@ -1741,10 +1737,10 @@ export default Vue.extend({
                 }) ||
                 item.semi_product_data.some((itemChild) => {
                   return (
-                    itemChild.process_id!.length > 0 &&
+                    itemChild.name &&
                     this.$formCheck(itemChild, [
                       {
-                        key: 'process_id',
+                        key: 'name',
                         errMsg: '请选择产品' + (index + 1) + '半成品加工工序'
                       },
                       {
@@ -1756,7 +1752,7 @@ export default Vue.extend({
                 }) ||
                 item.production_data.some((itemChild) => {
                   return (
-                    itemChild.name!.length > 0 &&
+                    itemChild.name &&
                     this.$formCheck(itemChild, [
                       {
                         key: 'name',
@@ -2138,8 +2134,7 @@ export default Vue.extend({
                   semi_product_data: [
                     {
                       id: '',
-                      process_id: [],
-                      process_name: [],
+                      name: '',
                       desc: '',
                       total_price: ''
                     }
@@ -2147,7 +2142,7 @@ export default Vue.extend({
                   production_data: [
                     {
                       id: '',
-                      name: [],
+                      name: '',
                       desc: '',
                       total_price: ''
                     }
@@ -2273,8 +2268,7 @@ export default Vue.extend({
                       semi_product_data: [
                         {
                           id: '',
-                          process_id: [],
-                          process_name: [],
+                          name: '',
                           desc: '',
                           total_price: ''
                         }
@@ -2282,7 +2276,7 @@ export default Vue.extend({
                       production_data: [
                         {
                           id: '',
-                          name: [],
+                          name: '',
                           desc: '',
                           total_price: ''
                         }

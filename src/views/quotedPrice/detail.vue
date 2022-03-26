@@ -269,7 +269,7 @@
                         </span>
                       </div>
                     </div>
-                    <div class="col">{{itemYarn.total_price.toFixed(2)}}元
+                    <div class="col">{{itemYarn.total_price}}元
                       <div class="tips"
                         v-if="compareDesc[index] && compareDesc[index].material_data[indexYarn].totalPriceChange">
                         <span :class="{'lightRed':compareDesc[index].material_data[indexYarn].totalPriceChange==='up','lightGreen':compareDesc[index].material_data[indexYarn].totalPriceChange==='down'}">
@@ -369,7 +369,7 @@
                       :key="'HalfProcess' + indexHalfProcess">
                       <div class="col">
                         <div class="circle"
-                          :class="{'backHoverBlue':itemHalfProcess.process_name,'backGray':!itemHalfProcess.process_name}">半</div>{{itemHalfProcess.process_name.join(',') || '无'}}
+                          :class="{'backHoverBlue':itemHalfProcess.name,'backGray':!itemHalfProcess.name}">半</div>{{itemHalfProcess.name || '无'}}
                         <div class="tips"
                           v-if="compareDesc[index] && compareDesc[index].semi_product_data[indexHalfProcess] && compareDesc[index].semi_product_data[indexHalfProcess].change">
                           <span :class="{'lightRed':compareDesc[index].semi_product_data[indexHalfProcess].change==='add','lightGreen':compareDesc[index].semi_product_data[indexHalfProcess].change==='delete'}">
@@ -401,7 +401,7 @@
                       :key="'FinishedProcess' + indexFinishedProcess">
                       <div class="col">
                         <div class="circle"
-                          :class="{'backHoverBlue':itemFinishedProcess.name,'backGray':!itemFinishedProcess.name}">成</div>{{itemFinishedProcess.name.join(',')  || '无'}}
+                          :class="{'backHoverBlue':itemFinishedProcess.name,'backGray':!itemFinishedProcess.name}">成</div>{{itemFinishedProcess.name  || '无'}}
                         <div class="tips"
                           v-if="compareDesc[index] && compareDesc[index].production_data[indexFinishedProcess] && compareDesc[index].production_data[indexFinishedProcess].change">
                           <span :class="{'lightRed':compareDesc[index].production_data[indexFinishedProcess].change==='add','lightGreen':compareDesc[index].production_data[indexFinishedProcess].change==='delete'}">
@@ -1077,14 +1077,14 @@ export default Vue.extend({
             ],
             semi_product_data: [
               {
-                process_name: [],
+                name: '',
                 desc: '',
                 total_price: ''
               }
             ],
             production_data: [
               {
-                name: [],
+                name: '',
                 desc: '',
                 total_price: ''
               }
@@ -1183,14 +1183,14 @@ export default Vue.extend({
             ],
             semi_product_data: [
               {
-                process_name: [],
+                name: '',
                 desc: '',
                 total_price: ''
               }
             ],
             production_data: [
               {
-                name: [],
+                name: '',
                 desc: '',
                 total_price: ''
               }
@@ -1620,7 +1620,7 @@ export default Vue.extend({
                 })
                 const finded = comparePro.semi_product_data.find(
                   // @ts-ignore
-                  (item) => item.process_name.join(',') === itemChild.process_name.join(',')
+                  (item) => item.name === itemChild.name
                 )
                 if (!finded) {
                   compareDesc.semi_product_data[indexChild].change = 'delete'
@@ -1666,7 +1666,7 @@ export default Vue.extend({
                 })
                 const finded = comparePro.production_data.find(
                   // @ts-ignore
-                  (item) => item.name.join(',') === itemChild.name.join(',')
+                  (item) => item.name === itemChild.name
                 )
                 if (!finded) {
                   compareDesc.production_data[indexChild].change = 'delete'
