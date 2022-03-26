@@ -286,7 +286,7 @@
     </div>
     <div class="module">
       <div class="titleCtn">
-        <div class="title">发货信息</div>
+        <div class="title">批次信息</div>
       </div>
       <div :class="itemBatchIndex===0?'detailCtn':'detailCtn noPadTop'"
         v-for="(itemBatch,itemBatchIndex) in orderInfo.time_data[0].batch_data"

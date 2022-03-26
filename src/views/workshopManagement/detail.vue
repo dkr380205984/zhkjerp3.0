@@ -381,7 +381,8 @@
                     </el-select>
                   </div>
                   <div class="tcol bgGray">加工工序</div>
-                  <div class="tcol" style="flex:0.6">
+                  <div class="tcol"
+                    style="flex:0.6">
                     <el-cascader v-model="item.process"
                       :options="processList"
                       @change="getWorkList(item)"
@@ -389,14 +390,16 @@
                       placeholder="加工工序"></el-cascader>
                   </div>
                   <div class="tcol bgGray">工序说明</div>
-                  <div class="tcol" style="flex:1.9">
+                  <div class="tcol"
+                    style="flex:1.9">
                     <el-autocomplete class="inline-input"
                       v-model="item.process_desc"
                       :fetch-suggestions="querySearch"
                       placeholder="请选择工序"></el-autocomplete>
                   </div>
                   <div class="tcol bgGray">结算单价</div>
-                  <div class="tcol" style="flex:0.5">
+                  <div class="tcol"
+                    style="flex:0.5">
                     <zh-input class="inputs"
                       :keyBoard="keyBoard"
                       v-model="item.unitPrice"
@@ -1372,7 +1375,7 @@ export default Vue.extend({
                         itemPro.secondary_category +
                         ')'
                       : itemPro.category_name + '/' + itemPro.secondary_category,
-                    process: itemProcess.process_name!.join(','),
+                    process: itemProcess.name,
                     desc: itemProcess.desc,
                     price: itemProcess.total_price
                   })
@@ -1388,7 +1391,7 @@ export default Vue.extend({
                         itemPro.secondary_category +
                         ')'
                       : itemPro.category_name + '/' + itemPro.secondary_category,
-                    process: itemProcess.name!.join(','),
+                    process: itemProcess.name,
                     desc: itemProcess.desc,
                     price: itemProcess.total_price
                   })

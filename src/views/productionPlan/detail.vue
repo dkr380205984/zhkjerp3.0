@@ -2091,7 +2091,7 @@ export default Vue.extend({
                         itemPro.secondary_category +
                         ')'
                       : itemPro.category_name + '/' + itemPro.secondary_category,
-                    process: itemProcess.process_name!.join(','),
+                    process: itemProcess.name,
                     desc: itemProcess.desc,
                     price: itemProcess.total_price
                   })
@@ -2107,7 +2107,7 @@ export default Vue.extend({
                         itemPro.secondary_category +
                         ')'
                       : itemPro.category_name + '/' + itemPro.secondary_category,
-                    process: itemProcess.name!.join(','),
+                    process: itemProcess.name,
                     desc: itemProcess.desc,
                     price: itemProcess.total_price
                   })
