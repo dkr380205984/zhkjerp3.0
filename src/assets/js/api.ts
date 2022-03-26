@@ -817,7 +817,18 @@ const statistics = {
     group_id: number | string
     is_check: number | string
     status: number | string
-  }) => http.get(`${baseUrl}/statistics/order`, params)
+  }) => http.get(`${baseUrl}/statistics/order`, params),
+  sampleOrderProgressChart: (params?: {
+    order_type: number | string
+    keyword: string
+    start_time: string
+    end_time: string
+    client_id: number | string
+    user_id: number | string
+    group_id: number | string
+    is_check: number | string
+    status: number | string
+  }) => http.get(`${baseUrl}/statistics/sample_order`, params)
 }
 export {
   statistics,

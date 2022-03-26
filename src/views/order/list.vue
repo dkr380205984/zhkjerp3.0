@@ -750,6 +750,11 @@ export default Vue.extend({
       //   this.$GetDateStr(14, 'MM-DD'),
       //   'MM-DD'
       // )
+      this.option.series[0].data = []
+      this.option.series[1].data = []
+      this.option.series[2].data = []
+      this.option.series[3].data = []
+      this.option.xAxis[0].data = []
       statistics
         .orderProgressChart({
           order_type: 1,
@@ -764,7 +769,9 @@ export default Vue.extend({
         })
         .then((res) => {
           for (let key in res.data.data) {
-            let hasNumber = Object.values(res.data.data[key]).find((res:any) => {return res > 0})
+            let hasNumber = Object.values(res.data.data[key]).find((res: any) => {
+              return res > 0
+            })
             this.showCharts = !!hasNumber || this.showCharts
             this.option.series[0].data.push(res.data.data[key].completed)
             this.option.series[3].data.push(res.data.data[key].order_number)

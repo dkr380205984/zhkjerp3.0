@@ -733,8 +733,12 @@ export default Vue.extend({
       //   'MM-DD'
       // )
 
+      this.option.series[0].data = []
+      this.option.series[1].data = []
+      this.option.series[2].data = []
+      this.option.xAxis[0].data = []
       statistics
-        .orderProgressChart({
+        .sampleOrderProgressChart({
           order_type: 2,
           keyword: this.keyword,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
@@ -747,7 +751,9 @@ export default Vue.extend({
         })
         .then((res) => {
           for (let key in res.data.data) {
-            let hasNumber = Object.values(res.data.data[key]).find((res:any) => {return res > 0})
+            let hasNumber = Object.values(res.data.data[key]).find((res: any) => {
+              return res > 0
+            })
             this.showCharts = !!hasNumber || this.showCharts
             this.option.series[0].data.push(res.data.data[key].completed)
             if (this.option.series[0].length < 4) {

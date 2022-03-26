@@ -40,26 +40,15 @@
     </div>
     <div class="module noBackColor">
       <div style="display: flex; width: 22%; justify-content: space-between">
-        <div class="tab" @click="$router.push('/dataReport/accessoriesDecorationOrderStatistics')">装饰辅料订购图表</div>
-        <div class="tab active" >包装辅料订购图表</div>
+        <div class="tab" @click="$router.push('/dataReport/accessoriesDecorationOrderStatistics')">
+          装饰辅料订购图表
+        </div>
+        <div class="tab active">包装辅料订购图表</div>
       </div>
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">
           <div class="screenCtn">
-            <div class="screen" style="width: 48.5%">
-              <el-select
-                @change="changeRouter"
-                filterable
-                v-model="filterData.orderOrSimpleOrder"
-                placeholder="筛选原料"
-                clearable
-              >
-                <el-option label="订单/样单" :value="''"></el-option>
-                <el-option label="订单" :value="1"></el-option>
-                <el-option label="样单" :value="2"></el-option>
-              </el-select>
-            </div>
-            <div class="screen" style="width: 48.5%">
+            <div class="screen">
               <el-cascader
                 @change="
                   getContacts($event)
@@ -74,7 +63,30 @@
               >
               </el-cascader>
             </div>
-            <div class="screen" style="margin-bottom: 0; width: 48.5%">
+            <div class="screen">
+              <el-select
+                @change="changeRouter"
+                filterable
+                v-model="filterData.orderOrSimpleOrder"
+                placeholder="筛选原料"
+                clearable
+              >
+                <el-option label="订单/样单" :value="''"></el-option>
+                <el-option label="订单" :value="1"></el-option>
+                <el-option label="样单" :value="2"></el-option>
+              </el-select>
+            </div>
+            <div class="screen">
+              <el-select
+                @change="(ev) => getLocalStorage(ev, 'group_id')"
+                v-model="filterData.group_id"
+                placeholder="筛选负责小组"
+                clearable
+              >
+                <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+              </el-select>
+            </div>
+            <div class="screen" style="margin-bottom: 0">
               <el-select @change="changePeople" v-model="filterData.contacts_id" placeholder="筛选创建人" clearable>
                 <el-option
                   v-for="item in userList"
@@ -84,15 +96,17 @@
                 ></el-option>
               </el-select>
             </div>
-            <div class="screen" style="margin-bottom: 0; width: 48.5%">
-              <el-select
-                @change="(ev) => getLocalStorage(ev, 'group_id')"
-                v-model="filterData.group_id"
-                placeholder="筛选负责小组"
-                clearable
+            <div class="screen" style="margin-bottom: 0">
+              <el-date-picker
+                v-model="filterData.start_time"
+                type="year"
+                @change="changeDate"
+                placeholder="筛选下单年份"
               >
-                <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
-              </el-select>
+              </el-date-picker>
+            </div>
+            <div class="screen" style="margin-bottom: 0">
+              <el-button style="width: 100%; height: 63px">重置</el-button>
             </div>
           </div>
         </div>
@@ -136,29 +150,6 @@
         </div>
       </div>
       <div class="cardCtn">
-        <div class="card noPad" style="overflow: hidden">
-          <div class="screen">
-            <el-input v-model="filterData.yuanliaomingcheng" placeholder="输入原料名称查询" clearable></el-input>
-          </div>
-        </div>
-        <div class="cardCtn" style="width: 100%; margin-top: 0">
-          <div class="card noPad" style="overflow: hidden">
-            <div class="screen">
-              <el-date-picker
-                v-model="filterData.start_time"
-                type="year"
-                @change="changeDate"
-                placeholder="筛选下单年份"
-              >
-              </el-date-picker>
-            </div>
-          </div>
-          <div class="card noPad" style="overflow: hidden">
-            <el-button style="width: 100%; height: 63px">重置</el-button>
-          </div>
-        </div>
-      </div>
-      <div class="cardCtn">
         <div class="card">
           <h3>合计订购数量</h3>
           <div class="content">
@@ -177,51 +168,18 @@
             <h2 class="unit">万元</h2>
           </div>
         </div>
-        <div class="card">
-          <h3>最终入库数量</h3>
-          <div class="content">
-            <span class="green">
-              <h2>{{ this.reportData.order.total_number }}</h2>
-            </span>
-            <h2 class="unit">吨或千米</h2>
-          </div>
-        </div>
-        <div class="card">
-          <h3>最终入库金额</h3>
-          <div class="content">
-            <span class="green">
-              <h2>{{ this.reportData.order.total_number }}</h2>
-            </span>
-            <h2 class="unit">万元</h2>
-          </div>
-        </div>
       </div>
       <div class="cardCtn">
         <div class="card">
-          <el-tabs v-model="activeName" @tab-click="getList">
-            <el-tab-pane label="计划订购" name="first">
-              <div style="display: flex; justify-content: end; padding-right: 50px">
-                <div style="width: 150px">
-                  <el-select v-model="sortWay" @change="changeRouter">
-                    <el-option label="按数量排序" :value="1"> </el-option>
-                    <el-option label="按金额排序" :value="2"> </el-option>
-                  </el-select>
-                </div>
-              </div>
-              <zh-charts v-if="activeName === 'first'" :option="option1"></zh-charts>
-            </el-tab-pane>
-            <el-tab-pane label="实际订购" name="second">
-              <div style="display: flex; justify-content: end; padding-right: 50px">
-                <div style="width: 150px">
-                  <el-select v-model="sortWay" @change="changeRouter">
-                    <el-option label="按数量排序" :value="1"> </el-option>
-                    <el-option label="按损耗排序%" :value="2"> </el-option>
-                  </el-select>
-                </div>
-              </div>
-              <zh-charts v-if="activeName === 'second'" :option="option1"></zh-charts
-            ></el-tab-pane>
-          </el-tabs>
+          <div style="display: flex; justify-content: end; padding-right: 50px">
+            <div style="width: 150px">
+              <el-select v-model="sortWay" @change="changeRouter">
+                <el-option label="按数量排序" :value="1"> </el-option>
+                <el-option label="按金额排序" :value="2"> </el-option>
+              </el-select>
+            </div>
+          </div>
+          <zh-charts :option="option1"></zh-charts>
         </div>
       </div>
     </div>
