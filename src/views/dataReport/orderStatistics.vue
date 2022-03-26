@@ -31,6 +31,12 @@
         </svg>
         <span class="text">辅料使用图表</span>
       </div>
+      <!-- <div class="tag" @click="$router.push('/dataReport/accessoriesDecorationOrderStatistics')">
+        <svg class="iconFont" aria-hidden="true">
+          <use xlink:href="#icon-fuliaoshiyongtubiao"></use>
+        </svg>
+        <span class="text">辅料使用图表</span>
+      </div> -->
       <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-shengchanshujutubiao"></use>

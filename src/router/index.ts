@@ -275,6 +275,20 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/dataReport/materialsStockStatistics.vue')
     }, {
       meta: {
+        permissions_id: '20-8',
+      },
+      path: '/dataReport/accessoriesDecorationOrderStatistics',
+      name: '装饰辅料订购图表',
+      component: () => import('../views/dataReport/accessoriesDecorationOrderStatistics.vue')
+    }, {
+      meta: {
+        permissions_id: '20-9',
+      },
+      path: '/dataReport/accessoriesPackagingOrderStatistics',
+      name: '包装辅料订购图表',
+      component: () => import('../views/dataReport/accessoriesPackagingOrderStatistics.vue')
+    }, {
+      meta: {
         permissions_id: '17-1',
       },
       path: '/workerManage/create',
