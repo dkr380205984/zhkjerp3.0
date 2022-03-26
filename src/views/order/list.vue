@@ -4,9 +4,11 @@
       <div class="titleCtn">
         <div class="title">订单列表</div>
       </div>
-      <!-- <div style="height: 200px; width: 1580px; transform: translateX(-111px)">
-        <zh-charts :option="option" style="height: 200px"></zh-charts>
-      </div> -->
+      <zh-drop-down :show="showCharts" hideTitle="点击查看图表">
+        <div style="height: 200px; width: 1580px; transform: translateX(-111px)">
+          <zh-charts :option="option" style="height: 200px"></zh-charts>
+        </div>
+      </zh-drop-down>
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
@@ -178,8 +180,9 @@ import { ListSetting } from '@/types/list'
 import { limitArr } from '@/assets/js/dictionary'
 import zhExportSetting from '@/components/zhExportSetting/zhExportSetting.vue'
 import zhCharts from '@/components/zhCharts/zhCharts.vue'
+import zhDropDown from '@/components/zhDropDown/zhDropDown.vue'
 export default Vue.extend({
-  components: { zhExportSetting, zhCharts },
+  components: { zhExportSetting, zhCharts, zhDropDown },
   data(): {
     originalSetting: ListSetting[]
     list: OrderInfo[]
@@ -189,6 +192,7 @@ export default Vue.extend({
       mainLoading: false,
       mainLoading1: false,
       loading: true,
+      showCharts: false,
       list: [],
       limitList: limitArr,
       showExport: false,
@@ -740,46 +744,53 @@ export default Vue.extend({
     },
     getList() {
       this.loading = true
-      // this.mainLoading1 = true
+      this.mainLoading1 = true
       // this.option.xAxis[0].data = this.$getEveryDayDateByBetweenDate(
       //   this.$GetDateStr(-3, 'MM-DD'),
       //   this.$GetDateStr(14, 'MM-DD'),
       //   'MM-DD'
       // )
-      // statistics
-      //   .orderProgressChart({
-      //     order_type: 1,
-      //     keyword: this.keyword,
-      //     client_id: this.client_id.length > 0 ? this.client_id[2] : '',
-      //     is_check: this.status,
-      //     status: this.type,
-      //     start_time: this.date.length > 0 ? this.date[0] : this.$GetDateStr(-3),
-      //     end_time: this.date.length > 0 ? this.date[1] : this.$GetDateStr(14),
-      //     user_id: this.user_id,
-      //     group_id: this.group_id
-      //   })
-      //   .then((res) => {
-      //     for (let key in res.data.data) {
-      //       this.option.series[0].data.push(res.data.data[key].completed)
-      //       this.option.series[1].data.push(res.data.data[key].completed)
-      //       this.option.series[2].data.push(res.data.data[key].postpone)
-      //       this.option.series[3].data.push(res.data.data[key].order_number)
+      statistics
+        .orderProgressChart({
+          order_type: 1,
+          keyword: this.keyword,
+          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
+          is_check: this.status,
+          status: this.type,
+          start_time: this.date.length > 0 ? this.date[0] : this.$GetDateStr(-3),
+          end_time: this.date.length > 0 ? this.date[1] : this.$GetDateStr(14),
+          user_id: this.user_id,
+          group_id: this.group_id
+        })
+        .then((res) => {
+          for (let key in res.data.data) {
+            let hasNumber = Object.values(res.data.data[key]).find((res:any) => {return res > 0})
+            this.showCharts = !!hasNumber || this.showCharts
+            this.option.series[0].data.push(res.data.data[key].completed)
+            this.option.series[3].data.push(res.data.data[key].order_number)
+            if (this.option.series[0].length < 4) {
+              this.option.series[2].data.push(0)
+              this.option.series[1].data.push(res.data.data[key].postpone)
+            } else {
+              this.option.series[1].data.push(0)
+              this.option.series[2].data.push(res.data.data[key].postpone)
+            }
 
-      //       if (key === new Date().getMonth() + 1 + '-' + new Date().getDate()) {
-      //         let obj = {
-      //           value: key + '\n今日',
-      //           textStyle: {
-      //             fontSize: 16,
-      //             color: '#1A95FF'
-      //           }
-      //         }
-      //         this.option.xAxis[0].data.push(obj)
-      //         continue
-      //       }
-      //       this.option.xAxis[0].data.push(key)
-      //     }
-      //     this.mainLoading1 = false
-      //   })
+            if (key === new Date().getMonth() + 1 + '-' + new Date().getDate()) {
+              let obj = {
+                value: key + '\n今日',
+                textStyle: {
+                  fontSize: 16,
+                  color: '#1A95FF'
+                }
+              }
+              this.option.xAxis[0].data.push(obj)
+              continue
+            }
+            this.option.xAxis[0].data.push(key)
+          }
+          this.mainLoading1 = false
+        })
 
       order
         .list({
