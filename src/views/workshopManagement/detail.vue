@@ -760,35 +760,55 @@ export default Vue.extend({
         this.settlementLogList = res.data.data
       })
 
-      process.list({ type: 2 }).then((res) => {
-        let arr: any = []
-        res.data.data.forEach((item: any) => {
+      order.processList({
+        // @ts-ignore
+        order_id:this.orderInfo.id
+      }).then((res:any) => {
+        let arr:any = []
+        res.data.data.forEach((item:String) => {
           arr.push({
-            label: item.name,
-            value: item.name
+            label: item,
+            value: item
           })
-        })
+        });
         this.processList.push({
-          label: '半成品加工工序',
-          value: 2,
+          label: '推荐工序',
+          value: 1,
           children: arr
+        })
+        process.list({ type: 2 }).then((res) => {
+          let arr: any = []
+          res.data.data.forEach((item: any) => {
+            arr.push({
+              label: item.name,
+              value: item.name
+            })
+          })
+          this.processList.push({
+            label: '半成品加工工序',
+            value: 2,
+            children: arr
+          })
+          process.list({ type: 3 }).then((res) => {
+            let arr: any = []
+            res.data.data.forEach((item: any) => {
+              arr.push({
+                label: item.name,
+                value: item.name
+              })
+            })
+            this.processList.push({
+              label: '成品加工工序',
+              value: 3,
+              children: arr
+            })
+          })
         })
       })
 
-      process.list({ type: 3 }).then((res) => {
-        let arr: any = []
-        res.data.data.forEach((item: any) => {
-          arr.push({
-            label: item.name,
-            value: item.name
-          })
-        })
-        this.processList.push({
-          label: '成品加工工序',
-          value: 3,
-          children: arr
-        })
-      })
+      
+
+      
 
       this.getWorkList('')
       this.loading = false
