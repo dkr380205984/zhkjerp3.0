@@ -247,7 +247,7 @@
                         <el-cascader placeholder="选择工序"
                           :show-all-levels="false"
                           v-model="itemChild.process_name_arr"
-                          :options="item.processList&&item.processList.length>0?item.processList:processList"
+                          :options="processList"
                           @change="(ev)=>{itemChild.process_type=ev[0];itemChild.process_name=ev[1]}"
                           filterable
                           clearable>
@@ -480,7 +480,7 @@
                         <el-cascader placeholder="选择工序"
                           :show-all-levels="false"
                           v-model="itemChild.process_name_arr"
-                          :options="item.processList&&item.processList.length>0?item.processList:processList"
+                          :options="processList"
                           @change="(ev)=>{itemChild.process_type=ev[0];itemChild.process_name=ev[1]}"
                           filterable
                           clearable>
@@ -777,12 +777,17 @@ export default Vue.extend({
         ],
         material_plan_data: [],
         material_plan_gather_data: []
+      },
+      orderProcess: {
+        label: '推荐工序',
+        value: '推荐工序',
+        children: []
       }
     }
   },
   computed: {
-    processList() {
-      return [
+    processList(): any[] {
+      const normalProcessList = [
         {
           label: '织造工序',
           value: '织造工序',
@@ -813,6 +818,7 @@ export default Vue.extend({
           })
         }
       ]
+      return this.orderProcess.children.length > 0 ? [this.orderProcess].concat(normalProcessList) : normalProcessList
     },
     yarnTypeList(): CascaderInfo[] {
       return this.$store.state.api.yarnType.arr
@@ -1078,7 +1084,6 @@ export default Vue.extend({
                   number: itemPart.number || 0,
                   order_number: itemChild.order_number,
                   loss: '',
-                  processList: item.quote_product_id ? this.getProcessInfo(item.quote_rel_product_info!) : [],
                   // 只有大身有工艺单
                   info_data:
                     itemPart.part_id === 0 && itemChild.material_info.length > 0
@@ -1215,28 +1220,6 @@ export default Vue.extend({
         })
       }
       this.confirmFlag = 2
-    },
-    // 工序信息
-    getProcessInfo(info: QuotedPriceProduct): any[] {
-      let processArr: any[] = []
-      info.weave_data!.forEach((item) => {
-        processArr.push(item.name)
-      })
-      info.semi_product_data.forEach((item) => {
-        processArr = processArr.concat(item.name)
-      })
-      info.production_data.forEach((item) => {
-        processArr = processArr.concat(item.name)
-      })
-      return [
-        {
-          label: '推荐工序',
-          value: '推荐工序',
-          children: Array.from(new Set(processArr)).map((item) => {
-            return { value: item, label: item }
-          })
-        }
-      ].concat(this.processList)
     },
     // 配件的工艺信息用单独的函数去order_info里寻找，这样就不需要破坏前面只有大身有工艺单的逻辑
     findPartCraftMaterial(
@@ -1493,6 +1476,22 @@ export default Vue.extend({
           // 别问我添加页面为什么要拿详情接口，因为有继续添加，要计算一个已计划数量值
           this.getMaterialPlan()
           this.loading = false
+        }
+      })
+
+    // 获取订单相关工序,理论上，这个环节，用户可以拿到报价单相关的
+    order
+      .processList({
+        order_id: Number(this.$route.query.id)
+      })
+      .then((res) => {
+        if (res.data.status) {
+          this.orderProcess.children = res.data.data.map((item: any) => {
+            return {
+              value: item,
+              label: item
+            }
+          })
         }
       })
     // 复制逻辑
