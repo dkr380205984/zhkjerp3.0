@@ -47,12 +47,11 @@
     <div class="module noBackColor">
       <div style="display: flex; width: 49%; justify-content: space-between">
         <div class="tab active">计划数据统计</div>
-        <div class="tab" @click="$message.info('功能正在开发中，即将上线')">订购数据统计</div>
+        <div class="tab" @click="$router.push('/dataReport/materialsOrderingStatistics')">订购数据统计</div>
         <div class="tab" @click="$message.info('功能正在开发中，即将上线')">调取数据统计</div>
         <div class="tab" @click="$message.info('功能正在开发中，即将上线')">加工数据统计</div>
         <div class="tab" @click="$message.info('功能正在开发中，即将上线')">原料库存数据统计</div>
-        <!-- <div class="tab" @click="$router.push('/dataReport/materialsOrderingStatistics')">订购数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
+        <!-- <div class="tab" @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
         <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
         <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">原料库存数据统计</div> -->
       </div>
