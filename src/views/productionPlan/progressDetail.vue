@@ -140,7 +140,7 @@
             :key="item.id">
             <div class="tcol">{{item.created_at.slice(0,10)}}</div>
             <div class="tcol">{{item.weave_plan_product_info.size.size_name}}/{{item.weave_plan_product_info.color.color_name}}</div>
-            <div class="tcol">{{item.weave_plan_product_info.real_number}}</div>
+            <div class="tcol">{{item.number}}</div>
             <div class="tcol">{{item.difference}}</div>
             <div class="tcol">{{item.weave_plan_product_info.real_number}}/{{item.weave_plan_product_info.number}}</div>
           </div>
