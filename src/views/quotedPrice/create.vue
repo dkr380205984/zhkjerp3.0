@@ -1655,163 +1655,158 @@ export default Vue.extend({
           ]) ||
           this.quotedPriceInfo.product_data.some((item, index) => {
             // 选择已有产品和直接添加产品描述验证不同
-            if (item.product_id) {
-              this.$message.error('暂时不支持')
-              return false
-            } else {
-              return (
-                this.$formCheck(item, [
-                  {
-                    key: 'transport_fee',
-                    errMsg: '产品' + (index + 1) + '请输入运费'
-                  },
-                  {
-                    key: 'type',
-                    errMsg: '请选择产品' + (index + 1) + '品类',
-                    regNormal: 'checkArr'
-                  }
-                ]) ||
-                item.material_data.some((itemChild) => {
-                  return (
-                    itemChild.tree_data &&
-                    this.$formCheck(itemChild, [
-                      {
-                        key: 'tree_data',
-                        errMsg: '请选择产品' + (index + 1) + '原料',
-                        regNormal: 'checkArr'
-                      },
-                      // {
-                      //   key: 'weight',
-                      //   errMsg: '请输入产品' + (index + 1) + '原料预计数量'
-                      // },
-                      {
-                        key: 'unit',
-                        errMsg: '物料的单位只能为g，kg或m',
-                        regExp: /^g$|^m$|^kg$/,
-                        regNegate: true
-                      }
-                      // {
-                      //   key: 'price',
-                      //   errMsg: '请输入产品' + (index + 1) + '原料单价'
-                      // }
-                    ])
-                  )
-                }) ||
-                item.assist_material_data.some((itemChild) => {
-                  return (
-                    itemChild.material_id &&
-                    this.$formCheck(itemChild, [
-                      {
-                        key: 'material_id',
-                        errMsg: '请选择产品' + (index + 1) + '装饰辅料'
-                      },
-                      // {
-                      //   key: 'number',
-                      //   errMsg: '请输入产品' + (index + 1) + '装饰辅料预计数量'
-                      // },
-                      {
-                        key: 'unit',
-                        errMsg: '请输入产品' + (index + 1) + '装饰辅料数量单位'
-                      }
-                      // {
-                      //   key: 'price',
-                      //   errMsg: '请输入产品' + (index + 1) + '装饰辅料单价'
-                      // }
-                    ])
-                  )
-                }) ||
-                item.weave_data.some((itemChild) => {
-                  return (
-                    itemChild.name &&
-                    this.$formCheck(itemChild, [
-                      {
-                        key: 'name',
-                        errMsg: '请选择产品' + (index + 1) + '织造明细'
-                      },
-                      {
-                        key: 'total_price',
-                        errMsg: '请输入产品' + (index + 1) + '织造小计'
-                      }
-                    ])
-                  )
-                }) ||
-                item.semi_product_data.some((itemChild) => {
-                  return (
-                    itemChild.name &&
-                    this.$formCheck(itemChild, [
-                      {
-                        key: 'name',
-                        errMsg: '请选择产品' + (index + 1) + '半成品加工工序'
-                      },
-                      {
-                        key: 'total_price',
-                        errMsg: '请输入产品' + (index + 1) + '半成品加工小计'
-                      }
-                    ])
-                  )
-                }) ||
-                item.production_data.some((itemChild) => {
-                  return (
-                    itemChild.name &&
-                    this.$formCheck(itemChild, [
-                      {
-                        key: 'name',
-                        errMsg: '请选择产品' + (index + 1) + '成品加工工序'
-                      },
-                      {
-                        key: 'total_price',
-                        errMsg: '请输入产品' + (index + 1) + '成品加工小计'
-                      }
-                    ])
-                  )
-                }) ||
-                item.pack_material_data.some((itemChild) => {
-                  return (
-                    itemChild.material_id &&
-                    this.$formCheck(itemChild, [
-                      {
-                        key: 'material_id',
-                        errMsg: '请选择产品' + (index + 1) + '包装辅料'
-                      },
-                      {
-                        key: 'total_price',
-                        errMsg: '请输入产品' + (index + 1) + '包装辅料小计'
-                      }
-                    ])
-                  )
-                }) ||
-                item.other_fee_data.some((itemChild) => {
-                  return (
-                    itemChild.name &&
-                    this.$formCheck(itemChild, [
-                      {
-                        key: 'name',
-                        errMsg: '请输入产品' + (index + 1) + '其他费用名称'
-                      },
-                      {
-                        key: 'total_price',
-                        errMsg: '请输入产品' + (index + 1) + '其他费用小计'
-                      }
-                    ])
-                  )
-                }) ||
-                item.no_production_fee_data.some((itemChild) => {
-                  return (
-                    itemChild.name &&
-                    this.$formCheck(itemChild, [
-                      {
-                        key: 'name',
-                        errMsg: '请输入产品' + (index + 1) + '非生产型费用名称'
-                      },
-                      {
-                        key: 'total_price',
-                        errMsg: '请输入产品' + (index + 1) + '非生产型费用小计'
-                      }
-                    ])
-                  )
-                })
-              )
-            }
+            return (
+              this.$formCheck(item, [
+                {
+                  key: 'transport_fee',
+                  errMsg: '产品' + (index + 1) + '请输入运费'
+                },
+                {
+                  key: 'type',
+                  errMsg: '请选择产品' + (index + 1) + '品类',
+                  regNormal: 'checkArr'
+                }
+              ]) ||
+              item.material_data.some((itemChild) => {
+                return (
+                  itemChild.tree_data &&
+                  this.$formCheck(itemChild, [
+                    {
+                      key: 'tree_data',
+                      errMsg: '请选择产品' + (index + 1) + '原料',
+                      regNormal: 'checkArr'
+                    },
+                    // {
+                    //   key: 'weight',
+                    //   errMsg: '请输入产品' + (index + 1) + '原料预计数量'
+                    // },
+                    {
+                      key: 'unit',
+                      errMsg: '物料的单位只能为g，kg或m',
+                      regExp: /^g$|^m$|^kg$/,
+                      regNegate: true
+                    }
+                    // {
+                    //   key: 'price',
+                    //   errMsg: '请输入产品' + (index + 1) + '原料单价'
+                    // }
+                  ])
+                )
+              }) ||
+              item.assist_material_data.some((itemChild) => {
+                return (
+                  itemChild.material_id &&
+                  this.$formCheck(itemChild, [
+                    {
+                      key: 'material_id',
+                      errMsg: '请选择产品' + (index + 1) + '装饰辅料'
+                    },
+                    // {
+                    //   key: 'number',
+                    //   errMsg: '请输入产品' + (index + 1) + '装饰辅料预计数量'
+                    // },
+                    {
+                      key: 'unit',
+                      errMsg: '请输入产品' + (index + 1) + '装饰辅料数量单位'
+                    }
+                    // {
+                    //   key: 'price',
+                    //   errMsg: '请输入产品' + (index + 1) + '装饰辅料单价'
+                    // }
+                  ])
+                )
+              }) ||
+              item.weave_data.some((itemChild) => {
+                return (
+                  itemChild.name &&
+                  this.$formCheck(itemChild, [
+                    {
+                      key: 'name',
+                      errMsg: '请选择产品' + (index + 1) + '织造明细'
+                    },
+                    {
+                      key: 'total_price',
+                      errMsg: '请输入产品' + (index + 1) + '织造小计'
+                    }
+                  ])
+                )
+              }) ||
+              item.semi_product_data.some((itemChild) => {
+                return (
+                  itemChild.name &&
+                  this.$formCheck(itemChild, [
+                    {
+                      key: 'name',
+                      errMsg: '请选择产品' + (index + 1) + '半成品加工工序'
+                    },
+                    {
+                      key: 'total_price',
+                      errMsg: '请输入产品' + (index + 1) + '半成品加工小计'
+                    }
+                  ])
+                )
+              }) ||
+              item.production_data.some((itemChild) => {
+                return (
+                  itemChild.name &&
+                  this.$formCheck(itemChild, [
+                    {
+                      key: 'name',
+                      errMsg: '请选择产品' + (index + 1) + '成品加工工序'
+                    },
+                    {
+                      key: 'total_price',
+                      errMsg: '请输入产品' + (index + 1) + '成品加工小计'
+                    }
+                  ])
+                )
+              }) ||
+              item.pack_material_data.some((itemChild) => {
+                return (
+                  itemChild.material_id &&
+                  this.$formCheck(itemChild, [
+                    {
+                      key: 'material_id',
+                      errMsg: '请选择产品' + (index + 1) + '包装辅料'
+                    },
+                    {
+                      key: 'total_price',
+                      errMsg: '请输入产品' + (index + 1) + '包装辅料小计'
+                    }
+                  ])
+                )
+              }) ||
+              item.other_fee_data.some((itemChild) => {
+                return (
+                  itemChild.name &&
+                  this.$formCheck(itemChild, [
+                    {
+                      key: 'name',
+                      errMsg: '请输入产品' + (index + 1) + '其他费用名称'
+                    },
+                    {
+                      key: 'total_price',
+                      errMsg: '请输入产品' + (index + 1) + '其他费用小计'
+                    }
+                  ])
+                )
+              }) ||
+              item.no_production_fee_data.some((itemChild) => {
+                return (
+                  itemChild.name &&
+                  this.$formCheck(itemChild, [
+                    {
+                      key: 'name',
+                      errMsg: '请输入产品' + (index + 1) + '非生产型费用名称'
+                    },
+                    {
+                      key: 'total_price',
+                      errMsg: '请输入产品' + (index + 1) + '非生产型费用小计'
+                    }
+                  ])
+                )
+              })
+            )
           })
         if (!formCheck) {
           this.getCmpData()

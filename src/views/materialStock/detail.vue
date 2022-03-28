@@ -91,7 +91,7 @@
                   </div>
                   <!-- 没染完 -->
                   <div class="trow"
-                    v-if="itemChild.process_info.filter((item)=>item.process==='染色').length>0&&itemChild.process_info.filter((item)=>item.process==='染色').reduce((total,cur)=>(total+cur.number),0)<itemChild.number">
+                    v-if="itemChild.process_info.filter((item)=>item.process==='染色').length>0&&itemChild.process_info.filter((item)=>item.process==='染色').reduce((total,cur)=>(total+Number(cur.number)),0)<Number(itemChild.number)">
                     <div class="tcol">
                       <span style="display:flex;align-items:center">
                         <div class="backHoverOrange"
@@ -531,7 +531,8 @@
         <div class="tbody">
           <div class="trow"
             v-for="item in productionPlanList"
-            :key="item.id">
+            :key="item.id"
+            v-show="item.material_info_data.length>0">
             <div class="tcol">
               <el-checkbox v-model="item.checkAll"
                 @change="getAllCheck($event,item)">{{item.code}}</el-checkbox>
