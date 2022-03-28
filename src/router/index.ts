@@ -292,7 +292,7 @@ const routes: Array<RouteConfig> = [
         permissions_id: '21-1',
       },
       path: '/billingManagement/rawMaterialPlan',
-      name: '原材计划单',
+      name: '原料计划单',
       component: () => import('../views/billingManagement/rawMaterialPlan.vue')
     }, {
       meta: {
@@ -355,7 +355,7 @@ const routes: Array<RouteConfig> = [
         permissions_id: '21-10',
       },
       path: '/billingManagement/transportationDeliveryOrder',
-      name: '辅料订购单',
+      name: '运输出库单',
       component: () => import('../views/billingManagement/transportationDeliveryOrder.vue')
     }, {
       meta: {

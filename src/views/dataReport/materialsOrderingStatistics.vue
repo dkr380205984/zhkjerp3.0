@@ -42,37 +42,27 @@
       <div style="display: flex; width: 49%; justify-content: space-between">
         <div class="tab" @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">计划数据统计</div>
         <div class="tab active">订购数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
+        <div class="tab" @click="$message.info('功能正在开发中，即将上线')">调取数据统计</div>
+        <div class="tab" @click="$message.info('功能正在开发中，即将上线')">加工数据统计</div>
+        <div class="tab" @click="$message.info('功能正在开发中，即将上线')">原料库存数据统计</div>
+        <!-- <div class="tab" @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
         <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">原料库存数据统计</div>
+        <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">原料库存数据统计</div> -->
       </div>
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">
           <div class="screenCtn">
-            <div class="screen" style="width: 48.5%">
+            <div class="screen" style="width: 100%">
               <el-select
                 @change="changeRouter"
                 filterable
-                v-model="filterData.orderOrSimpleOrder"
+                v-model="filterData.order_type"
                 placeholder="筛选原料"
                 clearable
               >
                 <el-option label="订单/样单" :value="''"></el-option>
                 <el-option label="订单" :value="1"></el-option>
                 <el-option label="样单" :value="2"></el-option>
-              </el-select>
-            </div>
-            <div class="screen" style="width: 48.5%">
-              <el-select
-                @change="changeRouter"
-                filterable
-                v-model="filterData.shaxianmianliao"
-                placeholder="筛选原料"
-                clearable
-              >
-                <el-option label="纱线/面料" :value="''"></el-option>
-                <el-option label="纱线" :value="1"></el-option>
-                <el-option label="面料" :value="2"></el-option>
               </el-select>
             </div>
             <div class="screen" style="margin-bottom: 0; width: 48.5%">
@@ -109,16 +99,7 @@
           <div class="contentGrid">
             <div>
               订单类型：<span class="blue">{{
-                filterData.orderOrSimpleOrder === ''
-                  ? '订单/样单'
-                  : filterData.orderOrSimpleOrder === 1
-                  ? '订单'
-                  : '样单'
-              }}</span>
-            </div>
-            <div>
-              原料类型：<span class="blue">{{
-                filterData.shaxianmianliao === '' ? '纱线/面料' : filterData.shaxianmianliao === 1 ? '纱线' : '面料'
+                filterData.order_type === '' ? '订单/样单' : filterData.order_type === 1 ? '订单' : '样单'
               }}</span>
             </div>
             <div>
@@ -137,7 +118,7 @@
         </div>
       </div>
       <div class="cardCtn">
-        <div class="card noPad" style="overflow:hidden">
+        <div class="card noPad" style="overflow: hidden">
           <div class="screen">
             <el-cascader
               @change="
@@ -156,11 +137,18 @@
         </div>
         <div class="card noPad" style="overflow: hidden">
           <div class="screen">
-            <el-input v-model="filterData.yuanliaomingcheng" placeholder="输入原料名称查询" clearable></el-input>
+            <el-input
+              v-model="filterData.name"
+              placeholder="输入原料名称查询"
+              clearable
+              @keydown.enter.native="changeRouter"
+              @blur="changeRouter"
+              @clear="changeRouter"
+            ></el-input>
           </div>
         </div>
         <div class="cardCtn" style="width: 206%; margin-top: 0">
-          <div class="card noPad" style="overflow: hidden;">
+          <div class="card noPad" style="overflow: hidden">
             <div class="screen">
               <el-date-picker
                 v-model="filterData.start_time"
@@ -181,7 +169,7 @@
           <h3>合计订购数量</h3>
           <div class="content">
             <span class="blue">
-              <h2>{{ this.reportData.order.total_price }}</h2>
+              <h2>{{ this.reportData.total_number }}</h2>
             </span>
             <h2 class="unit">吨或千米</h2>
           </div>
@@ -190,7 +178,7 @@
           <h3>合计订购金额</h3>
           <div class="content">
             <span class="blue">
-              <h2>{{ this.reportData.order.total_number }}</h2>
+              <h2>{{ this.reportData.total_number }}</h2>
             </span>
             <h2 class="unit">万元</h2>
           </div>
@@ -199,7 +187,7 @@
           <h3>最终入库数量</h3>
           <div class="content">
             <span class="green">
-              <h2>{{ this.reportData.order.total_number }}</h2>
+              <h2>{{ this.reportData.total_number }}</h2>
             </span>
             <h2 class="unit">吨或千米</h2>
           </div>
@@ -208,7 +196,7 @@
           <h3>最终入库金额</h3>
           <div class="content">
             <span class="green">
-              <h2>{{ this.reportData.order.total_number }}</h2>
+              <h2>{{ this.reportData.total_number }}</h2>
             </span>
             <h2 class="unit">万元</h2>
           </div>
@@ -246,7 +234,7 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue">查看订购单据</div>
+          <div class="btn backHoverBlue">查看原料订购单</div>
         </div>
       </div>
     </div>
@@ -409,8 +397,8 @@ export default Vue.extend({
         client_id: '',
         contacts_id: '',
         group_id: '',
-        orderOrSimpleOrder: '',
-        shaxianmianliao: ''
+        order_type: '',
+        user_id: ''
       },
       reportData: {
         order: {
@@ -591,13 +579,15 @@ export default Vue.extend({
     getList() {
       this.loading = true
       statistics
-        .order({
+        .rawMaterialOrder({
           start_time: this.filterData.start_time,
           client_id: this.filterData.client_id.length > 0 ? this.filterData.client_id[2] : '',
           user_id: this.filterData.user_id,
           group_id: this.filterData.group_id,
-          settle_unit: this.filterData.settle_unit,
-          end_time: this.filterData.end_time
+          order_type: this.filterData.order_type,
+          name: this.filterData.name,
+          end_time: this.filterData.end_time,
+          contacts_id: ''
         })
         .then((res) => {
           if (!res.data.status) {
@@ -605,152 +595,139 @@ export default Vue.extend({
             return
           }
           let data = res.data.data
-          data.order.total_number = this.$formatNum(+(data.order.total_number / 10000).toFixed(2))
-          data.order.total_price = this.$formatNum(+(data.order.total_price / 10000).toFixed(2))
-          data.transport.price = this.$formatNum(+(data.transport.price / 10000).toFixed(2))
-          data.transport.transport_number = this.$formatNum(+(data.transport.transport_number / 10000).toFixed(2))
-
           this.reportData = data
-          this.option1.series[0].data = []
-          this.option1.series[1].data = []
-          this.groupOption.series[0].data = []
-          this.companyOption.yAxis.data = []
-          this.companyOption.series[0].data = []
 
-          let orderPriceMax: any,
-            orderPriceMin: any,
-            orderNumberMax: any,
-            orderNumberMin: any,
-            outPriceMax: any,
-            outPriceMin: any,
-            outNumberMax: any,
-            outNumberMin: any = 0
+          // data.order.total_number = this.$formatNum(+(data.order.total_number / 10000).toFixed(2))
+          // data.order.total_price = this.$formatNum(+(data.order.total_price / 10000).toFixed(2))
+          // data.transport.price = this.$formatNum(+(data.transport.price / 10000).toFixed(2))
+          // data.transport.transport_number = this.$formatNum(+(data.transport.transport_number / 10000).toFixed(2))
 
-          if (data.order.report.month.length !== 0) {
-            //  每月下单总额
-            orderPriceMax = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
-              return +num1.total_price > +num2.total_price ? num1 : num2
-            })
-            orderPriceMin = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
-              return +num1.total_price < +num2.total_price ? num1 : num2
-            })
+          // this.option1.series[0].data = []
+          // this.option1.series[1].data = []
+          // this.groupOption.series[0].data = []
+          // this.companyOption.yAxis.data = []
+          // this.companyOption.series[0].data = []
 
-            // 每月下单总数
-            orderNumberMax = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
-              return +num1.total_number > +num2.total_number ? num1 : num2
-            })
-            orderNumberMin = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
-              return +num1.total_number < +num2.total_number ? num1 : num2
-            })
+          // let orderPriceMax: any,
+          //   orderPriceMin: any,
+          //   orderNumberMax: any,
+          //   orderNumberMin: any,
+          //   outPriceMax: any,
+          //   outPriceMin: any,
+          //   outNumberMax: any,
+          //   outNumberMin: any = 0
 
-            // 拿到每月下单总额的最大值和最小值
-            orderPriceMax = +orderPriceMax.total_price
-            orderPriceMin = +orderPriceMin.total_price
+          // if (data.order.report.month.length !== 0) {
+          //   //  每月下单总额
+          //   orderPriceMax = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
+          //     return +num1.total_price > +num2.total_price ? num1 : num2
+          //   })
+          //   orderPriceMin = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
+          //     return +num1.total_price < +num2.total_price ? num1 : num2
+          //   })
 
-            // 拿到每月下单总数的最大值和最小值
-            orderNumberMax = +orderNumberMax.total_number
-            orderNumberMin = +orderNumberMin.total_number
-          }
+          //   // 每月下单总数
+          //   orderNumberMax = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
+          //     return +num1.total_number > +num2.total_number ? num1 : num2
+          //   })
+          //   orderNumberMin = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
+          //     return +num1.total_number < +num2.total_number ? num1 : num2
+          //   })
 
-          if (data.transport.report.month.length !== 0) {
-            //  每月出库总额
-            outPriceMax = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
-              return +num1.price > +num2.price ? num1 : num2
-            })
-            outPriceMin = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
-              return +num1.price < +num2.price ? num1 : num2
-            })
+          //   // 拿到每月下单总额的最大值和最小值
+          //   orderPriceMax = +orderPriceMax.total_price
+          //   orderPriceMin = +orderPriceMin.total_price
 
-            // 每月出库总数
-            outNumberMax = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
-              return +num1.transport_number > +num2.transport_number ? num1 : num2
-            })
-            outNumberMin = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
-              return +num1.transport_number < +num2.transport_number ? num1 : num2
-            })
+          //   // 拿到每月下单总数的最大值和最小值
+          //   orderNumberMax = +orderNumberMax.total_number
+          //   orderNumberMin = +orderNumberMin.total_number
+          // }
 
-            // 拿到每月出库总额的最大值和最小值
-            outPriceMax = +outPriceMax.price
-            outPriceMin = +outPriceMin.price
+          // if (data.transport.report.month.length !== 0) {
+          //   //  每月出库总额
+          //   outPriceMax = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
+          //     return +num1.price > +num2.price ? num1 : num2
+          //   })
+          //   outPriceMin = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
+          //     return +num1.price < +num2.price ? num1 : num2
+          //   })
 
-            // 拿到出库下单总数的最大值和最小值
-            outNumberMax = +outNumberMax.transport_number
-            outNumberMin = +outNumberMin.transport_number
-          }
+          //   // 每月出库总数
+          //   outNumberMax = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
+          //     return +num1.transport_number > +num2.transport_number ? num1 : num2
+          //   })
+          //   outNumberMin = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
+          //     return +num1.transport_number < +num2.transport_number ? num1 : num2
+          //   })
 
-          if (this.activeName === 'first') {
-            this.option1.series[0].name = '每月下单总额'
-            this.option1.series[1].name = '每月下单总数'
-            this.option1.legend.data = ['每月下单总额', '每月下单总数']
-            this.option1.yAxis[0].name = '下单总额'
-            this.option1.yAxis[1].name = '下单总数'
+          //   // 拿到每月出库总额的最大值和最小值
+          //   outPriceMax = +outPriceMax.price
+          //   outPriceMin = +outPriceMin.price
 
-            // 每月下单总数 图表更新
-            this.option1.yAxis[0].max = Math.ceil(Math.ceil(orderPriceMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[0].min = orderPriceMin && orderPriceMin < 0 ? Math.ceil(orderPriceMin / 10000) : 0
-            this.option1.yAxis[0].interval = Math.ceil(orderPriceMax / 10000 / 5) || 10
+          //   // 拿到出库下单总数的最大值和最小值
+          //   outNumberMax = +outNumberMax.transport_number
+          //   outNumberMin = +outNumberMin.transport_number
+          // }
 
-            // 每月下单总额 图表更新
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(orderNumberMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[1].min = orderNumberMin && orderNumberMin < 0 ? Math.ceil(orderNumberMin / 10000) : 0
-            this.option1.yAxis[1].interval = Math.ceil(orderNumberMax / 10000 / 5) || 10
+          // if (this.activeName === 'first') {
+          //   this.option1.series[0].name = '每月下单总额'
+          //   this.option1.series[1].name = '每月下单总数'
+          //   this.option1.legend.data = ['每月下单总额', '每月下单总数']
+          //   this.option1.yAxis[0].name = '下单总额'
+          //   this.option1.yAxis[1].name = '下单总数'
 
-            this.option1.xAxis[0].data.forEach((itemMouth: any) => {
-              let mouth = this.reportData.order.report.month.find((item: any) => {
-                return item.mouth === itemMouth
-              })
-              if (mouth) {
-                this.option1.series[0].data.push(+(+mouth.total_price / 10000).toFixed(2))
-                this.option1.series[1].data.push(+(+mouth.total_number / 10000).toFixed(2))
-              } else {
-                this.option1.series[0].data.push(0)
-                this.option1.series[1].data.push(0)
-              }
-            })
+          //   // 每月下单总数 图表更新
+          //   this.option1.yAxis[0].max = Math.ceil(Math.ceil(orderPriceMax / 10000 / 5)) * 5 || 10
+          //   this.option1.yAxis[0].min = orderPriceMin && orderPriceMin < 0 ? Math.ceil(orderPriceMin / 10000) : 0
+          //   this.option1.yAxis[0].interval = Math.ceil(orderPriceMax / 10000 / 5) || 10
 
-            // 饼图
-            data.order.report.group.forEach((group: any) => {
-              this.groupOption.series[0].data.push({
-                name: group.group_name || '其它',
-                value: group.total_price
-              })
-            })
+          //   // 每月下单总额 图表更新
+          //   this.option1.yAxis[1].max = Math.ceil(Math.ceil(orderNumberMax / 10000 / 5)) * 5 || 10
+          //   this.option1.yAxis[1].min = orderNumberMin && orderNumberMin < 0 ? Math.ceil(orderNumberMin / 10000) : 0
+          //   this.option1.yAxis[1].interval = Math.ceil(orderNumberMax / 10000 / 5) || 10
 
-            // 横向柱状图
-            data.order.report.client.forEach((client: any) => {
-              this.companyOption.yAxis.data.push(client.client_name)
-              this.companyOption.series[0].data.push(client.total_price)
-            })
-          } else if (this.activeName === 'second') {
-            this.option1.series[0].name = '每月出库总额'
-            this.option1.series[1].name = '每月出库总数'
-            this.option1.legend.data = ['每月出库总额', '每月出库总数']
-            this.option1.yAxis[0].name = '出库总额'
-            this.option1.yAxis[1].name = '出库总数'
+          //   this.option1.xAxis[0].data.forEach((itemMouth: any) => {
+          //     let mouth = this.reportData.order.report.month.find((item: any) => {
+          //       return item.mouth === itemMouth
+          //     })
+          //     if (mouth) {
+          //       this.option1.series[0].data.push(+(+mouth.total_price / 10000).toFixed(2))
+          //       this.option1.series[1].data.push(+(+mouth.total_number / 10000).toFixed(2))
+          //     } else {
+          //       this.option1.series[0].data.push(0)
+          //       this.option1.series[1].data.push(0)
+          //     }
+          //   })
+          // } else if (this.activeName === 'second') {
+          //   this.option1.series[0].name = '每月出库总额'
+          //   this.option1.series[1].name = '每月出库总数'
+          //   this.option1.legend.data = ['每月出库总额', '每月出库总数']
+          //   this.option1.yAxis[0].name = '出库总额'
+          //   this.option1.yAxis[1].name = '出库总数'
 
-            // 每月出库总数 图表更新
-            this.option1.yAxis[0].max = Math.ceil(Math.ceil(outPriceMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[0].min = outPriceMin && outPriceMin < 0 ? Math.ceil(outPriceMin / 10000) : 0
-            this.option1.yAxis[0].interval = Math.ceil(outPriceMax / 10000 / 5) || 10
+          //   // 每月出库总数 图表更新
+          //   this.option1.yAxis[0].max = Math.ceil(Math.ceil(outPriceMax / 10000 / 5)) * 5 || 10
+          //   this.option1.yAxis[0].min = outPriceMin && outPriceMin < 0 ? Math.ceil(outPriceMin / 10000) : 0
+          //   this.option1.yAxis[0].interval = Math.ceil(outPriceMax / 10000 / 5) || 10
 
-            // 每月出库总额 图表更新
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(outNumberMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[1].min = outNumberMin && outNumberMin < 0 ? Math.ceil(outNumberMin / 10000) : 0
-            this.option1.yAxis[1].interval = Math.ceil(outNumberMax / 10000 / 5) || 10
+          //   // 每月出库总额 图表更新
+          //   this.option1.yAxis[1].max = Math.ceil(Math.ceil(outNumberMax / 10000 / 5)) * 5 || 10
+          //   this.option1.yAxis[1].min = outNumberMin && outNumberMin < 0 ? Math.ceil(outNumberMin / 10000) : 0
+          //   this.option1.yAxis[1].interval = Math.ceil(outNumberMax / 10000 / 5) || 10
 
-            this.option1.xAxis[0].data.forEach((itemMouth: any) => {
-              let mouth = this.reportData.transport.report.month.find((item: any) => {
-                return item.mouth === itemMouth
-              })
-              if (mouth) {
-                this.option1.series[0].data.push(+(+mouth.price / 10000).toFixed(2))
-                this.option1.series[1].data.push(+(+mouth.transport_number / 10000).toFixed(2))
-              } else {
-                this.option1.series[0].data.push(0)
-                this.option1.series[1].data.push(0)
-              }
-            })
-          }
+          //   this.option1.xAxis[0].data.forEach((itemMouth: any) => {
+          //     let mouth = this.reportData.transport.report.month.find((item: any) => {
+          //       return item.mouth === itemMouth
+          //     })
+          //     if (mouth) {
+          //       this.option1.series[0].data.push(+(+mouth.price / 10000).toFixed(2))
+          //       this.option1.series[1].data.push(+(+mouth.transport_number / 10000).toFixed(2))
+          //     } else {
+          //       this.option1.series[0].data.push(0)
+          //       this.option1.series[1].data.push(0)
+          //     }
+          //   })
+          // }
           this.loading = false
         })
     }

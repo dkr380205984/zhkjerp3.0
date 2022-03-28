@@ -13,18 +13,12 @@
         </svg>
         <span class="text">样单数据图表</span>
       </div>
-      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
+      <div class="tag" @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-yuanliaoshiyongtubiao"></use>
         </svg>
         <span class="text">原料使用图表</span>
       </div>
-      <!-- <div class="tag" @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">
-        <svg class="iconFont" aria-hidden="true">
-          <use xlink:href="#icon-yuanliaoshiyongtubiao"></use>
-        </svg>
-        <span class="text">原料使用图表</span>
-      </div> -->
       <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-fuliaoshiyongtubiao"></use>
@@ -89,7 +83,7 @@
               </el-select>
             </div>
             <div class="screen" style="margin-bottom: 0">
-              <el-select @change="changePeople" v-model="filterData.contacts_id" placeholder="筛选创建人" clearable>
+              <el-select @change="changePeople" v-model="filterData.user_id" placeholder="筛选创建人" clearable>
                 <el-option
                   v-for="item in userList"
                   :key="item.value"
@@ -391,7 +385,7 @@ export default Vue.extend({
         start_time: '',
         end_time: '',
         client_id: '',
-        contacts_id: '',
+        user_id: '',
         group_id: ''
       },
       reportData: {
@@ -464,7 +458,7 @@ export default Vue.extend({
       this.filterData.client_id = query.client_id
         ? (query.client_id as string).split(',').map((item) => Number(item))
         : []
-      this.filterData.contacts_id = query.contacts_id || this.$getLocalStorage('create_user') || ''
+      this.filterData.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.sortWay = Number(query.sortWay) || 1
       this.createPeople = this.$getLocalStorage('create_user_name')
@@ -507,8 +501,8 @@ export default Vue.extend({
           (this.filterData.client_id || '') +
           '&group_id=' +
           (this.filterData.group_id || '') +
-          '&contacts_id=' +
-          (this.filterData.contacts_id || '') +
+          '&user_id=' +
+          (this.filterData.user_id || '') +
           '&start_time=' +
           (this.filterData.start_time || '') +
           '&end_time=' +
@@ -526,7 +520,7 @@ export default Vue.extend({
           client_id: this.filterData.client_id.length > 0 ? this.filterData.client_id[2] : '',
           group_id: this.filterData.group_id,
           end_time: this.filterData.end_time,
-          user_id: this.filterData.contacts_id
+          user_id: this.filterData.user_id
         })
         .then((res) => {
           if (!res.data.status) {
