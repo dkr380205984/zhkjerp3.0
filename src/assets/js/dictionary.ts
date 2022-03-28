@@ -357,7 +357,7 @@ const systemModule = [{
     name: '原料补充单',
   }, {
     id: '21-3',
-    name: '原料采购单',
+    name: '原料订购单',
   }, {
     id: '21-4',
     name: '原料调取单',

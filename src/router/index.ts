@@ -289,6 +289,83 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/dataReport/accessoriesPackagingOrderStatistics.vue')
     }, {
       meta: {
+        permissions_id: '21-1',
+      },
+      path: '/billingManagement/rawMaterialPlan',
+      name: '原材计划单',
+      component: () => import('../views/billingManagement/rawMaterialPlan.vue')
+    }, {
+      meta: {
+        permissions_id: '21-2',
+      },
+      path: '/billingManagement/rawMaterialSupplement',
+      name: '原料补充单',
+      component: () => import('../views/billingManagement/rawMaterialSupplement.vue')
+    }, {
+      meta: {
+        permissions_id: '21-3',
+      },
+      path: '/billingManagement/rawMaterialPurchaseOrder',
+      name: '原料订购单',
+      component: () => import('../views/billingManagement/rawMaterialPurchaseOrder.vue')
+    }, {
+      meta: {
+        permissions_id: '21-4',
+      },
+      path: '/billingManagement/rawMaterialTransferOrder',
+      name: '原料调取单',
+      component: () => import('../views/billingManagement/rawMaterialTransferOrder.vue')
+    }, {
+      meta: {
+        permissions_id: '21-5',
+      },
+      path: '/billingManagement/rawMaterialProcessingOrder',
+      name: '原料加工单',
+      component: () => import('../views/billingManagement/rawMaterialProcessingOrder.vue')
+    }, {
+      meta: {
+        permissions_id: '21-6',
+      },
+      path: '/billingManagement/productionPlan',
+      name: '生产计划单',
+      component: () => import('../views/billingManagement/productionPlan.vue')
+    }, {
+      meta: {
+        permissions_id: '21-7',
+      },
+      path: '/billingManagement/workshopSettlementLog',
+      name: '车间结算日志',
+      component: () => import('../views/billingManagement/workshopSettlementLog.vue')
+    }, {
+      meta: {
+        permissions_id: '21-8',
+      },
+      path: '/billingManagement/auxiliaryMaterialPurchaseOrder',
+      name: '辅料订购单',
+      component: () => import('../views/billingManagement/auxiliaryMaterialPurchaseOrder.vue')
+    }, {
+      meta: {
+        permissions_id: '21-9',
+      },
+      path: '/billingManagement/packingOrder',
+      name: '包装订购单',
+      component: () => import('../views/billingManagement/packingOrder.vue')
+    }, {
+      meta: {
+        permissions_id: '21-10',
+      },
+      path: '/billingManagement/transportationDeliveryOrder',
+      name: '辅料订购单',
+      component: () => import('../views/billingManagement/transportationDeliveryOrder.vue')
+    }, {
+      meta: {
+        permissions_id: '21-11',
+      },
+      path: '/billingManagement/deductionForm',
+      name: '扣款单',
+      component: () => import('../views/billingManagement/deductionForm.vue')
+    }, {
+      meta: {
         permissions_id: '17-1',
       },
       path: '/workerManage/create',

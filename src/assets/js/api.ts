@@ -829,7 +829,16 @@ const statistics = {
     group_id: number | string
     is_check: number | string
     status: number | string
-  }) => http.get(`${baseUrl}/statistics/sample_order`, params)
+  }) => http.get(`${baseUrl}/statistics/sample_order`, params),
+  rawMaterial: (params?: {
+    order_type: number | string
+    user_id: number | string
+    group_id: number | string
+    contacts_id: number | string
+    name: string
+    start_time: string
+    end_time: string
+  }) => http.get(`${baseUrl}/statistics/rawmaterial`, params),
 }
 export {
   statistics,
