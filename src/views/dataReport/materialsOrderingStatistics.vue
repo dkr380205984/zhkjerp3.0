@@ -42,11 +42,10 @@
       <div style="display: flex; width: 49%; justify-content: space-between">
         <div class="tab" @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">计划数据统计</div>
         <div class="tab active">订购数据统计</div>
-        <div class="tab" @click="$message.info('功能正在开发中，即将上线')">调取数据统计</div>
+        <div class="tab" @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
         <div class="tab" @click="$message.info('功能正在开发中，即将上线')">加工数据统计</div>
         <div class="tab" @click="$message.info('功能正在开发中，即将上线')">原料库存数据统计</div>
-        <!-- <div class="tab" @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
+        <!-- <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
         <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">原料库存数据统计</div> -->
       </div>
       <div class="cardCtn">
@@ -66,7 +65,7 @@
               </el-select>
             </div>
             <div class="screen" style="margin-bottom: 0; width: 48.5%">
-              <el-select @change="changePeople" v-model="filterData.contacts_id" placeholder="筛选创建人" clearable>
+              <el-select @change="changePeople" v-model="filterData.user_id" placeholder="筛选创建人" clearable>
                 <el-option
                   v-for="item in userList"
                   :key="item.value"
@@ -347,10 +346,9 @@ export default Vue.extend({
         start_time: '',
         end_time: '',
         client_id: '',
-        contacts_id: '',
+        user_id: '',
         group_id: '',
         order_type: '',
-        user_id: '',
         name: ''
       },
       reportData: {
@@ -427,7 +425,7 @@ export default Vue.extend({
       this.filterData.client_id = query.client_id
         ? (query.client_id as string).split(',').map((item) => Number(item))
         : []
-      this.filterData.contacts_id = query.contacts_id || this.$getLocalStorage('create_user') || ''
+      this.filterData.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.filterData.settle_unit = query.settle_unit
       this.createPeople = this.$getLocalStorage('create_user_name')
@@ -483,8 +481,8 @@ export default Vue.extend({
         '/dataReport/materialsOrderingStatistics?' +
           '&client_id=' +
           (this.filterData.client_id || '') +
-          '&contacts_id=' +
-          (this.filterData.contacts_id || '') +
+          '&user_id=' +
+          (this.filterData.user_id || '') +
           '&group_id=' +
           (this.filterData.group_id || '') +
           '&name=' +

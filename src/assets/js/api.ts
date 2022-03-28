@@ -853,9 +853,7 @@ const statistics = {
     order_type: number | string
     user_id: number | string
     group_id: number | string
-    client_id:number | string
     store_id:number | string
-    contacts_id: number | string
     name: string
     start_time: string
     end_time: string
