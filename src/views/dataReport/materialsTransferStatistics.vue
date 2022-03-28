@@ -231,7 +231,9 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue">查看原料调取单</div>
+          <div class="btn backHoverBlue" @click="$router.push('/billingManagement/rawMaterialTransferOrder')">
+            查看原料调取单
+          </div>
         </div>
       </div>
     </div>
@@ -368,7 +370,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    getStoreDetail(ev:number) {
+    getStoreDetail(ev: number) {
       if (ev) {
         store
           .detail({
