@@ -161,6 +161,16 @@
             </div>
             <div class="row">
               <div class="col flex3">
+                <div class="label">创建日期：</div>
+                <div class="text">{{item.created_at.slice(0,10)}}</div>
+              </div>
+              <div class="col flex3">
+                <div class="label">创建人：</div>
+                <div class="text">{{item.user_name}}</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col flex3">
                 <div class="label">额外费用：</div>
                 <div class="text">
                   <others-fee-data :data="item.others_fee_data"></others-fee-data>
@@ -301,7 +311,16 @@
                 <div class="trow"
                   v-for="itemProcess in item.process_info"
                   :key="itemProcess.id">
-                  <div class="tcol"><span class="overText">{{itemProcess.code}}</span></div>
+                  <div class="tcol">
+                    <span class="overText">{{itemProcess.code}}
+                      <el-tooltip class="item"
+                        effect="dark"
+                        :content="'创建日期：'+itemProcess.created_at.slice(0,10) + ';创建人：'+itemProcess.user_name"
+                        placement="top">
+                        <i class="el-icon-timer hoverBlue"></i>
+                      </el-tooltip>
+                    </span>
+                  </div>
                   <div class="tcol">{{itemProcess.client_name}}</div>
                   <div class="tcol"
                     style="flex:0.5">{{itemProcess.process}}</div>
@@ -406,6 +425,16 @@
               <div class="col">
               </div>
             </div>
+            <div class="row">
+              <div class="col flex3">
+                <div class="label">创建日期：</div>
+                <div class="text">{{item.created_at.slice(0,10)}}</div>
+              </div>
+              <div class="col flex3">
+                <div class="label">创建人：</div>
+                <div class="text">{{item.user_name}}</div>
+              </div>
+            </div>
           </div>
           <div class="tableCtn"
             style="padding-top:0">
@@ -507,7 +536,15 @@
                 <div class="trow"
                   v-for="itemProcess in item.process_info"
                   :key="itemProcess.id">
-                  <div class="tcol"><span class="overText">{{itemProcess.code}}</span></div>
+                  <div class="tcol"><span class="overText">{{itemProcess.code}}
+                      <el-tooltip class="item"
+                        effect="dark"
+                        :content="'创建日期：'+itemProcess.created_at.slice(0,10) + ';创建人：'+itemProcess.user_name"
+                        placement="top">
+                        <i class="el-icon-timer hoverBlue"></i>
+                      </el-tooltip>
+                    </span>
+                  </div>
                   <div class="tcol">{{itemProcess.client_name}}</div>
                   <div class="tcol"
                     style="flex:0.5">{{itemProcess.process}}</div>
@@ -2374,6 +2411,7 @@ export default Vue.extend({
         this.loading = false
 
         // 优化报价信息
+        this.priceMaterialList = []
         quotedPrice
           .detailByOrder({
             order_time_id: this.$route.query.supFlag
