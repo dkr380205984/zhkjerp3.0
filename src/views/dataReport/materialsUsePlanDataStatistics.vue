@@ -216,14 +216,14 @@
         </div>
       </div>
     </div>
-    <div class="bottomFixBar">
+    <!-- <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
           <div class="btn backHoverBlue" @click="$router.push('/billingManagement/rawMaterialPlan')">查看原料计划单</div>
           <div class="btn backHoverBlue" @click="$router.push('/billingManagement/rawMaterialSupplement')">查看原料补充单</div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

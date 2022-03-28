@@ -228,7 +228,7 @@
         </div>
       </div>
     </div>
-    <div class="bottomFixBar">
+    <!-- <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
           <div class="btn backHoverBlue" @click="$router.push('/billingManagement/rawMaterialTransferOrder')">
@@ -236,7 +236,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
