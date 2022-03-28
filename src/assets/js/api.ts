@@ -849,7 +849,16 @@ const statistics = {
     start_time: string
     end_time: string
   }) => http.get(`${baseUrl}/statistics/rawmaterial/order`, params),
-  
+  rawMaterialTransfer: (params?: {
+    order_type: number | string
+    user_id: number | string
+    group_id: number | string
+    client_id:number | string
+    contacts_id: number | string
+    name: string
+    start_time: string
+    end_time: string
+  }) => http.get(`${baseUrl}/statistics/rawmaterial/transfer`, params),
 }
 export {
   statistics,
