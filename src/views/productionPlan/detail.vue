@@ -142,10 +142,13 @@
                 <div class="text">{{item.process_name}}</div>
               </div>
               <div class="col">
+                <div class="label">工序说明：</div>
+                <div class="text">{{item.process_desc||'无'}}</div>
+              </div>
+              <div class="col">
                 <div class="label">交货日期：</div>
                 <div class="text">{{item.end_time}}</div>
               </div>
-              <div class="col"></div>
             </div>
           </div>
           <div class="tableCtn"
@@ -367,6 +370,10 @@
             <div class="editCtn"
               v-for="(item,index) in productionPlanInfo"
               :key="index">
+              <div class="deleteIcon"
+                @click="productionPlanInfo.length>1?$deleteItem(productionPlanInfo,index):$message.error('至少有一家加工单位')">
+                <i class="el-icon-close"></i>
+              </div>
               <div class="row">
                 <div class="col">
                   <div class="label">
@@ -382,19 +389,32 @@
                   </div>
                 </div>
                 <div class="col">
-                  <div class="label">
-                    <span class="text">加工工序</span>
-                    <span class="explanation">(必选)</span>
-                  </div>
-                  <div class="info elCtn">
-                    <el-cascader placeholder="选择工序"
-                      :show-all-levels="false"
-                      v-model="item.process_name_arr"
-                      :options="processList"
-                      @change="(ev)=>{item.process_type=ev[0];item.process_name=ev[1]}"
-                      filterable
-                      clearable>
-                    </el-cascader>
+                  <div class="spaceBetween">
+                    <div class="once">
+                      <div class="label">
+                        <span class="text">加工工序</span>
+                        <span class="explanation">(必选)</span>
+                      </div>
+                      <div class="info elCtn">
+                        <el-cascader placeholder="选择工序"
+                          :show-all-levels="false"
+                          v-model="item.process_name_arr"
+                          :options="processList"
+                          @change="(ev)=>{item.process_type=ev[0];item.process_name=ev[1];getProcessDesc(ev,item)}"
+                          filterable
+                          clearable>
+                        </el-cascader>
+                      </div>
+                    </div>
+                    <div class="once">
+                      <div class="label">
+                        <span class="text">工序说明</span>
+                      </div>
+                      <div class="info elCtn">
+                        <el-input v-model="item.process_desc"
+                          placeholder="工序说明"></el-input>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div class="col">
@@ -604,6 +624,7 @@
               style="margin-bottom:16px"
               v-if="materialPlanList.find((item) => Number(item.id) === Number(materialPlanIndex))&&materialPlanList.find((item) => Number(item.id) === Number(materialPlanIndex)).type===1"
               @click="$addItem(productionPlanInfo, {
+                process_desc:'',
                 process_type: '',
                 order_id: '',
                 client_id: '',
@@ -644,6 +665,10 @@
                   }
                 ]
               })">添加加工单位</div>
+            <div class="btn backHoverOrange"
+              style="margin-bottom:16px;margin-left:12px"
+              v-if="materialPlanList.find((item) => Number(item.id) === Number(materialPlanIndex))&&materialPlanList.find((item) => Number(item.id) === Number(materialPlanIndex)).type===1"
+              @click="$addItem(productionPlanInfo, $clone(productionPlanInfo[0]))">复制第一组信息</div>
           </template>
           <template v-else>
             <div class="tableCtn">
@@ -1331,6 +1356,7 @@ export default Vue.extend({
       checkAllPro: false,
       productionPlanInfo: [
         {
+          process_desc: '',
           process_type: '',
           order_id: '',
           client_id: '',
@@ -1423,9 +1449,9 @@ export default Vue.extend({
           label: '织造工序',
           value: '织造工序',
           children: [
-            { label: '针织织造', value: '针织织造' },
-            { label: '梭织织造', value: '梭织织造' },
-            { label: '制版费', value: '制版费' }
+            { label: '针织织造', value: '针织织造', process_desc: '' },
+            { label: '梭织织造', value: '梭织织造', process_desc: '' },
+            { label: '制版费', value: '制版费', process_desc: '' }
           ]
         },
         {
@@ -1434,7 +1460,8 @@ export default Vue.extend({
           children: this.$store.state.api.staffProcess.arr.map((item: any) => {
             return {
               label: item.name,
-              value: item.name
+              value: item.name,
+              process_desc: item.process_desc
             }
           })
         },
@@ -1444,7 +1471,8 @@ export default Vue.extend({
           children: this.$store.state.api.halfProcess.arr.map((item: any) => {
             return {
               label: item.name,
-              value: item.name
+              value: item.name,
+              process_desc: item.process_desc
             }
           })
         }
@@ -2037,6 +2065,17 @@ export default Vue.extend({
       this.storeSurplusInfo.order_code = this.orderInfo.code
       this.storeSurplusInfo.order_id = this.orderInfo.id
       this.storeSurplusFlag = true
+    },
+    // 优化工序说明
+    getProcessDesc(ev: any[], info: any) {
+      info.process_desc =
+        this.processList
+          .find((item) => {
+            return item.value === ev[0]
+          })
+          .children.find((itemChild: any) => {
+            return itemChild.value === ev[1]
+          }).process_desc || ''
     }
   },
   mounted() {
@@ -2055,7 +2094,7 @@ export default Vue.extend({
         clientInOrder({
           order_id: this.order_id
         }).then((res) => {
-          this.bearClientArr = res.data.data[2].concat(res.data.data[3])
+          this.bearClientArr = res.data.data[2].concat(res.data.data[3]).concat(res.data.data[5])
         })
         this.init()
       })
@@ -2070,7 +2109,8 @@ export default Vue.extend({
           this.orderProcess.children = res.data.data.map((item: any) => {
             return {
               value: item,
-              label: item
+              label: item,
+              process_desc: ''
             }
           })
         }

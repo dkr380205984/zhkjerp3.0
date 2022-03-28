@@ -442,7 +442,7 @@ const order = {
 }
 
 // 跟单据相关的所有单位
-// 1.下单公司 2.原料采购单位 3.辅料采购单位 4.生产分配单位
+// 1.下单公司 2.原料采购单位 3.辅料采购单位 4.生产分配单位 5.原料加工单位
 const clientInOrder = (params: { order_id: string | number }) => http.get(`${baseUrl}/order/all/rel/client`, params)
 
 // 物料计划单

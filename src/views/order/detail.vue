@@ -743,6 +743,14 @@
         </div>
       </div>
     </div>
+    <div class="description"
+      style="padding: 18px;
+      background: #F0F0F0;
+      color: rgba(0, 0, 0, 0.85);
+      margin-bottom: 24px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align:center">财务流程汇总仅管理员可见</div>
     <template v-if="Number($getsessionStorage('has_check'))===1">
       <div class="module">
         <div class="titleCtn">
@@ -1342,8 +1350,8 @@
                   <div class="trow">
                     <div class="tcol">-</div>
                     <div class="tcol blue">{{financialInfo.pack.gather.quote_info.quote_total_price}}元</div>
-                    <div class="tcol blue">{{financialInfo.pack.gather.quote_info.quote_total_price}}元</div>
-                    <div class="tcol blue">{{financialInfo.pack.gather.quote_info.quote_total_price}}元</div>
+                    <div class="tcol blue">{{financialInfo.pack.gather.quote_info.pre_price}}元</div>
+                    <div class="tcol blue">{{financialInfo.pack.gather.quote_info.pre_product_price}}元</div>
                     <div class="tcol"
                       :class="{'red':financialInfo.pack.gather.quote_info.change.indexOf('上浮')!==-1,'green':financialInfo.pack.gather.quote_info.change.indexOf('下降')!==-1}">{{financialInfo.pack.gather.quote_info.change}}</div>
                     <div class="tcol"></div>
