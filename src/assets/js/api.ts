@@ -893,6 +893,15 @@ const statistics = {
     start_time: string
     end_time: string
   }) => http.get(`${baseUrl}/statistics/weave/plan`, params),
+  inspection: (params?: {
+    client_id: number | string
+    order_type: number | string
+    user_id: number | string
+    group_id: number | string
+    process_name: string
+    start_time: string
+    end_time: string
+  }) => http.get(`${baseUrl}/statistics/inspection`, params),
 }
 export {
   statistics,

@@ -296,6 +296,13 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/dataReport/productionPlanChartStatistics.vue')
     }, {
       meta: {
+        permissions_id: '20-11',
+      },
+      path: '/dataReport/inspectionReceivingDispatchingStatistic',
+      name: '检验收发图表',
+      component: () => import('../views/dataReport/inspectionReceivingDispatchingStatistic.vue')
+    }, {
+      meta: {
         permissions_id: '21-1',
       },
       path: '/billingManagement/rawMaterialPlan',

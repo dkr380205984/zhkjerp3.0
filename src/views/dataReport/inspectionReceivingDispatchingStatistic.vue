@@ -1,5 +1,5 @@
 <template>
-  <div id="productionPlanChartStatistics" class="bodyContainer" v-loading="loading">
+  <div id="inspectionReceivingDispatchingStatistic" class="bodyContainer" v-loading="loading">
     <div class="topTagCtn">
       <div class="tag" @click="$router.push('/dataReport/orderStatistics')">
         <svg class="iconFont" aria-hidden="true">
@@ -40,9 +40,10 @@
     </div>
     <div class="module noBackColor">
       <div style="display: flex; width: 27%; justify-content: space-between">
-        <div class="tab active">生产计划图表</div>
-        <div class="tab" @click="$router.push('/dataReport/inspectionReceivingDispatchingStatistic')">检验收发图表</div>
+        <div class="tab" @click="$router.push('/dataReport/productionPlanChartStatistics')">生产计划图表</div>
+        <div class="tab active">检验收发图表</div>
         <div class="tab" @click="$message.info('功能正在开发中，即将上线')">车间工资图表</div>
+        <!-- <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">车间工资图表</div> -->
       </div>
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">
@@ -162,45 +163,53 @@
       </div>
       <div class="cardCtn">
         <div class="card">
-          <h3>计划生产数量</h3>
+          <h3>检验入库数量</h3>
           <div class="content">
             <span class="blue">
-              <h2>{{ (reportData.total_number / 10000).toFixed(2) }}</h2>
+              <h2>{{ (reportData.enter.number / 10000).toFixed(2) }}</h2>
             </span>
             <h2 class="unit">万</h2>
           </div>
         </div>
         <div class="card">
-          <h3>计划生产总额</h3>
+          <h3>生产出库数量</h3>
           <div class="content">
             <span class="blue">
-              <h2>{{ (reportData.total_price / 10000).toFixed(2) }}</h2>
+              <h2>{{ (reportData.out.number / 10000).toFixed(2) }}</h2>
             </span>
-            <h2 class="unit">万元</h2>
+            <h2 class="unit">万</h2>
           </div>
         </div>
         <div class="card">
-          <h3>平均生产单价</h3>
+          <h3>次品数量</h3>
           <div class="content">
             <span class="green">
               <h2>
-                {{ (reportData.total_price / (reportData.total_number || 1)).toFixed(2) || 0 }}
+                {{ +reportData.enter.shoddy_number + +reportData.out.shoddy_number || 0 }}
               </h2>
             </span>
-            <h2 class="unit">元</h2>
+          </div>
+        </div>
+        <div class="card">
+          <h3>平均次品率</h3>
+          <div class="content">
+            <span class="green">
+              <h2>
+                {{
+                  (
+                    ((+reportData.enter.shoddy_number + +reportData.out.shoddy_number) /
+                      (+reportData.enter.number + +reportData.out.number)) *
+                    100
+                  ).toFixed(2) || 0
+                }}
+              </h2>
+            </span>
+            <h2 class="unit">%</h2>
           </div>
         </div>
       </div>
       <div class="cardCtn">
-        <div class="card">
-          <div style="display: flex; justify-content: end; padding-right: 50px; margin-top: 30px">
-            <div style="width: 150px">
-              <el-select v-model="sortWay" @change="changeRouter">
-                <el-option label="按数量排序" :value="1"> </el-option>
-                <el-option label="按损耗排序" :value="2"> </el-option>
-              </el-select>
-            </div>
-          </div>
+        <div class="card" style="padding-top:50px">
           <zh-charts :option="option1"></zh-charts>
         </div>
       </div>
@@ -208,7 +217,7 @@
     <!-- <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue" @click="$router.push('/billingManagement/productionPlan')">查看生产计划单</div>
+          <div class="btn backHoverBlue" @click="$router.push('/billingManagement/productionPlan')">查看检验收发日志</div>
         </div>
       </div>
     </div> -->
@@ -258,7 +267,7 @@ export default Vue.extend({
                 ';margin-right:10px">' +
                 param.value +
                 '</span>' +
-                (index === 1 ? '万元' : '万')
+                (index === 1 ? '' : '万')
 
               htmlStr += '</div>'
             })
@@ -267,7 +276,7 @@ export default Vue.extend({
           }
         },
         legend: {
-          data: ['生产数量', '生产总额']
+          data: ['生产数量', '次品数量']
         },
         xAxis: [
           {
@@ -294,12 +303,12 @@ export default Vue.extend({
           },
           {
             type: 'value',
-            name: '生产总额',
+            name: '次品数量',
             min: 0,
             max: 500,
             interval: 100,
             axisLabel: {
-              formatter: '{value} 万元'
+              formatter: '{value} '
             }
           }
         ],
@@ -311,7 +320,7 @@ export default Vue.extend({
           },
           {
             type: 'line',
-            name: '生产总额',
+            name: '次品数量',
             yAxisIndex: 1,
             data: []
           }
@@ -328,12 +337,13 @@ export default Vue.extend({
         process_name: []
       },
       reportData: {
-        order: {
-          total_price: '',
-          total_number: ''
+        enter: {
+          shoddy_number: '',
+          number: ''
         },
-        transport: {
-          price: ''
+        out: {
+          number: '',
+          shoddy_number:''
         }
       },
       filterCondition: {
@@ -440,7 +450,7 @@ export default Vue.extend({
     },
     changeRouter() {
       this.$router.push(
-        '/dataReport/productionPlanChartStatistics?' +
+        '/dataReport/inspectionReceivingDispatchingStatistic?' +
           '&user_id=' +
           (this.filterData.user_id || '') +
           '&group_id=' +
@@ -478,28 +488,28 @@ export default Vue.extend({
     },
     getData(arr: any, n1: any, n2: any, n3: any, n4: any) {
       n1 = arr.reduce((num1: any, num2: any) => {
-        return +num1.total_number > +num2.total_number ? num1 : num2
+        return +num1.number > +num2.number ? num1 : num2
       })
       n2 = arr.reduce((num1: any, num2: any) => {
-        return +num1.total_number < +num2.total_number ? num1 : num2
+        return +num1.number < +num2.number ? num1 : num2
       })
       n3 = arr.reduce((num1: any, num2: any) => {
-        return +num1.total_price > +num2.total_price ? num1 : num2
+        return +num1.shoddy_number > +num2.shoddy_number ? num1 : num2
       })
       n4 = arr.reduce((num1: any, num2: any) => {
-        return +num1.total_price < +num2.total_price ? num1 : num2
+        return +num1.shoddy_number < +num2.shoddy_number ? num1 : num2
       })
 
-      n1 = +n1.total_number
-      n2 = +n2.total_number
-      n3 = +n3.total_price
-      n4 = +n4.total_price
+      n1 = +n1.number
+      n2 = +n2.number
+      n3 = +n3.shoddy_number
+      n4 = +n4.shoddy_number
       return [n1, n2, n3, n4]
     },
     getList() {
       this.loading = true
       statistics
-        .weavePlan({
+        .inspection({
           start_time: this.filterData.start_time,
           end_time: this.filterData.end_time,
           user_id: this.filterData.user_id,
@@ -517,46 +527,40 @@ export default Vue.extend({
           let data = res.data.data
           this.reportData = data
 
-          if (this.sortWay === 1) {
-            data.report.sort(function (a: any, b: any) {
-              return b.total_number - a.total_number
-            })
-          } else if (this.sortWay === 2) {
-            data.report.sort(function (a: any, b: any) {
-              return b.total_price - a.total_price
-            })
-          }
+          data.report.sort(function (a: any, b: any) {
+            return b.number - a.number
+          })
 
           this.option1.series[0].data = []
           this.option1.series[1].data = []
           this.option1.xAxis[0].data = []
 
-          let planNumberMax: any,
-            planNumberMin: any,
-            planPriceMax: any,
-            planPriceMin: any = 0
+          let numberMax: any,
+            numberMin: any,
+            shoddyNumberMax: any,
+            shoddyNumberMin: any = 0
 
           if (data.report.length !== 0) {
-            let arr = this.getData(data.report, planNumberMax, planNumberMin, planPriceMax, planPriceMin)
-            planNumberMax = arr[0]
-            planNumberMin = arr[1]
-            planPriceMax = arr[2]
-            planPriceMin = arr[3]
+            let arr = this.getData(data.report, numberMax, numberMin, shoddyNumberMax, shoddyNumberMin)
+            numberMax = arr[0]
+            numberMin = arr[1]
+            shoddyNumberMax = arr[2]
+            shoddyNumberMin = arr[3]
           }
 
           // 查看所有 图表更新
-          this.option1.yAxis[0].max = Math.ceil(Math.ceil(planNumberMax / 10000)) * 5 || 10
-          this.option1.yAxis[0].min = planNumberMin && planNumberMin < 0 ? Math.ceil(planNumberMin / 10000) : 0
-          this.option1.yAxis[0].interval = Math.ceil(planNumberMax / 10000) || 10
+          this.option1.yAxis[0].max = Math.ceil(Math.ceil(numberMax / 10000)) * 5 || 10
+          this.option1.yAxis[0].min = numberMin && numberMin < 0 ? Math.ceil(numberMin / 10000) : 0
+          this.option1.yAxis[0].interval = Math.ceil(numberMax / 10000) || 10
 
-          this.option1.yAxis[1].max = Math.ceil(Math.ceil(planPriceMax / 10000)) * 5 || 10
-          this.option1.yAxis[1].min = planPriceMin && planPriceMin < 0 ? Math.ceil(planPriceMin / 10000) : 0
-          this.option1.yAxis[1].interval = Math.ceil(planPriceMax / 10000) || 10
+          this.option1.yAxis[1].max = Math.ceil(shoddyNumberMax) * 5 || 10
+          this.option1.yAxis[1].min = shoddyNumberMin && shoddyNumberMin < 0 ? Math.ceil(shoddyNumberMin) : 0
+          this.option1.yAxis[1].interval = Math.ceil(shoddyNumberMax) || 10
 
           data.report.forEach((item: any) => {
             this.option1.xAxis[0].data.push(item.name)
-            this.option1.series[0].data.push((item.total_number / 10000).toFixed(2))
-            this.option1.series[1].data.push((item.total_price / 10000).toFixed(2))
+            this.option1.series[0].data.push((item.number / 10000).toFixed(2))
+            this.option1.series[1].data.push(+item.shoddy_number)
           })
 
           this.loading = false
@@ -642,11 +646,11 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import '~@/assets/css/dataReport/productionPlanChartStatistics.less';
+@import '~@/assets/css/dataReport/inspectionReceivingDispatchingStatistic.less';
 </style>
 
 <style lang="less">
-#productionPlanChartStatistics {
+#inspectionReceivingDispatchingStatistic {
   .screen {
     overflow: hidden;
   }
