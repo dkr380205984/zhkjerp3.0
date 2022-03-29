@@ -25,7 +25,7 @@
         </svg>
         <span class="text">辅料使用图表</span>
       </div>
-      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
+      <div class="tag" @click="$router.push('/dataReport/productionPlanChartStatistics')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-shengchanshujutubiao"></use>
         </svg>
@@ -108,9 +108,9 @@
           <div class="contentGrid">
             <div>
               订单类型：<span class="blue">{{
-                filterData.orderOrSimpleOrder === ''
+                filterData.order_type === ''
                   ? '订单/样单'
-                  : filterData.orderOrSimpleOrder === 1
+                  : filterData.order_type === 1
                   ? '订单'
                   : '样单'
               }}</span>
@@ -466,7 +466,6 @@ export default Vue.extend({
         order_type: '',
         client_id: '',
         name: '',
-        sortWay: 1
       }
       localStorage.create_user_name = ''
       this.filterData.start_time = new Date().getFullYear() + '-01-01'

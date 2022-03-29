@@ -880,10 +880,19 @@ const statistics = {
     client_id: number | string
     user_id: number | string
     group_id: number | string
-    pack_material_id: string
+    pack_material_id: number | string
     start_time: string
     end_time: string
   }) => http.get(`${baseUrl}/statistics/auxmaterial/pack`, params),
+  weavePlan: (params?: {
+    client_id: number | string
+    order_type: number | string
+    user_id: number | string
+    group_id: number | string
+    process_name: string
+    start_time: string
+    end_time: string
+  }) => http.get(`${baseUrl}/statistics/weave/plan`, params),
 }
 export {
   statistics,

@@ -1,5 +1,5 @@
 <template>
-  <div id="accessoriesPackagingOrderStatistics" class="bodyContainer" v-loading="loading">
+  <div id="productionPlanChartStatistics" class="bodyContainer" v-loading="loading">
     <div class="topTagCtn">
       <div class="tag" @click="$router.push('/dataReport/orderStatistics')">
         <svg class="iconFont" aria-hidden="true">
@@ -19,13 +19,13 @@
         </svg>
         <span class="text">原料使用图表</span>
       </div>
-      <div class="tag active">
+      <div class="tag" @click="$router.push('/dataReport/accessoriesDecorationOrderStatistics')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-fuliaoshiyongtubiao"></use>
         </svg>
         <span class="text">辅料使用图表</span>
       </div>
-      <div class="tag" @click="$router.push('/dataReport/productionPlanChartStatistics')">
+      <div class="tag active">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-shengchanshujutubiao"></use>
         </svg>
@@ -39,22 +39,35 @@
       </div>
     </div>
     <div class="module noBackColor">
-      <div style="display: flex; width: 22%; justify-content: space-between">
-        <div class="tab" @click="$router.push('/dataReport/accessoriesDecorationOrderStatistics')">
-          装饰辅料订购图表
-        </div>
-        <div class="tab active">包装辅料订购图表</div>
+      <div style="display: flex; width: 27%; justify-content: space-between">
+        <div class="tab active">生产计划图表</div>
+        <div class="tab" @click="$message.info('功能正在开发中，即将上线')">检验收发图表</div>
+        <div class="tab" @click="$message.info('功能正在开发中，即将上线')">车间工资图表</div>
+        <!-- <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">车间工资图表</div> -->
       </div>
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">
           <div class="screenCtn">
-            <div class="screen">
+            <div class="screen" style="width: 48.5%">
+              <el-select
+                @change="changeRouter"
+                filterable
+                v-model="filterData.order_type"
+                placeholder="筛选原料"
+                clearable
+              >
+                <el-option label="订单/样单" :value="''"></el-option>
+                <el-option label="订单" :value="1"></el-option>
+                <el-option label="样单" :value="2"></el-option>
+              </el-select>
+            </div>
+            <div class="screen" style="width: 48.5%">
               <el-cascader
                 @change="
                   getContacts($event)
                   changeRouter()
                 "
-                placeholder="筛选下单公司"
+                placeholder="筛选生产单位"
                 v-model="filterData.client_id"
                 :show-all-levels="false"
                 filterable
@@ -63,32 +76,8 @@
               >
               </el-cascader>
             </div>
-            <div class="screen">
-              <el-select
-                @change="
-                  changePackName()
-                  changeRouter()
-                "
-                filterable
-                v-model="filterData.name"
-                placeholder="包装名称筛选"
-                clearable
-              >
-                <el-option v-for="item in packList" :key="item.id" :value="item.id" :label="item.name"></el-option>
-              </el-select>
-            </div>
-            <div class="screen">
-              <el-select
-                @change="(ev) => getLocalStorage(ev, 'group_id')"
-                v-model="filterData.group_id"
-                placeholder="筛选负责小组"
-                clearable
-              >
-                <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
-              </el-select>
-            </div>
-            <div class="screen" style="margin-bottom: 0">
-              <el-select @change="changePeople" v-model="filterData.contacts_id" placeholder="筛选创建人" clearable>
+            <div class="screen" style="margin-bottom: 0; width: 48.5%">
+              <el-select @change="changePeople" v-model="filterData.user_id" placeholder="筛选创建人" clearable>
                 <el-option
                   v-for="item in userList"
                   :key="item.value"
@@ -97,17 +86,15 @@
                 ></el-option>
               </el-select>
             </div>
-            <div class="screen" style="margin-bottom: 0">
-              <el-date-picker
-                v-model="filterData.start_time"
-                type="year"
-                @change="changeDate"
-                placeholder="筛选下单年份"
+            <div class="screen" style="margin-bottom: 0; width: 48.5%">
+              <el-select
+                @change="(ev) => getLocalStorage(ev, 'group_id')"
+                v-model="filterData.group_id"
+                placeholder="筛选负责小组"
+                clearable
               >
-              </el-date-picker>
-            </div>
-            <div class="screen" style="margin-bottom: 0">
-              <el-button style="width: 100%; height: 63px" @click="reset">重置</el-button>
+                <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+              </el-select>
             </div>
           </div>
         </div>
@@ -122,37 +109,86 @@
           </div>
           <div class="contentGrid">
             <div>
-              下单公司：<span class="blue">{{ alias || '所有' }}</span>
+              订单类型：<span class="blue">{{
+                filterData.order_type === '' ? '订单/样单' : filterData.order_type === 1 ? '订单' : '样单'
+              }}</span>
             </div>
             <div>
-              包装名称：<span class="blue">{{ packName || '所有' }}</span>
+              生产单位：<span class="blue">{{ alias || '所有' }}</span>
+            </div>
+            <div>
+              创建人：<span class="blue">{{ createPeople || '所有' }}</span>
             </div>
             <div>
               负责小组：<span class="blue">{{ groupName || '所有' }}</span>
             </div>
             <div>
-              创建人：<span class="blue">{{ createPeople || '所有' }}</span>
+              加工工序：<span class="blue">{{ processName || '所有' }}</span>
             </div>
           </div>
         </div>
       </div>
       <div class="cardCtn">
+        <div class="card noPad" style="overflow: hidden">
+          <div class="screen">
+            <el-cascader
+              v-model="filterData.process_name"
+              :options="processList"
+              @change="
+                getWorkList()
+                changeRouter()
+              "
+              :show-all-levels="false"
+              clearable
+              placeholder="加工工序"
+            ></el-cascader>
+          </div>
+        </div>
+        <div class="cardCtn" style="width: 100%; margin-top: 0">
+          <div class="card noPad" style="overflow: hidden; width: 210%">
+            <div class="screen">
+              <el-date-picker
+                v-model="filterData.start_time"
+                type="year"
+                @change="changeDate"
+                placeholder="筛选下单年份"
+              >
+              </el-date-picker>
+            </div>
+          </div>
+          <div class="card noPad" style="overflow: hidden">
+            <el-button style="width: 100%; height: 63px" @click="reset">重置</el-button>
+          </div>
+        </div>
+      </div>
+      <div class="cardCtn">
         <div class="card">
-          <h3>合计订购数量</h3>
+          <h3>计划生产数量</h3>
           <div class="content">
             <span class="blue">
-              <h2>{{ (this.reportData.total_number / 1000).toFixed(2) }}</h2>
+              <h2>{{ (reportData.total_number / 10000).toFixed(2) }}</h2>
             </span>
-            <h2 class="unit">千个</h2>
+            <h2 class="unit">万</h2>
           </div>
         </div>
         <div class="card">
-          <h3>合计订购金额</h3>
+          <h3>计划生产总额</h3>
           <div class="content">
             <span class="blue">
-              <h2>{{ (this.reportData.total_price / 10000).toFixed(2) }}</h2>
+              <h2>{{ (reportData.total_price / 10000).toFixed(2) }}</h2>
             </span>
             <h2 class="unit">万元</h2>
+          </div>
+        </div>
+        <div class="card">
+          <h3>平均生产单价</h3>
+          <div class="content">
+            <span class="green">
+              <h2>
+                {{ (reportData.total_price / (reportData.total_number || 1)).toFixed(2) || 0 }}
+              </h2>
+            </span>
+            <h2 class="unit">元</h2>
           </div>
         </div>
       </div>
@@ -162,7 +198,7 @@
             <div style="width: 150px">
               <el-select v-model="sortWay" @change="changeRouter">
                 <el-option label="按数量排序" :value="1"> </el-option>
-                <el-option label="按金额排序" :value="2"> </el-option>
+                <el-option label="按损耗排序" :value="2"> </el-option>
               </el-select>
             </div>
           </div>
@@ -173,7 +209,7 @@
     <!-- <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue" @clicl="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">查看辅料订购单</div>
+          <div class="btn backHoverBlue" @click="$router.push('/billingManagement/productionPlan')">查看生产计划单</div>
         </div>
       </div>
     </div> -->
@@ -182,7 +218,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { statistics, client, packMaterial } from '@/assets/js/api'
+import { statistics, client, process } from '@/assets/js/api'
 import { moneyArr } from '@/assets/js/dictionary'
 import zhCharts from '@/components/zhCharts/zhCharts.vue'
 export default Vue.extend({
@@ -192,8 +228,6 @@ export default Vue.extend({
   } {
     return {
       loading: false,
-      alias: '',
-      packName: '',
       sortWay: 1,
       option1: {
         tooltip: {
@@ -225,7 +259,7 @@ export default Vue.extend({
                 ';margin-right:10px">' +
                 param.value +
                 '</span>' +
-                (index === 1 ? '万元' : '千个')
+                (index === 1 ? '万元' : '万')
 
               htmlStr += '</div>'
             })
@@ -234,7 +268,7 @@ export default Vue.extend({
           }
         },
         legend: {
-          data: ['订购数量', '订购金额']
+          data: ['生产数量', '生产总额']
         },
         xAxis: [
           {
@@ -242,23 +276,26 @@ export default Vue.extend({
             data: [],
             axisPointer: {
               type: 'shadow'
+            },
+            axisLabel: {
+              interval: 0
             }
           }
         ],
         yAxis: [
           {
             type: 'value',
-            name: '订购数量',
+            name: '生产数量',
             min: 0,
             max: 25,
             interval: 5,
             axisLabel: {
-              formatter: '{value} 千个'
+              formatter: '{value} 万'
             }
           },
           {
             type: 'value',
-            name: '订购金额',
+            name: '生产总额',
             min: 0,
             max: 500,
             interval: 100,
@@ -270,41 +307,49 @@ export default Vue.extend({
         series: [
           {
             type: 'bar',
-            name: '订购数量',
+            name: '生产数量',
             data: []
           },
           {
             type: 'line',
-            name: '订购金额',
+            name: '生产总额',
             yAxisIndex: 1,
             data: []
           }
         ]
       },
-      packList: [],
       groupName: '',
       createPeople: '',
       filterData: {
         start_time: '',
         end_time: '',
-        client_id: '',
-        contacts_id: '',
+        user_id: '',
         group_id: '',
-        orderOrSimpleOrder: '',
-        shaxianmianliao: ''
+        order_type: '',
+        process_name: []
       },
       reportData: {
-        total_price: '',
-        total_number: ''
+        order: {
+          total_price: '',
+          total_number: ''
+        },
+        transport: {
+          price: ''
+        }
       },
       filterCondition: {
         contactsList: [],
         currency: moneyArr
       },
-      activeName: 'first'
+      processList: [],
+      alias: '',
+      processName: ''
     }
   },
   methods: {
+    getWorkList() {
+      this.processName = this.filterData.process_name[1]
+    },
     getContacts(ev: number[]) {
       if (ev && ev.length) {
         client
@@ -319,35 +364,6 @@ export default Vue.extend({
       } else {
         this.alias = '所有'
       }
-    },
-    changePackName(res: any) {
-      let obj: any = {}
-      if (res) {
-        this.packList.find((item: any) => {
-          return item.id === res
-        })
-      } else {
-        this.packList.find((item: any) => {
-          return item.id == this.filterData.name
-        })
-      }
-
-      this.packName = obj.name
-    },
-    reset() {
-      this.filterData = {
-        start_time: '',
-        end_time: '',
-        user_id: '',
-        group_id: '',
-        order_type: '',
-        client_id: '',
-        name: '',
-      }
-      localStorage.create_user_name = ''
-      this.filterData.start_time = new Date().getFullYear() + '-01-01'
-      this.filterData.end_time = this.formatDate(new Date())
-      this.changeRouter()
     },
     getLocalStorage(ev: any, type: string) {
       let groupInfo = this.groupList.find((item: any) => {
@@ -385,16 +401,13 @@ export default Vue.extend({
         this.filterData.start_time = query.start_time
         this.filterData.end_time = query.end_time
       }
+      this.filterData.name = query.name ? query.name : ''
       this.filterData.client_id = query.client_id
         ? (query.client_id as string).split(',').map((item) => Number(item))
         : []
-      this.filterData.contacts_id = query.contacts_id || this.$getLocalStorage('create_user') || ''
+      this.filterData.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
-      this.filterData.settle_unit = query.settle_unit
       this.createPeople = this.$getLocalStorage('create_user_name')
-      this.filterData.name = query.name ? +query.name : ''
-      this.getContacts(this.filterData.client_id)
-      this.changePackName(this.filterData.name)
     },
     formatDate(date: Date) {
       return (
@@ -428,76 +441,82 @@ export default Vue.extend({
     },
     changeRouter() {
       this.$router.push(
-        '/dataReport/accessoriesPackagingOrderStatistics?' +
-          '&client_id=' +
-          (this.filterData.client_id || '') +
+        '/dataReport/productionPlanChartStatistics?' +
           '&user_id=' +
           (this.filterData.user_id || '') +
           '&group_id=' +
           (this.filterData.group_id || '') +
-          '&name=' +
-          (this.filterData.name || '') +
+          '&order_type=' +
+          (this.filterData.order_type || '') +
+          '&process_name=' +
+          (this.filterData.process_name[1] || '') +
+          '&client_id=' +
+          (this.filterData.client_id || '') +
           '&sortWay=' +
-          (this.sortWay || '') +
+          (this.sortWay || 1) +
           '&start_time=' +
           (this.filterData.start_time || '') +
           '&end_time=' +
           (this.filterData.end_time || '')
       )
     },
+    reset() {
+      this.filterData = {
+        start_time: '',
+        end_time: '',
+        user_id: '',
+        group_id: '',
+        order_type: '',
+        client_id: [],
+        name: '',
+        process_name: []
+      }
+      localStorage.create_user_name = ''
+      this.alias = ''
+      this.filterData.start_time = new Date().getFullYear() + '-01-01'
+      this.filterData.end_time = this.formatDate(new Date())
+      this.changeRouter()
+    },
+    getData(arr: any, n1: any, n2: any, n3: any, n4: any) {
+      n1 = arr.reduce((num1: any, num2: any) => {
+        return +num1.total_number > +num2.total_number ? num1 : num2
+      })
+      n2 = arr.reduce((num1: any, num2: any) => {
+        return +num1.total_number < +num2.total_number ? num1 : num2
+      })
+      n3 = arr.reduce((num1: any, num2: any) => {
+        return +num1.total_price > +num2.total_price ? num1 : num2
+      })
+      n4 = arr.reduce((num1: any, num2: any) => {
+        return +num1.total_price < +num2.total_price ? num1 : num2
+      })
+
+      n1 = +n1.total_number
+      n2 = +n2.total_number
+      n3 = +n3.total_price
+      n4 = +n4.total_price
+      return [n1, n2, n3, n4]
+    },
     getList() {
       this.loading = true
       statistics
-        .auxmaterialPack({
+        .weavePlan({
           start_time: this.filterData.start_time,
-          client_id: this.filterData.client_id.length > 0 ? this.filterData.client_id[2] : '',
+          end_time: this.filterData.end_time,
           user_id: this.filterData.user_id,
           group_id: this.filterData.group_id,
-          pack_material_id: this.filterData.name,
-          end_time: this.filterData.end_time
+          process_name: this.filterData.process_name[1],
+          client_id: this.filterData.client_id.length > 0 ? this.filterData.client_id[2] : '',
+          order_type: this.filterData.order_type
         })
         .then((res) => {
           if (!res.data.status) {
             this.loading = false
             return
           }
+
           let data = res.data.data
           this.reportData = data
-
-          this.option1.series[0].data = []
-          this.option1.series[1].data = []
-          this.option1.xAxis[0].data = []
-
-          let orderPriceMax: any,
-            orderPriceMin: any,
-            orderNumberMax: any,
-            orderNumberMin: any = 0
-
-          if (data.report.length !== 0) {
-            //  订购数量
-            orderPriceMax = Object.values(data.report).reduce((num1: any, num2: any) => {
-              return +num1.total_price > +num2.total_price ? num1 : num2
-            })
-            orderPriceMin = Object.values(data.report).reduce((num1: any, num2: any) => {
-              return +num1.total_price < +num2.total_price ? num1 : num2
-            })
-
-            // 每月下单总数
-            orderNumberMax = Object.values(data.report).reduce((num1: any, num2: any) => {
-              return +num1.total_number > +num2.total_number ? num1 : num2
-            })
-            orderNumberMin = Object.values(data.report).reduce((num1: any, num2: any) => {
-              return +num1.total_number < +num2.total_number ? num1 : num2
-            })
-
-            // 拿到每月下单总额的最大值和最小值
-            orderPriceMax = +orderPriceMax.total_price
-            orderPriceMin = +orderPriceMin.total_price
-
-            // 拿到每月下单总数的最大值和最小值
-            orderNumberMax = +orderNumberMax.total_number
-            orderNumberMin = +orderNumberMin.total_number
-          }
 
           if (this.sortWay === 1) {
             data.report.sort(function (a: any, b: any) {
@@ -509,21 +528,38 @@ export default Vue.extend({
             })
           }
 
-          // 每月下单总数 图表更新
-          this.option1.yAxis[1].max = Math.ceil(Math.ceil(orderPriceMax / 10000 / 5)) * 5 || 10
-          this.option1.yAxis[1].min = orderPriceMin && orderPriceMin < 0 ? Math.ceil(orderPriceMin / 10000) : 0
-          this.option1.yAxis[1].interval = Math.ceil(orderPriceMax / 10000 / 5) || 10
+          this.option1.series[0].data = []
+          this.option1.series[1].data = []
+          this.option1.xAxis[0].data = []
 
-          // 每月下单总额 图表更新
-          this.option1.yAxis[0].max = Math.ceil(Math.ceil(orderNumberMax / 10000 / 5)) * 5 || 10
-          this.option1.yAxis[0].min = orderNumberMin && orderNumberMin < 0 ? Math.ceil(orderNumberMin / 10000) : 0
-          this.option1.yAxis[0].interval = Math.ceil(orderNumberMax / 10000 / 5) || 10
+          let planNumberMax: any,
+            planNumberMin: any,
+            planPriceMax: any,
+            planPriceMin: any = 0
+
+          if (data.report.length !== 0) {
+            let arr = this.getData(data.report, planNumberMax, planNumberMin, planPriceMax, planPriceMin)
+            planNumberMax = arr[0]
+            planNumberMin = arr[1]
+            planPriceMax = arr[2]
+            planPriceMin = arr[3]
+          }
+
+          // 查看所有 图表更新
+          this.option1.yAxis[0].max = Math.ceil(Math.ceil(planNumberMax / 10000)) * 5 || 10
+          this.option1.yAxis[0].min = planNumberMin && planNumberMin < 0 ? Math.ceil(planNumberMin / 10000) : 0
+          this.option1.yAxis[0].interval = Math.ceil(planNumberMax / 10000) || 10
+
+          this.option1.yAxis[1].max = Math.ceil(Math.ceil(planPriceMax / 10000)) * 5 || 10
+          this.option1.yAxis[1].min = planPriceMin && planPriceMin < 0 ? Math.ceil(planPriceMin / 10000) : 0
+          this.option1.yAxis[1].interval = Math.ceil(planPriceMax / 10000) || 10
 
           data.report.forEach((item: any) => {
             this.option1.xAxis[0].data.push(item.name)
-            this.option1.series[0].data.push((item.total_number / 1000).toFixed(2))
+            this.option1.series[0].data.push((item.total_number / 10000).toFixed(2))
             this.option1.series[1].data.push((item.total_price / 10000).toFixed(2))
           })
+
           this.loading = false
         })
     }
@@ -552,8 +588,33 @@ export default Vue.extend({
     }
   },
   created() {
-    packMaterial.list().then((res) => {
-      this.packList = res.data.data
+    process.list({ type: 2 }).then((res) => {
+      let arr: any = []
+      res.data.data.forEach((item: any) => {
+        arr.push({
+          label: item.name,
+          value: item.name
+        })
+      })
+      this.processList.push({
+        label: '半成品加工工序',
+        value: 2,
+        children: arr
+      })
+      process.list({ type: 3 }).then((res) => {
+        let arr: any = []
+        res.data.data.forEach((item: any) => {
+          arr.push({
+            label: item.name,
+            value: item.name
+          })
+        })
+        this.processList.push({
+          label: '成品加工工序',
+          value: 3,
+          children: arr
+        })
+      })
     })
     this.getFilters()
     this.getList()
@@ -582,11 +643,11 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import '~@/assets/css/dataReport/accessoriesPackagingOrderStatistics.less';
+@import '~@/assets/css/dataReport/productionPlanChartStatistics.less';
 </style>
 
 <style lang="less">
-#accessoriesPackagingOrderStatistics {
+#productionPlanChartStatistics {
   .screen {
     overflow: hidden;
   }
