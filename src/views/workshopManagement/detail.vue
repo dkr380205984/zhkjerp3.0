@@ -102,8 +102,8 @@
             <div class="title">完成报表</div>
           </div>
           <div class="tableCtn">
-            <div class="filterCtn" style="height: 50px">
-              <span>工序说明：{{ item.allProcessDesc }}</span>
+            <div class="filterCtn" style="overflow:hidden;margin-bottom:10px">
+              <div>工序说明：{{ item.allProcessDesc }}</div>
               <div class="btn backHoverBlue fr" @click="secondDataChance()">数量更新</div>
             </div>
             <div class="thead">
@@ -344,13 +344,25 @@
                     ></el-cascader>
                   </div>
                   <div class="tcol bgGray">工序说明</div>
-                  <div class="tcol" style="flex: 1.9">
-                    <el-autocomplete
+                  <div class="tcol" style="flex: 1.9;overflow:scroll;padding-top:10px">
+                    <el-select
+                      v-model="item.process_desc"
+                      multiple
+                      filterable
+                      allow-create
+                      default-first-option
+                      collapse-tags
+                      placeholder="请选择工序"
+                    >
+                      <el-option v-for="item in processDescList" :key="item.value" :label="item.label" :value="item.value">
+                      </el-option>
+                    </el-select>
+                    <!-- <el-autocomplete
                       class="inline-input"
                       v-model="item.process_desc"
                       :fetch-suggestions="querySearch"
                       placeholder="请选择工序"
-                    ></el-autocomplete>
+                    ></el-autocomplete> -->
                   </div>
                   <div class="tcol bgGray">结算单价</div>
                   <div class="tcol" style="flex: 0.5">
@@ -767,6 +779,10 @@ export default Vue.extend({
             })
           })
           items.allProcessDesc = items.allProcessDesc.toString().replace(/^,+/, '').replace(/,+$/, '')
+          let _this = this
+          items.allProcessDesc.split(',').forEach((item:any) => {
+            _this.processDescList.push({value:item})
+          });
         })
         this.processWorkerList = res.data.data
         this.tabChoose = res.data.data[0]?.process_name
@@ -829,14 +845,14 @@ export default Vue.extend({
       this.getWorkList('')
       this.loading = false
     },
-    querySearch(queryString: string, cb: any) {
-      if (this.processDescList === undefined || this.processDescList.length === 0) {
-        cb([])
-        return
-      }
+    // querySearch(queryString: string, cb: any) {
+    //   if (this.processDescList === undefined || this.processDescList.length === 0) {
+    //     cb([])
+    //     return
+    //   }
 
-      cb(this.processDescList)
-    },
+    //   cb(this.processDescList)
+    // },
     copyWorkerInfo(item: any, itemSizeColor: any) {
       if (item.productId === '') {
         this.$message.error('请先选择产品')
@@ -871,6 +887,7 @@ export default Vue.extend({
           processWorkerItem.info.forEach((staffNameItem: any) => {
             staffNameItem.info.forEach((productCodeItem: any) => {
               productCodeItem.info.forEach((process_desc: any) => {
+                process_desc.process_desc = process_desc.process_desc.split(',')
                 process_desc.info.forEach((item: any) => {
                   item.info.forEach((itemPrice: any) => {
                     itemPrice.info.forEach((itemSize: any) => {
@@ -963,7 +980,7 @@ export default Vue.extend({
               id: '',
               process_name: items.process[1],
               process_type: items.process[0],
-              process_desc: items.process_desc,
+              process_desc: items.process_desc.toString(),
               order_product_id: items.productNameId,
               product_id: items.productId,
               price: items.unitPrice || 0,
@@ -1083,9 +1100,6 @@ export default Vue.extend({
               name: processWorker.process_name
             })
             .then((ress) => {
-              if (ress.data.data[0]?.process_desc) {
-                processWorker.processDescList = ress.data.data[0].process_desc.split(',')
-              }
               let oldObj: any = {}
               processWorker.info.forEach((staffNameItem: any, staffIndex: number) => {
                 staffNameItem.info.forEach((productCodeItem: any) => {
@@ -1113,7 +1127,6 @@ export default Vue.extend({
                             obj.productNameId = itemColor.info.order_product_id
                             obj.process = [+itemColor.info.process_type, processWorker.process_name]
                             obj.process_desc = process_desc.process_desc
-                            obj.processDescList = processWorker.processDescList
                             obj.productId = itemColor.info.product_id
                             obj.unitPrice = process_desc.info[priceIndex].price
                             itemColor.chooseId = itemColor.info.size_id + ',' + itemColor.info.color_id
@@ -1225,14 +1238,14 @@ export default Vue.extend({
           }
           res.processDescList = []
           if (ress.data.data[0]?.process_desc) {
+            let _this = this
             res.processDescList = ress.data.data[0].process_desc.split(',')
             let arr: Array<{ value: string }> = []
             res.processDescList.forEach((item: any) => {
-              arr.push({
+              _this.processDescList.push({
                 value: item
               })
             })
-            this.processDescList = arr
           }
           this.$forceUpdate()
         })
@@ -1470,6 +1483,9 @@ export default Vue.extend({
     .zhInputAppend {
       border-left: 1px solid rgba(0, 0, 0, 0.15);
     }
+  }
+  .el-select__input{
+    margin-left: 0;
   }
 }
 </style>
