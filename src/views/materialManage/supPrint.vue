@@ -8,14 +8,16 @@
         <div class="fl">
           <div class="ptitle">{{title?title: company_name + '补纱单'}}</div>
           <div class="prow">
-            <div class="pcol wa">
+            <div class="pcol"
+              style="width: 838px;">
               <div class="label">系统编号：</div>
               <div class="info"
                 style="white-space: nowrap;">{{materialSupplementInfo.code}}</div>
             </div>
           </div>
           <div class="prow">
-            <div class="pcol wa">
+            <div class="pcol"
+              style="width: 838px;">
               <div class="label">创建信息：</div>
               <div class="info"
                 style="white-space: nowrap;">{{ materialSupplementInfo.created_at?materialSupplementInfo.created_at.slice(0, 10):'' }}{{materialSupplementInfo.user_name?'，' + materialSupplementInfo.user_name:''}}{{materialSupplementInfo.user_phone?'，' + materialSupplementInfo.user_phone:''}}</div>
@@ -119,6 +121,18 @@
                       @click="item.childrenMergeInfo.length>1?$deleteItem(item.childrenMergeInfo,indexChild):$deleteItem(materialPlanInfo,index)">删除本行</div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tableCtn">
+          <div class="thead bgWhite"
+            style="height: auto">
+            <div class="trow">
+              <div class="tcol bgGray label">补纱原因</div>
+              <div class="tcol"
+                style="flex: 4">
+                {{materialSupplementInfo.desc}}
               </div>
             </div>
           </div>

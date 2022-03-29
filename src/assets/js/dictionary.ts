@@ -475,6 +475,9 @@ const stockType = [{
 }, {
   name: '仓库出库',
   value: 13
+}, {
+  name: '预订购入库',
+  value: 14
 }]
 
 const productStockType = [{

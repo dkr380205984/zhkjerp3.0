@@ -21,6 +21,7 @@ import zhImage from './zhImage/zhImage.vue'
 import zhInput from './zhInput/zhInput.vue'
 import todayIsHoliday from './todayIsHoliday/todayIsHoliday.vue'
 import storeSurplus from './storeSurplus/storeSurplus.vue'
+import zhOrderLog from './zhOrderLog/zhOrderLog.vue'
 import vue from '@handsontable/vue'
 export default {
   install: (Vue: any) => {
@@ -46,6 +47,7 @@ export default {
     Vue.component('zhImage', zhImage)
     Vue.component('todayIsHoliday', todayIsHoliday)
     Vue.component('storeSurplus', storeSurplus)
+    Vue.component('zhOrderLog', zhOrderLog)
     Vue.component('zhCheckDetail', zhCheckDetail)
   }
 }
