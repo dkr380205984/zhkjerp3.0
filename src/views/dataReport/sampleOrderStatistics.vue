@@ -412,7 +412,7 @@ export default Vue.extend({
           })
           .then((res) => {
             if (res.data.status) {
-              this.alias = res.data.data.alias
+              this.alias = res.data.data.alias || res.data.data.name
             }
           })
       } else {

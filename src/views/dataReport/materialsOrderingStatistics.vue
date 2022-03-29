@@ -43,10 +43,9 @@
         <div class="tab" @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">计划数据统计</div>
         <div class="tab active">订购数据统计</div>
         <div class="tab" @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
-        <div class="tab" @click="$message.info('功能正在开发中，即将上线')">加工数据统计</div>
+        <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
         <div class="tab" @click="$message.info('功能正在开发中，即将上线')">原料库存数据统计</div>
-        <!-- <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">原料库存数据统计</div> -->
+        <!-- <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">原料库存数据统计</div> -->
       </div>
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">
@@ -379,7 +378,7 @@ export default Vue.extend({
           })
           .then((res) => {
             if (res.data.status) {
-              this.alias = res.data.data.alias
+              this.alias = res.data.data.alias || res.data.data.name
             }
           })
       } else {
@@ -422,6 +421,7 @@ export default Vue.extend({
         this.filterData.start_time = query.start_time
         this.filterData.end_time = query.end_time
       }
+      this.filterData.name = query.name ? query.name : ''
       this.filterData.client_id = query.client_id
         ? (query.client_id as string).split(',').map((item) => Number(item))
         : []
@@ -600,7 +600,7 @@ export default Vue.extend({
               this.option1.series[1].data.push((item.total_price / 10000).toFixed(2))
             })
           } else if (this.activeName === 'second') {
-          //   采购数量 图表更新
+            //   采购数量 图表更新
             this.option1.yAxis[0].max = Math.ceil(Math.ceil(realNumberMax / 1000 / 5)) * 5 || 10
             this.option1.yAxis[0].min = realNumberMin && realNumberMin < 0 ? Math.ceil(realNumberMin / 1000) : 0
             this.option1.yAxis[0].interval = Math.ceil(realNumberMax / 1000 / 5) || 10

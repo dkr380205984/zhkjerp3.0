@@ -43,10 +43,9 @@
         <div class="tab" @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">计划数据统计</div>
         <div class="tab" @click="$router.push('/dataReport/materialsOrderingStatistics')">订购数据统计</div>
         <div class="tab active">调取数据统计</div>
-        <div class="tab" @click="$message.info('功能正在开发中，即将上线')">加工数据统计</div>
+        <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
         <div class="tab" @click="$message.info('功能正在开发中，即将上线')">原料库存数据统计</div>
-        <!-- <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">原料库存数据统计</div> -->
+        <!-- <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">原料库存数据统计</div> -->
       </div>
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">
@@ -349,7 +348,8 @@ export default Vue.extend({
         user_id: '',
         store_id: '',
         group_id: '',
-        order_type: ''
+        order_type: '',
+        name:''
       },
       reportData: {
         plan: {
@@ -378,7 +378,7 @@ export default Vue.extend({
           })
           .then((res) => {
             if (res.data.status) {
-              this.alias = res.data.data.name
+              this.alias = res.data.data.alias || res.data.data.name
             }
           })
       } else {
@@ -421,12 +421,12 @@ export default Vue.extend({
         this.filterData.start_time = query.start_time
         this.filterData.end_time = query.end_time
       }
+      this.filterData.name = query.name ? query.name : ''
       this.filterData.client_id = query.client_id
         ? (query.client_id as string).split(',').map((item) => Number(item))
         : []
       this.filterData.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
-      this.filterData.settle_unit = query.settle_unit
       this.createPeople = this.$getLocalStorage('create_user_name')
       this.getStoreDetail(this.filterData.store_id)
     },
@@ -489,6 +489,8 @@ export default Vue.extend({
           (this.filterData.name || '') +
           '&store_id=' +
           (this.filterData.store_id || '') +
+          '&order_type=' +
+          (this.filterData.order_type || '') +
           '&sortWay=' +
           (this.sortWay || 1) +
           '&start_time=' +

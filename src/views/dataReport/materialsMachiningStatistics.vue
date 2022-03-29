@@ -44,16 +44,17 @@
         <div class="tab" @click="$router.push('/dataReport/materialsOrderingStatistics')">订购数据统计</div>
         <div class="tab" @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
         <div class="tab active">加工数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">原料库存数据统计</div>
+        <div class="tab" @click="$message.info('功能正在开发中，即将上线')">原料库存数据统计</div>
+        <!-- <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">原料库存数据统计</div> -->
       </div>
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">
           <div class="screenCtn">
-            <div class="screen" style="width: 48.5%">
+            <div class="screen" style="width: 100%">
               <el-select
                 @change="changeRouter"
                 filterable
-                v-model="filterData.orderOrSimpleOrder"
+                v-model="filterData.order_type"
                 placeholder="筛选原料"
                 clearable
               >
@@ -62,21 +63,8 @@
                 <el-option label="样单" :value="2"></el-option>
               </el-select>
             </div>
-            <div class="screen" style="width: 48.5%">
-              <el-select
-                @change="changeRouter"
-                filterable
-                v-model="filterData.shaxianmianliao"
-                placeholder="筛选原料"
-                clearable
-              >
-                <el-option label="纱线/面料" :value="''"></el-option>
-                <el-option label="纱线" :value="1"></el-option>
-                <el-option label="面料" :value="2"></el-option>
-              </el-select>
-            </div>
             <div class="screen" style="margin-bottom: 0; width: 48.5%">
-              <el-select @change="changePeople" v-model="filterData.contacts_id" placeholder="筛选创建人" clearable>
+              <el-select @change="changePeople" v-model="filterData.user_id" placeholder="筛选创建人" clearable>
                 <el-option
                   v-for="item in userList"
                   :key="item.value"
@@ -109,20 +97,12 @@
           <div class="contentGrid">
             <div>
               订单类型：<span class="blue">{{
-                filterData.orderOrSimpleOrder === ''
+                filterData.order_type === ''
                   ? '订单/样单'
-                  : filterData.orderOrSimpleOrder === 1
+                  : filterData.order_type === 1
                   ? '订单'
                   : '样单'
               }}</span>
-            </div>
-            <div>
-              原料类型：<span class="blue">{{
-                filterData.shaxianmianliao === '' ? '纱线/面料' : filterData.shaxianmianliao === 1 ? '纱线' : '面料'
-              }}</span>
-            </div>
-            <div>
-              原料名称：<span class="blue">{{ filterData.yuanliaomingcheng || '所有' }}</span>
             </div>
             <div>
               创建人：<span class="blue">{{ createPeople || '所有' }}</span>
@@ -133,11 +113,14 @@
             <div>
               下单公司：<span class="blue">{{ alias || '所有' }}</span>
             </div>
+            <div>
+              原料名称：<span class="blue">{{ filterData.name || '所有' }}</span>
+            </div>
           </div>
         </div>
       </div>
       <div class="cardCtn">
-        <div class="card noPad" style="overflow:hidden">
+        <div class="card noPad" style="overflow: hidden">
           <div class="screen">
             <el-cascader
               @change="
@@ -156,11 +139,20 @@
         </div>
         <div class="card noPad" style="overflow: hidden">
           <div class="screen">
-            <el-input v-model="filterData.yuanliaomingcheng" placeholder="输入原料名称查询" clearable></el-input>
+            <div class="screen">
+              <el-input
+                v-model="filterData.name"
+                placeholder="输入原料名称查询"
+                clearable
+                @keydown.enter.native="changeRouter"
+                @blur="changeRouter"
+                @clear="changeRouter"
+              ></el-input>
+            </div>
           </div>
         </div>
         <div class="cardCtn" style="width: 206%; margin-top: 0">
-          <div class="card noPad" style="overflow: hidden;">
+          <div class="card noPad" style="overflow: hidden">
             <div class="screen">
               <el-date-picker
                 v-model="filterData.start_time"
@@ -172,7 +164,7 @@
             </div>
           </div>
           <div class="card noPad" style="overflow: hidden">
-            <el-button style="width: 100%; height: 63px">重置</el-button>
+            <el-button style="width: 100%; height: 63px" @click="reset">重置</el-button>
           </div>
         </div>
       </div>
@@ -181,7 +173,7 @@
           <h3>合计加工数量</h3>
           <div class="content">
             <span class="blue">
-              <h2>{{ this.reportData.order.total_price }}</h2>
+              <h2>{{ (this.reportData.plan.total_number / 1000).toFixed(2) }}</h2>
             </span>
             <h2 class="unit">吨或千米</h2>
           </div>
@@ -190,7 +182,7 @@
           <h3>合计加工金额</h3>
           <div class="content">
             <span class="blue">
-              <h2>{{ this.reportData.order.total_number }}</h2>
+              <h2>{{ (this.reportData.plan.total_price / 10000).toFixed(2) }}</h2>
             </span>
             <h2 class="unit">万元</h2>
           </div>
@@ -199,7 +191,7 @@
           <h3>最终加工数量</h3>
           <div class="content">
             <span class="green">
-              <h2>{{ this.reportData.order.total_number }}</h2>
+              <h2>{{ (this.reportData.real.total_number / 1000).toFixed(2) }}</h2>
             </span>
             <h2 class="unit">吨或千米</h2>
           </div>
@@ -208,7 +200,7 @@
           <h3>最终加工金额</h3>
           <div class="content">
             <span class="green">
-              <h2>{{ this.reportData.order.total_number }}</h2>
+              <h2>{{ (this.reportData.real.total_number / 10000).toFixed(2) }}</h2>
             </span>
             <h2 class="unit">万元</h2>
           </div>
@@ -243,13 +235,13 @@
         </div>
       </div>
     </div>
-    <div class="bottomFixBar">
+    <!-- <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue">查看加工单据</div>
+          <div class="btn backHoverBlue" @click="$router.push('/billingManagement/rawMaterialProcessingOrder')">查看原料加工单</div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -407,18 +399,19 @@ export default Vue.extend({
         start_time: '',
         end_time: '',
         client_id: '',
-        contacts_id: '',
+        user_id: '',
         group_id: '',
-        orderOrSimpleOrder: '',
-        shaxianmianliao: ''
+        order_type: '',
+        name: ''
       },
       reportData: {
-        order: {
+        plan: {
           total_price: '',
           total_number: ''
         },
-        transport: {
-          price: ''
+        real: {
+          total_price: '',
+          total_number: ''
         }
       },
       filterCondition: {
@@ -437,7 +430,7 @@ export default Vue.extend({
           })
           .then((res) => {
             if (res.data.status) {
-              this.alias = res.data.data.alias
+              this.alias = res.data.data.alias || res.data.data.name
             }
           })
       } else {
@@ -469,56 +462,21 @@ export default Vue.extend({
       }
       this.changeRouter()
     },
-    changeUnit() {
-      this.option1.tooltip.formatter = (params: any) => {
-        var htmlStr = '<div>'
-        htmlStr += params[0].name + '<br/>' //x轴的名称
-        params.forEach((param: any, index: number) => {
-          var color = param.color //图例颜色
-
-          //为了保证和原来的效果一样，这里自己实现了一个点的效果
-          htmlStr +=
-            '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:' +
-            color +
-            ';"></span>'
-
-          //添加一个汉字，这里你可以格式你的数字或者自定义文本内容
-          htmlStr +=
-            param.seriesName +
-            '：' +
-            '<span style="color:' +
-            color +
-            ';margin-right:10px">' +
-            param.value +
-            '</span>' +
-            (index === 1 ? '万件' : '万' + (this.filterData.settle_unit || '元'))
-
-          htmlStr += '</div>'
-        })
-
-        return htmlStr
+    reset() {
+      this.filterData = {
+        start_time: '',
+        end_time: '',
+        user_id: '',
+        group_id: '',
+        order_type: '',
+        client_id: '',
+        name: '',
+        sortWay: 1
       }
-      this.option1.yAxis[0].axisLabel.formatter = '{value} 万' + (this.filterData.settle_unit || '元')
-      this.groupOption.tooltip.formatter = (params: any) => {
-        return `
-                <div>
-                    ${params.marker}<span style="margin-left:10px;color:black;font-weight:bold">${
-          params.data.name
-        }：<span style="color:${params.color};font-weight:normal">${params.data.value}万${
-          this.filterData.settle_unit || '元'
-        }</span></span>
-                </div>
-              `
-      }
-      this.companyOption.tooltip.formatter = (params: any) => {
-        return `
-                <h4 style='color:#000000;margin:5px 0'>${params[0].axisValue}</h4>
-                <span style='color:#A3A3A3;font-size:10px'>CNY：</span>
-                <span style='color:#229CFB;font-size:14px;'>${this.filterData.settle_unit === '美元' ? '$' : '￥'}${
-          params[0].value
-        }</span>
-            `
-      }
+
+      this.filterData.start_time = new Date().getFullYear() + '-01-01'
+      this.filterData.end_time = this.formatDate(new Date())
+      this.changeRouter()
     },
     getFilters() {
       const query = this.$route.query
@@ -531,14 +489,14 @@ export default Vue.extend({
         this.filterData.start_time = query.start_time
         this.filterData.end_time = query.end_time
       }
+      this.filterData.name = query.name ? query.name : ''
       this.filterData.client_id = query.client_id
         ? (query.client_id as string).split(',').map((item) => Number(item))
         : []
-      this.filterData.contacts_id = query.contacts_id || this.$getLocalStorage('create_user') || ''
+      this.filterData.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.filterData.settle_unit = query.settle_unit
       this.createPeople = this.$getLocalStorage('create_user_name')
-      this.changeUnit()
       this.getContacts(this.filterData.client_id)
     },
     formatDate(date: Date) {
@@ -576,27 +534,54 @@ export default Vue.extend({
         '/dataReport/materialsMachiningStatistics?' +
           '&client_id=' +
           (this.filterData.client_id || '') +
-          '&contacts_id=' +
-          (this.filterData.contacts_id || '') +
+          '&user_id=' +
+          (this.filterData.user_id || '') +
+          '&order_type=' +
+          (this.filterData.order_type || '') +
           '&group_id=' +
           (this.filterData.group_id || '') +
-          '&settle_unit=' +
-          (this.filterData.settle_unit || '') +
+          '&name=' +
+          (this.filterData.name || '') +
+          '&order_type=' +
+          (this.filterData.order_type || '') +
+          '&sortWay=' +
+          (this.sortWay || '1') +
           '&start_time=' +
           (this.filterData.start_time || '') +
           '&end_time=' +
           (this.filterData.end_time || '')
       )
     },
+    getData(arr: any, n1: any, n2: any, n3: any, n4: any) {
+      n1 = arr.reduce((num1: any, num2: any) => {
+        return +num1.total_price > +num2.total_price ? num1 : num2
+      })
+      n2 = arr.reduce((num1: any, num2: any) => {
+        return +num1.total_price < +num2.total_price ? num1 : num2
+      })
+      n3 = arr.reduce((num1: any, num2: any) => {
+        return +num1.total_number > +num2.total_number ? num1 : num2
+      })
+      n4 = arr.reduce((num1: any, num2: any) => {
+        return +num1.total_number < +num2.total_number ? num1 : num2
+      })
+
+      n1 = +n1.total_price
+      n2 = +n2.total_price
+      n3 = +n3.total_number
+      n4 = +n4.total_number
+      return [n1, n2, n3, n4]
+    },
     getList() {
       this.loading = true
       statistics
-        .order({
+        .rawMaterialMachining({
           start_time: this.filterData.start_time,
           client_id: this.filterData.client_id.length > 0 ? this.filterData.client_id[2] : '',
           user_id: this.filterData.user_id,
           group_id: this.filterData.group_id,
-          settle_unit: this.filterData.settle_unit,
+          name: this.filterData.name,
+          order_type: this.filterData.order_type,
           end_time: this.filterData.end_time
         })
         .then((res) => {
@@ -605,150 +590,84 @@ export default Vue.extend({
             return
           }
           let data = res.data.data
-          data.order.total_number = this.$formatNum(+(data.order.total_number / 10000).toFixed(2))
-          data.order.total_price = this.$formatNum(+(data.order.total_price / 10000).toFixed(2))
-          data.transport.price = this.$formatNum(+(data.transport.price / 10000).toFixed(2))
-          data.transport.transport_number = this.$formatNum(+(data.transport.transport_number / 10000).toFixed(2))
-
           this.reportData = data
+
           this.option1.series[0].data = []
           this.option1.series[1].data = []
-          this.groupOption.series[0].data = []
-          this.companyOption.yAxis.data = []
-          this.companyOption.series[0].data = []
+          this.option1.xAxis[0].data = []
 
-          let orderPriceMax: any,
-            orderPriceMin: any,
-            orderNumberMax: any,
-            orderNumberMin: any,
-            outPriceMax: any,
-            outPriceMin: any,
-            outNumberMax: any,
-            outNumberMin: any = 0
-
-          if (data.order.report.month.length !== 0) {
-            //  每月下单总额
-            orderPriceMax = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
-              return +num1.total_price > +num2.total_price ? num1 : num2
+          if (this.sortWay === 1) {
+            data.plan.report.sort(function (a: any, b: any) {
+              return b.total_number - a.total_number
             })
-            orderPriceMin = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
-              return +num1.total_price < +num2.total_price ? num1 : num2
+            data.real.report.sort(function (a: any, b: any) {
+              return b.total_number - a.total_number
             })
-
-            // 每月下单总数
-            orderNumberMax = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
-              return +num1.total_number > +num2.total_number ? num1 : num2
+          } else if (this.sortWay === 2) {
+            data.plan.report.sort(function (a: any, b: any) {
+              return b.total_price - a.total_price
             })
-            orderNumberMin = Object.values(data.order.report.month).reduce((num1: any, num2: any) => {
-              return +num1.total_number < +num2.total_number ? num1 : num2
+            data.real.report.sort(function (a: any, b: any) {
+              return b.total_price - a.total_price
             })
-
-            // 拿到每月下单总额的最大值和最小值
-            orderPriceMax = +orderPriceMax.total_price
-            orderPriceMin = +orderPriceMin.total_price
-
-            // 拿到每月下单总数的最大值和最小值
-            orderNumberMax = +orderNumberMax.total_number
-            orderNumberMin = +orderNumberMin.total_number
           }
 
-          if (data.transport.report.month.length !== 0) {
-            //  每月出库总额
-            outPriceMax = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
-              return +num1.price > +num2.price ? num1 : num2
-            })
-            outPriceMin = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
-              return +num1.price < +num2.price ? num1 : num2
-            })
+          let planPriceMax: any,
+            planPriceMin: any,
+            planNumberMax: any,
+            planNumberMin: any,
+            realPriceMax: any,
+            realPriceMin: any,
+            realNumberMax: any,
+            realNumberMin: any = 0
 
-            // 每月出库总数
-            outNumberMax = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
-              return +num1.transport_number > +num2.transport_number ? num1 : num2
-            })
-            outNumberMin = Object.values(data.transport.report.month).reduce((num1: any, num2: any) => {
-              return +num1.transport_number < +num2.transport_number ? num1 : num2
-            })
+          if (data.plan.report.length !== 0) {
+            let arr = this.getData(data.plan.report, planPriceMax, planPriceMin, planNumberMax, planNumberMin)
+            planPriceMax = arr[0]
+            planPriceMin = arr[1]
+            planNumberMax = arr[2]
+            planNumberMin = arr[3]
+          }
 
-            // 拿到每月出库总额的最大值和最小值
-            outPriceMax = +outPriceMax.price
-            outPriceMin = +outPriceMin.price
-
-            // 拿到出库下单总数的最大值和最小值
-            outNumberMax = +outNumberMax.transport_number
-            outNumberMin = +outNumberMin.transport_number
+          if (data.real.report.length !== 0) {
+            let arr = this.getData(data.real.report, realPriceMax, realPriceMin, realNumberMax, realNumberMin)
+            realPriceMax = arr[0]
+            realPriceMin = arr[1]
+            realNumberMax = arr[2]
+            realNumberMin = arr[3]
           }
 
           if (this.activeName === 'first') {
-            this.option1.series[0].name = '每月下单总额'
-            this.option1.series[1].name = '每月下单总数'
-            this.option1.legend.data = ['每月下单总额', '每月下单总数']
-            this.option1.yAxis[0].name = '下单总额'
-            this.option1.yAxis[1].name = '下单总数'
+            //   采购数量 图表更新
+            this.option1.yAxis[0].max = Math.ceil(Math.ceil(planNumberMax / 1000 / 5)) * 5 || 10
+            this.option1.yAxis[0].min = planNumberMin && planNumberMin < 0 ? Math.ceil(planNumberMin / 1000) : 0
+            this.option1.yAxis[0].interval = Math.ceil(planNumberMax / 1000 / 5) || 10
 
-            // 每月下单总数 图表更新
-            this.option1.yAxis[0].max = Math.ceil(Math.ceil(orderPriceMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[0].min = orderPriceMin && orderPriceMin < 0 ? Math.ceil(orderPriceMin / 10000) : 0
-            this.option1.yAxis[0].interval = Math.ceil(orderPriceMax / 10000 / 5) || 10
+            //   采购金额 图表更新
+            this.option1.yAxis[1].max = Math.ceil(Math.ceil(planPriceMax / 10000 / 5)) * 5 || 10
+            this.option1.yAxis[1].min = planPriceMin && planPriceMin < 0 ? Math.ceil(planPriceMin / 10000) : 0
+            this.option1.yAxis[1].interval = Math.ceil(planPriceMax / 10000 / 5) || 10
 
-            // 每月下单总额 图表更新
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(orderNumberMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[1].min = orderNumberMin && orderNumberMin < 0 ? Math.ceil(orderNumberMin / 10000) : 0
-            this.option1.yAxis[1].interval = Math.ceil(orderNumberMax / 10000 / 5) || 10
-
-            this.option1.xAxis[0].data.forEach((itemMouth: any) => {
-              let mouth = this.reportData.order.report.month.find((item: any) => {
-                return item.mouth === itemMouth
-              })
-              if (mouth) {
-                this.option1.series[0].data.push(+(+mouth.total_price / 10000).toFixed(2))
-                this.option1.series[1].data.push(+(+mouth.total_number / 10000).toFixed(2))
-              } else {
-                this.option1.series[0].data.push(0)
-                this.option1.series[1].data.push(0)
-              }
-            })
-
-            // 饼图
-            data.order.report.group.forEach((group: any) => {
-              this.groupOption.series[0].data.push({
-                name: group.group_name || '其它',
-                value: group.total_price
-              })
-            })
-
-            // 横向柱状图
-            data.order.report.client.forEach((client: any) => {
-              this.companyOption.yAxis.data.push(client.client_name)
-              this.companyOption.series[0].data.push(client.total_price)
+            data.plan.report.forEach((item: any) => {
+              this.option1.xAxis[0].data.push(item.name)
+              this.option1.series[0].data.push((item.total_number / 1000).toFixed(2))
+              this.option1.series[1].data.push((item.total_price / 10000).toFixed(2))
             })
           } else if (this.activeName === 'second') {
-            this.option1.series[0].name = '每月出库总额'
-            this.option1.series[1].name = '每月出库总数'
-            this.option1.legend.data = ['每月出库总额', '每月出库总数']
-            this.option1.yAxis[0].name = '出库总额'
-            this.option1.yAxis[1].name = '出库总数'
+            //   采购数量 图表更新
+            this.option1.yAxis[0].max = Math.ceil(Math.ceil(realNumberMax / 1000 / 5)) * 5 || 10
+            this.option1.yAxis[0].min = realNumberMin && realNumberMin < 0 ? Math.ceil(realNumberMin / 1000) : 0
+            this.option1.yAxis[0].interval = Math.ceil(realNumberMax / 1000 / 5) || 10
 
-            // 每月出库总数 图表更新
-            this.option1.yAxis[0].max = Math.ceil(Math.ceil(outPriceMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[0].min = outPriceMin && outPriceMin < 0 ? Math.ceil(outPriceMin / 10000) : 0
-            this.option1.yAxis[0].interval = Math.ceil(outPriceMax / 10000 / 5) || 10
+            //   采购金额 图表更新
+            this.option1.yAxis[1].max = Math.ceil(Math.ceil(realPriceMax / 10000 / 5)) * 5 || 10
+            this.option1.yAxis[1].min = realPriceMin && realPriceMin < 0 ? Math.ceil(realPriceMin / 10000) : 0
+            this.option1.yAxis[1].interval = Math.ceil(realPriceMax / 10000 / 5) || 10
 
-            // 每月出库总额 图表更新
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(outNumberMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[1].min = outNumberMin && outNumberMin < 0 ? Math.ceil(outNumberMin / 10000) : 0
-            this.option1.yAxis[1].interval = Math.ceil(outNumberMax / 10000 / 5) || 10
-
-            this.option1.xAxis[0].data.forEach((itemMouth: any) => {
-              let mouth = this.reportData.transport.report.month.find((item: any) => {
-                return item.mouth === itemMouth
-              })
-              if (mouth) {
-                this.option1.series[0].data.push(+(+mouth.price / 10000).toFixed(2))
-                this.option1.series[1].data.push(+(+mouth.transport_number / 10000).toFixed(2))
-              } else {
-                this.option1.series[0].data.push(0)
-                this.option1.series[1].data.push(0)
-              }
+            data.real.report.forEach((item: any) => {
+              this.option1.xAxis[0].data.push(item.name)
+              this.option1.series[0].data.push((item.total_number / 1000).toFixed(2))
+              this.option1.series[1].data.push((item.total_price / 10000).toFixed(2))
             })
           }
           this.loading = false

@@ -49,10 +49,9 @@
         <div class="tab active">计划数据统计</div>
         <div class="tab" @click="$router.push('/dataReport/materialsOrderingStatistics')">订购数据统计</div>
         <div class="tab" @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
-        <div class="tab" @click="$message.info('功能正在开发中，即将上线')">加工数据统计</div>
+        <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
         <div class="tab" @click="$message.info('功能正在开发中，即将上线')">原料库存数据统计</div>
-        <!-- <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">原料库存数据统计</div> -->
+        <!-- <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">原料库存数据统计</div> -->
       </div>
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">
@@ -337,7 +336,7 @@ export default Vue.extend({
         user_id: '',
         group_id: '',
         order_type: '',
-        name: '',
+        name: ''
       },
       reportData: {
         order: {
@@ -392,6 +391,7 @@ export default Vue.extend({
         this.filterData.start_time = query.start_time
         this.filterData.end_time = query.end_time
       }
+      this.filterData.name = query.name ? query.name : ''
       this.filterData.client_id = query.client_id
         ? (query.client_id as string).split(',').map((item) => Number(item))
         : []
@@ -456,7 +456,7 @@ export default Vue.extend({
         group_id: '',
         order_type: '',
         name: '',
-        sortWay: 1,
+        sortWay: 1
       }
 
       this.filterData.start_time = new Date().getFullYear() + '-01-01'

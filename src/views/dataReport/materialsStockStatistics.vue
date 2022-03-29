@@ -143,7 +143,7 @@
         </div>
       </div>
       <div class="cardCtn">
-        <div class="card" style="padding-top:60px">
+        <div class="card" style="padding-top: 60px">
           <zh-charts v-if="activeName === 'first'" :option="option1"></zh-charts>
         </div>
       </div>
@@ -342,7 +342,7 @@ export default Vue.extend({
           })
           .then((res) => {
             if (res.data.status) {
-              this.alias = res.data.data.alias
+              this.alias = res.data.data.alias || res.data.data.name
             }
           })
       } else {
@@ -439,6 +439,7 @@ export default Vue.extend({
       this.filterData.client_id = query.client_id
         ? (query.client_id as string).split(',').map((item) => Number(item))
         : []
+      this.filterData.name = query.name ? query.name : ''
       this.filterData.contacts_id = query.contacts_id || this.$getLocalStorage('create_user') || ''
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.filterData.settle_unit = query.settle_unit
