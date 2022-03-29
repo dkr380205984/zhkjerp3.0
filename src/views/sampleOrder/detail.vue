@@ -512,6 +512,11 @@
     </div>
     <div class="bottomFixBar">
       <div class="main">
+        <div class="btnCtn"
+          style="float:left"
+          @click="orderLogFlag=true">
+          <div class="btn backHoverBlue ">关联单据</div>
+        </div>
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
@@ -784,6 +789,11 @@
         </div>
       </div>
     </div>
+    <!-- 关联单据 -->
+    <zh-order-log :order_id="$route.query.id"
+      :order_time_id="sampleOrderInfo.time_data[sampleOrderIndex].id"
+      :show="orderLogFlag"
+      @close="orderLogFlag=false"></zh-order-log>
     <sample-detail :data="sampleDetail"
       :show="sampleShow"
       @close="sampleShow = false"
@@ -980,7 +990,8 @@ export default Vue.extend({
       },
       materialDetail: [],
       confirmSampleInfo: [], // 已经确认的样品信息
-      unConfirmSampleInfo: [] // 除了已确认的其他样品信息
+      unConfirmSampleInfo: [], // 除了已确认的其他样品信息
+      orderLogFlag: false
     }
   },
   computed: {

@@ -535,7 +535,8 @@
         </div>
       </div>
     </div>
-    <div class="module">
+    <div class="module"
+      id="hahaha">
       <div class="titleCtn">
         <div class="title">物料汇总信息</div>
       </div>
@@ -1468,7 +1469,7 @@
                 </div>
               </div>
             </template>
-            <div class="thead"
+            <!-- <div class="thead"
               v-if="item.quote_info">
               <div class="trow">
                 <div class="tcol">报价费用</div>
@@ -1491,7 +1492,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -1594,6 +1595,11 @@
     </div> -->
     <div class="bottomFixBar">
       <div class="main">
+        <div class="btnCtn"
+          style="float:left"
+          @click="orderLogFlag=true">
+          <div class="btn backHoverBlue ">关联单据</div>
+        </div>
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
@@ -1784,6 +1790,11 @@
         </div>
       </div>
     </div>
+    <!-- 关联单据 -->
+    <zh-order-log :order_id="$route.query.id"
+      :order_time_id="orderInfo.time_data[0].id"
+      :show="orderLogFlag"
+      @close="orderLogFlag=false"></zh-order-log>
     <product-detail :data="productDetail"
       :show="productShow"
       @close="productShow = false"></product-detail>
@@ -1797,6 +1808,13 @@
       :check_type="1"
       :show="checkDetailFlag"
       @close="checkDetailFlag=false"></zh-check-detail>
+    <div class="zhSideNav"
+      v-show="false">
+      <div class="sideCtn">
+        <a class="side"
+          href="#hahaha">跳转测试</a>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -2021,7 +2039,8 @@ export default Vue.extend({
             }
           }
         }
-      }
+      },
+      orderLogFlag: false
     }
   },
   methods: {
@@ -2107,17 +2126,6 @@ export default Vue.extend({
         })
     }
   },
-  created() {
-    console.log(
-      this.$checkCommonInfo([
-        {
-          checkWhich: 'api/group',
-          getInfoMethed: 'dispatch',
-          getInfoApi: 'getGroupAsync'
-        }
-      ])
-    )
-  },
   mounted() {
     order
       .detail({
@@ -2148,7 +2156,7 @@ export default Vue.extend({
           })
         }
       })
-
+    // 财务信息
     order
       .financial({
         order_id: Number(this.$route.query.id),
