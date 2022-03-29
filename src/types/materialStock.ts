@@ -54,7 +54,7 @@ export interface MaterialStockInfo {
   id?: number
   order_id?: string | number
   material_type: number // 1纱线 2面料 4辅料
-  action_type: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13
+  action_type: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14
   rel_doc_type?: string
   rel_doc_id: string | number
   rel_doc_code?: string // 前端显示单据编号用

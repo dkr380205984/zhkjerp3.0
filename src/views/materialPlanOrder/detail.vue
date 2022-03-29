@@ -652,7 +652,7 @@ export default Vue.extend({
       },
       materialStockInfo: {
         material_type: 1,
-        action_type: 13, // 预订购采购单最终入库
+        action_type: 14, // 预订购采购单最终入库
         rel_doc_type: '',
         rel_doc_id: '',
         rel_doc_code: '',

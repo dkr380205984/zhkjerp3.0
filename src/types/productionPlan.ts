@@ -7,6 +7,7 @@ export interface ProductionPlanInfo {
   process_id: number | string
   process_name?: string
   process_name_arr?: string[]
+  process_desc?: string
   order_id: number | string
   plan_id?: number | string // 计划单id
   client_id_arr?: number[] // 前端选公司用

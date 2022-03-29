@@ -1067,19 +1067,19 @@
                           <input class="tableInput"
                             v-model="itemPack.length"
                             placeholder="长"
-                            @input="(ev)=>{itemPack.single_bulk = $toFixed(Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height)/1000000);itemPack.total_bulk =  $toFixed(Number(itemPack.single_bulk)*Number(itemPack.box_count))}" />
+                            @input="(ev)=>{itemPack.single_bulk = $toFixed(Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height)/1000000,3);itemPack.total_bulk =  $toFixed(Number(itemPack.single_bulk)*Number(itemPack.box_count),3)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.width"
                             placeholder="宽"
-                            @input="(ev)=>{itemPack.single_bulk = $toFixed(Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height)/1000000);itemPack.total_bulk =  $toFixed(Number(itemPack.single_bulk)*Number(itemPack.box_count))}" />
+                            @input="(ev)=>{itemPack.single_bulk = $toFixed(Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height)/1000000,3);itemPack.total_bulk =  $toFixed(Number(itemPack.single_bulk)*Number(itemPack.box_count),3)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
                             v-model="itemPack.height"
                             placeholder="高"
-                            @input="(ev)=>{itemPack.single_bulk = $toFixed(Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height)/1000000);itemPack.total_bulk =  $toFixed(Number(itemPack.single_bulk)*Number(itemPack.box_count))}" />
+                            @input="(ev)=>{itemPack.single_bulk = $toFixed(Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height)/1000000,3);itemPack.total_bulk =  $toFixed(Number(itemPack.single_bulk)*Number(itemPack.box_count),3)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"

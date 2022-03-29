@@ -803,7 +803,8 @@ export default Vue.extend({
         material_type: '',
         material_name: '',
         material_arr: []
-      }
+      },
+      totalNumber: ''
     }
   },
   filters: {},
@@ -938,8 +939,9 @@ export default Vue.extend({
           if (res.data.status) {
             this.list = res.data.data.items
             this.total = res.data.data.total
-            this.loading = false
+            this.totalNumber = res.data.data.additional.total_number
           }
+          this.loading = false
         })
     },
     goStock(type: 9 | 13, info?: StoreTotalInfo) {
@@ -1230,11 +1232,6 @@ export default Vue.extend({
     }
   },
   computed: {
-    totalNumber(): number {
-      return this.list.reduce((total, cur) => {
-        return total + cur.number
-      }, 0)
-    },
     yarnClientInList() {
       return this.$store.state.api.clientType.arr.filter((item: { label: string }) => item.label === '纱线原料单位')
     },
