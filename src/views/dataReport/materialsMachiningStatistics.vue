@@ -19,7 +19,7 @@
         </svg>
         <span class="text">原料使用图表</span>
       </div>
-      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
+      <div class="tag" @click="$router.push('/dataReport/accessoriesDecorationOrderStatistics')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-fuliaoshiyongtubiao"></use>
         </svg>
@@ -97,11 +97,7 @@
           <div class="contentGrid">
             <div>
               订单类型：<span class="blue">{{
-                filterData.order_type === ''
-                  ? '订单/样单'
-                  : filterData.order_type === 1
-                  ? '订单'
-                  : '样单'
+                filterData.order_type === '' ? '订单/样单' : filterData.order_type === 1 ? '订单' : '样单'
               }}</span>
             </div>
             <div>
@@ -267,6 +263,34 @@ export default Vue.extend({
             crossStyle: {
               color: '#999'
             }
+          },
+          formatter: (params: any) => {
+            var htmlStr = '<div>'
+            htmlStr += params[0].name + '<br/>' //x轴的名称
+            params.forEach((param: any, index: number) => {
+              var color = param.color //图例颜色
+
+              //为了保证和原来的效果一样，这里自己实现了一个点的效果
+              htmlStr +=
+                '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:' +
+                color +
+                ';"></span>'
+
+              //添加一个汉字，这里你可以格式你的数字或者自定义文本内容
+              htmlStr +=
+                param.seriesName +
+                '：' +
+                '<span style="color:' +
+                color +
+                ';margin-right:10px">' +
+                param.value +
+                '</span>' +
+                (index === 1 ? '万元' : '吨或千米')
+
+              htmlStr += '</div>'
+            })
+
+            return htmlStr
           }
         },
         legend: {
@@ -275,7 +299,7 @@ export default Vue.extend({
         xAxis: [
           {
             type: 'category',
-            data: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            data: [],
             axisPointer: {
               type: 'shadow'
             }
@@ -473,7 +497,7 @@ export default Vue.extend({
         name: '',
         sortWay: 1
       }
-
+      localStorage.create_user_name = ''
       this.filterData.start_time = new Date().getFullYear() + '-01-01'
       this.filterData.end_time = this.formatDate(new Date())
       this.changeRouter()
@@ -493,6 +517,7 @@ export default Vue.extend({
       this.filterData.client_id = query.client_id
         ? (query.client_id as string).split(',').map((item) => Number(item))
         : []
+      this.filterData.order_type = query.order_type ? +query.order_type : ''
       this.filterData.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.filterData.settle_unit = query.settle_unit

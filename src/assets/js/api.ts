@@ -867,6 +867,23 @@ const statistics = {
     start_time: string
     end_time: string
   }) => http.get(`${baseUrl}/statistics/rawmaterial/process`, params),
+  auxmaterial: (params?: {
+    order_type: number | string
+    client_id: number | string
+    user_id: number | string
+    group_id: number | string
+    name: string
+    start_time: string
+    end_time: string
+  }) => http.get(`${baseUrl}/statistics/auxmaterial`, params),
+  auxmaterialPack: (params?: {
+    client_id: number | string
+    user_id: number | string
+    group_id: number | string
+    pack_material_id: string
+    start_time: string
+    end_time: string
+  }) => http.get(`${baseUrl}/statistics/auxmaterial/pack`, params),
 }
 export {
   statistics,

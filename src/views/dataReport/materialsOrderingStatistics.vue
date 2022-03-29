@@ -19,7 +19,7 @@
         </svg>
         <span class="text">原料使用图表</span>
       </div>
-      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
+      <div class="tag" @click="$router.push('/dataReport/accessoriesDecorationOrderStatistics')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-fuliaoshiyongtubiao"></use>
         </svg>
@@ -425,6 +425,7 @@ export default Vue.extend({
       this.filterData.client_id = query.client_id
         ? (query.client_id as string).split(',').map((item) => Number(item))
         : []
+      this.filterData.order_type = query.order_type ? +query.order_type : ''
       this.filterData.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.filterData.settle_unit = query.settle_unit
@@ -457,7 +458,7 @@ export default Vue.extend({
         name: '',
         sortWay: 1
       }
-
+      localStorage.create_user_name = ''
       this.filterData.start_time = new Date().getFullYear() + '-01-01'
       this.filterData.end_time = this.formatDate(new Date())
       this.changeRouter()

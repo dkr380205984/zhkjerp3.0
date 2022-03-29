@@ -19,7 +19,7 @@
         </svg>
         <span class="text">原料使用图表</span>
       </div>
-      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
+      <div class="tag" @click="$router.push('/dataReport/accessoriesDecorationOrderStatistics')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-fuliaoshiyongtubiao"></use>
         </svg>
@@ -76,25 +76,12 @@
                 clearable
               >
               </el-cascader>
-              <!-- <el-cascader
-                @change="
-                  getContacts($event)
-                  changeRouter()
-                "
-                placeholder="筛选下单公司"
-                v-model="filterData.client_id"
-                :show-all-levels="false"
-                filterable
-                :options="clientList"
-                clearable
-              >
-              </el-cascader> -->
             </div>
             <div class="screen" style="margin-bottom: 0; width: 65.5%">
               <el-input v-model="filterData.yuanliaomingcheng" placeholder="输入原料名称查询" clearable></el-input>
             </div>
             <div class="screen" style="margin-bottom: 0">
-              <el-button style="width: 100%; height: 52px">重置</el-button>
+              <el-button style="width: 100%; height: 52px" @click="reset">重置</el-button>
             </div>
           </div>
         </div>
@@ -440,12 +427,28 @@ export default Vue.extend({
         ? (query.client_id as string).split(',').map((item) => Number(item))
         : []
       this.filterData.name = query.name ? query.name : ''
+      this.filterData.order_type = query.order_type ? +query.order_type : ''
       this.filterData.contacts_id = query.contacts_id || this.$getLocalStorage('create_user') || ''
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.filterData.settle_unit = query.settle_unit
       this.createPeople = this.$getLocalStorage('create_user_name')
       this.changeUnit()
       this.getContacts(this.filterData.client_id)
+    },
+    reset() {
+      this.filterData = {
+        start_time: '',
+        end_time: '',
+        user_id: '',
+        group_id: '',
+        order_type: '',
+        name: '',
+        sortWay: 1
+      }
+      localStorage.create_user_name = ''
+      this.filterData.start_time = new Date().getFullYear() + '-01-01'
+      this.filterData.end_time = this.formatDate(new Date())
+      this.changeRouter()
     },
     formatDate(date: Date) {
       return (
