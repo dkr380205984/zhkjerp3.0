@@ -903,6 +903,13 @@ const statistics = {
     start_time: string
     end_time: string
   }) => http.get(`${baseUrl}/statistics/inspection`, params),
+  productionInspection: (params?: {
+    staff_id: number | string
+    user_id: number | string
+    process_name: string
+    start_time: string
+    end_time: string
+  }) => http.get(`${baseUrl}/statistics/production/inspection`, params),
 }
 export {
   statistics,

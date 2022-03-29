@@ -303,6 +303,13 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/dataReport/inspectionReceivingDispatchingStatistic.vue')
     }, {
       meta: {
+        permissions_id: '20-12',
+      },
+      path: '/dataReport/workshopSalaryStatistics',
+      name: '车间工资图表',
+      component: () => import('../views/dataReport/workshopSalaryStatistics.vue')
+    }, {
+      meta: {
         permissions_id: '21-1',
       },
       path: '/billingManagement/rawMaterialPlan',

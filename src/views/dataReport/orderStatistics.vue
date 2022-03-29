@@ -627,7 +627,7 @@ export default Vue.extend({
             // 每月下单总额 图表更新
             this.option1.yAxis[1].max = Math.ceil(Math.ceil(orderNumberMax / 10000 / 5)) * 5 || 10
             this.option1.yAxis[1].min = orderNumberMin && orderNumberMin < 0 ? Math.ceil(orderNumberMin / 10000) : 0
-            this.option1.yAxis[1].interval = Math.ceil(orderNumberMax / 10000 / 5) || 10
+            this.option1.yAxis[1].interval = Math.ceil(orderNumberMax / 10000 / 5) * 5 || 10
 
             this.option1.xAxis[0].data.forEach((itemMouth: any) => {
               let mouth = this.reportData.order.report.month.find((item: any) => {
@@ -653,7 +653,7 @@ export default Vue.extend({
             // 横向柱状图
             data.order.report.client.forEach((client: any) => {
               this.companyOption.yAxis.data.push(client.client_name)
-              this.companyOption.series[0].data.push((client.total_price/10000).toFixed(2))
+              this.companyOption.series[0].data.push((client.total_price / 10000).toFixed(2))
             })
           } else if (this.activeName === 'second') {
             this.option1.series[0].name = '每月出库总额'
@@ -670,7 +670,7 @@ export default Vue.extend({
             // 每月出库总额 图表更新
             this.option1.yAxis[1].max = Math.ceil(Math.ceil(outNumberMax / 10000 / 5)) * 5 || 10
             this.option1.yAxis[1].min = outNumberMin && outNumberMin < 0 ? Math.ceil(outNumberMin / 10000) : 0
-            this.option1.yAxis[1].interval = Math.ceil(outNumberMax / 10000 / 5) || 10
+            this.option1.yAxis[1].interval = Math.ceil(outNumberMax / 10000 / 5) * 5 || 10
 
             this.option1.xAxis[0].data.forEach((itemMouth: any) => {
               let mouth = this.reportData.transport.report.month.find((item: any) => {

@@ -42,7 +42,7 @@
       <div style="display: flex; width: 27%; justify-content: space-between">
         <div class="tab active">生产计划图表</div>
         <div class="tab" @click="$router.push('/dataReport/inspectionReceivingDispatchingStatistic')">检验收发图表</div>
-        <div class="tab" @click="$message.info('功能正在开发中，即将上线')">车间工资图表</div>
+        <div class="tab" @click="$router.push('/dataReport/workshopSalaryStatistics')">车间工资图表</div>
       </div>
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">
@@ -139,7 +139,7 @@
               "
               :show-all-levels="false"
               clearable
-              placeholder="加工工序"
+              placeholder="工序类型筛选"
             ></el-cascader>
           </div>
         </div>
@@ -472,6 +472,7 @@ export default Vue.extend({
       }
       localStorage.create_user_name = ''
       this.alias = ''
+      this.processName = ''
       this.filterData.start_time = new Date().getFullYear() + '-01-01'
       this.filterData.end_time = this.formatDate(new Date())
       this.changeRouter()
@@ -545,13 +546,13 @@ export default Vue.extend({
           }
 
           // 查看所有 图表更新
-          this.option1.yAxis[0].max = Math.ceil(Math.ceil(planNumberMax / 10000)) * 5 || 10
+          this.option1.yAxis[0].max = Math.ceil(Math.ceil(planNumberMax / 10000 / 5)) * 5 || 10
           this.option1.yAxis[0].min = planNumberMin && planNumberMin < 0 ? Math.ceil(planNumberMin / 10000) : 0
-          this.option1.yAxis[0].interval = Math.ceil(planNumberMax / 10000) || 10
+          this.option1.yAxis[0].interval = Math.ceil(planNumberMax / 10000 / 5) || 10
 
-          this.option1.yAxis[1].max = Math.ceil(Math.ceil(planPriceMax / 10000)) * 5 || 10
+          this.option1.yAxis[1].max = Math.ceil(Math.ceil(planPriceMax / 10000 / 5)) * 5 || 10
           this.option1.yAxis[1].min = planPriceMin && planPriceMin < 0 ? Math.ceil(planPriceMin / 10000) : 0
-          this.option1.yAxis[1].interval = Math.ceil(planPriceMax / 10000) || 10
+          this.option1.yAxis[1].interval = Math.ceil(planPriceMax / 10000 / 5 ) || 10
 
           data.report.forEach((item: any) => {
             this.option1.xAxis[0].data.push(item.name)

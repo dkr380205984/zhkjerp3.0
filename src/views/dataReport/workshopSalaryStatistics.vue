@@ -1,5 +1,5 @@
 <template>
-  <div id="inspectionReceivingDispatchingStatistic" class="bodyContainer" v-loading="loading">
+  <div id="workshopSalaryStatistics" class="bodyContainer" v-loading="loading">
     <div class="topTagCtn">
       <div class="tag" @click="$router.push('/dataReport/orderStatistics')">
         <svg class="iconFont" aria-hidden="true">
@@ -41,41 +41,39 @@
     <div class="module noBackColor">
       <div style="display: flex; width: 27%; justify-content: space-between">
         <div class="tab" @click="$router.push('/dataReport/productionPlanChartStatistics')">生产计划图表</div>
-        <div class="tab active">检验收发图表</div>
-        <div class="tab" @click="$router.push('/dataReport/workshopSalaryStatistics')">车间工资图表</div>
+        <div class="tab" @click="$router.push('/dataReport/inspectionReceivingDispatchingStatistic')">检验收发图表</div>
+        <div class="tab active">车间工资图表</div>
       </div>
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">
           <div class="screenCtn">
-            <div class="screen" style="width: 48.5%">
+            <div class="screen" style="margin-bottom: 0">
               <el-select
-                @change="changeRouter"
-                filterable
-                v-model="filterData.order_type"
-                placeholder="筛选原料"
-                clearable
-              >
-                <el-option label="订单/样单" :value="''"></el-option>
-                <el-option label="订单" :value="1"></el-option>
-                <el-option label="样单" :value="2"></el-option>
-              </el-select>
-            </div>
-            <div class="screen" style="width: 48.5%">
-              <el-cascader
                 @change="
-                  getContacts($event)
+                  changeStaff()
                   changeRouter()
                 "
-                placeholder="筛选生产单位"
-                v-model="filterData.client_id"
-                :show-all-levels="false"
-                filterable
-                :options="clientList"
+                v-model="filterData.staff_id"
+                placeholder="人员姓名筛选"
                 clearable
               >
-              </el-cascader>
+                <el-option v-for="item in staffList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+              </el-select>
             </div>
-            <div class="screen" style="margin-bottom: 0; width: 48.5%">
+            <div class="screen">
+              <el-cascader
+                v-model="filterData.process_name"
+                :options="processList"
+                @change="
+                  getWorkList()
+                  changeRouter()
+                "
+                :show-all-levels="false"
+                clearable
+                placeholder="工序类型筛选"
+              ></el-cascader>
+            </div>
+            <div class="screen" style="margin-bottom: 0">
               <el-select @change="changePeople" v-model="filterData.user_id" placeholder="筛选创建人" clearable>
                 <el-option
                   v-for="item in userList"
@@ -85,15 +83,17 @@
                 ></el-option>
               </el-select>
             </div>
-            <div class="screen" style="margin-bottom: 0; width: 48.5%">
-              <el-select
-                @change="(ev) => getLocalStorage(ev, 'group_id')"
-                v-model="filterData.group_id"
-                placeholder="筛选负责小组"
-                clearable
+            <div class="screen" style="margin-bottom: 0; width: 65.5%">
+              <el-date-picker
+                v-model="filterData.start_time"
+                type="year"
+                @change="changeDate"
+                placeholder="筛选下单年份"
               >
-                <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
-              </el-select>
+              </el-date-picker>
+            </div>
+            <div class="screen" style="margin-bottom: 0">
+              <el-button style="width: 100%; height: 52px" @click="reset">重置</el-button>
             </div>
           </div>
         </div>
@@ -108,18 +108,10 @@
           </div>
           <div class="contentGrid">
             <div>
-              订单类型：<span class="blue">{{
-                filterData.order_type === '' ? '订单/样单' : filterData.order_type === 1 ? '订单' : '样单'
-              }}</span>
-            </div>
-            <div>
-              生产单位：<span class="blue">{{ alias || '所有' }}</span>
+              所选人员：<span class="blue">{{ staffName || '所有' }}</span>
             </div>
             <div>
               创建人：<span class="blue">{{ createPeople || '所有' }}</span>
-            </div>
-            <div>
-              负责小组：<span class="blue">{{ groupName || '所有' }}</span>
             </div>
             <div>
               加工工序：<span class="blue">{{ processName || '所有' }}</span>
@@ -128,87 +120,37 @@
         </div>
       </div>
       <div class="cardCtn">
-        <div class="card noPad" style="overflow: hidden">
-          <div class="screen">
-            <el-cascader
-              v-model="filterData.process_name"
-              :options="processList"
-              @change="
-                getWorkList()
-                changeRouter()
-              "
-              :show-all-levels="false"
-              clearable
-              placeholder="工序类型筛选"
-            ></el-cascader>
-          </div>
-        </div>
-        <div class="cardCtn" style="width: 100%; margin-top: 0">
-          <div class="card noPad" style="overflow: hidden; width: 210%">
-            <div class="screen">
-              <el-date-picker
-                v-model="filterData.start_time"
-                type="year"
-                @change="changeDate"
-                placeholder="筛选下单年份"
-              >
-              </el-date-picker>
-            </div>
-          </div>
-          <div class="card noPad" style="overflow: hidden">
-            <el-button style="width: 100%; height: 63px" @click="reset">重置</el-button>
-          </div>
-        </div>
-      </div>
-      <div class="cardCtn">
         <div class="card">
-          <h3>检验入库数量</h3>
+          <h3>完成数量</h3>
           <div class="content">
             <span class="blue">
-              <h2>{{ (reportData.enter.number / 10000).toFixed(2) }}</h2>
+              <h2>{{ (reportData.total_number / 10000).toFixed(2) }}</h2>
             </span>
             <h2 class="unit">万</h2>
           </div>
         </div>
         <div class="card">
-          <h3>生产出库数量</h3>
+          <h3>完成总额</h3>
           <div class="content">
             <span class="blue">
-              <h2>{{ (reportData.out.number / 10000).toFixed(2) }}</h2>
+              <h2>{{ (reportData.total_price / 10000).toFixed(2) }}</h2>
             </span>
-            <h2 class="unit">万</h2>
+            <h2 class="unit">万元</h2>
           </div>
         </div>
         <div class="card">
-          <h3>次品数量</h3>
+          <h3>平均结算单价</h3>
           <div class="content">
             <span class="green">
               <h2>
-                {{ +reportData.enter.shoddy_number + +reportData.out.shoddy_number || 0 }}
+                {{ (reportData.total_price / (reportData.total_number || 1)).toFixed(2) }}
               </h2>
             </span>
-          </div>
-        </div>
-        <div class="card">
-          <h3>平均次品率</h3>
-          <div class="content">
-            <span class="green">
-              <h2>
-                {{
-                  (
-                    ((+reportData.enter.shoddy_number + +reportData.out.shoddy_number) /
-                      (+reportData.enter.number + +reportData.out.number)) *
-                    100
-                  ).toFixed(2) || 0
-                }}
-              </h2>
-            </span>
-            <h2 class="unit">%</h2>
           </div>
         </div>
       </div>
       <div class="cardCtn">
-        <div class="card" style="padding-top:50px">
+        <div class="card" style="padding-top: 50px">
           <zh-charts :option="option1"></zh-charts>
         </div>
       </div>
@@ -216,7 +158,7 @@
     <!-- <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue" @click="$router.push('/billingManagement/productionPlan')">查看检验收发日志</div>
+          <div class="btn backHoverBlue" @click="$router.push('/billingManagement/workshopSettlementLog')">查看车间结算日志</div>
         </div>
       </div>
     </div> -->
@@ -225,7 +167,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { statistics, client, process } from '@/assets/js/api'
+import { statistics, client, process, staff } from '@/assets/js/api'
 import { moneyArr } from '@/assets/js/dictionary'
 import zhCharts from '@/components/zhCharts/zhCharts.vue'
 export default Vue.extend({
@@ -266,7 +208,7 @@ export default Vue.extend({
                 ';margin-right:10px">' +
                 param.value +
                 '</span>' +
-                (index === 1 ? '' : '万')
+                (index === 1 ? '万元' : '万')
 
               htmlStr += '</div>'
             })
@@ -275,7 +217,7 @@ export default Vue.extend({
           }
         },
         legend: {
-          data: ['生产数量', '次品数量']
+          data: ['完成数量', '完成总额']
         },
         xAxis: [
           {
@@ -292,7 +234,7 @@ export default Vue.extend({
         yAxis: [
           {
             type: 'value',
-            name: '生产数量',
+            name: '完成数量',
             min: 0,
             max: 25,
             interval: 5,
@@ -302,24 +244,24 @@ export default Vue.extend({
           },
           {
             type: 'value',
-            name: '次品数量',
+            name: '完成总额',
             min: 0,
             max: 500,
             interval: 100,
             axisLabel: {
-              formatter: '{value} '
+              formatter: '{value} 万元'
             }
           }
         ],
         series: [
           {
             type: 'bar',
-            name: '生产数量',
+            name: '完成数量',
             data: []
           },
           {
             type: 'line',
-            name: '次品数量',
+            name: '完成总额',
             yAxisIndex: 1,
             data: []
           }
@@ -332,8 +274,8 @@ export default Vue.extend({
         end_time: '',
         user_id: '',
         group_id: '',
-        order_type: '',
-        process_name: []
+        staff_id: '',
+        process_name: ['', '']
       },
       reportData: {
         enter: {
@@ -342,7 +284,7 @@ export default Vue.extend({
         },
         out: {
           number: '',
-          shoddy_number:''
+          shoddy_number: ''
         }
       },
       filterCondition: {
@@ -350,8 +292,10 @@ export default Vue.extend({
         currency: moneyArr
       },
       processList: [],
+      staffList: [],
       alias: '',
-      processName: ''
+      processName: '',
+      staffName: ''
     }
   },
   methods: {
@@ -382,6 +326,17 @@ export default Vue.extend({
         this.groupName = groupInfo.name
       }
       this.changeRouter()
+    },
+    changeStaff() {
+      let obj = this.staffList.find((item: any) => {
+        return item.id === this.filterData.staff_id
+      })
+
+      if (obj) {
+        this.staffName = obj.name
+      } else {
+        this.staffName = ''
+      }
     },
     changePeople(user_id: any) {
       this.createPeople = '所有'
@@ -449,11 +404,11 @@ export default Vue.extend({
     },
     changeRouter() {
       this.$router.push(
-        '/dataReport/inspectionReceivingDispatchingStatistic?' +
+        '/dataReport/workshopSalaryStatistics?' +
           '&user_id=' +
           (this.filterData.user_id || '') +
-          '&group_id=' +
-          (this.filterData.group_id || '') +
+          '&staff_id=' +
+          (this.filterData.staff_id || '') +
           '&order_type=' +
           (this.filterData.order_type || '') +
           '&process_name=' +
@@ -481,6 +436,7 @@ export default Vue.extend({
       }
       localStorage.create_user_name = ''
       this.alias = ''
+      this.staffName = ''
       this.processName = ''
       this.filterData.start_time = new Date().getFullYear() + '-01-01'
       this.filterData.end_time = this.formatDate(new Date())
@@ -488,35 +444,33 @@ export default Vue.extend({
     },
     getData(arr: any, n1: any, n2: any, n3: any, n4: any) {
       n1 = arr.reduce((num1: any, num2: any) => {
-        return +num1.number > +num2.number ? num1 : num2
+        return +num1.total_number > +num2.total_number ? num1 : num2
       })
       n2 = arr.reduce((num1: any, num2: any) => {
-        return +num1.number < +num2.number ? num1 : num2
+        return +num1.total_number < +num2.total_number ? num1 : num2
       })
       n3 = arr.reduce((num1: any, num2: any) => {
-        return +num1.shoddy_number > +num2.shoddy_number ? num1 : num2
+        return +num1.total_price > +num2.total_price ? num1 : num2
       })
       n4 = arr.reduce((num1: any, num2: any) => {
-        return +num1.shoddy_number < +num2.shoddy_number ? num1 : num2
+        return +num1.total_price < +num2.total_price ? num1 : num2
       })
 
-      n1 = +n1.number
-      n2 = +n2.number
-      n3 = +n3.shoddy_number
-      n4 = +n4.shoddy_number
+      n1 = +n1.total_number
+      n2 = +n2.total_number
+      n3 = +n3.total_price
+      n4 = +n4.total_price
       return [n1, n2, n3, n4]
     },
     getList() {
       this.loading = true
       statistics
-        .inspection({
+        .productionInspection({
           start_time: this.filterData.start_time,
           end_time: this.filterData.end_time,
           user_id: this.filterData.user_id,
-          group_id: this.filterData.group_id,
           process_name: this.filterData.process_name[1],
-          client_id: this.filterData.client_id.length > 0 ? this.filterData.client_id[2] : '',
-          order_type: this.filterData.order_type
+          staff_id: this.filterData.staff_id
         })
         .then((res) => {
           if (!res.data.status) {
@@ -528,7 +482,7 @@ export default Vue.extend({
           this.reportData = data
 
           data.report.sort(function (a: any, b: any) {
-            return b.number - a.number
+            return b.total_number - a.total_number
           })
 
           this.option1.series[0].data = []
@@ -537,30 +491,30 @@ export default Vue.extend({
 
           let numberMax: any,
             numberMin: any,
-            shoddyNumberMax: any,
-            shoddyNumberMin: any = 0
+            priceMax: any,
+            priceMin: any = 0
 
           if (data.report.length !== 0) {
-            let arr = this.getData(data.report, numberMax, numberMin, shoddyNumberMax, shoddyNumberMin)
+            let arr = this.getData(data.report, numberMax, numberMin, priceMax, priceMin)
             numberMax = arr[0]
             numberMin = arr[1]
-            shoddyNumberMax = arr[2]
-            shoddyNumberMin = arr[3]
+            priceMax = arr[2]
+            priceMin = arr[3]
           }
 
           // 查看所有 图表更新
           this.option1.yAxis[0].max = Math.ceil(Math.ceil(numberMax / 10000 / 5)) * 5 || 10
-          this.option1.yAxis[0].min = numberMin && numberMin < 0 ? Math.ceil(numberMin / 10000) : 0
+          this.option1.yAxis[0].min = numberMin && numberMin < 0 ? Math.ceil(numberMin / 10000 ) : 0
           this.option1.yAxis[0].interval = Math.ceil(numberMax / 10000 / 5) || 10
 
-          this.option1.yAxis[1].max = Math.ceil(shoddyNumberMax / 5) * 5 || 10
-          this.option1.yAxis[1].min = shoddyNumberMin && shoddyNumberMin < 0 ? Math.ceil(shoddyNumberMin) : 0
-          this.option1.yAxis[1].interval = Math.ceil(shoddyNumberMax / 5) || 10
+          this.option1.yAxis[1].max = Math.ceil(Math.ceil(priceMax / 10000 / 5)) * 5 || 10
+          this.option1.yAxis[1].min = priceMin && priceMin < 0 ? Math.ceil(priceMin) : 0
+          this.option1.yAxis[1].interval = Math.ceil(Math.ceil(priceMax / 10000 / 5)) || 10
 
           data.report.forEach((item: any) => {
             this.option1.xAxis[0].data.push(item.name)
-            this.option1.series[0].data.push((item.number / 10000).toFixed(2))
-            this.option1.series[1].data.push(+item.shoddy_number)
+            this.option1.series[0].data.push((item.total_number / 10000).toFixed(2))
+            this.option1.series[1].data.push((item.total_price / 10000).toFixed(2))
           })
 
           this.loading = false
@@ -619,6 +573,9 @@ export default Vue.extend({
         })
       })
     })
+    staff.list('').then((res) => {
+      this.staffList = res.data.data
+    })
     this.getFilters()
     this.getList()
     this.$checkCommonInfo([
@@ -646,11 +603,11 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import '~@/assets/css/dataReport/inspectionReceivingDispatchingStatistic.less';
+@import '~@/assets/css/dataReport/workshopSalaryStatistics.less';
 </style>
 
 <style lang="less">
-#inspectionReceivingDispatchingStatistic {
+#workshopSalaryStatistics {
   .screen {
     overflow: hidden;
   }
