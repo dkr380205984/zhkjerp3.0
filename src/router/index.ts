@@ -312,6 +312,13 @@ const routes: Array<RouteConfig> = [
       meta: {
         permissions_id: '20-13',
       },
+      path: '/dataReport/reimbursementChartStatistics',
+      name: '报销费用图表',
+      component: () => import('../views/dataReport/reimbursementChartStatistics.vue')
+    }, {
+      meta: {
+        permissions_id: '20-14',
+      },
       path: '/dataReport/transportationOutboundStatistics',
       name: '运输出库图表',
       component: () => import('../views/dataReport/transportationOutboundStatistics.vue')

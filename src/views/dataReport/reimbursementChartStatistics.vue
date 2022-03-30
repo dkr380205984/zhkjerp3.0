@@ -1,5 +1,5 @@
 <template>
-  <div id="transportationOutboundStatistics" class="bodyContainer" v-loading="loading">
+  <div id="reimbursementChartStatistics" class="bodyContainer" v-loading="loading">
     <div class="topTagCtn">
       <div class="tag" @click="$router.push('/dataReport/orderStatistics')">
         <svg class="iconFont" aria-hidden="true">
@@ -40,14 +40,14 @@
     </div>
     <div class="module noBackColor">
       <div style="display: flex; width: 27%; justify-content: space-between">
-        <div class="tab active">运输出库图表</div>
-        <div class="tab" @click="$router.push('/dataReport/reimbursementChartStatistics')">报销费用图表</div>
+        <div class="tab" @click="$router.push('/dataReport/transportationOutboundStatistics')">运输出库图表</div>
+        <div class="tab active">报销费用图表</div>
         <div class="tab" @click="$message.info('功能正在开发中，即将上线')">额外费用图表</div>
       </div>
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">
           <div class="screenCtn">
-            <div class="screen" style="margin-bottom: 0">
+            <div class="screen" style="width: 48.5%">
               <el-select
                 @change="(ev) => getLocalStorage(ev, 'group_id')"
                 v-model="filterData.group_id"
@@ -57,22 +57,7 @@
                 <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
               </el-select>
             </div>
-            <div class="screen">
-              <el-cascader
-                @change="
-                  getContacts($event)
-                  changeRouter()
-                "
-                placeholder="筛选运输单位"
-                v-model="filterData.client_id"
-                :show-all-levels="false"
-                filterable
-                :options="clientList"
-                clearable
-              >
-              </el-cascader>
-            </div>
-            <div class="screen" style="margin-bottom: 0">
+            <div class="screen" style="width: 48.5%">
               <el-select @change="changePeople" v-model="filterData.user_id" placeholder="筛选创建人" clearable>
                 <el-option
                   v-for="item in userList"
@@ -110,9 +95,6 @@
               负责小组：<span class="blue">{{ groupName || '所有' }}</span>
             </div>
             <div>
-              运输单位：<span class="blue">{{ alias || '所有' }}</span>
-            </div>
-            <div>
               创建人：<span class="blue">{{ createPeople || '所有' }}</span>
             </div>
           </div>
@@ -120,29 +102,9 @@
       </div>
       <div class="cardCtn">
         <div class="card">
-          <h3>合计运输数量</h3>
+          <h3>合计报销金额</h3>
           <div class="content">
             <span class="blue">
-              <h2>{{ (reportData.total_number / 10000).toFixed(2) }}</h2>
-            </span>
-            <h2 class="unit">万</h2>
-          </div>
-        </div>
-        <div class="card">
-          <h3>合计运输立方</h3>
-          <div class="content">
-            <span class="blue">
-              <h2>
-                {{ reportData.total_bulk }}
-              </h2>
-            </span>
-            <h2 class="unit">立方</h2>
-          </div>
-        </div>
-        <div class="card">
-          <h3>合计运输金额</h3>
-          <div class="content">
-            <span class="green">
               <h2>{{ (reportData.total_price / 10000).toFixed(2) }}</h2>
             </span>
             <h2 class="unit">万元</h2>
@@ -217,7 +179,7 @@ export default Vue.extend({
           }
         },
         legend: {
-          data: ['运输立方', '运输金额']
+          data: ['报销金额']
         },
         xAxis: [
           {
@@ -234,20 +196,7 @@ export default Vue.extend({
         yAxis: [
           {
             type: 'value',
-            name: '运输立方',
-            min: 0,
-            max: 25,
-            interval: 5,
-            axisLabel: {
-              formatter: '{value} 立方'
-            }
-          },
-          {
-            type: 'value',
-            name: '运输金额',
-            min: 0,
-            max: 500,
-            interval: 100,
+            name: '报销金额',
             axisLabel: {
               formatter: '{value} 万元'
             }
@@ -256,13 +205,7 @@ export default Vue.extend({
         series: [
           {
             type: 'bar',
-            name: '运输立方',
-            data: []
-          },
-          {
-            type: 'line',
-            name: '运输金额',
-            yAxisIndex: 1,
+            name: '报销金额',
             data: []
           }
         ]
@@ -404,7 +347,7 @@ export default Vue.extend({
     },
     changeRouter() {
       this.$router.push(
-        '/dataReport/transportationOutboundStatistics?' +
+        '/dataReport/reimbursementChartStatistics?' +
           '&user_id=' +
           (this.filterData.user_id || '') +
           '&staff_id=' +
@@ -438,42 +381,22 @@ export default Vue.extend({
       }
       localStorage.create_user_name = ''
       this.alias = ''
-      this.groupName = ''
       this.staffName = ''
+      this.groupName = ''
       this.processName = ''
       this.filterData.start_time = new Date().getFullYear() + '-01-01'
       this.filterData.end_time = this.formatDate(new Date())
       this.changeRouter()
     },
-    getData(arr: any, n1: any, n2: any, n3: any, n4: any) {
-      n1 = arr.reduce((num1: any, num2: any) => {
-        return +num1.total_bul > +num2.total_bul ? num1 : num2
-      })
-      n2 = arr.reduce((num1: any, num2: any) => {
-        return +num1.total_bul < +num2.total_bul ? num1 : num2
-      })
-      n3 = arr.reduce((num1: any, num2: any) => {
-        return +num1.total_price > +num2.total_price ? num1 : num2
-      })
-      n4 = arr.reduce((num1: any, num2: any) => {
-        return +num1.total_price < +num2.total_price ? num1 : num2
-      })
-
-      n1 = +n1.total_bul
-      n2 = +n2.total_bul
-      n3 = +n3.total_price
-      n4 = +n4.total_price
-      return [n1, n2, n3, n4]
-    },
     getList() {
       this.loading = true
       statistics
-        .transportDispatch({
+        .receipt({
           start_time: this.filterData.start_time,
           end_time: this.filterData.end_time,
           user_id: this.filterData.user_id,
-          client_id: this.filterData.client_id.length > 0 ? this.filterData.client_id[2] : '',
-          group_id: this.filterData.group_id
+          group: this.groupName,
+          staff_id: ''
         })
         .then((res) => {
           if (!res.data.status) {
@@ -485,39 +408,15 @@ export default Vue.extend({
           this.reportData = data
 
           data.report.sort(function (a: any, b: any) {
-            return b.total_bul - a.total_bul
+            return b.amount - a.amount
           })
 
           this.option1.series[0].data = []
-          this.option1.series[1].data = []
           this.option1.xAxis[0].data = []
-
-          let numberMax: any,
-            numberMin: any,
-            priceMax: any,
-            priceMin: any = 0
-
-          if (data.report.length !== 0) {
-            let arr = this.getData(data.report, numberMax, numberMin, priceMax, priceMin)
-            numberMax = arr[0]
-            numberMin = arr[1]
-            priceMax = arr[2]
-            priceMin = arr[3]
-          }
-
-          // 查看所有 图表更新
-          this.option1.yAxis[0].max = Math.ceil(Math.ceil(numberMax / 5)) * 5 || 10
-          this.option1.yAxis[0].min = numberMin && numberMin < 0 ? Math.ceil(numberMin / 10000 ) : 0
-          this.option1.yAxis[0].interval = Math.ceil(numberMax / 5) || 10
-
-          this.option1.yAxis[1].max = Math.ceil(Math.ceil(priceMax / 10000 / 5)) * 5 || 10
-          this.option1.yAxis[1].min = priceMin && priceMin < 0 ? Math.ceil(priceMin) : 0
-          this.option1.yAxis[1].interval = Math.ceil(Math.ceil(priceMax / 10000 / 5)) || 10
 
           data.report.forEach((item: any) => {
             this.option1.xAxis[0].data.push(item.name)
-            this.option1.series[0].data.push(item.total_bul)
-            this.option1.series[1].data.push((item.total_price / 10000).toFixed(2))
+            this.option1.series[0].data.push((item.amount / 10000).toFixed(2))
           })
 
           this.loading = false
@@ -606,11 +505,11 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import '~@/assets/css/dataReport/transportationOutboundStatistics.less';
+@import '~@/assets/css/dataReport/reimbursementChartStatistics.less';
 </style>
 
 <style lang="less">
-#transportationOutboundStatistics {
+#reimbursementChartStatistics {
   .screen {
     overflow: hidden;
   }

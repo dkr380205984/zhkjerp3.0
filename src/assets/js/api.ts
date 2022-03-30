@@ -917,6 +917,13 @@ const statistics = {
     start_time: string
     end_time: string
   }) => http.get(`${baseUrl}/statistics/transport/dispatch`, params),
+  receipt: (params?: {
+    staff_id: number | string
+    group: string
+    user_id: string
+    start_time: string
+    end_time: string
+  }) => http.get(`${baseUrl}/statistics/receipt/contents`, params),
 }
 export {
   statistics,
