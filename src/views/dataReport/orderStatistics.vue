@@ -31,7 +31,7 @@
         </svg>
         <span class="text">生产数据图表</span>
       </div>
-      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
+      <div class="tag" @click="$router.push('/dataReport/transportationOutboundStatistics')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-qitafeiyongtubiao"></use>
         </svg>
@@ -119,6 +119,9 @@
               下单公司：<span class="blue">{{ alias || '所有' }}</span>
             </div>
             <div>
+              <el-tooltip class="item" effect="dark" content="已默认将美元按汇率转为人民币" placement="top">
+                <i class="el-icon-info"></i>
+              </el-tooltip>
               币种：<span class="blue">{{ filterData.settle_unit || '所有' }}</span>
             </div>
             <div>

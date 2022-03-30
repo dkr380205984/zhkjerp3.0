@@ -310,6 +310,13 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/dataReport/workshopSalaryStatistics.vue')
     }, {
       meta: {
+        permissions_id: '20-13',
+      },
+      path: '/dataReport/transportationOutboundStatistics',
+      name: '运输出库图表',
+      component: () => import('../views/dataReport/transportationOutboundStatistics.vue')
+    }, {
+      meta: {
         permissions_id: '21-1',
       },
       path: '/billingManagement/rawMaterialPlan',

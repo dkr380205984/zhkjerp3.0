@@ -910,6 +910,13 @@ const statistics = {
     start_time: string
     end_time: string
   }) => http.get(`${baseUrl}/statistics/production/inspection`, params),
+  transportDispatch: (params?: {
+    group_id: number | string
+    user_id: number | string
+    client_id: string
+    start_time: string
+    end_time: string
+  }) => http.get(`${baseUrl}/statistics/transport/dispatch`, params),
 }
 export {
   statistics,

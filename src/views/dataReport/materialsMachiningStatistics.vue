@@ -31,7 +31,7 @@
         </svg>
         <span class="text">生产数据图表</span>
       </div>
-      <div class="tag" @click="$message.info('功能正在开发中，即将上线')">
+      <div class="tag" @click="$router.push('/dataReport/transportationOutboundStatistics')">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-qitafeiyongtubiao"></use>
         </svg>
@@ -294,7 +294,7 @@ export default Vue.extend({
           }
         },
         legend: {
-          data: []
+          data: ['加工数量', '加工金额']
         },
         xAxis: [
           {
@@ -308,112 +308,36 @@ export default Vue.extend({
         yAxis: [
           {
             type: 'value',
-            name: '',
+            name: '加工数量',
             min: 0,
             max: 25,
             interval: 5,
             axisLabel: {
-              formatter: '{value} 万元'
+              formatter: '{value} 吨或千米'
             }
           },
           {
             type: 'value',
-            name: '',
+            name: '加工金额',
             min: 0,
             max: 500,
             interval: 100,
             axisLabel: {
-              formatter: '{value} 万件'
+              formatter: '{value} 万元'
             }
           }
         ],
         series: [
           {
             type: 'bar',
+            name: '加工数量',
             data: []
           },
           {
             type: 'line',
+            name: '加工金额',
             yAxisIndex: 1,
             data: []
-          }
-        ]
-      },
-      groupOption: {
-        tooltip: {
-          trigger: 'item'
-        },
-        legend: {
-          top: '5%',
-          left: 'center'
-        },
-        series: [
-          {
-            type: 'pie',
-            radius: ['40%', '70%'],
-            avoidLabelOverlap: false,
-            label: {
-              show: false,
-              position: 'center'
-            },
-            emphasis: {
-              label: {
-                show: true,
-                fontSize: '40',
-                fontWeight: 'bold'
-              }
-            },
-            labelLine: {
-              show: false
-            },
-            data: []
-          }
-        ]
-      },
-      companyOption: {
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow'
-          }
-        },
-
-        dataZoom: [
-          //给y轴设置滚动条
-          {
-            start: 0, //默认为0
-            end: 100 - 1500 / 31, //默认为100
-            type: 'slider',
-            maxValueSpan: 10, //窗口的大小，显示数据的条数的
-            show: true,
-            handleSize: 0, //滑动条的 左右2个滑动条的大小
-            height: '70%', //组件高度
-            left: 650,
-            right: 15,
-            top: 50,
-            borderColor: 'rgba(43,48,67,.8)',
-            fillerColor: '#33384b',
-            zoomLock: true,
-            brushSelect: false,
-            backgroundColor: 'rgba(43,48,67,.8)', //两边未选中的滑动条区域的颜色
-            showDataShadow: false, //是否显示数据阴影 默认auto
-            showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
-            realtime: true, //是否实时更新
-            yAxisIndex: [0, 1] //控制的 y轴
-          }
-        ],
-        yAxis: {
-          type: 'category',
-          inverse: true,
-          data: []
-        },
-        xAxis: {
-          type: 'value'
-        },
-        series: [
-          {
-            data: [],
-            type: 'bar'
           }
         ]
       },
@@ -494,7 +418,7 @@ export default Vue.extend({
         group_id: '',
         order_type: '',
         client_id: '',
-        name: '',
+        name: ''
       }
       localStorage.create_user_name = ''
       this.filterData.start_time = new Date().getFullYear() + '-01-01'

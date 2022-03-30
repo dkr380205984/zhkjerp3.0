@@ -1,0 +1,56 @@
+@import '../common.less';
+@import '../card.less';
+@import '../list.less';
+@import '../bottomBar.less';
+
+#transportationOutboundStatistics {
+    .contentGrid {
+        display: grid;
+        grid-template-columns: 33.33% 33.33% 33.33%;
+        align-items: center;
+        grid-template-rows: 50px;
+    }
+
+    .screen{
+        height:52px;
+    }
+
+    .item2 {
+        grid-column-start: 2;
+        grid-column-end: 4;
+    }
+
+    h3,
+    h2 {
+        display: inline-block;
+        margin: 10px 0;
+    }
+
+    .tag {
+        border-radius: 18px;
+    }
+
+    .tab{
+        color:#A3A3A3;
+        font-size: 16px;
+        font-weight: normal;
+        padding-bottom: 5px;
+        cursor: pointer;
+    }
+
+    .tab.active{
+        color:#229CFB;
+        border-bottom: 2px solid #229CFB;
+    }
+
+    .unit {
+        margin-left: 10px;
+        color: #A3A3A3;
+        font-weight: normal;
+    }
+
+    .content {
+        width: 100%;
+        display: flex;
+    }
+}
