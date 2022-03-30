@@ -463,6 +463,7 @@ const materialPlan = {
     code?: string
     user_id?: string | number
     order_code?: string
+    is_check?: number
     type?: 1 | 2 // 1.原料计划单 2.辅料计划单
   }) => http.get(`${baseUrl}/material/plan/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/material/plan/detail`, params),
@@ -477,6 +478,13 @@ const materialOrder = {
     plan_id?: string | number
     order_id?: string | number
     client_id?: string | number
+    is_check?: string | number
+    limit?: string | number
+    page?: string | number
+    code?: string
+    start_time?: string
+    end_time?: string
+    user_id?: string | number
     reserve_id?: string | number // 预订购单
     top_order_id?: string | number // 最外层order_id
     material_type?: 1 | 2
@@ -577,6 +585,7 @@ const materialSupplement = {
     plan_id?: string | number
     order_id?: string | number // time_data里的
     client_id?: string | number
+    is_check?: string | number
     limit?: number
     page?: number
     start_time?: string

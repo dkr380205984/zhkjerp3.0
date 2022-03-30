@@ -13,7 +13,7 @@
             </div>
             <div class="info elCtn">
               <el-select v-model="receiptInfo.staff" filterable placeholder="请选择报销人" value-key="id">
-                <el-option v-for="item in staffList" :key="item.id" :label="item.name" :value="item"> </el-option>
+                <el-option v-for="item in staffList" :key="item.id" :label="item.code.substr(-4) + ' ' + item.name" :value="item"> </el-option>
               </el-select>
             </div>
           </div>

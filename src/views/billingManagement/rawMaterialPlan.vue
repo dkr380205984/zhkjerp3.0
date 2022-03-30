@@ -4,7 +4,7 @@
       <div class="titleCtn">
         <div class="title">系统单据管理</div>
       </div>
-       <div style="display: flex;justify-content: space-between;padding:15px 35px 0">
+      <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
         <div class="tab active">原料计划单</div>
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialSupplement')">原料补充单</div>
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialPurchaseOrder')">原料订购单</div>
@@ -60,72 +60,60 @@
           </div>
           <div class="btn borderBtn" @click="reset">重置</div>
         </div>
-        <div class="filterCtn" style="height: 33px">
-          <div class="btn backHoverBlue fl" style="margin:0" @click="$router.push('/order/create')">默认全部展开</div>
-        </div>
         <div class="list">
           <!-- 表格 -->
           <el-table
             ref="multipleTable"
             :data="list"
             tooltip-effect="dark"
-            :row-key="rowKey"
             style="width: 100%"
+            :row-key="rowKey"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-            <el-table-column label="计划单号">
+            <el-table-column type="selection" width="30" :reserve-selection="true"></el-table-column>
+            <el-table-column label="计划单号" width="140">
               <template slot-scope="scope">
-                <div style="cursor: pointer" @click="selectTableRow(scope.row)">{{ scope.row.code }}</div>
+                <div>{{ scope.row.code }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="关联订单号">
+            <el-table-column label="关联订单号" width="150">
               <template slot-scope="scope">
-                <div style="cursor: pointer" @click="selectTableRow(scope.row)">{{ scope.row.name }}</div>
+                <div>{{ scope.row.order_code }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="phone" label="合计计划生产数量"></el-table-column>
-            <el-table-column prop="department" label="合计计划原料数量"></el-table-column>
-            <el-table-column label="平均损耗">
-              <template slot-scope="scope">
-                {{ scope.row.type === '1' ? '临时工' : scope.row.type === '2' ? '合同工' : '状态有误' }}
-              </template>
+            <el-table-column prop="total_production_number" label="合计计划生产数量" width="90"></el-table-column>
+            <el-table-column prop="total_plan_number" label="合计计划原料数量" width="90"></el-table-column>
+            <el-table-column label="平均损耗" width="100">
+              <template slot-scope="scope"> {{ +(+scope.row.pre_loss).toFixed(2) }}% </template>
             </el-table-column>
-            <el-table-column prop="status" label="采购状态">
+            <el-table-column label="采购状态">
               <template slot-scope="scope">
-                <div :class="scope.row.status === 1 ? 'blue' : scope.row.status === 2 ? 'orange' : 'red'">
-                  {{ scope.row.status === 1 ? '在职' : scope.row.status === 2 ? '离职' : '状态有误' }}
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="status" label="审核状态">
-              <template slot-scope="scope">
-                <div :class="scope.row.status === 1 ? 'blue' : scope.row.status === 2 ? 'orange' : 'red'">
-                  {{ scope.row.status === 1 ? '在职' : scope.row.status === 2 ? '离职' : '状态有误' }}
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="status" label="创建人">
-              <template slot-scope="scope">
-                <div :class="scope.row.status === 1 ? 'blue' : scope.row.status === 2 ? 'orange' : 'red'">
-                  {{ scope.row.status === 1 ? '在职' : scope.row.status === 2 ? '离职' : '状态有误' }}
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="status" label="创建时间">
-              <template slot-scope="scope">
-                <div :class="scope.row.status === 1 ? 'blue' : scope.row.status === 2 ? 'orange' : 'red'">
-                  {{ scope.row.status === 1 ? '在职' : scope.row.status === 2 ? '离职' : '状态有误' }}
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column label="操作">
-              <template slot-scope="scope">
-                <span class="opr hoverBlue" @click="$router.push('/workerManage/detail?id=' + scope.row.id)">详情</span>
-                <span class="opr hoverOrange" @click="$router.push('/workerManage/update?id=' + scope.row.id)"
-                  >修改</span
+                <div
+                  class="green"
+                  v-if="scope.row.material_order_progress > 0 && scope.row.material_order_progress < 100"
                 >
-                <span class="opr hoverRed" @click="deleteWorker(scope.row)">离职</span>
+                  采购中
+                </div>
+                <div class="orange" v-if="scope.row.material_order_progress === 0">未进行</div>
+                <div class="blue" v-if="scope.row.material_order_progress >= 100">已完成</div>
+              </template>
+            </el-table-column>
+            <el-table-column label="审核状态">
+              <template slot-scope="scope">
+                <div :class="scope.row.status === 1 ? 'blue' : scope.row.status === 2 ? 'orange' : 'red'">
+                  {{ scope.row.status === 1 ? '在职' : scope.row.status === 2 ? '离职' : '状态有误' }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="user_name" label="创建人"></el-table-column>
+            <el-table-column prop="created_at" label="创建时间"></el-table-column>materialManage
+            <el-table-column label="操作" width="200">
+              <template slot-scope="scope">
+                <span class="opr hoverBlue" @click="$router.push('/materialManage/detail?id=' + scope.row.id)"
+                  >详情</span
+                >
+                <span class="opr hoverBlue" @click="openPrint(scope.row)">打印</span>
+                <span class="opr hoverBlue" @click="changeStatus(scope.row)">审核</span>
               </template>
             </el-table-column>
           </el-table>
@@ -171,7 +159,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { order, listSetting, exportExcel, client, statistics } from '@/assets/js/api'
+import { order, listSetting, exportExcel, client, statistics, materialPlan } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
 import { ListSetting } from '@/types/list'
 import { limitArr } from '@/assets/js/dictionary'
@@ -637,6 +625,22 @@ export default Vue.extend({
       }
       this.changeRouter()
     },
+    openPrint(items: any) {
+      materialPlan
+        .detail({
+          id: items.id
+        })
+        .then((res) => {
+          let idArr: any = []
+          res.data.data.material_plan_data.forEach((item: any) => {
+            idArr.push(item.id)
+          })
+          this.$openUrl('/materialPlan/print?id=' + items.id + '&proId=' + JSON.stringify(idArr))
+        })
+    },
+    changeStatus(row: any) {
+      console.log(row)
+    },
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)
@@ -740,83 +744,18 @@ export default Vue.extend({
         })
     },
     getList() {
-      this.loading = true
-      this.mainLoading1 = true
-      // this.option.xAxis[0].data = this.$getEveryDayDateByBetweenDate(
-      //   this.$GetDateStr(-3, 'MM-DD'),
-      //   this.$GetDateStr(14, 'MM-DD'),
-      //   'MM-DD'
-      // )
-      this.option.series[0].data = []
-      this.option.series[1].data = []
-      this.option.series[2].data = []
-      this.option.series[3].data = []
-      this.option.xAxis[0].data = []
-      statistics
-        .orderProgressChart({
-          order_type: 1,
-          keyword: this.keyword,
-          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
-          is_check: this.status,
-          status: this.type,
-          start_time: this.date.length > 0 ? this.date[0] : this.$GetDateStr(-3),
-          end_time: this.date.length > 0 ? this.date[1] : this.$GetDateStr(14),
-          user_id: this.user_id,
-          group_id: this.group_id
-        })
-        .then((res) => {
-          for (let key in res.data.data) {
-            let hasNumber = Object.values(res.data.data[key]).find((res: any) => {
-              return res > 0
-            })
-            this.showCharts = !!hasNumber || this.showCharts
-            this.option.series[0].data.push(res.data.data[key].completed)
-            this.option.series[3].data.push(res.data.data[key].order_number)
-            if (this.option.series[0].length < 4) {
-              this.option.series[2].data.push(0)
-              this.option.series[1].data.push(res.data.data[key].postpone)
-            } else {
-              this.option.series[1].data.push(0)
-              this.option.series[2].data.push(res.data.data[key].postpone)
-            }
-
-            if (key === new Date().getMonth() + 1 + '-' + new Date().getDate()) {
-              let obj = {
-                value: key + '\n今日',
-                textStyle: {
-                  fontSize: 16,
-                  color: '#1A95FF'
-                }
-              }
-              this.option.xAxis[0].data.push(obj)
-              continue
-            }
-            this.option.xAxis[0].data.push(key)
-          }
-          this.mainLoading1 = false
-        })
-
-      order
+      materialPlan
         .list({
-          order_type: 1,
-          keyword: this.keyword,
-          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
-          page: this.page,
-          limit: this.limit,
           is_check: this.status,
-          status: this.type,
-          start_time: this.date.length > 0 ? this.date[0] : '',
-          end_time: this.date.length > 0 ? this.date[1] : '',
+          code: this.keyword,
           user_id: this.user_id,
-          group_id: this.group_id,
-          contacts_id: this.contacts_id
+          start_time: this.date[0],
+          end_time: this.date[1],
+          limit: this.limit,
+          page: this.page
         })
         .then((res) => {
           if (res.data.status) {
-            res.data.data.items.map((item: any) => {
-              this.$set(item, 'isCheck', false)
-              return item
-            })
             this.list = res.data.data.items
             this.total = res.data.data.total
           }
