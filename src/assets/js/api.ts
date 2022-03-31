@@ -557,7 +557,7 @@ import { MaterialStockInfo } from '@/types/materialStock'
 const materialStock = {
   create: (params: { data: MaterialStockInfo[] }) => http.post(`${baseUrl}/store/log/save`, params, 'application/json'),
   list: (params: {
-    action_type?: number // 搜调取单的时候用，一般是出库单10
+    action_type?: number | Array<number> // 搜调取单的时候用，一般是出库单10
     order_id?: string | number
     client_id?: string | number
     is_check?: string | number
