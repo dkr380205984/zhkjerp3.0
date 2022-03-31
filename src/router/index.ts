@@ -581,7 +581,7 @@ const routes: Array<RouteConfig> = [
       path: '/workshopManagement/detail',
       name: '车间管理详情',
       component: () => import('../views/workshopManagement/detail.vue')
-    }, 
+    },
     {
       meta: {
         permissions_id: '11-3',
@@ -635,6 +635,34 @@ const routes: Array<RouteConfig> = [
       path: '/tutorialSystem/list',
       name: '系统教程列表',
       component: () => import('../views/tutorialSystem/list.vue')
+    }, {
+      meta: {
+        permissions_id: '22-1',
+      },
+      path: '/settlement/collectionList',
+      name: '客户收款列表',
+      component: () => import('../views/settlement/collectionList.vue')
+    }, {
+      meta: {
+        permissions_id: '22-2',
+      },
+      path: '/settlement/collectionDetail',
+      name: '客户收款详情',
+      component: () => import('../views/settlement/collectionDetail.vue')
+    }, {
+      meta: {
+        permissions_id: '22-3',
+      },
+      path: '/settlement/paymentList',
+      name: '客户付款列表',
+      component: () => import('../views/settlement/paymentList.vue')
+    }, {
+      meta: {
+        permissions_id: '22-4',
+      },
+      path: '/settlement/paymentDetail',
+      name: '客户付款详情',
+      component: () => import('../views/settlement/paymentDetail.vue')
     }]
   }
 ]

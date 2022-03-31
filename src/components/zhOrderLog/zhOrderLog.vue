@@ -234,6 +234,31 @@
               </div>
             </div>
             <div class="trow"
+              v-if="showWhich.weave_plan && orderLogInfo.weave_plan.length>0">
+              <div class="tcol">生产管理</div>
+              <div class="tcol noPad"
+                style="flex:5">
+                <div class="trow">
+                  <div class="tcol">生产日志</div>
+                  <div class="tcol noPad"
+                    style="flex:4">
+                    <div class="trow"
+                      v-for="(item,index) in orderLogInfo.weave_plan"
+                      :key="index">
+                      <div class="tcol">{{item.code || '无'}}</div>
+                      <div class="tcol">{{item.user_name}}</div>
+                      <div class="tcol">{{item.created_at}}</div>
+                      <div class="tcol oprCtn"
+                        style="justify-content:start">
+                        <span class="blue opr"
+                          @click="$openUrl('/productionPlan/detail?id='+order_id+'&supFlag=true')">详情</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="trow"
               v-if="showWhich.inspection && (orderLogInfo.inspection.push.length>0||orderLogInfo.inspection.pop.length>0)">
               <div class="tcol">检验收发</div>
               <div class="tcol noPad"
@@ -404,7 +429,8 @@ export default Vue.extend({
           material_push: true,
           pack: true,
           production_inspection: true,
-          transport: true
+          transport: true,
+          weave_plan: true
         }
       }
     }
@@ -435,7 +461,8 @@ export default Vue.extend({
           order: []
         },
         production_inspection: [],
-        transport: []
+        transport: [],
+        weave_plan: []
       }
     }
   },

@@ -260,8 +260,7 @@
                     </el-cascader>
                   </div>
                 </div>
-                <div class="col"
-                  v-if="materialPlanOrderDetail.material_type===1">
+                <div class="col">
                   <div class="label spaceBetween"
                     v-if="indexMat===0">
                     <div class="once">
@@ -276,18 +275,17 @@
                   <div class="info elCtn spaceBetween">
                     <el-select class="once"
                       placeholder="属性"
-                      v-model="itemMat.attribute">
+                      v-model="itemMat.attribute"
+                      v-if="materialPlanOrderDetail.material_type===1">
                       <el-option v-for="item in yarnAttributeList"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value"></el-option>
                     </el-select>
-                    <template>
-                      <el-autocomplete class="once"
-                        v-model="itemMat.material_color"
-                        :fetch-suggestions="searchColor"
-                        placeholder="物料颜色"></el-autocomplete>
-                    </template>
+                    <el-autocomplete class="once"
+                      v-model="itemMat.material_color"
+                      :fetch-suggestions="searchColor"
+                      placeholder="物料颜色"></el-autocomplete>
                   </div>
                 </div>
                 <div class="col">
@@ -766,10 +764,10 @@ export default Vue.extend({
             key: 'material_id',
             errMsg: '请选择物料名称'
           },
-          {
-            key: 'attribute',
-            errMsg: '请选择物料属性'
-          },
+          // {
+          //   key: 'attribute',
+          //   errMsg: '请选择物料属性'
+          // },
           {
             key: 'material_color',
             errMsg: '请选择物料颜色'

@@ -572,10 +572,15 @@ export default Vue.extend({
           }).sort((a: any, b: any) => {
             if (a.process_name === '针织织造' || a.name === '梭织织造') {
               return 1
-            } else {
+            } else if (b.process_name === '针织织造' || b.name === '梭织织造') {
               return -1
+            } else {
+              return 0
             }
           })
+          this.productionPlanMergeList.reverse()
+          // 类型为梭织织造、针织织造的永远排在切换按钮的最前面的代码截至到这一句
+
           this.productionPlanIndex = this.productionPlanMergeList[0].process_name
           if (this.$route.query.isBarcodeScanner === 'true') {
             const finded: any = this.productionPlanMergeList.find(

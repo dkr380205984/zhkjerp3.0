@@ -300,7 +300,7 @@ export default Vue.extend({
         this.page = 1
       }
       this.$router.push(
-        '/packManage/list?page=' +
+        '/boxManage/orderList?page=' +
           this.page +
           '&keyword=' +
           this.keyword +

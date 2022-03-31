@@ -59,8 +59,15 @@
                 v-for="itemPro in itemBatch.product_data"
                 :key="itemPro.id">
                 <div class="tcol">
-                  <span>{{itemPro.product_code||itemPro.system_code||'无编号'}}</span>
-                  <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
+                  <el-checkbox v-model="itemPro.check"
+                    @change="(ev)=>{
+                      itemPro.product_info.forEach((itemChild)=>{
+                        itemChild.check = ev
+                      })
+                      $forceUpdate()}">
+                    <span>{{itemPro.product_code||itemPro.system_code||'无编号'}}</span>
+                    <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
+                  </el-checkbox>
                 </div>
                 <div class="tcol">
                   <div class="imageCtn">
@@ -81,7 +88,8 @@
                     v-for="(itemChild,indexChild) in itemPro.product_info"
                     :key="indexChild">
                     <div class="tcol">
-                      <el-checkbox v-model="itemChild.check">{{itemChild.size_name}}/{{itemChild.color_name}}</el-checkbox>
+                      <el-checkbox v-model="itemChild.check"
+                        @change="$forceUpdate()">{{itemChild.size_name}}/{{itemChild.color_name}}</el-checkbox>
                     </div>
                     <div class="tcol">{{itemChild.number}}</div>
                     <div class="tcol"
@@ -424,10 +432,10 @@
                 <div class="tcol">{{itemChild.pack_material_name}}</div>
                 <div class="tcol">
                   <template v-if="Number(itemChild.price_type)===1">
-                    {{itemChild.length}}*{{itemChild.width}}*{{itemChild.height}}m
+                    {{itemChild.length}}*{{itemChild.width}}*{{itemChild.height}}cm
                   </template>
                   <template v-else-if="Number(itemChild.price_type)===2">
-                    {{itemChild.length}}*{{itemChild.width}}m
+                    {{itemChild.length}}*{{itemChild.width}}cm
                   </template>
                   <template v-else-if="Number(itemChild.price_type)===3">
                     {{itemChild.length}}

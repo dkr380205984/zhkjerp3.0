@@ -116,6 +116,34 @@ const deduct = {
     }) => http.post(`${baseUrl}/doc/deduct`, params, 'application/json'),
 }
 
+// 单据收款
+const collection = {
+  list: (params: {
+    order_id: string
+    client_id: string
+    order_code: string
+    code: string
+    start_time: string
+    end_time: string
+    user_id: string,
+    page: number
+    limit: number
+  }) => http.get(`${baseUrl}/doc/collect/lists`, params),
+  create: (params: {
+    id?: string
+    order_id: number | string
+    doc_type: number
+    client_id: number | string
+    data: Array<{
+      doc_code: string
+      rel_doc_id: number | string
+      desc: string
+      complete_time: string
+      price: string
+    }>
+  }) => http.post(`${baseUrl}/doc/collect/save`, params, 'application/json'),
+}
+
 // 产品品类
 import { CategoryInfo } from '@/types/productSetting'
 const category = {
@@ -292,7 +320,9 @@ const client = {
     only_delete?: number
   }) => http.get(`${baseUrl}/client/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/client/delete`, params, 'application/json'),
-  check: (params: DetailParams) => http.post(`${baseUrl}/client/check/status`, params, 'application/json') // 启用/禁用客户
+  check: (params: DetailParams) => http.post(`${baseUrl}/client/check/status`, params, 'application/json'), // 启用/禁用客户
+  financialList: (params: any) => http.get(`${baseUrl}/financial/client/lists`, params), // 收款列表
+  financialDetail: (params: DetailParams) => http.get(`${baseUrl}/financial/client/detail`, params),
 }
 
 // 公司类型
@@ -844,7 +874,7 @@ const statistics = {
     order_type: number | string
     user_id: number | string
     group_id: number | string
-    client_id:number | string
+    client_id: number | string
     contacts_id: number | string
     name: string
     start_time: string
@@ -854,7 +884,7 @@ const statistics = {
     order_type: number | string
     user_id: number | string
     group_id: number | string
-    store_id:number | string
+    store_id: number | string
     name: string
     start_time: string
     end_time: string
@@ -864,7 +894,7 @@ const statistics = {
     user_id: number | string
     group_id: number | string
     name: string
-    client_id:number | string
+    client_id: number | string
     start_time: string
     end_time: string
   }) => http.get(`${baseUrl}/statistics/rawmaterial/process`, params),
@@ -914,6 +944,7 @@ export {
   category,
   check,
   deduct,
+  collection,
   style,
   ingredient,
   getCoder,
