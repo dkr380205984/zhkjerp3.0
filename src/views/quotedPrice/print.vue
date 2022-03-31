@@ -65,7 +65,8 @@
                   <div class="tcol bgGray">产品图片</div>
                   <div class="tcol bgGray">客户目标价格</div>
                   <div class="tcol bgGray">客户最低起订量</div>
-                  <div class="tcol bgGray big">产品描述/客户要求</div>
+                  <div class="tcol bgGray big"
+                    style="flex:2">产品描述/客户要求</div>
                 </div>
                 <div class="trow">
                   <div class="tcol">{{ item.category_name }}/{{ item.secondary_category }}</div>
@@ -84,7 +85,9 @@
                   </div>
                   <div class="tcol">{{ item.client_target_price }}元</div>
                   <div class="tcol">{{ item.start_order_number }}</div>
-                  <div class="tcol big">{{ item.desc }}</div>
+                  <div class="tcol big"
+                    v-html="item.desc"
+                    style="flex:2"></div>
                 </div>
               </div>
             </div>
