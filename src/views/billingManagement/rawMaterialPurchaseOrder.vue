@@ -1,5 +1,5 @@
 <template>
-  <div id="rawMaterialPurchaseOrder" v-loading="mainLoading1" class="bodyContainer">
+  <div id="rawMaterialPurchaseOrder" v-loading="loading" class="bodyContainer">
     <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">系统单据管理</div>
@@ -22,9 +22,23 @@
           <div class="elCtn">
             <el-input
               v-model="keyword"
-              placeholder="筛选报价/产品/样品编号"
+              placeholder="筛选订购单号/订单号"
               @keydown.enter.native="changeRouter"
             ></el-input>
+          </div>
+          <div class="elCtn">
+            <el-cascader
+              @change="
+                getContacts($event)
+                changeRouter()
+              "
+              placeholder="筛选下单公司"
+              v-model="client_id"
+              filterable
+              :options="clientList"
+              clearable
+            >
+            </el-cascader>
           </div>
           <div class="elCtn">
             <el-select
@@ -51,6 +65,9 @@
             >
             </el-date-picker>
           </div>
+          <div class="btn borderBtn" @click="reset">重置</div>
+        </div>
+        <div class="filterCtn">
           <div class="elCtn">
             <el-select @change="changeRouter" v-model="status" placeholder="筛选审核状态">
               <el-option value="null" label="全部"></el-option>
@@ -58,61 +75,152 @@
               <el-option value="2" label="待审核"></el-option>
             </el-select>
           </div>
-          <div class="btn borderBtn" @click="reset">重置</div>
         </div>
         <div class="list">
-          <!-- 表格 -->
-          <el-table
-            ref="multipleTable"
-            :data="list"
-            tooltip-effect="dark"
-            style="width: 100%"
-            :row-key="rowKey"
-            @selection-change="handleSelectionChange"
-          >
-            <el-table-column type="selection" width="30" :reserve-selection="true"></el-table-column>
-            <el-table-column label="订购单号" width="145">
-              <template slot-scope="scope">
-                <div>{{ scope.row.code }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column label="关联订单号">
-              <template slot-scope="scope">
-                <div>{{ scope.row.order_code }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="client_name" label="订购单位"></el-table-column>
-            <el-table-column prop="total_number" label="合计订购数量"  width="70"></el-table-column>
-            <el-table-column prop="total_price" label="合计订购金额" width="70">
-                <template slot-scope="scope">
-                <div>
-                  {{ +scope.row.total_price }}
+          <div class="row title">
+            <div class="col" style="flex: 0.05"><el-checkbox @change="checkAll"></el-checkbox></div>
+            <div class="col" style="flex: 1.2">订购单号</div>
+            <div class="col">关联订单号</div>
+            <div class="col">订购单位</div>
+            <div class="col" style="flex: 0.5">合计订购数量</div>
+            <div class="col" style="flex: 0.5">合计订购金额</div>
+            <div class="col" style="flex: 0.5">合计入库数量</div>
+            <div class="col" style="flex: 0.5">合计入库金额</div>
+            <div class="col">审核状态</div>
+            <div class="col">创建人</div>
+            <div class="col">创建时间</div>
+            <div class="col" style="flex: 1.4">操作</div>
+          </div>
+          <div v-for="(item, index) in list" :key="index">
+            <div class="row">
+              <div class="col" style="flex: 0.05"><el-checkbox v-model="item.checked"></el-checkbox></div>
+              <div class="col" style="flex: 1.2">{{ item.code }}</div>
+              <div class="col">{{ item.order_code }}</div>
+              <div class="col">{{ item.client_name }}</div>
+              <div class="col" style="flex: 0.5">{{ item.total_number }}</div>
+              <div class="col" style="flex: 0.5">{{ +item.total_price }}</div>
+              <div class="col" style="flex: 0.5">{{ item.total_push_number }}</div>
+              <div class="col" style="flex: 0.5">{{ item.total_push_price }}</div>
+              <div class="col">
+                <div :class="item.status === 1 ? 'blue' : item.status === 2 ? 'orange' : 'red'">
+                  {{ item.status === 1 ? '在职' : item.status === 2 ? '离职' : '状态有误' }}
                 </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="total_push_number" label="合计入库数量" width="70"></el-table-column>
-            <el-table-column prop="total_push_price" label="合计入库金额" width="70"></el-table-column>
-            <el-table-column label="审核状态">
-              <template slot-scope="scope">
-                <div :class="scope.row.status === 1 ? 'blue' : scope.row.status === 2 ? 'orange' : 'red'">
-                  {{ scope.row.status === 1 ? '在职' : scope.row.status === 2 ? '离职' : '状态有误' }}
+              </div>
+              <div class="col">{{ item.user_name }}</div>
+              <div class="col">{{ item.created_at }}</div>
+              <div class="col" style="flex: 1.4">
+                <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
+                <span class="opr hoverBlue" @click="openPrint(item)">打印</span>
+                <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
+              </div>
+            </div>
+            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px)">
+              <div class="titleCtn">
+                <div class="title">订购信息</div>
+              </div>
+              <div class="tableCtn">
+                <div class="thead">
+                  <div class="trow">
+                    <div class="tcol">原料名称</div>
+                    <div class="tcol">订购颜色</div>
+                    <div class="tcol">{{ $route.query.supFlag ? '补纱单' : '计划单' }}颜色</div>
+                    <div class="tcol">订购属性</div>
+                    <div class="tcol">订购数量</div>
+                    <div class="tcol">订购单价</div>
+                  </div>
                 </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="user_name" label="创建人"></el-table-column>
-            <el-table-column prop="created_at" label="创建时间"></el-table-column>materialManage
-            <el-table-column label="操作" width="200">
-              <template slot-scope="scope">
-                <span
-                  class="opr hoverBlue"
-                  @click="$router.push('/materialManage/detail?id=' + scope.row.id + '&supFlag=1')"
-                  >详情</span
-                >
-                <span class="opr hoverBlue" @click="openPrint(scope.row)">打印</span>
-                <span class="opr hoverBlue" @click="changeStatus(scope.row)">审核</span>
-              </template>
-            </el-table-column>
-          </el-table>
+                <div class="tbody">
+                  <div class="trow" v-for="(itemChild, indexChild) in item.detail.info_data" :key="indexChild">
+                    <div class="tcol">{{ itemChild.material_name }}</div>
+                    <div class="tcol">{{ itemChild.material_color }}</div>
+                    <div class="tcol">{{ itemChild.sup_color || itemChild.plan_color || '无' }}</div>
+                    <div class="tcol">{{ itemChild.attribute }}</div>
+                    <div class="tcol">{{ itemChild.number }}{{ itemChild.unit }}</div>
+                    <div class="tcol">{{ itemChild.price }}元</div>
+                  </div>
+                </div>
+              </div>
+              <div class="titleCtn" style="margin-top: 32px" v-if="item.detail.process_info.length > 0">
+                <div class="title">加工信息</div>
+              </div>
+              <div class="tableCtn" v-if="item.detail.process_info.length > 0">
+                <div class="thead">
+                  <div class="trow">
+                    <div class="tcol">加工单号</div>
+                    <div class="tcol">加工单位</div>
+                    <div class="tcol" style="flex: 0.5">工序</div>
+                    <div class="tcol noPad" style="flex: 3">
+                      <div class="trow">
+                        <div class="tcol">纱线名称</div>
+                        <div class="tcol">加工详情</div>
+                        <div class="tcol" style="flex: 0.5">数量</div>
+                        <div class="tcol" style="flex: 0.5">单价</div>
+                      </div>
+                    </div>
+                    <div class="tcol" style="flex: 0.8">截止日期</div>
+                    <div class="tcol">备注信息</div>
+                    <div class="tcol">额外费用</div>
+                  </div>
+                </div>
+                <div class="tbody" style="font-size: 14px">
+                  <div class="trow" v-for="itemProcess in item.detail.process_info" :key="itemProcess.id">
+                    <div class="tcol">
+                      <span class="overText"
+                        >{{ itemProcess.code }}
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          :content="
+                            '创建日期：' + itemProcess.created_at.slice(0, 10) + ';创建人：' + itemProcess.user_name
+                          "
+                          placement="top"
+                        >
+                          <i class="el-icon-timer hoverBlue"></i>
+                        </el-tooltip>
+                      </span>
+                    </div>
+                    <div class="tcol">{{ itemProcess.client_name }}</div>
+                    <div class="tcol" style="flex: 0.5">{{ itemProcess.process }}</div>
+                    <div class="tcol noPad" style="flex: 3">
+                      <div class="trow" v-for="(itemMat, indexMat) in itemProcess.info_data" :key="indexMat">
+                        <div class="tcol">{{ itemMat.material_order_name }}</div>
+                        <div class="tcol">
+                          <template v-if="itemProcess.process === '染色'">
+                            <div class="changeCtn">
+                              <span>白胚</span>
+                              <span class="el-icon-s-unfold blue"></span>
+                              <span>{{ itemMat.after_color }}</span>
+                            </div>
+                          </template>
+                          <template v-if="itemProcess.process === '倒纱'">
+                            <span>{{ itemMat.before_attribute }}</span>
+                            <span class="el-icon-s-unfold blue"></span>
+                            <span>{{ itemMat.after_attribute }}</span>
+                          </template>
+                          <template v-if="itemProcess.process === '并线'">
+                            <span>{{ itemMat.bingxian_desc }}</span>
+                          </template>
+                          <template v-if="itemProcess.process === '膨纱'">
+                            <span>{{ itemMat.pengsha_desc }}</span>
+                          </template>
+                          <template v-if="itemProcess.process === '切割'">
+                            <span>{{ itemMat.qiege_desc }}</span>
+                          </template>
+                        </div>
+                        <div class="tcol" style="flex: 0.5">{{ itemMat.number }}{{ itemMat.unit }}</div>
+                        <div class="tcol" style="flex: 0.5">{{ itemMat.price }}元</div>
+                      </div>
+                    </div>
+                    <div class="tcol" style="flex: 0.8">{{ itemProcess.delivery_time }}</div>
+                    <div class="tcol">{{ itemProcess.desc || '无备注' }}</div>
+                    <div class="tcol">
+                      <others-fee-data :data="itemProcess.others_fee_data"></others-fee-data>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="pageCtn">
           <el-pagination
@@ -160,10 +268,10 @@ import { OrderInfo } from '@/types/order'
 import { ListSetting } from '@/types/list'
 import { limitArr } from '@/assets/js/dictionary'
 import zhExportSetting from '@/components/zhExportSetting/zhExportSetting.vue'
-import zhCharts from '@/components/zhCharts/zhCharts.vue'
+import othersFeeData from '@/components/zhExportSetting/zhExportSetting.vue'
 import zhDropDown from '@/components/zhDropDown/zhDropDown.vue'
 export default Vue.extend({
-  components: { zhExportSetting, zhCharts, zhDropDown },
+  components: { zhExportSetting, zhDropDown, othersFeeData },
   data(): {
     originalSetting: ListSetting[]
     list: OrderInfo[]
@@ -188,92 +296,6 @@ export default Vue.extend({
         show_row: [],
         start_time: '',
         end_time: ''
-      },
-      option: {
-        color: ['#229CFB', '#2DD59A', '#FCCA24', '#000000'],
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'cross',
-            crossStyle: {
-              color: '#999'
-            }
-          },
-          formatter: (params: any) => {
-            let htmlStr = `
-              <div>
-                ${params[0].axisValueLabel}</br>
-            `
-            let number = 0
-            params.forEach((param: any) => {
-              if (param.data && param.seriesName !== '订单数') {
-                number += param.data
-              }
-            })
-            htmlStr += `发货数量：${number}<br/>`
-            params.forEach((param: any) => {
-              if (param.data) {
-                htmlStr +=
-                  param.marker +
-                  `<span style="margin-left:10px">${param.seriesName}</span><span style="margin-left:10px">${param.data}</span></br>`
-              }
-            })
-            return htmlStr + '</div>'
-          }
-        },
-        legend: {
-          data: []
-        },
-        xAxis: [
-          {
-            type: 'category',
-            data: [],
-            axisPointer: {
-              type: 'shadow'
-            },
-            axisLabel: {
-              interval: 0
-            }
-          }
-        ],
-        yAxis: [
-          {
-            type: 'value',
-            name: '',
-            show: false
-          },
-          {
-            type: 'value',
-            name: '订单数',
-            show: false
-          }
-        ],
-        series: [
-          {
-            type: 'bar',
-            name: '已完成',
-            stack: '0',
-            data: []
-          },
-          {
-            type: 'bar',
-            stack: '0',
-            name: '进行中',
-            data: []
-          },
-          {
-            type: 'bar',
-            name: '已延期',
-            stack: '0',
-            data: []
-          },
-          {
-            type: 'line',
-            yAxisIndex: 1,
-            name: '订单数',
-            data: []
-          }
-        ]
       },
       group_id: '',
       user_id: '',
@@ -627,6 +649,12 @@ export default Vue.extend({
     changeStatus(row: any) {
       console.log(row)
     },
+    checkAll(res: Boolean) {
+      this.list.forEach((item: any) => {
+        item.checked = res
+      })
+      this.$forceUpdate()
+    },
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)
@@ -742,11 +770,37 @@ export default Vue.extend({
         })
         .then((res) => {
           if (res.data.status) {
+            res.data.data.items.forEach((item: any) => {
+              item.detail = {
+                  process_info:[]
+              }
+            })
             this.list = res.data.data.items
             this.total = res.data.data.total
           }
           this.loading = false
         })
+    },
+    changeShow(item: any) {
+      this.loading = true
+      if (!item.detail.code) {
+        materialOrder
+          .detail({
+            id: item.id
+          })
+          .then((ress) => {
+            if (ress.status) {
+              item.detail = ress.data.data
+              item.isShow = true
+            }
+            this.loading = false
+          })
+      } else {
+        item.isShow = !item.isShow
+        this.loading = false
+      }
+
+      this.$forceUpdate()
     },
     getListSetting() {
       this.listKey = []

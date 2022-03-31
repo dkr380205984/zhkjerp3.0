@@ -1,5 +1,5 @@
 <template>
-  <div id="rawMaterialPlan" v-loading="mainLoading1" class="bodyContainer">
+  <div id="rawMaterialPlan" v-loading="loading" class="bodyContainer">
     <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">系统单据管理</div>
@@ -22,7 +22,7 @@
           <div class="elCtn">
             <el-input
               v-model="keyword"
-              placeholder="筛选报价/产品/样品编号"
+              placeholder="筛选计划单号/订单号"
               @keydown.enter.native="changeRouter"
             ></el-input>
           </div>
@@ -61,62 +61,155 @@
           <div class="btn borderBtn" @click="reset">重置</div>
         </div>
         <div class="list">
-          <!-- 表格 -->
-          <el-table
-            ref="multipleTable"
-            :data="list"
-            tooltip-effect="dark"
-            style="width: 100%"
-            :row-key="rowKey"
-            @selection-change="handleSelectionChange"
-          >
-            <el-table-column type="selection" width="30" :reserve-selection="true"></el-table-column>
-            <el-table-column label="计划单号" width="140">
-              <template slot-scope="scope">
-                <div>{{ scope.row.code }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column label="关联订单号" width="150">
-              <template slot-scope="scope">
-                <div>{{ scope.row.order_code }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="total_production_number" label="合计计划生产数量" width="90"></el-table-column>
-            <el-table-column prop="total_plan_number" label="合计计划原料数量" width="90"></el-table-column>
-            <el-table-column label="平均损耗" width="100">
-              <template slot-scope="scope"> {{ +(+scope.row.pre_loss).toFixed(2) }}% </template>
-            </el-table-column>
-            <el-table-column label="采购状态">
-              <template slot-scope="scope">
-                <div
-                  class="green"
-                  v-if="scope.row.material_order_progress > 0 && scope.row.material_order_progress < 100"
-                >
+          <div class="row title">
+            <div class="col" style="flex: 0.05"><el-checkbox @change="checkAll"></el-checkbox></div>
+            <div class="col" style="flex: 1.2">计划单号</div>
+            <div class="col">关联订单号</div>
+            <div class="col">合计计划<br />生产数量</div>
+            <div class="col">合计计划<br />原料数量</div>
+            <div class="col">平均损耗</div>
+            <div class="col">采购状态</div>
+            <div class="col">审核状态</div>
+            <div class="col">创建人</div>
+            <div class="col">创建时间</div>
+            <div class="col" style="flex: 1.4">操作</div>
+          </div>
+          <div v-for="(item, index) in list" :key="index">
+            <div class="row">
+              <div class="col" style="flex: 0.05"><el-checkbox v-model="item.checked"></el-checkbox></div>
+              <div class="col" style="flex: 1.2">{{ item.code }}</div>
+              <div class="col">{{ item.order_code }}</div>
+              <div class="col">{{ item.total_production_number }}</div>
+              <div class="col">{{ item.total_plan_number }}</div>
+              <div class="col">{{ item.pre_loss }}</div>
+              <div class="col">
+                <div class="green" v-if="item.material_order_progress > 0 && item.material_order_progress < 100">
                   采购中
                 </div>
-                <div class="orange" v-if="scope.row.material_order_progress === 0">未进行</div>
-                <div class="blue" v-if="scope.row.material_order_progress >= 100">已完成</div>
-              </template>
-            </el-table-column>
-            <el-table-column label="审核状态">
-              <template slot-scope="scope">
-                <div :class="scope.row.status === 1 ? 'blue' : scope.row.status === 2 ? 'orange' : 'red'">
-                  {{ scope.row.status === 1 ? '在职' : scope.row.status === 2 ? '离职' : '状态有误' }}
+                <div class="orange" v-if="item.material_order_progress === 0">未进行</div>
+                <div class="blue" v-if="item.material_order_progress >= 100">已完成</div>
+              </div>
+              <div class="col">
+                <div :class="item.status === 1 ? 'blue' : item.status === 2 ? 'orange' : 'red'">
+                  {{ item.status === 1 ? '在职' : item.status === 2 ? '离职' : '状态有误' }}
                 </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="user_name" label="创建人"></el-table-column>
-            <el-table-column prop="created_at" label="创建时间"></el-table-column>materialManage
-            <el-table-column label="操作" width="200">
-              <template slot-scope="scope">
-                <span class="opr hoverBlue" @click="$router.push('/materialManage/detail?id=' + scope.row.id)"
-                  >详情</span
-                >
-                <span class="opr hoverBlue" @click="openPrint(scope.row)">打印</span>
-                <span class="opr hoverBlue" @click="changeStatus(scope.row)">审核</span>
-              </template>
-            </el-table-column>
-          </el-table>
+              </div>
+              <div class="col">{{ item.user_name }}</div>
+              <div class="col">{{ item.created_at }}</div>
+              <div class="col" style="flex: 1.4">
+                <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
+                <span class="opr hoverBlue" @click="openPrint(item)">打印</span>
+                <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
+              </div>
+            </div>
+            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px)">
+              <div class="titleCtn" style="border-bottom: 0">
+                <div class="title">生产计划</div>
+              </div>
+              <div class="tableCtn">
+                <div class="thead">
+                  <div class="trow">
+                    <div class="tcol">产品品类</div>
+                    <div class="tcol noPad" style="flex: 7">
+                      <div class="trow">
+                        <div class="tcol">尺码颜色</div>
+                        <div class="tcol">下单数量</div>
+                        <div class="tcol">已计划</div>
+                        <div class="tcol">总数量百分比</div>
+                        <div class="tcol noPad" style="flex: 2">
+                          <div class="trow">
+                            <div class="tcol">产品部位</div>
+                            <div class="tcol">计划生产数量</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tbody">
+                  <div class="trow" v-for="itemSon in item.detail.production_plan_data" :key="itemSon.product_id">
+                    <div class="tcol">
+                      <span>{{ itemSon.product_code || itemSon.system_code }}</span>
+                      <span>{{ itemSon.category }}/{{ itemSon.secondary_category }}</span>
+                    </div>
+                    <div class="tcol noPad" style="flex: 7">
+                      <div class="trow" v-for="(itemChild, indexChild) in itemSon.product_data" :key="indexChild">
+                        <div class="tcol">{{ itemChild.size_name }}/{{ itemChild.color_name }}</div>
+                        <div class="tcol">{{ itemChild.order_number }}</div>
+                        <div class="tcol">
+                          {{
+                            itemChild.info_data.reduce((total, cur) => {
+                              return total + cur.number
+                            }, 0)
+                          }}
+                        </div>
+                        <div class="tcol">{{ itemChild.add_percent }}%</div>
+                        <div class="tcol noPad" style="flex: 2">
+                          <div class="trow" v-for="(itemPart, indexPart) in itemChild.info_data" :key="indexPart">
+                            <div class="tcol">{{ itemPart.part_name }}</div>
+                            <div class="tcol">{{ itemPart.number }}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="titleCtn" style="border-bottom: 0">
+                <div class="title">工序物料详情</div>
+              </div>
+              <div class="tableCtn">
+                <div class="thead">
+                  <div class="trow">
+                    <div class="tcol" style="flex: 1.3">产品信息</div>
+                    <div class="tcol">尺码颜色</div>
+                    <div class="tcol">产品部位</div>
+                    <div class="tcol">计划生产数量</div>
+                    <div class="tcol noPad" style="flex: 6">
+                      <div class="trow">
+                        <div class="tcol">工序名称</div>
+                        <div class="tcol">物料名称</div>
+                        <div class="tcol">物料颜色</div>
+                        <div class="tcol">损耗</div>
+                        <div class="tcol">合计最终数量</div>
+                        <div class="tcol">平均所需物料</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tbody">
+                  <div class="trow" v-for="(itemSon, index) in item.detail.material_plan_data" :key="index + 'i'">
+                    <div class="tcol" style="flex: 1.3">
+                      <div>{{ itemSon.product_code || itemSon.system_code }}</div>
+                      <div>{{ itemSon.category }}/{{ itemSon.secondary_category }}</div>
+                    </div>
+                    <div class="tcol">{{ itemSon.size_name }}/{{ itemSon.color_name }}</div>
+                    <div class="tcol">{{ itemSon.part_name }}</div>
+                    <div class="tcol">{{ itemSon.number }}</div>
+                    <div class="tcol noPad" style="flex: 6">
+                      <div class="trow" v-if="itemSon.info_data.length === 0">
+                        <div class="tcol gray" style="text-align: center">不需要物料</div>
+                      </div>
+                      <div class="trow" v-for="(itemChild, indexChild) in itemSon.info_data" :key="indexChild">
+                        <div class="tcol">{{ itemChild.process_name }}</div>
+                        <div class="tcol">{{ itemChild.material_name }}</div>
+                        <div class="tcol">{{ itemChild.material_color }}</div>
+                        <div class="tcol">{{ itemChild.loss }}%</div>
+                        <div class="tcol">{{ itemChild.final_number }}{{ itemChild.unit }}</div>
+                        <div class="tcol">
+                          {{
+                            itemChild.unit === 'kg'
+                              ? $toFixed((itemChild.final_number / itemSon.number) * 1000) + 'g'
+                              : $toFixed(itemChild.final_number / itemSon.number) + itemChild.unit
+                          }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="pageCtn">
           <el-pagination
@@ -161,7 +254,6 @@
 import Vue from 'vue'
 import { order, listSetting, exportExcel, client, statistics, materialPlan } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
-import { ListSetting } from '@/types/list'
 import { limitArr } from '@/assets/js/dictionary'
 import zhExportSetting from '@/components/zhExportSetting/zhExportSetting.vue'
 import zhCharts from '@/components/zhCharts/zhCharts.vue'
@@ -169,7 +261,6 @@ import zhDropDown from '@/components/zhDropDown/zhDropDown.vue'
 export default Vue.extend({
   components: { zhExportSetting, zhCharts, zhDropDown },
   data(): {
-    originalSetting: ListSetting[]
     list: OrderInfo[]
     [porpName: string]: any
   } {
@@ -180,105 +271,11 @@ export default Vue.extend({
       showCharts: false,
       list: [],
       limitList: limitArr,
-      showExport: false,
-      checkedCount: [],
       exportKey: [],
       keyword: '',
       contacts_id: '',
       contactsList: [],
       client_id: [],
-      checked: false,
-      exportExcelParam: {
-        show_row: [],
-        start_time: '',
-        end_time: ''
-      },
-      option: {
-        color: ['#229CFB', '#2DD59A', '#FCCA24', '#000000'],
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'cross',
-            crossStyle: {
-              color: '#999'
-            }
-          },
-          formatter: (params: any) => {
-            let htmlStr = `
-              <div>
-                ${params[0].axisValueLabel}</br>
-            `
-            let number = 0
-            params.forEach((param: any) => {
-              if (param.data && param.seriesName !== '订单数') {
-                number += param.data
-              }
-            })
-            htmlStr += `发货数量：${number}<br/>`
-            params.forEach((param: any) => {
-              if (param.data) {
-                htmlStr +=
-                  param.marker +
-                  `<span style="margin-left:10px">${param.seriesName}</span><span style="margin-left:10px">${param.data}</span></br>`
-              }
-            })
-            return htmlStr + '</div>'
-          }
-        },
-        legend: {
-          data: []
-        },
-        xAxis: [
-          {
-            type: 'category',
-            data: [],
-            axisPointer: {
-              type: 'shadow'
-            },
-            axisLabel: {
-              interval: 0
-            }
-          }
-        ],
-        yAxis: [
-          {
-            type: 'value',
-            name: '',
-            show: false
-          },
-          {
-            type: 'value',
-            name: '订单数',
-            show: false
-          }
-        ],
-        series: [
-          {
-            type: 'bar',
-            name: '已完成',
-            stack: '0',
-            data: []
-          },
-          {
-            type: 'bar',
-            stack: '0',
-            name: '进行中',
-            data: []
-          },
-          {
-            type: 'bar',
-            name: '已延期',
-            stack: '0',
-            data: []
-          },
-          {
-            type: 'line',
-            yAxisIndex: 1,
-            name: '订单数',
-            data: []
-          }
-        ]
-      },
       group_id: '',
       user_id: '',
       type: 'null',
@@ -287,236 +284,6 @@ export default Vue.extend({
       limit: 10,
       total: 1,
       page: 1,
-      showSetting: false,
-      listSettingId: null,
-      listKey: [],
-      originalExport: [
-        {
-          key: 'code',
-          name: '订单号',
-          ifExport: true,
-          index: 0
-        },
-        {
-          key: 'client_name',
-          name: '下单客户',
-          ifExport: true,
-          index: 1
-        },
-        {
-          key: 'contacts',
-          name: '客户联系人',
-          ifExport: true,
-          index: 2
-        },
-        {
-          key: 'group_name',
-          name: '负责小组',
-          ifExport: true,
-          index: 3
-        },
-        {
-          key: 'settle_unit',
-          name: '结算单位',
-          ifExport: true,
-          index: 4
-        },
-        {
-          key: 'settle_exchange',
-          name: '结算货币',
-          ifExport: true,
-          index: 5
-        },
-        {
-          key: 'order_time',
-          name: '下单时间',
-          ifExport: true,
-          index: 6
-        },
-        {
-          key: 'delivery_time',
-          name: '完成时间',
-          ifExport: true,
-          index: 7
-        },
-        {
-          key: 'batch_title',
-          name: '批次标题',
-          ifExport: true,
-          index: 8
-        },
-        {
-          key: 'batch_type',
-          name: '批次类型',
-          ifExport: true,
-          index: 9
-        },
-        {
-          key: 'batch_desc',
-          name: '批次备注',
-          ifExport: true,
-          index: 10
-        },
-        {
-          key: 'product_code',
-          name: '产品编号',
-          ifExport: true,
-          index: 11
-        },
-        {
-          key: 'product_name',
-          name: '产品名称/品类',
-          ifExport: true,
-          index: 12
-        },
-        {
-          key: 'size_color_name',
-          name: '尺码/颜色',
-          ifExport: true,
-          index: 13
-        },
-        {
-          key: 'price',
-          name: '下单单价',
-          ifExport: true,
-          index: 14
-        },
-        {
-          key: 'number',
-          name: '下单数量',
-          ifExport: true,
-          index: 15
-        },
-        {
-          key: 'is_send',
-          name: '是否寄送产前样',
-          ifExport: true,
-          index: 16
-        },
-        {
-          key: 'is_confirm',
-          name: '是否产前确认',
-          ifExport: true,
-          index: 17
-        },
-        {
-          key: 'is_urgent',
-          name: '是否加急',
-          ifExport: true,
-          index: 18
-        },
-        {
-          key: 'user_name',
-          name: '创建人',
-          ifExport: true,
-          index: 19
-        },
-        {
-          key: 'create_time',
-          name: '创建时间',
-          ifExport: true,
-          index: 20
-        }
-      ],
-      originalSetting: [
-        {
-          key: 'system_code',
-          name: '系统编号',
-          ifShow: true,
-          ifLock: true,
-          ifCaogao: 'is_draft',
-          caogaoArr: ['稿', '整'],
-          index: 0
-        },
-        {
-          key: 'code',
-          name: '订单号',
-          ifShow: true,
-          ifLock: true,
-          index: 1
-        },
-        {
-          key: 'client_name',
-          name: '下单公司',
-          ifShow: true,
-          ifLock: true,
-          index: 2
-        },
-        {
-          key: 'contacts_name',
-          name: '公司联系人',
-          ifShow: true,
-          ifLock: false,
-          index: 3
-        },
-        {
-          key: 'product_code',
-          otherkey: 'system_code',
-          name: '产品编号',
-          ifShow: true,
-          ifLock: false,
-          index: 4,
-          from: 'product_data',
-          mark: true
-        },
-        {
-          key: 'image_data',
-          name: '产品图片',
-          ifShow: true,
-          ifLock: false,
-          ifImage: true,
-          index: 5,
-          from: 'product_data'
-        },
-        {
-          key: '',
-          name: '流程进度',
-          ifShow: true,
-          ifLock: false,
-          index: 6,
-          specialForOrderPrcess: 'order'
-        },
-        {
-          key: 'status',
-          name: '订单状态',
-          ifShow: true,
-          ifLock: false,
-          index: 7,
-          filterArr: ['', '已创建', '进行中', '已完成', '已结算', '已逾期', '已取消'],
-          classArr: ['', 'orange', 'blue', 'green', 'green', 'red', 'gray']
-        },
-        {
-          key: 'total_number',
-          name: '下单总数',
-          ifShow: true,
-          ifLock: false,
-          index: 8,
-          errVal: '0'
-        },
-        {
-          key: 'total_price',
-          name: '下单总额',
-          ifShow: true,
-          ifLock: false,
-          index: 9,
-          unit: '元',
-          errVal: '0'
-        },
-        {
-          key: 'group_name',
-          name: '负责小组',
-          ifShow: true,
-          ifLock: false,
-          index: 10
-        },
-        {
-          key: 'user_name',
-          name: '创建人',
-          ifShow: true,
-          ifLock: false,
-          index: 11
-        }
-      ],
       pickerOptions: {
         shortcuts: [
           {
@@ -548,59 +315,6 @@ export default Vue.extend({
           }
         ]
       },
-      oprList: [
-        {
-          name: '详情',
-          class: 'hoverBlue',
-          fn: (item: any) => {
-            if (item.is_draft === 1) {
-              this.$router.push('/order/update?id=' + item.id)
-            } else {
-              this.$router.push('/order/detail?id=' + item.id)
-            }
-          }
-        },
-        {
-          name: '修改',
-          class: 'hoverOrange',
-          fn: (item: any) => {
-            this.$router.push('/order/update?id=' + item.id)
-          }
-        },
-        {
-          name: '删除',
-          class: 'hoverRed',
-          fn: (item: any) => {
-            this.$confirm('是否删除订单?', '提示', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning'
-            })
-              .then(() => {
-                order
-                  .delete({
-                    id: item.id
-                  })
-                  .then((res) => {
-                    if (res.data.status) {
-                      this.$message({
-                        type: 'success',
-                        message: '删除成功!'
-                      })
-                      // @ts-ignore
-                      this.getList()
-                    }
-                  })
-              })
-              .catch(() => {
-                this.$message({
-                  type: 'info',
-                  message: '已取消删除'
-                })
-              })
-          }
-        }
-      ]
     }
   },
   methods: {
@@ -618,6 +332,33 @@ export default Vue.extend({
       } else {
         this.contacts_id = ''
       }
+    },
+    changeShow(item: any) {
+      this.loading = true
+      if (!item.detail.code) {
+        materialPlan
+          .detail({
+            id: item.id
+          })
+          .then((ress) => {
+            if (ress.status) {
+              item.detail = ress.data.data
+              item.isShow = true
+            }
+            this.loading = false
+          })
+      } else {
+        item.isShow = !item.isShow
+        this.loading = false
+      }
+
+      this.$forceUpdate()
+    },
+    checkAll(res: Boolean) {
+      this.list.forEach((item: any) => {
+        item.checked = res
+      })
+      this.$forceUpdate()
     },
     getLocalStorage(ev: any, type: string) {
       if (!ev) {
@@ -656,10 +397,6 @@ export default Vue.extend({
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
-    },
-    exportExcelClick() {
-      if (!this.checked) return
-      this.showExport = true
     },
     exportExcel(data: any) {
       this.mainLoading = true
@@ -744,6 +481,7 @@ export default Vue.extend({
         })
     },
     getList() {
+      let _this = this
       materialPlan
         .list({
           is_check: this.status,
@@ -756,24 +494,15 @@ export default Vue.extend({
         })
         .then((res) => {
           if (res.data.status) {
-            this.list = res.data.data.items
             this.total = res.data.data.total
+            res.data.data.items.forEach((item: any) => {
+              item.detail = {}
+            })
+            this.list = res.data.data.items
           }
           this.loading = false
         })
     },
-    getListSetting() {
-      this.listKey = []
-      listSetting
-        .detail({
-          type: 3
-        })
-        .then((res) => {
-          this.listSettingId = res.data.data ? res.data.data.id : null
-          this.listKey = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting)
-          this.exportKey = this.$clone(this.originalExport)
-        })
-    }
   },
   watch: {
     $route() {
@@ -802,7 +531,6 @@ export default Vue.extend({
   created() {
     this.getFilters()
     this.getList()
-    this.getListSetting()
     this.$checkCommonInfo([
       {
         checkWhich: 'api/group',
