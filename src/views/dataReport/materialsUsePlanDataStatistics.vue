@@ -594,7 +594,7 @@ export default Vue.extend({
             this.option1.yAxis[0].min = allFinalNumberMin && allFinalNumberMin < 0 ? allFinalNumberMin : 0
             this.option1.yAxis[0].interval = Math.ceil(allFinalNumberMax / 1000) || 10
 
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(allLossMax / 5)) * 10 || 10
+            this.option1.yAxis[1].max = Math.ceil(Math.ceil(allLossMax / 5)) * 5 || 10
             this.option1.yAxis[1].min = allLossMin && allLossMin < 0 ? allLossMin : 0
             this.option1.yAxis[1].interval = Math.ceil(allLossMax / 5) || 10
 
@@ -603,14 +603,14 @@ export default Vue.extend({
               this.option1.series[0].data.push((item.final_number / 1000).toFixed(2))
               this.option1.series[1].data.push(((item.loss / item.final_number) * 100).toFixed(2))
             })
-          } else if (this.activeName === 'second') {
+          } else if (this.activeName === 'third') {
             // 原料计划 图表更新
             this.option1.yAxis[0].max = Math.ceil(Math.ceil(materialSupFinalNumberMax / 1000)) * 5 || 10
             this.option1.yAxis[0].min =
               materialSupFinalNumberMin && materialSupFinalNumberMin < 0 ? materialSupFinalNumberMin : 0
             this.option1.yAxis[0].interval = Math.ceil(materialSupFinalNumberMax / 5) || 10
 
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(materialSupLossMax / 5)) * 10 || 10
+            this.option1.yAxis[1].max = Math.ceil(Math.ceil(materialSupLossMax / 5)) * 5 || 10
             this.option1.yAxis[1].min = materialSupLossMin && materialSupLossMin < 0 ? materialSupLossMin : 0
             this.option1.yAxis[1].interval = Math.ceil(materialSupLossMax / 1000) || 10
 
@@ -619,13 +619,13 @@ export default Vue.extend({
               this.option1.series[0].data.push((item.final_number / 1000).toFixed(2))
               this.option1.series[1].data.push(((item.loss / item.final_number) * 100).toFixed(2))
             })
-          } else if (this.activeName === 'third') {
+          } else if (this.activeName === 'second') {
             // 补原料单据 图表更新
             this.option1.yAxis[0].max = Math.ceil(Math.ceil(rawFinalNumberMax / 1000)) * 5 || 10
             this.option1.yAxis[0].min = rawFinalNumberMin && rawFinalNumberMin < 0 ? rawFinalNumberMin : 0
             this.option1.yAxis[0].interval = Math.ceil(rawFinalNumberMax / 1000) || 10
 
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(rawLossMax / 5)) * 10 || 10
+            this.option1.yAxis[1].max = Math.ceil(Math.ceil(rawLossMax / 5)) * 5 || 10
             this.option1.yAxis[1].min = rawLossMin && rawLossMin < 0 ? rawLossMin : 0
             this.option1.yAxis[1].interval = Math.ceil(rawLossMax / 5) || 10
 

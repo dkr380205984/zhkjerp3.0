@@ -763,6 +763,7 @@ export default Vue.extend({
           is_check: this.status,
           code: this.keyword,
           user_id: this.user_id,
+          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           start_time: this.date[0],
           end_time: this.date[1],
           limit: this.limit,

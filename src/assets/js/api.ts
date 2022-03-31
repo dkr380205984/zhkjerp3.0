@@ -530,6 +530,14 @@ const materialStock = {
     action_type?: number // 搜调取单的时候用，一般是出库单10
     order_id?: string | number
     client_id?: string | number
+    is_check?: string | number
+    code?: string
+    start_time?: string
+    end_time?: string
+    store_id?: string | number
+    page?: string | number
+    limit?: string | number
+    user_id?: string | number
     reserve_id?: string | number // 预订购单
     top_order_id?: string | number // 最外层order_id
     rel_doc_id?: string | number
