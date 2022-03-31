@@ -339,9 +339,11 @@
                           </div>
                         </template>
                         <template v-if="itemProcess.process==='倒纱'">
-                          <span>{{itemMat.before_attribute}}</span>
-                          <span class="el-icon-s-unfold blue"></span>
-                          <span>{{itemMat.after_attribute}}</span>
+                          <div class="changeCtn">
+                            <span>{{itemMat.before_attribute}}</span>
+                            <span class="el-icon-s-unfold blue"></span>
+                            <span>{{itemMat.after_attribute}}</span>
+                          </div>
                         </template>
                         <template v-if="itemProcess.process==='并线'">
                           <span>{{itemMat.bingxian_desc}}</span>

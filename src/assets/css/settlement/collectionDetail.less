@@ -1,0 +1,85 @@
+@import '../common.less';
+@import '../detail.less';
+@import '../list.less';
+@import '../bottomBar.less';
+@import '../buttonList.less';
+@import '../table.less';
+@import '../popup.less';
+#collectionDetail{
+  .filterCtn{
+    .label{
+      display: inline-block;
+      line-height: 32px;
+    }
+    .check{
+      width: 160px;
+    }
+    .buttonList{
+      margin-right: 0;
+    }
+  }
+  .specialInfo{
+    flex-direction: column;
+    .col{
+      .label{
+        font-size: 14px;
+      }
+      .info{
+        font-size: 14px;
+      }
+    }
+  }
+  .specialCtn{
+    display: block;
+    padding: 20px 32px;
+    .row{
+      display: flex;
+      margin: 12px 0;
+      flex: 1;
+      .col{
+        flex: 1;
+        height:116px;
+        margin-right: 12px;
+        display: flex;
+       .infoCtn{
+          border-radius: 4px;
+          flex: 1;
+          background: #F0F2F5;
+          display: flex;
+          flex-direction: column;
+          padding: 20px;
+          .title{
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+          }
+          .number{
+            font-size: 24px;
+            font-weight: bold;
+            .unit{
+              font-size: 14px;
+              color: @font45;
+              font-weight: normal;
+              margin-left: 6px;
+            }
+          }
+       }
+        &:nth-last-child(1){
+          margin-right: 0;
+        }
+        .row{
+          margin: 0;
+        }
+      }
+    }
+  }
+  .popup{
+    .elCtn{
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    .elTitle{
+      margin:12px 0;
+    }
+  }
+}

@@ -503,7 +503,7 @@ export default Vue.extend({
       this.boxInfo.total_box = totalData.total_box
       this.boxInfo.total_gross_weight = this.$toFixed(totalData.total_gross_weight)
       this.boxInfo.total_net_weight = this.$toFixed(totalData.total_net_weight)
-      this.boxInfo.total_bulk = this.$toFixed(totalData.total_bulk)
+      this.boxInfo.total_bulk = this.$toFixed(totalData.total_bulk, 3)
       this.boxInfo.price_bulk = this.$toFixed(Number(this.boxInfo.price) * Number(this.boxInfo.total_bulk))
       this.boxInfo.total_price = this.$toFixed(Number(this.boxInfo.price_bulk) + Number(this.boxInfo.others_fee))
       this.$forceUpdate()

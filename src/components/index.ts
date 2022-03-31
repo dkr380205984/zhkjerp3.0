@@ -22,6 +22,7 @@ import zhInput from './zhInput/zhInput.vue'
 import todayIsHoliday from './todayIsHoliday/todayIsHoliday.vue'
 import storeSurplus from './storeSurplus/storeSurplus.vue'
 import zhOrderLog from './zhOrderLog/zhOrderLog.vue'
+import zhCollection from './zhCollection/zhCollection.vue'
 import vue from '@handsontable/vue'
 export default {
   install: (Vue: any) => {
@@ -49,5 +50,6 @@ export default {
     Vue.component('storeSurplus', storeSurplus)
     Vue.component('zhOrderLog', zhOrderLog)
     Vue.component('zhCheckDetail', zhCheckDetail)
+    Vue.component('zhCollection', zhCollection)
   }
 }

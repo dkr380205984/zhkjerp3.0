@@ -91,7 +91,9 @@
                   </div>
                   <!-- 没染完 -->
                   <div class="trow"
-                    v-if="itemChild.process_info.filter((item)=>item.process==='染色').length>0&&itemChild.process_info.filter((item)=>item.process==='染色').reduce((total,cur)=>(total+Number(cur.number)),0)<Number(itemChild.number)">
+                    v-if="itemChild.process_info.filter((item)=>item.process==='染色').length>0
+                    &&
+                    itemChild.process_info.filter((item)=>item.process==='染色').reduce((total,cur)=>(total+Number(cur.number)),0)<Number(itemChild.number)">
                     <div class="tcol">
                       <span style="display:flex;align-items:center">
                         <div class="backHoverOrange"
@@ -106,7 +108,7 @@
                           margin-right:8px">初</div>{{itemChild.material_color}}
                       </span>
                     </div>
-                    <div class="tcol">{{itemChild.number - itemChild.process_info.filter((item)=>item.process==='染色').reduce((total,cur)=>(total+cur.number),0)}}{{itemChild.unit||'kg'}}</div>
+                    <div class="tcol">{{itemChild.number - itemChild.process_info.filter((item)=>item.process==='染色').reduce((total,cur)=>(total+Number(cur.number)),0)}}{{itemChild.unit||'kg'}}</div>
                   </div>
                 </div>
                 <div class="tcol">{{itemChild.final_push_number||0}}{{item.unit||'kg'}}</div>
@@ -571,9 +573,6 @@
                 <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
                 <div class="tcol">{{itemMat.final_pop_number||0}}{{itemMat.unit}}</div>
                 <div class="tcol">暂无数据</div>
-                <!-- <div class="tcol oprCtn">
-                  <div class="opr hoverBlue">出库</div>
-                </div> -->
               </div>
               <!-- 补纱单 -->
               <template v-for="(itemMat) in item.sup_data">
@@ -600,9 +599,7 @@
                   <div class="tcol">{{itemChild.material_color}}</div>
                   <div class="tcol">{{itemChild.number}}{{itemChild.unit||'kg'}}</div>
                   <div class="tcol">{{itemChild.final_pop_number || 0}}{{itemChild.unit||'kg'}}</div>
-                  <!-- <div class="tcol oprCtn">
-                    <div class="opr hoverBlue">出库</div>
-                  </div> -->
+                  <div class="tcol">暂无数据</div>
                 </div>
               </template>
             </div>
