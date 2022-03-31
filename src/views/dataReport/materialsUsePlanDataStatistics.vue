@@ -472,7 +472,7 @@ export default Vue.extend({
         user_id: '',
         group_id: '',
         order_type: '',
-        name: '',
+        name: ''
       }
       localStorage.create_user_name = ''
       this.filterData.start_time = new Date().getFullYear() + '-01-01'
@@ -590,46 +590,50 @@ export default Vue.extend({
 
           if (this.activeName === 'first') {
             // 查看所有 图表更新
-            this.option1.yAxis[0].max = Math.ceil(Math.ceil(allFinalNumberMax / 1000)) * 5 || 10
+            this.option1.yAxis[0].max = Math.ceil(Math.ceil(allFinalNumberMax / 1000 / 5)) * 5 || 10
             this.option1.yAxis[0].min = allFinalNumberMin && allFinalNumberMin < 0 ? allFinalNumberMin : 0
-            this.option1.yAxis[0].interval = Math.ceil(allFinalNumberMax / 1000) || 10
+            this.option1.yAxis[0].interval = Math.ceil(allFinalNumberMax / 1000 / 5) || 10
 
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(allLossMax / 5)) * 5 || 10
-            this.option1.yAxis[1].min = allLossMin && allLossMin < 0 ? allLossMin : 0
-            this.option1.yAxis[1].interval = Math.ceil(allLossMax / 5) || 10
+            this.option1.yAxis[1].max = Math.ceil(Math.ceil(allLossMax / allFinalNumberMax / 5)) * 5 || 10
+            this.option1.yAxis[1].min = allLossMin && allLossMin < 0 ? allLossMin / allFinalNumberMin : 0
+            this.option1.yAxis[1].interval = Math.ceil(allLossMax / allFinalNumberMax / 5) || 10
 
             data.all.forEach((item: any) => {
+              if (item.final_number / 1000 < 1) return
               this.option1.xAxis[0].data.push(item.name)
               this.option1.series[0].data.push((item.final_number / 1000).toFixed(2))
               this.option1.series[1].data.push(((item.loss / item.final_number) * 100).toFixed(2))
             })
           } else if (this.activeName === 'third') {
             // 补原料单据 图表更新
-            this.option1.yAxis[0].max = Math.ceil(Math.ceil(materialSupFinalNumberMax / 1000)) * 5 || 10
+            this.option1.yAxis[0].max = Math.ceil(Math.ceil(materialSupFinalNumberMax / 1000 / 5)) * 5 || 10
             this.option1.yAxis[0].min =
               materialSupFinalNumberMin && materialSupFinalNumberMin < 0 ? materialSupFinalNumberMin : 0
-            this.option1.yAxis[0].interval = Math.ceil(materialSupFinalNumberMax / 5) || 10
+            this.option1.yAxis[0].interval = Math.ceil(materialSupFinalNumberMax / 1000 / 5) || 10
 
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(materialSupLossMax / 5)) * 5 || 10
-            this.option1.yAxis[1].min = materialSupLossMin && materialSupLossMin < 0 ? materialSupLossMin : 0
-            this.option1.yAxis[1].interval = Math.ceil(materialSupLossMax / 1000) || 10
+            this.option1.yAxis[1].max =
+              Math.ceil(Math.ceil(materialSupLossMax / materialSupFinalNumberMax / 5)) * 5 || 10
+            this.option1.yAxis[1].min = materialSupLossMin && materialSupLossMin < 0 ? materialSupLossMin / materialSupFinalNumberMin : 0
+            this.option1.yAxis[1].interval = Math.ceil(materialSupLossMax / materialSupFinalNumberMax / 5) || 10
 
             data.material_sup.forEach((item: any) => {
+              if (item.final_number / 1000 < 1) return
               this.option1.xAxis[0].data.push(item.name)
               this.option1.series[0].data.push((item.final_number / 1000).toFixed(2))
               this.option1.series[1].data.push(((item.loss / item.final_number) * 100).toFixed(2))
             })
           } else if (this.activeName === 'second') {
             // 原料计划 图表更新
-            this.option1.yAxis[0].max = Math.ceil(Math.ceil(rawFinalNumberMax / 1000)) * 5 || 10
+            this.option1.yAxis[0].max = Math.ceil(Math.ceil(rawFinalNumberMax / 1000 / 5)) * 5 || 10
             this.option1.yAxis[0].min = rawFinalNumberMin && rawFinalNumberMin < 0 ? rawFinalNumberMin : 0
-            this.option1.yAxis[0].interval = Math.ceil(rawFinalNumberMax / 1000) || 10
+            this.option1.yAxis[0].interval = Math.ceil(rawFinalNumberMax / 1000 / 5) || 10
 
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(rawLossMax / 5)) * 5 || 10
-            this.option1.yAxis[1].min = rawLossMin && rawLossMin < 0 ? rawLossMin : 0
-            this.option1.yAxis[1].interval = Math.ceil(rawLossMax / 5) || 10
+            this.option1.yAxis[1].max = Math.ceil(Math.ceil(rawLossMax / rawFinalNumberMax / 5)) * 5 || 10
+            this.option1.yAxis[1].min = rawLossMin && rawLossMin < 0 ? rawLossMin / rawFinalNumberMin : 0
+            this.option1.yAxis[1].interval = Math.ceil(rawLossMax / rawFinalNumberMax / 5) || 10
 
             data.raw.forEach((item: any) => {
+              if (item.final_number / 1000 < 1) return
               this.option1.xAxis[0].data.push(item.name)
               this.option1.series[0].data.push((item.final_number / 1000).toFixed(2))
               this.option1.series[1].data.push(((item.loss / item.final_number) * 100).toFixed(2))
