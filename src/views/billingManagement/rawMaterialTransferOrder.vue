@@ -107,34 +107,36 @@
             </div>
             <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px)">
               <div class="titleCtn">
-                <div class="title">订购信息</div>
+                <div class="title">调取信息</div>
               </div>
               <div class="tableCtn">
                 <div class="thead">
                   <div class="trow">
                     <div class="tcol">原料名称</div>
-                    <div class="tcol">订购颜色</div>
-                    <div class="tcol">{{ $route.query.supFlag ? '补纱单' : '计划单' }}颜色</div>
-                    <div class="tcol">订购属性</div>
-                    <div class="tcol">订购数量</div>
-                    <div class="tcol">订购单价</div>
+                    <div class="tcol">调取颜色</div>
+                    <div class="tcol">调取属性</div>
+                    <div class="tcol">批号/缸号/色号</div>
+                    <div class="tcol">调取数量</div>
+                    <div class="tcol">调取单价</div>
                   </div>
                 </div>
                 <div class="tbody">
                   <div class="trow" v-for="(itemChild, indexChild) in item.detail.info_data" :key="indexChild">
                     <div class="tcol">{{ itemChild.material_name }}</div>
                     <div class="tcol">{{ itemChild.material_color }}</div>
-                    <div class="tcol">{{ itemChild.sup_color || itemChild.plan_color || '无' }}</div>
                     <div class="tcol">{{ itemChild.attribute }}</div>
+                    <div class="tcol">
+                      {{ itemChild.batch_code }}/{{ itemChild.vat_code }}/{{ itemChild.color_code }}
+                    </div>
                     <div class="tcol">{{ itemChild.number }}{{ itemChild.unit }}</div>
-                    <div class="tcol">{{ itemChild.price }}元</div>
+                    <div class="tcol">{{ itemChild.price || 0 }}元</div>
                   </div>
                 </div>
               </div>
-              <div class="titleCtn" style="margin-top: 32px" v-if="item.detail.process_info.length > 0">
+              <div class="titleCtn" style="margin-top: 32px">
                 <div class="title">加工信息</div>
               </div>
-              <div class="tableCtn" v-if="item.detail.process_info.length > 0">
+              <div class="tableCtn">
                 <div class="thead">
                   <div class="trow">
                     <div class="tcol">加工单号</div>
@@ -174,7 +176,7 @@
                     <div class="tcol" style="flex: 0.5">{{ itemProcess.process }}</div>
                     <div class="tcol noPad" style="flex: 3">
                       <div class="trow" v-for="(itemMat, indexMat) in itemProcess.info_data" :key="indexMat">
-                        <div class="tcol">{{ itemMat.material_order_name }}</div>
+                        <div class="tcol">{{ itemMat.material_transfer_name }}</div>
                         <div class="tcol">
                           <template v-if="itemProcess.process === '染色'">
                             <div class="changeCtn">
@@ -707,8 +709,8 @@ export default Vue.extend({
           this.page +
           '&keyword=' +
           this.keyword +
-          '&client_id=' +
-          this.client_id +
+          '&store_id=' +
+          this.store_id +
           '&user_id=' +
           this.user_id +
           '&group_id=' +
@@ -761,6 +763,7 @@ export default Vue.extend({
           user_id: this.user_id,
           start_time: this.date[0],
           end_time: this.date[1],
+          action_type: [10, 12],
           limit: this.limit,
           page: this.page
         })
@@ -771,6 +774,7 @@ export default Vue.extend({
                 process_info: []
               }
             })
+
             this.list = res.data.data.items
             this.total = res.data.data.total
           }
