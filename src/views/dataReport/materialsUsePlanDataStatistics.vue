@@ -604,7 +604,7 @@ export default Vue.extend({
               this.option1.series[1].data.push(((item.loss / item.final_number) * 100).toFixed(2))
             })
           } else if (this.activeName === 'third') {
-            // 原料计划 图表更新
+            // 补原料单据 图表更新
             this.option1.yAxis[0].max = Math.ceil(Math.ceil(materialSupFinalNumberMax / 1000)) * 5 || 10
             this.option1.yAxis[0].min =
               materialSupFinalNumberMin && materialSupFinalNumberMin < 0 ? materialSupFinalNumberMin : 0
@@ -620,7 +620,7 @@ export default Vue.extend({
               this.option1.series[1].data.push(((item.loss / item.final_number) * 100).toFixed(2))
             })
           } else if (this.activeName === 'second') {
-            // 补原料单据 图表更新
+            // 原料计划 图表更新
             this.option1.yAxis[0].max = Math.ceil(Math.ceil(rawFinalNumberMax / 1000)) * 5 || 10
             this.option1.yAxis[0].min = rawFinalNumberMin && rawFinalNumberMin < 0 ? rawFinalNumberMin : 0
             this.option1.yAxis[0].interval = Math.ceil(rawFinalNumberMax / 1000) || 10

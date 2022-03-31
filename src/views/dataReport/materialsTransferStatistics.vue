@@ -439,7 +439,7 @@ export default Vue.extend({
         group_id: '',
         store_id: '',
         order_type: '',
-        name: '',
+        name: ''
       }
       localStorage.create_user_name = ''
       this.filterData.start_time = new Date().getFullYear() + '-01-01'
@@ -542,6 +542,24 @@ export default Vue.extend({
           this.option1.series[0].data = []
           this.option1.series[1].data = []
           this.option1.xAxis[0].data = []
+
+          if (this.sortWay === 1) {
+            data.plan.report.sort(function (a: any, b: any) {
+              return b.total_number - a.total_number
+            })
+            data.real.report.sort(function (a: any, b: any) {
+              return b.total_number - a.total_number
+            })
+          }
+          
+          if (this.sortWay === 2) {
+            data.plan.report.sort(function (a: any, b: any) {
+              return b.total_price - a.total_price
+            })
+            data.real.report.sort(function (a: any, b: any) {
+              return b.total_price - a.total_price
+            })
+          }
 
           let planPriceMax: any,
             planPriceMin: any,
