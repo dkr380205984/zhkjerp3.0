@@ -980,7 +980,7 @@ export default Vue.extend({
               id: '',
               process_name: items.process[1],
               process_type: items.process[0],
-              process_desc: items.process_desc.toString(),
+              process_desc: items.process_desc?items.process_desc.toString():'',
               order_product_id: items.productNameId,
               product_id: items.productId,
               price: items.unitPrice || 0,
