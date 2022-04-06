@@ -26,6 +26,7 @@ axios.interceptors.response.use(
       // do nothing
     } else if (res.data.code === 406) {
       // do nothing 这个编码专门用于登录页面设置公司用
+      Message.Message.error(res.data.msg)
     } else if (res.data.code === 401) {
       Message.Message.error(res.data.msg)
       router.push('/login')
