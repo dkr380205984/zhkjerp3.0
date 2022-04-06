@@ -102,10 +102,7 @@
                 <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
               </div>
             </div>
-            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px)">
-              <div class="titleCtn" style="border-bottom: 0">
-                <div class="title">生产计划</div>
-              </div>
+            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
               <div class="tableCtn">
                 <div class="thead">
                   <div class="trow">
@@ -128,7 +125,7 @@
                 </div>
                 <div class="tbody">
                   <div class="trow" v-for="itemSon in item.detail.production_plan_data" :key="itemSon.product_id">
-                    <div class="tcol">
+                    <div class="tcol hoverBlue" style="cursor:pointer" @click="showProduct(itemSon)">
                       <span>{{ itemSon.product_code || itemSon.system_code }}</span>
                       <span>{{ itemSon.category }}/{{ itemSon.secondary_category }}</span>
                     </div>
@@ -155,9 +152,6 @@
                   </div>
                 </div>
               </div>
-              <div class="titleCtn" style="border-bottom: 0">
-                <div class="title">工序物料详情</div>
-              </div>
               <div class="tableCtn">
                 <div class="thead">
                   <div class="trow">
@@ -179,7 +173,7 @@
                 </div>
                 <div class="tbody">
                   <div class="trow" v-for="(itemSon, index) in item.detail.material_plan_data" :key="index + 'i'">
-                    <div class="tcol" style="flex: 1.3">
+                    <div class="tcol hoverBlue" style="flex: 1.3 ;cursor:pointer" @click="showProduct(itemSon)">
                       <div>{{ itemSon.product_code || itemSon.system_code }}</div>
                       <div>{{ itemSon.category }}/{{ itemSon.secondary_category }}</div>
                     </div>
@@ -247,12 +241,18 @@
         </div>
       </div>
     </div>
+    <product-detail
+      :id="productDetailId"
+      :show="productShow"
+      :noOpr="true"
+      @close="productShow = false"
+    ></product-detail>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { order, listSetting, exportExcel, client, statistics, materialPlan } from '@/assets/js/api'
+import { exportExcel, client, materialPlan } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
 import { limitArr } from '@/assets/js/dictionary'
 import zhExportSetting from '@/components/zhExportSetting/zhExportSetting.vue'
@@ -267,6 +267,8 @@ export default Vue.extend({
     return {
       mainLoading: false,
       mainLoading1: false,
+      productShow: false,
+      productDetailId: '',
       loading: true,
       showCharts: false,
       list: [],
@@ -314,7 +316,7 @@ export default Vue.extend({
             }
           }
         ]
-      },
+      }
     }
   },
   methods: {
@@ -381,6 +383,10 @@ export default Vue.extend({
     },
     changeStatus(row: any) {
       console.log(row)
+    },
+    showProduct(item: any) {
+      this.productShow = true
+      this.productDetailId = item.product_id
     },
     getFilters() {
       const query = this.$route.query
@@ -502,7 +508,7 @@ export default Vue.extend({
           }
           this.loading = false
         })
-    },
+    }
   },
   watch: {
     $route() {

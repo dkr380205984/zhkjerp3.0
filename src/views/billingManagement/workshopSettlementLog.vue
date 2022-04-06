@@ -98,13 +98,9 @@
                 <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
               </div>
             </div>
-            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px)">
-              <div class="titleCtn">
-                <div class="title">结算日志</div>
-              </div>
+            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
               <div class="tableCtn">
                 <el-table ref="chooseSettlementLogList" :data="[item]" tooltip-effect="dark" style="width: 100%">
-                  <el-table-column prop="id" label="序号" width="70" fixed></el-table-column>
                   <el-table-column prop="created_at" label="添加时间" width="110" fixed> </el-table-column>
                   <el-table-column prop="user_name" label="操作人" width="110" fixed> </el-table-column>
                   <el-table-column label="审核状态" width="120">

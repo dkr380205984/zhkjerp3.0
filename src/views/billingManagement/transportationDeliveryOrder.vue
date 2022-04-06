@@ -107,10 +107,7 @@
                 <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
               </div>
             </div>
-            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px)">
-              <div class="titleCtn">
-                <div class="title">装箱出库详情</div>
-              </div>
+            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
               <div class="detailCtn">
                 <div class="row">
                   <div class="col">
@@ -166,7 +163,7 @@
                   </div>
                 </div>
               </div>
-              <div class="tableCtn" v-for="itema,index in item.detail.packPlanLogCopy" :key="index+'tszd'">
+              <div class="tableCtn" v-for="(itema, index) in item.detail.packPlanLogCopy" :key="index + 'tszd'">
                 <div class="thead" v-if="itema">
                   <div class="trow">
                     <div class="tcol">计划单号</div>
@@ -281,7 +278,7 @@
                 </div>
                 <div class="tbody">
                   <div class="trow" v-for="(item, index) in item.detail.batchInfo" :key="index">
-                    <div class="tcol">
+                    <div class="tcol hoverBlue" style="cursor: pointer" @click="showProduct(item)">
                       {{ item.product_code }}
                       <span>({{ item.category }}/{{ item.secondary_category }})</span>
                     </div>
@@ -330,6 +327,12 @@
         </div>
       </div>
     </div>
+    <product-detail
+      :id="productDetailId"
+      :show="productShow"
+      :noOpr="true"
+      @close="productShow = false"
+    ></product-detail>
   </div>
 </template>
 
@@ -354,6 +357,8 @@ export default Vue.extend({
       mainLoading1: false,
       loading: true,
       showCharts: false,
+      productShow: false,
+      productDetailId: '',
       list: [],
       limitList: limitArr,
       showExport: false,
@@ -717,6 +722,11 @@ export default Vue.extend({
     },
     changeStatus(row: any) {
       console.log(row)
+    },
+    showProduct(item: any) {
+        console.log(item)
+      this.productShow = true
+      this.productDetailId = item.product_id
     },
     checkAll(res: Boolean) {
       this.list.forEach((item: any) => {

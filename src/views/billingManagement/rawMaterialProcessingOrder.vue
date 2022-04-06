@@ -114,10 +114,7 @@
                 <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
               </div>
             </div>
-            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px)">
-              <div class="titleCtn" style="margin-top: 32px" v-if="item.detail.info_data.length > 0">
-                <div class="title">加工信息</div>
-              </div>
+            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
               <div class="tableCtn" v-if="item.detail.info_data.length > 0">
                 <div class="thead">
                   <div class="trow">

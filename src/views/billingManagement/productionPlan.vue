@@ -114,114 +114,95 @@
                 <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
               </div>
             </div>
-            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px)">
-               <div class="titleCtn">
-            <div class="title">加工单据</div>
-          </div>
-          <div class="tableCtn">
-            <div class="thead">
-              <div class="trow">
-                <div class="tcol">产品信息</div>
-                <div class="tcol">产品部位</div>
-                <div class="tcol">尺码颜色</div>
-                <div class="tcol">加工数量</div>
-                <div class="tcol">加工单价</div>
-                <div class="tcol">加工总价</div>
-              </div>
-            </div>
-            <div class="tbody">
-              <div class="trow"
-                v-for="(itemPro,indexPro) in item.detail.product_info_data"
-                :key="indexPro">
-                <div class="tcol">
-                  <span>{{itemPro.product_code||itemPro.system_code}}</span>
-                  <span>{{itemPro.category_name}}/{{itemPro.secondary_category_name}}</span>
-                </div>
-                <div class="tcol">
-                  {{itemPro.part_name}}
-                </div>
-                <div class="tcol">{{itemPro.size_name?itemPro.size_name + '/' + itemPro.color_name:'未选择尺码颜色'}}</div>
-                <div class="tcol">{{itemPro.number}}</div>
-                <div class="tcol">{{itemPro.price}}元</div>
-                <div class="tcol">{{$toFixed(itemPro.price*itemPro.number)}}元</div>
-              </div>
-            </div>
-          </div>
-          <div class="tableCtn"
-            v-if="item.detail.material_info_data.length>0">
-            <div class="thead">
-              <div class="trow">
-                <div class="tcol">物料名称</div>
-                <div class="tcol">物料颜色</div>
-                <div class="tcol">分配数量</div>
-              </div>
-            </div>
-            <div class="tbody">
-              <div class="trow"
-                v-for="(itemMat,indexMat) in item.detail.material_info_data"
-                :key="indexMat">
-                <div class="tcol">{{itemMat.material_name}}</div>
-                <div class="tcol">{{itemMat.material_color}}</div>
-                <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
-              </div>
-            </div>
-          </div>
-          <div class="titleCtn"
-            style="margin-top:40px"
-            v-if="item.detail.sup_data.length>0">
-            <div class="title">加工物料补充</div>
-          </div>
-          <div class="tableCtn"
-            v-if="item.detail.sup_data.length>0">
-            <div class="thead">
-              <div class="trow">
-                <div class="tcol">补纱单编号</div>
-                <div class="tcol noPad"
-                  style="flex:2">
+            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
+              <div class="tableCtn">
+                <div class="thead">
                   <div class="trow">
-                    <div class="tcol">承担单位</div>
-                    <div class="tcol">承担金额</div>
+                    <div class="tcol">产品信息</div>
+                    <div class="tcol">产品部位</div>
+                    <div class="tcol">尺码颜色</div>
+                    <div class="tcol">加工数量</div>
+                    <div class="tcol">加工单价</div>
+                    <div class="tcol">加工总价</div>
                   </div>
                 </div>
-                <div class="tcol noPad"
-                  style="flex:3">
+                <div class="tbody">
+                  <div class="trow" v-for="(itemPro, indexPro) in item.detail.product_info_data" :key="indexPro">
+                    <div class="tcol hoverBlue" style="cursor: pointer" @click="showProduct(itemPro)">
+                      <span>{{ itemPro.product_code || itemPro.system_code }}</span>
+                      <span>{{ itemPro.category_name }}/{{ itemPro.secondary_category_name }}</span>
+                    </div>
+                    <div class="tcol">
+                      {{ itemPro.part_name }}
+                    </div>
+                    <div class="tcol">
+                      {{ itemPro.size_name ? itemPro.size_name + '/' + itemPro.color_name : '未选择尺码颜色' }}
+                    </div>
+                    <div class="tcol">{{ itemPro.number }}</div>
+                    <div class="tcol">{{ itemPro.price }}元</div>
+                    <div class="tcol">{{ $toFixed(itemPro.price * itemPro.number) }}元</div>
+                  </div>
+                </div>
+              </div>
+              <div class="tableCtn" v-if="item.detail.material_info_data.length > 0">
+                <div class="thead">
                   <div class="trow">
                     <div class="tcol">物料名称</div>
                     <div class="tcol">物料颜色</div>
-                    <div class="tcol">物料数量</div>
+                    <div class="tcol">分配数量</div>
                   </div>
                 </div>
-                <div class="tcol">备注信息</div>
+                <div class="tbody">
+                  <div class="trow" v-for="(itemMat, indexMat) in item.detail.material_info_data" :key="indexMat">
+                    <div class="tcol">{{ itemMat.material_name }}</div>
+                    <div class="tcol">{{ itemMat.material_color }}</div>
+                    <div class="tcol">{{ itemMat.number }}{{ itemMat.unit }}</div>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="tbody">
-              <div class="trow"
-                v-for="itemChild in item.detail.sup_data"
-                :key="itemChild.id">
-                <div class="tcol">{{itemChild.code}}</div>
-                <div class="tcol noPad"
-                  style="flex:2">
-                  <div class="trow"
-                    v-for="(itemClient,indexClient) in itemChild.client_data"
-                    :key="indexClient">
-                    <div class="tcol">{{itemClient.bear_client_name}}</div>
-                    <div class="tcol">{{itemClient.bear_price}}元</div>
-                  </div>
-                </div>
-                <div class="tcol noPad"
-                  style="flex:3">
-                  <div class="trow"
-                    v-for="itemMat in itemChild.info_data"
-                    :key="itemMat.id">
-                    <div class="tcol">{{itemMat.material_name}}</div>
-                    <div class="tcol">{{itemMat.material_color}}</div>
-                    <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
-                  </div>
-                </div>
-                <div class="tcol">{{itemChild.desc}}</div>
+              <div class="titleCtn" style="margin-top: 40px" v-if="item.detail.sup_data.length > 0">
+                <div class="title">加工物料补充</div>
               </div>
-            </div>
-          </div>
+              <div class="tableCtn" v-if="item.detail.sup_data.length > 0">
+                <div class="thead">
+                  <div class="trow">
+                    <div class="tcol">补纱单编号</div>
+                    <div class="tcol noPad" style="flex: 2">
+                      <div class="trow">
+                        <div class="tcol">承担单位</div>
+                        <div class="tcol">承担金额</div>
+                      </div>
+                    </div>
+                    <div class="tcol noPad" style="flex: 3">
+                      <div class="trow">
+                        <div class="tcol">物料名称</div>
+                        <div class="tcol">物料颜色</div>
+                        <div class="tcol">物料数量</div>
+                      </div>
+                    </div>
+                    <div class="tcol">备注信息</div>
+                  </div>
+                </div>
+                <div class="tbody">
+                  <div class="trow" v-for="itemChild in item.detail.sup_data" :key="itemChild.id">
+                    <div class="tcol">{{ itemChild.code }}</div>
+                    <div class="tcol noPad" style="flex: 2">
+                      <div class="trow" v-for="(itemClient, indexClient) in itemChild.client_data" :key="indexClient">
+                        <div class="tcol">{{ itemClient.bear_client_name }}</div>
+                        <div class="tcol">{{ itemClient.bear_price }}元</div>
+                      </div>
+                    </div>
+                    <div class="tcol noPad" style="flex: 3">
+                      <div class="trow" v-for="itemMat in itemChild.info_data" :key="itemMat.id">
+                        <div class="tcol">{{ itemMat.material_name }}</div>
+                        <div class="tcol">{{ itemMat.material_color }}</div>
+                        <div class="tcol">{{ itemMat.number }}{{ itemMat.unit }}</div>
+                      </div>
+                    </div>
+                    <div class="tcol">{{ itemChild.desc }}</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -261,6 +242,12 @@
         </div>
       </div>
     </div>
+    <product-detail
+      :id="productDetailId"
+      :show="productShow"
+      :noOpr="true"
+      @close="productShow = false"
+    ></product-detail>
   </div>
 </template>
 
@@ -285,6 +272,8 @@ export default Vue.extend({
       mainLoading1: false,
       loading: true,
       showCharts: false,
+      productShow:false,
+      productDetailId:'',
       list: [],
       limitList: limitArr,
       showExport: false,
@@ -652,6 +641,10 @@ export default Vue.extend({
     changeStatus(row: any) {
       console.log(row)
     },
+    showProduct(item: any) {
+      this.productShow = true
+      this.productDetailId = item.product_id
+    },
     checkAll(res: Boolean) {
       this.list.forEach((item: any) => {
         item.checked = res
@@ -776,9 +769,9 @@ export default Vue.extend({
           if (res.data.status) {
             res.data.data.items.forEach((item: any) => {
               item.detail = {
-                  product_info_data:[],
-                  material_info_data:[],
-                  sup_data:[]
+                product_info_data: [],
+                material_info_data: [],
+                sup_data: []
               }
             })
             this.list = res.data.data.items

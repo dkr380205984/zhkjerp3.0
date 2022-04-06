@@ -104,10 +104,7 @@
                 <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
               </div>
             </div>
-            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px)">
-              <div class="titleCtn">
-                <div class="title">调取信息</div>
-              </div>
+            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
               <div class="tableCtn">
                 <div class="thead">
                   <div class="trow">
@@ -129,85 +126,6 @@
                     </div>
                     <div class="tcol">{{ itemChild.number }}{{ itemChild.unit }}</div>
                     <div class="tcol">{{ itemChild.price || 0 }}元</div>
-                  </div>
-                </div>
-              </div>
-              <div class="titleCtn" style="margin-top: 32px">
-                <div class="title">加工信息</div>
-              </div>
-              <div class="tableCtn">
-                <div class="thead">
-                  <div class="trow">
-                    <div class="tcol">加工单号</div>
-                    <div class="tcol">加工单位</div>
-                    <div class="tcol" style="flex: 0.5">工序</div>
-                    <div class="tcol noPad" style="flex: 3">
-                      <div class="trow">
-                        <div class="tcol">纱线名称</div>
-                        <div class="tcol">加工详情</div>
-                        <div class="tcol" style="flex: 0.5">数量</div>
-                        <div class="tcol" style="flex: 0.5">单价</div>
-                      </div>
-                    </div>
-                    <div class="tcol" style="flex: 0.8">截止日期</div>
-                    <div class="tcol">备注信息</div>
-                    <div class="tcol">额外费用</div>
-                  </div>
-                </div>
-                <div class="tbody" style="font-size: 14px">
-                  <div class="trow" v-for="itemProcess in item.detail.process_info" :key="itemProcess.id">
-                    <div class="tcol">
-                      <span class="overText"
-                        >{{ itemProcess.code }}
-                        <el-tooltip
-                          class="item"
-                          effect="dark"
-                          :content="
-                            '创建日期：' + itemProcess.created_at.slice(0, 10) + ';创建人：' + itemProcess.user_name
-                          "
-                          placement="top"
-                        >
-                          <i class="el-icon-timer hoverBlue"></i>
-                        </el-tooltip>
-                      </span>
-                    </div>
-                    <div class="tcol">{{ itemProcess.client_name }}</div>
-                    <div class="tcol" style="flex: 0.5">{{ itemProcess.process }}</div>
-                    <div class="tcol noPad" style="flex: 3">
-                      <div class="trow" v-for="(itemMat, indexMat) in itemProcess.info_data" :key="indexMat">
-                        <div class="tcol">{{ itemMat.material_transfer_name }}</div>
-                        <div class="tcol">
-                          <template v-if="itemProcess.process === '染色'">
-                            <div class="changeCtn">
-                              <span>白胚</span>
-                              <span class="el-icon-s-unfold blue"></span>
-                              <span>{{ itemMat.after_color }}</span>
-                            </div>
-                          </template>
-                          <template v-if="itemProcess.process === '倒纱'">
-                            <span>{{ itemMat.before_attribute }}</span>
-                            <span class="el-icon-s-unfold blue"></span>
-                            <span>{{ itemMat.after_attribute }}</span>
-                          </template>
-                          <template v-if="itemProcess.process === '并线'">
-                            <span>{{ itemMat.bingxian_desc }}</span>
-                          </template>
-                          <template v-if="itemProcess.process === '膨纱'">
-                            <span>{{ itemMat.pengsha_desc }}</span>
-                          </template>
-                          <template v-if="itemProcess.process === '切割'">
-                            <span>{{ itemMat.qiege_desc }}</span>
-                          </template>
-                        </div>
-                        <div class="tcol" style="flex: 0.5">{{ itemMat.number }}{{ itemMat.unit }}</div>
-                        <div class="tcol" style="flex: 0.5">{{ itemMat.price }}元</div>
-                      </div>
-                    </div>
-                    <div class="tcol" style="flex: 0.8">{{ itemProcess.delivery_time }}</div>
-                    <div class="tcol">{{ itemProcess.desc || '无备注' }}</div>
-                    <div class="tcol">
-                      <others-fee-data :data="itemProcess.others_fee_data"></others-fee-data>
-                    </div>
                   </div>
                 </div>
               </div>
