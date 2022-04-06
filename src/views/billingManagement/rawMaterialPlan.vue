@@ -78,7 +78,7 @@
             <div class="row">
               <div class="col" style="flex: 0.05"><el-checkbox v-model="item.checked"></el-checkbox></div>
               <div class="col" style="flex: 1.2">{{ item.code }}</div>
-              <div class="col">{{ item.order_code }}</div>
+              <div class="col hoverBlue" style="cursor:pointer" @click="$router.push('/order/detail?id=' + item.order_id)">{{ item.order_code }}</div>
               <div class="col">{{ item.total_production_number }}</div>
               <div class="col">{{ item.total_plan_number }}</div>
               <div class="col">{{ item.pre_loss }}</div>

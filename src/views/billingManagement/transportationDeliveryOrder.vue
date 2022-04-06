@@ -724,7 +724,6 @@ export default Vue.extend({
       console.log(row)
     },
     showProduct(item: any) {
-        console.log(item)
       this.productShow = true
       this.productDetailId = item.product_id
     },

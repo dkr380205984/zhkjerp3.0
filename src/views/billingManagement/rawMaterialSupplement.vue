@@ -79,7 +79,13 @@
             <div class="row">
               <div class="col" style="flex: 0.05"><el-checkbox v-model="item.checked"></el-checkbox></div>
               <div class="col" style="flex: 1.2">{{ item.code }}</div>
-              <div class="col">{{ item.order_code }}</div>
+              <div
+                class="col hoverBlue"
+                style="cursor: pointer"
+                @click="$router.push('/order/detail?id=' + item.top_order_id)"
+              >
+                {{ item.order_code }}
+              </div>
               <div class="col">{{ item.client_name }}</div>
               <div class="col">{{ item.total_plan_number }}</div>
               <div class="col">
@@ -107,7 +113,7 @@
                 <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
               </div>
             </div>
-            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px);background:#eee">
+            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
               <div class="tableCtn">
                 <div class="thead">
                   <div class="trow">
@@ -145,7 +151,7 @@
                         <div class="tcol">{{ itemMat.number }}{{ itemMat.unit }}</div>
                       </div>
                     </div>
-                    <div class="tcol">{{ item.detail.desc || '无'}}</div>
+                    <div class="tcol">{{ item.detail.desc || '无' }}</div>
                     <div class="tcol oprCtn">
                       <div class="opr hoverBlue" @click="$openUrl('/materialManage/supPrint?id=' + item.detail.id)">
                         打印
