@@ -101,7 +101,6 @@
               <div class="col">{{ item.created_at }}</div>
               <div class="col" style="flex: 1.4">
                 <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
-                <span class="opr hoverBlue" @click="openPrint(item)">打印</span>
                 <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
               </div>
             </div>

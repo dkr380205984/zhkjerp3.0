@@ -121,10 +121,8 @@
               <div class="tableCtn">
                 <div class="thead">
                   <div class="trow">
-                    <div class="tcol">原料名称</div>
-                    <div class="tcol">订购颜色</div>
-                    <div class="tcol">{{ $route.query.supFlag ? '补纱单' : '计划单' }}颜色</div>
-                    <div class="tcol">订购属性</div>
+                    <div class="tcol">辅料名称</div>
+                    <div class="tcol">物料信息</div>
                     <div class="tcol">订购数量</div>
                     <div class="tcol">订购单价</div>
                   </div>
@@ -762,6 +760,7 @@ export default Vue.extend({
         .list({
           is_check: this.status,
           code: this.keyword,
+          material_type:1,
           user_id: this.user_id,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           start_time: this.date[0],

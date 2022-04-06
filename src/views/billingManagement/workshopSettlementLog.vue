@@ -1,0 +1,789 @@
+<template>
+  <div id="workshopSettlementLog" v-loading="loading" class="bodyContainer">
+    <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
+      <div class="titleCtn">
+        <div class="title">系统单据管理</div>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
+        <div class="tab" @click="$router.push('/billingManagement/rawMaterialPlan')">原料计划单</div>
+        <div class="tab" @click="$router.push('/billingManagement/rawMaterialSupplement')">原料补充单</div>
+        <div class="tab" @click="$router.push('/billingManagement/rawMaterialPurchaseOrder')">原料订购单</div>
+        <div class="tab" @click="$router.push('/billingManagement/rawMaterialTransferOrder')">原料调取单</div>
+        <div class="tab" @click="$router.push('/billingManagement/rawMaterialProcessingOrder')">原料加工单</div>
+        <div class="tab" @click="$router.push('/billingManagement/productionPlan')">生产计划单</div>
+        <div class="tab active">车间结算日志</div>
+        <div class="tab" @click="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">辅料订购单</div>
+        <div class="tab" @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
+        <div class="tab" @click="$router.push('/billingManagement/transportationDeliveryOrder')">运输出库单</div>
+        <div class="tab" @click="$router.push('/billingManagement/deductionForm')">扣款单</div>
+      </div>
+      <div class="listCtn">
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-input
+              v-model="keyword"
+              placeholder="筛选订单号、产品编号"
+              @keydown.enter.native="changeRouter"
+            ></el-input>
+          </div>
+          <div class="elCtn">
+            <el-select @change="changeRouter()" placeholder="筛选员工" v-model="staff_id" filterable clearable>
+              <el-option v-for="item in staffList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-select
+              @change="(ev) => getLocalStorage(ev, 'create_user')"
+              v-model="user_id"
+              placeholder="筛选创建人"
+              clearable
+            >
+              <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-date-picker
+              v-model="date"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+              @change="changeRouter"
+              value-format="yyyy-MM-dd"
+            >
+            </el-date-picker>
+          </div>
+          <div class="btn borderBtn" @click="reset">重置</div>
+        </div>
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-select @change="changeRouter" v-model="status" placeholder="筛选审核状态">
+              <el-option value="null" label="全部"></el-option>
+              <el-option value="1" label="已审核"></el-option>
+              <el-option value="2" label="待审核"></el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="list">
+          <div class="row title">
+            <div class="col" style="flex: 0.05"><el-checkbox @change="checkAll"></el-checkbox></div>
+            <div class="col">关联订单号</div>
+            <div class="col">员工姓名</div>
+            <div class="col">合计完成数量</div>
+            <div class="col">合计结算金额</div>
+            <div class="col">审核状态</div>
+            <div class="col">创建人</div>
+            <div class="col">创建时间</div>
+            <div class="col" style="flex: 1.4">操作</div>
+          </div>
+          <div v-for="(item, index) in list" :key="index">
+            <div class="row">
+              <div class="col" style="flex: 0.05"><el-checkbox v-model="item.checked"></el-checkbox></div>
+              <div class="col">{{ item.order_code }}</div>
+              <div class="col">{{ item.staff_name }}</div>
+              <div class="col">{{ item.number }}</div>
+              <div class="col">{{ +item.total_price }}</div>
+              <div class="col">
+                <div v-if="item.is_check === 1" class="orange">审核中</div>
+                <div v-if="item.is_check === 2" class="blue">通过</div>
+                <div v-if="item.is_check === 3" class="red">不通过</div>
+              </div>
+              <div class="col">{{ item.user_name }}</div>
+              <div class="col">{{ item.created_at }}</div>
+              <div class="col" style="flex: 1.4">
+                <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
+                <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
+              </div>
+            </div>
+            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px)">
+              <div class="titleCtn">
+                <div class="title">结算日志</div>
+              </div>
+              <div class="tableCtn">
+                <el-table ref="chooseSettlementLogList" :data="[item]" tooltip-effect="dark" style="width: 100%">
+                  <el-table-column prop="id" label="序号" width="70" fixed></el-table-column>
+                  <el-table-column prop="created_at" label="添加时间" width="110" fixed> </el-table-column>
+                  <el-table-column prop="user_name" label="操作人" width="110" fixed> </el-table-column>
+                  <el-table-column label="审核状态" width="120">
+                    <template slot-scope="scope">
+                      <div v-if="scope.row.is_check === 1" class="orange">审核中</div>
+                      <div v-if="scope.row.is_check === 2" class="blue">通过</div>
+                      <div v-if="scope.row.is_check === 3" class="red">不通过</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="process_name" label="工序"> </el-table-column>
+                  <el-table-column label="工序说明" width="120">
+                    <template slot-scope="scope">
+                      <el-tooltip
+                        class="item"
+                        effect="dark"
+                        :content="scope.row.process_desc || '无工序说明'"
+                        placement="top-start"
+                      >
+                        <span class="blue" style="cursor: pointer">查看</span>
+                      </el-tooltip>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="staff_name" label="人员" width="120">
+                    <template slot-scope="scope">
+                      <div>{{ scope.row.staff_code.substring(scope.row.staff_code.length - 4) }}</div>
+                      <div>{{ scope.row.staff_name }}</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="product_code" label="产品编号" width="120"> </el-table-column>
+                  <el-table-column label="颜色尺码" width="120">
+                    <template slot-scope="scope">{{
+                      (scope.row.size_name || '无尺码数据') + '/' + (scope.row.color_name || '无颜色数据')
+                    }}</template>
+                  </el-table-column>
+                  <el-table-column prop="number" label="完成数量" width="120"> </el-table-column>
+                  <el-table-column prop="extra_number" label="额外数量" width="120"> </el-table-column>
+                  <el-table-column prop="shoddy_number" label="次品数量" width="120"> </el-table-column>
+                  <el-table-column label="次品原因" width="120">
+                    <template slot-scope="scope">
+                      <el-tooltip
+                        class="item"
+                        effect="dark"
+                        :content="scope.row.shoddy_reason || '无次品原因'"
+                        placement="top-start"
+                      >
+                        <span class="blue" style="cursor: pointer">查看</span>
+                      </el-tooltip>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="price" label="结算单价(元/件)" width="150"> </el-table-column>
+                  <el-table-column prop="total_price" label="结算总价(元)" fixed="right" width="120"> </el-table-column>
+                </el-table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pageCtn">
+          <el-pagination
+            background
+            :page-size="limit"
+            layout="prev, pager, next"
+            :total="total"
+            :current-page.sync="page"
+            @current-change="changeRouter"
+          >
+          </el-pagination>
+        </div>
+      </div>
+    </div>
+    <div class="bottomFixBar">
+      <div class="main">
+        <div class="fl blue green" style="line-height: 56px; margin-left: 24px">
+          <div class="btn backHoverBlue">
+            <span class="text">批量审核</span>
+          </div>
+        </div>
+        <div class="btnCtn">
+          <div class="borderBtn" @click="$router.go(-1)">返回</div>
+          <div class="buttonList" style="margin-left: 12px">
+            <div class="btn backHoverBlue">
+              <span class="text">导出月度报表</span>
+            </div>
+            <div class="btn backHoverBlue" @click="$router.push('/quotedPrice/update?id=' + quotedList[quotedIndex])">
+              <span class="text">导出季度报表</span>
+            </div>
+            <div class="btn backHoverBlue" @click="checkFlag = true">
+              <span class="text">导出年度报表</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue'
+import { order, listSetting, exportExcel, staff, workshop } from '@/assets/js/api'
+import { OrderInfo } from '@/types/order'
+import { ListSetting } from '@/types/list'
+import { limitArr } from '@/assets/js/dictionary'
+import zhExportSetting from '@/components/zhExportSetting/zhExportSetting.vue'
+import othersFeeData from '@/components/zhExportSetting/zhExportSetting.vue'
+import zhDropDown from '@/components/zhDropDown/zhDropDown.vue'
+export default Vue.extend({
+  components: { zhExportSetting, zhDropDown, othersFeeData },
+  data(): {
+    originalSetting: ListSetting[]
+    list: OrderInfo[]
+    [porpName: string]: any
+  } {
+    return {
+      mainLoading: false,
+      mainLoading1: false,
+      loading: true,
+      showCharts: false,
+      list: [],
+      limitList: limitArr,
+      showExport: false,
+      checkedCount: [],
+      exportKey: [],
+      keyword: '',
+      contacts_id: '',
+      contactsList: [],
+      staff_id: '',
+      checked: false,
+      exportExcelParam: {
+        show_row: [],
+        start_time: '',
+        end_time: ''
+      },
+      group_id: '',
+      user_id: '',
+      type: 'null',
+      status: 'null',
+      date: [],
+      limit: 10,
+      total: 1,
+      page: 1,
+      showSetting: false,
+      listSettingId: null,
+      listKey: [],
+      staffList: [],
+      originalExport: [
+        {
+          key: 'code',
+          name: '订单号',
+          ifExport: true,
+          index: 0
+        },
+        {
+          key: 'client_name',
+          name: '下单客户',
+          ifExport: true,
+          index: 1
+        },
+        {
+          key: 'contacts',
+          name: '客户联系人',
+          ifExport: true,
+          index: 2
+        },
+        {
+          key: 'group_name',
+          name: '负责小组',
+          ifExport: true,
+          index: 3
+        },
+        {
+          key: 'settle_unit',
+          name: '结算单位',
+          ifExport: true,
+          index: 4
+        },
+        {
+          key: 'settle_exchange',
+          name: '结算货币',
+          ifExport: true,
+          index: 5
+        },
+        {
+          key: 'order_time',
+          name: '下单时间',
+          ifExport: true,
+          index: 6
+        },
+        {
+          key: 'delivery_time',
+          name: '完成时间',
+          ifExport: true,
+          index: 7
+        },
+        {
+          key: 'batch_title',
+          name: '批次标题',
+          ifExport: true,
+          index: 8
+        },
+        {
+          key: 'batch_type',
+          name: '批次类型',
+          ifExport: true,
+          index: 9
+        },
+        {
+          key: 'batch_desc',
+          name: '批次备注',
+          ifExport: true,
+          index: 10
+        },
+        {
+          key: 'product_code',
+          name: '产品编号',
+          ifExport: true,
+          index: 11
+        },
+        {
+          key: 'product_name',
+          name: '产品名称/品类',
+          ifExport: true,
+          index: 12
+        },
+        {
+          key: 'size_color_name',
+          name: '尺码/颜色',
+          ifExport: true,
+          index: 13
+        },
+        {
+          key: 'price',
+          name: '下单单价',
+          ifExport: true,
+          index: 14
+        },
+        {
+          key: 'number',
+          name: '下单数量',
+          ifExport: true,
+          index: 15
+        },
+        {
+          key: 'is_send',
+          name: '是否寄送产前样',
+          ifExport: true,
+          index: 16
+        },
+        {
+          key: 'is_confirm',
+          name: '是否产前确认',
+          ifExport: true,
+          index: 17
+        },
+        {
+          key: 'is_urgent',
+          name: '是否加急',
+          ifExport: true,
+          index: 18
+        },
+        {
+          key: 'user_name',
+          name: '创建人',
+          ifExport: true,
+          index: 19
+        },
+        {
+          key: 'create_time',
+          name: '创建时间',
+          ifExport: true,
+          index: 20
+        }
+      ],
+      originalSetting: [
+        {
+          key: 'system_code',
+          name: '系统编号',
+          ifShow: true,
+          ifLock: true,
+          ifCaogao: 'is_draft',
+          caogaoArr: ['稿', '整'],
+          index: 0
+        },
+        {
+          key: 'code',
+          name: '订单号',
+          ifShow: true,
+          ifLock: true,
+          index: 1
+        },
+        {
+          key: 'client_name',
+          name: '下单公司',
+          ifShow: true,
+          ifLock: true,
+          index: 2
+        },
+        {
+          key: 'contacts_name',
+          name: '公司联系人',
+          ifShow: true,
+          ifLock: false,
+          index: 3
+        },
+        {
+          key: 'product_code',
+          otherkey: 'system_code',
+          name: '产品编号',
+          ifShow: true,
+          ifLock: false,
+          index: 4,
+          from: 'product_data',
+          mark: true
+        },
+        {
+          key: 'image_data',
+          name: '产品图片',
+          ifShow: true,
+          ifLock: false,
+          ifImage: true,
+          index: 5,
+          from: 'product_data'
+        },
+        {
+          key: '',
+          name: '流程进度',
+          ifShow: true,
+          ifLock: false,
+          index: 6,
+          specialForOrderPrcess: 'order'
+        },
+        {
+          key: 'status',
+          name: '订单状态',
+          ifShow: true,
+          ifLock: false,
+          index: 7,
+          filterArr: ['', '已创建', '进行中', '已完成', '已结算', '已逾期', '已取消'],
+          classArr: ['', 'orange', 'blue', 'green', 'green', 'red', 'gray']
+        },
+        {
+          key: 'total_number',
+          name: '下单总数',
+          ifShow: true,
+          ifLock: false,
+          index: 8,
+          errVal: '0'
+        },
+        {
+          key: 'total_price',
+          name: '下单总额',
+          ifShow: true,
+          ifLock: false,
+          index: 9,
+          unit: '元',
+          errVal: '0'
+        },
+        {
+          key: 'group_name',
+          name: '负责小组',
+          ifShow: true,
+          ifLock: false,
+          index: 10
+        },
+        {
+          key: 'user_name',
+          name: '创建人',
+          ifShow: true,
+          ifLock: false,
+          index: 11
+        }
+      ],
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }
+        ]
+      },
+      oprList: [
+        {
+          name: '详情',
+          class: 'hoverBlue',
+          fn: (item: any) => {
+            if (item.is_draft === 1) {
+              this.$router.push('/order/update?id=' + item.id)
+            } else {
+              this.$router.push('/order/detail?id=' + item.id)
+            }
+          }
+        },
+        {
+          name: '修改',
+          class: 'hoverOrange',
+          fn: (item: any) => {
+            this.$router.push('/order/update?id=' + item.id)
+          }
+        },
+        {
+          name: '删除',
+          class: 'hoverRed',
+          fn: (item: any) => {
+            this.$confirm('是否删除订单?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            })
+              .then(() => {
+                order
+                  .delete({
+                    id: item.id
+                  })
+                  .then((res) => {
+                    if (res.data.status) {
+                      this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                      })
+                      // @ts-ignore
+                      this.getList()
+                    }
+                  })
+              })
+              .catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '已取消删除'
+                })
+              })
+          }
+        }
+      ]
+    }
+  },
+  methods: {
+    getLocalStorage(ev: any, type: string) {
+      if (!ev) {
+        this.$setLocalStorage(type, '')
+      }
+      this.changeRouter()
+    },
+    changeStatus(row: any) {
+      console.log(row)
+    },
+    checkAll(res: Boolean) {
+      this.list.forEach((item: any) => {
+        item.checked = res
+      })
+      this.$forceUpdate()
+    },
+    getFilters() {
+      const query = this.$route.query
+      this.page = Number(query.page)
+      this.staff_id = Number(query.staff_id) || ''
+      this.keyword = query.keyword || ''
+      this.status = query.status || 'null'
+      this.type = Number(query.type) || 'null'
+      this.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
+      this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
+      this.date = query.date ? (query.date as string).split(',') : []
+      this.limit = Number(query.limit) || 10
+    },
+    exportExcelClick() {
+      if (!this.checked) return
+      this.showExport = true
+    },
+    exportExcel(data: any) {
+      this.mainLoading = true
+      data.sort(function (a: any, b: any) {
+        return a.index - b.index
+      })
+      this.exportExcelParam.show_row = []
+      data.forEach((item: any) => {
+        if (item.ifExport) {
+          this.exportExcelParam.show_row.push(item.key)
+        }
+      })
+
+      let idArr: any = []
+
+      this.list.forEach((item) => {
+        idArr.push(item.id)
+      })
+
+      this.exportExcelParam['id'] = idArr
+      exportExcel.orderInfo(this.exportExcelParam).then((res: any) => {
+        if (res.data.status) {
+          console.log(res.data.data)
+          this.mainLoading = false
+          window.location.href = res.data.data
+        }
+      })
+      setTimeout(() => {
+        this.mainLoading = false
+      }, 10000)
+    },
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
+      this.$router.push(
+        '/billingManagement/workshopSettlementLog?page=' +
+          this.page +
+          '&keyword=' +
+          this.keyword +
+          '&staff_id=' +
+          this.staff_id +
+          '&user_id=' +
+          this.user_id +
+          '&group_id=' +
+          this.group_id +
+          '&status=' +
+          this.status +
+          '&type=' +
+          this.type +
+          '&date=' +
+          this.date +
+          '&limit=' +
+          this.limit +
+          '&contacts_id=' +
+          this.contacts_id
+      )
+    },
+    reset() {
+      this.$confirm('是否重置所有筛选条件?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.staff_id = ''
+          this.keyword = ''
+          this.user_id = ''
+          this.group_id = ''
+          this.date = []
+          this.type = 'null'
+          this.status = 'null'
+          this.limit = 10
+          this.changeRouter()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消重置'
+          })
+        })
+    },
+    getList() {
+      workshop
+        .list({
+          is_check: this.status,
+          code: this.keyword,
+          user_id: this.user_id,
+          staff_id: this.staff_id,
+          start_time: this.date[0],
+          end_time: this.date[1],
+          limit: this.limit,
+          page: this.page
+        })
+        .then((res) => {
+          if (res.data.status) {
+            res.data.data.items.forEach((item: any) => {
+              item.detail = {
+                product_info_data: [],
+                material_info_data: [],
+                sup_data: []
+              }
+            })
+            this.list = res.data.data.items
+            this.total = res.data.data.total
+          }
+          this.loading = false
+        })
+    },
+    changeShow(item: any) {
+      this.loading = true
+      if (!item.detail.code) {
+        workshop
+          .detail({
+            order_id: item.order_id
+          })
+          .then((ress) => {
+            if (ress.status) {
+              item.detail = ress.data.data
+              item.isShow = true
+            }
+            this.loading = false
+          })
+      } else {
+        item.isShow = !item.isShow
+        this.loading = false
+      }
+
+      this.$forceUpdate()
+    },
+    getListSetting() {
+      this.listKey = []
+      listSetting
+        .detail({
+          type: 3
+        })
+        .then((res) => {
+          this.listSettingId = res.data.data ? res.data.data.id : null
+          this.listKey = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting)
+          this.exportKey = this.$clone(this.originalExport)
+        })
+    }
+  },
+  watch: {
+    $route() {
+      this.getFilters()
+      this.getList()
+    },
+    checkedCount(newVal) {
+      if (newVal.length > 0) {
+        this.checked = true
+      } else {
+        this.checked = false
+      }
+    }
+  },
+  computed: {
+    userList() {
+      return this.$store.state.api.user.arr
+    },
+    groupList() {
+      return this.$store.state.api.group.arr
+    }
+  },
+  created() {
+    staff.list({}).then((res) => {
+      this.staffList = res.data.data
+    })
+    this.getFilters()
+    this.getList()
+    this.getListSetting()
+    this.$checkCommonInfo([
+      {
+        checkWhich: 'api/group',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getGroupAsync'
+      },
+      {
+        checkWhich: 'api/clientType',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getClientTypeAsync'
+      },
+      {
+        checkWhich: 'api/user',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getUserAsync'
+      }
+    ])
+  }
+})
+</script>
+
+<style lang="less">
+@import '~@/assets/css/billingManagement/workshopSettlementLog.less';
+</style>    

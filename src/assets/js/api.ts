@@ -114,6 +114,20 @@ const deduct = {
       file_url: string[]
       price: string
     }) => http.post(`${baseUrl}/doc/deduct`, params, 'application/json'),
+  list: (params: {
+    order_id?: number | string
+    client_id?: number | string
+    order_code?: string | number
+    is_check?: string | number
+    limit?: number
+    page?: number
+    code?: number
+    user_id?: number | string
+    rel_doc_id?: number | string
+    doc_type?: number | string
+    start_time?: string
+    end_time?: string
+  }) => http.get(`${baseUrl}/doc/deduct/lists`, params),
 }
 
 // 单据收款
@@ -547,6 +561,14 @@ const materialProcess = {
     plan_id?: string | number
     order_id?: string | number
     client_id?: string | number
+    user_id?: string | number
+    id?: string | number
+    limit: number
+    page: number
+    code?: string
+    start_time?: string
+    end_time?: string
+    is_check: string | number
   }) => http.get(`${baseUrl}/material/process/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/material/process/detail`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/material/process/delete`, params, 'application/json')
@@ -588,9 +610,16 @@ const productionPlan = {
   create: (params: { data: ProductionPlanInfo[] }) => http.post(`${baseUrl}/weave/plan/save`, params, 'application/json'),
   list: (params: {
     plan_id?: string | number
+    is_check?: string | number
     order_id?: string | number
     client_id?: string | number
+    user_id?: string | number
     top_order_id?: string | number // 最外层order_id
+    code?: string
+    start_time?: string
+    end_time?: string
+    limit?: number
+    page?: number
   }) => http.get(`${baseUrl}/weave/plan/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/weave/plan/delete`, params, 'application/json'),
   detail: (params: DetailParams) => http.get(`${baseUrl}/weave/plan/detail`, params),
@@ -655,7 +684,20 @@ import { PackOrderInfo, PackPlanInfo } from '@/types/packManage'
 const packManage = {
   UpdateOrder: (params: PackOrderInfo) => http.post(`${baseUrl}/pack/order/edit`, params, 'application/json'),
   createOrder: (params: { data: PackOrderInfo[] }) => http.post(`${baseUrl}/pack/order/save`, params, 'application/json'),
-  orderList: (params: { order_id: string | number }) => http.get(`${baseUrl}/pack/order/lists`, params),
+  orderList: (params: {
+    order_id?: string | number
+    is_check?: string | number
+    client_id?: string | number
+    user_id?: string | number
+    code?: string
+    start_time?: string
+    end_time?: string
+    limit?: number
+    page?: number
+  }) => http.get(`${baseUrl}/pack/order/lists`, params),
+  orderListDetail: (params: {
+    id?: string | number
+  }) => http.get(`${baseUrl}/pack/order/detail`, params),
   deleteOrder: (params: DeleteParams) => http.post(`${baseUrl}/pack/order/delete`, params, 'application/json'),
   createPlan: (params: PackPlanInfo) => http.post(`${baseUrl}/pack/plan/save`, params, 'application/json'),
   planList: (params: { order_id?: string | number, [propName: string]: any }) => http.get(`${baseUrl}/pack/plan/lists`, params),
@@ -786,10 +828,18 @@ const workshop = {
     }>
   }) => http.post(`${baseUrl}/production/inspection/save`, params),
   list: (params: {
-    order_id: string | number
+    order_id?: string | number
+    is_check?: string | number
+    code?: string
+    staff_id?: string | number
+    user_id?: string | number
+    start_time?: string
+    end_time?: string
+    limit?: number
+    page?: number
   }) => http.get(`${baseUrl}/production/inspection/lists`, params),
   detail: (params: {
-    order_id: number | string
+    order_id?: number | string
   }) => http.get(`${baseUrl}/production/inspection/detail`, params),
   delete: (params: {
     id: Array<number | string>
