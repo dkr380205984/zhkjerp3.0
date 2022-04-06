@@ -3467,7 +3467,7 @@ export default Vue.extend({
         user_name: '',
         password: '',
         phone: '',
-        only_search_self: 1,
+        only_search_self: 2,
         is_admin: 2, // 1：超管 2：普通用户
         module_info: [],
         has_check: 2,
