@@ -1,5 +1,5 @@
 <template>
-  <div class="charts"></div>
+  <div class="charts" @click="clickEcharts"></div>
 </template>
 
 <script lang="ts">
@@ -37,6 +37,11 @@ export default Vue.extend({
     },
     setOptions() {
       this.chart.setOption(this.option)
+    },
+    clickEcharts() {
+      this.chart.on('click', (params: any) => {
+        this.$emit('chartsData', params)
+      })
     }
   },
   mounted() {

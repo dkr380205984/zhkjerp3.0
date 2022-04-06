@@ -752,8 +752,8 @@ export default Vue.extend({
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           is_check: this.status,
           status: this.type,
-          start_time: this.date.length > 0 ? this.date[0] : this.$GetDateStr(-3),
-          end_time: this.date.length > 0 ? this.date[1] : this.$GetDateStr(14),
+          start_time: this.date.length > 1 ? this.date[0] : this.$GetDateStr(-3),
+          end_time: this.date.length > 1 ? this.date[1] : this.$GetDateStr(14),
           user_id: this.user_id,
           group_id: this.group_id
         })

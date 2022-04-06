@@ -6,7 +6,7 @@
       </div>
       <zh-drop-down :show="showCharts" hideTitle="点击查看图表">
         <div style="height: 200px; width: 1580px; transform: translateX(-111px); padding-top: 50px">
-          <zh-charts :option="option" style="height: 200px"></zh-charts>
+          <zh-charts :option="option" style="height: 200px" v-on:chartsData="chartsData"></zh-charts>
         </div>
       </zh-drop-down>
       <div class="listCtn">
@@ -647,6 +647,9 @@ export default Vue.extend({
       }
       this.changeRouter()
     },
+    chartsData(params:any){
+      console.log(params)
+    },
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)
@@ -765,8 +768,8 @@ export default Vue.extend({
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           is_check: this.status,
           status: this.type,
-          start_time: this.date.length > 0 ? this.date[0] : this.$GetDateStr(-3),
-          end_time: this.date.length > 0 ? this.date[1] : this.$GetDateStr(14),
+          start_time: this.date.length > 1 ? this.date[0] : this.$GetDateStr(-3),
+          end_time: this.date.length > 1 ? this.date[1] : this.$GetDateStr(14),
           user_id: this.user_id,
           group_id: this.group_id
         })
