@@ -650,11 +650,33 @@
                 <div class="label">
                   <span class="text">订购单位</span>
                   <span class="explanation">(必选)</span>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="设置成功后请点击此按钮刷新数据"
+                    placement="top">
+                    <i class="el-icon-refresh hoverGreen fr"
+                      style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                      @click="$checkCommonInfo([{
+                        checkWhich: 'api/clientType',
+                        getInfoMethed: 'dispatch',
+                        getInfoApi: 'getClientTypeAsync',
+                        forceUpdate:true
+                      }])"></i>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="添加新单位"
+                    placement="top">
+                    <i class="el-icon-upload hoverOrange fr"
+                      style="line-height:38px;font-size:18px;cursor:pointer;"
+                      @click="$openUrl('/client/create?type=2')"></i>
+                  </el-tooltip>
                 </div>
                 <div class="info elCtn">
                   <el-cascader placeholder="请选择订购单位"
                     v-model="item.client_id_arr"
-                    :options="orderClientList"></el-cascader>
+                    :options="orderClientList"
+                    @change="getMatAttr($event,item)"></el-cascader>
                 </div>
               </div>
               <div class="col">
@@ -690,6 +712,27 @@
                   v-if="indexMat===0">
                   <span class="text">物料名称</span>
                   <span class="explanation">(必选)</span>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="设置成功后请点击此按钮刷新数据"
+                    placement="top">
+                    <i class="el-icon-refresh hoverGreen fr"
+                      style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                      @click="$checkCommonInfo([{
+                        checkWhich: 'api/yarnType',
+                        getInfoMethed: 'dispatch',
+                        getInfoApi: 'getYarnTypeAsync',
+                        forceUpdate:true
+                      }])"></i>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="添加新原料"
+                    placement="top">
+                    <i class="el-icon-upload hoverOrange fr"
+                      style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                      @click="$openUrl('/setting/?pName=物料设置&cName=纱线原料')"></i>
+                  </el-tooltip>
                 </div>
                 <div class="info elCtn">
                   <el-select placeholder="请选择物料名称"
@@ -1742,7 +1785,7 @@
           <span class="btn borderBtn"
             @click="materialOrderUpdataFlag = false">取消</span>
           <span class="btn backHoverOrange"
-            @click="updataMaterialOrder">确认修改</span>
+            @click="updateMaterialOrder">确认修改</span>
         </div>
       </div>
     </div>
@@ -2679,7 +2722,7 @@ export default Vue.extend({
           })
         })
     },
-    updataMaterialOrder() {
+    updateMaterialOrder() {
       const formCheck = this.$formCheck(this.materialOrderUpdataInfo, [
         {
           key: 'delivery_time',
@@ -2704,9 +2747,9 @@ export default Vue.extend({
         materialOrder.update(this.materialOrderUpdataInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('修改成功')
-            this.materialOrderUpdataFlag = false
             this.init()
           }
+          this.materialOrderUpdataFlag = false
         })
       }
     },
@@ -2757,6 +2800,13 @@ export default Vue.extend({
       info.batch_code = finded.batch_code
       info.color_code = finded.color_code
       info.vat_code = finded.vat_code
+    },
+    getMatAttr(id: string[], info: any) {
+      if (this.orderClientList.find((item) => item.value === id[0])!.label === '面料原料单位') {
+        info.info_data.forEach((item: any) => {
+          item.attribute = '面料'
+        })
+      }
     },
     resetStockMaterial() {
       this.materialStockFilter = {

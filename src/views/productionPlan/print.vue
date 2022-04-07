@@ -54,6 +54,16 @@
               <div class="tcol bgGray label">分配总额</div>
               <div class="tcol">{{totalPrice}}元</div>
             </div>
+            <div class="trow">
+              <div class="tcol bgGray label">联系人</div>
+              <div class="tcol">{{productionPlanInfo.contacts_name}}</div>
+              <div class="tcol bgGray label">联系电话</div>
+              <div class="tcol">{{productionPlanInfo.contacts_phone}}</div>
+              <div class="tcol bgGray label">工序说明</div>
+              <div class="tcol">{{productionPlanInfo.process_desc}}</div>
+              <div class="tcol bgGray label"></div>
+              <div class="tcol"></div>
+            </div>
           </div>
         </div>
         <div class="tableCtn">
@@ -315,7 +325,9 @@ export default Vue.extend({
         if (res.data.status) {
           this.productionPlanInfo = res.data.data
           const QRCode = require('qrcode')
-          QRCode.toDataURL(`/inspection/detail?id=${this.$route.query.order_id}&code=${res.data.data.code}&product_id=${res.data.data.product_info_data[0].product_id}&isBarcodeScanner=true`)
+          QRCode.toDataURL(
+            `/inspection/detail?id=${this.$route.query.order_id}&code=${res.data.data.code}&product_id=${res.data.data.product_info_data[0].product_id}&isBarcodeScanner=true`
+          )
             .then((url: any) => {
               this.qrCodeUrl = url
             })

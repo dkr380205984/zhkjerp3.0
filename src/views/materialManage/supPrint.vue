@@ -51,8 +51,8 @@
               <div class="tcol">{{item.bear_client_name}}</div>
               <div class="tcol bgGray headTitle">承担金额</div>
               <div class="tcol">{{item.bear_price}}元</div>
-              <div class="tcol bgGray headTitle"></div>
-              <div class="tcol"></div>
+              <div class="tcol bgGray headTitle">联系电话</div>
+              <div class="tcol">{{materialSupplementInfo.contacts_phone}}</div>
             </div>
           </div>
         </div>

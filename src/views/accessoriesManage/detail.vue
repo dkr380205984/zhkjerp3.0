@@ -124,6 +124,27 @@
                   <div class="label">
                     <span class="text">订购单位</span>
                     <span class="explanation">(必选)</span>
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="设置成功后请点击此按钮刷新数据"
+                      placement="top">
+                      <i class="el-icon-refresh hoverGreen fr"
+                        style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                        @click="$checkCommonInfo([{
+                        checkWhich: 'api/clientType',
+                        getInfoMethed: 'dispatch',
+                        getInfoApi: 'getClientTypeAsync',
+                        forceUpdate:true
+                      }])"></i>
+                    </el-tooltip>
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="添加新单位"
+                      placement="top">
+                      <i class="el-icon-upload hoverOrange fr"
+                        style="line-height:38px;font-size:18px;cursor:pointer;"
+                        @click="$openUrl('/client/create?type=2')"></i>
+                    </el-tooltip>
                   </div>
                   <div class="info elCtn">
                     <el-cascader placeholder="请选择订购单位"

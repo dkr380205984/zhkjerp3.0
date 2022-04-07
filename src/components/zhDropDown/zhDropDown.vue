@@ -1,9 +1,13 @@
 <template>
   <div>
-    <div class="zhDropDown" ref="aa" :style="{ height: isShow ? height + 'px' : '0' }">
+    <div class="zhDropDown"
+      ref="aa"
+      :style="{ height: isShow ? height + 'px' : '0' }">
       <slot></slot>
     </div>
-    <div class="blue clickButton" @click="isShow = !isShow">{{ isShow ? showTitle : hideTitle }}</div>
+    <div class="blue clickButton"
+      :style="buttonStyle"
+      @click="isShow = !isShow">{{ isShow ? showTitle : hideTitle }}</div>
   </div>
 </template>
 
@@ -22,6 +26,10 @@ export default Vue.extend({
     show: {
       type: Boolean,
       default: true
+    },
+    buttonStyle: {
+      type: String,
+      required: false
     }
   },
   data(): {

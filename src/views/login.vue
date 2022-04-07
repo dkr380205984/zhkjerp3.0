@@ -297,6 +297,7 @@ export default Vue.extend({
       //   companyInfo.module_id_detail ? JSON.parse(companyInfo.module_id_detail) : []
       // )
       // console.log(moduleId)
+      window.sessionStorage.setItem('group_id', res.data.data.group_id)
       window.sessionStorage.setItem('user_name', res.data.data.name)
       window.sessionStorage.setItem('company_id', companyInfo.company_id)
       window.sessionStorage.setItem('company_name', companyInfo.company_name)

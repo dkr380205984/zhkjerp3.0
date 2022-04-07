@@ -493,7 +493,7 @@ export default Vue.extend({
         id: null,
         client_id: '',
         tree_data: [],
-        group_id: Number(this.$getLocalStorage('group_id')) || '',
+        group_id: Number(this.$getsessionStorage('group_id')) || Number(this.$getLocalStorage('group_id')) || '',
         contacts_id: '',
         public_files: [],
         private_files: [],
