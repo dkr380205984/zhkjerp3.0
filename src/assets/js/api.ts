@@ -89,11 +89,11 @@ const yarnPrice = {
   delete: (params: DeleteParams) => http.post(`${baseUrl}/yarn/price/delete`, params, 'application/json'),
 }
 // 单据审核
-// 单据类型 1订单 2物料订购 3无聊加工 4制造计划 5报价 6原料出入库 7原料预订购 8产品出入库 9物料计划单
+// 单据类型 1订单 2物料订购 3物料加工 4制造计划/生产计划 5报价 6原料出入库/物料调取 7原料预订购 8产品出入库 9物料计划 10补纱 11包装采购 12扣款单 13运输单 14车间管理 15开票单 16收款单
 const check = {
   create: (params:
     {
-      pid: number | string
+      pid: number | string | Array<number>
       check_type: number
       check_desc: string | string[]
       is_check: 1 | 2 // 1通过 2没通过
