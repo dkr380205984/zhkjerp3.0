@@ -231,7 +231,7 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue" @click="$router.push('/billingManagement/rawMaterialTransferOrder')">
+          <div class="btn backHoverBlue" @click="$openUrl('/billingManagement/rawMaterialTransferOrder')">
             查看原料调取单
           </div>
         </div>

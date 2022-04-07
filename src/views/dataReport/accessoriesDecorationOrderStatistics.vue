@@ -231,7 +231,7 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue" @click="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">查看辅料订购单</div>
+          <div class="btn backHoverBlue" @click="$openUrl('/billingManagement/auxiliaryMaterialPurchaseOrder')">查看辅料订购单</div>
         </div>
       </div>
     </div>

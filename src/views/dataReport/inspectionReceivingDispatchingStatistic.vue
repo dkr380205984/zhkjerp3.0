@@ -216,7 +216,7 @@
     <!-- <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue" @click="$router.push('/billingManagement/productionPlan')">查看检验收发日志</div>
+          <div class="btn backHoverBlue" @click="$openUrl('/billingManagement/productionPlan')">查看检验收发日志</div>
         </div>
       </div>
     </div> -->

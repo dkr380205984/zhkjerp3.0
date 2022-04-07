@@ -232,7 +232,7 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue" @click="$router.push('/billingManagement/rawMaterialPurchaseOrder')">查看原料订购单</div>
+          <div class="btn backHoverBlue" @click="$openUrl('/billingManagement/rawMaterialPurchaseOrder')">查看原料订购单</div>
         </div>
       </div>
     </div>
