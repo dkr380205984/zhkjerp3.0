@@ -90,7 +90,13 @@
                 <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
               </div>
               <div class="col" style="flex: 1.2">{{ item.code }}</div>
-              <div class="col">{{ item.order_code }}</div>
+              <div
+                class="col hoverBlue"
+                style="cursor: pointer"
+                @click="$router.push('/order/detail?id=' + item.top_order_id)"
+              >
+                {{ item.order_code }}
+              </div>
               <div class="col">{{ item.store }}</div>
               <div class="col" style="flex: 0.5">{{ item.total_number }}</div>
               <div class="col" style="flex: 0.5">{{ item.total_price }}</div>
