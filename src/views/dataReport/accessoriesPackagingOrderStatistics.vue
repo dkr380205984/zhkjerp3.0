@@ -54,7 +54,7 @@
                   getContacts($event)
                   changeRouter()
                 "
-                placeholder="筛选下单公司"
+                placeholder="筛选订购单位"
                 v-model="filterData.client_id"
                 :show-all-levels="false"
                 filterable
@@ -122,7 +122,7 @@
           </div>
           <div class="contentGrid">
             <div>
-              下单公司：<span class="blue">{{ alias || '所有' }}</span>
+              订购单位：<span class="blue">{{ alias || '所有' }}</span>
             </div>
             <div>
               包装名称：<span class="blue">{{ packName || '所有' }}</span>

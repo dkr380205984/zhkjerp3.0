@@ -1,29 +1,26 @@
 <template>
-  <div id="orderList"
-    v-loading="mainLoading1"
-    class="bodyContainer">
-    <div class="module"
-      v-loading="mainLoading"
-      element-loading-text="正在导出文件中....请耐心等待">
+  <div id="orderList" v-loading="mainLoading1" class="bodyContainer">
+    <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">订单列表</div>
       </div>
-      <zh-drop-down :show="showCharts"
-        hideTitle="点击查看图表">
+      <zh-drop-down :show="showCharts" hideTitle="点击查看图表">
         <div style="height: 200px; width: 1580px; transform: translateX(-111px); padding-top: 50px">
-
           <zh-charts :option="option" style="height: 200px" v-on:chartsData="chartsData"></zh-charts>
         </div>
       </zh-drop-down>
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input v-model="keyword"
+            <el-input
+              v-model="keyword"
               placeholder="筛选报价/产品/样品编号"
-              @keydown.enter.native="changeRouter"></el-input>
+              @keydown.enter.native="changeRouter"
+            ></el-input>
           </div>
           <div class="elCtn">
-            <el-cascader @change="
+            <el-cascader
+              @change="
                 getContacts($event)
                 changeRouter()
               "
@@ -31,76 +28,61 @@
               v-model="client_id"
               filterable
               :options="clientList"
-              clearable>
+              clearable
+            >
             </el-cascader>
           </div>
           <div class="elCtn">
-            <el-select placeholder="请选择公司联系人"
+            <el-select
+              placeholder="请选择公司联系人"
               v-model="contacts_id"
               no-data-text="请先选择下单公司"
               filterable
               clearable
-              @change="changeRouter">
-              <el-option v-for="item in contactsList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"></el-option>
+              @change="changeRouter"
+            >
+              <el-option v-for="item in contactsList" :key="item.id" :value="item.id" :label="item.name"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter"
-              v-model="status"
-              placeholder="筛选审核状态">
-              <el-option value="null"
-                label="全部"></el-option>
-              <el-option value="1"
-                label="已审核"></el-option>
-              <el-option value="2"
-                label="待审核"></el-option>
+            <el-select @change="changeRouter" v-model="status" placeholder="筛选审核状态">
+              <el-option value="null" label="全部"></el-option>
+              <el-option value="1" label="已审核"></el-option>
+              <el-option value="2" label="待审核"></el-option>
             </el-select>
           </div>
-          <div class="btn borderBtn"
-            @click="reset">重置</div>
+          <div class="btn borderBtn" @click="reset">重置</div>
         </div>
         <div class="filterCtn">
           <div class="elCtn hasIcon">
-            <el-select @change="(ev) => getLocalStorage(ev, 'create_user')"
+            <el-select
+              @change="(ev) => getLocalStorage(ev, 'create_user')"
               v-model="user_id"
               placeholder="筛选创建人"
-              clearable>
-              <el-option v-for="item in userList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"></el-option>
+              clearable
+            >
+              <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
-            <el-tooltip class="item"
-              effect="dark"
-              content="保存创建人筛选"
-              placement="top">
-              <i class="el-icon-upload hoverOrange"
-                @click="$setLocalStorage('create_user', user_id)"></i>
+            <el-tooltip class="item" effect="dark" content="保存创建人筛选" placement="top">
+              <i class="el-icon-upload hoverOrange" @click="$setLocalStorage('create_user', user_id)"></i>
             </el-tooltip>
           </div>
           <div class="elCtn hasIcon">
-            <el-select @change="(ev) => getLocalStorage(ev, 'group_id')"
+            <el-select
+              @change="(ev) => getLocalStorage(ev, 'group_id')"
               v-model="group_id"
               placeholder="筛选负责小组"
-              clearable>
-              <el-option v-for="item in groupList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"></el-option>
+              clearable
+            >
+              <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
             </el-select>
-            <el-tooltip class="item"
-              effect="dark"
-              content="保存负责小组筛选"
-              placement="top">
-              <i class="el-icon-upload hoverOrange"
-                @click="$setLocalStorage('group_id', group_id)"></i>
+            <el-tooltip class="item" effect="dark" content="保存负责小组筛选" placement="top">
+              <i class="el-icon-upload hoverOrange" @click="$setLocalStorage('group_id', group_id)"></i>
             </el-tooltip>
           </div>
           <div class="elCtn">
-            <el-date-picker v-model="date"
+            <el-date-picker
+              v-model="date"
               type="daterange"
               align="right"
               unlink-panels
@@ -109,91 +91,84 @@
               end-placeholder="结束日期"
               :picker-options="pickerOptions"
               @change="changeRouter"
-              value-format="yyyy-MM-dd">
+              value-format="yyyy-MM-dd"
+            >
             </el-date-picker>
           </div>
           <div class="elCtn">
-            <el-select v-model="limit"
-              placeholder="每页展示条数"
-              @change="changeRouter">
-              <el-option v-for="item in limitList"
-                :key="item.value"
-                :label="item.name"
-                :value="item.value"></el-option>
+            <el-select v-model="limit" placeholder="每页展示条数" @change="changeRouter">
+              <el-option v-for="item in limitList" :key="item.value" :label="item.name" :value="item.value"></el-option>
             </el-select>
           </div>
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select v-model="type"
-              placeholder="订单状态筛选"
-              @change="changeRouter">
-              <el-option label="全部"
-                value="null"></el-option>
-              <el-option label="已创建"
-                :value="1"></el-option>
-              <el-option label="进行中"
-                :value="2"></el-option>
-              <el-option label="已完成"
-                :value="3"></el-option>
-              <el-option label="已取消"
-                :value="5"></el-option>
-              <el-option label="已延期"
-                :value="6"></el-option>
+            <el-select v-model="type" placeholder="订单状态筛选" @change="changeRouter">
+              <el-option label="全部" value="null"></el-option>
+              <el-option label="已创建" :value="1"></el-option>
+              <el-option label="进行中" :value="2"></el-option>
+              <el-option label="已完成" :value="3"></el-option>
+              <el-option label="已取消" :value="5"></el-option>
+              <el-option label="已延期" :value="6"></el-option>
             </el-select>
           </div>
         </div>
-        <div class="filterCtn"
-          style="height: 33px">
-          <div class="btn backHoverBlue fr"
-            @click="$router.push('/order/create')">添加订单</div>
-          <div class="btn backHoverOrange fl"
-            @click="showSetting = true"
-            style="margin-left: 0">列表设置</div>
-          <div class="btn backHoverGreen fl"
+        <div class="filterCtn" style="height: 33px">
+          <div class="btn backHoverBlue fr" @click="$router.push('/order/create')">添加订单</div>
+          <div class="btn backHoverOrange fl" @click="showSetting = true" style="margin-left: 0">列表设置</div>
+          <div
+            class="btn backHoverGreen fl"
             @click="
               getFilters()
               getList()
-            ">
+            "
+          >
             刷新列表
           </div>
-          <div :class="checked ? 'btn backHoverBlue fl' : 'btn backHoverBlue fl noCheck'"
-            @click="exportExcelClick()">
+          <div :class="checked ? 'btn backHoverBlue fl' : 'btn backHoverBlue fl noCheck'" @click="exportExcelClick()">
             导出Excel
           </div>
         </div>
-        <zh-list :list="list"
+        <zh-list
+          :list="list"
           :check="true"
           :checkedCount="checkedCount"
           :listKey="listKey"
           :loading="loading"
-          :oprList="oprList"></zh-list>
+          :oprList="oprList"
+        ></zh-list>
         <div class="pageCtn">
-          <el-pagination background
+          <el-pagination
+            background
             :page-size="limit"
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
-            @current-change="changeRouter">
+            @current-change="changeRouter"
+          >
           </el-pagination>
         </div>
       </div>
     </div>
     <!-- 列表设置 -->
-    <zh-list-setting @close="showSetting = false"
+    <zh-list-setting
+      @close="showSetting = false"
       @afterSave="getListSetting"
       :show="showSetting"
       :id="listSettingId"
       :type="3"
       :data.sync="listKey"
-      :originalData="originalSetting"></zh-list-setting>
+      :originalData="originalSetting"
+    ></zh-list-setting>
 
     <!-- 导出Excel -->
-    <zhExportSetting @close="showExport = false"
+    <zhExportSetting
+      @close="showExport = false"
       @afterSave="exportExcel"
       :show="showExport"
       :data.sync="exportKey"
-      :originalData="originalExport"></zhExportSetting>
+      :originalData="originalExport"
+    ></zhExportSetting>
   </div>
 </template>
 
@@ -218,12 +193,14 @@ export default Vue.extend({
       mainLoading1: false,
       loading: true,
       showCharts: false,
+      isClick: false,
       list: [],
       limitList: limitArr,
       showExport: false,
       checkedCount: [],
       exportKey: [],
       keyword: '',
+      delivery_time: '',
       contacts_id: '',
       contactsList: [],
       client_id: [],
@@ -234,7 +211,7 @@ export default Vue.extend({
         end_time: ''
       },
       option: {
-        color: ['#229CFB', '#2DD59A', '#FCCA24', '#000000', '#000000'],
+        color: ['#229CFB', '#2DD59A', '#FCCA24', '#FA9036', '#000000'],
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -249,9 +226,9 @@ export default Vue.extend({
                 ${params[0].axisValueLabel}</br>
             `
 
-            htmlStr += `发货数量：${params[3].data}<br/>`
+            // htmlStr += `发货数量：${params[3].data}<br/>`
             params.forEach((param: any) => {
-              if (param.seriesName === '发货数') return
+              // if (param.seriesName === '发货数') return
               if (param.dataIndex < 3 && param.seriesIndex === 1) return
               if (param.dataIndex >= 3 && param.seriesIndex === 2) return
 
@@ -273,7 +250,7 @@ export default Vue.extend({
               type: 'shadow'
             },
             axisLabel: {
-              interval: 0
+              interval: 2
             }
           }
         ],
@@ -310,13 +287,8 @@ export default Vue.extend({
           },
           {
             type: 'bar',
-            name: '发货数',
-            stack: '0',
+            name: '发货数量',
             data: [],
-            itemStyle: {
-              width: 0, // 线宽是0
-              color: 'rgba(0, 0, 0, 0)' // 线的颜色是透明的
-            }
           },
           {
             type: 'line',
@@ -672,8 +644,11 @@ export default Vue.extend({
       }
       this.changeRouter()
     },
-    chartsData(params:any){
-      console.log(params)
+    chartsData(params: any) {
+      if(this.isClick) return
+      this.isClick = true
+      this.delivery_time = params.name
+      this.getList()
     },
     getFilters() {
       const query = this.$route.query
@@ -716,7 +691,7 @@ export default Vue.extend({
       this.exportExcelParam['id'] = idArr
       exportExcel.orderInfo(this.exportExcelParam).then((res: any) => {
         if (res.data.status) {
-          console.log(res.data.data)
+          // console.log(res.data.data)
           this.mainLoading = false
           window.location.href = res.data.data
         }
@@ -726,6 +701,7 @@ export default Vue.extend({
       }, 10000)
     },
     changeRouter(ev?: any) {
+      this.delivery_time = ''
       if (ev !== this.page) {
         this.page = 1
       }
@@ -818,7 +794,7 @@ export default Vue.extend({
 
             if (key === new Date().getMonth() + 1 + '-' + new Date().getDate()) {
               let obj = {
-                value: key + '\n今日',
+                value: res.data.data[key].date + '\n今日',
                 textStyle: {
                   fontSize: 16,
                   color: '#1A95FF'
@@ -827,7 +803,7 @@ export default Vue.extend({
               this.option.xAxis[0].data.push(obj)
               continue
             }
-            this.option.xAxis[0].data.push(key)
+            this.option.xAxis[0].data.push(res.data.data[key].date)
           }
           this.mainLoading1 = false
         })
@@ -835,6 +811,7 @@ export default Vue.extend({
         .list({
           order_type: 1,
           keyword: this.keyword,
+          delivery_time: this.delivery_time.slice(0,10),
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           page: this.page,
           limit: this.limit,
@@ -856,6 +833,7 @@ export default Vue.extend({
             this.total = res.data.data.total
           }
           this.loading = false
+          this.isClick = false
         })
     },
     getListSetting() {

@@ -107,7 +107,7 @@
               负责小组：<span class="blue">{{ groupName || '所有' }}</span>
             </div>
             <div>
-              下单公司：<span class="blue">{{ alias || '所有' }}</span>
+              订购单位：<span class="blue">{{ alias || '所有' }}</span>
             </div>
             <div>
               原材名称：<span class="blue">{{ filterData.name || '所有' }}</span>
@@ -123,7 +123,7 @@
                 getContacts($event)
                 changeRouter()
               "
-              placeholder="筛选下单公司"
+              placeholder="筛选订购单位"
               v-model="filterData.client_id"
               :show-all-levels="false"
               filterable
@@ -214,7 +214,7 @@
               </div>
               <zh-charts v-if="activeName === 'first'" :option="option1"></zh-charts>
             </el-tab-pane>
-            <el-tab-pane label="实际订购" name="second">
+            <el-tab-pane label="最终入库" name="second">
               <div style="display: flex; justify-content: end; padding-right: 50px">
                 <div style="width: 150px">
                   <el-select v-model="sortWay" @change="changeRouter">
@@ -292,7 +292,7 @@ export default Vue.extend({
           }
         },
         legend: {
-          data: ['采购数量', '订购金额']
+          data: []
         },
         xAxis: [
           {
@@ -306,7 +306,7 @@ export default Vue.extend({
         yAxis: [
           {
             type: 'value',
-            name: '采购数量',
+            name: '',
             min: 0,
             max: 25,
             interval: 5,
@@ -316,7 +316,7 @@ export default Vue.extend({
           },
           {
             type: 'value',
-            name: '订购金额',
+            name: '',
             min: 0,
             max: 500,
             interval: 100,
@@ -328,12 +328,12 @@ export default Vue.extend({
         series: [
           {
             type: 'bar',
-            name: '采购数量',
+            name: '',
             data: []
           },
           {
             type: 'line',
-            name: '订购金额',
+            name: '',
             yAxisIndex: 1,
             data: []
           }
@@ -557,6 +557,7 @@ export default Vue.extend({
           this.option1.series[0].data = []
           this.option1.series[1].data = []
           this.option1.xAxis[0].data = []
+          this.option1.legend.data = []
 
           let planPriceMax: any,
             planPriceMin: any,
@@ -584,6 +585,12 @@ export default Vue.extend({
           }
 
           if (this.activeName === 'first') {
+            this.option1.legend.data = ['采购数量', '订购金额']
+            this.option1.series[0].name = '采购数量'
+            this.option1.series[1].name = '订购金额'
+            this.option1.yAxis[0].name = '采购数量'
+            this.option1.yAxis[1].name = '订购金额'
+
             //   采购数量 图表更新
             this.option1.yAxis[0].max = Math.ceil(Math.ceil(planNumberMax / 1000 / 5)) * 5 || 10
             this.option1.yAxis[0].min = planNumberMin && planNumberMin < 0 ? Math.ceil(planNumberMin / 1000) : 0
@@ -600,6 +607,12 @@ export default Vue.extend({
               this.option1.series[1].data.push((item.total_price / 10000).toFixed(2))
             })
           } else if (this.activeName === 'second') {
+            this.option1.legend.data = ['入库数量','入库金额']
+            this.option1.series[0].name = '入库数量'
+            this.option1.series[1].name = '入库金额'
+            this.option1.yAxis[0].name = '入库数量'
+            this.option1.yAxis[1].name = '入库金额'
+
             //   采购数量 图表更新
             this.option1.yAxis[0].max = Math.ceil(Math.ceil(realNumberMax / 1000 / 5)) * 5 || 10
             this.option1.yAxis[0].min = realNumberMin && realNumberMin < 0 ? Math.ceil(realNumberMin / 1000) : 0

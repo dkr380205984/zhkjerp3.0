@@ -618,7 +618,6 @@ export default Vue.extend({
             this.option1.yAxis[1].interval = Math.ceil(materialSupLossMax / materialSupFinalNumberMax / 5) * 10 || 10
 
             data.material_sup.forEach((item: any) => {
-              if (item.final_number / 1000 < 1) return
               this.option1.xAxis[0].data.push(item.name)
               this.option1.series[0].data.push((item.final_number / 1000).toFixed(2))
               this.option1.series[1].data.push(((item.loss / item.final_number) * 100).toFixed(2))

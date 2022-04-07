@@ -201,7 +201,8 @@
       <div class="cardCtn">
         <div class="card">
           <el-tabs v-model="activeName" @tab-click="getList">
-            <el-tab-pane label="计划调取" name="first">
+            <!-- <el-tab-pane label="计划调取" name="first"> -->
+            <el-tab-pane label="" name="first">
               <div style="display: flex; justify-content: end; padding-right: 50px">
                 <div style="width: 150px">
                   <el-select v-model="sortWay" @change="changeRouter">
@@ -212,7 +213,7 @@
               </div>
               <zh-charts v-if="activeName === 'first'" :option="option1"></zh-charts>
             </el-tab-pane>
-            <el-tab-pane label="实际调取" name="second">
+            <!-- <el-tab-pane label="实际调取" name="second">
               <div style="display: flex; justify-content: end; padding-right: 50px">
                 <div style="width: 150px">
                   <el-select v-model="sortWay" @change="changeRouter">
@@ -222,7 +223,7 @@
                 </div>
               </div>
               <zh-charts v-if="activeName === 'second'" :option="option1"></zh-charts
-            ></el-tab-pane>
+            ></el-tab-pane> -->
           </el-tabs>
         </div>
       </div>
