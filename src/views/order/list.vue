@@ -11,8 +11,9 @@
       <zh-drop-down :show="showCharts"
         hideTitle="点击查看图表">
         <div style="height: 200px; width: 1580px; transform: translateX(-111px); padding-top: 50px">
-
-          <zh-charts :option="option" style="height: 200px" v-on:chartsData="chartsData"></zh-charts>
+          <zh-charts :option="option"
+            style="height: 200px"
+            v-on:chartsData="chartsData"></zh-charts>
         </div>
       </zh-drop-down>
       <div class="listCtn">
@@ -205,9 +206,8 @@ import { ListSetting } from '@/types/list'
 import { limitArr } from '@/assets/js/dictionary'
 import zhExportSetting from '@/components/zhExportSetting/zhExportSetting.vue'
 import zhCharts from '@/components/zhCharts/zhCharts.vue'
-import zhDropDown from '@/components/zhDropDown/zhDropDown.vue'
 export default Vue.extend({
-  components: { zhExportSetting, zhCharts, zhDropDown },
+  components: { zhExportSetting, zhCharts },
   data(): {
     originalSetting: ListSetting[]
     list: OrderInfo[]
@@ -672,7 +672,7 @@ export default Vue.extend({
       }
       this.changeRouter()
     },
-    chartsData(params:any){
+    chartsData(params: any) {
       console.log(params)
     },
     getFilters() {

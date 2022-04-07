@@ -59,7 +59,8 @@
               </div>
             </div>
           </div>
-          <div class="tableCtn">
+          <div class="tableCtn"
+            v-if="need_pro==='1'">
             <div class="thead">
               <div class="trow">
                 <div class="tcol">产品信息</div>
@@ -232,7 +233,8 @@
               </div>
             </div>
           </div>
-          <div class="tableCtn">
+          <div class="tableCtn"
+            v-if="need_pro==='1'">
             <div class="thead">
               <div class="trow">
                 <div class="tcol">产品信息</div>
@@ -413,6 +415,8 @@
         @click="windowMethod(3)">{{editFlag?'完成编辑':'编辑模式'}}</div>
       <div class="setting_item"
         @click="windowMethod(5)">打印设置</div>
+      <div class="setting_item"
+        @click="windowMethod(6)">{{need_pro==='1'?'不需要打印产品':'需要打印产品'}}</div>
     </div>
   </div>
 </template>
@@ -427,6 +431,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      need_pro: this.$getLocalStorage('need_pro') || '1',
       company_name: window.sessionStorage.getItem('company_name'),
       isBreak: false,
       loading: true,
@@ -480,6 +485,10 @@ export default Vue.extend({
           this.showMenu = false
         } else if (type === 5) {
           this.settingFlag = true
+          this.showMenu = false
+        } else if (type === 6) {
+          this.need_pro = this.need_pro === '1' ? '2' : '1'
+          this.$setLocalStorage('need_pro', this.need_pro)
           this.showMenu = false
         }
       })

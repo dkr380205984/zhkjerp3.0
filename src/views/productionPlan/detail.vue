@@ -229,6 +229,14 @@
                   </svg>
                   <span class="text">删除单据</span>
                 </div>
+                <div class="btn backHoverOrange"
+                  @click="goUpdate(item)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">修改单据</span>
+                </div>
                 <div class="btn backHoverGreen"
                   @click="goMaterialSupplement(item)">
                   <svg class="iconFont"
@@ -1210,6 +1218,190 @@
         </div>
       </div>
     </div>
+    <!-- 修改单据 -->
+    <div class="popup"
+      v-if="updateFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">生产计划单修改</span>
+          <div class="closeCtn"
+            @click="updateFlag = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="editCtn">
+            <div class="row">
+              <div class="col">
+                <div class="label">
+                  <span class="text">加工单位</span>
+                  <span class="explanation">(必选)</span>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="设置成功后请点击此按钮刷新数据"
+                    placement="top">
+                    <i class="el-icon-refresh hoverGreen fr"
+                      style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                      @click="$checkCommonInfo([{
+                        checkWhich: 'api/clientType',
+                        getInfoMethed: 'dispatch',
+                        getInfoApi: 'getClientTypeAsync',
+                        forceUpdate:true
+                      }])"></i>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="添加新单位"
+                    placement="top">
+                    <i class="el-icon-upload hoverOrange fr"
+                      style="line-height:38px;font-size:18px;cursor:pointer;"
+                      @click="$openUrl('/client/create?type=2')"></i>
+                  </el-tooltip>
+                </div>
+                <div class="info elCtn">
+                  <el-cascader placeholder="请选择加工单位"
+                    v-model="productionPlanUpdateInfo.client_id_arr"
+                    :options="processClientList"
+                    @change="(ev)=>{productionPlanUpdateInfo.client_id=ev[2]}"
+                    filterable></el-cascader>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label">
+                  <span class="text">加工工序</span>
+                  <span class="explanation">(默认)</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input v-model="productionPlanUpdateInfo.process_name"
+                    placeholder="加工工序"
+                    disabled></el-input>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label">
+                  <span class="text">工序说明</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input v-model="productionPlanUpdateInfo.process_desc"
+                    placeholder="工序说明"></el-input>
+                </div>
+              </div>
+            </div>
+            <div class="row"
+              v-for="(itemPro,indexPro) in productionPlanUpdateInfo.product_info_data"
+              :key="'pro'+ indexPro">
+              <div class="col">
+                <div class="label"
+                  v-if="indexPro===0">
+                  <span class="text">产品信息</span>
+                  <span class="explanation">(默认)</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input disabled
+                    v-model="itemPro.product_code"></el-input>
+                </div>
+              </div>
+              <div class="col">
+                <div class="spaceBetween">
+                  <div class="once">
+                    <div class="label"
+                      v-if="indexPro===0">
+                      <span class="text">单价</span>
+                      <span class="explanation">(必填)</span>
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一单价"
+                        placement="top">
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true"
+                          @click="$copyInfo(productionPlanUpdateInfo.product_info_data,['price'])">
+                          <use xlink:href='#icon-tongbushuju1'></use>
+                        </svg>
+                      </el-tooltip>
+                    </div>
+                    <div class="info elCtn">
+                      <el-input v-model="itemPro.price"
+                        placeholder="请输入单价"
+                        @input="(ev)=>{itemPro.total_price=$toFixed(Number(ev)*Number(itemPro.number))}">
+                        <template slot="append">元</template>
+                      </el-input>
+                    </div>
+                  </div>
+                  <div class="once">
+                    <div class="label"
+                      v-if="indexPro===0">
+                      <span class="text">数量</span>
+                      <span class="explanation">(默认)</span>
+                    </div>
+                    <div class="info elCtn">
+                      <el-input disabled
+                        v-model="itemPro.number"
+                        @input="(ev)=>{itemPro.total_price=$toFixed(Number(ev)*Number(itemPro.price))}"
+                        placeholder="请输入数量">
+                      </el-input>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label"
+                  v-if="indexPro===0">
+                  <span class="text">合计总价</span>
+                  <span class="explanation">(默认)</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input v-model="itemPro.total_price"
+                    placeholder="默认"
+                    disabled>
+                  </el-input>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="label">
+                  <span class="text">订购时间</span>
+                  <span class="explanation">(必选)</span>
+                </div>
+                <div class="info elCtn">
+                  <el-date-picker style="width:100%"
+                    placeholder="请选择时间"
+                    value-format="yyyy-MM-dd"
+                    v-model="productionPlanUpdateInfo.start_time"></el-date-picker>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label">
+                  <span class="text">交货日期</span>
+                  <span class="explanation">(必选)</span>
+                </div>
+                <div class="info elCtn">
+                  <el-date-picker style="width:100%"
+                    placeholder="请选择交货日期"
+                    value-format="yyyy-MM-dd"
+                    v-model="productionPlanUpdateInfo.end_time"></el-date-picker>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label">
+                  <span class="text">备注信息</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input placeholder="请输入备注信息"
+                    v-model="productionPlanUpdateInfo.desc"></el-input>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="updateFlag = false">取消</span>
+          <span class="btn backHoverOrange"
+            @click="updateProductionPlan">修改</span>
+        </div>
+      </div>
+    </div>
     <div class="bottomFixBar">
       <div class="main">
         <!-- 报价单表格 -->
@@ -1305,6 +1497,7 @@ export default Vue.extend({
   data(): {
     materialPlanList: MaterialPlanInfo[]
     productionPlanInfo: ProductionPlanInfo[]
+    productionPlanUpdateInfo: ProductionPlanInfo
     productionDivideInfo: ProductionPlanInfo[]
     productionPlanList: ProductionPlanInfo[]
     materialSupplementInfo: MaterialSupplementInfo
@@ -1319,6 +1512,7 @@ export default Vue.extend({
         order_id: '',
         order_code: ''
       },
+      updateFlag: false,
       deductFlag: false,
       deductDetailFlag: false,
       deductDetail: [],
@@ -1440,6 +1634,48 @@ export default Vue.extend({
           ]
         }
       ],
+      productionPlanUpdateInfo: {
+        process_desc: '',
+        process_type: '',
+        order_id: '',
+        client_id: '',
+        start_time: this.$getDate(new Date()),
+        end_time: '',
+        desc: '',
+        total_price: '',
+        total_number: '',
+        process_id: '',
+        process_name: '',
+        process_name_arr: [],
+        product_info_data: [
+          {
+            product_id: '',
+            size_id: '',
+            color_id: '',
+            part_id: '',
+            number: '',
+            price: '',
+            total_price: '',
+            select_arr: ''
+          }
+        ],
+        material_info_data: [
+          {
+            material_id: '',
+            material_name: '',
+            material_color: '',
+            number: '',
+            unit: ''
+          }
+        ],
+        others_fee_data: [
+          {
+            name: '',
+            price: '',
+            desc: ''
+          }
+        ]
+      },
       productionPlanList: [],
       productionPlanIndex: '0',
       materialSupplementFlag: false,
@@ -1810,6 +2046,32 @@ export default Vue.extend({
             }
           })
       }
+    },
+    goUpdate(info: ProductionPlanInfo) {
+      this.productionPlanUpdateInfo = this.$clone(info)
+      // 获取单位名称————展示用
+      this.processClientList.forEach((item1) => {
+        item1.children?.forEach((item2) => {
+          item2.children?.forEach((item3) => {
+            if (item3.value === this.productionPlanUpdateInfo.client_id) {
+              // @ts-ignore
+              this.productionPlanUpdateInfo.client_id_arr = [item1.value, item2.value, item3.value]
+            }
+          })
+        })
+      })
+      this.updateFlag = true
+    },
+    updateProductionPlan() {
+      this.loading = true
+      productionPlan.update(this.productionPlanUpdateInfo).then((res) => {
+        if (res.data.status) {
+          this.$message.success('修改成功')
+          this.updateFlag = false
+          this.loading = false
+          this.init()
+        }
+      })
     },
     deleteProductionPlan(id: number) {
       this.$confirm('是否删除该加工单据?', '提示', {

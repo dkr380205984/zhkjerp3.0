@@ -50,8 +50,8 @@
                 <div class="tcol">{{materialProcessInfo.total_number}}</div>
                 <div class="tcol bgGray headTitle">加工总额</div>
                 <div class="tcol">{{materialProcessInfo.total_price}}元</div>
-                <div class="tcol bgGray headTitle"></div>
-                <div class="tcol"></div>
+                <div class="tcol bgGray headTitle">联系电话</div>
+                <div class="tcol">{{materialProcessInfo.contacts_phone}}</div>
               </div>
             </div>
           </div>

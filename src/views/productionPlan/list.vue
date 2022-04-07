@@ -5,7 +5,7 @@
       <div class="tag active">
         <svg class="iconFont"
           aria-hidden="true">
-          <use xlink:href='#icon-zhuangshifuliaocangku'></use>
+          <use xlink:href='#icon-shengchanjihua2'></use>
         </svg>
         <span class="text">生产计划</span>
       </div>
@@ -13,7 +13,7 @@
         @click="$router.push('/productionPlan/progressList')">
         <svg class="iconFont"
           aria-hidden="true">
-          <use xlink:href='#icon-zhuangshifuliaocangku'></use>
+          <use xlink:href='#icon-shengchanjindu'></use>
         </svg>
         <span class="text">生产进度</span>
       </div>

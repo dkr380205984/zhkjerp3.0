@@ -23,6 +23,8 @@ import todayIsHoliday from './todayIsHoliday/todayIsHoliday.vue'
 import storeSurplus from './storeSurplus/storeSurplus.vue'
 import zhOrderLog from './zhOrderLog/zhOrderLog.vue'
 import zhCollection from './zhCollection/zhCollection.vue'
+import zhSideNav from './zhSideNav/zhSideNav.vue'
+import zhDropDown from './zhDropDown/zhDropDown.vue'
 import vue from '@handsontable/vue'
 export default {
   install: (Vue: any) => {
@@ -51,5 +53,7 @@ export default {
     Vue.component('zhOrderLog', zhOrderLog)
     Vue.component('zhCheckDetail', zhCheckDetail)
     Vue.component('zhCollection', zhCollection)
+    Vue.component('zhSideNav', zhSideNav)
+    Vue.component('zhDropDown', zhDropDown)
   }
 }

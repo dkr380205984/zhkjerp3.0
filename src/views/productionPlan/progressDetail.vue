@@ -28,7 +28,7 @@
           </div>
           <div class="col">
             <div class="label">产品名：</div>
-            <div class="text">{{productionPorgressInfo.product.product_code}}</div>
+            <div class="text">{{productionPorgressInfo.product.product_code}}/{{productionPorgressInfo.product.name}}</div>
           </div>
           <div class="col">
             <div class="label">加工作坊：</div>
@@ -56,7 +56,7 @@
           </div>
           <div class="col">
             <div class="label">加工总价：</div>
-            <div class="text">{{productionPorgressInfo.weave_plan_product_info.list.reduce((total,cur)=>total+cur.total_price,0)}}元</div>
+            <div class="text">{{productionPorgressInfo.weave_plan_product_info.list.reduce((total,cur)=>total+Number(cur.total_price),0)}}元</div>
           </div>
           <div class="col">
             <div class="label">加工总数：</div>
@@ -144,6 +144,14 @@
             <div class="tcol">{{item.difference}}</div>
             <div class="tcol">{{item.weave_plan_product_info.real_number}}/{{item.weave_plan_product_info.number}}</div>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottomFixBar">
+      <div class="main">
+        <div class="btnCtn">
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
         </div>
       </div>
     </div>
