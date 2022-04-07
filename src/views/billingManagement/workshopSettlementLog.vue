@@ -69,7 +69,9 @@
         </div>
         <div class="list">
           <div class="row title">
-            <div class="col" style="flex: 0.05"><el-checkbox @change="checkAll"></el-checkbox></div>
+            <div class="col" style="flex: 0.05">
+              <el-checkbox v-model="checkAllPlan" @change="checkAll"></el-checkbox>
+            </div>
             <div class="col">关联订单号</div>
             <div class="col">员工姓名</div>
             <div class="col">合计完成数量</div>
@@ -81,15 +83,17 @@
           </div>
           <div v-for="(item, index) in list" :key="index">
             <div class="row">
-              <div class="col" style="flex: 0.05"><el-checkbox v-model="item.checked"></el-checkbox></div>
+              <div class="col" style="flex: 0.05">
+                <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
+              </div>
               <div class="col">{{ item.order_code }}</div>
               <div class="col">{{ item.staff_name }}</div>
               <div class="col">{{ item.number }}</div>
               <div class="col">{{ +item.total_price }}</div>
               <div class="col">
-                <div v-if="item.is_check === 1" class="orange">审核中</div>
-                <div v-if="item.is_check === 2" class="blue">通过</div>
-                <div v-if="item.is_check === 3" class="red">不通过</div>
+                <div v-if="item.is_check === 0" class="orange">审核中</div>
+                <div v-if="item.is_check === 1" class="blue">通过</div>
+                <div v-if="item.is_check === 2" class="red">不通过</div>
               </div>
               <div class="col">{{ item.user_name }}</div>
               <div class="col">{{ item.created_at }}</div>
@@ -105,9 +109,9 @@
                   <el-table-column prop="user_name" label="操作人" width="110" fixed> </el-table-column>
                   <el-table-column label="审核状态" width="120">
                     <template slot-scope="scope">
-                      <div v-if="scope.row.is_check === 1" class="orange">审核中</div>
-                      <div v-if="scope.row.is_check === 2" class="blue">通过</div>
-                      <div v-if="scope.row.is_check === 3" class="red">不通过</div>
+                      <div v-if="scope.row.is_check === 0" class="orange">审核中</div>
+                      <div v-if="scope.row.is_check === 1" class="blue">通过</div>
+                      <div v-if="scope.row.is_check === 2" class="red">不通过</div>
                     </template>
                   </el-table-column>
                   <el-table-column prop="process_name" label="工序"> </el-table-column>
@@ -173,7 +177,7 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="fl blue green" style="line-height: 56px; margin-left: 24px">
-          <div class="btn backHoverBlue">
+          <div class="btn backHoverBlue" @click="lostCheck">
             <span class="text">批量审核</span>
           </div>
         </div>
@@ -193,12 +197,48 @@
         </div>
       </div>
     </div>
+    <div class="popup" v-show="checkFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">车间结算日志审核</span>
+          <div class="closeCtn" @click="checkFlag = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="row">
+            <div class="label">是否通过：</div>
+            <div class="info" style="line-height: 32px">
+              <el-radio v-model="reviewerParams.is_check" :label="1">通过</el-radio>
+              <el-radio v-model="reviewerParams.is_check" :label="2">驳回</el-radio>
+            </div>
+          </div>
+          <div class="row" v-if="reviewerParams.is_check === 2">
+            <div class="label">驳回理由：</div>
+            <div class="info" style="min-height: 32px; height: auto">
+              <el-input placeholder="请输入驳回理由" v-model="reviewerParams.check_desc"></el-input>
+            </div>
+          </div>
+          <div class="row" v-else></div>
+          <div class="row">
+            <div class="label">备注信息：</div>
+            <div class="info">
+              <el-input placeholder="请输入备注信息" v-model="reviewerParams.desc"></el-input>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn" @click="checkFlag = false">取消</span>
+          <span class="btn backHoverBlue" @click="agreeCheck">确认</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { order, listSetting, exportExcel, staff, workshop } from '@/assets/js/api'
+import { order, listSetting, exportExcel, staff, workshop, check } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
 import { ListSetting } from '@/types/list'
 import { limitArr } from '@/assets/js/dictionary'
@@ -217,6 +257,15 @@ export default Vue.extend({
       mainLoading1: false,
       loading: true,
       showCharts: false,
+      checkFlag: false,
+      checkAllPlan: false,
+      reviewerParams: {
+        pid: '',
+        check_type: 14,
+        check_desc: '',
+        is_check: 1, // 1通过 2没通过
+        desc: ''
+      },
       list: [],
       limitList: limitArr,
       showExport: false,
@@ -564,14 +613,44 @@ export default Vue.extend({
       }
       this.changeRouter()
     },
-    changeStatus(row: any) {
-      console.log(row)
-    },
     checkAll(res: Boolean) {
       this.list.forEach((item: any) => {
         item.checked = res
       })
       this.$forceUpdate()
+    },
+    agreeCheck(item: any) {
+      if (this.reviewerParams.is_check === 1) {
+        this.reviewerParams.check_desc = ''
+      }
+      check.create(this.reviewerParams).then((res) => {
+        if (res.data.status) {
+          this.$message.success('审核成功')
+          this.checkFlag = false
+          this.checkAllPlan = false
+          this.getList()
+        }
+      })
+    },
+    changeStatus(row: any) {
+      this.checkFlag = true
+      this.reviewerParams.pid = row.id
+    },
+    lostCheck() {
+      let idArrs = this.list.filter(function (value: any) {
+        if (value.checked) return value.id
+      })
+
+      if (idArrs.length === 0) {
+        this.$message.error('至少选择一条数据')
+        return
+      }
+
+      this.reviewerParams.pid = idArrs.map(function (value: any) {
+        if (value.checked) return value.id
+      })
+
+      this.checkFlag = true
     },
     getFilters() {
       const query = this.$route.query
@@ -698,24 +777,7 @@ export default Vue.extend({
         })
     },
     changeShow(item: any) {
-      this.loading = true
-      if (!item.detail.code) {
-        workshop
-          .detail({
-            order_id: item.order_id
-          })
-          .then((ress) => {
-            if (ress.status) {
-              item.detail = ress.data.data
-              item.isShow = true
-            }
-            this.loading = false
-          })
-      } else {
-        item.isShow = !item.isShow
-        this.loading = false
-      }
-
+      item.isShow = !item.isShow
       this.$forceUpdate()
     },
     getListSetting() {

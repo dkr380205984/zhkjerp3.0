@@ -436,7 +436,7 @@ export default Vue.extend({
       })
 
       if (idArrs.length === 0) {
-        this.$message.error('至少选择一条计划单')
+        this.$message.error('至少选择一条数据')
         return
       }
 

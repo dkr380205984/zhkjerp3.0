@@ -175,7 +175,7 @@
     <div class="popup" v-show="checkFlag">
       <div class="main">
         <div class="titleCtn">
-          <span class="text">原料计划单审核</span>
+          <span class="text">原料调取单审核</span>
           <div class="closeCtn" @click="checkFlag = false">
             <span class="el-icon-close"></span>
           </div>
@@ -636,7 +636,7 @@ export default Vue.extend({
       })
 
       if (idArrs.length === 0) {
-        this.$message.error('至少选择一条计划单')
+        this.$message.error('至少选择一条数据')
         return
       }
 
