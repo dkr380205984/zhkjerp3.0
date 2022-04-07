@@ -170,13 +170,13 @@
         </div>
       </div>
     </div>
-    <!-- <div class="bottomFixBar">
+    <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue" @clicl="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">查看辅料订购单</div>
+          <div class="btn backHoverBlue" @click="$router.push('/billingManagement/packingOrder')">查看包装订购单</div>
         </div>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 

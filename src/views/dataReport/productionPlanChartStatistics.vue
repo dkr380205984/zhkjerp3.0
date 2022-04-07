@@ -62,18 +62,17 @@
             </div>
             <div class="screen" style="width: 48.5%">
               <el-cascader
+                placeholder="筛选生产单位"
+                v-model="filterData.client_id"
+                :options="processClientList"
+                :show-all-levels="false"
                 @change="
                   getContacts($event)
                   changeRouter()
                 "
-                placeholder="筛选生产单位"
-                v-model="filterData.client_id"
-                :show-all-levels="false"
                 filterable
-                :options="clientList"
                 clearable
-              >
-              </el-cascader>
+              ></el-cascader>
             </div>
             <div class="screen" style="margin-bottom: 0; width: 48.5%">
               <el-select @change="changePeople" v-model="filterData.user_id" placeholder="筛选创建人" clearable>
@@ -205,13 +204,13 @@
         </div>
       </div>
     </div>
-    <!-- <div class="bottomFixBar">
+    <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
           <div class="btn backHoverBlue" @click="$router.push('/billingManagement/productionPlan')">查看生产计划单</div>
         </div>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -575,7 +574,7 @@ export default Vue.extend({
 
           this.option1.yAxis[1].max = Math.ceil(Math.ceil(planPriceMax / 10000 / 5)) * 5 || 10
           this.option1.yAxis[1].min = planPriceMin && planPriceMin < 0 ? Math.ceil(planPriceMin / 10000) : 0
-          this.option1.yAxis[1].interval = Math.ceil(planPriceMax / 10000 / 5 ) || 10
+          this.option1.yAxis[1].interval = Math.ceil(planPriceMax / 10000 / 5) || 10
 
           data.report.forEach((item: any) => {
             this.option1.xAxis[0].data.push(item.name)
@@ -594,6 +593,11 @@ export default Vue.extend({
     }
   },
   computed: {
+    processClientList(): any {
+      return this.$store.state.api.clientType.arr.filter(
+        (item: { label: string }) => item.label === '生产织造单位' || item.label === '生产加工单位'
+      )
+    },
     clientList() {
       return this.$store.state.api.clientType.arr.filter((item: { type: any }) => Number(item.type) === 1)
     },

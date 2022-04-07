@@ -155,13 +155,13 @@
         </div>
       </div>
     </div>
-    <!-- <div class="bottomFixBar">
+    <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
           <div class="btn backHoverBlue" @click="$router.push('/billingManagement/transportationDeliveryOrder')">查看运输出库单</div>
         </div>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 

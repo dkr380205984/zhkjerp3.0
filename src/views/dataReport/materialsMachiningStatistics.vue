@@ -58,7 +58,7 @@
                 placeholder="筛选原料"
                 clearable
               >
-                <el-option label="订单/样单" :value="''"></el-option>
+                <el-option label="订单/样单" value=""></el-option>
                 <el-option label="订单" :value="1"></el-option>
                 <el-option label="样单" :value="2"></el-option>
               </el-select>
@@ -231,13 +231,13 @@
         </div>
       </div>
     </div>
-    <!-- <div class="bottomFixBar">
+    <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
           <div class="btn backHoverBlue" @click="$router.push('/billingManagement/rawMaterialProcessingOrder')">查看原料加工单</div>
         </div>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -490,8 +490,6 @@ export default Vue.extend({
           (this.filterData.group_id || '') +
           '&name=' +
           (this.filterData.name || '') +
-          '&order_type=' +
-          (this.filterData.order_type || '') +
           '&sortWay=' +
           (this.sortWay || '1') +
           '&start_time=' +
