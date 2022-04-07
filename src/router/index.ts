@@ -603,9 +603,19 @@ const routes: Array<RouteConfig> = [
         permissions_id: '19-3',
       },
       path: '/workshopManagement/list',
-      name: '车间管理列表',
+      name: '车间管理订单列表',
       component: () => import('../views/workshopManagement/list.vue')
     }, {
+      meta: {
+        permissions_id: '19-5',
+      },
+      path: '/workshopManagement/staffList',
+      name: '车间管理员工列表',
+      component: () => import('../views/workshopManagement/staffList.vue')
+    }, {
+      meta: {
+        permissions_id: '19-2',
+      },
       path: '/workshopManagement/detail',
       name: '车间管理详情',
       component: () => import('../views/workshopManagement/detail.vue')

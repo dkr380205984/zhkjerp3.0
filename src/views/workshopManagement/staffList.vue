@@ -1,16 +1,15 @@
 <template>
-  <div id="workshopManagementList"
+  <div id="workshopManagementStaffList"
     class="bodyContainer">
     <div class="topTagCtn">
-      <div class="tag active">
+      <div class="tag" @click="$router.push('/workshopManagement/list')">
         <svg class="iconFont"
           aria-hidden="true">
           <use xlink:href='#icon-andingdanluru'></use>
         </svg>
         <span class="text">按订单录入</span>
       </div>
-      <div class="tag"
-        @click="$router.push('/workshopManagement/staffList')">
+      <div class="tag active">
         <svg class="iconFont"
           aria-hidden="true">
           <use xlink:href='#icon-anyuangongluru'></use>
@@ -49,32 +48,6 @@
                 :value="item.value"></el-option>
             </el-select>
           </div>
-          <!-- <div class="elCtn">
-            <el-select v-model="order_type"
-              @change="changeRouter">
-              <el-option label="所有单据"
-                :value="null"></el-option>
-              <el-option label="订单"
-                :value="1"></el-option>
-              <el-option label="样单"
-                :value="2"></el-option>
-            </el-select>
-          </div> -->
-          <div class="btn borderBtn"
-            @click="reset">重置</div>
-        </div>
-        <div class="filterCtn">
-          <div class="elCtn">
-            <el-select @change="$setLocalStorage('group_id',group_id);changeRouter()"
-              v-model="group_id"
-              placeholder="筛选负责小组"
-              clearable>
-              <el-option v-for="item in groupList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"></el-option>
-            </el-select>
-          </div>
           <div class="elCtn">
             <el-date-picker v-model="date"
               type="daterange"
@@ -88,20 +61,8 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
-          <div class="elCtn">
-            <el-select v-model="limit"
-              placeholder="每页展示条数"
-              @change="changeRouter">
-              <el-option v-for="item in limitList"
-                :key="item.value"
-                :label="item.name"
-                :value="item.value"></el-option>
-            </el-select>
-          </div>
-          <div class="btn backHoverOrange fr"
-            @click="showSetting=true">列表设置</div>
-          <div class="btn backHoverGreen fr"
-            @click="getFilters();getList()">刷新列表</div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
         </div>
         <zh-list :list="list"
           :listKey="listKey"
@@ -406,5 +367,5 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import '~@/assets/css/workshopManagement/list.less';
+@import '~@/assets/css/workshopManagement/staffList.less';
 </style>
