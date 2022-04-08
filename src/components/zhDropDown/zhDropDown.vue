@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div class="zhDropDown"
-      ref="aa"
-      :style="{ height: isShow ? 'auto' : '0' }">
-      <slot></slot>
+    <div class="zhDropDown" :style="{ height: isShow ? height + 'px' : '0' }">
+      <div ref="aa">
+        <slot></slot>
+      </div>
     </div>
-    <div class="blue clickButton"
-      @click="isShow = !isShow"
-      :style="buttonStyle">{{ isShow ? showTitle : hideTitle }}</div>
+    <div class="blue clickButton" @click="isShow = !isShow" :style="buttonStyle">
+      {{ isShow ? showTitle : hideTitle }}
+    </div>
   </div>
 </template>
 
@@ -37,10 +37,16 @@ export default Vue.extend({
   } {
     return { isShow: true, height: undefined }
   },
-  methods: {},
-  mounted() {
-    this.isShow = this.show
-  }
+  watch: {
+    show: function (val) {
+      this.isShow = val
+    },
+    isShow: function (val) {
+      let a: any = this.$refs.aa
+      this.height = a.clientHeight
+    }
+  },
+  methods: {}
 })
 </script>
 

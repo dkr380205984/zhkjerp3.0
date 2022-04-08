@@ -1881,9 +1881,9 @@ export default Vue.extend({
       loading: true,
       checkFlag: false,
       checkDetailFlag: false,
-      show_material: false,
-      show_production: false,
-      show_financial: false,
+      show_material: true,
+      show_production: true,
+      show_financial: true,
       orderInfo: {
         id: null,
         client_id: '',
@@ -2210,6 +2210,8 @@ export default Vue.extend({
             this.productionProgress = res[1].data.data.progress
             this.productionUpdateTime = res[1].data.data.update_time
             this.materialUpdateTime = res[0].data.data.update_time
+            this.show_production = false
+            this.show_material = false
             this.loading = false
           })
         }
