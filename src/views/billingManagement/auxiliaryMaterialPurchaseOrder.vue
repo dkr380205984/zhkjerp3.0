@@ -84,14 +84,14 @@
             <div class="col" style="flex: 1.2">订购单号</div>
             <div class="col">关联订单号</div>
             <div class="col">订购单位</div>
-            <div class="col" style="flex: 0.5">合计计划数量</div>
-            <div class="col" style="flex: 0.5">合计计划金额</div>
-            <div class="col" style="flex: 0.5">合计入库数量</div>
-            <div class="col" style="flex: 0.5">合计入库金额</div>
+            <div class="col">合计计划数量</div>
+            <div class="col">合计计划金额</div>
+            <div class="col">合计入库数量</div>
+            <div class="col">合计入库金额</div>
             <div class="col">审核状态</div>
             <div class="col">创建人</div>
             <div class="col">创建时间</div>
-            <div class="col" style="flex: 1.4">操作</div>
+            <div class="col" style="flex: 0.94">操作</div>
           </div>
           <div v-for="(item, index) in list" :key="index">
             <div class="row">
@@ -101,16 +101,25 @@
               <div class="col" style="flex: 1.2">{{ item.code }}</div>
               <div
                 class="col hoverBlue"
-                style="cursor: pointer"
+                style="
+                  cursor: pointer;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  width:100px
+                  flex:unset;
+                  display:block;
+                "
+                :title="item.order_code || '无编号，点击查看详情'"
                 @click="$router.push('/order/detail?id=' + item.top_order_id)"
               >
                 {{ item.order_code }}
               </div>
               <div class="col">{{ item.client_name }}</div>
-              <div class="col" style="flex: 0.5">{{ item.total_number }}</div>
-              <div class="col" style="flex: 0.5">{{ +item.total_price }}</div>
-              <div class="col" style="flex: 0.5">{{ item.total_push_number }}</div>
-              <div class="col" style="flex: 0.5">{{ item.total_push_price }}</div>
+              <div class="col">{{ item.total_number || 0 }}</div>
+              <div class="col">{{ +item.total_price || 0 }}</div>
+              <div class="col">{{ item.total_push_number || 0 }}</div>
+              <div class="col">{{ item.total_push_price || 0 }}</div>
               <div class="col">
                 <div v-if="item.is_check === 0" class="orange">审核中</div>
                 <div v-if="item.is_check === 1" class="blue">通过</div>
@@ -118,7 +127,7 @@
               </div>
               <div class="col">{{ item.user_name }}</div>
               <div class="col">{{ item.created_at }}</div>
-              <div class="col" style="flex: 1.4">
+              <div class="col" style="flex: 0.94">
                 <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
                 <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
               </div>

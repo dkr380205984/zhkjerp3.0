@@ -72,6 +72,7 @@
             <div class="col" style="flex: 0.05">
               <el-checkbox v-model="checkAllPlan" @change="checkAll"></el-checkbox>
             </div>
+            <div class="col">序号</div>
             <div class="col">关联订单号</div>
             <div class="col">员工姓名</div>
             <div class="col">合计完成数量</div>
@@ -86,9 +87,19 @@
               <div class="col" style="flex: 0.05">
                 <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
               </div>
+              <div class="col">{{ item.id }}</div>
               <div
                 class="col hoverBlue"
-                style="cursor: pointer"
+                style="
+                  cursor: pointer;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  width:100px
+                  flex:unset;
+                  display:block;
+                "
+                :title="item.order_code || '无编号，点击查看详情'"
                 @click="$router.push('/order/detail?id=' + item.top_order_id)"
               >
                 {{ item.order_code }}

@@ -84,14 +84,23 @@
               <div class="col" style="flex: 1.2">{{ item.code }}</div>
               <div
                 class="col hoverBlue"
-                style="cursor: pointer"
-                @click="$router.push('/order/detail?id=' + item.order_id)"
+                style="
+                  cursor: pointer;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  width:100px
+                  flex:unset;
+                  display:block;
+                "
+                :title="item.order_code || '无编号，点击查看详情'"
+                @click="$router.push('/order/detail?id=' + item.top_order_id)"
               >
-                {{ item.order_code }}
+                {{ item.order_code || '无编号，点击查看详情' }}
               </div>
               <div class="col">{{ item.total_production_number }}</div>
               <div class="col">{{ item.total_plan_number }}</div>
-              <div class="col">{{ item.pre_loss }}</div>
+              <div class="col">{{ (+item.pre_loss).toFixed(2) }}%</div>
               <div class="col">
                 <div class="green" v-if="item.material_order_progress > 0 && item.material_order_progress < 100">
                   采购中
