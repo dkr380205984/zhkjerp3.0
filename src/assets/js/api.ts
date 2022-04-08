@@ -636,6 +636,7 @@ const productionProgress = {
     page?: number | string
     limit?: number | string
     user_id?: string | number
+    order_type: 1 | 2
   }) => http.get(`${baseUrl}/production/list`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/production/detail`, params),
   codeInfo: (params: {

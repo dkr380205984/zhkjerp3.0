@@ -435,7 +435,7 @@
                     {{itemChild.length}}*{{itemChild.width}}*{{itemChild.height}}cm
                   </template>
                   <template v-else-if="Number(itemChild.price_type)===2">
-                    {{itemChild.length}}*{{itemChild.width}}cm
+                    {{itemChild.length}}*{{itemChild.width}}cm + {{itemChild.height}}cm
                   </template>
                   <template v-else-if="Number(itemChild.price_type)===3">
                     {{itemChild.length}}
@@ -1573,6 +1573,9 @@ export default Vue.extend({
     goUpdatePlanOrder(info: PackOrderInfo) {
       const updateInfo = this.$clone(info)
       updateInfo.tree_data = JSON.parse(updateInfo.tree_data as string)
+      updateInfo.info_data.forEach((item) => {
+        item.price_type = Number(item.price_type) as 1 | 2 | 3
+      })
       this.packOrderInfo = [updateInfo]
       this.packOrderFlag = true
       this.packOrderUpdateFlag = true

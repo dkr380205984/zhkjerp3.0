@@ -220,7 +220,8 @@
           </div>
         </div>
       </div>
-      <div class="tableCtn">
+      <!-- 只看当前出库单信息，不需要看订单汇总信息 -->
+      <!-- <div class="tableCtn">
         <div class="thead">
           <div class="trow">
             <div class="tcol">产品信息</div>
@@ -241,11 +242,13 @@
             <div class="tcol">{{item.transport_number}}</div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
+          <div class="btn backHoverBlue"
+            @click="$openUrl('/boxManage/print?id='+$route.query.id)">打印</div>
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
         </div>

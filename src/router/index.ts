@@ -73,6 +73,10 @@ const routes: Array<RouteConfig> = [
     name: '包装订购单打印',
     component: () => import('../views/packManage/printOrder.vue')
   }, {
+    path: '/boxManage/print',
+    name: '发货单打印',
+    component: () => import('../views/boxManage/print.vue')
+  }, {
     path: '/setting/printQRCode',
     name: '公司二维码打印',
     component: () => import('../views/setting/printQRCode.vue')
