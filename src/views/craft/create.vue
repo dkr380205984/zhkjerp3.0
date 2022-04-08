@@ -1507,6 +1507,7 @@ export default Vue.extend({
     return {
       loading: false,
       showUsing: false,
+      saveSuccess: false,
       proId: '',
       productShow: false,
       sampleShow: false,
@@ -3243,6 +3244,7 @@ export default Vue.extend({
         craft.create(this.craftInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
+            this.saveSuccess = true
             this.$router.push('/craft/detail?id=' + res.data.data)
           }
         })
@@ -3349,6 +3351,7 @@ export default Vue.extend({
           craft.create(this.craftInfo).then((res) => {
             if (res.data.status) {
               this.$message.success('添加成功')
+              this.saveSuccess = true
               this.$router.push('/craft/detail?id=' + res.data.data)
             }
           })
@@ -3911,6 +3914,26 @@ export default Vue.extend({
       this.initProInfo(Number(this.$route.query.id))
     } else {
       this.getProList()
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.saveSuccess) {
+      next()
+    } else {
+      this.$confirm('是否离开添加页面，这会导致已填写的数据丢失', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          next()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        })
     }
   }
 })

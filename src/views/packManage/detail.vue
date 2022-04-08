@@ -471,6 +471,14 @@
                   </svg>
                   <span class="text">删除订购</span>
                 </div>
+                <div class="btn backHoverBlue"
+                  @click="$openUrl('/packManage/printOrder?id=' + item.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">打印订购</span>
+                </div>
               </div>
             </div>
           </div>

@@ -822,7 +822,8 @@ export default Vue.extend({
         token: ''
       },
       pub_file_list: [],
-      pri_file_list: []
+      pri_file_list: [],
+      saveSuccess: false
     }
   },
   computed: {
@@ -1219,6 +1220,7 @@ export default Vue.extend({
           order.create(this.orderInfo).then((res) => {
             if (res.data.status) {
               this.$message.success('修改成功')
+              this.saveSuccess = true
               this.$router.push('/order/detail?id=' + this.$route.query.id)
             }
           })
@@ -1283,6 +1285,26 @@ export default Vue.extend({
         }
         this.loading = false
       })
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.saveSuccess) {
+      next()
+    } else {
+      this.$confirm('是否离开修改页面，这会导致已填写的数据丢失', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          next()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        })
+    }
   }
 })
 </script>

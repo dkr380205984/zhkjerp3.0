@@ -1018,6 +1018,7 @@ export default Vue.extend({
         key: '',
         token: ''
       },
+      saveSuccess: false,
       confirmSampleInfo: [] // 已经确认的样品信息
     }
   },
@@ -1264,6 +1265,7 @@ export default Vue.extend({
         order.create(this.orderInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('草稿保存成功')
+            this.saveSuccess = true // 可以离开了
             this.$router.push('/order/list?page=1&keyword=&client_id=&user_id=&status=null&date=')
           }
         })
@@ -1340,6 +1342,7 @@ export default Vue.extend({
           order.create(this.orderInfo).then((res) => {
             if (res.data.status) {
               this.$message.success('添加成功')
+              this.saveSuccess = true // 可以离开了
               this.$router.push('/order/list?page=1&keyword=&client_id=&user_id=&status=null&date=')
             }
           })
@@ -1389,6 +1392,26 @@ export default Vue.extend({
         this.confirmSampleInfo = res[1].data.data.filter((item: any) => item.status === 2)
         this.loading = false
       })
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.saveSuccess) {
+      next()
+    } else {
+      this.$confirm('是否离开添加页面，这会导致已填写的数据丢失', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          next()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        })
     }
   }
 })

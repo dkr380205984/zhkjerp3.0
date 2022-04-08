@@ -1175,7 +1175,8 @@ export default Vue.extend({
       showContent: false,
       quotedImage: '',
       notify: null,
-      imgId: ''
+      imgId: '',
+      saveSuccess: false
     }
   },
   computed: {
@@ -1814,6 +1815,7 @@ export default Vue.extend({
           quotedPrice.create(this.quotedPriceInfo).then((res) => {
             if (res.data.status) {
               this.$message.success('创建成功')
+              this.saveSuccess = true
               this.$router.push('/quotedPrice/detail?id=' + res.data.data)
             } else {
               // 提交不成功把tree_data反复横跳改来改去
@@ -1832,6 +1834,7 @@ export default Vue.extend({
         this.getCmpData()
         quotedPrice.create(this.quotedPriceInfo).then((res) => {
           if (res.data.status) {
+            this.saveSuccess = true
             this.$message.success('草稿保存成功')
           }
         })
@@ -2320,6 +2323,26 @@ export default Vue.extend({
     // 初始化编辑器
     if (this.quotedPriceInfo.product_data.length === 0) {
       this.addPro()
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.saveSuccess) {
+      next()
+    } else {
+      this.$confirm('是否离开添加页面，这会导致已填写的数据丢失', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          next()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        })
     }
   },
   beforeDestroy() {
