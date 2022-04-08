@@ -86,7 +86,7 @@
             <el-table-column prop="total_price" label="本月完成金额"></el-table-column>
             <el-table-column label="平均单价">
               <template slot-scope="scope">
-                <span>{{ scope.row.total_price / (scope.row.total_number || 1) }}</span>
+                <span>{{ (scope.row.total_price / (scope.row.total_number || 1)).toFixed(2) }}</span>
               </template>
             </el-table-column>
             <el-table-column label="操作">

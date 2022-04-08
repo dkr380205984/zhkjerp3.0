@@ -16,20 +16,42 @@
           </div>
         </div>
       </div>
-      <div>
-        <div class="detailCtn">
-          <div class="row">
-            <div class="col">
-              <div class="label">负责工序：</div>
-              <div class="text">{{ 111 }}</div>
+    </div>
+    <div class="module" v-for="(item, index) in settlementLogList" :key="'process' + index">
+      <div class="detailCtn">
+        <div class="row">
+          <div class="col">
+            <div class="label">负责工序：</div>
+            <div class="text">
+              <el-cascader
+                v-model="item.chooseProcess"
+                :options="processList"
+                :show-all-levels="false"
+                placeholder="加工工序"
+              ></el-cascader>
             </div>
-            <div class="col">
-              <div class="label">工序说明：</div>
-              <div class="text">{{ 111 }}</div>
+          </div>
+          <div class="col">
+            <div class="label">工序说明：</div>
+            <div class="text">
+              <el-select
+                v-model="item.process_desc"
+                multiple
+                filterable
+                allow-create
+                default-first-option
+                collapse-tags
+                placeholder="请选择工序说明"
+              >
+                <el-option v-for="item in processDescList" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
             </div>
-            <div class="col">
-              <div class="label">结算单价：</div>
-              <div class="text">{{ 111 }}</div>
+          </div>
+          <div class="col">
+            <div class="label">结算单价：</div>
+            <div class="text">
+                <el-input v-model="item.price"></el-input>
             </div>
           </div>
         </div>
@@ -49,7 +71,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { order, process, staff, workshop } from '@/assets/js/api'
+import { order, process, workshop } from '@/assets/js/api'
 export default Vue.extend({
   data(): {
     [propName: string]: any
@@ -253,24 +275,40 @@ export default Vue.extend({
         processArr = [...new Set(processArr)]
 
         res.data.data.forEach((item: any) => {
-          processArr.forEach((process: any) => {
-            if (item.process_name === process) {
+          processArr.forEach((processItem: any) => {
+            if (item.process_name === processItem) {
               let a = processListArr.find((items: any) => {
-                return items.process_name === process
+                return items.process_name === processItem
               })
               if (a === undefined) {
                 processListArr.push({
-                  process_name: process,
+                  process_name: processItem,
+                  process_type: item.process_type,
+                  process_desc: '',
+                  chooseProcess: [+item.process_type || 0, processItem],
                   info: [item]
                 })
               } else {
-                  a.info.push(item)
+                a.info.push(item)
               }
             }
           })
         })
 
-        this.settlementLogList = res.data.data
+        processListArr.forEach((items: any) => {
+          items.info.forEach((item: any) => {
+            if (!item.process_desc) return
+            this.processDescList.push(item.process_desc)
+          })
+        })
+
+        this.processDescList = [...new Set(this.processDescList)]
+
+        this.processDescList.forEach((item: any, index: number) => {
+          this.processDescList[index] = { value: item, label: item }
+        })
+
+        this.settlementLogList = processListArr
       })
 
       process.list({ type: 2 }).then((res) => {
@@ -299,29 +337,18 @@ export default Vue.extend({
             value: 3,
             children: arr
           })
+          this.processList.unshift({
+            label: '织造工序',
+            value: 0,
+            children: [
+              { label: '针织织造', value: '针织织造', process_desc: '' },
+              { label: '梭织织造', value: '梭织织造', process_desc: '' },
+              { label: '制版费', value: '制版费', process_desc: '' }
+            ]
+          })
         })
       })
 
-      order
-        .processList({
-          order_id: Number(this.$route.query.id)
-        })
-        .then((res) => {
-          if (res.data.status) {
-            let arr: any = []
-            res.data.data.forEach((item: any) => {
-              arr.push({
-                label: item,
-                value: item
-              })
-            })
-            this.processList.unshift({
-              label: '推荐工序',
-              value: 0,
-              children: arr
-            })
-          }
-        })
       this.loading = false
     },
     copyWorkerInfo(item: any, itemSizeColor: any) {
