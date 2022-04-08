@@ -102,7 +102,7 @@
             <div class="title">完成报表</div>
           </div>
           <div class="tableCtn">
-            <div class="filterCtn" style="overflow:hidden;margin-bottom:10px">
+            <div class="filterCtn" style="overflow: hidden; margin-bottom: 10px">
               <div>工序说明：{{ item.allProcessDesc }}</div>
               <div class="btn backHoverBlue fr" @click="secondDataChance()">数量更新</div>
             </div>
@@ -226,9 +226,9 @@
           <el-table-column prop="user_name" label="操作人" width="110" fixed> </el-table-column>
           <el-table-column label="审核状态" width="120">
             <template slot-scope="scope">
-              <div v-if="scope.row.is_check === 1" class="orange">审核中</div>
-              <div v-if="scope.row.is_check === 2" class="blue">通过</div>
-              <div v-if="scope.row.is_check === 3" class="red">不通过</div>
+              <div v-if="scope.row.is_check === 0" class="orange">审核中</div>
+              <div v-if="scope.row.is_check === 1" class="blue">通过</div>
+              <div v-if="scope.row.is_check === 2" class="red">不通过</div>
             </template>
           </el-table-column>
           <el-table-column prop="process_name" label="工序"> </el-table-column>
@@ -344,7 +344,7 @@
                     ></el-cascader>
                   </div>
                   <div class="tcol bgGray">工序说明</div>
-                  <div class="tcol" style="flex: 1.9;overflow:scroll;padding-top:10px">
+                  <div class="tcol" style="flex: 1.9; overflow: scroll; padding-top: 10px">
                     <el-select
                       v-model="item.process_desc"
                       multiple
@@ -354,7 +354,12 @@
                       collapse-tags
                       placeholder="请选择工序"
                     >
-                      <el-option v-for="item in processDescList" :key="item.value" :label="item.label" :value="item.value">
+                      <el-option
+                        v-for="item in processDescList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      >
                       </el-option>
                     </el-select>
                     <!-- <el-autocomplete
@@ -780,9 +785,9 @@ export default Vue.extend({
           })
           items.allProcessDesc = items.allProcessDesc.toString().replace(/^,+/, '').replace(/,+$/, '')
           let _this = this
-          items.allProcessDesc.split(',').forEach((item:any) => {
-            _this.processDescList.push({value:item})
-          });
+          items.allProcessDesc.split(',').forEach((item: any) => {
+            _this.processDescList.push({ value: item })
+          })
         })
         this.processWorkerList = res.data.data
         this.tabChoose = res.data.data[0]?.process_name
@@ -980,7 +985,7 @@ export default Vue.extend({
               id: '',
               process_name: items.process[1],
               process_type: items.process[0],
-              process_desc: items.process_desc?items.process_desc.toString():'',
+              process_desc: items.process_desc ? items.process_desc.toString() : '',
               order_product_id: items.productNameId,
               product_id: items.productId,
               price: items.unitPrice || 0,
@@ -1484,7 +1489,7 @@ export default Vue.extend({
       border-left: 1px solid rgba(0, 0, 0, 0.15);
     }
   }
-  .el-select__input{
+  .el-select__input {
     margin-left: 0;
   }
 }

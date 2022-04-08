@@ -35,7 +35,7 @@ export default Vue.extend({
   data(): {
     [propName: string]: any
   } {
-    return { isShow: true, height: undefined }
+    return { isShow: this.show, height: undefined }
   },
   watch: {
     show: function (val) {
