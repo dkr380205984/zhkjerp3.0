@@ -395,13 +395,13 @@
       <div class="processCtn">
         <div class="process">
           <div class="active"
-            :style="{'width':productionProgress.weave}"></div>
+            :style="{'width':(productionProgress.weave>100?100:productionProgress.weave) + '%'}"></div>
           <span class="left">生产织造进度</span>
           <span class="right">{{productionProgress.weave}}%</span>
         </div>
         <div class="process">
           <div class="active"
-            :style="{'width':productionProgress.inspection}"></div>
+            :style="{'width':(productionProgress.inspection>100?100:productionProgress.inspection)+'%'}"></div>
           <span class="left">检验入库进度</span>
           <span class="right">{{productionProgress.inspection}}%</span>
         </div>
@@ -567,13 +567,13 @@
       <div class="processCtn">
         <div class="process">
           <div class="active"
-            :style="{'width':materialProgress.material_push}"></div>
+            :style="{'width':(materialProgress.material_push>100?100:materialProgress.material_push)+'%'}"></div>
           <span class="left">原料入库进度</span>
           <span class="right">{{materialProgress.material_push}}%</span>
         </div>
         <div class="process">
           <div class="active"
-            :style="{'width':materialProgress.material_pop}"></div>
+            :style="{'width':(materialProgress.material_pop>100?100:materialProgress.material_pop)+'%'}"></div>
           <span class="left">原料出库进度</span>
           <span class="right">{{materialProgress.material_pop}}%</span>
         </div>

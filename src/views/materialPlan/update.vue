@@ -645,7 +645,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
-      testValue: '',
+      saveSuccess: false,
       confirmFlag: 1,
       settingMethod: 2, // 数字取整方式
       orderIndex: 0, // 多张订单/样单
@@ -935,6 +935,7 @@ export default Vue.extend({
         materialPlan.create(this.materialPlanInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('修改成功')
+            this.saveSuccess = true
             this.$router.push('/materialPlan/detail?id=' + this.$route.query.order_id)
           }
           this.loading = false
@@ -1010,6 +1011,26 @@ export default Vue.extend({
         this.getUpdateData()
         this.loading = false
       })
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.saveSuccess) {
+      next()
+    } else {
+      this.$confirm('是否离开修改页面，这会导致已填写的数据丢失', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          next()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        })
+    }
   }
 })
 </script>

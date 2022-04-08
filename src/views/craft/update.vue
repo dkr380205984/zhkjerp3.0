@@ -500,7 +500,7 @@
             </div>
           </div>
         </div>
-        <div class="row">
+        <!-- <div class="row">
           <div class="col flex3">
             <div class="label">
               <span class="text">选择常用穿综法</span>
@@ -512,7 +512,7 @@
               </el-select>
             </div>
           </div>
-        </div>
+        </div> -->
         <div class="row">
           <div class="col">
             <div class="label">
@@ -1373,8 +1373,8 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
-      testValue: '',
       loading: false,
+      saveSuccess: false,
       productInfo: {
         product_type: 1,
         name: '',
@@ -2681,6 +2681,7 @@ export default Vue.extend({
         this.craftInfo.is_draft = 1
         craft.create(this.craftInfo).then((res) => {
           if (res.data.status) {
+            this.saveSuccess = true
             this.$message.success('修改成功')
           }
         })
@@ -2796,6 +2797,7 @@ export default Vue.extend({
           craft.create(this.craftInfo).then((res) => {
             if (res.data.status) {
               this.$message.success('修改成功')
+              this.saveSuccess = true
               this.$router.push('/craft/detail?id=' + this.$route.query.id)
             }
           })
@@ -3253,6 +3255,26 @@ export default Vue.extend({
           this.craftInfo.process_data = this.craftInfo.process_data.map((item) => item.process_id)
         }
       })
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.saveSuccess) {
+      next()
+    } else {
+      this.$confirm('是否离开修改页面，这会导致已填写的数据丢失', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          next()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        })
+    }
   }
 })
 </script>

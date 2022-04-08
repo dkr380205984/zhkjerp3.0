@@ -554,6 +554,7 @@ export default Vue.extend({
         category_id: '',
         type_id: ''
       },
+      saveSuccess: false,
       quotedPriceProductList: [] // 报价单转过来的产品信息
     }
   },
@@ -767,6 +768,7 @@ export default Vue.extend({
           sampleOrder.create(this.sampleOrderInfo).then((res) => {
             if (res.data.status) {
               this.$message.success('添加成功')
+              this.saveSuccess = true
               this.$router.push('/sampleOrder/list?page=1&keyword=&client_id=&user_id=&status=0&date=')
             }
             this.loading = false
@@ -790,6 +792,7 @@ export default Vue.extend({
           sampleOrder.create(this.sampleOrderInfo).then((res) => {
             if (res.data.status) {
               this.$message.success('已保存第一次打样为草稿信息,请在详情页及时完善信息')
+              this.saveSuccess = true
               this.$router.push('/sampleOrder/list?page=1&keyword=&client_id=&user_id=&status=null0&date=')
             }
             this.loading = false
@@ -822,6 +825,26 @@ export default Vue.extend({
       }
     ])
     this.getQuotedPrice()
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.saveSuccess) {
+      next()
+    } else {
+      this.$confirm('是否离开添加页面，这会导致已填写的数据丢失', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          next()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        })
+    }
   }
 })
 </script>

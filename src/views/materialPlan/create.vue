@@ -784,6 +784,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      saveSuccess: false,
       justWatch: false, // 这个字段专门用于监听物料概览，在某些特定操作下无法触发watch的时候手动触发重新计算
       confirmFlag: 1,
       settingMethod: 1, // 数字取整方式
@@ -1473,6 +1474,7 @@ export default Vue.extend({
         materialPlan.create(this.materialPlanInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
+            this.saveSuccess = true
             this.$router.push('/materialPlan/detail?id=' + this.$route.query.id)
           }
         })
@@ -1622,6 +1624,26 @@ export default Vue.extend({
           this.getUpdateData()
           this.confirmFlag = 2
           this.loading = false
+        })
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.saveSuccess) {
+      next()
+    } else {
+      this.$confirm('是否离开添加页面，这会导致已填写的数据丢失', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          next()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
         })
     }
   }

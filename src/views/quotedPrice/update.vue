@@ -1027,6 +1027,7 @@ export default Vue.extend({
     return {
       loading: true,
       unitArr: moneyArr,
+      saveSuccess: false,
       postData: {
         key: '',
         token: ''
@@ -1637,6 +1638,7 @@ export default Vue.extend({
           quotedPrice.create(this.quotedPriceInfo).then((res) => {
             if (res.data.status) {
               this.$message.success('修改成功')
+              this.saveSuccess = true
               this.$router.push('/quotedPrice/detail?id=' + Number(this.$route.query.id))
             } else {
               // 提交不成功把tree_data反复横跳改来改去
@@ -1656,6 +1658,7 @@ export default Vue.extend({
         quotedPrice.create(this.quotedPriceInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('草稿保存成功')
+            this.saveSuccess = true
             this.$router.push('/quotedPrice/list?page=1&keyword=&client_id=&user_id=&status=0&date=')
           }
         })
@@ -1773,6 +1776,26 @@ export default Vue.extend({
           this.loading = false
         }
       })
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.saveSuccess) {
+      next()
+    } else {
+      this.$confirm('是否离开修改页面，这会导致已填写的数据丢失', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          next()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        })
+    }
   }
 })
 </script>
