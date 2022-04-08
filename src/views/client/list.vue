@@ -117,7 +117,7 @@
             <div class="col"
               :class="{'green':item.status===1,'red':item.status===0}">{{item.status===1?'合作中':'终止合作'}}</div>
             <div class="col"
-              :class="{'green':item.workshop_id!=='0','orange':item.workshop_id==='0'}">{{item.workshop_id==='0'?'未绑定':'已绑定'}}</div>
+              :class="{'green':item.workshop_id!=='0','orange':item.workshop_id==='0'}">{{item.workshop_id==='0'?'未绑定':('已绑定'+item.workshop.name)}}</div>
             <div class="col oprCtn"
               style="flex:1.8">
               <span class="opr hoverGreen"

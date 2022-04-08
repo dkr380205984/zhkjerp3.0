@@ -1151,7 +1151,7 @@ export default Vue.extend({
         client_id: '',
         tree_data: [],
         contacts_id: '',
-        group_id: Number(this.$getLocalStorage('group_id')) || '',
+        group_id: Number(this.$getsessionStorage('group_id')) || Number(this.$getLocalStorage('group_id')) || '',
         settle_unit: '元',
         exchange_rate: '100',
         total_number: '',

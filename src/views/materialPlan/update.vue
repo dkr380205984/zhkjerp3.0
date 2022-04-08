@@ -24,7 +24,18 @@
               <div class="trow">
                 <div class="tcol">尺码颜色</div>
                 <div class="tcol">下单数量</div>
-                <div class="tcol">总数量百分比</div>
+                <div class="tcol">总数量百分比
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="统一数量百分比"
+                    placement="top">
+                    <svg class="iconFont copyIcon hoverBlue"
+                      aria-hidden="true"
+                      @click="getPlanNumAll">
+                      <use xlink:href='#icon-tongbushuju1'></use>
+                    </svg>
+                  </el-tooltip>
+                </div>
                 <div class="tcol noPad"
                   style="flex:3">
                   <div class="trow">
@@ -158,7 +169,29 @@
               <div class="childrenCtn"
                 v-if="item.info_data.length>0">
                 <div class="trow">
-                  <div class="tcol">计划工序
+                  <div class="tcol"
+                    style="flex-direction: row;align-items: center;justify-content: start;">计划工序
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="设置成功后请点击此按钮刷新数据"
+                      placement="top">
+                      <i class="el-icon-refresh hoverGreen"
+                        style="line-height:46px;font-size:18px;margin-left:8px;cursor:pointer"
+                        @click="$checkCommonInfo([{
+                          checkWhich: 'api/halfProcess',
+                          getInfoMethed: 'dispatch',
+                          getInfoApi: 'getHalfProcessAsync',
+                          forceUpdate:true
+                        }])"></i>
+                    </el-tooltip>
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="添加新工序"
+                      placement="top">
+                      <i class="el-icon-upload hoverOrange"
+                        style="line-height:46px;font-size:18px;cursor:pointer;margin-left:8px"
+                        @click="$openUrl('/setting/?pName=工序设置&cName=半成品加工')"></i>
+                    </el-tooltip>
                     <el-tooltip class="item"
                       effect="dark"
                       content="统一工序"
@@ -170,7 +203,29 @@
                       </svg>
                     </el-tooltip>
                   </div>
-                  <div class="tcol">原料名称
+                  <div class="tcol"
+                    style="flex-direction: row;align-items: center;justify-content: start;">原料名称
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="设置成功后请点击此按钮刷新数据"
+                      placement="top">
+                      <i class="el-icon-refresh hoverGreen"
+                        style="line-height:46px;font-size:18px;cursor:pointer;margin-left:8px"
+                        @click="$checkCommonInfo([{
+                        checkWhich: 'api/yarnType',
+                        getInfoMethed: 'dispatch',
+                        getInfoApi: 'getYarnTypeAsync',
+                        forceUpdate:true
+                      }])"></i>
+                    </el-tooltip>
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="添加新原料"
+                      placement="top">
+                      <i class="el-icon-upload hoverOrange"
+                        style="line-height:46px;font-size:18px;cursor:pointer;margin-left:8px"
+                        @click="$openUrl('/setting/?pName=物料设置&cName=纱线原料')"></i>
+                    </el-tooltip>
                     <el-tooltip class="item"
                       effect="dark"
                       content="统一原料"
@@ -781,6 +836,22 @@ export default Vue.extend({
         }
       })
     },
+    getPlanNumAll() {
+      const copyNum = this.$clone(this.materialPlanInfo.production_plan_data[0].product_data[0].add_percent)
+      this.materialPlanInfo.production_plan_data.forEach((item) => {
+        item.product_data.forEach((itemChild) => {
+          itemChild.add_percent = copyNum
+          itemChild.info_data.forEach((itemPart) => {
+            if (itemPart.part_id === 0) {
+              itemPart.number = this.numberAutoMethod(
+                Number(itemChild.order_number) * (Number(itemChild.add_percent) / 100 + 1)
+              )
+              this.getMaterialPlanDetail(0, Number(itemPart.number), itemPart)
+            }
+          })
+        })
+      })
+    },
     // 数量百分比 = 计划生产数量/下单数量 - 1
     // 物料最终数量 = 物料计划数量*(原料损耗百分比+1)
     getMaterialFinalNum(rate: number, materail: any) {
@@ -797,7 +868,6 @@ export default Vue.extend({
         )
         if (finded) {
           finded.number = number
-        } else {
         }
       }
     },

@@ -608,6 +608,7 @@ const productStock = {
 import { ProductionPlanInfo } from '@/types/productionPlan'
 const productionPlan = {
   create: (params: { data: ProductionPlanInfo[] }) => http.post(`${baseUrl}/weave/plan/save`, params, 'application/json'),
+  update: (params: ProductionPlanInfo) => http.post(`${baseUrl}/weave/plan/edit`, params, 'application/json'),
   list: (params: {
     plan_id?: string | number
     is_check?: string | number
