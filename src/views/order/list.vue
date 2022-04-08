@@ -11,17 +11,9 @@
       <zh-drop-down :show="showCharts"
         hideTitle="点击查看图表">
         <div style="height: 200px; width: 1580px; transform: translateX(-111px); padding-top: 50px">
-          <<<<<<< HEAD
-            <zh-charts
-            :option="option"
+          <zh-charts :option="option"
             style="height: 200px"
-            v-on:chartsData="chartsData">
-            </zh-charts>
-            =======
-            <zh-charts :option="option"
-              style="height: 200px"
-              v-on:chartsData="chartsData"></zh-charts>
-            >>>>>>> dkr
+            v-on:chartsData="chartsData"></zh-charts>
         </div>
       </zh-drop-down>
       <div class="listCtn">
@@ -226,14 +218,12 @@ export default Vue.extend({
       mainLoading1: false,
       loading: true,
       showCharts: false,
-      isClick: false,
       list: [],
       limitList: limitArr,
       showExport: false,
       checkedCount: [],
       exportKey: [],
       keyword: '',
-      delivery_time: '',
       contacts_id: '',
       contactsList: [],
       client_id: [],
@@ -244,7 +234,7 @@ export default Vue.extend({
         end_time: ''
       },
       option: {
-        color: ['#229CFB', '#2DD59A', '#FCCA24', '#FA9036', '#000000'],
+        color: ['#229CFB', '#2DD59A', '#FCCA24', '#000000', '#000000'],
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -259,9 +249,9 @@ export default Vue.extend({
                 ${params[0].axisValueLabel}</br>
             `
 
-            // htmlStr += `发货数量：${params[3].data}<br/>`
+            htmlStr += `发货数量：${params[3].data}<br/>`
             params.forEach((param: any) => {
-              // if (param.seriesName === '发货数') return
+              if (param.seriesName === '发货数') return
               if (param.dataIndex < 3 && param.seriesIndex === 1) return
               if (param.dataIndex >= 3 && param.seriesIndex === 2) return
 
@@ -283,7 +273,7 @@ export default Vue.extend({
               type: 'shadow'
             },
             axisLabel: {
-              interval: 2
+              interval: 0
             }
           }
         ],
@@ -320,8 +310,13 @@ export default Vue.extend({
           },
           {
             type: 'bar',
-            name: '发货数量',
-            data: []
+            name: '发货数',
+            stack: '0',
+            data: [],
+            itemStyle: {
+              width: 0, // 线宽是0
+              color: 'rgba(0, 0, 0, 0)' // 线的颜色是透明的
+            }
           },
           {
             type: 'line',
@@ -678,10 +673,7 @@ export default Vue.extend({
       this.changeRouter()
     },
     chartsData(params: any) {
-      if (this.isClick) return
-      this.isClick = true
-      this.delivery_time = params.name
-      this.getList()
+      console.log(params)
     },
     getFilters() {
       const query = this.$route.query
@@ -724,7 +716,7 @@ export default Vue.extend({
       this.exportExcelParam['id'] = idArr
       exportExcel.orderInfo(this.exportExcelParam).then((res: any) => {
         if (res.data.status) {
-          // console.log(res.data.data)
+          console.log(res.data.data)
           this.mainLoading = false
           window.location.href = res.data.data
         }
@@ -734,7 +726,6 @@ export default Vue.extend({
       }, 10000)
     },
     changeRouter(ev?: any) {
-      this.delivery_time = ''
       if (ev !== this.page) {
         this.page = 1
       }
@@ -827,7 +818,7 @@ export default Vue.extend({
 
             if (key === new Date().getMonth() + 1 + '-' + new Date().getDate()) {
               let obj = {
-                value: res.data.data[key].date + '\n今日',
+                value: key + '\n今日',
                 textStyle: {
                   fontSize: 16,
                   color: '#1A95FF'
@@ -836,7 +827,7 @@ export default Vue.extend({
               this.option.xAxis[0].data.push(obj)
               continue
             }
-            this.option.xAxis[0].data.push(res.data.data[key].date)
+            this.option.xAxis[0].data.push(key)
           }
           this.mainLoading1 = false
         })
@@ -844,7 +835,6 @@ export default Vue.extend({
         .list({
           order_type: 1,
           keyword: this.keyword,
-          delivery_time: this.delivery_time.slice(0, 10),
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           page: this.page,
           limit: this.limit,
@@ -866,7 +856,6 @@ export default Vue.extend({
             this.total = res.data.data.total
           }
           this.loading = false
-          this.isClick = false
         })
     },
     getListSetting() {
