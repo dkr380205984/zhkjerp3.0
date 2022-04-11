@@ -174,7 +174,7 @@
                     <div class="tcol" style="flex: 0.5">{{ item.detail.process }}</div>
                     <div class="tcol noPad" style="flex: 3">
                       <div class="trow" v-for="(itemMat, indexMat) in item.detail.info_data" :key="indexMat">
-                        <div class="tcol">{{ itemMat.material_order_name }}</div>
+                        <div class="tcol">{{ itemMat.material_order_name || itemMat.material_transfer_name }}</div>
                         <div class="tcol">
                           <template v-if="item.detail.process === '染色'">
                             <div class="changeCtn">

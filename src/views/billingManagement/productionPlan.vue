@@ -113,7 +113,7 @@
                 :title="item.order_code || '无编号，点击查看详情'"
                 @click="$router.push('/order/detail?id=' + item.top_order_id)"
               >
-                {{ item.order_code || "无编号，点击查看详情" }}
+                {{ item.order_code || '无编号，点击查看详情' }}
               </div>
               <div class="col">{{ item.client_name }}</div>
               <div class="col">{{ item.total_number }}</div>
@@ -135,6 +135,18 @@
             </div>
             <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
               <div class="tableCtn">
+              <div class="detailCtn">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">加工工序：</div>
+                    <div class="text">{{ item.detail.process_name || '无' }}</div>
+                  </div>
+                  <div class="col">
+                    <div class="label">工序说明：</div>
+                    <div class="text">{{ item.detail.process_desc || '无' }}</div>
+                  </div>
+                </div>
+              </div>
                 <div class="thead">
                   <div class="trow">
                     <div class="tcol">产品信息</div>

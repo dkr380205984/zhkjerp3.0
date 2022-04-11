@@ -108,8 +108,8 @@
             <el-table-column prop="status"
               label="员工状态">
               <template slot-scope="scope">
-                <div :class="scope.row.status === 1 ? 'blue' : scope.row.status === 2 ? 'orange' : 'red'">
-                  {{ scope.row.status === 1 ? '在职' : scope.row.status === 2 ? '离职' : '状态有误' }}
+                <div :class="scope.row.status == 1 ? 'blue' : scope.row.status == 2 ? 'orange' : 'red'">
+                  {{ scope.row.status == 1 ? '在职' : scope.row.status == 2 ? '离职' : '状态有误' }}
                 </div>
               </template>
             </el-table-column>

@@ -841,6 +841,7 @@ const workshop = {
   }) => http.get(`${baseUrl}/production/inspection/lists`, params),
   detail: (params: {
     order_id?: number | string
+    staff_id?: number | string
   }) => http.get(`${baseUrl}/production/inspection/detail`, params),
   delete: (params: {
     id: Array<number | string>

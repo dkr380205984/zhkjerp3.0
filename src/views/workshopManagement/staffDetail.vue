@@ -8,13 +8,24 @@
         <div class="row">
           <div class="col">
             <div class="label">员工姓名：</div>
-            <div class="text">{{ $route.query.name }}</div>
+            <div class="text">{{ staffInfo.name }}</div>
           </div>
           <div class="col">
             <div class="label">员工编号：</div>
-            <div class="text">{{ $route.query.code }}</div>
+            <div class="text">{{ staffInfo.code }}</div>
           </div>
         </div>
+        <el-checkbox v-model="outCiPin"
+          >结算工资去除次品数量
+          <el-tooltip class="item" effect="dark" placement="top">
+            <div slot="content">
+              勾选前，工资计算公式 = 结算单价 * （完成数量 + 额外数量）<br />勾选后，工资计算公式 = 结算单价 *
+              （完成数量 + 额外数量 - 次品数量）
+            </div>
+            <i class="el-icon-question"></i>
+          </el-tooltip>
+        </el-checkbox>
+        <el-checkbox v-model="keyBoard" @change="changeKeyBoard">打开页面键盘</el-checkbox>
       </div>
     </div>
     <div class="module" v-for="(item, index) in settlementLogList" :key="'process' + index">
@@ -23,12 +34,10 @@
           <div class="col">
             <div class="label">负责工序：</div>
             <div class="text">
-              <el-cascader
-                v-model="item.chooseProcess"
-                :options="processList"
-                :show-all-levels="false"
-                placeholder="加工工序"
-              ></el-cascader>
+              <el-select v-model="item.process" filterable placeholder="加工工序" @change="getProcessDesc(item)">
+                <el-option v-for="item in processList" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
             </div>
           </div>
           <div class="col">
@@ -41,20 +50,173 @@
                 allow-create
                 default-first-option
                 collapse-tags
-                placeholder="请选择工序说明"
+                placeholder="请选择填写工序说明"
               >
-                <el-option v-for="item in processDescList" :key="item.value" :label="item.label" :value="item.value">
+                <el-option
+                  v-for="itemSon in item.processDesc"
+                  :key="itemSon.value"
+                  :label="itemSon.label"
+                  :value="itemSon.value"
+                >
                 </el-option>
               </el-select>
             </div>
           </div>
           <div class="col">
             <div class="label">结算单价：</div>
-            <div class="text">
-                <el-input v-model="item.price"></el-input>
+            <div class="text" style="height: 38px">
+              <zh-input v-model="item.price" placeholder="请输入结算单价" :keyBoard="keyBoard" type="number"></zh-input>
             </div>
           </div>
         </div>
+      </div>
+      <div class="tableCtn">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol" style="flex: 0.2; text-align: center">
+              <el-checkbox v-model="isCheckAllSizeColor" @change="chooseAllSizeColor"></el-checkbox>
+            </div>
+            <div class="tcol">订单号</div>
+            <div class="tcol">产品编号</div>
+            <div class="tcol noPad" style="flex: 8.7">
+              <div class="trow">
+                <div class="tcol">尺码颜色</div>
+                <div class="tcol">完成数量</div>
+                <div class="tcol">额外数量</div>
+                <div class="tcol">次品数量</div>
+                <div class="tcol">次品原因</div>
+              </div>
+            </div>
+            <div class="tcol">操作</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow" v-for="(itemPro, itemProIndex) in item.product_info" :key="itemProIndex">
+            <div class="tcol" style="flex: 0.2; text-align: center">
+              <el-checkbox v-model="isCheckAllSizeColor" @change="chooseAllSizeColor"></el-checkbox>
+            </div>
+            <div class="tcol">
+              <el-input v-model="itemPro.order_code" placeholder="请输入订单号"></el-input>
+            </div>
+            <div class="tcol">
+              <el-input v-model="itemPro.code" placeholder="请输入产品编号"></el-input>
+            </div>
+            <div class="tcol noPad" style="flex: 8.7">
+              <div class="trow" v-for="(itemSizeColor, indexSizeColor) in itemPro.sizeColorInfo" :key="indexSizeColor">
+                <div class="tcol" style="display: block; line-height: 2.9">
+                  {{ itemSizeColor.size_name || '无数据' }}/{{ itemSizeColor.color_name || '无数据' }}
+                  <i
+                    class="el-icon-circle-plus-outline"
+                    style="cursor: pointer"
+                    @click="
+                      $addItem(itemPro.sizeColorInfo, {
+                        size_name: '',
+                        color_name: '',
+                        number: '',
+                        extra_number: '',
+                        shoddy_number: '',
+                        shoddy_reason: []
+                      })
+                    "
+                  ></i>
+                </div>
+                <div class="tcol">
+                  <zh-input
+                    v-model="itemSizeColor.number"
+                    placeholder="请输入完成数量"
+                    :keyBoard="keyBoard"
+                    type="number"
+                  ></zh-input>
+                </div>
+                <div class="tcol">
+                  <zh-input
+                    v-model="itemSizeColor.extra_number"
+                    placeholder="请输入额外数量"
+                    :keyBoard="keyBoard"
+                    type="number"
+                  ></zh-input>
+                </div>
+                <div class="tcol">
+                  <zh-input
+                    v-model="itemSizeColor.shoddy_number"
+                    placeholder="请输入结算单价"
+                    :keyBoard="keyBoard"
+                    type="number"
+                  ></zh-input>
+                </div>
+                <div class="tcol cpyy" style="overflow-y: scroll">
+                  <el-select
+                    v-model="itemSizeColor.shoddy_reason"
+                    multiple
+                    filterable
+                    allow-create
+                    default-first-option
+                    collapse-tags
+                    placeholder="请选择次品原因"
+                  >
+                    <el-option
+                      v-for="item in substandardReason"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    >
+                    </el-option>
+                  </el-select>
+                </div>
+              </div>
+            </div>
+            <div
+              class="tcol hoverBlue"
+              style="cursor: pointer"
+              @click="
+                $addItem(item.product_info, {
+                  code: '',
+                  order_code: '',
+                  sizeColorInfo: [
+                    {
+                      size_name: '',
+                      color_name: '',
+                      number: '',
+                      extra_number: '',
+                      shoddy_number: '',
+                      shoddy_reason: []
+                    }
+                  ]
+                })
+              "
+            >
+              添加下一组
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="overflow: hidden">
+      <div
+        class="btn backHoverBlue fr"
+        @click="
+          $addItem(settlementLogList, {
+            process: '',
+            product_info: [
+              {
+                code: '',
+                order_code: '',
+                sizeColorInfo: [
+                  {
+                    size_name: '',
+                    color_name: '',
+                    number: '',
+                    extra_number: '',
+                    shoddy_number: '',
+                    shoddy_reason: []
+                  }
+                ]
+              }
+            ]
+          })
+        "
+      >
+        添加下个工序
       </div>
     </div>
     <!-- 生产进度 -->
@@ -71,8 +233,10 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { order, process, workshop } from '@/assets/js/api'
+import { staff, process, workshop } from '@/assets/js/api'
+import zhInput from '@/components/zhInput/zhInput.vue'
 export default Vue.extend({
+  components: { zhInput },
   data(): {
     [propName: string]: any
   } {
@@ -90,6 +254,7 @@ export default Vue.extend({
       isCheckAllSizeColor: false,
       isCheckAllProcess: false,
       processWorkerListCheck: false,
+      staffInfo: {},
       substandardReason: [
         {
           value: '织造原因',
@@ -234,122 +399,37 @@ export default Vue.extend({
   methods: {
     init() {
       this.loading = true
-      this.processList = []
+      this.processList = ['针织织造', '梭织织造', '制版费']
       this.order_id = this.$route.query.id
-      workshop.detail({ order_id: this.order_id }).then((res) => {
-        res.data.data.forEach((items: any) => {
-          items.allProcessDesc = []
-          items.info.forEach((item: any) => {
-            item.info.forEach((itemSon: any) => {
-              let number = 0
-              itemSon.info.forEach((itemGrandSon: any) => {
-                items.allProcessDesc.push(itemGrandSon.process_desc)
-                itemGrandSon.info.forEach((itemProcessDesc: any) => {
-                  itemProcessDesc.info.forEach((itemPrice: any) => {
-                    itemPrice.info.forEach((itemSize: any) => {
-                      number += itemSize.info.total_price
-                    })
-                  })
-                })
-              })
-              itemSon.allColorSizePrice = number
-            })
-          })
-          items.allProcessDesc = items.allProcessDesc.toString().replace(/^,+/, '').replace(/,+$/, '')
-          let _this = this
-          items.allProcessDesc.split(',').forEach((item: any) => {
-            _this.processDescList.push({ value: item })
-          })
-        })
-        this.processWorkerList = res.data.data
-        this.tabChoose = res.data.data[0]?.process_name
-      })
-
-      workshop.list({ staff_id: this.$route.query.id + '' }).then((res) => {
-        let processArr: any = []
-        let processListArr: any = []
-        res.data.data.forEach((item: any) => {
-          processArr.push(item.process_name)
-        })
-
-        processArr = [...new Set(processArr)]
-
-        res.data.data.forEach((item: any) => {
-          processArr.forEach((processItem: any) => {
-            if (item.process_name === processItem) {
-              let a = processListArr.find((items: any) => {
-                return items.process_name === processItem
-              })
-              if (a === undefined) {
-                processListArr.push({
-                  process_name: processItem,
-                  process_type: item.process_type,
-                  process_desc: '',
-                  chooseProcess: [+item.process_type || 0, processItem],
-                  info: [item]
-                })
-              } else {
-                a.info.push(item)
-              }
-            }
-          })
-        })
-
-        processListArr.forEach((items: any) => {
-          items.info.forEach((item: any) => {
-            if (!item.process_desc) return
-            this.processDescList.push(item.process_desc)
-          })
-        })
-
-        this.processDescList = [...new Set(this.processDescList)]
-
-        this.processDescList.forEach((item: any, index: number) => {
-          this.processDescList[index] = { value: item, label: item }
-        })
-
-        this.settlementLogList = processListArr
-      })
 
       process.list({ type: 2 }).then((res) => {
-        let arr: any = []
         res.data.data.forEach((item: any) => {
-          arr.push({
-            label: item.name,
-            value: item.name
-          })
-        })
-        this.processList.push({
-          label: '半成品加工工序',
-          value: 2,
-          children: arr
+          this.processList.push(item.name)
         })
         process.list({ type: 3 }).then((res) => {
-          let arr: any = []
           res.data.data.forEach((item: any) => {
-            arr.push({
-              label: item.name,
-              value: item.name
-            })
+            this.processList.push(item.name)
           })
-          this.processList.push({
-            label: '成品加工工序',
-            value: 3,
-            children: arr
-          })
-          this.processList.unshift({
-            label: '织造工序',
-            value: 0,
-            children: [
-              { label: '针织织造', value: '针织织造', process_desc: '' },
-              { label: '梭织织造', value: '梭织织造', process_desc: '' },
-              { label: '制版费', value: '制版费', process_desc: '' }
-            ]
+
+          this.processList = [...new Set(this.processList)]
+          this.processList.forEach((item: any, index: any) => {
+            this.processList[index] = { label: item, value: item }
           })
         })
       })
 
       this.loading = false
+    },
+    getProcessDesc(item: any) {
+      process.list({ name: item.process }).then((res) => {
+        if (res.data.status) {
+          item.processDesc = []
+          res.data.data[0].process_desc.split(',').forEach((process_desc: any) => {
+            item.processDesc.push({ label: process_desc, value: process_desc })
+          })
+        }
+        this.$forceUpdate()
+      })
     },
     copyWorkerInfo(item: any, itemSizeColor: any) {
       if (item.productId === '') {
@@ -843,20 +923,31 @@ export default Vue.extend({
     }
   },
   mounted() {
-    order
-      .detail({
-        id: Number(this.$route.query.id)
+    this.settlementLogList = []
+    staff.detail({ id: this.$route.query.id + '' }).then((res) => {
+      this.staffInfo = res.data.data
+      this.settlementLogList.push({
+        process: this.staffInfo.process,
+        product_info: [
+          {
+            code: '',
+            order_code: '',
+            sizeColorInfo: [
+              {
+                size_name: '',
+                color_name: '',
+                number: '',
+                extra_number: '',
+                shoddy_number: '',
+                shoddy_reason: []
+              }
+            ]
+          }
+        ]
       })
-      .then((res) => {
-        this.order_id = res.data.data.time_data[this.orderIndex].id
-        this.orderInfo = res.data.data
-        res.data.data.time_data[0].batch_data.forEach((item: any) => {
-          item.product_data.forEach((itemPro: any) => {
-            this.product_arr.push(itemPro)
-          })
-        })
-        this.init()
-      })
+      this.getProcessDesc(this.settlementLogList[0])
+      this.init()
+    })
   }
 })
 </script>
@@ -865,31 +956,35 @@ export default Vue.extend({
 @import '~@/assets/css/workshopManagement/detail.less';
 </style>
 <style lang="less">
-#workshopManagementDetail {
-  .el-tabs__content {
-    padding: 0;
-  }
-  .el-input input {
-    padding: 3px 0;
-    border: none;
-  }
+#workshopStaffDetail {
   .el-input__suffix {
     display: none;
   }
   .zhInputCtn {
-    border: none;
     .zhInputBox {
-      .zhInput {
-        padding: 0;
-        border: 0;
-      }
-    }
-    .zhInputAppend {
-      border-left: 1px solid rgba(0, 0, 0, 0.15);
+      height: 38px;
     }
   }
-  .el-select__input {
-    margin-left: 0;
+
+  .tbody {
+    .zhInputCtn {
+      .zhInputBox {
+        .zhInput {
+          border: 0;
+        }
+      }
+    }
+  }
+
+  .tbody {
+    .el-input .el-input__inner {
+      border: 0;
+      padding: 0;
+    }
+  }
+  .cpyy .el-input__inner {
+    padding-right: 0;
+    border: 0;
   }
 }
 </style>

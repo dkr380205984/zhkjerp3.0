@@ -91,18 +91,7 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <span
-                  class="opr hoverBlue"
-                  @click="
-                    $router.push(
-                      '/workshopManagement/staffDetail?id=' +
-                        scope.row.id +
-                        '&code=' +
-                        scope.row.code +
-                        '&name=' +
-                        scope.row.name
-                    )
-                  "
+                <span class="opr hoverBlue" @click="$router.push('/workshopManagement/staffDetail?id=' + scope.row.id)"
                   >继续添加</span
                 >
               </template>
