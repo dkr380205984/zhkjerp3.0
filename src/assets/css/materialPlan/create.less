@@ -4,8 +4,9 @@
 @import '../bottomBar.less';
 @import '../flattenTable.less';
 @import '../popup.less';
-#materialPlanCreate{
-  .description{
+
+#materialPlanCreate {
+  .description {
     padding: 18px;
     background: #F0F0F0;
     color: @font85;
@@ -13,23 +14,55 @@
     font-size: @fontBig;
     font-weight: bold;
   }
-  .noPad{
+
+  .number {
+    position: absolute;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border: 1px solid @blue;
+    text-align: center;
+    border-radius: 50%;
+    line-height: 20px;
+    color: @blue;
+  }
+
+  .number2 {
+    position: absolute;
+    left: 2px;
+    text-align: center;
+    border-radius: 50%;
+    color: @orange;
+    height: 18px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+  }
+
+  .elCtn {
+    position: relative;
+  }
+
+  .noPad {
     padding: 0;
   }
-  .popup{
-    .tag{
+
+  .popup {
+    .tag {
       padding: 4px 16px;
-      border:1px solid @borderColor;
+      border: 1px solid @borderColor;
       margin: 16px 12px;
       display: inline-block;
       cursor: pointer;
       border-radius: 4px;
     }
   }
-  .tcol{
+
+  .tcol {
     position: relative;
   }
-  .copyIcon{
+
+  .copyIcon {
     position: absolute;
     right: 12px;
     line-height: 46px;
@@ -37,7 +70,8 @@
     height: 24px;
     cursor: pointer;
   }
-  .childrenCtn{
+
+  .childrenCtn {
     font-size: 14px;
   }
 }

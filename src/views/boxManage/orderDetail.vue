@@ -519,7 +519,7 @@ export default Vue.extend({
     ])
     order
       .detail({
-        id: Number(this.$route.query.id)
+        id: JSON.parse(this.$route.query.id as string)[0]
       })
       .then((res) => {
         if (res.data.status) {

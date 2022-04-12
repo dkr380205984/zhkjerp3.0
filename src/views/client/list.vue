@@ -148,7 +148,7 @@
         <div class="titleCtn">
           <div class="text">用户绑定合作单位</div>
           <div class="closeCtn"
-            @click="bindFlag=false">
+            @click="bindFlag=false;getList()">
             <i class="el-icon-close"></i>
           </div>
         </div>

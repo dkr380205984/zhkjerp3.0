@@ -6,7 +6,9 @@
       <div class="titleCtn">
         <div class="title">添加报价单
           <div class="elCtn fr">
-            <el-select v-model="searchQuotedPriceKey"
+            <!-- 导入报价功能不应该在订单转报价的时候使用，因为不知道订单的哪个产品要和导入进来的报价单的哪个产品绑定，就很麻烦，优化了才能用 -->
+            <el-select v-if="!$route.query.orderId&&!$route.query.sampleOrderId"
+              v-model="searchQuotedPriceKey"
               filterable
               remote
               reserve-keyword
@@ -1836,6 +1838,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.saveSuccess = true
             this.$message.success('草稿保存成功')
+            this.$router.push('/quotedPrice/detail?id=' + res.data.data)
           }
         })
       }

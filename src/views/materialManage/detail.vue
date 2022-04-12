@@ -148,7 +148,7 @@
             <div class="row">
               <div class="col">
                 <div class="label">订购总数：</div>
-                <div class="text">{{item.total_number}}kg</div>
+                <div class="text">{{item.total_number}}</div>
               </div>
               <div class="col">
                 <div class="label">订购总额：</div>
@@ -196,6 +196,7 @@
                 <div class="tcol">订购属性</div>
                 <div class="tcol">订购数量</div>
                 <div class="tcol">订购单价</div>
+                <div class="tcol">订购总价</div>
               </div>
             </div>
             <div class="tbody">
@@ -213,6 +214,7 @@
                 <div class="tcol">{{itemChild.attribute}}</div>
                 <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
                 <div class="tcol">{{itemChild.price}}元</div>
+                <div class="tcol">{{$toFixed(itemChild.price*itemChild.number)}}元</div>
               </div>
             </div>
           </div>
@@ -287,7 +289,7 @@
                 <div class="tcol"
                   style="flex:0.5">工序</div>
                 <div class="tcol noPad"
-                  style="flex:3">
+                  style="flex:5">
                   <div class="trow">
                     <div class="tcol">纱线名称</div>
                     <div class="tcol">加工详情</div>
@@ -295,6 +297,8 @@
                       style="flex:0.5">数量</div>
                     <div class="tcol"
                       style="flex:0.5">单价</div>
+                    <div class="tcol"
+                      style="flex:0.5">小计</div>
                   </div>
                 </div>
                 <div class="tcol"
@@ -325,7 +329,7 @@
                   <div class="tcol"
                     style="flex:0.5">{{itemProcess.process}}</div>
                   <div class="tcol noPad"
-                    style="flex:3">
+                    style="flex:5">
                     <div class="trow"
                       v-for="(itemMat,indexMat) in itemProcess.info_data"
                       :key="indexMat">
@@ -359,6 +363,8 @@
                         style="flex:0.5">{{itemMat.number}}{{itemMat.unit}}</div>
                       <div class="tcol"
                         style="flex:0.5">{{itemMat.price}}元</div>
+                      <div class="tcol"
+                        style="flex:0.5">{{$toFixed(itemMat.price*itemMat.number)}}元</div>
                     </div>
                   </div>
                   <div class="tcol"
@@ -425,6 +431,10 @@
                 <div class="text">{{item.store}}/{{item.secondary_store}}</div>
               </div>
               <div class="col">
+                <div class="col">
+                  <div class="label">调取总数：</div>
+                  <div class="text">{{item.info_data.reduce((total,cur)=>total+Number(cur.number),0)}}</div>
+                </div>
               </div>
             </div>
             <div class="row">
@@ -435,6 +445,10 @@
               <div class="col flex3">
                 <div class="label">创建人：</div>
                 <div class="text">{{item.user_name}}</div>
+              </div>
+              <div class="col">
+                <div class="label">调取总价：</div>
+                <div class="text">{{item.info_data.reduce((total,cur)=>total+Number(cur.number)*Number(cur.price),0)}}元</div>
               </div>
             </div>
           </div>
@@ -452,6 +466,7 @@
                 <div class="tcol">批号/缸号/色号</div>
                 <div class="tcol">调取数量</div>
                 <div class="tcol">调取单价</div>
+                <div class="tcol">调取总价</div>
               </div>
             </div>
             <div class="tbody">
@@ -469,6 +484,7 @@
                 <div class="tcol">{{itemChild.batch_code}}/{{itemChild.vat_code}}/{{itemChild.color_code}}</div>
                 <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
                 <div class="tcol">{{itemChild.price||0}}元</div>
+                <div class="tcol">{{$toFixed(itemChild.price*itemChild.number)}}元</div>
               </div>
             </div>
           </div>
@@ -514,7 +530,7 @@
                 <div class="tcol"
                   style="flex:0.5">工序</div>
                 <div class="tcol noPad"
-                  style="flex:3">
+                  style="flex:5">
                   <div class="trow">
                     <div class="tcol">纱线名称</div>
                     <div class="tcol">加工详情</div>
@@ -522,6 +538,8 @@
                       style="flex:0.5">数量</div>
                     <div class="tcol"
                       style="flex:0.5">单价</div>
+                    <div class="tcol"
+                      style="flex:0.5">小计</div>
                   </div>
                 </div>
                 <div class="tcol"
@@ -551,7 +569,7 @@
                   <div class="tcol"
                     style="flex:0.5">{{itemProcess.process}}</div>
                   <div class="tcol noPad"
-                    style="flex:3">
+                    style="flex:5">
                     <div class="trow"
                       v-for="(itemMat,indexMat) in itemProcess.info_data"
                       :key="indexMat">
@@ -565,9 +583,11 @@
                           </div>
                         </template>
                         <template v-if="itemProcess.process==='倒纱'">
-                          <span>{{itemMat.before_attribute}}</span>
-                          <span class="el-icon-s-unfold blue"></span>
-                          <span>{{itemMat.after_attribute}}</span>
+                          <div class="changeCtn">
+                            <span>{{itemMat.before_attribute}}</span>
+                            <span class="el-icon-s-unfold blue"></span>
+                            <span>{{itemMat.after_attribute}}</span>
+                          </div>
                         </template>
                         <template v-if="itemProcess.process==='并线'">
                           <span>{{itemMat.bingxian_desc}}</span>
@@ -583,6 +603,8 @@
                         style="flex:0.5">{{itemMat.number}}{{itemMat.unit}}</div>
                       <div class="tcol"
                         style="flex:0.5">{{itemMat.price}}元</div>
+                      <div class="tcol"
+                        style="flex:0.5">{{$toFixed(itemMat.price*itemMat.number)}}元</div>
                     </div>
                   </div>
                   <div class="tcol"

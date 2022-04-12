@@ -5,74 +5,126 @@
 @import '../table.less';
 @import '../popup.less';
 @import '../bottomBar.less';
-#sampleOrderDetail{
-  .titleIn{
+
+#sampleOrderDetail {
+  .titleIn {
     color: @blue;
     padding: 0 32px;
     font-size: 18px;
   }
-  .tableCtn{
-    .tbody{
-      .thead{
+
+  .processCtn {
+    padding: 20px 32px;
+
+    .process {
+      width: 100%;
+      height: 28px;
+      background: rgba(0, 0, 0, .45);
+      line-height: 28px;
+      border-radius: 14px;
+      font-size: @fontMiddle;
+      position: relative;
+      margin-bottom: 20px;
+
+      .active {
+        background: #61CAAC;
+        width: 15%;
+        height: 28px;
+        border-radius: 14px;
+      }
+
+      .left {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        color: #fff;
+        left: 12px;
+      }
+
+      .right {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 12px;
+        color: #fff;
+      }
+    }
+  }
+
+  .tableCtn {
+    .tbody {
+      .thead {
         border: 0;
         font-size: 14px;
       }
-      .tbody{
+
+      .tbody {
         border: 0;
         font-size: 14px;
       }
     }
   }
-  .samallFont{
-    .trow{
+
+  .samallFont {
+    .trow {
       height: 100%;
     }
-    .tcol{
-      &.center{
+
+    .tcol {
+      &.center {
         text-align: center;
       }
+
       font-size: @fontSmall;
-      &.w100{
+
+      &.w100 {
         min-width: 100px;
         max-width: 150px;
       }
     }
   }
-  .box{
+
+  .box {
     padding: 0 24px;
     line-height: 32px;
     font-size: @fontMiddle;
     border: 1px solid @borderColor;
     display: inline-block;
-    background:#F5F7FA ;
+    background: #F5F7FA;
     color: #C0C4CC;
     border-radius: 4px;
     margin-right: 32px;
     position: relative;
-    .icon{
-      position:absolute;
+
+    .icon {
+      position: absolute;
       right: -22px;
       line-height: 32px;
       cursor: pointer;
     }
   }
-  .popup{
-    .main{
+
+  .popup {
+    .main {
       width: 1200px;
-      .label{
+
+      .label {
         line-height: 38px;
         font-size: 14px;
         width: auto;
         text-align: left;
       }
     }
-    .editCtn{
-      padding:20px 0;
+
+    .editCtn {
+      padding: 20px 0;
     }
-    .tableCtn{
-      padding:20px 0;
+
+    .tableCtn {
+      padding: 20px 0;
     }
-    .description{
+
+    .description {
       padding: 18px;
       background: #F0F0F0;
       color: @font85;

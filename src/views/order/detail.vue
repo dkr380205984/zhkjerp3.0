@@ -65,16 +65,6 @@
             <div class="label">下单时间：</div>
             <div class="text">{{orderInfo.time_data[0].order_time}}</div>
           </div>
-          <div class="col flex3">
-            <div class="label">关联单据：</div>
-            <div class="text green">
-              <span v-if="orderInfo.rel_order_id"
-                style="cursor:pointer;margin-right:12px"
-                @click="$openUrl('/sampleOrder/detail?id='+orderInfo.rel_order_id)">{{orderInfo.rel_order_code}}(订单)</span>
-              <span class="gray"
-                v-if="!orderInfo.rel_order_id">无关联单据</span>
-            </div>
-          </div>
         </div>
         <div class="row">
           <div class="col">
@@ -217,6 +207,7 @@
       <div class="tableCtn">
         <div class="thead">
           <div class="trow">
+            <div class="tcol">批次序号</div>
             <div class="tcol">产品编号</div>
             <div class="tcol">产品名称</div>
             <div class="tcol">产品图片</div>
@@ -237,6 +228,7 @@
           <div class="trow"
             v-for="(item,index) in productList"
             :key="index">
+            <div class="tcol">第{{item.batchIndex}}批</div>
             <div class="tcol">
               <span class="blue"
                 style="cursor:pointer"
@@ -274,7 +266,7 @@
                   :class="{'backGray':!item.craft_list_id,'backBlue':item.craft_list_id}">工</div>
               </div>
               <div class="state"
-                @click="item.rel_quote_info.quote_id?$openUrl('/quotedPrice/detail?id='+item.rel_quote_info.quote_id):$openUrl('/quotedPrice/create?orderId=' + $route.query.id + '&product_id='+item.product_id)">
+                @click="goQuotedPrice(item)">
                 <div class="circle"
                   :class="{'backGray':!item.rel_quote_info.quote_id,'backBlue':item.rel_quote_info.quote_id}">报</div>
               </div>
@@ -2100,6 +2092,31 @@ export default Vue.extend({
     }
   },
   methods: {
+    goQuotedPrice(item: any) {
+      if (item.rel_quote_info.quote_id) {
+        this.$openUrl('/quotedPrice/detail?id=' + item.rel_quote_info.quote_id)
+      } else {
+        this.$confirm('是否添加新的报价单?', '提示', {
+          distinguishCancelAndClose: true,
+          confirmButtonText: '添加新报价单',
+          cancelButtonText: '去报价单列表查询已有报价单绑定',
+          type: 'warning'
+        })
+          .then(() => {
+            this.$openUrl('/quotedPrice/create?orderId=' + this.$route.query.id + '&product_id=' + item.product_id)
+          })
+          .catch((action: any) => {
+            if (action === 'cancel') {
+              this.$openUrl('/quotedPrice/list?page=1&keyword=&client_id=&user_id=&status=null&date=')
+            } else {
+              this.$message({
+                type: 'info',
+                message: '已取消'
+              })
+            }
+          })
+      }
+    },
     cancelOrder() {
       this.$confirm('是否取消该订单?', '提示', {
         confirmButtonText: '确认取消',
@@ -2192,8 +2209,14 @@ export default Vue.extend({
           this.orderInfo = res.data.data
           // 整理产品信息
           this.orderInfo.time_data.forEach((itemTime) => {
-            itemTime.batch_data.forEach((itemBatch) => {
-              this.productList = this.productList.concat(itemBatch.product_data)
+            itemTime.batch_data.forEach((itemBatch, indexBatch) => {
+              this.productList = this.productList.concat(
+                itemBatch.product_data.map((item) => {
+                  // @ts-ignore 产品信息里加个批次序号，用于区分不同批次相同产品
+                  item.batchIndex = indexBatch + 1
+                  return item
+                })
+              )
             })
           })
           Promise.all([

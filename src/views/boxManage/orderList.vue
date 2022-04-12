@@ -63,10 +63,6 @@
                 :value="item.value"></el-option>
             </el-select>
           </div>
-          <div class="btn borderBtn"
-            @click="reset">重置</div>
-        </div>
-        <div class="filterCtn">
           <div class="elCtn">
             <el-select @change="changeRouter"
               v-model="group_id"
@@ -78,6 +74,10 @@
                 :label="item.name"></el-option>
             </el-select>
           </div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
+        </div>
+        <div class="filterCtn">
           <div class="elCtn">
             <el-date-picker v-model="date"
               type="daterange"
@@ -106,7 +106,21 @@
           <div class="btn backHoverGreen fr"
             @click="getFilters();getList()">刷新列表</div>
         </div>
+        <div class="filterCtn clearfix">
+          <div class="label">已勾选单据：</div>
+          <div class="elCtn check"
+            v-for="item in checkList"
+            :key="item.id">
+            <el-input v-model="item.code"
+              disabled></el-input>
+          </div>
+          <div class="btn fr"
+            :class="{'backHoverBlue':checkList.length>0,'backGray':checkList.length===0}"
+            @click="checkList.length>0?$router.push('/boxManage/orderDetail?id='+JSON.stringify(checkList.map((item)=>item.id))):$message.error('请选择列表中的订单去发货')">去发货</div>
+        </div>
         <zh-list :list="list"
+          :check="true"
+          :checkedCount="checkList"
           :listKey="listKey"
           :loading="loading"
           :oprList="oprList"></zh-list>
@@ -145,6 +159,7 @@ export default Vue.extend({
     return {
       loading: true,
       list: [],
+      checkList: [],
       limitList: limitArr,
       limit: 10,
       keyword: '',
@@ -277,7 +292,7 @@ export default Vue.extend({
           name: '去发货',
           class: 'hoverBlue',
           fn: (item: any) => {
-            this.$router.push('/boxManage/orderDetail?id=' + item.id)
+            this.$router.push('/boxManage/orderDetail?id=' + JSON.stringify([item.id]))
           }
         }
       ]

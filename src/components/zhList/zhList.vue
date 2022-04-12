@@ -306,7 +306,7 @@
           <div class="column check"
             v-if="check">
             <el-checkbox v-model="item.isCheck"
-              @change="checkChange"></el-checkbox>
+              @change="checkChange($event,item)"></el-checkbox>
           </div>
           <div class="column"
             v-for="itemKey in listKey"
@@ -439,15 +439,19 @@ export default Vue.extend({
         })
       }
 
-      // console.log(val)
       this.isIndeterminate = false
     },
-    checkChange(val: any) {
-      // console.log(val,this.checkedCount)
+    checkChange(val: boolean, info: any) {
       if (val) {
-        this.checkedCount.push(2)
+        const index = this.checkedCount.map((item: any) => item.id).indexOf(info.id)
+        if (index === -1) {
+          this.checkedCount.push(info)
+        }
       } else {
-        this.checkedCount.pop()
+        const index = this.checkedCount.map((item: any) => item.id).indexOf(info.id)
+        if (index !== -1) {
+          this.checkedCount.splice(index, 1)
+        }
         this.allCheck = false
       }
       if (this.checkedCount.length === 0) {

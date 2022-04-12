@@ -57,6 +57,7 @@
                 <div class="tcol">物料信息</div>
                 <div class="tcol">订购数量</div>
                 <div class="tcol">订购单价</div>
+                <div class="tcol">订购总价</div>
               </div>
             </div>
             <div class="tbody">
@@ -67,6 +68,7 @@
                 <div class="tcol">{{itemChild.attribute}}</div>
                 <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
                 <div class="tcol">{{itemChild.price}}元</div>
+                <div class="tcol">{{$toFixed(itemChild.price*itemChild.number)}}元</div>
               </div>
             </div>
           </div>
