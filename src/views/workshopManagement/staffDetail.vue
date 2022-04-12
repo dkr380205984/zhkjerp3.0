@@ -77,9 +77,9 @@
               <el-checkbox v-model="isCheckAllSizeColor" @change="chooseAllSizeColor"></el-checkbox>
             </div>
             <div class="tcol">订单号</div>
-            <div class="tcol">产品编号</div>
             <div class="tcol noPad" style="flex: 8.7">
               <div class="trow">
+                <div class="tcol">产品编号</div>
                 <div class="tcol">尺码颜色</div>
                 <div class="tcol">完成数量</div>
                 <div class="tcol">额外数量</div>
@@ -96,72 +96,89 @@
               <el-checkbox v-model="isCheckAllSizeColor" @change="chooseAllSizeColor"></el-checkbox>
             </div>
             <div class="tcol">
-              <el-input v-model="itemPro.order_code" placeholder="请输入订单号"></el-input>
-            </div>
-            <div class="tcol">
-              <el-input v-model="itemPro.code" placeholder="请输入产品编号"></el-input>
+              <el-autocomplete
+                v-model="itemPro.order_code"
+                :fetch-suggestions="querySearchAsync"
+                placeholder="请输入订单号"
+                @select="handleSelect(item, itemProIndex, index)"
+              ></el-autocomplete>
             </div>
             <div class="tcol noPad" style="flex: 8.7">
-              <div class="trow" v-for="(itemSizeColor, indexSizeColor) in itemPro.sizeColorInfo" :key="indexSizeColor">
-                <div class="tcol" style="display: block; line-height: 2.9">
-                  {{ itemSizeColor.size_name || '无数据' }}/{{ itemSizeColor.color_name || '无数据' }}
-                  <i
-                    class="el-icon-circle-plus-outline"
-                    style="cursor: pointer"
-                    @click="
-                      $addItem(itemPro.sizeColorInfo, {
-                        size_name: '',
-                        color_name: '',
-                        number: '',
-                        extra_number: '',
-                        shoddy_number: '',
-                        shoddy_reason: []
-                      })
-                    "
-                  ></i>
-                </div>
+              <div
+                class="trow"
+                v-for="(itemDetail, indexDetail) in itemPro.product_detail_info"
+                :key="indexDetail + 'indexDetail'"
+              >
                 <div class="tcol">
-                  <zh-input
-                    v-model="itemSizeColor.number"
-                    placeholder="请输入完成数量"
-                    :keyBoard="keyBoard"
-                    type="number"
-                  ></zh-input>
+                  <el-input v-model="itemDetail.code" placeholder="请输入产品编号"></el-input>
                 </div>
-                <div class="tcol">
-                  <zh-input
-                    v-model="itemSizeColor.extra_number"
-                    placeholder="请输入额外数量"
-                    :keyBoard="keyBoard"
-                    type="number"
-                  ></zh-input>
-                </div>
-                <div class="tcol">
-                  <zh-input
-                    v-model="itemSizeColor.shoddy_number"
-                    placeholder="请输入结算单价"
-                    :keyBoard="keyBoard"
-                    type="number"
-                  ></zh-input>
-                </div>
-                <div class="tcol cpyy" style="overflow-y: scroll">
-                  <el-select
-                    v-model="itemSizeColor.shoddy_reason"
-                    multiple
-                    filterable
-                    allow-create
-                    default-first-option
-                    collapse-tags
-                    placeholder="请选择次品原因"
+                <div class="tcol noPad" style="flex: 5.7">
+                  <div
+                    class="trow"
+                    v-for="(itemSizeColor, indexSizeColor) in itemDetail.sizeColorInfo"
+                    :key="indexSizeColor + 'indexSizeColor'"
                   >
-                    <el-option
-                      v-for="item in substandardReason"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    >
-                    </el-option>
-                  </el-select>
+                    <div class="tcol" style="display: block; line-height: 2.9">
+                      {{ itemSizeColor.size_name || '无数据' }}/{{ itemSizeColor.color_name || '无数据' }}
+                      <i
+                        class="el-icon-circle-plus-outline"
+                        style="cursor: pointer"
+                        @click="
+                          $addItem(itemDetail.sizeColorInfo, {
+                            size_name: '',
+                            color_name: '',
+                            number: '',
+                            extra_number: '',
+                            shoddy_number: '',
+                            shoddy_reason: []
+                          })
+                        "
+                      ></i>
+                    </div>
+                    <div class="tcol">
+                      <zh-input
+                        v-model="itemSizeColor.number"
+                        placeholder="请输入完成数量"
+                        :keyBoard="keyBoard"
+                        type="number"
+                      ></zh-input>
+                    </div>
+                    <div class="tcol">
+                      <zh-input
+                        v-model="itemSizeColor.extra_number"
+                        placeholder="请输入额外数量"
+                        :keyBoard="keyBoard"
+                        type="number"
+                      ></zh-input>
+                    </div>
+                    <div class="tcol">
+                      <zh-input
+                        v-model="itemSizeColor.shoddy_number"
+                        placeholder="请输入结算单价"
+                        :keyBoard="keyBoard"
+                        type="number"
+                      ></zh-input>
+                    </div>
+                    <div class="tcol cpyy" style="overflow-y: scroll">
+                      <el-select
+                        v-model="itemSizeColor.shoddy_reason"
+                        multiple
+                        filterable
+                        allow-create
+                        default-first-option
+                        collapse-tags
+                        placeholder="请选择次品原因"
+                      >
+                        <el-option
+                          v-for="item in substandardReason"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                        >
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -170,16 +187,20 @@
               style="cursor: pointer"
               @click="
                 $addItem(item.product_info, {
-                  code: '',
                   order_code: '',
-                  sizeColorInfo: [
+                  product_detail_info: [
                     {
-                      size_name: '',
-                      color_name: '',
-                      number: '',
-                      extra_number: '',
-                      shoddy_number: '',
-                      shoddy_reason: []
+                      code: '',
+                      sizeColorInfo: [
+                        {
+                          size_name: '',
+                          color_name: '',
+                          number: '',
+                          extra_number: '',
+                          shoddy_number: '',
+                          shoddy_reason: []
+                        }
+                      ]
                     }
                   ]
                 })
@@ -200,15 +221,19 @@
             product_info: [
               {
                 code: '',
-                order_code: '',
-                sizeColorInfo: [
+                product_detail_info: [
                   {
-                    size_name: '',
-                    color_name: '',
-                    number: '',
-                    extra_number: '',
-                    shoddy_number: '',
-                    shoddy_reason: []
+                    order_code: '',
+                    sizeColorInfo: [
+                      {
+                        size_name: '',
+                        color_name: '',
+                        number: '',
+                        extra_number: '',
+                        shoddy_number: '',
+                        shoddy_reason: []
+                      }
+                    ]
                   }
                 ]
               }
@@ -220,6 +245,76 @@
       </div>
     </div>
     <!-- 生产进度 -->
+    <div class="popup" v-show="addOrder" v-loading="showPopupLoading" element-loading-target>
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">添加订单</span>
+          <div class="closeCtn">
+            <span class="el-icon-close" @click="addOrder = false"></span>
+          </div>
+        </div>
+        <div class="contentCtn" style="padding-top: 15px">
+          <div class="editCtn packOrder" v-for="(item, index) in productionScheduleUpdate" :key="index">
+            <div class="tableCtn">
+              <div class="tbody hasTop">
+                <div class="trow">
+                  <div class="tcol bgGray">系统编号</div>
+                  <div class="tcol bgGray">订单号</div>
+                  <div class="tcol bgGray">产品编号</div>
+                  <div class="tcol bgGray">产品品类</div>
+                  <div class="tcol bgGray">产品名称</div>
+                  <div class="tcol bgGray">产品图片</div>
+                  <div class="tcol bgGray">尺码颜色</div>
+                  <div class="tcol bgGray">计划生产数量</div>
+                  <div class="tcol bgGray">检验入库数量</div>
+                  <div class="tcol bgGray" style="flex: 0.2">
+                    <el-checkbox v-model="item.checkAll" @change="checkAllOrder(item)"></el-checkbox>
+                  </div>
+                </div>
+                <div class="trow">
+                  <div class="tcol">{{ item.system_code }}</div>
+                  <div class="tcol">{{ item.code }}</div>
+                  <div class="tcol noPad" style="flex: 8.82">
+                    <div class="trow" v-for="(itemPro, indexPro) in item.product_info" :key="indexPro + 'pro'">
+                      <div class="tcol">{{ itemPro.product_code }}</div>
+                      <div class="tcol">
+                        {{ itemPro.category }}
+                      </div>
+                      <div class="tcol">{{ itemPro.name }}</div>
+                      <div class="tcol">
+                        <el-image
+                          :src="itemPro.img ? itemPro.img : require('@/assets/image/common/noPic.png')"
+                        ></el-image>
+                      </div>
+                      <div class="tcol noPad" style="flex: 4.005">
+                        <div
+                          class="trow"
+                          v-for="(itemSizeColor, indexSizeColor) in itemPro.colorSizeInfo"
+                          :key="itemSizeColor.size_id + 'color' + indexSizeColor"
+                        >
+                          <div class="tcol">
+                            {{ (itemSizeColor.size_name || '无数据') + '/' + (itemSizeColor.color_name || '无数据') }}
+                          </div>
+                          <div class="tcol">{{ itemSizeColor.number }}</div>
+                          <div class="tcol">{{ itemSizeColor.inspection_number }}</div>
+                          <div class="tcol" style="flex: 0.2">
+                            <el-checkbox v-model="itemSizeColor.check" @change="$forceUpdate()"></el-checkbox>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn" @click="addOrder = false">取消</span>
+          <span class="btn backHoverBlue" @click="confirmSubmit">确认提交</span>
+        </div>
+      </div>
+    </div>
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
@@ -233,7 +328,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { staff, process, workshop } from '@/assets/js/api'
+import { staff, process, workshop, order } from '@/assets/js/api'
 import zhInput from '@/components/zhInput/zhInput.vue'
 export default Vue.extend({
   components: { zhInput },
@@ -391,7 +486,7 @@ export default Vue.extend({
           }
         ]
       },
-      numberUpdate: false,
+      addOrder: false,
       showPrice: false,
       priceProcessList: [] // 报价单报价信息
     }
@@ -424,6 +519,7 @@ export default Vue.extend({
       process.list({ name: item.process }).then((res) => {
         if (res.data.status) {
           item.processDesc = []
+          if (!res.data.data.length) return
           res.data.data[0].process_desc.split(',').forEach((process_desc: any) => {
             item.processDesc.push({ label: process_desc, value: process_desc })
           })
@@ -492,102 +588,111 @@ export default Vue.extend({
         }
       })
     },
-    confirmSubmit() {
-      let params: {
-        order_id: any
-        data: Array<{
-          staff_id: number | string
-          process_name: number | string
-          process_type: number | string
-          process_desc: string
-          extra_number: number | string
-          order_product_id: number | string
-          product_id: number | string
-          size_id: number | string
-          color_id: number | string
-          number: number | string
-          price: number | string
-          total_price: number | string
-          shoddy_number: number | string
-          shoddy_reason: string
-          complete_time: string
-        }>
-      } = {
-        order_id: this.order_id,
-        data: []
-      }
-      const data: any = []
-
-      this.productionScheduleUpdate.forEach((items: any) => {
-        if (items.productId === '') {
-          this.$message.error('请选择加工产品')
-          throw Error()
-        }
-        if (items.process === '') {
-          this.$message.error('请选择工序')
-          throw Error()
-        }
-        items.infoData.forEach((item: any) => {
-          if (item.worker === '') {
-            this.$message.error('请选择员工')
-            throw Error()
-          }
-          item.sizeColorList.forEach((itemChild: any) => {
-            if (itemChild.complete_time === undefined) {
-              this.$message.error('请选择日期')
-              throw Error()
-            }
-            let obj: {
-              id: number | string
-              staff_id: number | string
-              process_name: string | number
-              process_desc: string
-              process_type: string | number
-              order_product_id: string | number
-              extra_number: number | string
-              product_id: number | string
-              size_id: number | string
-              color_id: number | string
-              number: number | string
-              price: number | string
-              total_price: number | string
-              shoddy_number: number | string
-              shoddy_reason: string
-              complete_time: string
-            } = {
-              id: '',
-              process_name: items.process[1],
-              process_type: items.process[0],
-              process_desc: items.process_desc ? items.process_desc.toString() : '',
-              order_product_id: items.productNameId,
-              product_id: items.productId,
-              price: items.unitPrice || 0,
-              staff_id: item.worker[1],
-              size_id: itemChild.chooseId.split(',')[0],
-              extra_number: itemChild.extra_number || 0,
-              color_id: itemChild.chooseId.split(',')[1],
-              number: itemChild.complete_number || 0,
-              total_price: this.outCiPin
-                ? ((itemChild.complete_number || 0 + itemChild.extra_number || 0) - (itemChild.shoddy_number || 0)) *
-                  (items.unitPrice || 0)
-                : (itemChild.complete_number || 0 + itemChild.extra_number || 0) * (items.unitPrice || 0),
-              shoddy_number: itemChild.shoddy_number || 0,
-              shoddy_reason: itemChild.shoddy_reason ? itemChild.shoddy_reason.toString() : '',
-              complete_time: itemChild.complete_time
-            }
-            data.push(obj)
-            params.data = data
+    handleSelect(item: any, index: number, orderIndex: number) {
+      this.loading = true
+      order
+        .simpleList({
+          keyword: item.product_info[index].order_code
+        })
+        .then((res) => {
+          order.detail({ id: res.data.data[0].id }).then((ress) => {
+            let data = ress.data.data
+            this.productionScheduleUpdate = [
+              {
+                code: data.code,
+                checkAll: false,
+                indexPro: index,
+                indexOrder: orderIndex,
+                system_code: data.system_code,
+                product_info: []
+              }
+            ]
+            data.time_data[0].batch_data[0].product_data.forEach((item: any) => {
+              this.productionScheduleUpdate[0].product_info.push({
+                product_code: item.product_code,
+                name: item.name,
+                img: item.image_data.length > 0 ? item.image_data[0] : '',
+                category: item.category + (item.secondary_category ? '/' + item.secondary_category : ''),
+                colorSizeInfo: item.product_info
+              })
+            })
+            this.addOrder = true
+            this.loading = false
           })
+        })
+    },
+    querySearchAsync(str: string, cb: any) {
+      if (str === '' || str === undefined) {
+        cb([])
+        return
+      }
+      order
+        .simpleList({
+          keyword: str
+        })
+        .then((res) => {
+          if (res.data.status) {
+            let arr: any = []
+            res.data.data.forEach((item: any) => {
+              arr.push({ value: item.code, id: item.id })
+            })
+            cb(arr)
+          } else {
+            cb([])
+          }
+        })
+    },
+    checkAllOrder(items: any) {
+      items.product_info.forEach((item: any) => {
+        item.colorSizeInfo.forEach((sizeColor: any) => {
+          sizeColor.check = items.checkAll
+        })
+      })
+      this.$forceUpdate()
+    },
+    confirmSubmit() {
+      let haveTrue = false
+
+      this.productionScheduleUpdate[0].product_info.forEach((product_info: any) => {
+        product_info.colorSizeInfo.forEach((color: any) => {
+          if (color.check) product_info.check = true
+          if (haveTrue || color.check) {
+            haveTrue = true
+          }
         })
       })
 
-      workshop.save(params).then((res) => {
-        if (res.data.status) {
-          this.$message.success('提交成功')
-          this.numberUpdate = false
-          location.reload()
+      if (!haveTrue) return
+
+      let arr: any = [
+        {
+          order_code: this.productionScheduleUpdate[0].code,
+          product_detail_info: []
         }
+      ]
+
+      this.productionScheduleUpdate[0].product_info.forEach((product_info: any) => {
+        if (!product_info.check) return
+        arr[0].product_detail_info.push({
+          code: product_info.product_code,
+          sizeColorInfo: []
+        })
+
+        product_info.colorSizeInfo.forEach((color: any) => {
+          if (!color.check) return
+          color.number = ''
+          arr[0].product_detail_info[arr[0].product_detail_info.length - 1].sizeColorInfo.push(color)
+        })
       })
+
+      if (this.productionScheduleUpdate[0].indexPro === 0) {
+        this.settlementLogList[this.productionScheduleUpdate[0].indexOrder].product_info = arr
+      } else {
+        this.settlementLogList[this.productionScheduleUpdate[0].indexOrder].product_info[this.productionScheduleUpdate[0].indexPro] = arr[0]
+      }
+
+      this.addOrder = false
+      this.$forceUpdate()
     },
     dataChange() {
       if (
@@ -930,16 +1035,20 @@ export default Vue.extend({
         process: this.staffInfo.process,
         product_info: [
           {
-            code: '',
             order_code: '',
-            sizeColorInfo: [
+            product_detail_info: [
               {
-                size_name: '',
-                color_name: '',
-                number: '',
-                extra_number: '',
-                shoddy_number: '',
-                shoddy_reason: []
+                code: '',
+                sizeColorInfo: [
+                  {
+                    size_name: '',
+                    color_name: '',
+                    number: '',
+                    extra_number: '',
+                    shoddy_number: '',
+                    shoddy_reason: []
+                  }
+                ]
               }
             ]
           }
@@ -953,7 +1062,7 @@ export default Vue.extend({
 </script>
 
 <style lang="less">
-@import '~@/assets/css/workshopManagement/detail.less';
+@import '~@/assets/css/workshopManagement/staffDetail.less';
 </style>
 <style lang="less">
 #workshopStaffDetail {
