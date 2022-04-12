@@ -1,6 +1,6 @@
 <template>
   <div id="workshopManagementList" class="bodyContainer">
-    <div class="topTagCtn">
+    <!-- <div class="topTagCtn">
       <div class="tag active">
         <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-andingdanluru"></use>
@@ -13,7 +13,7 @@
         </svg>
         <span class="text">按员工录入</span>
       </div>
-    </div>
+    </div> -->
     <div class="module">
       <div class="titleCtn">
         <div class="title">单据列表</div>
