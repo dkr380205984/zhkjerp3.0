@@ -921,8 +921,8 @@ export default Vue.extend({
     },
     confirmSubmit() {
       let params: {
-        order_id: any
         data: Array<{
+          order_id: number | string
           staff_id: number | string
           process_name: number | string
           process_type: number | string
@@ -940,7 +940,6 @@ export default Vue.extend({
           complete_time: string
         }>
       } = {
-        order_id: this.order_id,
         data: []
       }
       const data: any = []
@@ -967,6 +966,7 @@ export default Vue.extend({
             let obj: {
               id: number | string
               staff_id: number | string
+              order_id: number | string
               process_name: string | number
               process_desc: string
               process_type: string | number
@@ -983,6 +983,7 @@ export default Vue.extend({
               complete_time: string
             } = {
               id: '',
+              order_id: this.order_id,
               process_name: items.process[1],
               process_type: items.process[0],
               process_desc: items.process_desc ? items.process_desc.toString() : '',
@@ -995,9 +996,9 @@ export default Vue.extend({
               color_id: itemChild.chooseId.split(',')[1],
               number: itemChild.complete_number || 0,
               total_price: this.outCiPin
-                ? ((itemChild.complete_number || 0 + itemChild.extra_number || 0) - (itemChild.shoddy_number || 0)) *
+                ? ((itemChild.complete_number || 0) + (itemChild.extra_number || 0) - (itemChild.shoddy_number || 0)) *
                   (items.unitPrice || 0)
-                : (itemChild.complete_number || 0 + itemChild.extra_number || 0) * (items.unitPrice || 0),
+                : ((itemChild.complete_number || 0) + (itemChild.extra_number || 0)) * (items.unitPrice || 0),
               shoddy_number: itemChild.shoddy_number || 0,
               shoddy_reason: itemChild.shoddy_reason ? itemChild.shoddy_reason.toString() : '',
               complete_time: itemChild.complete_time

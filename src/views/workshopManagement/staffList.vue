@@ -60,6 +60,7 @@
           </div>
           <div class="btn borderBtn" @click="reset">重置</div>
         </div>
+        <div class="btn backHoverBlue" style="margin-bottom: 20px" @click="updateNumber">更新数量</div>
         <div class="list">
           <el-table
             ref="multipleTable"
@@ -91,7 +92,16 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <span class="opr hoverBlue" @click="$router.push('/workshopManagement/staffDetail?id=' + scope.row.id)"
+                <span
+                  class="opr hoverBlue"
+                  @click="
+                    $router.push(
+                      '/workshopManagement/staffDetail?staffInfo=' +
+                        JSON.stringify([
+                          { id: scope.row.id, name: scope.row.name, code: scope.row.code, process: scope.row.process }
+                        ])
+                    )
+                  "
                   >继续添加</span
                 >
               </template>
@@ -150,6 +160,7 @@ export default Vue.extend({
       client_id: [],
       department: '',
       departmentList: [],
+      multipleSelection: [],
       process: '',
       processList: [],
       group_id: '',
@@ -287,6 +298,27 @@ export default Vue.extend({
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
+    },
+    rowKey(row: { id: any }) {
+      return row.id
+    },
+    handleSelectionChange(val: any) {
+      this.multipleSelection = val
+    },
+    updateNumber() {
+      if (this.multipleSelection.length === 0) {
+        this.$message.error('请至少选择一条数据')
+      }
+      let a = this.multipleSelection.map((user: any) => {
+        console.log(user)
+        return {
+          id: user.id,
+          name: user.name,
+          code: user.code,
+          process: user.process
+        }
+      })
+      this.$router.push('/workshopManagement/staffDetail?staffInfo=' + JSON.stringify(a))
     },
     changeRouter(ev?: any) {
       if (ev !== this.page) {

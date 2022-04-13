@@ -1,20 +1,7 @@
 <template>
   <div id="workshopStaffDetail" class="bodyContainer" v-loading="loading">
     <div class="module clearfix">
-      <div class="titleCtn">
-        <div class="title">下单信息</div>
-      </div>
       <div class="detailCtn">
-        <div class="row">
-          <div class="col">
-            <div class="label">员工姓名：</div>
-            <div class="text">{{ staffInfo.name }}</div>
-          </div>
-          <div class="col">
-            <div class="label">员工编号：</div>
-            <div class="text">{{ staffInfo.code }}</div>
-          </div>
-        </div>
         <el-checkbox v-model="outCiPin"
           >结算工资去除次品数量
           <el-tooltip class="item" effect="dark" placement="top">
@@ -28,169 +15,243 @@
         <el-checkbox v-model="keyBoard" @change="changeKeyBoard">打开页面键盘</el-checkbox>
       </div>
     </div>
-    <div class="module" v-for="(item, index) in settlementLogList" :key="'process' + index">
+    <div v-for="(settlementLog, settlementLogIndex) in settlementLogList" :key="'process' + settlementLogIndex">
       <div class="detailCtn">
         <div class="row">
           <div class="col">
-            <div class="label">负责工序：</div>
-            <div class="text">
-              <el-select v-model="item.process" filterable placeholder="加工工序" @change="getProcessDesc(item)">
-                <el-option v-for="item in processList" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-            </div>
+            <div class="label">员工姓名：</div>
+            <div class="text">{{ settlementLog.staffName }}</div>
           </div>
           <div class="col">
-            <div class="label">工序说明：</div>
-            <div class="text">
-              <el-select
-                v-model="item.process_desc"
-                multiple
-                filterable
-                allow-create
-                default-first-option
-                collapse-tags
-                placeholder="请选择填写工序说明"
-              >
-                <el-option
-                  v-for="itemSon in item.processDesc"
-                  :key="itemSon.value"
-                  :label="itemSon.label"
-                  :value="itemSon.value"
-                >
-                </el-option>
-              </el-select>
-            </div>
-          </div>
-          <div class="col">
-            <div class="label">结算单价：</div>
-            <div class="text" style="height: 38px">
-              <zh-input v-model="item.price" placeholder="请输入结算单价" :keyBoard="keyBoard" type="number"></zh-input>
-            </div>
+            <div class="label">员工编号：</div>
+            <div class="text">{{ settlementLog.staffCode }}</div>
           </div>
         </div>
       </div>
-      <div class="tableCtn">
-        <div class="thead">
-          <div class="trow">
-            <div class="tcol" style="flex: 0.2; text-align: center">
-              <el-checkbox v-model="isCheckAllSizeColor" @change="chooseAllSizeColor"></el-checkbox>
-            </div>
-            <div class="tcol">订单号</div>
-            <div class="tcol noPad" style="flex: 8.7">
-              <div class="trow">
-                <div class="tcol">产品编号</div>
-                <div class="tcol">尺码颜色</div>
-                <div class="tcol">完成数量</div>
-                <div class="tcol">额外数量</div>
-                <div class="tcol">次品数量</div>
-                <div class="tcol">次品原因</div>
+      <div class="module" v-for="(item, index) in settlementLog.processInfo" :key="'process' + index">
+        <div class="detailCtn">
+          <div class="row">
+            <div class="col">
+              <div class="label">负责工序：</div>
+              <div class="text">
+                <el-select v-model="item.process" filterable placeholder="加工工序" @change="getProcessDesc(item)">
+                  <el-option v-for="item in processList" :key="item.value" :label="item.label" :value="item.value">
+                  </el-option>
+                </el-select>
               </div>
             </div>
-            <div class="tcol">操作</div>
+            <div class="col">
+              <div class="label">工序说明：</div>
+              <div class="text">
+                <el-select
+                  v-model="item.process_desc"
+                  multiple
+                  filterable
+                  allow-create
+                  default-first-option
+                  collapse-tags
+                  placeholder="请选择填写工序说明"
+                >
+                  <el-option
+                    v-for="itemSon in item.processDesc"
+                    :key="itemSon.value"
+                    :label="itemSon.label"
+                    :value="itemSon.value"
+                  >
+                  </el-option>
+                </el-select>
+              </div>
+            </div>
+            <div class="col">
+              <div class="label">结算单价：</div>
+              <div class="text" style="height: 38px">
+                <zh-input
+                  v-model="item.price"
+                  placeholder="请输入结算单价"
+                  :keyBoard="keyBoard"
+                  type="number"
+                ></zh-input>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="tbody">
-          <div class="trow" v-for="(itemPro, itemProIndex) in item.product_info" :key="itemProIndex">
-            <div class="tcol" style="flex: 0.2; text-align: center">
-              <el-checkbox v-model="isCheckAllSizeColor" @change="chooseAllSizeColor"></el-checkbox>
-            </div>
-            <div class="tcol">
-              <el-autocomplete
-                v-model="itemPro.order_code"
-                :fetch-suggestions="querySearchAsync"
-                placeholder="请输入订单号"
-                @select="handleSelect(item, itemProIndex, index)"
-              ></el-autocomplete>
-            </div>
-            <div class="tcol noPad" style="flex: 8.7">
-              <div
-                class="trow"
-                v-for="(itemDetail, indexDetail) in itemPro.product_detail_info"
-                :key="indexDetail + 'indexDetail'"
-              >
-                <div class="tcol">
-                  <el-input v-model="itemDetail.code" placeholder="请输入产品编号"></el-input>
+        <div class="tableCtn">
+          <div class="thead">
+            <div class="trow">
+              <div class="tcol" style="flex: 0.2; text-align: center">
+                <el-checkbox v-model="isCheckAllSizeColor" @change="chooseAllSizeColor"></el-checkbox>
+              </div>
+              <div class="tcol">订单号</div>
+              <div class="tcol noPad" style="flex: 8.7">
+                <div class="trow">
+                  <div class="tcol">产品编号</div>
+                  <div class="tcol">尺码颜色</div>
+                  <div class="tcol">完成数量</div>
+                  <div class="tcol">额外数量</div>
+                  <div class="tcol">次品数量</div>
+                  <div class="tcol">次品原因</div>
                 </div>
-                <div class="tcol noPad" style="flex: 5.7">
-                  <div
-                    class="trow"
-                    v-for="(itemSizeColor, indexSizeColor) in itemDetail.sizeColorInfo"
-                    :key="indexSizeColor + 'indexSizeColor'"
-                  >
-                    <div class="tcol" style="display: block; line-height: 2.9">
-                      {{ itemSizeColor.size_name || '无数据' }}/{{ itemSizeColor.color_name || '无数据' }}
-                      <i
-                        class="el-icon-circle-plus-outline"
-                        style="cursor: pointer"
-                        @click="
-                          $addItem(itemDetail.sizeColorInfo, {
+              </div>
+              <div class="tcol">操作</div>
+            </div>
+          </div>
+          <div class="tbody">
+            <div class="trow" v-for="(itemPro, itemProIndex) in item.product_info" :key="itemProIndex">
+              <div class="tcol" style="flex: 0.2; text-align: center">
+                <el-checkbox v-model="isCheckAllSizeColor" @change="chooseAllSizeColor"></el-checkbox>
+              </div>
+              <div class="tcol">
+                <el-autocomplete
+                  style="width: 200px"
+                  v-model="itemPro.order_code"
+                  :fetch-suggestions="querySearchAsync"
+                  placeholder="请输入订单号"
+                  @select="handleSelect(item, itemProIndex, index, settlementLogIndex)"
+                >
+                  <template slot-scope="{ item }">
+                    <div style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
+                      订单名称：{{ item.value }}
+                    </div>
+                    <span>创建时间：{{ item.created_at }}</span>
+                  </template>
+                </el-autocomplete>
+              </div>
+              <div class="tcol noPad" style="flex: 8.7">
+                <div
+                  class="trow"
+                  v-for="(itemDetail, indexDetail) in itemPro.product_detail_info"
+                  :key="indexDetail + 'indexDetail'"
+                >
+                  <div class="tcol">
+                    <!-- <el-input v-model="itemDetail.code" placeholder="请输入产品编号"></el-input> -->
+                    {{ itemDetail.code || '暂无产品编号' }}
+                  </div>
+                  <div class="tcol noPad" style="flex: 5.7">
+                    <div
+                      class="trow"
+                      v-for="(itemSizeColor, indexSizeColor) in itemDetail.sizeColorInfo"
+                      :key="indexSizeColor + 'indexSizeColor'"
+                    >
+                      <div class="tcol" style="display: block; position: relative">
+                        <el-select
+                          v-model="itemSizeColor.chooseId"
+                          placeholder="请选择尺码颜色"
+                          @change="$forceUpdate()"
+                        >
+                          <el-option
+                            v-for="(colorItem, colorIndex) in itemSizeColor.colorList"
+                            :key="colorItem.size_id + ',' + colorItem.color_id + colorIndex"
+                            :label="colorItem.name"
+                            :value="colorItem.value"
+                          >
+                          </el-option>
+                        </el-select>
+                        <!-- {{ itemSizeColor.size_name || '无数据' }}/{{ itemSizeColor.color_name || '无数据' }} -->
+                        <i
+                          class="el-icon-circle-plus-outline"
+                          style="cursor: pointer; position: absolute; right: 10%; top: 30%"
+                          @click="
+                            $addItem(itemDetail.sizeColorInfo, {
+                              size_name: '',
+                              color_name: '',
+                              number: '',
+                              colorList: itemDetail.sizeColorInfo[0].colorList,
+                              extra_number: '',
+                              shoddy_number: '',
+                              shoddy_reason: []
+                            })
+                          "
+                        ></i>
+                      </div>
+                      <div class="tcol">
+                        <zh-input
+                          v-model="itemSizeColor.number"
+                          placeholder="请输入完成数量"
+                          :keyBoard="keyBoard"
+                          type="number"
+                        ></zh-input>
+                      </div>
+                      <div class="tcol">
+                        <zh-input
+                          v-model="itemSizeColor.extra_number"
+                          placeholder="请输入额外数量"
+                          :keyBoard="keyBoard"
+                          type="number"
+                        ></zh-input>
+                      </div>
+                      <div class="tcol">
+                        <zh-input
+                          v-model="itemSizeColor.shoddy_number"
+                          placeholder="请输入结算单价"
+                          :keyBoard="keyBoard"
+                          type="number"
+                        ></zh-input>
+                      </div>
+                      <div class="tcol cpyy" style="overflow-y: scroll">
+                        <el-select
+                          v-model="itemSizeColor.shoddy_reason"
+                          multiple
+                          filterable
+                          allow-create
+                          default-first-option
+                          collapse-tags
+                          placeholder="请选择次品原因"
+                        >
+                          <el-option
+                            v-for="item in substandardReason"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          >
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="tcol hoverBlue"
+                style="cursor: pointer"
+                @click="
+                  $addItem(item.product_info, {
+                    order_code: '',
+                    product_detail_info: [
+                      {
+                        code: '',
+                        sizeColorInfo: [
+                          {
                             size_name: '',
                             color_name: '',
                             number: '',
                             extra_number: '',
                             shoddy_number: '',
                             shoddy_reason: []
-                          })
-                        "
-                      ></i>
-                    </div>
-                    <div class="tcol">
-                      <zh-input
-                        v-model="itemSizeColor.number"
-                        placeholder="请输入完成数量"
-                        :keyBoard="keyBoard"
-                        type="number"
-                      ></zh-input>
-                    </div>
-                    <div class="tcol">
-                      <zh-input
-                        v-model="itemSizeColor.extra_number"
-                        placeholder="请输入额外数量"
-                        :keyBoard="keyBoard"
-                        type="number"
-                      ></zh-input>
-                    </div>
-                    <div class="tcol">
-                      <zh-input
-                        v-model="itemSizeColor.shoddy_number"
-                        placeholder="请输入结算单价"
-                        :keyBoard="keyBoard"
-                        type="number"
-                      ></zh-input>
-                    </div>
-                    <div class="tcol cpyy" style="overflow-y: scroll">
-                      <el-select
-                        v-model="itemSizeColor.shoddy_reason"
-                        multiple
-                        filterable
-                        allow-create
-                        default-first-option
-                        collapse-tags
-                        placeholder="请选择次品原因"
-                      >
-                        <el-option
-                          v-for="item in substandardReason"
-                          :key="item.value"
-                          :label="item.label"
-                          :value="item.value"
-                        >
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                </div>
+                          }
+                        ]
+                      }
+                    ]
+                  })
+                "
+              >
+                添加下一组
               </div>
             </div>
-            <div
-              class="tcol hoverBlue"
-              style="cursor: pointer"
-              @click="
-                $addItem(item.product_info, {
-                  order_code: '',
+          </div>
+        </div>
+      </div>
+      <div style="overflow: hidden">
+        <div
+          class="btn backHoverBlue fr"
+          @click="
+            $addItem(settlementLog.processInfo, {
+              process: '',
+              product_info: [
+                {
+                  code: '',
                   product_detail_info: [
                     {
-                      code: '',
+                      order_code: '',
                       sizeColorInfo: [
                         {
                           size_name: '',
@@ -203,35 +264,42 @@
                       ]
                     }
                   ]
-                })
-              "
-            >
-              添加下一组
-            </div>
-          </div>
+                }
+              ]
+            })
+          "
+        >
+          添加下个工序
         </div>
       </div>
     </div>
-    <div style="overflow: hidden">
+    <div style="overflow: hidden; margin-top: 20px">
       <div
         class="btn backHoverBlue fr"
         @click="
           $addItem(settlementLogList, {
-            process: '',
-            product_info: [
+            staffName: '',
+            staffCode: '',
+            staffId: '',
+            processInfo: [
               {
-                code: '',
-                product_detail_info: [
+                process: '',
+                product_info: [
                   {
-                    order_code: '',
-                    sizeColorInfo: [
+                    code: '',
+                    product_detail_info: [
                       {
-                        size_name: '',
-                        color_name: '',
-                        number: '',
-                        extra_number: '',
-                        shoddy_number: '',
-                        shoddy_reason: []
+                        order_code: '',
+                        sizeColorInfo: [
+                          {
+                            size_name: '',
+                            color_name: '',
+                            number: '',
+                            extra_number: '',
+                            shoddy_number: '',
+                            shoddy_reason: []
+                          }
+                        ]
                       }
                     ]
                   }
@@ -241,7 +309,7 @@
           })
         "
       >
-        添加下个工序
+        添加下个员工
       </div>
     </div>
     <!-- 生产进度 -->
@@ -319,7 +387,7 @@
       <div class="main">
         <div class="btnCtn">
           <div class="borderBtn" @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverBlue fr">确认提交</div>
+          <div class="btn backHoverBlue fr" @click="workSave">确认提交</div>
         </div>
       </div>
     </div>
@@ -339,7 +407,6 @@ export default Vue.extend({
       loading: true,
       keyBoard: localStorage.showWorkShopKeyBoard === 'true',
       showPopupLoading: false,
-      orderIndex: '0',
       openWindowKey: false,
       autoAssignSizeColor: false,
       product_arr: [],
@@ -494,21 +561,19 @@ export default Vue.extend({
   methods: {
     init() {
       this.loading = true
-      this.processList = ['针织织造', '梭织织造', '制版费']
-      this.order_id = this.$route.query.id
+      this.processList = [
+        { label: '针织织造', value: '针织织造0', type: 0 },
+        { label: '梭织织造', value: '梭织织造0', type: 0 },
+        { label: '制版费', value: '制版费0', type: 0 }
+      ]
 
       process.list({ type: 2 }).then((res) => {
         res.data.data.forEach((item: any) => {
-          this.processList.push(item.name)
+          this.processList.push({ label: item.name, value: item.name + 2, type: 2 })
         })
         process.list({ type: 3 }).then((res) => {
           res.data.data.forEach((item: any) => {
-            this.processList.push(item.name)
-          })
-
-          this.processList = [...new Set(this.processList)]
-          this.processList.forEach((item: any, index: any) => {
-            this.processList[index] = { label: item, value: item }
+            this.processList.push({ label: item.name, value: item.name + 3, type: 3 })
           })
         })
       })
@@ -516,16 +581,32 @@ export default Vue.extend({
       this.loading = false
     },
     getProcessDesc(item: any) {
-      process.list({ name: item.process }).then((res) => {
-        if (res.data.status) {
-          item.processDesc = []
-          if (!res.data.data.length) return
-          res.data.data[0].process_desc.split(',').forEach((process_desc: any) => {
-            item.processDesc.push({ label: process_desc, value: process_desc })
-          })
-        }
-        this.$forceUpdate()
-      })
+      process
+        .list({
+          name: +item.process[item.process.length - 1] ? item.process.substr(0, item.process.length - 1) : item.process
+        })
+        .then((res) => {
+          if (res.data.status) {
+            let str = +item.process[item.process.length - 1]
+              ? item.process.substr(0, item.process.length - 1)
+              : item.process
+            item.processDesc = []
+            if (!res.data.data.length) return
+
+            let detailData = res.data.data.find((item: any) => {
+              return item.name === str
+            })
+
+            if (detailData.process_desc) {
+              detailData.process_desc.split(',').forEach((process_desc: any) => {
+                item.processDesc.push({ label: process_desc, value: process_desc })
+              })
+            }
+          } else {
+            item.processDesc = []
+          }
+          this.$forceUpdate()
+        })
     },
     copyWorkerInfo(item: any, itemSizeColor: any) {
       if (item.productId === '') {
@@ -588,7 +669,7 @@ export default Vue.extend({
         }
       })
     },
-    handleSelect(item: any, index: number, orderIndex: number) {
+    handleSelect(item: any, index: number, orderIndex: number, staffIndex: number) {
       this.loading = true
       order
         .simpleList({
@@ -599,10 +680,12 @@ export default Vue.extend({
             let data = ress.data.data
             this.productionScheduleUpdate = [
               {
+                id: data.id,
                 code: data.code,
                 checkAll: false,
                 indexPro: index,
                 indexOrder: orderIndex,
+                indexStaff: staffIndex,
                 system_code: data.system_code,
                 product_info: []
               }
@@ -610,6 +693,7 @@ export default Vue.extend({
             data.time_data[0].batch_data[0].product_data.forEach((item: any) => {
               this.productionScheduleUpdate[0].product_info.push({
                 product_code: item.product_code,
+                product_id: item.product_id,
                 name: item.name,
                 img: item.image_data.length > 0 ? item.image_data[0] : '',
                 category: item.category + (item.secondary_category ? '/' + item.secondary_category : ''),
@@ -634,8 +718,9 @@ export default Vue.extend({
           if (res.data.status) {
             let arr: any = []
             res.data.data.forEach((item: any) => {
-              arr.push({ value: item.code, id: item.id })
+              arr.push({ value: item.code, id: item.id, created_at: item.created_at })
             })
+            this.orderList = arr
             cb(arr)
           } else {
             cb([])
@@ -667,32 +752,119 @@ export default Vue.extend({
       let arr: any = [
         {
           order_code: this.productionScheduleUpdate[0].code,
+          order_id: this.productionScheduleUpdate[0].id,
           product_detail_info: []
         }
       ]
 
       this.productionScheduleUpdate[0].product_info.forEach((product_info: any) => {
+        let colorList: any = []
+
         if (!product_info.check) return
         arr[0].product_detail_info.push({
           code: product_info.product_code,
+          product_id: product_info.product_id,
           sizeColorInfo: []
         })
 
         product_info.colorSizeInfo.forEach((color: any) => {
+          colorList.push({
+            name: (color.size_name || '无数据') + '/' + (color.color_name || '无数据'),
+            value: color.size_id + ',' + color.color_id
+          })
+          color.colorList = colorList
           if (!color.check) return
           color.number = ''
+          color.chooseId = color.size_id + ',' + color.color_id
           arr[0].product_detail_info[arr[0].product_detail_info.length - 1].sizeColorInfo.push(color)
         })
       })
 
       if (this.productionScheduleUpdate[0].indexPro === 0) {
-        this.settlementLogList[this.productionScheduleUpdate[0].indexOrder].product_info = arr
+        this.settlementLogList[this.productionScheduleUpdate[0].indexStaff].processInfo[
+          this.productionScheduleUpdate[0].indexOrder
+        ].product_info = arr
       } else {
-        this.settlementLogList[this.productionScheduleUpdate[0].indexOrder].product_info[this.productionScheduleUpdate[0].indexPro] = arr[0]
+        this.settlementLogList[this.productionScheduleUpdate[0].indexStaff].processInfo[
+          this.productionScheduleUpdate[0].indexOrder
+        ].product_info[this.productionScheduleUpdate[0].indexPro] = arr[0]
       }
 
       this.addOrder = false
       this.$forceUpdate()
+    },
+    workSave() {
+      this.loading = true
+      
+      this.settlementLogList.forEach((settlementLog: any) => {
+        console.log(settlementLog, 'settlementLog')
+        settlementLog.processInfo.forEach((staffInfo: any) => {
+          console.log(staffInfo, 'staffInfo')
+          staffInfo.product_info.forEach((product_info: any) => {
+            if (product_info.order_code === '') return
+            let params: {
+              data: Array<{
+                staff_id: number | string
+                order_id: number | string
+                process_name: number | string
+                process_type: number | string
+                process_desc: string
+                extra_number: number | string
+                product_id: number | string
+                size_id: number | string
+                color_id: number | string
+                number: number | string
+                price: number | string
+                total_price: number | string
+                shoddy_number: number | string
+                shoddy_reason: string
+                complete_time: string
+              }>
+            } = {
+              data: []
+            }
+            product_info.product_detail_info.forEach((product_detail_info: any) => {
+              console.log(product_detail_info, 'product_detail_info')
+              product_detail_info.sizeColorInfo.forEach((sizeColorInfo: any) => {
+                console.log(sizeColorInfo, 'sizeColorInfo')
+                params.data.push({
+                  order_id: product_info.order_id,
+                  staff_id: settlementLog.staffId,
+                  process_name: staffInfo.process,
+                  process_type: 0,
+                  process_desc: staffInfo.process_desc.toString(),
+                  extra_number: sizeColorInfo.extra_number || 0,
+                  size_id: sizeColorInfo.size_id || 0,
+                  color_id: sizeColorInfo.color_id || 0,
+                  number: sizeColorInfo.number || 0,
+                  shoddy_number: sizeColorInfo.shoddy_number || 0,
+                  shoddy_reason: sizeColorInfo.shoddy_reason ? sizeColorInfo.shoddy_reason.toString() : '',
+                  product_id: product_detail_info.product_id,
+                  price: staffInfo.price || 0,
+                  total_price: this.outCiPin
+                    ? ((sizeColorInfo.number || 0) +
+                        (sizeColorInfo.extra_number || 0) -
+                        (sizeColorInfo.shoddy_number || 0)) *
+                      (staffInfo.price || 0)
+                    : ((sizeColorInfo.complete_number || 0) + (sizeColorInfo.extra_number || 0)) *
+                      (staffInfo.price || 0),
+                  complete_time: this.$GetDateStr(0)
+                })
+              })
+            })
+
+            workshop.save(params).then((res) => {
+              if (res.data.status) {
+                this.$message.success('提交成功')
+                this.numberUpdate = false
+                location.reload()
+              }
+            })
+          })
+        })
+      })
+
+      this.loading = false
     },
     dataChange() {
       if (
@@ -1029,34 +1201,44 @@ export default Vue.extend({
   },
   mounted() {
     this.settlementLogList = []
-    staff.detail({ id: this.$route.query.id + '' }).then((res) => {
-      this.staffInfo = res.data.data
+    let _this = this
+    let staffArr = JSON.parse(_this.$route.query.staffInfo + '')
+
+    staffArr.forEach((staff: any) => {
       this.settlementLogList.push({
-        process: this.staffInfo.process,
-        product_info: [
-          {
-            order_code: '',
-            product_detail_info: [
-              {
-                code: '',
-                sizeColorInfo: [
-                  {
-                    size_name: '',
-                    color_name: '',
-                    number: '',
-                    extra_number: '',
-                    shoddy_number: '',
-                    shoddy_reason: []
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+        staffName: staff.name,
+        staffCode: staff.code,
+        staffId: staff.id,
+        processInfo: []
       })
-      this.getProcessDesc(this.settlementLogList[0])
-      this.init()
+      staff.process.split('/').forEach((processs: any) => {
+        this.settlementLogList[this.settlementLogList.length - 1].processInfo.push({
+          process: processs,
+          product_info: [
+            {
+              order_code: '',
+              product_detail_info: [
+                {
+                  code: '',
+                  sizeColorInfo: [
+                    {
+                      size_name: '',
+                      color_name: '',
+                      number: '',
+                      extra_number: '',
+                      shoddy_number: '',
+                      shoddy_reason: []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        })
+      })
     })
+
+    this.init()
   }
 })
 </script>
@@ -1069,10 +1251,16 @@ export default Vue.extend({
   .el-input__suffix {
     display: none;
   }
+
   .zhInputCtn {
     .zhInputBox {
       height: 38px;
     }
+  }
+
+  .detailCtn {
+    background: white;
+    margin: 20px 0;
   }
 
   .tbody {

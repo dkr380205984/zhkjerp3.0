@@ -810,14 +810,14 @@ const staff = {
 // 车间管理
 const workshop = {
   save: (params: {
-    order_id: string | number
     data: Array<{
+      order_id: number | string
       staff_id: number | string
       process_name: number | string
       process_type: number | string
       process_desc: string
       extra_number: number | string
-      order_product_id: number | string
+      order_product_id?: number | string
       product_id: number | string
       size_id: number | string
       color_id: number | string
