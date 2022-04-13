@@ -818,38 +818,42 @@ export default Vue.extend({
     workSave() {
       this.loading = true
 
+      let params: {
+        data: Array<{
+          id: number | string | null
+          staff_id: number | string
+          order_id: number | string
+          process_name: number | string
+          process_type: number | string
+          process_desc: string
+          extra_number: number | string
+          product_id: number | string
+          size_id: number | string
+          color_id: number | string
+          number: number | string
+          price: number | string
+          total_price: number | string
+          shoddy_number: number | string
+          shoddy_reason: string
+          complete_time: string
+        }>
+      } = {
+        data: []
+      }
+
       this.settlementLogList.forEach((settlementLog: any) => {
         console.log(settlementLog, 'settlementLog')
         settlementLog.processInfo.forEach((staffInfo: any) => {
           console.log(staffInfo, 'staffInfo')
           staffInfo.product_info.forEach((product_info: any) => {
             if (product_info.order_code === '') return
-            let params: {
-              data: Array<{
-                staff_id: number | string
-                order_id: number | string
-                process_name: number | string
-                process_type: number | string
-                process_desc: string
-                extra_number: number | string
-                product_id: number | string
-                size_id: number | string
-                color_id: number | string
-                number: number | string
-                price: number | string
-                total_price: number | string
-                shoddy_number: number | string
-                shoddy_reason: string
-                complete_time: string
-              }>
-            } = {
-              data: []
-            }
+
             product_info.product_detail_info.forEach((product_detail_info: any) => {
               console.log(product_detail_info, 'product_detail_info')
               product_detail_info.sizeColorInfo.forEach((sizeColorInfo: any) => {
                 console.log(sizeColorInfo, 'sizeColorInfo')
                 params.data.push({
+                  id: null,
                   order_id: product_info.order_id,
                   staff_id: settlementLog.staffId,
                   process_name: staffInfo.process,
@@ -874,186 +878,18 @@ export default Vue.extend({
                 })
               })
             })
-
-            workshop.save(params).then((res) => {
-              if (res.data.status) {
-                this.$message.success('提交成功')
-                this.numberUpdate = false
-                location.reload()
-              }
-            })
           })
         })
       })
 
+      workshop.save(params).then((res) => {
+        if (res.data.status) {
+          this.$message.success('提交成功')
+          this.numberUpdate = false
+          location.reload()
+        }
+      })
       this.loading = false
-    },
-    dataChange() {
-      if (
-        !this.product_arr.some(
-          (res: any) => res.checkSizeColor !== undefined && res.checkSizeColor.length !== 0 //||
-          //(res.checkProcess !== undefined && res.checkProcess.length !== 0)
-        )
-      ) {
-        this.resetProductionScheduleUpdate()
-        this.numberUpdate = true
-        return
-      }
-      let arr: any = []
-
-      this.product_arr.forEach((item: any, index: any) => {
-        if (
-          item.checkSizeColor === undefined ||
-          item.checkSizeColor.length === 0 //&&
-          // (item.checkProcess === undefined || item.checkProcess.length === 0)
-        ) {
-          return
-        }
-
-        // item.product_info.forEach((itemColor: any) => {
-        //   itemColor.product_inspection_info.forEach((itemProcess: any) => {
-        //     if (itemProcess.checkProcess) {
-        //       console.log(item, itemColor, itemProcess, this.productionScheduleUpdate)
-        //       let obj: any = {
-        //         infoData: []
-        //       }
-        //       obj.productNameId = item.id
-        //       obj.productId = item.product_id
-        //       obj.process = itemProcess.process_name
-        //       obj.infoData.push({
-        //         sizeColorList: [itemColor]
-        //       })
-        //       arr.push(obj)
-        //     }
-        //   })
-        // })
-
-        let obj: any = {}
-        obj.infoData = []
-        obj.productIndex = index
-        obj.productNameId = item.id
-        obj.productId = item.product_id
-
-        item.product_info.forEach((itemColor: any, itemIndex: any) => {
-          if (itemIndex === 0) {
-            obj.infoData.push({
-              sizeColorList: []
-            })
-          }
-
-          if (itemColor.checkSizeColor) {
-            itemColor.chooseId = itemColor.size_id + ',' + itemColor.color_id
-            itemColor.complete_time = this.getNowFormatDate()
-            obj.infoData[0].sizeColorList.push(itemColor)
-          }
-        })
-
-        arr.push(obj)
-      })
-
-      this.productionScheduleUpdate = arr
-      this.numberUpdate = true
-    },
-    secondDataChance() {
-      this.showPopupLoading = true
-      if (
-        !this.processWorkerList.some(
-          (res: any) => res.checked !== undefined && res.checked.length !== 0 //||
-          //(res.checkProcess !== undefined && res.checkProcess.length !== 0)
-        )
-      ) {
-        this.resetProductionScheduleUpdate()
-        this.numberUpdate = true
-        this.showPopupLoading = false
-        return
-      }
-
-      let arr: any = []
-
-      this.processWorkerList.forEach((processWorker: any) => {
-        if (processWorker.process_name === this.tabChoose) {
-          process
-            .list({
-              name: processWorker.process_name
-            })
-            .then((ress) => {
-              let oldObj: any = {}
-              processWorker.info.forEach((staffNameItem: any, staffIndex: number) => {
-                staffNameItem.info.forEach((productCodeItem: any) => {
-                  productCodeItem.info.forEach((process_desc: any) => {
-                    process_desc.info.forEach((itemPrice: any, priceIndex: any) => {
-                      itemPrice.info.forEach((itemSize: any) => {
-                        let obj: any = {}
-                        obj.infoData = [{ worker: '', sizeColorList: [] }]
-                        itemSize.info.forEach((itemColor: any, colorIndex: number) => {
-                          // console.log(itemColor)
-                          if (itemColor.checked === undefined || itemColor.checked === false) return
-
-                          if (staffIndex > 0) {
-                            if (colorIndex === 0) {
-                              oldObj.infoData.push({ worker: '', sizeColorList: [] })
-                              oldObj.infoData[oldObj.infoData.length - 1].worker = ['', itemColor.info.staff_id]
-                            }
-                            itemColor.chooseId = itemColor.info.size_id + ',' + itemColor.info.color_id
-                            itemColor.complete_time = this.getNowFormatDate()
-                            itemColor.size_name = itemSize.size_name
-                            itemColor.size_id = itemColor.info.size_id
-                            itemColor.color_id = itemColor.info.color_id
-                            oldObj.infoData[oldObj.infoData.length - 1].sizeColorList.push(itemColor)
-                          } else {
-                            obj.productNameId = itemColor.info.order_product_id
-                            obj.process = [+itemColor.info.process_type, processWorker.process_name]
-                            obj.process_desc = process_desc.process_desc
-                            obj.productId = itemColor.info.product_id
-                            obj.unitPrice = process_desc.info[priceIndex].price
-                            itemColor.chooseId = itemColor.info.size_id + ',' + itemColor.info.color_id
-                            itemColor.complete_time = this.getNowFormatDate()
-                            itemColor.size_name = itemSize.size_name
-                            itemColor.size_id = itemColor.info.size_id
-                            itemColor.color_id = itemColor.info.color_id
-                            obj.infoData[obj.infoData.length - 1].sizeColorList.push(itemColor)
-                            obj.infoData[obj.infoData.length - 1].worker = ['', itemColor.info.staff_id]
-                            oldObj = obj
-                          }
-
-                          // console.log(sizeColorItem)
-                          // item.product_info.forEach((itemColor: any, itemIndex: any) => {
-                          //   if (itemIndex === 0) {
-                          //     obj.infoData.push({
-                          //       sizeColorList: []
-                          //     })
-                          //   }
-                          //   console.log(itemColor)
-                          //   if (itemColor.checkSizeColor) {
-                          //     itemColor.chooseId = itemColor.size_id + ',' + itemColor.color_id
-                          //     obj.infoData[0].sizeColorList.push(itemColor)
-                          //   }
-                          // })
-                        })
-                        if (
-                          itemPrice.checked === undefined ||
-                          itemPrice.checked.length === 0 ||
-                          !obj.productId ||
-                          staffIndex > 0
-                        ) {
-                          return
-                        }
-                        arr.push(obj)
-                      })
-                      // arr.forEach((price:any) => {
-                      //   console.log(price.unitPrice)
-                      // });
-                    })
-                  })
-                })
-              })
-              this.showPopupLoading = false
-            })
-        }
-      })
-
-      this.productionScheduleUpdate = arr
-      this.numberUpdate = true
     },
     chooseProcess(item: any, check: any, itemProIndex: any) {
       if (item.checkProcess === undefined) {

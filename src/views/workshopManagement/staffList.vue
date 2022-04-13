@@ -44,7 +44,7 @@
             ></el-cascader>
           </div>
           <div class="elCtn">
-            <el-date-picker
+            <!-- <el-date-picker
               v-model="date"
               type="daterange"
               align="right"
@@ -55,6 +55,14 @@
               :picker-options="pickerOptions"
               @change="changeRouter"
               value-format="yyyy-MM-dd"
+            >
+            </el-date-picker> -->
+            <el-date-picker
+              v-model="date"
+              type="month"
+              @change="changeRouter"
+              value-format="yyyy-MM"
+              placeholder="选择月份"
             >
             </el-date-picker>
           </div>
@@ -109,9 +117,9 @@
           </el-table>
         </div>
         <div
-          class="btn backHoverBlue fl noCheck"
+          class="btn backHoverBlue fl"
           style="margin-top: 16px"
-          @click="$router.push('/workerManage/create')"
+          @click="exportExcel"
         >
           导出年度报表
         </div>
@@ -143,7 +151,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { process, listSetting, staff } from '@/assets/js/api'
+import { process, listSetting, staff, exportExcel } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
 import { limitArr } from '@/assets/js/dictionary'
 export default Vue.extend({
@@ -296,7 +304,11 @@ export default Vue.extend({
       this.status = query.status || '0'
       this.user_id = query.user_id || ''
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
-      this.date = query.date ? (query.date as string).split(',') : []
+      this.date =
+        query.date ||
+        new Date().getFullYear() +
+          '-' +
+          (new Date().getMonth() + 1 < 10 ? '0' + (new Date().getMonth() + 1) : new Date().getMonth() + 1)
       this.limit = Number(query.limit) || 10
     },
     rowKey(row: { id: any }) {
@@ -332,7 +344,7 @@ export default Vue.extend({
           '&group_id=' +
           this.group_id +
           '&date=' +
-          this.date +
+          (this.date || '') +
           '&limit=' +
           this.limit
       )
@@ -359,6 +371,22 @@ export default Vue.extend({
             type: 'info',
             message: '已取消重置'
           })
+        })
+    },
+    exportExcel() {
+      this.mainLoading = true
+      exportExcel
+        .staff({
+          keyword: this.keyword,
+          department: this.department,
+          process: this.process ? this.process[1] : '',
+          month: this.date
+        })
+        .then((res: any) => {
+          if (res.data.status) {
+            this.mainLoading = false
+            window.location.href = res.data.data
+          }
         })
     },
     getList() {
@@ -410,8 +438,7 @@ export default Vue.extend({
           process: this.process ? this.process[1] : '',
           page: this.page,
           limit: this.limit,
-          start_time: this.date.length > 0 ? this.date[0] : '',
-          end_time: this.date.length > 0 ? this.date[1] : ''
+          month: this.date
         })
         .then((res) => {
           if (res.data.status) {

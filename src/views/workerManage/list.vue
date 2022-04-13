@@ -326,7 +326,6 @@ export default Vue.extend({
         .staff({
           keyword: this.keyword,
           department: this.department,
-          limit: this.limit,
           type: this.type,
           status: this.status
         })

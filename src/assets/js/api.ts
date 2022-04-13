@@ -741,11 +741,14 @@ const exportExcel = {
     end_time: string
   }) => http.get(`${baseUrl}/export/order/info`, params),
   staff: (params: {
-    limit: number | string
-    keyword: string
-    department: string
-    status: string | number
-    type: string | number
+    limit?: number | string
+    page?: number | string
+    process?: number | string
+    keyword?: string
+    department?: string
+    month?: string
+    status?: string | number
+    type?: string | number
   }) => http.get(`${baseUrl}/export/staff`, params),
   receipt: (params: {
     keyword: string
