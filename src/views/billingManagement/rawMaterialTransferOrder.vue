@@ -104,7 +104,7 @@
                 :title="item.order_code || '无编号，点击查看详情'"
                 @click="$router.push('/order/detail?id=' + item.top_order_id)"
               >
-                {{ item.order_code  || "无编号，点击查看详情" }}
+                {{ item.order_code || '无编号，点击查看详情' }}
               </div>
               <div class="col">{{ item.store }}</div>
               <div class="col">{{ item.total_number }}</div>
@@ -150,6 +150,12 @@
               </div>
             </div>
           </div>
+        </div>
+        <div style="margin-top: 20px">
+          <span style="line-height: 35px; margin-left: 40px">合计调取数量：{{ additional.total_number }} </span>
+          <span style="line-height: 35px; margin-left: 40px">合计调取金额：{{ additional.total_price }}元 </span>
+          <span style="line-height: 35px; margin-left: 40px">合计入库数量：{{ additional.total_push_number }} </span>
+          <span style="line-height: 35px; margin-left: 40px">合计入库金额：{{ additional.total_push_price }}元 </span>
         </div>
         <div class="pageCtn">
           <el-pagination
@@ -249,6 +255,7 @@ export default Vue.extend({
       showCharts: false,
       checkFlag: false,
       checkAllPlan: false,
+      additional: {},
       reviewerParams: {
         pid: '',
         check_type: 6,
@@ -788,6 +795,7 @@ export default Vue.extend({
 
             this.list = res.data.data.items
             this.total = res.data.data.total
+            this.additional = res.data.data.additional
           }
           this.loading = false
         })

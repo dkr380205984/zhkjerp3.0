@@ -178,6 +178,10 @@
             </div>
           </div>
         </div>
+        <div style="margin-top: 20px">
+          <span style="line-height: 35px; margin-left: 40px">合计完成数量：{{ additional.total_number }} </span>
+          <span style="line-height: 35px; margin-left: 40px">合计结算金额：{{ additional.total_price }}元 </span>
+        </div>
         <div class="pageCtn">
           <el-pagination
             background
@@ -276,6 +280,7 @@ export default Vue.extend({
       showCharts: false,
       checkFlag: false,
       checkAllPlan: false,
+      additional: {},
       reviewerParams: {
         pid: '',
         check_type: 14,
@@ -789,6 +794,7 @@ export default Vue.extend({
             })
             this.list = res.data.data.items
             this.total = res.data.data.total
+            this.additional = res.data.data.additional
           }
           this.loading = false
         })

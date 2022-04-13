@@ -92,7 +92,7 @@
                   width:100px
                   flex:unset;
                   display:block;"
-                  :title="item.order_code || '无编号，点击查看详情'"
+                :title="item.order_code || '无编号，点击查看详情'"
                 @click="$router.push('/order/detail?id=' + item.top_order_id)"
               >
                 {{ item.order_code || '无编号，点击查看详情' }}
@@ -143,7 +143,6 @@
                       </div>
                     </div>
                     <div class="tcol">备注信息</div>
-                    <div class="tcol">操作</div>
                   </div>
                 </div>
                 <div class="tbody">
@@ -163,17 +162,18 @@
                       </div>
                     </div>
                     <div class="tcol">{{ item.detail.desc || '无' }}</div>
-                    <div class="tcol oprCtn">
-                      <div class="opr hoverBlue" @click="$openUrl('/materialManage/supPrint?id=' + item.detail.id)">
-                        打印
-                      </div>
-                      <div class="opr hoverRed" @click="deleteMaterialSupplement(item.detail.id)">删除</div>
-                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+        <div style="margin-top: 20px">
+          <span style="line-height: 35px; margin-left: 40px">合计补原料数量：{{ additional.total_number }} </span>
+          <span style="line-height: 35px; margin-left: 40px"
+            >合计本厂承担金额：{{ -additional.self_client_price }}元
+          </span>
+          <span style="line-height: 35px; margin-left: 40px">合计外协承担金额：{{ additional.client_price }}元 </span>
         </div>
         <div class="pageCtn">
           <el-pagination
@@ -272,6 +272,7 @@ export default Vue.extend({
       loading: true,
       showCharts: false,
       checkFlag: false,
+      additional: {},
       checkAllPlan: false,
       reviewerParams: {
         pid: '',
@@ -910,6 +911,7 @@ export default Vue.extend({
             })
             this.list = res.data.data.items
             this.total = res.data.data.total
+            this.additional = res.data.data.additional
           }
           this.loading = false
         })

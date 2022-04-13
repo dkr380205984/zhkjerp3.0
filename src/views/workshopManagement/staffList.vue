@@ -376,11 +376,11 @@ export default Vue.extend({
     exportExcel() {
       this.mainLoading = true
       exportExcel
-        .staff({
+        .staffYear({
           keyword: this.keyword,
           department: this.department,
           process: this.process ? this.process[1] : '',
-          month: this.date
+          year: new Date().getFullYear()
         })
         .then((res: any) => {
           if (res.data.status) {

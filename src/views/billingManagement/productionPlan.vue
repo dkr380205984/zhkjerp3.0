@@ -135,18 +135,18 @@
             </div>
             <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
               <div class="tableCtn">
-              <div class="detailCtn">
-                <div class="row">
-                  <div class="col">
-                    <div class="label">加工工序：</div>
-                    <div class="text">{{ item.detail.process_name || '无' }}</div>
-                  </div>
-                  <div class="col">
-                    <div class="label">工序说明：</div>
-                    <div class="text">{{ item.detail.process_desc || '无' }}</div>
+                <div class="detailCtn">
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">加工工序：</div>
+                      <div class="text">{{ item.detail.process_name || '无' }}</div>
+                    </div>
+                    <div class="col">
+                      <div class="label">工序说明：</div>
+                      <div class="text">{{ item.detail.process_desc || '无' }}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
                 <div class="thead">
                   <div class="trow">
                     <div class="tcol">产品信息</div>
@@ -236,6 +236,12 @@
               </div>
             </div>
           </div>
+        </div>
+        <div style="margin-top: 20px">
+          <span style="line-height: 35px; margin-left: 40px">合计计划数量：{{ additional.total_number }} </span>
+          <span style="line-height: 35px; margin-left: 40px">合计计划金额：{{ additional.total_price }}元 </span>
+          <span style="line-height: 35px; margin-left: 40px">合计完成数量：{{ additional.total_real_number }} </span>
+          <span style="line-height: 35px; margin-left: 40px">合计完成金额：{{ additional.total_real_price }}元 </span>
         </div>
         <div class="pageCtn">
           <el-pagination
@@ -342,6 +348,7 @@ export default Vue.extend({
       productShow: false,
       checkFlag: false,
       checkAllPlan: false,
+      additional: {},
       reviewerParams: {
         pid: '',
         check_type: 4,
@@ -882,6 +889,7 @@ export default Vue.extend({
             })
             this.list = res.data.data.items
             this.total = res.data.data.total
+            this.additional = res.data.data.additional
           }
           this.loading = false
         })

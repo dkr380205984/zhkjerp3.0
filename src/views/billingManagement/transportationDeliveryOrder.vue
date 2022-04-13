@@ -78,7 +78,9 @@
         </div>
         <div class="list">
           <div class="row title">
-            <div class="col" style="flex: 0.05"><el-checkbox v-model="checkAllPlan" @change="checkAll"></el-checkbox></div>
+            <div class="col" style="flex: 0.05">
+              <el-checkbox v-model="checkAllPlan" @change="checkAll"></el-checkbox>
+            </div>
             <div class="col" style="flex: 1.3">发货单号</div>
             <div class="col">运输单位</div>
             <div class="col">合计运输立方</div>
@@ -90,7 +92,9 @@
           </div>
           <div v-for="(item, index) in list" :key="index">
             <div class="row">
-              <div class="col" style="flex: 0.05"><el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox></div>
+              <div class="col" style="flex: 0.05">
+                <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
+              </div>
               <div class="col" style="flex: 1.3">{{ item.code }}</div>
               <div class="col">{{ item.client_name }}</div>
               <div class="col">{{ item.total_bulk }}</div>
@@ -291,6 +295,10 @@
             </div>
           </div>
         </div>
+        <div style="margin-top: 20px">
+          <span style="line-height: 35px; margin-left: 40px">合计运输立方：{{ additional.total_number }}元 </span>
+          <span style="line-height: 35px; margin-left: 40px">合计运输金额：{{ additional.total_price }}元 </span>
+        </div>
         <div class="pageCtn">
           <el-pagination
             background
@@ -333,7 +341,7 @@
       :noOpr="true"
       @close="productShow = false"
     ></product-detail>
-        <div class="popup" v-show="checkFlag">
+    <div class="popup" v-show="checkFlag">
       <div class="main">
         <div class="titleCtn">
           <span class="text">运输出库单审核</span>
@@ -396,6 +404,7 @@ export default Vue.extend({
       productShow: false,
       checkFlag: false,
       checkAllPlan: false,
+      additional: {},
       reviewerParams: {
         pid: '',
         check_type: 13,
@@ -933,6 +942,7 @@ export default Vue.extend({
             })
             this.list = res.data.data.items
             this.total = res.data.data.total
+            this.additional = res.data.data.additional
           }
           this.loading = false
         })

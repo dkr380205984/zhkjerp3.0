@@ -89,7 +89,7 @@
               <div class="col" style="flex: 1.3">{{ item.code || '无' }}</div>
               <div class="col">{{ item.client_name }}</div>
               <div class="col">{{ item.price }}</div>
-              <div class="col">{{ item.reason.toString() }}</div>
+              <div class="col">{{ item.reason ? item.reason.toString() : '' }}</div>
               <div class="col">
                 <div v-if="item.is_check === 0" class="orange">审核中</div>
                 <div v-if="item.is_check === 1" class="blue">通过</div>
@@ -140,6 +140,9 @@
               </div>
             </div>
           </div>
+        </div>
+        <div style="margin-top: 20px">
+          <span style="line-height: 35px; margin-left: 40px">合计扣款金额：{{ additional.total_price }}元 </span>
         </div>
         <div class="pageCtn">
           <el-pagination
@@ -239,6 +242,7 @@ export default Vue.extend({
       showCharts: false,
       checkFlag: false,
       checkAllPlan: false,
+      additional: {},
       reviewerParams: {
         pid: '',
         check_type: 12,
@@ -768,6 +772,7 @@ export default Vue.extend({
             })
             this.list = res.data.data.items
             this.total = res.data.data.total
+            this.additional = res.data.data.additional
           }
           this.loading = false
         })

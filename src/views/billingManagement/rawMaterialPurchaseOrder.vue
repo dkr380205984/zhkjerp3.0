@@ -159,6 +159,12 @@
             </div>
           </div>
         </div>
+        <div style="margin-top: 20px">
+          <span style="line-height: 35px; margin-left: 40px">合计订购数量：{{ additional.total_order_number }} </span>
+          <span style="line-height: 35px; margin-left: 40px">合计订购金额：{{ additional.total_order_price }}元 </span>
+          <span style="line-height: 35px; margin-left: 40px">合计入库数量：{{ additional.total_push_number }} </span>
+          <span style="line-height: 35px; margin-left: 40px">合计入库金额：{{ additional.total_push_price }}元 </span>
+        </div>
         <div class="pageCtn">
           <el-pagination
             background
@@ -274,6 +280,7 @@ export default Vue.extend({
       contactsList: [],
       client_id: [],
       checked: false,
+      additional: {},
       exportExcelParam: {
         show_row: [],
         start_time: '',
@@ -791,6 +798,7 @@ export default Vue.extend({
             })
             this.list = res.data.data.items
             this.total = res.data.data.total
+            this.additional = res.data.data.additional
           }
           this.loading = false
         })

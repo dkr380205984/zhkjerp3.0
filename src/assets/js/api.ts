@@ -750,6 +750,16 @@ const exportExcel = {
     status?: string | number
     type?: string | number
   }) => http.get(`${baseUrl}/export/staff`, params),
+  staffYear: (params: {
+    limit?: number | string
+    page?: number | string
+    process?: number | string
+    keyword?: string
+    department?: string
+    year?: number | string
+    status?: string | number
+    type?: string | number
+  }) => http.get(`${baseUrl}/export/staff/year`, params),
   receipt: (params: {
     keyword: string
     group: string

@@ -224,6 +224,15 @@
             </div>
           </div>
         </div>
+        <div style="margin-top: 20px">
+          <span style="line-height: 35px; margin-left: 40px"
+            >合计计划生产数量：{{ additional.total_production_number }}
+          </span>
+          <span style="line-height: 35px; margin-left: 40px"
+            >合计计划原料数量：{{ additional.total_material_number }}
+          </span>
+          <span style="line-height: 35px; margin-left: 40px">平均损耗：{{ additional.pre_loss }}% </span>
+        </div>
         <div class="pageCtn">
           <el-pagination
             background
@@ -324,6 +333,7 @@ export default Vue.extend({
       mainLoading1: false,
       productShow: false,
       productDetailId: '',
+      additional: {},
       loading: true,
       showCharts: false,
       list: [],
@@ -599,6 +609,7 @@ export default Vue.extend({
               item.detail = {}
             })
             this.list = res.data.data.items
+            this.additional = res.data.data.additional
           }
           this.loading = false
         })
