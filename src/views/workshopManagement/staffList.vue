@@ -306,11 +306,7 @@ export default Vue.extend({
       this.multipleSelection = val
     },
     updateNumber() {
-      if (this.multipleSelection.length === 0) {
-        this.$message.error('请至少选择一条数据')
-      }
       let a = this.multipleSelection.map((user: any) => {
-        console.log(user)
         return {
           id: user.id,
           name: user.name,

@@ -20,7 +20,23 @@
         <div class="row">
           <div class="col">
             <div class="label">员工姓名：</div>
-            <div class="text">{{ settlementLog.staffName }}</div>
+            <div class="text">
+              <el-select
+                v-model="settlementLog.staffInfo"
+                value-key="id"
+                filterable
+                placeholder="请选择员工"
+                @change="selectStaff(settlementLogIndex)"
+              >
+                <el-option
+                  v-for="(staff, StaffIndex) in staffList"
+                  :key="StaffIndex + 'StaffIndex'"
+                  :label="staff.name"
+                  :value="staff"
+                >
+                </el-option>
+              </el-select>
+            </div>
           </div>
           <div class="col">
             <div class="label">员工编号：</div>
@@ -410,6 +426,7 @@ export default Vue.extend({
       openWindowKey: false,
       autoAssignSizeColor: false,
       product_arr: [],
+      staffList: [],
       outCiPin: false,
       tabChoose: '',
       // 颜色尺码是否全选
@@ -705,6 +722,11 @@ export default Vue.extend({
           })
         })
     },
+    selectStaff(index: any) {
+      this.settlementLogList[index].staffId = this.settlementLogList[index].staffInfo.id
+      this.settlementLogList[index].staffCode = this.settlementLogList[index].staffInfo.code
+      this.settlementLogList[index].staffName = this.settlementLogList[index].staffInfo.name
+    },
     querySearchAsync(str: string, cb: any) {
       if (str === '' || str === undefined) {
         cb([])
@@ -795,7 +817,7 @@ export default Vue.extend({
     },
     workSave() {
       this.loading = true
-      
+
       this.settlementLogList.forEach((settlementLog: any) => {
         console.log(settlementLog, 'settlementLog')
         settlementLog.processInfo.forEach((staffInfo: any) => {
@@ -1237,6 +1259,14 @@ export default Vue.extend({
         })
       })
     })
+
+    staff
+      .list({
+        status: 1
+      })
+      .then((res) => {
+        this.staffList = res.data.data
+      })
 
     this.init()
   }
