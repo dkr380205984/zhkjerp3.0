@@ -105,8 +105,8 @@
                 {{ item.order_code }}
               </div>
               <div class="col">{{ item.staff_name }}</div>
-              <div class="col">{{ item.number }}</div>
-              <div class="col">{{ +item.total_price }}</div>
+              <div class="col">{{ (+item.number).toFixed(2) }}</div>
+              <div class="col">{{ (+item.total_price).toFixed(2) }}</div>
               <div class="col">
                 <div v-if="item.is_check === 0" class="orange">审核中</div>
                 <div v-if="item.is_check === 1" class="blue">通过</div>

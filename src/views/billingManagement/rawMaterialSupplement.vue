@@ -98,7 +98,7 @@
                 {{ item.order_code || '无编号，点击查看详情' }}
               </div>
               <div class="col">{{ item.client_name }}</div>
-              <div class="col">{{ item.total_plan_number }}</div>
+              <div class="col">{{ (+item.total_plan_number).toFixed(2) }}</div>
               <div class="col">
                 <el-tooltip class="item" effect="dark" :content="item.desc || '无'" placement="top">
                   <span style="border-bottom: 1px solid #606266">查看</span>

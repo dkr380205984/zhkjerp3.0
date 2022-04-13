@@ -116,10 +116,10 @@
                 {{ item.order_code || '无编号，点击查看详情' }}
               </div>
               <div class="col">{{ item.client_name }}</div>
-              <div class="col">{{ item.total_number }}</div>
-              <div class="col">{{ +item.total_price }}</div>
-              <div class="col">{{ item.total_push_number }}</div>
-              <div class="col">{{ item.total_push_price }}</div>
+              <div class="col">{{ (+item.total_number).toFixed(2) }}</div>
+              <div class="col">{{ (+item.total_price).toFixed(2) }}</div>
+              <div class="col">{{ item.total_push_number.toFixed(2) }}</div>
+              <div class="col">{{ item.total_push_price.toFixed(2) }}</div>
               <div class="col">
                 <div v-if="item.is_check === 0" class="orange">未审核</div>
                 <div v-if="item.is_check === 1" class="blue">已通过</div>

@@ -98,8 +98,8 @@
               >
                 {{ item.order_code || '无编号，点击查看详情' }}
               </div>
-              <div class="col">{{ item.total_production_number }}</div>
-              <div class="col">{{ item.total_plan_number }}</div>
+              <div class="col">{{ (+item.total_production_number).toFixed(2) }}</div>
+              <div class="col">{{ (+item.total_plan_number).toFixed(2) }}</div>
               <div class="col">{{ (+item.pre_loss).toFixed(2) }}%</div>
               <div class="col">
                 <div class="green" v-if="item.material_order_progress > 0 && item.material_order_progress < 100">
