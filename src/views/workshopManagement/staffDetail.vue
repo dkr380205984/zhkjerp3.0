@@ -92,10 +92,18 @@
             <div class="trow">
               <div class="tcol bgGray">负责工序</div>
               <div class="tcol">
-                <el-select v-model="item.process" filterable placeholder="加工工序" @change="getProcessDesc(item)">
+                <el-cascader
+                  v-model="item.process"
+                  filterable
+                  :options="processList"
+                  :show-all-levels="false"
+                  clearable
+                  @change="getProcessDesc(item)"
+                ></el-cascader>
+                <!-- <el-select v-model="item.process" filterable placeholder="加工工序" @change="getProcessDesc(item)">
                   <el-option v-for="item in processList" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
-                </el-select>
+                </el-select> -->
               </div>
               <div class="tcol bgGray">工序说明</div>
               <div class="tcol">
@@ -173,6 +181,7 @@
                   v-model="itemPro.order_code"
                   :fetch-suggestions="querySearchAsync"
                   placeholder="订单号/产品编号"
+                  :debounce="3000"
                   @select="handleSelect(item, itemProIndex, index, settlementLogIndex)"
                 >
                   <template slot-scope="{ item }">
@@ -476,7 +485,6 @@ export default Vue.extend({
       // 颜色尺码是否全选
       isCheckAllSizeColor: false,
       isCheckAllProcess: false,
-      processWorkerListCheck: false,
       staffInfo: {},
       substandardReason: [
         {
@@ -551,7 +559,6 @@ export default Vue.extend({
       ],
       settlementLogList: [],
       chooseSettlementLogList: [],
-      processWorkerList: [],
       processList: [],
       processDescList: [],
       workList: [],
@@ -622,20 +629,16 @@ export default Vue.extend({
   methods: {
     init() {
       this.loading = true
-      this.processList = [
-        { label: '针织织造', value: '针织织造0', type: 0 },
-        { label: '梭织织造', value: '梭织织造0', type: 0 },
-        { label: '制版费', value: '制版费0', type: 0 }
-      ]
 
       process.list({ type: 2 }).then((res) => {
         res.data.data.forEach((item: any) => {
-          this.processList.push({ label: item.name, value: item.name + 2, type: 2 })
+          this.processList[1].children.push({ label: item.name, value: item.name })
         })
-        process.list({ type: 3 }).then((res) => {
-          res.data.data.forEach((item: any) => {
-            this.processList.push({ label: item.name, value: item.name + 3, type: 3 })
-          })
+      })
+
+      process.list({ type: 3 }).then((res) => {
+        res.data.data.forEach((item: any) => {
+          this.processList[2].children.push({ label: item.name, value: item.name })
         })
       })
 
@@ -644,13 +647,11 @@ export default Vue.extend({
     getProcessDesc(item: any) {
       process
         .list({
-          name: +item.process[item.process.length - 1] ? item.process.substr(0, item.process.length - 1) : item.process
+          name: item.process[1]
         })
         .then((res) => {
           if (res.data.status) {
-            let str = +item.process[item.process.length - 1]
-              ? item.process.substr(0, item.process.length - 1)
-              : item.process
+            let str = item.process[1]
             item.processDesc = []
             if (!res.data.data.length) return
 
@@ -696,39 +697,6 @@ export default Vue.extend({
         this.$deleteItem(itemRoot.checked, 0)
       }
       this.$forceUpdate()
-    },
-    chooseWorkerProcess(bol: any) {
-      this.processWorkerList.forEach((processWorkerItem: any) => {
-        if (processWorkerItem.process_name === this.tabChoose) {
-          processWorkerItem.info.forEach((staffNameItem: any) => {
-            staffNameItem.info.forEach((productCodeItem: any) => {
-              productCodeItem.info.forEach((process_desc: any) => {
-                process_desc.process_desc = process_desc.process_desc.split(',')
-                process_desc.info.forEach((item: any) => {
-                  item.info.forEach((itemPrice: any) => {
-                    itemPrice.info.forEach((itemSize: any) => {
-                      itemSize.checked = bol
-                      if (bol) {
-                        if (processWorkerItem.checked === undefined) {
-                          processWorkerItem.checked = []
-                        }
-                        if (item.checked === undefined) {
-                          item.checked = []
-                        }
-                        processWorkerItem.checked.push(bol)
-                        item.checked.push(bol)
-                      } else {
-                        this.$deleteItem(processWorkerItem.checked, 0)
-                        this.$deleteItem(item.checked, 0)
-                      }
-                    })
-                  })
-                })
-              })
-            })
-          })
-        }
-      })
     },
     handleSelect(item: any, index: number, orderIndex: number, staffIndex: number) {
       this.loading = true
@@ -900,8 +868,8 @@ export default Vue.extend({
                   id: null,
                   order_id: product_info.order_id,
                   staff_id: settlementLog.staffId,
-                  process_name: staffInfo.process,
-                  process_type: 0,
+                  process_name: staffInfo.process[1],
+                  process_type: staffInfo.process[0],
                   process_desc: staffInfo.process_desc.toString(),
                   extra_number: sizeColorInfo.extra_number || 0,
                   size_id: sizeColorInfo.size_id || 0,
@@ -935,168 +903,6 @@ export default Vue.extend({
       })
       this.loading = false
     },
-    chooseProcess(item: any, check: any, itemProIndex: any) {
-      if (item.checkProcess === undefined) {
-        item.checkProcess = []
-      }
-      if (check) {
-        item.checkProcess.push(check)
-      } else {
-        if (item.checkProcess.length !== 0) {
-          this.$deleteItem(item.checkProcess, 0)
-        }
-      }
-      item.product_info[itemProIndex].checkProcess = check
-      this.$forceUpdate()
-    },
-    chooseAllProcess(bol: any) {
-      // 判断是否全部选择
-      this.isCheckAllProcess = bol
-
-      this.product_arr.forEach((itemPro: any) => {
-        itemPro.product_info.forEach((itemProcess: any) => {
-          itemProcess.product_inspection_info.forEach((process: any) => {
-            if (bol) {
-              if (itemPro.checkProcess === undefined) {
-                itemPro.checkProcess = []
-              }
-              itemPro.checkProcess.push(bol)
-            } else {
-              itemPro.checkProcess = []
-            }
-            process.checkProcess = bol
-          })
-        })
-      })
-    },
-    getNowFormatDate() {
-      let date = new Date()
-      let seperator1 = '-'
-      let year = date.getFullYear()
-      let month: any = date.getMonth() + 1
-      let strDate: any = date.getDate()
-      if (month >= 1 && month <= 9) {
-        month = '0' + month
-      }
-      if (strDate >= 0 && strDate <= 9) {
-        strDate = '0' + strDate
-      }
-      let currentdate = year + seperator1 + month + seperator1 + strDate
-      return currentdate
-    },
-    getColorList(res: any) {
-      let product_info = this.product_arr.find((val: any) => {
-        return val.id === res.productNameId
-      })
-
-      res.productId = product_info.product_id
-      res.infoData.forEach((el: any) => {
-        let arr: any = []
-
-        product_info.product_info.forEach((item: any) => {
-          arr.push(JSON.parse(JSON.stringify(item)))
-        })
-
-        el.sizeColorList = arr
-      })
-    },
-    chooseAllSizeColor(bol: boolean) {
-      // 判断是否全部选择
-      this.isCheckAllSizeColor = bol
-
-      this.product_arr.forEach((itemPro: any) => {
-        itemPro.product_info.forEach((itemSizeColor: any) => {
-          if (bol) {
-            if (itemPro.checkSizeColor === undefined) {
-              itemPro.checkSizeColor = []
-            }
-            itemPro.checkSizeColor.push(bol)
-          } else {
-            itemPro.checkSizeColor = []
-          }
-          itemSizeColor.checkSizeColor = bol
-        })
-      })
-    },
-    forceUpdate(checked: any, itemPro: any) {
-      if (itemPro.checkSizeColor === undefined) {
-        itemPro.checkSizeColor = []
-      }
-      if (checked) {
-        itemPro.checkSizeColor.push(checked)
-      } else {
-        if (itemPro.checkSizeColor.length !== 0) {
-          this.$deleteItem(itemPro.checkSizeColor, 0)
-        }
-      }
-      this.$forceUpdate()
-    },
-    resetProductionScheduleUpdate() {
-      this.productionScheduleUpdate = [
-        {
-          productName: '',
-          process: '',
-          unitPrice: 0,
-          process_desc: '',
-          infoData: [
-            {
-              date: '',
-              worker: '',
-              sizeColorList: [{}],
-              substandardReason: []
-            }
-          ]
-        }
-      ]
-    },
-    lostDelete() {
-      if (this.chooseSettlementLogList.length === 0) {
-        this.$message.error('请选择至少一条日志')
-        return
-      }
-
-      let arr: any = []
-      this.chooseSettlementLogList.forEach((settlementLog: any) => {
-        arr.push(settlementLog.id)
-      })
-
-      workshop
-        .delete({
-          id: arr
-        })
-        .then((res) => {
-          if (res.data.status === true) {
-            this.$message.success('删除成功')
-            this.init()
-          }
-        })
-    },
-    lostAgree() {
-      if (this.chooseSettlementLogList.length === 0) {
-        this.$message.error('请选择至少一条日志')
-        return
-      }
-
-      let arr: any = []
-      this.chooseSettlementLogList.forEach((settlementLog: any) => {
-        arr.push(settlementLog.id)
-      })
-
-      workshop
-        .check({
-          id: arr,
-          is_check: 2
-        })
-        .then((res) => {
-          if (res.data.status === true) {
-            this.$message.success('审核成功')
-            this.init()
-          }
-        })
-    },
-    handleSelectionChange(val: any) {
-      this.chooseSettlementLogList = val
-    },
     changeKeyBoard(val: boolean) {
       localStorage.showWorkShopKeyBoard = val + ''
     }
@@ -1105,6 +911,24 @@ export default Vue.extend({
     this.settlementLogList = []
     let _this = this
     let staffArr = JSON.parse(_this.$route.query.staffInfo + '')
+    let arr: any = [
+      {
+        value: 0,
+        label: '推荐工序',
+        children: []
+      },
+      {
+        value: 2,
+        label: '半成品加工工序',
+        children: []
+      },
+      {
+        value: 3,
+        label: '成品加工工序',
+        children: []
+      }
+    ]
+    let arr1: any = []
 
     staffArr.forEach((staff: any) => {
       this.settlementLogList.push({
@@ -1114,8 +938,11 @@ export default Vue.extend({
         processInfo: []
       })
       staff.process.split('/').forEach((processs: any) => {
+        if (processs !== '') {
+          arr1.push(processs)
+        }
         this.settlementLogList[this.settlementLogList.length - 1].processInfo.push({
-          process: processs,
+          process: [0, processs],
           product_info: [
             {
               order_code: '',
@@ -1139,6 +966,13 @@ export default Vue.extend({
         })
       })
     })
+
+    arr1 = [...new Set(arr1)]
+    arr1.forEach((processs: string) => {
+      arr[0].children.push({ label: processs, value: processs })
+    })
+
+    this.processList = arr
 
     staff
       .list({
