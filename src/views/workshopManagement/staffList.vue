@@ -24,14 +24,26 @@
             <el-input v-model="keyword" placeholder="编号、姓名搜索" @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter" v-model="department" placeholder="部门筛选" clearable>
+            <el-select
+              style="width: 95%"
+              @change="
+                changeDepartment()
+                changeRouter()
+              "
+              v-model="department"
+              placeholder="部门筛选"
+              clearable
+            >
               <el-option
                 v-for="(item, index) in departmentList"
                 :key="index"
-                :value="item.name"
+                :value="item.id"
                 :label="item.name"
               ></el-option>
             </el-select>
+            <el-tooltip class="item" effect="dark" content="保存部门筛选" placement="top">
+              <i class="el-icon-upload hoverOrange" @click="$setLocalStorage('department', department)"></i>
+            </el-tooltip>
           </div>
           <div class="elCtn">
             <el-cascader
@@ -116,13 +128,7 @@
             </el-table-column>
           </el-table>
         </div>
-        <div
-          class="btn backHoverBlue fl"
-          style="margin-top: 16px"
-          @click="exportExcel"
-        >
-          导出月度报表
-        </div>
+        <div class="btn backHoverBlue fl" style="margin-top: 16px" @click="exportExcel">导出月度报表</div>
         <div class="pageCtn">
           <el-pagination
             background
@@ -300,6 +306,7 @@ export default Vue.extend({
       const query = this.$route.query
       this.page = Number(query.page)
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
+      this.department = Number(query.department) || Number(this.$getLocalStorage('department')) || ''
       this.keyword = query.keyword || ''
       this.status = query.status || '0'
       this.user_id = query.user_id || ''
@@ -313,6 +320,19 @@ export default Vue.extend({
     },
     rowKey(row: { id: any }) {
       return row.id
+    },
+    changeDepartment() {
+      if (this.department === '') {
+        this.$setLocalStorage('department', '')
+        return
+      }
+      staff
+        .departmentDetail({
+          id: this.department
+        })
+        .then((res) => {
+          this.departmentName = res.data.data.name
+        })
     },
     handleSelectionChange(val: any) {
       this.multipleSelection = val
@@ -376,11 +396,11 @@ export default Vue.extend({
     exportExcel() {
       this.mainLoading = true
       exportExcel
-        .staffYear({
+        .staffMonth({
           keyword: this.keyword,
-          department: this.department,
+          department: this.departmentName,
           process: this.process ? this.process[1] : '',
-          year: new Date().getFullYear()
+          month: this.date
         })
         .then((res: any) => {
           if (res.data.status) {
@@ -434,7 +454,7 @@ export default Vue.extend({
       staff
         .list({
           keyword: this.keyword,
-          department: this.department,
+          department: this.departmentName,
           process: this.process ? this.process[1] : '',
           page: this.page,
           limit: this.limit,

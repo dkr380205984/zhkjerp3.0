@@ -760,6 +760,16 @@ const exportExcel = {
     status?: string | number
     type?: string | number
   }) => http.get(`${baseUrl}/export/staff/year`, params),
+  staffMonth: (params: {
+    limit?: number | string
+    page?: number | string
+    process?: number | string
+    keyword?: string
+    department?: string
+    month?: number | string
+    status?: string | number
+    type?: string | number
+  }) => http.get(`${baseUrl}/export/staff/month`, params),
   receipt: (params: {
     keyword: string
     group: string
@@ -779,9 +789,12 @@ const clientBind = {
 // 员工管理
 const staff = {
   departmentList: (params: {
-    limit: string | number
-    keyword: string
+    limit?: string | number
+    keyword?: string
   }) => http.get(`${baseUrl}/staff/department/list`, params),
+  departmentDetail: (params: {
+    id?: number | string
+  }) => http.get(`${baseUrl}/staff/department/detail`, params),
   importStaff: (params?: any) => http.post(`${baseUrl}/import/staff`, params),
   list: (params: any) => http.get(`${baseUrl}/staff/list`, params),
   departmentAdd: (params: {
