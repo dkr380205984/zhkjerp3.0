@@ -40,8 +40,8 @@
                 </el-select>
               </div>
               <div
-                class="deleteIcon hoverRed"
-                style="margin-left: 20px; display: flex; align-items: center; cursor: pointer"
+                class="btn backHoverRed"
+                style="margin-left: 20px; display: flex; align-items: center"
                 @click="
                   settlementLogList.length > 1
                     ? $deleteItem(settlementLogList, settlementLogIndex)
@@ -53,39 +53,38 @@
                 </div> -->
                 删除员工
               </div>
-            </div>
-          </div>
-        </div>
-        <div style="overflow: hidden; padding-right: 32px">
-          <div
-            class="btn backHoverBlue fr"
-            @click="
-              $addItem(settlementLog.processInfo, {
-                process: '',
-                product_info: [
-                  {
-                    code: '',
-                    product_detail_info: [
+              <div
+                class="btn backHoverBlue"
+                style="margin-left: 20px; display: flex; align-items: center"
+                @click="
+                  $addItem(settlementLog.processInfo, {
+                    process: '',
+                    product_info: [
                       {
-                        order_code: '',
-                        sizeColorInfo: [
+                        code: '',
+                        product_detail_info: [
                           {
-                            size_name: '',
-                            color_name: '',
-                            number: '',
-                            extra_number: '',
-                            shoddy_number: '',
-                            shoddy_reason: []
+                            order_code: '',
+                            sizeColorInfo: [
+                              {
+                                size_name: '',
+                                color_name: '',
+                                number: '',
+                                extra_number: '',
+                                shoddy_number: '',
+                                shoddy_reason: []
+                              }
+                            ]
                           }
                         ]
                       }
                     ]
-                  }
-                ]
-              })
-            "
-          >
-            添加下个工序
+                  })
+                "
+              >
+                添加下个工序
+              </div>
+            </div>
           </div>
         </div>
         <div class="tableCtn" v-for="(item, index) in settlementLog.processInfo" :key="'process' + index">
@@ -1208,14 +1207,6 @@ export default Vue.extend({
     background: #2e394f;
     &:hover {
       background: #737375;
-    }
-  }
-
-  .backHoverRed {
-    color: #fff;
-    background: #f5222d;
-    &:hover {
-      background: #fd5b63;
     }
   }
 }
