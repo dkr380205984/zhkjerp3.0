@@ -87,7 +87,6 @@
             <div class="col">合计计划数量</div>
             <div class="col">合计计划金额</div>
             <div class="col">合计完成数量</div>
-            <div class="col">合计完成金额</div>
             <div class="col">审核状态</div>
             <div class="col">创建人</div>
             <div class="col">创建时间</div>
@@ -119,7 +118,6 @@
               <div class="col">{{ (+item.total_number).toFixed(2) }}</div>
               <div class="col">{{ (+item.total_price).toFixed(2) }}</div>
               <div class="col">{{ (+item.total_real_number).toFixed(2) }}</div>
-              <div class="col">{{ (+item.total_real_price).toFixed(2) }}</div>
               <div class="col">
                 <div v-if="item.is_check === 0" class="orange">未审核</div>
                 <div v-if="item.is_check === 1" class="blue">已通过</div>

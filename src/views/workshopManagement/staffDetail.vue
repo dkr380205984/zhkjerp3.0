@@ -16,49 +16,57 @@
       </div>
     </div>
     <div v-for="(settlementLog, settlementLogIndex) in settlementLogList" :key="'process' + settlementLogIndex">
-      <div class="detailCtn">
-        <div class="row">
-          <div class="col">
-            <div class="label">员工姓名：</div>
-            <div class="text">
-              <el-select
-                v-model="settlementLog.staffInfo"
-                value-key="id"
-                filterable
-                placeholder="请选择员工"
-                @change="selectStaff(settlementLogIndex)"
-              >
-                <el-option
-                  v-for="(staff, StaffIndex) in staffList"
-                  :key="StaffIndex + 'StaffIndex'"
-                  :label="staff.name"
-                  :value="staff"
-                >
-                </el-option>
-              </el-select>
-            </div>
-          </div>
-          <div class="col">
-            <div class="label">员工编号：</div>
-            <div class="text">{{ settlementLog.staffCode }}</div>
-          </div>
-        </div>
-      </div>
-      <div class="module" v-for="(item, index) in settlementLog.processInfo" :key="'process' + index">
-        <div class="detailCtn">
+      <div class="module">
+        <div class="detailCtn" style="margin-bottom: 0; padding-bottom: 0">
           <div class="row">
             <div class="col">
-              <div class="label">负责工序：</div>
+              <div class="label">员工姓名：</div>
               <div class="text">
+                <el-select
+                  v-model="settlementLog.staffInfo"
+                  value-key="id"
+                  filterable
+                  placeholder="请选择员工"
+                  @change="selectStaff(settlementLogIndex)"
+                >
+                  <el-option
+                    v-for="(staff, StaffIndex) in staffList"
+                    :key="StaffIndex + 'StaffIndex'"
+                    :label="staff.code.substr(staff.code.length - 4, staff.code.length) + ' ' + staff.name"
+                    :value="staff"
+                  >
+                  </el-option>
+                </el-select>
+              </div>
+              <div
+                class="deleteIcon hoverRed"
+                style="margin-left: 20px; display: flex; align-items: center; cursor: pointer"
+                @click="
+                  settlementLogList.length > 1
+                    ? $deleteItem(settlementLogList, settlementLogIndex)
+                    : $message.error('至少有一个员工')
+                "
+              >
+                <!-- <div class="closeCtn">
+                  <span class="el-icon-close" style="cursor: pointer"></span>
+                </div> -->
+                删除员工
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tableCtn" v-for="(item, index) in settlementLog.processInfo" :key="'process' + index">
+          <div class="tbody" style="border-top: 1px solid #e9e9e9">
+            <div class="trow">
+              <div class="tcol bgGray">负责工序</div>
+              <div class="tcol">
                 <el-select v-model="item.process" filterable placeholder="加工工序" @change="getProcessDesc(item)">
                   <el-option v-for="item in processList" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
               </div>
-            </div>
-            <div class="col">
-              <div class="label">工序说明：</div>
-              <div class="text">
+              <div class="tcol bgGray">工序说明</div>
+              <div class="tcol">
                 <el-select
                   v-model="item.process_desc"
                   multiple
@@ -77,10 +85,8 @@
                   </el-option>
                 </el-select>
               </div>
-            </div>
-            <div class="col">
-              <div class="label">结算单价：</div>
-              <div class="text" style="height: 38px">
+              <div class="tcol bgGray">结算单价</div>
+              <div class="tcol">
                 <zh-input
                   v-model="item.price"
                   placeholder="请输入结算单价"
@@ -88,30 +94,45 @@
                   type="number"
                 ></zh-input>
               </div>
-            </div>
-          </div>
-        </div>
-        <div class="tableCtn">
-          <div class="thead">
-            <div class="trow">
-              <div class="tcol" style="flex: 0.2; text-align: center">
-                <el-checkbox v-model="isCheckAllSizeColor" @change="chooseAllSizeColor"></el-checkbox>
-              </div>
-              <div class="tcol">订单号</div>
-              <div class="tcol noPad" style="flex: 8.7">
-                <div class="trow">
-                  <div class="tcol">产品编号</div>
-                  <div class="tcol">尺码颜色</div>
-                  <div class="tcol">完成数量</div>
-                  <div class="tcol">额外数量</div>
-                  <div class="tcol">次品数量</div>
-                  <div class="tcol">次品原因</div>
+              <div class="tcol" style="flex: 0.1">
+                <div class="closeCtn backHoverRed">
+                  <span
+                    class="el-icon-close"
+                    style="cursor: pointer"
+                    @click="
+                      settlementLog.processInfo.length > 1
+                        ? $deleteItem(settlementLog.processInfo, index)
+                        : $message.error('至少有一道工序')
+                    "
+                  ></span>
                 </div>
               </div>
-              <div class="tcol">操作</div>
             </div>
-          </div>
-          <div class="tbody">
+            <div class="trow">
+              <div class="tcol bgGray" style="flex: 0.2; text-align: center">
+                <el-checkbox v-model="isCheckAllSizeColor" @change="chooseAllSizeColor"></el-checkbox>
+              </div>
+              <div class="tcol bgGray">
+                <div>
+                  订单号
+                  <el-tooltip class="item" effect="dark" placement="top">
+                    <div slot="content">也可以通过产品编号进行搜索</div>
+                    <i class="el-icon-question"></i>
+                  </el-tooltip>
+                </div>
+              </div>
+              <div class="tcol noPad" style="flex: 8.7">
+                <div class="trow">
+                  <div class="tcol bgGray">产品编号</div>
+                  <div class="tcol bgGray">尺码颜色</div>
+                  <div class="tcol bgGray">完成数量</div>
+                  <div class="tcol bgGray">额外数量</div>
+                  <div class="tcol bgGray">次品数量</div>
+                  <div class="tcol bgGray">次品原因</div>
+                </div>
+              </div>
+              <div class="tcol bgGray">操作</div>
+            </div>
             <div class="trow" v-for="(itemPro, itemProIndex) in item.product_info" :key="itemProIndex">
               <div class="tcol" style="flex: 0.2; text-align: center">
                 <el-checkbox v-model="isCheckAllSizeColor" @change="chooseAllSizeColor"></el-checkbox>
@@ -121,7 +142,7 @@
                   style="width: 200px"
                   v-model="itemPro.order_code"
                   :fetch-suggestions="querySearchAsync"
-                  placeholder="请输入订单号"
+                  placeholder="订单号/产品编号"
                   @select="handleSelect(item, itemProIndex, index, settlementLogIndex)"
                 >
                   <template slot-scope="{ item }">
@@ -165,7 +186,7 @@
                         <!-- {{ itemSizeColor.size_name || '无数据' }}/{{ itemSizeColor.color_name || '无数据' }} -->
                         <i
                           class="el-icon-circle-plus-outline"
-                          style="cursor: pointer; position: absolute; right: 10%; top: 30%"
+                          style="cursor: pointer; position: absolute; right: 15%; top: 30%"
                           @click="
                             $addItem(itemDetail.sizeColorInfo, {
                               size_name: '',
@@ -176,6 +197,15 @@
                               shoddy_number: '',
                               shoddy_reason: []
                             })
+                          "
+                        ></i>
+                        <i
+                          class="el-icon-remove-outline"
+                          style="cursor: pointer; position: absolute; right: 5%; top: 30%"
+                          @click="
+                            itemDetail.sizeColorInfo.length > 1
+                              ? $deleteItem(itemDetail.sizeColorInfo, indexSizeColor)
+                              : $message.error('至少有一个产品颜色')
                           "
                         ></i>
                       </div>
@@ -226,31 +256,46 @@
                   </div>
                 </div>
               </div>
-              <div
-                class="tcol hoverBlue"
-                style="cursor: pointer"
-                @click="
-                  $addItem(item.product_info, {
-                    order_code: '',
-                    product_detail_info: [
-                      {
-                        code: '',
-                        sizeColorInfo: [
+              <div class="tcol">
+                <div>
+                  <span
+                    class="hoverBlue"
+                    style="cursor: pointer"
+                    @click="
+                      $addItem(item.product_info, {
+                        order_code: '',
+                        product_detail_info: [
                           {
-                            size_name: '',
-                            color_name: '',
-                            number: '',
-                            extra_number: '',
-                            shoddy_number: '',
-                            shoddy_reason: []
+                            code: '',
+                            sizeColorInfo: [
+                              {
+                                size_name: '',
+                                color_name: '',
+                                number: '',
+                                extra_number: '',
+                                shoddy_number: '',
+                                shoddy_reason: []
+                              }
+                            ]
                           }
                         ]
-                      }
-                    ]
-                  })
-                "
-              >
-                添加下一组
+                      })
+                    "
+                  >
+                    添加
+                  </span>
+                  <span
+                    class="hoverRed"
+                    style="cursor: pointer"
+                    @click="
+                      item.product_info.length > 1
+                        ? $deleteItem(item.product_info, itemProIndex)
+                        : $message.error('至少有一个订单')
+                    "
+                  >
+                    删除
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -342,7 +387,7 @@
             <div class="tableCtn">
               <div class="tbody hasTop">
                 <div class="trow">
-                  <div class="tcol bgGray">系统编号</div>
+                  <div class="tcol">系统编号</div>
                   <div class="tcol bgGray">订单号</div>
                   <div class="tcol bgGray">产品编号</div>
                   <div class="tcol bgGray">产品品类</div>
@@ -1148,6 +1193,28 @@ export default Vue.extend({
   .cpyy .el-input__inner {
     padding-right: 0;
     border: 0;
+  }
+
+  .closeCtn {
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    color: #fff;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 50%;
+    background: #2e394f;
+    &:hover {
+      background: #737375;
+    }
+  }
+
+  .backHoverRed {
+    color: #fff;
+    background: #f5222d;
+    &:hover {
+      background: #fd5b63;
+    }
   }
 }
 </style>
