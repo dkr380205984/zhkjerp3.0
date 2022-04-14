@@ -141,9 +141,7 @@
               </div>
             </div>
             <div class="trow">
-              <div class="tcol bgGray" style="flex: 0.2; text-align: center">
-                <el-checkbox v-model="isCheckAllSizeColor" @change="chooseAllSizeColor"></el-checkbox>
-              </div>
+              <div class="tcol bgGray" style="flex: 0.3; text-align: center">序号</div>
               <div class="tcol bgGray">
                 <div>
                   订单号
@@ -166,8 +164,8 @@
               <div class="tcol bgGray">操作</div>
             </div>
             <div class="trow" v-for="(itemPro, itemProIndex) in item.product_info" :key="itemProIndex">
-              <div class="tcol" style="flex: 0.2; text-align: center">
-                <el-checkbox v-model="isCheckAllSizeColor" @change="chooseAllSizeColor"></el-checkbox>
+              <div class="tcol" style="flex: 0.3; text-align: center">
+                {{ itemProIndex + 1 }}
               </div>
               <div class="tcol">
                 <el-autocomplete
