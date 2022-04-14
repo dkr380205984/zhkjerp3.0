@@ -20,6 +20,7 @@
         <div class="detailCtn" style="margin-bottom: 0; padding-bottom: 0">
           <div class="row">
             <div class="col">
+              <div class="label" style="width: unset; margin-right: 10px">{{ settlementLogIndex + 1 }}</div>
               <div class="label">员工姓名：</div>
               <div class="text">
                 <el-select
@@ -53,6 +54,38 @@
                 删除员工
               </div>
             </div>
+          </div>
+        </div>
+        <div style="overflow: hidden; padding-right: 32px">
+          <div
+            class="btn backHoverBlue fr"
+            @click="
+              $addItem(settlementLog.processInfo, {
+                process: '',
+                product_info: [
+                  {
+                    code: '',
+                    product_detail_info: [
+                      {
+                        order_code: '',
+                        sizeColorInfo: [
+                          {
+                            size_name: '',
+                            color_name: '',
+                            number: '',
+                            extra_number: '',
+                            shoddy_number: '',
+                            shoddy_reason: []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              })
+            "
+          >
+            添加下个工序
           </div>
         </div>
         <div class="tableCtn" v-for="(item, index) in settlementLog.processInfo" :key="'process' + index">
@@ -301,38 +334,6 @@
           </div>
         </div>
       </div>
-      <div style="overflow: hidden">
-        <div
-          class="btn backHoverBlue fr"
-          @click="
-            $addItem(settlementLog.processInfo, {
-              process: '',
-              product_info: [
-                {
-                  code: '',
-                  product_detail_info: [
-                    {
-                      order_code: '',
-                      sizeColorInfo: [
-                        {
-                          size_name: '',
-                          color_name: '',
-                          number: '',
-                          extra_number: '',
-                          shoddy_number: '',
-                          shoddy_reason: []
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            })
-          "
-        >
-          添加下个工序
-        </div>
-      </div>
     </div>
     <div style="overflow: hidden; margin-top: 20px">
       <div
@@ -472,6 +473,7 @@ export default Vue.extend({
       autoAssignSizeColor: false,
       product_arr: [],
       staffList: [],
+      orderList: [],
       outCiPin: false,
       tabChoose: '',
       // 颜色尺码是否全选
