@@ -471,7 +471,7 @@ import { OrderInfo } from '@/types/order'
 const order = {
   create: (params: OrderInfo) => http.post(`${baseUrl}/order/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrl}/order/lists`, params),
-  simpleList: (params?: { keyword: string, count?: number }) => http.get(`${baseUrl}/order/simple/lists`, params),
+  simpleList: (params?: { keyword: string }) => http.get(`${baseUrl}/order/simple/lists`, params),
   timeList: (params?: ListParams) => http.get(`${baseUrl}/order/time/lists`, params), // 根据time_data查询的列表
   detail: (params: DetailParams) => http.get(`${baseUrl}/order/detail`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/order/delete`, params, 'application/json'),
