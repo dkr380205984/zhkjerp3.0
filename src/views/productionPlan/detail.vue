@@ -1462,9 +1462,9 @@
     </div>
     <!-- 扣款 -->
     <zh-deduct :show="deductFlag"
-      @close="deductFlag = false"
+      @close="deductFlag = false;init()"
       :type="deductInfo.type"
-      :id="deductInfo.doc_id"
+      :data="[{id:deductInfo.doc_id,code:deductInfo.doc_code}]"
       :order_id="$route.query.id"
       :client_id="deductInfo.client_id"
       :client_name="deductInfo.client_name"></zh-deduct>
@@ -1520,6 +1520,7 @@ export default Vue.extend({
         client_id: '',
         client_name: '',
         doc_id: '',
+        doc_code: '',
         type: 2
       },
       order_id: 0,
@@ -2193,6 +2194,7 @@ export default Vue.extend({
       this.deductInfo.client_id = info.client_id
       this.deductInfo.client_name = info.client_name
       this.deductInfo.doc_id = info.id
+      this.deductInfo.doc_code = info.code
       this.deductInfo.type = type
       this.deductFlag = true
     },

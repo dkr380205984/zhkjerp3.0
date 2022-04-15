@@ -1,7 +1,8 @@
 <template>
   <div id="collectionDetail"
     class="bodyContainer">
-    <div class="module">
+    <div class="module"
+      id="基本信息">
       <div class="titleCtn">
         <div class="title">基本信息</div>
       </div>
@@ -17,7 +18,7 @@
           </div>
           <div class="col">
             <div class="label">客户状态：</div>
-            <div class="text">{{clientFinancial.status}}</div>
+            <div class="text">{{clientFinancial.status===1?'合作中':'暂停合作'}}</div>
           </div>
         </div>
         <div class="row">
@@ -62,7 +63,8 @@
         </div>
       </div>
     </div>
-    <div class="module">
+    <div class="module"
+      id="统计报表">
       <div class="titleCtn">
         <div class="title">统计报表</div>
       </div>
@@ -141,18 +143,116 @@
         </div>
       </div>
     </div>
-    <div class="module">
+    <div class="module"
+      id="下单明细">
       <div class="titleCtn">
         <div class="title">下单明细</div>
       </div>
       <div class="listCtn">
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-input v-model="keyword"
+              placeholder="筛选报价/产品/样品编号"
+              @keydown.enter.native="getOrderList"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-select placeholder="请选择公司联系人"
+              v-model="contacts_id"
+              no-data-text="请先选择下单公司"
+              filterable
+              clearable
+              @change="getOrderList">
+              <el-option v-for="item in contactsList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-select v-model="type"
+              placeholder="订单状态筛选"
+              @change="getOrderList">
+              <el-option label="全部"
+                value="null"></el-option>
+              <el-option label="已创建"
+                :value="1"></el-option>
+              <el-option label="进行中"
+                :value="2"></el-option>
+              <el-option label="已完成"
+                :value="3"></el-option>
+              <el-option label="已取消"
+                :value="5"></el-option>
+              <el-option label="已延期"
+                :value="6"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-select placeholder="请选择下单币种"
+              v-model="settle_unit"
+              @change="getOrderList">
+              <el-option v-for="item in unitArr"
+                :key="item.name"
+                :label="item.name"
+                :value="item.name"
+                class="between">
+                <span>{{item.name}}</span>
+                <span class="gray">({{item.short}})</span>
+              </el-option>
+            </el-select>
+          </div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
+        </div>
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-select @change="getOrderList"
+              v-model="user_id"
+              placeholder="筛选创建人"
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-select @change="getOrderList"
+              v-model="group_id"
+              placeholder="筛选负责小组"
+              clearable>
+              <el-option v-for="item in groupList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-date-picker v-model="date"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+              @change="getOrderList"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </div>
+        </div>
         <div class="filterCtn clearfix">
           <div class="label">已勾选单据：</div>
           <div class="elCtn check"
-            v-for="item in orderCheckList"
+            v-for="(item,index) in orderCheckList"
             :key="item.id">
             <el-input v-model="item.code"
-              disabled></el-input>
+              disabled>
+              <template slot="append">
+                <i class="el-icon-close hoverRed"
+                  style="cursor:pointer"
+                  @click="orderCheckList.splice(index,1)"></i>
+              </template>
+            </el-input>
           </div>
           <div class="buttonList fr">
             <div class="btn backHoverBlue">
@@ -161,21 +261,24 @@
             </div>
             <div class="otherInfoCtn">
               <div class="otherInfo">
-                <div class="btn backHoverBlue">
+                <div class="btn backHoverBlue"
+                  @click="goCollection(orderCheckList)">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">批量收款</span>
                 </div>
-                <div class="btn backHoverOrange">
+                <div class="btn backHoverOrange"
+                  @click="goPayment(orderCheckList)">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">批量开票</span>
                 </div>
-                <div class="btn backHoverOrange">
+                <div class="btn backHoverRed"
+                  @click="goDeduct(orderCheckList)">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
@@ -188,23 +291,275 @@
         </div>
         <zh-list :list="orderList"
           :listKey="originalSetting"
+          :check="true"
+          :checkedCount="orderCheckList"
           :loading="orderLoading"
           :oprList="oprList"></zh-list>
         <div class="pageCtn">
           <el-pagination background
             :page-size="10"
             layout="prev, pager, next"
-            :total="order_total"
-            :current-page.sync="order_page"
+            :total="orderTotal"
+            :current-page.sync="orderPage"
             @current-change="getOrderList">
           </el-pagination>
         </div>
       </div>
-
     </div>
-    <div class="module">
+    <div class="module"
+      id="开票单据">
       <div class="titleCtn">
-        <div class="title">操作日志</div>
+        <div class="title">开票单据</div>
+      </div>
+      <div class="listCtn">
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-input v-model="paymentOrderCode"
+              placeholder="搜索订单号"
+              @keydown.enter.native="getPaymentLogList"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-input v-model="paymentKeyword"
+              placeholder="搜索票据编号"
+              @keydown.enter.native="getPaymentLogList"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-select @change="getPaymentLogList"
+              v-model="paymentUser"
+              placeholder="筛选创建人"
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-date-picker v-model="paymentDate"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+              @change="getPaymentLogList"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </div>
+          <div class="backHoverBlue btn">搜索</div>
+        </div>
+        <div class="list">
+          <div class="row title">
+            <div class="col">票据编号</div>
+            <div class="col">关联订单号</div>
+            <div class="col">开票金额</div>
+            <div class="col">开票号码</div>
+            <div class="col">备注信息</div>
+            <div class="col">开票人</div>
+            <div class="col">开票日期</div>
+            <div class="col">操作</div>
+          </div>
+          <div class="row"
+            v-for="item in paymentLog"
+            :key="item.id">
+            <div class="col">{{item.code}}</div>
+            <div class="col">{{item.order_code||'未关联订单'}}</div>
+            <div class="col">{{item.price}}元</div>
+            <div class="col">{{item.invoice_code}}</div>
+            <div class="col">{{item.desc}}</div>
+            <div class="col">{{item.user_name}}</div>
+            <div class="col">{{item.created_at}}</div>
+            <div class="col oprCtn">
+              <span class="opr orange"
+                @click="goPayment([item],true)">修改</span>
+              <span class="opr red">删除</span>
+            </div>
+          </div>
+        </div>
+        <div class="pageCtn">
+          <el-pagination background
+            :page-size="5"
+            layout="prev, pager, next"
+            :total="paymentTotal"
+            :current-page.sync="paymentPage"
+            @current-change="getPaymentLogList">
+          </el-pagination>
+        </div>
+      </div>
+    </div>
+    <div class="module"
+      id="收款单据">
+      <div class="titleCtn">
+        <div class="title">收款单据</div>
+      </div>
+      <div class="listCtn">
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-input v-model="collectionOrderCode"
+              placeholder="搜索订单号"
+              @keydown.enter.native="getCollectionLogList"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-input v-model="collectionKeyword"
+              placeholder="搜索票据编号"
+              @keydown.enter.native="getCollectionLogList"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-select @change="getCollectionLogList"
+              v-model="collectionUser"
+              placeholder="筛选创建人"
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-date-picker v-model="collectionDate"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+              @change="getCollectionLogList"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </div>
+          <div class="backHoverBlue btn">搜索</div>
+        </div>
+        <div class="list">
+          <div class="row title">
+            <div class="col">票据编号</div>
+            <div class="col">关联订单号</div>
+            <div class="col">收款金额</div>
+            <div class="col">备注信息</div>
+            <div class="col">收款人</div>
+            <div class="col">收款日期</div>
+            <div class="col">操作</div>
+          </div>
+          <div class="row"
+            v-for="item in collectionLog"
+            :key="item.id">
+            <div class="col">{{item.code}}</div>
+            <div class="col">{{item.order_code||'未关联订单'}}</div>
+            <div class="col">{{item.price}}元</div>
+            <div class="col">{{item.desc}}</div>
+            <div class="col">{{item.user_name}}</div>
+            <div class="col">{{item.created_at}}</div>
+            <div class="col oprCtn">
+              <span class="opr orange"
+                @click="goCollection([item],true)">修改</span>
+              <span class="opr red">删除</span>
+            </div>
+          </div>
+        </div>
+        <div class="pageCtn">
+          <el-pagination background
+            :page-size="5"
+            layout="prev, pager, next"
+            :total="collectionTotal"
+            :current-page.sync="collectionPage"
+            @current-change="getCollectionLogList">
+          </el-pagination>
+        </div>
+      </div>
+    </div>
+    <div class="module"
+      id="扣款单据">
+      <div class="titleCtn">
+        <div class="title">扣款单据</div>
+      </div>
+      <div class="listCtn">
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-input v-model="deductOrderCode"
+              placeholder="搜索订单号"
+              @keydown.enter.native="getDeductList"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-input v-model="deductKeyword"
+              placeholder="搜索票据编号"
+              @keydown.enter.native="getDeductList"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-select @change="getDeductList"
+              v-model="deductUser"
+              placeholder="筛选创建人"
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-date-picker v-model="deductDate"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+              @change="getDeductList"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </div>
+          <div class="backHoverBlue btn">搜索</div>
+        </div>
+        <div class="list">
+          <div class="row title">
+            <div class="col">票据编号</div>
+            <div class="col">关联订单号</div>
+            <div class="col">扣款金额</div>
+            <div class="col">扣款原因</div>
+            <div class="col">图片信息</div>
+            <div class="col">开票人</div>
+            <div class="col">开票日期</div>
+            <div class="col">操作</div>
+          </div>
+          <div class="row"
+            v-for="item in deductLog"
+            :key="item.id">
+            <div class="col">{{item.code}}</div>
+            <div class="col">{{item.order_code||'未关联订单'}}</div>
+            <div class="col">{{item.price}}元</div>
+            <div class="col">{{item.reason}}</div>
+            <div class="col">
+              <div class="imageCtn">
+                <el-image style="width:100%;height:100%"
+                  :src="item.file_url?item.file_url:''"
+                  :preview-src-list="[item.file_url]">
+                  <div slot="error"
+                    class="image-slot">
+                    <i class="el-icon-picture-outline"
+                      style="font-size:42px"></i>
+                  </div>
+                </el-image>
+              </div>
+            </div>
+            <div class="col">{{item.user_name}}</div>
+            <div class="col">{{item.create_time}}</div>
+            <div class="col oprCtn">
+              <span class="opr orange"
+                @click="goDeduct([item],true)">修改</span>
+              <span class="opr red">删除</span>
+            </div>
+          </div>
+        </div>
+        <div class="pageCtn">
+          <el-pagination background
+            :page-size="5"
+            layout="prev, pager, next"
+            :total="deductTotal"
+            :current-page.sync="deductPage"
+            @current-change="getDeductList">
+          </el-pagination>
+        </div>
       </div>
     </div>
     <div class="bottomFixBar">
@@ -212,28 +567,101 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
+          <div class="btn backHoverOrange"
+            @click="goPayment([])">直接开票</div>
           <div class="btn backHoverBlue"
-            @click="collectionFlag=true">直接收款</div>
-          <div class="btn backHoverOrange">直接开票</div>
-          <div class="btn backHoverRed">直接扣款</div>
+            @click="goCollection([])">直接收款</div>
+          <div class="btn backHoverRed"
+            @click="goDeduct([])">直接扣款</div>
         </div>
       </div>
     </div>
+    <!-- 收款 -->
     <zh-collection :type="1"
+      :update="collectionUpdate"
       :show="collectionFlag"
+      :data="collectionData"
       :client_name="clientFinancial.name"
       :client_id="$route.query.id"
       @close="collectionFlag=false;init()"></zh-collection>
+    <!-- 开票 -->
+    <zh-payment :type="1"
+      :update="paymentUpdate"
+      :show="paymentFlag"
+      :data="paymentData"
+      :client_name="clientFinancial.name"
+      :client_id="$route.query.id"
+      @close="paymentFlag=false;init()"></zh-payment>
+    <!-- 扣款 -->
+    <zh-deduct :type="1"
+      :update="deductUpdate"
+      :show="deductFlag"
+      :data="deductData"
+      :client_name="clientFinancial.name"
+      :client_id="$route.query.id"
+      @close="deductFlag=false;init()"></zh-deduct>
+    <!-- 侧边导航栏 -->
+    <zh-side-nav :data="[{
+      name:'基本信息',
+      mark:'#基本信息'
+    },{
+      name:'统计报表',
+      mark:'#统计报表'
+    },{
+      name:'下单明细',
+      mark:'#下单明细'
+    },{
+      name:'开票单据',
+      mark:'#开票单据'
+    },{
+      name:'收款单据',
+      mark:'#收款单据'
+    },{
+      name:'扣款单据',
+      mark:'#扣款单据'
+    }]"></zh-side-nav>
   </div>
 </template>
 
 <script lang="ts">
-import { client, order } from '@/assets/js/api'
+import { client, collection, deduct, order, payment } from '@/assets/js/api'
+import { moneyArr } from '@/assets/js/dictionary'
 import Vue from 'vue'
 export default Vue.extend({
-  data() {
+  data(): {
+    [propName: string]: any
+  } {
     return {
       collectionFlag: false,
+      collectionData: [],
+      collectionLog: [],
+      collectionTotal: 1,
+      collectionPage: 1,
+      collectionUpdate: false,
+      collectionOrderCode: '',
+      collectionKeyword: '',
+      collectionDate: [],
+      collectionUser: '',
+      paymentFlag: false,
+      paymentData: [],
+      paymentLog: [],
+      paymentTotal: 1,
+      paymentPage: 1,
+      paymentUpdate: false,
+      paymentOrderCode: '',
+      paymentKeyword: '',
+      paymentDate: [],
+      paymentUser: '',
+      deductFlag: false,
+      deductData: [],
+      deductLog: [],
+      deductTotal: 1,
+      deductPage: 1,
+      deductUpdate: false,
+      deductOrderCode: '',
+      deductKeyword: '',
+      deductDate: [],
+      deductUser: '',
       clientFinancial: {
         total_collect_price: 0,
         total_deduct_price: 0,
@@ -300,12 +728,13 @@ export default Vue.extend({
           errVal: '0'
         },
         {
-          key: '',
-          name: '流程进度',
+          key: 'status',
+          name: '订单状态',
           ifShow: true,
           ifLock: false,
-          index: 6,
-          specialForOrderPrcess: 'order'
+          index: 7,
+          filterArr: ['', '已创建', '进行中', '已完成', '已结算', '已逾期', '已取消'],
+          classArr: ['', 'orange', 'blue', 'green', 'green', 'red', 'gray']
         },
         {
           key: 'group_name',
@@ -327,36 +756,82 @@ export default Vue.extend({
           name: '收款',
           class: 'blue',
           fn: (item: any) => {
-            //  this.
+            // @ts-ignore
+            this.goCollection([item])
           }
         },
         {
           name: '开票',
           class: 'orange',
           fn: (item: any) => {
-            //  this.
+            // @ts-ignore
+            this.goPayment([item])
           }
         },
         {
           name: '扣款',
           class: 'red',
           fn: (item: any) => {
-            //  this.
-          }
-        },
-        {
-          name: '勾选',
-          class: 'blue',
-          fn: (item: any) => {
-            //  this.
+            // @ts-ignore
+            this.goDeduct([item])
           }
         }
       ],
       orderCheckList: [],
       orderList: [],
       orderLoading: true,
-      order_page: 1,
-      order_total: 1
+      orderPage: 1,
+      orderTotal: 1,
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }
+        ]
+      },
+      keyword: '',
+      contacts_id: '',
+      contactsList: [],
+      client_id: [],
+      group_id: '',
+      user_id: '',
+      type: 'null',
+      status: 'null',
+      settle_unit: '',
+      date: [],
+      unitArr: moneyArr
+    }
+  },
+  computed: {
+    userList() {
+      return this.$store.state.api.user.arr
+    },
+    groupList() {
+      return this.$store.state.api.group.arr
     }
   },
   methods: {
@@ -366,10 +841,48 @@ export default Vue.extend({
           id: Number(this.$route.query.id)
         })
         .then((res) => {
-          console.log(res)
           this.clientFinancial = res.data.data
         })
       this.getOrderList()
+      this.getCollectionLogList()
+      this.getPaymentLogList()
+      this.getDeductList()
+    },
+    getContacts() {
+      client
+        .detail({
+          id: Number(this.$route.query.id)
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.contactsList = res.data.data.contacts_data
+          }
+        })
+    },
+    reset() {
+      this.$confirm('是否重置所有筛选条件?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.client_id = []
+          this.keyword = ''
+          this.user_id = ''
+          this.group_id = ''
+          this.date = []
+          this.type = 'null'
+          this.status = 'null'
+          this.contacts_id = ''
+          this.limit = 10
+          this.getOrderList()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消重置'
+          })
+        })
     },
     getOrderList() {
       this.orderLoading = true
@@ -377,28 +890,117 @@ export default Vue.extend({
         .list({
           client_id: this.$route.query.id,
           keyword: '',
-          page: this.order_page,
+          page: this.orderPage,
           limit: 10,
-          // is_check: this.status,
-          // status: this.type,
-          start_time: '',
-          end_time: '',
-          user_id: '',
-          group_id: '',
-          contacts_id: ''
+          is_check: this.status,
+          status: this.type,
+          start_time: this.date.length > 0 ? this.date[0] : '',
+          end_time: this.date.length > 0 ? this.date[1] : '',
+          user_id: this.user_id,
+          group_id: this.group_id,
+          contacts_id: this.contacts_id,
+          settle_unit: this.settle_unit
         })
         .then((res) => {
           if (res.data.status) {
             this.orderList = res.data.data.items
-            this.order_total = res.data.data.total
+            this.orderTotal = res.data.data.total
             this.orderLoading = false
           }
           this.orderLoading = false
         })
+    },
+    getCollectionLogList() {
+      collection
+        .list({
+          order_id: '',
+          client_id: this.$route.query.id as string,
+          order_code: this.collectionOrderCode,
+          code: this.collectionKeyword,
+          start_time: this.collectionDate.length > 1 ? this.collectionDate[0] : '',
+          end_time: this.collectionDate.length > 1 ? this.collectionDate[1] : '',
+          user_id: this.collectionUser,
+          page: this.collectionPage,
+          limit: 5
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.collectionLog = res.data.data.items
+            this.collectionTotal = res.data.data.total
+          }
+        })
+    },
+    goCollection(data: any[], update?: boolean) {
+      this.collectionUpdate = update
+      this.collectionData = data
+      this.collectionFlag = true
+    },
+    getPaymentLogList() {
+      payment
+        .list({
+          order_id: '',
+          client_id: this.$route.query.id as string,
+          order_code: this.paymentOrderCode,
+          code: this.paymentKeyword,
+          start_time: this.paymentDate.length > 1 ? this.paymentDate[0] : '',
+          end_time: this.paymentDate.length > 1 ? this.paymentDate[1] : '',
+          user_id: this.paymentUser,
+          page: this.collectionPage,
+          limit: 5
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.paymentLog = res.data.data.items
+            this.paymentTotal = res.data.data.total
+          }
+        })
+    },
+    goPayment(data: any[], update?: boolean) {
+      this.paymentUpdate = update
+      this.paymentData = data
+      this.paymentFlag = true
+    },
+    getDeductList() {
+      deduct
+        .list({
+          order_id: '',
+          client_id: this.$route.query.id as string,
+          order_code: this.deductOrderCode,
+          code: this.deductKeyword,
+          start_time: this.deductDate.length > 1 ? this.deductDate[0] : '',
+          end_time: this.deductDate.length > 1 ? this.deductDate[1] : '',
+          user_id: this.deductUser,
+          page: this.deductPage,
+          limit: 5
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.deductLog = res.data.data.items
+            this.deductTotal = res.data.data.total
+          }
+        })
+    },
+    goDeduct(data: any[], update?: boolean) {
+      this.deductUpdate = update
+      this.deductData = data
+      this.deductFlag = true
     }
   },
   mounted() {
     this.init()
+    this.getContacts()
+    this.$checkCommonInfo([
+      {
+        checkWhich: 'api/group',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getGroupAsync'
+      },
+      {
+        checkWhich: 'api/user',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getUserAsync'
+      }
+    ])
   }
 })
 </script>

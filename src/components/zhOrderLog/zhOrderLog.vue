@@ -101,10 +101,7 @@
                       <div class="tcol">-</div>
                       <div class="tcol oprCtn"
                         style="justify-content:start">
-                        <span class="blue opr"
-                          @click="$openUrl(item.plan_id?
-                          ('/materialManage/detail?id='+item.plan_id):('/materialManage/detail?id='+item.sup_id+'&supFlag=true')
-                          )">添加</span>
+                        <span class="gray opr">暂无操作</span>
                       </div>
                     </div>
                   </div>
@@ -134,10 +131,7 @@
                       <div class="tcol">-</div>
                       <div class="tcol oprCtn"
                         style="justify-content:start">
-                        <span class="blue opr"
-                          @click="$openUrl(item.plan_id?
-                          ('/materialManage/detail?id='+item.plan_id):('/materialManage/detail?id='+item.sup_id+'&supFlag=true')
-                          )">添加</span>
+                        <span class="gray opr">暂无操作</span>
                       </div>
                     </div>
                   </div>
@@ -167,10 +161,7 @@
                       <div class="tcol">-</div>
                       <div class="tcol oprCtn"
                         style="justify-content:start">
-                        <span class="blue opr"
-                          @click="$openUrl(item.plan_id?
-                          ('/materialManage/detail?id='+item.plan_id):('/materialManage/detail?id='+item.sup_id+'&supFlag=true')
-                          )">添加</span>
+                        <span class="gray opr">暂无操作</span>
                       </div>
                     </div>
                   </div>

@@ -110,6 +110,7 @@ declare module 'vue/types/vue' {
     $getsessionStorage(name: string): string
     $openUrl(url: string): void
     $initEditor(item: any, index?: number): void
+    $debounce(val: string, timer: any, fn: Function, time?: number): void
   }
 }
 new Vue({

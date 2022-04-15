@@ -1,10 +1,9 @@
 <template>
-  <div class="zhCollection popup"
+  <div class="zhPayment popup"
     v-show="show">
     <div class="main">
       <div class="titleCtn">
-        <div class="text">{{type|filterType}}收款{{update?'修改':''}}
-        </div>
+        <div class="text">{{type|filterType}}开票{{update?'修改':''}}</div>
         <div class="closeCtn"
           @click="close">
           <i class="el-icon-close"></i>
@@ -14,35 +13,34 @@
         <div class="row">
           <div class="info">
             <el-input disabled
-              placeholder="收款单位"
+              placeholder="开票单位"
               v-model="client_name">
-              <template slot="prepend">收款单位</template>
+              <template slot="prepend">开票单位</template>
             </el-input>
           </div>
         </div>
-        <div v-for="(item,index) in collectionInfo.data"
+        <div v-for="(item,index) in paymentInfo.data"
           :key="index">
           <div class="blue"
-            style="margin-left:6px">收款单据{{index+1}}</div>
+            style="margin-left:6px">开票单据{{index+1}}</div>
           <div class="row">
             <div class="info">
               <el-input disabled
-                placeholder="无单据收款"
+                placeholder="无单据开票"
                 v-model="item.doc_code">
               </el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-date-picker placeholder="收款日期"
-                v-model="item.complete_time">
-                <template slot="prepend">收款日期</template>
-              </el-date-picker>
+              <el-input placeholder="开票号码"
+                v-model="item.invoice_code">
+              </el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input placeholder="收款金额(必填)"
+              <el-input placeholder="开票金额(必填)"
                 v-model="item.price">
                 <template slot="append">元</template>
               </el-input>
@@ -62,7 +60,7 @@
           @click="close">取消</span>
         <span class="btn"
           :class="{'backHoverBlue':!update,'backHoverOrange':update}"
-          @click="saveCollection">{{update?'修改':'确认'}}</span>
+          @click="savePayment">{{update?'修改':'确认'}}</span>
       </div>
     </div>
   </div>
@@ -70,8 +68,8 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { collection } from '@/assets/js/api'
-interface CollectionInfo {
+import { payment } from '@/assets/js/api'
+interface paymentInfo {
   id?: string
   order_id: number | string
   doc_type: number
@@ -80,7 +78,7 @@ interface CollectionInfo {
     doc_code: string
     rel_doc_id: number | string
     desc: string
-    complete_time: string
+    invoice_code: string
     price: string
   }>
 }
@@ -130,11 +128,11 @@ export default Vue.extend({
     }
   },
   data(): {
-    collectionInfo: CollectionInfo
+    paymentInfo: paymentInfo
     [propName: string]: any
   } {
     return {
-      collectionInfo: {
+      paymentInfo: {
         order_id: '',
         doc_type: 0,
         client_id: '',
@@ -144,7 +142,7 @@ export default Vue.extend({
             rel_doc_id: '',
             price: '',
             desc: '',
-            complete_time: this.$getDate(new Date())
+            invoice_code: ''
           }
         ]
       }
@@ -172,35 +170,35 @@ export default Vue.extend({
     show(val) {
       if (val) {
         this.reset()
-        this.collectionInfo.doc_type = this.type
+        this.paymentInfo.doc_type = this.type
         if (this.update) {
           // @ts-ignore
-          this.collectionInfo.order_id = this.order_id || this.data[0].order_id
+          this.paymentInfo.order_id = this.order_id || this.data[0].order_id
           // @ts-ignore
-          this.collectionInfo.client_id = this.client_id || this.data[0].client_id
+          this.paymentInfo.client_id = this.client_id || this.data[0].client_id
         } else {
-          this.collectionInfo.order_id = this.order_id
-          this.collectionInfo.client_id = this.client_id
+          this.paymentInfo.order_id = this.order_id
+          this.paymentInfo.client_id = this.client_id
         }
         if (this.data && this.data.length > 0) {
-          this.collectionInfo.data = this.data.map((item: any) => {
+          this.paymentInfo.data = this.data.map((item: any) => {
             return {
               id: this.update ? item.id : '',
               doc_code: this.update ? item.rel_doc_code : item.code,
               rel_doc_id: this.update ? item.rel_doc_id : item.id,
               price: this.update ? item.price : '',
               desc: this.update ? item.desc : '',
-              complete_time: this.update ? item.complete_time : this.$getDate(new Date())
+              invoice_code: this.update ? item.invoice_code : ''
             }
           })
         } else {
-          this.collectionInfo.data = [
+          this.paymentInfo.data = [
             {
               doc_code: '',
               rel_doc_id: '',
               price: '',
               desc: '',
-              complete_time: this.$getDate(new Date())
+              invoice_code: ''
             }
           ]
         }
@@ -212,7 +210,7 @@ export default Vue.extend({
       this.$emit('close')
     },
     reset() {
-      this.collectionInfo = {
+      this.paymentInfo = {
         order_id: '',
         doc_type: 0,
         client_id: '',
@@ -222,24 +220,24 @@ export default Vue.extend({
             rel_doc_id: '',
             price: '',
             desc: '',
-            complete_time: ''
+            invoice_code: ''
           }
         ]
       }
     },
-    saveCollection() {
-      const formCheck = this.collectionInfo.data.some((item) => {
+    savePayment() {
+      const formCheck = this.paymentInfo.data.some((item) => {
         return this.$formCheck(item, [
           {
             key: 'price',
-            errMsg: '请输入收款金额'
+            errMsg: '请输入开票金额'
           }
         ])
       })
       if (!formCheck) {
-        collection.create(this.collectionInfo).then((res) => {
+        payment.create(this.paymentInfo).then((res) => {
           if (res.data.status) {
-            this.$message.success(this.update ? '修改成功' : '收款成功')
+            this.$message.success('开票成功')
             this.$emit('afterCollection')
             this.$emit('close')
           }
@@ -251,5 +249,5 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import './zhCollection.less';
+@import './zhPayment.less';
 </style>

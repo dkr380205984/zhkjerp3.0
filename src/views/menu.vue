@@ -167,12 +167,12 @@ export default Vue.extend({
             icon: 'icon-xitongdanjuguanli',
             url: '/billingManagement/rawMaterialPlan?page=1'
           },
-          // {
-          //   name: '财务结算',
-          //   id: 22,
-          //   icon: 'icon-chexiaodanguanli',
-          //   url: '/settlement/collectionList?page=1&status='
-          // }
+          {
+            name: '财务结算',
+            id: 22,
+            icon: 'icon-chexiaodanguanli',
+            url: '/settlement/collectionList?page=1&status='
+          }
         ]
       }
     }

@@ -1,14 +1,16 @@
 @import '../common.less';
 @import '../edit.less';
 @import '../bottomBar.less';
-#quotedPriceCreate{
-  .lineInfo{
+
+#quotedPriceCreate {
+  .lineInfo {
     position: relative;
     height: 1px;
     background: @borderColor;
     margin: 20px 0;
     color: @font65;
-    .text{
+
+    .text {
       transform: translateY(-50%);
       left: 32px;
       position: absolute;
@@ -18,7 +20,8 @@
       padding: 0 8px;
       color: @blue;
     }
-    .deleteIcon{
+
+    .deleteIcon {
       transform: translateY(-50%);
       right: 32px;
       position: absolute;
@@ -28,8 +31,56 @@
       background: #FFF1F0;
       font-size: @fontMiddle;
       line-height: 24px;
-      padding:0 8px;
+      padding: 0 8px;
       border-radius: 4px;
+      z-index: 99;
+
+      &.blue {
+        color: @blue;
+      }
+
+      &:hover {
+        .printInfo {
+          display: flex;
+        }
+      }
+    }
+
+    .printInfo {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 50%;
+      transform: translate(-50%, 33px);
+      width: 226px;
+      background: #fff;
+      z-index: 99;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgb(0, 0, 0, .2);
+      font-size: 12px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px;
+      box-sizing: border-box;
+      color: #666;
+
+      .items {
+        width: 100%;
+        margin-bottom: 16px;
+        line-height: 1em;
+        min-height: 0;
+        display: flex;
+        justify-content: flex-start;
+
+        .label {
+          width: 3em;
+          margin-right: 1em;
+          position: static;
+          width: auto;
+          white-space: nowrap;
+        }
+      }
     }
   }
 }

@@ -12,6 +12,7 @@ export interface MaterialSupplementInfo {
   client_id: string | number // 补纱单位
   desc: string
   info_data: Array<{
+    yarn_type?: 1 | 2
     check?: boolean
     id?: string | number
     material_id: string | number

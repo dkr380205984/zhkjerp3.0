@@ -6,101 +6,103 @@
       <div class="titleCtn">
         <div class="title">发货信息</div>
       </div>
-      <div :class="itemBatchIndex===0?'detailCtn':'detailCtn noPadTop'"
-        v-for="(itemBatch,itemBatchIndex) in orderInfo.time_data[0].batch_data"
-        :key="itemBatch.id">
-        <div class="tableCtn noPadBtm"
-          style="padding-left:0;padding-right:0">
-          <div class="thead">
-            <div class="trow">
-              <div class="tcol"
-                style="flex:0.72">批次序号</div>
-              <div class="tcol">发货时间</div>
-              <div class="tcol noPad"
-                style="flex:8.7">
-                <div class="trow">
-                  <div class="tcol">产品品类</div>
-                  <div class="tcol noPad"
-                    style="flex:3">
-                    <div class="trow">
-                      <div class="tcol">尺码颜色</div>
-                      <div class="tcol">计划发货数量</div>
-                      <div class="tcol">实际发货数量</div>
+      <div v-for="itemOrder in orderInfo"
+        :key="itemOrder.id">
+        <div :class="itemBatchIndex===0?'detailCtn':'detailCtn noPadTop'"
+          v-for="(itemBatch,itemBatchIndex) in itemOrder.time_data[0].batch_data"
+          :key="itemBatch.id">
+          <div class="tableCtn noPadBtm"
+            style="padding-left:0;padding-right:0">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol">订单/批次</div>
+                <div class="tcol">发货时间</div>
+                <div class="tcol noPad"
+                  style="flex:4.7">
+                  <div class="trow">
+                    <div class="tcol">产品品类</div>
+                    <div class="tcol noPad"
+                      style="flex:3">
+                      <div class="trow">
+                        <div class="tcol">尺码颜色</div>
+                        <div class="tcol">计划发货数量</div>
+                        <div class="tcol">实际发货数量</div>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <div class="tcol">箱数</div>
+                <div class="tcol">总毛重kg</div>
+                <div class="tcol">总净重kg</div>
+                <div class="tcol">总体积m³</div>
               </div>
-              <div class="tcol">箱数</div>
-              <div class="tcol">总毛重kg</div>
-              <div class="tcol">总净重kg</div>
-              <div class="tcol">总体积m³</div>
             </div>
-          </div>
-          <div class="tbody">
-            <div class="trow">
-              <div class="tcol"
-                style="flex:0.72">
-                <span>第{{itemBatch.batch_number}}批</span>
-              </div>
-              <div class="tcol">
-                <span class="green">{{itemBatch.delivery_time}}</span>
-              </div>
-              <div class="tcol noPad"
-                style="flex:8.7">
-                <div class="trow"
-                  v-for="itemPro in itemBatch.product_data"
-                  :key="itemPro.id">
-                  <div class="tcol">
-                    <span>{{itemPro.product_code||itemPro.system_code||'无编号'}}</span>
-                    <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
-                  </div>
-                  <div class="tcol noPad"
-                    style="flex:3">
-                    <div class="trow"
-                      v-for="(itemChild,indexChild) in itemPro.product_info"
-                      :key="indexChild">
-                      <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                      <div class="tcol">{{itemChild.number}}</div>
-                      <div class="tcol">
-                        <div class="elCtn">
-                          <el-input v-model="itemChild.real_number"
-                            placeholder="实际发货数量"></el-input>
+            <div class="tbody">
+              <div class="trow">
+                <div class="tcol">
+                  <span>{{itemOrder.code}}</span>
+                  <span>第{{itemBatch.batch_number}}批</span>
+                </div>
+                <div class="tcol">
+                  <span class="green">{{itemBatch.delivery_time}}</span>
+                </div>
+                <div class="tcol noPad"
+                  style="flex:4.7">
+                  <div class="trow"
+                    v-for="itemPro in itemBatch.product_data"
+                    :key="itemPro.id">
+                    <div class="tcol">
+                      <span>{{itemPro.product_code||itemPro.system_code||'无编号'}}</span>
+                      <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
+                    </div>
+                    <div class="tcol noPad"
+                      style="flex:3">
+                      <div class="trow"
+                        v-for="(itemChild,indexChild) in itemPro.product_info"
+                        :key="indexChild">
+                        <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
+                        <div class="tcol">{{itemChild.number}}</div>
+                        <div class="tcol">
+                          <div class="elCtn">
+                            <el-input v-model="itemChild.real_number"
+                              placeholder="实际发货数量"></el-input>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="tcol">
-                <div class="elCtn">
-                  <el-input @input="computedEverything"
-                    v-model="itemBatch.total_box_count"
-                    placeholder="总箱数">
-                  </el-input>
+                <div class="tcol">
+                  <div class="elCtn">
+                    <el-input @input="computedEverything"
+                      v-model="itemBatch.total_box_count"
+                      placeholder="总箱数">
+                    </el-input>
+                  </div>
                 </div>
-              </div>
-              <div class="tcol">
-                <div class="elCtn">
-                  <el-input @input="computedEverything"
-                    v-model="itemBatch.total_gross_weight"
-                    placeholder="总毛重">
-                  </el-input>
+                <div class="tcol">
+                  <div class="elCtn">
+                    <el-input @input="computedEverything"
+                      v-model="itemBatch.total_gross_weight"
+                      placeholder="总毛重">
+                    </el-input>
+                  </div>
                 </div>
-              </div>
-              <div class="tcol">
-                <div class="elCtn">
-                  <el-input @input="computedEverything"
-                    v-model="itemBatch.total_net_weight"
-                    placeholder="总净重">
-                  </el-input>
+                <div class="tcol">
+                  <div class="elCtn">
+                    <el-input @input="computedEverything"
+                      v-model="itemBatch.total_net_weight"
+                      placeholder="总净重">
+                    </el-input>
+                  </div>
                 </div>
-              </div>
-              <div class="tcol">
-                <div class="elCtn">
-                  <el-input @input="computedEverything"
-                    v-model="itemBatch.total_bulk"
-                    placeholder="总体积">
-                  </el-input>
+                <div class="tcol">
+                  <div class="elCtn">
+                    <el-input @input="computedEverything"
+                      v-model="itemBatch.total_bulk"
+                      placeholder="总体积">
+                    </el-input>
+                  </div>
                 </div>
               </div>
             </div>
@@ -142,10 +144,14 @@
               </el-tooltip>
             </div>
             <div class="info elCtn">
-              <el-cascader v-model="boxInfo.tree_data"
+              <el-cascader v-if="$route.query.id"
+                v-model="boxInfo.tree_data"
                 placeholder="请选择运输单位"
                 @change="(ev)=>{boxInfo.client_id=ev[2]}"
                 :options="boxClientList"></el-cascader>
+              <el-input v-else
+                v-model="boxInfo.client_name"
+                disabled></el-input>
             </div>
           </div>
           <div class="col"
@@ -164,7 +170,6 @@
           <div class="col">
             <div class="label">
               <span class="text">运输地址</span>
-              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-autocomplete class="inline-input"
@@ -289,8 +294,9 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverBlue"
-            @click="saveBox">提交</div>
+          <div class="btn "
+            :class="{'backHoverBlue':$route.query.id,'backHoverOrange':$route.query.boxId}"
+            @click="saveBox">{{$route.query.id?'提交':'修改'}}</div>
         </div>
       </div>
     </div>
@@ -308,68 +314,70 @@ interface OrderDetail extends OrderInfo {
 }
 export default Vue.extend({
   data(): {
-    orderInfo: OrderDetail
+    orderInfo: OrderDetail[]
     boxInfo: BoxInfo
     [propName: string]: any
   } {
     return {
       loading: true,
-      orderInfo: {
-        id: null,
-        client_id: '',
-        group_id: '',
-        contacts_id: '',
-        public_files: [],
-        private_files: [],
-        settle_tax: '', // 订单用无用字段
-        settle_unit: '', // 订单用无用字段
-        order_type: 1,
-        code: '',
-        desc: '',
-        time_data: [
-          {
-            id: '',
-            order_time: '',
-            order_type_id: '',
-            complete_time: '',
-            is_draft: 2,
-            total_style: '',
-            total_number: '',
-            total_price: '',
-            is_urgent: 2,
-            batch_data: [
-              {
-                id: '',
-                batch_number: 1,
-                batch_title: '',
-                batch_type: '',
-                delivery_time: '',
-                is_urgent: 2,
-                is_draft: 2,
-                total_style: '',
-                total_number: '',
-                total_price: '',
-                desc: '',
-                product_data: [
-                  {
-                    product_id: '',
-                    size_color_list: [], // 用于下拉框选择尺码颜色
-                    product_info: [
-                      {
-                        size_color: '', // 用于下拉框选择尺码颜色
-                        size_id: '',
-                        color_id: '',
-                        number: '',
-                        price: ''
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
+      orderInfo: [
+        {
+          id: null,
+          client_id: '',
+          group_id: '',
+          contacts_id: '',
+          public_files: [],
+          private_files: [],
+          settle_tax: '', // 订单用无用字段
+          settle_unit: '', // 订单用无用字段
+          order_type: 1,
+          code: '',
+          desc: '',
+          time_data: [
+            {
+              id: '',
+              order_time: '',
+              order_type_id: '',
+              complete_time: '',
+              is_draft: 2,
+              total_style: '',
+              total_number: '',
+              total_price: '',
+              is_urgent: 2,
+              batch_data: [
+                {
+                  id: '',
+                  batch_number: 1,
+                  batch_title: '',
+                  batch_type: '',
+                  delivery_time: '',
+                  is_urgent: 2,
+                  is_draft: 2,
+                  total_style: '',
+                  total_number: '',
+                  total_price: '',
+                  desc: '',
+                  product_data: [
+                    {
+                      product_id: '',
+                      size_color_list: [], // 用于下拉框选择尺码颜色
+                      product_info: [
+                        {
+                          size_color: '', // 用于下拉框选择尺码颜色
+                          size_id: '',
+                          color_id: '',
+                          number: '',
+                          price: ''
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
       boxInfo: {
         rel_plan: [],
         client_id: '',
@@ -421,17 +429,19 @@ export default Vue.extend({
       cb(results)
     },
     getCmpData() {
-      this.boxInfo.order_transport_info = JSON.stringify(this.orderInfo.time_data[0])
+      this.boxInfo.order_transport_info = JSON.stringify(this.orderInfo)
       this.boxInfo.transport_number_data = []
-      this.orderInfo.time_data[0].batch_data.forEach((item) => {
-        item.product_data.forEach((itemPro) => {
-          itemPro.product_info.forEach((itemChild) => {
-            if (itemChild.real_number) {
-              this.boxInfo.transport_number_data.push({
-                order_product_info_id: itemChild.id as number,
-                transport_number: itemChild.real_number as string
-              })
-            }
+      this.orderInfo.forEach((itemOrder) => {
+        itemOrder.time_data[0].batch_data.forEach((item) => {
+          item.product_data.forEach((itemPro) => {
+            itemPro.product_info.forEach((itemChild) => {
+              if (itemChild.real_number) {
+                this.boxInfo.transport_number_data.push({
+                  order_product_info_id: itemChild.id as number,
+                  transport_number: itemChild.real_number as string
+                })
+              }
+            })
           })
         })
       })
@@ -445,10 +455,6 @@ export default Vue.extend({
         {
           key: 'city',
           errMsg: '请输入运输城市'
-        },
-        {
-          key: 'address',
-          errMsg: '请输入运输地址'
         },
         {
           key: 'total_price',
@@ -484,13 +490,29 @@ export default Vue.extend({
       }
     },
     computedEverything() {
-      const totalData = this.orderInfo.time_data[0].batch_data.reduce(
-        (total, cur: any) => {
+      const totalData = this.orderInfo.reduce(
+        (totalOrder, curOrder) => {
           return {
-            total_box: Number(cur.total_box_count) + total.total_box,
-            total_gross_weight: Number(cur.total_gross_weight) + total.total_gross_weight,
-            total_net_weight: Number(cur.total_net_weight) + total.total_net_weight,
-            total_bulk: Number(cur.total_bulk) + total.total_bulk
+            total_box:
+              totalOrder.total_box +
+              curOrder.time_data[0].batch_data.reduce((total, cur: any) => {
+                return Number(cur.total_box_count) + total
+              }, 0),
+            total_gross_weight:
+              totalOrder.total_gross_weight +
+              curOrder.time_data[0].batch_data.reduce((total, cur: any) => {
+                return Number(cur.total_net_weight) + total
+              }, 0),
+            total_net_weight:
+              totalOrder.total_net_weight +
+              curOrder.time_data[0].batch_data.reduce((total, cur: any) => {
+                return Number(cur.total_box_count) + total
+              }, 0),
+            total_bulk:
+              totalOrder.total_bulk +
+              curOrder.time_data[0].batch_data.reduce((total, cur: any) => {
+                return Number(cur.total_bulk) + total
+              }, 0)
           }
         },
         {
@@ -517,27 +539,45 @@ export default Vue.extend({
         getInfoApi: 'getClientTypeAsync'
       }
     ])
-    order
-      .detail({
-        id: JSON.parse(this.$route.query.id as string)[0]
-      })
-      .then((res) => {
-        if (res.data.status) {
-          this.orderInfo = res.data.data
-          this.orderInfo.time_data[0].batch_data.forEach((item) => {
-            // @ts-ignore 给批次新增一些发货信息
-            item.total_box_count = ''
-            // @ts-ignore
-            item.total_gross_weight = ''
-            // @ts-ignore
-            item.total_net_weight = ''
-            // @ts-ignore
-            item.total_bulk = ''
-          })
-          this.computedEverything()
-        }
-        this.loading = false
-      })
+    if (this.$route.query.id) {
+      order
+        .detail({
+          id: JSON.parse(this.$route.query.id as string)
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.orderInfo = res.data.data
+            this.orderInfo.forEach((itemOrder) => {
+              itemOrder.time_data[0].batch_data.forEach((item) => {
+                // @ts-ignore 给批次新增一些发货信息
+                item.total_box_count = ''
+                // @ts-ignore
+                item.total_gross_weight = ''
+                // @ts-ignore
+                item.total_net_weight = ''
+                // @ts-ignore
+                item.total_bulk = ''
+              })
+            })
+            this.computedEverything()
+          }
+          this.loading = false
+        })
+    } else {
+      // 修改界面
+      boxManage
+        .detail({
+          id: Number(this.$route.query.boxId)
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.orderInfo = JSON.parse(res.data.data.order_transport_info)
+            this.boxInfo = res.data.data
+            this.computedEverything()
+          }
+          this.loading = false
+        })
+    }
   }
 })
 </script>

@@ -152,10 +152,14 @@
               </el-tooltip>
             </div>
             <div class="info elCtn">
-              <el-cascader v-model="boxInfo.tree_data"
+              <el-cascader v-if="$route.query.id"
+                v-model="boxInfo.tree_data"
                 placeholder="请选择运输单位"
                 @change="(ev)=>{boxInfo.client_id=ev[2]}"
                 :options="boxClientList"></el-cascader>
+              <el-input v-else
+                v-model="boxInfo.client_name"
+                disabled></el-input>
             </div>
           </div>
           <div class="col"
@@ -174,7 +178,6 @@
           <div class="col">
             <div class="label">
               <span class="text">运输地址</span>
-              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-autocomplete class="inline-input"
@@ -299,8 +302,9 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverBlue"
-            @click="saveBox">提交</div>
+          <div class="btn "
+            :class="{'backHoverBlue':$route.query.id,'backHoverOrange':$route.query.boxId}"
+            @click="saveBox">{{$route.query.id?'提交':'修改'}}</div>
         </div>
       </div>
     </div>
@@ -401,10 +405,6 @@ export default Vue.extend({
           errMsg: '请输入运输城市'
         },
         {
-          key: 'address',
-          errMsg: '请输入运输地址'
-        },
-        {
           key: 'total_price',
           errMsg: '请输入运输总价'
         }
@@ -488,55 +488,71 @@ export default Vue.extend({
         getInfoApi: 'getClientTypeAsync'
       }
     ])
-    packManage
-      .detailPlan({
-        id: JSON.parse(this.$route.query.id as string) as number[]
-      })
-      .then((res) => {
-        if (res.data.status) {
-          this.packPlanLog = res.data.data
-          this.packPlanLog.forEach((itemPack) => {
-            itemPack.data.forEach((itemData) => {
-              itemData.total_box_count = itemData.info_data.reduce((total, cur) => {
-                return total + Number(cur.box_count)
-              }, 0)
-              itemData.total_bulk = this.$toFixed(
-                itemData.info_data.reduce((total, cur) => {
-                  return total + Number(cur.total_bulk)
+    if (this.$route.query.id) {
+      packManage
+        .detailPlan({
+          id: JSON.parse(this.$route.query.id as string) as number[]
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.packPlanLog = res.data.data
+            this.packPlanLog.forEach((itemPack) => {
+              itemPack.data.forEach((itemData) => {
+                itemData.total_box_count = itemData.info_data.reduce((total, cur) => {
+                  return total + Number(cur.box_count)
                 }, 0)
-              )
-              itemData.total_gross_weight = this.$toFixed(
-                itemData.info_data.reduce((total, cur) => {
-                  return total + Number(cur.total_gross_weight)
-                }, 0)
-              )
-              itemData.total_net_weight = this.$toFixed(
-                itemData.info_data.reduce((total, cur) => {
-                  return total + Number(cur.total_net_weight)
-                }, 0)
-              )
-              itemData.product_info.forEach((itemPro) => {
-                itemPro.pack_number_all = 0
-                itemData.info_data.forEach((itemInfo) => {
-                  itemInfo.product_info.forEach((itemChild) => {
-                    if (
-                      itemChild.product_id === itemPro.product_id &&
-                      itemChild.size_id === itemPro.size_id &&
-                      itemChild.color_id === itemPro.color_id
-                    ) {
-                      itemPro.pack_number_all =
-                        Number(itemPro.pack_number_all) + Number(itemChild.pack_number) * Number(itemInfo.box_count)
-                    }
+                itemData.total_bulk = this.$toFixed(
+                  itemData.info_data.reduce((total, cur) => {
+                    return total + Number(cur.total_bulk)
+                  }, 0)
+                )
+                itemData.total_gross_weight = this.$toFixed(
+                  itemData.info_data.reduce((total, cur) => {
+                    return total + Number(cur.total_gross_weight)
+                  }, 0)
+                )
+                itemData.total_net_weight = this.$toFixed(
+                  itemData.info_data.reduce((total, cur) => {
+                    return total + Number(cur.total_net_weight)
+                  }, 0)
+                )
+                itemData.product_info.forEach((itemPro) => {
+                  itemPro.pack_number_all = 0
+                  itemData.info_data.forEach((itemInfo) => {
+                    itemInfo.product_info.forEach((itemChild) => {
+                      if (
+                        itemChild.product_id === itemPro.product_id &&
+                        itemChild.size_id === itemPro.size_id &&
+                        itemChild.color_id === itemPro.color_id
+                      ) {
+                        itemPro.pack_number_all =
+                          Number(itemPro.pack_number_all) + Number(itemChild.pack_number) * Number(itemInfo.box_count)
+                      }
+                    })
                   })
                 })
               })
             })
-          })
-          this.computedEverything()
-          console.log(this.packPlanLog)
-        }
-        this.loading = false
-      })
+            this.computedEverything()
+            console.log(this.packPlanLog)
+          }
+          this.loading = false
+        })
+    } else {
+      // 修改界面
+      boxManage
+        .detail({
+          id: Number(this.$route.query.boxId)
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.packPlanLog = res.data.data.rel_plan.map((item: any) => JSON.parse(item.transport_info))
+            this.boxInfo = res.data.data
+            // this.computedEverything()
+          }
+          this.loading = false
+        })
+    }
   }
 })
 </script>

@@ -214,6 +214,7 @@ export default Vue.extend({
     [porpName: string]: any
   } {
     return {
+      timer: '',
       mainLoading: false,
       mainLoading1: false,
       loading: true,

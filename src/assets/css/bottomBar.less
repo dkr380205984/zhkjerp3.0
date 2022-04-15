@@ -1,5 +1,5 @@
 // 底部操作栏
-.bottomFixBar{
+.bottomFixBar {
   position: fixed;
   left: 0;
   right: 0;
@@ -9,71 +9,85 @@
   background: #fff;
   align-items: center;
   z-index: 128;
-  box-shadow:0px -1px 2px rgba(0,0,0,0.03);
-  .main{
+  box-shadow: 0px -1px 2px rgba(0, 0, 0, 0.03);
+
+  .main {
     width: 1366px;
     height: 100%;
     margin: auto;
-    .btnCtn{
+
+    .btnCtn {
       float: right;
       display: flex;
       align-items: center;
       height: 100%;
-      .btn{
+
+      .btn {
         margin-left: 22px;
       }
-      .borderBtn{
+
+      .borderBtn {
         margin-left: 22px;
       }
-      .btnList{
+
+      .btnList {
         position: relative;
         display: inline-block;
         margin-left: 22px;
-        .showButton{
+
+        .showButton {
           height: 32px;
           line-height: 32px;
-          border:1px solid #d9d9d9;
+          border: 1px solid #d9d9d9;
           border-radius: 4px;
           cursor: pointer;
           padding: 0 23px;
           line-height: 32px;
           color: @blue;
-          .el-icon-s-grid{
+
+          .el-icon-s-grid {
             font-size: 18px;
           }
-          .text{
+
+          .text {
             margin-left: 8px;
           }
         }
-        &:hover{
-          border-color:@blue;
-          .showButton{
+
+        &:hover {
+          border-color: @blue;
+
+          .showButton {
             background: @blue;
             color: #fff;
           }
-          .otherInfoCtn{
+
+          .otherInfoCtn {
             display: block;
           }
         }
-        .otherInfoCtn{
+
+        .otherInfoCtn {
           position: absolute;
           bottom: 33px;
           right: 0;
           display: none;
-          .otherInfo{
+
+          .otherInfo {
             padding: 24px 24px 12px 24px;
             margin-bottom: 6px;
             background: #fff;
-            border:1px solid #d9d9d9;
+            border: 1px solid #d9d9d9;
             border-radius: 4px;
             width: 260px;
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
-            .button{
+
+            .button {
               height: 32px;
               line-height: 32px;
-              border:1px solid #d9d9d9;
+              border: 1px solid #d9d9d9;
               border-radius: 4px;
               cursor: pointer;
               width: 120px;
@@ -81,18 +95,21 @@
               line-height: 32px;
               font-size: 16px;
               margin-bottom: 12px;
-              .icon{
+
+              .icon {
                 width: 18px;
                 height: 18px;
                 display: inline-block;
                 background: #fff;
                 vertical-align: middle;
               }
-              .iconfont{
+
+              .iconfont {
                 font-size: 18px;
                 vertical-align: middle;
               }
-              .text{
+
+              .text {
                 vertical-align: middle;
                 margin-left: 8px;
               }
@@ -101,36 +118,43 @@
         }
       }
     }
-    .buttonList{
+
+    .buttonList {
       position: relative;
       display: inline-block;
-      &:hover{
-        .otherInfoCtn{
+
+      &:hover {
+        .otherInfoCtn {
           display: block;
         }
       }
-      .text{
+
+      .text {
         margin-left: 8px;
       }
-      .otherInfoCtn{
+
+      .otherInfoCtn {
         position: absolute;
         bottom: 32px;
         right: 0;
         display: none;
-        .otherInfo{
+
+        .otherInfo {
           padding-bottom: 12px;
           margin-bottom: 6px;
           background: #fff;
-          border:1px solid #d9d9d9;
+          border: 1px solid #d9d9d9;
           border-radius: 4px;
           width: 320px;
           display: flex;
           flex-wrap: wrap;
           justify-content: space-between;
-          .btn{
+
+          .btn {
             margin: 12px 12px 0 12px;
             display: inline-block;
-            .icon{
+
+            .icon {
               width: 18px;
               height: 18px;
               display: inline-block;
@@ -141,27 +165,32 @@
         }
       }
     }
-    .priceCtn{
+
+    .priceCtn {
       float: left;
       display: flex;
       align-items: center;
       height: 100%;
       position: relative;
-      .priceTable{
-        box-shadow:1px 1px 2px rgba(0,0,0,0.03);
+
+      .priceTable {
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
         position: absolute;
         width: 600px;
         height: 400px;
         bottom: 100%;
         z-index: 1;
-        .module{
+
+        .module {
           background: #fff;
           margin-bottom: 0;
           height: 100%;
-          .titleCtn{
+
+          .titleCtn {
             padding: 0 12px;
           }
-          .contentCtn{
+
+          .contentCtn {
             height: 345px;
             overflow: auto;
           }

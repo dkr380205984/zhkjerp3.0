@@ -82,10 +82,10 @@
           <template v-if="itemKey.specialForOrderPrcess === 'order'">
             <div class="processCtn">
               <div class="process"
-                :class="{'green':item.has_quote.status===1,'gray':item.has_quote.status===2}">
+                :class="{'green':item.has_quote.status===1,'gray':item.has_quote.status===2,'orange':item.has_quote.status===3}">
                 <el-tooltip class="item"
                   effect="dark"
-                  :content="'报价单'+(item.has_quote.status===1?('已添加(更新日期:'+item.has_quote.update_time +')'):'未添加')"
+                  :content="'报价单'+(item.has_quote.status!==2?('已添加(更新日期:'+item.has_quote.update_time +')'):'未添加')"
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
@@ -206,10 +206,10 @@
             <div class="processCtn">
               <div class="processCtn">
                 <div class="process"
-                  :class="{'green':item.has_quote.status===1,'gray':item.has_quote.status===2}">
+                  :class="{'green':item.has_quote.status===1,'gray':item.has_quote.status===2,'orange':item.has_quote.status===3}">
                   <el-tooltip class="item"
                     effect="dark"
-                    :content="'报价单'+(item.has_quote.status===1?('已添加(更新日期:'+item.has_quote.update_time +')'):'未添加')"
+                    :content="'报价单'+(item.has_quote.status!==2?('已添加(更新日期:'+item.has_quote.update_time +')'):'未添加')"
                     placement="top">
                     <svg class="iconFont"
                       aria-hidden="true">
@@ -426,16 +426,19 @@ export default Vue.extend({
     handleCheckAllChange(val: any) {
       if (this.isIndeterminate || this.allCheck) {
         this.list.forEach((item: any) => {
-          this.checkedCount.pop()
-        })
-        this.list.forEach((item: any) => {
           item.isCheck = true
-          this.checkedCount.push(2)
+          const index = this.checkedCount.map((item: any) => item.id).indexOf(item.id)
+          if (index === -1) {
+            this.checkedCount.push(item)
+          }
         })
       } else {
         this.list.forEach((item: any) => {
           item.isCheck = false
-          this.checkedCount.pop()
+          const index = this.checkedCount.map((item: any) => item.id).indexOf(item.id)
+          if (index !== -1) {
+            this.checkedCount.splice(index, 1)
+          }
         })
       }
 
@@ -462,6 +465,7 @@ export default Vue.extend({
       } else {
         this.isIndeterminate = true
       }
+      this.$forceUpdate()
       // this.allCheck = this.checkedCount.length === this.list.length;
     }
   }
