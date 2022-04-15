@@ -240,7 +240,11 @@ export default Vue.extend({
         ? this.clientTypeList.find((item: any) => item.id === Number(query.clientType)).public_tag
         : []
     },
-    changeRouter() {
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
+
       this.$router.push(
         '/settlement/collectionList?page=' +
           this.page +
