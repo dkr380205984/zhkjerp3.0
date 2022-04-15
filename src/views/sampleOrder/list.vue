@@ -773,11 +773,11 @@ export default Vue.extend({
             this.option.series[0].data.push(res.data.data[key].completed)
             this.option.series[3].data.push(res.data.data[key].number)
             if (this.option.series[0].length < 4) {
-              this.option.series[2].data.push(0)
-              this.option.series[1].data.push(res.data.data[key].postpone)
-            } else {
               this.option.series[1].data.push(0)
               this.option.series[2].data.push(res.data.data[key].postpone)
+            } else {
+              this.option.series[2].data.push(0)
+              this.option.series[1].data.push(res.data.data[key].postpone)
             }
 
             if (key === new Date().getMonth() + 1 + '-' + new Date().getDate()) {

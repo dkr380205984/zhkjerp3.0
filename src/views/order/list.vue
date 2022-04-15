@@ -783,11 +783,11 @@ export default Vue.extend({
             this.option.series[3].data.push(res.data.data[key].number)
             this.option.series[4].data.push(res.data.data[key].order_number)
             if (this.option.series[0].length < 4) {
-              this.option.series[2].data.push(0)
-              this.option.series[1].data.push(res.data.data[key].postpone)
-            } else {
               this.option.series[1].data.push(0)
               this.option.series[2].data.push(res.data.data[key].postpone)
+            } else {
+              this.option.series[2].data.push(0)
+              this.option.series[1].data.push(res.data.data[key].postpone)
             }
 
             if (key === new Date().getMonth() + 1 + '-' + new Date().getDate()) {
