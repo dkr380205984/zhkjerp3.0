@@ -121,11 +121,14 @@
       <div class="titleCtn">
         <div class="title">物料计划详情</div>
       </div>
+      <el-checkbox v-model="showAll"
+        style="margin:20px 0 0 32px;">页面使用卡顿？尝试关闭部分信息优化速度</el-checkbox>
       <template v-if="materialPlanInfo.type===1">
         <div class="flattenTableCtn">
           <div class="thead">
             <div class="trow">
-              <div class="tcol">产品品类</div>
+              <div class="tcol"
+                style="flex:1.5">产品品类</div>
               <div class="tcol">尺码颜色</div>
               <div class="tcol">产品部位</div>
               <div class="tcol">下单数量</div>
@@ -133,12 +136,15 @@
               <div class="tcol">操作</div>
             </div>
           </div>
-          <div class="tbody">
+          <div class="tbody"
+            style="font-size:14px">
             <div class="trowCtn"
               v-for="(item,index) in materialPlanInfo.material_plan_data"
               :key="index">
               <div class="trow">
-                <div class="tcol">
+                <div class="tcol"
+                  style="padding-left:30px;flex:1.5">
+                  <span class="number">{{index+1}}</span>
                   <span>{{item.product_code || item.system_code}}</span>
                   <span>{{item.category}}/{{item.secondary_category}}</span>
                 </div>
@@ -164,198 +170,207 @@
                     })">新增物料</span>
                   <div class="opr hoverRed"
                     @click="item.info_data=[]">不需要物料</div>
+                  <span class="opr orange"
+                    @click="copyMaterialPlanDataInfoFlag=true;copyMaterialPlanDataInfoIndex=index">复制</span>
+                  <span class="opr green"
+                    v-if="showAll"
+                    @click="item.showChild=!item.showChild;$forceUpdate()">{{item.showChild?'收起':'展开'}}</span>
                 </div>
               </div>
-              <div class="childrenCtn"
-                v-if="item.info_data.length>0">
-                <div class="trow">
-                  <div class="tcol"
-                    style="flex-direction: row;align-items: center;justify-content: start;">计划工序
-                    <el-tooltip class="item"
-                      effect="dark"
-                      content="设置成功后请点击此按钮刷新数据"
-                      placement="top">
-                      <i class="el-icon-refresh hoverGreen"
-                        style="line-height:46px;font-size:18px;margin-left:8px;cursor:pointer"
-                        @click="$checkCommonInfo([{
+              <template v-if="showAll?item.showChild:true">
+                <div class="childrenCtn"
+                  v-if="item.info_data.length>0">
+                  <div class="trow">
+                    <div class="tcol"
+                      style="flex-direction: row;align-items: center;justify-content: start;">计划工序
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="设置成功后请点击此按钮刷新数据"
+                        placement="top">
+                        <i class="el-icon-refresh hoverGreen"
+                          style="line-height:46px;font-size:18px;margin-left:8px;cursor:pointer"
+                          @click="$checkCommonInfo([{
                           checkWhich: 'api/halfProcess',
                           getInfoMethed: 'dispatch',
                           getInfoApi: 'getHalfProcessAsync',
                           forceUpdate:true
                         }])"></i>
-                    </el-tooltip>
-                    <el-tooltip class="item"
-                      effect="dark"
-                      content="添加新工序"
-                      placement="top">
-                      <i class="el-icon-upload hoverOrange"
-                        style="line-height:46px;font-size:18px;cursor:pointer;margin-left:8px"
-                        @click="$openUrl('/setting/?pName=工序设置&cName=半成品加工')"></i>
-                    </el-tooltip>
-                    <el-tooltip class="item"
-                      effect="dark"
-                      content="统一工序"
-                      placement="top">
-                      <svg class="iconFont copyIcon hoverBlue"
-                        aria-hidden="true"
-                        @click="copyInfo(item.info_data,['process_name_arr','process_name','process_type'])">
-                        <use xlink:href='#icon-tongbushuju1'></use>
-                      </svg>
-                    </el-tooltip>
-                  </div>
-                  <div class="tcol"
-                    style="flex-direction: row;align-items: center;justify-content: start;">原料名称
-                    <el-tooltip class="item"
-                      effect="dark"
-                      content="设置成功后请点击此按钮刷新数据"
-                      placement="top">
-                      <i class="el-icon-refresh hoverGreen"
-                        style="line-height:46px;font-size:18px;cursor:pointer;margin-left:8px"
-                        @click="$checkCommonInfo([{
+                      </el-tooltip>
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="添加新工序"
+                        placement="top">
+                        <i class="el-icon-upload hoverOrange"
+                          style="line-height:46px;font-size:18px;cursor:pointer;margin-left:8px"
+                          @click="$openUrl('/setting/?pName=工序设置&cName=半成品加工')"></i>
+                      </el-tooltip>
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一工序"
+                        placement="top">
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true"
+                          @click="copyInfo(item.info_data,['process_name_arr','process_name','process_type'])">
+                          <use xlink:href='#icon-tongbushuju1'></use>
+                        </svg>
+                      </el-tooltip>
+                    </div>
+                    <div class="tcol"
+                      style="flex-direction: row;align-items: center;justify-content: start;">原料名称
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="设置成功后请点击此按钮刷新数据"
+                        placement="top">
+                        <i class="el-icon-refresh hoverGreen"
+                          style="line-height:46px;font-size:18px;cursor:pointer;margin-left:8px"
+                          @click="$checkCommonInfo([{
                         checkWhich: 'api/yarnType',
                         getInfoMethed: 'dispatch',
                         getInfoApi: 'getYarnTypeAsync',
                         forceUpdate:true
                       }])"></i>
-                    </el-tooltip>
-                    <el-tooltip class="item"
-                      effect="dark"
-                      content="添加新原料"
-                      placement="top">
-                      <i class="el-icon-upload hoverOrange"
-                        style="line-height:46px;font-size:18px;cursor:pointer;margin-left:8px"
-                        @click="$openUrl('/setting/?pName=物料设置&cName=纱线原料')"></i>
-                    </el-tooltip>
-                    <el-tooltip class="item"
-                      effect="dark"
-                      content="统一原料"
-                      placement="top">
-                      <svg class="iconFont copyIcon hoverBlue"
-                        aria-hidden="true"
-                        @click="copyInfo(item.info_data,['tree_data','material_name','material_id'])">
-                        <use xlink:href='#icon-tongbushuju1'></use>
-                      </svg>
-                    </el-tooltip>
-                  </div>
-                  <div class="tcol">原料颜色
-                    <el-tooltip class="item"
-                      effect="dark"
-                      content="统一颜色"
-                      placement="top">
-                      <svg class="iconFont copyIcon hoverBlue"
-                        aria-hidden="true"
-                        @click="copyInfo(item.info_data,['material_color'])">
-                        <use xlink:href='#icon-tongbushuju1'></use>
-                      </svg>
-                    </el-tooltip>
-                  </div>
-                  <div class="tcol">单个数量</div>
-                  <div class="tcol">所需数量</div>
-                  <div class="tcol">原料损耗
-                    <el-tooltip class="item"
-                      effect="dark"
-                      content="统一损耗"
-                      placement="top">
-                      <svg class="iconFont copyIcon hoverBlue"
-                        aria-hidden="true"
-                        @click="copyInfo(item.info_data,['loss']);changeAllLoss(item.info_data)">
-                        <use xlink:href='#icon-tongbushuju1'></use>
-                      </svg>
-                    </el-tooltip>
-                  </div>
-                  <div class="tcol">最终数量
-                    <el-tooltip class="item"
-                      effect="dark"
-                      content="统一数量"
-                      placement="top">
-                      <svg class="iconFont copyIcon hoverBlue"
-                        aria-hidden="true"
-                        @click="copyInfo(item.info_data,['final_number','unit'])">
-                        <use xlink:href='#icon-tongbushuju1'></use>
-                      </svg>
-                    </el-tooltip>
-                  </div>
-                  <div class="tcol">操作</div>
-                </div>
-                <div class="trow"
-                  v-for="(itemChild,indexChild) in item.info_data"
-                  :key="indexChild">
-                  <div class="tcol">
-                    <div class="elCtn">
-                      <el-cascader placeholder="选择工序"
-                        :show-all-levels="false"
-                        v-model="itemChild.process_name_arr"
-                        :options="processList"
-                        @change="(ev)=>{itemChild.process_type=ev[0];itemChild.process_name=ev[1]}"
-                        filterable
-                        clearable>
-                      </el-cascader>
+                      </el-tooltip>
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="添加新原料"
+                        placement="top">
+                        <i class="el-icon-upload hoverOrange"
+                          style="line-height:46px;font-size:18px;cursor:pointer;margin-left:8px"
+                          @click="$openUrl('/setting/?pName=物料设置&cName=纱线原料')"></i>
+                      </el-tooltip>
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一原料"
+                        placement="top">
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true"
+                          @click="copyInfo(item.info_data,['tree_data','material_name','material_id'])">
+                          <use xlink:href='#icon-tongbushuju1'></use>
+                        </svg>
+                      </el-tooltip>
                     </div>
-                  </div>
-                  <div class="tcol">
-                    <div class="elCtn"
-                      v-if="itemChild.tree_data">
-                      <el-cascader placeholder="物料名称"
-                        :show-all-levels="false"
-                        v-model="itemChild.tree_data"
-                        :options="yarnTypeList"
-                        filterable
-                        @change="getMatId($event,itemChild)"
-                        clearable>
-                      </el-cascader>
+                    <div class="tcol">原料颜色
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一颜色"
+                        placement="top">
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true"
+                          @click="copyInfo(item.info_data,['material_color'])">
+                          <use xlink:href='#icon-tongbushuju1'></use>
+                        </svg>
+                      </el-tooltip>
                     </div>
-                    <span class="text"
-                      v-else>{{itemChild.material_name}}</span>
-                  </div>
-                  <div class="tcol">
-                    <div class="elCtn">
-                      <el-autocomplete class="inline-input"
-                        v-model="itemChild.material_color"
-                        :fetch-suggestions="searchColor"
-                        placeholder="物料颜色"></el-autocomplete>
+                    <div class="tcol">单个数量</div>
+                    <div class="tcol">所需数量</div>
+                    <div class="tcol">原料损耗
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一损耗"
+                        placement="top">
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true"
+                          @click="copyInfo(item.info_data,['loss']);changeAllLoss(item.info_data)">
+                          <use xlink:href='#icon-tongbushuju1'></use>
+                        </svg>
+                      </el-tooltip>
                     </div>
-                  </div>
-                  <div class="tcol"
-                    :class="itemChild.production_number?'blue':'gray'">
-                    <div class="elCtn">
-                      <el-input v-model="itemChild.production_number"
-                        placeholder="无计划值"
-                        @input="(ev)=>{
-                        itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='g'||itemChild.unit==='kg'?1000:1));
-                        itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)}">
-                        <template slot="append">
-                          {{itemChild.unit==='kg'?'g':itemChild.unit}}
-                        </template>
-                      </el-input>
+                    <div class="tcol">最终数量
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一数量"
+                        placement="top">
+                        <svg class="iconFont copyIcon hoverBlue"
+                          aria-hidden="true"
+                          @click="copyInfo(item.info_data,['final_number','unit'])">
+                          <use xlink:href='#icon-tongbushuju1'></use>
+                        </svg>
+                      </el-tooltip>
                     </div>
+                    <div class="tcol">操作</div>
                   </div>
-                  <div class="tcol">
-                    {{itemChild.need_number}}{{itemChild.unit}}
-                  </div>
-                  <div class="tcol">
-                    <div class="elCtn">
-                      <el-input v-model="itemChild.loss"
-                        placeholder="损耗"
-                        @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number)">
-                        <template slot="append">%</template>
-                      </el-input>
+                  <div class="trow"
+                    v-for="(itemChild,indexChild) in item.info_data"
+                    :key="indexChild">
+                    <div class="tcol">
+                      <div class="elCtn"
+                        style="padding-left:18px">
+                        <span class="number2">{{indexChild+1}}</span>
+                        <el-cascader placeholder="选择工序"
+                          :show-all-levels="false"
+                          v-model="itemChild.process_name_arr"
+                          :options="processList"
+                          @change="(ev)=>{itemChild.process_type=ev[0];itemChild.process_name=ev[1]}"
+                          filterable
+                          clearable>
+                        </el-cascader>
+                      </div>
                     </div>
-                  </div>
-                  <div class="tcol">
-                    <div class="elCtn UnitCtn">
-                      <el-input v-model="itemChild.final_number"
-                        placeholder="数量">
-                        <template slot="append">
-                          <el-input v-model="itemChild.unit"
-                            placeholder="单位"></el-input>
-                        </template>
-                      </el-input>
+                    <div class="tcol">
+                      <div class="elCtn"
+                        v-if="itemChild.tree_data">
+                        <el-cascader placeholder="物料名称"
+                          :show-all-levels="false"
+                          v-model="itemChild.tree_data"
+                          :options="yarnTypeList"
+                          filterable
+                          @change="getMatId($event,itemChild)"
+                          clearable>
+                        </el-cascader>
+                      </div>
+                      <span class="text"
+                        v-else>{{itemChild.material_name}}</span>
                     </div>
-                  </div>
-                  <div class="tcol">
-                    <div class="oprCtn">
-                      <span class="opr blue"
-                        @click="$addItem(item.info_data,{
+                    <div class="tcol">
+                      <div class="elCtn">
+                        <el-autocomplete class="inline-input"
+                          v-model="itemChild.material_color"
+                          :fetch-suggestions="searchColor"
+                          placeholder="物料颜色"></el-autocomplete>
+                      </div>
+                    </div>
+                    <div class="tcol"
+                      :class="itemChild.production_number?'blue':'gray'">
+                      <div class="elCtn">
+                        <el-input v-model="itemChild.production_number"
+                          placeholder="无计划值"
+                          @input="(ev)=>{
+                            itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='g'?1000:1));
+                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)
+                          }">
+                          <template slot="append">
+                            {{itemChild.unit==='kg'?'g':itemChild.unit}}
+                          </template>
+                        </el-input>
+                      </div>
+                    </div>
+                    <div class="tcol">
+                      {{itemChild.need_number}}{{itemChild.unit}}
+                    </div>
+                    <div class="tcol">
+                      <div class="elCtn">
+                        <el-input v-model="itemChild.loss"
+                          placeholder="损耗"
+                          @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number)">
+                          <template slot="append">%</template>
+                        </el-input>
+                      </div>
+                    </div>
+                    <div class="tcol">
+                      <div class="elCtn UnitCtn">
+                        <el-input v-model="itemChild.final_number"
+                          placeholder="数量">
+                          <template slot="append">
+                            <el-input v-model="itemChild.unit"
+                              placeholder="单位"></el-input>
+                          </template>
+                        </el-input>
+                      </div>
+                    </div>
+                    <div class="tcol">
+                      <div class="oprCtn">
+                        <span class="opr blue"
+                          @click="$addItem(item.info_data,{
                           process_name_arr:[],
                           process_name: '',
                           tree_data: [],
@@ -369,8 +384,8 @@
                           final_number: '',
                           unit: 'kg'
                         })">添加</span>
-                      <span class="opr orange"
-                        @click="$addItem(item.info_data,{
+                        <span class="opr orange"
+                          @click="$addItem(item.info_data,{
                           process_name_arr:itemChild.process_name_arr,
                           process_name: itemChild.process_name,
                           tree_data: itemChild.tree_data,
@@ -384,19 +399,20 @@
                           final_number: itemChild.final_number,
                           unit: itemChild.unit
                         })">复制</span>
-                      <span class="opr red"
-                        @click="item.info_data.length>1?$deleteItem(item.info_data,indexChild):$message.error('至少有一项，可以不填')">删除</span>
+                        <span class="opr red"
+                          @click="item.info_data.length>1?$deleteItem(item.info_data,indexChild):$message.error('至少有一项，可以不填')">删除</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="childrenCtn"
-                v-else>
-                <div class="trow">
-                  <div class="tcol gray"
-                    style="text-align: center;">确认不需要物料</div>
+                <div class="childrenCtn"
+                  v-else>
+                  <div class="trow">
+                    <div class="tcol gray"
+                      style="text-align: center;">确认不需要物料</div>
+                  </div>
                 </div>
-              </div>
+              </template>
             </div>
           </div>
         </div>
@@ -405,19 +421,23 @@
         <div class="flattenTableCtn">
           <div class="thead">
             <div class="trow">
-              <div class="tcol">产品品类</div>
+              <div class="tcol"
+                style="flex:1.5">产品品类</div>
               <div class="tcol">产品部位</div>
               <div class="tcol">下单数量</div>
               <div class="tcol">计划生产数量</div>
               <div class="tcol">操作</div>
             </div>
           </div>
-          <div class="tbody">
+          <div class="tbody"
+            style="font-size:14px">
             <div class="trowCtn"
               v-for="(item,index) in materialPlanInfo.material_plan_data"
               :key="index">
               <div class="trow">
-                <div class="tcol">
+                <div class="tcol"
+                  style="padding-left:30px;flex:1.5">
+                  <span class="number">{{index+1}}</span>
                   <span>{{item.product_code || item.system_code}}</span>
                   <span>{{item.category}}/{{item.secondary_category}}</span>
                 </div>
@@ -442,95 +462,104 @@
                     })">新增物料</span>
                   <div class="opr hoverRed"
                     @click="item.info_data=[]">不需要物料</div>
+                  <span class="opr orange"
+                    @click="copyMaterialPlanDataInfoFlag=true;copyMaterialPlanDataInfoIndex=index">复制</span>
+                  <span class="opr green"
+                    v-if="showAll"
+                    @click="item.showChild=!item.showChild;$forceUpdate()">{{item.showChild?'收起':'展开'}}</span>
                 </div>
               </div>
-              <div class="childrenCtn"
-                v-if="item.info_data.length>0">
-                <div class="trow">
-                  <div class="tcol">计划工序</div>
-                  <div class="tcol">原料名称</div>
-                  <div class="tcol">原料颜色</div>
-                  <div class="tcol">单个数量</div>
-                  <div class="tcol">所需数量</div>
-                  <div class="tcol">原料损耗</div>
-                  <div class="tcol">最终数量</div>
-                  <div class="tcol">操作</div>
-                </div>
-                <div class="trow"
-                  v-for="(itemChild,indexChild) in item.info_data"
-                  :key="indexChild">
-                  <div class="tcol">
-                    <div class="elCtn">
-                      <el-cascader placeholder="选择工序"
-                        :show-all-levels="false"
-                        v-model="itemChild.process_name_arr"
-                        :options="processList"
-                        @change="(ev)=>{itemChild.process_type=ev[0];itemChild.process_name=ev[1]}"
-                        filterable
-                        clearable>
-                      </el-cascader>
+              <template v-if="showAll?item.showChild:true">
+                <div class="childrenCtn"
+                  v-if="item.info_data.length>0">
+                  <div class="trow">
+                    <div class="tcol">计划工序</div>
+                    <div class="tcol">原料名称</div>
+                    <div class="tcol">原料颜色</div>
+                    <div class="tcol">单个数量</div>
+                    <div class="tcol">所需数量</div>
+                    <div class="tcol">原料损耗</div>
+                    <div class="tcol">最终数量</div>
+                    <div class="tcol">操作</div>
+                  </div>
+                  <div class="trow"
+                    v-for="(itemChild,indexChild) in item.info_data"
+                    :key="indexChild">
+                    <div class="tcol">
+                      <div class="elCtn"
+                        style="padding-left:18px">
+                        <span class="number2">{{indexChild+1}}</span>
+                        <el-cascader placeholder="选择工序"
+                          :show-all-levels="false"
+                          v-model="itemChild.process_name_arr"
+                          :options="processList"
+                          @change="(ev)=>{itemChild.process_type=ev[0];itemChild.process_name=ev[1]}"
+                          filterable
+                          clearable>
+                        </el-cascader>
+                      </div>
                     </div>
-                  </div>
-                  <div class="tcol">
-                    <div class="elCtn"
-                      v-if="!itemChild.has_plan">
-                      <el-cascader placeholder="物料名称"
-                        :show-all-levels="false"
-                        v-model="itemChild.tree_data"
-                        :options="yarnTypeList"
-                        @change="getMatId($event,itemChild)"
-                        clearable>
-                      </el-cascader>
+                    <div class="tcol">
+                      <div class="elCtn"
+                        v-if="!itemChild.has_plan">
+                        <el-cascader placeholder="物料名称"
+                          :show-all-levels="false"
+                          v-model="itemChild.tree_data"
+                          :options="yarnTypeList"
+                          @change="getMatId($event,itemChild)"
+                          clearable>
+                        </el-cascader>
+                      </div>
+                      <span class="text"
+                        v-else>{{itemChild.material_name}}</span>
                     </div>
-                    <span class="text"
-                      v-else>{{itemChild.material_name}}</span>
-                  </div>
-                  <div class="tcol">
-                    <div class="elCtn">
-                      <el-autocomplete class="inline-input"
-                        v-model="itemChild.material_color"
-                        :fetch-suggestions="searchColor"
-                        placeholder="物料颜色"></el-autocomplete>
+                    <div class="tcol">
+                      <div class="elCtn">
+                        <el-autocomplete class="inline-input"
+                          v-model="itemChild.material_color"
+                          :fetch-suggestions="searchColor"
+                          placeholder="物料颜色"></el-autocomplete>
+                      </div>
                     </div>
-                  </div>
-                  <div class="tcol"
-                    :class="itemChild.production_number?'blue':'gray'">
-                    <el-input v-model="itemChild.production_number"
-                      placeholder="无计划值"
-                      @input="(ev)=>{
-                        itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='g'||itemChild.unit==='kg'?1000:1));
-                        itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)}">
-                      <template slot="append">
-                        {{itemChild.unit==='kg'?'g':itemChild.unit}}
-                      </template>
-                    </el-input>
-                  </div>
-                  <div class="tcol">{{itemChild.need_number}}{{itemChild.unit}}</div>
-                  <div class="tcol">
-                    <div class="elCtn">
-                      <el-input v-model="itemChild.loss"
-                        placeholder="损耗"
-                        @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number)">
-                        <template slot="append">%</template>
-                      </el-input>
-                    </div>
-                  </div>
-                  <div class="tcol">
-                    <div class="elCtn">
-                      <el-input class="UnitCtn"
-                        v-model="itemChild.final_number"
-                        placeholder="数量">
+                    <div class="tcol"
+                      :class="itemChild.production_number?'blue':'gray'">
+                      <el-input v-model="itemChild.production_number"
+                        placeholder="无计划值"
+                        @input="(ev)=>{
+                            itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='g'?1000:1));
+                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)
+                          }">
                         <template slot="append">
-                          <el-input v-model="itemChild.unit"
-                            placeholder="单位"></el-input>
+                          {{itemChild.unit==='kg'?'g':itemChild.unit}}
                         </template>
                       </el-input>
                     </div>
-                  </div>
-                  <div class="tcol">
-                    <div class="oprCtn">
-                      <span class="opr blue"
-                        @click="$addItem(item.info_data,{
+                    <div class="tcol">{{itemChild.need_number}}{{itemChild.unit}}</div>
+                    <div class="tcol">
+                      <div class="elCtn">
+                        <el-input v-model="itemChild.loss"
+                          placeholder="损耗"
+                          @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number)">
+                          <template slot="append">%</template>
+                        </el-input>
+                      </div>
+                    </div>
+                    <div class="tcol">
+                      <div class="elCtn">
+                        <el-input class="UnitCtn"
+                          v-model="itemChild.final_number"
+                          placeholder="数量">
+                          <template slot="append">
+                            <el-input v-model="itemChild.unit"
+                              placeholder="单位"></el-input>
+                          </template>
+                        </el-input>
+                      </div>
+                    </div>
+                    <div class="tcol">
+                      <div class="oprCtn">
+                        <span class="opr blue"
+                          @click="$addItem(item.info_data,{
                           process_name: '',
                           tree_data: [],
                           material_id: '',
@@ -543,19 +572,20 @@
                           final_number: '',
                           unit: 'kg'
                         })">添加</span>
-                      <span class="opr red"
-                        @click="item.info_data.length>1?$deleteItem(item.info_data,indexChild):$message.error('至少有一项，可以不填')">删除</span>
+                        <span class="opr red"
+                          @click="item.info_data.length>1?$deleteItem(item.info_data,indexChild):$message.error('至少有一项，可以不填')">删除</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="childrenCtn"
-                v-else>
-                <div class="trow">
-                  <div class="tcol gray"
-                    style="text-align: center;">确认不需要物料</div>
+                <div class="childrenCtn"
+                  v-else>
+                  <div class="trow">
+                    <div class="tcol gray"
+                      style="text-align: center;">确认不需要物料</div>
+                  </div>
                 </div>
-              </div>
+              </template>
             </div>
           </div>
         </div>
@@ -630,6 +660,42 @@
         </div>
       </div>
     </div>
+    <!-- 复制一组信息 -->
+    <div class="popup"
+      v-show="copyMaterialPlanDataInfoFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">复制信息</span>
+          <div class="closeCtn"
+            @click="copyMaterialPlanDataInfoFlag=false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="row">
+            请选择复制第几组信息：
+          </div>
+          <el-radio v-model="copyMaterialPlanDataChooseIndex"
+            :label="index"
+            v-for="(item,index) in materialPlanInfo.material_plan_data"
+            :key="index"
+            :disabled="copyMaterialPlanDataInfoIndex===index">第{{index+1}}组</el-radio>
+          <div class="row">
+            请选择要复制的信息：
+          </div>
+          <el-checkbox v-model="copyMaterialPlanDataKey.process_name">复制工序</el-checkbox>
+          <el-checkbox v-model="copyMaterialPlanDataKey.material_color">复制物料名称</el-checkbox>
+          <el-checkbox v-model="copyMaterialPlanDataKey.material_name">复制物料颜色</el-checkbox>
+          <el-checkbox v-model="copyMaterialPlanDataKey.number">复制数量</el-checkbox>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="copyMaterialPlanDataInfoFlag=false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="copyMaterialPlanDataInfo">确认</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -647,6 +713,16 @@ export default Vue.extend({
       loading: true,
       saveSuccess: false,
       confirmFlag: 1,
+      showAll: false,
+      copyMaterialPlanDataInfoFlag: false, // 复制一组产品的子项信息
+      copyMaterialPlanDataInfoIndex: 0,
+      copyMaterialPlanDataChooseIndex: 0,
+      copyMaterialPlanDataKey: {
+        material_color: true,
+        material_name: true,
+        process_name: true,
+        number: true
+      },
       settingMethod: 2, // 数字取整方式
       orderIndex: 0, // 多张订单/样单
       materialPlanInfo: {
@@ -731,6 +807,7 @@ export default Vue.extend({
     // 监听物料计划表的变化，来计算所需物料概览
     'materialPlanInfo.material_plan_data': {
       handler: function (materailPlanData: MaterailPlanData[]) {
+        console.log(this.justWatch)
         this.materialPlanInfo.material_plan_gather_data = []
         const flattenYarnList: CascaderInfo[] = []
         this.yarnTypeList.forEach((item) => {
@@ -751,18 +828,21 @@ export default Vue.extend({
               if (finded) {
                 finded.need_number = Number(itemChild.need_number) + Number(finded.need_number)
                 finded.final_number = Number(itemChild.final_number) + Number(finded.final_number)
-                this.numberAutoMethod(100 * (Number(finded.final_number) / Number(finded.need_number) - 1))
+                finded.loss =
+                  finded.final_number >= finded.need_number
+                    ? this.$toFixed((finded.final_number / finded.need_number - 1) * 100)
+                    : 0
+                this.$toFixed(100 * (Number(finded.final_number) / Number(finded.need_number) - 1))
               } else {
                 this.materialPlanInfo.material_plan_gather_data.push({
-                  material_name: itemChild.tree_data
-                    ? this.$findId(flattenYarnList, itemChild.tree_data![2], 'label', 'value')
-                    : itemChild.material_name,
+                  material_name:
+                    itemChild.material_name || this.$findId(flattenYarnList, itemChild.tree_data![2], 'label', 'value'),
                   material_id: itemChild.material_id || itemChild.tree_data![2],
                   material_type: 1, // 目前只有原料
                   material_color: itemChild.material_color,
                   need_number: Number(itemChild.need_number),
                   loss: itemChild.need_number
-                    ? this.numberAutoMethod(100 * (Number(itemChild.final_number) / Number(itemChild.need_number) - 1))
+                    ? this.$toFixed(100 * (Number(itemChild.final_number) / Number(itemChild.need_number) - 1))
                     : 0,
                   final_number: Number(itemChild.final_number),
                   unit: itemChild.unit
@@ -776,6 +856,23 @@ export default Vue.extend({
     }
   },
   methods: {
+    copyMaterialPlanDataInfo() {
+      this.materialPlanInfo.material_plan_data[this.copyMaterialPlanDataInfoIndex].info_data = this.$clone(
+        this.materialPlanInfo.material_plan_data[this.copyMaterialPlanDataChooseIndex].info_data
+      )
+      this.materialPlanInfo.material_plan_data[this.copyMaterialPlanDataInfoIndex].info_data.forEach((item) => {
+        item.process_name_arr = this.copyMaterialPlanDataKey.process_name ? item.process_name_arr : []
+        item.process_name = this.copyMaterialPlanDataKey.process_name ? item.process_name : ''
+        item.material_name = this.copyMaterialPlanDataKey.material_name ? item.material_name : ''
+        item.material_id = this.copyMaterialPlanDataKey.material_name ? item.material_id : ''
+        item.tree_data = this.copyMaterialPlanDataKey.material_name ? item.tree_data : []
+        item.material_color = this.copyMaterialPlanDataKey.material_color ? item.material_color : ''
+        item.production_number = this.copyMaterialPlanDataKey.number ? item.production_number : ''
+        item.final_number = this.copyMaterialPlanDataKey.number ? item.final_number : ''
+        item.loss = this.copyMaterialPlanDataKey.number ? item.loss : ''
+      })
+      this.copyMaterialPlanDataInfoFlag = false
+    },
     // 原料颜色搜索
     searchColor(str: string, cb: any) {
       let results = str ? this.yarnColorList.filter(this.createFilter(str)) : this.yarnColorList.slice(0, 10)

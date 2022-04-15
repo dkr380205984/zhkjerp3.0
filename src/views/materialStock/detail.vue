@@ -111,7 +111,7 @@
                     <div class="tcol">{{itemChild.number - itemChild.process_info.filter((item)=>item.process==='染色').reduce((total,cur)=>(total+Number(cur.number)),0)}}{{itemChild.unit||'kg'}}</div>
                   </div>
                 </div>
-                <div class="tcol">{{itemChild.final_push_number||0}}{{item.unit||'kg'}}</div>
+                <div class="tcol">{{itemChild.final_push_number||0}}{{itemChild.unit||'kg'}}</div>
               </div>
             </div>
           </div>
@@ -1257,88 +1257,64 @@ export default Vue.extend({
       }
     },
     goStock(type: number) {
-      const tipsArr = [
-        '',
-        '中转入库一般为采购单半成品原料入库，如为成品原料请选择最终入库',
-        '客供入库',
-        '中转出库只能选择已入库物料进行出库操作，请确认物料已入库',
-        '最终入库一般为成品原料入库，半成品原料请选择中转入库',
-        '单据生产出库',
-        '订单结余入库',
-        '调取单最终入库',
-        '调取单最终入库'
-      ]
-      this.$confirm(tipsArr[type], '提示', {
-        confirmButtonText: type !== 7 && type !== 8 ? this.stockTypeList[type - 1].name : '调取单最终入库',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          if (type === 1 || type === 4) {
-            this.getOrderInfo(type)
-          } else if (type === 3) {
-            this.getProcessInfo(type)
-          } else if (type === 5) {
-            this.getInspectionInfo()
-          } else if (type === 7 || type === 8) {
-            this.getDiaoquInfo(type)
-          } else if (type === 6) {
-            // 结余入库用组件的逻辑
-            this.storeSurplusFlag = true
-            this.storeSurplusInfo.order_code = this.orderInfo.code
-            this.storeSurplusInfo.order_id = this.orderInfo.id
-            this.storeSurplusInfo.materialList = []
-            const checkLength = this.productionPlanList.filter((item) => {
-              return (
-                item.material_info_data.some((itemChild) => itemChild.check) ||
-                item.sup_data!.some((itemChild) => {
-                  return itemChild.info_data.some((itemSon) => itemSon.check)
-                })
-              )
-            }).length
-            if (checkLength > 1) {
-              this.$message.error('只能选择一张加工单进行出库操作')
-              return
-            }
-
-            this.productionPlanList.forEach((item) => {
-              item.material_info_data.forEach((itemChild) => {
-                if (itemChild.check) {
-                  // 如果需要记录是那一张加工单结余可能会有用的字段
-                  // this.materialStockInfo.client_id = item.client_id
-                  // this.materialStockInfo.rel_doc_code = item.code
-                  // this.materialStockInfo.rel_doc_id = item.id as number
-                  this.storeSurplusInfo.materialList.push({
-                    material_color: itemChild.material_color,
-                    material_id: itemChild.material_id,
-                    attribute: '筒纱',
-                    number: itemChild.number,
-                    unit: itemChild.unit
-                  })
-                }
-              })
-              item.sup_data!.forEach((itemSup) => {
-                itemSup.info_data.forEach((itemChild) => {
-                  if (itemChild.check) {
-                    this.storeSurplusInfo.materialList.push({
-                      material_color: itemChild.material_color,
-                      material_id: itemChild.material_id,
-                      attribute: '筒纱',
-                      number: itemChild.number,
-                      unit: itemChild.unit
-                    })
-                  }
-                })
-              })
+      if (type === 1 || type === 4) {
+        this.getOrderInfo(type)
+      } else if (type === 3) {
+        this.getProcessInfo(type)
+      } else if (type === 5) {
+        this.getInspectionInfo()
+      } else if (type === 7 || type === 8) {
+        this.getDiaoquInfo(type)
+      } else if (type === 6) {
+        // 结余入库用组件的逻辑
+        this.storeSurplusFlag = true
+        this.storeSurplusInfo.order_code = this.orderInfo.code
+        this.storeSurplusInfo.order_id = this.orderInfo.id
+        this.storeSurplusInfo.materialList = []
+        const checkLength = this.productionPlanList.filter((item) => {
+          return (
+            item.material_info_data.some((itemChild) => itemChild.check) ||
+            item.sup_data!.some((itemChild) => {
+              return itemChild.info_data.some((itemSon) => itemSon.check)
             })
-          }
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消' + (type !== 7 && type !== 8 ? this.stockTypeList[type - 1].name : '调取单最终入库')
+          )
+        }).length
+        if (checkLength > 1) {
+          this.$message.error('只能选择一张加工单进行出库操作')
+          return
+        }
+
+        this.productionPlanList.forEach((item) => {
+          item.material_info_data.forEach((itemChild) => {
+            if (itemChild.check) {
+              // 如果需要记录是那一张加工单结余可能会有用的字段
+              // this.materialStockInfo.client_id = item.client_id
+              // this.materialStockInfo.rel_doc_code = item.code
+              // this.materialStockInfo.rel_doc_id = item.id as number
+              this.storeSurplusInfo.materialList.push({
+                material_color: itemChild.material_color,
+                material_id: itemChild.material_id,
+                attribute: '筒纱',
+                number: itemChild.number,
+                unit: itemChild.unit
+              })
+            }
+          })
+          item.sup_data!.forEach((itemSup) => {
+            itemSup.info_data.forEach((itemChild) => {
+              if (itemChild.check) {
+                this.storeSurplusInfo.materialList.push({
+                  material_color: itemChild.material_color,
+                  material_id: itemChild.material_id,
+                  attribute: '筒纱',
+                  number: itemChild.number,
+                  unit: itemChild.unit
+                })
+              }
+            })
           })
         })
+      }
     },
     // 采购单中转入库和最终入库初始化
     getOrderInfo(type: 1 | 4) {
@@ -1404,7 +1380,7 @@ export default Vue.extend({
                       color_code: '',
                       batch_code: '',
                       vat_code: '',
-                      attribute: '筒纱',
+                      attribute: itemChild.attribute === '面料' ? '面料' : '筒纱',
                       number: itemProcess.number,
                       item: '', // 件数
                       unit: itemProcess.unit,
@@ -1423,7 +1399,7 @@ export default Vue.extend({
                     color_code: '',
                     batch_code: '',
                     vat_code: '',
-                    attribute: '筒纱',
+                    attribute: itemChild.attribute === '面料' ? '面料' : '筒纱',
                     number:
                       Number(itemChild.number) -
                       itemChild
@@ -1441,7 +1417,7 @@ export default Vue.extend({
                   color_code: '',
                   batch_code: '',
                   vat_code: '',
-                  attribute: '筒纱',
+                  attribute: itemChild.attribute === '面料' ? '面料' : '筒纱',
                   number: itemChild.number as string,
                   item: '', // 件数
                   unit: itemChild.unit,
@@ -1554,7 +1530,7 @@ export default Vue.extend({
               name: itemChild.material_name + '/' + (itemChild.material_color || '未知颜色'),
               material_color: itemChild.material_color,
               material_id: itemChild.material_id,
-              attribute: '筒纱', // 根据最终入库是筒纱推测最终出库也是筒纱
+              attribute: itemChild.yarn_type === 1 ? '筒纱' : '面料', // 根据最终入库是筒纱推测最终出库也是筒纱
               number: itemChild.number
             })
           }
@@ -1570,7 +1546,7 @@ export default Vue.extend({
                 name: itemChild.material_name + '/' + (itemChild.material_color || '未知颜色'),
                 material_color: itemChild.material_color,
                 material_id: itemChild.material_id,
-                attribute: '筒纱', // 根据最终入库是筒纱推测最终出库也是筒纱
+                attribute: itemChild.yarn_type === 1 ? '筒纱' : '面料', // 根据最终入库是筒纱推测最终出库也是筒纱
                 number: itemChild.number
               })
             }

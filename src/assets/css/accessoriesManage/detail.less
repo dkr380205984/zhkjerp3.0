@@ -6,28 +6,34 @@
 @import '../list.less';
 @import '../bottomBar.less';
 @import '../buttonList.less';
-#accessoriesManageDetail{
-  .noPad{
-    padding:0;
+
+#accessoriesManageDetail {
+  .noPad {
+    padding: 0;
   }
-  .btnCtn{
+
+  .btnCtn {
     display: flex;
     padding: 20px 32px 0 32px;
     justify-content: right;
-    .btn{
+
+    .btn {
       margin-left: 16px;
     }
   }
-  .popup{
-    .main{
+
+  .popup {
+    .main {
       width: 1200px;
-      .label{
+
+      .label {
         line-height: 38px;
         font-size: 14px;
         width: auto;
         text-align: left;
       }
-      .description{
+
+      .description {
         padding: 18px;
         background: #F0F0F0;
         color: @font85;
@@ -35,39 +41,45 @@
         font-size: @fontBig;
         font-weight: bold;
       }
-      .stepCtn{
+
+      .stepCtn {
         display: flex;
         align-items: center;
         height: 70px;
         margin: 12px 0;
         justify-content: space-around;
         position: relative;
-        .step{
+
+        .step {
           display: flex;
           flex-direction: column;
           align-items: center;
-          .circle{
+
+          .circle {
             text-align: center;
             line-height: 40px;
             width: 40px;
             color: @blue;
             border-radius: 50%;
-            border:1px solid @blue;
+            border: 1px solid @blue;
             background: #fff;
           }
-          .name{
+
+          .name {
             margin-top: 10px;
             color: @blue;
           }
-          &.active{
-            .circle{
+
+          &.active {
+            .circle {
               background: @blue;
               color: #fff;
             }
           }
         }
-        &::after{
-          content:'';
+
+        &::after {
+          content: '';
           position: absolute;
           height: 1px;
           left: 0;
@@ -77,45 +89,57 @@
           z-index: -1;
         }
       }
-      .editCtn{
-        background:#F0F0F0 ;
+
+      .editCtn {
+        background: #F0F0F0;
         margin: 16px 0;
-        .col{
+
+        .col {
           margin-right: 30px;
         }
-        .opr{
+
+        .opr {
           transform: translate(-20px, 100%);
         }
       }
-      .listCtn{
+
+      .listCtn {
         padding: 0;
-       .list{
-         min-height: 220px;
-         .row{
-           height: 46px;
-           margin: 6px 0;
-         }
-       }
-        .elCtn{
+
+        .list {
+          min-height: 220px;
+
+          .row {
+            height: 46px;
+            margin: 6px 0;
+          }
+        }
+
+        .elCtn {
           width: 140px;
         }
       }
-      .selectCtn{
+
+      .selectCtn {
         margin-bottom: 12px;
-        .label{
+
+        .label {
           display: block;
           font-size: @fontBig;
         }
-        .boxCtn{
+
+        .boxCtn {
           display: flex;
-          .box{
+
+          .box {
             line-height: 32px;
-            padding:0 12px;
+            padding: 0 12px;
             background: #F5F7FA;
             color: #C0C4CC;
             border-radius: 4px;
             margin-right: 12px;
-            .closeIcon{
+
+            .closeIcon {
               cursor: pointer;
               font-size: @fontBig;
               margin-left: 6px;
@@ -125,14 +149,17 @@
       }
     }
   }
-  .bottomFixBar{
-    .btnCtn{
+
+  .bottomFixBar {
+    .btnCtn {
       padding: 0;
     }
   }
-  .changeCtn{
+
+  .changeCtn {
     flex-direction: row;
-    .el-icon-s-unfold{
+
+    .el-icon-s-unfold {
       margin: 0 4px;
     }
   }

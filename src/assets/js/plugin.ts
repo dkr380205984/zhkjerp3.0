@@ -616,6 +616,20 @@ function getEveryDayDateByBetweenDate(start_date: string, end_date: string, form
   return dateList;
 }
 
+// 输入框防抖函数
+function debounce(val: string, timer: any, fn: Function, time: number = 1000) {
+  if (val) {
+    console.log(val)
+    if (timer) {
+      clearTimeout(timer)
+    } else {
+      timer = setTimeout(fn(val), time)
+    }
+  } else {
+    clearTimeout(timer)
+  }
+}
+
 /**
  *获取前后N天的日期，返回一个字符串
  *@method GetDateStr
@@ -665,5 +679,6 @@ export default {
     Vue.prototype.$formatDate = formatDate
     Vue.prototype.$getEveryDayDateByBetweenDate = getEveryDayDateByBetweenDate
     Vue.prototype.$GetDateStr = GetDateStr
+    Vue.prototype.$debounce = debounce
   }
 }

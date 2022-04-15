@@ -1326,7 +1326,7 @@
             remote
             reserve-keyword
             placeholder="输入编号导入工艺单"
-            :remote-method="searchCraft"
+            :remote-method="(ev)=>{return $debounce(ev,timer,searchCraft)}"
             :loading="searchLoading"
             @change="getCraftDetail">
             <el-option v-for="item in searchList"

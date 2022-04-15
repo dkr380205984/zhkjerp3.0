@@ -167,7 +167,8 @@
               @change="logPage=1;$forceUpdate()"></el-input>
           </div>
         </div>
-        <div class="tableCtn noPad">
+        <div class="tableCtn noPad"
+          style="font-size:14px">
           <div class="thead">
             <div class="trow">
               <div class="tcol">单据编号</div>
@@ -191,7 +192,16 @@
             <div class="trow"
               v-for="item in storeLogList"
               :key="item.id">
-              <div class="tcol">{{item.code}}</div>
+              <div class="tcol">
+                <span class="overText">{{item.code}}
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'创建人：'+item.user_name+ ';备注信息：'+item.desc"
+                    placement="top">
+                    <i class="el-icon-timer hoverBlue"></i>
+                  </el-tooltip>
+                </span>
+              </div>
               <div class="tcol"
                 :class="item.action_type|materialStockTypeClassFilter">{{item.action_type|materialStockTypeFilter}}</div>
               <div class="tcol">

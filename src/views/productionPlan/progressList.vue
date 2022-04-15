@@ -84,6 +84,7 @@
               <div class="column">加工状态</div>
               <div class="column w150">生产进度</div>
               <div class="column w220">分配/交货时间</div>
+              <div class="column">更新日期</div>
               <div class="column">下单公司</div>
               <div class="column w150">操作</div>
             </div>
@@ -118,6 +119,7 @@
                 <span>{{item.start_time}}~{{item.end_time}}</span>
                 <span :class="$diffByDate(item.end_time)>0?'green':'red'">({{$diffByDate(item.end_time)>0?'还剩'+$diffByDate(item.end_time)+'天':'逾期'+Math.abs($diffByDate(item.end_time))+'天'}})</span>
               </div>
+              <div class="column">暂无</div>
               <div class="column">{{item.customer.name}}</div>
               <div class="column w150">操作</div>
             </div>
@@ -277,6 +279,7 @@ export default Vue.extend({
       this.loading = true
       productionProgress
         .list({
+          order_type: 1,
           page: this.page,
           limit: this.limit,
           keyword: this.keyword,

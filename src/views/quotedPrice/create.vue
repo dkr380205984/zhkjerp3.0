@@ -6,12 +6,14 @@
       <div class="titleCtn">
         <div class="title">添加报价单
           <div class="elCtn fr">
-            <el-select v-model="searchQuotedPriceKey"
+            <!-- 导入报价功能不应该在订单转报价的时候使用，因为不知道订单的哪个产品要和导入进来的报价单的哪个产品绑定，就很麻烦，优化了才能用 -->
+            <el-select v-if="!$route.query.orderId&&!$route.query.sampleOrderId"
+              v-model="searchQuotedPriceKey"
               filterable
               remote
               reserve-keyword
               placeholder="输入编号导入报价单"
-              :remote-method="searchQuotedPriceFn"
+              :remote-method="(ev)=>{return $debounce(ev,timer,searchQuotedPriceFn)}"
               :loading="searchLoading"
               @change="getImportDetail">
               <el-option v-for="item in searchList"
@@ -155,16 +157,55 @@
         <div class="title">添加产品描述
           <span class="orange"
             style="font-size:14px"
-            v-if="$route.query.again || $route.query.product_id">(订单产品转报价/再次报价不能新增或者删除产品)</span>
+            v-if="$route.query.again || $route.query.product_id || $route.query.orderId || $route.query.sampleOrderId">(订单/样单转报价或再次报价不能新增或者删除产品)</span>
         </div>
       </div>
       <div v-for="(item,index) in quotedPriceInfo.product_data"
         :key="index">
         <div class="lineInfo">
           <div class="text">产品{{index+1}}</div>
+          <div class="deleteIcon blue"
+            v-if="$route.query.product_id || $route.query.orderId || $route.query.sampleOrderId">详情
+            <div class="printInfo">
+              <div class="items">
+                <div class="label">编号:</div>
+                <div class="contents">{{item.product_info.product_code}}</div>
+              </div>
+              <div class="items">
+                <div class="label">品类:</div>
+                <div class="contents">{{item.product_info.category}}/{{item.product_info.secondary_category}}</div>
+              </div>
+              <div class="items">
+                <div class="label">款式:</div>
+                <div class="contents">{{item.product_info.style_data.map((itemChild)=>itemChild.name).join(',')}}</div>
+              </div>
+              <div class="items">
+                <div class="label">成分:</div>
+                <div class="contents">
+                  <span style="margin-right:6px"
+                    v-for="itemChild in item.product_info.component_data"
+                    :key="itemChild.id">{{itemChild.name}}{{itemChild.number}}%</span>
+                </div>
+              </div>
+              <div class="items">
+                <div class="label">配色:</div>
+                <div class="contents">
+                  <span style="margin-right:6px"
+                    v-for="itemChild in item.product_info.color_data"
+                    :key="itemChild.id">{{itemChild.name}}</span>
+                </div>
+              </div>
+              <div class="items"
+                v-for="itemChild in item.product_info.size_data"
+                :key="itemChild.id">
+                <div class="label">尺码:</div>
+                <div class="contents">{{itemChild.name}}&nbsp;{{itemChild.weight}}g&nbsp;{{itemChild.size_info}}</div>
+              </div>
+            </div>
+          </div>
           <div class="deleteIcon"
             @click="quotedPriceInfo.product_data.length>1?$deleteItem(quotedPriceInfo.product_data,index):$message.error('至少有一项产品描述')"
-            v-if="!$route.query.again && !$route.query.product_id">删除</div>
+            v-if="index===quotedPriceInfo.product_data.length-1 && !$route.query.again && !$route.query.product_id && !$route.query.orderId && !$route.query.sampleOrderId">删除</div>
         </div>
         <div class="editCtn">
           <div class="row">
@@ -270,7 +311,7 @@
               </div>
             </div>
           </div>
-          <div v-if="index===quotedPriceInfo.product_data.length-1 && !$route.query.again && !$route.query.product_id"
+          <div v-if="index===quotedPriceInfo.product_data.length-1 && !$route.query.again && !$route.query.product_id && !$route.query.orderId && !$route.query.sampleOrderId"
             class="oprRow">
             <div class="once"
               @click="addPro">新增产品描述
@@ -376,7 +417,6 @@
                   <el-input class="once unitAppend"
                     v-model="itemYarn.weight"
                     placeholder="数量"
-                    @change="cmpTotalPrice(itemYarn)"
                     :disabled="itemYarn.tree_data.length===0">
                     <template slot="append">
                       <input class="unit"
@@ -388,7 +428,6 @@
                   <el-input class="once"
                     v-model="itemYarn.loss"
                     placeholder="损耗"
-                    @change="cmpTotalPrice(itemYarn)"
                     :disabled="itemYarn.tree_data.length===0">
                     <template slot="append">%</template>
                   </el-input>
@@ -484,7 +523,6 @@
                   <el-input class="once unitAppend"
                     v-model="itemDecorateMaterial.number"
                     placeholder="数量"
-                    @change="cmpTotalPrice(itemDecorateMaterial)"
                     :disabled="!itemDecorateMaterial.material_id">
                     <template slot="append">
                       <input class="unit"
@@ -496,7 +534,6 @@
                   <el-input class="once"
                     v-model="itemDecorateMaterial.loss"
                     placeholder="损耗"
-                    @change="cmpTotalPrice(itemDecorateMaterial)"
                     :disabled="!itemDecorateMaterial.material_id">
                     <template slot="append">%</template>
                   </el-input>
@@ -1176,7 +1213,8 @@ export default Vue.extend({
       quotedImage: '',
       notify: null,
       imgId: '',
-      saveSuccess: false
+      saveSuccess: false,
+      timer: '' // 导入报价单防抖定时器
     }
   },
   computed: {
@@ -1836,6 +1874,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.saveSuccess = true
             this.$message.success('草稿保存成功')
+            this.$router.push('/quotedPrice/detail?id=' + res.data.data)
           }
         })
       }
@@ -2079,6 +2118,7 @@ export default Vue.extend({
                   cv_list: [],
                   cvFlag: false,
                   total_price: '',
+                  product_info: item,
                   product_id: item.product_id,
                   type: [item.category_id as number, item.secondary_category_id as number],
                   category_id: item.category_id,
@@ -2179,6 +2219,14 @@ export default Vue.extend({
                 (item) => Number(item.product_id) === Number(this.$route.query.product_id)
               )
             }
+            // 把编辑器补上
+            this.$nextTick(() => {
+              this.quotedPriceInfo.product_data.forEach((item, index) => {
+                if (index > 0) {
+                  this.$initEditor(item, index)
+                }
+              })
+            })
           }
           this.loading = false
         })
@@ -2213,6 +2261,7 @@ export default Vue.extend({
                       cv_list: [],
                       cvFlag: false,
                       total_price: '',
+                      product_info: item,
                       product_id: item.product_id,
                       type: [item.category_id as number, item.secondary_category_id as number],
                       category_id: item.category_id,
@@ -2315,6 +2364,14 @@ export default Vue.extend({
                 (item) => Number(item.product_id) === Number(this.$route.query.product_id)
               )
             }
+            // 把编辑器补上
+            this.$nextTick(() => {
+              this.quotedPriceInfo.product_data.forEach((item, index) => {
+                if (index > 0) {
+                  this.$initEditor(item, index)
+                }
+              })
+            })
           }
           this.loading = false
         })

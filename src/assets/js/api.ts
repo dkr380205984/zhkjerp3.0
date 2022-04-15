@@ -107,12 +107,17 @@ const check = {
 const deduct = {
   create: (params:
     {
-      rel_doc_id: number | string
+      id?: string
+      order_id: number | string
       doc_type: number
-      reason: string[]
       client_id: number | string
-      file_url: string[]
-      price: string
+      data: Array<{
+        doc_code: string
+        rel_doc_id: number | string
+        reason: string
+        price: string
+        file_url: string
+      }>
     }) => http.post(`${baseUrl}/doc/deduct`, params, 'application/json'),
   list: (params: {
     order_id?: number | string
@@ -121,7 +126,7 @@ const deduct = {
     is_check?: string | number
     limit?: number
     page?: number
-    code?: number
+    code?: string
     user_id?: number | string
     rel_doc_id?: number | string
     doc_type?: number | string
@@ -156,6 +161,34 @@ const collection = {
       price: string
     }>
   }) => http.post(`${baseUrl}/doc/collect/save`, params, 'application/json'),
+}
+
+// 单据开票
+const payment = {
+  list: (params: {
+    order_id: string
+    client_id: string
+    order_code: string
+    code: string
+    start_time: string
+    end_time: string
+    user_id: string,
+    page: number
+    limit: number
+  }) => http.get(`${baseUrl}/doc/invoice/lists`, params),
+  create: (params: {
+    id?: string
+    order_id: number | string
+    doc_type: number
+    client_id: number | string
+    data: Array<{
+      doc_code: string
+      rel_doc_id: number | string
+      desc: string
+      invoice_code: string
+      price: string
+    }>
+  }) => http.post(`${baseUrl}/doc/invoice/save`, params, 'application/json'),
 }
 
 // 产品品类
@@ -637,6 +670,7 @@ const productionProgress = {
     page?: number | string
     limit?: number | string
     user_id?: string | number
+    order_type: 1 | 2
   }) => http.get(`${baseUrl}/production/list`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/production/detail`, params),
   codeInfo: (params: {
@@ -1114,5 +1148,6 @@ export {
   materialSupplement,
   clientInOrder,
   productStock,
-  productionProgress
+  productionProgress,
+  payment
 }

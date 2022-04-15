@@ -251,11 +251,20 @@ export default Vue.extend({
           unit: '元'
         },
         {
+          key: 'has_order',
+          name: '绑定产品',
+          ifShow: true,
+          ifLock: false,
+          index: 7,
+          filterArr: ['', '已绑定', '未绑定'],
+          classArr: ['', 'green', 'orange']
+        },
+        {
           key: 'is_check',
           name: '审核状态',
           ifShow: true,
           ifLock: false,
-          index: 7,
+          index: 8,
           filterArr: ['待审核', '已审核', '已驳回'],
           classArr: ['orange', 'blue', 'red']
         },
@@ -264,28 +273,28 @@ export default Vue.extend({
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 8
+          index: 9
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 9
+          index: 10
         },
         {
           key: 'settle_unit',
           name: '报价币种',
           ifShow: true,
           ifLock: false,
-          index: 10
+          index: 11
         },
         {
           key: 'created_at',
           name: '创建日期',
           ifShow: true,
           ifLock: false,
-          index: 11
+          index: 12
         }
       ],
       pickerOptions: {

@@ -290,7 +290,6 @@
                   <el-input class="once unitAppend"
                     v-model="itemYarn.weight"
                     placeholder="数量"
-                    @change="cmpTotalPrice(itemYarn)"
                     :disabled="itemYarn.tree_data.length===0">
                     <template slot="append">
                       <input class="unit"
@@ -302,7 +301,6 @@
                   <el-input class="once"
                     v-model="itemYarn.loss"
                     placeholder="损耗"
-                    @change="cmpTotalPrice(itemYarn)"
                     :disabled="itemYarn.tree_data.length===0">
                     <template slot="append">%</template>
                   </el-input>
@@ -318,6 +316,7 @@
                   <el-input class="once"
                     v-model="itemYarn.price"
                     placeholder="单价"
+                    clearable
                     @change="cmpTotalPrice(itemYarn)"
                     :disabled="itemYarn.tree_data.length===0">
                     <template slot="append">元/{{itemYarn.unit==='g'?'kg':itemYarn.unit || '单位'}}</template>
@@ -398,7 +397,6 @@
                   <el-input class="once unitAppend"
                     v-model="itemDecorateMaterial.number"
                     placeholder="数量"
-                    @change="cmpTotalPrice(itemDecorateMaterial)"
                     :disabled="!itemDecorateMaterial.material_id">
                     <template slot="append">
                       <input class="unit"
@@ -410,7 +408,6 @@
                   <el-input class="once"
                     v-model="itemDecorateMaterial.loss"
                     placeholder="损耗"
-                    @change="cmpTotalPrice(itemDecorateMaterial)"
                     :disabled="!itemDecorateMaterial.material_id">
                     <template slot="append">%</template>
                   </el-input>
@@ -427,6 +424,7 @@
                     v-model="itemDecorateMaterial.price"
                     placeholder="单价"
                     @change="cmpTotalPrice(itemDecorateMaterial)"
+                    clearable
                     :disabled="!itemDecorateMaterial.material_id">
                     <template slot="append">元/{{itemDecorateMaterial.unit||'单位'}}</template>
                   </el-input>
@@ -491,6 +489,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemWeave.total_price"
                     placeholder="小计"
+                    clearable
                     :disabled="!itemWeave.name">
                     <template slot="append">元</template>
                   </el-input>
@@ -569,6 +568,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemHalfProcess.total_price"
                     placeholder="小计"
+                    clearable
                     :disabled="!itemHalfProcess.name">
                     <template slot="append">元</template>
                   </el-input>
@@ -647,6 +647,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemFinishedProcess.total_price"
                     placeholder="小计"
+                    clearable
                     :disabled="!itemFinishedProcess.name">
                     <template slot="append">元</template>
                   </el-input>
@@ -725,6 +726,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemPackMaterial.total_price"
                     placeholder="小计"
+                    clearable
                     :disabled="!itemPackMaterial.material_id">
                     <template slot="append">元</template>
                   </el-input>
@@ -775,6 +777,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemOther.total_price"
                     placeholder="小计"
+                    clearable
                     :disabled="!itemOther.name">
                     <template slot="append">元</template>
                   </el-input>
@@ -825,6 +828,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemNoPro.total_price"
                     placeholder="小计"
+                    clearable
                     :disabled="!itemNoPro.name">
                     <template slot="append">元</template>
                   </el-input>
@@ -891,7 +895,8 @@
           <div class="col flex3">
             <div class="label">产品成本价合计</div>
             <div class="info elCtn">
-              <el-input v-model="totalPrice"
+              <el-input style="font-size:20px;"
+                v-model="totalPrice"
                 disabled
                 placeholder="请输入产品成本价合计">
                 <template slot="append">元</template>
@@ -915,7 +920,8 @@
           <div class="col flex3">
             <div class="label">佣金费用</div>
             <div class="info elCtn">
-              <el-input v-model="commissionPrice"
+              <el-input style="font-size:20px;"
+                v-model="commissionPrice"
                 placeholder="请输入佣金费用"
                 disabled>
                 <template slot="append">元</template>
@@ -939,7 +945,8 @@
           <div class="col flex3">
             <div class="label">税费</div>
             <div class="info elCtn">
-              <el-input v-model="ratePrice"
+              <el-input style="font-size:20px;"
+                v-model="ratePrice"
                 disabled
                 placeholder="请输入税费">
                 <template slot="append">元</template>
@@ -963,7 +970,8 @@
           <div class="col flex3">
             <div class="label">利润</div>
             <div class="info elCtn">
-              <el-input v-model="profitPrice"
+              <el-input style="font-size:20px;"
+                v-model="profitPrice"
                 disabled
                 placeholder="请输入利润">
                 <template slot="append">元</template>
@@ -1673,7 +1681,10 @@ export default Vue.extend({
       }
 
       this.quotedPriceInfo.product_data.forEach((item, index) => {
-        this.$initEditor(item, index)
+        this.$nextTick(() => {
+          this.$initEditor(item, index)
+        })
+
         item.file_list = item.image_data.map((itemImage, index) => {
           return {
             id: index,

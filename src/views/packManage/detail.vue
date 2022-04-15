@@ -422,6 +422,7 @@
                 <div class="tcol">面积单价</div>
                 <div class="tcol">数量单价</div>
                 <div class="tcol">订购数量</div>
+                <div class="tcol">订购总价</div>
                 <div class="tcol">备注信息</div>
               </div>
             </div>
@@ -435,7 +436,7 @@
                     {{itemChild.length}}*{{itemChild.width}}*{{itemChild.height}}cm
                   </template>
                   <template v-else-if="Number(itemChild.price_type)===2">
-                    {{itemChild.length}}*{{itemChild.width}}cm
+                    {{itemChild.length}}*{{itemChild.width}}cm + {{itemChild.height}}cm
                   </template>
                   <template v-else-if="Number(itemChild.price_type)===3">
                     {{itemChild.length}}
@@ -444,6 +445,7 @@
                 <div class="tcol">{{itemChild.bulk_price?(itemChild.bulk_price +'元'):'-'}}</div>
                 <div class="tcol">{{itemChild.count_price?(itemChild.count_price +'元'):'-'}}</div>
                 <div class="tcol">{{itemChild.number}}</div>
+                <div class="tcol">{{$toFixed(itemChild.number*itemChild.count_price)}}元</div>
                 <div class="tcol">{{itemChild.desc}}</div>
               </div>
             </div>
@@ -1573,6 +1575,9 @@ export default Vue.extend({
     goUpdatePlanOrder(info: PackOrderInfo) {
       const updateInfo = this.$clone(info)
       updateInfo.tree_data = JSON.parse(updateInfo.tree_data as string)
+      updateInfo.info_data.forEach((item) => {
+        item.price_type = Number(item.price_type) as 1 | 2 | 3
+      })
       this.packOrderInfo = [updateInfo]
       this.packOrderFlag = true
       this.packOrderUpdateFlag = true

@@ -3,7 +3,7 @@
     v-show="show">
     <div class="main">
       <div class="titleCtn">
-        <div class="text">单据扣款</div>
+        <div class="text">{{type|filterType}}扣款{{update?'修改':''}}</div>
         <div class="closeCtn"
           @click="close">
           <i class="el-icon-close"></i>
@@ -11,67 +11,73 @@
       </div>
       <div class="contentCtn">
         <div class="row">
-          <div class="label isMust">扣款单位：</div>
           <div class="info">
             <el-input disabled
               placeholder="扣款单位"
-              v-model="client_name"></el-input>
-          </div>
-        </div>
-        <div class="row">
-          <div class="label isMust">扣款金额：</div>
-          <div class="info">
-            <el-input placeholder="请输入扣款金额"
-              v-model="deductInfo.price">
-              <template slot="append">元</template>
+              v-model="client_name">
+              <template slot="prepend">扣款单位</template>
             </el-input>
           </div>
         </div>
-        <div class="row"
-          v-for="(item,index) in deductInfo.reason"
+        <div v-for="(item,index) in deductInfo.data"
           :key="index">
-          <div class="label"
-            :style="{'visibility': index===0?'visible':'hidden'}">扣款原因：</div>
-          <div class="info">
-            <el-autocomplete class="inline-input"
-              v-model="deductInfo.reason[index]"
-              :fetch-suggestions="searchReason"
-              placeholder="请输入扣款原因"></el-autocomplete>
-            <div class="info_btn hoverBlue"
-              v-if="index===0"
-              @click="$addItem(deductInfo.reason,'')">添加</div>
-            <div class="info_btn hoverRed"
-              v-if="index>0"
-              @click="$deleteItem(deductInfo.reason,index)">删除</div>
+          <div class="blue"
+            style="margin-left:6px">扣款单据{{index+1}}</div>
+          <div class="row">
+            <div class="info">
+              <el-input disabled
+                placeholder="无单据开票"
+                v-model="item.doc_code">
+              </el-input>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="label">图片上传：</div>
-          <div class="info imgInfo">
-            <el-upload class="upload"
-              action="https://upload.qiniup.com/"
-              accept="image/jpeg,image/gif,image/png,image/bmp"
-              :before-upload="beforeAvatarUpload"
-              :data="postData"
-              :on-remove="removeFile"
-              :on-success="successFile"
-              ref="uploada"
-              list-type="picture">
-              <div class="uploadBtn">
-                <i class="el-icon-upload"></i>
-                <span>上传图片</span>
-              </div>
-              <div slot="tip"
-                class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M</div>
-            </el-upload>
+          <div class="row">
+            <div class="info">
+              <el-input placeholder="请输入扣款金额(必填)"
+                v-model="item.price">
+                <template slot="append">元</template>
+              </el-input>
+            </div>
+          </div>
+          <div class="row">
+            <div class="info">
+              <el-autocomplete class="inline-input"
+                v-model="item.reason"
+                :fetch-suggestions="searchReason"
+                placeholder="请输入扣款原因"></el-autocomplete>
+            </div>
+          </div>
+          <div class="row"
+            style="height:auto">
+            <div class="info imgInfo"
+              style="height:auto">
+              <el-upload class="upload"
+                action="https://upload.qiniup.com/"
+                accept="image/jpeg,image/gif,image/png,image/bmp"
+                :before-upload="beforeAvatarUpload"
+                :data="postData"
+                :file-list="item.file_url?[{'id':item.file_url,'url':item.file_url}]:[]"
+                :on-remove="(ev)=>{return removeFile(ev,item)}"
+                :on-success="(ev)=>{return successFile(ev,item)}"
+                ref="uploada"
+                list-type="picture">
+                <div class="uploadBtn">
+                  <i class="el-icon-upload"></i>
+                  <span>上传图片</span>
+                </div>
+                <div slot="tip"
+                  class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M</div>
+              </el-upload>
+            </div>
           </div>
         </div>
       </div>
       <div class="oprCtn">
         <span class="btn borderBtn"
           @click="close">取消</span>
-        <span class="btn backHoverBlue"
-          @click="saveDeduct">确认</span>
+        <span class="btn"
+          :class="{'backHoverBlue':!update,'backHoverOrange':update}"
+          @click="saveDeduct">{{update?'修改':'确认'}}</span>
       </div>
     </div>
   </div>
@@ -81,13 +87,17 @@
 import Vue from 'vue'
 import { deduct } from '@/assets/js/api'
 interface deductInfo {
+  id?: string
   order_id: number | string
-  rel_doc_id: number | string
   doc_type: number
-  reason: string[]
   client_id: number | string
-  file_url: string[]
-  price: string
+  data: Array<{
+    doc_code: string
+    rel_doc_id: number | string
+    reason: string
+    price: string
+    file_url: string
+  }>
 }
 export default Vue.extend({
   props: {
@@ -121,6 +131,17 @@ export default Vue.extend({
     type: {
       type: Number,
       required: true
+    },
+    data: {
+      type: Array,
+      default: () => {
+        return []
+      },
+      required: false
+    },
+    update: {
+      type: Boolean,
+      default: false
     }
   },
   data(): {
@@ -130,12 +151,17 @@ export default Vue.extend({
     return {
       deductInfo: {
         order_id: '',
-        rel_doc_id: '',
         doc_type: 0,
-        reason: [''],
         client_id: '',
-        file_url: [],
-        price: ''
+        data: [
+          {
+            doc_code: '',
+            rel_doc_id: '',
+            reason: '',
+            file_url: '',
+            price: ''
+          }
+        ]
       },
       postData: {
         key: '',
@@ -163,6 +189,63 @@ export default Vue.extend({
   computed: {
     token(): string {
       return this.$store.state.status.token
+    }
+  },
+  filters: {
+    filterType(val: number) {
+      const arr = [
+        '',
+        '订单',
+        '物料订购单',
+        '物料加工单',
+        '织造计划单',
+        '报价单',
+        '原料出入库单',
+        '原料预订购单',
+        '产品出入库单',
+        '物料计划单',
+        '物料补充单'
+      ]
+      return arr[val]
+    }
+  },
+  watch: {
+    show(val) {
+      if (val) {
+        this.reset()
+        this.deductInfo.doc_type = this.type
+        if (this.update) {
+          // @ts-ignore
+          this.deductInfo.order_id = this.order_id || this.data[0].order_id
+          // @ts-ignore
+          this.deductInfo.client_id = this.client_id || this.data[0].client_id
+        } else {
+          this.deductInfo.order_id = this.order_id
+          this.deductInfo.client_id = this.client_id
+        }
+        if (this.data && this.data.length > 0) {
+          this.deductInfo.data = this.data.map((item: any) => {
+            return {
+              id: this.update ? item.id : '',
+              doc_code: this.update ? item.rel_doc_code : item.code,
+              rel_doc_id: this.update ? item.rel_doc_id : item.id,
+              price: this.update ? item.price : '',
+              reason: this.update ? item.reason : '',
+              file_url: this.update ? item.file_url : ''
+            }
+          })
+        } else {
+          this.deductInfo.data = [
+            {
+              doc_code: '',
+              rel_doc_id: '',
+              price: '',
+              reason: '',
+              file_url: ''
+            }
+          ]
+        }
+      }
     }
   },
   methods: {
@@ -196,26 +279,21 @@ export default Vue.extend({
         return false
       }
     },
-    successFile(response: { hash: string; key: string }) {
-      this.deductInfo.file_url.push('https://file.zwyknit.com/' + response.key)
+    successFile(response: { hash: string; key: string }, item: any) {
+      item.file_url = 'https://file.zwyknit.com/' + response.key
     },
-    removeFile(file: { response: { hash: string; key: string }; url: string }) {
-      this.$deleteItem(
-        this.deductInfo.file_url,
-        this.deductInfo.file_url.indexOf('https://file.zwyknit.com/' + file.response.key)
-      )
+    removeFile(file: { response: { hash: string; key: string } }, item: any) {
+      item.file_url = ''
     },
     saveDeduct() {
-      this.deductInfo.order_id = this.order_id
-      this.deductInfo.rel_doc_id = this.id
-      this.deductInfo.client_id = this.client_id
-      this.deductInfo.doc_type = this.type
-      const formCheck = this.$formCheck(this.deductInfo, [
-        {
-          key: 'price',
-          errMsg: '请填写扣款金额'
-        }
-      ])
+      const formCheck = this.deductInfo.data.some((item) => {
+        return this.$formCheck(item, [
+          {
+            key: 'price',
+            errMsg: '请输入扣款金额'
+          }
+        ])
+      })
       if (!formCheck) {
         deduct.create(this.deductInfo).then((res) => {
           if (res.data.status) {
@@ -224,6 +302,22 @@ export default Vue.extend({
             this.$emit('close')
           }
         })
+      }
+    },
+    reset() {
+      this.deductInfo = {
+        order_id: '',
+        doc_type: 0,
+        client_id: '',
+        data: [
+          {
+            doc_code: '',
+            rel_doc_id: '',
+            price: '',
+            reason: '',
+            file_url: ''
+          }
+        ]
       }
     }
   },

@@ -1706,7 +1706,8 @@ export default Vue.extend({
           if (item.material_id) {
             item.apply.forEach((itemApply: any) => {
               const finded = this.craftInfo.yarn_coefficient.find((itemFind) => itemFind.name === item.material_name)
-              warpCK[Number(itemApply)] = finded ? Number(finded!.chuankou) : 1
+              warpCK[Number(itemApply)] =
+                finded && finded!.chuankou ? Number(finded!.chuankou) : Number(this.craftInfo.warp_data.reed_method)
             })
           }
         })

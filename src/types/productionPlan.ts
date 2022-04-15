@@ -51,5 +51,6 @@ export interface ProductionMaterialPlanInfo {
   material_name: string
   material_color: string
   number: number | string
+  yarn_type?: 1 | 2
   unit: string
 }
