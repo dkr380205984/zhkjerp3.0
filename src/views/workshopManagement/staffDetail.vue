@@ -170,7 +170,7 @@
                 {{ itemProIndex + 1 }}
               </div>
               <div class="tcol">
-                <el-autocomplete
+                <!-- <el-autocomplete
                   style="width: 200px"
                   v-model="itemPro.order_code"
                   :fetch-suggestions="querySearchAsync"
@@ -184,7 +184,21 @@
                     </div>
                     <span>创建时间：{{ item.created_at }}</span>
                   </template>
-                </el-autocomplete>
+                </el-autocomplete> -->
+                <el-select
+                  v-model="itemPro.order_code"
+                  filterable
+                  remote
+                  placeholder="订单号/产品编号"
+                  :remote-method="querySearchAsync"
+                >
+                  <el-option v-for="item in orderList" :key="item.value" :label="item.label" :value="item.value">
+                    <div style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
+                      订单名称：{{ item.value }}
+                    </div>
+                    <div>创建时间：{{ item.created_at }}</div>
+                  </el-option>
+                </el-select>
               </div>
               <div class="tcol noPad" style="flex: 8.7">
                 <div
@@ -471,6 +485,7 @@ export default Vue.extend({
       showPopupLoading: false,
       openWindowKey: false,
       autoAssignSizeColor: false,
+      reqTime: '',
       product_arr: [],
       staffList: [],
       orderList: [],
@@ -729,13 +744,34 @@ export default Vue.extend({
         })
     },
     selectStaff(id: number) {
+      this.loading = true
+      staff
+        .detail({
+          id: id
+        })
+        .then((res) => {
+          if (res.data.status) {
+            let arr = this.processList[0].children.map((item: any) => {
+              return item.value
+            })
+
+            arr = arr.concat(res.data.data.process.split('/'))
+            arr = [...new Set(arr)]
+
+            this.processList[0].children = arr.map((item: any) => {
+              return { value: item, label: item }
+            })
+          }
+
+          this.loading = false
+        })
       // this.settlementLogList[index].staffId = this.settlementLogList[index].staffInfo.id
       // this.settlementLogList[index].staffCode = this.settlementLogList[index].staffInfo.code
       // this.settlementLogList[index].staffName = this.settlementLogList[index].staffInfo.name
     },
-    querySearchAsync(str: string, cb: any) {
+    querySearchAsync(str: string) {
       if (str === '' || str === undefined) {
-        cb([])
+        this.orderList = []
         return
       }
       order
@@ -744,14 +780,17 @@ export default Vue.extend({
         })
         .then((res) => {
           if (res.data.status) {
-            let arr: any = []
-            res.data.data.forEach((item: any) => {
-              arr.push({ value: item.code, id: item.id, created_at: item.created_at })
-            })
-            this.orderList = arr
-            cb(arr)
+            console.log()
+            if (new Date(res.headers.date) > new Date(this.reqTime) || this.reqTime === '') {
+              this.reqTime = res.headers.date
+              let arr: any = []
+              res.data.data.forEach((item: any) => {
+                arr.push({ value: item.code, id: item.id, created_at: item.created_at })
+              })
+              this.orderList = arr
+            }
           } else {
-            cb([])
+            this.orderList = []
           }
         })
     },
@@ -972,25 +1011,25 @@ export default Vue.extend({
         staffName: staff.name,
         staffCode: staff.code,
         staffId: +staff.id,
-        processInfo: []
-      })
-
-      this.settlementLogList[0].processInfo.push({
-        process: [0, ''],
-        product_info: [
+        processInfo: [
           {
-            order_code: '',
-            product_detail_info: [
+            process: [0, ''],
+            product_info: [
               {
-                code: '',
-                sizeColorInfo: [
+                order_code: '',
+                product_detail_info: [
                   {
-                    size_name: '',
-                    color_name: '',
-                    number: '',
-                    extra_number: '',
-                    shoddy_number: '',
-                    shoddy_reason: []
+                    code: '',
+                    sizeColorInfo: [
+                      {
+                        size_name: '',
+                        color_name: '',
+                        number: '',
+                        extra_number: '',
+                        shoddy_number: '',
+                        shoddy_reason: []
+                      }
+                    ]
                   }
                 ]
               }
@@ -1080,5 +1119,14 @@ export default Vue.extend({
       background: #fd5b63;
     }
   }
+
+  .el-select__input {
+    margin-left: 0;
+  }
+}
+
+.el-select-dropdown__item {
+  height: unset;
+  overflow: unset;
 }
 </style>
