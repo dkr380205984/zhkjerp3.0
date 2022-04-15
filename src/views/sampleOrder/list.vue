@@ -208,7 +208,7 @@ export default Vue.extend({
         order_type: 2
       },
       option: {
-        color: ['#229CFB', '#2DD59A', '#FCCA24', '#FA9036', '#000000'],
+        color: ['#2DD59A', '#229CFB', '#F5222D', '#FA9036', '#000000'],
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -277,7 +277,8 @@ export default Vue.extend({
           },
           {
             type: 'bar',
-            name: '发货数量',
+            stack: '0',
+            name: '未进行',
             data: []
           }
         ]
@@ -771,7 +772,7 @@ export default Vue.extend({
             })
             this.showCharts = !!hasNumber || this.showCharts
             this.option.series[0].data.push(res.data.data[key].completed)
-            this.option.series[3].data.push(res.data.data[key].number)
+            this.option.series[3].data.push(res.data.data[key].number - res.data.data[key].postpone - res.data.data[key].completed)
             if (this.option.series[0].data.length < 4) {
               this.option.series[1].data.push(0)
               this.option.series[2].data.push(res.data.data[key].postpone)

@@ -292,6 +292,7 @@ export default Vue.extend({
           department: this.departmentName,
           page: this.page,
           limit: this.limit,
+          month: '',
           type: this.type,
           status: this.status
         })
