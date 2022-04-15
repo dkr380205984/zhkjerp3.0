@@ -191,6 +191,7 @@
                   remote
                   placeholder="订单号/产品编号"
                   :remote-method="querySearchAsync"
+                  @change="handleSelect(item, itemProIndex, index, settlementLogIndex)"
                 >
                   <el-option v-for="item in orderList" :key="item.value" :label="item.label" :value="item.value">
                     <div style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
