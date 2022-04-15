@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="position === 'top'" class="blue clickButton" @click="isShow = !isShow" :style="buttonStyle">
+    <div v-if="position !== 'bottom'" class="blue clickButton" @click="isShow = !isShow" :style="buttonStyle">
       {{ isShow ? showTitle : hideTitle }}
     </div>
     <div class="zhDropDown" :style="{ height: isShow ? height + 'px' : '0' }">
@@ -8,7 +8,7 @@
         <slot></slot>
       </div>
     </div>
-    <div v-if="position !== 'top'" class="blue clickButton" @click="isShow = !isShow" :style="buttonStyle">
+    <div v-if="position === 'bottom'" class="blue clickButton" @click="isShow = !isShow" :style="buttonStyle">
       {{ isShow ? showTitle : hideTitle }}
     </div>
   </div>
@@ -24,7 +24,7 @@ export default Vue.extend({
     },
     position: {
       type: String,
-      default: 'bottom'
+      default: 'top'
     },
     hideTitle: {
       type: String,

@@ -4,7 +4,7 @@
       <div class="titleCtn">
         <div class="title">样单列表</div>
       </div>
-      <zh-drop-down :show="showCharts" hideTitle="点击查看图表" style="padding-top: 10px">
+      <zh-drop-down :show="showCharts" position="bottom" hideTitle="点击查看图表" style="padding-top: 10px">
         <div style="height: 200px; width: 1580px; transform: translateX(-111px); padding-top: 50px">
           <zh-charts :option="option" style="height: 200px" v-on:chartsData="chartsData"></zh-charts>
         </div>
@@ -733,7 +733,7 @@ export default Vue.extend({
         })
     },
     chartsData(params: any) {
-      if(this.isClick) return
+      if (this.isClick) return
       this.isClick = true
       this.complete_time = params.name
       this.getList()
@@ -802,7 +802,7 @@ export default Vue.extend({
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           page: this.page,
           limit: this.limit,
-          complete_time: this.complete_time.slice(0,10),
+          complete_time: this.complete_time.slice(0, 10),
           is_check: this.status,
           start_time: this.date.length > 0 ? this.date[0] : '',
           end_time: this.date.length > 0 ? this.date[1] : '',
