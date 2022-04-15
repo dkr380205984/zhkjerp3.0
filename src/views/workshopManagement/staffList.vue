@@ -104,6 +104,7 @@
             <el-table-column prop="department" label="所属部门"></el-table-column>
             <el-table-column prop="process" label="负责工序"></el-table-column>
             <el-table-column prop="total_number" label="本月完成数量"></el-table-column>
+            <el-table-column prop="total_extra_number" label="本月额外数量"></el-table-column>
             <el-table-column prop="total_price" label="本月完成金额"></el-table-column>
             <el-table-column label="平均单价">
               <template slot-scope="scope">
@@ -128,7 +129,12 @@
             </el-table-column>
           </el-table>
         </div>
-        <div class="btn backHoverBlue fl" style="margin-top: 16px" @click="exportExcel">导出月度报表</div>
+        <div class="btn backHoverBlue fl" style="margin-right: 40px" @click="exportExcel">导出月度报表</div>
+        <div style="width: 50%; display: flex; justify-content: space-between; margin-left: 20px; line-height: 2">
+          <span>完成数量：{{ additional.total_number }}</span>
+          <span>完成金额：{{ additional.total_price }} 元</span>
+          <span>额外数量：{{ additional.total_extra_number }}</span>
+        </div>
         <div class="pageCtn">
           <el-pagination
             background
@@ -171,6 +177,7 @@ export default Vue.extend({
       limitList: limitArr,
       limit: 10,
       keyword: '',
+      additional: {},
       client_id: [],
       department: '',
       departmentList: [],
@@ -464,6 +471,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.list = res.data.data.items
             this.total = res.data.data.total
+            this.additional = res.data.data.additional
           }
           this.loading = false
         })
