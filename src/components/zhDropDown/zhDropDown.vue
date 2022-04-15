@@ -1,11 +1,14 @@
 <template>
   <div>
+    <div v-if="position === 'top'" class="blue clickButton" @click="isShow = !isShow" :style="buttonStyle">
+      {{ isShow ? showTitle : hideTitle }}
+    </div>
     <div class="zhDropDown" :style="{ height: isShow ? height + 'px' : '0' }">
       <div ref="aa">
         <slot></slot>
       </div>
     </div>
-    <div class="blue clickButton" @click="isShow = !isShow" :style="buttonStyle">
+    <div v-if="position !== 'top'" class="blue clickButton" @click="isShow = !isShow" :style="buttonStyle">
       {{ isShow ? showTitle : hideTitle }}
     </div>
   </div>
@@ -18,6 +21,10 @@ export default Vue.extend({
     showTitle: {
       type: String,
       default: '收起'
+    },
+    position: {
+      type: String,
+      default: 'bottom'
     },
     hideTitle: {
       type: String,
