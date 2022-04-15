@@ -111,7 +111,7 @@
                 <span>{{ (scope.row.total_price / (scope.row.total_number || 1)).toFixed(2) }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column label="操作" width="140">
               <template slot-scope="scope">
                 <span
                   class="opr hoverBlue"
@@ -125,6 +125,18 @@
                   "
                   >继续添加</span
                 >
+                <!-- <span
+                  class="opr hoverBlue"
+                  @click="
+                    $router.push(
+                      '/workshopManagement/staffInputDetail?staffInfo=' +
+                        JSON.stringify([
+                          { id: scope.row.id, name: scope.row.name, code: scope.row.code, process: scope.row.process }
+                        ])
+                    )
+                  "
+                  >详情</span
+                > -->
               </template>
             </el-table-column>
           </el-table>
