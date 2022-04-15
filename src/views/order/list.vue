@@ -209,7 +209,7 @@ export default Vue.extend({
         end_time: ''
       },
       option: {
-        color: ['#229CFB', '#2DD59A', '#FCCA24', '#000000', '#000000'],
+        color: ['#2DD59A', '#229CFB', '#F5222D', '#FA9036', '#000000'],
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -224,7 +224,6 @@ export default Vue.extend({
                 ${params[0].axisValueLabel}</br>
             `
 
-            htmlStr += `发货数量：${params[3].data}<br/>`
             params.forEach((param: any) => {
               if (param.seriesName === '发货数') return
               if (param.dataIndex < 3 && param.seriesIndex === 1) return
@@ -285,13 +284,9 @@ export default Vue.extend({
           },
           {
             type: 'bar',
-            name: '发货数',
+            name: '未进行',
             stack: '0',
             data: [],
-            itemStyle: {
-              width: 0, // 线宽是0
-              color: 'rgba(0, 0, 0, 0)' // 线的颜色是透明的
-            }
           },
           {
             type: 'line',
@@ -781,7 +776,7 @@ export default Vue.extend({
             })
             this.showCharts = !!hasNumber || this.showCharts
             this.option.series[0].data.push(res.data.data[key].completed)
-            this.option.series[3].data.push(res.data.data[key].number)
+            this.option.series[3].data.push(res.data.data[key].number - res.data.data[key].postpone - res.data.data[key].completed)
             this.option.series[4].data.push(res.data.data[key].order_number)
             if (this.option.series[0].data.length < 4) {
               this.option.series[1].data.push(0)
