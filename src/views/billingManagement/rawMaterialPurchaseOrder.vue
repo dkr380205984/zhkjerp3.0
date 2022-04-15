@@ -32,7 +32,7 @@
                 getContacts($event)
                 changeRouter()
               "
-              placeholder="筛选下单公司"
+              placeholder="筛选订购公司"
               v-model="client_id"
               filterable
               :options="clientList"
