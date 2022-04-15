@@ -1,5 +1,5 @@
 <template>
-  <div id="workshopManagementStaffList" class="bodyContainer">
+  <div id="workshopManagementStaffList" v-loading="loading" class="bodyContainer">
     <div class="topTagCtn">
       <div class="tag" @click="$router.push('/workshopManagement/list')">
         <svg class="iconFont" aria-hidden="true">

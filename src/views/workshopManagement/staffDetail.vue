@@ -23,18 +23,12 @@
               <div class="label" style="width: unset; margin-right: 10px">{{ settlementLogIndex + 1 }}</div>
               <div class="label">员工姓名：</div>
               <div class="text">
-                <el-select
-                  v-model="settlementLog.staffInfo"
-                  value-key="id"
-                  filterable
-                  placeholder="请选择员工"
-                  @change="selectStaff(settlementLogIndex)"
-                >
+                <el-select v-model="settlementLog.staffId" filterable placeholder="请选择员工" @change="selectStaff">
                   <el-option
                     v-for="(staff, StaffIndex) in staffList"
                     :key="StaffIndex + 'StaffIndex'"
                     :label="staff.code.substr(staff.code.length - 4, staff.code.length) + ' ' + staff.name"
-                    :value="staff"
+                    :value="staff.id"
                   >
                   </el-option>
                 </el-select>
@@ -734,10 +728,10 @@ export default Vue.extend({
           })
         })
     },
-    selectStaff(index: any) {
-      this.settlementLogList[index].staffId = this.settlementLogList[index].staffInfo.id
-      this.settlementLogList[index].staffCode = this.settlementLogList[index].staffInfo.code
-      this.settlementLogList[index].staffName = this.settlementLogList[index].staffInfo.name
+    selectStaff(id: number) {
+      // this.settlementLogList[index].staffId = this.settlementLogList[index].staffInfo.id
+      // this.settlementLogList[index].staffCode = this.settlementLogList[index].staffInfo.code
+      // this.settlementLogList[index].staffName = this.settlementLogList[index].staffInfo.name
     },
     querySearchAsync(str: string, cb: any) {
       if (str === '' || str === undefined) {
@@ -908,6 +902,16 @@ export default Vue.extend({
     }
   },
   mounted() {
+    staff
+      .list({
+        status: 1
+      })
+      .then((res) => {
+        this.staffList = res.data.data
+        // this.loading = false
+      })
+
+    this.loading = true
     this.settlementLogList = []
     let _this = this
     let staffArr = JSON.parse(_this.$route.query.staffInfo + '')
@@ -930,40 +934,75 @@ export default Vue.extend({
     ]
     let arr1: any = []
 
+    if (staffArr.length === 0) {
+      this.settlementLogList.push({
+        staffName: '',
+        staffCode: '',
+        staffId: '',
+        processInfo: [
+          {
+            process: [0, ''],
+            product_info: [
+              {
+                order_code: '',
+                product_detail_info: [
+                  {
+                    code: '',
+                    sizeColorInfo: [
+                      {
+                        size_name: '',
+                        color_name: '',
+                        number: '',
+                        extra_number: '',
+                        shoddy_number: '',
+                        shoddy_reason: []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      })
+    }
+
     staffArr.forEach((staff: any) => {
       this.settlementLogList.push({
         staffName: staff.name,
         staffCode: staff.code,
-        staffId: staff.id,
+        staffId: +staff.id,
         processInfo: []
       })
+
+      this.settlementLogList[0].processInfo.push({
+        process: [0, ''],
+        product_info: [
+          {
+            order_code: '',
+            product_detail_info: [
+              {
+                code: '',
+                sizeColorInfo: [
+                  {
+                    size_name: '',
+                    color_name: '',
+                    number: '',
+                    extra_number: '',
+                    shoddy_number: '',
+                    shoddy_reason: []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      })
+
       staff.process.split('/').forEach((processs: any) => {
         if (processs !== '') {
           arr1.push(processs)
         }
-        this.settlementLogList[this.settlementLogList.length - 1].processInfo.push({
-          process: [0, processs],
-          product_info: [
-            {
-              order_code: '',
-              product_detail_info: [
-                {
-                  code: '',
-                  sizeColorInfo: [
-                    {
-                      size_name: '',
-                      color_name: '',
-                      number: '',
-                      extra_number: '',
-                      shoddy_number: '',
-                      shoddy_reason: []
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        })
       })
     })
 
@@ -973,14 +1012,6 @@ export default Vue.extend({
     })
 
     this.processList = arr
-
-    staff
-      .list({
-        status: 1
-      })
-      .then((res) => {
-        this.staffList = res.data.data
-      })
 
     this.init()
   }
@@ -1039,6 +1070,14 @@ export default Vue.extend({
     background: #2e394f;
     &:hover {
       background: #737375;
+    }
+  }
+
+  .backHoverRed {
+    color: #fff;
+    background: #f5222d;
+    &:hover {
+      background: #fd5b63;
     }
   }
 }
