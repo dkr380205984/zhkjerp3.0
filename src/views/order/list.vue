@@ -645,7 +645,7 @@ export default Vue.extend({
       this.changeRouter()
     },
     chartsData(params: any) {
-      console.log(params)
+      // console.log(params)
       if (this.isClick) return
       this.isClick = true
       this.delivery_time = params.name

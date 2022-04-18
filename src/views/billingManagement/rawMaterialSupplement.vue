@@ -171,11 +171,24 @@
           </div>
         </div>
         <div style="margin-top: 20px">
-          <span style="line-height: 35px; margin-left: 40px">合计补原料数量：{{ additional.total_number }} </span>
-          <span style="line-height: 35px; margin-left: 40px"
-            >合计本厂承担金额：{{ -additional.self_client_price }}元
+          <span style="line-height: 35px; margin-left: 40px">
+            合计补原料数量：
+            <span class="green" style="font-weight: bold">
+              {{ (additional.total_number / 1000).toFixed(2) }} 吨或千米
+            </span>
           </span>
-          <span style="line-height: 35px; margin-left: 40px">合计外协承担金额：{{ additional.client_price }}元 </span>
+          <span style="line-height: 35px; margin-left: 40px">
+            合计本厂承担金额：
+            <span class="green" style="font-weight: bold">
+              {{ (-additional.self_client_price / 10000).toFixed(2) }} 万元
+            </span>
+          </span>
+          <span style="line-height: 35px; margin-left: 40px">
+            合计外协承担金额：
+            <span class="green" style="font-weight: bold">
+              {{ (additional.client_price / 10000).toFixed(2) }} 万元
+            </span>
+          </span>
         </div>
         <div class="pageCtn">
           <el-pagination

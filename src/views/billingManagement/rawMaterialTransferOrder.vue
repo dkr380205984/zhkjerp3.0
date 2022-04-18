@@ -154,10 +154,30 @@
           </div>
         </div>
         <div style="margin-top: 20px">
-          <span style="line-height: 35px; margin-left: 40px">合计调取数量：{{ additional.total_number }} </span>
-          <span style="line-height: 35px; margin-left: 40px">合计调取金额：{{ additional.total_price }}元 </span>
-          <span style="line-height: 35px; margin-left: 40px">合计入库数量：{{ additional.total_push_number }} </span>
-          <span style="line-height: 35px; margin-left: 40px">合计入库金额：{{ additional.total_push_price }}元 </span>
+          <span style="line-height: 35px; margin-left: 40px">
+            合计调取数量：
+            <span class="green" style="font-weight: bold">
+              {{ (additional.total_number / 10000).toFixed(2) }} 万件
+            </span>
+          </span>
+          <span style="line-height: 35px; margin-left: 40px">
+            合计调取金额：
+            <span class="green" style="font-weight: bold">
+              {{ (additional.total_price / 10000).toFixed(2) }} 万元
+            </span>
+          </span>
+          <span style="line-height: 35px; margin-left: 40px">
+            合计入库数量：
+            <span class="green" style="font-weight: bold">
+              {{ (additional.total_push_number / 10000).toFixed(2) }} 万件
+            </span>
+          </span>
+          <span style="line-height: 35px; margin-left: 40px">
+            合计入库金额：
+            <span class="green" style="font-weight: bold">
+              {{ (additional.total_push_price / 10000).toFixed(2) }} 万元
+            </span>
+          </span>
         </div>
         <div class="pageCtn">
           <el-pagination

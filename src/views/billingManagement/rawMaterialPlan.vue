@@ -228,12 +228,21 @@
         </div>
         <div style="margin-top: 20px">
           <span style="line-height: 35px; margin-left: 40px"
-            >合计计划生产数量：{{ additional.total_production_number }}
+            >合计计划生产数量：
+            <span style="font-weight: bold" class="green">
+              {{ (additional.total_production_number / 10000).toFixed(2) }} 万件
+            </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px"
-            >合计计划原料数量：{{ additional.total_material_number }}
+            >合计计划原料数量：
+            <span class="green" style="font-weight: bold">
+              {{ (additional.total_material_number / 1000).toFixed(2) }} 吨或千米
+            </span>
           </span>
-          <span style="line-height: 35px; margin-left: 40px">平均损耗：{{ additional.pre_loss }}% </span>
+          <span style="line-height: 35px; margin-left: 40px">
+            平均损耗：
+            <span class="green" style="font-weight: bold"> {{ additional.pre_loss }} % </span>
+          </span>
         </div>
         <div class="pageCtn">
           <el-pagination

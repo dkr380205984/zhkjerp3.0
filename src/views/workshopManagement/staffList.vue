@@ -143,9 +143,24 @@
         </div>
         <div class="btn backHoverBlue fl" style="margin-right: 40px" @click="exportExcel">导出月度报表</div>
         <div style="width: 50%; display: flex; justify-content: space-between; margin-left: 20px; line-height: 2">
-          <span>完成数量：{{ additional.total_number }}</span>
-          <span>完成金额：{{ additional.total_price }} 元</span>
-          <span>额外数量：{{ additional.total_extra_number }}</span>
+          <span>
+            完成数量：
+            <span class="green" style="font-weight: bold">
+              {{ (additional.total_number / 10000).toFixed(2) }} 万件
+            </span>
+          </span>
+          <span>
+            完成金额：
+            <span class="green" style="font-weight: bold">
+              {{ (additional.total_price / 10000).toFixed(2) }} 万元
+            </span>
+          </span>
+          <span>
+            额外数量：
+            <span class="green" style="font-weight: bold">
+              {{ (additional.total_extra_number / 10000).toFixed(2) }} 万件
+            </span>
+          </span>
         </div>
         <div class="pageCtn">
           <el-pagination

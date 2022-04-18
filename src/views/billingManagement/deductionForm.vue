@@ -142,7 +142,12 @@
           </div>
         </div>
         <div style="margin-top: 20px">
-          <span style="line-height: 35px; margin-left: 40px">合计扣款金额：{{ additional.total_price }}元 </span>
+          <span style="line-height: 35px; margin-left: 40px">
+            合计扣款金额：
+            <span class="green" style="font-weight: bold">
+              {{ (additional.total_price / 10000).toFixed(2) }} 万元
+            </span>
+          </span>
         </div>
         <div class="pageCtn">
           <el-pagination
