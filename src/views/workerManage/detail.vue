@@ -89,13 +89,7 @@
           <div class="col">
             <div class="label">是否缴纳社保：</div>
             <div class="text">
-              {{
-                userDetailInfo.social_security == '1'
-                  ? '否'
-                  : userDetailInfo.social_security === '2'
-                  ? '是'
-                  : ''
-              }}
+              {{ userDetailInfo.social_security == '1' ? '否' : userDetailInfo.social_security === '2' ? '是' : '' }}
             </div>
           </div>
         </div>
@@ -104,6 +98,121 @@
             <div class="label">备注：</div>
             <div class="text">{{ userDetailInfo.desc }}</div>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="module clearfix">
+      <div class="titleCtn">
+        <div class="title">结算日志</div>
+      </div>
+      <div class="listCtn">
+        <div class="filterCtn">
+          选择月份：
+          <div class="elCtn">
+            <el-date-picker
+              v-model="month"
+              type="month"
+              placeholder="选择月"
+              value-format="yyyy-M"
+              @change="changeRouter"
+            >
+            </el-date-picker>
+          </div>
+        </div>
+      </div>
+      <div class="tableCtn">
+        <el-table
+          ref="chooseSettlementLogList"
+          @selection-change="handleSelectionChange"
+          :data="settlementLogList"
+          tooltip-effect="dark"
+          style="width: 100%"
+        >
+          <el-table-column type="selection" width="55" fixed> </el-table-column>
+          <el-table-column prop="id" label="序号" width="70" fixed></el-table-column>
+          <el-table-column prop="created_at" label="添加时间" width="110" fixed> </el-table-column>
+          <el-table-column prop="user_name" label="操作人" width="110" fixed> </el-table-column>
+          <el-table-column label="审核状态" width="120">
+            <template slot-scope="scope">
+              <div v-if="scope.row.is_check === 0" class="orange">审核中</div>
+              <div v-if="scope.row.is_check === 1" class="blue">通过</div>
+              <div v-if="scope.row.is_check === 2" class="red">不通过</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="process_name" label="工序"> </el-table-column>
+          <el-table-column label="工序说明" width="120">
+            <template slot-scope="scope">
+              <el-tooltip
+                class="item"
+                effect="dark"
+                :content="scope.row.process_desc || '无工序说明'"
+                placement="top-start"
+              >
+                <span class="blue" style="cursor: pointer">查看</span>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+          <el-table-column prop="staff_name" label="人员" width="120">
+            <template slot-scope="scope">
+              <div>{{ scope.row.staff_code.substring(scope.row.staff_code.length - 4) }}</div>
+              <div>{{ scope.row.staff_name }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="product_code" label="产品编号" width="120"> </el-table-column>
+          <el-table-column label="颜色尺码" width="120">
+            <template slot-scope="scope">{{
+              (scope.row.size_name || '无尺码数据') + '/' + (scope.row.color_name || '无颜色数据')
+            }}</template>
+          </el-table-column>
+          <el-table-column prop="number" label="完成数量" width="120"> </el-table-column>
+          <el-table-column prop="extra_number" label="额外数量" width="120"> </el-table-column>
+          <el-table-column prop="shoddy_number" label="次品数量" width="120"> </el-table-column>
+          <el-table-column label="次品原因" width="120">
+            <template slot-scope="scope">
+              <el-tooltip
+                class="item"
+                effect="dark"
+                :content="scope.row.shoddy_reason || '无次品原因'"
+                placement="top-start"
+              >
+                <span class="blue" style="cursor: pointer">查看</span>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+          <el-table-column prop="price" label="结算单价(元/件)" width="150"> </el-table-column>
+          <el-table-column prop="total_price" label="结算总价(元)" fixed="right" width="120"> </el-table-column>
+        </el-table>
+        <div class="listCtn">
+          <div class="pageCtn">
+            <el-pagination
+              background
+              :page-size="10"
+              layout="prev, pager, next"
+              :total="total"
+              :current-page.sync="page"
+              @current-change="changeRouter"
+            >
+            </el-pagination>
+          </div>
+        </div>
+        <div style="position: relative; float: left">
+          <span style="margin-top: 20px; margin-left: 32px; display: inline-block">合计</span>
+          <span style="margin-top: 20px; margin-left: 32px; display: inline-block">
+            本月完成数量：
+            <span class="green" style="font-weight: bold">
+              {{ (additional.total_number / 10000).toFixed(2) }} 万件
+            </span>
+          </span>
+          <span style="margin-top: 20px; margin-left: 32px; display: inline-block">
+            本月完成金额：
+            <span class="green" style="font-weight: bold">
+              {{ (additional.total_price / 10000).toFixed(2) }} 万元
+            </span>
+          </span>
+        </div>
+        <div class="buttonList">
+          <div style="margin-top: 20px; margin-left: 32px" class="btn backHoverBlue" @click="lostAgree">批量通过</div>
+          <div style="margin-top: 20px; margin-left: 32px" class="btn backHoverRed" @click="lostDelete">批量删除</div>
         </div>
       </div>
     </div>
@@ -131,14 +240,26 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { staff } from '@/assets/js/api'
+import { staff, workshop } from '@/assets/js/api'
 export default Vue.extend({
   data(): {
     [propName: string]: any
   } {
     return {
       loading: true,
-      userDetailInfo: {}
+      total: 0,
+      page: 1,
+      month: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
+      userDetailInfo: {},
+      additional: {},
+      settlementLogList: [],
+      chooseSettlementLogList: []
+    }
+  },
+  watch: {
+    $route() {
+      this.getFilters()
+      this.init()
     }
   },
   methods: {
@@ -154,16 +275,92 @@ export default Vue.extend({
             res.data.data.process = res.data.data.process.toString()
           }
 
-          if(res.data.data.entry_time !== null){
+          if (res.data.data.entry_time !== null) {
             res.data.data.entry_time = res.data.data.entry_time.slice(0, 10)
           }
-          
-          if(res.data.data.resign_time !== null){
+
+          if (res.data.data.resign_time !== null) {
             res.data.data.resign_time = res.data.data.resign_time.slice(0, 10)
           }
           this.userDetailInfo = res.data.data
           this.loading = false
         })
+
+      workshop
+        .list({
+          staff_id: this.$route.query.id + '',
+          page: this.page,
+          limit: 10,
+          month: +this.month.split('-')[1],
+          year: this.month.split('-')[0]
+        })
+        .then((res) => {
+          this.settlementLogList = res.data.data.items
+          this.additional = res.data.data.additional
+          this.total = res.data.data.total
+        })
+    },
+    lostAgree() {
+      if (this.chooseSettlementLogList.length === 0) {
+        this.$message.error('请选择至少一条日志')
+        return
+      }
+
+      let arr: any = []
+      this.chooseSettlementLogList.forEach((settlementLog: any) => {
+        arr.push(settlementLog.id)
+      })
+
+      workshop
+        .check({
+          id: arr,
+          is_check: 1
+        })
+        .then((res) => {
+          if (res.data.status === true) {
+            this.$message.success('审核成功')
+            this.init()
+          }
+        })
+    },
+    getFilters() {
+      const query = this.$route.query
+      this.page = Number(query.page) || 1
+      this.month = query.month || new Date().getFullYear() + '-' + (new Date().getMonth() + 1)
+      this.id = query.id
+    },
+    lostDelete() {
+      if (this.chooseSettlementLogList.length === 0) {
+        this.$message.error('请选择至少一条日志')
+        return
+      }
+
+      let arr: any = []
+      this.chooseSettlementLogList.forEach((settlementLog: any) => {
+        arr.push(settlementLog.id)
+      })
+
+      workshop
+        .delete({
+          id: arr
+        })
+        .then((res) => {
+          if (res.data.status === true) {
+            this.$message.success('删除成功')
+            this.init()
+          }
+        })
+    },
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
+      this.$router.push(
+        '/workerManage/detail?page=' + (this.page || 1) + '&month=' + this.month + '&id=' + this.$route.query.id
+      )
+    },
+    handleSelectionChange(val: any) {
+      this.chooseSettlementLogList = val
     },
     deleteWorker() {
       this.$confirm('是否离职该员工?', '提示', {
@@ -200,12 +397,13 @@ export default Vue.extend({
     }
   },
   mounted() {
+    this.getFilters()
     this.init()
   }
 })
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @import '~@/assets/css/workerManage/detail.less';
 </style>
 <style lang="less">
