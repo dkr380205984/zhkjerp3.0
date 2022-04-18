@@ -8,7 +8,13 @@
         <div class="filterCtn">
           选择月份：
           <div class="elCtn">
-            <el-date-picker v-model="month" type="month" placeholder="选择月" value-format="yyyy-MM" @change="changeRouter">
+            <el-date-picker
+              v-model="month"
+              type="month"
+              placeholder="选择月"
+              value-format="yyyy-M"
+              @change="changeRouter"
+            >
             </el-date-picker>
           </div>
         </div>
@@ -141,7 +147,13 @@ export default Vue.extend({
   methods: {
     init() {
       workshop
-        .list({ staff_id: this.$route.query.id + '', page: this.page, limit: 10, month: this.month })
+        .list({
+          staff_id: this.$route.query.id + '',
+          page: this.page,
+          limit: 10,
+          month: +this.month.split('-')[1],
+          year: this.month.split('-')[0]
+        })
         .then((res) => {
           this.settlementLogList = res.data.data.items
           this.additional = res.data.data.additional
@@ -150,7 +162,7 @@ export default Vue.extend({
     },
     getFilters() {
       const query = this.$route.query
-      this.page = Number(query.page)
+      this.page = Number(query.page) || 1
       this.month = query.month || new Date().getFullYear() + '-' + (new Date().getMonth() + 1)
       this.id = query.id
     },
@@ -160,7 +172,7 @@ export default Vue.extend({
       }
       this.$router.push(
         '/workshopManagement/staffInputDetail?page=' +
-          this.page +
+          (this.page || 1) +
           '&month=' +
           this.month +
           '&id=' +
