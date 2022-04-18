@@ -75,7 +75,7 @@
               <div class="col">
                 <div class="infoCtn">
                   <span class="title">订单下单数量</span>
-                  <span class="number blue">{{clientFinancial.total_order_number/10000}}
+                  <span class="number blue">{{clientFinancial.total_order_number}}
                     <span class="unit">万</span>
                   </span>
                 </div>
@@ -83,7 +83,7 @@
               <div class="col">
                 <div class="infoCtn">
                   <span class="title">订单下单总额</span>
-                  <span class="number blue">{{clientFinancial.total_order_price/10000}}
+                  <span class="number blue">{{clientFinancial.total_order_price}}
                     <span class="unit">万元</span>
                   </span>
                 </div>
@@ -95,7 +95,7 @@
               <div class="col">
                 <div class="infoCtn">
                   <span class="title">实际发货数量</span>
-                  <span class="number green">{{clientFinancial.total_transport_number/10000}}
+                  <span class="number green">{{clientFinancial.total_transport_number}}
                     <span class="unit">万</span>
                   </span>
                 </div>
@@ -103,7 +103,7 @@
               <div class="col">
                 <div class="infoCtn">
                   <span class="title">实际发货总额</span>
-                  <span class="number green">{{clientFinancial.total_transport_price/10000}}
+                  <span class="number green">{{clientFinancial.total_transport_price}}
                     <span class="unit">万元</span>
                   </span>
                 </div>
@@ -115,7 +115,7 @@
           <div class="col">
             <div class="infoCtn">
               <span class="title">客户扣款金额</span>
-              <span class="number orange">{{clientFinancial.total_deduct_price/10000}}
+              <span class="number orange">{{clientFinancial.total_deduct_price}}
                 <span class="unit">万元</span>
               </span>
             </div>
@@ -125,7 +125,7 @@
               <div class="col">
                 <div class="infoCtn">
                   <span class="title">我方已开票金额</span>
-                  <span class="number green">{{clientFinancial.total_invoice_price/10000}}
+                  <span class="number green">{{clientFinancial.total_invoice_price}}
                     <span class="unit">万元</span>
                   </span>
                 </div>
@@ -133,7 +133,7 @@
               <div class="col">
                 <div class="infoCtn">
                   <span class="title">我方已收款金额</span>
-                  <span class="number green">{{clientFinancial.total_collect_price/10000}}
+                  <span class="number green">{{clientFinancial.total_collect_price}}
                     <span class="unit">万元</span>
                   </span>
                 </div>

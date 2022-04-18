@@ -400,7 +400,23 @@ export default Vue.extend({
           }
         ]
       },
-      cityList: JSON.parse(this.$getLocalStorage('boxCity')) || [],
+      cityList: JSON.parse(this.$getLocalStorage('boxCity'))
+        ? [
+            { value: '上海' },
+            { value: '宁波' },
+            { value: '青岛' },
+            { value: '天津' },
+            { value: '杭州' },
+            { value: '义乌' }
+          ].concat(JSON.parse(this.$getLocalStorage('boxCity')))
+        : [
+            { value: '上海' },
+            { value: '宁波' },
+            { value: '青岛' },
+            { value: '天津' },
+            { value: '杭州' },
+            { value: '义乌' }
+          ],
       addressList: JSON.parse(this.$getLocalStorage('boxAddress')) || []
     }
   },

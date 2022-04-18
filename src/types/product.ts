@@ -27,7 +27,7 @@ export interface ProductInfo {
   desc: string
   style_data?: string[] // 款式
   component_data: Array<{
-    component_id: string | number
+    component_id?: string | number
     component_name?: string
     number: string | number // 成分信息
   }>
@@ -61,7 +61,7 @@ export interface PartInfo {
     weight: string
   }>
   part_component_data?: Array<{
-    component_id: string | number
+    component_id?: string | number
     component_name?: string
     number: string | number // 成分信息
   }>

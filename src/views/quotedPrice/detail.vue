@@ -124,7 +124,16 @@
                 <div class="tcol"
                   style="flex:0.5">客户最低起订量</div>
                 <div class="tcol">产品描述/客户要求</div>
-                <div class="tcol">是否已绑订单</div>
+                <div class="tcol">
+                  <div>是否已绑订单
+                    <el-tooltip class="item orange"
+                      effect="dark"
+                      content="注意：每个产品只能绑定订单里面的一个产品。如出现重复产品的订单，请使用复制功能，再复制一张新的报价单进行绑定。"
+                      placement="top">
+                      <el-icon class="el-icon-warning"></el-icon>
+                    </el-tooltip>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="tbody">

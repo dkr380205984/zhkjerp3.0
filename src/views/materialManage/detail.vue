@@ -2142,6 +2142,10 @@
           </div>
         </div>
         <div class="btnCtn">
+          <div class="btn backHoverGreen"
+            @click="showAssociatedPage=true">
+            <span class="text">关联页面</span>
+          </div>
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
         </div>
@@ -2157,6 +2161,9 @@
     <zh-deduct-detail :show="deductDetailFlag"
       @close="deductDetailFlag = false"
       :data="deductDetail"></zh-deduct-detail>
+    <associated-page :data="associatedPage"
+      @close="showAssociatedPage = false"
+      :show="showAssociatedPage"></associated-page>
   </div>
 </template>
 
@@ -2195,6 +2202,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      showAssociatedPage: false,
       materialOrderFlag: false,
       materialStockFlag: false,
       step: 1,
@@ -3221,6 +3229,19 @@ export default Vue.extend({
     }
   },
   computed: {
+    associatedPage(): any[] {
+      return [
+        {
+          name: '物料出入库',
+          url:
+            '/materialStock/detail?id=' +
+            // @ts-ignore
+            this.materialPlanInfo.top_order_id +
+            '&sampleOrderIndex=' +
+            this.materialPlanInfo.order_id
+        }
+      ]
+    },
     materialStockList(): any[] {
       return this.materialStockArr.slice((this.searchPage - 1) * 5, this.searchPage * 5)
     },

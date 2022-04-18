@@ -116,9 +116,9 @@
             <div class="col">{{item.total_order_number}}</div>
             <div class="col">{{item.total_transport_price}}</div>
             <div class="col">{{item.total_transport_number}}</div>
-            <div class="col">{{item.total_invoice_price}}元</div>
-            <div class="col">{{item.total_collect_price}}元</div>
-            <div class="col">{{item.total_deduct_price}}元</div>
+            <div class="col">{{item.total_invoice_price}}万元</div>
+            <div class="col">{{item.total_collect_price}}万元</div>
+            <div class="col">{{item.total_deduct_price}}万元</div>
             <div class="col oprCtn">
               <span class="opr hoverBlue"
                 @click="$router.push('/settlement/collectionDetail?id='+item.id)">详情</span>
@@ -132,9 +132,9 @@
             <div class="col green">{{totalData.total_order_number}}</div>
             <div class="col green">{{totalData.total_transport_price}}</div>
             <div class="col green">{{totalData.total_transport_number}}</div>
-            <div class="col green">{{totalData.total_invoice_price}}元</div>
-            <div class="col green">{{totalData.total_collect_price}}元</div>
-            <div class="col green">{{totalData.total_deduct_price}}元</div>
+            <div class="col green">{{totalData.total_invoice_price}}万元</div>
+            <div class="col green">{{totalData.total_collect_price}}万元</div>
+            <div class="col green">{{totalData.total_deduct_price}}万元</div>
             <div class="col"></div>
           </div>
         </div>
@@ -240,7 +240,11 @@ export default Vue.extend({
         ? this.clientTypeList.find((item: any) => item.id === Number(query.clientType)).public_tag
         : []
     },
-    changeRouter() {
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
+
       this.$router.push(
         '/settlement/collectionList?page=' +
           this.page +
