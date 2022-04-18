@@ -1084,6 +1084,12 @@ const statistics = {
     start_time: string
     end_time: string
   }) => http.get(`${baseUrl}/statistics/receipt/contents`, params),
+  storeTotal: (params?: {
+    store_id: number | string
+    name: string
+    start_time: string
+    end_time: string
+  }) => http.get(`${baseUrl}/statistics/store/total`, params),
 }
 export {
   statistics,
