@@ -137,76 +137,82 @@
               </div>
             </div>
           </div>
-          <div class="tableCtn noPadBtm"
-            style="padding-left:0;padding-right:0"
-            v-for="(itemBatch,indexBatch) in orderBatchCopy"
-            :key="indexBatch">
-            <div class="thead">
-              <div class="trow">
-                <div class="tcol"
-                  style="flex:0.72">批次序号</div>
-                <div class="tcol">发货时间</div>
-                <div class="tcol noPad"
-                  style="flex:8.7">
+          <div v-for="itemOrder in orderInfoCopy"
+            :key="itemOrder.id">
+            <div :class="itemBatchIndex===0?'detailCtn':'detailCtn noPadTop'"
+              v-for="(itemBatch,itemBatchIndex) in itemOrder.time_data[0].batch_data"
+              :key="itemBatch.id">
+              <div class="tableCtn noPadBtm"
+                style="padding-left:0;padding-right:0">
+                <div class="thead">
                   <div class="trow">
-                    <div class="tcol">产品品类</div>
+                    <div class="tcol">订单/批次</div>
+                    <div class="tcol">发货时间</div>
                     <div class="tcol noPad"
-                      style="flex:3">
+                      style="flex:4.7">
                       <div class="trow">
-                        <div class="tcol">尺码颜色</div>
-                        <div class="tcol">计划发货数量</div>
-                        <div class="tcol">实际发货数量</div>
+                        <div class="tcol">产品品类</div>
+                        <div class="tcol noPad"
+                          style="flex:3">
+                          <div class="trow">
+                            <div class="tcol">尺码颜色</div>
+                            <div class="tcol">计划发货数量</div>
+                            <div class="tcol">实际发货数量</div>
+                          </div>
+                        </div>
                       </div>
                     </div>
+                    <div class="tcol">箱数</div>
+                    <div class="tcol">总毛重kg</div>
+                    <div class="tcol">总净重kg</div>
+                    <div class="tcol">总体积m³</div>
                   </div>
                 </div>
-                <div class="tcol">箱数</div>
-                <div class="tcol">总毛重kg</div>
-                <div class="tcol">总净重kg</div>
-                <div class="tcol">总体积m³</div>
-              </div>
-            </div>
-            <div class="tbody">
-              <div class="trow">
-                <div class="tcol"
-                  style="flex:0.72">
-                  <span>第{{itemBatch.batch_number}}批</span>
-                </div>
-                <div class="tcol">
-                  <span class="green">{{itemBatch.delivery_time}}</span>
-                </div>
-                <div class="tcol noPad"
-                  style="flex:8.7">
-                  <div class="trow"
-                    v-for="itemPro in itemBatch.product_data"
-                    :key="itemPro.id">
+                <div class="tbody">
+                  <div class="trow">
                     <div class="tcol">
-                      <span>{{itemPro.product_code||itemPro.system_code||'无编号'}}</span>
-                      <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
+                      <span>{{itemOrder.code}}</span>
+                      <span>第{{itemBatch.batch_number}}批</span>
+                    </div>
+                    <div class="tcol">
+                      <span>{{itemBatch.delivery_time}}</span>
                     </div>
                     <div class="tcol noPad"
-                      style="flex:3">
+                      style="flex:4.7">
                       <div class="trow"
-                        v-for="(itemChild,indexChild) in itemPro.product_info"
-                        :key="indexChild">
-                        <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                        <div class="tcol">{{itemChild.number}}</div>
-                        <div class="tcol">{{itemChild.real_number}}</div>
+                        v-for="itemPro in itemBatch.product_data"
+                        :key="itemPro.id">
+                        <div class="tcol">
+                          <span>{{itemPro.product_code||itemPro.system_code||'无编号'}}</span>
+                          <span>({{itemPro.category}}/{{itemPro.secondary_category}})</span>
+                        </div>
+                        <div class="tcol noPad"
+                          style="flex:3">
+                          <div class="trow"
+                            v-for="(itemChild,indexChild) in itemPro.product_info"
+                            :key="indexChild">
+                            <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
+                            <div class="tcol">{{itemChild.number}}</div>
+                            <div class="tcol">
+                              {{itemChild.real_number}}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
+                    <div class="tcol">
+                      {{itemBatch.total_box_count}}
+                    </div>
+                    <div class="tcol">
+                      {{itemBatch.total_gross_weight}}
+                    </div>
+                    <div class="tcol">
+                      {{itemBatch.total_net_weight}}
+                    </div>
+                    <div class="tcol">
+                      {{itemBatch.total_bulk}}
+                    </div>
                   </div>
-                </div>
-                <div class="tcol">
-                  {{itemBatch.total_box_count}}箱
-                </div>
-                <div class="tcol">
-                  {{itemBatch.total_gross_weight}}kg
-                </div>
-                <div class="tcol">
-                  {{itemBatch.total_net_weight}}kg
-                </div>
-                <div class="tcol">
-                  {{itemBatch.total_bulk}}m³
                 </div>
               </div>
             </div>
@@ -348,9 +354,7 @@ export default Vue.extend({
           this.packPlanLogCopy = this.packPlanLog.map((item) => item.transport_info)
           // @ts-ignore
           this.batchInfo = this.boxInfo.rel_batch
-          this.orderBatchCopy = this.boxInfo.order_transport_info
-            ? JSON.parse(this.boxInfo.order_transport_info).batch_data
-            : []
+          this.orderInfoCopy = this.boxInfo.order_transport_info ? JSON.parse(this.boxInfo.order_transport_info) : []
         }
       })
   }

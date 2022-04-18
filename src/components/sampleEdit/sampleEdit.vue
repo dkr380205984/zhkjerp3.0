@@ -322,13 +322,10 @@
                   </el-tooltip>
                 </div>
                 <div class="info elCtn">
-                  <el-select placeholder="请选择成分"
-                    v-model="item.component_id">
-                    <el-option v-for="item in ingredientList"
-                      :key="item.id"
-                      :value="item.id"
-                      :label="item.name"></el-option>
-                  </el-select>
+                  <el-autocomplete class="inline-input"
+                    v-model="item.component_name"
+                    :fetch-suggestions="searchIngredient"
+                    placeholder="请输入成分"></el-autocomplete>
                 </div>
               </div>
               <div class="col">
@@ -345,7 +342,7 @@
               </div>
               <div class="opr hoverBlue"
                 v-if="index===0"
-                @click="$addItem(sampleInfo.component_data,{component_id:'',number:''})">添加</div>
+                @click="$addItem(sampleInfo.component_data,{component_name:'',number:''})">添加</div>
               <div class="opr hoverRed"
                 v-if="index>0"
                 @click="$deleteItem(sampleInfo.component_data,index)">删除</div>
@@ -456,13 +453,10 @@
                     <span class="text">配件成分</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select placeholder="请选择成分"
-                      v-model="itemComponent.component_id">
-                      <el-option v-for="item in ingredientList"
-                        :key="item.id"
-                        :value="item.id"
-                        :label="item.name"></el-option>
-                    </el-select>
+                    <el-autocomplete class="inline-input"
+                      v-model="itemComponent.component_name"
+                      :fetch-suggestions="searchIngredient"
+                      placeholder="请输入成分"></el-autocomplete>
                   </div>
                 </div>
                 <div class="col">
@@ -479,7 +473,7 @@
                 </div>
                 <div class="opr hoverBlue"
                   v-if="indexComponent===0"
-                  @click="$addItem(item.part_component_data,{component_id:'',number:''})">添加</div>
+                  @click="$addItem(item.part_component_data,{component_name:'',number:''})">添加</div>
                 <div class="opr hoverRed"
                   v-if="indexComponent>0"
                   @click="$deleteItem(item.part_component_data,index)">删除</div>
@@ -651,7 +645,7 @@ export default Vue.extend({
         style_data: [], // 款式
         component_data: [
           {
-            component_id: '',
+            component_name: '',
             number: '' // 成分信息
           }
         ],
@@ -681,7 +675,7 @@ export default Vue.extend({
             ],
             part_component_data: [
               {
-                component_id: '',
+                component_name: '',
                 number: '' // 成分信息
               }
             ]
@@ -699,7 +693,12 @@ export default Vue.extend({
       return this.$store.state.api.productType.arr
     },
     ingredientList(): Array<{ name: string; id: number }> {
-      return this.$store.state.api.ingredient.arr
+      return this.$store.state.api.ingredient.arr.map((item: { name: any }) => {
+        return {
+          value: item.name,
+          label: item.name
+        }
+      })
     },
     colourList(): Array<{ value: string; label: string }> {
       return this.$store.state.api.colour.arr.map((item: { name: any }) => {
@@ -760,6 +759,9 @@ export default Vue.extend({
     }
   },
   methods: {
+    searchIngredient(str: string, cb: Function) {
+      cb(str ? this.ingredientList.filter(this.createFilter(str)) : this.ingredientList)
+    },
     searchColour(str: string, cb: any) {
       let results = str ? this.colourList.filter(this.createFilter(str)) : this.colourList.slice(0, 10)
       // 调用 callback 返回建议列表的数据
@@ -848,7 +850,7 @@ export default Vue.extend({
         }),
         part_component_data: [
           {
-            component_id: '',
+            component_name: '',
             number: '' // 成分信息
           }
         ]
@@ -1026,7 +1028,7 @@ export default Vue.extend({
         style_data: [], // 款式
         component_data: [
           {
-            component_id: '',
+            component_name: '',
             number: '' // 成分信息
           }
         ],
@@ -1056,7 +1058,7 @@ export default Vue.extend({
             ],
             part_component_data: [
               {
-                component_id: '',
+                component_name: '',
                 number: '' // 成分信息
               }
             ]
@@ -1100,7 +1102,7 @@ export default Vue.extend({
         style_data: data.style_data.map((item: any) => item.id),
         component_data: data.component_data.map((item: any) => {
           return {
-            component_id: item.id,
+            component_name: item.id,
             number: item.number
           }
         }),
@@ -1134,7 +1136,7 @@ export default Vue.extend({
             }),
             part_component_data: item.part_component_data.map((item: any) => {
               return {
-                component_id: item.id,
+                component_name: item.id,
                 number: item.number
               }
             })
