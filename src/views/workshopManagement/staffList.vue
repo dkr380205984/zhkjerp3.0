@@ -125,18 +125,11 @@
                   "
                   >继续添加</span
                 >
-                <!-- <span
+                <span
                   class="opr hoverBlue"
-                  @click="
-                    $router.push(
-                      '/workshopManagement/staffInputDetail?staffInfo=' +
-                        JSON.stringify([
-                          { id: scope.row.id, name: scope.row.name, code: scope.row.code, process: scope.row.process }
-                        ])
-                    )
-                  "
+                  @click="$router.push('/workshopManagement/staffInputDetail?id=' + scope.row.id)"
                   >详情</span
-                > -->
+                >
               </template>
             </el-table-column>
           </el-table>

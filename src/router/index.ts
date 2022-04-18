@@ -636,6 +636,13 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/workshopManagement/staffDetail.vue')
     }, {
       meta: {
+        permissions_id: '19-2',
+      },
+      path: '/workshopManagement/staffInputDetail',
+      name: ' 车间管理员工录入详情',
+      component: () => import('../views/workshopManagement/staffInputDetail.vue')
+    }, {
+      meta: {
         permissions_id: '11-3',
       },
       path: '/boxManage/list',

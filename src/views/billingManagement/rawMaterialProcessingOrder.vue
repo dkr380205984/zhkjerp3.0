@@ -219,7 +219,7 @@
           <span style="line-height: 35px; margin-left: 40px">
             合计加工数量：
             <span class="green" style="font-weight: bold">
-              {{ (additional.total_number / 10000).toFixed(2) }} 万件
+              {{ (additional.total_number / 1000).toFixed(2) }} 吨或千米
             </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
@@ -231,7 +231,7 @@
           <span style="line-height: 35px; margin-left: 40px">
             合计完成数量：
             <span class="green" style="font-weight: bold">
-              {{ (additional.total_push_number / 10000).toFixed(2) }} 万件
+              {{ (additional.total_push_number / 1000).toFixed(2) }} 吨或千米
             </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">

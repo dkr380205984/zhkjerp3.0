@@ -1,0 +1,151 @@
+@import '../common.less';
+@import '../table.less';
+@import '../list.less';
+@import '../detail.less';
+@import '../buttonList.less';
+@import '../fixedTable.less';
+@import '../popup.less';
+@import '../bottomBar.less';
+@import '../edit.less';
+
+#staffInputDetail {
+  .specialTable {
+    display: block;
+    width: 100%;
+    overflow: auto;
+    padding-right: 0;
+    padding-left: 0;
+    padding-bottom: 0;
+
+    .thead {
+      width: 2070px;
+    }
+
+    .tbody {
+      width: 2070px;
+    }
+
+    .trow {
+      width: auto;
+      height: auto;
+
+      &.outTrow {
+        width: 2070px;
+      }
+
+      .tcol {
+        min-width: 110px;
+        box-sizing: border-box;
+        font-size: 14px;
+        position: relative;
+
+        .trow {
+          height: 100%;
+        }
+
+        .unit {
+          position: absolute;
+          right: 4px
+        }
+      }
+    }
+  }
+
+  .trowContainer {
+    border-bottom: 1px solid #e9e9e9;
+  }
+
+  .trowContainer:nth-last-child(1) {
+    border-bottom: 0;
+  }
+
+  .bgGray {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .popup {
+    .tableCtn {
+      .tcol {
+        border-right: 1px solid #88888888;
+        text-align: center;
+      }
+
+      .tbody {
+        border: 1px solid #88888888;
+      }
+
+      .trow {
+        border-bottom: 1px solid #88888888;
+      }
+
+      .tcol:nth-last-child(1) {
+        border-right: 0;
+      }
+
+      .trow:nth-last-child(1) {
+        border-bottom: 0;
+      }
+    }
+
+    .main {
+      width: 1370px;
+
+      .label {
+        line-height: 38px;
+        font-size: 14px;
+        width: auto;
+        text-align: left;
+      }
+
+      .editCtn {
+        &.packOrder {
+          background: #F0F0F0;
+          margin: 16px 0;
+
+          .deleteIcon {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            color: #fff;
+            line-height: 20px;
+            text-align: center;
+            border-radius: 50%;
+            background: @red;
+            float: right;
+            margin-right: -20px;
+
+            &:hover {
+              background: @hoverRed;
+            }
+          }
+
+          .col {
+            margin-right: 30px;
+          }
+
+          .opr {
+            transform: translate(-20px, 100%);
+          }
+        }
+
+        &.packPlan {
+          padding-right: 0;
+          padding-left: 0;
+        }
+      }
+    }
+
+    .tableInput {
+      border: 0;
+      outline: 0;
+      height: 100%;
+      font-size: 14px;
+      box-sizing: border-box;
+      padding: 8px 0;
+      resize: none;
+      line-height: 24px;
+      font-family: Source Han Sans CN;
+      color: @font65;
+    }
+  }
+}

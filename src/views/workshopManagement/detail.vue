@@ -1378,7 +1378,7 @@ export default Vue.extend({
       workshop
         .check({
           id: arr,
-          is_check: 2
+          is_check: 1
         })
         .then((res) => {
           if (res.data.status === true) {

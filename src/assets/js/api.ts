@@ -909,7 +909,7 @@ const workshop = {
   }) => http.post(`${baseUrl}/production/inspection/delete`, params),
   check: (params: {
     id: Array<number | string>
-    is_check: 2 | 3
+    is_check: 1 | 2 | 3
   }) => http.post(`${baseUrl}/production/inspection/check`, params),
 }
 
