@@ -189,9 +189,11 @@ export default Vue.extend({
   } {
     return {
       timer: '',
+      delivery_time: '',
       mainLoading: false,
       mainLoading1: false,
       loading: true,
+      isClick: true,
       showCharts: false,
       list: [],
       limitList: limitArr,
@@ -247,7 +249,7 @@ export default Vue.extend({
               type: 'shadow'
             },
             axisLabel: {
-              interval: 0
+              interval: 2
             }
           }
         ],
@@ -644,6 +646,10 @@ export default Vue.extend({
     },
     chartsData(params: any) {
       console.log(params)
+      if (this.isClick) return
+      this.isClick = true
+      this.delivery_time = params.name
+      this.getList()
     },
     getFilters() {
       const query = this.$route.query
@@ -788,7 +794,7 @@ export default Vue.extend({
 
             if (key === new Date().getMonth() + 1 + '-' + new Date().getDate()) {
               let obj = {
-                value: key + '\n今日',
+                value: res.data.data[key].date + '\n今日',
                 textStyle: {
                   fontSize: 16,
                   color: '#1A95FF'
@@ -797,7 +803,7 @@ export default Vue.extend({
               this.option.xAxis[0].data.push(obj)
               continue
             }
-            this.option.xAxis[0].data.push(key)
+            this.option.xAxis[0].data.push(res.data.data[key].date)
           }
           this.mainLoading1 = false
         })
@@ -806,6 +812,7 @@ export default Vue.extend({
           order_type: 1,
           keyword: this.keyword,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
+          delivery_time: this. delivery_time.slice(0, 10),
           page: this.page,
           limit: this.limit,
           is_check: this.status,
@@ -826,6 +833,7 @@ export default Vue.extend({
             this.total = res.data.data.total
           }
           this.loading = false
+          this.isClick = false
         })
     },
     getListSetting() {
