@@ -6,9 +6,10 @@
       </div>
       <div class="listCtn">
         <div class="filterCtn">
-            选择月份：
+          选择月份：
           <div class="elCtn">
-            <el-date-picker v-model="month" type="month" placeholder="选择月"> </el-date-picker>
+            <el-date-picker v-model="month" type="month" placeholder="选择月" value-format="yyyy-MM" @change="changeRouter">
+            </el-date-picker>
           </div>
         </div>
       </div>
@@ -131,7 +132,7 @@ export default Vue.extend({
       loading: false,
       total: 0,
       page: 1,
-      month: new Date().getFullYear() + '-' + new Date().getMonth(),
+      month: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
       additional: {},
       settlementLogList: [],
       chooseSettlementLogList: []
@@ -139,16 +140,18 @@ export default Vue.extend({
   },
   methods: {
     init() {
-      workshop.list({ staff_id: this.$route.query.id + '', page: this.page, limit: 10 }).then((res) => {
-        this.settlementLogList = res.data.data.items
-        this.additional = res.data.data.additional
-        this.total = res.data.data.total
-      })
+      workshop
+        .list({ staff_id: this.$route.query.id + '', page: this.page, limit: 10, month: this.month })
+        .then((res) => {
+          this.settlementLogList = res.data.data.items
+          this.additional = res.data.data.additional
+          this.total = res.data.data.total
+        })
     },
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)
-      this.keyword = query.keyword || ''
+      this.month = query.month || new Date().getFullYear() + '-' + (new Date().getMonth() + 1)
       this.id = query.id
     },
     changeRouter(ev?: any) {

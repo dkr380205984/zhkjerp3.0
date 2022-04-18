@@ -899,6 +899,7 @@ const workshop = {
     end_time?: string
     limit?: number
     page?: number
+    month?: string
   }) => http.get(`${baseUrl}/production/inspection/lists`, params),
   detail: (params: {
     order_id?: number | string
