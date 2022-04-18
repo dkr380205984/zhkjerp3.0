@@ -49,33 +49,18 @@
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">
           <div class="screenCtn">
-            <div class="screen" style="width: 48.5%">
+            <div class="screen" style="width: 100%">
               <el-select
-                @change="changeRouter"
-                filterable
-                v-model="filterData.shaxianmianliao"
-                placeholder="筛选原料"
-                clearable
-              >
-                <el-option label="纱线/面料" :value="''"></el-option>
-                <el-option label="纱线" :value="1"></el-option>
-                <el-option label="面料" :value="2"></el-option>
-              </el-select>
-            </div>
-            <div class="screen" style="width: 48.5%">
-              <el-cascader
                 @change="
-                  getContacts($event)
+                  getStoreDetail($event)
                   changeRouter()
                 "
-                placeholder="筛选仓库名称"
-                v-model="filterData.client_id"
-                :show-all-levels="false"
-                filterable
-                :options="clientList"
+                v-model="filterData.store_id"
+                placeholder="筛选调取仓库"
                 clearable
               >
-              </el-cascader>
+                <el-option v-for="item in storeList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+              </el-select>
             </div>
             <div class="screen" style="margin-bottom: 0; width: 65.5%">
               <el-input v-model="filterData.yuanliaomingcheng" placeholder="输入原料名称查询" clearable></el-input>
@@ -95,11 +80,6 @@
             </div>
           </div>
           <div class="contentGrid">
-            <div>
-              原料类型：<span class="blue">{{
-                filterData.shaxianmianliao === '' ? '纱线/面料' : filterData.shaxianmianliao === 1 ? '纱线' : '面料'
-              }}</span>
-            </div>
             <div>
               原料名称：<span class="blue">{{ filterData.yuanliaomingcheng || '所有' }}</span>
             </div>
@@ -147,7 +127,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { statistics, client } from '@/assets/js/api'
+import { statistics, client, store } from '@/assets/js/api'
 import { moneyArr } from '@/assets/js/dictionary'
 import zhCharts from '@/components/zhCharts/zhCharts.vue'
 export default Vue.extend({
@@ -184,113 +164,20 @@ export default Vue.extend({
         yAxis: [
           {
             type: 'value',
-            name: '',
+            name: '库存数量',
             min: 0,
             max: 25,
             interval: 5,
             axisLabel: {
-              formatter: '{value} 万元'
+              formatter: '{value} 吨或千米'
             }
           },
-          {
-            type: 'value',
-            name: '',
-            min: 0,
-            max: 500,
-            interval: 100,
-            axisLabel: {
-              formatter: '{value} 万件'
-            }
-          }
         ],
         series: [
           {
             type: 'bar',
             data: []
           },
-          {
-            type: 'line',
-            yAxisIndex: 1,
-            data: []
-          }
-        ]
-      },
-      groupOption: {
-        tooltip: {
-          trigger: 'item'
-        },
-        legend: {
-          top: '5%',
-          left: 'center'
-        },
-        series: [
-          {
-            type: 'pie',
-            radius: ['40%', '70%'],
-            avoidLabelOverlap: false,
-            label: {
-              show: false,
-              position: 'center'
-            },
-            emphasis: {
-              label: {
-                show: true,
-                fontSize: '40',
-                fontWeight: 'bold'
-              }
-            },
-            labelLine: {
-              show: false
-            },
-            data: []
-          }
-        ]
-      },
-      companyOption: {
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow'
-          }
-        },
-
-        dataZoom: [
-          //给y轴设置滚动条
-          {
-            start: 0, //默认为0
-            end: 100 - 1500 / 31, //默认为100
-            type: 'slider',
-            maxValueSpan: 10, //窗口的大小，显示数据的条数的
-            show: true,
-            handleSize: 0, //滑动条的 左右2个滑动条的大小
-            height: '70%', //组件高度
-            left: 650,
-            right: 15,
-            top: 50,
-            borderColor: 'rgba(43,48,67,.8)',
-            fillerColor: '#33384b',
-            zoomLock: true,
-            brushSelect: false,
-            backgroundColor: 'rgba(43,48,67,.8)', //两边未选中的滑动条区域的颜色
-            showDataShadow: false, //是否显示数据阴影 默认auto
-            showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
-            realtime: true, //是否实时更新
-            yAxisIndex: [0, 1] //控制的 y轴
-          }
-        ],
-        yAxis: {
-          type: 'category',
-          inverse: true,
-          data: []
-        },
-        xAxis: {
-          type: 'value'
-        },
-        series: [
-          {
-            data: [],
-            type: 'bar'
-          }
         ]
       },
       groupName: '',
@@ -302,7 +189,7 @@ export default Vue.extend({
         contacts_id: '',
         group_id: '',
         orderOrSimpleOrder: '',
-        shaxianmianliao: ''
+        store_id: ''
       },
       reportData: {
         order: {
@@ -317,6 +204,7 @@ export default Vue.extend({
         contactsList: [],
         currency: moneyArr
       },
+      storeList: [],
       activeName: 'first'
     }
   },
@@ -326,6 +214,22 @@ export default Vue.extend({
         client
           .detail({
             id: ev[2]
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.alias = res.data.data.alias || res.data.data.name
+            }
+          })
+      } else {
+        this.alias = '所有'
+      }
+    },
+
+    getStoreDetail(ev: number) {
+      if (ev) {
+        store
+          .detail({
+            id: ev
           })
           .then((res) => {
             if (res.data.status) {
@@ -361,57 +265,6 @@ export default Vue.extend({
       }
       this.changeRouter()
     },
-    changeUnit() {
-      this.option1.tooltip.formatter = (params: any) => {
-        var htmlStr = '<div>'
-        htmlStr += params[0].name + '<br/>' //x轴的名称
-        params.forEach((param: any, index: number) => {
-          var color = param.color //图例颜色
-
-          //为了保证和原来的效果一样，这里自己实现了一个点的效果
-          htmlStr +=
-            '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:' +
-            color +
-            ';"></span>'
-
-          //添加一个汉字，这里你可以格式你的数字或者自定义文本内容
-          htmlStr +=
-            param.seriesName +
-            '：' +
-            '<span style="color:' +
-            color +
-            ';margin-right:10px">' +
-            param.value +
-            '</span>' +
-            (index === 1 ? '万件' : '万' + (this.filterData.settle_unit || '元'))
-
-          htmlStr += '</div>'
-        })
-
-        return htmlStr
-      }
-      this.option1.yAxis[0].axisLabel.formatter = '{value} 万' + (this.filterData.settle_unit || '元')
-      this.groupOption.tooltip.formatter = (params: any) => {
-        return `
-                <div>
-                    ${params.marker}<span style="margin-left:10px;color:black;font-weight:bold">${
-          params.data.name
-        }：<span style="color:${params.color};font-weight:normal">${params.data.value}万${
-          this.filterData.settle_unit || '元'
-        }</span></span>
-                </div>
-              `
-      }
-      this.companyOption.tooltip.formatter = (params: any) => {
-        return `
-                <h4 style='color:#000000;margin:5px 0'>${params[0].axisValue}</h4>
-                <span style='color:#A3A3A3;font-size:10px'>CNY：</span>
-                <span style='color:#229CFB;font-size:14px;'>${this.filterData.settle_unit === '美元' ? '$' : '￥'}${
-          params[0].value
-        }</span>
-            `
-      }
-    },
     getFilters() {
       const query = this.$route.query
       if (query.start_time === '' || query.start_time === undefined) {
@@ -432,17 +285,17 @@ export default Vue.extend({
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.filterData.settle_unit = query.settle_unit
       this.createPeople = this.$getLocalStorage('create_user_name')
-      this.changeUnit()
-      this.getContacts(this.filterData.client_id)
+      this.getStoreDetail(this.filterData.store_id)
     },
     reset() {
       this.filterData = {
         start_time: '',
         end_time: '',
         user_id: '',
+        store_id: '',
         group_id: '',
         order_type: '',
-        name: '',
+        name: ''
       }
       localStorage.create_user_name = ''
       this.filterData.start_time = new Date().getFullYear() + '-01-01'
@@ -488,6 +341,8 @@ export default Vue.extend({
           (this.filterData.contacts_id || '') +
           '&group_id=' +
           (this.filterData.group_id || '') +
+          '&store_id=' +
+          (this.filterData.store_id || '') +
           '&settle_unit=' +
           (this.filterData.settle_unit || '') +
           '&start_time=' +
@@ -499,12 +354,10 @@ export default Vue.extend({
     getList() {
       this.loading = true
       statistics
-        .order({
+        .storeTotal({
           start_time: this.filterData.start_time,
-          client_id: this.filterData.client_id.length > 0 ? this.filterData.client_id[2] : '',
-          user_id: this.filterData.user_id,
-          group_id: this.filterData.group_id,
-          settle_unit: this.filterData.settle_unit,
+          store_id: this.filterData.store_id,
+          name: this.filterData.name,
           end_time: this.filterData.end_time
         })
         .then((res) => {
@@ -687,6 +540,9 @@ export default Vue.extend({
     }
   },
   created() {
+    store.list().then((res) => {
+      this.storeList = res.data.data
+    })
     this.getFilters()
     this.getList()
     this.$checkCommonInfo([
