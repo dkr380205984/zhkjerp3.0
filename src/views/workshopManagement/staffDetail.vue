@@ -13,6 +13,22 @@
           </el-tooltip>
         </el-checkbox>
         <el-checkbox v-model="keyBoard" @change="changeKeyBoard">打开页面键盘</el-checkbox>
+        <div class="elCtn" style="margin-left: 20px">
+          <el-select
+            style="width: 95%"
+            @change="changeDepartment()"
+            v-model="department"
+            placeholder="部门筛选"
+            clearable
+          >
+            <el-option
+              v-for="(item, index) in departmentList"
+              :key="index"
+              :value="item.id"
+              :label="item.name"
+            ></el-option>
+          </el-select>
+        </div>
       </div>
     </div>
     <div v-for="(settlementLog, settlementLogIndex) in settlementLogList" :key="'process' + settlementLogIndex">
@@ -633,7 +649,10 @@ export default Vue.extend({
       },
       addOrder: false,
       showPrice: false,
-      priceProcessList: [] // 报价单报价信息
+      staffArr: [],
+      departmentList: [],
+      department: Number(this.$getLocalStorage('department')) || '',
+      departmentName: ''
     }
   },
   methods: {
@@ -653,6 +672,35 @@ export default Vue.extend({
       })
 
       this.loading = false
+    },
+    changeDepartment() {
+      if (this.department === '') {
+        this.$setLocalStorage('department', '')
+        return
+      }
+      staff
+        .departmentDetail({
+          id: this.department
+        })
+        .then((res) => {
+          this.departmentName = res.data.data.name
+          staff
+            .list({
+              status: 1,
+              department: res.data.data.name
+            })
+            .then((res) => {
+              let arr = this.$clone(this.staffArr)
+              res.data.data.forEach((item: any) => {
+                this.staffArr.forEach((staff: any, index: number) => {
+                  if (item.id === staff.id) {
+                    this.$deleteItem(arr, index)
+                  }
+                })
+              })
+              this.staffList = res.data.data.concat(arr)
+            })
+        })
     },
     getProcessDesc(item: any) {
       process
@@ -943,8 +991,20 @@ export default Vue.extend({
   },
   mounted() {
     staff
+      .departmentList({
+        keyword: '',
+        limit: ''
+      })
+      .then((res) => {
+        if (res.data.status) {
+          this.departmentList = res.data.data
+        }
+      })
+
+    staff
       .list({
-        status: 1
+        status: 1,
+        department: this.departmentName
       })
       .then((res) => {
         this.staffList = res.data.data
@@ -955,6 +1015,10 @@ export default Vue.extend({
     this.settlementLogList = []
     let _this = this
     let staffArr = JSON.parse(_this.$route.query.staffInfo + '')
+    this.staffArr = staffArr.map((item: any) => {
+      item.id = Number(item.id)
+      return item
+    })
     let arr: any = [
       {
         value: 0,
