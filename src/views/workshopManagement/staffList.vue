@@ -134,7 +134,8 @@
             </el-table-column>
           </el-table>
         </div>
-        <div class="btn backHoverBlue fl" style="margin-right: 40px" @click="exportExcel">导出月度报表</div>
+        <div class="btn backHoverBlue fl" style="margin-right: 40px" @click="exportExcel(1)">导出月度报表</div>
+        <!-- <div class="btn backHoverBlue fl" style="margin-right: 40px" @click="exportExcel(2)">导出月度明细</div> -->
         <div style="width: 50%; display: flex; justify-content: space-between; margin-left: 20px; line-height: 2">
           <span>
             完成数量：
@@ -420,21 +421,37 @@ export default Vue.extend({
           })
         })
     },
-    exportExcel() {
+    exportExcel(type: 1 | 2) {
       this.mainLoading = true
-      exportExcel
-        .staffMonth({
-          keyword: this.keyword,
-          department: this.departmentName,
-          process: this.process ? this.process[1] : '',
-          month: this.date
-        })
-        .then((res: any) => {
-          if (res.data.status) {
-            this.mainLoading = false
-            window.location.href = res.data.data
-          }
-        })
+      if (type === 1) {
+        exportExcel
+          .staffMonth({
+            keyword: this.keyword,
+            department: this.departmentName,
+            process: this.process ? this.process[1] : '',
+            month: this.date
+          })
+          .then((res: any) => {
+            if (res.data.status) {
+              this.mainLoading = false
+              window.location.href = res.data.data
+            }
+          })
+      } else if(type === 2){
+         exportExcel
+          .staffMonth({
+            keyword: this.keyword,
+            department: this.departmentName,
+            process: this.process ? this.process[1] : '',
+            month: this.date
+          })
+          .then((res: any) => {
+            if (res.data.status) {
+              this.mainLoading = false
+              window.location.href = res.data.data
+            }
+          })
+      }
     },
     getList() {
       this.loading = true

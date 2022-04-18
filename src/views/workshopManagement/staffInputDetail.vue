@@ -57,6 +57,11 @@
               <div>{{ scope.row.staff_name }}</div>
             </template>
           </el-table-column>
+          <el-table-column prop="staff_name" label="订单号" width="140">
+            <template slot-scope="scope">
+              <div class="blue" style="cursor: pointer" @click="$router.push('/order/detail?id=' + scope.row.order_id)">{{ scope.row.order_code }}</div>
+            </template>
+          </el-table-column>
           <el-table-column prop="product_code" label="产品编号" width="120"> </el-table-column>
           <el-table-column label="颜色尺码" width="120">
             <template slot-scope="scope">{{
@@ -99,13 +104,13 @@
           <span style="margin-top: 20px; margin-left: 32px; display: inline-block">
             本月完成数量：
             <span class="green" style="font-weight: bold">
-              {{ (additional.total_number / 10000).toFixed(2) }} 万件
+              {{ additional.total_number }} 件
             </span>
           </span>
           <span style="margin-top: 20px; margin-left: 32px; display: inline-block">
             本月完成金额：
             <span class="green" style="font-weight: bold">
-              {{ (additional.total_price / 10000).toFixed(2) }} 万元
+              {{ additional.total_price }} 元
             </span>
           </span>
         </div>
