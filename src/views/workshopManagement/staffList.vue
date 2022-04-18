@@ -28,7 +28,6 @@
               style="width: 95%"
               @change="
                 changeDepartment()
-                changeRouter()
               "
               v-model="department"
               placeholder="部门筛选"
@@ -201,6 +200,7 @@ export default Vue.extend({
       additional: {},
       client_id: [],
       department: '',
+      departmentName: '',
       departmentList: [],
       multipleSelection: [],
       process: '',
@@ -336,6 +336,7 @@ export default Vue.extend({
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.department = Number(query.department) || Number(this.$getLocalStorage('department')) || ''
       this.keyword = query.keyword || ''
+      this.departmentName = query.departmentName || ''
       this.status = query.status || '0'
       this.user_id = query.user_id || ''
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
@@ -360,6 +361,7 @@ export default Vue.extend({
         })
         .then((res) => {
           this.departmentName = res.data.data.name
+          this.getList()
         })
     },
     handleSelectionChange(val: any) {
@@ -387,6 +389,8 @@ export default Vue.extend({
           this.keyword +
           '&department=' +
           this.department +
+          '&departmentName=' +
+          this.departmentName +
           '&process=' +
           this.process +
           '&group_id=' +
@@ -499,7 +503,6 @@ export default Vue.extend({
         .list({
           keyword: this.keyword,
           department: this.departmentName,
-          process: this.process ? this.process[1] : '',
           page: this.page,
           limit: this.limit,
           month: this.date
