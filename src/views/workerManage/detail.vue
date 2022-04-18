@@ -160,7 +160,7 @@
           </el-table-column>
           <el-table-column prop="staff_name" label="订单号" width="140">
             <template slot-scope="scope">
-              <div class="blue" style="cursor: pointer" @click="$router.push('/order/detail?id=' + scope.row.order_id)">{{ scope.row.order_code }}</div>
+              <div class="blue" style="cursor: pointer" @click="$router.push('/workshopManagement/detail?id=' + scope.row.order_id)">{{ scope.row.order_code }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="product_code" label="产品编号" width="120"> </el-table-column>

@@ -26,9 +26,7 @@
           <div class="elCtn">
             <el-select
               style="width: 95%"
-              @change="
-                changeDepartment()
-              "
+              @change="changeDepartment()"
               v-model="department"
               placeholder="部门筛选"
               clearable
@@ -353,6 +351,8 @@ export default Vue.extend({
     changeDepartment() {
       if (this.department === '') {
         this.$setLocalStorage('department', '')
+        this.departmentName = ''
+        this.getList()
         return
       }
       staff
@@ -441,8 +441,8 @@ export default Vue.extend({
               window.location.href = res.data.data
             }
           })
-      } else if(type === 2){
-         exportExcel
+      } else if (type === 2) {
+        exportExcel
           .staffMonth({
             keyword: this.keyword,
             department: this.departmentName,
