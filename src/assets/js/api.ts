@@ -164,7 +164,7 @@ const collection = {
 }
 
 // 单据开票
-const payment = {
+const invoice = {
   list: (params: {
     order_id: string
     client_id: string
@@ -1161,5 +1161,5 @@ export {
   clientInOrder,
   productStock,
   productionProgress,
-  payment
+  invoice
 }

@@ -96,9 +96,9 @@
             <div class="col">{{item.group_name}}</div>
             <div class="col">{{item.total_plan_number}}</div>
             <div class="col">{{item.total_order_number}}</div>
-            <div class="col">{{item.total_process_number || 0}}</div>
+            <div class="col">{{item.total_production_number || 0}}</div>
             <div class="col"
-              :class="item.total_plan_number>item.total_order_number?'orange':'green'">{{$toFixed(item.total_order_number/item.total_plan_number*100)}}%</div>
+              :class="item.material_order_progress>=100?'orange':'green'">{{item.material_order_progress}}%</div>
             <div class="col"
               :class="item.is_check|filterCheckClass">{{item.is_check|filterCheck}}</div>
             <div class="col">{{item.user_name}}</div>
@@ -107,6 +107,19 @@
               <span class="opr hoverBlue"
                 @click="$router.push('/materialManage/detail?id='+item.id)">订购加工</span>
             </div>
+          </div>
+          <div class="row">
+            <div class="col green">合计:</div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col green bold">{{additional.total_material_number}}</div>
+            <div class="col"></div>
+            <div class="col green bold">{{additional.total_production_number}}</div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
           </div>
         </div>
         <div class="pageCtn">
@@ -174,6 +187,11 @@ export default Vue.extend({
             }
           }
         ]
+      },
+      additional: {
+        pre_loss: 0,
+        total_material_number: 0,
+        total_production_number: 0
       }
     }
   },
@@ -250,6 +268,7 @@ export default Vue.extend({
         .then((res) => {
           this.list = res.data.data.items
           this.total = res.data.data.total
+          this.additional = res.data.data.additional
           this.loading = false
         })
     }

@@ -554,7 +554,7 @@
                       <div class="tcol oprCtn"
                         style="justify-content:start">
                         <span class="blue opr"
-                          @click="$openUrl('/boxManage/orderDetail?id='+order_id)">去发货</span>
+                          @click="$openUrl('/boxManage/orderDetail?id='+JSON.stringify([order_id]))">去发货</span>
                       </div>
                     </div>
                   </div>

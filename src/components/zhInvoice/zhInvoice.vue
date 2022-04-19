@@ -1,5 +1,5 @@
 <template>
-  <div class="zhPayment popup"
+  <div class="zhInvoice popup"
     v-show="show">
     <div class="main">
       <div class="titleCtn">
@@ -19,7 +19,7 @@
             </el-input>
           </div>
         </div>
-        <div v-for="(item,index) in paymentInfo.data"
+        <div v-for="(item,index) in invoiceInfo.data"
           :key="index">
           <div class="blue"
             style="margin-left:6px">开票单据{{index+1}}</div>
@@ -60,7 +60,7 @@
           @click="close">取消</span>
         <span class="btn"
           :class="{'backHoverBlue':!update,'backHoverOrange':update}"
-          @click="savePayment">{{update?'修改':'确认'}}</span>
+          @click="saveInvoice">{{update?'修改':'确认'}}</span>
       </div>
     </div>
   </div>
@@ -68,8 +68,8 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { payment } from '@/assets/js/api'
-interface paymentInfo {
+import { invoice } from '@/assets/js/api'
+interface invoiceInfo {
   id?: string
   order_id: number | string
   doc_type: number
@@ -128,11 +128,11 @@ export default Vue.extend({
     }
   },
   data(): {
-    paymentInfo: paymentInfo
+    invoiceInfo: invoiceInfo
     [propName: string]: any
   } {
     return {
-      paymentInfo: {
+      invoiceInfo: {
         order_id: '',
         doc_type: 0,
         client_id: '',
@@ -170,18 +170,18 @@ export default Vue.extend({
     show(val) {
       if (val) {
         this.reset()
-        this.paymentInfo.doc_type = this.type
+        this.invoiceInfo.doc_type = this.type
         if (this.update) {
           // @ts-ignore
-          this.paymentInfo.order_id = this.order_id || this.data[0].order_id
+          this.invoiceInfo.order_id = this.order_id || this.data[0].order_id
           // @ts-ignore
-          this.paymentInfo.client_id = this.client_id || this.data[0].client_id
+          this.invoiceInfo.client_id = this.client_id || this.data[0].client_id
         } else {
-          this.paymentInfo.order_id = this.order_id
-          this.paymentInfo.client_id = this.client_id
+          this.invoiceInfo.order_id = this.order_id
+          this.invoiceInfo.client_id = this.client_id
         }
         if (this.data && this.data.length > 0) {
-          this.paymentInfo.data = this.data.map((item: any) => {
+          this.invoiceInfo.data = this.data.map((item: any) => {
             return {
               id: this.update ? item.id : '',
               doc_code: this.update ? item.rel_doc_code : item.code,
@@ -192,7 +192,7 @@ export default Vue.extend({
             }
           })
         } else {
-          this.paymentInfo.data = [
+          this.invoiceInfo.data = [
             {
               doc_code: '',
               rel_doc_id: '',
@@ -210,7 +210,7 @@ export default Vue.extend({
       this.$emit('close')
     },
     reset() {
-      this.paymentInfo = {
+      this.invoiceInfo = {
         order_id: '',
         doc_type: 0,
         client_id: '',
@@ -225,8 +225,8 @@ export default Vue.extend({
         ]
       }
     },
-    savePayment() {
-      const formCheck = this.paymentInfo.data.some((item) => {
+    saveInvoice() {
+      const formCheck = this.invoiceInfo.data.some((item) => {
         return this.$formCheck(item, [
           {
             key: 'price',
@@ -235,7 +235,7 @@ export default Vue.extend({
         ])
       })
       if (!formCheck) {
-        payment.create(this.paymentInfo).then((res) => {
+        invoice.create(this.invoiceInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('开票成功')
             this.$emit('afterCollection')
@@ -249,5 +249,5 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import './zhPayment.less';
+@import './zhInvoice.less';
 </style>
