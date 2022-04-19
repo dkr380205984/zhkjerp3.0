@@ -2400,7 +2400,10 @@ export default Vue.extend({
         clientInOrder({
           order_id: this.order_id
         }).then((res) => {
-          this.bearClientArr = res.data.data[2].concat(res.data.data[3]).concat(res.data.data[5])
+          this.bearClientArr = res.data.data[2]
+            .concat(res.data.data[3])
+            .concat(res.data.data[5])
+            .concat(res.data.data[4])
         })
         this.init()
       })
