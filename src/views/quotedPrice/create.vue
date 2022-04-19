@@ -166,7 +166,8 @@
           <div class="text">产品{{index+1}}</div>
           <div class="deleteIcon blue"
             v-if="$route.query.product_id || $route.query.orderId || $route.query.sampleOrderId">详情
-            <div class="printInfo">
+            <div class="printInfo"
+              v-if="item.product_info">
               <div class="items">
                 <div class="label">编号:</div>
                 <div class="contents">{{item.product_info.product_code}}</div>

@@ -33,17 +33,15 @@
             </el-select>
           </div>
           <div class="elCtn">
-            <div class="elCtn">
-              <el-select v-model="order_type"
-                @change="changeRouter">
-                <el-option label="所有单据"
-                  :value="null"></el-option>
-                <el-option label="订单"
-                  :value="1"></el-option>
-                <el-option label="样单"
-                  :value="2"></el-option>
-              </el-select>
-            </div>
+            <el-select v-model="order_type"
+              @change="changeRouter">
+              <el-option label="所有单据"
+                :value="null"></el-option>
+              <el-option label="订单"
+                :value="1"></el-option>
+              <el-option label="样单"
+                :value="2"></el-option>
+            </el-select>
           </div>
           <div class="btn borderBtn"
             @click="reset">重置</div>

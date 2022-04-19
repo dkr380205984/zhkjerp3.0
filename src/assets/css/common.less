@@ -1,216 +1,269 @@
-@blue:#1A95FF;
-@hoverBlue:#51ADFD;
-@red:#F5222D;
-@hoverRed:#FD5B63;
-@orange:#FA9036;
-@hoverOrange:#FCB171;
-@green:#01B48C;
-@hoverGreen:#03D0A2;
-@black:#2E394F;
-@font85:rgba(0,0,0,0.85);
-@font65:rgba(0,0,0,0.65);
-@font45:rgba(0,0,0,0.45);
-@font25:rgba(0,0,0,0.25);
-@borderColor:#e9e9e9;
-@fontTitle:20px;
-@fontBig:18px;
-@fontMiddle:16px;
-@fontSmall:14px;
+@blue: #1A95FF;
+@hoverBlue: #51ADFD;
+@red: #F5222D;
+@hoverRed: #FD5B63;
+@orange: #FA9036;
+@hoverOrange: #FCB171;
+@green: #01B48C;
+@hoverGreen: #03D0A2;
+@black: #2E394F;
+@font85: rgba(0, 0, 0, 0.85);
+@font65: rgba(0, 0, 0, 0.65);
+@font45: rgba(0, 0, 0, 0.45);
+@font25: rgba(0, 0, 0, 0.25);
+@borderColor: #e9e9e9;
+@fontTitle: 20px;
+@fontBig: 18px;
+@fontMiddle: 16px;
+@fontSmall: 14px;
+
 @font-face {
-  font-family: 'iconfont';  /* Project id 2943570 */
+  font-family: 'iconfont';
+  /* Project id 2943570 */
   src: url('//at.alicdn.com/t/font_2943570_rpzddr84nen.woff2?t=1641521449435') format('woff2'),
-        url('//at.alicdn.com/t/font_2943570_rpzddr84nen.woff?t=1641521449435') format('woff'),
-        url('//at.alicdn.com/t/font_2943570_rpzddr84nen.ttf?t=1641521449435') format('truetype');
+    url('//at.alicdn.com/t/font_2943570_rpzddr84nen.woff?t=1641521449435') format('woff'),
+    url('//at.alicdn.com/t/font_2943570_rpzddr84nen.ttf?t=1641521449435') format('truetype');
 }
+
 .iconFont {
-  width: 1em; height: 1em;
+  width: 1em;
+  height: 1em;
   vertical-align: -0.15em;
   fill: currentColor;
   overflow: hidden;
   font-size: 16px;
 }
-.clearfix{
-  &::after{
+
+.clearfix {
+  &::after {
     content: '';
     display: block;
     clear: both;
   }
 }
-.fl{
+
+.bold {
+  font-weight: bold;
+}
+
+.fl {
   float: left;
 }
-.fr{
+
+.fr {
   float: right;
 }
-.noPad{
+
+.noPad {
   padding: 0;
 }
-.blue{
-  color:@blue;
+
+.blue {
+  color: @blue;
 }
-.hoverBlue{
-  color:@blue;
-  &:hover{
+
+.hoverBlue {
+  color: @blue;
+
+  &:hover {
     color: @hoverBlue;
   }
 }
-.red{
-  color:@red;
+
+.red {
+  color: @red;
 }
-.hoverRed{
-  color:@red;
-  &:hover{
+
+.hoverRed {
+  color: @red;
+
+  &:hover {
     color: @hoverRed;
   }
 }
-.orange{
-  color:@orange;
+
+.orange {
+  color: @orange;
 }
-.hoverOrange{
-  color:@orange;
-  &:hover{
+
+.hoverOrange {
+  color: @orange;
+
+  &:hover {
     color: @hoverOrange;
   }
 }
-.green{
-  color:@green;
+
+.green {
+  color: @green;
 }
-.hoverGreen{
-  color:@green;
-  &:hover{
+
+.hoverGreen {
+  color: @green;
+
+  &:hover {
     color: @hoverGreen;
   }
 }
-.black{
+
+.black {
   color: @font85;
 }
-.gray{
+
+.gray {
   color: @font25;
 }
-.fontNormal{
+
+.fontNormal {
   color: @font65;
 }
-.backGray{
+
+.backGray {
   background: @font25;
 }
-.backBlue{
+
+.backBlue {
   color: #fff;
   background: @blue;
 }
-.backHoverBlue{
+
+.backHoverBlue {
   color: #fff;
   background: @blue;
-  &:hover{
+
+  &:hover {
     background: @hoverBlue;
   }
 }
-.backGray{
+
+.backGray {
   color: #fff;
   background: #F4F4F4;
 }
-.backRed{
+
+.backRed {
   color: #fff;
   background: @red;
 }
-.backHoverRed{
+
+.backHoverRed {
   color: #fff;
   background: @red;
-  &:hover{
+
+  &:hover {
     background: @hoverRed;
   }
 }
-.backGreen{
+
+.backGreen {
   color: #fff;
   background: @green;
 }
-.backHoverGreen{
+
+.backHoverGreen {
   color: #fff;
   background: @green;
-  &:hover{
+
+  &:hover {
     background: @hoverGreen;
   }
 }
-.backOrange{
+
+.backOrange {
   color: #fff;
   background: @orange;
 }
-.backHoverOrange{
+
+.backHoverOrange {
   color: #fff;
   background: @orange;
-  &:hover{
+
+  &:hover {
     background: @hoverOrange;
   }
 }
-.spaceBetween{
+
+.spaceBetween {
   display: flex;
   justify-content: space-between;
 }
 
-.noBackColor{
-  background-color: unset!important;
+.noBackColor {
+  background-color: unset !important;
 }
 
 // 通用子页面父级容器
-.bodyContainer{
+.bodyContainer {
   margin: 32px auto 56px auto;
-  .module{
+
+  .module {
     width: 100%;
     background: #fff;
     margin-bottom: 24px;
-    .titleCtn{
+
+    .titleCtn {
       height: 55px;
       line-height: 55px;
       padding: 0 32px;
       border-bottom: 1px solid @borderColor;
-      &.flexBetween{
+
+      &.flexBetween {
         display: flex;
         justify-content: space-between;
         align-items: center;
       }
-      .title{
+
+      .title {
         font-size: @fontBig;
-        color:@font85;
+        color: @font85;
         font-weight: bold;
         position: relative;
       }
     }
   }
 }
+
 // 通用按钮
-.btn{
+.btn {
   line-height: 32px;
   cursor: pointer;
   display: inline-block;
   padding: 0 24px;
   border-radius: 4px;
 }
-.borderBtn{
+
+.borderBtn {
   line-height: 30px;
-  border:1px solid @borderColor;
+  border: 1px solid @borderColor;
   cursor: pointer;
   color: @font45;
   display: inline-block;
   padding: 0 24px;
   border-radius: 4px;
-  &:hover{
+
+  &:hover {
     color: #888888;
   }
-  &.blue{
+
+  &.blue {
     border-color: @blue;
     color: @blue;
-    &:hover{
+
+    &:hover {
       border-color: @hoverBlue;
       color: @hoverBlue;
     }
   }
 }
+
 // 表格内通用操作
-.opr{
+.opr {
   margin: 0 8px;
   cursor: pointer;
-  border-bottom: 1px solid rgba(0,0,0,0);
+  border-bottom: 1px solid rgba(0, 0, 0, 0);
   position: relative;
-  &::after{
+
+  &::after {
     content: '';
     height: 15px;
     background: @borderColor;
@@ -221,11 +274,13 @@
     margin: auto;
     right: -8px;
   }
-  &:hover{
+
+  &:hover {
     border-bottom: 1px solid;
   }
-  &:nth-last-child(1){
-    &::after{
+
+  &:nth-last-child(1) {
+    &::after {
       content: '';
       height: 15px;
       background: transparent;
@@ -237,12 +292,14 @@
       right: -8px;
     }
   }
-  &:nth-child(1){
+
+  &:nth-child(1) {
     margin-left: 0;
   }
 }
+
 // 通用操作行
-.oprRow{
+.oprRow {
   line-height: 30px;
   border: 1px dashed @borderColor;
   text-align: center;
@@ -251,49 +308,61 @@
   font-size: @fontMiddle;
   cursor: pointer;
   display: flex;
-  .once{
-    flex:1;
+
+  .once {
+    flex: 1;
     text-align: center;
     border-right: 1px dashed #D9D9D9;
-    &:nth-last-child(1){
+
+    &:nth-last-child(1) {
       border-right: 0;
     }
-    &.ok{
-      color:#fff;
+
+    &.ok {
+      color: #fff;
       background: @green;
-      &:hover{
+
+      &:hover {
         background: @green;
       }
     }
-    &.cancle{
+
+    &.cancle {
       color: #fff;
       background: @orange;
-      &:hover{
+
+      &:hover {
         background: @orange;
       }
     }
-    &.normal{
+
+    &.normal {
       color: #fff;
       background: @blue;
     }
-    &:hover{
-      color:#fff;
+
+    &:hover {
+      color: #fff;
       background: @blue;
     }
   }
 }
-.noCheck{
+
+.noCheck {
   cursor: not-allowed;
   background-color: white;
   border: 1px solid #1A95FF;
   color: #CCCCCC;
 }
-.noCheckOrange{
+
+.noCheckOrange {
   cursor: not-allowed;
   background-color: white;
   border: 1px solid @orange;
   color: #CCCCCC;
 }
-.noCheck:hover,.noCheckOrange:hover{
+
+.noCheck:hover,
+.noCheckOrange:hover {
   background-color: white;
 }

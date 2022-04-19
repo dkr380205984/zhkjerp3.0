@@ -66,7 +66,43 @@
     <div class="module"
       id="统计报表">
       <div class="titleCtn">
-        <div class="title">统计报表</div>
+        <div class="title">统计报表
+          <el-tooltip class="item"
+            effect="dark"
+            content="以下统计已默认将美元按汇率转成了人民币，如需单独显示，请单独筛选人民币或者美元币种"
+            placement="right">
+            <i class="el-icon-question"></i>
+          </el-tooltip>
+        </div>
+      </div>
+      <div class="listCtn"
+        style="padding-bottom:0">
+        <div class="filterCtn"
+          style="margin-bottom:0">
+          <div class="elCtn">
+            <el-date-picker v-model="year"
+              @change="getFinancialDetail"
+              value-format="yyyy"
+              type="year"
+              placeholder="选择年">
+            </el-date-picker>
+          </div>
+          <div class="elCtn">
+            <el-select placeholder="筛选币种"
+              v-model="settle_unit_sts"
+              @change="getFinancialDetail"
+              clearable>
+              <el-option v-for="item in unitArr"
+                :key="item.name"
+                :label="item.name"
+                :value="item.name"
+                class="between">
+                <span>{{item.name}}</span>
+                <span class="gray">({{item.short}})</span>
+              </el-option>
+            </el-select>
+          </div>
+        </div>
       </div>
       <div class="specialCtn">
         <div class="row">
@@ -83,8 +119,11 @@
               <div class="col">
                 <div class="infoCtn">
                   <span class="title">订单下单总额</span>
-                  <span class="number blue">{{clientFinancial.total_order_price}}
-                    <span class="unit">万元</span>
+                  <span class="number blue">
+                    <template v-if="!settle_unit_sts"> {{clientFinancial.total_order_price}}</template>
+                    <template v-else-if="settle_unit_sts==='元'"> {{clientFinancial.total_order_price_rmb}}</template>
+                    <template v-else-if="settle_unit_sts==='美元'"> {{clientFinancial.total_order_price_usd}}</template>
+                    <span class="unit">万{{settle_unit_sts?settle_unit_sts:'元'}}</span>
                   </span>
                 </div>
               </div>
@@ -103,8 +142,11 @@
               <div class="col">
                 <div class="infoCtn">
                   <span class="title">实际发货总额</span>
-                  <span class="number green">{{clientFinancial.total_transport_price}}
-                    <span class="unit">万元</span>
+                  <span class="number green">
+                    <template v-if="!settle_unit_sts"> {{clientFinancial.total_transport_price}}</template>
+                    <template v-else-if="settle_unit_sts==='元'"> {{clientFinancial.total_transport_price_rmb}}</template>
+                    <template v-else-if="settle_unit_sts==='美元'"> {{clientFinancial.total_transport_price_usd}}</template>
+                    <span class="unit">万{{settle_unit_sts?settle_unit_sts:'元'}}</span>
                   </span>
                 </div>
               </div>
@@ -189,7 +231,8 @@
           <div class="elCtn">
             <el-select placeholder="请选择下单币种"
               v-model="settle_unit"
-              @change="getOrderList">
+              @change="getOrderList"
+              clearable>
               <el-option v-for="item in unitArr"
                 :key="item.name"
                 :label="item.name"
@@ -238,6 +281,17 @@
               @change="getOrderList"
               value-format="yyyy-MM-dd">
             </el-date-picker>
+          </div>
+          <div class="elCtn">
+            <el-select v-model="order_type"
+              @change="getOrderList">
+              <el-option label="所有单据"
+                :value="null"></el-option>
+              <el-option label="订单"
+                :value="1"></el-option>
+              <el-option label="样单"
+                :value="2"></el-option>
+            </el-select>
           </div>
         </div>
         <div class="filterCtn clearfix">
@@ -376,6 +430,16 @@
               <span class="opr red">删除</span>
             </div>
           </div>
+          <div class="row">
+            <div class="col">合计：</div>
+            <div class="col"></div>
+            <div class="col green bold">{{paymentTotalPrice}}元</div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+          </div>
         </div>
         <div class="pageCtn">
           <el-pagination background
@@ -455,6 +519,15 @@
                 @click="goCollection([item],true)">修改</span>
               <span class="opr red">删除</span>
             </div>
+          </div>
+          <div class="row">
+            <div class="col">合计：</div>
+            <div class="col"></div>
+            <div class="col green bold">{{collectionTotalPrice}}元</div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
           </div>
         </div>
         <div class="pageCtn">
@@ -550,6 +623,16 @@
               <span class="opr red">删除</span>
             </div>
           </div>
+          <div class="row">
+            <div class="col">合计：</div>
+            <div class="col"></div>
+            <div class="col green bold">{{deductTotalPrice}}元</div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+          </div>
         </div>
         <div class="pageCtn">
           <el-pagination background
@@ -635,6 +718,7 @@ export default Vue.extend({
       collectionFlag: false,
       collectionData: [],
       collectionLog: [],
+      collectionTotalPrice: 0,
       collectionTotal: 1,
       collectionPage: 1,
       collectionUpdate: false,
@@ -644,6 +728,7 @@ export default Vue.extend({
       collectionUser: '',
       paymentFlag: false,
       paymentData: [],
+      paymentTotalPrice: 0,
       paymentLog: [],
       paymentTotal: 1,
       paymentPage: 1,
@@ -655,6 +740,7 @@ export default Vue.extend({
       deductFlag: false,
       deductData: [],
       deductLog: [],
+      deductTotalPrice: 0,
       deductTotal: 1,
       deductPage: 1,
       deductUpdate: false,
@@ -668,7 +754,11 @@ export default Vue.extend({
         total_invoice_price: 0,
         total_order_number: 0,
         total_order_price: 0,
+        total_order_price_rmb: 0,
+        total_order_price_usd: 0,
         total_transport_price: 0,
+        total_transport_price_rmb: 0,
+        total_transport_price_usd: 0,
         total_transport_number: 0,
         status: 0,
         name: '',
@@ -720,52 +810,85 @@ export default Vue.extend({
           from: 'product_data'
         },
         {
-          key: 'total_number',
-          name: '下单总数',
-          ifShow: true,
-          ifLock: false,
-          index: 5,
-          errVal: '0'
-        },
-        {
-          key: 'status',
-          name: '订单状态',
-          ifShow: true,
-          ifLock: false,
-          index: 7,
-          filterArr: ['', '已创建', '进行中', '已完成', '已结算', '已逾期', '已取消'],
-          classArr: ['', 'orange', 'blue', 'green', 'green', 'red', 'gray']
-        },
-        {
           key: 'group_name',
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 8
+          index: 5
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 9
+          index: 6
+        },
+        {
+          key: 'total_number',
+          name: '下单总数',
+          ifShow: true,
+          ifLock: false,
+          index: 7,
+          errVal: '0'
+        },
+        {
+          key: 'total_price',
+          name: '下单总额',
+          ifShow: true,
+          ifLock: false,
+          index: 8,
+          errVal: '0'
+        },
+        {
+          key: 'total_number',
+          name: '发货总数',
+          ifShow: true,
+          ifLock: false,
+          index: 9,
+          errVal: '0'
+        },
+        {
+          key: 'total_price',
+          name: '发货总额',
+          ifShow: true,
+          ifLock: false,
+          index: 10,
+          errVal: '0'
+        },
+        {
+          key: 'invoice_status',
+          name: '开票状态',
+          ifShow: true,
+          ifLock: false,
+          index: 11,
+          filterArr: ['', '已开票', '待开票'],
+          classArr: ['', 'green', 'orange']
+        },
+        {
+          key: 'collect_status',
+          name: '收款状态',
+          ifShow: true,
+          ifLock: false,
+          index: 12,
+          filterArr: ['', '已收款', '待收款'],
+          classArr: ['', 'green', 'orange']
         }
       ],
       oprList: [
-        {
-          name: '收款',
-          class: 'blue',
-          fn: (item: any) => {
-            // @ts-ignore
-            this.goCollection([item])
-          }
-        },
         {
           name: '开票',
           class: 'orange',
           fn: (item: any) => {
             // @ts-ignore
             this.goPayment([item])
+          }
+        },
+        {
+          name: '收款',
+          class: 'blue',
+          fn: (item: any) => {
+            // @ts-ignore
+            this.goCollection([item])
           }
         },
         {
@@ -813,6 +936,7 @@ export default Vue.extend({
           }
         ]
       },
+      year: new Date().getFullYear().toString(),
       keyword: '',
       contacts_id: '',
       contactsList: [],
@@ -822,7 +946,9 @@ export default Vue.extend({
       type: 'null',
       status: 'null',
       settle_unit: '',
+      settle_unit_sts: '',
       date: [],
+      order_type: null,
       unitArr: moneyArr
     }
   },
@@ -836,13 +962,7 @@ export default Vue.extend({
   },
   methods: {
     init() {
-      client
-        .financialDetail({
-          id: Number(this.$route.query.id)
-        })
-        .then((res) => {
-          this.clientFinancial = res.data.data
-        })
+      this.getFinancialDetail()
       this.getOrderList()
       this.getCollectionLogList()
       this.getPaymentLogList()
@@ -884,10 +1004,22 @@ export default Vue.extend({
           })
         })
     },
+    getFinancialDetail() {
+      client
+        .financialDetail({
+          id: Number(this.$route.query.id),
+          year: this.year,
+          settle_unit: this.settle_unit_sts
+        })
+        .then((res) => {
+          this.clientFinancial = res.data.data
+        })
+    },
     getOrderList() {
       this.orderLoading = true
       order
         .list({
+          order_type: this.order_type,
           client_id: this.$route.query.id,
           keyword: '',
           page: this.orderPage,
@@ -904,6 +1036,10 @@ export default Vue.extend({
         .then((res) => {
           if (res.data.status) {
             this.orderList = res.data.data.items
+            this.orderList.forEach((item: any) => {
+              item.collect_status = item.has_collect.status
+              item.invoice_status = item.has_invoice.status
+            })
             this.orderTotal = res.data.data.total
             this.orderLoading = false
           }
@@ -927,6 +1063,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.collectionLog = res.data.data.items
             this.collectionTotal = res.data.data.total
+            this.collectionTotalPrice = res.data.data.additional.total_price
           }
         })
     },
@@ -952,6 +1089,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.paymentLog = res.data.data.items
             this.paymentTotal = res.data.data.total
+            this.paymentTotalPrice = res.data.data.additional.total_price
           }
         })
     },
@@ -977,6 +1115,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.deductLog = res.data.data.items
             this.deductTotal = res.data.data.total
+            this.deductTotalPrice = res.data.data.additional.total_price
           }
         })
     },
