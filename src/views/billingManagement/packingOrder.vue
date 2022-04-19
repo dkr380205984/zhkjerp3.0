@@ -172,7 +172,7 @@
           <span style="line-height: 35px; margin-left: 40px">
             合计订购数量：
             <span class="green" style="font-weight: bold">
-              {{ (additional.total_number / 10000).toFixed(2) }} 万元
+              {{ (additional.total_number / 10000).toFixed(2) }} 万个
             </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
