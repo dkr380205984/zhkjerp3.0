@@ -281,7 +281,7 @@ export default Vue.extend({
             // }
             this.checkLogin(res, {
               module_info: res.data.data.module_info || [],
-              company_name: res.data.data.company_name,
+              company_name: res.data.data.alias,
               logo: res.data.data.logo
             })
           })

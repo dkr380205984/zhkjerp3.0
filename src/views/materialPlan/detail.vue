@@ -496,7 +496,6 @@ export default Vue.extend({
           if (this.$route.query.ifprint) {
             this.showAssociatedPage = true
           }
-          this.loading = false
         }
       })
   }

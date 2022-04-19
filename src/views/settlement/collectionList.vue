@@ -76,6 +76,21 @@
             </el-select>
           </div>
           <div class="elCtn">
+            <el-select placeholder="筛选币种"
+              v-model="settle_unit"
+              @change="changeRouter"
+              clearable>
+              <el-option v-for="item in unitArr"
+                :key="item.name"
+                :label="item.name"
+                :value="item.name"
+                class="between">
+                <span>{{item.name}}</span>
+                <span class="gray">({{item.short}})</span>
+              </el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
             <el-select v-model="limit"
               placeholder="每页展示条数"
               @change="changeRouter">
@@ -91,6 +106,7 @@
               :true-label="1">查询已删除的数据</el-checkbox>
           </div>
         </div>
+        <div class="description">当前统计默认值：下单年份：{{year}}年；下单客户：默认所有；币种：{{settle_unit||'所有'}}；合作状态：{{status===0?'暂停合作':status===1?'合作中':'全部'}}</div>
         <div class="list"
           v-loading="loading">
           <div class="row title">
@@ -112,10 +128,32 @@
             <div class="col">{{item.name}}</div>
             <div class="col">{{item.alias}}</div>
             <div class="col">{{item.client_type_name}}</div>
-            <div class="col">{{item.total_order_price}}</div>
-            <div class="col">{{item.total_order_number}}</div>
-            <div class="col">{{item.total_transport_price}}</div>
-            <div class="col">{{item.total_transport_number}}</div>
+            <div class="col">
+              <template v-if="!settle_unit">
+                {{item.total_order_price}}
+              </template>
+              <template v-else-if="settle_unit==='元'">
+                {{item.total_order_price_rmb}}
+              </template>
+              <template v-else-if="settle_unit==='美元'">
+                {{item.total_order_price_usd}}
+              </template>
+              万{{settle_unit||'元'}}
+            </div>
+            <div class="col">{{item.total_order_number}}万件</div>
+            <div class="col">
+              <template v-if="!settle_unit">
+                {{item.total_transport_price}}
+              </template>
+              <template v-else-if="settle_unit==='元'">
+                {{item.total_transport_price_rmb}}
+              </template>
+              <template v-else-if="settle_unit==='美元'">
+                {{item.total_transport_price_usd}}
+              </template>
+              万{{settle_unit||'元'}}
+            </div>
+            <div class="col">{{item.total_transport_number}}万件</div>
             <div class="col">{{item.total_invoice_price}}万元</div>
             <div class="col">{{item.total_collect_price}}万元</div>
             <div class="col">{{item.total_deduct_price}}万元</div>
@@ -128,13 +166,13 @@
             <div class="col green">合计：</div>
             <div class="col"></div>
             <div class="col"></div>
-            <div class="col green">{{totalData.total_order_price}}</div>
-            <div class="col green">{{totalData.total_order_number}}</div>
-            <div class="col green">{{totalData.total_transport_price}}</div>
-            <div class="col green">{{totalData.total_transport_number}}</div>
-            <div class="col green">{{totalData.total_invoice_price}}万元</div>
-            <div class="col green">{{totalData.total_collect_price}}万元</div>
-            <div class="col green">{{totalData.total_deduct_price}}万元</div>
+            <div class="col green bold">{{totalData.total_order_price}}万{{settle_unit||'元'}}</div>
+            <div class="col green bold">{{totalData.total_order_number}}万件</div>
+            <div class="col green bold">{{totalData.total_transport_price}}万{{settle_unit||'元'}}</div>
+            <div class="col green bold">{{totalData.total_transport_number}}万件</div>
+            <div class="col green bold">{{totalData.total_invoice_price}}万元</div>
+            <div class="col green bold">{{totalData.total_collect_price}}万元</div>
+            <div class="col green bold">{{totalData.total_deduct_price}}万元</div>
             <div class="col"></div>
           </div>
         </div>
@@ -155,7 +193,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { client } from '@/assets/js/api'
-import { limitArr } from '@/assets/js/dictionary'
+import { limitArr, moneyArr } from '@/assets/js/dictionary'
 export default Vue.extend({
   data(): {
     [propName: string]: any
@@ -178,6 +216,8 @@ export default Vue.extend({
       clientTagList: [],
       limitList: limitArr,
       only_delete: 0,
+      settle_unit: '',
+      unitArr: moneyArr,
       year: new Date().getFullYear().toString(),
       totalData: {
         total_collect_price: 0,
@@ -211,6 +251,7 @@ export default Vue.extend({
           name: this.keyword,
           status: this.status,
           only_delete: this.only_delete,
+          settle_unit: this.settle_unit,
           tag_id: this.tag_id ? [this.tag_id] : null, // 筛选标签用的，暂时没用到
           client_type_id: this.clientType ? [this.clientType] : this.clientTypeArr.map((item: any) => item.id),
           year: this.year
@@ -236,6 +277,7 @@ export default Vue.extend({
       this.clientType = Number(query.clientType) || ''
       this.only_delete = Number(query.only_delete) || 0
       this.year = query.year || '' + new Date().getFullYear().toString()
+      this.settle_unit = query.settle_unit || ''
       this.clientTagList = this.clientType
         ? this.clientTypeList.find((item: any) => item.id === Number(query.clientType)).public_tag
         : []
@@ -263,7 +305,9 @@ export default Vue.extend({
           '&only_delete=' +
           this.only_delete +
           '&year=' +
-          this.year
+          this.year +
+          '&settle_unit=' +
+          this.settle_unit
       )
     },
     reset() {
@@ -289,6 +333,18 @@ export default Vue.extend({
     }
   },
   created() {
+    this.$checkCommonInfo([
+      {
+        checkWhich: 'api/group',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getGroupAsync'
+      },
+      {
+        checkWhich: 'api/clientType',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getClientTypeAsync'
+      }
+    ])
     this.getList()
   }
 })
