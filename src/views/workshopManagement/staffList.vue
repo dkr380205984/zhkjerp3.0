@@ -132,7 +132,7 @@
           </el-table>
         </div>
         <div class="btn backHoverBlue fl" style="margin-right: 40px" @click="exportExcel(1)">导出月度报表</div>
-        <!-- <div class="btn backHoverBlue fl" style="margin-right: 40px" @click="exportExcel(2)">导出月度明细</div> -->
+        <div class="btn backHoverBlue fl" style="margin-right: 40px" @click="exportExcel(2)">导出月度明细</div>
         <div style="width: 50%; display: flex; justify-content: space-between; margin-left: 20px; line-height: 2">
           <span>
             完成数量：
@@ -181,7 +181,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { process, listSetting, staff, exportExcel } from '@/assets/js/api'
+import { process, listSetting, staff, exportExcel, workshop } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
 import { limitArr } from '@/assets/js/dictionary'
 export default Vue.extend({
@@ -442,14 +442,16 @@ export default Vue.extend({
             }
           })
       } else if (type === 2) {
-        exportExcel
-          .staffMonth({
+        workshop
+          .list({
             keyword: this.keyword,
             department: this.departmentName,
-            process: this.process ? this.process[1] : '',
-            month: this.date
+            process: this.process[1],
+            year: this.date.split('-')[0],
+            month: this.date.split('-')[1],
+            export_excel:1,
           })
-          .then((res: any) => {
+          .then((res) => {
             if (res.data.status) {
               this.mainLoading = false
               window.location.href = res.data.data

@@ -893,12 +893,16 @@ const workshop = {
     order_id?: string | number
     is_check?: string | number
     code?: string
+    keyword?: string
+    department?: string
     staff_id?: string | number
     user_id?: string | number
     start_time?: string
     end_time?: string
+    process?: string
     limit?: number
     page?: number
+    export_excel?: 1
     month?: string | number
     year?: string | number
   }) => http.get(`${baseUrl}/production/inspection/lists`, params),
