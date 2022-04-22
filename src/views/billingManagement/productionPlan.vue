@@ -35,7 +35,7 @@
               placeholder="筛选生产单位"
               v-model="client_id"
               filterable
-              :options="clientList"
+              :options="processClientList"
               clearable
             >
             </el-cascader>
@@ -970,6 +970,11 @@ export default Vue.extend({
     },
     groupList() {
       return this.$store.state.api.group.arr
+    },
+    processClientList(): any {
+      return this.$store.state.api.clientType.arr.filter(
+        (item: { label: string }) => item.label === '生产织造单位' || item.label === '生产加工单位'
+      )
     }
   },
   created() {

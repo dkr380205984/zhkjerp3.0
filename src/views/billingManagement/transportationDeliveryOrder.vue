@@ -35,7 +35,7 @@
               placeholder="筛选运输单位 "
               v-model="client_id"
               filterable
-              :options="clientList"
+              :options="boxClientList"
               clearable
             >
             </el-cascader>
@@ -1052,6 +1052,9 @@ export default Vue.extend({
     },
     groupList() {
       return this.$store.state.api.group.arr
+    },
+    boxClientList(): any {
+      return this.$store.state.api.clientType.arr.filter((item: { label: string }) => item.label === '运输单位')
     }
   },
   created() {

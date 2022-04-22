@@ -836,14 +836,14 @@ export default Vue.extend({
   },
   computed: {
     clientList() {
-      return this.$store.state.api.clientType.arr.filter((item: { type: any }) => Number(item.type) === 1)
+      return this.$store.state.api.clientType.arr.filter((item: { type: any }) => Number(item.type) === 2)
     },
     userList() {
       return this.$store.state.api.user.arr
     },
     groupList() {
       return this.$store.state.api.group.arr
-    }
+    },
   },
   created() {
     this.getFilters()

@@ -35,7 +35,7 @@
               placeholder="筛选加工单位"
               v-model="client_id"
               filterable
-              :options="clientList"
+              :options="prcessClientList"
               clearable
             >
             </el-cascader>
@@ -934,7 +934,10 @@ export default Vue.extend({
     },
     groupList() {
       return this.$store.state.api.group.arr
-    }
+    },
+    prcessClientList(): any {
+      return this.$store.state.api.clientType.arr.filter((item: { label: string }) => item.label === '原料加工单位')
+    },
   },
   created() {
     this.getFilters()
