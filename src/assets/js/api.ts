@@ -50,6 +50,8 @@ const getToken = () => http.get(`${baseUrl}/upload/token`)
 // 版本公告
 const systemMessage = () => http.get(`${baseUrl}/system/update/log`, {})
 
+// 修改结算单价
+const updateSettlePrice = (params: any) => http.post(`${baseUrl}/update/settle/price`, params, 'application/json')
 //工厂信息
 const companyInfo = {
   detail: () => http.get(`${baseUrl}/company/info`, {}),
@@ -108,10 +110,10 @@ const deduct = {
   create: (params:
     {
       id?: string
-      order_id: number | string
       doc_type: number
       client_id: number | string
       data: Array<{
+        order_id: number | string
         doc_code: string
         rel_doc_id: number | string
         reason: string
@@ -150,10 +152,10 @@ const collection = {
   }) => http.get(`${baseUrl}/doc/collect/lists`, params),
   create: (params: {
     id?: string
-    order_id: number | string
     doc_type: number
     client_id: number | string
     data: Array<{
+      order_id: number | string
       doc_code: string
       rel_doc_id: number | string
       desc: string
@@ -161,6 +163,34 @@ const collection = {
       price: string
     }>
   }) => http.post(`${baseUrl}/doc/collect/save`, params, 'application/json'),
+}
+
+// 单据付款，其实和收款一毛一样
+const payment = {
+  list: (params: {
+    order_id: string
+    client_id: string
+    order_code: string
+    code: string
+    start_time: string
+    end_time: string
+    user_id: string,
+    page: number
+    limit: number
+  }) => http.get(`${baseUrl}/doc/pay/lists`, params),
+  create: (params: {
+    id?: string
+    doc_type: number
+    client_id: number | string
+    data: Array<{
+      order_id: number | string
+      doc_code: string
+      rel_doc_id: number | string
+      desc: string
+      complete_time: string
+      price: string
+    }>
+  }) => http.post(`${baseUrl}/doc/pay/save`, params, 'application/json'),
 }
 
 // 单据开票
@@ -178,10 +208,10 @@ const invoice = {
   }) => http.get(`${baseUrl}/doc/invoice/lists`, params),
   create: (params: {
     id?: string
-    order_id: number | string
     doc_type: number
     client_id: number | string
     data: Array<{
+      order_id: number | string
       doc_code: string
       rel_doc_id: number | string
       desc: string
@@ -602,7 +632,7 @@ const materialProcess = {
     code?: string
     start_time?: string
     end_time?: string
-    is_check: string | number
+    is_check?: string | number
   }) => http.get(`${baseUrl}/material/process/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/material/process/detail`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/material/process/delete`, params, 'application/json')
@@ -1098,6 +1128,7 @@ const statistics = {
   }) => http.get(`${baseUrl}/statistics/store/total`, params),
 }
 export {
+  payment,
   statistics,
   receipt,
   workshop,
@@ -1161,5 +1192,6 @@ export {
   clientInOrder,
   productStock,
   productionProgress,
-  invoice
+  invoice,
+  updateSettlePrice
 }

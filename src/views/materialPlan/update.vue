@@ -335,7 +335,7 @@
                         <el-input v-model="itemChild.production_number"
                           placeholder="无计划值"
                           @input="(ev)=>{
-                            itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='g'?1000:1));
+                            itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='kg'||itemChild.unit==='g'?1000:1));
                             itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)
                           }">
                           <template slot="append">
@@ -385,20 +385,7 @@
                           unit: 'kg'
                         })">添加</span>
                         <span class="opr orange"
-                          @click="$addItem(item.info_data,{
-                          process_name_arr:itemChild.process_name_arr,
-                          process_name: itemChild.process_name,
-                          tree_data: itemChild.tree_data,
-                          material_id: itemChild.material_id,
-                          material_type: itemChild.material_type,
-                          material_color: itemChild.material_color,
-                          assist_material_number: itemChild.assist_material_number,
-                          need_number: itemChild.need_number,
-                          production_number: itemChild.production_number,
-                          loss: itemChild.loss,
-                          final_number: itemChild.final_number,
-                          unit: itemChild.unit
-                        })">复制</span>
+                          @click="$addItem(item.info_data,$clone(itemChild))">复制</span>
                         <span class="opr red"
                           @click="item.info_data.length>1?$deleteItem(item.info_data,indexChild):$message.error('至少有一项，可以不填')">删除</span>
                       </div>
@@ -526,7 +513,7 @@
                       <el-input v-model="itemChild.production_number"
                         placeholder="无计划值"
                         @input="(ev)=>{
-                            itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='g'?1000:1));
+                            itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='kg'||itemChild.unit==='g'?1000:1));
                             itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)
                           }">
                         <template slot="append">

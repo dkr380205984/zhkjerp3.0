@@ -898,6 +898,13 @@ export default Vue.extend({
             // @ts-ignore
             this.goDeduct([item])
           }
+        },
+        {
+          name: '详情',
+          class: 'blue',
+          fn: (item: any) => {
+            this.$openUrl('/order/detail?id=' + item.id)
+          }
         }
       ],
       orderCheckList: [],
@@ -948,7 +955,7 @@ export default Vue.extend({
       settle_unit: '',
       settle_unit_sts: '',
       date: [],
-      order_type: null,
+      order_type: 1,
       unitArr: moneyArr
     }
   },
