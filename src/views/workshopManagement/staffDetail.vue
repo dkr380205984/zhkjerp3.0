@@ -966,7 +966,7 @@ export default Vue.extend({
                         (sizeColorInfo.extra_number || 0) -
                         (sizeColorInfo.shoddy_number || 0)) *
                       (staffInfo.price || 0)
-                    : ((sizeColorInfo.complete_number || 0) + (sizeColorInfo.extra_number || 0)) *
+                    : ((sizeColorInfo.number || 0) + (sizeColorInfo.extra_number || 0)) *
                       (staffInfo.price || 0),
                   complete_time: this.$GetDateStr(0)
                 })
