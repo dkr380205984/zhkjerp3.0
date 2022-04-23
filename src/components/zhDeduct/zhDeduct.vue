@@ -88,10 +88,10 @@ import Vue from 'vue'
 import { deduct } from '@/assets/js/api'
 interface deductInfo {
   id?: string
-  order_id: number | string
   doc_type: number
   client_id: number | string
   data: Array<{
+    order_id: number | string
     doc_code: string
     rel_doc_id: number | string
     reason: string
@@ -102,9 +102,6 @@ interface deductInfo {
 export default Vue.extend({
   props: {
     id: {
-      default: ''
-    },
-    order_id: {
       default: ''
     },
     client_name: {
@@ -150,18 +147,9 @@ export default Vue.extend({
   } {
     return {
       deductInfo: {
-        order_id: '',
         doc_type: 0,
         client_id: '',
-        data: [
-          {
-            doc_code: '',
-            rel_doc_id: '',
-            reason: '',
-            file_url: '',
-            price: ''
-          }
-        ]
+        data: [{ order_id: '', doc_code: '', rel_doc_id: '', reason: '', file_url: '', price: '' }]
       },
       postData: {
         key: '',
@@ -204,7 +192,11 @@ export default Vue.extend({
         '原料预订购单',
         '产品出入库单',
         '物料计划单',
-        '物料补充单'
+        '物料补充单',
+        '包装采购单',
+        '',
+        '运输单',
+        '车间管理单'
       ]
       return arr[val]
     }
@@ -216,11 +208,8 @@ export default Vue.extend({
         this.deductInfo.doc_type = this.type
         if (this.update) {
           // @ts-ignore
-          this.deductInfo.order_id = this.order_id || this.data[0].order_id
-          // @ts-ignore
           this.deductInfo.client_id = this.client_id || this.data[0].client_id
         } else {
-          this.deductInfo.order_id = this.order_id
           this.deductInfo.client_id = this.client_id
         }
         if (this.data && this.data.length > 0) {
@@ -229,6 +218,7 @@ export default Vue.extend({
               id: this.update ? item.id : '',
               doc_code: this.update ? item.rel_doc_code : item.code,
               rel_doc_id: this.update ? item.rel_doc_id : item.id,
+              order_id: this.update ? item.order_id : this.type === 1 ? item.id : item.top_order_id,
               price: this.update ? item.price : '',
               reason: this.update ? item.reason : '',
               file_url: this.update ? item.file_url : ''
@@ -237,6 +227,7 @@ export default Vue.extend({
         } else {
           this.deductInfo.data = [
             {
+              order_id: '',
               doc_code: '',
               rel_doc_id: '',
               price: '',
@@ -306,18 +297,9 @@ export default Vue.extend({
     },
     reset() {
       this.deductInfo = {
-        order_id: '',
         doc_type: 0,
         client_id: '',
-        data: [
-          {
-            doc_code: '',
-            rel_doc_id: '',
-            price: '',
-            reason: '',
-            file_url: ''
-          }
-        ]
+        data: [{ order_id: '', doc_code: '', rel_doc_id: '', price: '', reason: '', file_url: '' }]
       }
     }
   },

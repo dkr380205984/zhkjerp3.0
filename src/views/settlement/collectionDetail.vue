@@ -324,7 +324,7 @@
                   <span class="text">批量收款</span>
                 </div>
                 <div class="btn backHoverOrange"
-                  @click="goPayment(orderCheckList)">
+                  @click="goInvoice(orderCheckList)">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
@@ -368,18 +368,18 @@
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input v-model="paymentOrderCode"
+            <el-input v-model="invoiceOrderCode"
               placeholder="搜索订单号"
-              @keydown.enter.native="getPaymentLogList"></el-input>
+              @keydown.enter.native="getInvoiceLogList"></el-input>
           </div>
           <div class="elCtn">
-            <el-input v-model="paymentKeyword"
+            <el-input v-model="invoiceKeyword"
               placeholder="搜索票据编号"
-              @keydown.enter.native="getPaymentLogList"></el-input>
+              @keydown.enter.native="getInvoiceLogList"></el-input>
           </div>
           <div class="elCtn">
-            <el-select @change="getPaymentLogList"
-              v-model="paymentUser"
+            <el-select @change="getInvoiceLogList"
+              v-model="invoiceUser"
               placeholder="筛选创建人"
               clearable>
               <el-option v-for="item in userList"
@@ -389,7 +389,7 @@
             </el-select>
           </div>
           <div class="elCtn">
-            <el-date-picker v-model="paymentDate"
+            <el-date-picker v-model="invoiceDate"
               type="daterange"
               align="right"
               unlink-panels
@@ -397,7 +397,7 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               :picker-options="pickerOptions"
-              @change="getPaymentLogList"
+              @change="getInvoiceLogList"
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
@@ -415,7 +415,7 @@
             <div class="col">操作</div>
           </div>
           <div class="row"
-            v-for="item in paymentLog"
+            v-for="item in invoiceLog"
             :key="item.id">
             <div class="col">{{item.code}}</div>
             <div class="col">{{item.order_code||'未关联订单'}}</div>
@@ -426,14 +426,14 @@
             <div class="col">{{item.created_at}}</div>
             <div class="col oprCtn">
               <span class="opr orange"
-                @click="goPayment([item],true)">修改</span>
+                @click="goInvoice([item],true)">修改</span>
               <span class="opr red">删除</span>
             </div>
           </div>
           <div class="row">
             <div class="col">合计：</div>
             <div class="col"></div>
-            <div class="col green bold">{{paymentTotalPrice}}元</div>
+            <div class="col green bold">{{invoiceTotalPrice}}元</div>
             <div class="col"></div>
             <div class="col"></div>
             <div class="col"></div>
@@ -445,9 +445,9 @@
           <el-pagination background
             :page-size="5"
             layout="prev, pager, next"
-            :total="paymentTotal"
-            :current-page.sync="paymentPage"
-            @current-change="getPaymentLogList">
+            :total="invoiceTotal"
+            :current-page.sync="invoicePage"
+            @current-change="getInvoiceLogList">
           </el-pagination>
         </div>
       </div>
@@ -651,7 +651,7 @@
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
           <div class="btn backHoverOrange"
-            @click="goPayment([])">直接开票</div>
+            @click="goInvoice([])">直接开票</div>
           <div class="btn backHoverBlue"
             @click="goCollection([])">直接收款</div>
           <div class="btn backHoverRed"
@@ -668,13 +668,13 @@
       :client_id="$route.query.id"
       @close="collectionFlag=false;init()"></zh-collection>
     <!-- 开票 -->
-    <zh-payment :type="1"
-      :update="paymentUpdate"
-      :show="paymentFlag"
-      :data="paymentData"
+    <zh-invoice :type="1"
+      :update="invoiceUpdate"
+      :show="invoiceFlag"
+      :data="invoiceData"
       :client_name="clientFinancial.name"
       :client_id="$route.query.id"
-      @close="paymentFlag=false;init()"></zh-payment>
+      @close="invoiceFlag=false;init()"></zh-invoice>
     <!-- 扣款 -->
     <zh-deduct :type="1"
       :update="deductUpdate"
@@ -707,7 +707,7 @@
 </template>
 
 <script lang="ts">
-import { client, collection, deduct, order, payment } from '@/assets/js/api'
+import { client, collection, deduct, order, invoice } from '@/assets/js/api'
 import { moneyArr } from '@/assets/js/dictionary'
 import Vue from 'vue'
 export default Vue.extend({
@@ -726,17 +726,17 @@ export default Vue.extend({
       collectionKeyword: '',
       collectionDate: [],
       collectionUser: '',
-      paymentFlag: false,
-      paymentData: [],
-      paymentTotalPrice: 0,
-      paymentLog: [],
-      paymentTotal: 1,
-      paymentPage: 1,
-      paymentUpdate: false,
-      paymentOrderCode: '',
-      paymentKeyword: '',
-      paymentDate: [],
-      paymentUser: '',
+      invoiceFlag: false,
+      invoiceData: [],
+      invoiceTotalPrice: 0,
+      invoiceLog: [],
+      invoiceTotal: 1,
+      invoicePage: 1,
+      invoiceUpdate: false,
+      invoiceOrderCode: '',
+      invoiceKeyword: '',
+      invoiceDate: [],
+      invoiceUser: '',
       deductFlag: false,
       deductData: [],
       deductLog: [],
@@ -880,7 +880,7 @@ export default Vue.extend({
           class: 'orange',
           fn: (item: any) => {
             // @ts-ignore
-            this.goPayment([item])
+            this.goInvoice([item])
           }
         },
         {
@@ -897,6 +897,13 @@ export default Vue.extend({
           fn: (item: any) => {
             // @ts-ignore
             this.goDeduct([item])
+          }
+        },
+        {
+          name: '详情',
+          class: 'blue',
+          fn: (item: any) => {
+            this.$openUrl('/order/detail?id=' + item.id)
           }
         }
       ],
@@ -948,7 +955,7 @@ export default Vue.extend({
       settle_unit: '',
       settle_unit_sts: '',
       date: [],
-      order_type: null,
+      order_type: 1,
       unitArr: moneyArr
     }
   },
@@ -965,7 +972,7 @@ export default Vue.extend({
       this.getFinancialDetail()
       this.getOrderList()
       this.getCollectionLogList()
-      this.getPaymentLogList()
+      this.getInvoiceLogList()
       this.getDeductList()
     },
     getContacts() {
@@ -1072,31 +1079,31 @@ export default Vue.extend({
       this.collectionData = data
       this.collectionFlag = true
     },
-    getPaymentLogList() {
-      payment
+    getInvoiceLogList() {
+      invoice
         .list({
           order_id: '',
           client_id: this.$route.query.id as string,
-          order_code: this.paymentOrderCode,
-          code: this.paymentKeyword,
-          start_time: this.paymentDate.length > 1 ? this.paymentDate[0] : '',
-          end_time: this.paymentDate.length > 1 ? this.paymentDate[1] : '',
-          user_id: this.paymentUser,
+          order_code: this.invoiceOrderCode,
+          code: this.invoiceKeyword,
+          start_time: this.invoiceDate.length > 1 ? this.invoiceDate[0] : '',
+          end_time: this.invoiceDate.length > 1 ? this.invoiceDate[1] : '',
+          user_id: this.invoiceUser,
           page: this.collectionPage,
           limit: 5
         })
         .then((res) => {
           if (res.data.status) {
-            this.paymentLog = res.data.data.items
-            this.paymentTotal = res.data.data.total
-            this.paymentTotalPrice = res.data.data.additional.total_price
+            this.invoiceLog = res.data.data.items
+            this.invoiceTotal = res.data.data.total
+            this.invoiceTotalPrice = res.data.data.additional.total_price
           }
         })
     },
-    goPayment(data: any[], update?: boolean) {
-      this.paymentUpdate = update
-      this.paymentData = data
-      this.paymentFlag = true
+    goInvoice(data: any[], update?: boolean) {
+      this.invoiceUpdate = update
+      this.invoiceData = data
+      this.invoiceFlag = true
     },
     getDeductList() {
       deduct

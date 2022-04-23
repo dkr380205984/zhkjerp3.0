@@ -1,10 +1,9 @@
 <template>
-  <div class="zhCollection popup"
+  <div class="zhInvoice popup"
     v-show="show">
     <div class="main">
       <div class="titleCtn">
-        <div class="text">{{type|filterType}}收款{{update?'修改':''}}
-        </div>
+        <div class="text">{{type|filterType}}开票{{update?'修改':''}}</div>
         <div class="closeCtn"
           @click="close">
           <i class="el-icon-close"></i>
@@ -14,35 +13,34 @@
         <div class="row">
           <div class="info">
             <el-input disabled
-              placeholder="收款单位"
+              placeholder="开票单位"
               v-model="client_name">
-              <template slot="prepend">收款单位</template>
+              <template slot="prepend">开票单位</template>
             </el-input>
           </div>
         </div>
-        <div v-for="(item,index) in collectionInfo.data"
+        <div v-for="(item,index) in invoiceInfo.data"
           :key="index">
           <div class="blue"
-            style="margin-left:6px">收款单据{{index+1}}</div>
+            style="margin-left:6px">开票单据{{index+1}}</div>
           <div class="row">
             <div class="info">
               <el-input disabled
-                placeholder="无单据收款"
+                placeholder="无单据开票"
                 v-model="item.doc_code">
               </el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-date-picker placeholder="收款日期"
-                v-model="item.complete_time">
-                <template slot="prepend">收款日期</template>
-              </el-date-picker>
+              <el-input placeholder="开票号码"
+                v-model="item.invoice_code">
+              </el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input placeholder="收款金额(必填)"
+              <el-input placeholder="开票金额(必填)"
                 v-model="item.price">
                 <template slot="append">元</template>
               </el-input>
@@ -62,7 +60,7 @@
           @click="close">取消</span>
         <span class="btn"
           :class="{'backHoverBlue':!update,'backHoverOrange':update}"
-          @click="saveCollection">{{update?'修改':'确认'}}</span>
+          @click="saveInvoice">{{update?'修改':'确认'}}</span>
       </div>
     </div>
   </div>
@@ -70,8 +68,8 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { collection } from '@/assets/js/api'
-interface CollectionInfo {
+import { invoice } from '@/assets/js/api'
+interface invoiceInfo {
   id?: string
   doc_type: number
   client_id: number | string
@@ -80,16 +78,13 @@ interface CollectionInfo {
     doc_code: string
     rel_doc_id: number | string
     desc: string
-    complete_time: string
+    invoice_code: string
     price: string
   }>
 }
 export default Vue.extend({
   props: {
     id: {
-      default: ''
-    },
-    order_id: {
       default: ''
     },
     client_name: {
@@ -113,9 +108,6 @@ export default Vue.extend({
     // const SCARF_DOC_PRODUCT_STORE_LOG=8;//产品出入库单
     // const SCARF_DOC_MATERIAL_PLAN=9;//物料计划单
     // const SCARF_DOC_MATERIAL_SUP=10;//物料计划单
-    // 11 包装采购单
-    // 13 运输单
-    // 14 车间管理单
     type: {
       type: Number,
       required: true
@@ -133,16 +125,14 @@ export default Vue.extend({
     }
   },
   data(): {
-    collectionInfo: CollectionInfo
+    invoiceInfo: invoiceInfo
     [propName: string]: any
   } {
     return {
-      collectionInfo: {
+      invoiceInfo: {
         doc_type: 0,
         client_id: '',
-        data: [
-          { order_id: '', doc_code: '', rel_doc_id: '', price: '', desc: '', complete_time: this.$getDate(new Date()) }
-        ]
+        data: [{ order_id: '', doc_code: '', rel_doc_id: '', price: '', desc: '', invoice_code: '' }]
       }
     }
   },
@@ -172,34 +162,34 @@ export default Vue.extend({
     show(val) {
       if (val) {
         this.reset()
-        this.collectionInfo.doc_type = this.type
+        this.invoiceInfo.doc_type = this.type
         if (this.update) {
           // @ts-ignore
-          this.collectionInfo.client_id = this.client_id || this.data[0].client_id
+          this.invoiceInfo.client_id = this.client_id || this.data[0].client_id
         } else {
-          this.collectionInfo.client_id = this.client_id
+          this.invoiceInfo.client_id = this.client_id
         }
         if (this.data && this.data.length > 0) {
-          this.collectionInfo.data = this.data.map((item: any) => {
+          this.invoiceInfo.data = this.data.map((item: any) => {
             return {
               id: this.update ? item.id : '',
-              doc_code: this.update ? item.rel_doc_code : item.code,
+              doc_code: this.update ? item.code : item.code,
               rel_doc_id: this.update ? item.rel_doc_id : item.id,
               order_id: this.update ? item.order_id : this.type === 1 ? item.id : item.top_order_id,
               price: this.update ? item.price : '',
               desc: this.update ? item.desc : '',
-              complete_time: this.update ? item.complete_time : this.$getDate(new Date())
+              invoice_code: this.update ? item.invoice_code : ''
             }
           })
         } else {
-          this.collectionInfo.data = [
+          this.invoiceInfo.data = [
             {
               order_id: '',
               doc_code: '',
               rel_doc_id: '',
               price: '',
               desc: '',
-              complete_time: this.$getDate(new Date())
+              invoice_code: ''
             }
           ]
         }
@@ -211,35 +201,26 @@ export default Vue.extend({
       this.$emit('close')
     },
     reset() {
-      this.collectionInfo = {
+      this.invoiceInfo = {
         doc_type: 0,
         client_id: '',
-        data: [
-          {
-            order_id: '',
-            doc_code: '',
-            rel_doc_id: '',
-            price: '',
-            desc: '',
-            complete_time: ''
-          }
-        ]
+        data: [{ order_id: '', doc_code: '', rel_doc_id: '', price: '', desc: '', invoice_code: '' }]
       }
     },
-    saveCollection() {
-      const formCheck = this.collectionInfo.data.some((item) => {
+    saveInvoice() {
+      const formCheck = this.invoiceInfo.data.some((item) => {
         return this.$formCheck(item, [
           {
             key: 'price',
-            errMsg: '请输入收款金额'
+            errMsg: '请输入开票金额'
           }
         ])
       })
       if (!formCheck) {
-        collection.create(this.collectionInfo).then((res) => {
+        invoice.create(this.invoiceInfo).then((res) => {
           if (res.data.status) {
-            this.$message.success(this.update ? '修改成功' : '收款成功')
-            this.$emit('afterCollection')
+            this.$message.success(this.update ? '修改成功' : '开票成功')
+            this.$emit('afterInvoice')
             this.$emit('close')
           }
         })
@@ -250,5 +231,5 @@ export default Vue.extend({
 </script>
 
 <style lang="less" scoped>
-@import './zhCollection.less';
+@import './zhInvoice.less';
 </style>

@@ -169,12 +169,6 @@ export default Vue.extend({
       lastPasd: '',
       navData: [
         {
-          name: '数据报表',
-          id: 4,
-          icon: 'icon-shujubaobiao',
-          url: '/dataReport/orderStatistics'
-        },
-        {
           name: '报价管理',
           id: 1,
           icon: 'icon-baojiaguanli1',
@@ -191,6 +185,18 @@ export default Vue.extend({
           id: 3,
           icon: 'icon-dingdanguanli1',
           url: '/order/list?page=1&keyword=&client_id=&user_id=&status=null&date='
+        },
+        {
+          name: '数据报表',
+          id: 4,
+          icon: 'icon-shujubaobiao',
+          url: '/dataReport/orderStatistics'
+        },
+        {
+          name: '单据管理',
+          id: '20-1',
+          icon: 'icon-danjuguanli',
+          url: '/billingManagement/rawMaterialPlan?page=1'
         },
         {
           name: '其它管理',

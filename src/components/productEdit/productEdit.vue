@@ -930,7 +930,7 @@ export default Vue.extend({
           .list({
             limit: 99,
             page: 1,
-            product_type: 1,
+            // product_type: 1, // 导入可以搜样品
             product_code: this.searchProductCode,
             order_code: this.searchOrderCode
           })

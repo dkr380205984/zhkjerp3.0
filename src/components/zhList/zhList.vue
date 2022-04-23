@@ -89,7 +89,7 @@
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
-                    <use xlink:href="#icon-baojiadan"></use>
+                    <use xlink:href="#icon-baojiadan1"></use>
                   </svg>
                 </el-tooltip>
               </div>
@@ -101,7 +101,7 @@
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
-                    <use xlink:href="#icon-yuanliaojihua"></use>
+                    <use xlink:href="#icon-yuanliaojihua1"></use>
                   </svg>
                 </el-tooltip>
               </div>
@@ -113,7 +113,7 @@
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
-                    <use xlink:href="#icon-yuanliaocaigou"></use>
+                    <use xlink:href="#icon-yuanliaocaigou1"></use>
                   </svg>
                 </el-tooltip>
               </div>
@@ -125,7 +125,7 @@
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
-                    <use xlink:href="#icon-yuanliaoruku"></use>
+                    <use xlink:href="#icon-yuanliaoruku1"></use>
                   </svg>
                 </el-tooltip>
               </div>
@@ -137,7 +137,7 @@
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
-                    <use xlink:href="#icon-yuanliaochuku"></use>
+                    <use xlink:href="#icon-yuanliaochuku1"></use>
                   </svg>
                 </el-tooltip>
               </div>
@@ -149,7 +149,7 @@
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
-                    <use xlink:href="#icon-shengchanjihua1"></use>
+                    <use xlink:href="#icon-shengchanjihua3"></use>
                   </svg>
                 </el-tooltip>
               </div>
@@ -161,7 +161,7 @@
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
-                    <use xlink:href="#icon-jianyanruku"></use>
+                    <use xlink:href="#icon-jianyanchuku"></use>
                   </svg>
                 </el-tooltip>
               </div>
@@ -173,7 +173,7 @@
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
-                    <use xlink:href="#icon-zhuangxiangchuku"></use>
+                    <use xlink:href="#icon-zhuangxiangchuku1"></use>
                   </svg>
                 </el-tooltip>
               </div>
@@ -185,18 +185,18 @@
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
-                    <use xlink:href="#icon-baozhuangcaigou"></use>
+                    <use xlink:href="#icon-baozhuangcaigou1"></use>
                   </svg>
                 </el-tooltip>
               </div>
               <div class="process gray">
                 <el-tooltip class="item"
                   effect="dark"
-                  content="财务结算暂不支持"
+                  :content="'开票金额'+(item.has_invoice.status===1?('已添加(更新日期:'+item.has_invoice.update_time +')'):'未添加')"
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
-                    <use xlink:href="#icon-caiwukaipiao"></use>
+                    <use xlink:href="#icon-caiwukaipiao1"></use>
                   </svg>
                 </el-tooltip>
               </div>
@@ -213,7 +213,7 @@
                     placement="top">
                     <svg class="iconFont"
                       aria-hidden="true">
-                      <use xlink:href="#icon-baojiadan"></use>
+                      <use xlink:href="#icon-baojiadan1"></use>
                     </svg>
                   </el-tooltip>
                 </div>
@@ -225,7 +225,7 @@
                     placement="top">
                     <svg class="iconFont"
                       aria-hidden="true">
-                      <use xlink:href="#icon-yuanliaojihua"></use>
+                      <use xlink:href="#icon-yuanliaojihua1"></use>
                     </svg>
                   </el-tooltip>
                 </div>
@@ -237,7 +237,7 @@
                     placement="top">
                     <svg class="iconFont"
                       aria-hidden="true">
-                      <use xlink:href="#icon-yuanliaocaigou"></use>
+                      <use xlink:href="#icon-yuanliaocaigou1"></use>
                     </svg>
                   </el-tooltip>
                 </div>
@@ -249,7 +249,7 @@
                     placement="top">
                     <svg class="iconFont"
                       aria-hidden="true">
-                      <use xlink:href="#icon-yuanliaoruku"></use>
+                      <use xlink:href="#icon-yuanliaoruku1"></use>
                     </svg>
                   </el-tooltip>
                 </div>
@@ -261,7 +261,7 @@
                     placement="top">
                     <svg class="iconFont"
                       aria-hidden="true">
-                      <use xlink:href="#icon-yuanliaochuku"></use>
+                      <use xlink:href="#icon-yuanliaochuku1"></use>
                     </svg>
                   </el-tooltip>
                 </div>
@@ -273,7 +273,7 @@
                     placement="top">
                     <svg class="iconFont"
                       aria-hidden="true">
-                      <use xlink:href="#icon-shengchanjihua1"></use>
+                      <use xlink:href="#icon-shengchanjihua3"></use>
                     </svg>
                   </el-tooltip>
                 </div>

@@ -1,9 +1,10 @@
 <template>
-  <div class="zhPayment popup"
+  <div class="zhCollection popup"
     v-show="show">
     <div class="main">
       <div class="titleCtn">
-        <div class="text">{{type|filterType}}开票{{update?'修改':''}}</div>
+        <div class="text">{{type|filterType}}付款{{update?'修改':''}}
+        </div>
         <div class="closeCtn"
           @click="close">
           <i class="el-icon-close"></i>
@@ -13,34 +14,35 @@
         <div class="row">
           <div class="info">
             <el-input disabled
-              placeholder="开票单位"
+              placeholder="付款单位"
               v-model="client_name">
-              <template slot="prepend">开票单位</template>
+              <template slot="prepend">付款单位</template>
             </el-input>
           </div>
         </div>
         <div v-for="(item,index) in paymentInfo.data"
           :key="index">
           <div class="blue"
-            style="margin-left:6px">开票单据{{index+1}}</div>
+            style="margin-left:6px">付款单据{{index+1}}</div>
           <div class="row">
             <div class="info">
               <el-input disabled
-                placeholder="无单据开票"
+                placeholder="无单据付款"
                 v-model="item.doc_code">
               </el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input placeholder="开票号码"
-                v-model="item.invoice_code">
-              </el-input>
+              <el-date-picker placeholder="付款日期"
+                v-model="item.complete_time">
+                <template slot="prepend">付款日期</template>
+              </el-date-picker>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input placeholder="开票金额(必填)"
+              <el-input placeholder="付款金额(必填)"
                 v-model="item.price">
                 <template slot="append">元</template>
               </el-input>
@@ -69,25 +71,22 @@
 <script lang="ts">
 import Vue from 'vue'
 import { payment } from '@/assets/js/api'
-interface paymentInfo {
+interface PaymentInfo {
   id?: string
-  order_id: number | string
   doc_type: number
   client_id: number | string
   data: Array<{
+    order_id: number | string
     doc_code: string
     rel_doc_id: number | string
     desc: string
-    invoice_code: string
+    complete_time: string
     price: string
   }>
 }
 export default Vue.extend({
   props: {
     id: {
-      default: ''
-    },
-    order_id: {
       default: ''
     },
     client_name: {
@@ -128,21 +127,21 @@ export default Vue.extend({
     }
   },
   data(): {
-    paymentInfo: paymentInfo
+    paymentInfo: PaymentInfo
     [propName: string]: any
   } {
     return {
       paymentInfo: {
-        order_id: '',
         doc_type: 0,
         client_id: '',
         data: [
           {
+            order_id: '',
             doc_code: '',
             rel_doc_id: '',
             price: '',
             desc: '',
-            invoice_code: ''
+            complete_time: this.$getDate(new Date())
           }
         ]
       }
@@ -161,7 +160,11 @@ export default Vue.extend({
         '原料预订购单',
         '产品出入库单',
         '物料计划单',
-        '物料补充单'
+        '物料补充单',
+        '包装采购单',
+        '',
+        '运输单',
+        '车间管理单'
       ]
       return arr[val]
     }
@@ -173,22 +176,20 @@ export default Vue.extend({
         this.paymentInfo.doc_type = this.type
         if (this.update) {
           // @ts-ignore
-          this.paymentInfo.order_id = this.order_id || this.data[0].order_id
-          // @ts-ignore
           this.paymentInfo.client_id = this.client_id || this.data[0].client_id
         } else {
-          this.paymentInfo.order_id = this.order_id
           this.paymentInfo.client_id = this.client_id
         }
         if (this.data && this.data.length > 0) {
           this.paymentInfo.data = this.data.map((item: any) => {
             return {
               id: this.update ? item.id : '',
-              doc_code: this.update ? item.rel_doc_code : item.code,
+              doc_code: this.update ? item.code : item.code,
               rel_doc_id: this.update ? item.rel_doc_id : item.id,
+              order_id: this.update ? item.order_id : this.type === 1 ? item.id : item.top_order_id,
               price: this.update ? item.price : '',
               desc: this.update ? item.desc : '',
-              invoice_code: this.update ? item.invoice_code : ''
+              complete_time: this.update ? item.complete_time : this.$getDate(new Date())
             }
           })
         } else {
@@ -196,9 +197,10 @@ export default Vue.extend({
             {
               doc_code: '',
               rel_doc_id: '',
+              order_id: '',
               price: '',
               desc: '',
-              invoice_code: ''
+              complete_time: this.$getDate(new Date())
             }
           ]
         }
@@ -211,18 +213,9 @@ export default Vue.extend({
     },
     reset() {
       this.paymentInfo = {
-        order_id: '',
         doc_type: 0,
         client_id: '',
-        data: [
-          {
-            doc_code: '',
-            rel_doc_id: '',
-            price: '',
-            desc: '',
-            invoice_code: ''
-          }
-        ]
+        data: [{ order_id: '', doc_code: '', rel_doc_id: '', price: '', desc: '', complete_time: '' }]
       }
     },
     savePayment() {
@@ -230,15 +223,15 @@ export default Vue.extend({
         return this.$formCheck(item, [
           {
             key: 'price',
-            errMsg: '请输入开票金额'
+            errMsg: '请输入付款金额'
           }
         ])
       })
       if (!formCheck) {
         payment.create(this.paymentInfo).then((res) => {
           if (res.data.status) {
-            this.$message.success('开票成功')
-            this.$emit('afterCollection')
+            this.$message.success(this.update ? '修改成功' : '付款成功')
+            this.$emit('afterPayment')
             this.$emit('close')
           }
         })

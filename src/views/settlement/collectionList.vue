@@ -1,5 +1,5 @@
 <template>
-  <div id="collectionList"
+  <div id="paymentList"
     class="bodyContainer">
     <div class="topTagCtn">
       <div class="tag active">
@@ -11,7 +11,8 @@
         </div>
         <span class="text">应收款客户</span>
       </div>
-      <div class="tag">
+      <div class="tag"
+        @click="$router.push('/settlement/paymentList?page=&limit&type=&keyword=&status=&clientType=&tag_id=&only_delete=&year=&settle_unit=')">
         <div class="iconCtn">
           <svg class="iconFont"
             aria-hidden="true">
@@ -46,7 +47,7 @@
               v-model="clientType"
               @change="tag_id='';getClientTag($event)"
               clearable>
-              <el-option v-for="item in clientTypeArr"
+              <el-option v-for="item in clientTypeList"
                 :key="item.id"
                 :value="item.id"
                 :label="item.name"></el-option>
@@ -70,9 +71,9 @@
               @change="changeRouter"
               clearable>
               <el-option v-for="item in clientTagList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"></el-option>
+                :key="item.value"
+                :value="item.value"
+                :label="item.label"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
@@ -192,7 +193,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { client } from '@/assets/js/api'
+import { client, clientType } from '@/assets/js/api'
 import { limitArr, moneyArr } from '@/assets/js/dictionary'
 export default Vue.extend({
   data(): {
@@ -205,14 +206,12 @@ export default Vue.extend({
       page: 1,
       total: 1,
       limit: 10,
-      type: 1,
+      type: 1, // 类型2，合作单位类型
       status: 1,
-      clientTypeList: [],
       clientType: '',
-      clientBindList: [],
-      unBindClient: [],
       tag_id: '',
       bindFlag: false,
+      clientTypeList: [],
       clientTagList: [],
       limitList: limitArr,
       only_delete: 0,
@@ -230,11 +229,6 @@ export default Vue.extend({
       }
     }
   },
-  computed: {
-    clientTypeArr(): any {
-      return this.clientTypeList.filter((item: { type: string }) => Number(item.type) === Number(this.type))
-    }
-  },
   watch: {
     $route() {
       this.getFilters()
@@ -242,6 +236,14 @@ export default Vue.extend({
     }
   },
   methods: {
+    getClientTag(ev: number) {
+      if (ev) {
+        this.clientTagList = this.clientTypeList.find((item: { id: number }) => item.id === ev).children
+      } else {
+        this.clientTagList = []
+      }
+      this.changeRouter()
+    },
     getList() {
       this.loading = true
       client
@@ -253,7 +255,7 @@ export default Vue.extend({
           only_delete: this.only_delete,
           settle_unit: this.settle_unit,
           tag_id: this.tag_id ? [this.tag_id] : null, // 筛选标签用的，暂时没用到
-          client_type_id: this.clientType ? [this.clientType] : this.clientTypeArr.map((item: any) => item.id),
+          client_type_id: this.clientType ? [this.clientType] : this.clientTypeList.map((item: any) => item.id),
           year: this.year
         })
         .then((res) => {
@@ -286,9 +288,8 @@ export default Vue.extend({
       if (ev !== this.page) {
         this.page = 1
       }
-
       this.$router.push(
-        '/settlement/collectionList?page=' +
+        '/settlement/paymentList?page=' +
           this.page +
           '&limit=' +
           this.limit +
@@ -333,23 +334,16 @@ export default Vue.extend({
     }
   },
   created() {
-    this.$checkCommonInfo([
-      {
-        checkWhich: 'api/group',
-        getInfoMethed: 'dispatch',
-        getInfoApi: 'getGroupAsync'
-      },
-      {
-        checkWhich: 'api/clientType',
-        getInfoMethed: 'dispatch',
-        getInfoApi: 'getClientTypeAsync'
-      }
-    ])
-    this.getList()
+    // 由于列表需要用到type数据，所以这里不用checkCommonInfo
+    clientType.list().then((res) => {
+      this.clientTypeList = res.data.data.filter((item: { type: string }) => Number(item.type) === Number(this.type))
+      this.getFilters()
+      this.getList()
+    })
   }
 })
 </script>
 <style lang="less" scoped>
-@import '~@/assets/css/settlement/collectionList.less';
+@import '~@/assets/css/settlement/paymentList.less';
 </style>
 

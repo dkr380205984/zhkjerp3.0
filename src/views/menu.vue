@@ -162,12 +162,6 @@ export default Vue.extend({
             url: '/reimbursementManage/list?page=1&status='
           },
           {
-            name: '系统单据管理',
-            id: '20-1',
-            icon: 'icon-xitongdanjuguanli',
-            url: '/billingManagement/rawMaterialPlan?page=1'
-          },
-          {
             name: '财务结算',
             id: 22,
             icon: 'icon-chexiaodanguanli',

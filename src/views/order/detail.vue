@@ -378,180 +378,6 @@
       </div>
     </div>
     <div class="module"
-      id="生产汇总表">
-      <div class="titleCtn">
-        <div class="title"
-          style="display: flex;align-items: center;">生产汇总表
-        </div>
-      </div>
-      <div class="processCtn">
-        <div class="process">
-          <div class="active"
-            :style="{'width':(productionProgress.weave>100?100:productionProgress.weave) + '%'}"></div>
-          <span class="left">生产织造进度</span>
-          <span class="right">{{productionProgress.weave}}%</span>
-        </div>
-        <div class="process">
-          <div class="active"
-            :style="{'width':(productionProgress.inspection>100?100:productionProgress.inspection)+'%'}"></div>
-          <span class="left">检验入库进度</span>
-          <span class="right">{{productionProgress.inspection}}%</span>
-        </div>
-      </div>
-      <zh-drop-down :buttonStyle="'padding:20px'"
-        :show="show_production"
-        hideTitle="点击查看图表">
-        <div class="tableCtn samallFont">
-          <div class="thead"
-            style="height:auto">
-            <div class="trow">
-              <div class="tcol center"
-                style="min-width: 379px;">
-                <span>
-                  下单信息
-                  <el-tooltip class="item"
-                    effect="dark"
-                    :content="'更新日期:'+(productionUpdateTime.order?productionUpdateTime.order:'暂无')"
-                    placement="top">
-                    <i class="el-icon-info blue"></i>
-                  </el-tooltip>
-                </span>
-              </div>
-              <div class="tcol center"
-                style="min-width: 235px;">
-                <span>
-                  计划信息
-                  <el-tooltip class="item"
-                    effect="dark"
-                    :content="'更新日期:'+(productionUpdateTime.plan?productionUpdateTime.plan:'暂无')"
-                    placement="top">
-                    <i class="el-icon-info blue"></i>
-                  </el-tooltip>
-                </span>
-              </div>
-              <div class="tcol center"
-                style="min-width: 208px;">
-                <span>
-                  生产分配信息
-                  <el-tooltip class="item"
-                    effect="dark"
-                    :content="'更新日期:'+(productionUpdateTime.weave?productionUpdateTime.weave:'暂无')"
-                    placement="top">
-                    <i class="el-icon-info blue"></i>
-                  </el-tooltip>
-                </span>
-              </div>
-              <div class="tcol center">
-                <span>
-                  数量更新信息
-                  <el-tooltip class="item"
-                    effect="dark"
-                    :content="'更新日期:'+(productionUpdateTime.complete?productionUpdateTime.complete:'暂无')"
-                    placement="top">
-                    <i class="el-icon-info blue"></i>
-                  </el-tooltip>
-                </span>
-              </div>
-              <div class="tcol center">
-                <span>
-                  检验收发信息
-                  <el-tooltip class="item"
-                    effect="dark"
-                    :content="'更新日期:'+(productionUpdateTime.inspection?productionUpdateTime.inspection:'暂无')"
-                    placement="top">
-                    <i class="el-icon-info blue"></i>
-                  </el-tooltip>
-                </span>
-              </div>
-            </div>
-            <div class="trow">
-              <div class="tcol">产品信息</div>
-              <div class="tcol noPad"
-                style="flex:10">
-                <div class="trow">
-                  <div class="tcol">产品颜色</div>
-                  <div class="tcol noPad"
-                    style="flex:9">
-                    <div class="trow">
-                      <div class="tcol">产品尺码</div>
-                      <div class="tcol">下单数量</div>
-                      <div class="tcol">计划数量</div>
-                      <div class="tcol noPad"
-                        style="flex:6">
-                        <div class="trow">
-                          <div class="tcol">生产单位</div>
-                          <div class="tcol noPad"
-                            style="flex:5">
-                            <div class="trow">
-                              <div class="tcol">生产工序</div>
-                              <div class="tcol">完成数量</div>
-                              <div class="tcol">检验入库数量</div>
-                              <div class="tcol">次品数量</div>
-                              <div class="tcol">次品率</div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="tbody">
-            <div class="trow"
-              v-for="(item,index) in productionDetail"
-              :key="index">
-              <div class="tcol">{{item.product_code}}</div>
-              <div class="tcol noPad"
-                style="flex:10">
-                <div class="trow"
-                  v-for="(itemColor,indexColor) in item.data"
-                  :key="indexColor">
-                  <div class="tcol">{{itemColor.color_name}}</div>
-                  <div class="tcol noPad"
-                    style="flex:9">
-                    <div class="trow"
-                      v-for="(itemSize,indexSize) in itemColor.data"
-                      :key="indexSize">
-                      <div class="tcol">{{itemSize.size_name}}</div>
-                      <div class="tcol">{{itemSize.data.order_number}}</div>
-                      <div class="tcol">{{itemSize.data.plan_number}}</div>
-                      <div class="tcol noPad"
-                        style="flex:6">
-                        <div class="trow"
-                          v-for="(itemClient,indexClient) in itemSize.data.weave_info"
-                          :key="indexClient">
-                          <div class="tcol">{{itemClient.client_name}}</div>
-                          <div class="tcol noPad"
-                            style="flex:5">
-                            <div class="trow"
-                              v-for="(itemChild,indexChild) in itemClient.data"
-                              :key="indexChild">
-                              <div class="tcol">{{itemChild.process_name}}</div>
-                              <div class="tcol">{{itemChild.data.real_number}}</div>
-                              <div class="tcol">{{itemChild.data.inspection_number}}</div>
-                              <div class="tcol">{{itemChild.data.shoddy_number}}</div>
-                              <div class="tcol">{{itemChild.data.shoddy_pre}}%</div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="trow"
-              v-if="productionDetail.length===0">
-              <div class="tcol gray"
-                style="text-align:center">暂无生产信息</div>
-            </div>
-          </div>
-        </div>
-      </zh-drop-down>
-    </div>
-    <div class="module"
       id="物料汇总信息">
       <div class="titleCtn">
         <div class="title">物料汇总信息</div>
@@ -773,6 +599,180 @@
               v-if="materialDetail.length===0">
               <div class="tcol gray"
                 style="text-align:center">暂无物料信息</div>
+            </div>
+          </div>
+        </div>
+      </zh-drop-down>
+    </div>
+    <div class="module"
+      id="生产汇总表">
+      <div class="titleCtn">
+        <div class="title"
+          style="display: flex;align-items: center;">生产汇总表
+        </div>
+      </div>
+      <div class="processCtn">
+        <div class="process">
+          <div class="active"
+            :style="{'width':(productionProgress.weave>100?100:productionProgress.weave) + '%'}"></div>
+          <span class="left">生产织造进度(此进度为外协小程序申报数量)</span>
+          <span class="right">{{productionProgress.weave}}%</span>
+        </div>
+        <div class="process">
+          <div class="active"
+            :style="{'width':(productionProgress.inspection>100?100:productionProgress.inspection)+'%'}"></div>
+          <span class="left">检验入库进度(此进度为本厂检验车间申报数量)</span>
+          <span class="right">{{productionProgress.inspection}}%</span>
+        </div>
+      </div>
+      <zh-drop-down :buttonStyle="'padding:20px'"
+        :show="show_production"
+        hideTitle="点击查看图表">
+        <div class="tableCtn samallFont">
+          <div class="thead"
+            style="height:auto">
+            <div class="trow">
+              <div class="tcol center"
+                style="min-width: 379px;">
+                <span>
+                  下单信息
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'更新日期:'+(productionUpdateTime.order?productionUpdateTime.order:'暂无')"
+                    placement="top">
+                    <i class="el-icon-info blue"></i>
+                  </el-tooltip>
+                </span>
+              </div>
+              <div class="tcol center"
+                style="min-width: 235px;">
+                <span>
+                  计划信息
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'更新日期:'+(productionUpdateTime.plan?productionUpdateTime.plan:'暂无')"
+                    placement="top">
+                    <i class="el-icon-info blue"></i>
+                  </el-tooltip>
+                </span>
+              </div>
+              <div class="tcol center"
+                style="min-width: 208px;">
+                <span>
+                  生产分配信息
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'更新日期:'+(productionUpdateTime.weave?productionUpdateTime.weave:'暂无')"
+                    placement="top">
+                    <i class="el-icon-info blue"></i>
+                  </el-tooltip>
+                </span>
+              </div>
+              <div class="tcol center">
+                <span>
+                  数量更新信息
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'更新日期:'+(productionUpdateTime.complete?productionUpdateTime.complete:'暂无')"
+                    placement="top">
+                    <i class="el-icon-info blue"></i>
+                  </el-tooltip>
+                </span>
+              </div>
+              <div class="tcol center">
+                <span>
+                  检验收发信息
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'更新日期:'+(productionUpdateTime.inspection?productionUpdateTime.inspection:'暂无')"
+                    placement="top">
+                    <i class="el-icon-info blue"></i>
+                  </el-tooltip>
+                </span>
+              </div>
+            </div>
+            <div class="trow">
+              <div class="tcol">产品信息</div>
+              <div class="tcol noPad"
+                style="flex:10">
+                <div class="trow">
+                  <div class="tcol">产品颜色</div>
+                  <div class="tcol noPad"
+                    style="flex:9">
+                    <div class="trow">
+                      <div class="tcol">产品尺码</div>
+                      <div class="tcol">下单数量</div>
+                      <div class="tcol">计划数量</div>
+                      <div class="tcol noPad"
+                        style="flex:6">
+                        <div class="trow">
+                          <div class="tcol">生产单位</div>
+                          <div class="tcol noPad"
+                            style="flex:5">
+                            <div class="trow">
+                              <div class="tcol">生产工序</div>
+                              <div class="tcol">完成数量</div>
+                              <div class="tcol">检验入库数量</div>
+                              <div class="tcol">次品数量</div>
+                              <div class="tcol">次品率</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tbody">
+            <div class="trow"
+              v-for="(item,index) in productionDetail"
+              :key="index">
+              <div class="tcol">{{item.product_code}}</div>
+              <div class="tcol noPad"
+                style="flex:10">
+                <div class="trow"
+                  v-for="(itemColor,indexColor) in item.data"
+                  :key="indexColor">
+                  <div class="tcol">{{itemColor.color_name}}</div>
+                  <div class="tcol noPad"
+                    style="flex:9">
+                    <div class="trow"
+                      v-for="(itemSize,indexSize) in itemColor.data"
+                      :key="indexSize">
+                      <div class="tcol">{{itemSize.size_name}}</div>
+                      <div class="tcol">{{itemSize.data.order_number}}</div>
+                      <div class="tcol">{{itemSize.data.plan_number}}</div>
+                      <div class="tcol noPad"
+                        style="flex:6">
+                        <div class="trow"
+                          v-for="(itemClient,indexClient) in itemSize.data.weave_info"
+                          :key="indexClient">
+                          <div class="tcol">{{itemClient.client_name}}</div>
+                          <div class="tcol noPad"
+                            style="flex:5">
+                            <div class="trow"
+                              v-for="(itemChild,indexChild) in itemClient.data"
+                              :key="indexChild">
+                              <div class="tcol">{{itemChild.process_name}}</div>
+                              <div class="tcol">{{itemChild.data.real_number}}</div>
+                              <div class="tcol">{{itemChild.data.inspection_number}}</div>
+                              <div class="tcol">{{itemChild.data.shoddy_number}}</div>
+                              <div class="tcol">{{itemChild.data.shoddy_pre}}%</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="trow"
+              v-if="productionDetail.length===0">
+              <div class="tcol gray"
+                style="text-align:center">暂无生产信息</div>
             </div>
           </div>
         </div>
@@ -1713,6 +1713,14 @@
                   </svg>
                   <span class="text">装箱出库</span>
                 </div>
+                <div class="btn backHoverGreen"
+                  @click="confirmOrder">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-shanchudingdan"></use>
+                  </svg>
+                  <span class="text">确认完成</span>
+                </div>
               </div>
             </div>
           </div>
@@ -1840,11 +1848,11 @@
       name:'产品信息',
       mark:'#产品信息'
     },{
-      name:'批次信息',
-      mark:'#批次信息'
-    },{
       name:'生产汇总表',
       mark:'#生产汇总表'
+    },{
+      name:'批次信息',
+      mark:'#批次信息'
     },{
       name:'物料汇总信息',
       mark:'#物料汇总信息'
@@ -2116,6 +2124,35 @@ export default Vue.extend({
             }
           })
       }
+    },
+    confirmOrder() {
+      this.$confirm('是否确认完成该订单，确认订单将不能进行其他操作?', '提示', {
+        confirmButtonText: '确认取消',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.$message.warning('暂无该功能')
+          // order
+          //   .confirm({
+          //     id: Number(this.orderInfo.time_data[0].id)
+          //   })
+          //   .then((res) => {
+          //     if (res.data.status) {
+          //       this.$message({
+          //         type: 'success',
+          //         message: '确认完成该订单!'
+          //       })
+          //       // 改一下状态
+          //     }
+          //   })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        })
     },
     cancelOrder() {
       this.$confirm('是否取消该订单?', '提示', {
