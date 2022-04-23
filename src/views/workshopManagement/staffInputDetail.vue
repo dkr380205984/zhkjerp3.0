@@ -31,14 +31,26 @@
           <el-table-column prop="id" label="序号" width="70" fixed></el-table-column>
           <el-table-column prop="created_at" label="添加时间" width="110" fixed> </el-table-column>
           <el-table-column prop="user_name" label="操作人" width="110" fixed> </el-table-column>
-          <el-table-column label="审核状态" width="120">
+          <el-table-column prop="process_name" label="工序"> </el-table-column>
+          <el-table-column prop="staff_name" label="订单号" width="140">
             <template slot-scope="scope">
-              <div v-if="scope.row.is_check === 0" class="orange">审核中</div>
-              <div v-if="scope.row.is_check === 1" class="blue">通过</div>
-              <div v-if="scope.row.is_check === 2" class="red">不通过</div>
+              <div
+                class="blue"
+                style="cursor: pointer"
+                @click="$router.push('/workshopManagement/detail?id=' + scope.row.order_id)"
+              >
+                {{ scope.row.order_code }}
+              </div>
             </template>
           </el-table-column>
-          <el-table-column prop="process_name" label="工序"> </el-table-column>
+          <el-table-column label="颜色尺码" width="120">
+            <template slot-scope="scope">{{
+              (scope.row.size_name || '无尺码数据') + '/' + (scope.row.color_name || '无颜色数据')
+            }}</template>
+          </el-table-column>
+          <el-table-column prop="number" label="完成数量" width="120"> </el-table-column>
+          <el-table-column prop="extra_number" label="额外数量" width="120"> </el-table-column>
+          <el-table-column prop="shoddy_number" label="次品数量" width="120"> </el-table-column>
           <el-table-column label="工序说明" width="120">
             <template slot-scope="scope">
               <el-tooltip
@@ -51,26 +63,21 @@
               </el-tooltip>
             </template>
           </el-table-column>
+          <el-table-column label="审核状态" width="120">
+            <template slot-scope="scope">
+              <div v-if="scope.row.is_check === 0" class="orange">审核中</div>
+              <div v-if="scope.row.is_check === 1" class="blue">通过</div>
+              <div v-if="scope.row.is_check === 2" class="red">不通过</div>
+            </template>
+          </el-table-column>
           <el-table-column prop="staff_name" label="人员" width="120">
             <template slot-scope="scope">
               <div>{{ scope.row.staff_code.substring(scope.row.staff_code.length - 4) }}</div>
               <div>{{ scope.row.staff_name }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="staff_name" label="订单号" width="140">
-            <template slot-scope="scope">
-              <div class="blue" style="cursor: pointer" @click="$router.push('/workshopManagement/detail?id=' + scope.row.order_id)">{{ scope.row.order_code }}</div>
-            </template>
-          </el-table-column>
+
           <el-table-column prop="product_code" label="产品编号" width="120"> </el-table-column>
-          <el-table-column label="颜色尺码" width="120">
-            <template slot-scope="scope">{{
-              (scope.row.size_name || '无尺码数据') + '/' + (scope.row.color_name || '无颜色数据')
-            }}</template>
-          </el-table-column>
-          <el-table-column prop="number" label="完成数量" width="120"> </el-table-column>
-          <el-table-column prop="extra_number" label="额外数量" width="120"> </el-table-column>
-          <el-table-column prop="shoddy_number" label="次品数量" width="120"> </el-table-column>
           <el-table-column label="次品原因" width="120">
             <template slot-scope="scope">
               <el-tooltip
@@ -83,7 +90,7 @@
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column prop="price" label="结算单价(元/件)" width="150"> </el-table-column>
+          <el-table-column prop="price" label="结算单价(元/件)" fixed="right" width="150"> </el-table-column>
           <el-table-column prop="total_price" label="结算总价(元)" fixed="right" width="120"> </el-table-column>
         </el-table>
         <div class="listCtn">
@@ -103,15 +110,11 @@
           <span style="margin-top: 20px; margin-left: 32px; display: inline-block">合计</span>
           <span style="margin-top: 20px; margin-left: 32px; display: inline-block">
             本月完成数量：
-            <span class="green" style="font-weight: bold">
-              {{ additional.total_number }} 件
-            </span>
+            <span class="green" style="font-weight: bold"> {{ additional.total_number }} 件 </span>
           </span>
           <span style="margin-top: 20px; margin-left: 32px; display: inline-block">
             本月完成金额：
-            <span class="green" style="font-weight: bold">
-              {{ additional.total_price }} 元
-            </span>
+            <span class="green" style="font-weight: bold"> {{ additional.total_price }} 元 </span>
           </span>
         </div>
         <div class="buttonList" style="margin-bottom: 20px">

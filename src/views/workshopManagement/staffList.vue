@@ -449,7 +449,7 @@ export default Vue.extend({
             process: this.process[1],
             year: this.date.split('-')[0],
             month: this.date.split('-')[1],
-            export_excel:1,
+            export_excel: 1
           })
           .then((res) => {
             if (res.data.status) {
@@ -469,7 +469,26 @@ export default Vue.extend({
         .then((res) => {
           if (res.data.status) {
             this.departmentList = res.data.data
+            this.departmentName = res.data.data.find((res: any) => {
+              return res.id == this.department
+            }).name
           }
+          staff
+            .list({
+              keyword: this.keyword,
+              department: this.departmentName,
+              page: this.page,
+              limit: this.limit,
+              month: this.date
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.list = res.data.data.items
+                this.total = res.data.data.total
+                this.additional = res.data.data.additional
+              }
+              this.loading = false
+            })
         })
 
       process.list({ type: 2 }).then((res) => {
@@ -500,23 +519,6 @@ export default Vue.extend({
           })
         })
       })
-
-      staff
-        .list({
-          keyword: this.keyword,
-          department: this.departmentName,
-          page: this.page,
-          limit: this.limit,
-          month: this.date
-        })
-        .then((res) => {
-          if (res.data.status) {
-            this.list = res.data.data.items
-            this.total = res.data.data.total
-            this.additional = res.data.data.additional
-          }
-          this.loading = false
-        })
     },
     getListSetting() {
       this.listKey = []

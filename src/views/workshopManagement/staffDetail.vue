@@ -804,12 +804,14 @@ export default Vue.extend({
               return item.value
             })
 
-            arr = arr.concat(res.data.data.process.split('/'))
-            arr = [...new Set(arr)]
+            if (res.data.data.process) {
+              arr = arr.concat(res.data.data.process.split('/'))
+              arr = [...new Set(arr)]
 
-            this.processList[0].children = arr.map((item: any) => {
-              return { value: item, label: item }
-            })
+              this.processList[0].children = arr.map((item: any) => {
+                return { value: item, label: item }
+              })
+            }
           }
 
           this.loading = false
@@ -966,8 +968,7 @@ export default Vue.extend({
                         (sizeColorInfo.extra_number || 0) -
                         (sizeColorInfo.shoddy_number || 0)) *
                       (staffInfo.price || 0)
-                    : ((sizeColorInfo.number || 0) + (sizeColorInfo.extra_number || 0)) *
-                      (staffInfo.price || 0),
+                    : ((sizeColorInfo.number || 0) + (sizeColorInfo.extra_number || 0)) * (staffInfo.price || 0),
                   complete_time: this.$GetDateStr(0)
                 })
               })
@@ -998,17 +999,21 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.departmentList = res.data.data
-        }
-      })
 
-    staff
-      .list({
-        status: 1,
-        department: this.departmentName
-      })
-      .then((res) => {
-        this.staffList = res.data.data
-        // this.loading = false
+          this.departmentName = res.data.data.find((item: any) => {
+            return item.id == this.department
+          }).name
+
+          staff
+            .list({
+              status: 1,
+              department: this.departmentName
+            })
+            .then((res) => {
+              this.staffList = res.data.data
+              // this.loading = false
+            })
+        }
       })
 
     this.loading = true
