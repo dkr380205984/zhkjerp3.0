@@ -534,6 +534,7 @@ import { OrderInfo } from '@/types/order'
 const order = {
   create: (params: OrderInfo) => http.post(`${baseUrl}/order/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrl}/order/lists`, params),
+  confirmBatch: (params: { batch_id: string | number }) => http.post(`${baseUrl}/order/batch/complete`, params, 'application/json'),
   simpleList: (params?: { keyword: string }) => http.get(`${baseUrl}/order/simple/lists`, params),
   timeList: (params?: ListParams) => http.get(`${baseUrl}/order/time/lists`, params), // 根据time_data查询的列表
   detail: (params: DetailParams) => http.get(`${baseUrl}/order/detail`, params),
@@ -592,6 +593,8 @@ const materialOrder = {
     code?: string
     start_time?: string
     end_time?: string
+    start_push_time?: string
+    end_push_time?: string
     user_id?: string | number
     reserve_id?: string | number // 预订购单
     top_order_id?: string | number // 最外层order_id

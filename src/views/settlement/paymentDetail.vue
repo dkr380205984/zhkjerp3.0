@@ -513,7 +513,7 @@
               </el-date-picker>
             </div>
             <div class="elCtn">
-              <el-date-picker v-model="materialOrderFilter.date"
+              <el-date-picker v-model="materialOrderFilter.pushDate"
                 type="daterange"
                 align="right"
                 unlink-panels
@@ -594,11 +594,12 @@
               </div>
               <div class="col">订购单号</div>
               <div class="col">关联订单号</div>
-              <div class="col">合计订购数量</div>
-              <div class="col">合计订购金额</div>
-              <div class="col">合计入库数量</div>
-              <div class="col">合计入库金额</div>
+              <div class="col numberWidth">合计订购数量</div>
+              <div class="col numberWidth">合计订购金额</div>
+              <div class="col numberWidth">合计入库数量</div>
+              <div class="col numberWidth">合计入库金额</div>
               <div class="col">审核状态</div>
+              <div class="col circleCtn">票据状态</div>
               <div class="col">创建人</div>
               <div class="col">创建时间</div>
               <div class="col"
@@ -615,10 +616,10 @@
                 </div>
                 <div class="col">{{ item.code }}</div>
                 <div class="col">{{ item.order_code}}</div>
-                <div class="col">{{ (+item.total_number).toFixed(2) }}</div>
-                <div class="col">{{ (+item.total_price).toFixed(2) }}</div>
-                <div class="col">{{ item.total_push_number.toFixed(2) }}</div>
-                <div class="col">{{ item.total_push_price.toFixed(2) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_push_number) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_push_price) }}</div>
                 <div class="col">
                   <div v-if="item.is_check === 0"
                     class="orange">未审核</div>
@@ -626,6 +627,14 @@
                     class="blue">已通过</div>
                   <div v-if="item.is_check === 2"
                     class="red">已驳回</div>
+                </div>
+                <div class="col circleCtn">
+                  <div class="circle"
+                    :class="{'blue':item.has_invoice===1}">票</div>
+                  <div class="circle"
+                    :class="{'green':item.has_pay===1}">付</div>
+                  <div class="circle"
+                    :class="{'red':item.has_deduct===1}">扣</div>
                 </div>
                 <div class="col">{{ item.user_name }}</div>
                 <div class="col">{{ item.created_at }}</div>
@@ -834,11 +843,12 @@
               </div>
               <div class="col">加工单号</div>
               <div class="col">关联订单号</div>
-              <div class="col">合计加工数量</div>
-              <div class="col">合计加工金额</div>
-              <div class="col">合计完成数量</div>
-              <div class="col">合计完成金额</div>
+              <div class="col numberWidth">合计加工数量</div>
+              <div class="col numberWidth">合计加工金额</div>
+              <div class="col numberWidth">合计完成数量</div>
+              <div class="col numberWidth">合计完成金额</div>
               <div class="col">审核状态</div>
+              <div class="col circleCtn">票据状态</div>
               <div class="col">创建人</div>
               <div class="col">创建时间</div>
               <div class="col"
@@ -854,10 +864,10 @@
                 </div>
                 <div class="col">{{ item.code }}</div>
                 <div class="col">{{item.order_code}}</div>
-                <div class="col">{{ (+item.total_number).toFixed(2) }}</div>
-                <div class="col">{{ (+item.total_price).toFixed(2) }}</div>
-                <div class="col">{{ (+item.total_push_number).toFixed(2) }}</div>
-                <div class="col">{{ (+item.total_push_price).toFixed(2) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_push_number) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_push_price) }}</div>
                 <div class="col">
                   <div v-if="item.is_check === 0"
                     class="orange">未审核</div>
@@ -865,6 +875,14 @@
                     class="blue">已通过</div>
                   <div v-if="item.is_check === 2"
                     class="red">已驳回</div>
+                </div>
+                <div class="col circleCtn">
+                  <div class="circle"
+                    :class="{'blue':item.has_invoice===1}">票</div>
+                  <div class="circle"
+                    :class="{'green':item.has_pay===1}">付</div>
+                  <div class="circle"
+                    :class="{'red':item.has_deduct===1}">扣</div>
                 </div>
                 <div class="col">{{ item.user_name }}</div>
                 <div class="col">{{ item.created_at }}</div>
@@ -1097,9 +1115,9 @@
               </div>
               <div class="col">生产单号</div>
               <div class="col">关联订单号</div>
-              <div class="col">合计计划数量</div>
-              <div class="col">合计计划金额</div>
-              <div class="col">合计完成数量</div>
+              <div class="col numberWidth">合计计划数量</div>
+              <div class="col numberWidth">合计计划金额</div>
+              <div class="col numberWidth">合计完成数量</div>
               <div class="col">审核状态</div>
               <div class="col">创建人</div>
               <div class="col">创建时间</div>
@@ -1116,9 +1134,9 @@
                 </div>
                 <div class="col">{{ item.code }}</div>
                 <div class="col">{{item.order_code}}</div>
-                <div class="col">{{ (+item.total_number).toFixed(2) }}</div>
-                <div class="col">{{ (+item.total_price).toFixed(2) }}</div>
-                <div class="col">{{ (+item.total_real_number).toFixed(2) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_real_number) }}</div>
                 <div class="col">
                   <div v-if="item.is_check === 0"
                     class="orange">未审核</div>
@@ -1126,6 +1144,14 @@
                     class="blue">已通过</div>
                   <div v-if="item.is_check === 2"
                     class="red">已驳回</div>
+                </div>
+                <div class="col circleCtn">
+                  <div class="circle"
+                    :class="{'blue':item.has_invoice===1}">票</div>
+                  <div class="circle"
+                    :class="{'green':item.has_pay===1}">付</div>
+                  <div class="circle"
+                    :class="{'red':item.has_deduct===1}">扣</div>
                 </div>
                 <div class="col">{{ item.user_name }}</div>
                 <div class="col">{{ item.created_at }}</div>
@@ -1392,9 +1418,10 @@
               </div>
               <div class="col">订购单号</div>
               <div class="col">关联订单号</div>
-              <div class="col">合计订购数量</div>
-              <div class="col">合计订购金额</div>
+              <div class="col numberWidth">合计订购数量</div>
+              <div class="col numberWidth">合计订购金额</div>
               <div class="col">审核状态</div>
+              <div class="col circleCtn">票据状态</div>
               <div class="col">创建人</div>
               <div class="col">创建时间</div>
               <div class="col"
@@ -1410,8 +1437,8 @@
                 </div>
                 <div class="col">{{ item.code }}</div>
                 <div class="col">{{item.order_code}}</div>
-                <div class="col">{{ (+item.total_number).toFixed(2) }}</div>
-                <div class="col">{{ (+item.total_price).toFixed(2) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
                 <div class="col">
                   <div v-if="item.is_check === 0"
                     class="orange">未审核</div>
@@ -1419,6 +1446,14 @@
                     class="blue">已通过</div>
                   <div v-if="item.is_check === 2"
                     class="red">已驳回</div>
+                </div>
+                <div class="col circleCtn">
+                  <div class="circle"
+                    :class="{'blue':item.has_invoice===1}">票</div>
+                  <div class="circle"
+                    :class="{'green':item.has_pay===1}">付</div>
+                  <div class="circle"
+                    :class="{'red':item.has_deduct===1}">扣</div>
                 </div>
                 <div class="col">{{ item.user_name }}</div>
                 <div class="col">{{ item.created_at }}</div>
@@ -1479,7 +1514,7 @@
                 合计订购数量：
                 <span class="green"
                   style="font-weight: bold">
-                  {{ (packOrderSts.total_number / 10000).toFixed(2) }} 万元
+                  {{ (packOrderSts.total_number / 10000).toFixed(2) }} 万
                 </span>
               </span>
               <span style="line-height: 35px; margin-left: 40px">
@@ -1586,9 +1621,10 @@
               </div>
               <div class="col"
                 style="flex: 1.3">发货单号</div>
-              <div class="col">合计运输立方</div>
-              <div class="col">合计运输金额</div>
+              <div class="col numberWidth">合计运输立方</div>
+              <div class="col numberWidth">合计运输金额</div>
               <div class="col">审核状态</div>
+              <div class="col circleCtn">票据状态</div>
               <div class="col">创建人</div>
               <div class="col">创建时间</div>
               <div class="col"
@@ -1603,8 +1639,8 @@
                     @change="(ev)=>getCheckInfo(ev,item,boxManageCheckList)"></el-checkbox>
                 </div>
                 <div class="col">{{ item.code }}</div>
-                <div class="col">{{ (+item.total_bulk).toFixed(2) }}</div>
-                <div class="col">{{ (+item.total_price).toFixed(2) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_bulk) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
                 <div class="col">
                   <div v-if="item.is_check === 0"
                     class="orange">未审核</div>
@@ -1612,6 +1648,14 @@
                     class="blue">已通过</div>
                   <div v-if="item.is_check === 2"
                     class="red">已驳回</div>
+                </div>
+                <div class="col circleCtn">
+                  <div class="circle"
+                    :class="{'blue':item.has_invoice===1}">票</div>
+                  <div class="circle"
+                    :class="{'green':item.has_pay===1}">付</div>
+                  <div class="circle"
+                    :class="{'red':item.has_deduct===1}">扣</div>
                 </div>
                 <div class="col">{{ item.user_name }}</div>
                 <div class="col">{{ item.created_at }}</div>
@@ -1854,7 +1898,7 @@
               合计运输立方：
               <span class="green"
                 style="font-weight: bold">
-                {{ (boxManageSts.total_number / 10000).toFixed(2) }} 万元
+                {{ (boxManageSts.total_number / 10000).toFixed(2) }} 立方
               </span>
             </span>
             <span style="line-height: 35px; margin-left: 40px">
@@ -2392,6 +2436,7 @@ export default Vue.extend({
       listPage: 1,
       listTotal: 1,
       materialOrderFilter: {
+        pushDate: [],
         date: [],
         user_id: '',
         keyword: ''
@@ -2506,11 +2551,27 @@ export default Vue.extend({
           .list({
             client_id: Number(this.$route.query.id),
             page: this.materialOrderFilter.page,
-            limit: 5
+            limit: 5,
+            start_time:
+              this.materialOrderFilter.date && this.materialOrderFilter.date.length > 0
+                ? this.materialOrderFilter.date[0]
+                : '',
+            end_time:
+              this.materialOrderFilter.date && this.materialOrderFilter.date.length > 0
+                ? this.materialOrderFilter.date[0]
+                : '',
+            start_push_time:
+              this.materialOrderFilter.pushDate && this.materialOrderFilter.pushDate.length > 0
+                ? this.materialOrderFilter.pushDate[0]
+                : '',
+            end_push_time:
+              this.materialOrderFilter.pushDate && this.materialOrderFilter.pushDate.length > 0
+                ? this.materialOrderFilter.pushDate[0]
+                : ''
           })
           .then((res) => {
             this.materialOrderList = res.data.data.items
-            this.listPage = res.data.data.total
+            this.listTotal = res.data.data.total
             this.materialOrderSts = res.data.data.additional
             this.listLoading = false
           })
@@ -2519,12 +2580,20 @@ export default Vue.extend({
         materialProcess
           .list({
             client_id: Number(this.$route.query.id),
-            page: this.materialOrderFilter.page,
+            page: this.materialProcessFilter.page,
+            start_time:
+              this.materialProcessFilter.date && this.materialProcessFilter.date.length > 0
+                ? this.materialProcessFilter.date[0]
+                : '',
+            end_time:
+              this.materialProcessFilter.date && this.materialProcessFilter.date.length > 0
+                ? this.materialProcessFilter.date[0]
+                : '',
             limit: 5
           })
           .then((res) => {
             this.materialProcessList = res.data.data.items
-            this.listPage = res.data.data.total
+            this.listTotal = res.data.data.total
             this.materialProcessSts = res.data.data.additional
             this.listLoading = false
           })
@@ -2533,13 +2602,20 @@ export default Vue.extend({
         productionPlan
           .list({
             client_id: Number(this.$route.query.id),
-            page: this.materialOrderFilter.page,
+            page: this.productionPlanFilter.page,
+            start_time:
+              this.productionPlanFilter.date && this.productionPlanFilter.date.length > 0
+                ? this.productionPlanFilter.date[0]
+                : '',
+            end_time:
+              this.productionPlanFilter.date && this.productionPlanFilter.date.length > 0
+                ? this.productionPlanFilter.date[0]
+                : '',
             limit: 5
           })
           .then((res) => {
-            console.log(res)
             this.productionPlanList = res.data.data.items
-            this.listPage = res.data.data.total
+            this.listTotal = res.data.data.total
             this.productionPlanSts = res.data.data.additional
             this.listLoading = false
           })
@@ -2548,13 +2624,16 @@ export default Vue.extend({
         packManage
           .orderList({
             client_id: Number(this.$route.query.id),
-            page: this.materialOrderFilter.page,
+            page: this.packOrderFilter.page,
+            start_time:
+              this.packOrderFilter.date && this.packOrderFilter.date.length > 0 ? this.packOrderFilter.date[0] : '',
+            end_time:
+              this.packOrderFilter.date && this.packOrderFilter.date.length > 0 ? this.packOrderFilter.date[0] : '',
             limit: 5
           })
           .then((res) => {
-            console.log(res)
             this.packOrderList = res.data.data.items
-            this.listPage = res.data.data.total
+            this.listTotal = res.data.data.total
             this.packOrderSts = res.data.data.additional
             this.listLoading = false
           })
@@ -2563,13 +2642,16 @@ export default Vue.extend({
         boxManage
           .list({
             client_id: Number(this.$route.query.id),
-            page: this.materialOrderFilter.page,
+            page: this.boxManageFilter.page,
+            start_time:
+              this.boxManageFilter.date && this.boxManageFilter.date.length > 0 ? this.boxManageFilter.date[0] : '',
+            end_time:
+              this.boxManageFilter.date && this.boxManageFilter.date.length > 0 ? this.boxManageFilter.date[0] : '',
             limit: 5
           })
           .then((res) => {
-            console.log(res)
             this.boxManageList = res.data.data.items
-            this.listPage = res.data.data.total
+            this.listTotal = res.data.data.total
             this.boxManageSts = res.data.data.additional
             this.listLoading = false
           })

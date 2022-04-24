@@ -444,7 +444,7 @@
                   <el-input class="once"
                     v-model="itemYarn.price"
                     placeholder="单价"
-                    @change="cmpTotalPrice(itemYarn)"
+                    @input="cmpTotalPrice(itemYarn)"
                     :disabled="itemYarn.tree_data.length===0">
                     <template slot="append">元/{{itemYarn.unit==='g'?'kg':itemYarn.unit || '单位'}}</template>
                   </el-input>
@@ -550,7 +550,7 @@
                   <el-input class="once"
                     v-model="itemDecorateMaterial.price"
                     placeholder="单价"
-                    @change="cmpTotalPrice(itemDecorateMaterial)"
+                    @input="cmpTotalPrice(itemDecorateMaterial)"
                     :disabled="!itemDecorateMaterial.material_id">
                     <template slot="append">元/{{itemDecorateMaterial.unit||'单位'}}</template>
                   </el-input>

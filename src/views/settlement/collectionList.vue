@@ -274,7 +274,7 @@ export default Vue.extend({
       this.limit = Number(query.limit) || 10
       this.type = Number(query.type)
       this.tag_id = Number(query.tag_id) || ''
-      this.status = query.status === 'null' ? null : Number(query.status)
+      this.status = query.status ? (query.status === 'null' ? null : Number(query.status)) : 1
       this.keyword = query.keyword
       this.clientType = Number(query.clientType) || ''
       this.only_delete = Number(query.only_delete) || 0

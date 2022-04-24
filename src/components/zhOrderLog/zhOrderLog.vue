@@ -233,7 +233,7 @@
               <div class="tcol noPad"
                 style="flex:5">
                 <div class="trow">
-                  <div class="tcol">调取最终入库</div>
+                  <div class="tcol width1">调取最终入库</div>
                   <div class="tcol noPad"
                     style="flex:4">
                     <div class="trow"
@@ -242,11 +242,6 @@
                       <div class="tcol">{{item.code}}</div>
                       <div class="tcol">{{item.user_name}}</div>
                       <div class="tcol">{{item.created_at}}</div>
-                      <div class="tcol oprCtn"
-                        style="justify-content:start">
-                        <span class="blue opr"
-                          @click="$openUrl('/materialStock/detail?id='+order_id+'&sampleOrderIndex='+order_time_id)">详情</span>
-                      </div>
                     </div>
                     <div class="trow"
                       v-if="orderLogInfo.material_push.transfer_push.length===0">
@@ -260,9 +255,14 @@
                       </div>
                     </div>
                   </div>
+                  <div v-if="orderLogInfo.material_push.transfer_push.length>0"
+                    class="tcol width2 oprCtn">
+                    <span class="blue opr"
+                      @click="$openUrl('/materialStock/detail?id='+order_id+'&sampleOrderIndex='+order_time_id)">详情</span>
+                  </div>
                 </div>
                 <div class="trow">
-                  <div class="tcol">订购最终入库</div>
+                  <div class="tcol width1">订购最终入库</div>
                   <div class="tcol noPad"
                     style="flex:4">
                     <div class="trow"
@@ -271,11 +271,6 @@
                       <div class="tcol">{{item.code}}</div>
                       <div class="tcol">{{item.user_name}}</div>
                       <div class="tcol">{{item.created_at}}</div>
-                      <div class="tcol oprCtn"
-                        style="justify-content:start">
-                        <span class="blue opr"
-                          @click="$openUrl('/materialStock/detail?id='+order_id+'&sampleOrderIndex='+order_time_id)">详情</span>
-                      </div>
                     </div>
                     <div class="trow"
                       v-if="orderLogInfo.material_push.order_push.length===0">
@@ -289,9 +284,14 @@
                       </div>
                     </div>
                   </div>
+                  <div class="tcol width2 oprCtn"
+                    v-if="orderLogInfo.material_push.order_push.length>0">
+                    <span class="blue opr"
+                      @click="$openUrl('/materialStock/detail?id='+order_id+'&sampleOrderIndex='+order_time_id)">详情</span>
+                  </div>
                 </div>
                 <div class="trow">
-                  <div class="tcol">生产最终出库</div>
+                  <div class="tcol width1">生产最终出库</div>
                   <div class="tcol noPad"
                     style="flex:4">
                     <div class="trow"
@@ -300,11 +300,6 @@
                       <div class="tcol">{{item.code}}</div>
                       <div class="tcol">{{item.user_name}}</div>
                       <div class="tcol">{{item.created_at}}</div>
-                      <div class="tcol oprCtn"
-                        style="justify-content:start">
-                        <span class="blue opr"
-                          @click="$openUrl('/materialStock/detail?id='+order_id+'&sampleOrderIndex='+order_time_id)">详情</span>
-                      </div>
                     </div>
                     <div class="trow"
                       v-if="orderLogInfo.material_push.production_pop.length===0">
@@ -318,6 +313,11 @@
                       </div>
                     </div>
                   </div>
+                  <div class="tcol width2 oprCtn"
+                    v-if="orderLogInfo.material_push.production_pop.length>0">
+                    <span class="blue opr"
+                      @click="$openUrl('/materialStock/detail?id='+order_id+'&sampleOrderIndex='+order_time_id)">详情</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -327,7 +327,7 @@
               <div class="tcol noPad"
                 style="flex:5">
                 <div class="trow">
-                  <div class="tcol">生产日志</div>
+                  <div class="tcol width1">生产日志</div>
                   <div class="tcol noPad"
                     style="flex:4">
                     <div class="trow"
@@ -336,11 +336,6 @@
                       <div class="tcol">{{item.code || '无'}}</div>
                       <div class="tcol">{{item.user_name}}</div>
                       <div class="tcol">{{item.created_at}}</div>
-                      <div class="tcol oprCtn"
-                        style="justify-content:start">
-                        <span class="blue opr"
-                          @click="$openUrl('/productionPlan/detail?id='+order_id+'&supFlag=true')">详情</span>
-                      </div>
                     </div>
                     <div class="trow"
                       v-if="orderLogInfo.weave_plan.length===0">
@@ -354,6 +349,11 @@
                       </div>
                     </div>
                   </div>
+                  <div class="tcol oprCtn width2"
+                    v-if="orderLogInfo.weave_plan.length>0">
+                    <span class="blue opr"
+                      @click="$openUrl('/productionPlan/detail?id='+order_id+'&supFlag=true')">详情</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -363,7 +363,7 @@
               <div class="tcol noPad"
                 style="flex:5">
                 <div class="trow">
-                  <div class="tcol">检验入库</div>
+                  <div class="tcol width1">检验入库</div>
                   <div class="tcol noPad"
                     style="flex:4">
                     <div class="trow"
@@ -372,11 +372,6 @@
                       <div class="tcol">{{item.code}}</div>
                       <div class="tcol">{{item.user_name}}</div>
                       <div class="tcol">{{item.created_at}}</div>
-                      <div class="tcol oprCtn"
-                        style="justify-content:start">
-                        <span class="blue opr"
-                          @click="$openUrl('/inspection/detail?id='+order_id)">详情</span>
-                      </div>
                     </div>
                     <div class="trow"
                       v-if="orderLogInfo.inspection.push.length===0">
@@ -390,10 +385,14 @@
                       </div>
                     </div>
                   </div>
+                  <div class="tcol oprCtn width2"
+                    v-if="orderLogInfo.inspection.push.length>0">
+                    <span class="blue opr"
+                      @click="$openUrl('/inspection/detail?id='+order_id)">详情</span>
+                  </div>
                 </div>
-                <div class="trow"
-                  v-if="orderLogInfo.inspection.pop.length>0">
-                  <div class="tcol">生产出库</div>
+                <div class="trow">
+                  <div class="tcol width1">生产出库</div>
                   <div class="tcol noPad"
                     style="flex:4">
                     <div class="trow"
@@ -402,11 +401,6 @@
                       <div class="tcol">{{item.code}}</div>
                       <div class="tcol">{{item.user_name}}</div>
                       <div class="tcol">{{item.created_at}}</div>
-                      <div class="tcol oprCtn"
-                        style="justify-content:start">
-                        <span class="blue opr"
-                          @click="$openUrl('/inspection/detail?id='+order_id)">详情</span>
-                      </div>
                     </div>
                     <div class="trow"
                       v-if="orderLogInfo.inspection.pop.length===0">
@@ -420,6 +414,11 @@
                       </div>
                     </div>
                   </div>
+                  <div class="tcol oprCtn width2"
+                    v-show="orderLogInfo.inspection.pop.length>0">
+                    <span class="blue opr"
+                      @click="$openUrl('/inspection/detail?id='+order_id)">详情</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -429,7 +428,7 @@
               <div class="tcol noPad"
                 style="flex:5">
                 <div class="trow">
-                  <div class="tcol">结算日志</div>
+                  <div class="tcol width1">结算日志</div>
                   <div class="tcol noPad"
                     style="flex:4">
                     <div class="trow"
@@ -438,11 +437,6 @@
                       <div class="tcol">{{item.code || '无'}}</div>
                       <div class="tcol">{{item.user_name}}</div>
                       <div class="tcol">{{item.created_at}}</div>
-                      <div class="tcol oprCtn"
-                        style="justify-content:start">
-                        <span class="blue opr"
-                          @click="$openUrl('/workshopManagement/detail?id='+order_id)">详情</span>
-                      </div>
                     </div>
                     <div class="trow"
                       v-if="orderLogInfo.production_inspection.length===0">
@@ -455,6 +449,11 @@
                           @click="$openUrl('/workshopManagement/detail?id='+order_id)">添加</span>
                       </div>
                     </div>
+                  </div>
+                  <div class="tcol oprCtn width2"
+                    v-if="orderLogInfo.production_inspection.length>0">
+                    <span class="blue opr"
+                      @click="$openUrl('/workshopManagement/detail?id='+order_id)">详情</span>
                   </div>
                 </div>
               </div>

@@ -15,6 +15,7 @@ export interface OrderBatch {
   total_number: string
   total_price: string
   desc: string
+  status?: 1 | 2 // 1进行中 2已完成
   product_data: Array<{
     id?: number
     status?: 1 | 2 // 1.待定 2.已确认
