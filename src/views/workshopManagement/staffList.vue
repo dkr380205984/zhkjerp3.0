@@ -471,7 +471,8 @@ export default Vue.extend({
             this.departmentList = res.data.data
             this.departmentName = res.data.data.find((res: any) => {
               return res.id == this.department
-            }).name
+            })
+            this.departmentName = this.departmentName?.name || ""
           }
           staff
             .list({
