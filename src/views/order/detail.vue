@@ -290,16 +290,15 @@
           <div class="thead">
             <div class="trow">
               <div class="tcol"
-                style="flex:0.72">批次序号</div>
+                style="flex:0.5">序号</div>
               <div class="tcol">发货时间</div>
               <div class="tcol">批次名称</div>
               <div class="tcol">批次类型</div>
               <div class="tcol">批次备注</div>
               <div class="tcol noPad"
-                style="flex:8.7">
+                style="flex:7">
                 <div class="trow">
                   <div class="tcol">产品品类</div>
-                  <div class="tcol">产品图片</div>
                   <div class="tcol noPad"
                     style="flex:3">
                     <div class="trow">
@@ -308,7 +307,8 @@
                       <div class="tcol">实际发货数量</div>
                     </div>
                   </div>
-                  <div class="tcol">批次状态</div>
+                  <div class="tcol">状态</div>
+                  <div class="tcol">操作</div>
                 </div>
               </div>
             </div>
@@ -316,8 +316,8 @@
           <div class="tbody">
             <div class="trow">
               <div class="tcol"
-                style="flex:0.72">
-                <span>第{{itemBatch.batch_number}}批</span>
+                style="flex:0.5">
+                <span>{{itemBatch.batch_number}}</span>
               </div>
               <div class="tcol">
                 <span class="green">{{itemBatch.delivery_time}}</span>
@@ -332,26 +332,13 @@
                 <span>{{itemBatch.desc || '无'}}</span>
               </div>
               <div class="tcol noPad"
-                style="flex:8.7">
+                style="flex:7">
                 <div class="trow"
                   v-for="itemPro in itemBatch.product_data"
                   :key="itemPro.id">
                   <div class="tcol">
                     <span>{{itemPro.product_code||itemPro.system_code||'无编号'}}</span>
                     <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
-                  </div>
-                  <div class="tcol">
-                    <div class="imageCtn">
-                      <el-image style="width:100%;height:100%"
-                        :src="itemPro.image_data&&itemPro.image_data.length>0?itemPro.image_data[0]:''"
-                        :preview-src-list="itemPro.image_data">
-                        <div slot="error"
-                          class="image-slot">
-                          <i class="el-icon-picture-outline"
-                            style="font-size:42px"></i>
-                        </div>
-                      </el-image>
-                    </div>
                   </div>
                   <div class="tcol noPad"
                     style="flex:3">
@@ -369,7 +356,14 @@
                       </div>
                     </div>
                   </div>
-                  <div class="tcol">暂无</div>
+                  <div class="tcol"
+                    :class="{'green':itemBatch.status===1,'green':itemBatch.status===2}">
+                    {{itemBatch.status===1?'进行中':'已完成'}}
+                  </div>
+                  <div class="tcol oprCtn">
+                    <div class="opr hoverGreen"
+                      @click="confirmOrderBatch(itemBatch)">确认完成</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1713,14 +1707,6 @@
                   </svg>
                   <span class="text">装箱出库</span>
                 </div>
-                <div class="btn backHoverGreen"
-                  @click="confirmOrder">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-shanchudingdan"></use>
-                  </svg>
-                  <span class="text">确认完成</span>
-                </div>
               </div>
             </div>
           </div>
@@ -1866,7 +1852,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { order } from '@/assets/js/api'
-import { OrderInfo, OrderTime } from '@/types/order'
+import { OrderBatch, OrderInfo, OrderTime } from '@/types/order'
 import zhCheckDetail from '@/components/zhCheck/zhCheckDetail.vue'
 interface OrderDetail extends OrderInfo {
   time_data: OrderTime[]
@@ -2125,27 +2111,27 @@ export default Vue.extend({
           })
       }
     },
-    confirmOrder() {
+    confirmOrderBatch(batch: OrderBatch) {
       this.$confirm('是否确认完成该订单，确认订单将不能进行其他操作?', '提示', {
-        confirmButtonText: '确认取消',
+        confirmButtonText: '确认完成',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
-          this.$message.warning('暂无该功能')
-          // order
-          //   .confirm({
-          //     id: Number(this.orderInfo.time_data[0].id)
-          //   })
-          //   .then((res) => {
-          //     if (res.data.status) {
-          //       this.$message({
-          //         type: 'success',
-          //         message: '确认完成该订单!'
-          //       })
-          //       // 改一下状态
-          //     }
-          //   })
+          order
+            .confirmBatch({
+              batch_id: Number(batch.id)
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '批次确认完成!'
+                })
+                batch.status = 2
+                this.$forceUpdate()
+              }
+            })
         })
         .catch(() => {
           this.$message({

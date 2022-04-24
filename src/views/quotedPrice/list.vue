@@ -36,19 +36,18 @@
                 :label="item.name"></el-option>
             </el-select>
           </div>
-          <div class="elCtn">
-            <el-select @change="changeRouter"
-              v-model="status"
-              placeholder="筛选报价单状态">
-              <el-option :value="null"
-                label="全部"></el-option>
-              <el-option value="0"
-                label="待审核"></el-option>
-              <el-option value="1"
-                label="已审核"></el-option>
-              <el-option value="2"
-                label="已驳回"></el-option>
-            </el-select>
+          <div class="elCtn"
+            style="width:130px">
+            <el-input v-model="start_price"
+              placeholder="价格区间"
+              @keydown.enter.native="changeRouter"></el-input>
+          </div>
+          <span style="position:absolute;transform: translate(-14px, 5px);">~</span>
+          <div class="elCtn"
+            style="width:130px">
+            <el-input v-model="end_price"
+              placeholder="价格区间"
+              @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="btn borderBtn"
             @click="reset">重置</div>
@@ -103,7 +102,8 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
-          <div class="elCtn">
+          <div class="elCtn"
+            style="width:130px">
             <el-select v-model="limit"
               placeholder="每页展示条数"
               @change="changeRouter">
@@ -111,6 +111,21 @@
                 :key="item.value"
                 :label="item.name"
                 :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn"
+            style="width:130px">
+            <el-select @change="changeRouter"
+              v-model="status"
+              placeholder="筛选报价单状态">
+              <el-option :value="null"
+                label="全部"></el-option>
+              <el-option value="0"
+                label="待审核"></el-option>
+              <el-option value="1"
+                label="已审核"></el-option>
+              <el-option value="2"
+                label="已驳回"></el-option>
             </el-select>
           </div>
         </div>
@@ -187,6 +202,8 @@ export default Vue.extend({
       user_id: '',
       group_id: '',
       status: null,
+      start_price: '',
+      end_price: '',
       listSettingId: null,
       listKey: [],
       date: [],
@@ -453,7 +470,11 @@ export default Vue.extend({
           '&limit=' +
           this.limit +
           '&contacts_id=' +
-          this.contacts_id
+          this.contacts_id +
+          '&start_price=' +
+          this.start_price +
+          '&end_price=' +
+          this.end_price
       )
     },
     getFilters() {
@@ -470,6 +491,8 @@ export default Vue.extend({
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.limit = Number(query.limit) || 10
       this.date = query.date ? (query.date as string).split(',') : []
+      this.start_price = query.start_price || ''
+      this.end_price = query.end_price || ''
     },
     reset() {
       this.$confirm('是否重置所有筛选条件?', '提示', {
@@ -485,6 +508,8 @@ export default Vue.extend({
           this.contacts_id = ''
           this.date = []
           this.limit = 10
+          this.start_price = ''
+          this.end_price = ''
           this.status = null
           this.changeRouter()
         })
@@ -508,7 +533,9 @@ export default Vue.extend({
           end_time: this.date.length > 0 ? this.date[1] : '',
           user_id: this.user_id,
           group_id: this.group_id,
-          contacts_id: this.contacts_id
+          contacts_id: this.contacts_id,
+          min_price: this.start_price,
+          max_price: this.end_price
         })
         .then((res) => {
           // 产品信息需要在列表里展示，配合列表设置要把产品信息拿到最外层

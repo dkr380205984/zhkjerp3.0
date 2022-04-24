@@ -7,6 +7,10 @@
 @import '../popup.less';
 
 #paymentDetail {
+  .numberWidth {
+    max-width: 63px;
+  }
+
   .filterCtn {
     .label {
       display: inline-block;
@@ -84,6 +88,42 @@
 
         .row {
           margin: 0;
+        }
+      }
+    }
+  }
+
+  .col {
+    &.circleCtn {
+      flex-direction: row;
+      justify-content: start;
+      align-items: center;
+      min-width: 110px;
+      padding-left: 0;
+
+      .circle {
+        width: 26px;
+        height: 26px;
+        font-size: 14px;
+        font-weight: bold;
+        border: 1px solid;
+        color: @font45;
+        margin-right: 8px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 24px;
+        box-sizing: border-box;
+
+        &.blue {
+          color: @blue;
+        }
+
+        &.green {
+          color: @green;
+        }
+
+        &.red {
+          color: @red;
         }
       }
     }

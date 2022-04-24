@@ -245,6 +245,13 @@
     </div>
     <div class="bottomFixBar">
       <div class="main">
+        <div class="btnCtn"
+          style="float:left">
+          <div class="btn backHoverGreen"
+            @click="showAssociatedPage=true">
+            <span class="text">关联页面</span>
+          </div>
+        </div>
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
@@ -300,14 +307,6 @@
                     <use xlink:href="#icon-caozuojilu"></use>
                   </svg>
                   <span class="text">复制计划</span>
-                </div>
-                <div class="btn backHoverGreen"
-                  @click="showAssociatedPage=true">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-caozuojilu"></use>
-                  </svg>
-                  <span class="text">关联页面</span>
                 </div>
               </div>
             </div>
