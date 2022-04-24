@@ -1,5 +1,5 @@
 <template>
-  <div id="workerManage" class="bodyContainer">
+  <div id="workerManage" v-loading="loading" class="bodyContainer">
     <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">员工列表</div>
@@ -283,23 +283,27 @@ export default Vue.extend({
         .then((res) => {
           if (res.data.status) {
             this.departmentList = res.data.data
+            this.departmentName = res.data.data.find((res: any) => {
+              return res.id == this.department
+            })
+            this.departmentName = this.departmentName?.name || ''
           }
-        })
 
-      staff
-        .list({
-          keyword: this.keyword,
-          department: this.departmentName,
-          page: this.page,
-          limit: this.limit,
-          month: '',
-          type: this.type,
-          status: this.status
-        })
-        .then((res) => {
-          this.list = res.data.data.items
-          this.total = res.data.data.total
-          this.loading = false
+          staff
+            .list({
+              keyword: this.keyword,
+              department: this.departmentName,
+              page: this.page,
+              limit: this.limit,
+              month: '',
+              type: this.type,
+              status: this.status
+            })
+            .then((res) => {
+              this.list = res.data.data.items
+              this.total = res.data.data.total
+              this.loading = false
+            })
         })
     },
     // 批量离职
