@@ -37,6 +37,7 @@ export interface MaterialStockLog {
   stockInList?: MaterialStockLog[] // 这部分数据是前端用的入库数据列表,出库的时候只能选入库日志
   material_id: string | number
   material_type?: number
+  yarn_type?: number // 1纱线，2面料
   material_name?: string
   material_color: string
   color_code: string
@@ -54,7 +55,9 @@ export interface MaterialStockLog {
 export interface MaterialStockInfo {
   id?: number
   order_id?: string | number
-  material_type: number // 1纱线 2面料 4辅料
+  material_type: number // 1原料 2辅料
+  yarn_type?: number // 1纱线，2面料
+  before_color?: string | null
   action_type: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 // 4 采购单最终入库 10 仓库出库绑定订单 12 补纱调取 14 预订购采购单最终入库
   rel_doc_type?: string
   rel_doc_id: string | number
@@ -85,6 +88,7 @@ export interface MaterialStockInfo {
     color_code?: string
     batch_code?: string
     material_type?: number
+    yarn_type?: number // 1纱线，2面料
   }> // 前端用，存储勾选的单据纱线列表
   info_data: MaterialStockLog[]
 }

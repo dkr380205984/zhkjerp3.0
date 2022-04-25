@@ -120,7 +120,7 @@
                   <div class="infoCtn">
                     <span class="title">实际入库总额</span>
                     <span class="number green">
-                      {{$toFixed(clientFinancial.total_real_price)}}
+                      {{$toFixed(clientFinancial.total_real_price/10000)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -589,15 +589,16 @@
             <div class="row title">
               <div class="col"
                 style="flex:0.1">
-                <el-checkbox v-model="checkAll">
+                <el-checkbox v-model="checkAll"
+                  @change="(ev)=>checkAllInfo(ev,materialOrderList,materialOrderCheckList)">
                 </el-checkbox>
               </div>
               <div class="col">订购单号</div>
               <div class="col">关联订单号</div>
-              <div class="col numberWidth">合计订购数量</div>
-              <div class="col numberWidth">合计订购金额</div>
-              <div class="col numberWidth">合计入库数量</div>
-              <div class="col numberWidth">合计入库金额</div>
+              <div class="col numberWidth">订购数量</div>
+              <div class="col numberWidth">订购金额</div>
+              <div class="col numberWidth">入库数量</div>
+              <div class="col numberWidth">入库金额</div>
               <div class="col">审核状态</div>
               <div class="col circleCtn">票据状态</div>
               <div class="col">创建人</div>
@@ -609,7 +610,7 @@
               <div class="row">
                 <div class="col"
                   style="flex:0.1">
-                  <el-checkbox v-model="item.check"
+                  <el-checkbox v-model="item.checked"
                     @change="(ev)=>getCheckInfo(ev,item,materialOrderCheckList)">
                   </el-checkbox>
                 </div>
@@ -841,10 +842,10 @@
               </div>
               <div class="col">加工单号</div>
               <div class="col">关联订单号</div>
-              <div class="col numberWidth">合计加工数量</div>
-              <div class="col numberWidth">合计加工金额</div>
-              <div class="col numberWidth">合计完成数量</div>
-              <div class="col numberWidth">合计完成金额</div>
+              <div class="col numberWidth">加工数量</div>
+              <div class="col numberWidth">加工金额</div>
+              <div class="col numberWidth">完成数量</div>
+              <div class="col numberWidth">完成金额</div>
               <div class="col">审核状态</div>
               <div class="col circleCtn">票据状态</div>
               <div class="col">创建人</div>
@@ -1105,9 +1106,9 @@
               </div>
               <div class="col">生产单号</div>
               <div class="col">关联订单号</div>
-              <div class="col numberWidth">合计计划数量</div>
-              <div class="col numberWidth">合计计划金额</div>
-              <div class="col numberWidth">合计完成数量</div>
+              <div class="col numberWidth">计划数量</div>
+              <div class="col numberWidth">计划金额</div>
+              <div class="col numberWidth">完成数量</div>
               <div class="col">审核状态</div>
               <div class="col circleCtn">票据状态</div>
               <div class="col">创建人</div>
@@ -1401,8 +1402,8 @@
               </div>
               <div class="col">订购单号</div>
               <div class="col">关联订单号</div>
-              <div class="col numberWidth">合计订购数量</div>
-              <div class="col numberWidth">合计订购金额</div>
+              <div class="col numberWidth">订购数量</div>
+              <div class="col numberWidth">订购金额</div>
               <div class="col">审核状态</div>
               <div class="col circleCtn">票据状态</div>
               <div class="col">创建人</div>
@@ -1596,8 +1597,8 @@
               </div>
               <div class="col"
                 style="flex: 1.3">发货单号</div>
-              <div class="col numberWidth">合计运输立方</div>
-              <div class="col numberWidth">合计运输金额</div>
+              <div class="col numberWidth">运输立方</div>
+              <div class="col numberWidth">运输金额</div>
               <div class="col">审核状态</div>
               <div class="col circleCtn">票据状态</div>
               <div class="col">创建人</div>
@@ -1695,7 +1696,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="tableCtn"
+                <!-- <div class="tableCtn"
                   v-for="(itema, index) in item.detail.packPlanLogCopy"
                   :key="index + 'tszd'">
                   <div class="thead"
@@ -1856,7 +1857,7 @@
                       <div class="tcol">{{ item.transport_number }}</div>
                     </div>
                   </div>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
@@ -1879,7 +1880,7 @@
         </template>
         <div class="pageCtn">
           <el-pagination background
-            :page-size="5"
+            :page-size="10"
             layout="prev, pager, next"
             :total="listTotal"
             :current-page.sync="listPage"
@@ -2524,13 +2525,14 @@ export default Vue.extend({
     // 获取不同的单据
     getBill() {
       this.listLoading = true
+      this.checkAll = false
       if (this.clientType === 2) {
         // 物料订购单
         materialOrder
           .list({
             client_id: Number(this.$route.query.id),
-            page: this.materialOrderFilter.page,
-            limit: 5,
+            page: this.listPage,
+            limit: 10,
             start_time:
               this.materialOrderFilter.date && this.materialOrderFilter.date.length > 0
                 ? this.materialOrderFilter.date[0]
@@ -2559,7 +2561,7 @@ export default Vue.extend({
         materialProcess
           .list({
             client_id: Number(this.$route.query.id),
-            page: this.materialProcessFilter.page,
+            page: this.listPage,
             start_time:
               this.materialProcessFilter.date && this.materialProcessFilter.date.length > 0
                 ? this.materialProcessFilter.date[0]
@@ -2568,7 +2570,7 @@ export default Vue.extend({
               this.materialProcessFilter.date && this.materialProcessFilter.date.length > 0
                 ? this.materialProcessFilter.date[0]
                 : '',
-            limit: 5
+            limit: 10
           })
           .then((res) => {
             this.materialProcessList = res.data.data.items
@@ -2581,7 +2583,7 @@ export default Vue.extend({
         productionPlan
           .list({
             client_id: Number(this.$route.query.id),
-            page: this.productionPlanFilter.page,
+            page: this.listPage,
             start_time:
               this.productionPlanFilter.date && this.productionPlanFilter.date.length > 0
                 ? this.productionPlanFilter.date[0]
@@ -2590,7 +2592,7 @@ export default Vue.extend({
               this.productionPlanFilter.date && this.productionPlanFilter.date.length > 0
                 ? this.productionPlanFilter.date[0]
                 : '',
-            limit: 5
+            limit: 10
           })
           .then((res) => {
             this.productionPlanList = res.data.data.items
@@ -2603,12 +2605,12 @@ export default Vue.extend({
         packManage
           .orderList({
             client_id: Number(this.$route.query.id),
-            page: this.packOrderFilter.page,
+            page: this.listPage,
             start_time:
               this.packOrderFilter.date && this.packOrderFilter.date.length > 0 ? this.packOrderFilter.date[0] : '',
             end_time:
               this.packOrderFilter.date && this.packOrderFilter.date.length > 0 ? this.packOrderFilter.date[0] : '',
-            limit: 5
+            limit: 10
           })
           .then((res) => {
             this.packOrderList = res.data.data.items
@@ -2621,12 +2623,12 @@ export default Vue.extend({
         boxManage
           .list({
             client_id: Number(this.$route.query.id),
-            page: this.boxManageFilter.page,
+            page: this.listPage,
             start_time:
               this.boxManageFilter.date && this.boxManageFilter.date.length > 0 ? this.boxManageFilter.date[0] : '',
             end_time:
               this.boxManageFilter.date && this.boxManageFilter.date.length > 0 ? this.boxManageFilter.date[0] : '',
-            limit: 5
+            limit: 10
           })
           .then((res) => {
             this.boxManageList = res.data.data.items
@@ -2676,6 +2678,30 @@ export default Vue.extend({
               }
               this.listLoading = false
             })
+        } else if (this.clientType === 11) {
+          packManage
+            .orderListDetail({
+              id: item.id
+            })
+            .then((res) => {
+              if (res.status) {
+                item.detail = res.data.data
+                item.isShow = true
+              }
+              this.listLoading = false
+            })
+        } else if (this.clientType === 13) {
+          boxManage
+            .detail({
+              id: item.id
+            })
+            .then((res) => {
+              if (res.status) {
+                item.detail = res.data.data
+                item.isShow = true
+              }
+              this.listLoading = false
+            })
         }
       } else {
         item.isShow = !item.isShow
@@ -2698,6 +2724,7 @@ export default Vue.extend({
       this.$forceUpdate()
     },
     checkAllInfo(ev: boolean, list: any[], checkList: any[]) {
+      console.log(list)
       list.forEach((item) => {
         item.checked = ev
         this.getCheckInfo(ev, item, checkList)
@@ -2715,7 +2742,7 @@ export default Vue.extend({
           end_time: this.paymentDate.length > 1 ? this.paymentDate[1] : '',
           user_id: this.paymentUser,
           page: this.paymentPage,
-          limit: 5
+          limit: 10
         })
         .then((res) => {
           if (res.data.status) {
@@ -2741,7 +2768,7 @@ export default Vue.extend({
           end_time: this.invoiceDate.length > 1 ? this.invoiceDate[1] : '',
           user_id: this.invoiceUser,
           page: this.paymentPage,
-          limit: 5
+          limit: 10
         })
         .then((res) => {
           if (res.data.status) {
@@ -2768,7 +2795,7 @@ export default Vue.extend({
           end_time: this.deductDate.length > 1 ? this.deductDate[1] : '',
           user_id: this.deductUser,
           page: this.deductPage,
-          limit: 5
+          limit: 10
         })
         .then((res) => {
           if (res.data.status) {

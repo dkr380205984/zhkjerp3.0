@@ -43,7 +43,17 @@
           <div class="row">
             <div class="info">
               <el-input placeholder="付款金额(必填)"
-                v-model="item.price">
+                v-model="item.price"
+                @input="changeNumToPrice($event,index)">
+                <template slot="append">元</template>
+              </el-input>
+            </div>
+          </div>
+          <div class="row">
+            <div class="info">
+              <el-input placeholder="数字金额(默认)"
+                v-model="item.hanPrice"
+                disabled>
                 <template slot="append">元</template>
               </el-input>
             </div>
@@ -82,6 +92,7 @@ interface PaymentInfo {
     desc: string
     complete_time: string
     price: string
+    hanPrice?: string
   }>
 }
 export default Vue.extend({
@@ -208,6 +219,20 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 把数字改成金额
+    changeNumToPrice(val: string, index: number) {
+      const realNumStr = val.replace(/[^0-9]/gi, '')
+      const numStrArr = realNumStr.split('')
+      this.paymentInfo.data[index].hanPrice = this.$changeNumToHan(Number(realNumStr))
+      const length = Number(numStrArr.length)
+      for (let i = length, j = 0; i > 0; i--) {
+        j++
+        if (j % 3 === 0 && i !== 1) {
+          numStrArr.splice(i - 1, 0, '，')
+        }
+      }
+      this.paymentInfo.data[index].price = numStrArr.join('')
+    },
     close() {
       this.$emit('close')
     },
@@ -228,6 +253,9 @@ export default Vue.extend({
         ])
       })
       if (!formCheck) {
+        this.paymentInfo.data.forEach((item) => {
+          item.price = item.price.replace(/[^0-9]/gi, '')
+        })
         payment.create(this.paymentInfo).then((res) => {
           if (res.data.status) {
             this.$message.success(this.update ? '修改成功' : '付款成功')

@@ -31,6 +31,7 @@ export interface MaterialListInfo {
   material_name?: string
   material_color?: string
   material_type?: number
+  yarn_type?: number // 1纱线，2面料
   before_color?: string | null
   attribute?: string
   price: string

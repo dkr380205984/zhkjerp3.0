@@ -1343,7 +1343,7 @@ export default Vue.extend({
               material_color: itemChild.material_color,
               material_id: itemChild.material_id,
               attribute: itemChild.attribute,
-              material_type: itemChild.material_type,
+              yarn_type: itemChild.yarn_type,
               number: itemChild.number
             })
           }
@@ -1376,7 +1376,7 @@ export default Vue.extend({
                   .process_info!.filter((item) => item.process === '染色')
                   .forEach((itemProcess) => {
                     this.materialStockInfo.info_data.push({
-                      material_type: itemChild.material_type,
+                      yarn_type: itemChild.yarn_type,
                       material_id: itemChild.material_id as number,
                       material_color: itemProcess.after_color,
                       color_code: '',
@@ -1396,7 +1396,7 @@ export default Vue.extend({
                     .reduce((total, cur) => total + cur.number, 0) < itemChild.number
                 ) {
                   this.materialStockInfo.info_data.push({
-                    material_type: itemChild.material_type,
+                    yarn_type: itemChild.yarn_type,
                     material_id: itemChild.material_id as number,
                     material_color: itemChild.material_color as string,
                     color_code: '',
@@ -1415,7 +1415,7 @@ export default Vue.extend({
                 }
               } else {
                 this.materialStockInfo.info_data.push({
-                  material_type: itemChild.material_type,
+                  yarn_type: itemChild.yarn_type,
                   material_id: itemChild.material_id as number,
                   material_color: itemChild.material_color as string,
                   color_code: '',
@@ -1436,8 +1436,7 @@ export default Vue.extend({
     },
     // 入库选采购单的时候给material_id赋值
     getMatId(id: number, info: MaterialStockLog) {
-      info.material_type = this.materialStockInfo.selectList!.find((itemFind) => itemFind.value === id)!
-        .material_type as number
+      info.yarn_type = this.materialStockInfo.selectList!.find((itemFind) => itemFind.value === id)!.yarn_type as number
       info.material_id = this.materialStockInfo.selectList!.find((itemFind) => itemFind.value === id)!
         .material_id as number
     },

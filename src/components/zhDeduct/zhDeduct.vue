@@ -34,7 +34,17 @@
           <div class="row">
             <div class="info">
               <el-input placeholder="请输入扣款金额(必填)"
-                v-model="item.price">
+                v-model="item.price"
+                @input="changeNumToPrice($event,index)">
+                <template slot="append">元</template>
+              </el-input>
+            </div>
+          </div>
+          <div class="row">
+            <div class="info">
+              <el-input placeholder="数字金额(默认)"
+                v-model="item.hanPrice"
+                disabled>
                 <template slot="append">元</template>
               </el-input>
             </div>
@@ -97,6 +107,7 @@ interface deductInfo {
     reason: string
     price: string
     file_url: string
+    hanPrice?: string
   }>
 }
 export default Vue.extend({
@@ -240,6 +251,20 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 把数字改成金额
+    changeNumToPrice(val: string, index: number) {
+      const realNumStr = val.replace(/[^0-9]/gi, '')
+      const numStrArr = realNumStr.split('')
+      this.deductInfo.data[index].hanPrice = this.$changeNumToHan(Number(realNumStr))
+      const length = Number(numStrArr.length)
+      for (let i = length, j = 0; i > 0; i--) {
+        j++
+        if (j % 3 === 0 && i !== 1) {
+          numStrArr.splice(i - 1, 0, '，')
+        }
+      }
+      this.deductInfo.data[index].price = numStrArr.join('')
+    },
     close() {
       this.$emit('close')
     },
@@ -286,6 +311,9 @@ export default Vue.extend({
         ])
       })
       if (!formCheck) {
+        this.deductInfo.data.forEach((item) => {
+          item.price = item.price.replace(/[^0-9]/gi, '')
+        })
         deduct.create(this.deductInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('扣款成功')
