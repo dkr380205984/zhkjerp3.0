@@ -116,7 +116,8 @@
                 <span class="opr hoverOrange" @click="$router.push('/workerManage/update?id=' + scope.row.id)"
                   >修改</span
                 >
-                <span class="opr hoverRed" @click="deleteWorker(scope.row)">离职</span>
+                <span class="opr hoverBlue" v-if="scope.row.status == 2" @click="addWorker(scope.row)">在职</span>
+                <span class="opr hoverRed" v-if="scope.row.status == 1" @click="deleteWorker(scope.row)">离职</span>
               </template>
             </el-table-column>
           </el-table>
@@ -178,10 +179,6 @@ export default Vue.extend({
   },
   methods: {
     deleteWorker(item: any) {
-      if (item.status === 2) {
-        this.$message.warning('该员工已经为离职状态')
-        return
-      }
       staff
         .changeStaffStatus({
           data: [
@@ -194,6 +191,23 @@ export default Vue.extend({
         .then((res) => {
           if (res.data.status === true) {
             this.$message.success('离职成功')
+            this.getList()
+          }
+        })
+    },
+    addWorker(item: any) {
+      staff
+        .changeStaffStatus({
+          data: [
+            {
+              id: item.id,
+              status: 1
+            }
+          ]
+        })
+        .then((res) => {
+          if (res.data.status === true) {
+            this.$message.success('在职成功')
             this.getList()
           }
         })

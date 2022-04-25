@@ -999,21 +999,21 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.departmentList = res.data.data
-
-          this.departmentName = res.data.data.find((item: any) => {
-            return item.id == this.department
-          }).name
-
-          staff
-            .list({
-              status: 1,
-              department: this.departmentName
-            })
-            .then((res) => {
-              this.staffList = res.data.data
-              // this.loading = false
-            })
+          this.departmentName = res.data.data.find((res: any) => {
+            return res.id == this.department
+          })
+          this.departmentName = this.departmentName?.name || ''
         }
+        
+        staff
+          .list({
+            status: 1,
+            department: this.departmentName
+          })
+          .then((res) => {
+            this.staffList = res.data.data
+            // this.loading = false
+          })
       })
 
     this.loading = true
