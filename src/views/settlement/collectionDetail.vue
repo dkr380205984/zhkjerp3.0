@@ -791,6 +791,24 @@ export default Vue.extend({
           index: 2
         },
         {
+          key: 'invoice_status',
+          name: '开票状态',
+          ifShow: true,
+          ifLock: false,
+          index: 11,
+          filterArr: ['', '已开票', '待开票'],
+          classArr: ['', 'green', 'orange']
+        },
+        {
+          key: 'collect_status',
+          name: '收款状态',
+          ifShow: true,
+          ifLock: false,
+          index: 12,
+          filterArr: ['', '已收款', '待收款'],
+          classArr: ['', 'green', 'orange']
+        },
+        {
           key: 'product_code',
           otherkey: 'system_code',
           name: '产品编号',
@@ -854,24 +872,6 @@ export default Vue.extend({
           ifLock: false,
           index: 10,
           errVal: '0'
-        },
-        {
-          key: 'invoice_status',
-          name: '开票状态',
-          ifShow: true,
-          ifLock: false,
-          index: 11,
-          filterArr: ['', '已开票', '待开票'],
-          classArr: ['', 'green', 'orange']
-        },
-        {
-          key: 'collect_status',
-          name: '收款状态',
-          ifShow: true,
-          ifLock: false,
-          index: 12,
-          filterArr: ['', '已收款', '待收款'],
-          classArr: ['', 'green', 'orange']
         }
       ],
       oprList: [
