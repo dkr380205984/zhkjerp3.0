@@ -65,6 +65,8 @@
             <div class="col oprCtn">
               <span class="opr hoverBlue"
                 @click="$router.push('/boxManage/boxDetail?id='+item.id)">详情</span>
+              <span class="opr hoverRed"
+                @click="deleteBox(item.id)">删除</span>
             </div>
           </div>
         </div>
@@ -117,6 +119,35 @@ export default Vue.extend({
             this.total = res.data.data.total
           }
           this.loading = false
+        })
+    },
+    deleteBox(id: number) {
+      this.$confirm('是否删除发货单?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          boxManage
+            .delete({
+              id
+            })
+            .then((res) => {
+              if (res.data.stauts) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+              }
+
+              this.getList()
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
         })
     }
   },

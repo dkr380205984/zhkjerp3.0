@@ -875,30 +875,30 @@ export default Vue.extend({
         }
       ],
       oprList: [
-        {
-          name: '开票',
-          class: 'orange',
-          fn: (item: any) => {
-            // @ts-ignore
-            this.goInvoice([item])
-          }
-        },
-        {
-          name: '收款',
-          class: 'blue',
-          fn: (item: any) => {
-            // @ts-ignore
-            this.goCollection([item])
-          }
-        },
-        {
-          name: '扣款',
-          class: 'red',
-          fn: (item: any) => {
-            // @ts-ignore
-            this.goDeduct([item])
-          }
-        },
+        // {
+        //   name: '开票',
+        //   class: 'orange',
+        //   fn: (item: any) => {
+        //     // @ts-ignore
+        //     this.goInvoice([item])
+        //   }
+        // },
+        // {
+        //   name: '收款',
+        //   class: 'blue',
+        //   fn: (item: any) => {
+        //     // @ts-ignore
+        //     this.goCollection([item])
+        //   }
+        // },
+        // {
+        //   name: '扣款',
+        //   class: 'red',
+        //   fn: (item: any) => {
+        //     // @ts-ignore
+        //     this.goDeduct([item])
+        //   }
+        // },
         {
           name: '详情',
           class: 'blue',

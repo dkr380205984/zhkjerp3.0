@@ -780,6 +780,15 @@ const boxManage = {
   create: (params: BoxInfo) => http.post(`${baseUrl}/transport/dispatch/save`, params, 'application/json'),
   list: (params: any) => http.get(`${baseUrl}/transport/dispatch/lists`, params),
   detail: (params: any) => http.get(`${baseUrl}/transport/dispatch/detail`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/transport/dispatch/delete`, params, 'application/json'),
+  addOtherFee: (params: {
+    id: string | number
+    data: Array<{
+      name: string
+      price: string | number
+      desc: string
+    }>
+  }) => http.post(`${baseUrl}/transport/save/others/fee`, params, 'application/json'),
 }
 // excel导出
 const exportExcel = {

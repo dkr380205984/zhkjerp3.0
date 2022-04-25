@@ -30,6 +30,7 @@ export interface MaterialListInfo {
   material_id?: number | string
   material_name?: string
   material_color?: string
+  material_type?: number
   before_color?: string | null
   attribute?: string
   price: string

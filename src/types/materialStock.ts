@@ -36,6 +36,7 @@ export interface MaterialStockLog {
   id?: string | number
   stockInList?: MaterialStockLog[] // 这部分数据是前端用的入库数据列表,出库的时候只能选入库日志
   material_id: string | number
+  material_type?: number
   material_name?: string
   material_color: string
   color_code: string
@@ -83,6 +84,7 @@ export interface MaterialStockInfo {
     vat_code?: string
     color_code?: string
     batch_code?: string
+    material_type?: number
   }> // 前端用，存储勾选的单据纱线列表
   info_data: MaterialStockLog[]
 }

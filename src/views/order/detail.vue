@@ -307,10 +307,10 @@
                       <div class="tcol">实际发货数量</div>
                     </div>
                   </div>
-                  <div class="tcol">状态</div>
-                  <div class="tcol">操作</div>
                 </div>
               </div>
+              <div class="tcol">状态</div>
+              <div class="tcol">操作</div>
             </div>
           </div>
           <div class="tbody">
@@ -356,15 +356,15 @@
                       </div>
                     </div>
                   </div>
-                  <div class="tcol"
-                    :class="{'green':itemBatch.status===1,'green':itemBatch.status===2}">
-                    {{itemBatch.status===1?'进行中':'已完成'}}
-                  </div>
-                  <div class="tcol oprCtn">
-                    <div class="opr hoverGreen"
-                      @click="confirmOrderBatch(itemBatch)">确认完成</div>
-                  </div>
                 </div>
+              </div>
+              <div class="tcol"
+                :class="{'green':itemBatch.status===1,'green':itemBatch.status===2}">
+                {{itemBatch.status===1?'进行中':'已完成'}}
+              </div>
+              <div class="tcol oprCtn">
+                <div class="opr hoverGreen"
+                  @click="confirmOrderBatch(itemBatch)">确认完成</div>
               </div>
             </div>
           </div>
