@@ -2241,7 +2241,7 @@ export default Vue.extend({
     },
     // 搜索要导入的工艺单列表
     searchCraft(key: string) {
-      this.seachLoading = true
+      this.searchLoading = true
       craft
         .list({
           page: 1,

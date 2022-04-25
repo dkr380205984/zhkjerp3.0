@@ -206,8 +206,13 @@
                   filterable
                   remote
                   placeholder="订单号/产品编号"
-                  :remote-method="querySearchAsync"
-                  @change="handleSelect(item, itemProIndex, index, settlementLogIndex)"
+                  :loading="searchLoading"
+                  :remote-method="
+                    (ev) => {
+                      return $debounce(ev, timer, querySearchAsync)
+                    }
+                  "
+                  @change="handleSelect(item, settlementLogIndex, index, itemProIndex, index, settlementLogIndex)"
                 >
                   <el-option v-for="item in orderList" :key="item.value" :label="item.label" :value="item.value">
                     <div style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
@@ -411,7 +416,7 @@
         <div class="titleCtn">
           <span class="text">添加订单</span>
           <div class="closeCtn">
-            <span class="el-icon-close" @click="addOrder = false"></span>
+            <span class="el-icon-close" @click="closeAddOrder()"></span>
           </div>
         </div>
         <div class="contentCtn" style="padding-top: 15px">
@@ -471,7 +476,7 @@
           </div>
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn" @click="addOrder = false">取消</span>
+          <span class="btn borderBtn" @click="closeAddOrder()">取消</span>
           <span class="btn backHoverBlue" @click="confirmSubmit">确认提交</span>
         </div>
       </div>
@@ -507,6 +512,7 @@ export default Vue.extend({
       staffList: [],
       orderList: [],
       outCiPin: false,
+      searchLoading: false,
       tabChoose: '',
       // 颜色尺码是否全选
       isCheckAllSizeColor: false,
@@ -728,6 +734,12 @@ export default Vue.extend({
           this.$forceUpdate()
         })
     },
+    closeAddOrder() {
+      this.addOrder = false
+      this.settlementLogList[this.lastOneChoose.settlementLogIndex].processInfo[
+        this.lastOneChoose.itemIndex
+      ].product_info[this.lastOneChoose.itemProIndex].order_code = ''
+    },
     copyWorkerInfo(item: any, itemSizeColor: any) {
       if (item.productId === '') {
         this.$message.error('请先选择产品')
@@ -756,8 +768,20 @@ export default Vue.extend({
       }
       this.$forceUpdate()
     },
-    handleSelect(item: any, index: number, orderIndex: number, staffIndex: number) {
+    handleSelect(
+      item: any,
+      settlementLogIndex: number,
+      itemIndex: number,
+      index: number,
+      orderIndex: number,
+      staffIndex: number
+    ) {
       this.loading = true
+      this.lastOneChoose = {
+        settlementLogIndex,
+        itemIndex,
+        itemProIndex: index
+      }
       order
         .simpleList({
           keyword: item.product_info[index].order_code
@@ -821,6 +845,7 @@ export default Vue.extend({
       // this.settlementLogList[index].staffName = this.settlementLogList[index].staffInfo.name
     },
     querySearchAsync(str: string) {
+      this.searchLoading = true
       if (str === '' || str === undefined) {
         this.orderList = []
         return
@@ -831,7 +856,6 @@ export default Vue.extend({
         })
         .then((res) => {
           if (res.data.status) {
-            console.log()
             if (new Date(res.headers.date) > new Date(this.reqTime) || this.reqTime === '') {
               this.reqTime = res.headers.date
               let arr: any = []
@@ -843,6 +867,7 @@ export default Vue.extend({
           } else {
             this.orderList = []
           }
+          this.searchLoading = false
         })
     },
     checkAllOrder(items: any) {
@@ -1004,7 +1029,7 @@ export default Vue.extend({
           })
           this.departmentName = this.departmentName?.name || ''
         }
-        
+
         staff
           .list({
             status: 1,
