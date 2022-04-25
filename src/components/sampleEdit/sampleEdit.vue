@@ -1102,7 +1102,7 @@ export default Vue.extend({
         style_data: data.style_data.map((item: any) => item.id),
         component_data: data.component_data.map((item: any) => {
           return {
-            component_name: item.id,
+            component_name: item.name,
             number: item.number
           }
         }),
@@ -1136,7 +1136,7 @@ export default Vue.extend({
             }),
             part_component_data: item.part_component_data.map((item: any) => {
               return {
-                component_name: item.id,
+                component_name: item.name,
                 number: item.number
               }
             })

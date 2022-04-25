@@ -98,7 +98,7 @@
             <div class="col">{{item.total_order_number}}</div>
             <div class="col">{{item.total_production_number || 0}}</div>
             <div class="col"
-              :class="item.material_order_progress>=100?'orange':'green'">{{item.material_order_progress}}%</div>
+              :class="item.material_order_progress>=100?'green':'orange'">{{item.material_order_progress}}%</div>
             <div class="col"
               :class="item.is_check|filterCheckClass">{{item.is_check|filterCheck}}</div>
             <div class="col">{{item.user_name}}</div>
@@ -107,19 +107,6 @@
               <span class="opr hoverBlue"
                 @click="$router.push('/materialManage/detail?id='+item.id)">订购加工</span>
             </div>
-          </div>
-          <div class="row">
-            <div class="col green">合计:</div>
-            <div class="col"></div>
-            <div class="col"></div>
-            <div class="col green bold">{{additional.total_material_number}}</div>
-            <div class="col"></div>
-            <div class="col green bold">{{additional.total_production_number}}</div>
-            <div class="col"></div>
-            <div class="col"></div>
-            <div class="col"></div>
-            <div class="col"></div>
-            <div class="col"></div>
           </div>
         </div>
         <div class="pageCtn">

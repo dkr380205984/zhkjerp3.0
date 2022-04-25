@@ -602,8 +602,7 @@
               <div class="col circleCtn">票据状态</div>
               <div class="col">创建人</div>
               <div class="col">创建时间</div>
-              <div class="col"
-                style="flex: 2">操作</div>
+              <div class="col oprWidth">操作</div>
             </div>
             <div v-for="(item, index) in materialOrderList"
               :key="index">
@@ -638,16 +637,15 @@
                 </div>
                 <div class="col">{{ item.user_name }}</div>
                 <div class="col">{{ item.created_at }}</div>
-                <div class="col"
-                  style="flex:2">
+                <div class="col oprWidth">
                   <span class="opr hoverBlue"
                     @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
-                  <span class="opr hoverOrange"
+                  <!-- <span class="opr hoverOrange"
                     @click="goInvoice([item])">开票</span>
                   <span class="opr hoverBlue"
                     @click="goPayment([item])">付款</span>
                   <span class="opr hoverRed"
-                    @click="goDeduct([item])">扣款</span>
+                    @click="goDeduct([item])">扣款</span> -->
                 </div>
               </div>
               <div v-if="item.isShow"
@@ -851,8 +849,7 @@
               <div class="col circleCtn">票据状态</div>
               <div class="col">创建人</div>
               <div class="col">创建时间</div>
-              <div class="col"
-                style="flex: 2">操作</div>
+              <div class="col oprWidth">操作</div>
             </div>
             <div v-for="(item, index) in materialProcessList"
               :key="index">
@@ -886,16 +883,9 @@
                 </div>
                 <div class="col">{{ item.user_name }}</div>
                 <div class="col">{{ item.created_at }}</div>
-                <div class="col"
-                  style="flex: 2">
+                <div class="col oprWidth">
                   <span class="opr hoverBlue"
                     @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
-                  <span class="opr hoverOrange"
-                    @click="goInvoice([item])">开票</span>
-                  <span class="opr hoverBlue"
-                    @click="goPayment([item])">付款</span>
-                  <span class="opr hoverRed"
-                    @click="goDeduct([item])">扣款</span>
                 </div>
               </div>
               <div v-if="item.isShow"
@@ -1119,10 +1109,10 @@
               <div class="col numberWidth">合计计划金额</div>
               <div class="col numberWidth">合计完成数量</div>
               <div class="col">审核状态</div>
+              <div class="col circleCtn">票据状态</div>
               <div class="col">创建人</div>
               <div class="col">创建时间</div>
-              <div class="col"
-                style="flex:2">操作</div>
+              <div class="col oprWidth">操作</div>
             </div>
             <div v-for="(item, index) in productionPlanList"
               :key="index">
@@ -1155,16 +1145,9 @@
                 </div>
                 <div class="col">{{ item.user_name }}</div>
                 <div class="col">{{ item.created_at }}</div>
-                <div class="col"
-                  style="flex: 2">
+                <div class="col oprWidth">
                   <span class="opr hoverBlue"
                     @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
-                  <span class="opr hoverOrange"
-                    @click="goInvoice([item])">开票</span>
-                  <span class="opr hoverBlue"
-                    @click="goPayment([item])">付款</span>
-                  <span class="opr hoverRed"
-                    @click="goDeduct([item])">扣款</span>
                 </div>
               </div>
               <div v-if="item.isShow"
@@ -1424,8 +1407,7 @@
               <div class="col circleCtn">票据状态</div>
               <div class="col">创建人</div>
               <div class="col">创建时间</div>
-              <div class="col"
-                style="flex: 1.4">操作</div>
+              <div class="col oprWidth">操作</div>
             </div>
             <div v-for="(item, index) in packOrderList"
               :key="index">
@@ -1457,16 +1439,9 @@
                 </div>
                 <div class="col">{{ item.user_name }}</div>
                 <div class="col">{{ item.created_at }}</div>
-                <div class="col"
-                  style="flex: 1.4">
+                <div class="col oprWidth">
                   <span class="opr hoverBlue"
                     @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
-                  <span class="opr hoverOrange"
-                    @click="goInvoice([item])">开票</span>
-                  <span class="opr hoverBlue"
-                    @click="goPayment([item])">付款</span>
-                  <span class="opr hoverRed"
-                    @click="goDeduct([item])">扣款</span>
                 </div>
               </div>
               <div v-if="item.isShow"
@@ -1627,8 +1602,7 @@
               <div class="col circleCtn">票据状态</div>
               <div class="col">创建人</div>
               <div class="col">创建时间</div>
-              <div class="col"
-                style="flex: 1.4">操作</div>
+              <div class="col oprWidth">操作</div>
             </div>
             <div v-for="(item, index) in boxManageList"
               :key="index">
@@ -1659,16 +1633,9 @@
                 </div>
                 <div class="col">{{ item.user_name }}</div>
                 <div class="col">{{ item.created_at }}</div>
-                <div class="col"
-                  style="flex: 1.4">
+                <div class="col oprWidth">
                   <span class="opr hoverBlue"
                     @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
-                  <span class="opr hoverOrange"
-                    @click="goInvoice([item])">开票</span>
-                  <span class="opr hoverBlue"
-                    @click="goPayment([item])">付款</span>
-                  <span class="opr hoverRed"
-                    @click="goDeduct([item])">扣款</span>
                 </div>
               </div>
               <div v-if="item.isShow"
@@ -2244,6 +2211,11 @@
       :client_name="clientFinancial.name"
       :client_id="$route.query.id"
       @close="deductFlag=false;init()"></zh-deduct>
+    <!-- 产品详情 -->
+    <product-detail :id="productDetailId"
+      :show="productShow"
+      :noOpr="true"
+      @close="productShow = false"></product-detail>
     <!-- 批量修改结算单价功能 -->
     <div class="popup"
       v-show="updatePriceFlag">
@@ -2353,6 +2325,9 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      loading: true,
+      productDetailId: '',
+      productShow: false,
       paymentFlag: false,
       paymentData: [],
       paymentLog: [],
@@ -2531,6 +2506,10 @@ export default Vue.extend({
     }
   },
   methods: {
+    showProduct(item: any) {
+      this.productShow = true
+      this.productDetailId = item.product_id
+    },
     getFinancialDetail() {
       client
         .financialDetail({

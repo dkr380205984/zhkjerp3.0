@@ -76,6 +76,22 @@
             <div class="text">{{boxInfo.address}}</div>
           </div>
         </div>
+        <div class="row"
+          v-for="item in boxInfo.others_fee_data"
+          :key="item.id">
+          <div class="col">
+            <div class="label">额外费用：</div>
+            <div class="text">{{item.name}}</div>
+          </div>
+          <div class="col">
+            <div class="label">费用价格：</div>
+            <div class="text">{{item.price}}元</div>
+          </div>
+          <div class="col">
+            <div class="label">费用备注：</div>
+            <div class="text">{{item.desc}}</div>
+          </div>
+        </div>
       </div>
       <div class="tableCtn"
         v-for="item in packPlanLogCopy"
@@ -253,10 +269,70 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
+          <div class="btn backHoverGreen"
+            @click="otherFeeFlag=true;boxInfo.others_fee_data?otherFeeInfo.data=boxInfo.others_fee_data:''">{{boxInfo.others_fee_data?'修改':'新增'}}额外费用</div>
           <div class="btn backHoverBlue"
             @click="$openUrl('/boxManage/print?id='+$route.query.id)">打印</div>
-          <!-- <div class="btn backHoverOrange"
-            @click="orderInfoCopy.length>0?$router.push('/boxManage/orderDetail?boxId='+$route.query.id):$router.push('/boxManage/detail?boxId='+$route.query.id)">修改</div> -->
+          <div class="btn backHoverOrange"
+            @click="orderInfoCopy.length>0?$router.push('/boxManage/orderDetail?boxId='+$route.query.id):$router.push('/boxManage/detail?boxId='+$route.query.id)">修改</div>
+        </div>
+      </div>
+    </div>
+    <!-- 额外费用 -->
+    <div class="popup"
+      v-show="otherFeeFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">额外费用</span>
+          <div class="closeCtn"
+            @click="otherFeeFlag=false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="rowCtn"
+            v-for="item,index in otherFeeInfo.data"
+            :key="index">
+            <div class="closeCtn"
+              @click="otherFeeInfo.data.length>1?$deleteItem(otherFeeInfo.data,index):$message.error('不能少于一项')">
+              <span class="el-icon-close hoverRed"></span>
+            </div>
+            <div class="row">
+              <div class="label">费用名称：</div>
+              <div class="info elCtn">
+                <el-input v-model="item.name"
+                  placeholder="费用名称"></el-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">额外费用：</div>
+              <div class="info elCtn">
+                <el-input v-model="item.price"
+                  placeholder="额外费用">
+                  <template slot="append">元</template>
+                </el-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">备注信息：</div>
+              <div class="info elCtn">
+                <el-input v-model="item.desc"
+                  placeholder="备注信息"></el-input>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="otherFeeFlag=false">取消</span>
+          <span class="btn backHoverGreen"
+            @click="$addItem(otherFeeInfo.data,{
+              name: '',
+              price: '',
+              desc: ''
+            })">新增额外费用</span>
+          <span class="btn backHoverBlue"
+            @click="saveOtherFee">确认</span>
         </div>
       </div>
     </div>
@@ -308,60 +384,102 @@ export default Vue.extend({
             transport_number: ''
           }
         ]
+      },
+      otherFeeFlag: false,
+      otherFeeInfo: {
+        id: '',
+        data: [
+          {
+            name: '',
+            price: '',
+            desc: ''
+          }
+        ]
       }
     }
   },
-  mounted() {
-    boxManage
-      .detail({
-        id: Number(this.$route.query.id)
+  methods: {
+    saveOtherFee() {
+      const formCheck = this.otherFeeInfo.data.some((item: any) => {
+        return this.$formCheck(item, [
+          {
+            key: 'name',
+            errMsg: '请输入名称'
+          },
+          {
+            key: 'price',
+            errMsg: '请输入费用'
+          }
+        ])
       })
-      .then((res) => {
-        if (res.data.status) {
-          this.boxInfo = res.data.data
-          // @ts-ignore
-          this.packPlanLog = this.boxInfo.rel_plan
-          this.packPlanLog.forEach((itemPack) => {
-            itemPack.transport_info = JSON.parse(itemPack.transport_info)
-            itemPack.plan_info.data.forEach((itemData) => {
-              itemData.total_box_count = itemData.info_data.reduce((total, cur) => {
-                return total + Number(cur.box_count)
-              }, 0)
-              itemData.total_bulk = itemData.info_data.reduce((total, cur) => {
-                return total + Number(cur.total_bulk)
-              }, 0)
-              itemData.total_gross_weight = itemData.info_data.reduce((total, cur) => {
-                return total + Number(cur.total_gross_weight)
-              }, 0)
-              itemData.total_net_weight = itemData.info_data.reduce((total, cur) => {
-                return total + Number(cur.total_net_weight)
-              }, 0)
-              itemData.product_info.forEach((itemPro) => {
-                itemPro.pack_number_all = 0
-                itemData.info_data.forEach((itemInfo) => {
-                  itemInfo.product_info.forEach((itemChild) => {
-                    if (
-                      itemChild.product_id === itemPro.product_id &&
-                      itemChild.size_id === itemPro.size_id &&
-                      itemChild.color_id === itemPro.color_id
-                    ) {
-                      itemPro.pack_number_all =
-                        Number(itemPro.pack_number_all) + Number(itemChild.pack_number) * Number(itemInfo.box_count)
-                    }
+      if (!formCheck) {
+        this.loading = true
+        this.otherFeeInfo.id = this.$route.query.id
+        boxManage.addOtherFee(this.otherFeeInfo).then((res) => {
+          if (res.data.status) {
+            this.$message.success('添加成功')
+            this.otherFeeFlag = false
+            this.init()
+          }
+        })
+      }
+    },
+    init() {
+      this.loading = true
+      boxManage
+        .detail({
+          id: Number(this.$route.query.id)
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.boxInfo = res.data.data
+            // @ts-ignore
+            this.packPlanLog = this.boxInfo.rel_plan
+            this.packPlanLog.forEach((itemPack) => {
+              itemPack.transport_info = JSON.parse(itemPack.transport_info)
+              itemPack.plan_info.data.forEach((itemData) => {
+                itemData.total_box_count = itemData.info_data.reduce((total, cur) => {
+                  return total + Number(cur.box_count)
+                }, 0)
+                itemData.total_bulk = itemData.info_data.reduce((total, cur) => {
+                  return total + Number(cur.total_bulk)
+                }, 0)
+                itemData.total_gross_weight = itemData.info_data.reduce((total, cur) => {
+                  return total + Number(cur.total_gross_weight)
+                }, 0)
+                itemData.total_net_weight = itemData.info_data.reduce((total, cur) => {
+                  return total + Number(cur.total_net_weight)
+                }, 0)
+                itemData.product_info.forEach((itemPro) => {
+                  itemPro.pack_number_all = 0
+                  itemData.info_data.forEach((itemInfo) => {
+                    itemInfo.product_info.forEach((itemChild) => {
+                      if (
+                        itemChild.product_id === itemPro.product_id &&
+                        itemChild.size_id === itemPro.size_id &&
+                        itemChild.color_id === itemPro.color_id
+                      ) {
+                        itemPro.pack_number_all =
+                          Number(itemPro.pack_number_all) + Number(itemChild.pack_number) * Number(itemInfo.box_count)
+                      }
+                    })
                   })
                 })
               })
             })
-          })
-          // @ts-ignore
-          this.packPlanLogCopy = this.packPlanLog.map((item) => item.transport_info)
-          // @ts-ignore
-          this.batchInfo = this.boxInfo.rel_batch
-          this.orderInfoCopy = this.boxInfo.order_transport_info ? JSON.parse(this.boxInfo.order_transport_info) : []
-        }
-        console.log(this.packPlanLog)
-        this.loading = false
-      })
+            // @ts-ignore
+            this.packPlanLogCopy = this.packPlanLog.map((item) => item.transport_info)
+            // @ts-ignore
+            this.batchInfo = this.boxInfo.rel_batch
+            this.orderInfoCopy = this.boxInfo.order_transport_info ? JSON.parse(this.boxInfo.order_transport_info) : []
+          }
+          console.log(this.packPlanLog)
+          this.loading = false
+        })
+    }
+  },
+  mounted() {
+    this.init()
   }
 })
 </script>
