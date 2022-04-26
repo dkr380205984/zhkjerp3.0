@@ -227,7 +227,7 @@ export default Vue.extend({
       for (let i = length, j = 0; i > 0; i--) {
         j++
         if (j % 3 === 0 && i !== 1) {
-          numStrArr.splice(i - 1, 0, '，')
+          numStrArr.splice(i - 1, 0, ',')
         }
       }
       this.collectionInfo.data[index].price = numStrArr.join('')

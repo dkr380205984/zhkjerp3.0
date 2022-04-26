@@ -114,13 +114,13 @@
             <div class="col">{{item.name}}</div>
             <div class="col">{{item.alias}}</div>
             <div class="col">{{item.client_type_name}}</div>
-            <div class="col">{{item.total_plan_price}}万元</div>
-            <div class="col">{{item.total_plan_number}}</div>
-            <div class="col">{{item.total_real_price}}万元</div>
-            <div class="col">{{item.total_real_number}}</div>
-            <div class="col">{{item.total_invoice_price}}万元</div>
-            <div class="col">{{item.total_pay_price}}万元</div>
-            <div class="col">{{item.total_deduct_price}}万元</div>
+            <div class="col">{{$toFixed(item.total_plan_price/10000)}}万元</div>
+            <div class="col">{{$toFixed(item.total_plan_number/10000)}}万</div>
+            <div class="col">{{$toFixed(item.total_real_price/10000)}}万元</div>
+            <div class="col">{{$toFixed(item.total_real_number/10000)}}万</div>
+            <div class="col">{{$toFixed(item.total_invoice_price)}}万元</div>
+            <div class="col">{{$toFixed(item.total_pay_price)}}万元</div>
+            <div class="col">{{$toFixed(item.total_deduct_price)}}万元</div>
             <div class="col oprCtn">
               <span class="opr hoverBlue"
                 @click="$router.push('/settlement/paymentDetail?id='+item.id + '&type=' + item.client_type_name)">详情</span>

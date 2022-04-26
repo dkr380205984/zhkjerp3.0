@@ -600,6 +600,7 @@ const materialOrder = {
     top_order_id?: string | number // 最外层order_id
     material_type?: 1 | 2
     sup_id?: string | number //补纱单id
+    [propName: string]: any
   }) => http.get(`${baseUrl}/material/order/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/material/order/detail`, params),
   delete: (params: DetailParams) => http.post(`${baseUrl}/material/order/delete`, params, 'application/json')
@@ -636,6 +637,7 @@ const materialProcess = {
     start_time?: string
     end_time?: string
     is_check?: string | number
+    [propName: string]: any
   }) => http.get(`${baseUrl}/material/process/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/material/process/detail`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/material/process/delete`, params, 'application/json')
@@ -688,6 +690,7 @@ const productionPlan = {
     end_time?: string
     limit?: number
     page?: number
+    [propName: string]: any
   }) => http.get(`${baseUrl}/weave/plan/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/weave/plan/delete`, params, 'application/json'),
   detail: (params: DetailParams) => http.get(`${baseUrl}/weave/plan/detail`, params),
@@ -763,6 +766,7 @@ const packManage = {
     end_time?: string
     limit?: number
     page?: number
+    [propName: string]: any
   }) => http.get(`${baseUrl}/pack/order/lists`, params),
   orderListDetail: (params: {
     id?: string | number

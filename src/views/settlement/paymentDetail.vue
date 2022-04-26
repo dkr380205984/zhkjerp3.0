@@ -31,12 +31,19 @@
             <div class="text">{{clientFinancial.client_type_name}}</div>
           </div>
         </div>
+        <div class="row">
+          <div class="col">
+            <div class="label">联系人信息</div>
+            <div class="text blue"
+              style="cursor:pointer"
+              @click="contactsDataFlag=!contactsDataFlag">{{contactsDataFlag?'收起':'展开'}}</div>
+          </div>
+        </div>
         <div class="row"
           v-for="(item,index) in clientFinancial.contacts_data"
-          :key="item.id">
+          :key="index"
+          v-show="contactsDataFlag">
           <div class="col specialInfo">
-            <div class="label"
-              v-if="index===0">联系人信息</div>
             <div class="info">
               <div class="row">
                 <div class="col flex3">
@@ -528,6 +535,72 @@
             <div class="btn borderBtn"
               @click="reset">重置</div>
           </div>
+          <div class="filterCtn">
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="materialOrderFilter.group_id"
+                placeholder="筛选负责小组"
+                clearable>
+                <el-option v-for="item in groupList"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.name"></el-option>
+              </el-select>
+            </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="materialOrderFilter.has_invoice"
+                placeholder="筛选开票状态"
+                clearable>
+                <el-option label="全部"
+                  value="null"></el-option>
+                <el-option label="已开票"
+                  value="1"></el-option>
+                <el-option label="待开票"
+                  value="2"></el-option>
+              </el-select>
+            </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="materialOrderFilter.has_pay"
+                placeholder="筛选付款状态"
+                clearable>
+                <el-option label="全部"
+                  value="null"></el-option>
+                <el-option label="已付款"
+                  value="1"></el-option>
+                <el-option label="待付款"
+                  value="2"></el-option>
+              </el-select>
+            </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="materialOrderFilter.has_deduct"
+                placeholder="筛选扣款状态"
+                clearable>
+                <el-option label="全部"
+                  value="null"></el-option>
+                <el-option label="已扣款"
+                  value="1"></el-option>
+                <el-option label="待扣款"
+                  value="2"></el-option>
+              </el-select>
+            </div>
+          </div>
+          <div class="filterCtn">
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="materialOrderFilter.is_check"
+                placeholder="筛选审核状态">
+                <el-option value="null"
+                  label="全部"></el-option>
+                <el-option value="1"
+                  label="已审核"></el-option>
+                <el-option value="2"
+                  label="待审核"></el-option>
+              </el-select>
+            </div>
+          </div>
           <div class="filterCtn clearfix">
             <div class="label">已勾选单据：</div>
             <div class="elCtn check"
@@ -614,7 +687,9 @@
                     @change="(ev)=>getCheckInfo(ev,item,materialOrderCheckList)">
                   </el-checkbox>
                 </div>
-                <div class="col">{{ item.code }}</div>
+                <div class="col blue"
+                  style="cursor:pointer"
+                  @click="$openUrl('/materialManage/detail?id='+item.plan_id)">{{ item.code }}</div>
                 <div class="col">{{ item.order_code}}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
@@ -752,13 +827,13 @@
         <template v-else-if="clientType===3">
           <div class="filterCtn">
             <div class="elCtn">
-              <el-input v-model="materialOrderFilter.keyword"
+              <el-input v-model="materialProcessFilter.keyword"
                 placeholder="筛选订购单号/订单号"
                 @keydown.enter.native="getBill"></el-input>
             </div>
             <div class="elCtn">
               <el-select @change="getBill"
-                v-model="materialOrderFilter.user_id"
+                v-model="materialProcessFilter.user_id"
                 placeholder="筛选创建人"
                 clearable>
                 <el-option v-for="item in userList"
@@ -768,7 +843,7 @@
               </el-select>
             </div>
             <div class="elCtn">
-              <el-date-picker v-model="materialOrderFilter.date"
+              <el-date-picker v-model="materialProcessFilter.date"
                 type="daterange"
                 align="right"
                 unlink-panels
@@ -780,8 +855,72 @@
                 value-format="yyyy-MM-dd">
               </el-date-picker>
             </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="materialProcessFilter.is_check"
+                placeholder="筛选审核状态">
+                <el-option value="null"
+                  label="全部"></el-option>
+                <el-option value="1"
+                  label="已审核"></el-option>
+                <el-option value="2"
+                  label="待审核"></el-option>
+              </el-select>
+            </div>
             <div class="btn borderBtn"
               @click="reset">重置</div>
+          </div>
+          <div class="filterCtn">
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="materialProcessFilter.group_id"
+                placeholder="筛选负责小组"
+                clearable>
+                <el-option v-for="item in groupList"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.name"></el-option>
+              </el-select>
+            </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="materialProcessFilter.has_invoice"
+                placeholder="筛选开票状态"
+                clearable>
+                <el-option label="全部"
+                  value="null"></el-option>
+                <el-option label="已开票"
+                  value="1"></el-option>
+                <el-option label="待开票"
+                  value="2"></el-option>
+              </el-select>
+            </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="materialProcessFilter.has_pay"
+                placeholder="筛选付款状态"
+                clearable>
+                <el-option label="全部"
+                  value="null"></el-option>
+                <el-option label="已付款"
+                  value="1"></el-option>
+                <el-option label="待付款"
+                  value="2"></el-option>
+              </el-select>
+            </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="materialProcessFilter.has_deduct"
+                placeholder="筛选扣款状态"
+                clearable>
+                <el-option label="全部"
+                  value="null"></el-option>
+                <el-option label="已扣款"
+                  value="1"></el-option>
+                <el-option label="待扣款"
+                  value="2"></el-option>
+              </el-select>
+            </div>
           </div>
           <div class="filterCtn clearfix">
             <div class="label">已勾选单据：</div>
@@ -860,7 +999,9 @@
                   <el-checkbox v-model="item.checked"
                     @change="(ev)=>getCheckInfo(ev,item,materialProcessCheckList)"></el-checkbox>
                 </div>
-                <div class="col">{{ item.code }}</div>
+                <div class="col blue"
+                  style="cursor:pointer"
+                  @click="$openUrl('/materialManage/detail?id='+item.plan_id)">{{ item.code }}</div>
                 <div class="col">{{item.order_code}}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
@@ -1044,8 +1185,72 @@
                 value-format="yyyy-MM-dd">
               </el-date-picker>
             </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="productionPlanFilter.is_check"
+                placeholder="筛选审核状态">
+                <el-option value="null"
+                  label="全部"></el-option>
+                <el-option value="1"
+                  label="已审核"></el-option>
+                <el-option value="2"
+                  label="待审核"></el-option>
+              </el-select>
+            </div>
             <div class="btn borderBtn"
               @click="reset">重置</div>
+          </div>
+          <div class="filterCtn">
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="productionPlanFilter.group_id"
+                placeholder="筛选负责小组"
+                clearable>
+                <el-option v-for="item in groupList"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.name"></el-option>
+              </el-select>
+            </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="productionPlanFilter.has_invoice"
+                placeholder="筛选开票状态"
+                clearable>
+                <el-option label="全部"
+                  value="null"></el-option>
+                <el-option label="已开票"
+                  value="1"></el-option>
+                <el-option label="待开票"
+                  value="2"></el-option>
+              </el-select>
+            </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="productionPlanFilter.has_pay"
+                placeholder="筛选付款状态"
+                clearable>
+                <el-option label="全部"
+                  value="null"></el-option>
+                <el-option label="已付款"
+                  value="1"></el-option>
+                <el-option label="待付款"
+                  value="2"></el-option>
+              </el-select>
+            </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="productionPlanFilter.has_deduct"
+                placeholder="筛选扣款状态"
+                clearable>
+                <el-option label="全部"
+                  value="null"></el-option>
+                <el-option label="已扣款"
+                  value="1"></el-option>
+                <el-option label="待扣款"
+                  value="2"></el-option>
+              </el-select>
+            </div>
           </div>
           <div class="filterCtn clearfix">
             <div class="label">已勾选单据：</div>
@@ -1123,7 +1328,9 @@
                   <el-checkbox v-model="item.checked"
                     @change="(ev)=>getCheckInfo(ev,item,productionPlanCheckList)"></el-checkbox>
                 </div>
-                <div class="col">{{ item.code }}</div>
+                <div class="col blue"
+                  style="cursor:pointer"
+                  @click="$openUrl('/productionPlan/detail?id='+item.order_id+'&sampleOrderIndex='+item.top_order_id)">{{ item.code }}</div>
                 <div class="col">{{item.order_code}}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
@@ -1340,8 +1547,72 @@
                 value-format="yyyy-MM-dd">
               </el-date-picker>
             </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="packOrderFilter.is_check"
+                placeholder="筛选审核状态">
+                <el-option value="null"
+                  label="全部"></el-option>
+                <el-option value="1"
+                  label="已审核"></el-option>
+                <el-option value="2"
+                  label="待审核"></el-option>
+              </el-select>
+            </div>
             <div class="btn borderBtn"
               @click="reset">重置</div>
+          </div>
+          <div class="filterCtn">
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="packOrderFilter.group_id"
+                placeholder="筛选负责小组"
+                clearable>
+                <el-option v-for="item in groupList"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.name"></el-option>
+              </el-select>
+            </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="packOrderFilter.has_invoice"
+                placeholder="筛选开票状态"
+                clearable>
+                <el-option label="全部"
+                  value="null"></el-option>
+                <el-option label="已开票"
+                  value="1"></el-option>
+                <el-option label="待开票"
+                  value="2"></el-option>
+              </el-select>
+            </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="packOrderFilter.has_pay"
+                placeholder="筛选付款状态"
+                clearable>
+                <el-option label="全部"
+                  value="null"></el-option>
+                <el-option label="已付款"
+                  value="1"></el-option>
+                <el-option label="待付款"
+                  value="2"></el-option>
+              </el-select>
+            </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="packOrderFilter.has_deduct"
+                placeholder="筛选扣款状态"
+                clearable>
+                <el-option label="全部"
+                  value="null"></el-option>
+                <el-option label="已扣款"
+                  value="1"></el-option>
+                <el-option label="待扣款"
+                  value="2"></el-option>
+              </el-select>
+            </div>
           </div>
           <div class="filterCtn clearfix">
             <div class="label">已勾选单据：</div>
@@ -1418,7 +1689,9 @@
                   <el-checkbox v-model="item.checked"
                     @change="(ev)=>getCheckInfo(ev,item,packOrderCheckList)"></el-checkbox>
                 </div>
-                <div class="col">{{ item.code }}</div>
+                <div class="col blue"
+                  style="cursor:pointer"
+                  @click="$openUrl('/packManage/detail?id=' + item.top_order_id)">{{ item.code }}</div>
                 <div class="col">{{item.order_code}}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
@@ -1535,8 +1808,72 @@
                 value-format="yyyy-MM-dd">
               </el-date-picker>
             </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="boxManageFilter.is_check"
+                placeholder="筛选审核状态">
+                <el-option value="null"
+                  label="全部"></el-option>
+                <el-option value="1"
+                  label="已审核"></el-option>
+                <el-option value="2"
+                  label="待审核"></el-option>
+              </el-select>
+            </div>
             <div class="btn borderBtn"
               @click="reset">重置</div>
+          </div>
+          <div class="filterCtn">
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="boxManageFilter.group_id"
+                placeholder="筛选负责小组"
+                clearable>
+                <el-option v-for="item in groupList"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.name"></el-option>
+              </el-select>
+            </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="boxManageFilter.has_invoice"
+                placeholder="筛选开票状态"
+                clearable>
+                <el-option label="全部"
+                  value="null"></el-option>
+                <el-option label="已开票"
+                  value="1"></el-option>
+                <el-option label="待开票"
+                  value="2"></el-option>
+              </el-select>
+            </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="boxManageFilter.has_pay"
+                placeholder="筛选付款状态"
+                clearable>
+                <el-option label="全部"
+                  value="null"></el-option>
+                <el-option label="已付款"
+                  value="1"></el-option>
+                <el-option label="待付款"
+                  value="2"></el-option>
+              </el-select>
+            </div>
+            <div class="elCtn">
+              <el-select @change="getBill"
+                v-model="boxManageFilter.has_deduct"
+                placeholder="筛选扣款状态"
+                clearable>
+                <el-option label="全部"
+                  value="null"></el-option>
+                <el-option label="已扣款"
+                  value="1"></el-option>
+                <el-option label="待扣款"
+                  value="2"></el-option>
+              </el-select>
+            </div>
           </div>
           <div class="filterCtn clearfix">
             <div class="label">已勾选单据：</div>
@@ -1613,7 +1950,9 @@
                   <el-checkbox v-model="item.checked"
                     @change="(ev)=>getCheckInfo(ev,item,boxManageCheckList)"></el-checkbox>
                 </div>
-                <div class="col">{{ item.code }}</div>
+                <div class="col blue"
+                  style="cursor:pointer"
+                  @click="$openUrl('/boxManage/boxDetail?id=' + item.id)">{{ item.code }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_bulk) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
                 <div class="col">
@@ -2281,7 +2620,7 @@
               </el-input>
             </div>
           </div>
-          <div class="row">
+          <!-- <div class="row">
             <div class="label">修改范围：</div>
             <div class="info elCtn">
               <el-radio style="line-height:32px"
@@ -2291,7 +2630,7 @@
                 v-model="updatePriceInfo.client_id"
                 :label="null">所有单位</el-radio>
             </div>
-          </div>
+          </div> -->
         </div>
         <div class="oprCtn">
           <span class="btn borderBtn"
@@ -2327,6 +2666,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      contactsDataFlag: false,
       productDetailId: '',
       productShow: false,
       paymentFlag: false,
@@ -2415,7 +2755,12 @@ export default Vue.extend({
         pushDate: [],
         date: [],
         user_id: '',
-        keyword: ''
+        keyword: '',
+        group_id: '',
+        is_check: '',
+        has_invoice: '',
+        has_deduct: '',
+        has_pay: ''
       },
       materialOrderSts: {
         total_order_number: 0,
@@ -2428,7 +2773,12 @@ export default Vue.extend({
       materialProcessFilter: {
         date: [],
         user_id: '',
-        keyword: ''
+        keyword: '',
+        group_id: '',
+        is_check: '',
+        has_invoice: '',
+        has_deduct: '',
+        has_pay: ''
       },
       materialProcessSts: {
         total_number: 0,
@@ -2442,7 +2792,12 @@ export default Vue.extend({
       productionPlanFilter: {
         date: [],
         user_id: '',
-        keyword: ''
+        keyword: '',
+        group_id: '',
+        is_check: '',
+        has_invoice: '',
+        has_deduct: '',
+        has_pay: ''
       },
       productionPlanSts: {
         total_number: 0,
@@ -2460,11 +2815,25 @@ export default Vue.extend({
       packOrderSts: {
         date: [],
         user_id: '',
-        keyword: ''
+        keyword: '',
+        group_id: '',
+        is_check: '',
+        has_invoice: '',
+        has_deduct: '',
+        has_pay: ''
       },
       packOrderList: [],
       packOrderCheckList: [],
-      boxManageFilter: { date: [], user_id: '', keyword: '' },
+      boxManageFilter: {
+        date: [],
+        user_id: '',
+        keyword: '',
+        group_id: '',
+        is_check: '',
+        has_invoice: '',
+        has_deduct: '',
+        has_pay: ''
+      },
       boxManageSts: {
         total_number: 0,
         total_price: 0
@@ -2500,6 +2869,7 @@ export default Vue.extend({
         纱线原料单位: 2,
         原料加工单位: 3,
         生产织造单位: 4,
+        生产加工单位: 4,
         包装辅料单位: 11,
         运输单位: 13
       }
@@ -2518,8 +2888,17 @@ export default Vue.extend({
           year: this.year
         })
         .then((res) => {
-          console.log(res.data.data)
-          this.clientFinancial = res.data.data
+          if (res.data.status) {
+            this.clientFinancial = res.data.data
+          } else {
+            this.clientFinancial.total_pay_price = 0
+            this.clientFinancial.total_deduct_price = 0
+            this.clientFinancial.total_invoice_price = 0
+            this.clientFinancial.total_plan_number = 0
+            this.clientFinancial.total_plan_price = 0
+            this.clientFinancial.total_real_number = 0
+            this.clientFinancial.total_real_price = 0
+          }
         })
     },
     // 获取不同的单据
@@ -2533,6 +2912,11 @@ export default Vue.extend({
             client_id: Number(this.$route.query.id),
             page: this.listPage,
             limit: 10,
+            group_id: this.materialOrderFilter.gourp_id,
+            is_check: this.materialOrderFilter.is_check,
+            has_invoice: this.materialOrderFilter.has_invoice,
+            has_deduct: this.materialOrderFilter.has_deduct,
+            has_pay: this.materialOrderFilter.has_pay,
             start_time:
               this.materialOrderFilter.date && this.materialOrderFilter.date.length > 0
                 ? this.materialOrderFilter.date[0]
@@ -2562,6 +2946,11 @@ export default Vue.extend({
           .list({
             client_id: Number(this.$route.query.id),
             page: this.listPage,
+            group_id: this.materialProcessFilter.gourp_id,
+            is_check: this.materialProcessFilter.is_check,
+            has_invoice: this.materialProcessFilter.has_invoice,
+            has_deduct: this.materialProcessFilter.has_deduct,
+            has_pay: this.materialProcessFilter.has_pay,
             start_time:
               this.materialProcessFilter.date && this.materialProcessFilter.date.length > 0
                 ? this.materialProcessFilter.date[0]
@@ -2584,6 +2973,11 @@ export default Vue.extend({
           .list({
             client_id: Number(this.$route.query.id),
             page: this.listPage,
+            group_id: this.productionPlanFilter.gourp_id,
+            is_check: this.productionPlanFilter.is_check,
+            has_invoice: this.productionPlanFilter.has_invoice,
+            has_deduct: this.productionPlanFilter.has_deduct,
+            has_pay: this.productionPlanFilter.has_pay,
             start_time:
               this.productionPlanFilter.date && this.productionPlanFilter.date.length > 0
                 ? this.productionPlanFilter.date[0]
@@ -2606,6 +3000,11 @@ export default Vue.extend({
           .orderList({
             client_id: Number(this.$route.query.id),
             page: this.listPage,
+            group_id: this.packOrderFilter.gourp_id,
+            is_check: this.packOrderFilter.is_check,
+            has_invoice: this.packOrderFilter.has_invoice,
+            has_deduct: this.packOrderFilter.has_deduct,
+            has_pay: this.packOrderFilter.has_pay,
             start_time:
               this.packOrderFilter.date && this.packOrderFilter.date.length > 0 ? this.packOrderFilter.date[0] : '',
             end_time:
@@ -2624,6 +3023,11 @@ export default Vue.extend({
           .list({
             client_id: Number(this.$route.query.id),
             page: this.listPage,
+            group_id: this.boxManageFilter.gourp_id,
+            is_check: this.boxManageFilter.is_check,
+            has_invoice: this.boxManageFilter.has_invoice,
+            has_deduct: this.boxManageFilter.has_deduct,
+            has_pay: this.boxManageFilter.has_pay,
             start_time:
               this.boxManageFilter.date && this.boxManageFilter.date.length > 0 ? this.boxManageFilter.date[0] : '',
             end_time:

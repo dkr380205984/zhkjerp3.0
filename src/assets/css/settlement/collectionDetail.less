@@ -5,81 +5,109 @@
 @import '../buttonList.less';
 @import '../table.less';
 @import '../popup.less';
-#collectionDetail{
-  .filterCtn{
-    .label{
+
+#collectionDetail {
+  .filterCtn {
+    .label {
       display: inline-block;
       line-height: 32px;
     }
-    .check{
+
+    .check {
       width: 160px;
     }
-    .buttonList{
+
+    .buttonList {
       margin-right: 0;
     }
+
+    &.clearfix {
+      .label {
+        margin-bottom: 8px;
+      }
+
+      .elCtn {
+        margin-bottom: 8px;
+        width: 200px;
+      }
+    }
   }
-  .specialInfo{
+
+  .specialInfo {
     flex-direction: column;
-    .col{
-      .label{
+
+    .col {
+      .label {
         font-size: 14px;
       }
-      .info{
+
+      .info {
         font-size: 14px;
       }
     }
   }
-  .specialCtn{
+
+  .specialCtn {
     display: block;
     padding: 20px 32px;
-    .row{
+
+    .row {
       display: flex;
       margin: 12px 0;
       flex: 1;
-      .col{
+
+      .col {
         flex: 1;
-        height:116px;
+        height: 116px;
         margin-right: 12px;
         display: flex;
-       .infoCtn{
+
+        .infoCtn {
           border-radius: 4px;
           flex: 1;
           background: #F0F2F5;
           display: flex;
           flex-direction: column;
           padding: 20px;
-          .title{
+
+          .title {
             font-size: 20px;
             font-weight: bold;
             margin-bottom: 20px;
           }
-          .number{
+
+          .number {
             font-size: 24px;
             font-weight: bold;
-            .unit{
+
+            .unit {
               font-size: 14px;
               color: @font45;
               font-weight: normal;
               margin-left: 6px;
             }
           }
-       }
-        &:nth-last-child(1){
+        }
+
+        &:nth-last-child(1) {
           margin-right: 0;
         }
-        .row{
+
+        .row {
           margin: 0;
         }
       }
     }
   }
-  .popup{
-    .elCtn{
+
+  .popup {
+    .elCtn {
       width: 100%;
       margin-bottom: 12px;
     }
-    .elTitle{
-      margin:12px 0;
+
+    .elTitle {
+      margin: 12px 0;
     }
   }
 }
