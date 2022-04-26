@@ -34,14 +34,24 @@
           <div class="tableCtn">
             <div class="tbody hasTop">
               <div class="trow">
-                <div class="tcol bgGray headTitle">计划单号</div>
-                <div class="tcol">{{materialOrderInfo.plan_code || '暂无' }}</div>
                 <div class="tcol bgGray headTitle">采购单号</div>
                 <div class="tcol">{{materialOrderInfo.code || '暂无' }}</div>
+                <div class="tcol bgGray headTitle">订单号</div>
+                <div class="tcol">{{materialOrderInfo.order_code || '暂无' }}</div>
+                <div class="tcol bgGray headTitle">联系人</div>
+                <div class="tcol">{{materialOrderInfo.contacts_name}}</div>
+                <div class="tcol bgGray headTitle">联系电话</div>
+                <div class="tcol">{{materialOrderInfo.contacts_phone}}</div>
+              </div>
+              <div class="trow">
+                <div class="tcol bgGray headTitle">计划单号</div>
+                <div class="tcol">{{materialOrderInfo.plan_code || '暂无' }}</div>
                 <div class="tcol bgGray headTitle">下单日期</div>
                 <div class="tcol">{{ materialOrderInfo.order_time || '暂无' }}</div>
                 <div class="tcol bgGray headTitle">交货日期</div>
                 <div class="tcol">{{ materialOrderInfo.delivery_time || '暂无' }}</div>
+                <div class="tcol bgGray headTitle"></div>
+                <div class="tcol"></div>
               </div>
               <div class="trow">
                 <div class="tcol bgGray headTitle">采购单位</div>
@@ -50,8 +60,8 @@
                 <div class="tcol">{{materialOrderInfo.total_number}}</div>
                 <div class="tcol bgGray headTitle">订购总额</div>
                 <div class="tcol">{{materialOrderInfo.total_price}}元</div>
-                <div class="tcol bgGray headTitle">联系电话</div>
-                <div class="tcol">{{materialOrderInfo.contacts_phone}}</div>
+                <div class="tcol bgGray headTitle"></div>
+                <div class="tcol"></div>
               </div>
             </div>
           </div>
