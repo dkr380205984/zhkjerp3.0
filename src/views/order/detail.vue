@@ -846,7 +846,7 @@
                   <div class="tcol">-</div>
                   <div class="tcol blue">{{item.quote_info.price}}{{orderInfo.settle_unit}}</div>
                   <div class="tcol blue">{{item.quote_info.total_price}}{{orderInfo.settle_unit}}</div>
-                  <div class="tcol green"
+                  <div class="tcol"
                     :class="{'red':item.quote_info.change.indexOf('上浮')!==-1,'green':item.quote_info.change.indexOf('下降')!==-1}">{{item.quote_info.change}}</div>
                 </div>
               </div>
@@ -1030,7 +1030,7 @@
                       <div class="tcol blue">-</div>
                       <div class="tcol blue">{{financialInfo.material.material.gather.quote_info.pre_product_price}}元</div>
                       <div class="tcol blue">{{financialInfo.material.material.gather.quote_info.number}}g</div>
-                      <div class="tcol green"
+                      <div class="tcol"
                         :class="{'red':financialInfo.material.material.gather.quote_info.change.indexOf('上浮')!==-1,'green':financialInfo.material.material.gather.quote_info.change.indexOf('下降')!==-1}">{{financialInfo.material.material.gather.quote_info.change}}</div>
                     </div>
                   </div>
@@ -1185,7 +1185,7 @@
                       <div class="tcol">-</div>
                       <div class="tcol blue">-</div>
                       <div class="tcol blue">{{financialInfo.material.decorate.gather.quote_info.pre_product_price}}元</div>
-                      <div class="tcol green"
+                      <div class="tcol"
                         :class="{'red':financialInfo.material.decorate.gather.quote_info.change.indexOf('上浮')!==-1,'green':financialInfo.material.decorate.gather.quote_info.change.indexOf('下降')!==-1}">{{financialInfo.material.decorate.gather.quote_info.change}}</div>
                     </div>
                   </div>
@@ -1291,7 +1291,7 @@
                       <div class="tcol blue">{{item.quote_info.pre_product_price}}元</div>
                     </div>
                   </div>
-                  <div class="tcol green"
+                  <div class="tcol"
                     :class="{'red':item.quote_info.change.indexOf('上浮')!==-1,'green':item.quote_info.change.indexOf('下降')!==-1}">{{item.quote_info.change}}</div>
                 </div>
               </div>
@@ -1383,7 +1383,7 @@
                       <div class="tcol blue">{{financialInfo.pack.gather.quote_info.quote_total_price}}元</div>
                       <div class="tcol blue">-</div>
                       <div class="tcol blue">{{financialInfo.pack.gather.quote_info.pre_product_price}}元</div>
-                      <div class="tcol green"
+                      <div class="tcol"
                         :class="{'red':financialInfo.pack.gather.quote_info.change.indexOf('上浮')!==-1,'green':financialInfo.pack.gather.quote_info.change.indexOf('下降')!==-1}">{{financialInfo.pack.gather.quote_info.change}}</div>
                       <div class="tcol"></div>
                     </div>

@@ -20,7 +20,7 @@
               <div class="trow">
                 <div class="tcol">产品编号</div>
                 <div class="tcol">产品图片</div>
-                <div class="tcol">下单数量</div>
+                <div class="tcol">批次/订单总数</div>
                 <div class="tcol noPad"
                   style="flex:3">
                   <div class="trow">
@@ -44,7 +44,7 @@
                 <div class="tcol">{{item.client_name}}</div>
                 <div class="tcol">{{item.order_time}}</div>
                 <div class="tcol"
-                  :class="item.status|orderStatusClassFilter">{{item.status|orderStatusFilter}}</div>
+                  :class="item.status|orderBatchClassFilter">{{item.status|orderBatchFilter}}</div>
                 <div class="tcol">{{item.user_name}}</div>
                 <div class="tcol noPad"
                   style="flex:6">
@@ -65,7 +65,7 @@
                         </el-image>
                       </div>
                     </div>
-                    <div class="tcol">{{itemPro.number}}</div>
+                    <div class="tcol">{{itemPro.number}}/{{itemPro.total_number||0}}</div>
                     <div class="tcol noPad"
                       style="flex:3">
                       <div class="trow"
@@ -300,11 +300,14 @@ export default Vue.extend({
   watch: {
     'listStore.length'(val) {
       if (this.getOrderCompleteFlag) {
-        if (val === 5) {
+        if (val >= 5) {
           this.list = this.list.concat(this.listStore.slice(0, val - 1))
           this.listStore = this.listStore.slice(val - 1)
         }
-      } else {
+      }
+    },
+    getOrderCompleteFlag(val) {
+      if (val) {
         this.list = this.list.concat(this.listNew)
         this.listNew = []
       }
@@ -361,18 +364,24 @@ export default Vue.extend({
         .then((res) => {
           if (res.data.status) {
             this.totalOrderNum = res.data.data.total
+            // 如果总数本来就很少就直接赋值
+            if (this.totalOrderNum < 20) {
+              this.list = res.data.data.items
+              this.getOrderCompleteFlag = true
+            }
             if (this.totalOrderNum > this.orderPage * 20) {
               this.orderPage++
               if (this.list.length === 0) {
                 this.list = res.data.data.items
               } else {
-                this.listNew = res.data.data.items
+                this.listNew = this.listNew.concat(res.data.data.items)
               }
               this.getOrderList()
             } else {
+              this.listNew = this.listNew.concat(res.data.data.items)
               this.getOrderCompleteFlag = true
             }
-            if (!this.timer && Number(this.totalOrderNum) > 10) {
+            if (!this.timer && Number(this.totalOrderNum) > 10 && this.getOrderCompleteFlag) {
               this.timer = setInterval(() => {
                 this.listStore.push(this.list[0])
                 this.list.shift()
@@ -386,6 +395,9 @@ export default Vue.extend({
       this.listNew = [] // 新增区
       this.listStore = [] // 缓冲区
       this.appList = []
+      this.showOrder = false
+      this.appPage = 1
+      this.orderPage = 1
       this.getOrderList()
       this.getAppList()
       this.getBatchLog()
@@ -405,7 +417,7 @@ export default Vue.extend({
               this.appPage++
               this.getAppList()
             }
-            this.appList = this.appList.concat(res.data.data.items)
+            this.appList = this.appList.concat(res.data.data)
             if (!this.appTimer && this.totalAppNum > 5) {
               this.appTimer = setInterval(() => {
                 if (this.appListPage * 5 < this.totalAppNum) {
@@ -483,7 +495,7 @@ export default Vue.extend({
       }
     ])
     this.getOrderList()
-    // this.getAppList()
+    this.getAppList()
     this.getBatchLog()
     setInterval(() => {
       this.time = this.getTime()
