@@ -36,16 +36,16 @@
               <div class="tcol"
                 style="flex:1.6">单据编号</div>
               <div class="tcol noPad"
-                style="flex:4">
+                style="flex:6">
                 <div class="trow">
                   <div class="tcol">纱线名称</div>
                   <div class="tcol">颜色</div>
                   <div class="tcol">属性</div>
                   <div class="tcol">订购数量</div>
-
+                  <div class="tcol">订购单价</div>
+                  <div class="tcol">入库数量</div>
                 </div>
               </div>
-              <div class="tcol">入库数量</div>
               <div class="tcol">额外费用</div>
               <div class="tcol">日期</div>
               <div class="tcol">备注信息</div>
@@ -54,12 +54,12 @@
           </div>
           <div class="tbody">
             <div class="trow"
-              v-for="item in materialOrderList"
+              v-for="item in materialOrderListShow"
               :key="item.id">
               <div class="tcol"
                 style="flex:1.6">{{item.code}}</div>
               <div class="tcol noPad"
-                style="flex:4">
+                style="flex:6">
                 <div class="trow"
                   v-for="itemChild in item.info_data"
                   :key="itemChild.id">
@@ -67,9 +67,11 @@
                   <div class="tcol">{{itemChild.material_color}}</div>
                   <div class="tcol">{{itemChild.attribute}}</div>
                   <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
+                  <div class="tcol">{{itemChild.price||0}}元</div>
+                  <div class="tcol">{{itemChild.final_push_number || 0}}{{itemChild.unit}}</div>
                 </div>
               </div>
-              <div class="tcol">{{item.final_push_number}}{{item.unit}}</div>
+
               <div class="tcol">
                 <others-fee-data :data="item.others_fee_data"></others-fee-data>
               </div>
@@ -84,67 +86,118 @@
             </div>
             <div class="trow noData"
               v-if="materialOrderList.length===0">暂无数据</div>
+            <div class="trow">
+              <div class="tcol green"
+                style="flex:1.6">合计:</div>
+              <div class="tcol noPad"
+                style="flex:6">
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol"></div>
+                  <div class="tcol"></div>
+                  <div class="tcol green">{{$toFixed(materialOrderTotal.totalNum/1000)}}吨</div>
+                  <div class="tcol green">{{$toFixed(materialOrderTotal.totalPrice/10000)}}万元</div>
+                  <div class="tcol green">{{$toFixed(materialOrderTotal.totalPush/1000)}}吨</div>
+                </div>
+              </div>
+              <div class="tcol"></div>
+              <div class="tcol"></div>
+              <div class="tcol"></div>
+              <div class="tcol"></div>
+            </div>
           </div>
         </div>
-        <!-- <div class="pageCtn">
+        <div class="pageCtn">
           <el-pagination background
-            :page-size="5"
+            :page-size="10"
             layout="prev, pager, next"
-            :total="storeTotal"
-            :current-page.sync="storePage">
+            :total="orderTotal"
+            :current-page.sync="orderPage">
           </el-pagination>
-        </div> -->
+        </div>
       </div>
     </div>
     <div class="module">
       <div class="titleCtn">
         <div class="title">入库日志</div>
       </div>
-      <div class="tableCtn">
-        <div class="thead">
-          <div class="trow">
-            <div class="tcol">单据编号</div>
-            <div class="tcol">入库仓库</div>
-            <div class="tcol"
-              style="flex:6">
-              <div class="trow">
-                <div class="tcol">原料名称</div>
-                <div class="tcol">入库颜色</div>
-                <div class="tcol">入库属性</div>
-                <div class="tcol">批号/缸号/色号</div>
-                <div class="tcol">入库数量</div>
-                <div class="tcol">入库单价</div>
+      <div class="listCtn">
+        <div class="tableCtn noPad">
+          <div class="thead">
+            <div class="trow">
+              <div class="tcol">单据编号</div>
+              <div class="tcol">入库仓库</div>
+              <div class="tcol"
+                style="flex:6">
+                <div class="trow">
+                  <div class="tcol">原料名称</div>
+                  <div class="tcol">入库颜色</div>
+                  <div class="tcol">入库属性</div>
+                  <div class="tcol">批号/缸号/色号</div>
+                  <div class="tcol">入库数量</div>
+                  <div class="tcol">入库单价</div>
+                </div>
+              </div>
+              <div class="tcol">创建人</div>
+              <div class="tcol">创建日期</div>
+              <div class="tcol">操作</div>
+            </div>
+          </div>
+          <div class="tbody">
+            <div class="trow"
+              v-for="(item,index) in materialStockListShow"
+              :key="index">
+              <div class="tcol">{{item.code}}</div>
+              <div class="tcol">{{item.store}}/{{item.secondary_store}}</div>
+              <div class="tcol"
+                style="flex:6">
+                <div class="trow"
+                  v-for="(itemChild,indexChild) in item.info_data"
+                  :key="indexChild">
+                  <div class="tcol">{{itemChild.material_name}}</div>
+                  <div class="tcol">{{itemChild.material_color}}</div>
+                  <div class="tcol">{{itemChild.attribute}}</div>
+                  <div class="tcol">{{itemChild.batch_code}}/{{itemChild.vat_code}}/{{itemChild.color_code}}</div>
+                  <div class="tcol">{{itemChild.number}}kg</div>
+                  <div class="tcol">{{itemChild.price||0}}元</div>
+                </div>
+              </div>
+              <div class="tcol">{{item.user_name}}</div>
+              <div class="tcol">{{item.created_at}}</div>
+              <div class="tcol oprCtn">
+                <div class="opr hoverRed"
+                  @click="deleteMaterialStock(item.id)">删除</div>
               </div>
             </div>
-            <div class="tcol">操作</div>
+            <div class="trow noData"
+              v-if="materialStockList.length===0">暂无数据</div>
+            <div class="trow">
+              <div class="tcol green">合计:</div>
+              <div class="tcol"></div>
+              <div class="tcol"
+                style="flex:6">
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol"></div>
+                  <div class="tcol"></div>
+                  <div class="tcol"></div>
+                  <div class="tcol green">{{$toFixed(materialStockTotal.totalNum/1000)}}吨</div>
+                  <div class="tcol green">{{$toFixed(materialStockTotal.totalPrice/10000)}}万元</div>
+                </div>
+              </div>
+              <div class="tcol"></div>
+              <div class="tcol"></div>
+              <div class="tcol"></div>
+            </div>
           </div>
         </div>
-        <div class="tbody">
-          <div class="trow"
-            v-for="(item,index) in materialStockList"
-            :key="index">
-            <div class="tcol">{{item.code}}</div>
-            <div class="tcol">{{item.store}}/{{item.secondary_store}}</div>
-            <div class="tcol"
-              style="flex:6">
-              <div class="trow"
-                v-for="(itemChild,indexChild) in item.info_data"
-                :key="indexChild">
-                <div class="tcol">{{itemChild.material_name}}</div>
-                <div class="tcol">{{itemChild.material_color}}</div>
-                <div class="tcol">{{itemChild.attribute}}</div>
-                <div class="tcol">{{itemChild.batch_code}}/{{itemChild.vat_code}}/{{itemChild.color_code}}</div>
-                <div class="tcol">{{itemChild.number}}kg</div>
-                <div class="tcol">{{itemChild.price||0}}元</div>
-              </div>
-            </div>
-            <div class="tcol oprCtn">
-              <div class="opr hoverRed"
-                @click="deleteMaterialStock(item.id)">删除</div>
-            </div>
-          </div>
-          <div class="trow noData"
-            v-if="materialStockList.length===0">暂无数据</div>
+        <div class="pageCtn">
+          <el-pagination background
+            :page-size="10"
+            layout="prev, pager, next"
+            :total="storeTotal"
+            :current-page.sync="storePage">
+          </el-pagination>
         </div>
       </div>
     </div>
@@ -159,7 +212,7 @@
               v-model="date"
               value-format="yyyy-MM"
               type="month"
-              placeholder="选择月">
+              placeholder="选择月份">
             </el-date-picker>
           </div>
         </div>
@@ -169,9 +222,7 @@
               <div class="tcol">物料名称</div>
               <div class="tcol">物料颜色</div>
               <div class="tcol">物料属性</div>
-              <div class="tcol">入库单价</div>
               <div class="tcol">入库数量</div>
-              <div class="tcol">总价</div>
             </div>
           </div>
           <div class="tbody">
@@ -181,12 +232,17 @@
               <div class="tcol">{{item.material_name}}</div>
               <div class="tcol">{{item.material_color}}</div>
               <div class="tcol">{{item.attribute}}</div>
-              <div class="tcol">{{item.price}}元</div>
               <div class="tcol">{{item.number}}kg</div>
               <div class="tcol">{{item.total_price}}元</div>
             </div>
             <div class="trow noData"
               v-if="materialStsList.length===0">暂无数据</div>
+            <div class="trow">
+              <div class="tcol green">合计:</div>
+              <div class="tcol"></div>
+              <div class="tcol"></div>
+              <div class="tcol green">{{$toFixed(materialStsTotal/1000)}}吨</div>
+            </div>
           </div>
         </div>
       </div>
@@ -231,8 +287,8 @@
                   <div class="info elCtn">
                     <el-date-picker style="width:100%"
                       placeholder="请选择时间"
-                      type="month"
-                      value-format="yyyy-MM"
+                      type="date"
+                      value-format="yyyy-MM-dd"
                       v-model="materialPlanOrderInfo.order_time"></el-date-picker>
                   </div>
                 </div>
@@ -615,6 +671,10 @@ export default Vue.extend({
         total_number: '',
         desc: ''
       },
+      storePage: 1,
+      storeTotal: 0,
+      orderPage: 1,
+      orderTotal: 1,
       materialOrderList: [],
       materialPlanOrderInfo: {
         material_type: 1,
@@ -677,10 +737,26 @@ export default Vue.extend({
       },
       materialStockList: [],
       materialStsList: [],
-      date: ''
+      date: '',
+      materialOrderTotal: {
+        totalNum: 0,
+        totalPrice: 0,
+        totalPush: 0
+      },
+      materialStockTotal: {
+        totalNum: 0,
+        totalPrice: 0
+      },
+      materialStsTotal: 0
     }
   },
   computed: {
+    materialStockListShow(): any[] {
+      return this.materialStockList.slice((this.storePage - 1) * 10, this.storePage * 10)
+    },
+    materialOrderListShow(): any[] {
+      return this.materialOrderList.slice((this.orderPage - 1) * 10, this.orderPage * 10)
+    },
     yarnTypeList(): CascaderInfo[] {
       return this.$store.state.api.yarnType.arr.filter(
         (item: any) => item.value === this.materialPlanOrderDetail.material_type
@@ -727,8 +803,59 @@ export default Vue.extend({
         })
       ]).then((res) => {
         this.materialOrderList = res[0].data.data
+        this.materialOrderTotal = res[0].data.data.reduce(
+          (total: any, cur: any) => {
+            return {
+              totalNum:
+                total.totalNum +
+                cur.info_data.reduce((totalChild: any, curChild: any) => {
+                  return totalChild + Number(curChild.number)
+                }, 0),
+              totalPrice:
+                total.totalPrice +
+                cur.info_data.reduce((totalChild: any, curChild: any) => {
+                  return totalChild + (Number(curChild.price) || 0) * Number(curChild.number)
+                }, 0),
+              totalPush:
+                total.totalPush +
+                cur.info_data.reduce((totalChild: any, curChild: any) => {
+                  return totalChild + Number(curChild.final_push_number)
+                }, 0)
+            }
+          },
+          {
+            totalNum: 0,
+            totalPrice: 0,
+            totalPush: 0
+          }
+        )
+        this.orderTotal = this.materialOrderList.length
         this.materialStockList = res[1].data.data
+        this.materialStockTotal = res[1].data.data.reduce(
+          (total: any, cur: any) => {
+            return {
+              totalNum:
+                total.totalNum +
+                cur.info_data.reduce((totalChild: any, curChild: any) => {
+                  return totalChild + Number(curChild.number)
+                }, 0),
+              totalPrice:
+                total.totalPrice +
+                cur.info_data.reduce((totalChild: any, curChild: any) => {
+                  return totalChild + (Number(curChild.price) || 0) * Number(curChild.number)
+                }, 0)
+            }
+          },
+          {
+            totalNum: 0,
+            totalPrice: 0
+          }
+        )
+        this.storeTotal = this.materialStockList.length
         this.materialStsList = res[2].data.data
+        this.materialStsTotal = res[2].data.data.reduce((total: any, cur: any) => {
+          return total + Number(cur.number)
+        }, 0)
         this.loading = false
       })
     },
@@ -744,11 +871,10 @@ export default Vue.extend({
       }
     },
     getMatSts() {
-      console.log(this.date)
       materialPlanOrder
         .stockSts({
-          year: this.date.split('-')[0],
-          month: this.date.split('-')[1],
+          year: new Date().getFullYear(),
+          month: new Date().getMonth() + 1,
           reserve_id: Number(this.$route.query.id)
         })
         .then((res) => {
@@ -848,18 +974,26 @@ export default Vue.extend({
       info.attribute = finded!.attribute as string
     },
     saveMaterialStock() {
-      const formCheck = this.materialStockInfo.info_data.some((item) => {
-        return this.$formCheck(item, [
+      const formCheck =
+        this.$formCheck(this.materialStockInfo, [
           {
-            key: 'rel_doc_info_id',
-            errMsg: '请选择单据物料'
-          },
-          {
-            key: 'material_id',
-            errMsg: '请选择物料'
+            key: 'tree_data',
+            errMsg: '请选择入库仓库',
+            regNormal: 'checkArr'
           }
-        ])
-      })
+        ]) ||
+        this.materialStockInfo.info_data.some((item) => {
+          return this.$formCheck(item, [
+            {
+              key: 'rel_doc_info_id',
+              errMsg: '请选择单据物料'
+            },
+            {
+              key: 'material_id',
+              errMsg: '请选择物料'
+            }
+          ])
+        })
       if (!formCheck) {
         materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
           if (res.data.status) {
@@ -968,7 +1102,7 @@ export default Vue.extend({
     }
   },
   mounted() {
-    this.date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1)
+    // this.date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1)
     materialPlanOrder
       .detail({
         id: Number(this.$route.query.id)

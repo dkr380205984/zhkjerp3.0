@@ -31,21 +31,15 @@
             <div class="text">{{clientFinancial.client_type_name}}</div>
           </div>
         </div>
-        <div class="row">
-          <div class="col">
-            <div class="label">联系人信息</div>
-            <div class="text blue"
-              style="cursor:pointer"
-              @click="contactsDataFlag=!contactsDataFlag">{{contactsDataFlag?'收起':'展开'}}</div>
-          </div>
-        </div>
         <div class="row"
           v-for="(item,index) in clientFinancial.contacts_data"
-          :key="index"
-          v-show="contactsDataFlag">
+          :key="item.id">
           <div class="col specialInfo">
+            <div class="label"
+              v-if="index===0">联系人信息</div>
             <div class="info">
-              <div class="row">
+              <div class="row"
+                style="margin:0">
                 <div class="col flex3">
                   <div class="label">姓名：</div>
                   <div class="text">{{item.name}}</div>
@@ -54,13 +48,11 @@
                   <div class="label">电话：</div>
                   <div class="text">{{item.phone}}</div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col flex3">
+                <div class="col">
                   <div class="label">职务：</div>
                   <div class="text">{{item.station}}</div>
                 </div>
-                <div class="col flex3">
+                <div class="col">
                   <div class="label">邮箱：</div>
                   <div class="text">{{item.email}}</div>
                 </div>
@@ -97,8 +89,8 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">计划订购数量</span>
-                    <span class="number blue">{{$toFixed(clientFinancial.total_plan_number/1000)}}
-                      <span class="unit">{{$route.query.type==='纱线原料单位'?'吨':'千米'}}</span>
+                    <span class="number blue">{{$route.query.type==='装饰辅料单位'?$toFixed(clientFinancial.total_plan_number/10000):$toFixed(clientFinancial.total_plan_number/1000)}}
+                      <span class="unit">{{$route.query.type==='纱线原料单位'?'吨':$route.query.type==='面料原料单位'?'千米':'万'}}</span>
                     </span>
                   </div>
                 </div>
@@ -118,8 +110,8 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">实际入库数量</span>
-                    <span class="number green">{{$toFixed(clientFinancial.total_real_number/1000)}}
-                      <span class="unit">{{$route.query.type==='纱线原料单位'?'吨':'千米'}}</span>
+                    <span class="number blue">{{$route.query.type==='装饰辅料单位'?$toFixed(clientFinancial.total_real_number/10000):$toFixed(clientFinancial.total_real_number/1000)}}
+                      <span class="unit">{{$route.query.type==='纱线原料单位'?'吨':$route.query.type==='面料原料单位'?'千米':'万'}}</span>
                     </span>
                   </div>
                 </div>
@@ -176,7 +168,7 @@
                   <div class="infoCtn">
                     <span class="title">计划加工数量</span>
                     <span class="number blue">{{$toFixed(clientFinancial.total_plan_number/1000)}}
-                      <span class="unit">{{$route.query.type==='纱线原料单位'?'吨':'千米'}}</span>
+                      <span class="unit">吨或千米</span>
                     </span>
                   </div>
                 </div>
@@ -197,7 +189,7 @@
                   <div class="infoCtn">
                     <span class="title">实际加工数量</span>
                     <span class="number green">{{$toFixed(clientFinancial.total_real_number/1000)}}
-                      <span class="unit">{{$route.query.type==='纱线原料单位'?'吨':'千米'}}</span>
+                      <span class="unit">吨或千米</span>
                     </span>
                   </div>
                 </div>
@@ -275,7 +267,7 @@
                   <div class="infoCtn">
                     <span class="title">实际生产数量</span>
                     <span class="number green">{{$toFixed(clientFinancial.total_real_number/10000)}}
-                      <span class="unit">万</span>
+                      <span class="unit">万件</span>
                     </span>
                   </div>
                 </div>
@@ -284,7 +276,7 @@
                     <span class="title">实际生产总额</span>
                     <span class="number green">
                       {{$toFixed(clientFinancial.total_real_price/10000)}}
-                      <span class="unit">万件</span>
+                      <span class="unit">万元</span>
                     </span>
                   </div>
                 </div>
@@ -408,9 +400,9 @@
               <div class="row">
                 <div class="col">
                   <div class="infoCtn">
-                    <span class="title">计划发货数量</span>
-                    <span class="number blue">{{$toFixed(clientFinancial.total_plan_number/10000)}}
-                      <span class="unit">万件</span>
+                    <span class="title">计划发货立方</span>
+                    <span class="number blue">{{$toFixed(clientFinancial.total_plan_number)}}
+                      <span class="unit">立方</span>
                     </span>
                   </div>
                 </div>
@@ -430,8 +422,8 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">实际发货数量</span>
-                    <span class="number green">{{$toFixed(clientFinancial.total_real_number/10000)}}
-                      <span class="unit">万件</span>
+                    <span class="number green">{{$toFixed(clientFinancial.total_real_number)}}
+                      <span class="unit">立方</span>
                     </span>
                   </div>
                 </div>
@@ -796,7 +788,7 @@
                 合计订购数量：
                 <span class="green"
                   style="font-weight: bold">
-                  {{ (materialOrderSts.total_order_number / 1000).toFixed(2) }} {{$route.query.type==='纱线原料单位'?'吨':'千米'}}
+                  {{  $route.query.type==='装饰辅料单位'?$toFixed(materialOrderSts.total_order_number / 10000):$toFixed(materialOrderSts.total_order_number / 1000) }} <span class="unit">{{$route.query.type==='纱线原料单位'?'吨':$route.query.type==='面料原料单位'?'千米':'万'}}</span>
                 </span>
               </span>
               <span style="line-height: 35px; margin-left: 40px">
@@ -810,7 +802,7 @@
                 合计入库数量：
                 <span class="green"
                   style="font-weight: bold">
-                  {{ (materialOrderSts.total_push_number / 1000).toFixed(2) }} {{$route.query.type==='纱线原料单位'?'吨':'千米'}}
+                  {{ $route.query.type==='装饰辅料单位'?$toFixed(materialOrderSts.total_push_number / 10000):$toFixed(materialOrderSts.total_push_number / 1000) }} <span class="unit">{{$route.query.type==='纱线原料单位'?'吨':$route.query.type==='面料原料单位'?'千米':'万'}}</span>
                 </span>
               </span>
               <span style="line-height: 35px; margin-left: 40px">
@@ -1763,7 +1755,7 @@
                 合计订购数量：
                 <span class="green"
                   style="font-weight: bold">
-                  {{ (packOrderSts.total_number / 10000).toFixed(2) }} 万
+                  {{ (packOrderSts.total_number / 10000).toFixed(2) }} 万个
                 </span>
               </span>
               <span style="line-height: 35px; margin-left: 40px">
@@ -1932,8 +1924,7 @@
                   @change="(ev)=>checkAllInfo(ev,packOrderList,boxManageCheckList)">
                 </el-checkbox>
               </div>
-              <div class="col"
-                style="flex: 1.3">发货单号</div>
+              <div class="col">发货单号</div>
               <div class="col numberWidth">运输立方</div>
               <div class="col numberWidth">运输金额</div>
               <div class="col">审核状态</div>
@@ -2270,6 +2261,13 @@
             </el-date-picker>
           </div>
           <div class="backHoverBlue btn">搜索</div>
+        </div>
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-input v-model="invoiceCode"
+              placeholder="搜索开票号码"
+              @keydown.enter.native="getInvoiceLogList"></el-input>
+          </div>
         </div>
         <div class="list">
           <div class="row title">
@@ -2666,7 +2664,6 @@ export default Vue.extend({
   } {
     return {
       loading: true,
-      contactsDataFlag: false,
       productDetailId: '',
       productShow: false,
       paymentFlag: false,
@@ -2689,6 +2686,7 @@ export default Vue.extend({
       invoiceUpdate: false,
       invoiceOrderCode: '',
       invoiceKeyword: '',
+      invoiceCode: '',
       invoiceDate: [],
       invoiceUser: '',
       deductFlag: false,
@@ -2840,6 +2838,22 @@ export default Vue.extend({
       },
       boxManageList: [],
       boxManageCheckList: [],
+      accessoriesFilter: {
+        date: [],
+        user_id: '',
+        keyword: '',
+        group_id: '',
+        is_check: '',
+        has_invoice: '',
+        has_deduct: '',
+        has_pay: ''
+      },
+      accessoriesSts: {
+        total_number: 0,
+        total_price: 0
+      },
+      accessoriesList: [],
+      accessoriesCheckList: [],
       listLoading: false,
       updatePriceFlag: false,
       updatePriceInfo: {
@@ -2867,6 +2881,7 @@ export default Vue.extend({
       const filter: any = {
         面料原料单位: 2,
         纱线原料单位: 2,
+        装饰辅料单位: 2,
         原料加工单位: 3,
         生产织造单位: 4,
         生产加工单位: 4,
@@ -3168,6 +3183,7 @@ export default Vue.extend({
           client_id: this.$route.query.id as string,
           order_code: this.invoiceOrderCode,
           code: this.invoiceKeyword,
+          invoice_code: this.invoiceCode,
           start_time: this.invoiceDate.length > 1 ? this.invoiceDate[0] : '',
           end_time: this.invoiceDate.length > 1 ? this.invoiceDate[1] : '',
           user_id: this.invoiceUser,
@@ -3214,7 +3230,59 @@ export default Vue.extend({
       this.deductData = data
       this.deductFlag = true
     },
-    reset() {},
+    reset() {
+      this.materialOrderFilter = {
+        date: [],
+        user_id: '',
+        keyword: '',
+        group_id: '',
+        is_check: '',
+        has_invoice: '',
+        has_deduct: '',
+        has_pay: ''
+      }
+      this.materialProcessFilter = {
+        date: [],
+        user_id: '',
+        keyword: '',
+        group_id: '',
+        is_check: '',
+        has_invoice: '',
+        has_deduct: '',
+        has_pay: ''
+      }
+      this.productionPlanFilter = {
+        date: [],
+        user_id: '',
+        keyword: '',
+        group_id: '',
+        is_check: '',
+        has_invoice: '',
+        has_deduct: '',
+        has_pay: ''
+      }
+      this.packOrderFilter = {
+        date: [],
+        user_id: '',
+        keyword: '',
+        group_id: '',
+        is_check: '',
+        has_invoice: '',
+        has_deduct: '',
+        has_pay: ''
+      }
+      this.boxManageFilter = {
+        date: [],
+        user_id: '',
+        keyword: '',
+        group_id: '',
+        is_check: '',
+        has_invoice: '',
+        has_deduct: '',
+        has_pay: ''
+      }
+      this.getBill()
+    },
     init() {
       this.getFinancialDetail()
       this.getBill()

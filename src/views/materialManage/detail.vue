@@ -168,6 +168,11 @@
                 <div class="label">创建人：</div>
                 <div class="text">{{item.user_name}}</div>
               </div>
+              <div class="col flex3">
+                <div class="label">结算状态：</div>
+                <div class="text"
+                  :class="{'green':item.has_invoice===1||item.has_pay===1,'gray':item.has_invoice!==1&&item.has_pay!==1}">{{item.has_invoice===1||item.has_pay===1?'已结算':'待结算'}}</div>
+              </div>
             </div>
             <div class="row">
               <div class="col flex3">
@@ -234,7 +239,7 @@
                   <span class="text">物料加工</span>
                 </div>
                 <div class="btn backHoverOrange"
-                  @click="materialOrderUpdataInfo=$clone(item);materialOrderUpdataFlag=true">
+                  @click="Number($getsessionStorage('has_check'))!==1&&(item.has_invoice===1||item.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):materialOrderUpdataInfo=$clone(item);materialOrderUpdataFlag=true">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
@@ -377,7 +382,7 @@
                     style="flex:1.3">
                     <div class="oprCtn">
                       <div class="opr hoverOrange"
-                        @click="goUpdateMaterialProcess(itemProcess);materialProcessUpdataFlag=true">修改</div>
+                        @click="Number($getsessionStorage('has_check'))!==1&&(itemProcess.has_invoice===1||itemProcess.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):goUpdateMaterialProcess(itemProcess);materialProcessUpdataFlag=true">修改</div>
                       <div class="opr hoverGreen"
                         @click="$openUrl('/materialManage/processPrint?id='+itemProcess.id)">打印</div>
                       <div class="opr hoverRed"
@@ -617,7 +622,7 @@
                     style="flex:1.3">
                     <div class="oprCtn">
                       <div class="opr hoverOrange"
-                        @click="goUpdateMaterialProcess(itemProcess);materialProcessUpdataFlag=true">修改</div>
+                        @click="Number($getsessionStorage('has_check'))!==1&&(itemProcess.has_invoice===1||itemProcess.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):goUpdateMaterialProcess(itemProcess);materialProcessUpdataFlag=true">修改</div>
                       <div class="opr hoverGreen"
                         @click="$openUrl('/materialManage/processPrint?id='+itemProcess.id)">打印</div>
                       <div class="opr hoverRed"
@@ -2776,6 +2781,7 @@ export default Vue.extend({
       ])
       if (!formCheck) {
         this.loading = true
+        this.materialOrderUpdataInfo.total_price = this.totalOrderPrice
         this.materialOrderUpdataInfo.order_id = this.materialPlanInfo.order_id
         materialOrder.update(this.materialOrderUpdataInfo).then((res) => {
           if (res.data.status) {

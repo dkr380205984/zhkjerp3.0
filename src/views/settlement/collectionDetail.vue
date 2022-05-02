@@ -38,7 +38,8 @@
             <div class="label"
               v-if="index===0">联系人信息</div>
             <div class="info">
-              <div class="row">
+              <div class="row"
+                style="margin:0">
                 <div class="col flex3">
                   <div class="label">姓名：</div>
                   <div class="text">{{item.name}}</div>
@@ -47,13 +48,11 @@
                   <div class="label">电话：</div>
                   <div class="text">{{item.phone}}</div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col flex3">
+                <div class="col">
                   <div class="label">职务：</div>
                   <div class="text">{{item.station}}</div>
                 </div>
-                <div class="col flex3">
+                <div class="col">
                   <div class="label">邮箱：</div>
                   <div class="text">{{item.email}}</div>
                 </div>
@@ -858,7 +857,7 @@ export default Vue.extend({
           errVal: '0'
         },
         {
-          key: 'total_number',
+          key: 'total_transport_number',
           name: '发货总数',
           ifShow: true,
           ifLock: false,
@@ -866,7 +865,7 @@ export default Vue.extend({
           errVal: '0'
         },
         {
-          key: 'total_price',
+          key: 'total_transport_price',
           name: '发货总额',
           ifShow: true,
           ifLock: false,

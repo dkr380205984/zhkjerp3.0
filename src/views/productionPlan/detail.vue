@@ -138,8 +138,9 @@
             </div>
             <div class="row">
               <div class="col">
-                <div class="label">加工工序：</div>
-                <div class="text">{{item.process_name}}</div>
+                <div class="label">结算状态：</div>
+                <div class="text"
+                  :class="{'green':item.has_invoice===1||item.has_pay===1,'gray':item.has_invoice!==1&&item.has_pay!==1}">{{item.has_invoice===1||item.has_pay===1?'已结算':'待结算'}}</div>
               </div>
               <div class="col">
                 <div class="label">工序说明：</div>
@@ -230,7 +231,7 @@
                   <span class="text">删除单据</span>
                 </div>
                 <div class="btn backHoverOrange"
-                  @click="goUpdate(item)">
+                  @click="Number($getsessionStorage('has_check'))!==1&&(item.has_invoice===1||item.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):goUpdate(item)">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>

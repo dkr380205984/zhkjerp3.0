@@ -115,9 +115,41 @@
             <div class="col">{{item.alias}}</div>
             <div class="col">{{item.client_type_name}}</div>
             <div class="col">{{$toFixed(item.total_plan_price/10000)}}万元</div>
-            <div class="col">{{$toFixed(item.total_plan_number/10000)}}万</div>
+            <div class="col">
+              <template v-if="item.client_type_name==='纱线原料单位'||item.client_type_name==='原料加工单位'">
+                {{$toFixed(item.total_plan_number/1000)}}吨
+              </template>
+              <template v-else-if="item.client_type_name==='面料原料单位'">
+                {{$toFixed(item.total_plan_number/1000)}}千米
+              </template>
+              <template v-else-if="item.client_type_name==='装饰辅料单位'||item.client_type_name==='包装辅料单位'">
+                {{$toFixed(item.total_plan_number/10000)}}万个
+              </template>
+              <template v-else-if="item.client_type_name==='生产织造单位' || item.client_type_name==='生产加工单位'">
+                {{$toFixed(item.total_plan_number/10000)}}万件
+              </template>
+              <template v-else-if="item.client_type_name==='运输单位'">
+                {{$toFixed(item.total_plan_number)}}立方
+              </template>
+            </div>
             <div class="col">{{$toFixed(item.total_real_price/10000)}}万元</div>
-            <div class="col">{{$toFixed(item.total_real_number/10000)}}万</div>
+            <div class="col">
+              <template v-if="item.client_type_name==='纱线原料单位'||item.client_type_name==='原料加工单位'">
+                {{$toFixed(item.total_real_number/1000)}}吨
+              </template>
+              <template v-else-if="item.client_type_name==='面料原料单位'">
+                {{$toFixed(item.total_real_number/1000)}}千米
+              </template>
+              <template v-else-if="item.client_type_name==='装饰辅料单位'||item.client_type_name==='包装辅料单位'">
+                {{$toFixed(item.total_real_number/10000)}}万个
+              </template>
+              <template v-else-if="item.client_type_name==='生产织造单位' || item.client_type_name==='生产加工单位'">
+                {{$toFixed(item.total_real_number/10000)}}万件
+              </template>
+              <template v-else-if="item.client_type_name==='运输单位'">
+                {{$toFixed(item.total_real_number)}}立方
+              </template>
+            </div>
             <div class="col">{{$toFixed(item.total_invoice_price)}}万元</div>
             <div class="col">{{$toFixed(item.total_pay_price)}}万元</div>
             <div class="col">{{$toFixed(item.total_deduct_price)}}万元</div>
@@ -127,7 +159,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col green">合计：{{clientTypeName}}</div>
+            <div class="col green">合计：</div>
             <div class="col"></div>
             <div class="col"></div>
             <div class="col green bold">{{clientTypeName?$toFixed(totalData.total_plan_price/10000):'-'}}{{clientTypeName?'万元':''}}</div>

@@ -1640,18 +1640,21 @@ export default Vue.extend({
       if (this.materialDetialInfo.length === 0) {
         return 0
       } else {
-        return this.materialDetialInfo.reduce((total, cur) => {
+        const num = this.materialDetialInfo.reduce((total, cur) => {
           return (
             total +
             cur.material_plan_data.reduce((totalChild, curChild) => {
               // @ts-ignore
-              return totalChild +
-                (Number(curChild.product_id) === id && curChild.size_name === size && curChild.color_name === color)
-                ? Number(curChild.number)
-                : 0
+              return (
+                totalChild +
+                (Number(curChild.product_id) === id && curChild.size_name === size && curChild.color_name === color
+                  ? Number(curChild.number)
+                  : 0)
+              )
             }, 0)
           )
         }, 0)
+        return num
       }
     },
     getMaterialPlan() {

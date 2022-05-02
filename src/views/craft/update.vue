@@ -500,19 +500,35 @@
             </div>
           </div>
         </div>
-        <!-- <div class="row">
+        <div class="row">
           <div class="col flex3">
             <div class="label">
               <span class="text">选择常用穿综法</span>
-              <span class="explanation">(点击小图标可保存本次穿综法)</span>
+              <el-tooltip class="item"
+                effect="dark"
+                content="保存本次穿综法"
+                placement="top">
+                <i class="el-icon-upload hoverOrange fr"
+                  style="line-height:38px;font-size:18px;cursor:pointer;"
+                  @click="saveDraftMethods"></i>
+              </el-tooltip>
             </div>
             <div class="info elCtn">
-              <el-select v-model="testValue"
-                placeholder="请选择常用穿综法">
+              <el-select v-model="draftMethod"
+                placeholder="请选择常用穿综法"
+                @change="getDraftMethod">
+                <el-option v-for="item in draftMethodList"
+                  :key="item.id"
+                  :value="item.pattern_loop"
+                  :label="item.name">
+                  <span class="green">{{item.name}}</span>
+                  <span class="red fr"
+                    @click.stop="deleteDraftMethods(item.id)">删除</span>
+                </el-option>
               </el-select>
             </div>
           </div>
-        </div> -->
+        </div>
         <div class="row">
           <div class="col">
             <div class="label">
@@ -1375,6 +1391,8 @@ export default Vue.extend({
     return {
       loading: false,
       saveSuccess: false,
+      draftMethodList: [],
+      draftMethod: '',
       productInfo: {
         product_type: 1,
         name: '',
@@ -1769,6 +1787,65 @@ export default Vue.extend({
             this.searchList = res.data.data.items
           }
           this.searchLoading = false
+        })
+    },
+    // 保存穿综法
+    saveDraftMethods() {
+      this.$prompt('请输入穿综法名称', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      })
+        .then((obj: any) => {
+          craft
+            .czfCreate({
+              name: obj.value as string,
+              pattern_loop: JSON.stringify(this.craftInfo.draft_method)
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '穿综法' + obj.value + '已保存成功'
+                })
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消保存'
+          })
+        })
+    },
+    getDraftMethod() {
+      this.craftInfo.draft_method = JSON.parse(this.draftMethod)
+    },
+    deleteDraftMethods(id: number) {
+      this.$confirm('是否删除该穿综循环?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          craft
+            .czfDelete({
+              id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.draftMethodList = this.draftMethodList.filter((item: any) => item.id !== id)
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
         })
     },
     getCraftDetail() {
@@ -3170,10 +3247,28 @@ export default Vue.extend({
         getInfoApi: 'getHalfProcessAsync'
       }
     ])
-    Promise.all([craftSetting.listSide(), craftSetting.listMachine(), craftSetting.listMethods()]).then((res) => {
-      this.sideList = res[0].data.data
-      this.machineList = res[1].data.data
-      this.methodsList = res[2].data.data
+    Promise.all([
+      craftSetting.listSide(),
+      craftSetting.listMachine(),
+      craftSetting.listMethods(),
+      craft.czfList()
+    ]).then((res) => {
+      this.sideList = res[0].data.data.map((item: any) => {
+        return {
+          value: item.name
+        }
+      })
+      this.machineList = res[1].data.data.map((item: any) => {
+        return {
+          value: item.name
+        }
+      })
+      this.methodsList = res[2].data.data.map((item: any) => {
+        return {
+          value: item.name
+        }
+      })
+      this.draftMethodList = res[3].data.data
     })
     craft
       .detail({

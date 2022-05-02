@@ -29,14 +29,14 @@
               </div>
             </div>
             <div class="row">
-              <div class="col">
+              <!-- <div class="col">
                 <div class="label">订购总数：</div>
                 <div class="text">{{item.total_number}}kg</div>
               </div>
               <div class="col">
                 <div class="label">订购总额：</div>
                 <div class="text">{{item.total_price}}元</div>
-              </div>
+              </div> -->
               <div class="col">
                 <div class="label">交货日期：</div>
                 <div class="text">{{item.delivery_time}}</div>
@@ -80,7 +80,7 @@
             <div class="otherInfoCtn">
               <div class="otherInfo">
                 <div class="btn backHoverOrange"
-                  @click="materialOrderUpdataInfo=$clone(item);materialOrderUpdataFlag=true">
+                  @click="Number($getsessionStorage('has_check'))!==1&&(item.has_invoice===1||item.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):materialOrderUpdataInfo=$clone(item);materialOrderUpdataFlag=true">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
@@ -1143,18 +1143,26 @@ export default Vue.extend({
       this.materialOrderFlag = true
     },
     saveMaterialStock() {
-      const formCheck = this.materialStockInfo.info_data.some((item) => {
-        return this.$formCheck(item, [
+      const formCheck =
+        this.$formCheck(this.materialStockInfo, [
           {
-            key: 'rel_doc_info_id',
-            errMsg: '请选择单据物料'
-          },
-          {
-            key: 'material_id',
-            errMsg: '请选择物料'
+            key: 'tree_data',
+            errMsg: '请选择仓库',
+            regNormal: 'checkArr'
           }
-        ])
-      })
+        ]) ||
+        this.materialStockInfo.info_data.some((item) => {
+          return this.$formCheck(item, [
+            {
+              key: 'rel_doc_info_id',
+              errMsg: '请选择单据物料'
+            },
+            {
+              key: 'material_id',
+              errMsg: '请选择物料'
+            }
+          ])
+        })
       if (!formCheck) {
         materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
           if (res.data.status) {
