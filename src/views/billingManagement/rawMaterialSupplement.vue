@@ -61,6 +61,18 @@
           </div>
           <div class="btn borderBtn" @click="reset">重置</div>
         </div>
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-select
+              @change="changeRouter"
+              v-model="group_id"
+              placeholder="筛选负责小组"
+              clearable
+            >
+              <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+            </el-select>
+          </div>
+        </div>
         <div class="list">
           <div class="row title">
             <div class="col" style="flex: 0.05">
@@ -914,6 +926,7 @@ export default Vue.extend({
           is_check: this.status,
           code: this.keyword,
           user_id: this.user_id,
+          group_id: this.group_id,
           start_time: this.date[0],
           end_time: this.date[1],
           limit: this.limit,

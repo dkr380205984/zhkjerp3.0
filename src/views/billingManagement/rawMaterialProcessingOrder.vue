@@ -75,6 +75,23 @@
               <el-option value="2" label="待审核"></el-option>
             </el-select>
           </div>
+          <div class="elCtn">
+            <el-select @change="changeRouter" v-model="order_type" placeholder="筛选单据类型" clearable>
+              <el-option label="全部" value=""></el-option>
+              <el-option label="订单" value="1"></el-option>
+              <el-option label="样单" value="2"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-select
+              @change="changeRouter"
+              v-model="group_id"
+              placeholder="筛选负责小组"
+              clearable
+            >
+              <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+            </el-select>
+          </div>
         </div>
         <div class="list">
           <div class="row title">
@@ -364,6 +381,7 @@ export default Vue.extend({
       },
       group_id: '',
       user_id: '',
+      order_type: '',
       type: 'null',
       status: 'null',
       date: [],
@@ -759,6 +777,7 @@ export default Vue.extend({
         this.getContacts(this.client_id)
       }
       this.keyword = query.keyword || ''
+      this.order_type = query.order_type || ''
       this.status = query.status || 'null'
       this.type = Number(query.type) || 'null'
       this.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
@@ -815,6 +834,8 @@ export default Vue.extend({
           this.user_id +
           '&group_id=' +
           this.group_id +
+          '&order_type=' +
+          this.order_type +
           '&status=' +
           this.status +
           '&type=' +
@@ -838,6 +859,7 @@ export default Vue.extend({
           this.keyword = ''
           this.user_id = ''
           this.group_id = ''
+          this.order_type = ''
           this.date = []
           this.type = 'null'
           this.status = 'null'
@@ -858,6 +880,8 @@ export default Vue.extend({
           is_check: this.status,
           code: this.keyword,
           user_id: this.user_id,
+          group_id: this.group_id,
+          order_type: this.order_type,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           start_time: this.date[0],
           end_time: this.date[1],

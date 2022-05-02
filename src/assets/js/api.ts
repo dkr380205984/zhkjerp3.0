@@ -130,6 +130,7 @@ const deduct = {
     page?: number
     code?: string
     user_id?: number | string
+    group_id?: number | string
     rel_doc_id?: number | string
     doc_type?: number | string
     start_time?: string
@@ -571,9 +572,11 @@ const materialPlan = {
     keyword?: string
     code?: string
     user_id?: string | number
+    group_id?: string | number
     order_code?: string
     is_check?: number
     type?: 1 | 2 // 1.原料计划单 2.辅料计划单
+    order_type?: string // 1.订单 2.样单
   }) => http.get(`${baseUrl}/material/plan/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/material/plan/detail`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/material/plan/delete`, params, 'application/json')
@@ -659,9 +662,11 @@ const materialStock = {
     page?: string | number
     limit?: string | number
     user_id?: string | number
+    group_id?: string | number
     reserve_id?: string | number // 预订购单
     top_order_id?: string | number // 最外层order_id
     rel_doc_id?: string | number
+    order_type?: string
   }) => http.get(`${baseUrl}/store/log/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/store/log/delete`, params, 'application/json'),
   detail: (params: DetailParams) => http.get(`${baseUrl}/store/log/detail`, params),
@@ -724,6 +729,7 @@ const materialSupplement = {
     plan_id?: string | number
     order_id?: string | number // time_data里的
     client_id?: string | number
+    group_id?: string | number
     is_check?: string | number
     limit?: number
     page?: number
@@ -943,6 +949,7 @@ const workshop = {
     department?: string
     staff_id?: string | number
     user_id?: string | number
+    group_id?: string | number
     start_time?: string
     end_time?: string
     process?: string
