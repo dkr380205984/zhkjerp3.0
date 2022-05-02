@@ -60,6 +60,8 @@
             @click="$router.push('/setting?pName=产品设置&cName=品类')"></i> -->
           <!-- <i class="el-icon-s-data elIcon"
             @click="$router.push('/order/orderStat/page=1&&keyword=&&date=&&group_id=&&company_id=')"></i> -->
+          <i class="el-icon-s-data elIcon"
+            @click="$openUrl('/deliveryVisualization')"></i>
           <div class="headImg">{{userName.charAt(userName.length-1)}}</div>
           <div class="selectCtn">
             <el-dropdown @command="commondHandler"

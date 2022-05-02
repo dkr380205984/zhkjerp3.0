@@ -405,7 +405,11 @@
                 <div class="label">订购总额：</div>
                 <div class="text">{{item.total_price}}元</div>
               </div>
-              <div class="col"></div>
+              <div class="col">
+                <div class="label">结算状态：</div>
+                <div class="text"
+                  :class="{'green':item.has_invoice===1||item.has_pay===1,'gray':item.has_invoice!==1&&item.has_pay!==1}">{{item.has_invoice===1||item.has_pay===1?'已结算':'待结算'}}</div>
+              </div>
             </div>
             <div class="row">
               <div class="col">
@@ -458,7 +462,7 @@
             <div class="otherInfoCtn">
               <div class="otherInfo">
                 <div class="btn backHoverOrange"
-                  @click="goUpdatePlanOrder(item)">
+                  @click="Number($getsessionStorage('has_check'))!==1&&(item.has_invoice===1||item.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):goUpdatePlanOrder(item)">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>

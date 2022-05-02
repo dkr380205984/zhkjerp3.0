@@ -85,6 +85,10 @@ const routes: Array<RouteConfig> = [
     name: '报销单打印',
     component: () => import('../views/reimbursementManage/print.vue')
   }, {
+    path: '/deliveryVisualization',
+    name: '大屏发货列表',
+    component: () => import('../views/deliveryVisualization.vue')
+  }, {
     path: '/index',
     name: 'index',
     component: () => import('../views/index.vue'),

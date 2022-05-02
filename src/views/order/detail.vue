@@ -313,7 +313,8 @@
               <div class="tcol">操作</div>
             </div>
           </div>
-          <div class="tbody">
+          <div class="tbody"
+            style="font-size:14px">
             <div class="trow">
               <div class="tcol"
                 style="flex:0.5">
@@ -359,8 +360,8 @@
                 </div>
               </div>
               <div class="tcol"
-                :class="{'green':itemBatch.status===1,'green':itemBatch.status===2}">
-                {{itemBatch.status===1?'进行中':'已完成'}}
+                :class="{'blue':itemBatch.status===1,'green':itemBatch.status===2,'red':itemBatch.status===3}">
+                {{itemBatch.status===1?'进行中':(itemBatch.status===2?'已完成':'已逾期')}}
               </div>
               <div class="tcol oprCtn">
                 <div class="opr hoverGreen"

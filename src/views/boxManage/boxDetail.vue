@@ -59,7 +59,9 @@
             <div class="text">{{boxInfo.total_price}}元</div>
           </div>
           <div class="col">
-
+            <div class="label">结算状态：</div>
+            <div class="text"
+              :class="{'green':boxInfo.has_invoice===1||boxInfo.has_pay===1,'gray':boxInfo.has_invoice!==1&&boxInfo.has_pay!==1}">{{boxInfo.has_invoice===1||boxInfo.has_pay===1?'已结算':'待结算'}}</div>
           </div>
         </div>
         <div class="row">
@@ -274,7 +276,7 @@
           <div class="btn backHoverBlue"
             @click="$openUrl('/boxManage/print?id='+$route.query.id)">打印</div>
           <div class="btn backHoverOrange"
-            @click="orderInfoCopy.length>0?$router.push('/boxManage/orderDetail?boxId='+$route.query.id):$router.push('/boxManage/detail?boxId='+$route.query.id)">修改</div>
+            @click="Number($getsessionStorage('has_check'))!==1&&(boxInfo.has_invoice===1||boxInfo.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):(orderInfoCopy.length>0?$router.push('/boxManage/orderDetail?boxId='+$route.query.id):$router.push('/boxManage/detail?boxId='+$route.query.id))">修改</div>
         </div>
       </div>
     </div>

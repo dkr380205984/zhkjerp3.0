@@ -597,6 +597,18 @@ export default Vue.extend({
             findChild.checkAll = true
             this.$forceUpdate()
             this.goInspection(1)
+          } else {
+            // 重置勾选
+            this.productionPlanMergeList.forEach((item) => {
+              item.childrenMergeInfo.forEach((itemChild) => {
+                // @ts-ignore
+                itemChild.checkAll = null
+                itemChild.product_info_data.forEach((itemPro) => {
+                  itemPro.check = false
+                })
+              })
+            })
+            this.$forceUpdate()
           }
         } else {
           this.$message.warning('该订单还未创建生产计划信息，请先填写生产计划')

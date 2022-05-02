@@ -73,7 +73,8 @@
               </div>
               <div class="col">
                 <div class="label">{{productType}}描述：</div>
-                <div class="text">{{productInfo.desc}}</div>
+                <div class="text"
+                  v-html="productInfo.desc"></div>
               </div>
             </div>
             <div class="row">
@@ -108,7 +109,8 @@
             <div class="row">
               <div class="col">
                 <div class="label">备注信息：</div>
-                <div class="text">{{productInfo.desc}}</div>
+                <div class="text"
+                  v-html="productInfo.desc"></div>
               </div>
             </div>
           </div>
