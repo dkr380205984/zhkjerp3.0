@@ -1,58 +1,41 @@
 <template>
-  <div id="homePage"
-    class="bodyContainer">
+  <div id="homePage" class="bodyContainer">
     <div class="module">
       <div class="titleCtn">
         <div class="title">搜索</div>
       </div>
       <div class="content">
         <div class="searchCtn">
-          <el-input class="input"
+          <el-input
+            class="input"
             placeholder="请输入产品/样品/报价单/订单信息按回车搜索"
             v-model="searchValue"
-            @keydown.native.enter="searchInfo">
-            <i slot="suffix"
-              class="el-input__icon el-icon-search"></i>
-            <el-select v-model="searchType"
-              slot="prepend"
-              class="select"
-              placeholder="请选择"
-              @change="searchInfo">
-              <el-option label="所有"
-                value="0"></el-option>
-              <el-option label="订单"
-                value="1"></el-option>
-              <el-option label="样品订单"
-                value="2"></el-option>
-              <el-option label="报价单"
-                value="3"></el-option>
-              <el-option label="工艺单"
-                value="4"></el-option>
-              <el-option label="物料计划单"
-                value="5"></el-option>
+            @keydown.native.enter="searchInfo"
+          >
+            <i slot="suffix" class="el-input__icon el-icon-search"></i>
+            <el-select v-model="searchType" slot="prepend" class="select" placeholder="请选择" @change="searchInfo">
+              <el-option label="所有" value="0"></el-option>
+              <el-option label="订单" value="1"></el-option>
+              <el-option label="样品订单" value="2"></el-option>
+              <el-option label="报价单" value="3"></el-option>
+              <el-option label="工艺单" value="4"></el-option>
+              <el-option label="物料计划单" value="5"></el-option>
             </el-select>
           </el-input>
-          <div class="btn backHoverBlue"
-            @click="searchInfo">搜索</div>
+          <div class="btn backHoverBlue" @click="searchInfo">搜索</div>
         </div>
         <div class="seachHistory">
           <div class="container">
             <span class="label gray">近期搜索记录：</span>
-            <span class="normal gray"
-              v-for="(item,index) in history"
-              :key="index"
-              @click="searchHistory(item)">{{item}}</span>
+            <span class="normal gray" v-for="(item, index) in history" :key="index" @click="searchHistory(item)">{{
+              item
+            }}</span>
           </div>
-          <div class="btn noBorder gray"
-            @click="resetHistory">清空历史</div>
+          <div class="btn noBorder gray" @click="resetHistory">清空历史</div>
         </div>
-        <div class="searchBox"
-          v-show="showSearch"
-          v-loading="searchLoading">
-          <i class="el-icon-circle-close icons"
-            @click="showSearch = false"></i>
-          <div class="block"
-            v-show="searchType==='0'||searchType==='1'">
+        <div class="searchBox" v-show="showSearch" v-loading="searchLoading">
+          <i class="el-icon-circle-close icons" @click="showSearch = false"></i>
+          <div class="block" v-show="searchType === '0' || searchType === '1'">
             <div class="titled">相关订单</div>
             <div class="info title">
               <span class="text">编号</span>
@@ -61,22 +44,20 @@
               <span class="text">创建人</span>
               <span class="text">下单总数</span>
             </div>
-            <div class="info"
-              v-for="item in searchList.order"
-              :key="item.id">
-              <span class="text hoverBlue"
+            <div class="info" v-for="item in searchList.order" :key="item.id">
+              <span
+                class="text hoverBlue"
                 v-html="item.code || item.system_code"
-                @click="$openUrl('/order/detail?id=' + item.id)"></span>
-              <span class="text">{{item.client_name}}</span>
-              <span class="text">{{item.create_time}}</span>
-              <span class="text">{{item.user_name}}</span>
-              <span class="text">{{item.total_number}}</span>
+                @click="$openUrl('/order/detail?id=' + item.id)"
+              ></span>
+              <span class="text">{{ item.client_name }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
+              <span class="text">{{ item.total_number }}</span>
             </div>
-            <div class="noMsg"
-              v-if="searchList.order.length===0">暂无相关信息</div>
+            <div class="noMsg" v-if="searchList.order.length === 0">暂无相关信息</div>
           </div>
-          <div class="block"
-            v-show="searchType==='0'||searchType==='2'">
+          <div class="block" v-show="searchType === '0' || searchType === '2'">
             <div class="titled">相关样单</div>
             <div class="info title">
               <span class="text">编号</span>
@@ -85,22 +66,20 @@
               <span class="text">创建人</span>
               <span class="text">打样总数</span>
             </div>
-            <div class="info"
-              v-for="item in searchList.sampleOrder"
-              :key="item.id">
-              <span class="text hoverBlue"
+            <div class="info" v-for="item in searchList.sampleOrder" :key="item.id">
+              <span
+                class="text hoverBlue"
                 v-html="item.code"
-                @click="$openUrl('/sampleOrder/detail?id=' + item.id)"></span>
-              <span class="text">{{item.client_name}}</span>
-              <span class="text">{{item.create_time}}</span>
-              <span class="text">{{item.user_name}}</span>
-              <span class="text">{{item.total_number}}</span>
+                @click="$openUrl('/sampleOrder/detail?id=' + item.id)"
+              ></span>
+              <span class="text">{{ item.client_name }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
+              <span class="text">{{ item.total_number }}</span>
             </div>
-            <div class="noMsg"
-              v-if="searchList.sampleOrder.length===0">暂无相关信息</div>
+            <div class="noMsg" v-if="searchList.sampleOrder.length === 0">暂无相关信息</div>
           </div>
-          <div class="block"
-            v-show="searchType==='0'||searchType==='3'">
+          <div class="block" v-show="searchType === '0' || searchType === '3'">
             <div class="titled">相关报价单</div>
             <div class="info title">
               <span class="text">编号</span>
@@ -109,22 +88,20 @@
               <span class="text">创建时间</span>
               <span class="text">创建人</span>
             </div>
-            <div class="info"
-              v-for="item in searchList.quotedPrice"
-              :key="item.id">
-              <span class="text hoverBlue"
+            <div class="info" v-for="item in searchList.quotedPrice" :key="item.id">
+              <span
+                class="text hoverBlue"
                 v-html="item.code"
-                @click="$openUrl('/quotedPrice/detail?id=' + item.id)"></span>
-              <span class="text">{{item.title}}</span>
-              <span class="text">{{item.client_name}}</span>
-              <span class="text">{{item.create_time}}</span>
-              <span class="text">{{item.user_name}}</span>
+                @click="$openUrl('/quotedPrice/detail?id=' + item.id)"
+              ></span>
+              <span class="text">{{ item.title }}</span>
+              <span class="text">{{ item.client_name }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
             </div>
-            <div class="noMsg"
-              v-if="searchList.quotedPrice.length===0">暂无相关信息</div>
+            <div class="noMsg" v-if="searchList.quotedPrice.length === 0">暂无相关信息</div>
           </div>
-          <div class="block"
-            v-show="searchType==='0'||searchType==='4'">
+          <div class="block" v-show="searchType === '0' || searchType === '4'">
             <div class="titled">相关工艺单</div>
             <div class="info title">
               <span class="text">工艺单编号</span>
@@ -133,22 +110,16 @@
               <span class="text">创建时间</span>
               <span class="text">创建人</span>
             </div>
-            <div class="info"
-              v-for="item in searchList.craft"
-              :key="item.id">
-              <span class="text hoverBlue"
-                v-html="item.code"
-                @click="$openUrl('/craft/detail?id=' + item.id)"></span>
-              <span class="text">{{item.title}}</span>
-              <span class="text">{{item.product_code}}</span>
-              <span class="text">{{item.create_time}}</span>
-              <span class="text">{{item.user_name}}</span>
+            <div class="info" v-for="item in searchList.craft" :key="item.id">
+              <span class="text hoverBlue" v-html="item.code" @click="$openUrl('/craft/detail?id=' + item.id)"></span>
+              <span class="text">{{ item.title }}</span>
+              <span class="text">{{ item.product_code }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
             </div>
-            <div class="noMsg"
-              v-if="searchList.craft.length===0">暂无相关信息</div>
+            <div class="noMsg" v-if="searchList.craft.length === 0">暂无相关信息</div>
           </div>
-          <div class="block"
-            v-show="searchType==='0'||searchType==='5'">
+          <div class="block" v-show="searchType === '0' || searchType === '5'">
             <div class="titled">相关物料计划</div>
             <div class="info title">
               <span class="text">编号</span>
@@ -156,63 +127,54 @@
               <span class="text">创建时间</span>
               <span class="text">创建人</span>
             </div>
-            <div class="info"
-              v-for="item in searchList.materialPlan"
-              :key="item.id">
-              <span class="text hoverBlue"
+            <div class="info" v-for="item in searchList.materialPlan" :key="item.id">
+              <span
+                class="text hoverBlue"
                 v-html="item.code"
-                @click="$openUrl('/materialPlan/detail?id=' + item.id)"></span>
-              <span class="text">{{item.order_code}}</span>
-              <span class="text">{{item.create_time}}</span>
-              <span class="text">{{item.user_name}}</span>
+                @click="$openUrl('/materialPlan/detail?id=' + item.id)"
+              ></span>
+              <span class="text">{{ item.order_code }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
             </div>
-            <div class="noMsg"
-              v-if="searchList.materialPlan.length===0">暂无相关信息</div>
+            <div class="noMsg" v-if="searchList.materialPlan.length === 0">暂无相关信息</div>
           </div>
         </div>
       </div>
     </div>
     <div class="fastEditCtn">
       <div class="first_line">
-        <div class="fastEdit_item"
-          v-for="(item,index) in userCheckedOpr"
+        <div
+          class="fastEdit_item"
+          v-for="(item, index) in userCheckedOpr"
           :key="index"
-          @click="easyOprFlag ? false : $router.push(item.url)">
-          <svg class="iconFont"
-            aria-hidden="true">
+          @click="easyOprFlag ? false : $router.push(item.url)"
+        >
+          <svg class="iconFont" aria-hidden="true">
             <use :xlink:href="'#' + item.icon"></use>
           </svg>
-          <span class="name">{{item.opr}}</span>
-          <span class="editBtn delete el-icon-minus red"
-            v-if="easyOprFlag"
-            @click.stop="item.isChecked = false"></span>
+          <span class="name">{{ item.opr }}</span>
+          <span class="editBtn delete el-icon-minus red" v-if="easyOprFlag" @click.stop="item.isChecked = false"></span>
         </div>
-        <div class="edit_item"
-          @click="easyOprFlag ? saveOpr() : easyOprFlag = true">
-          <svg class="iconFont"
-            aria-hidden="true">
+        <div class="edit_item" @click="easyOprFlag ? saveOpr() : (easyOprFlag = true)">
+          <svg class="iconFont" aria-hidden="true">
             <use xlink:href="#icon-zhuangshifuliaocangku"></use>
           </svg>
-          <span class="name blue">{{easyOprFlag ? '完成编辑' : '自定义编辑'}}</span>
+          <span class="name blue">{{ easyOprFlag ? '完成编辑' : '自定义编辑' }}</span>
         </div>
       </div>
-      <div class="edit_line_box"
+      <div
+        class="edit_line_box"
         :class="easyOprFlag ? false : 'hiddle'"
-        :style="'height:' + userCanCheckedOpr.length * 132 + 'px'">
-        <div class="edit_line"
-          v-for="(item,index) in userCanCheckedOpr"
-          :key="index">
-          <div class="fastEdit_item"
-            v-for="(itemN,indexN) in item"
-            :key="indexN">
-            <svg class="iconFont"
-              aria-hidden="true">
+        :style="'height:' + userCanCheckedOpr.length * 132 + 'px'"
+      >
+        <div class="edit_line" v-for="(item, index) in userCanCheckedOpr" :key="index">
+          <div class="fastEdit_item" v-for="(itemN, indexN) in item" :key="indexN">
+            <svg class="iconFont" aria-hidden="true">
               <use :xlink:href="'#' + itemN.icon"></use>
             </svg>
-            <span class="name">{{itemN.opr}}</span>
-            <span class="editBtn add el-icon-plus green"
-              v-if="easyOprFlag"
-              @click.stop="addFastList(itemN)"></span>
+            <span class="name">{{ itemN.opr }}</span>
+            <span class="editBtn add el-icon-plus green" v-if="easyOprFlag" @click.stop="addFastList(itemN)"></span>
           </div>
         </div>
       </div>
@@ -223,8 +185,7 @@
           <div class="titleCtn">
             <div class="title">版本更新公告</div>
           </div>
-          <div class="content"
-            style="overflow: auto;">
+          <div class="content" style="overflow: auto">
             <div v-html="systemMessageContent"></div>
           </div>
         </div>
@@ -232,18 +193,21 @@
       <div class="rightCtn">
         <div class="module">
           <div class="titleCtn">
-            <div class="title">系统教学<div class="fr hoverBlue"
-                style="font-size:16px;font-weight:normal;cursor:pointer"
-                @click="$openUrl('/tutorialSystem/list')">查看全部</div>
+            <div class="title">
+              系统教学
+              <div
+                class="fr hoverBlue"
+                style="font-size: 16px; font-weight: normal; cursor: pointer"
+                @click="$openUrl('/tutorialSystem/list')"
+              >
+                查看全部
+              </div>
             </div>
           </div>
           <div class="content">
-            <div class="line"
-              v-for="(item,index) in tutorialSystemArr"
-              :key="index">
-              <div class="number">{{index + 1}}</div>
-              <div class="text"
-                @click.prevent="$openUrl('/tutorialSystem/detail?id=' + item.id)">{{item.title}}</div>
+            <div class="line" v-for="(item, index) in tutorialSystemArr" :key="index">
+              <div class="number">{{ index + 1 }}</div>
+              <div class="text" @click.prevent="$openUrl('/tutorialSystem/detail?id=' + item.id)">{{ item.title }}</div>
             </div>
           </div>
         </div>
@@ -397,6 +361,41 @@ export default Vue.extend({
           id: '14-3',
           icon: 'icon-wuliaoyudinggou',
           url: '/materialPlanOrder/list?page=1&type=1'
+        },
+        {
+          opr: '发货管理',
+          isChecked: false,
+          id: '10-3',
+          icon: 'icon-zhuangxiangjihua',
+          url: '/boxManage/list?page=1&type=1'
+        },
+        {
+          opr: '车间管理',
+          isChecked: false,
+          id: '19-3',
+          icon: 'icon-chejianguanli',
+          url: '/workshopManagement/list?page=1&type=1'
+        },
+        {
+          opr: '员工管理',
+          isChecked: false,
+          id: '17-3',
+          icon: 'icon-yuangongguanli',
+          url: '/workerManage/list?page=1&keyword=&department=&status=&type=&limit=10'
+        },
+        {
+          opr: '报销单管理',
+          isChecked: false,
+          id: '18-3',
+          icon: 'icon-chexiaodanguanli',
+          url: '/reimbursementManage/list?page=1&status='
+        },
+        {
+          opr: '财务结算',
+          isChecked: false,
+          id: 22,
+          icon: 'icon-chexiaodanguanli',
+          url: '/settlement/collectionList?page=1&status='
         }
       ],
       searchList: {

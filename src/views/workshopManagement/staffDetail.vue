@@ -186,26 +186,11 @@
                 {{ itemProIndex + 1 }}
               </div>
               <div class="tcol">
-                <!-- <el-autocomplete
-                  style="width: 200px"
-                  v-model="itemPro.order_code"
-                  :fetch-suggestions="querySearchAsync"
-                  placeholder="订单号/产品编号"
-                  :debounce="3000"
-                  @select="handleSelect(item, itemProIndex, index, settlementLogIndex)"
-                >
-                  <template slot-scope="{ item }">
-                    <div style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
-                      订单名称：{{ item.value }}
-                    </div>
-                    <span>创建时间：{{ item.created_at }}</span>
-                  </template>
-                </el-autocomplete> -->
                 <el-select
                   v-model="itemPro.order_code"
                   filterable
                   remote
-                  placeholder="订单号/产品编号"
+                  placeholder="请输入订单编号"
                   :loading="searchLoading"
                   :remote-method="
                     (ev) => {
@@ -214,11 +199,17 @@
                   "
                   @change="handleSelect(item, settlementLogIndex, index, itemProIndex, index, settlementLogIndex)"
                 >
+                  <div style="display: flex; padding: 0 10px; width: 500px">
+                    <div style="flex: 1">订单号</div>
+                    <div style="flex: 1">下单公司</div>
+                    <div style="flex: 1">下单时间</div>
+                  </div>
                   <el-option v-for="item in orderList" :key="item.value" :label="item.label" :value="item.value">
-                    <div style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
-                      订单名称：{{ item.value }}
+                    <div style="display: flex">
+                      <span style="flex: 1">{{ item.value }}</span>
+                      <span style="flex: 1"> {{ item.client_name }} </span>
+                      <span style="flex: 1">{{ item.created_at }}</span>
                     </div>
-                    <div>创建时间：{{ item.created_at }}</div>
                   </el-option>
                 </el-select>
               </div>
@@ -229,8 +220,34 @@
                   :key="indexDetail + 'indexDetail'"
                 >
                   <div class="tcol">
-                    <!-- <el-input v-model="itemDetail.code" placeholder="请输入产品编号"></el-input> -->
-                    {{ itemDetail.code || '暂无产品编号' }}
+                    <el-select
+                      v-model="itemPro.order_code"
+                      filterable
+                      remote
+                      placeholder="请输入产品编号"
+                      :loading="searchLoading"
+                      :remote-method="
+                        (ev) => {
+                          return $debounce(ev, timer, querySearchAsync1)
+                        }
+                      "
+                      @change="handleSelect(item, settlementLogIndex, index, itemProIndex, index, settlementLogIndex)"
+                    >
+                      <div style="display: flex; padding: 0 10px; width: 800px">
+                        <div style="flex: 1">产品编号</div>
+                        <div style="flex: 1">所属订单号</div>
+                        <div style="flex: 1">下单公司</div>
+                        <div style="flex: 1">下单时间</div>
+                      </div>
+                      <el-option v-for="item in orderList" :key="item.value" :label="item.label" :value="item.value">
+                        <div style="display: flex">
+                          <span style="flex: 1">{{ item.product_name }}</span>
+                          <span style="flex: 1">{{ item.value }}</span>
+                          <span style="flex: 1"> {{ item.client_name }} </span>
+                          <span style="flex: 1">{{ item.created_at }}</span>
+                        </div>
+                      </el-option>
+                    </el-select>
                   </div>
                   <div class="tcol noPad" style="flex: 5.7">
                     <div
@@ -409,6 +426,7 @@
       >
         添加下个员工
       </div>
+      <div style="margin-right: 10px" class="btn backHoverBlue fr" @click="copyUp">复制上一组</div>
     </div>
     <!-- 生产进度 -->
     <div class="popup" v-show="addOrder" v-loading="showPopupLoading" element-loading-target>
@@ -852,7 +870,7 @@ export default Vue.extend({
       }
       order
         .simpleList({
-          keyword: str
+          order_code: str
         })
         .then((res) => {
           if (res.data.status) {
@@ -860,7 +878,7 @@ export default Vue.extend({
               this.reqTime = res.headers.date
               let arr: any = []
               res.data.data.forEach((item: any) => {
-                arr.push({ value: item.code, id: item.id, created_at: item.created_at })
+                arr.push({ value: item.code, id: item.id, created_at: item.created_at, client_name: item.client_name })
               })
               this.orderList = arr
             }
@@ -869,6 +887,60 @@ export default Vue.extend({
           }
           this.searchLoading = false
         })
+    },
+    querySearchAsync1(str: string) {
+      this.searchLoading = true
+      if (str === '' || str === undefined) {
+        this.orderList = []
+        return
+      }
+      order
+        .simpleList({
+          product_code: str
+        })
+        .then((res) => {
+          if (res.data.status) {
+            if (new Date(res.headers.date) > new Date(this.reqTime) || this.reqTime === '') {
+              this.reqTime = res.headers.date
+              let arr: any = []
+              res.data.data.forEach((item: any) => {
+                arr.push({
+                  value: item.code,
+                  id: item.id,
+                  created_at: item.created_at,
+                  client_name: item.client_name,
+                  product_name: item.product_data[0].product_code
+                })
+              })
+              this.orderList = arr
+            }
+          } else {
+            this.orderList = []
+          }
+          this.searchLoading = false
+        })
+    },
+    copyUp() {
+      let obj = this.$clone(this.settlementLogList[this.settlementLogList.length - 1])
+      obj.staffCode = ''
+      obj.staffId = ''
+      obj.staffName = ''
+      obj.processInfo.forEach((item: any) => {
+        console.log(item)
+        item.product_info.forEach((itemPro: any) => {
+          itemPro.product_detail_info.forEach((itemDetailPro: any) => {
+            itemDetailPro.sizeColorInfo.forEach((itemColor: any) => {
+              console.log(itemColor)
+              itemColor.extra_number = ''
+              itemColor.shoddy_number = ''
+              itemColor.number = ''
+              itemColor.shoddy_reason = []
+            })
+          })
+        })
+      })
+
+      this.settlementLogList.push(obj)
     },
     checkAllOrder(items: any) {
       items.product_info.forEach((item: any) => {
@@ -1102,36 +1174,103 @@ export default Vue.extend({
     }
 
     staffArr.forEach((staff: any) => {
-      this.settlementLogList.push({
-        staffName: staff.name,
-        staffCode: staff.code,
-        staffId: +staff.id,
-        processInfo: [
-          {
-            process: [0, ''],
-            product_info: [
+      if (staff.process) {
+        let processArr = staff.process.split('/')
+        if (processArr.length === 1) {
+          this.settlementLogList.push({
+            staffName: staff.name,
+            staffCode: staff.code,
+            staffId: +staff.id,
+            processInfo: [
               {
-                order_code: '',
-                product_detail_info: [
+                process: [0, processArr[0]],
+                product_info: [
                   {
-                    code: '',
-                    sizeColorInfo: [
+                    order_code: '',
+                    product_detail_info: [
                       {
-                        size_name: '',
-                        color_name: '',
-                        number: '',
-                        extra_number: '',
-                        shoddy_number: '',
-                        shoddy_reason: []
+                        code: '',
+                        sizeColorInfo: [
+                          {
+                            size_name: '',
+                            color_name: '',
+                            number: '',
+                            extra_number: '',
+                            shoddy_number: '',
+                            shoddy_reason: []
+                          }
+                        ]
                       }
                     ]
                   }
                 ]
               }
             ]
-          }
-        ]
-      })
+          })
+        } else {
+          this.settlementLogList.push({
+            staffName: staff.name,
+            staffCode: staff.code,
+            staffId: +staff.id,
+            processInfo: [
+              {
+                process: [0, ''],
+                product_info: [
+                  {
+                    order_code: '',
+                    product_detail_info: [
+                      {
+                        code: '',
+                        sizeColorInfo: [
+                          {
+                            size_name: '',
+                            color_name: '',
+                            number: '',
+                            extra_number: '',
+                            shoddy_number: '',
+                            shoddy_reason: []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          })
+        }
+      } else {
+        this.settlementLogList.push({
+            staffName: staff.name,
+            staffCode: staff.code,
+            staffId: +staff.id,
+            processInfo: [
+              {
+                process: [0, ''],
+                product_info: [
+                  {
+                    order_code: '',
+                    product_detail_info: [
+                      {
+                        code: '',
+                        sizeColorInfo: [
+                          {
+                            size_name: '',
+                            color_name: '',
+                            number: '',
+                            extra_number: '',
+                            shoddy_number: '',
+                            shoddy_reason: []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          })
+      }
 
       staff.process.split('/').forEach((processs: any) => {
         if (processs !== '') {

@@ -69,12 +69,7 @@
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select
-              @change="changeRouter"
-              v-model="group_id"
-              placeholder="筛选负责小组"
-              clearable
-            >
+            <el-select @change="changeRouter" v-model="group_id" placeholder="筛选负责小组" clearable>
               <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
             </el-select>
           </div>
@@ -85,7 +80,7 @@
               <el-checkbox v-model="checkAllPlan" @change="checkAll"></el-checkbox>
             </div>
             <div class="col" style="flex: 1.3">扣款单号</div>
-            <div class="col">订购单位</div>
+            <div class="col">扣款单位</div>
             <div class="col">扣款金额</div>
             <div class="col">扣款原因</div>
             <div class="col">审核状态</div>
@@ -184,13 +179,13 @@
         <div class="btnCtn">
           <div class="borderBtn" @click="$router.go(-1)">返回</div>
           <div class="buttonList" style="margin-left: 12px">
-            <div class="btn backHoverBlue">
+            <div class="btn backHoverBlue" @click="exportExcel(1)">
               <span class="text">导出月度报表</span>
             </div>
-            <div class="btn backHoverBlue" @click="$router.push('/quotedPrice/update?id=' + quotedList[quotedIndex])">
+            <div class="btn backHoverBlue" @click="exportExcel(2)">
               <span class="text">导出季度报表</span>
             </div>
-            <div class="btn backHoverBlue" @click="checkFlag = true">
+            <div class="btn backHoverBlue" @click="exportExcel(3)">
               <span class="text">导出年度报表</span>
             </div>
           </div>
@@ -238,7 +233,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { order, listSetting, exportExcel, client, deduct, check } from '@/assets/js/api'
+import { order, listSetting, client, deduct, check } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
 import { ListSetting } from '@/types/list'
 import { limitArr } from '@/assets/js/dictionary'
@@ -277,11 +272,6 @@ export default Vue.extend({
       contactsList: [],
       client_id: [],
       checked: false,
-      exportExcelParam: {
-        show_row: [],
-        start_time: '',
-        end_time: ''
-      },
       group_id: '',
       user_id: '',
       type: 'null',
@@ -683,39 +673,41 @@ export default Vue.extend({
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
     },
-    exportExcelClick() {
-      if (!this.checked) return
-      this.showExport = true
-    },
-    exportExcel(data: any) {
+    exportExcel(type: number) {
       this.mainLoading = true
-      data.sort(function (a: any, b: any) {
-        return a.index - b.index
-      })
-      this.exportExcelParam.show_row = []
-      data.forEach((item: any) => {
-        if (item.ifExport) {
-          this.exportExcelParam.show_row.push(item.key)
-        }
-      })
 
-      let idArr: any = []
+      let start_time = ''
+      let end_time = ''
+      let y = new Date().getFullYear()
+      let m = new Date().getMonth() + 1
+      // @ts-ignore
+      let q = Math.floor(m % 3 == 0 ? m / 3 : m / 3 + 1)
 
-      this.list.forEach((item) => {
-        idArr.push(item.id)
-      })
+      switch (type) {
+        case 1:
+          start_time = new Date(y, m - 1, 1).toLocaleDateString().replaceAll('/', '-')
+          end_time = new Date(y, m, 0).toLocaleDateString().replaceAll('/', '-')
+          break
+        case 2:
+          start_time = new Date(y, (q - 1) * 3, 1).toLocaleDateString().replaceAll('/', '-')
+          end_time = new Date(y, q * 3, 0).toLocaleDateString().replaceAll('/', '-')
+          break
+        case 3:
+          start_time = y + '-01-01'
+          end_time = y + '-12-31'
+          break
+      }
 
-      this.exportExcelParam['id'] = idArr
-      exportExcel.orderInfo(this.exportExcelParam).then((res: any) => {
-        if (res.data.status) {
-          console.log(res.data.data)
-          this.mainLoading = false
+      deduct
+        .list({
+          start_time: start_time,
+          end_time: end_time,
+          export_excel: 1
+        })
+        .then((res) => {
           window.location.href = res.data.data
-        }
-      })
-      setTimeout(() => {
-        this.mainLoading = false
-      }, 10000)
+          this.mainLoading = false
+        })
     },
     changeRouter(ev?: any) {
       if (ev !== this.page) {
@@ -856,7 +848,7 @@ export default Vue.extend({
     },
     groupList() {
       return this.$store.state.api.group.arr
-    },
+    }
   },
   created() {
     this.getFilters()
