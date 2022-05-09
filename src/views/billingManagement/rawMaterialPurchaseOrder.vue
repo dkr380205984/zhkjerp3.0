@@ -27,7 +27,7 @@
             ></el-input>
           </div>
           <div class="elCtn">
-            <el-cascader
+            <!-- <el-cascader
               @change="
                 getContacts($event)
                 changeRouter()
@@ -38,7 +38,19 @@
               :options="clientList"
               clearable
             >
-            </el-cascader>
+            </el-cascader> -->
+            <el-select
+              @change="
+                getContacts($event)
+                changeRouter()
+              "
+              v-model="client_id"
+              filterable
+              clearable
+              placeholder="筛选订购公司"
+            >
+              <el-option v-for="item in clientList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+            </el-select>
           </div>
           <div class="elCtn">
             <el-select
@@ -316,7 +328,8 @@ export default Vue.extend({
       keyword: '',
       contacts_id: '',
       contactsList: [],
-      client_id: [],
+      clientList: [],
+      client_id: '',
       checked: false,
       additional: {},
       group_id: '',
@@ -645,11 +658,11 @@ export default Vue.extend({
     }
   },
   methods: {
-    getContacts(ev: number[]) {
-      if (ev && ev.length) {
+    getContacts(ev: any) {
+      if (ev) {
         client
           .detail({
-            id: ev[2]
+            id: ev
           })
           .then((res) => {
             if (res.data.status) {
@@ -711,11 +724,7 @@ export default Vue.extend({
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)
-      this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
-      this.contacts_id = Number(query.contacts_id) || ''
-      if (this.client_id && this.client_id.length) {
-        this.getContacts(this.client_id)
-      }
+      this.client_id = query.client_id ? query.client_id : ''
       this.keyword = query.keyword || ''
       this.order_type = query.order_type || ''
       this.status = query.status || 'null'
@@ -798,7 +807,7 @@ export default Vue.extend({
         type: 'warning'
       })
         .then(() => {
-          this.client_id = []
+          this.client_id = ''
           this.keyword = ''
           this.user_id = ''
           this.group_id = ''
@@ -826,7 +835,7 @@ export default Vue.extend({
           order_type: this.order_type,
           user_id: this.user_id,
           group_id: this.group_id,
-          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
+          client_id: this.client_id,
           start_time: this.date[0],
           end_time: this.date[1],
           limit: this.limit,
@@ -894,9 +903,6 @@ export default Vue.extend({
     }
   },
   computed: {
-    clientList() {
-      return this.$store.state.api.clientType.arr.filter((item: { type: any }) => Number(item.type) === 1)
-    },
     userList() {
       return this.$store.state.api.user.arr
     },
@@ -905,6 +911,9 @@ export default Vue.extend({
     }
   },
   created() {
+    client.list().then((res) => {
+      this.clientList = res.data.data
+    })
     this.getFilters()
     this.getList()
     this.getListSetting()
@@ -913,11 +922,6 @@ export default Vue.extend({
         checkWhich: 'api/group',
         getInfoMethed: 'dispatch',
         getInfoApi: 'getGroupAsync'
-      },
-      {
-        checkWhich: 'api/clientType',
-        getInfoMethed: 'dispatch',
-        getInfoApi: 'getClientTypeAsync'
       },
       {
         checkWhich: 'api/user',

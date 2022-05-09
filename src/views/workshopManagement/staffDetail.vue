@@ -161,13 +161,7 @@
             <div class="trow">
               <div class="tcol bgGray" style="flex: 0.3; text-align: center">序号</div>
               <div class="tcol bgGray">
-                <div>
-                  订单号
-                  <el-tooltip class="item" effect="dark" placement="top">
-                    <div slot="content">也可以通过产品编号进行搜索</div>
-                    <i class="el-icon-question"></i>
-                  </el-tooltip>
-                </div>
+                <div>订单号</div>
               </div>
               <div class="tcol noPad" style="flex: 8.7">
                 <div class="trow">
@@ -854,13 +848,22 @@ export default Vue.extend({
                 return { value: item, label: item }
               })
             }
+
+            this.settlementLogList.forEach((item: any) => {
+              if (item.staffId === id) {
+                if (res.data.data.process) {
+                  if (res.data.data.process.split('/').length === 1) {
+                    item.processInfo.forEach((itemProcess: any) => {
+                      itemProcess.process = [0, res.data.data.process]
+                    })
+                  }
+                }
+              }
+            })
           }
 
           this.loading = false
         })
-      // this.settlementLogList[index].staffId = this.settlementLogList[index].staffInfo.id
-      // this.settlementLogList[index].staffCode = this.settlementLogList[index].staffInfo.code
-      // this.settlementLogList[index].staffName = this.settlementLogList[index].staffInfo.name
     },
     querySearchAsync(str: string) {
       this.searchLoading = true
@@ -1241,35 +1244,35 @@ export default Vue.extend({
         }
       } else {
         this.settlementLogList.push({
-            staffName: staff.name,
-            staffCode: staff.code,
-            staffId: +staff.id,
-            processInfo: [
-              {
-                process: [0, ''],
-                product_info: [
-                  {
-                    order_code: '',
-                    product_detail_info: [
-                      {
-                        code: '',
-                        sizeColorInfo: [
-                          {
-                            size_name: '',
-                            color_name: '',
-                            number: '',
-                            extra_number: '',
-                            shoddy_number: '',
-                            shoddy_reason: []
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          })
+          staffName: staff.name,
+          staffCode: staff.code,
+          staffId: +staff.id,
+          processInfo: [
+            {
+              process: [0, ''],
+              product_info: [
+                {
+                  order_code: '',
+                  product_detail_info: [
+                    {
+                      code: '',
+                      sizeColorInfo: [
+                        {
+                          size_name: '',
+                          color_name: '',
+                          number: '',
+                          extra_number: '',
+                          shoddy_number: '',
+                          shoddy_reason: []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        })
       }
 
       staff.process.split('/').forEach((processs: any) => {
