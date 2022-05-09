@@ -75,6 +75,18 @@ Vue.filter('orderStatusClassFilter', (val: 0 | 1 | 2 | 3 | 4 | 5) => {
   return statusArr[val]
 })
 
+// 批次状态
+Vue.filter('orderBatchFilter', (val: 0 | 1 | 2 | 3 | 4 | 5) => {
+  const statusArr = ['', '进行中', '已完成', '已逾期']
+  return statusArr[val]
+})
+// 批次状态 class
+Vue.filter('orderBatchClassFilter', (val: 0 | 1 | 2 | 3 | 4 | 5) => {
+  const statusArr = ['', 'blue', 'green', 'red']
+  return statusArr[val]
+})
+
+
 // 计价方式
 Vue.filter('packCalcFilter', (val: 0 | 1 | 2 | 3) => {
   const statusArr = ['', '纸箱:面积', '胶袋:面积', '其他']
