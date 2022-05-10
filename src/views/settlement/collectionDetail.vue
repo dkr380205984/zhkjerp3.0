@@ -1027,7 +1027,7 @@ export default Vue.extend({
         .list({
           order_type: this.order_type,
           client_id: this.$route.query.id,
-          keyword: '',
+          keyword: this.keyword,
           page: this.orderPage,
           limit: 10,
           is_check: this.status,
