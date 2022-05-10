@@ -13,6 +13,33 @@
           <div class="titleCtn">
             <div class="title">计划加工</div>
           </div>
+          <div class="detailCtn">
+            <div class="row">
+              <div class="col">
+                <div class="label">单据编号：</div>
+                <div class="text">{{item.code}}</div>
+              </div>
+              <div class="col">
+                <div class="label">创建人：</div>
+                <div class="text">{{item.user_name}}</div>
+              </div>
+              <div class="col">
+                <div class="label">更新时间：</div>
+                <div class="text">{{item.created_at.slice(0,10)}}</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col flex3">
+                <div class="label">关联订单：</div>
+                <div class="text">{{item.order_code}}</div>
+              </div>
+              <div class="col">
+                <div class="label">备注信息：</div>
+                <div class="text"
+                  :class="item.desc?'':'gray'">{{item.desc || '无'}}</div>
+              </div>
+            </div>
+          </div>
           <!-- 按尺码配色填 -->
           <template v-if="Number(item.type)===1">
             <div class="description">
@@ -122,6 +149,12 @@
             <div class="title">加工单据</div>
           </div>
           <div class="detailCtn">
+            <div class="row">
+              <div class="col">
+                <div class="label">关联计划单：</div>
+                <div class="text">{{item.plan_code}}</div>
+              </div>
+            </div>
             <div class="row">
               <div class="col">
                 <div class="label">加工单号：</div>

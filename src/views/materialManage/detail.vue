@@ -4,12 +4,12 @@
     v-loading="loading">
     <div class="module clearfix">
       <div class="titleCtn">
-        <div class="title">物料信息合计</div>
+        <div class="title">计划原料信息</div>
       </div>
       <div class="detailCtn">
         <div class="row">
           <div class="col">
-            <div class="label">单据编号：</div>
+            <div class="label">计划单编号：</div>
             <div class="text">{{materialPlanInfo.code||materialSupplementInfo.code}}</div>
           </div>
           <div class="col">
@@ -1688,14 +1688,14 @@
                     placeholder="物料属性"></el-autocomplete>
                   <template>
                     <el-input class="once"
-                      placeholder="白胚"
-                      disabled
-                      v-if="itemMat.material_color==='白胚'"></el-input>
-                    <el-autocomplete v-else
+                      v-model="itemMat.material_color"
+                      placeholder="颜色"
+                      disabled></el-input>
+                    <!-- <el-autocomplete v-else
                       class="once"
                       v-model="itemMat.material_color"
                       :fetch-suggestions="searchColor"
-                      placeholder="物料颜色"></el-autocomplete>
+                      placeholder="物料颜色"></el-autocomplete> -->
                   </template>
                 </div>
               </div>
@@ -2170,6 +2170,7 @@
       @close="deductDetailFlag = false"
       :data="deductDetail"></zh-deduct-detail>
     <associated-page :data="associatedPage"
+      :nowPage="true"
       @close="showAssociatedPage = false"
       :show="showAssociatedPage"></associated-page>
   </div>
@@ -2576,7 +2577,7 @@ export default Vue.extend({
               material_id: item.material_id,
               material_name: '',
               material_color: item.material_color,
-              attribute: '筒纱',
+              attribute: '',
               price: '',
               number: item.final_number,
               unit: item.unit
@@ -2610,7 +2611,7 @@ export default Vue.extend({
               material_id: item.material_id,
               material_name: '',
               material_color: '白胚',
-              attribute: '筒纱',
+              attribute: '',
               price: '',
               number: item.final_number,
               unit: item.unit
@@ -2844,6 +2845,10 @@ export default Vue.extend({
       if (this.orderClientList.find((item) => item.value === id[0])!.label === '面料原料单位') {
         info.info_data.forEach((item: any) => {
           item.attribute = '面料'
+        })
+      } else {
+        info.info_data.forEach((item: any) => {
+          item.attribute = '筒纱'
         })
       }
     },
@@ -3240,6 +3245,15 @@ export default Vue.extend({
   computed: {
     associatedPage(): any[] {
       return [
+        {
+          name: '物料计划单',
+          url:
+            '/materialPlan/detail?id=' +
+            // @ts-ignore
+            this.materialPlanInfo.top_order_id +
+            '&sampleOrderIndex=' +
+            this.materialPlanInfo.order_id
+        },
         {
           name: '物料出入库',
           url:

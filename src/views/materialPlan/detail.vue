@@ -316,6 +316,7 @@
     </div>
     <associated-page :data="associatedPage"
       @close="showAssociatedPage = false"
+      :nowPage="true"
       :show="showAssociatedPage"></associated-page>
   </div>
 </template>
