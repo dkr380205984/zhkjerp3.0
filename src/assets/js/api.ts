@@ -141,6 +141,7 @@ const deduct = {
     doc_type?: number | string
     start_time?: string
     end_time?: string
+    export_excel?: 1
   }) => http.get(`${baseUrl}/doc/deduct/lists`, params),
 }
 
@@ -543,7 +544,7 @@ const order = {
   create: (params: OrderInfo) => http.post(`${baseUrl}/order/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrl}/order/lists`, params),
   confirmBatch: (params: { batch_id: string | number }) => http.post(`${baseUrl}/order/batch/complete`, params, 'application/json'),
-  simpleList: (params?: { keyword: string }) => http.get(`${baseUrl}/order/simple/lists`, params),
+  simpleList: (params?: { keyword?: string,product_code?: string, order_code?: string }) => http.get(`${baseUrl}/order/simple/lists`, params),
   timeList: (params?: ListParams) => http.get(`${baseUrl}/order/time/lists`, params), // 根据time_data查询的列表
   detail: (params: DetailParams) => http.get(`${baseUrl}/order/detail`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/order/delete`, params, 'application/json'),
@@ -642,12 +643,13 @@ const materialProcess = {
     client_id?: string | number
     user_id?: string | number
     id?: string | number
-    limit: number
-    page: number
+    limit?: number
+    page?: number
     code?: string
     start_time?: string
     end_time?: string
     is_check?: string | number
+    export_excel?: 1
     [propName: string]: any
   }) => http.get(`${baseUrl}/material/process/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/material/process/detail`, params),
@@ -675,6 +677,7 @@ const materialStock = {
     top_order_id?: string | number // 最外层order_id
     rel_doc_id?: string | number
     order_type?: string
+    export_excel?: 1
   }) => http.get(`${baseUrl}/store/log/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/store/log/delete`, params, 'application/json'),
   detail: (params: DetailParams) => http.get(`${baseUrl}/store/log/detail`, params),
@@ -748,6 +751,7 @@ const materialSupplement = {
     user_id?: string | number
     order_code?: string
     type?: 1 | 2 // 1.原料计划单 2.辅料计划单
+    export_excel?: 1
   }) => http.get(`${baseUrl}/material/sup/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/material/sup/detail`, params),
 }

@@ -291,15 +291,15 @@
         <div class="btnCtn">
           <div class="borderBtn" @click="$router.go(-1)">返回</div>
           <div class="buttonList" style="margin-left: 12px">
-            <div class="btn backHoverBlue">
+            <!-- <div class="btn backHoverBlue">
               <span class="text">导出月度报表</span>
             </div>
-            <div class="btn backHoverBlue" @click="$router.push('/quotedPrice/update?id=' + quotedList[quotedIndex])">
+            <div class="btn backHoverBlue">
               <span class="text">导出季度报表</span>
             </div>
-            <div class="btn backHoverBlue" @click="checkFlag = true">
+            <div class="btn backHoverBlue">
               <span class="text">导出年度报表</span>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
