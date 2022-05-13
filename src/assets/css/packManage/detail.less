@@ -6,55 +6,76 @@
 @import '../popup.less';
 @import '../edit.less';
 @import '../bottomBar.less';
-#packManageDetail{
-  .specialTable{
+
+#packManageDetail {
+  .backGray {
+    background: @font25;
+    cursor: not-allowed;
+
+    &:hover {
+      background: @font25;
+    }
+  }
+
+  .specialTable {
     display: block;
     width: 100%;
     overflow: auto;
     padding-right: 0;
     padding-left: 0;
     padding-bottom: 0;
-    .thead{
+
+    .thead {
       width: 2070px;
     }
-    .tbody{
+
+    .tbody {
       width: 2070px;
     }
-    .trow{
+
+    .trow {
       width: auto;
       height: auto;
-      &.outTrow{
+
+      &.outTrow {
         width: 2070px;
       }
-      .tcol{
-        min-width:110px;
+
+      .tcol {
+        min-width: 110px;
         box-sizing: border-box;
         font-size: 14px;
         position: relative;
-        .trow{
+
+        .trow {
           height: 100%;
         }
-        .unit{
+
+        .unit {
           position: absolute;
           right: 4px
         }
       }
     }
   }
-  .popup{
-    .main{
+
+  .popup {
+    .main {
       width: 1200px;
-      .label{
+
+      .label {
         line-height: 38px;
         font-size: 14px;
         width: auto;
         text-align: left;
       }
-      .editCtn{
-        &.packOrder{
+
+      .editCtn {
+        &.packOrder {
           background: #F0F0F0;
           margin: 16px 0;
-          .deleteIcon{
+
+          .deleteIcon {
             cursor: pointer;
             width: 20px;
             height: 20px;
@@ -65,40 +86,46 @@
             background: @red;
             float: right;
             margin-right: -20px;
-            &:hover{
+
+            &:hover {
               background: @hoverRed;
             }
           }
-          .col{
+
+          .col {
             margin-right: 30px;
           }
-          .opr{
+
+          .opr {
             transform: translate(-20px, 100%);
           }
         }
-        &.packPlan{
+
+        &.packPlan {
           padding-right: 0;
           padding-left: 0;
         }
       }
     }
-    .tableInput{
+
+    .tableInput {
       border: 0;
       outline: 0;
       height: 100%;
       font-size: 14px;
       box-sizing: border-box;
       padding: 8px 0;
-      resize:none;
+      resize: none;
       line-height: 24px;
       font-family: Source Han Sans CN;
       color: @font65;
     }
   }
-  .rowCtn{
+
+  .rowCtn {
     padding: 12px;
     background: #dcdcdc;
     border: 1px dotted #aaa;
-    border-top:0;
+    border-top: 0;
   }
 }

@@ -38,7 +38,7 @@
                 :key="indexChild">
                 <div class="tcol">
                   <el-checkbox v-model="itemChild.checkAll"
-                    @change="(ev)=>{itemChild.product_info_data.forEach((itemPro)=>itemPro.check=ev);$forceUpdate()}">{{itemChild.code}}</el-checkbox>
+                    @change="(ev)=>{itemChild.product_info_data.forEach((itemPro)=>itemPro.check=ev);$forceUpdate();checkList()}">{{itemChild.code}}</el-checkbox>
                 </div>
                 <div class="tcol">
                   <span>{{itemChild.client_name}}</span>
@@ -54,7 +54,7 @@
                     :key="indexPro">
                     <div class="tcol">
                       <el-checkbox v-model="itemPro.check"
-                        @change="$forceUpdate()"
+                        @change="$forceUpdate();checkList()"
                         style="display: flex;align-items: center;">
                         <div style="display:flex;flex-direction:column">
                           <span>{{itemPro.product_code}}</span>
@@ -89,6 +89,7 @@
             <div class="otherInfoCtn">
               <div class="otherInfo">
                 <div class="btn backHoverBlue"
+                  :class="{'backGray':checkListLength===0}"
                   @click="goInspection(1)">
                   <svg class="iconFont"
                     aria-hidden="true">
@@ -97,6 +98,7 @@
                   <span class="text">检验入库</span>
                 </div>
                 <div class="btn backHoverOrange"
+                  :class="{'backGray':checkListLength===0}"
                   @click="goInspection(2)">
                   <svg class="iconFont"
                     aria-hidden="true">
@@ -135,7 +137,7 @@
             v-for="item in inspectionList.filter((item)=>item.type===1)"
             :key="item.id">
             <div class="col"
-              :class="{'blue':item.type===1,'orange':item.type===2}">{{item.type===1?'检验入库':'生产出库'}}</div>
+              :class="{'blue':item.type===1,'orange':item.type===2,'green':item.type===3}">{{item.type===1?'检验入库':item.type===2?'生产出库':'成品入库'}}</div>
             <div class="col">{{item.doc_code}}</div>
             <div class="col">{{item.client_name}}</div>
             <div class="col">{{item.product_code}}/{{item.part_name}}
@@ -385,9 +387,99 @@
         </div>
       </div>
     </div>
+    <div class="popup"
+      v-show="cprkFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">成品入库</span>
+          <div class="closeCtn"
+            @click="cprkFlag=false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="tableCtn">
+            <el-checkbox v-for="item,index in cprkProList"
+              :key="index"
+              v-model="item.check"
+              @change="$forceUpdate()"> <span class="blue"
+                style="cursor:pointer">{{item.product_code||item.system_code}}</span>
+              <span class="gray">({{item.category}}/{{item.secondary_category}})</span>
+            </el-checkbox>
+          </div>
+          <div class="tableCtn">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol">产品编号</div>
+                <div class="tcol">产品名称</div>
+                <div class="tcol">产品图片</div>
+                <div class="tcol noPad"
+                  style="flex:4">
+                  <div class="trow">
+                    <div class="tcol">尺码颜色</div>
+                    <div class="tcol">下单数量</div>
+                    <div class="tcol">已入库数量</div>
+                    <div class="tcol">本次入库数量</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div class="trow"
+                v-for="(item,index) in cprkProList.filter((item)=>item.check)"
+                :key="index">
+                <div class="tcol">
+                  <span class="blue"
+                    style="cursor:pointer">{{item.product_code||item.system_code}}</span>
+                  <span class="gray">({{item.category}}/{{item.secondary_category}})</span>
+                </div>
+                <div class="tcol">{{item.name}}</div>
+                <div class="tcol">
+                  <div class="imageCtn">
+                    <el-image style="width:100%;height:100%"
+                      :src="item.image_data.length>0?item.image_data[0]:''"
+                      :preview-src-list="item.image_data">
+                      <div slot="error"
+                        class="image-slot">
+                        <i class="el-icon-picture-outline"
+                          style="font-size:42px"></i>
+                      </div>
+                    </el-image>
+                  </div>
+                </div>
+                <div class="tcol noPad"
+                  style="flex:4">
+                  <div class="trow"
+                    v-for="(itemChild,indexChild) in item.product_info"
+                    :key="indexChild">
+                    <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
+                    <div class="tcol">{{itemChild.number}}</div>
+                    <div class="tcol">暂无数据</div>
+                    <div class="tcol">
+                      <div class="elCtn">
+                        <el-input v-model="itemChild.inNum"
+                          placeholder="数量"></el-input>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="cprkFlag=false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="saveCprk">确认入库</span>
+        </div>
+      </div>
+    </div>
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
+          <div class="btn backHoverBlue"
+            @click="cprkFlag=true">成品入库</div>
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
         </div>
@@ -545,7 +637,10 @@ export default Vue.extend({
         {
           value: '其它原因'
         }
-      ]
+      ],
+      cprkFlag: false,
+      cprkProList: [],
+      checkListLength: 0
     }
   },
   methods: {
@@ -641,6 +736,7 @@ export default Vue.extend({
             return item.product_info_data.filter((itemChild) => itemChild.check).length > 0
           })
         : []
+      this.checkListLength = checkInfo.length
       if (checkInfo.length === 0) {
         return []
       } else {
@@ -720,6 +816,42 @@ export default Vue.extend({
         })
       }
     },
+    saveCprk() {
+      const formArr: InspectionInfo[] = []
+      this.cprkProList.forEach((item: any) => {
+        if (item.check) {
+          item.product_info.forEach((itemChild: any) => {
+            if (itemChild.inNum) {
+              formArr.push({
+                id: null,
+                type: 3,
+                order_id: this.order_id,
+                doc_info_id: item.product_id,
+                complete_time: this.$getDate(new Date()),
+                number: itemChild.inNum,
+                size: itemChild.size_name,
+                color: itemChild.color_name,
+                part_name: '',
+                shoddy_number: '',
+                shoddy_reason: '',
+                client: ''
+              })
+            }
+          })
+        }
+      })
+      if (formArr.length === 0) {
+        this.$message.error('请填写入库数量')
+        return
+      }
+      inspection.create({ data: formArr }).then((res) => {
+        if (res.data.status) {
+          this.$message.success('入库成功')
+          this.cprkFlag = false
+          this.init()
+        }
+      })
+    },
     deleteInspection(id: number) {
       this.$confirm('是否删除该检验日志?', '提示', {
         confirmButtonText: '确认删除',
@@ -754,6 +886,12 @@ export default Vue.extend({
       .then((res) => {
         this.order_id = res.data.data.time_data[this.orderIndex].id
         this.orderInfo = res.data.data
+        this.orderInfo.time_data.forEach((itemTime: any) => {
+          itemTime.batch_data.forEach((itemBatch: any) => {
+            this.cprkProList = this.cprkProList.concat(itemBatch.product_data)
+          })
+        })
+        this.cprkProList.forEach((item: any) => (item.check = true))
         this.init()
         // 订单相关单位，用于检验出库
         clientInOrder({

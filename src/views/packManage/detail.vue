@@ -114,6 +114,13 @@
         <div class="otherInfoCtn">
           <div class="otherInfo">
             <div class="btn backHoverBlue"
+              :class="{'backGray': orderInfo.time_data[0].batch_data.filter((item) => {
+                return item.product_data.some((itemPro) => {
+                  return itemPro.product_info.some((itemChild) => {
+                    return itemChild.check
+                  })
+                })
+              }).length===0}"
               @click="goPlanPack(1)">
               <svg class="iconFont"
                 aria-hidden="true">
@@ -122,6 +129,13 @@
               <span class="text">合并装箱</span>
             </div>
             <div class="btn backHoverBlue"
+              :class="{'backGray': orderInfo.time_data[0].batch_data.filter((item) => {
+                return item.product_data.some((itemPro) => {
+                  return itemPro.product_info.some((itemChild) => {
+                    return itemChild.check
+                  })
+                })
+              }).length===0}"
               @click="goPlanPack(2)">
               <svg class="iconFont"
                 aria-hidden="true">

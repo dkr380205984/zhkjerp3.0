@@ -38,6 +38,10 @@
                 <div class="text"
                   :class="item.desc?'':'gray'">{{item.desc || '无'}}</div>
               </div>
+              <div class="col">
+                <div class="label">计划工序：</div>
+                <div class="text">已计划<span class="green">{{item.weave_plan_count||0}}</span>张</div>
+              </div>
             </div>
           </div>
           <!-- 按尺码配色填 -->
@@ -124,6 +128,7 @@
                   <span class="text">加工计划</span>
                 </div> -->
                 <div class="btn backHoverOrange"
+                  :class="{'backGray':checkList().length===0}"
                   @click="getProductionPlan">
                   <svg class="iconFont"
                     aria-hidden="true">

@@ -544,7 +544,7 @@ const order = {
   create: (params: OrderInfo) => http.post(`${baseUrl}/order/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrl}/order/lists`, params),
   confirmBatch: (params: { batch_id: string | number }) => http.post(`${baseUrl}/order/batch/complete`, params, 'application/json'),
-  simpleList: (params?: { keyword?: string,product_code?: string, order_code?: string }) => http.get(`${baseUrl}/order/simple/lists`, params),
+  simpleList: (params?: { keyword?: string, product_code?: string, order_code?: string }) => http.get(`${baseUrl}/order/simple/lists`, params),
   timeList: (params?: ListParams) => http.get(`${baseUrl}/order/time/lists`, params), // 根据time_data查询的列表
   detail: (params: DetailParams) => http.get(`${baseUrl}/order/detail`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/order/delete`, params, 'application/json'),
@@ -1024,6 +1024,46 @@ const receipt = {
   total: () => http.get(`${baseUrl}/receipt/total`),
 }
 
+interface CheckConfigInfo {
+  doc_type: number
+  data: {
+    auto_pass: 1 | 2 // 是否自动通过 1是 2否
+    has_condition: 1 | 2 // 是否根据条件判断 1是 2否
+    user_id: Array<number>
+    client_id?: Array<number>
+    number?: any
+    order_type?: number | string
+    total_number?: number | string
+    total_price?: number | string
+    total_order_number?: number | string
+    total_material_number?: number | string
+    contrast_quote_extent?: number | string | any[] // 报价单浮动
+    by_process_price?: number // 是否根据工序单价判断 1是 2否
+    ranse?: string // 对比报价单价格浮动
+    daosha?: string
+    bingxian?: string
+    pengsha?: string
+    qiege?: string
+    not_allow_operate: 1 | 2 // 	是否限制后续操作 1是 2否
+    not_allow_print: 1 | 2 // 限制打印 1是 2否
+    not_allow_add_rel_doc: 1 | 2 // 是否限制添加关联单据 1是 2否
+    not_allow_settle: 1 | 2 // 限制结算 1是 2否
+  }
+}
+// 审核设置
+const checkConfig = {
+  pushDetail: () => http.get(`${baseUrl}/doc/push/status/info`, {}),
+  detail: (params: { doc_type: number }) => http.get(`${baseUrl}/doc/push/config/detail`, params),
+  save: (params: CheckConfigInfo) => http.post(`${baseUrl}/doc/push/config/save`, params, 'application/json'),
+  savePush: (params: {
+    push_status: 1 | 2
+    push_user: Array<{
+      user_id: string | number
+      doc_type: Array<number>
+    }>
+  }) => http.post(`${baseUrl}/doc/push/status/save`, params, 'application/json'),
+}
+
 const statistics = {
   order: (params?: {
     start_time: string
@@ -1163,6 +1203,7 @@ const statistics = {
   }) => http.get(`${baseUrl}/statistics/store/total`, params),
 }
 export {
+  checkConfig,
   payment,
   statistics,
   receipt,

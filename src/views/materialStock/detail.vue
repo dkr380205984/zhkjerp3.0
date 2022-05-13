@@ -130,6 +130,9 @@
         <div class="otherInfoCtn">
           <div class="otherInfo">
             <div class="btn backHoverBlue"
+              :class="{'backGray':materialOrderList.filter((item) => {
+                return item.info_data.some((itemChild) => itemChild.check)
+              }).length===0}"
               @click="goStock(4)">
               <svg class="iconFont"
                 aria-hidden="true">
@@ -619,6 +622,7 @@
         <div class="otherInfoCtn">
           <div class="otherInfo">
             <div class="btn backHoverOrange"
+              :class="{'backGray':productionPlanList.filter((item) => {return item.material_info_data.some((itemChild) => itemChild.check) || item.sup_data.some((itemChild) => {return itemChild.info_data.some((itemSon) => itemSon.check)})}).length!==1}"
               @click="goStock(6)">
               <svg class="iconFont"
                 aria-hidden="true">
@@ -627,6 +631,14 @@
               <span class="text">结余入库</span>
             </div>
             <div class="btn backHoverBlue"
+              :class="{'backGray':productionPlanList.filter((item) => {
+                return (
+                  item.material_info_data.some((itemChild) => itemChild.check) ||
+                  item.sup_data.some((itemChild) => {
+                    return itemChild.info_data.some((itemSon) => itemSon.check)
+                  })
+                )
+              }).length!==1}"
               @click="goStock(5)">
               <svg class="iconFont"
                 aria-hidden="true">
@@ -1267,10 +1279,6 @@ export default Vue.extend({
         this.getDiaoquInfo(type)
       } else if (type === 6) {
         // 结余入库用组件的逻辑
-        this.storeSurplusFlag = true
-        this.storeSurplusInfo.order_code = this.orderInfo.code
-        this.storeSurplusInfo.order_id = this.orderInfo.id
-        this.storeSurplusInfo.materialList = []
         const checkLength = this.productionPlanList.filter((item) => {
           return (
             item.material_info_data.some((itemChild) => itemChild.check) ||
@@ -1279,10 +1287,14 @@ export default Vue.extend({
             })
           )
         }).length
-        if (checkLength > 1) {
+        if (checkLength > 1 || checkLength === 0) {
           this.$message.error('只能选择一张加工单进行出库操作')
           return
         }
+        this.storeSurplusFlag = true
+        this.storeSurplusInfo.order_code = this.orderInfo.code
+        this.storeSurplusInfo.order_id = this.orderInfo.id
+        this.storeSurplusInfo.materialList = []
 
         this.productionPlanList.forEach((item) => {
           item.material_info_data.forEach((itemChild) => {

@@ -91,6 +91,7 @@
         <div class="otherInfoCtn">
           <div class="otherInfo">
             <div class="btn backHoverBlue"
+              :class="{'backGray':checkMaterialOrderList().length===0}"
               @click="goOrderMaterial('色纱')">
               <svg class="iconFont"
                 aria-hidden="true">
@@ -99,6 +100,7 @@
               <span class="text">订购成品</span>
             </div>
             <div class="btn backHoverBlue"
+              :class="{'backGray':checkMaterialOrderList().length===0}"
               @click="goOrderMaterial('白胚')">
               <svg class="iconFont"
                 aria-hidden="true">
@@ -107,6 +109,7 @@
               <span class="text">订购白胚</span>
             </div>
             <div class="btn backHoverOrange"
+              :class="{'backGray':checkMaterialOrderList().length===0}"
               @click="goStockMaterial()">
               <svg class="iconFont"
                 aria-hidden="true">
