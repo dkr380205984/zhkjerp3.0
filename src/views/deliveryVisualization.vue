@@ -55,7 +55,7 @@
                     <div class="tcol">
                       <div class="imageCtn">
                         <el-image style="width:100%;height:100%"
-                          :src="itemPro.image_data.length>0?itemPro.image_data[0]:''"
+                          :src="itemPro.image_data.length>0?itemPro.image_data[0]+'?imageView2/1/w/100/100':''"
                           :preview-src-list="itemPro.image_data">
                           <div slot="error"
                             class="image-slot">
@@ -68,22 +68,24 @@
                     <div class="tcol">{{itemPro.number}}/{{itemPro.total_number||0}}</div>
                     <div class="tcol noPad"
                       style="flex:3">
-                      <div class="trow"
-                        v-for="(itemChild,indexChild) in itemPro.weave_info"
-                        :key="indexChild">
-                        <div class="tcol">{{itemChild.process_name}}</div>
-                        <div class="tcol middle">
-                          <div>{{itemChild.real_number}}
-                            (<span :class="{'green':itemChild.real_number>=itemChild.number,'red':itemChild.real_number<itemChild.number}">
-                              <template v-if="itemChild.real_number>itemChild.number">+{{itemChild.real_number-itemChild.number}}</template>
-                              <template v-else-if="itemChild.real_number===itemChild.number">0</template>
-                              <template v-else>-{{itemChild.number - itemChild.real_number}}</template>
-                            </span>)</div>
+                      <template v-if="itemPro.weave_info">
+                        <div class="trow"
+                          v-for="(itemChild,indexChild) in itemPro.weave_info"
+                          :key="indexChild">
+                          <div class="tcol">{{itemChild.process_name}}</div>
+                          <div class="tcol middle">
+                            <div>{{itemChild.real_number}}
+                              (<span :class="{'green':itemChild.real_number>=itemChild.number,'red':itemChild.real_number<itemChild.number}">
+                                <template v-if="itemChild.real_number>itemChild.number">+{{itemChild.real_number-itemChild.number}}</template>
+                                <template v-else-if="itemChild.real_number===itemChild.number">0</template>
+                                <template v-else>-{{itemChild.number - itemChild.real_number}}</template>
+                              </span>)</div>
+                          </div>
+                          <div class="tcol">{{itemChild.update_time}}</div>
                         </div>
-                        <div class="tcol">{{itemChild.update_time}}</div>
-                      </div>
+                      </template>
                       <div class="trow"
-                        v-if="itemPro.weave_info.length===0">
+                        v-if="!itemPro.weave_info">
                         <div class="tcol">暂无生产信息</div>
                       </div>
                     </div>
@@ -126,7 +128,7 @@
               <div class="tcol">
                 <div class="imageCtn">
                   <el-image style="width:100%;height:100%"
-                    :src="item.image_data.length>0?item.image_data[0]:''"
+                    :src="item.image_data.length>0?item.image_data[0]+'?imageView2/1/w/100/100':''"
                     :preview-src-list="item.image_data">
                     <div slot="error"
                       class="image-slot">
@@ -355,30 +357,31 @@ export default Vue.extend({
     },
     getOrderList() {
       order
-        .deliveryList({
+        .deliveryListNoLog({
+          company_id: this.$getsessionStorage('company_id'),
           user_id: this.user_id,
           group_id: this.group_id,
           page: this.orderPage,
           limit: 20
         })
         .then((res) => {
-          if (res.data.status) {
+          if (res.data.status || res.data.code === 200) {
             this.totalOrderNum = res.data.data.total
             // 如果总数本来就很少就直接赋值
             if (this.totalOrderNum < 20) {
-              this.list = res.data.data.items
+              this.list = res.data.data.data
               this.getOrderCompleteFlag = true
             }
             if (this.totalOrderNum > this.orderPage * 20) {
               this.orderPage++
               if (this.list.length === 0) {
-                this.list = res.data.data.items
+                this.list = res.data.data.data
               } else {
-                this.listNew = this.listNew.concat(res.data.data.items)
+                this.listNew = this.listNew.concat(res.data.data.data)
               }
               this.getOrderList()
             } else {
-              this.listNew = this.listNew.concat(res.data.data.items)
+              this.listNew = this.listNew.concat(res.data.data.data)
               this.getOrderCompleteFlag = true
             }
             if (!this.timer && Number(this.totalOrderNum) > 10 && this.getOrderCompleteFlag) {
@@ -404,14 +407,15 @@ export default Vue.extend({
     },
     getAppList() {
       chartsApi
-        .appLog({
+        .appLogNew({
+          company_id: this.$getsessionStorage('company_id'),
           user_id: this.user_id,
           group_id: this.group_id,
           limit: 20,
           page: this.appPage
         })
         .then((res) => {
-          if (res.data.status) {
+          if (res.data.status || res.data.code === 200) {
             this.totalAppNum = res.data.data.total
             if (this.totalAppNum > this.appPage * 20) {
               this.appPage++
@@ -451,14 +455,15 @@ export default Vue.extend({
     },
     getBatchLog() {
       chartsApi
-        .batchLog({
+        .batchLogNew({
+          company_id: this.$getsessionStorage('company_id'),
           user_id: this.user_id,
           group_id: this.group_id,
           start_time: '',
           end_time: ''
         })
         .then((res) => {
-          if (res.data.status) {
+          if (res.data.status || res.data.code === 200) {
             this.option.series.data = this.getVirtulData(res.data.data)
             this.option.visualMap.max = Math.max(...res.data.data.map((item: any) => item.number))
             this.option.series.symbolSize = (val: any) => {

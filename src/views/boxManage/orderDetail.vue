@@ -65,6 +65,7 @@
                         <div class="tcol">
                           <div class="elCtn">
                             <el-input v-model="itemChild.real_number"
+                              @focus="$focusInput($event)"
                               placeholder="实际发货数量"></el-input>
                           </div>
                         </div>
@@ -75,6 +76,7 @@
                 <div class="tcol">
                   <div class="elCtn">
                     <el-input @input="computedEverything"
+                      @focus="$focusInput($event)"
                       v-model="itemBatch.total_box_count"
                       placeholder="总箱数">
                     </el-input>
@@ -83,6 +85,7 @@
                 <div class="tcol">
                   <div class="elCtn">
                     <el-input @input="computedEverything"
+                      @focus="$focusInput($event)"
                       v-model="itemBatch.total_gross_weight"
                       placeholder="总毛重">
                     </el-input>
@@ -91,6 +94,7 @@
                 <div class="tcol">
                   <div class="elCtn">
                     <el-input @input="computedEverything"
+                      @focus="$focusInput($event)"
                       v-model="itemBatch.total_net_weight"
                       placeholder="总净重">
                     </el-input>
@@ -99,6 +103,7 @@
                 <div class="tcol">
                   <div class="elCtn">
                     <el-input @input="computedEverything"
+                      @focus="$focusInput($event)"
                       v-model="itemBatch.total_bulk"
                       placeholder="总体积">
                     </el-input>
@@ -163,6 +168,7 @@
             <div class="info elCtn">
               <el-autocomplete class="inline-input"
                 v-model="boxInfo.city"
+                @focus="$focusInput($event)"
                 :fetch-suggestions="searchCity"
                 placeholder="请输入运输城市"></el-autocomplete>
             </div>
@@ -174,6 +180,7 @@
             <div class="info elCtn">
               <el-autocomplete class="inline-input"
                 v-model="boxInfo.address"
+                @focus="$focusInput($event)"
                 :fetch-suggestions="searchAddress"
                 placeholder="请输入运输城市"></el-autocomplete>
             </div>
@@ -240,6 +247,7 @@
             </div>
             <div class="info elCtn">
               <el-input v-model="boxInfo.price"
+                @focus="$focusInput($event)"
                 placeholder="请输入运输单价"
                 @input="(ev)=>{
                   boxInfo.price_bulk = $toFixed(Number(ev)*Number(boxInfo.total_bulk));
@@ -267,6 +275,7 @@
             </div>
             <div class="info elCtn">
               <el-input v-model="boxInfo.others_fee"
+                @focus="$focusInput($event)"
                 placeholder="请输入额外费用"
                 @input="(ev)=>{boxInfo.total_price = $toFixed(Number(ev)+Number(boxInfo.total_price))}">
                 <template slot="append">元</template>

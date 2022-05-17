@@ -13,6 +13,45 @@
           <div class="titleCtn">
             <div class="title">计划加工</div>
           </div>
+          <div class="detailCtn">
+            <div class="checkCtn">
+              <el-tooltip class="item"
+                effect="dark"
+                content="点击查看审核日志"
+                placement="bottom">
+                <img :src="item.is_check|checkFilter" />
+              </el-tooltip>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="label">单据编号：</div>
+                <div class="text">{{item.code}}</div>
+              </div>
+              <div class="col">
+                <div class="label">创建人：</div>
+                <div class="text">{{item.user_name}}</div>
+              </div>
+              <div class="col">
+                <div class="label">更新时间：</div>
+                <div class="text">{{item.created_at.slice(0,10)}}</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col flex3">
+                <div class="label">关联订单：</div>
+                <div class="text">{{item.order_code}}</div>
+              </div>
+              <div class="col">
+                <div class="label">备注信息：</div>
+                <div class="text"
+                  :class="item.desc?'':'gray'">{{item.desc || '无'}}</div>
+              </div>
+              <div class="col">
+                <div class="label">计划工序：</div>
+                <div class="text">已计划<span class="green">{{item.weave_plan_count||0}}</span>张</div>
+              </div>
+            </div>
+          </div>
           <!-- 按尺码配色填 -->
           <template v-if="Number(item.type)===1">
             <div class="description">
@@ -83,28 +122,14 @@
             </div>
           </template>
           <div class="buttonList">
-            <div class="btn backHoverBlue">
-              <i class="el-icon-s-grid"></i>
-              <span class="text">计划单操作</span>
-            </div>
-            <div class="otherInfoCtn">
-              <div class="otherInfo">
-                <!-- <div class="btn backHoverBlue">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">加工计划</span>
-                </div> -->
-                <div class="btn backHoverOrange"
-                  @click="getProductionPlan">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">内部派单</span>
-                </div>
-              </div>
+            <div class="btn backHoverOrange"
+              :class="{'backGray':checkList().length===0}"
+              @click="getProductionPlan">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">内部派单</span>
             </div>
           </div>
         </el-tab-pane>
@@ -122,6 +147,12 @@
             <div class="title">加工单据</div>
           </div>
           <div class="detailCtn">
+            <div class="row">
+              <div class="col">
+                <div class="label">关联计划单：</div>
+                <div class="text">{{item.plan_code}}</div>
+              </div>
+            </div>
             <div class="row">
               <div class="col">
                 <div class="label">加工单号：</div>
@@ -1323,6 +1354,7 @@
                     <div class="info elCtn">
                       <el-input v-model="itemPro.price"
                         placeholder="请输入单价"
+                        @focus="$focusInput($event)"
                         @input="(ev)=>{itemPro.total_price=$toFixed(Number(ev)*Number(itemPro.number))}">
                         <template slot="append">元</template>
                       </el-input>
@@ -1389,6 +1421,7 @@
                 </div>
                 <div class="info elCtn">
                   <el-input placeholder="请输入备注信息"
+                    @focus="$focusInput($event)"
                     v-model="productionPlanUpdateInfo.desc"></el-input>
                 </div>
               </div>

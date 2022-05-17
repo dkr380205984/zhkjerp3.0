@@ -7,6 +7,14 @@
         <div class="title">装箱出库详情</div>
       </div>
       <div class="detailCtn">
+        <div class="checkCtn">
+          <el-tooltip class="item"
+            effect="dark"
+            content="点击查看审核日志"
+            placement="bottom">
+            <img :src="boxInfo.is_check|checkFilter" />
+          </el-tooltip>
+        </div>
         <div class="row">
           <div class="col">
             <div class="label">出库单号：</div>

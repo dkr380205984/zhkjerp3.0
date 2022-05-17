@@ -418,6 +418,7 @@
                   <el-input class="once unitAppend"
                     v-model="itemYarn.weight"
                     placeholder="数量"
+                    @input="itemYarn.price?cmpTotalPrice(itemYarn):''"
                     :disabled="itemYarn.tree_data.length===0">
                     <template slot="append">
                       <input class="unit"
@@ -429,6 +430,7 @@
                   <el-input class="once"
                     v-model="itemYarn.loss"
                     placeholder="损耗"
+                    @input="itemYarn.price?cmpTotalPrice(itemYarn):''"
                     :disabled="itemYarn.tree_data.length===0">
                     <template slot="append">%</template>
                   </el-input>
@@ -524,6 +526,7 @@
                   <el-input class="once unitAppend"
                     v-model="itemDecorateMaterial.number"
                     placeholder="数量"
+                    @input="itemDecorateMaterial.price?cmpTotalPrice(itemDecorateMaterial):''"
                     :disabled="!itemDecorateMaterial.material_id">
                     <template slot="append">
                       <input class="unit"
@@ -535,6 +538,7 @@
                   <el-input class="once"
                     v-model="itemDecorateMaterial.loss"
                     placeholder="损耗"
+                    @input="itemDecorateMaterial.price?cmpTotalPrice(itemDecorateMaterial):''"
                     :disabled="!itemDecorateMaterial.material_id">
                     <template slot="append">%</template>
                   </el-input>
@@ -1894,7 +1898,11 @@ export default Vue.extend({
         this.getContacts(this.quotedPriceInfo.tree_data, true) //标记一下是初始化
       }
 
-      this.quotedPriceInfo.product_data.forEach((item) => {
+      this.quotedPriceInfo.product_data.forEach((item, index) => {
+        this.$nextTick(() => {
+          this.$initEditor(item, index)
+        })
+
         item.file_list = item.image_data.map((itemImage, index) => {
           return {
             id: index,

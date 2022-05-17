@@ -4,27 +4,32 @@
 @import '../fixedTable.less';
 @import '../table.less';
 @import '../edit.less';
-#setting{
-  .info{
 
-    .el-button{
+#setting {
+  .info {
+
+    .el-button {
       height: 100%;
       line-height: 0;
     }
   }
- .settingCtn{
+
+  .settingCtn {
     display: flex;
-    .navFather{
+
+    .navFather {
       width: 200px;
       border-right: 1px solid @borderColor;
       font-size: @fontBig;
     }
-    .navSon{
+
+    .navSon {
       width: 150px;
       border-right: 1px solid @borderColor;
       font-size: @fontMiddle;
     }
-    .nav{
+
+    .nav {
       width: 75%;
       padding-left: 15px;
       line-height: 40px;
@@ -34,72 +39,87 @@
       border-bottom-right-radius: 2px;
       color: @font65;
       margin: 8px 0;
-      box-shadow: 2px 2px 4px 1px rgba(0,0,0,0.15);
+      box-shadow: 2px 2px 4px 1px rgba(0, 0, 0, 0.15);
       background: #eeeeee;
       transition: 0.1s linear;
       box-sizing: border-box;
       cursor: pointer;
-      &:hover{
+
+      &:hover {
         width: 88%;
         background: #fafafa;
         color: @blue;
       }
-      &.active{
+
+      &.active {
         width: 88%;
         background: #fafafa;
         color: @blue;
       }
     }
-    .mainSetting{
+
+    .mainSetting {
       flex: 1;
       overflow: auto;
       max-height: 750px;
     }
-    .rect{
+
+    .rect {
       width: 32px;
       height: 32px;
       line-height: 32px;
       text-align: center;
     }
-    .documentSetting{
+
+    .documentSetting {
       padding: 20px 32px;
-      .row{
+
+      .row {
         flex-direction: column;
         margin: 16px 0;
-        &:first-child{
+
+        &:first-child {
           margin-top: 0;
         }
-        .label{
+
+        .label {
           width: 100%;
           color: @font65;
           font-size: @fontMiddle;
           line-height: 32px;
         }
-        .content{
+
+        .content {
           margin-top: 8px;
           max-width: 600px;
           height: 32px;
-          &.upload{
+
+          &.upload {
             height: auto;
           }
         }
-        .prompt{
+
+        .prompt {
           font-size: @fontSmall;
           color: @font45;
         }
       }
-      .companySignatureUpload{
+
+      .companySignatureUpload {
         width: 360px;
         height: 180px;
         // border: 1px dashed #d9d9d9;
-        border-radius: 6px;cursor: pointer;
-        .showImg{
+        border-radius: 6px;
+        cursor: pointer;
+
+        .showImg {
           display: block;
           width: 360px;
           height: 180px;
           object-fit: contain;
         }
-        .addIcon{
+
+        .addIcon {
           font-size: 28px;
           color: #8c939d;
           width: 360px;
@@ -110,14 +130,16 @@
       }
     }
   }
-  .popup{
-    .tagCtn{
+
+  .popup {
+    .tagCtn {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       min-height: 32px;
       height: auto;
-      .yarnNameTag{
+
+      .yarnNameTag {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -128,8 +150,9 @@
         color: @blue;
         position: relative;
         margin: 6px 4px;
-        background-color:rgba(230,247,255,1);
-        .icon{
+        background-color: rgba(230, 247, 255, 1);
+
+        .icon {
           position: absolute;
           top: 50%;
           right: 0.5em;
@@ -139,87 +162,113 @@
           box-sizing: border-box;
           transition: opacity 0.1s linear;
           color: @red;
-          &:hover{
+
+          &:hover {
             opacity: 1;
             cursor: pointer;
             font-weight: bold;
           }
         }
-        &.unactive{
+
+        &.unactive {
           color: @font45;
           border-color: @borderColor;
           background: #fff;
           cursor: pointer;
         }
-        &.active{
+
+        &.active {
           background: @green;
           border-color: @green;
           color: #fff;
           cursor: pointer;
           padding-right: 1.2rem;
-          .icon{
+
+          .icon {
             display: none;
           }
         }
-        &.addBtn{
+
+        &.addBtn {
           padding-right: 1.2rem;
-          border:1px dotted @blue;
+          border: 1px dotted @blue;
           color: @blue;
           cursor: pointer;
         }
       }
     }
-    .contentCtn{
+
+    .contentCtn {
       min-height: 0;
     }
-    .specialInput{
+
+    .specialInput {
       width: 80px;
-      &.hasMargin{
+
+      &.hasMargin {
         margin-right: 12px;
       }
     }
   }
-  .editCtn{
+
+  .editCtn {
     padding: 0;
-    .label{
+
+    .label {
       text-align: left;
     }
-    .col{
+
+    .col {
       margin-right: 12px;
     }
-    .opr{
+
+    .opr {
       transform: translate(0px, 100%);
       top: -28px;
     }
+
+    .middle {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
   }
-  .tableCtn{
+
+  .tableCtn {
     padding: 0;
     padding-bottom: 12px;
   }
-  .companySetting{
+
+  .companySetting {
     padding: 20px;
     overflow: auto;
-    .row{
+
+    .row {
       display: flex;
       margin-bottom: 16px;
-      .label{
+
+      .label {
         width: 6em;
         font-size: @fontMiddle;
         color: @font65;
         line-height: 32px;
       }
-      .content{
+
+      .content {
         min-height: 32px;
-        .input-item{
+
+        .input-item {
           width: 600px;
         }
       }
-      .prompt{
+
+      .prompt {
         font-size: @fontSmall;
         color: @font45;
       }
     }
-    .btnCtn{
+
+    .btnCtn {
       margin-top: 32px;
       display: flex;
       flex-direction: row;
@@ -227,14 +276,17 @@
       justify-content: flex-end;
     }
   }
-  .checkBoxCtn{
+
+  .checkBoxCtn {
     display: block;
     height: auto;
-    .checkbox{
+
+    .checkbox {
       display: inline-flex;
       margin-right: 12px;
       align-items: center;
-      .text{
+
+      .text {
         margin-left: 8px;
         line-height: 32px;
         cursor: pointer;

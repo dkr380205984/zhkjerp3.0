@@ -5,19 +5,31 @@
 @import '../table.less';
 @import '../popup.less';
 @import '../buttonList.less';
-#productionPlanDetail{
-  .description{
+
+#productionPlanDetail {
+  .backGray {
+    background: @font25;
+    cursor: not-allowed;
+
+    &:hover {
+      background: @font25;
+    }
+  }
+
+  .description {
     padding: 18px;
     background: #F0F0F0;
     color: @font85;
-    margin:20px 32px 0 32px;
+    margin: 20px 32px 0 32px;
     font-size: @fontBig;
     font-weight: bold;
   }
-  .popup{
-    .main{
+
+  .popup {
+    .main {
       width: 1200px;
-      .copyIcon{
+
+      .copyIcon {
         position: absolute;
         right: 0;
         top: 0;
@@ -27,62 +39,74 @@
         width: 16px;
         height: 16px;
       }
-      .label{
+
+      .label {
         line-height: 38px;
         font-size: 14px;
         width: auto;
         text-align: left;
         position: relative;
       }
-      .editCtn{
-        background:#F0F0F0 ;
+
+      .editCtn {
+        background: #F0F0F0;
         margin: 16px 0;
-        .col{
+
+        .col {
           margin-right: 30px;
         }
-        .opr{
+
+        .opr {
           transform: translate(-20px, 100%);
         }
-        .tableCtn{
+
+        .tableCtn {
           padding: 0;
-          .thead{
+
+          .thead {
             background: #CCCCCC;
           }
         }
       }
-      .stepCtn{
+
+      .stepCtn {
         display: flex;
         align-items: center;
         height: 70px;
         margin: 12px 0;
         justify-content: space-around;
         position: relative;
-        .step{
+
+        .step {
           display: flex;
           flex-direction: column;
           align-items: center;
-          .circle{
+
+          .circle {
             text-align: center;
             line-height: 40px;
             width: 40px;
             color: @blue;
             border-radius: 50%;
-            border:1px solid @blue;
+            border: 1px solid @blue;
             background: #fff;
           }
-          .name{
+
+          .name {
             margin-top: 10px;
             color: @blue;
           }
-          &.active{
-            .circle{
+
+          &.active {
+            .circle {
               background: @blue;
               color: #fff;
             }
           }
         }
-        &::after{
-          content:'';
+
+        &::after {
+          content: '';
           position: absolute;
           height: 1px;
           left: 0;

@@ -16,6 +16,11 @@ module.exports = {
     port: 9966,
     https: false,
     proxy: {
+      '/ever': {
+        target: 'https://knit-m2-api.zwyknit.com',
+        changeOrigin: true,
+        ws: true
+      },
       '/scarf': {
         target: TARGET, // 对应自己的接口
         changeOrigin: true,

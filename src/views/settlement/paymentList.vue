@@ -162,7 +162,7 @@
             <div class="col green">合计：</div>
             <div class="col"></div>
             <div class="col"></div>
-            <div class="col green bold">{{clientTypeName?$toFixed(totalData.total_plan_price/10000):'-'}}{{clientTypeName?'万元':''}}</div>
+            <div class="col green bold">{{$toFixed(totalData.total_plan_price/10000)}}万元</div>
             <div class="col green bold">
               <template v-if="!clientTypeName">-</template>
               <template v-else-if="clientTypeName==='纱线原料单位'||clientTypeName==='原料加工单位'">
@@ -181,7 +181,7 @@
                 {{$toFixed(totalData.total_plan_number)}}立方
               </template>
             </div>
-            <div class="col green bold">{{clientTypeName?$toFixed(totalData.total_real_price/10000):'-'}}{{clientTypeName?'万元':''}}</div>
+            <div class="col green bold">{{$toFixed(totalData.total_real_price/10000)}}万元</div>
             <div class="col green bold">
               <template v-if="!clientTypeName">-</template>
               <template v-else-if="clientTypeName==='纱线原料单位'||clientTypeName==='原料加工单位'">
@@ -200,9 +200,9 @@
                 {{$toFixed(totalData.total_real_number)}}立方
               </template>
             </div>
-            <div class="col green bold">{{clientTypeName?$toFixed(totalData.total_invoice_price/10000):'-'}}{{clientTypeName?'万元':''}}</div>
-            <div class="col green bold">{{clientTypeName?$toFixed(totalData.total_collect_price/10000):'-'}}{{clientTypeName?'万元':''}}</div>
-            <div class="col green bold">{{clientTypeName?$toFixed(totalData.total_deduct_price/10000):'-'}}{{clientTypeName?'万元':''}}</div>
+            <div class="col green bold">{{$toFixed(totalData.total_invoice_price)}}万元</div>
+            <div class="col green bold">{{$toFixed(totalData.total_pay_price)}}万元</div>
+            <div class="col green bold">{{$toFixed(totalData.total_deduct_price)}}万元</div>
             <div class="col"></div>
           </div>
         </div>
@@ -248,7 +248,7 @@ export default Vue.extend({
       unitArr: moneyArr,
       year: new Date().getFullYear().toString(),
       totalData: {
-        total_collect_price: 0,
+        total_pay_price: 0,
         total_deduct_price: 0,
         total_invoice_price: 0,
         total_plan_number: 0,

@@ -67,7 +67,8 @@
                   <div class="elCtn">
                     <el-input placeholder="百分比"
                       v-model="itemChild.add_percent"
-                      @input="getPlanNum($event,itemChild)">
+                      @input="getPlanNum($event,itemChild)"
+                      @focus="$focusInput($event)">
                       <template slot="append">%</template>
                     </el-input>
                   </div>
@@ -91,6 +92,7 @@
                       <div class="elCtn">
                         <el-input v-model="itemPart.number"
                           placeholder="计划生产数量"
+                          @focus="$focusInput($event)"
                           @change="getMaterialPlanDetail(itemPart.part_id,itemPart.number,itemChild)"></el-input>
                       </div>
                     </div>
@@ -326,7 +328,8 @@
                         <el-autocomplete class="inline-input"
                           v-model="itemChild.material_color"
                           :fetch-suggestions="searchColor"
-                          placeholder="物料颜色"></el-autocomplete>
+                          placeholder="物料颜色"
+                          @focus="$focusInput($event)"></el-autocomplete>
                       </div>
                     </div>
                     <div class="tcol"
@@ -334,6 +337,7 @@
                       <div class="elCtn">
                         <el-input v-model="itemChild.production_number"
                           placeholder="无计划值"
+                          @focus="$focusInput($event)"
                           @input="(ev)=>{
                             itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='kg'||itemChild.unit==='g'?1000:1));
                             itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)
@@ -351,6 +355,7 @@
                       <div class="elCtn">
                         <el-input v-model="itemChild.loss"
                           placeholder="损耗"
+                          @focus="$focusInput($event)"
                           @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number)">
                           <template slot="append">%</template>
                         </el-input>
@@ -359,6 +364,7 @@
                     <div class="tcol">
                       <div class="elCtn UnitCtn">
                         <el-input v-model="itemChild.final_number"
+                          @focus="$focusInput($event)"
                           placeholder="数量">
                           <template slot="append">
                             <el-input v-model="itemChild.unit"
@@ -505,13 +511,15 @@
                         <el-autocomplete class="inline-input"
                           v-model="itemChild.material_color"
                           :fetch-suggestions="searchColor"
-                          placeholder="物料颜色"></el-autocomplete>
+                          placeholder="物料颜色"
+                          @focus="$focusInput($event)"></el-autocomplete>
                       </div>
                     </div>
                     <div class="tcol"
                       :class="itemChild.production_number?'blue':'gray'">
                       <el-input v-model="itemChild.production_number"
                         placeholder="无计划值"
+                        @focus="$focusInput($event)"
                         @input="(ev)=>{
                             itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='kg'||itemChild.unit==='g'?1000:1));
                             itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)
@@ -526,6 +534,7 @@
                       <div class="elCtn">
                         <el-input v-model="itemChild.loss"
                           placeholder="损耗"
+                          @focus="$focusInput($event)"
                           @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number)">
                           <template slot="append">%</template>
                         </el-input>
@@ -535,7 +544,8 @@
                       <div class="elCtn">
                         <el-input class="UnitCtn"
                           v-model="itemChild.final_number"
-                          placeholder="数量">
+                          placeholder="数量"
+                          @focus="$focusInput($event)">
                           <template slot="append">
                             <el-input v-model="itemChild.unit"
                               placeholder="单位"></el-input>
@@ -609,7 +619,8 @@
               <div class="elCtn">
                 <el-input v-model="item.loss"
                   placeholder="原料损耗"
-                  @input="getMaterialFinalNum($event,item)">
+                  @input="getMaterialFinalNum($event,item)"
+                  @focus="$focusInput($event)">
                   <template slot="append">%</template>
                 </el-input>
               </div>
@@ -617,7 +628,8 @@
             <div class="tcol">
               <div class="elCtn">
                 <el-input v-model="item.final_number"
-                  placeholder="最终数量">
+                  placeholder="最终数量"
+                  @focus="$focusInput($event)">
                   <template slot="append">{{item.unit==='g'?'kg':item.unit}}</template>
                 </el-input>
               </div>
@@ -631,7 +643,8 @@
             <div class="label">备注信息</div>
             <div class="info elCtn">
               <el-input placeholder="请输入备注信息"
-                v-model="materialPlanInfo.desc"></el-input>
+                v-model="materialPlanInfo.desc"
+                @focus="$focusInput($event)"></el-input>
             </div>
           </div>
         </div>
