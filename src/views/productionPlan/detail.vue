@@ -14,6 +14,14 @@
             <div class="title">计划加工</div>
           </div>
           <div class="detailCtn">
+            <div class="checkCtn">
+              <el-tooltip class="item"
+                effect="dark"
+                content="点击查看审核日志"
+                placement="bottom">
+                <img :src="item.is_check|checkFilter" />
+              </el-tooltip>
+            </div>
             <div class="row">
               <div class="col">
                 <div class="label">单据编号：</div>
@@ -114,29 +122,14 @@
             </div>
           </template>
           <div class="buttonList">
-            <div class="btn backHoverBlue">
-              <i class="el-icon-s-grid"></i>
-              <span class="text">计划单操作</span>
-            </div>
-            <div class="otherInfoCtn">
-              <div class="otherInfo">
-                <!-- <div class="btn backHoverBlue">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">加工计划</span>
-                </div> -->
-                <div class="btn backHoverOrange"
-                  :class="{'backGray':checkList().length===0}"
-                  @click="getProductionPlan">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">内部派单</span>
-                </div>
-              </div>
+            <div class="btn backHoverOrange"
+              :class="{'backGray':checkList().length===0}"
+              @click="getProductionPlan">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">内部派单</span>
             </div>
           </div>
         </el-tab-pane>
@@ -1361,6 +1354,7 @@
                     <div class="info elCtn">
                       <el-input v-model="itemPro.price"
                         placeholder="请输入单价"
+                        @focus="$focusInput($event)"
                         @input="(ev)=>{itemPro.total_price=$toFixed(Number(ev)*Number(itemPro.number))}">
                         <template slot="append">元</template>
                       </el-input>
@@ -1427,6 +1421,7 @@
                 </div>
                 <div class="info elCtn">
                   <el-input placeholder="请输入备注信息"
+                    @focus="$focusInput($event)"
                     v-model="productionPlanUpdateInfo.desc"></el-input>
                 </div>
               </div>

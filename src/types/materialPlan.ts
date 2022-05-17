@@ -3,7 +3,7 @@ import { CraftMaterialInfo } from "./craft";
 import { ProductInfo } from "./product";
 import { QuotedPriceProduct } from "./quotedPrice";
 export interface MaterialPlanInfo {
-  id?: number
+  id?: number | string
   order_id: string | number
   type: string | number // 1:按尺码颜色 2:按产品
   desc: string

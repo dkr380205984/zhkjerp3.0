@@ -107,43 +107,36 @@
         </div>
       </div>
       <div class="buttonList">
-        <div class="btn backHoverBlue">
-          <i class="el-icon-s-grid"></i>
-          <span class="text">装箱计划操作</span>
+        <div style="margin-right:12px"
+          class="btn backHoverBlue"
+          :class="{'backGray': orderInfo.time_data[0].batch_data.filter((item) => {
+                return item.product_data.some((itemPro) => {
+                  return itemPro.product_info.some((itemChild) => {
+                    return itemChild.check
+                  })
+                })
+              }).length===0}"
+          @click="goPlanPack(1)">
+          <svg class="iconFont"
+            aria-hidden="true">
+            <use xlink:href="#icon-xiugaidingdan"></use>
+          </svg>
+          <span class="text">合并装箱</span>
         </div>
-        <div class="otherInfoCtn">
-          <div class="otherInfo">
-            <div class="btn backHoverBlue"
-              :class="{'backGray': orderInfo.time_data[0].batch_data.filter((item) => {
+        <div class="btn backHoverBlue"
+          :class="{'backGray': orderInfo.time_data[0].batch_data.filter((item) => {
                 return item.product_data.some((itemPro) => {
                   return itemPro.product_info.some((itemChild) => {
                     return itemChild.check
                   })
                 })
               }).length===0}"
-              @click="goPlanPack(1)">
-              <svg class="iconFont"
-                aria-hidden="true">
-                <use xlink:href="#icon-xiugaidingdan"></use>
-              </svg>
-              <span class="text">合并装箱</span>
-            </div>
-            <div class="btn backHoverBlue"
-              :class="{'backGray': orderInfo.time_data[0].batch_data.filter((item) => {
-                return item.product_data.some((itemPro) => {
-                  return itemPro.product_info.some((itemChild) => {
-                    return itemChild.check
-                  })
-                })
-              }).length===0}"
-              @click="goPlanPack(2)">
-              <svg class="iconFont"
-                aria-hidden="true">
-                <use xlink:href="#icon-xiugaidingdan"></use>
-              </svg>
-              <span class="text">单独装箱</span>
-            </div>
-          </div>
+          @click="goPlanPack(2)">
+          <svg class="iconFont"
+            aria-hidden="true">
+            <use xlink:href="#icon-xiugaidingdan"></use>
+          </svg>
+          <span class="text">单独装箱</span>
         </div>
       </div>
     </div>
@@ -382,6 +375,14 @@
             <div class="title">订购信息</div>
           </div>
           <div class="detailCtn">
+            <div class="checkCtn">
+              <el-tooltip class="item"
+                effect="dark"
+                content="点击查看审核日志"
+                placement="bottom">
+                <img :src="item.is_check|checkFilter" />
+              </el-tooltip>
+            </div>
             <div class="row">
               <div class="col">
                 <div class="label">单据编号：</div>
@@ -716,15 +717,19 @@
                     <template v-if="itemChild.price_type!==3">
                       <el-input style="margin-right:12px"
                         v-model="itemChild.length"
+                        @focus="$focusInput($event)"
                         placeholder="长"></el-input>
                       <el-input style="margin-right:12px"
                         v-model="itemChild.width"
+                        @focus="$focusInput($event)"
                         placeholder="宽"></el-input>
                       <el-input v-model="itemChild.height"
+                        @focus="$focusInput($event)"
                         :placeholder="itemChild.price_type!==2?'高':'封口'"></el-input>
                     </template>
                     <template v-else>
                       <el-input v-model="itemChild.length"
+                        @focus="$focusInput($event)"
                         placeholder="尺寸规格"></el-input>
                     </template>
                   </div>
@@ -735,6 +740,7 @@
                   </div>
                   <div class="info elCtn">
                     <el-input v-model="itemChild.desc"
+                      @focus="$focusInput($event)"
                       placeholder="包装属性或说明"></el-input>
                   </div>
                 </div>
@@ -749,6 +755,7 @@
                       </div>
                       <div class="info elCtn">
                         <el-input v-model="itemChild.bulk_price"
+                          @focus="$focusInput($event)"
                           placeholder="单价">
                           <template slot="append">元</template>
                         </el-input>
@@ -760,6 +767,7 @@
                       </div>
                       <div class="info elCtn">
                         <el-input v-model="itemChild.count_price"
+                          @focus="$focusInput($event)"
                           placeholder="单价">
                           <template slot="append">元/个</template>
                         </el-input>
@@ -774,6 +782,7 @@
                   </div>
                   <div class="info elCtn">
                     <el-input v-model="itemChild.number"
+                      @focus="$focusInput($event)"
                       placeholder="订购数量"></el-input>
                   </div>
                 </div>
@@ -810,6 +819,7 @@
                 </div>
                 <div class="info elCtn">
                   <el-input placeholder="请输入额外费用名称"
+                    @focus="$focusInput($event)"
                     v-model="itemOther.name"></el-input>
                 </div>
               </div>
@@ -820,6 +830,7 @@
                 </div>
                 <div class="info elCtn">
                   <el-input placeholder="请输入额外费用金额"
+                    @focus="$focusInput($event)"
                     v-model="itemOther.price">
                     <template slot="append">元</template>
                   </el-input>
@@ -832,6 +843,7 @@
                 </div>
                 <div class="info elCtn">
                   <el-input placeholder="请输入额外费用备注"
+                    @focus="$focusInput($event)"
                     v-model="itemOther.desc"></el-input>
                 </div>
               </div>
@@ -853,6 +865,7 @@
                 </div>
                 <div class="info elCtn">
                   <el-input placeholder="请输入订购备注信息"
+                    @focus="$focusInput($event)"
                     v-model="item.desc"></el-input>
                 </div>
               </div>

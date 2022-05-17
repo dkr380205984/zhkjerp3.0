@@ -1522,57 +1522,61 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">是否需要限定条件自动通过？</div>
-                  <div class="info middle">
-                    <el-radio v-model="sampleOrderCheckConfig.data.has_condition"
-                      :label="2">不需要限定，全部通过</el-radio>
-                    <el-radio v-model="sampleOrderCheckConfig.data.has_condition"
-                      :label="1">需要，并填写限定条件</el-radio>
+              <template v-if="sampleOrderCheckConfig.data.auto_pass===1">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">是否需要限定条件自动通过？</div>
+                    <div class="info middle">
+                      <el-radio v-model="sampleOrderCheckConfig.data.has_condition"
+                        :label="2">不需要限定，全部通过</el-radio>
+                      <el-radio v-model="sampleOrderCheckConfig.data.has_condition"
+                        :label="1">需要，并填写限定条件</el-radio>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">请选择可以自动审核通过的下单客户（可多选）：</div>
-                  <div class="info elCtn">
-                    <el-cascader placeholder="筛选下单公司"
-                      v-model="sampleOrderCheckConfig.data.client_id"
-                      filterable
-                      :props="{ multiple: true}"
-                      :options="clientList"
-                      clearable>
-                    </el-cascader>
+                <template v-if="sampleOrderCheckConfig.data.has_condition===1">
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">请选择可以自动审核通过的下单客户（可多选）：</div>
+                      <div class="info elCtn">
+                        <el-cascader placeholder="筛选下单公司"
+                          v-model="sampleOrderCheckConfig.data.client_id"
+                          filterable
+                          :props="{ multiple: true}"
+                          :options="clientList"
+                          clearable>
+                        </el-cascader>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                  <div class="info elCtn">
-                    <el-select placeholder="请选择创建人"
-                      v-model="sampleOrderCheckConfig.data.user_id"
-                      filterable
-                      multiple
-                      clearable>
-                      <el-option v-for="item in userListCommon"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                      <div class="info elCtn">
+                        <el-select placeholder="请选择创建人"
+                          v-model="sampleOrderCheckConfig.data.user_id"
+                          filterable
+                          multiple
+                          clearable>
+                          <el-option v-for="item in userListCommon"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下打样数量，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="打样数量"
-                      v-model="sampleOrderCheckConfig.data.number"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下打样数量，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="打样数量"
+                          v-model="sampleOrderCheckConfig.data.number"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </template>
+              </template>
               <div class="row">
                 <div class="col">
                   <div class="label">未审核的样单是否限制后续操作？</div>
@@ -1638,68 +1642,72 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">是否需要限定条件自动通过？</div>
-                  <div class="info middle">
-                    <el-radio v-model="orderCheckConfig.data.has_condition"
-                      :label="2">不需要限定，全部通过</el-radio>
-                    <el-radio v-model="orderCheckConfig.data.has_condition"
-                      :label="1">需要，并填写限定条件</el-radio>
+              <template v-if="orderCheckConfig.data.auto_pass===1">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">是否需要限定条件自动通过？</div>
+                    <div class="info middle">
+                      <el-radio v-model="orderCheckConfig.data.has_condition"
+                        :label="2">不需要限定，全部通过</el-radio>
+                      <el-radio v-model="orderCheckConfig.data.has_condition"
+                        :label="1">需要，并填写限定条件</el-radio>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">请选择可以自动审核通过的下单客户（可多选）：</div>
-                  <div class="info elCtn">
-                    <el-cascader placeholder="筛选下单公司"
-                      v-model="orderCheckConfig.data.client_id"
-                      filterable
-                      :props="{ multiple: true}"
-                      :options="clientList"
-                      clearable>
-                    </el-cascader>
+                </div> <template v-if="orderCheckConfig.data.has_condition===1">
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">请选择可以自动审核通过的下单客户（可多选）：</div>
+                      <div class="info elCtn">
+                        <el-cascader placeholder="筛选下单公司"
+                          v-model="orderCheckConfig.data.client_id"
+                          filterable
+                          :props="{ multiple: true}"
+                          :options="clientList"
+                          clearable>
+                        </el-cascader>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                  <div class="info elCtn">
-                    <el-select placeholder="请选择创建人"
-                      v-model="orderCheckConfig.data.user_id"
-                      filterable
-                      multiple
-                      clearable>
-                      <el-option v-for="item in userListCommon"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
+
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                      <div class="info elCtn">
+                        <el-select placeholder="请选择创建人"
+                          v-model="orderCheckConfig.data.user_id"
+                          filterable
+                          multiple
+                          clearable>
+                          <el-option v-for="item in userListCommon"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下大货数量，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="大货数量"
-                      v-model="orderCheckConfig.data.number"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下大货数量，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="大货数量"
+                          v-model="orderCheckConfig.data.number"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">未审核的订单是否限制后续操作？</div>
-                  <div class="info middle">
-                    <el-radio v-model="orderCheckConfig.data.not_allow_operate"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="orderCheckConfig.data.not_allow_operate"
-                      :label="2">否</el-radio>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">未审核的订单是否限制后续操作？</div>
+                      <div class="info middle">
+                        <el-radio v-model="orderCheckConfig.data.not_allow_operate"
+                          :label="1">是</el-radio>
+                        <el-radio v-model="orderCheckConfig.data.not_allow_operate"
+                          :label="2">否</el-radio>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </template>
+              </template>
               <div class="row">
                 <div class="col">
                   <div class="label">未审核的订单是否限制打印？</div>
@@ -1743,92 +1751,95 @@
           <template v-if="cName ==='原料计划单'">
             <div class="editCtn clearfix"
               style="padding:20px 32px">
-              <div class="row">
-                <div class="col">
-                  <div class="label">是否需要系统自动审核通过？</div>
-                  <div class="info middle">
-                    <el-radio v-model="materialPlanCheckConfig.data.auto_pass"
-                      :label="1">需要，并限定通过条件</el-radio>
-                    <el-radio v-model="materialPlanCheckConfig.data.auto_pass"
-                      :label="2">不需要，全部人工审核</el-radio>
+              <template v-if="materialPlanCheckConfig.data.auto_pass===1">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">是否需要系统自动审核通过？</div>
+                    <div class="info middle">
+                      <el-radio v-model="materialPlanCheckConfig.data.auto_pass"
+                        :label="1">需要，并限定通过条件</el-radio>
+                      <el-radio v-model="materialPlanCheckConfig.data.auto_pass"
+                        :label="2">不需要，全部人工审核</el-radio>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">是否需要限定条件自动通过？</div>
-                  <div class="info middle">
-                    <el-radio v-model="materialPlanCheckConfig.data.has_condition"
-                      :label="2">不需要限定，全部通过</el-radio>
-                    <el-radio v-model="materialPlanCheckConfig.data.has_condition"
-                      :label="1">需要，并填写限定条件</el-radio>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">是否需要限定条件自动通过？</div>
+                    <div class="info middle">
+                      <el-radio v-model="materialPlanCheckConfig.data.has_condition"
+                        :label="2">不需要限定，全部通过</el-radio>
+                      <el-radio v-model="materialPlanCheckConfig.data.has_condition"
+                        :label="1">需要，并填写限定条件</el-radio>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                  <div class="info elCtn">
-                    <el-select placeholder="请选择创建人"
-                      v-model="materialPlanCheckConfig.data.user_id"
-                      filterable
-                      multiple
-                      clearable>
-                      <el-option v-for="item in userListCommon"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
+                <template v-if="materialPlanCheckConfig.data.has_condition===1">
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                      <div class="info elCtn">
+                        <el-select placeholder="请选择创建人"
+                          v-model="materialPlanCheckConfig.data.user_id"
+                          filterable
+                          multiple
+                          clearable>
+                          <el-option v-for="item in userListCommon"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">按照单据类型：</div>
-                  <div class="info elCtn">
-                    <el-select placeholder="单据类型"
-                      v-model="materialPlanCheckConfig.data.order_type">
-                      <el-option label="全部自动通过"
-                        value="3"></el-option>
-                      <el-option label="仅订单自动通过"
-                        value="1"></el-option>
-                      <el-option label="仅样单自动通过"
-                        value="2"></el-option>
-                    </el-select>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">按照单据类型：</div>
+                      <div class="info elCtn">
+                        <el-select placeholder="单据类型"
+                          v-model="materialPlanCheckConfig.data.order_type"
+                          clearable>
+                          <el-option label="仅订单自动通过"
+                            :value="1"></el-option>
+                          <el-option label="仅样单自动通过"
+                            :value="2"></el-option>
+                        </el-select>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下下单数量，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="下单数量"
-                      v-model="materialPlanCheckConfig.data.total_order_number"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下下单数量，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="下单数量"
+                          v-model="materialPlanCheckConfig.data.total_order_number"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下原料数量，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="原料数量"
-                      v-model="materialPlanCheckConfig.data.total_material_number"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下原料数量，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="原料数量"
+                          v-model="materialPlanCheckConfig.data.total_material_number"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">报价单对比比例介于该比例之间则自动通过：</div>
-                  <div class="info elCtn"
-                    style="display:flex">
-                    <el-input style="flex:1;margin-right:12px"
-                      placeholder="数值"
-                      v-model="materialPlanCheckConfig.data.contrast_quote_extent">
-                      <template slot="append">%</template>
-                    </el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">报价单对比比例介于该比例之间则自动通过：</div>
+                      <div class="info elCtn"
+                        style="display:flex">
+                        <el-input style="flex:1;margin-right:12px"
+                          placeholder="数值"
+                          v-model="materialPlanCheckConfig.data.contrast_quote_extent">
+                          <template slot="append">%</template>
+                        </el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </template>
+              </template>
               <div class="row">
                 <div class="col">
                   <div class="label">未审核的计划单是否限制后续操作？</div>
@@ -1883,65 +1894,69 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">是否需要限定条件自动通过？</div>
-                  <div class="info middle">
-                    <el-radio v-model="materialOrderCheckConfig.data.has_condition"
-                      :label="2">不需要限定，全部通过</el-radio>
-                    <el-radio v-model="materialOrderCheckConfig.data.has_condition"
-                      :label="1">需要，并填写限定条件</el-radio>
+              <template v-if="materialOrderCheckConfig.data.auto_pass===1">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">是否需要限定条件自动通过？</div>
+                    <div class="info middle">
+                      <el-radio v-model="materialOrderCheckConfig.data.has_condition"
+                        :label="2">不需要限定，全部通过</el-radio>
+                      <el-radio v-model="materialOrderCheckConfig.data.has_condition"
+                        :label="1">需要，并填写限定条件</el-radio>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                  <div class="info elCtn">
-                    <el-select placeholder="请选择创建人"
-                      v-model="materialOrderCheckConfig.data.user_id"
-                      filterable
-                      multiple
-                      clearable>
-                      <el-option v-for="item in userListCommon"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
+                <template v-if="materialOrderCheckConfig.data.has_condition===1">
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                      <div class="info elCtn">
+                        <el-select placeholder="请选择创建人"
+                          v-model="materialOrderCheckConfig.data.user_id"
+                          filterable
+                          multiple
+                          clearable>
+                          <el-option v-for="item in userListCommon"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下采购总价，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="采购总价"
-                      v-model="materialOrderCheckConfig.data.total_price"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下采购总价，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="采购总价"
+                          v-model="materialOrderCheckConfig.data.total_price"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下采购总数，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="采购总数"
-                      v-model="materialOrderCheckConfig.data.total_number"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下采购总数，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="采购总数"
+                          v-model="materialOrderCheckConfig.data.total_number"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">输入可以自动审核通过的价格比例：</div>
-                  <div class="info elCtn"
-                    style="display:flex">
-                    <el-input style="flex:1;margin-right:12px"
-                      placeholder="数值"
-                      v-model="materialOrderCheckConfig.data.contrast_quote_extent">
-                      <template slot="append">%</template>
-                    </el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">输入可以自动审核通过的价格比例：</div>
+                      <div class="info elCtn"
+                        style="display:flex">
+                        <el-input style="flex:1;margin-right:12px"
+                          placeholder="数值"
+                          v-model="materialOrderCheckConfig.data.contrast_quote_extent">
+                          <template slot="append">%</template>
+                        </el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </template>
+              </template>
               <div class="row">
                 <div class="col">
                   <div class="label">未审核的订购单是否限制后续操作？</div>
@@ -1996,107 +2011,111 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">是否需要限定条件自动通过？</div>
-                  <div class="info middle">
-                    <el-radio v-model="materialProcessCheckConfig.data.has_condition"
-                      :label="2">不需要限定，全部通过</el-radio>
-                    <el-radio v-model="materialProcessCheckConfig.data.has_condition"
-                      :label="1">需要，并填写限定条件</el-radio>
+              <template v-if="materialProcessCheckConfig.data.auto_pass===1">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">是否需要限定条件自动通过？</div>
+                    <div class="info middle">
+                      <el-radio v-model="materialProcessCheckConfig.data.has_condition"
+                        :label="2">不需要限定，全部通过</el-radio>
+                      <el-radio v-model="materialProcessCheckConfig.data.has_condition"
+                        :label="1">需要，并填写限定条件</el-radio>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                  <div class="info elCtn">
-                    <el-select placeholder="请选择创建人"
-                      v-model="materialProcessCheckConfig.data.user_id"
-                      filterable
-                      multiple
-                      clearable>
-                      <el-option v-for="item in userListCommon"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
+                <template v-if="materialProcessCheckConfig.data.has_condition===1">
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                      <div class="info elCtn">
+                        <el-select placeholder="请选择创建人"
+                          v-model="materialProcessCheckConfig.data.user_id"
+                          filterable
+                          multiple
+                          clearable>
+                          <el-option v-for="item in userListCommon"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下加工总价，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="加工总价"
-                      v-model="materialProcessCheckConfig.data.total_price"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下加工总价，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="加工总价"
+                          v-model="materialProcessCheckConfig.data.total_price"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下加工总数，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="加工总数"
-                      v-model="materialProcessCheckConfig.data.total_number"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下加工总数，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="加工总数"
+                          v-model="materialProcessCheckConfig.data.total_number"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">是否根据工序单价自动通过？</div>
-                  <div class="info middle">
-                    <el-radio v-model="materialProcessCheckConfig.data.by_process_price"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="materialProcessCheckConfig.data.by_process_price"
-                      :label="2">否</el-radio>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">是否根据工序单价自动通过？</div>
+                      <div class="info middle">
+                        <el-radio v-model="materialProcessCheckConfig.data.by_process_price"
+                          :label="1">是</el-radio>
+                        <el-radio v-model="materialProcessCheckConfig.data.by_process_price"
+                          :label="2">否</el-radio>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">按工序单价：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="加工单价"
-                      v-model="materialProcessCheckConfig.data.ranse">
-                      <template slot="prepend">染色低于</template>
-                      <template slot="append">元</template>
-                    </el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">按工序单价：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="加工单价"
+                          v-model="materialProcessCheckConfig.data.ranse">
+                          <template slot="prepend">染色低于</template>
+                          <template slot="append">元</template>
+                        </el-input>
+                      </div>
+                      <div class="info elCtn"
+                        style="margin-top:12px">
+                        <el-input placeholder="加工单价"
+                          v-model="materialProcessCheckConfig.data.daosha">
+                          <template slot="prepend">倒纱低于</template>
+                          <template slot="append">元</template>
+                        </el-input>
+                      </div>
+                      <div class="info elCtn"
+                        style="margin-top:12px">
+                        <el-input placeholder="加工单价"
+                          v-model="materialProcessCheckConfig.data.bingxian">
+                          <template slot="prepend">并线低于</template>
+                          <template slot="append">元</template>
+                        </el-input>
+                      </div>
+                      <div class="info elCtn"
+                        style="margin-top:12px">
+                        <el-input placeholder="加工单价"
+                          v-model="materialProcessCheckConfig.data.pengsha">
+                          <template slot="prepend">膨纱低于</template>
+                          <template slot="append">元</template>
+                        </el-input>
+                      </div>
+                      <div class="info elCtn"
+                        style="margin-top:12px">
+                        <el-input placeholder="加工单价"
+                          v-model="materialProcessCheckConfig.data.qiege">
+                          <template slot="prepend">切割低于</template>
+                          <template slot="append">元</template>
+                        </el-input>
+                      </div>
+                    </div>
                   </div>
-                  <div class="info elCtn"
-                    style="margin-top:12px">
-                    <el-input placeholder="加工单价"
-                      v-model="materialProcessCheckConfig.data.daosha">
-                      <template slot="prepend">倒纱低于</template>
-                      <template slot="append">元</template>
-                    </el-input>
-                  </div>
-                  <div class="info elCtn"
-                    style="margin-top:12px">
-                    <el-input placeholder="加工单价"
-                      v-model="materialProcessCheckConfig.data.bingxian">
-                      <template slot="prepend">并线低于</template>
-                      <template slot="append">元</template>
-                    </el-input>
-                  </div>
-                  <div class="info elCtn"
-                    style="margin-top:12px">
-                    <el-input placeholder="加工单价"
-                      v-model="materialProcessCheckConfig.data.pengsha">
-                      <template slot="prepend">膨纱低于</template>
-                      <template slot="append">元</template>
-                    </el-input>
-                  </div>
-                  <div class="info elCtn"
-                    style="margin-top:12px">
-                    <el-input placeholder="加工单价"
-                      v-model="materialProcessCheckConfig.data.qiege">
-                      <template slot="prepend">切割低于</template>
-                      <template slot="append">元</template>
-                    </el-input>
-                  </div>
-                </div>
-              </div>
+                </template>
+              </template>
               <div class="row">
                 <div class="col">
                   <div class="label">未审核的加工单是否限制后续操作？</div>
@@ -2151,52 +2170,56 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">是否需要限定条件自动通过？</div>
-                  <div class="info middle">
-                    <el-radio v-model="materialStockCheckConfig.data.has_condition"
-                      :label="2">不需要限定，全部通过</el-radio>
-                    <el-radio v-model="materialStockCheckConfig.data.has_condition"
-                      :label="1">需要，并填写限定条件</el-radio>
+              <template v-if="materialStockCheckConfig.data.auto_pass===1">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">是否需要限定条件自动通过？</div>
+                    <div class="info middle">
+                      <el-radio v-model="materialStockCheckConfig.data.has_condition"
+                        :label="2">不需要限定，全部通过</el-radio>
+                      <el-radio v-model="materialStockCheckConfig.data.has_condition"
+                        :label="1">需要，并填写限定条件</el-radio>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                  <div class="info elCtn">
-                    <el-select placeholder="请选择创建人"
-                      v-model="materialStockCheckConfig.data.user_id"
-                      filterable
-                      multiple
-                      clearable>
-                      <el-option v-for="item in userListCommon"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
+                <template v-if="materialStockCheckConfig.data.has_condition===1">
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                      <div class="info elCtn">
+                        <el-select placeholder="请选择创建人"
+                          v-model="materialStockCheckConfig.data.user_id"
+                          filterable
+                          multiple
+                          clearable>
+                          <el-option v-for="item in userListCommon"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下调取总价，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="调取总价"
-                      v-model="materialStockCheckConfig.data.total_price"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下调取总价，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="调取总价"
+                          v-model="materialStockCheckConfig.data.total_price"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下调取总数，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="调取总数"
-                      v-model="materialStockCheckConfig.data.total_number"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下调取总数，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="调取总数"
+                          v-model="materialStockCheckConfig.data.total_number"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </template>
+              </template>
               <div class="row">
                 <div class="col">
                   <div class="label">未审核的调取单是否限制后续操作？</div>
@@ -2240,65 +2263,69 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">是否需要限定条件自动通过？</div>
-                  <div class="info middle">
-                    <el-radio v-model="accessoriesOrderCheckConfig.data.has_condition"
-                      :label="2">不需要限定，全部通过</el-radio>
-                    <el-radio v-model="accessoriesOrderCheckConfig.data.has_condition"
-                      :label="1">需要，并填写限定条件</el-radio>
+              <template v-if="accessoriesOrderCheckConfig.data.auto_pass===1">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">是否需要限定条件自动通过？</div>
+                    <div class="info middle">
+                      <el-radio v-model="accessoriesOrderCheckConfig.data.has_condition"
+                        :label="2">不需要限定，全部通过</el-radio>
+                      <el-radio v-model="accessoriesOrderCheckConfig.data.has_condition"
+                        :label="1">需要，并填写限定条件</el-radio>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                  <div class="info elCtn">
-                    <el-select placeholder="请选择创建人"
-                      v-model="accessoriesOrderCheckConfig.data.user_id"
-                      filterable
-                      multiple
-                      clearable>
-                      <el-option v-for="item in userListCommon"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
+                <template v-if="accessoriesOrderCheckConfig.data.has_condition===1">
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                      <div class="info elCtn">
+                        <el-select placeholder="请选择创建人"
+                          v-model="accessoriesOrderCheckConfig.data.user_id"
+                          filterable
+                          multiple
+                          clearable>
+                          <el-option v-for="item in userListCommon"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下采购总价，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="采购总价"
-                      v-model="accessoriesOrderCheckConfig.data.total_price"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下采购总价，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="采购总价"
+                          v-model="accessoriesOrderCheckConfig.data.total_price"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下采购总数，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="采购总数"
-                      v-model="accessoriesOrderCheckConfig.data.total_number"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下采购总数，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="采购总数"
+                          v-model="accessoriesOrderCheckConfig.data.total_number"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">输入可以自动审核通过的报价单对比价格比例：</div>
-                  <div class="info elCtn"
-                    style="display:flex">
-                    <el-input style="flex:1;margin-right:12px"
-                      placeholder="数值"
-                      v-model="accessoriesOrderCheckConfig.data.contrast_quote_extent">
-                      <template slot="append">%</template>
-                    </el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">输入可以自动审核通过的报价单对比价格比例：</div>
+                      <div class="info elCtn"
+                        style="display:flex">
+                        <el-input style="flex:1;margin-right:12px"
+                          placeholder="数值"
+                          v-model="accessoriesOrderCheckConfig.data.contrast_quote_extent">
+                          <template slot="append">%</template>
+                        </el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </template>
+              </template>
               <div class="row">
                 <div class="col">
                   <div class="label">未审核的订购单是否限制后续操作？</div>
@@ -2353,87 +2380,91 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">是否需要限定条件自动通过？</div>
-                  <div class="info middle">
-                    <el-radio v-model="productionPlanCheckConfig.data.has_condition"
-                      :label="2">不需要限定，全部通过</el-radio>
-                    <el-radio v-model="productionPlanCheckConfig.data.has_condition"
-                      :label="1">需要，并填写限定条件</el-radio>
+              <template v-if="productionPlanCheckConfig.data.auto_pass===1">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">是否需要限定条件自动通过？</div>
+                    <div class="info middle">
+                      <el-radio v-model="productionPlanCheckConfig.data.has_condition"
+                        :label="2">不需要限定，全部通过</el-radio>
+                      <el-radio v-model="productionPlanCheckConfig.data.has_condition"
+                        :label="1">需要，并填写限定条件</el-radio>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                  <div class="info elCtn">
-                    <el-select placeholder="请选择创建人"
-                      v-model="productionPlanCheckConfig.data.user_id"
-                      filterable
-                      multiple
-                      clearable>
-                      <el-option v-for="item in userListCommon"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
+                <template v-if="productionPlanCheckConfig.data.has_condition===1">
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                      <div class="info elCtn">
+                        <el-select placeholder="请选择创建人"
+                          v-model="productionPlanCheckConfig.data.user_id"
+                          filterable
+                          multiple
+                          clearable>
+                          <el-option v-for="item in userListCommon"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下生产数量，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="生产数量"
-                      v-model="productionPlanCheckConfig.data.total_number"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下生产数量，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="生产数量"
+                          v-model="productionPlanCheckConfig.data.total_number"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下生产总价，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="生产总价"
-                      v-model="productionPlanCheckConfig.data.total_price"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下生产总价，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="生产总价"
+                          v-model="productionPlanCheckConfig.data.total_price"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row"
-                v-for="item,index in productionPlanCheckConfig.data.contrast_quote_extent"
-                :key="index">
-                <div class="col">
-                  <div class="label"
-                    v-if="index===0">报价单工序对比比例介于该比例之间则自动通过：</div>
-                  <div class="info elCtn"
-                    style="display:flex">
-                    <el-input style="flex:1;margin-right:12px"
-                      placeholder="输入工序"
-                      v-model="item.process_name">
-                    </el-input>
-                    <el-input style="flex:1;margin-right:12px"
-                      placeholder="低于"
-                      v-model="item.min">
-                      <template slot="append">%</template>
-                    </el-input>
-                    <el-input style="flex:1"
-                      placeholder="高于"
-                      v-model="item.max">
-                      <template slot="append">%</template>
-                    </el-input>
-                    <div class="opr hoverBlue"
-                      @click="$addItem(productionPlanCheckConfig.data.contrast_quote_extent,{
+                  <div class="row"
+                    v-for="item,index in productionPlanCheckConfig.data.contrast_quote_extent"
+                    :key="index">
+                    <div class="col">
+                      <div class="label"
+                        v-if="index===0">报价单工序对比比例介于该比例之间则自动通过：</div>
+                      <div class="info elCtn"
+                        style="display:flex">
+                        <el-input style="flex:1;margin-right:12px"
+                          placeholder="输入工序"
+                          v-model="item.process_name">
+                        </el-input>
+                        <el-input style="flex:1;margin-right:12px"
+                          placeholder="低于"
+                          v-model="item.min">
+                          <template slot="append">%</template>
+                        </el-input>
+                        <el-input style="flex:1"
+                          placeholder="高于"
+                          v-model="item.max">
+                          <template slot="append">%</template>
+                        </el-input>
+                        <div class="opr hoverBlue"
+                          @click="$addItem(productionPlanCheckConfig.data.contrast_quote_extent,{
                       process_name:'',
                       min:'',
                       max:''
                     })"
-                      v-if="index===0">新增</div>
-                    <div class="opr hoverRed"
-                      @click="$deleteItem(productionPlanCheckConfig.data.contrast_quote_extent,index)"
-                      v-if="index>0">删除</div>
+                          v-if="index===0">新增</div>
+                        <div class="opr hoverRed"
+                          @click="$deleteItem(productionPlanCheckConfig.data.contrast_quote_extent,index)"
+                          v-if="index>0">删除</div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </template>
+              </template>
               <div class="row">
                 <div class="col">
                   <div class="label">未审核的计划单是否限制后续操作？</div>
@@ -2477,65 +2508,69 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">是否需要限定条件自动通过？</div>
-                  <div class="info middle">
-                    <el-radio v-model="packOrderCheckConfig.data.has_condition"
-                      :label="2">不需要限定，全部通过</el-radio>
-                    <el-radio v-model="packOrderCheckConfig.data.has_condition"
-                      :label="1">需要，并填写限定条件</el-radio>
+              <template v-if="packOrderCheckConfig.data.auto_pass===1">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">是否需要限定条件自动通过？</div>
+                    <div class="info middle">
+                      <el-radio v-model="packOrderCheckConfig.data.has_condition"
+                        :label="2">不需要限定，全部通过</el-radio>
+                      <el-radio v-model="packOrderCheckConfig.data.has_condition"
+                        :label="1">需要，并填写限定条件</el-radio>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                  <div class="info elCtn">
-                    <el-select placeholder="请选择创建人"
-                      v-model="packOrderCheckConfig.data.user_id"
-                      filterable
-                      multiple
-                      clearable>
-                      <el-option v-for="item in userListCommon"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
+                <template v-if="packOrderCheckConfig.data.has_condition===1">
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                      <div class="info elCtn">
+                        <el-select placeholder="请选择创建人"
+                          v-model="packOrderCheckConfig.data.user_id"
+                          filterable
+                          multiple
+                          clearable>
+                          <el-option v-for="item in userListCommon"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下采购数量，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="采购数量"
-                      v-model="packOrderCheckConfig.data.total_number"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下采购数量，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="采购数量"
+                          v-model="packOrderCheckConfig.data.total_number"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下采购总价，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="采购总价"
-                      v-model="packOrderCheckConfig.data.total_price"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下采购总价，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="采购总价"
+                          v-model="packOrderCheckConfig.data.total_price"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">输入可以自动审核通过的报价单对比价格比例：</div>
-                  <div class="info elCtn"
-                    style="display:flex">
-                    <el-input style="flex:1;margin-right:12px"
-                      placeholder="数值"
-                      v-model="packOrderCheckConfig.data.contrast_quote_extent">
-                      <template slot="append">%</template>
-                    </el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">输入可以自动审核通过的报价单对比价格比例：</div>
+                      <div class="info elCtn"
+                        style="display:flex">
+                        <el-input style="flex:1;margin-right:12px"
+                          placeholder="数值"
+                          v-model="packOrderCheckConfig.data.contrast_quote_extent">
+                          <template slot="append">%</template>
+                        </el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </template>
+              </template>
               <div class="row">
                 <div class="col">
                   <div class="label">未审核的订购单是否限制后续操作？</div>
@@ -2590,65 +2625,69 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">是否需要限定条件自动通过？</div>
-                  <div class="info middle">
-                    <el-radio v-model="gongziCheckConfig.data.has_condition"
-                      :label="2">不需要限定，全部通过</el-radio>
-                    <el-radio v-model="gongziCheckConfig.data.has_condition"
-                      :label="1">需要，并填写限定条件</el-radio>
+              <template v-if="gongziCheckConfig.data.auto_pass===1">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">是否需要限定条件自动通过？</div>
+                    <div class="info middle">
+                      <el-radio v-model="gongziCheckConfig.data.has_condition"
+                        :label="2">不需要限定，全部通过</el-radio>
+                      <el-radio v-model="gongziCheckConfig.data.has_condition"
+                        :label="1">需要，并填写限定条件</el-radio>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                  <div class="info elCtn">
-                    <el-select placeholder="请选择创建人"
-                      v-model="gongziCheckConfig.data.user_id"
-                      filterable
-                      multiple
-                      clearable>
-                      <el-option v-for="item in userListCommon"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
+                <template v-if="gongziCheckConfig.data.has_condition===1">
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                      <div class="info elCtn">
+                        <el-select placeholder="请选择创建人"
+                          v-model="gongziCheckConfig.data.user_id"
+                          filterable
+                          multiple
+                          clearable>
+                          <el-option v-for="item in userListCommon"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下结算数量，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="结算数量"
-                      v-model="gongziCheckConfig.data.total_number"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下结算数量，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="结算数量"
+                          v-model="gongziCheckConfig.data.total_number"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下结算总价，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="结算总价"
-                      v-model="gongziCheckConfig.data.total_price"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下结算总价，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="结算总价"
+                          v-model="gongziCheckConfig.data.total_price"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">输入可以自动审核通过的报价单对比价格比例：</div>
-                  <div class="info elCtn"
-                    style="display:flex">
-                    <el-input style="flex:1;margin-right:12px"
-                      placeholder="数值"
-                      v-model="gongziCheckConfig.data.contrast_quote_extent">
-                      <template slot="append">%</template>
-                    </el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">输入可以自动审核通过的报价单对比价格比例：</div>
+                      <div class="info elCtn"
+                        style="display:flex">
+                        <el-input style="flex:1;margin-right:12px"
+                          placeholder="数值"
+                          v-model="gongziCheckConfig.data.contrast_quote_extent">
+                          <template slot="append">%</template>
+                        </el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </template>
+              </template>
               <div class="row">
                 <div class="col">
                   <div class="label">未审核的订购单是否限制后续操作？</div>
@@ -2692,65 +2731,69 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">是否需要限定条件自动通过？</div>
-                  <div class="info middle">
-                    <el-radio v-model="packOutCheckConfig.data.has_condition"
-                      :label="2">不需要限定，全部通过</el-radio>
-                    <el-radio v-model="packOutCheckConfig.data.has_condition"
-                      :label="1">需要，并填写限定条件</el-radio>
+              <template v-if="packOutCheckConfig.data.auto_pass===1">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">是否需要限定条件自动通过？</div>
+                    <div class="info middle">
+                      <el-radio v-model="packOutCheckConfig.data.has_condition"
+                        :label="2">不需要限定，全部通过</el-radio>
+                      <el-radio v-model="packOutCheckConfig.data.has_condition"
+                        :label="1">需要，并填写限定条件</el-radio>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                  <div class="info elCtn">
-                    <el-select placeholder="请选择创建人"
-                      v-model="packOutCheckConfig.data.user_id"
-                      filterable
-                      multiple
-                      clearable>
-                      <el-option v-for="item in userListCommon"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
+                <template v-if="packOutCheckConfig.data.has_condition===1">
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                      <div class="info elCtn">
+                        <el-select placeholder="请选择创建人"
+                          v-model="packOutCheckConfig.data.user_id"
+                          filterable
+                          multiple
+                          clearable>
+                          <el-option v-for="item in userListCommon"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下发货数量，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="发货数量"
-                      v-model="packOutCheckConfig.data.total_number"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下发货数量，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="发货数量"
+                          v-model="packOutCheckConfig.data.total_number"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">少于以下发货总价，则自动通过：</div>
-                  <div class="info elCtn">
-                    <el-input placeholder="发货总价"
-                      v-model="packOutCheckConfig.data.total_price"></el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">少于以下发货总价，则自动通过：</div>
+                      <div class="info elCtn">
+                        <el-input placeholder="发货总价"
+                          v-model="packOutCheckConfig.data.total_price"></el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">输入可以自动审核通过的报价单对比价格比例：</div>
-                  <div class="info elCtn"
-                    style="display:flex">
-                    <el-input style="flex:1;margin-right:12px"
-                      placeholder="数值"
-                      v-model="packOutCheckConfig.data.contrast_quote_extent">
-                      <template slot="append">%</template>
-                    </el-input>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">输入可以自动审核通过的报价单对比价格比例：</div>
+                      <div class="info elCtn"
+                        style="display:flex">
+                        <el-input style="flex:1;margin-right:12px"
+                          placeholder="数值"
+                          v-model="packOutCheckConfig.data.contrast_quote_extent">
+                          <template slot="append">%</template>
+                        </el-input>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </template>
+              </template>
               <div class="row">
                 <div class="col">
                   <div class="label">未审核的发货单是否限制后续操作？</div>

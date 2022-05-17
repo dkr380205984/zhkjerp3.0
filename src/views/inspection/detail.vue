@@ -200,6 +200,42 @@
           </div>
         </div>
       </div>
+      <div class="listCtn"
+        style="min-height: 0px;"
+        v-if="inspectionList.filter((item)=>item.type===3).length>0">
+        <div class="list">
+          <div class="row title">
+            <div class="col">单据类型</div>
+            <div class="col">单据编号</div>
+            <div class="col">检验单位</div>
+            <div class="col">产品信息</div>
+            <div class="col">尺码颜色</div>
+            <div class="col">入库数量</div>
+            <div class="col">操作时间</div>
+            <div class="col">创建人</div>
+            <div class="col">操作</div>
+          </div>
+          <div class="row fontSmall"
+            v-for="item in inspectionList.filter((item)=>item.type===3)"
+            :key="item.id">
+            <div class="col green">成品入库</div>
+            <div class="col">{{item.doc_code}}</div>
+            <div class="col">{{item.client_name}}</div>
+            <div class="col">{{item.product_code}}
+            </div>
+            <div class="col">{{item.color}}/{{item.size}}</div>
+            <div class="col green">{{item.number}}</div>
+            <div class="col">{{item.complete_time}}</div>
+            <div class="col">{{item.user_name}}</div>
+            <div class="col">
+              <div class="oprCtn">
+                <span class="opr hoverRed"
+                  @click="deleteInspection(item.id)">删除</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="popup"
       v-show="inspectionFlag">
@@ -454,7 +490,7 @@
                     :key="indexChild">
                     <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
                     <div class="tcol">{{itemChild.number}}</div>
-                    <div class="tcol">暂无数据</div>
+                    <div class="tcol">{{itemChild.production_push_number}}</div>
                     <div class="tcol">
                       <div class="elCtn">
                         <el-input v-model="itemChild.inNum"
@@ -826,7 +862,7 @@ export default Vue.extend({
                 id: null,
                 type: 3,
                 order_id: this.order_id,
-                doc_info_id: item.product_id,
+                doc_info_id: itemChild.id,
                 complete_time: this.$getDate(new Date()),
                 number: itemChild.inNum,
                 size: itemChild.size_name,
@@ -848,7 +884,9 @@ export default Vue.extend({
         if (res.data.status) {
           this.$message.success('入库成功')
           this.cprkFlag = false
-          this.init()
+          setTimeout(() => {
+            window.location.reload()
+          }, 1000)
         }
       })
     },

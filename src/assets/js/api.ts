@@ -62,6 +62,8 @@ const companyInfo = {
 const chartsApi = {
   appLog: (params: any) => http.get(`${baseUrl}/order/mini_program/update/log`, params), //小程序更新日志
   batchLog: (params: any) => http.get(`${baseUrl}/order/dispatch/calendar`, params), // 发货日历
+  appLogNew: (params: any) => http.get(`/ever/mini_program/update/log`, params), //小程序更新日志
+  batchLogNew: (params: any) => http.get(`/ever/order/dispatch/calendar`, params), // 发货日历
 }
 
 // 首页
@@ -551,6 +553,7 @@ const order = {
   cancel: (params: DeleteParams) => http.post(`${baseUrl}/order/time/cancel`, params, 'application/json'),
   oprLog: (params: DetailParams) => http.get(`${baseUrl}/order/activity/logs`, params), // 操作记录
   deliveryList: (params?: ListParams) => http.get(`${baseUrl}/order/dispatch/lists`, params), // 大屏发货列表
+  deliveryListNoLog: (params?: ListParams) => http.get('/ever/order/dispatch/lists', params), // 大屏发货列表
   financial: (params: { order_id: string | number, product_id: string | number }) => http.get(`${baseUrl}/financial/order/detail`, params), // 操作记录
   deletePro: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product`, params, 'application/json'), // 删除订单里的产品
   deleteProChild: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product/info`, params, 'application/json'), // 删除订单里的子项

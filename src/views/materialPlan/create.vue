@@ -1762,6 +1762,7 @@ export default Vue.extend({
         })
         .then((res) => {
           this.materialPlanInfo = res.data.data
+          this.materialPlanInfo.id = ''
           this.materialPlanInfo.type = this.materialPlanInfo.type.toString()
           this.getUpdateData()
           this.confirmFlag = 2

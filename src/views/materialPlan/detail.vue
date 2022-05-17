@@ -14,6 +14,14 @@
             <div class="title">生产计划</div>
           </div>
           <div class="detailCtn">
+            <div class="checkCtn">
+              <el-tooltip class="item"
+                effect="dark"
+                content="点击查看审核日志"
+                placement="bottom">
+                <img :src="itemFather.is_check|checkFilter" />
+              </el-tooltip>
+            </div>
             <div class="row">
               <div class="col">
                 <div class="label">单据编号：</div>
@@ -279,19 +287,14 @@
                   </svg>
                   <span class="text">继续添加</span>
                 </div>
-                <el-tooltip class="item"
-                  effect="dark"
-                  content="可勾选部分产品信息进行打印"
-                  placement="top">
-                  <div class="btn backHoverBlue"
-                    @click="openPrint">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-dayindingdan"></use>
-                    </svg>
-                    <span class="text">打印计划</span>
-                  </div>
-                </el-tooltip>
+                <div class="btn backHoverBlue"
+                  @click="openPrint">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-dayindingdan"></use>
+                  </svg>
+                  <span class="text">打印计划</span>
+                </div>
                 <div class="btn backHoverRed"
                   @click="deleteMaterialPlan">
                   <svg class="iconFont"
@@ -470,13 +473,26 @@ export default Vue.extend({
         })
     },
     openPrint() {
-      const planInfo = this.materialPlanInfo.find((item) => item.id!.toString() === this.materialPlanIndex)
-      let arr = planInfo!.material_plan_data.filter((item) => item.check).map((item) => item.id)
-      // 没选就是全选
-      if (arr.length === 0) {
-        arr = planInfo!.material_plan_data.map((item) => item.id)
-      }
-      this.$openUrl('/materialPlan/print?id=' + this.materialPlanIndex + '&proId=' + JSON.stringify(arr))
+      this.$confirm('可勾选部分产品信息进行打印,不勾选则打印全部?', '提示', {
+        confirmButtonText: '确定打印',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          const planInfo = this.materialPlanInfo.find((item) => item.id!.toString() === this.materialPlanIndex)
+          let arr = planInfo!.material_plan_data.filter((item) => item.check).map((item) => item.id)
+          // 没选就是全选
+          if (arr.length === 0) {
+            arr = planInfo!.material_plan_data.map((item) => item.id)
+          }
+          this.$openUrl('/materialPlan/print?id=' + this.materialPlanIndex + '&proId=' + JSON.stringify(arr))
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        })
     }
   },
   mounted() {

@@ -299,7 +299,7 @@ export default Vue.extend({
       // console.log(moduleId)
       window.sessionStorage.setItem('group_id', res.data.data.group_id)
       window.sessionStorage.setItem('user_name', res.data.data.name)
-      window.sessionStorage.setItem('company_id', companyInfo.company_id)
+      window.sessionStorage.setItem('company_id', res.data.data.company_id)
       window.sessionStorage.setItem('company_name', companyInfo.company_name)
       window.sessionStorage.setItem('full_name', companyInfo.full_name)
       window.sessionStorage.setItem('module_id', JSON.stringify(companyInfo.module_info))

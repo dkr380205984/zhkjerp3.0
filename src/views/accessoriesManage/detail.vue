@@ -14,6 +14,14 @@
             <div class="title">订购信息</div>
           </div>
           <div class="detailCtn">
+            <div class="checkCtn">
+              <el-tooltip class="item"
+                effect="dark"
+                content="点击查看审核日志"
+                placement="bottom">
+                <img :src="item.is_check|checkFilter" />
+              </el-tooltip>
+            </div>
             <div class="row">
               <div class="col">
                 <div class="label">单据编号：</div>
@@ -73,29 +81,22 @@
             </div>
           </div>
           <div class="buttonList">
-            <div class="btn backHoverBlue">
-              <i class="el-icon-s-grid"></i>
-              <span class="text">订购单操作</span>
+            <div style="margin-right:12px"
+              class="btn backHoverOrange"
+              @click="Number($getsessionStorage('has_check'))!==1&&(item.has_invoice===1||item.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):materialOrderUpdataInfo=$clone(item);materialOrderUpdataFlag=true">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">单据修改</span>
             </div>
-            <div class="otherInfoCtn">
-              <div class="otherInfo">
-                <div class="btn backHoverOrange"
-                  @click="Number($getsessionStorage('has_check'))!==1&&(item.has_invoice===1||item.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):materialOrderUpdataInfo=$clone(item);materialOrderUpdataFlag=true">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">单据修改</span>
-                </div>
-                <div class="btn backHoverRed"
-                  @click="deleteMaterialOrder(item.id)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">删除单据</span>
-                </div>
-              </div>
+            <div class="btn backHoverRed"
+              @click="deleteMaterialOrder(item.id)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">删除单据</span>
             </div>
           </div>
         </el-tab-pane>
@@ -601,7 +602,8 @@
                 </div>
                 <div class="info elCtn">
                   <el-input placeholder="订购颜色、材质、属性或尺寸"
-                    v-model="itemMat.attribute">
+                    v-model="itemMat.attribute"
+                    @focus="$focusInput($event)">
                   </el-input>
                 </div>
               </div>
@@ -620,12 +622,14 @@
                 <div class="info elCtn spaceBetween">
                   <el-input class="once"
                     placeholder="单价"
-                    v-model="itemMat.price">
+                    v-model="itemMat.price"
+                    @focus="$focusInput($event)">
                     <template slot="append">元</template>
                   </el-input>
                   <el-input class="once"
                     placeholder="数量"
-                    v-model="itemMat.number">
+                    v-model="itemMat.number"
+                    @focus="$focusInput($event)">
                     <template slot="append">kg</template>
                   </el-input>
                 </div>
@@ -641,7 +645,8 @@
                 </div>
                 <div class="info elCtn">
                   <el-input placeholder="请输入额外费用名称"
-                    v-model="itemOther.name"></el-input>
+                    v-model="itemOther.name"
+                    @focus="$focusInput($event)"></el-input>
                 </div>
               </div>
               <div class="col">
@@ -651,7 +656,8 @@
                 </div>
                 <div class="info elCtn">
                   <el-input placeholder="请输入额外费用金额"
-                    v-model="itemOther.price">
+                    v-model="itemOther.price"
+                    @focus="$focusInput($event)">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -663,7 +669,8 @@
                 </div>
                 <div class="info elCtn">
                   <el-input placeholder="请输入额外费用备注"
-                    v-model="itemOther.desc"></el-input>
+                    v-model="itemOther.desc"
+                    @focus="$focusInput($event)"></el-input>
                 </div>
               </div>
               <div class="opr hoverBlue"
@@ -684,7 +691,8 @@
                 </div>
                 <div class="info elCtn">
                   <el-input placeholder="请输入订购备注信息"
-                    v-model="materialOrderUpdataInfo.desc"></el-input>
+                    v-model="materialOrderUpdataInfo.desc"
+                    @focus="$focusInput($event)"></el-input>
                 </div>
               </div>
               <div class="col">

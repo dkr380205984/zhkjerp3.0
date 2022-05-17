@@ -321,7 +321,9 @@
                 <span>{{itemBatch.batch_number}}</span>
               </div>
               <div class="tcol">
-                <span class="green">{{itemBatch.delivery_time}}</span>
+                <span class="green">{{itemBatch.delivery_time}}
+                  <span :class="$diffByDate(itemBatch.delivery_time)>0?'green':'red'">({{$diffByDate(itemBatch.delivery_time)>0?'还剩'+$diffByDate(itemBatch.delivery_time)+'天':'逾期'+Math.abs($diffByDate(itemBatch.delivery_time))+'天'}})</span>
+                </span>
               </div>
               <div class="tcol">
                 <span>{{itemBatch.batch_title || '无'}}</span>
@@ -364,7 +366,7 @@
                 {{itemBatch.status===1?'进行中':(itemBatch.status===2?'已完成':'已逾期')}}
               </div>
               <div class="tcol oprCtn">
-                <div class="opr hoverGreen"
+                <div class="opr hoverBlue"
                   @click="confirmOrderBatch(itemBatch)">确认完成</div>
               </div>
             </div>
