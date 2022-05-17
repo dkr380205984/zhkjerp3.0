@@ -544,7 +544,7 @@ const ifRepeatArray = (arr: string[]): boolean => {
   return Array.from(new Set(arr)).length !== arr.length
 }
 
-const formatDate = (formatStr: string, date: Date) => {
+const formatDate = (date: Date, formatStr: string = 'YYYY-MM-DD') => {
   var str = formatStr;
   var Week = ["日", "一", "二", "三", "四", "五", "六"];
   str = str.replace(/yyyy|YYYY/, date.getFullYear() + '');
@@ -606,7 +606,7 @@ function getEveryDayDateByBetweenDate(start_date: string, end_date: string, form
   while (true) {
     let dateTime: any = new Date(dateList[i - 1]);
     dateTime = dateTime.setDate(dateTime.getDate() + 1);
-    var date = formatDate(formatStr, new Date(dateTime))
+    var date = formatDate(new Date(dateTime), formatStr)
     dateList.push(date);
     if (date == end_date) {
       break;
@@ -663,7 +663,7 @@ function changeNumToHan(num: number): string {
 function GetDateStr(AddDayCount: number, formatStr: string = 'YYYY-MM-DD') {
   var dd = new Date();
   dd.setDate(dd.getDate() + AddDayCount);//获取AddDayCount天后的日期
-  return formatDate(formatStr, dd)
+  return formatDate(dd, formatStr)
 }
 export default {
   install: (Vue: any) => {

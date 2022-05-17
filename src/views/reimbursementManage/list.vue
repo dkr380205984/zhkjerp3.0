@@ -26,6 +26,18 @@
               <el-option value="3" label="已驳回"></el-option>
             </el-select>
           </div>
+          <div class="elCtn">
+            <el-date-picker
+              v-model="timeArr"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              @change="changeRouter"
+              value-format="yyyy-MM-dd"
+            >
+            </el-date-picker>
+          </div>
           <div class="btn borderBtn" @click="reset">重置</div>
         </div>
         <div class="filterCtn" style="height: 33px">
@@ -42,7 +54,7 @@
             <el-table-column prop="total_order_number" label="相关凭证">
               <template slot-scope="scope">
                 <el-image
-                  style="height: 44px; width: 44px;padding-top:5px"
+                  style="height: 44px; width: 44px; padding-top: 5px"
                   fix="cover"
                   :src="
                     scope.row.certificate
@@ -83,7 +95,8 @@
         </div>
         <div class="pageCtn" style="align-items: center; justify-content: space-between">
           <div>
-            合计金额 <span style="margin-left: 50px">{{ totalAmount }}</span> 元
+            合计金额
+            <span style="margin-left: 50px; font-weight: bold">{{ (totalAmount / 10000).toFixed(2) }}万元</span>
           </div>
           <el-pagination
             background
@@ -112,6 +125,7 @@ export default Vue.extend({
       mainLoading: false,
       totalAmount: 0,
       list: [],
+      timeArr: [],
       page: 1,
       total: 1,
       limit: 10,
@@ -158,8 +172,13 @@ export default Vue.extend({
           '&status=' +
           this.status +
           '&limit=' +
-          this.limit
+          this.limit +
+          '&start_time=' +
+          (this.timeArr ? this.timeArr[0] : this.$formatDate(new Date(new Date().getFullYear(), 0, 1))) +
+          '&end_time=' +
+          (this.timeArr ? this.timeArr[1] : this.$GetDateStr(0))
       )
+      this.getFilters()
       this.getList()
     },
     getFilters() {
@@ -168,6 +187,10 @@ export default Vue.extend({
       this.keyword = query.keyword || ''
       this.status = query.status
       this.group = query.group || ''
+      this.timeArr = [
+        query.start_time || this.$formatDate(new Date(new Date().getFullYear(), 0, 1)),
+        query.end_time || this.$GetDateStr(0)
+      ]
       this.limit = Number(query.limit) || 10
     },
     reset() {
@@ -179,6 +202,7 @@ export default Vue.extend({
         .then(() => {
           this.keyword = ''
           this.group = ''
+          this.timeArr = [this.$formatDate(new Date(new Date().getFullYear(), 0, 1)), this.$GetDateStr(0)]
           this.limit = 10
           this.status = ''
           this.changeRouter()
@@ -201,7 +225,9 @@ export default Vue.extend({
           page: this.page,
           limit: this.limit,
           status: this.status,
-          group: this.group
+          group: this.group,
+          start_time: this.timeArr[0],
+          end_time: this.timeArr[1]
         })
         .then((res) => {
           this.list = res.data.data.items

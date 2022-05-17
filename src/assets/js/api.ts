@@ -1003,6 +1003,8 @@ const receipt = {
     page: number | string
     keyword: string
     group: string
+    start_time: string
+    end_time: string
     status: string | number
   }) => http.get(`${baseUrl}/receipt/list`, params),
   detail: (params: {

@@ -39,10 +39,9 @@
       </div>
     </div>
     <div class="module noBackColor">
-      <div style="display: flex; width: 27%; justify-content: space-between">
+      <div style="display: flex; width: 17%; justify-content: space-between">
         <div class="tab active">运输出库图表</div>
         <div class="tab" @click="$router.push('/dataReport/reimbursementChartStatistics')">报销费用图表</div>
-        <div class="tab" @click="$message.info('功能正在开发中，即将上线')">额外费用图表</div>
       </div>
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">

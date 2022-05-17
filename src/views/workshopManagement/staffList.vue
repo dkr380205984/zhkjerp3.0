@@ -23,7 +23,7 @@
           <div class="elCtn">
             <el-input v-model="keyword" placeholder="编号、姓名搜索" @keydown.enter.native="changeRouter"></el-input>
           </div>
-          <div class="elCtn">
+          <div class="elCtn" style="position: relative">
             <el-select
               style="width: 95%"
               @change="changeDepartment()"
