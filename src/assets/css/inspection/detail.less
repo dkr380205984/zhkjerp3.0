@@ -6,38 +6,56 @@
 @import '../list.less';
 @import '../popup.less';
 @import '../buttonList.less';
-#inspectionDetail{
-  .popup{
-    .main{
+
+#inspectionDetail {
+  .backGray {
+    background: @font25;
+    cursor: not-allowed;
+
+    &:hover {
+      background: @font25;
+    }
+  }
+
+  .popup {
+    .main {
       width: 1200px;
-      .label{
+
+      .label {
         line-height: 38px;
         font-size: 14px;
         width: auto;
         text-align: left;
       }
-      .editCtn{
-        background:#F0F0F0 ;
+
+      .editCtn {
+        background: #F0F0F0;
         margin: 16px 0;
-        .col{
+
+        .col {
           margin-right: 30px;
         }
-        .opr{
+
+        .opr {
           transform: translate(-20px, 100%);
         }
-        .tableCtn{
+
+        .tableCtn {
           padding: 0;
-          .thead{
+
+          .thead {
             background: #CCCCCC;
           }
         }
       }
     }
   }
-  .fontSmall{
+
+  .fontSmall {
     font-size: 14px;
   }
-  .copyIcon{
+
+  .copyIcon {
     position: absolute;
     right: 0;
     top: 0;

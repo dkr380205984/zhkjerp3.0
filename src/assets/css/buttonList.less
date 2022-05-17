@@ -1,35 +1,41 @@
-.buttonList{
+.buttonList {
   position: relative;
   float: right;
   margin-right: 32px;
   margin-bottom: 20px;
-  &:hover{
-    .otherInfoCtn{
+
+  &:hover {
+    .otherInfoCtn {
       display: block;
     }
   }
-  .text{
+
+  .text {
     margin-left: 8px;
   }
-  .otherInfoCtn{
+
+  .otherInfoCtn {
     position: absolute;
     bottom: 32px;
     right: 0;
     display: none;
-    .otherInfo{
+
+    .otherInfo {
       padding-bottom: 12px;
       margin-bottom: 6px;
       background: #fff;
-      border:1px solid #d9d9d9;
+      border: 1px solid #d9d9d9;
       border-radius: 4px;
       width: 320px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
-      .btn{
+
+      .btn {
         margin: 12px 12px 0 12px;
         display: inline-block;
-        .icon{
+
+        .icon {
           width: 18px;
           height: 18px;
           display: inline-block;

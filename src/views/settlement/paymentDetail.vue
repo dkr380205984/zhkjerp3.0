@@ -2291,6 +2291,8 @@
             <div class="col">{{item.user_name}}</div>
             <div class="col">{{item.created_at}}</div>
             <div class="col oprCtn">
+              <span class="opr blue"
+                @click="goPayment([{ order_id: item.order_id, doc_code: item.order_code, rel_doc_id: item.rel_doc_id, price: item.price, desc: '', complete_time: $getDate(new Date()) }],false,true)">付款</span>
               <span class="opr orange"
                 @click="goInvoice([item],true)">修改</span>
               <span class="opr red">删除</span>
@@ -2527,6 +2529,7 @@
     </div>
     <!-- 付款 -->
     <zh-payment :type="clientType"
+      :invoiceChange="invoiceChange"
       :update="paymentUpdate"
       :show="paymentFlag"
       :data="paymentData"
@@ -2664,6 +2667,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      invoiceChange: false,
       productDetailId: '',
       productShow: false,
       paymentFlag: false,
@@ -3171,7 +3175,8 @@ export default Vue.extend({
           }
         })
     },
-    goPayment(data: any[], update?: boolean) {
+    goPayment(data: any[], update?: boolean, invoiceChange?: boolean) {
+      this.invoiceChange = invoiceChange
       this.paymentUpdate = update
       this.paymentData = data
       this.paymentFlag = true

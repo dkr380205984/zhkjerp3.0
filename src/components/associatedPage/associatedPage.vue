@@ -29,7 +29,8 @@
 <script lang="ts">
 import Vue from 'vue'
 export default Vue.extend({
-  props: ['data', 'show'],
+  // nowPage 是当前页面跳转
+  props: ['data', 'show', 'nowPage'],
   data() {
     return {
       checkUrl: {
@@ -50,7 +51,11 @@ export default Vue.extend({
     },
     goRouter() {
       if (this.checkUrl.url) {
-        this.$openUrl(this.checkUrl.url)
+        if (this.nowPage) {
+          this.$router.push(this.checkUrl.url)
+        } else {
+          this.$openUrl(this.checkUrl.url)
+        }
       } else {
         this.$message.error('请选择要跳转的页面')
       }

@@ -174,7 +174,8 @@
               <div class="label"> 客户目标价格</div>
               <div class="info elCtn">
                 <el-input placeholder="请输入客户目标价格"
-                  v-model="item.client_target_price">
+                  v-model="item.client_target_price"
+                  @focus="$focusInput($event)">
                   <template slot="append">元</template>
                 </el-input>
               </div>
@@ -183,7 +184,8 @@
               <div class="label">客户最低起订量</div>
               <div class="info elCtn">
                 <el-input placeholder="请输入客户最低起订量"
-                  v-model="item.start_order_number"></el-input>
+                  v-model="item.start_order_number"
+                  @focus="$focusInput($event)"></el-input>
               </div>
             </div>
           </div>
@@ -290,6 +292,8 @@
                   <el-input class="once unitAppend"
                     v-model="itemYarn.weight"
                     placeholder="数量"
+                    @focus="$focusInput($event)"
+                    @input="itemYarn.price?cmpTotalPrice(itemYarn):''"
                     :disabled="itemYarn.tree_data.length===0">
                     <template slot="append">
                       <input class="unit"
@@ -301,6 +305,8 @@
                   <el-input class="once"
                     v-model="itemYarn.loss"
                     placeholder="损耗"
+                    @focus="$focusInput($event)"
+                    @input="itemYarn.price?cmpTotalPrice(itemYarn):''"
                     :disabled="itemYarn.tree_data.length===0">
                     <template slot="append">%</template>
                   </el-input>
@@ -317,6 +323,7 @@
                     v-model="itemYarn.price"
                     placeholder="单价"
                     clearable
+                    @focus="$focusInput($event)"
                     @change="cmpTotalPrice(itemYarn)"
                     :disabled="itemYarn.tree_data.length===0">
                     <template slot="append">元/{{itemYarn.unit==='g'?'kg':itemYarn.unit || '单位'}}</template>
@@ -324,6 +331,7 @@
                   <el-input class="once"
                     v-model="itemYarn.total_price"
                     placeholder="小计"
+                    @focus="$focusInput($event)"
                     :disabled="itemYarn.tree_data.length===0">
                     <template slot="append">元</template>
                   </el-input>
@@ -397,6 +405,8 @@
                   <el-input class="once unitAppend"
                     v-model="itemDecorateMaterial.number"
                     placeholder="数量"
+                    @focus="$focusInput($event)"
+                    @input="itemDecorateMaterial.price?cmpTotalPrice(itemDecorateMaterial):''"
                     :disabled="!itemDecorateMaterial.material_id">
                     <template slot="append">
                       <input class="unit"
@@ -408,6 +418,8 @@
                   <el-input class="once"
                     v-model="itemDecorateMaterial.loss"
                     placeholder="损耗"
+                    @focus="$focusInput($event)"
+                    @input="itemDecorateMaterial.price?cmpTotalPrice(itemDecorateMaterial):''"
                     :disabled="!itemDecorateMaterial.material_id">
                     <template slot="append">%</template>
                   </el-input>
@@ -423,6 +435,7 @@
                   <el-input class="once"
                     v-model="itemDecorateMaterial.price"
                     placeholder="单价"
+                    @focus="$focusInput($event)"
                     @change="cmpTotalPrice(itemDecorateMaterial)"
                     clearable
                     :disabled="!itemDecorateMaterial.material_id">
@@ -431,6 +444,7 @@
                   <el-input class="once"
                     v-model="itemDecorateMaterial.total_price"
                     placeholder="小计"
+                    @focus="$focusInput($event)"
                     :disabled="!itemDecorateMaterial.material_id">
                     <template slot="append">元</template>
                   </el-input>
@@ -477,6 +491,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemWeave.desc"
                     placeholder="织造说明"
+                    @focus="$focusInput($event)"
                     :disabled="!itemWeave.name">
                   </el-input>
                 </div>
@@ -490,6 +505,7 @@
                   <el-input v-model="itemWeave.total_price"
                     placeholder="小计"
                     clearable
+                    @focus="$focusInput($event)"
                     :disabled="!itemWeave.name">
                     <template slot="append">元</template>
                   </el-input>
@@ -556,6 +572,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemHalfProcess.desc"
                     placeholder="加工说明"
+                    @focus="$focusInput($event)"
                     :disabled="!itemHalfProcess.name">
                   </el-input>
                 </div>
@@ -568,6 +585,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemHalfProcess.total_price"
                     placeholder="小计"
+                    @focus="$focusInput($event)"
                     clearable
                     :disabled="!itemHalfProcess.name">
                     <template slot="append">元</template>
@@ -635,6 +653,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemFinishedProcess.desc"
                     placeholder="加工说明"
+                    @focus="$focusInput($event)"
                     :disabled="!itemFinishedProcess.name">
                   </el-input>
                 </div>
@@ -647,6 +666,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemFinishedProcess.total_price"
                     placeholder="小计"
+                    @focus="$focusInput($event)"
                     clearable
                     :disabled="!itemFinishedProcess.name">
                     <template slot="append">元</template>
@@ -714,6 +734,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemPackMaterial.desc"
                     placeholder="辅料说明"
+                    @focus="$focusInput($event)"
                     :disabled="!itemPackMaterial.material_id">
                   </el-input>
                 </div>
@@ -727,6 +748,7 @@
                   <el-input v-model="itemPackMaterial.total_price"
                     placeholder="小计"
                     clearable
+                    @focus="$focusInput($event)"
                     :disabled="!itemPackMaterial.material_id">
                     <template slot="append">元</template>
                   </el-input>
@@ -754,6 +776,7 @@
                 </div>
                 <div class="info elCtn">
                   <el-input v-model="itemOther.name"
+                    @focus="$focusInput($event)"
                     placeholder="其他费用"></el-input>
                 </div>
               </div>
@@ -765,6 +788,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemOther.desc"
                     placeholder="费用说明"
+                    @focus="$focusInput($event)"
                     :disabled="!itemOther.name">
                   </el-input>
                 </div>
@@ -778,6 +802,7 @@
                   <el-input v-model="itemOther.total_price"
                     placeholder="小计"
                     clearable
+                    @focus="$focusInput($event)"
                     :disabled="!itemOther.name">
                     <template slot="append">元</template>
                   </el-input>
@@ -805,6 +830,7 @@
                 </div>
                 <div class="info elCtn">
                   <el-input v-model="itemNoPro.name"
+                    @focus="$focusInput($event)"
                     placeholder="非生产型费用"></el-input>
                 </div>
               </div>
@@ -816,6 +842,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemNoPro.desc"
                     placeholder="费用说明"
+                    @focus="$focusInput($event)"
                     :disabled="!itemNoPro.name">
                   </el-input>
                 </div>
@@ -828,6 +855,7 @@
                 <div class="info elCtn">
                   <el-input v-model="itemNoPro.total_price"
                     placeholder="小计"
+                    @focus="$focusInput($event)"
                     clearable
                     :disabled="!itemNoPro.name">
                     <template slot="append">元</template>
@@ -853,7 +881,8 @@
                 </div>
                 <div class="info elCtn">
                   <el-input v-model="item.transport_fee"
-                    placeholder="运输费用">
+                    placeholder="运输费用"
+                    @focus="$focusInput($event)">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -864,7 +893,8 @@
                 </div>
                 <div class="info elCtn">
                   <el-input v-model="item.transport_fee_desc"
-                    placeholder="费用说明">
+                    placeholder="费用说明"
+                    @focus="$focusInput($event)">
                   </el-input>
                 </div>
               </div>
@@ -912,7 +942,8 @@
             </div>
             <div class="info elCtn">
               <el-input v-model="quotedPriceInfo.commission_percentage"
-                placeholder="请输入客户佣金百分比">
+                placeholder="请输入客户佣金百分比"
+                @focus="$focusInput($event)">
                 <template slot="append">%</template>
               </el-input>
             </div>
@@ -937,7 +968,8 @@
             </div>
             <div class="info elCtn">
               <el-input v-model="quotedPriceInfo.rate_taxation"
-                placeholder="请输入预计税率">
+                placeholder="请输入预计税率"
+                @focus="$focusInput($event)">
                 <template slot="append">%</template>
               </el-input>
             </div>
@@ -962,7 +994,8 @@
             </div>
             <div class="info elCtn">
               <el-input v-model="quotedPriceInfo.profit_percentage"
-                placeholder="请输入预计利润百分比">
+                placeholder="请输入预计利润百分比"
+                @focus="$focusInput($event)">
                 <template slot="append">%</template>
               </el-input>
             </div>
@@ -986,7 +1019,8 @@
             </div>
             <div class="info elCtn">
               <el-input v-model="quotedPriceInfo.desc"
-                placeholder="请输入其它说明与备注">
+                placeholder="请输入其它说明与备注"
+                @focus="$focusInput($event)">
               </el-input>
             </div>
           </div>
@@ -994,7 +1028,8 @@
             <div class="label">最终客户报价</div>
             <div class="info elCtn">
               <el-input v-model="quotedPriceInfo.real_quote_price"
-                placeholder="请输入最终客户报价">
+                placeholder="请输入最终客户报价"
+                @focus="$focusInput($event)">
                 <template slot="append">元</template>
               </el-input>
             </div>

@@ -424,6 +424,8 @@
             <div class="col">{{item.user_name}}</div>
             <div class="col">{{item.created_at}}</div>
             <div class="col oprCtn">
+              <span class="opr blue"
+                @click="goCollection([{ order_id: item.order_id, doc_code: item.order_code, rel_doc_id: item.rel_doc_id, price: item.price, desc: '', complete_time: $getDate(new Date()) }],false,true)">收款</span>
               <span class="opr orange"
                 @click="goInvoice([item],true)">修改</span>
               <span class="opr red">删除</span>
@@ -661,6 +663,7 @@
     <!-- 收款 -->
     <zh-collection :type="1"
       :update="collectionUpdate"
+      :invoiceChange="invoiceChange"
       :show="collectionFlag"
       :data="collectionData"
       :client_name="clientFinancial.name"
@@ -714,6 +717,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      invoiceChange: false, // 开票转收款
       collectionFlag: false,
       collectionData: [],
       collectionLog: [],
@@ -1073,7 +1077,8 @@ export default Vue.extend({
           }
         })
     },
-    goCollection(data: any[], update?: boolean) {
+    goCollection(data: any[], update?: boolean, invoiceChange?: boolean) {
+      this.invoiceChange = invoiceChange
       this.collectionUpdate = update
       this.collectionData = data
       this.collectionFlag = true

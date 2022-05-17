@@ -8,7 +8,8 @@
         <div class="title">报价单列表</div>
       </div>
       <div class="listCtn">
-        <div class="filterCtn">
+        <div class="filterCtn"
+          style="position:relative">
           <div class="elCtn">
             <el-input v-model="keyword"
               placeholder="筛选报价/产品/样品编号"

@@ -18,7 +18,18 @@
             按钮开始填写产品物料信息。
             <span class="red">注意：</span>
             未填写计划生产数量的部位，或者填写值为0的产品部位将不计入物料填写。
+            也可以通过下方产品勾选来选择要参与计划物料的产品。
           </span>
+          <div class="checkCtn">
+            <div style="font-weight:normal;font-size:16px;margin-bottom:12px">请选择需要计划的产品：</div>
+            <el-checkbox v-for="item in material_plan_check_data"
+              :key="item.id"
+              v-model="item.check"
+              @change="getNewMaterialPlanData">
+              <span>{{item.product_code || item.system_code}}</span>
+              <span>({{item.category}}/{{item.secondary_category}})</span>
+            </el-checkbox>
+          </div>
         </div>
         <div class="thead">
           <div class="trow">
@@ -973,7 +984,8 @@ export default Vue.extend({
         label: '推荐工序',
         value: '推荐工序',
         children: []
-      }
+      },
+      material_plan_check_data: []
     }
   },
   computed: {
@@ -1076,6 +1088,14 @@ export default Vue.extend({
     }
   },
   methods: {
+    getNewMaterialPlanData() {
+      const data = this.material_plan_check_data.filter((item: any) => item.check)
+      if (data.length === 0) {
+        this.$message.error('至少有一项')
+        return
+      }
+      this.materialPlanInfo.production_plan_data = this.$clone(data)
+    },
     planNumberToZero() {
       this.materialPlanInfo.production_plan_data.forEach((item) => {
         item.product_data.forEach((itemChild) => {
@@ -1257,6 +1277,8 @@ export default Vue.extend({
         })
         return cloneItem
       })
+      this.material_plan_check_data = this.$clone(this.materialPlanInfo.production_plan_data)
+      this.material_plan_check_data.forEach((item: any) => (item.check = true))
     },
     // 计算所需物料--按尺码颜色
     getMaterialPlanDetail(partId?: number, number?: number, proInfo?: any) {
@@ -1740,6 +1762,7 @@ export default Vue.extend({
         })
         .then((res) => {
           this.materialPlanInfo = res.data.data
+          this.materialPlanInfo.id = ''
           this.materialPlanInfo.type = this.materialPlanInfo.type.toString()
           this.getUpdateData()
           this.confirmFlag = 2

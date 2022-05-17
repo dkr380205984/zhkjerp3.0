@@ -487,6 +487,11 @@ const initEditor = (item: any, index?: number) => {
     })
   }
 }
+
+// 输入框获取焦点选中文本
+const focusInput = (ev: any) => {
+  ev.currentTarget.select()
+}
 /**
  * @param {string} el 到达其视图的id
  * @returns {void|boolean}
@@ -704,5 +709,6 @@ export default {
     Vue.prototype.$GetDateStr = GetDateStr
     Vue.prototype.$debounce = debounce
     Vue.prototype.$changeNumToHan = changeNumToHan
+    Vue.prototype.$focusInput = focusInput
   }
 }

@@ -166,18 +166,6 @@
                 </el-tooltip>
               </div>
               <div class="process"
-                :class="{'green':item.has_pack_plan.status===1,'gray':item.has_pack_plan.status===2}">
-                <el-tooltip class="item"
-                  effect="dark"
-                  :content="'装箱计划'+(item.has_pack_plan.status===1?('已添加(更新日期:'+item.has_pack_plan.update_time +')'):'未添加')"
-                  placement="top">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-zhuangxiangchuku1"></use>
-                  </svg>
-                </el-tooltip>
-              </div>
-              <div class="process"
                 :class="{'green':item.has_pack_order.status===1,'gray':item.has_pack_order.status===2}">
                 <el-tooltip class="item"
                   effect="dark"
@@ -186,6 +174,18 @@
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-baozhuangcaigou1"></use>
+                  </svg>
+                </el-tooltip>
+              </div>
+              <div class="process"
+                :class="{'green':item.transport_progress>=100,'gray':item.transport_progress===0,'orange':item.transport_progress>0&&item.transport_progress<100}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="'装箱进度'+(item.transport_progress||'0')+'%'"
+                  placement="top">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-zhuangxiangchuku1"></use>
                   </svg>
                 </el-tooltip>
               </div>
