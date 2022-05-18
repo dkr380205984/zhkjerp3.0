@@ -1266,7 +1266,7 @@ export default Vue.extend({
         })
         this.allWorkList[0].children = arr
       })
-      staff.list({ keyword: '' }).then((ress: any) => {
+      staff.list({ keyword: '', status: 1 }).then((ress: any) => {
         let arr: any = []
         ress.data.data.forEach((worker: any) => {
           arr.push({
