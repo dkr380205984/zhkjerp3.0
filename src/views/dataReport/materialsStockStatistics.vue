@@ -123,7 +123,9 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue" @click="$router.push('/store/list?page=1&keyword=&user_id=&store_type=1')">查看库存数量</div>
+          <div class="btn backHoverBlue" @click="$router.push('/store/list?page=1&keyword=&user_id=&store_type=1')">
+            查看库存数量
+          </div>
         </div>
       </div>
     </div>
@@ -407,9 +409,14 @@ export default Vue.extend({
 
           let orderNumberMax: any, orderNumberMin: any
 
+          data.report.sort(function (a: any, b: any) {
+            return b.number - a.number
+          })
+
           data.report.forEach((item: any) => {
-            this.option1.xAxis[0].data.push(item.name)
-            console.log(this.option1.series[0])
+            if (item.number !== '0.00') {
+              this.option1.xAxis[0].data.push(item.name)
+            }
 
             storeArr = storeArr.concat(
               item.store.map((item: any) => {
@@ -433,7 +440,19 @@ export default Vue.extend({
                 }
               }
             })
+
             data.report.forEach((itemReport: any) => {
+              if (itemReport.number === '0.00') {
+                return
+              }
+              let arr = itemReport.store.map((el: any) => {
+                return el.name
+              })
+
+              if (arr.indexOf(item) === -1) {
+                itemReport.store.push({ name: item, number: '0.00' })
+              }
+
               itemReport.store.forEach((itemStore: any) => {
                 if (itemStore.name === item) {
                   this.option1.series[index].data.push((itemStore.number / 1000).toFixed(2))
