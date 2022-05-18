@@ -48,7 +48,7 @@ const getAuthorization = () => http.post(`${baseUrl}/auth/info`, {}, 'applicatio
 const getToken = () => http.get(`${baseUrl}/upload/token`)
 
 // 版本公告
-const systemMessage = () => http.get(`${baseUrl}/system/update/log`, {})
+const systemMessage = (params?: { start_time: string, end_time: string }) => http.get(`${baseUrl}/system/update/log`, params)
 
 // 修改结算单价
 const updateSettlePrice = (params: any) => http.post(`${baseUrl}/update/settle/price`, params, 'application/json')

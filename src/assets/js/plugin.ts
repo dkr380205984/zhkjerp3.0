@@ -687,6 +687,14 @@ function forJiDuGetMonth(index: number, isAll: boolean = false) {
 
   return month[index - 1]
 }
+
+// 将时间格式 2022-01-07T06:16:11.000000Z 
+// 转换成为 2022-01-07 06:16:11
+function rTime(date: string) {
+  var json_date = new Date(date).toJSON();
+  // @ts-ignore
+  return new Date(new Date(json_date) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
+}
 export default {
   install: (Vue: any) => {
     Vue.prototype.$getHash = plugin.getHash
@@ -728,5 +736,6 @@ export default {
     Vue.prototype.$changeNumToHan = changeNumToHan
     Vue.prototype.$focusInput = focusInput
     Vue.prototype.$forJiDuGetMonth = forJiDuGetMonth
+    Vue.prototype.$rTime = rTime
   }
 }

@@ -222,7 +222,7 @@
         </div>
       </div>
     </div>
-     <div class="popup" v-show="showExportPopup">
+    <div class="popup" v-show="showExportPopup">
       <div class="main">
         <div class="titleCtn">
           <span class="text"
@@ -736,14 +736,22 @@ export default Vue.extend({
 
       let start_time = ''
       let end_time = ''
-      
+
       if (this.exportJiDu !== '') {
         if (this.exportMonth !== '') {
-          start_time = new Date(this.exportYear.getFullYear(), this.exportMonth - 1, 1).toLocaleDateString().replaceAll('/', '-')
-          end_time = new Date(this.exportYear.getFullYear(), this.exportMonth, 0).toLocaleDateString().replaceAll('/', '-')
+          start_time = new Date(this.exportYear.getFullYear(), this.exportMonth - 1, 1)
+            .toLocaleDateString()
+            .replaceAll('/', '-')
+          end_time = new Date(this.exportYear.getFullYear(), this.exportMonth, 0)
+            .toLocaleDateString()
+            .replaceAll('/', '-')
         } else {
-          start_time = new Date(this.exportYear.getFullYear(), (this.exportJiDu - 1) * 3, 1).toLocaleDateString().replaceAll('/', '-')
-          end_time = new Date(this.exportYear.getFullYear(), this.exportJiDu * 3, 0).toLocaleDateString().replaceAll('/', '-')
+          start_time = new Date(this.exportYear.getFullYear(), (this.exportJiDu - 1) * 3, 1)
+            .toLocaleDateString()
+            .replaceAll('/', '-')
+          end_time = new Date(this.exportYear.getFullYear(), this.exportJiDu * 3, 0)
+            .toLocaleDateString()
+            .replaceAll('/', '-')
         }
       } else {
         start_time = this.exportYear.getFullYear() + '-01-01'

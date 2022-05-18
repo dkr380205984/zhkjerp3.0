@@ -183,7 +183,16 @@
       <div class="leftCtn">
         <div class="module">
           <div class="titleCtn">
-            <div class="title">版本更新公告</div>
+            <div class="title">
+              版本更新公告
+              <div
+                class="fr hoverBlue"
+                style="font-size: 16px; font-weight: normal; cursor: pointer"
+                @click="showSystemMessageContent = true"
+              >
+                查看全部
+              </div>
+            </div>
           </div>
           <div class="content" style="overflow: auto">
             <div v-html="systemMessageContent"></div>
@@ -213,6 +222,60 @@
         </div>
       </div>
     </div>
+    <div class="popup" v-show="showSystemMessageContent">
+      <div class="main" style="width: 1000px">
+        <div class="titleCtn">
+          <span class="text">通知列表</span>
+          <div class="closeCtn" @click="showSystemMessageContent = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn" style="max-height: 1000px">
+          <div class="row">
+            <div class="label">筛选条件：</div>
+            <div class="info" style="line-height: 32px">
+              <el-date-picker
+                v-model="chooseMessageDate"
+                @change="getSystemMessage"
+                type="daterange"
+                align="right"
+                value-format="yyyy-MM-dd"
+                unlink-panels
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :picker-options="pickerOptions"
+              >
+              </el-date-picker>
+            </div>
+            <div class="btnCtn">
+              <div class="borderBtn" @click="chooseMessageDate = [];getSystemMessage()">重置</div>
+            </div>
+          </div>
+          <div class="row" style="height: 900px; overflow-y: scroll">
+            <el-collapse v-model="activeNames" style="width: 100%">
+              <el-collapse-item v-for="(item, index) in systemMessageContentList" :key="item + index" :name="index">
+                <template slot="title">
+                  {{ $rTime(item.updated_at) }}
+                  <div
+                    style="
+                      width: 680px;
+                      overflow: hidden;
+                      white-space: nowrap;
+                      text-overflow: ellipsis;
+                      margin-left: 20px;
+                    "
+                  >
+                    {{ contentHtml(item.content) }}
+                  </div>
+                </template>
+                <div v-html="item.content"></div>
+              </el-collapse-item>
+            </el-collapse>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -231,6 +294,40 @@ export default Vue.extend({
       showSearch: false,
       searchLoading: false,
       easyOprFlag: false,
+      activeNames:'',
+      showSystemMessageContent: false,
+      chooseMessageDate: [],
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }
+        ]
+      },
       userEasyOpr: window.localStorage.getItem('userEasyOpr')
         ? JSON.parse(window.localStorage.getItem('userEasyOpr') as string)
         : [],
@@ -406,7 +503,8 @@ export default Vue.extend({
         craft: []
       },
       tutorialSystemArr: [],
-      systemMessageContent: ''
+      systemMessageContent: '',
+      systemMessageContentList: []
     }
   },
   methods: {
@@ -490,6 +588,27 @@ export default Vue.extend({
       } else {
         item.isChecked = true
       }
+    },
+    contentHtml(content: string) {
+      // 富文本编辑器的内容如何只获得文字去掉标签
+      // content = content.replace(/<[^>]+>/g, '')
+      // 在上面的基础上还去掉了换行<br/>
+      content = content.replace(/<[^>]+>/g, '').replace(/(\n)/g, '')
+      return content
+    },
+    getSystemMessage(e: any) {
+      if (e) {
+        systemMessage({
+          start_time: e[0],
+          end_time: e[1]
+        }).then((res) => {
+          this.systemMessageContentList = res.data.data.items
+        })
+      } else {
+        systemMessage().then((res) => {
+          this.systemMessageContentList = res.data.data.items
+        })
+      }
     }
   },
   computed: {
@@ -524,7 +643,8 @@ export default Vue.extend({
     Promise.all([tutorialSystem.list({ type: 1 }), systemMessage()]).then((res) => {
       this.tutorialSystemArr = res[0].data.data.slice(0, 8)
       this.systemMessageContent =
-        res[1].data.data.data.length > 0 ? res[1].data.data.data[0].content : '暂无版本更新公告'
+        res[1].data.data.items.length > 0 ? res[1].data.data.items[0].content : '暂无版本更新公告'
+      this.systemMessageContentList = res[1].data.data.items
     })
   }
 })
