@@ -220,14 +220,8 @@
         <div class="btnCtn">
           <div class="borderBtn" @click="$router.go(-1)">返回</div>
           <div class="buttonList" style="margin-left: 12px">
-            <div class="btn backHoverBlue" @click="exportExcel(1)">
-              <span class="text">导出月度报表</span>
-            </div>
-            <div class="btn backHoverBlue" @click="exportExcel(2)">
-              <span class="text">导出季度报表</span>
-            </div>
-            <div class="btn backHoverBlue" @click="exportExcel(3)">
-              <span class="text">导出年度报表</span>
+            <div class="btn backHoverBlue" @click="showExportPopup = true">
+              <span class="text" style="margin-left: 0">导出报表</span>
             </div>
           </div>
         </div>
@@ -269,6 +263,57 @@
         </div>
       </div>
     </div>
+    <div class="popup" v-show="showExportPopup">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text"
+            >请选择需要导出的时间段<el-tooltip class="item" effect="dark" content="均为创建时间" placement="top">
+              <i class="el-icon-info"></i> </el-tooltip
+          ></span>
+          <div class="closeCtn" @click="showExportPopup = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="row">
+            <div class="label">年份：</div>
+            <div class="info" style="line-height: 32px">
+              <el-date-picker v-model="exportYear" type="year" placeholder="选择年"> </el-date-picker>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label">季度：</div>
+            <div class="info" style="min-height: 32px; height: auto">
+              <el-select v-model="exportJiDu" placeholder="请选择" @change="changeJiDu">
+                <el-option label="全部" :value="''"></el-option>
+                <el-option label="第一季度" :value="1"></el-option>
+                <el-option label="第二季度" :value="2"></el-option>
+                <el-option label="第三季度" :value="3"></el-option>
+                <el-option label="第四季度" :value="4"></el-option>
+              </el-select>
+            </div>
+          </div>
+          <div class="row" v-if="exportJiDu != ''">
+            <div class="label">月份：</div>
+            <div class="info">
+              <el-select v-model="exportMonth" placeholder="请选择">
+                <el-option
+                  v-for="item in monthList"
+                  :key="item.label + item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn" @click="showExportPopup = false">取消</span>
+          <span class="btn backHoverBlue" @click="exportExcel">确认</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -294,6 +339,7 @@ export default Vue.extend({
       loading: true,
       showCharts: false,
       checkFlag: false,
+      showExportPopup: false,
       additional: {},
       checkAllPlan: false,
       reviewerParams: {
@@ -310,6 +356,10 @@ export default Vue.extend({
       exportKey: [],
       keyword: '',
       contacts_id: '',
+      exportYear: new Date(),
+      exportJiDu: '',
+      exportMonth: '',
+      monthList: [],
       contactsList: [],
       client_id: [],
       checked: false,
@@ -754,6 +804,14 @@ export default Vue.extend({
       })
       this.$forceUpdate()
     },
+    changeJiDu(e: any) {
+      this.exportMonth = ''
+      if (e != '') {
+        this.monthList = this.$forJiDuGetMonth(e, true)
+      } else {
+        this.monthList = []
+      }
+    },
     agreeCheck(item: any) {
       if (this.reviewerParams.is_check === 1) {
         this.reviewerParams.check_desc = ''
@@ -824,28 +882,23 @@ export default Vue.extend({
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
     },
-    exportExcel(type: number) {
+    exportExcel() {
       let start_time = ''
       let end_time = ''
-      let y = new Date().getFullYear()
-      let m = new Date().getMonth() + 1
-      // @ts-ignore
-      let q = Math.floor(m % 3 == 0 ? m / 3 : m / 3 + 1)
 
-      switch (type) {
-        case 1:
-          start_time = new Date(y, m - 1, 1).toLocaleDateString().replaceAll('/', '-')
-          end_time = new Date(y, m, 0).toLocaleDateString().replaceAll('/', '-')
-          break
-        case 2:
-          start_time = new Date(y, (q - 1) * 3, 1).toLocaleDateString().replaceAll('/', '-')
-          end_time = new Date(y, q * 3, 0).toLocaleDateString().replaceAll('/', '-')
-          break
-        case 3:
-          start_time = y + '-01-01'
-          end_time = y + '-12-31'
-          break
+      if (this.exportJiDu !== '') {
+        if (this.exportMonth !== '') {
+          start_time = new Date(this.exportYear.getFullYear(), this.exportMonth - 1, 1).toLocaleDateString().replaceAll('/', '-')
+          end_time = new Date(this.exportYear.getFullYear(), this.exportMonth, 0).toLocaleDateString().replaceAll('/', '-')
+        } else {
+          start_time = new Date(this.exportYear.getFullYear(), (this.exportJiDu - 1) * 3, 1).toLocaleDateString().replaceAll('/', '-')
+          end_time = new Date(this.exportYear.getFullYear(), this.exportJiDu * 3, 0).toLocaleDateString().replaceAll('/', '-')
+        }
+      } else {
+        start_time = this.exportYear.getFullYear() + '-01-01'
+        end_time = this.exportYear.getFullYear() + '-12-31'
       }
+
       this.mainLoading = true
 
       materialSupplement
@@ -857,6 +910,7 @@ export default Vue.extend({
         .then((res) => {
           window.location.href = res.data.data
           this.mainLoading = false
+          this.showExportPopup = false
         })
     },
     changeRouter(ev?: any) {

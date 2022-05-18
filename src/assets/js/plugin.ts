@@ -670,6 +670,23 @@ function GetDateStr(AddDayCount: number, formatStr: string = 'YYYY-MM-DD') {
   dd.setDate(dd.getDate() + AddDayCount);//获取AddDayCount天后的日期
   return formatDate(dd, formatStr)
 }
+
+function forJiDuGetMonth(index: number, isAll: boolean = false) {
+  let month = [
+    [{ label: '一月', value: 1 }, { label: '二月', value: 2 }, { label: '三月', value: 3 }],
+    [{ label: '四月', value: 4 }, { label: '五月', value: 5 }, { label: '六月', value: 6 }],
+    [{ label: '七月', value: 7 }, { label: '八月', value: 8 }, { label: '九月', value: 9 }],
+    [{ label: '十月', value: 10 }, { label: '十一月', value: 11 }, { label: '十二月', value: 12 }],
+  ]
+
+  if (isAll) {
+    let arr = [{ label: '全部', value: '' }]
+    // @ts-ignore
+    return arr.concat(month[index - 1])
+  }
+
+  return month[index - 1]
+}
 export default {
   install: (Vue: any) => {
     Vue.prototype.$getHash = plugin.getHash
@@ -710,5 +727,6 @@ export default {
     Vue.prototype.$debounce = debounce
     Vue.prototype.$changeNumToHan = changeNumToHan
     Vue.prototype.$focusInput = focusInput
+    Vue.prototype.$forJiDuGetMonth = forJiDuGetMonth
   }
 }
