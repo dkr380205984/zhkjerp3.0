@@ -27,6 +27,7 @@
                   v-show="!systemMessageContent">暂无版本公告</div>
                 <div v-html="systemMessageContent"></div>
               </div>
+              <div class="msgBottom"><span @click="showSystemMessageContent=true;getSystemMessage()">查看历史版本公告</span></div>
             </div>
           </div>
           <!-- <i v-show="false"
@@ -158,6 +159,66 @@
         </div>
       </div>
     </div>
+    <div class="popup"
+      v-show="showSystemMessageContent">
+      <div class="main"
+        style="width: 1000px">
+        <div class="titleCtn">
+          <span class="text">通知列表</span>
+          <div class="closeCtn"
+            @click="showSystemMessageContent = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn"
+          style="max-height: 1000px;">
+          <div class="row">
+            <div class="label">筛选条件：</div>
+            <div class="info"
+              style="line-height: 32px">
+              <el-date-picker v-model="chooseMessageDate"
+                @change="getSystemMessage"
+                type="daterange"
+                align="right"
+                value-format="yyyy-MM-dd"
+                unlink-panels
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :picker-options="pickerOptions">
+              </el-date-picker>
+            </div>
+            <div class="btnCtn">
+              <div class="borderBtn"
+                @click="chooseMessageDate = [];getSystemMessage()">重置</div>
+            </div>
+          </div>
+          <div class="row"
+            style="height: 900px; overflow-y: scroll">
+            <el-collapse v-model="activeNames"
+              style="width: 100%">
+              <el-collapse-item v-for="(item, index) in systemMessageContentList"
+                :key="item + index"
+                :name="index">
+                <template slot="title">
+                  {{ $rTime(item.updated_at) }}
+                  <div style="
+                      width: 680px;
+                      overflow: hidden;
+                      white-space: nowrap;
+                      text-overflow: ellipsis;
+                      margin-left: 20px;
+                    ">
+                    {{ contentHtml(item.content) }}
+                  </div>
+                </template>
+                <div v-html="item.content"></div>
+              </el-collapse-item>
+            </el-collapse>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -223,7 +284,42 @@ export default Vue.extend({
           icon: 'icon-qitaguanli1',
           url: '/menu'
         }
-      ]
+      ],
+      systemMessageContentList: [],
+      showSystemMessageContent: false,
+      chooseMessageDate: [],
+      activeNames: '',
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }
+        ]
+      }
     }
   },
   watch: {
@@ -233,6 +329,27 @@ export default Vue.extend({
     }
   },
   methods: {
+    contentHtml(content: string) {
+      // 富文本编辑器的内容如何只获得文字去掉标签
+      // content = content.replace(/<[^>]+>/g, '')
+      // 在上面的基础上还去掉了换行<br/>
+      content = content.replace(/<[^>]+>/g, '').replace(/(\n)/g, '')
+      return content
+    },
+    getSystemMessage(e: any) {
+      if (e) {
+        systemMessage({
+          start_time: e[0],
+          end_time: e[1]
+        }).then((res) => {
+          this.systemMessageContentList = res.data.data.items
+        })
+      } else {
+        systemMessage().then((res) => {
+          this.systemMessageContentList = res.data.data.items
+        })
+      }
+    },
     commondHandler(ev: string) {
       if (ev === 'logout') {
         window.sessionStorage.setItem('user_name', '')
