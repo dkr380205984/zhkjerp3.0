@@ -1540,6 +1540,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      saveLock: false,
       storeSurplusFlag: false,
       storeSurplusInfo: {
         materialList: [],
@@ -2025,6 +2026,10 @@ export default Vue.extend({
       })
     },
     saveProductionPlan() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       const formcheck = this.productionPlanInfo.some((item) => {
         return (
           this.$formCheck(item, [
@@ -2067,6 +2072,7 @@ export default Vue.extend({
         // 获取物料信息
         this.getMaterialInfo()
         this.getCmpData()
+        this.saveLock = true
         this.loading = true
         productionPlan
           .create({
@@ -2079,6 +2085,7 @@ export default Vue.extend({
               this.loading = false
               this.init()
             }
+            this.saveLock = false
           })
       }
     },

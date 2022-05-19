@@ -700,6 +700,7 @@ export default Vue.extend({
     return {
       testValue: [],
       loading: true,
+      saveLock: false,
       stockTypeList: stockType,
       storeDetail: {
         name: '',
@@ -1196,6 +1197,10 @@ export default Vue.extend({
       })
     },
     saveStock() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       const formCheck =
         this.$formCheck(this.materialStockInfo, [
           {
@@ -1225,12 +1230,14 @@ export default Vue.extend({
         })
       if (!formCheck) {
         this.getCmpData()
+        this.saveLock = true
         materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
             this.materialStockFlag = false
             this.init()
           }
+          this.saveLock = false
         })
       }
     },

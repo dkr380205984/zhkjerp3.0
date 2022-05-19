@@ -329,6 +329,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      saveLock: false,
       orderInfo: [
         {
           id: null,
@@ -472,6 +473,10 @@ export default Vue.extend({
       })
     },
     saveBox() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       const formCheck = this.$formCheck(this.boxInfo, [
         {
           key: 'client_id',
@@ -488,6 +493,7 @@ export default Vue.extend({
       ])
       if (!formCheck) {
         this.getCmpData()
+        this.saveLock = true
         if (this.addressList.length === 10) {
           this.addressList.pop()
         }
@@ -511,6 +517,7 @@ export default Vue.extend({
             this.$message.success('添加成功')
             this.$router.push('/boxManage/boxDetail?id=' + res.data.data)
           }
+          this.saveLock = false
         })
       }
     },

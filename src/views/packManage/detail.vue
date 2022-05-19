@@ -1292,6 +1292,7 @@ export default Vue.extend({
     return {
       loading: true,
       orderIndex: '0',
+      saveLock: false,
       orderInfo: {
         id: null,
         client_id: '',
@@ -1660,6 +1661,10 @@ export default Vue.extend({
       })
     },
     saveOrderPack() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       const formCheck = this.packOrderInfo.some((item) => {
         return (
           this.$formCheck(item, [
@@ -1688,6 +1693,7 @@ export default Vue.extend({
       })
       if (!formCheck) {
         this.getOrderCmpData()
+        this.saveLock = true
         if (this.packOrderUpdateFlag) {
           packManage.UpdateOrder(this.packOrderInfo[0]).then((res) => {
             if (res.data.status) {
@@ -1696,6 +1702,7 @@ export default Vue.extend({
               this.packorderUpdateFlag = false
               this.init()
             }
+            this.saveLock = false
           })
         } else {
           packManage.createOrder({ data: this.packOrderInfo }).then((res) => {
@@ -1988,6 +1995,10 @@ export default Vue.extend({
       }, 0)
     },
     savePlanPack() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       const formCheck = this.packPlanInfo.gather_info.some((item) => {
         return this.$formCheck(item, [
           {
@@ -2010,6 +2021,7 @@ export default Vue.extend({
       })
       if (!formCheck) {
         this.getPlanCmpData()
+        this.saveLock = true
         packManage.createPlan(this.packPlanInfo).then((res) => {
           if (res.data.status) {
             this.$message.success(this.packPlanUpdateFlag ? '修改成功' : '添加成功')
@@ -2018,6 +2030,7 @@ export default Vue.extend({
             this.packPlanStep = 1
             this.init()
           }
+          this.saveLock = false
         })
       }
     },

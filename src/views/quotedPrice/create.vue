@@ -1219,6 +1219,7 @@ export default Vue.extend({
       notify: null,
       imgId: '',
       saveSuccess: false,
+      saveLock: false,
       timer: '' // 导入报价单防抖定时器
     }
   },
@@ -1675,6 +1676,10 @@ export default Vue.extend({
       })
     },
     saveQuotedPrice(ifCaogao: boolean) {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       this.quotedPriceInfo.is_draft = ifCaogao ? 1 : 2
       if (!ifCaogao) {
         const formCheck =
@@ -1854,7 +1859,7 @@ export default Vue.extend({
           })
         if (!formCheck) {
           this.getCmpData()
-          console.log(this.quotedPriceInfo)
+          this.saveLock = true
           quotedPrice.create(this.quotedPriceInfo).then((res) => {
             if (res.data.status) {
               this.$message.success('创建成功')
@@ -1871,6 +1876,7 @@ export default Vue.extend({
                 })
               })
             }
+            this.saveLock = false
           })
         }
       } else {

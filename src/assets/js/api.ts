@@ -79,6 +79,12 @@ const tutorialSystem = {
   list: (params: { type: 1 }) => http.get(`${baseUrl}/system/study/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/system/study/detail`, params),
 }
+
+// 待办事项
+const todoInfo = {
+  list: () => http.get(`${baseUrl}/todo/lists`, {}),
+  complete: (params: { id: number[] }) => http.post(`${baseUrl}/complete/todo`, params, 'application/json'),
+}
 // 纱线报价
 interface YarnPrice {
   id: string | number
@@ -150,15 +156,20 @@ const deduct = {
 // 单据收款
 const collection = {
   list: (params: {
-    order_id: string
-    client_id: string
-    order_code: string
-    code: string
-    start_time: string
-    end_time: string
-    user_id: string,
-    page: number
-    limit: number
+    order_id?: number | string
+    client_id?: number | string
+    order_code?: string | number
+    is_check?: string | number
+    limit?: number
+    page?: number
+    code?: string
+    user_id?: number | string
+    group_id?: number | string
+    rel_doc_id?: number | string
+    doc_type?: number | string
+    start_time?: string
+    end_time?: string
+    export_excel?: 1
   }) => http.get(`${baseUrl}/doc/collect/lists`, params),
   create: (params: {
     id?: string
@@ -178,15 +189,20 @@ const collection = {
 // 单据付款，其实和收款一毛一样
 const payment = {
   list: (params: {
-    order_id: string
-    client_id: string
-    order_code: string
-    code: string
-    start_time: string
-    end_time: string
-    user_id: string,
-    page: number
-    limit: number
+    order_id?: number | string
+    client_id?: number | string
+    order_code?: string | number
+    is_check?: string | number
+    limit?: number
+    page?: number
+    code?: string
+    user_id?: number | string
+    group_id?: number | string
+    rel_doc_id?: number | string
+    doc_type?: number | string
+    start_time?: string
+    end_time?: string
+    export_excel?: 1
   }) => http.get(`${baseUrl}/doc/pay/lists`, params),
   create: (params: {
     id?: string
@@ -206,16 +222,17 @@ const payment = {
 // 单据开票
 const invoice = {
   list: (params: {
-    order_id: string
-    client_id: string
-    order_code: string
-    code: string
-    start_time: string
+    order_id?: string
+    client_id?: string
+    order_code?: string
+    code?: string
+    start_time?: string
     invoice_code?: string
-    end_time: string
-    user_id: string,
-    page: number
-    limit: number
+    end_time?: string
+    user_id?: string,
+    page?: number
+    limit?: number
+    export_excel?: number
   }) => http.get(`${baseUrl}/doc/invoice/lists`, params),
   create: (params: {
     id?: string
@@ -545,7 +562,7 @@ import { OrderInfo } from '@/types/order'
 const order = {
   create: (params: OrderInfo) => http.post(`${baseUrl}/order/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrl}/order/lists`, params),
-  confirmBatch: (params: { batch_id: string | number }) => http.post(`${baseUrl}/order/batch/complete`, params, 'application/json'),
+  confirmBatch: (params: { batch_id: Array<string | number> }) => http.post(`${baseUrl}/order/batch/complete`, params, 'application/json'),
   simpleList: (params?: { keyword?: string, product_code?: string, order_code?: string }) => http.get(`${baseUrl}/order/simple/lists`, params),
   timeList: (params?: ListParams) => http.get(`${baseUrl}/order/time/lists`, params), // 根据time_data查询的列表
   detail: (params: DetailParams) => http.get(`${baseUrl}/order/detail`, params),
@@ -1208,6 +1225,7 @@ const statistics = {
   }) => http.get(`${baseUrl}/statistics/store/total`, params),
 }
 export {
+  todoInfo,
   checkConfig,
   payment,
   statistics,

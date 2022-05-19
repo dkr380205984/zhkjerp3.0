@@ -877,6 +877,7 @@ export default Vue.extend({
     return {
       loading: true,
       saveSuccess: false,
+      saveLock: false,
       showAll: false, // 页面使用卡顿
       copyMaterialPlanDataInfoFlag: false, // 复制一组产品的子项信息
       copyMaterialPlanDataInfoIndex: 0,
@@ -1563,6 +1564,10 @@ export default Vue.extend({
       })
     },
     saveMaterialPlan() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       if (this.materialPlanInfo.material_plan_data.length === 0) {
         this.$message.warning('请确认生产数量')
         return
@@ -1610,12 +1615,14 @@ export default Vue.extend({
         })
       if (!formCheck) {
         this.getCmpData()
+        this.saveLock = false
         materialPlan.create(this.materialPlanInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
             this.saveSuccess = true
             this.$router.push('/materialPlan/detail?id=' + this.$route.query.id)
           }
+          this.saveLock = false
         })
       }
     },

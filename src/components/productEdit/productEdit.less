@@ -2,40 +2,46 @@
 @import '../../assets/css/popup.less';
 @import '../../assets/css/list.less';
 @import '../../assets/css/edit.less';
-.productEdit{
-  .stepCtn{
+
+.productEdit {
+  .stepCtn {
     display: flex;
     align-items: center;
     height: 70px;
     margin: 12px 0;
     justify-content: space-around;
     position: relative;
-    .step{
+
+    .step {
       display: flex;
       flex-direction: column;
       align-items: center;
-      .circle{
+
+      .circle {
         text-align: center;
         line-height: 40px;
         width: 40px;
         color: @blue;
         border-radius: 50%;
-        border:1px solid @blue;
+        border: 1px solid @blue;
         background: #fff;
       }
-      .name{
+
+      .name {
         margin-top: 10px;
         color: @blue;
       }
-      &.active{
-        .circle{
+
+      &.active {
+        .circle {
           background: @blue;
           color: #fff;
         }
       }
     }
-    &::after{
-      content:'';
+
+    &::after {
+      content: '';
       position: absolute;
       height: 1px;
       left: 0;
@@ -45,26 +51,33 @@
       z-index: -1;
     }
   }
-  &.sidePopup{
-    .main{
-      background:#EEE;
-      .titleCtn{
+
+  &.sidePopup {
+    .main {
+      background: #EEE;
+
+      .titleCtn {
         background: #fff;
       }
-      .contentCtn{
-        padding:0;
+
+      .contentCtn {
+        padding: 0;
         padding-bottom: 56px;
-        .module{
+
+        .module {
           background: #fff;
           margin-top: 24px;
-          .editCtn{
-            .opr{
-              transform: translate(-25px,100%);
+
+          .editCtn {
+            .opr {
+              transform: translate(-25px, 100%);
             }
-            .col{
+
+            .col {
               margin-right: 32px;
             }
-            .mark{
+
+            .mark {
               border-radius: 50%;
               background: @orange;
               width: 18px;
@@ -75,17 +88,21 @@
               text-align: center;
               margin-right: 4px;
             }
-            .fileCtn{
+
+            .fileCtn {
               max-width: 562px;
             }
           }
-          .partCtn{
+
+          .partCtn {
             padding-bottom: 24px;
-            &:nth-last-child(1){
+
+            &:nth-last-child(1) {
               padding-bottom: 0;
             }
           }
-          .noData{
+
+          .noData {
             color: @font45;
             line-height: 32px;
             font-size: @fontMiddle;
@@ -93,17 +110,21 @@
         }
       }
     }
-    .inDetailMain.main{
-      transform:translate(0%, 0%);
+
+    .inDetailMain.main {
+      transform: translate(0%, 0%);
       left: unset;
       justify-content: unset;
-      .contentCtn{
+
+      .contentCtn {
         max-height: unset;
       }
-      .label{
+
+      .label {
         text-align: left;
         width: unset;
       }
     }
   }
+
 }

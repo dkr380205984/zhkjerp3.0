@@ -1,135 +1,159 @@
 @import './common.less';
-@import './popup.less';
 
-#homePage{
-  .content{
+#homePage {
+  .content {
     padding: 24px;
     position: relative;
-    .searchCtn{
+
+    .searchCtn {
       height: 40px;
       display: flex;
       justify-content: space-between;
-      .input{
+
+      .input {
         width: calc(100% - 120px);
       }
-      .el-input__icon{
+
+      .el-input__icon {
         font-size: 16px;
         line-height: 40px;
       }
-      .btn{
+
+      .btn {
         height: 40px;
         line-height: 40px;
         width: 52px;
         text-align: center;
       }
     }
-    .seachHistory{
+
+    .seachHistory {
       line-height: 38px;
       font-size: @fontMiddle;
       color: @font65;
       display: flex;
       justify-content: space-between;
-      .container{
+
+      .container {
         width: 780px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        .label{
+
+        .label {
           margin-right: 16px;
         }
-        .normal{
+
+        .normal {
           margin-right: 12px;
           cursor: pointer;
-          &:hover{
+
+          &:hover {
             color: @blue;
           }
         }
       }
-      .btn{
+
+      .btn {
         line-height: 38px;
         padding: 0;
       }
     }
-    .searchBox{
+
+    .searchBox {
       position: absolute;
       left: 24px;
       right: 144px;
       background: #fff;
-      border:1px solid rgba(217,217,217,1);
-      box-shadow:0px 6px 12px rgba(0,0,0,0.16);
+      border: 1px solid rgba(217, 217, 217, 1);
+      box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.16);
       border-radius: 4px;
       top: 70px;
       z-index: 999;
       max-height: 600px;
       overflow: auto;
-      .icons{
+
+      .icons {
         position: absolute;
         right: 10px;
         top: 10px;
         font-size: 20px;
         color: @font85;
         cursor: pointer;
-        &:hover{
+
+        &:hover {
           color: @blue;
         }
       }
-      .block{
+
+      .block {
         padding: 20px;
-        border-bottom: 1px solid rgba(217,217,217,1);
+        border-bottom: 1px solid rgba(217, 217, 217, 1);
       }
-      .titled{
+
+      .titled {
         font-size: @fontMiddle;
         color: @font85;
         font-weight: bold;
       }
-      .info{
+
+      .info {
         font-size: @fontMiddle;
         color: @font65;
         margin: 12px 0;
         display: flex;
         height: 26px;
         line-height: 26px;
-        .text{
+
+        .text {
           display: block;
           min-width: 160px;
           margin-right: 16px;
-          &:nth-of-type(1){
+
+          &:nth-of-type(1) {
             cursor: pointer;
             width: 200px;
           }
         }
-        &.title{
+
+        &.title {
           color: @font85;
           font-size: @fontBig;
         }
       }
-      .noMsg{
+
+      .noMsg {
         color: @font25;
         font-size: @fontMiddle;
       }
     }
-    .opr{
+
+    .opr {
       font-size: @fontMiddle;
       color: @font65;
       margin-right: 12px;
       margin-bottom: 6px;
       display: inline-block;
       cursor: pointer;
-      &:hover{
+
+      &:hover {
         color: @blue;
       }
     }
   }
-  .fastEditCtn{
+
+  .fastEditCtn {
     display: flex;
     flex-direction: column;
     padding: 24px 0;
+
     .first_line,
-    .edit_line{
+    .edit_line {
       display: flex;
       align-items: center;
+
       .fastEdit_item,
-      .edit_item{
+      .edit_item {
         width: calc((100% - 192px) / 7);
         height: 108px;
         display: flex;
@@ -140,29 +164,35 @@
         margin-right: 32px;
         position: relative;
         border-radius: 6px;
-        border:1px solid rgba(0,0,0,0.1);
+        border: 1px solid rgba(0, 0, 0, 0.1);
         box-sizing: border-box;
         cursor: pointer;
-        &:last-child{
+
+        &:last-child {
           margin-right: 0;
         }
-        &:hover{
+
+        &:hover {
           background-color: #E6F7FF;
         }
-        .iconFont{
+
+        .iconFont {
           width: 41px;
           height: 41px;
         }
-        .name{
+
+        .name {
           font-size: 16px;
           color: @font65;
           line-height: 32px;
           font-weight: 500;
-          &.blue{
+
+          &.blue {
             color: @blue;
           }
         }
-        .editBtn{
+
+        .editBtn {
           display: flex;
           position: absolute;
           top: -7px;
@@ -173,64 +203,85 @@
           justify-content: center;
           border-radius: 50%;
           color: #fff;
-          box-shadow:0px 2px 4px 0px rgba(255,120,117,0.2);
-          &.red{
-            background: rgba(255,120,117,1);
+          box-shadow: 0px 2px 4px 0px rgba(255, 120, 117, 0.2);
+
+          &.red {
+            background: rgba(255, 120, 117, 1);
           }
-          &.green{
-            background: rgba(40,185,152,1);
+
+          &.green {
+            background: rgba(40, 185, 152, 1);
           }
         }
       }
     }
-    .edit_line{
+
+    .edit_line {
       margin-top: 24px;
     }
-    .edit_line_box{
+
+    .edit_line_box {
       transition: height 0.1s linear;
       overflow: initial;
-      &.hiddle{
-        height: 0!important;
+
+      &.hiddle {
+        height: 0 !important;
         overflow: hidden;
       }
     }
   }
-  .flexCtn{
+
+  .flexCtn {
     display: flex;
-    .leftCtn{
-      flex:1;
+
+    .leftCtn {
+      flex: 1;
       margin-right: 24px;
-      .content{
+
+      .content {
         height: 320px;
         background: #fff;
+
+        .line {
+          font-size: 16px;
+          line-height: 30px;
+          text-align: justify;
+        }
       }
     }
-    .rightCtn{
-      flex:1;
-      .content{
+
+    .rightCtn {
+      flex: 1;
+
+      .content {
         height: 320px;
         background: #fff;
-        .line{
+
+        .line {
           line-height: 32px;
           margin: 12px 24px;
           display: flex;
           align-items: flex-start;
-          &:nth-of-type(1){
-            .number{
+
+          &:nth-of-type(1) {
+            .number {
               background: @blue;
             }
           }
-          &:nth-of-type(2){
-            .number{
-              background: rgba(26,148,255,0.85);
+
+          &:nth-of-type(2) {
+            .number {
+              background: rgba(26, 148, 255, 0.85);
             }
           }
-          &:nth-of-type(3){
-            .number{
-              background: rgba(26,148,255,0.45);
+
+          &:nth-of-type(3) {
+            .number {
+              background: rgba(26, 148, 255, 0.45);
             }
           }
-          .number{
+
+          .number {
             width: 24px;
             height: 24px;
             color: @font65;
@@ -242,7 +293,8 @@
             background: #D9D9D9;
             margin-right: 12px;
           }
-          .text{
+
+          .text {
             flex: 1;
             display: inline-block;
             font-size: @fontMiddle;
@@ -252,7 +304,8 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            &:hover{
+
+            &:hover {
               color: @blue;
             }
           }

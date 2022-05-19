@@ -324,6 +324,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      saveLock: false,
       editSampleShow: false,
       sampleId: '',
       sampleShow: false,
@@ -539,6 +540,10 @@ export default Vue.extend({
       })
     },
     saveSampleOrder() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       const formCheck =
         this.sampleList.some((item) => {
           return this.$formCheck(item, [
@@ -591,12 +596,14 @@ export default Vue.extend({
         return false
       }
       if (!formCheck) {
+        this.saveLock = true
         this.getCmpData()
         sampleOrder.again(this.sampleOrderTime).then((res) => {
           if (res.data.status) {
             this.$message.success('保存成功')
             this.$router.push('/sampleOrder/detail?id=' + this.$route.query.id)
           }
+          this.saveLock = false
         })
       }
     }

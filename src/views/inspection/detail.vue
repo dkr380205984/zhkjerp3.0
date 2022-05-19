@@ -82,31 +82,24 @@
             </div>
           </div>
           <div class="buttonList">
-            <div class="btn backHoverBlue">
-              <i class="el-icon-s-grid"></i>
-              <span class="text">生产单操作</span>
+            <div class="btn backHoverBlue"
+              :class="{'backGray':checkListLength===0}"
+              @click="goInspection(1)"
+              style="margin-right:12px">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">检验入库</span>
             </div>
-            <div class="otherInfoCtn">
-              <div class="otherInfo">
-                <div class="btn backHoverBlue"
-                  :class="{'backGray':checkListLength===0}"
-                  @click="goInspection(1)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">检验入库</span>
-                </div>
-                <div class="btn backHoverOrange"
-                  :class="{'backGray':checkListLength===0}"
-                  @click="goInspection(2)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">生产出库</span>
-                </div>
-              </div>
+            <div class="btn backHoverOrange"
+              :class="{'backGray':checkListLength===0}"
+              @click="goInspection(2)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">生产出库</span>
             </div>
           </div>
         </el-tab-pane>
@@ -566,6 +559,7 @@ export default Vue.extend({
     return {
       loading: true,
       deductFlag: false,
+      saveLock: false,
       deductDetailFlag: false,
       keyBoard: localStorage.showWorkShopKeyBoard === 'true',
       deductDetail: [],
@@ -830,6 +824,10 @@ export default Vue.extend({
       )
     },
     saveInspection() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       const formCheck = this.inspectionInfo.some((item) => {
         return item.child_data.some((itemChild) => {
           return this.$formCheck(itemChild, [
@@ -842,6 +840,7 @@ export default Vue.extend({
       })
       if (!formCheck) {
         this.getCmpData()
+        this.saveLock = true
         const formData: InspectionInfo[] = this.$flatten(this.$flatten(this.inspectionInfo))
         inspection.create({ data: formData }).then((res) => {
           if (res.data.status) {
@@ -849,10 +848,15 @@ export default Vue.extend({
             this.closeInspection()
             this.init()
           }
+          this.saveLock = false
         })
       }
     },
     saveCprk() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       const formArr: InspectionInfo[] = []
       this.cprkProList.forEach((item: any) => {
         if (item.check) {
@@ -880,6 +884,7 @@ export default Vue.extend({
         this.$message.error('请填写入库数量')
         return
       }
+      this.saveLock = true
       inspection.create({ data: formArr }).then((res) => {
         if (res.data.status) {
           this.$message.success('入库成功')
@@ -888,6 +893,7 @@ export default Vue.extend({
             window.location.reload()
           }, 1000)
         }
+        this.saveLock = false
       })
     },
     deleteInspection(id: number) {

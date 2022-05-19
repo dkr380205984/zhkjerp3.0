@@ -439,6 +439,7 @@ export default Vue.extend({
     return {
       loading: false, // 报价单转样单需要loading报价单详情
       sampleShow: false,
+      saveLock: false,
       sampleDetail: {
         product_type: 2,
         name: '',
@@ -705,6 +706,10 @@ export default Vue.extend({
       })
     },
     saveSampleOrder(ifCaogao: boolean) {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       if (!ifCaogao) {
         const formCheck =
           this.$formCheck(this.sampleOrderInfo, [
@@ -765,6 +770,7 @@ export default Vue.extend({
         if (!formCheck) {
           this.getCmpData(2)
           this.loading = true
+          this.saveLock = true
           sampleOrder.create(this.sampleOrderInfo).then((res) => {
             if (res.data.status) {
               this.$message.success('添加成功')
@@ -772,6 +778,7 @@ export default Vue.extend({
               this.$router.push('/sampleOrder/list?page=1&keyword=&client_id=&user_id=&status=0&date=')
             }
             this.loading = false
+            this.saveLock = false
           })
         }
       } else {

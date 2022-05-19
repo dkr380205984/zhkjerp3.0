@@ -13,6 +13,22 @@
           <zh-nav :data="navCmp"></zh-nav>
         </div>
         <div class="rightCtn">
+          <div class="msgCtn">
+            <el-badge>
+              <i class="el-icon-data-line elIcon"></i>
+            </el-badge>
+            <div class="msgTop"></div>
+            <div class="msgBox">
+              <div class="msgOpr">
+                <span>版本公告</span>
+              </div>
+              <div class="msgContent">
+                <div class="noMsg"
+                  v-show="!systemMessageContent">暂无版本公告</div>
+                <div v-html="systemMessageContent"></div>
+              </div>
+            </div>
+          </div>
           <!-- <i v-show="false"
             class="el-icon-data-line elIcon"
             @click="$router.push('/other/chartIndex')"></i> -->
@@ -147,7 +163,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { navInfo } from '@/types/nav'
-import { changePassword, getCoder, productionProgress } from '@/assets/js/api'
+import { changePassword, getCoder, productionProgress, systemMessage } from '@/assets/js/api'
 export default Vue.extend({
   data(): {
     navData: navInfo[]
@@ -156,6 +172,7 @@ export default Vue.extend({
   } {
     return {
       breadHeight: 100,
+      systemMessageContent: '',
       moduleArr: window.sessionStorage.getItem('module_id') as string,
       userName: window.sessionStorage.getItem('user_name'),
       logo: window.sessionStorage.getItem('logo') || require('@/assets/image/common/noPic.png'),
@@ -367,6 +384,9 @@ export default Vue.extend({
   },
   mounted() {
     window.addEventListener('keydown', this.smqListener, false)
+    systemMessage().then((res: any) => {
+      this.systemMessageContent = res.data.data.items.length > 0 ? res.data.data.items[0].content : ''
+    })
   },
   beforeDestroy() {
     window.removeEventListener('keydown', this.smqListener, false)

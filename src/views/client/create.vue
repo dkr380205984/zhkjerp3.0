@@ -163,6 +163,7 @@ export default Vue.extend({
     clientTagInfo: ClientTypeInfo
   } {
     return {
+      saveLock: false,
       clientTagInfo: {
         type: Number(this.$route.query.type),
         client_type_id: null,
@@ -223,6 +224,10 @@ export default Vue.extend({
         })
     },
     saveClientTag() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       const formCheck = this.$formCheck(this.clientTagInfo, [
         {
           key: 'name',
@@ -230,6 +235,7 @@ export default Vue.extend({
         }
       ])
       if (!formCheck) {
+        this.saveLock = true
         clientType
           .create({
             type: this.$route.query.type as string,
@@ -245,12 +251,17 @@ export default Vue.extend({
                 check: true,
                 type: 'private'
               })
+              this.saveLock = false
               this.clientTagFlag = false
             }
           })
       }
     },
     saveClient() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       this.clientInfo.rel_tag_data = this.clientTagList
         .filter((item: { check: boolean }) => item.check)
         .map((item: { value: any }) => item.value)
@@ -282,6 +293,7 @@ export default Vue.extend({
       //   ])
       // })
       if (!formCheck) {
+        this.saveLock = true
         client.create(this.clientInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
@@ -294,6 +306,7 @@ export default Vue.extend({
               }
             ])
           }
+          this.saveLock = false
         })
       }
     }
