@@ -123,33 +123,16 @@
         </div>
       </div>
       <div class="buttonList">
-        <div class="btn backHoverBlue">
-          <i class="el-icon-s-grid"></i>
-          <span class="text">订购单操作</span>
-        </div>
-        <div class="otherInfoCtn">
-          <div class="otherInfo">
-            <div class="btn backHoverBlue"
-              :class="{'backGray':materialOrderList.filter((item) => {
+        <div class="btn backHoverBlue"
+          :class="{'backGray':materialOrderList.filter((item) => {
                 return item.info_data.some((itemChild) => itemChild.check)
               }).length===0}"
-              @click="goStock(4)">
-              <svg class="iconFont"
-                aria-hidden="true">
-                <use xlink:href="#icon-xiugaidingdan"></use>
-              </svg>
-              <span class="text">最终入库</span>
-            </div>
-            <!-- 中转入库是为了中转出库给物料加工单，没人管所以隐藏 -->
-            <!-- <div class="btn backHoverOrange"
-              @click="goStock(1)">
-              <svg class="iconFont"
-                aria-hidden="true">
-                <use xlink:href="#icon-xiugaidingdan"></use>
-              </svg>
-              <span class="text">中转入库</span>
-            </div> -->
-          </div>
+          @click="goStock(4)">
+          <svg class="iconFont"
+            aria-hidden="true">
+            <use xlink:href="#icon-xiugaidingdan"></use>
+          </svg>
+          <span class="text">最终入库</span>
         </div>
       </div>
     </div>
@@ -494,21 +477,13 @@
         </div>
       </div>
       <div class="buttonList">
-        <div class="btn backHoverBlue">
-          <i class="el-icon-s-grid"></i>
-          <span class="text">加工单操作</span>
-        </div>
-        <div class="otherInfoCtn">
-          <div class="otherInfo">
-            <div class="btn backHoverBlue"
-              @click="goStock(3)">
-              <svg class="iconFont"
-                aria-hidden="true">
-                <use xlink:href="#icon-xiugaidingdan"></use>
-              </svg>
-              <span class="text">中转出库</span>
-            </div>
-          </div>
+        <div class="btn backHoverBlue"
+          @click="goStock(3)">
+          <svg class="iconFont"
+            aria-hidden="true">
+            <use xlink:href="#icon-xiugaidingdan"></use>
+          </svg>
+          <span class="text">中转出库</span>
         </div>
       </div>
     </div>
@@ -615,23 +590,18 @@
         </div>
       </div>
       <div class="buttonList">
-        <div class="btn backHoverBlue">
-          <i class="el-icon-s-grid"></i>
-          <span class="text">加工单操作</span>
+        <div class="btn backHoverOrange"
+          :class="{'backGray':productionPlanList.filter((item) => {return item.material_info_data.some((itemChild) => itemChild.check) || item.sup_data.some((itemChild) => {return itemChild.info_data.some((itemSon) => itemSon.check)})}).length!==1}"
+          @click="goStock(6)"
+          style="margin-right:12px">
+          <svg class="iconFont"
+            aria-hidden="true">
+            <use xlink:href="#icon-xiugaidingdan"></use>
+          </svg>
+          <span class="text">结余入库</span>
         </div>
-        <div class="otherInfoCtn">
-          <div class="otherInfo">
-            <div class="btn backHoverOrange"
-              :class="{'backGray':productionPlanList.filter((item) => {return item.material_info_data.some((itemChild) => itemChild.check) || item.sup_data.some((itemChild) => {return itemChild.info_data.some((itemSon) => itemSon.check)})}).length!==1}"
-              @click="goStock(6)">
-              <svg class="iconFont"
-                aria-hidden="true">
-                <use xlink:href="#icon-xiugaidingdan"></use>
-              </svg>
-              <span class="text">结余入库</span>
-            </div>
-            <div class="btn backHoverBlue"
-              :class="{'backGray':productionPlanList.filter((item) => {
+        <div class="btn backHoverBlue"
+          :class="{'backGray':productionPlanList.filter((item) => {
                 return (
                   item.material_info_data.some((itemChild) => itemChild.check) ||
                   item.sup_data.some((itemChild) => {
@@ -639,14 +609,12 @@
                   })
                 )
               }).length!==1}"
-              @click="goStock(5)">
-              <svg class="iconFont"
-                aria-hidden="true">
-                <use xlink:href="#icon-xiugaidingdan"></use>
-              </svg>
-              <span class="text">生产出库</span>
-            </div>
-          </div>
+          @click="goStock(5)">
+          <svg class="iconFont"
+            aria-hidden="true">
+            <use xlink:href="#icon-xiugaidingdan"></use>
+          </svg>
+          <span class="text">生产出库</span>
         </div>
       </div>
     </div>
@@ -1081,6 +1049,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      saveLock: false,
       orderInfo: {
         id: null,
         client_id: '',
@@ -1837,6 +1806,10 @@ export default Vue.extend({
       })
     },
     saveMaterialStock() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       const formCheck = this.materialStockInfo.info_data.some((item) => {
         return this.$formCheck(item, [
           {
@@ -1851,12 +1824,14 @@ export default Vue.extend({
       })
       if (!formCheck) {
         this.getCmpData()
+        this.saveLock = true
         materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
             this.materialStockFlag = false
             this.init()
           }
+          this.saveLock = false
         })
       }
     },

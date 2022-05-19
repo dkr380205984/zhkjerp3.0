@@ -156,7 +156,8 @@
                     </el-tooltip>
                   </div>
                   <div class="info elCtn">
-                    <el-cascader placeholder="请选择品类"
+                    <el-cascader :class="{'error':mustFlag&&!productInfo.type}"
+                      placeholder="请选择品类"
                       v-model="productInfo.type"
                       :options="productTypeList"
                       @change="getUnit"></el-cascader>
@@ -203,7 +204,8 @@
                     </el-tooltip>
                   </div>
                   <div class="info elCtn">
-                    <el-select placeholder="请选择产品款式"
+                    <el-select :class="{'error':mustFlag&&productInfo.style_data.length===0}"
+                      placeholder="请选择产品款式"
                       v-model="productInfo.style_data"
                       multiple>
                       <el-option v-for="item in productStyleList"
@@ -224,7 +226,8 @@
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-autocomplete class="inline-input"
+                    <el-autocomplete :class="{'error':mustFlag&&!item.name}"
+                      class="inline-input"
                       v-model="item.name"
                       :fetch-suggestions="searchColour"
                       placeholder="请输入产品配色"></el-autocomplete>
@@ -367,7 +370,8 @@
                         <span class="explanation">(必选)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-autocomplete class="inline-input"
+                        <el-autocomplete :class="{'error':mustFlag&&!item.size_name}"
+                          class="inline-input"
                           v-model="item.size_name"
                           :fetch-suggestions="searchSize"
                           placeholder="输入大身尺码"></el-autocomplete>
@@ -437,7 +441,8 @@
                         @click="$deleteItem(productInfo.part_data,index)"
                         v-if="!item.id">删除此配件</span>
                     </div>
-                    <div class="info elCtn">
+                    <div class="info elCtn"
+                      :class="{'error':mustFlag&&!item.name}">
                       <el-input placeholder="请输入配件名称"
                         v-model="item.name"></el-input>
                     </div>
@@ -725,8 +730,10 @@ export default Vue.extend({
   } {
     return {
       loading: false,
+      saveLock: false,
       have_part: false,
       need_import: false,
+      mustFlag: false,
       repeatAdd: false, // 连续添加产品
       step: 1,
       notify: '',
@@ -1062,8 +1069,11 @@ export default Vue.extend({
       }
     },
     saveProduct() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       this.$emit('beforeSave', this.productInfo)
-      console.log(this.productInfo)
       const formCheck =
         this.$formCheck(this.productInfo, [
           {
@@ -1121,6 +1131,7 @@ export default Vue.extend({
         this.productInfo.editor.destroy()
         this.productInfo.editor = null
         this.loading = true
+        this.saveLock = true
         product.create(this.productInfo).then((res) => {
           if (res.data.status) {
             this.$message.success(this.eidt ? '修改成功' : '添加成功')
@@ -1148,8 +1159,11 @@ export default Vue.extend({
               }
             }
           }
+          this.saveLock = false
           this.loading = false
         })
+      } else {
+        this.mustFlag = true
       }
     },
     reset() {
@@ -1391,6 +1405,8 @@ export default Vue.extend({
             this.loading = false
           }
         })
+      } else {
+        this.mustFlag = true
       }
     },
     getStore() {
@@ -1556,4 +1572,11 @@ export default Vue.extend({
 
 <style lang="less" scoped>
 @import './productEdit.less';
+</style>
+<style lang="less">
+.error {
+  .el-input .el-input__inner {
+    border-color: red !important;
+  }
+}
 </style>

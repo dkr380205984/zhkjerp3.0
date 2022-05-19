@@ -402,6 +402,20 @@
           </div>
           <div class="backHoverBlue btn">搜索</div>
         </div>
+        <div class="filterCtn clearfix">
+          <div class="btn backHoverBlue"
+            @click="exportExcel(1,'invoice')">
+            <span class="text">导出月度报表</span>
+          </div>
+          <div class="btn backHoverBlue"
+            @click="exportExcel(2,'invoice')">
+            <span class="text">导出季度报表</span>
+          </div>
+          <div class="btn backHoverBlue"
+            @click="exportExcel(3,'invoice')">
+            <span class="text">导出年度报表</span>
+          </div>
+        </div>
         <div class="list">
           <div class="row title">
             <div class="col">票据编号</div>
@@ -434,7 +448,7 @@
           <div class="row">
             <div class="col">合计：</div>
             <div class="col"></div>
-            <div class="col green bold">{{invoiceTotalPrice}}元</div>
+            <div class="col green bold">{{invoiceTotalPrice}}万元</div>
             <div class="col"></div>
             <div class="col"></div>
             <div class="col"></div>
@@ -496,6 +510,20 @@
           </div>
           <div class="backHoverBlue btn">搜索</div>
         </div>
+        <div class="filterCtn clearfix">
+          <div class="btn backHoverBlue"
+            @click="exportExcel(1,'collection')">
+            <span class="text">导出月度报表</span>
+          </div>
+          <div class="btn backHoverBlue"
+            @click="exportExcel(2,'collection')">
+            <span class="text">导出季度报表</span>
+          </div>
+          <div class="btn backHoverBlue"
+            @click="exportExcel(3,'collection')">
+            <span class="text">导出年度报表</span>
+          </div>
+        </div>
         <div class="list">
           <div class="row title">
             <div class="col">票据编号</div>
@@ -524,7 +552,7 @@
           <div class="row">
             <div class="col">合计：</div>
             <div class="col"></div>
-            <div class="col green bold">{{collectionTotalPrice}}元</div>
+            <div class="col green bold">{{collectionTotalPrice}}万元</div>
             <div class="col"></div>
             <div class="col"></div>
             <div class="col"></div>
@@ -585,6 +613,20 @@
           </div>
           <div class="backHoverBlue btn">搜索</div>
         </div>
+        <div class="filterCtn clearfix">
+          <div class="btn backHoverBlue"
+            @click="exportExcel(1,'deduct')">
+            <span class="text">导出月度报表</span>
+          </div>
+          <div class="btn backHoverBlue"
+            @click="exportExcel(2,'deduct')">
+            <span class="text">导出季度报表</span>
+          </div>
+          <div class="btn backHoverBlue"
+            @click="exportExcel(3,'deduct')">
+            <span class="text">导出年度报表</span>
+          </div>
+        </div>
         <div class="list">
           <div class="row title">
             <div class="col">票据编号</div>
@@ -627,7 +669,7 @@
           <div class="row">
             <div class="col">合计：</div>
             <div class="col"></div>
-            <div class="col green bold">{{deductTotalPrice}}元</div>
+            <div class="col green bold">{{deductTotalPrice}}万元</div>
             <div class="col"></div>
             <div class="col"></div>
             <div class="col"></div>
@@ -978,6 +1020,68 @@ export default Vue.extend({
       this.getInvoiceLogList()
       this.getDeductList()
     },
+    exportExcel(type: number, payType: string) {
+      this.loading = true
+
+      let start_time = ''
+      let end_time = ''
+      let y = new Date().getFullYear()
+      let m = new Date().getMonth() + 1
+      // @ts-ignore
+      let q = Math.floor(m % 3 == 0 ? m / 3 : m / 3 + 1)
+
+      switch (type) {
+        case 1:
+          start_time = new Date(y, m - 1, 1).toLocaleDateString().replaceAll('/', '-')
+          end_time = new Date(y, m, 0).toLocaleDateString().replaceAll('/', '-')
+          break
+        case 2:
+          start_time = new Date(y, (q - 1) * 3, 1).toLocaleDateString().replaceAll('/', '-')
+          end_time = new Date(y, q * 3, 0).toLocaleDateString().replaceAll('/', '-')
+          break
+        case 3:
+          start_time = y + '-01-01'
+          end_time = y + '-12-31'
+          break
+      }
+      if (payType === 'invoice') {
+        invoice
+          .list({
+            start_time: start_time,
+            end_time: end_time,
+            export_excel: 1,
+            client_id: this.$route.query.id as string
+          })
+          .then((res) => {
+            window.location.href = res.data.data
+            this.loading = false
+          })
+      } else if (payType === 'deduct') {
+        deduct
+          .list({
+            start_time: start_time,
+            end_time: end_time,
+            export_excel: 1,
+            client_id: this.$route.query.id as string
+          })
+          .then((res) => {
+            window.location.href = res.data.data
+            this.loading = false
+          })
+      } else {
+        collection
+          .list({
+            start_time: start_time,
+            end_time: end_time,
+            export_excel: 1,
+            client_id: this.$route.query.id as string
+          })
+          .then((res) => {
+            window.location.href = res.data.data
+            this.loading = false
+          })
+      }
+    },
     getContacts() {
       client
         .detail({
@@ -1073,7 +1177,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.collectionLog = res.data.data.items
             this.collectionTotal = res.data.data.total
-            this.collectionTotalPrice = res.data.data.additional.total_price
+            this.collectionTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000)
           }
         })
     },
@@ -1100,7 +1204,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.invoiceLog = res.data.data.items
             this.invoiceTotal = res.data.data.total
-            this.invoiceTotalPrice = res.data.data.additional.total_price
+            this.invoiceTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000)
           }
         })
     },
@@ -1126,7 +1230,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.deductLog = res.data.data.items
             this.deductTotal = res.data.data.total
-            this.deductTotalPrice = res.data.data.additional.total_price
+            this.deductTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000)
           }
         })
     },

@@ -646,6 +646,14 @@
                     </svg>
                     <span class="text">修改单价</span>
                   </div>
+                  <div class="btn backHoverBlue"
+                    @click="exportExcel()">
+                    <svg class="iconFont"
+                      aria-hidden="true">
+                      <use xlink:href="#icon-xiugaidingdan"></use>
+                    </svg>
+                    <span class="text">导出报表</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -958,6 +966,14 @@
                       <use xlink:href="#icon-xiugaidingdan"></use>
                     </svg>
                     <span class="text">批量扣款</span>
+                  </div>
+                  <div class="btn backHoverBlue"
+                    @click="exportExcel()">
+                    <svg class="iconFont"
+                      aria-hidden="true">
+                      <use xlink:href="#icon-xiugaidingdan"></use>
+                    </svg>
+                    <span class="text">导出报表</span>
                   </div>
                 </div>
               </div>
@@ -1288,6 +1304,14 @@
                       <use xlink:href="#icon-xiugaidingdan"></use>
                     </svg>
                     <span class="text">批量扣款</span>
+                  </div>
+                  <div class="btn backHoverBlue"
+                    @click="exportExcel()">
+                    <svg class="iconFont"
+                      aria-hidden="true">
+                      <use xlink:href="#icon-xiugaidingdan"></use>
+                    </svg>
+                    <span class="text">导出报表</span>
                   </div>
                 </div>
               </div>
@@ -1651,6 +1675,14 @@
                     </svg>
                     <span class="text">批量扣款</span>
                   </div>
+                  <div class="btn backHoverBlue"
+                    @click="exportExcel()">
+                    <svg class="iconFont"
+                      aria-hidden="true">
+                      <use xlink:href="#icon-xiugaidingdan"></use>
+                    </svg>
+                    <span class="text">导出报表</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1911,6 +1943,14 @@
                       <use xlink:href="#icon-xiugaidingdan"></use>
                     </svg>
                     <span class="text">批量扣款</span>
+                  </div>
+                  <div class="btn backHoverBlue"
+                    @click="exportExcel()">
+                    <svg class="iconFont"
+                      aria-hidden="true">
+                      <use xlink:href="#icon-xiugaidingdan"></use>
+                    </svg>
+                    <span class="text">导出报表</span>
                   </div>
                 </div>
               </div>
@@ -2262,11 +2302,23 @@
           </div>
           <div class="backHoverBlue btn">搜索</div>
         </div>
-        <div class="filterCtn">
+        <div class="filterCtn clearfix">
           <div class="elCtn">
             <el-input v-model="invoiceCode"
               placeholder="搜索开票号码"
               @keydown.enter.native="getInvoiceLogList"></el-input>
+          </div>
+          <div class="btn backHoverBlue"
+            @click="exportExcel(1,'invoice')">
+            <span class="text">导出月度报表</span>
+          </div>
+          <div class="btn backHoverBlue"
+            @click="exportExcel(2,'invoice')">
+            <span class="text">导出季度报表</span>
+          </div>
+          <div class="btn backHoverBlue"
+            @click="exportExcel(3,'invoice')">
+            <span class="text">导出年度报表</span>
           </div>
         </div>
         <div class="list">
@@ -2363,6 +2415,20 @@
           </div>
           <div class="backHoverBlue btn">搜索</div>
         </div>
+        <div class="filterCtn clearfix">
+          <div class="btn backHoverBlue"
+            @click="exportExcel(1,'payment')">
+            <span class="text">导出月度报表</span>
+          </div>
+          <div class="btn backHoverBlue"
+            @click="exportExcel(2,'payment')">
+            <span class="text">导出季度报表</span>
+          </div>
+          <div class="btn backHoverBlue"
+            @click="exportExcel(3,'payment')">
+            <span class="text">导出年度报表</span>
+          </div>
+        </div>
         <div class="list">
           <div class="row title">
             <div class="col">票据编号</div>
@@ -2451,6 +2517,20 @@
             </el-date-picker>
           </div>
           <div class="backHoverBlue btn">搜索</div>
+        </div>
+        <div class="filterCtn clearfix">
+          <div class="btn backHoverBlue"
+            @click="exportExcel(1,'deduct')">
+            <span class="text">导出月度报表</span>
+          </div>
+          <div class="btn backHoverBlue"
+            @click="exportExcel(2,'deduct')">
+            <span class="text">导出季度报表</span>
+          </div>
+          <div class="btn backHoverBlue"
+            @click="exportExcel(3,'deduct')">
+            <span class="text">导出年度报表</span>
+          </div>
         </div>
         <div class="list">
           <div class="row title">
@@ -2899,6 +2979,192 @@ export default Vue.extend({
     showProduct(item: any) {
       this.productShow = true
       this.productDetailId = item.product_id
+    },
+    exportExcel(type?: number, payType?: string) {
+      this.loading = true
+
+      if (!type) {
+        if (this.clientType === 2) {
+          // 物料订购单
+          materialOrder
+            .list({
+              export_excel: 1,
+              client_id: Number(this.$route.query.id),
+              group_id: this.materialOrderFilter.gourp_id,
+              is_check: this.materialOrderFilter.is_check,
+              has_invoice: this.materialOrderFilter.has_invoice,
+              has_deduct: this.materialOrderFilter.has_deduct,
+              has_pay: this.materialOrderFilter.has_pay,
+              start_time:
+                this.materialOrderFilter.date && this.materialOrderFilter.date.length > 0
+                  ? this.materialOrderFilter.date[0]
+                  : '',
+              end_time:
+                this.materialOrderFilter.date && this.materialOrderFilter.date.length > 0
+                  ? this.materialOrderFilter.date[0]
+                  : '',
+              start_push_time:
+                this.materialOrderFilter.pushDate && this.materialOrderFilter.pushDate.length > 0
+                  ? this.materialOrderFilter.pushDate[0]
+                  : '',
+              end_push_time:
+                this.materialOrderFilter.pushDate && this.materialOrderFilter.pushDate.length > 0
+                  ? this.materialOrderFilter.pushDate[0]
+                  : ''
+            })
+            .then((res) => {
+              window.location.href = res.data.data
+              this.loading = false
+            })
+        } else if (this.clientType === 3) {
+          // 物料加工单
+          materialProcess
+            .list({
+              client_id: Number(this.$route.query.id),
+              group_id: this.materialProcessFilter.gourp_id,
+              is_check: this.materialProcessFilter.is_check,
+              has_invoice: this.materialProcessFilter.has_invoice,
+              has_deduct: this.materialProcessFilter.has_deduct,
+              has_pay: this.materialProcessFilter.has_pay,
+              start_time:
+                this.materialProcessFilter.date && this.materialProcessFilter.date.length > 0
+                  ? this.materialProcessFilter.date[0]
+                  : '',
+              end_time:
+                this.materialProcessFilter.date && this.materialProcessFilter.date.length > 0
+                  ? this.materialProcessFilter.date[0]
+                  : '',
+              export_excel: 1
+            })
+            .then((res) => {
+              window.location.href = res.data.data
+              this.loading = false
+            })
+        } else if (this.clientType === 4) {
+          // 生产计划单
+          productionPlan
+            .list({
+              client_id: Number(this.$route.query.id),
+              export_excel: 1,
+              group_id: this.productionPlanFilter.gourp_id,
+              is_check: this.productionPlanFilter.is_check,
+              has_invoice: this.productionPlanFilter.has_invoice,
+              has_deduct: this.productionPlanFilter.has_deduct,
+              has_pay: this.productionPlanFilter.has_pay,
+              start_time:
+                this.productionPlanFilter.date && this.productionPlanFilter.date.length > 0
+                  ? this.productionPlanFilter.date[0]
+                  : '',
+              end_time:
+                this.productionPlanFilter.date && this.productionPlanFilter.date.length > 0
+                  ? this.productionPlanFilter.date[0]
+                  : ''
+            })
+            .then((res) => {
+              window.location.href = res.data.data
+              this.loading = false
+            })
+        } else if (this.clientType === 11) {
+          // 包装订购单
+          packManage
+            .orderList({
+              client_id: Number(this.$route.query.id),
+              group_id: this.packOrderFilter.gourp_id,
+              is_check: this.packOrderFilter.is_check,
+              has_invoice: this.packOrderFilter.has_invoice,
+              has_deduct: this.packOrderFilter.has_deduct,
+              has_pay: this.packOrderFilter.has_pay,
+              start_time:
+                this.packOrderFilter.date && this.packOrderFilter.date.length > 0 ? this.packOrderFilter.date[0] : '',
+              end_time:
+                this.packOrderFilter.date && this.packOrderFilter.date.length > 0 ? this.packOrderFilter.date[0] : '',
+              export_excel: 1
+            })
+            .then((res) => {
+              window.location.href = res.data.data
+              this.loading = false
+            })
+        } else if (this.clientType === 13) {
+          // 发货单
+          boxManage
+            .list({
+              client_id: Number(this.$route.query.id),
+              group_id: this.boxManageFilter.gourp_id,
+              is_check: this.boxManageFilter.is_check,
+              has_invoice: this.boxManageFilter.has_invoice,
+              has_deduct: this.boxManageFilter.has_deduct,
+              has_pay: this.boxManageFilter.has_pay,
+              start_time:
+                this.boxManageFilter.date && this.boxManageFilter.date.length > 0 ? this.boxManageFilter.date[0] : '',
+              end_time:
+                this.boxManageFilter.date && this.boxManageFilter.date.length > 0 ? this.boxManageFilter.date[0] : '',
+              export_excel: 1
+            })
+            .then((res) => {
+              window.location.href = res.data.data
+              this.loading = false
+            })
+        }
+      } else {
+        let start_time = ''
+        let end_time = ''
+        let y = new Date().getFullYear()
+        let m = new Date().getMonth() + 1
+        // @ts-ignore
+        let q = Math.floor(m % 3 == 0 ? m / 3 : m / 3 + 1)
+
+        switch (type) {
+          case 1:
+            start_time = new Date(y, m - 1, 1).toLocaleDateString().replaceAll('/', '-')
+            end_time = new Date(y, m, 0).toLocaleDateString().replaceAll('/', '-')
+            break
+          case 2:
+            start_time = new Date(y, (q - 1) * 3, 1).toLocaleDateString().replaceAll('/', '-')
+            end_time = new Date(y, q * 3, 0).toLocaleDateString().replaceAll('/', '-')
+            break
+          case 3:
+            start_time = y + '-01-01'
+            end_time = y + '-12-31'
+            break
+        }
+        if (payType === 'invoice') {
+          invoice
+            .list({
+              start_time: start_time,
+              end_time: end_time,
+              export_excel: 1,
+              client_id: this.$route.query.id as string
+            })
+            .then((res) => {
+              window.location.href = res.data.data
+              this.loading = false
+            })
+        } else if (payType === 'deduct') {
+          deduct
+            .list({
+              start_time: start_time,
+              end_time: end_time,
+              export_excel: 1,
+              client_id: this.$route.query.id as string
+            })
+            .then((res) => {
+              window.location.href = res.data.data
+              this.loading = false
+            })
+        } else {
+          payment
+            .list({
+              start_time: start_time,
+              end_time: end_time,
+              export_excel: 1,
+              client_id: this.$route.query.id as string
+            })
+            .then((res) => {
+              window.location.href = res.data.data
+              this.loading = false
+            })
+        }
+      }
     },
     getFinancialDetail() {
       client

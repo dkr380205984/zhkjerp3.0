@@ -507,33 +507,26 @@
             </div>
           </div>
           <div class="buttonList">
-            <div class="btn backHoverBlue">
-              <i class="el-icon-s-grid"></i>
-              <span class="text">调取单操作</span>
+            <div class="btn backHoverBlue"
+              style="margin-right:12px"
+              @click="goProcessMaterial('调取加工')">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">物料加工</span>
             </div>
-            <div class="otherInfoCtn">
-              <div class="otherInfo">
-                <div class="btn backHoverBlue"
-                  @click="goProcessMaterial('调取加工')">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">物料加工</span>
-                </div>
-                <!-- <div class="btn backHoverOrange">
+            <!-- <div class="btn backHoverOrange">
                   <i class="iconfont">&#xe63b;</i>
                   <span class="text">单据修改</span>
                 </div> -->
-                <div class="btn backHoverRed"
-                  @click="deleteMaterialStock(item.id)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">删除单据</span>
-                </div>
-              </div>
+            <div class="btn backHoverRed"
+              @click="deleteMaterialStock(item.id)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">删除单据</span>
             </div>
           </div>
           <div class="titleCtn"
@@ -2246,6 +2239,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      saveLock: false,
       showAssociatedPage: false,
       materialOrderFlag: false,
       materialStockFlag: false,
@@ -2722,6 +2716,10 @@ export default Vue.extend({
       })
     },
     saveMaterialOrder() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       const formCheck = this.materialOrderInfo.some((item) => {
         return this.$formCheck(item, [
           {
@@ -2762,6 +2760,7 @@ export default Vue.extend({
       if (!formCheck) {
         this.getMatOrderCmpData()
         this.loading = true
+        this.saveLock = true
         materialOrder.create({ data: this.materialOrderInfo }).then((res) => {
           if (res.data.status) {
             this.$message.success('物料订购成功')
@@ -2769,6 +2768,7 @@ export default Vue.extend({
             this.resetOrderMaterial()
             this.init()
           }
+          this.saveLock = false
         })
       }
     },
@@ -2965,6 +2965,10 @@ export default Vue.extend({
         })
     },
     saveMaterialStock() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       this.materialStockInfo.order_id = this.$route.query.supFlag
         ? this.materialSupplementInfo.order_id
         : this.materialPlanInfo.order_id
@@ -2986,6 +2990,7 @@ export default Vue.extend({
         ])
       })
       if (!formCheck) {
+        this.saveLock = true
         materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
           if (res.data.status) {
             this.$message.success('调取成功')
@@ -2993,6 +2998,7 @@ export default Vue.extend({
             this.materialStockFlag = false
             this.init()
           }
+          this.saveLock = false
         })
       }
     },
@@ -3143,6 +3149,10 @@ export default Vue.extend({
       })
     },
     saveMaterialProcess() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       const formCheck = this.materialProcessInfo.some((item) => {
         return (
           this.$formCheck(item, [
@@ -3175,6 +3185,7 @@ export default Vue.extend({
         )
       })
       if (!formCheck) {
+        this.saveLock = true
         this.getMatProcessCmpData()
         materialProcess.create({ data: this.materialProcessInfo }).then((res) => {
           if (res.data.status) {
@@ -3183,6 +3194,7 @@ export default Vue.extend({
             this.resetProcessMaterial()
             this.init()
           }
+          this.saveLock = false
         })
       }
     },

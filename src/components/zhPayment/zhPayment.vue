@@ -146,6 +146,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      saveLock: false,
       paymentInfo: {
         doc_type: 0,
         client_id: '',
@@ -256,6 +257,10 @@ export default Vue.extend({
       }
     },
     savePayment() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       const formCheck = this.paymentInfo.data.some((item) => {
         return this.$formCheck(item, [
           {
@@ -265,6 +270,7 @@ export default Vue.extend({
         ])
       })
       if (!formCheck) {
+        this.saveLock = true
         this.paymentInfo.data.forEach((item) => {
           item.price = item.price.replace(/[^0-9]/gi, '')
         })
@@ -274,6 +280,7 @@ export default Vue.extend({
             this.$emit('afterPayment')
             this.$emit('close')
           }
+          this.saveLock = false
         })
       }
     }

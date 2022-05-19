@@ -842,6 +842,7 @@ export default Vue.extend({
     return {
       showTable: true,
       loading: false,
+      saveLock: false,
       unitArr: moneyArr,
       quotedPriceProductInfo: {
         id: '',
@@ -1259,15 +1260,21 @@ export default Vue.extend({
       })
     },
     saveOrder(ifCaogao: boolean) {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       if (ifCaogao) {
         this.orderInfo.is_draft = 1
         this.getCmpData()
+        this.saveLock = true
         order.create(this.orderInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('草稿保存成功')
             this.saveSuccess = true // 可以离开了
             this.$router.push('/order/list?page=1&keyword=&client_id=&user_id=&status=null&date=')
           }
+          this.saveLock = false
         })
       } else {
         this.orderInfo.is_draft = 2
@@ -1339,12 +1346,14 @@ export default Vue.extend({
         }
         if (!formCheck) {
           this.getCmpData()
+          this.saveLock = true
           order.create(this.orderInfo).then((res) => {
             if (res.data.status) {
               this.$message.success('添加成功')
               this.saveSuccess = true // 可以离开了
               this.$router.push('/order/list?page=1&keyword=&client_id=&user_id=&status=null&date=')
             }
+            this.saveLock = false
           })
         }
       }

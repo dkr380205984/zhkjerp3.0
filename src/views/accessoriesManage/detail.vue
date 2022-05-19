@@ -794,6 +794,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      saveLock: false,
       step: 1,
       orderInfo: {
         id: null,
@@ -1070,6 +1071,10 @@ export default Vue.extend({
       })
     },
     saveMaterialOrder(ifStock: boolean) {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       const formCheck = this.materialOrderInfo.some((item) => {
         return this.$formCheck(item, [
           {
@@ -1102,6 +1107,7 @@ export default Vue.extend({
       if (!formCheck) {
         this.getMatOrderCmpData()
         this.loading = true
+        this.saveLock = true
         materialOrder.create({ data: this.materialOrderInfo }).then((res) => {
           if (res.data.status) {
             if (ifStock) {
@@ -1113,6 +1119,7 @@ export default Vue.extend({
               this.init()
             }
           }
+          this.saveLock = false
           this.loading = false
         })
       }

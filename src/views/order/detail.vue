@@ -280,8 +280,11 @@
     </div>
     <div class="module"
       id="批次信息">
-      <div class="titleCtn">
-        <div class="title">批次信息</div>
+      <div class="titleCtn clearfix">
+        <div class="title">批次信息 <div class="btn backHoverBlue fr"
+            style="margin-top:11px;font-weight:normal"
+            @click="confirmOrderBatch(orderInfo.time_data[0].batch_data.filter((item)=>item.check))">批量确认完成</div>
+        </div>
       </div>
       <div :class="itemBatchIndex===0?'detailCtn':'detailCtn noPadTop'"
         v-for="(itemBatch,itemBatchIndex) in orderInfo.time_data[0].batch_data"
@@ -318,7 +321,9 @@
             <div class="trow">
               <div class="tcol"
                 style="flex:0.5">
-                <span>{{itemBatch.batch_number}}</span>
+                <span>
+                  <el-checkbox v-model="itemBatch.check">{{itemBatch.batch_number}}</el-checkbox>
+                </span>
               </div>
               <div class="tcol">
                 <span class="green">{{itemBatch.delivery_time}}
@@ -367,7 +372,7 @@
               </div>
               <div class="tcol oprCtn">
                 <div class="opr hoverBlue"
-                  @click="confirmOrderBatch(itemBatch)">确认完成</div>
+                  @click="confirmOrderBatch([itemBatch])">确认完成</div>
               </div>
             </div>
           </div>
@@ -2114,8 +2119,12 @@ export default Vue.extend({
           })
       }
     },
-    confirmOrderBatch(batch: OrderBatch) {
-      this.$confirm('是否确认完成该订单，确认订单将不能进行其他操作?', '提示', {
+    confirmOrderBatch(batch: OrderBatch[]) {
+      if (batch.length === 0) {
+        this.$message.error('请选择要确认完成的批次')
+        return
+      }
+      this.$confirm('是否确认完成该批次，确认后订单将不能进行其他操作?', '提示', {
         confirmButtonText: '确认完成',
         cancelButtonText: '取消',
         type: 'warning'
@@ -2123,7 +2132,7 @@ export default Vue.extend({
         .then(() => {
           order
             .confirmBatch({
-              batch_id: Number(batch.id)
+              batch_id: batch.map((item) => Number(item.id))
             })
             .then((res) => {
               if (res.data.status) {
@@ -2131,7 +2140,7 @@ export default Vue.extend({
                   type: 'success',
                   message: '批次确认完成!'
                 })
-                batch.status = 2
+                batch.forEach((item) => (item.status = 2))
                 this.$forceUpdate()
               }
             })

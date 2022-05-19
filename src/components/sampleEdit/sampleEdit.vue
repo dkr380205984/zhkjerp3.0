@@ -135,7 +135,8 @@
                       @click="$openUrl('/setting?pName=产品设置&cName=品类')"></i>
                   </el-tooltip>
                 </div>
-                <div class="info elCtn">
+                <div class="info elCtn"
+                  :class="{'error':mustFlag&&!sampleInfo.type}">
                   <el-cascader placeholder="请选择品类"
                     v-model="sampleInfo.type"
                     :options="productTypeList"
@@ -183,7 +184,8 @@
                   </el-tooltip>
                 </div>
                 <div class="info elCtn">
-                  <el-select placeholder="请选择样品款式"
+                  <el-select :class="{'error':mustFlag&&sampleInfo.style_data.length===0}"
+                    placeholder="请选择样品款式"
                     v-model="sampleInfo.style_data"
                     multiple>
                     <el-option v-for="item in productStyleList"
@@ -204,7 +206,8 @@
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-autocomplete class="inline-input"
+                  <el-autocomplete :class="{'error':mustFlag&&!item.name}"
+                    class="inline-input"
                     v-model="item.name"
                     :fetch-suggestions="searchColour"
                     placeholder="请输入样品配色"></el-autocomplete>
@@ -359,7 +362,8 @@
                       <span class="explanation">(必选)</span>
                     </div>
                     <div class="info elCtn">
-                      <el-autocomplete class="inline-input"
+                      <el-autocomplete :class="{'error':mustFlag&&!item.size_name}"
+                        class="inline-input"
                         v-model="item.size_name"
                         :fetch-suggestions="searchSize"
                         placeholder="请选择大身尺码"></el-autocomplete>
@@ -430,7 +434,8 @@
                       v-if="!item.id">删除此配件</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input placeholder="请输入配件名称"
+                    <el-input :class="{'error':mustFlag&&!item.name}"
+                      placeholder="请输入配件名称"
                       v-model="item.name"></el-input>
                   </div>
                 </div>
@@ -608,7 +613,9 @@ export default Vue.extend({
   } {
     return {
       loading: false,
+      saveLock: false,
       have_part: false,
+      mustFlag: false,
       need_import: false,
       repeatAdd: false,
       notify: '',
@@ -915,6 +922,10 @@ export default Vue.extend({
       }
     },
     saveSample() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       this.$emit('beforeSave', this.sampleInfo)
       const formCheck =
         this.$formCheck(this.sampleInfo, [
@@ -981,12 +992,15 @@ export default Vue.extend({
             })
           )
         })
+      } else {
+        this.mustFlag = true
       }
       this.getCmpData()
       if (!formCheck && !partFormCheck) {
         this.loading = true
         this.sampleInfo.editor.destroy()
         this.sampleInfo.editor = ''
+        this.saveLock = true
         sample.create(this.sampleInfo).then((res) => {
           if (res.data.status) {
             this.$message.success(this.edit ? '修改成功' : '添加成功')
@@ -999,6 +1013,7 @@ export default Vue.extend({
             }
           }
           this.loading = false
+          this.saveLock = false
         })
       }
     },
@@ -1287,4 +1302,11 @@ export default Vue.extend({
 
 <style lang="less" scoped>
 @import './sampleEdit.less';
+</style>
+<style lang="less">
+.error {
+  .el-input .el-input__inner {
+    border-color: red !important;
+  }
+}
 </style>

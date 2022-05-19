@@ -6,9 +6,9 @@ if (process.env.NODE_ENV === 'development') {
   TARGET = 'https://knit_beta.zwyknit.com'
 } else {
   // 正式环境
-  TARGET = 'https://knit_api.zwyknit.com'
+  // TARGET = 'https://knit_api.zwyknit.com'
   // 测试环境
-  // TARGET = 'https://beta.zwyknit.com'
+  TARGET = 'https://beta.zwyknit.com'
 }
 module.exports = {
   devServer: {

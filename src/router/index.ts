@@ -538,19 +538,15 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/materialManage/supList.vue')
     }, {
       meta: {
-        permissions_id: '6-1',
-      },
-      path: '/accessoriesManage/create',
-      name: '辅料订购加工',
-      component: () => import('../views/accessoriesManage/create.vue')
-    }, {
-      meta: {
         permissions_id: '6-3',
       },
       path: '/accessoriesManage/list',
       name: '辅料管理列表',
       component: () => import('../views/accessoriesManage/list.vue')
     }, {
+      meta: {
+        permissions_id: '6-1',
+      },
       path: '/accessoriesManage/detail',
       name: '辅料管理详情',
       component: () => import('../views/accessoriesManage/detail.vue')

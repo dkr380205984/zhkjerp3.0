@@ -367,6 +367,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      saveLock: false,
       packPlanLogCopy: [], // 前端保存的发货单具体信息，只能看，不能做任何操作
       packPlanLog: [],
       batchInfo: [],
@@ -410,6 +411,10 @@ export default Vue.extend({
   },
   methods: {
     saveOtherFee() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       const formCheck = this.otherFeeInfo.data.some((item: any) => {
         return this.$formCheck(item, [
           {
@@ -424,6 +429,7 @@ export default Vue.extend({
       })
       if (!formCheck) {
         this.loading = true
+        this.saveLock = true
         this.otherFeeInfo.id = this.$route.query.id
         boxManage.addOtherFee(this.otherFeeInfo).then((res) => {
           if (res.data.status) {
@@ -431,6 +437,7 @@ export default Vue.extend({
             this.otherFeeFlag = false
             this.init()
           }
+          this.saveLock = false
         })
       }
     },

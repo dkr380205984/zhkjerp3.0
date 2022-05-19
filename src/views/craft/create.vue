@@ -1506,6 +1506,7 @@ export default Vue.extend({
   } {
     return {
       loading: false,
+      saveLock: false,
       showUsing: false,
       saveSuccess: false,
       proId: '',
@@ -3238,15 +3239,21 @@ export default Vue.extend({
       })
     },
     saveCraft(ifCaogao: boolean) {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       if (ifCaogao) {
         this.getCmpData()
         this.craftInfo.is_draft = 1
+        this.saveLock = true
         craft.create(this.craftInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
             this.saveSuccess = true
             this.$router.push('/craft/detail?id=' + res.data.data)
           }
+          this.saveLock = false
         })
       } else {
         this.craftInfo.is_draft = 2
@@ -3345,6 +3352,7 @@ export default Vue.extend({
           this.$message.error('请完善经纬项信息')
         }
         if (!formCheck) {
+          this.saveLock = true
           this.getCmpData()
           this.getMaterialData()
           this.getMaterialDataTotal()
@@ -3354,6 +3362,7 @@ export default Vue.extend({
               this.saveSuccess = true
               this.$router.push('/craft/detail?id=' + res.data.data)
             }
+            this.saveLock = false
           })
         }
       }

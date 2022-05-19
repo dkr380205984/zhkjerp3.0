@@ -152,6 +152,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      saveLock: false,
       collectionInfo: {
         doc_type: 0,
         client_id: '',
@@ -264,6 +265,10 @@ export default Vue.extend({
       }
     },
     saveCollection() {
+      if (this.saveLock) {
+        this.$message.error('请勿频繁点击')
+        return
+      }
       const formCheck = this.collectionInfo.data.some((item) => {
         return this.$formCheck(item, [
           {
@@ -273,6 +278,7 @@ export default Vue.extend({
         ])
       })
       if (!formCheck) {
+        this.saveLock = true
         // 把提交金额替换回来
         this.collectionInfo.data.forEach((item) => {
           item.price = item.price.replace(/[^0-9]/gi, '')
@@ -283,6 +289,7 @@ export default Vue.extend({
             this.$emit('afterCollection')
             this.$emit('close')
           }
+          this.saveLock = false
         })
       }
     }
