@@ -227,16 +227,38 @@
           </div>
           <div class="content"
             style="overflow: auto">
-            <div class="line"
-              v-for="(item,index) in todoList"
-              :key="index">
-              <span v-html="item.html"></span>
-              <span class="blue fr"
-                style="cursor:pointer">查看</span>
-              <!-- <span class="fr"
-                :class="{'green':item.status===1,'orange':item.status===2}"
-                style="cursor:pointer;margin-right:12px"
-                @click="completeTodo(item)">{{item.status===1?'完成':'已完成'}}</span> -->
+            <div class="tableCtn"
+              style="padding:0">
+              <div class="thead">
+                <div class="trow">
+                  <div class="tcol"
+                    style="max-width:50px">序号</div>
+                  <div class="tcol"
+                    style="max-width:100px">日期</div>
+                  <div class="tcol">待办任务</div>
+                  <div class="tcol"
+                    style="max-width:70px">操作</div>
+                </div>
+              </div>
+              <div class="tbody">
+                <div class="trow"
+                  v-for="(item,index) in todoList"
+                  :key="index">
+                  <div class="tcol"
+                    style="max-width:50px">{{index+1}}</div>
+                  <div class="tcol"
+                    style="max-width:100px">{{item.created_at.slice(0,10)}}</div>
+                  <div class="tcol">
+                    <span v-html="item.html"></span>
+                  </div>
+                  <div class="tcol"
+                    style="max-width:70px">
+                    <span class="blue"
+                      style="cursor:pointer"
+                      @click="todoUrl(item)">查看</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -576,6 +598,40 @@ export default Vue.extend({
             message: '已取消'
           })
         })
+    },
+    // doc_type 2 3的时候 doc_order_id和doc_order_time_id 分别对应plan_id和sup_id
+    todoUrl(item: any) {
+      if (item.doc_type === 1) {
+        this.$openUrl('/order/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 2) {
+        this.$openUrl('/materialManage/detail?id=' + item.doc_order_id || item.doc_order_time_id)
+      } else if (item.doc_type === 3) {
+        this.$openUrl('/materialManage/detail?id=' + item.doc_order_id || item.doc_order_time_id)
+      } else if (item.doc_type === 4) {
+        this.$openUrl('/productionPlan/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id)
+      } else if (item.doc_type === 5) {
+        this.$openUrl('/quotedPrice/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 6) {
+        this.$openUrl('/materialStock/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id)
+      } else if (item.doc_type === 7) {
+        this.$openUrl('/materialPlanOrder/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 9) {
+        this.$openUrl('/materialPlan/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 10) {
+        this.$openUrl('/materialManage/detail?id=' + item.doc_id + '&supFlag=1')
+      } else if (item.doc_type === 11) {
+        this.$openUrl('/packManage/detail?id=' + item.doc_order_id)
+      } else if (item.doc_type === 13) {
+        this.$openUrl('/boxManage/boxDetail?id=' + item.doc_id)
+      } else if (item.doc_type === 14) {
+        this.$openUrl('/workshopManagement/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 17) {
+        this.$openUrl('/sampleOrder/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 18) {
+        this.$openUrl(
+          '/accessoriesManage/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id
+        )
+      }
     }
   },
   computed: {

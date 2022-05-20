@@ -1,4 +1,5 @@
 @import './common.less';
+@import './table.less';
 
 #homePage {
   .content {
@@ -235,7 +236,7 @@
     display: flex;
 
     .leftCtn {
-      flex: 1;
+      flex: 1.4;
       margin-right: 24px;
 
       .content {
@@ -304,6 +305,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            max-width: 368px;
 
             &:hover {
               color: @blue;

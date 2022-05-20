@@ -402,20 +402,6 @@
           </div>
           <div class="backHoverBlue btn">搜索</div>
         </div>
-        <div class="filterCtn clearfix">
-          <div class="btn backHoverBlue"
-            @click="exportExcel(1,'invoice')">
-            <span class="text">导出月度报表</span>
-          </div>
-          <div class="btn backHoverBlue"
-            @click="exportExcel(2,'invoice')">
-            <span class="text">导出季度报表</span>
-          </div>
-          <div class="btn backHoverBlue"
-            @click="exportExcel(3,'invoice')">
-            <span class="text">导出年度报表</span>
-          </div>
-        </div>
         <div class="list">
           <div class="row title">
             <div class="col">票据编号</div>
@@ -510,20 +496,6 @@
           </div>
           <div class="backHoverBlue btn">搜索</div>
         </div>
-        <div class="filterCtn clearfix">
-          <div class="btn backHoverBlue"
-            @click="exportExcel(1,'collection')">
-            <span class="text">导出月度报表</span>
-          </div>
-          <div class="btn backHoverBlue"
-            @click="exportExcel(2,'collection')">
-            <span class="text">导出季度报表</span>
-          </div>
-          <div class="btn backHoverBlue"
-            @click="exportExcel(3,'collection')">
-            <span class="text">导出年度报表</span>
-          </div>
-        </div>
         <div class="list">
           <div class="row title">
             <div class="col">票据编号</div>
@@ -612,20 +584,6 @@
             </el-date-picker>
           </div>
           <div class="backHoverBlue btn">搜索</div>
-        </div>
-        <div class="filterCtn clearfix">
-          <div class="btn backHoverBlue"
-            @click="exportExcel(1,'deduct')">
-            <span class="text">导出月度报表</span>
-          </div>
-          <div class="btn backHoverBlue"
-            @click="exportExcel(2,'deduct')">
-            <span class="text">导出季度报表</span>
-          </div>
-          <div class="btn backHoverBlue"
-            @click="exportExcel(3,'deduct')">
-            <span class="text">导出年度报表</span>
-          </div>
         </div>
         <div class="list">
           <div class="row title">

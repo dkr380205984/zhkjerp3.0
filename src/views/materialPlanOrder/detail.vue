@@ -797,8 +797,8 @@ export default Vue.extend({
           reserve_id: Number(this.$route.query.id)
         }),
         materialPlanOrder.stockSts({
-          year: new Date().getFullYear(),
-          month: new Date().getMonth() + 1,
+          year: '',
+          month: '',
           reserve_id: Number(this.$route.query.id)
         })
       ]).then((res) => {
@@ -871,10 +871,11 @@ export default Vue.extend({
       }
     },
     getMatSts() {
+      console.log(new Date(this.date))
       materialPlanOrder
         .stockSts({
-          year: new Date().getFullYear(),
-          month: new Date().getMonth() + 1,
+          year: this.date ? new Date(this.date).getFullYear() : '',
+          month: this.date ? new Date(this.date).getMonth() + 1 : '',
           reserve_id: Number(this.$route.query.id)
         })
         .then((res) => {
