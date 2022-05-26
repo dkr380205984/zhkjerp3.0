@@ -337,7 +337,8 @@
                         <div class="elCtn"
                           style="padding-left:18px">
                           <span class="number2">{{indexChild+1}}</span>
-                          <el-cascader placeholder="选择工序"
+                          <el-cascader :class="{'error':mustFlag&&itemChild.process_name_arr.length===0}"
+                            placeholder="选择工序"
                             :show-all-levels="false"
                             v-model="itemChild.process_name_arr"
                             :options="processList"
@@ -350,7 +351,8 @@
                       <div class="tcol">
                         <div class="elCtn"
                           v-if="!itemChild.has_plan">
-                          <el-cascader placeholder="物料名称"
+                          <el-cascader :class="{'error':mustFlag&&itemChild.tree_data.length===0}"
+                            placeholder="物料名称"
                             :show-all-levels="false"
                             v-model="itemChild.tree_data"
                             :options="yarnTypeList"
@@ -364,7 +366,8 @@
                       </div>
                       <div class="tcol">
                         <div class="elCtn">
-                          <el-autocomplete class="inline-input"
+                          <el-autocomplete :class="{'error':mustFlag&&!itemChild.material_color}"
+                            class="inline-input"
                             v-model="itemChild.material_color"
                             :fetch-suggestions="searchColor"
                             placeholder="物料颜色"></el-autocomplete>
@@ -406,7 +409,8 @@
                       </div>
                       <div class="tcol">
                         <div class="elCtn">
-                          <el-input v-model="itemChild.final_number"
+                          <el-input :class="{'error':mustFlag&&!itemChild.final_number}"
+                            v-model="itemChild.final_number"
                             placeholder="数量"
                             @input="(ev)=>itemChild.loss = $toFixed((itemChild.final_number<=itemChild.need_number || !itemChild.need_number)?0:(itemChild.final_number-itemChild.need_number)/itemChild.need_number*100)">
                             <template slot="append">
@@ -631,7 +635,8 @@
                         <div class="elCtn"
                           style="padding-left:18px">
                           <span class="number2">{{indexChild+1}}</span>
-                          <el-cascader placeholder="选择工序"
+                          <el-cascader :class="{'error':mustFlag&&itemChild.process_name_arr.length===0}"
+                            placeholder="选择工序"
                             :show-all-levels="false"
                             v-model="itemChild.process_name_arr"
                             :options="processList"
@@ -644,7 +649,8 @@
                       <div class="tcol">
                         <div class="elCtn"
                           v-if="!itemChild.has_plan">
-                          <el-cascader placeholder="物料名称"
+                          <el-cascader :class="{'error':mustFlag&&itemChild.tree_data.length===0}"
+                            placeholder="物料名称"
                             :show-all-levels="false"
                             v-model="itemChild.tree_data"
                             :options="yarnTypeList"
@@ -658,7 +664,8 @@
                       </div>
                       <div class="tcol">
                         <div class="elCtn">
-                          <el-autocomplete class="inline-input"
+                          <el-autocomplete :class="{'error':mustFlag&&!itemChild.material_color}"
+                            class="inline-input"
                             v-model="itemChild.material_color"
                             :fetch-suggestions="searchColor"
                             placeholder="物料颜色"></el-autocomplete>
@@ -700,7 +707,8 @@
                       </div>
                       <div class="tcol">
                         <div class="elCtn">
-                          <el-input v-model="itemChild.final_number"
+                          <el-input :class="{'error':mustFlag&&!itemChild.final_number}"
+                            v-model="itemChild.final_number"
                             placeholder="数量"
                             @input="(ev)=>itemChild.loss = $toFixed((itemChild.final_number<=itemChild.need_number || !itemChild.need_number)?0:(itemChild.final_number-itemChild.need_number)/itemChild.need_number*100)">
                             <template slot="append">
@@ -876,6 +884,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      mustFlag: false,
       saveSuccess: false,
       saveLock: false,
       showAll: false, // 页面使用卡顿
@@ -1624,6 +1633,8 @@ export default Vue.extend({
           }
           this.saveLock = false
         })
+      } else {
+        this.mustFlag = true
       }
     },
     // 复制逻辑
@@ -1807,6 +1818,11 @@ export default Vue.extend({
 #materialPlanCreate {
   .el-tabs__content {
     padding: 20px 32px;
+  }
+  .error {
+    .el-input__inner {
+      border-color: red !important;
+    }
   }
   .UnitCtn {
     .el-input-group__append {

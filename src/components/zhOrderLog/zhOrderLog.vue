@@ -149,9 +149,7 @@
                       <div class="tcol oprCtn"
                         style="justify-content:start">
                         <span class="blue opr"
-                          @click="$openUrl(item.plan_id?
-                          ('/materialManage/detail?id='+item.plan_id):('/materialManage/detail?id='+item.sup_id+'&supFlag=true')
-                          )">详情</span>
+                          @click="$openUrl('/materialManage/detail?id='+item.id+'&supFlag=true')">详情</span>
                       </div>
                     </div>
                     <div class="trow"

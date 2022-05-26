@@ -594,7 +594,8 @@
                   </el-tooltip>
                 </div>
                 <div class="info elCtn">
-                  <el-cascader placeholder="请选择订购单位"
+                  <el-cascader :class="{'error':mustFlag&&item.tree_data.length===0}"
+                    placeholder="请选择订购单位"
                     v-model="item.tree_data"
                     :options="packClientList"
                     @change="(ev)=>{item.client_id=ev[2]}"></el-cascader>
@@ -618,7 +619,8 @@
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-date-picker style="width:100%"
+                  <el-date-picker :class="{'error':mustFlag&&!item.delivery_time}"
+                    style="width:100%"
                     placeholder="请选择交货日期"
                     value-format="yyyy-MM-dd"
                     v-model="item.delivery_time"></el-date-picker>
@@ -657,7 +659,8 @@
                     </el-tooltip>
                   </div>
                   <div class="info elCtn">
-                    <el-select v-model="itemChild.pack_material_id"
+                    <el-select :class="{'error':mustFlag&&!itemChild.pack_material_id}"
+                      v-model="itemChild.pack_material_id"
                       placeholder="请选择包装辅料名称"
                       filterable
                       @change="getPackUnit($event,itemChild)">
@@ -781,7 +784,8 @@
                     <span class="explanation">(必填)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input v-model="itemChild.number"
+                    <el-input :class="{'error':mustFlag&&!itemChild.number}"
+                      v-model="itemChild.number"
                       @focus="$focusInput($event)"
                       placeholder="订购数量"></el-input>
                   </div>
@@ -1293,6 +1297,7 @@ export default Vue.extend({
       loading: true,
       orderIndex: '0',
       saveLock: false,
+      mustFlag: false,
       orderInfo: {
         id: null,
         client_id: '',
@@ -1713,6 +1718,9 @@ export default Vue.extend({
             }
           })
         }
+        this.mustFlag = false
+      } else {
+        this.mustFlag = true
       }
     },
     // 1合并装箱 2单独装箱
@@ -2168,6 +2176,11 @@ export default Vue.extend({
 </style>
 <style lang="less">
 #packManageDetail {
+  .error {
+    .el-input__inner {
+      border-color: red !important;
+    }
+  }
   .el-tabs__content {
     padding: 0;
   }

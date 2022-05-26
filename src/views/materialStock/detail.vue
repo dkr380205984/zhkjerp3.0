@@ -789,7 +789,8 @@
                         <span class="explanation">(必选)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-select placeholder="单据物料"
+                        <el-select :class="{'error':mustFlag&&!item.rel_doc_info_id}"
+                          placeholder="单据物料"
                           v-model="item.rel_doc_info_id"
                           @change="getMatId($event,item)">
                           <el-option v-for="item in materialStockInfo.selectList"
@@ -869,7 +870,8 @@
                         <span class="explanation">(必填)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input placeholder="数量"
+                        <el-input :class="{'error':mustFlag&&!item.number}"
+                          placeholder="数量"
                           v-model="item.number">
                           <template slot="append">{{item.unit}}</template>
                         </el-input>
@@ -899,7 +901,8 @@
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select placeholder="单据物料"
+                    <el-select :class="{'error':mustFlag&&!item.rel_doc_info_id}"
+                      placeholder="单据物料"
                       v-model="item.rel_doc_info_id"
                       @change="getMatId($event,item)">
                       <el-option v-for="item in materialStockInfo.selectList"
@@ -935,7 +938,8 @@
                         <span class="explanation">(必填)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input placeholder="数量"
+                        <el-input :class="{'error':mustFlag&&!item.number}"
+                          placeholder="数量"
                           v-model="item.number"></el-input>
                       </div>
                     </div>
@@ -1050,6 +1054,7 @@ export default Vue.extend({
     return {
       loading: true,
       saveLock: false,
+      mustFlag: false,
       orderInfo: {
         id: null,
         client_id: '',
@@ -1325,7 +1330,8 @@ export default Vue.extend({
               material_id: itemChild.material_id,
               attribute: itemChild.attribute,
               yarn_type: itemChild.yarn_type,
-              number: itemChild.number
+              number: itemChild.number,
+              unit: itemChild.unit
             })
           }
         })
@@ -1417,9 +1423,11 @@ export default Vue.extend({
     },
     // 入库选采购单的时候给material_id赋值
     getMatId(id: number, info: MaterialStockLog) {
-      info.yarn_type = this.materialStockInfo.selectList!.find((itemFind) => itemFind.value === id)!.yarn_type as number
-      info.material_id = this.materialStockInfo.selectList!.find((itemFind) => itemFind.value === id)!
-        .material_id as number
+      const finded: any = this.materialStockInfo.selectList!.find((itemFind) => itemFind.value === id)
+      info.yarn_type = finded.yarn_type as number
+      info.material_id = finded.material_id as number
+      info.unit = finded.unit
+      console.log(finded)
     },
     // 出库选入库信息的时候赋值
     getStoreOut(value: string, info: MaterialStockLog) {
@@ -1462,7 +1470,8 @@ export default Vue.extend({
               material_color: itemChild.material_color || itemChild.after_color,
               material_id: itemChild.order_material_id,
               attribute: itemChild.after_attribute,
-              number: itemChild.number
+              number: itemChild.number,
+              unit: itemChild.unit
             })
           }
         })
@@ -1517,7 +1526,8 @@ export default Vue.extend({
               material_color: itemChild.material_color,
               material_id: itemChild.material_id,
               attribute: itemChild.yarn_type === 1 ? '筒纱' : '面料', // 根据最终入库是筒纱推测最终出库也是筒纱
-              number: itemChild.number
+              number: itemChild.number,
+              unit: itemChild.unit
             })
           }
         })
@@ -1533,7 +1543,8 @@ export default Vue.extend({
                 material_color: itemChild.material_color,
                 material_id: itemChild.material_id,
                 attribute: itemChild.yarn_type === 1 ? '筒纱' : '面料', // 根据最终入库是筒纱推测最终出库也是筒纱
-                number: itemChild.number
+                number: itemChild.number,
+                unit: itemChild.unit
               })
             }
           })
@@ -1819,12 +1830,17 @@ export default Vue.extend({
           {
             key: 'material_id',
             errMsg: '请选择物料'
+          },
+          {
+            key: 'number',
+            errMsg: '请输入数量'
           }
         ])
       })
       if (!formCheck) {
         this.getCmpData()
         this.saveLock = true
+        this.loading = true
         materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
@@ -1832,7 +1848,11 @@ export default Vue.extend({
             this.init()
           }
           this.saveLock = false
+          this.loading = false
+          this.mustFlag = false
         })
+      } else {
+        this.mustFlag = true
       }
     },
     closeStock() {
@@ -1903,4 +1923,13 @@ export default Vue.extend({
 
 <style lang="less" scoped>
 @import '~@/assets/css/materialStock/detail.less';
+</style>
+<style lang="less">
+#materialStockDetail {
+  .error {
+    .el-input__inner {
+      border-color: red !important;
+    }
+  }
+}
 </style>

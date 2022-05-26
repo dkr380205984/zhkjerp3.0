@@ -646,14 +646,6 @@
                     </svg>
                     <span class="text">修改单价</span>
                   </div>
-                  <div class="btn backHoverBlue"
-                    @click="exportExcel()">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">导出报表</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -966,14 +958,6 @@
                       <use xlink:href="#icon-xiugaidingdan"></use>
                     </svg>
                     <span class="text">批量扣款</span>
-                  </div>
-                  <div class="btn backHoverBlue"
-                    @click="exportExcel()">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">导出报表</span>
                   </div>
                 </div>
               </div>
@@ -1304,14 +1288,6 @@
                       <use xlink:href="#icon-xiugaidingdan"></use>
                     </svg>
                     <span class="text">批量扣款</span>
-                  </div>
-                  <div class="btn backHoverBlue"
-                    @click="exportExcel()">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">导出报表</span>
                   </div>
                 </div>
               </div>
@@ -1675,14 +1651,6 @@
                     </svg>
                     <span class="text">批量扣款</span>
                   </div>
-                  <div class="btn backHoverBlue"
-                    @click="exportExcel()">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">导出报表</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -1943,14 +1911,6 @@
                       <use xlink:href="#icon-xiugaidingdan"></use>
                     </svg>
                     <span class="text">批量扣款</span>
-                  </div>
-                  <div class="btn backHoverBlue"
-                    @click="exportExcel()">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">导出报表</span>
                   </div>
                 </div>
               </div>
@@ -2308,18 +2268,6 @@
               placeholder="搜索开票号码"
               @keydown.enter.native="getInvoiceLogList"></el-input>
           </div>
-          <div class="btn backHoverBlue"
-            @click="exportExcel(1,'invoice')">
-            <span class="text">导出月度报表</span>
-          </div>
-          <div class="btn backHoverBlue"
-            @click="exportExcel(2,'invoice')">
-            <span class="text">导出季度报表</span>
-          </div>
-          <div class="btn backHoverBlue"
-            @click="exportExcel(3,'invoice')">
-            <span class="text">导出年度报表</span>
-          </div>
         </div>
         <div class="list">
           <div class="row title">
@@ -2353,7 +2301,7 @@
           <div class="row">
             <div class="col">合计：</div>
             <div class="col"></div>
-            <div class="col green bold">{{invoiceTotalPrice}}元</div>
+            <div class="col green bold">{{invoiceTotalPrice}}万元</div>
             <div class="col"></div>
             <div class="col"></div>
             <div class="col"></div>
@@ -2416,18 +2364,6 @@
           <div class="backHoverBlue btn">搜索</div>
         </div>
         <div class="filterCtn clearfix">
-          <div class="btn backHoverBlue"
-            @click="exportExcel(1,'payment')">
-            <span class="text">导出月度报表</span>
-          </div>
-          <div class="btn backHoverBlue"
-            @click="exportExcel(2,'payment')">
-            <span class="text">导出季度报表</span>
-          </div>
-          <div class="btn backHoverBlue"
-            @click="exportExcel(3,'payment')">
-            <span class="text">导出年度报表</span>
-          </div>
         </div>
         <div class="list">
           <div class="row title">
@@ -2457,7 +2393,7 @@
           <div class="row">
             <div class="col">合计：</div>
             <div class="col"></div>
-            <div class="col green bold">{{paymentTotalPrice}}元</div>
+            <div class="col green bold">{{paymentTotalPrice}}万元</div>
             <div class="col"></div>
             <div class="col"></div>
             <div class="col"></div>
@@ -2518,20 +2454,6 @@
           </div>
           <div class="backHoverBlue btn">搜索</div>
         </div>
-        <div class="filterCtn clearfix">
-          <div class="btn backHoverBlue"
-            @click="exportExcel(1,'deduct')">
-            <span class="text">导出月度报表</span>
-          </div>
-          <div class="btn backHoverBlue"
-            @click="exportExcel(2,'deduct')">
-            <span class="text">导出季度报表</span>
-          </div>
-          <div class="btn backHoverBlue"
-            @click="exportExcel(3,'deduct')">
-            <span class="text">导出年度报表</span>
-          </div>
-        </div>
         <div class="list">
           <div class="row title">
             <div class="col">票据编号</div>
@@ -2574,7 +2496,7 @@
           <div class="row">
             <div class="col">合计：</div>
             <div class="col"></div>
-            <div class="col green bold">{{deductTotalPrice}}元</div>
+            <div class="col green bold">{{deductTotalPrice}}万元</div>
             <div class="col"></div>
             <div class="col"></div>
             <div class="col"></div>
@@ -3437,7 +3359,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.paymentLog = res.data.data.items
             this.paymentTotal = res.data.data.total
-            this.paymentTotalPrice = res.data.data.additional.total_price
+            this.paymentTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000)
           }
         })
     },
@@ -3465,7 +3387,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.invoiceLog = res.data.data.items
             this.invoiceTotal = res.data.data.total
-            this.invoiceTotalPrice = res.data.data.additional.total_price
+            this.invoiceTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000)
           }
         })
     },
@@ -3492,7 +3414,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.deductLog = res.data.data.items
             this.deductTotal = res.data.data.total
-            this.deductTotalPrice = res.data.data.additional.total_price
+            this.deductTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000)
           }
         })
     },

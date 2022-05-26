@@ -23,7 +23,8 @@
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-select placeholder="请选择样单类型"
+              <el-select :class="{'error':mustFlag&&!sampleOrderInfo.time_data.order_type_id}"
+                placeholder="请选择样单类型"
                 v-model="sampleOrderInfo.time_data.order_type_id">
                 <el-option v-for="item in sampleOrderTypeList"
                   :key="item.id"
@@ -38,7 +39,8 @@
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-date-picker placeholder="请选择下单日期"
+              <el-date-picker :class="{'error':mustFlag&&!sampleOrderInfo.time_data.order_time}"
+                placeholder="请选择下单日期"
                 v-model="sampleOrderInfo.time_data.order_time"
                 value-format="yyyy-MM-dd"></el-date-picker>
             </div>
@@ -72,7 +74,8 @@
               </el-tooltip>
             </div>
             <div class="info elCtn">
-              <el-cascader placeholder="请选择打样公司"
+              <el-cascader :class="{'error':mustFlag&&sampleOrderInfo.tree_data.length===0}"
+                placeholder="请选择打样公司"
                 v-model="sampleOrderInfo.tree_data"
                 :options="clientList"
                 @change="getContacts">
@@ -213,7 +216,8 @@
                 style="position:relative">
                 <div class="elCtn"
                   style="width:87%">
-                  <el-select v-model="item.product_id"
+                  <el-select :class="{'error':mustFlag&&!item.product_id}"
+                    v-model="item.product_id"
                     placeholder="选择样品"
                     @change="getColour($event,item)"
                     no-data-text="请先添加/导入样品">
@@ -241,7 +245,8 @@
                   :key="indexChild">
                   <div class="tcol">
                     <div class="elCtn">
-                      <el-select v-model="itemChild.size_color"
+                      <el-select :class="{'error':mustFlag&&!itemChild.size_color}"
+                        v-model="itemChild.size_color"
                         placeholder="尺码颜色"
                         no-data-text="请先选择产品">
                         <el-option v-for="item in item.size_color_list"
@@ -261,7 +266,8 @@
                   </div>
                   <div class="tcol">
                     <div class="elCtn">
-                      <el-input v-model="itemChild.number"
+                      <el-input :class="{'error':mustFlag&&!itemChild.number}"
+                        v-model="itemChild.number"
                         placeholder="打样数量">
                       </el-input>
                     </div>
@@ -309,7 +315,8 @@
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-date-picker placeholder="请选择计划完成时间"
+              <el-date-picker :class="{'error':mustFlag&&!sampleOrderInfo.time_data.complete_time}"
+                placeholder="请选择计划完成时间"
                 v-model="sampleOrderInfo.time_data.complete_time"
                 value-format="yyyy-MM-dd"></el-date-picker>
             </div>
@@ -439,6 +446,7 @@ export default Vue.extend({
     return {
       loading: false, // 报价单转样单需要loading报价单详情
       sampleShow: false,
+      mustFlag: false,
       saveLock: false,
       sampleDetail: {
         product_type: 2,
@@ -780,6 +788,8 @@ export default Vue.extend({
             this.loading = false
             this.saveLock = false
           })
+        } else {
+          this.mustFlag = true
         }
       } else {
         const formCheck = this.$formCheck(this.sampleOrderInfo, [
@@ -863,5 +873,12 @@ export default Vue.extend({
 .el-date-editor.el-input,
 .el-date-editor.el-input__inner {
   width: 100%;
+}
+#sampleOrderCreate {
+  .error {
+    .el-input__inner {
+      border-color: red !important;
+    }
+  }
 }
 </style>

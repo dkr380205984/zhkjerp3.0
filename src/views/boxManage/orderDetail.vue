@@ -578,8 +578,10 @@ export default Vue.extend({
         })
         .then((res) => {
           if (res.data.status) {
-            this.orderInfo = res.data.data
+            this.orderInfo = [res.data.data]
+            console.log(this.orderInfo)
             this.orderInfo.forEach((itemOrder) => {
+              // @ts-ignore
               itemOrder.time_data[0].batch_data.forEach((item) => {
                 // @ts-ignore 给批次新增一些发货信息
                 item.total_box_count = ''

@@ -24,7 +24,8 @@
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-cascader placeholder="请选择下单公司"
+              <el-cascader :class="{'error':mustFlag&&orderInfo.tree_data.length===0}"
+                placeholder="请选择下单公司"
                 v-model="orderInfo.tree_data"
                 :options="clientList"
                 @change="getContacts"
@@ -96,7 +97,8 @@
               <span class="explanation">(必填,例：100人民币=600美元,填入"600"。)</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入汇率"
+              <el-input :class="{'error':mustFlag&&!orderInfo.settle_tax}"
+                placeholder="请输入汇率"
                 v-model="orderInfo.settle_tax"></el-input>
             </div>
           </div>
@@ -108,7 +110,8 @@
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-date-picker style="width:100%"
+              <el-date-picker :class="{'error':mustFlag&&!orderInfo.order_time}"
+                style="width:100%"
                 placeholder="请选择下单日期"
                 v-model="orderInfo.time_data.order_time"
                 value-format="yyyy-MM-dd"></el-date-picker>
@@ -344,7 +347,8 @@
               :key="'tableIcon_'+index">
               <div class="tcol">
                 <div class="info elCtn">
-                  <el-date-picker style="width:100%"
+                  <el-date-picker :class="{'error':mustFlag&&!item.delivery_time}"
+                    style="width:100%"
                     placeholder="发货日期"
                     v-model="item.delivery_time"
                     value-format="yyyy-MM-dd"></el-date-picker>
@@ -388,7 +392,8 @@
                         style="flex:1.2">
                         <div class="elCtn"
                           style="width:87%">
-                          <el-select v-model="itemPro.product_id"
+                          <el-select :class="{'error':mustFlag&&!itemPro.product_id}"
+                            v-model="itemPro.product_id"
                             placeholder="选择产品"
                             @change="getColour($event,itemPro)"
                             no-data-text="请先添加/导入产品">
@@ -418,7 +423,8 @@
                           <div class="tcol"
                             style="flex:1.5">
                             <div class="elCtn">
-                              <el-select v-model="itemProInfo.size_color"
+                              <el-select :class="{'error':mustFlag&&!itemProInfo.size_color}"
+                                v-model="itemProInfo.size_color"
                                 placeholder="尺码颜色"
                                 no-data-text="请先选择产品">
                                 <el-option v-for="itemColor in itemPro.size_color_list"
@@ -430,14 +436,16 @@
                           </div>
                           <div class="tcol">
                             <div class="elCtn">
-                              <el-input v-model="itemProInfo.price"
+                              <el-input :class="{'error':mustFlag&&!itemProInfo.price}"
+                                v-model="itemProInfo.price"
                                 placeholder="单价">
                               </el-input>
                             </div>
                           </div>
                           <div class="tcol">
                             <div class="elCtn">
-                              <el-input v-model="itemProInfo.number"
+                              <el-input :class="{'error':mustFlag&&!itemProInfo.number}"
+                                v-model="itemProInfo.number"
                                 placeholder="数量">
                               </el-input>
                             </div>
@@ -495,7 +503,8 @@
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-date-picker style="width:100%"
+                  <el-date-picker :class="{'error':mustFlag&&!item.delivery_time}"
+                    style="width:100%"
                     placeholder="请选择发货日期"
                     v-model="item.delivery_time"
                     value-format="yyyy-MM-dd"></el-date-picker>
@@ -552,7 +561,8 @@
                   <div class="tcol">
                     <div class="elCtn"
                       style="width:220px">
-                      <el-select v-model="itemChild.product_id"
+                      <el-select :class="{'error':mustFlag&&!itemChild.product_id}"
+                        v-model="itemChild.product_id"
                         placeholder="选择产品"
                         @change="getColour($event,itemChild)"
                         no-data-text="请先添加/导入产品">
@@ -583,7 +593,8 @@
                         <div class="elCtn">
                           <el-select v-model="itemPro.size_color"
                             placeholder="尺码颜色"
-                            no-data-text="请先选择产品">
+                            no-data-text="请先选择产品"
+                            :class="{'error':mustFlag&&!itemPro.size_color}">
                             <el-option v-for="item in itemChild.size_color_list"
                               :key="item.value"
                               :label="item.label"
@@ -593,7 +604,8 @@
                       </div>
                       <div class="tcol">
                         <div class="elCtn">
-                          <el-input v-model="itemPro.price"
+                          <el-input :class="{'error':mustFlag&&!itemPro.price}"
+                            v-model="itemPro.price"
                             placeholder="下单单价">
                             <template slot="append">{{orderInfo.settle_unit||'元'}}</template>
                           </el-input>
@@ -601,7 +613,8 @@
                       </div>
                       <div class="tcol">
                         <div class="elCtn">
-                          <el-input v-model="itemPro.number"
+                          <el-input :class="{'error':mustFlag&&!itemPro.number}"
+                            v-model="itemPro.number"
                             placeholder="下单数量">
                           </el-input>
                         </div>
@@ -843,6 +856,7 @@ export default Vue.extend({
       showTable: true,
       loading: false,
       saveLock: false,
+      mustFlag: false,
       unitArr: moneyArr,
       quotedPriceProductInfo: {
         id: '',
@@ -864,6 +878,7 @@ export default Vue.extend({
         rel_quote_id: '',
         settle_unit: '元',
         settle_tax: '100',
+        tree_data: [],
         time_data: {
           id: '',
           order_time: this.$getDate(new Date()),
@@ -1355,6 +1370,8 @@ export default Vue.extend({
             }
             this.saveLock = false
           })
+        } else {
+          this.mustFlag = true
         }
       }
     }
@@ -1433,6 +1450,11 @@ export default Vue.extend({
 #orderCreate {
   .el-input--suffix .el-input__inner {
     padding-right: 0;
+  }
+  .error {
+    .el-input__inner {
+      border-color: red !important;
+    }
   }
 }
 </style>

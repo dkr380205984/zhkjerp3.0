@@ -311,12 +311,30 @@
                   </svg>
                   <span class="text">复制计划</span>
                 </div>
+                <div class="btn backHoverOrange"
+                  @click="checkFlag=true">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-shenhedingdan"></use>
+                  </svg>
+                  <span class="text">审核计划</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <zh-check @close="checkFlag=false"
+      @afterCheck="(ev)=>{materialPlanInfo.find((item)=>Number(item.id)===Number(materialPlanIndex)).is_check=ev;$forceUpdate()}"
+      :show="checkFlag"
+      :pid="materialPlanIndex"
+      :check_type="9"
+      :reason="[]"></zh-check>
+    <zh-check-detail :pid="materialPlanIndex"
+      :check_type="9"
+      :show="checkDetailFlag"
+      @close="checkDetailFlag=false"></zh-check-detail>
     <associated-page :data="associatedPage"
       @close="showAssociatedPage = false"
       :nowPage="true"
@@ -341,6 +359,8 @@ export default Vue.extend({
     return {
       loading: true,
       orderIndex: 0,
+      checkFlag: false,
+      checkDetailFlag: false,
       orderInfo: {
         id: null,
         client_id: '',

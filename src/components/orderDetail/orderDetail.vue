@@ -296,7 +296,10 @@
                           <div class="tcol">{{itemChild.transport_number||0}}</div>
                         </div>
                       </div>
-                      <div class="tcol">暂无</div>
+                      <div class="tcol"
+                        :class="{'blue':itemBatch.status===1,'green':itemBatch.status===2,'red':itemBatch.status===3}">
+                        {{itemBatch.status===1?'进行中':(itemBatch.status===2?'已完成':'已逾期')}}
+                      </div>
                     </div>
                   </div>
                 </div>
