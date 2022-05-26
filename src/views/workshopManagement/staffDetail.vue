@@ -907,12 +907,16 @@ export default Vue.extend({
               this.reqTime = res.headers.date
               let arr: any = []
               res.data.data.forEach((item: any) => {
-                arr.push({
-                  value: item.code,
-                  id: item.id,
-                  created_at: item.created_at,
-                  client_name: item.client_name,
-                  product_name: item.product_data[0].product_code
+                item.product_data.forEach((itemPro: any) => {
+                  if (itemPro.product_code.indexOf(str) != -1) {
+                    arr.push({
+                      value: item.code,
+                      id: item.id,
+                      created_at: item.created_at,
+                      client_name: item.client_name,
+                      product_name: itemPro.product_code
+                    })
+                  }
                 })
               })
               this.orderList = arr
