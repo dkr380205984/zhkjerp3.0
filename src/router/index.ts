@@ -105,6 +105,10 @@ const routes: Array<RouteConfig> = [
       name: '系统设置',
       component: () => import('../views/setting/setting.vue')
     }, {
+      path: '/otherPage/msgList',
+      name: '待办事项列表',
+      component: () => import('../views/otherPage/msgList.vue')
+    }, {
       meta: {
         permissions_id: '1-1',
       },

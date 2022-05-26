@@ -267,6 +267,27 @@
         <div class="module">
           <div class="titleCtn">
             <div class="title">
+              版本公告
+              <div class="fr hoverBlue"
+                style="font-size: 16px; font-weight: normal; cursor: pointer"
+                @click="showSystemMessageContent=true;getSystemMessage()">
+                查看历史公告
+              </div>
+            </div>
+          </div>
+          <div class="content">
+            <div class="noMsg"
+              v-show="!systemMessageContent">暂无版本公告</div>
+            <div v-html="systemMessageContent"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flexCtn">
+      <div class="leftCtn">
+        <div class="module">
+          <div class="titleCtn">
+            <div class="title">
               系统教学
               <div class="fr hoverBlue"
                 style="font-size: 16px; font-weight: normal; cursor: pointer"
@@ -287,6 +308,66 @@
         </div>
       </div>
     </div>
+    <div class="popup"
+      v-show="showSystemMessageContent">
+      <div class="main"
+        style="width: 1000px">
+        <div class="titleCtn">
+          <span class="text">通知列表</span>
+          <div class="closeCtn"
+            @click="showSystemMessageContent = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn"
+          style="max-height: 1000px;">
+          <div class="row">
+            <div class="label">筛选条件：</div>
+            <div class="info"
+              style="line-height: 32px">
+              <el-date-picker v-model="chooseMessageDate"
+                @change="getSystemMessage"
+                type="daterange"
+                align="right"
+                value-format="yyyy-MM-dd"
+                unlink-panels
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :picker-options="pickerOptions">
+              </el-date-picker>
+            </div>
+            <div class="btnCtn">
+              <div class="borderBtn"
+                @click="chooseMessageDate = [];getSystemMessage()">重置</div>
+            </div>
+          </div>
+          <div class="row"
+            style="height: 900px; overflow-y: scroll">
+            <el-collapse v-model="activeNames"
+              style="width: 100%">
+              <el-collapse-item v-for="(item, index) in systemMessageContentList"
+                :key="item + index"
+                :name="index">
+                <template slot="title">
+                  {{ $rTime(item.updated_at) }}
+                  <div style="
+                      width: 680px;
+                      overflow: hidden;
+                      white-space: nowrap;
+                      text-overflow: ellipsis;
+                      margin-left: 20px;
+                    ">
+                    {{ contentHtml(item.content) }}
+                  </div>
+                </template>
+                <div v-html="item.content"></div>
+              </el-collapse-item>
+            </el-collapse>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -297,6 +378,42 @@ import { tutorialSystem, systemMessage } from '@/assets/js/api'
 export default Vue.extend({
   data() {
     return {
+      activeNames: '',
+      systemMessageContent: '',
+      systemMessageContentList: [],
+      showSystemMessageContent: false,
+      chooseMessageDate: [],
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }
+        ]
+      },
       searchType: '0',
       searchValue: '',
       history: window.localStorage.getItem('searchHistory')
@@ -484,11 +601,35 @@ export default Vue.extend({
     }
   },
   methods: {
+    contentHtml(content: string) {
+      // 富文本编辑器的内容如何只获得文字去掉标签
+      // content = content.replace(/<[^>]+>/g, '')
+      // 在上面的基础上还去掉了换行<br/>
+      content = content.replace(/<[^>]+>/g, '').replace(/(\n)/g, '')
+      return content
+    },
+    getSystemMessage(e: any) {
+      if (e) {
+        systemMessage({
+          start_time: e[0],
+          end_time: e[1]
+        }).then((res) => {
+          this.systemMessageContentList = res.data.data.items
+        })
+      } else {
+        systemMessage().then((res) => {
+          this.systemMessageContentList = res.data.data.items
+        })
+      }
+    },
     // 待办事项样式转换
     changeContentToHtml(str: string): string {
       return str
         .replaceAll('修改', '<span style="color:#FA9036">修改</span>')
         .replaceAll('审核', '<span style="color:#01B48C">审核</span>')
+        .replace(/【.*】/, function (data) {
+          return '<span style="color:#1a95ff">' + data + '</span>'
+        })
     },
     newSplice(data: any[], index = 5, arr?: any) {
       if (data.length === 0 || !data) {
@@ -663,13 +804,22 @@ export default Vue.extend({
         flag.isChecked = true
       }
     })
-    Promise.all([tutorialSystem.list({ type: 1 }), todoInfo.list()]).then((res) => {
+    Promise.all([
+      tutorialSystem.list({ type: 1 }),
+      todoInfo.list({
+        limit: 10,
+        page: 1
+      })
+    ]).then((res) => {
       this.tutorialSystemArr = res[0].data.data.slice(0, 8)
       console.log(res[1])
       this.todoList = res[1].data.data
       res[1].data.data.forEach((item: any) => {
         item.html = this.changeContentToHtml(item.content)
       })
+    })
+    systemMessage().then((res: any) => {
+      this.systemMessageContent = res.data.data.items.length > 0 ? res.data.data.items[0].content : ''
     })
   }
 })

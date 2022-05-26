@@ -1116,7 +1116,8 @@
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select placeholder="请选择单据物料"
+                    <el-select :class="{'error':mustFlag&&!item.rel_doc_info_id}"
+                      placeholder="请选择单据物料"
                       v-model="item.rel_doc_info_id">
                       <el-option v-for="item in checkMaterialOrderList()"
                         :key="item.id"
@@ -1150,13 +1151,15 @@
                   </div>
                   <div class="info spaceBetween elCtn">
                     <div class="once">
-                      <el-input placeholder="调取单价"
+                      <el-input :class="{'error':mustFlag&&!item.price}"
+                        placeholder="调取单价"
                         v-model="item.price">
                         <template slot="append">元</template>
                       </el-input>
                     </div>
                     <div class="once UnitCtn">
-                      <el-input placeholder="调取数量"
+                      <el-input :class="{'error':mustFlag&&!item.number}"
+                        placeholder="调取数量"
                         v-model="item.number">
                         <template slot="append">
                           <el-input v-model="item.unit"
@@ -1257,7 +1260,8 @@
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-cascader placeholder="请选择加工单位"
+                  <el-cascader :class="{'error':mustFlag&&item.client_id_arr.length===0}"
+                    placeholder="请选择加工单位"
                     v-model="item.client_id_arr"
                     :options="prcessClientList"></el-cascader>
                 </div>
@@ -1268,7 +1272,8 @@
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-select v-model="item.process"
+                  <el-select :class="{'error':mustFlag&&item.process}"
+                    v-model="item.process"
                     placeholder="选择加工工序"
                     @change="getProcess($event,item)">
                     <el-option v-for="item in yarnProcessList"
@@ -1295,7 +1300,8 @@
                     placeholder="下单日期"
                     value-format="yyyy-MM-dd"
                     v-model="item.order_time"></el-date-picker>
-                  <el-date-picker style="width:100%"
+                  <el-date-picker :class="{'error':mustFlag&&item.delivery_time}"
+                    style="width:100%"
                     class="once"
                     placeholder="交货日期"
                     value-format="yyyy-MM-dd"
@@ -1316,7 +1322,8 @@
                   <el-select v-if="materialProcessFlag==='订购加工'"
                     placeholder="请选择订购物料"
                     v-model="itemMat.material_order_info_id"
-                    @change="getAfterColor($event,itemMat,'订购加工')">
+                    @change="getAfterColor($event,itemMat,'订购加工')"
+                    :class="{'error':mustFlag&&!itemMat.material_order_info_id}">
                     <el-option v-for="item in checkMaterialProcessList"
                       :key="item.id"
                       :value="item.id"
@@ -1325,7 +1332,8 @@
                   <el-select v-if="materialProcessFlag==='调取加工'"
                     placeholder="请选择调取物料"
                     v-model="itemMat.material_transfer_info_id"
-                    @change="getAfterColor($event,itemMat,'调取加工')">
+                    @change="getAfterColor($event,itemMat,'调取加工')"
+                    :class="{'error':mustFlag&&!itemMat.material_transfer_info_id}">
                     <el-option v-for="item in checkMaterialStockList"
                       :key="item.id"
                       :value="item.id"
@@ -1449,13 +1457,15 @@
                   </div>
                 </div>
                 <div class="info elCtn spaceBetween">
-                  <el-input class="once"
+                  <el-input :class="{'error':mustFlag&&!itemMat.price}"
+                    class="once"
                     placeholder="单价"
                     v-model="itemMat.price"
                     @focus="$focusInput($event)">
                     <template slot="append">元</template>
                   </el-input>
-                  <el-input class="once UnitCtn"
+                  <el-input :class="{'error':mustFlag&&!itemMat.number}"
+                    class="once UnitCtn"
                     placeholder="数量"
                     v-model="itemMat.number"
                     @focus="$focusInput($event)">
@@ -2240,6 +2250,7 @@ export default Vue.extend({
     return {
       loading: true,
       saveLock: false,
+      mustFlag: false,
       showAssociatedPage: false,
       materialOrderFlag: false,
       materialStockFlag: false,
@@ -2999,7 +3010,10 @@ export default Vue.extend({
             this.init()
           }
           this.saveLock = false
+          this.mustFlag = false
         })
+      } else {
+        this.mustFlag = true
       }
     },
     deleteMaterialStock(id: number) {
@@ -3195,7 +3209,10 @@ export default Vue.extend({
             this.init()
           }
           this.saveLock = false
+          this.mustFlag = false
         })
+      } else {
+        this.mustFlag = true
       }
     },
     goUpdateMaterialProcess(itemProcess: MaterialProcessInfo) {
@@ -3481,6 +3498,11 @@ export default Vue.extend({
 #materialManageDetail {
   .el-tabs__content {
     padding: 0;
+  }
+  .error {
+    .el-input__inner {
+      border-color: red !important;
+    }
   }
   .UnitCtn {
     .el-input-group__append {

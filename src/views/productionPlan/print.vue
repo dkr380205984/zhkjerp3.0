@@ -60,9 +60,12 @@
               <div class="tcol bgGray label">联系电话</div>
               <div class="tcol">{{productionPlanInfo.contacts_phone}}</div>
               <div class="tcol bgGray label">工序说明</div>
-              <div class="tcol">{{productionPlanInfo.process_desc}}</div>
-              <div class="tcol bgGray label"></div>
-              <div class="tcol"></div>
+              <div class="tcol"
+                style="min-width:369px">{{productionPlanInfo.process_desc}}</div>
+            </div>
+            <div class="trow">
+              <div class="tcol bgGray label">备注信息</div>
+              <div class="tcol">{{productionPlanInfo.desc}}</div>
             </div>
           </div>
         </div>

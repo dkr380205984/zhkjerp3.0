@@ -152,8 +152,6 @@
                 <div class="label">关联计划单：</div>
                 <div class="text">{{item.plan_code}}</div>
               </div>
-            </div>
-            <div class="row">
               <div class="col">
                 <div class="label">加工单号：</div>
                 <div class="text">{{item.code}}</div>
@@ -162,24 +160,32 @@
                 <div class="label">加工单位：</div>
                 <div class="text">{{item.client_name}}</div>
               </div>
+
+            </div>
+            <div class="row">
               <div class="col">
                 <div class="label">加工日期：</div>
                 <div class="text">{{item.start_time}}</div>
               </div>
-            </div>
-            <div class="row">
+              <div class="col">
+                <div class="label">交货日期：</div>
+                <div class="text">{{item.end_time}}</div>
+              </div>
               <div class="col">
                 <div class="label">结算状态：</div>
                 <div class="text"
                   :class="{'green':item.has_invoice===1||item.has_pay===1,'gray':item.has_invoice!==1&&item.has_pay!==1}">{{item.has_invoice===1||item.has_pay===1?'已结算':'待结算'}}</div>
               </div>
-              <div class="col">
+            </div>
+            <div class="row">
+              <div class="col flex3">
                 <div class="label">工序说明：</div>
                 <div class="text">{{item.process_desc||'无'}}</div>
               </div>
               <div class="col">
-                <div class="label">交货日期：</div>
-                <div class="text">{{item.end_time}}</div>
+                <div class="label">备注信息：</div>
+                <div class="text"
+                  :class="{'gray':!item.desc}">{{item.desc || '无'}}</div>
               </div>
             </div>
           </div>
@@ -442,7 +448,8 @@
                     </el-tooltip>
                   </div>
                   <div class="info elCtn">
-                    <el-cascader placeholder="请选择加工单位"
+                    <el-cascader :class="{'error':mustFlag&&!item.client_id_arr}"
+                      placeholder="请选择加工单位"
                       v-model="item.client_id_arr"
                       :options="processClientList"
                       @change="(ev)=>{item.client_id=ev[2]}"
@@ -478,7 +485,8 @@
                         </el-tooltip>
                       </div>
                       <div class="info elCtn">
-                        <el-cascader placeholder="选择工序"
+                        <el-cascader :class="{'error':mustFlag&&item.process_name_arr.length===0}"
+                          placeholder="选择工序"
                           :show-all-levels="false"
                           v-model="item.process_name_arr"
                           :options="processList"
@@ -519,7 +527,8 @@
                         <span class="explanation">(必选)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-date-picker style="width:100%"
+                        <el-date-picker :class="{'error':mustFlag&&!item.end_time}"
+                          style="width:100%"
                           placeholder="请选择交货日期"
                           value-format="yyyy-MM-dd"
                           v-model="item.end_time"></el-date-picker>
@@ -538,7 +547,8 @@
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select placeholder="请选择产品信息"
+                    <el-select :class="{'error':mustFlag&&!itemPro.select_arr}"
+                      placeholder="请选择产品信息"
                       v-model="itemPro.select_arr"
                       @change="getProInfo($event,itemPro)">
                       <el-option v-for="(item,index) in checkList()"
@@ -567,7 +577,8 @@
                         </el-tooltip>
                       </div>
                       <div class="info elCtn">
-                        <el-input v-model="itemPro.price"
+                        <el-input :class="{'error':mustFlag&&!itemPro.price}"
+                          v-model="itemPro.price"
                           placeholder="请输入单价"
                           @input="(ev)=>{itemPro.total_price=$toFixed(Number(ev)*Number(itemPro.number))}">
                           <template slot="append">元</template>
@@ -581,7 +592,8 @@
                         <span class="explanation">(必填)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input v-model="itemPro.number"
+                        <el-input :class="{'error':mustFlag&&!itemPro.number}"
+                          v-model="itemPro.number"
                           :disabled="materialPlanList.find((item) => Number(item.id) === Number(materialPlanIndex))&&materialPlanList.find((item) => Number(item.id) === Number(materialPlanIndex)).type===2"
                           @input="(ev)=>{itemPro.total_price=$toFixed(Number(ev)*Number(itemPro.price))}"
                           placeholder="请输入数量">
@@ -844,7 +856,8 @@
                 </div>
                 <div class="info elCtn">
                   <el-select placeholder="请选择承担单位"
-                    v-model="item.bear_client_id">
+                    v-model="item.bear_client_id"
+                    :class="{'error':mustFlag&&!item.bear_client_id}">
                     <el-option :value="materialSupplementInfo.client_id"
                       :label="materialSupplementInfo.client_name"></el-option>
                     <el-option :value="-1"
@@ -890,7 +903,8 @@
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-select v-model="item.tree_data"
+                  <el-select :class="{'error':mustFlag&&!item.tree_data}"
+                    v-model="item.tree_data"
                     placeholder="请选择物料名称/颜色"
                     @change="getMatId($event,item)">
                     <el-option v-for="item in materialSupplementSelect"
@@ -908,7 +922,8 @@
                   <span class="explanation">(必填)</span>
                 </div>
                 <div class="info elCtn UnitCtn">
-                  <el-input placeholder="请输入物料数量"
+                  <el-input :class="{'error':mustFlag&&!item.number}"
+                    placeholder="请输入物料数量"
                     v-model="item.number">
                     <template slot="append">
                       <el-input v-model="item.unit"
@@ -1021,7 +1036,8 @@
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-cascader placeholder="请选择加工单位"
+                    <el-cascader :class="{'error':mustFlag&&orderInfo.client_id_arr.length===0}"
+                      placeholder="请选择加工单位"
                       v-model="item.client_id_arr"
                       :options="processClientList"
                       @change="(ev)=>{item.client_id=ev[2]}"
@@ -1046,7 +1062,8 @@
                         <span class="explanation">(必选)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-date-picker style="width:100%"
+                        <el-date-picker :class="{'error':mustFlag&&!item.start_time}"
+                          style="width:100%"
                           placeholder="请选择时间"
                           value-format="yyyy-MM-dd"
                           v-model="item.start_time"></el-date-picker>
@@ -1058,7 +1075,8 @@
                         <span class="explanation">(必选)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-date-picker style="width:100%"
+                        <el-date-picker :class="{'error':mustFlag&&!item.end_time}"
+                          style="width:100%"
                           placeholder="请选择交货日期"
                           value-format="yyyy-MM-dd"
                           v-model="item.end_time"></el-date-picker>
@@ -1079,7 +1097,8 @@
                   <div class="info elCtn">
                     <el-select placeholder="请选择产品信息"
                       v-model="itemPro.select_arr"
-                      @change="getProInfo($event,itemPro)">
+                      @change="getProInfo($event,itemPro)"
+                      :class="{'error':mustFlag&&!itemPro.select_arr}">
                       <el-option v-for="(item,index) in productionDivideInfo[0].product_info_data"
                         :key="index"
                         :value="item.product_id+'/'+ item.part_id+'/'+item.size_id+'/'+ item.color_id"
@@ -1096,7 +1115,8 @@
                         <span class="explanation">(必填)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input v-model="itemPro.price"
+                        <el-input :class="{'error':mustFlag&&!itemPro.price}"
+                          v-model="itemPro.price"
                           placeholder="请输入单价"
                           @input="(ev)=>{itemPro.total_price=Number(ev)*Number(itemPro.number)}">
                           <template slot="append">元</template>
@@ -1110,7 +1130,8 @@
                         <span class="explanation">(必填)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input v-model="itemPro.number"
+                        <el-input :class="{'error':mustFlag&&!itemPro.number}"
+                          v-model="itemPro.number"
                           @input="(ev)=>{itemPro.total_price=$toFixed(Number(ev)*Number(itemPro.price))}"
                           placeholder="请输入数量">
                         </el-input>
@@ -1542,6 +1563,7 @@ export default Vue.extend({
       loading: true,
       saveLock: false,
       storeSurplusFlag: false,
+      mustFlag: false,
       storeSurplusInfo: {
         materialList: [],
         order_id: '',
@@ -2085,8 +2107,11 @@ export default Vue.extend({
               this.loading = false
               this.init()
             }
+            this.mustFlag = false
             this.saveLock = false
           })
+      } else {
+        this.mustFlag = true
       }
     },
     goUpdate(info: ProductionPlanInfo) {
@@ -2199,10 +2224,13 @@ export default Vue.extend({
           if (res.data.status) {
             this.$message.success('添加成功')
             this.materialSupplementFlag = false
-            this.loading = false
             this.init()
           }
+          this.loading = false
+          this.mustFlag = false
         })
+      } else {
+        this.mustFlag = true
       }
     },
     deleteMaterialSupplement(id: number) {
@@ -2396,9 +2424,12 @@ export default Vue.extend({
                 this.init()
               }
             })
+          this.mustFlag = false
         } else {
           this.$message.error(errMsg)
         }
+      } else {
+        this.mustFlag = true
       }
     },
     // 被选中的产品信息
@@ -2578,6 +2609,11 @@ export default Vue.extend({
           border-bottom-right-radius: 4px;
         }
       }
+    }
+  }
+  .error {
+    .el-input__inner {
+      border-color: red !important;
     }
   }
 }

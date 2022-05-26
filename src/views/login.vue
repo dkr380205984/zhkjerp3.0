@@ -305,7 +305,7 @@ export default Vue.extend({
       window.sessionStorage.setItem('module_id', JSON.stringify(companyInfo.module_info))
       window.sessionStorage.setItem('logo', companyInfo.logo)
       window.sessionStorage.setItem('has_check', res.data.data.has_check)
-      // window.sessionStorage.setItem('user_id', res.data.data.user_id)
+      window.sessionStorage.setItem('user_id', res.data.data.user_id)
       // window.sessionStorage.setItem('group_name', res.data.data.group_name)
       window.sessionStorage.setItem('telephone', res.data.data.telephone || this.loginInfo.user_name)
       window.localStorage.setItem('zhUsername', this.loginInfo.user_name)
