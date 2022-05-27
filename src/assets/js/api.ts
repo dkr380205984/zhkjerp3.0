@@ -82,7 +82,7 @@ const tutorialSystem = {
 
 // 待办事项
 const todoInfo = {
-  list: () => http.get(`${baseUrl}/todo/lists`, {}),
+  list: (params: any) => http.get(`${baseUrl}/todo/lists`, params),
   complete: (params: { id: number[] }) => http.post(`${baseUrl}/complete/todo`, params, 'application/json'),
 }
 // 纱线报价

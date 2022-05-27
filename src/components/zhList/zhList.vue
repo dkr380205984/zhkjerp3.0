@@ -94,10 +94,10 @@
                 </el-tooltip>
               </div>
               <div class="process"
-                :class="{'green':item.has_material_plan.status===1,'gray':item.has_material_plan.status===2}">
+                :class="{'green':item.has_material_plan.status===1,'gray':item.has_material_plan.status===2,'orange':item.has_material_plan.status===3}">
                 <el-tooltip class="item"
                   effect="dark"
-                  :content="'原料计划'+(item.has_material_plan.status===1?('已添加(更新日期:'+item.has_material_plan.update_time +')'):'未添加')"
+                  :content="'原料计划'+(item.has_material_plan.status!==2?((item.has_material_plan.status===1?'已添加(更新日期:':'部分添加(更新日期:')+item.has_material_plan.update_time +')'):'未添加')"
                   placement="top">
                   <svg class="iconFont"
                     aria-hidden="true">
@@ -218,10 +218,10 @@
                   </el-tooltip>
                 </div>
                 <div class="process"
-                  :class="{'green':item.has_material_plan.status===1,'gray':item.has_material_plan.status===2}">
+                  :class="{'green':item.has_material_plan.status===1,'gray':item.has_material_plan.status===2,'orange':item.has_material_plan.status===3}">
                   <el-tooltip class="item"
                     effect="dark"
-                    :content="'原料计划'+(item.has_material_plan.status===1?('已添加(更新日期:'+item.has_material_plan.update_time +')'):'未添加')"
+                    :content="'原料计划'+(item.has_material_plan.status!==2?((item.has_material_plan.status===1?'已添加(更新日期:':'部分添加(更新日期:')+item.has_material_plan.update_time +')'):'未添加')"
                     placement="top">
                     <svg class="iconFont"
                       aria-hidden="true">

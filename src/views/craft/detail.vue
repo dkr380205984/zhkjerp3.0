@@ -762,7 +762,7 @@
                   <span class="text">打印工艺</span>
                 </div>
                 <div class="btn backHoverBlue"
-                  @click="$router.push('/materialPlan/create?id=' + craftInfo.order_id)"
+                  @click="$router.push('/materialPlan/create?id=' + craftInfo.order_id + '&sampleOrderIndex='+craftInfo.order_time_id)"
                   v-show="craftInfo.order_id">
                   <svg class="iconFont"
                     aria-hidden="true">

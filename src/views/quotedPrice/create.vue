@@ -66,7 +66,8 @@
               </el-tooltip>
             </div>
             <div class="info elCtn">
-              <el-cascader placeholder="请选择询价客户"
+              <el-cascader :class="{'error':mustFlag&&quotedPriceInfo.tree_data.length===0}"
+                placeholder="请选择询价客户"
                 v-model="quotedPriceInfo.tree_data"
                 :options="clientList"
                 @change="getContacts"
@@ -237,7 +238,8 @@
                 </el-tooltip>
               </div>
               <div class="info elCtn">
-                <el-cascader :disabled="$route.query.again==='true'"
+                <el-cascader :class="{'error':mustFlag&&item.type.length===0}"
+                  :disabled="$route.query.again==='true'"
                   placeholder="请选择品类"
                   v-model="item.type"
                   :options="productTypeList"></el-cascader>
@@ -981,7 +983,8 @@
                   <span class="text">运输费用</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input v-model="item.transport_fee"
+                  <el-input :class="{'error':mustFlag&&!item.transport_fee}"
+                    v-model="item.transport_fee"
                     placeholder="运输费用">
                     <template slot="append">元</template>
                   </el-input>
@@ -1052,7 +1055,8 @@
               <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
-              <el-input v-model="quotedPriceInfo.commission_percentage"
+              <el-input :class="{'error':mustFlag&&!quotedPriceInfo.commission_percentage}"
+                v-model="quotedPriceInfo.commission_percentage"
                 placeholder="请输入客户佣金百分比">
                 <template slot="append">%</template>
               </el-input>
@@ -1077,7 +1081,8 @@
               <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
-              <el-input v-model="quotedPriceInfo.rate_taxation"
+              <el-input :class="{'error':mustFlag&&!quotedPriceInfo.rate_taxation}"
+                v-model="quotedPriceInfo.rate_taxation"
                 placeholder="请输入预计税率">
                 <template slot="append">%</template>
               </el-input>
@@ -1102,7 +1107,8 @@
               <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
-              <el-input v-model="quotedPriceInfo.profit_percentage"
+              <el-input :class="{'error':mustFlag&&!quotedPriceInfo.profit_percentage}"
+                v-model="quotedPriceInfo.profit_percentage"
                 placeholder="请输入预计利润百分比">
                 <template slot="append">%</template>
               </el-input>
@@ -1177,6 +1183,7 @@ export default Vue.extend({
   } {
     return {
       loading: false,
+      mustFlag: false,
       unitArr: moneyArr,
       searchQuotedPriceKey: '',
       searchLoading: false,
@@ -1878,6 +1885,8 @@ export default Vue.extend({
             }
             this.saveLock = false
           })
+        } else {
+          this.mustFlag = true
         }
       } else {
         this.getCmpData()
@@ -2433,6 +2442,11 @@ export default Vue.extend({
 #quotedPriceCreate {
   .el-tabs__content {
     padding: 0;
+  }
+  .error {
+    .el-input__inner {
+      border-color: red !important;
+    }
   }
 }
 </style>

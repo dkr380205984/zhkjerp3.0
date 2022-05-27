@@ -150,7 +150,8 @@
                     </el-tooltip>
                   </div>
                   <div class="info elCtn">
-                    <el-cascader placeholder="请选择订购单位"
+                    <el-cascader :class="{'error':mustFlag&&item.client_id_arr.length===0}"
+                      placeholder="请选择订购单位"
                       v-model="item.client_id_arr"
                       :options="orderClientList"></el-cascader>
                   </div>
@@ -173,7 +174,8 @@
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-date-picker style="width:100%"
+                    <el-date-picker :class="{'error':mustFlag&&!item.delivery_time}"
+                      style="width:100%"
                       placeholder="请选择交货日期"
                       value-format="yyyy-MM-dd"
                       v-model="item.delivery_time"></el-date-picker>
@@ -190,7 +192,8 @@
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select placeholder="请选择物料名称"
+                    <el-select :class="{'error':mustFlag&&!itemMat.material_id}"
+                      placeholder="请选择物料名称"
                       v-model="itemMat.material_id"
                       @change="getUnit($event,itemMat)">
                       <el-option v-for="item in decorateMaterialList"
@@ -225,12 +228,14 @@
                     </div>
                   </div>
                   <div class="info elCtn spaceBetween">
-                    <el-input class="once"
+                    <el-input :class="{'error':mustFlag&&!itemMat.price}"
+                      class="once"
                       placeholder="单价"
                       v-model="itemMat.price">
                       <template slot="append">元</template>
                     </el-input>
-                    <el-input class="once"
+                    <el-input :class="{'error':mustFlag&&!itemMat.number}"
+                      class="once"
                       placeholder="数量"
                       v-model="itemMat.number">
                       <template slot="append">{{itemMat.unit}}</template>
@@ -374,7 +379,8 @@
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-cascader v-model="materialStockInfo.tree_data"
+                    <el-cascader :class="{'error':mustFlag&&materialStockInfo.tree_data.length===0}"
+                      v-model="materialStockInfo.tree_data"
                       :options="storeList"
                       placeholder="请选择仓库"
                       @change="(ev)=>{materialStockInfo.store_id=ev[0];materialStockInfo.secondary_store_id=ev[1]}"></el-cascader>
@@ -395,7 +401,8 @@
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select placeholder="单据物料"
+                    <el-select :class="{'error':mustFlag&&!item.rel_doc_info_id}"
+                      placeholder="单据物料"
                       v-model="item.rel_doc_info_id"
                       @change="getMatId($event,item)">
                       <el-option v-for="item in materialStockInfo.selectList"
@@ -446,7 +453,8 @@
                     <span class="explanation">(必填)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input placeholder="数量"
+                    <el-input :class="{'error':mustFlag&&!item.number}"
+                      placeholder="数量"
                       class="UnitCtn"
                       v-model="item.number">
                       <template slot="append">
@@ -493,7 +501,8 @@
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-date-picker style="width:100%"
+                    <el-date-picker :class="{'error':mustFlag&&!materialStockInfo.complete_time}"
+                      style="width:100%"
                       class="once"
                       placeholder="入库日期"
                       value-format="yyyy-MM-dd"
@@ -630,7 +639,7 @@
                     placeholder="数量"
                     v-model="itemMat.number"
                     @focus="$focusInput($event)">
-                    <template slot="append">kg</template>
+                    <template slot="append">{{itemMat.unit}}</template>
                   </el-input>
                 </div>
               </div>
@@ -795,6 +804,7 @@ export default Vue.extend({
     return {
       loading: true,
       saveLock: false,
+      mustFlag: false,
       step: 1,
       orderInfo: {
         id: null,
@@ -1120,8 +1130,11 @@ export default Vue.extend({
             }
           }
           this.saveLock = false
+          this.mustFlag = false
           this.loading = false
         })
+      } else {
+        this.mustFlag = true
       }
     },
     goStock(materialOrderList: MaterialOrderInfo[]) {
@@ -1186,8 +1199,11 @@ export default Vue.extend({
             this.resetOrderMaterial()
             this.materialOrderFlag = false
             this.init()
+            this.mustFlag = false
           }
         })
+      } else {
+        this.mustFlag = true
       }
     },
     deleteMaterialOrder(id: number) {
@@ -1322,6 +1338,11 @@ export default Vue.extend({
 #accessoriesManageDetail {
   .el-tabs__content {
     padding: 0;
+  }
+  .error {
+    .el-input__inner {
+      border-color: red !important;
+    }
   }
   .UnitCtn {
     .el-input-group__append {

@@ -13,65 +13,49 @@
           <zh-nav :data="navCmp"></zh-nav>
         </div>
         <div class="rightCtn">
-          <div class="msgCtn">
-            <el-badge>
-              <i class="el-icon-data-line elIcon"></i>
-            </el-badge>
-            <div class="msgTop"></div>
-            <div class="msgBox">
-              <div class="msgOpr">
-                <span>版本公告</span>
-              </div>
-              <div class="msgContent">
-                <div class="noMsg"
-                  v-show="!systemMessageContent">暂无版本公告</div>
-                <div v-html="systemMessageContent"></div>
-              </div>
-              <div class="msgBottom"><span @click="showSystemMessageContent=true;getSystemMessage()">查看历史版本公告</span></div>
-            </div>
-          </div>
           <!-- <i v-show="false"
             class="el-icon-data-line elIcon"
             @click="$router.push('/other/chartIndex')"></i> -->
-          <!-- <div class="msgCtn">
+          <div class="msgCtn">
             <el-badge :is-dot="total>0">
               <i class="el-icon-bell elIcon"
-                @click="$router.push('/other/msgList')"></i>
+                @click="$message.error('暂无')"></i>
             </el-badge>
             <div class="msgTop"></div>
-            <div class="msgBox">
+            <div class="msgBox"
+              v-loading="msgLoading">
               <div class="msgOpr">
-                <span>消息通知</span>
-                <span @click="readAll">全部标记已读</span>
+                <span>待办事项</span>
+                <span class="hoverBlue"
+                  @click="getTodoList">刷新待办事项</span>
               </div>
               <div class="msgContent">
                 <div class="noMsg"
                   v-show="msgList.length===0">暂无新通知</div>
                 <div class="oneMsg"
                   v-for="item in msgList"
-                  :key="item.id">
+                  :key="item.id"
+                  @click="todoUrl(item)">
                   <div class="oneMsgLeft">
                     <div class="oneMsgLine1">
+                      <span class="mark orange">{{item.doc_type|filterType}}</span>
                       <span class="oneMsgTitle"
-                        @click="readMsg(item)"
-                        :class="{'must':item.type==='紧急','normal':item.type==='普通','important':item.type==='重要'}">{{item.title}}</span>
-                      <span class="mark"
-                        :class="{'blue':item.tag==='工序'||item.tag==='审核','purple':item.tag==='公司','yellow':item.tag==='系统' || item.tag === '版本更新公告'}">{{item.tag}}</span>
+                        v-html="changeContentToHtml(item.content)"></span>
                     </div>
-                    <div class="oneMsgLine2">
+                    <!-- <div class="oneMsgLine2">
                       <div class="oneMsgInfo"
                         v-html="item.content"></div>
-                    </div>
+                    </div> -->
                   </div>
                   <div class="oneMsgRight">
-                    <div class="oneMsgLine1">{{item.create_time.slice(0,10)}}</div>
+                    <div class="oneMsgLine1">{{item.updated_at.slice(0,10)}}</div>
                     <div class="oneMsgLine2">{{item.user_name}}</div>
                   </div>
                 </div>
               </div>
-              <div class="msgBottom"><span @click="$router.push('/other/msgList')">查看全部通知</span></div>
+              <div class="msgBottom"><span @click="$message.error('暂无')">查看全部</span></div>
             </div>
-          </div> -->
+          </div>
           <!-- <i class="el-icon-setting elIcon"
             v-show="haveSet"
             @click="$router.push('/setting?pName=产品设置&cName=品类')"></i> -->
@@ -159,72 +143,13 @@
         </div>
       </div>
     </div>
-    <div class="popup"
-      v-show="showSystemMessageContent">
-      <div class="main"
-        style="width: 1000px">
-        <div class="titleCtn">
-          <span class="text">通知列表</span>
-          <div class="closeCtn"
-            @click="showSystemMessageContent = false">
-            <span class="el-icon-close"></span>
-          </div>
-        </div>
-        <div class="contentCtn"
-          style="max-height: 1000px;">
-          <div class="row">
-            <div class="label">筛选条件：</div>
-            <div class="info"
-              style="line-height: 32px">
-              <el-date-picker v-model="chooseMessageDate"
-                @change="getSystemMessage"
-                type="daterange"
-                align="right"
-                value-format="yyyy-MM-dd"
-                unlink-panels
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                :picker-options="pickerOptions">
-              </el-date-picker>
-            </div>
-            <div class="btnCtn">
-              <div class="borderBtn"
-                @click="chooseMessageDate = [];getSystemMessage()">重置</div>
-            </div>
-          </div>
-          <div class="row"
-            style="height: 900px; overflow-y: scroll">
-            <el-collapse v-model="activeNames"
-              style="width: 100%">
-              <el-collapse-item v-for="(item, index) in systemMessageContentList"
-                :key="item + index"
-                :name="index">
-                <template slot="title">
-                  {{ $rTime(item.updated_at) }}
-                  <div style="
-                      width: 680px;
-                      overflow: hidden;
-                      white-space: nowrap;
-                      text-overflow: ellipsis;
-                      margin-left: 20px;
-                    ">
-                    {{ contentHtml(item.content) }}
-                  </div>
-                </template>
-                <div v-html="item.content"></div>
-              </el-collapse-item>
-            </el-collapse>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import Pusher from 'pusher-js' // 全局方法
 import { navInfo } from '@/types/nav'
-import { changePassword, getCoder, productionProgress, systemMessage } from '@/assets/js/api'
+import { changePassword, getCoder, productionProgress, systemMessage, todoInfo } from '@/assets/js/api'
 export default Vue.extend({
   data(): {
     navData: navInfo[]
@@ -233,7 +158,6 @@ export default Vue.extend({
   } {
     return {
       breadHeight: 100,
-      systemMessageContent: '',
       moduleArr: window.sessionStorage.getItem('module_id') as string,
       userName: window.sessionStorage.getItem('user_name'),
       logo: window.sessionStorage.getItem('logo') || require('@/assets/image/common/noPic.png'),
@@ -285,41 +209,7 @@ export default Vue.extend({
           url: '/menu'
         }
       ],
-      systemMessageContentList: [],
-      showSystemMessageContent: false,
-      chooseMessageDate: [],
-      activeNames: '',
-      pickerOptions: {
-        shortcuts: [
-          {
-            text: '最近一周',
-            onClick(picker: any) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近一个月',
-            onClick(picker: any) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近三个月',
-            onClick(picker: any) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-              picker.$emit('pick', [start, end])
-            }
-          }
-        ]
-      }
+      msgLoading: false
     }
   },
   watch: {
@@ -329,25 +219,52 @@ export default Vue.extend({
     }
   },
   methods: {
-    contentHtml(content: string) {
-      // 富文本编辑器的内容如何只获得文字去掉标签
-      // content = content.replace(/<[^>]+>/g, '')
-      // 在上面的基础上还去掉了换行<br/>
-      content = content.replace(/<[^>]+>/g, '').replace(/(\n)/g, '')
-      return content
+    getTodoList() {
+      this.msgLoading = true
+      todoInfo
+        .list({
+          limit: 10,
+          page: 1
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.msgList = res.data.data
+            this.total = this.msgList.length
+          }
+          this.msgLoading = false
+        })
     },
-    getSystemMessage(e: any) {
-      if (e) {
-        systemMessage({
-          start_time: e[0],
-          end_time: e[1]
-        }).then((res) => {
-          this.systemMessageContentList = res.data.data.items
-        })
-      } else {
-        systemMessage().then((res) => {
-          this.systemMessageContentList = res.data.data.items
-        })
+    todoUrl(item: any) {
+      if (item.doc_type === 1) {
+        this.$openUrl('/order/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 2) {
+        this.$openUrl('/materialManage/detail?id=' + item.doc_order_id || item.doc_order_time_id)
+      } else if (item.doc_type === 3) {
+        this.$openUrl('/materialManage/detail?id=' + item.doc_order_id || item.doc_order_time_id)
+      } else if (item.doc_type === 4) {
+        this.$openUrl('/productionPlan/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id)
+      } else if (item.doc_type === 5) {
+        this.$openUrl('/quotedPrice/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 6) {
+        this.$openUrl('/materialStock/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id)
+      } else if (item.doc_type === 7) {
+        this.$openUrl('/materialPlanOrder/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 9) {
+        this.$openUrl('/materialPlan/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 10) {
+        this.$openUrl('/materialManage/detail?id=' + item.doc_id + '&supFlag=1')
+      } else if (item.doc_type === 11) {
+        this.$openUrl('/packManage/detail?id=' + item.doc_order_id)
+      } else if (item.doc_type === 13) {
+        this.$openUrl('/boxManage/boxDetail?id=' + item.doc_id)
+      } else if (item.doc_type === 14) {
+        this.$openUrl('/workshopManagement/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 17) {
+        this.$openUrl('/sampleOrder/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 18) {
+        this.$openUrl(
+          '/accessoriesManage/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id
+        )
       }
     },
     commondHandler(ev: string) {
@@ -470,6 +387,15 @@ export default Vue.extend({
         }
         this.lastTime = curryTime
       }
+    },
+    // 待办事项样式转换
+    changeContentToHtml(str: string): string {
+      return str
+        .replaceAll('修改', '<span style="color:#FA9036">修改</span>')
+        .replaceAll('审核', '<span style="color:#01B48C">审核</span>')
+        .replace(/【.*】/, function (data) {
+          return '<span style="color:#1a95ff">' + data + '</span>'
+        })
     }
   },
   computed: {
@@ -499,10 +425,48 @@ export default Vue.extend({
       }
     }
   },
+  filters: {
+    filterType(val: number) {
+      const arr = [
+        '',
+        '订单',
+        '物料订购单',
+        '物料加工单',
+        '生产计划单',
+        '报价单',
+        '原料出入库单',
+        '产品出入库单',
+        '物料计划单',
+        '补纱单',
+        '包装采购单',
+        '扣款单',
+        '运输单',
+        '车间管理单',
+        '开票单',
+        '收款单',
+        '样单',
+        '辅料采购单'
+      ]
+      return arr[val]
+    }
+  },
   mounted() {
+    this.getTodoList()
     window.addEventListener('keydown', this.smqListener, false)
-    systemMessage().then((res: any) => {
-      this.systemMessageContent = res.data.data.items.length > 0 ? res.data.data.items[0].content : ''
+    // 消息通知
+    let vue = this
+    let pusher = new Pusher('9df11d97766e328a79c4', {
+      cluster: 'ap3',
+      forceTLS: true
+    })
+    let channel = pusher.subscribe('knit_server_' + this.$getsessionStorage('user_id'))
+    channel.bind('knit_server_event', function (data: any) {
+      vue.$notify({
+        title: data.content.title,
+        dangerouslyUseHTMLString: true,
+        duration: 0,
+        message: vue.changeContentToHtml(data.content)
+      })
     })
   },
   beforeDestroy() {

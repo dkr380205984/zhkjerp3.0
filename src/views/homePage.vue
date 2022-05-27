@@ -227,21 +227,64 @@
           </div>
           <div class="content"
             style="overflow: auto">
-            <div class="line"
-              v-for="(item,index) in todoList"
-              :key="index">
-              <span v-html="item.html"></span>
-              <span class="blue fr"
-                style="cursor:pointer">查看</span>
-              <!-- <span class="fr"
-                :class="{'green':item.status===1,'orange':item.status===2}"
-                style="cursor:pointer;margin-right:12px"
-                @click="completeTodo(item)">{{item.status===1?'完成':'已完成'}}</span> -->
+            <div class="tableCtn"
+              style="padding:0">
+              <div class="thead">
+                <div class="trow">
+                  <div class="tcol"
+                    style="max-width:50px">序号</div>
+                  <div class="tcol"
+                    style="max-width:100px">日期</div>
+                  <div class="tcol">待办任务</div>
+                  <div class="tcol"
+                    style="max-width:70px">操作</div>
+                </div>
+              </div>
+              <div class="tbody">
+                <div class="trow"
+                  v-for="(item,index) in todoList"
+                  :key="index">
+                  <div class="tcol"
+                    style="max-width:50px">{{index+1}}</div>
+                  <div class="tcol"
+                    style="max-width:100px">{{item.created_at.slice(0,10)}}</div>
+                  <div class="tcol">
+                    <span v-html="item.html"></span>
+                  </div>
+                  <div class="tcol"
+                    style="max-width:70px">
+                    <span class="blue"
+                      style="cursor:pointer"
+                      @click="todoUrl(item)">查看</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div class="rightCtn">
+        <div class="module">
+          <div class="titleCtn">
+            <div class="title">
+              版本公告
+              <div class="fr hoverBlue"
+                style="font-size: 16px; font-weight: normal; cursor: pointer"
+                @click="showSystemMessageContent=true;getSystemMessage()">
+                查看历史公告
+              </div>
+            </div>
+          </div>
+          <div class="content">
+            <div class="noMsg"
+              v-show="!systemMessageContent">暂无版本公告</div>
+            <div v-html="systemMessageContent"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flexCtn">
+      <div class="leftCtn">
         <div class="module">
           <div class="titleCtn">
             <div class="title">
@@ -265,6 +308,66 @@
         </div>
       </div>
     </div>
+    <div class="popup"
+      v-show="showSystemMessageContent">
+      <div class="main"
+        style="width: 1000px">
+        <div class="titleCtn">
+          <span class="text">通知列表</span>
+          <div class="closeCtn"
+            @click="showSystemMessageContent = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn"
+          style="max-height: 1000px;">
+          <div class="row">
+            <div class="label">筛选条件：</div>
+            <div class="info"
+              style="line-height: 32px">
+              <el-date-picker v-model="chooseMessageDate"
+                @change="getSystemMessage"
+                type="daterange"
+                align="right"
+                value-format="yyyy-MM-dd"
+                unlink-panels
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :picker-options="pickerOptions">
+              </el-date-picker>
+            </div>
+            <div class="btnCtn">
+              <div class="borderBtn"
+                @click="chooseMessageDate = [];getSystemMessage()">重置</div>
+            </div>
+          </div>
+          <div class="row"
+            style="height: 900px; overflow-y: scroll">
+            <el-collapse v-model="activeNames"
+              style="width: 100%">
+              <el-collapse-item v-for="(item, index) in systemMessageContentList"
+                :key="item + index"
+                :name="index">
+                <template slot="title">
+                  {{ $rTime(item.updated_at) }}
+                  <div style="
+                      width: 680px;
+                      overflow: hidden;
+                      white-space: nowrap;
+                      text-overflow: ellipsis;
+                      margin-left: 20px;
+                    ">
+                    {{ contentHtml(item.content) }}
+                  </div>
+                </template>
+                <div v-html="item.content"></div>
+              </el-collapse-item>
+            </el-collapse>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -275,6 +378,42 @@ import { tutorialSystem, systemMessage } from '@/assets/js/api'
 export default Vue.extend({
   data() {
     return {
+      activeNames: '',
+      systemMessageContent: '',
+      systemMessageContentList: [],
+      showSystemMessageContent: false,
+      chooseMessageDate: [],
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }
+        ]
+      },
       searchType: '0',
       searchValue: '',
       history: window.localStorage.getItem('searchHistory')
@@ -462,11 +601,35 @@ export default Vue.extend({
     }
   },
   methods: {
+    contentHtml(content: string) {
+      // 富文本编辑器的内容如何只获得文字去掉标签
+      // content = content.replace(/<[^>]+>/g, '')
+      // 在上面的基础上还去掉了换行<br/>
+      content = content.replace(/<[^>]+>/g, '').replace(/(\n)/g, '')
+      return content
+    },
+    getSystemMessage(e: any) {
+      if (e) {
+        systemMessage({
+          start_time: e[0],
+          end_time: e[1]
+        }).then((res) => {
+          this.systemMessageContentList = res.data.data.items
+        })
+      } else {
+        systemMessage().then((res) => {
+          this.systemMessageContentList = res.data.data.items
+        })
+      }
+    },
     // 待办事项样式转换
     changeContentToHtml(str: string): string {
       return str
         .replaceAll('修改', '<span style="color:#FA9036">修改</span>')
         .replaceAll('审核', '<span style="color:#01B48C">审核</span>')
+        .replace(/【.*】/, function (data) {
+          return '<span style="color:#1a95ff">' + data + '</span>'
+        })
     },
     newSplice(data: any[], index = 5, arr?: any) {
       if (data.length === 0 || !data) {
@@ -576,6 +739,40 @@ export default Vue.extend({
             message: '已取消'
           })
         })
+    },
+    // doc_type 2 3的时候 doc_order_id和doc_order_time_id 分别对应plan_id和sup_id
+    todoUrl(item: any) {
+      if (item.doc_type === 1) {
+        this.$openUrl('/order/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 2) {
+        this.$openUrl('/materialManage/detail?id=' + item.doc_order_id || item.doc_order_time_id)
+      } else if (item.doc_type === 3) {
+        this.$openUrl('/materialManage/detail?id=' + item.doc_order_id || item.doc_order_time_id)
+      } else if (item.doc_type === 4) {
+        this.$openUrl('/productionPlan/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id)
+      } else if (item.doc_type === 5) {
+        this.$openUrl('/quotedPrice/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 6) {
+        this.$openUrl('/materialStock/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id)
+      } else if (item.doc_type === 7) {
+        this.$openUrl('/materialPlanOrder/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 9) {
+        this.$openUrl('/materialPlan/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 10) {
+        this.$openUrl('/materialManage/detail?id=' + item.doc_id + '&supFlag=1')
+      } else if (item.doc_type === 11) {
+        this.$openUrl('/packManage/detail?id=' + item.doc_order_id)
+      } else if (item.doc_type === 13) {
+        this.$openUrl('/boxManage/boxDetail?id=' + item.doc_id)
+      } else if (item.doc_type === 14) {
+        this.$openUrl('/workshopManagement/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 17) {
+        this.$openUrl('/sampleOrder/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 18) {
+        this.$openUrl(
+          '/accessoriesManage/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id
+        )
+      }
     }
   },
   computed: {
@@ -607,13 +804,22 @@ export default Vue.extend({
         flag.isChecked = true
       }
     })
-    Promise.all([tutorialSystem.list({ type: 1 }), todoInfo.list()]).then((res) => {
+    Promise.all([
+      tutorialSystem.list({ type: 1 }),
+      todoInfo.list({
+        limit: 10,
+        page: 1
+      })
+    ]).then((res) => {
       this.tutorialSystemArr = res[0].data.data.slice(0, 8)
       console.log(res[1])
       this.todoList = res[1].data.data
       res[1].data.data.forEach((item: any) => {
         item.html = this.changeContentToHtml(item.content)
       })
+    })
+    systemMessage().then((res: any) => {
+      this.systemMessageContent = res.data.data.items.length > 0 ? res.data.data.items[0].content : ''
     })
   }
 })

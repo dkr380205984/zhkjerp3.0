@@ -169,10 +169,18 @@
           <div class="col flex3">
             <div class="label">{{productType}}图片：</div>
             <div class="imgCtn">
-              <img v-for="(item,index) in productInfo.image_data"
-                :key="index"
+              <el-image :key="index"
                 class="img"
-                :src="item" />
+                v-for="(item,index) in productInfo.image_data"
+                style="width:100%;height:100%"
+                :src="item"
+                :preview-src-list="[item]">
+                <div slot="error"
+                  class="image-slot">
+                  <i class="el-icon-picture-outline"
+                    style="font-size:42px"></i>
+                </div>
+              </el-image>
             </div>
           </div>
         </div>
@@ -209,7 +217,8 @@
               <el-select class="colour"
                 placeholder="请选择产品配色组"
                 v-model="itemColour.color_id"
-                @change="keepColourSame('warp')">
+                @change="keepColourSame('warp')"
+                :class="{'error':colourList.length>0&&mustFlag&&!itemColour.color_id}">
                 <el-option v-for="item in colourList"
                   :key="item.id"
                   :value="item.id"
@@ -274,6 +283,7 @@
               <el-select placeholder="请选择主要原料"
                 v-model="craftInfo.warp_data.material_data[0].material_id"
                 @change="cmpYarnCoefficient"
+                :class="{'error':mustFlag&&!craftInfo.warp_data.material_data[0].material_id}"
                 filterable>
                 <el-option v-for="item in materialList"
                   :key="item.id"
@@ -562,7 +572,8 @@
               <span class="explanation">(根据筘幅说明计算)</span>
             </div>
             <div class="info elCtn">
-              <el-input v-model="craftInfo.warp_data.reed_width"
+              <el-input :class="{'error':mustFlag&&!craftInfo.warp_data.reed_width}"
+                v-model="craftInfo.warp_data.reed_width"
                 disabled
                 placeholder="请输入筘幅">
                 <template slot="append">cm</template>
@@ -1002,7 +1013,8 @@
               <span class="text"></span>
             </div>
             <div class="info elCtn">
-              <el-input v-model="craftInfo.weft_data.rangwei"
+              <el-input :class="{'error':mustFlag&&!craftInfo.weft_data.rangwei}"
+                v-model="craftInfo.weft_data.rangwei"
                 placeholder="请输入让位">
                 <template slot="prepend">让位</template>
                 <template slot="append">cm</template>
@@ -1044,7 +1056,8 @@
               <el-select class="colour"
                 placeholder="请选择产品配色组"
                 v-model="itemColour.color_id"
-                @change="keepColourSame('weft')">
+                @change="keepColourSame('weft')"
+                :class="{'error':colourList.length>0&&mustFlag&&!itemColour.color_id}">
                 <el-option v-for="item in colourList"
                   :key="item.id"
                   :value="item.id"
@@ -1109,6 +1122,7 @@
               <el-select placeholder="请选择主要原料"
                 v-model="craftInfo.weft_data.material_data[0].material_id"
                 @change="cmpYarnCoefficient"
+                :class="{'error':mustFlag&&!craftInfo.weft_data.material_data[0].material_id}"
                 filterable>
                 <el-option v-for="item in materialList"
                   :key="item.id"
@@ -1312,9 +1326,11 @@
           <div class="col">
             <div class="label">
               <span class="text">工艺单名称</span>
+              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
-              <el-input v-model="craftInfo.title"
+              <el-input :class="{'error':mustFlag&&!craftInfo.title}"
+                v-model="craftInfo.title"
                 placeholder="请输入工艺单名称"></el-input>
             </div>
           </div>
@@ -1368,7 +1384,8 @@
               <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
-              <el-input v-model="item.value"
+              <el-input :class="{'error':mustFlag&&!item.value}"
+                v-model="item.value"
                 placeholder="请输入物料系数">
                 <template slot="prepend">{{item.name}}</template>
                 <template slot="append">g/m</template>
@@ -1395,7 +1412,8 @@
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-date-picker style="width:100%"
+              <el-date-picker :class="{'error':mustFlag&&!craftInfo.product_time}"
+                style="width:100%"
                 v-model="craftInfo.product_time"
                 value-format="yyyy-MM-dd"
                 placeholder="请选择下机时间"></el-date-picker>
@@ -1507,6 +1525,7 @@ export default Vue.extend({
     return {
       loading: false,
       saveLock: false,
+      mustFlag: false,
       showUsing: false,
       saveSuccess: false,
       proId: '',
@@ -3323,24 +3342,58 @@ export default Vue.extend({
           this.$formCheck(this.craftInfo.warp_data, [
             {
               key: 'reed_width',
-              errMsg: '请填写筘幅说明'
+              errMsg: '请填写筘幅说明',
+              regNormal: 'isNum'
             }
           ]) ||
           this.$formCheck(this.craftInfo.weft_data, [
             {
               key: 'rangwei',
-              errMsg: '请输入让位信息'
+              errMsg: '请输入让位信息',
+              regNormal: 'isNum'
             }
           ]) ||
           this.craftInfo.yarn_coefficient.some((item) => {
             return this.$formCheck(item, [
               {
                 key: 'value',
-                errMsg: '请输入物料系数'
+                errMsg: '请输入物料系数(数字)',
+                regNormal: 'isNum'
               }
             ])
           })
         if (formCheck) {
+          this.mustFlag = true
+          return
+        }
+        this.tableData.warp.data[1].forEach((item: any) => {
+          if (Number(item) !== 0 && !Number(item)) {
+            formCheck = true
+          }
+        })
+        this.tableData.weft.data[1].forEach((item: any) => {
+          if (Number(item) !== 0 && !Number(item)) {
+            formCheck = true
+          }
+        })
+        if (formCheck) {
+          this.mustFlag = true
+          this.$message.error('经纬向表格内存在未选择的主夹信息，请检查修改后提交')
+          return
+        }
+        this.tableData.warp.data[2].forEach((item: any) => {
+          if (Number(item) !== 0 && !Number(item)) {
+            formCheck = true
+          }
+        })
+        this.tableData.weft.data[2].forEach((item: any) => {
+          if (Number(item) !== 0 && !Number(item)) {
+            formCheck = true
+          }
+        })
+        if (formCheck) {
+          this.mustFlag = true
+          this.$message.error('经纬向表格内存在非数字填写，请检查修改后提交')
           return
         }
         formCheck =
@@ -3349,13 +3402,14 @@ export default Vue.extend({
           this.checkSliceData(this.tableData.weft.data[1]) ||
           this.checkSliceData(this.tableData.weft.data[2])
         if (formCheck) {
+          this.mustFlag = true
           this.$message.error('请完善经纬项信息')
         }
         if (!formCheck) {
-          this.saveLock = true
           this.getCmpData()
           this.getMaterialData()
           this.getMaterialDataTotal()
+          this.saveLock = true
           craft.create(this.craftInfo).then((res) => {
             if (res.data.status) {
               this.$message.success('添加成功')
@@ -3953,6 +4007,11 @@ export default Vue.extend({
 </style>
 <style lang="less">
 #craftCreate {
+  .error {
+    .el-input__inner {
+      border-color: red !important;
+    }
+  }
   .treeCtn {
     .el-input__inner {
       border: 0 !important;

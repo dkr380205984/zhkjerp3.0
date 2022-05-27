@@ -13,7 +13,7 @@
             <div class="tcol">订单号</div>
             <div class="tcol">下单客户</div>
             <div class="tcol">下单时间</div>
-            <div class="tcol">订单状态</div>
+            <div class="tcol">批次信息</div>
             <div class="tcol">创建人</div>
             <div class="tcol noPad"
               style="flex:6">
@@ -39,19 +39,30 @@
               <div class="trow"
                 v-for="item in list"
                 :key="item.id">
-                <div class="tcol">{{item.delivery_time}}</div>
+                <div class="tcol">
+                  <span style="display:flex;flex-direction:column">{{item.delivery_time}}
+                    <span :class="$diffByDate(item.delivery_time)>0?'green':'red'">({{$diffByDate(item.delivery_time)>0?'还剩'+$diffByDate(item.delivery_time)+'天':'逾期'+Math.abs($diffByDate(item.delivery_time))+'天'}})</span>
+                  </span>
+                </div>
                 <div class="tcol">{{item.order_code}}</div>
                 <div class="tcol">{{item.client_name}}</div>
                 <div class="tcol">{{item.order_time}}</div>
                 <div class="tcol"
-                  :class="item.status|orderBatchClassFilter">{{item.status|orderBatchFilter}}</div>
+                  :class="item.status|orderBatchClassFilter">
+                  <span style="display:flex;flex-direction:column">
+                    <span>批次:{{item.batch_number}}</span>
+                    <span>{{item.status|orderBatchFilter}}</span>
+                  </span>
+                </div>
                 <div class="tcol">{{item.user_name}}</div>
                 <div class="tcol noPad"
                   style="flex:6">
                   <div class="trow"
                     v-for="(itemPro,indexPro) in item.product_info"
                     :key="indexPro">
-                    <div class="tcol">{{itemPro.product_code}}</div>
+                    <div class="tcol"><span>{{itemPro.product_code}}
+                        ({{itemPro.category.name}}/{{itemPro.secondary_category.name}})</span>
+                    </div>
                     <div class="tcol">
                       <div class="imageCtn">
                         <el-image style="width:100%;height:100%"
@@ -65,7 +76,12 @@
                         </el-image>
                       </div>
                     </div>
-                    <div class="tcol">{{itemPro.number}}/{{itemPro.total_number||0}}</div>
+                    <div class="tcol">
+                      <span style="display:flex;flex-direction:column">
+                        <span><span class="circle backGreen">批</span>{{itemPro.number}}</span>
+                        <span><span class="circle backBlue">总</span>{{itemPro.total_number||0}}</span>
+                      </span>
+                    </div>
                     <div class="tcol noPad"
                       style="flex:3">
                       <template v-if="itemPro.weave_info">
@@ -356,6 +372,28 @@ export default Vue.extend({
       done()
     },
     getOrderList() {
+      // 测试数据，本地没数据
+      // this.list = [
+      //   {
+      //     delivery_time: '2022-06-01',
+      //     id: 111,
+      //     order_code: 'ADSFASDF-12',
+      //     order_time: '2022-03-21',
+      //     product_info: [
+      //       {
+      //         number: 60818,
+      //         product_code: 'KRCP-2200415-C',
+      //         production_push: 0,
+      //         total_number: 170338,
+      //         weave_info: null,
+      //         image_data: []
+      //       }
+      //     ],
+      //     status: 1,
+      //     user_name: '江仙红'
+      //   }
+      // ]
+      // return
       order
         .deliveryListNoLog({
           company_id: this.$getsessionStorage('company_id'),

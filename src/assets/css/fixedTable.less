@@ -1,17 +1,20 @@
-.fixedTableCtn{
+.fixedTableCtn {
   position: relative;
-  .original{
+
+  .original {
     overflow: auto;
   }
-  .cover{
-    .fixedLeft{
+
+  .cover {
+    .fixedLeft {
       position: absolute;
       left: 0;
       top: 0;
       background: #fff;
       box-shadow: 3px 0px 6px rgba(0, 0, 0, 0.16);
     }
-    .fixedRight{
+
+    .fixedRight {
       position: absolute;
       right: 0;
       top: 0;
@@ -19,21 +22,24 @@
       box-shadow: -3px 0px 6px rgba(0, 0, 0, 0.16);
     }
   }
-  .row{
+
+  .row {
     display: flex;
     height: 55px;
     width: 100%;
-    &.title{
-      .column{
+
+    &.title {
+      .column {
         background: #FAFAFA;
         color: @font85;
       }
     }
-    .column{
+
+    .column {
       font-size: @fontMiddle;
       display: flex;
       align-items: center;
-      padding:0 12px;
+      padding: 0 12px;
       flex: 1;
       max-width: 120px;
       min-width: 120px;
@@ -41,17 +47,20 @@
       border-bottom: 1px solid @borderColor;
       word-break: break-all;
       overflow: hidden;
-      span{
+
+      span {
         width: 100%;
         display: block;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      &.w130{
+
+      &.w130 {
         min-width: 136px;
       }
-      .mark{
+
+      .mark {
         display: block;
         width: 24px;
         height: 24px;
@@ -60,13 +69,15 @@
         line-height: 24px;
         margin-right: 4px;
       }
-      .overText{
+
+      .overText {
         width: 8em;
         overflow: hidden;
-        text-overflow:ellipsis; 
+        text-overflow: ellipsis;
         white-space: nowrap;
       }
-      .sortCtn{
+
+      .sortCtn {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -75,7 +86,8 @@
         height: 100%;
         color: @borderColor;
         text-align: center;
-        .number{
+
+        .number {
           color: @font45;
           font-size: 12px;
           border-left: 1px solid @borderColor;
@@ -83,54 +95,62 @@
           border-radius: 50%;
           padding: 4px 1px;
         }
-        .el-icon-caret-top{
+
+        .el-icon-caret-top {
           position: relative;
           top: 5px;
           cursor: pointer;
           background: #fff;
-          &:hover{
+
+          &:hover {
             color: @blue;
           }
         }
-        .el-icon-caret-bottom{
+
+        .el-icon-caret-bottom {
           position: relative;
           bottom: 5px;
           cursor: pointer;
           background: #fff;
-          &:hover{
+
+          &:hover {
             color: @blue;
           }
         }
       }
-      .imageCtn{
+
+      .imageCtn {
         height: 44px;
-        .el-image{
+
+        .el-image {
           height: 44px;
           width: auto;
         }
       }
     }
   }
+
   ::-webkit-scrollbar {
     /*滚动条整体样式*/
-    width : 16px;  /*高宽分别对应横竖滚动条的尺寸*/
+    width: 16px;
+    /*高宽分别对应横竖滚动条的尺寸*/
     height: 16px;
   }
+
   ::-webkit-scrollbar-thumb {
     /*滚动条里面小方块*/
-    border-radius   : 10px;
+    border-radius: 10px;
     background-color: @blue;
-    background-image: -webkit-linear-gradient(
-        45deg,
+    background-image: -webkit-linear-gradient(45deg,
         rgba(255, 255, 255, 0.1) 25%,
         transparent 25%,
         transparent 50%,
         rgba(255, 255, 255, 0.1) 50%,
         rgba(255, 255, 255, 0.1) 75%,
         transparent 75%,
-        transparent
-    );
-    }
+        transparent);
+  }
+
   ::-webkit-scrollbar-track {
     /*滚动条里面轨道*/
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
