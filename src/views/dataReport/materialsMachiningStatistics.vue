@@ -195,7 +195,7 @@
           <h3>最终加工金额</h3>
           <div class="content">
             <span class="green">
-              <h2>{{ (this.reportData.real.total_number / 10000).toFixed(2) }}</h2>
+              <h2>{{ (this.reportData.real.total_price / 10000).toFixed(2) }}</h2>
             </span>
             <h2 class="unit">万元</h2>
           </div>
