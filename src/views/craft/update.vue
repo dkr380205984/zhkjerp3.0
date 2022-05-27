@@ -2769,10 +2769,6 @@ export default Vue.extend({
             {
               key: 'title',
               errMsg: '请输入工艺单名称'
-            },
-            {
-              key: 'product_time',
-              errMsg: '请选择下机时间'
             }
           ]) ||
           this.craftInfo.warp_data.color_data.some((item) => {

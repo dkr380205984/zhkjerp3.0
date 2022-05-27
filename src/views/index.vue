@@ -19,7 +19,7 @@
           <div class="msgCtn">
             <el-badge :is-dot="total>0">
               <i class="el-icon-bell elIcon"
-                @click="$message.error('暂无')"></i>
+                @click="$router.push('/otherPage/msgList')"></i>
             </el-badge>
             <div class="msgTop"></div>
             <div class="msgBox"
@@ -53,7 +53,7 @@
                   </div>
                 </div>
               </div>
-              <div class="msgBottom"><span @click="$message.error('暂无')">查看全部</span></div>
+              <div class="msgBottom"><span @click="$router.push('/otherPage/msgList')">查看全部</span></div>
             </div>
           </div>
           <!-- <i class="el-icon-setting elIcon"
@@ -224,7 +224,8 @@ export default Vue.extend({
       todoInfo
         .list({
           limit: 10,
-          page: 1
+          page: 1,
+          status: 1
         })
         .then((res) => {
           if (res.data.status) {
@@ -435,6 +436,7 @@ export default Vue.extend({
         '生产计划单',
         '报价单',
         '原料出入库单',
+        '原料预订购单',
         '产品出入库单',
         '物料计划单',
         '补纱单',

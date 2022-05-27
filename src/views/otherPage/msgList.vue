@@ -1,6 +1,6 @@
 <template>
   <div id="msgList"
-    class="indexMain"
+    class="bodyContainer"
     v-loading="loading">
     <div class="head">
       <h2>全部待办任务
@@ -13,42 +13,26 @@
         v-model="activeName"
         @tab-click="handleClick">
         <el-tab-pane name="null">
-          <span slot="label">全部通知
+          <span slot="label">全部待办任务
             <el-badge class="mark"
-              v-show="unread.all>0"
-              :value="unread.all"
+              v-show="type.all>0"
+              :value="type.all"
               :max="99" />
           </span>
         </el-tab-pane>
-        <el-tab-pane name="工序">
-          <span slot="label">工序通知
+        <el-tab-pane name="1">
+          <span slot="label">待完成任务
             <el-badge class="mark"
-              v-show="unread.tag>0"
-              :value="unread.tag"
+              v-show="type.todo>0"
+              :value="type.todo"
               :max="99" />
           </span>
         </el-tab-pane>
-        <el-tab-pane name="审核">
-          <span slot="label">审核通知
+        <el-tab-pane name="2">
+          <span slot="label">已完成任务
             <el-badge class="mark"
-              v-show="unread.check>0"
-              :value="unread.check"
-              :max="99" />
-          </span>
-        </el-tab-pane>
-        <el-tab-pane name="公司">
-          <span slot="label">公司通知
-            <el-badge class="mark"
-              v-show="unread.company>0"
-              :value="unread.company"
-              :max="99" />
-          </span>
-        </el-tab-pane>
-        <el-tab-pane name="系统">
-          <span slot="label">系统通知
-            <el-badge class="mark"
-              v-show="unread.system>0"
-              :value="unread.system"
+              v-show="type.havedo>0"
+              :value="type.havedo"
               :max="99" />
           </span>
         </el-tab-pane>
@@ -60,14 +44,13 @@
           <div class="oneMsg"
             :class="{'unread':item.status===1,'readed':item.status===2}"
             v-for="item in msgList"
-            :key="item.id">
+            :key="item.id"
+            @click="todoUrl(item)">
             <div class="oneMsgLeft">
               <div class="oneMsgLine1">
-                <span class="mark"
-                  :class="{'blue':item.tag==='工序'||item.tag==='审核','purple':item.tag==='公司','yellow':item.tag==='系统' || item.tag === '版本更新公告'}">{{item.tag}}</span>
+                <span class="mark orange">{{item.doc_type|filterType}}</span>
                 <span class="oneMsgTitle"
-                  @click="readMsg(item)"
-                  :class="{'must':item.type==='紧急','normal':item.type==='普通','important':item.type==='重要'}">{{item.title}}</span>
+                  v-html="changeContentToHtml(item.content)"></span>
               </div>
               <div class="oneMsgLine2">
                 <div class="oneMsgInfo"
@@ -75,7 +58,7 @@
               </div>
             </div>
             <div class="oneMsgRight">
-              <div class="oneMsgLine1">{{item.create_time.slice(0,10)}}</div>
+              <div class="oneMsgLine1">{{item.updated_at.slice(0,10)}}</div>
               <div class="oneMsgLine2">{{item.user_name}}</div>
             </div>
           </div>
@@ -87,143 +70,135 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn btnGray"
+          <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
-          <div class="btn btnBlue"
-            @click="$router.push('/other/sendMsg')">发通知</div>
         </div>
       </div>
     </div>
   </div>
 </template>
-<script>
-// import { notify } from '@/assets/js/api.js'
-export default {
-  data () {
+<script lang="ts">
+import Vue from 'vue'
+import { todoInfo } from '@/assets/js/api'
+export default Vue.extend({
+  data() {
     return {
       activeName: 'null',
       noMore: false,
       loading: false,
       pages: 1,
-      msgList: [],
-      unread: {
+      type: {
         all: 0,
-        tag: 0,
-        company: 0,
-        system: 0,
-        check: 0
-      }
+        todo: 0,
+        havedo: 0
+      },
+      msgList: []
     }
   },
   computed: {
-    disabled () {
+    disabled(): boolean {
       return this.loading || this.noMore
     }
   },
+  filters: {
+    filterType(val: number) {
+      const arr = [
+        '',
+        '订单',
+        '物料订购单',
+        '物料加工单',
+        '生产计划单',
+        '报价单',
+        '原料出入库单',
+        '原料预订购单',
+        '产品出入库单',
+        '物料计划单',
+        '补纱单',
+        '包装采购单',
+        '扣款单',
+        '运输单',
+        '车间管理单',
+        '开票单',
+        '收款单',
+        '样单',
+        '辅料采购单'
+      ]
+      return arr[val]
+    }
+  },
   methods: {
-    getNotify () {
-      this.loading = true
-      notify.list({
-        limit: 20,
-        page: this.pages,
-        status: null,
-        tag: this.activeName === 'null' ? null : this.activeName
-      }).then((res) => {
-        this.loading = false
-        this.msgList = this.msgList.concat(res.data.data)
-        if (res.data.data.length === 0) {
-          this.noMore = true
-        }
-      })
-    },
-    readMsg (item) {
-      if (item.tag === '公司' || item.tag === '系统' || item.tag === '版本更新公告') {
-        this.$alert('通知详情：' + item.content, item.title, {
-          confirmButtonText: '确定',
-          dangerouslyUseHTMLString: true
-        })
-      } else {
-        window.open(item.router_url)
-      }
-      if (item.status === 1) {
-        notify.read({
-          id: item.id
-        }).then((res) => {
-          if (res.data.status) {
-            this.msgList.find((itemFind) => itemFind.id === item.id).status = 2
-            if (item.tag === '工序') {
-              this.unread.tag--
-            } else if (item.tag === '公司') {
-              this.unread.company--
-            } else if (item.tag === '系统') {
-              this.unread.system--
-            } else if (item.tag === '审核') {
-              this.unread.check--
-            }
-            this.unread.all--
-          } else {
-            this.$message.error({
-              message: res.data.message
-            })
-          }
-        })
+    todoUrl(item: any) {
+      if (item.doc_type === 1) {
+        this.$openUrl('/order/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 2) {
+        this.$openUrl('/materialManage/detail?id=' + item.doc_order_id || item.doc_order_time_id)
+      } else if (item.doc_type === 3) {
+        this.$openUrl('/materialManage/detail?id=' + item.doc_order_id || item.doc_order_time_id)
+      } else if (item.doc_type === 4) {
+        this.$openUrl('/productionPlan/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id)
+      } else if (item.doc_type === 5) {
+        this.$openUrl('/quotedPrice/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 6) {
+        this.$openUrl('/materialStock/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id)
+      } else if (item.doc_type === 7) {
+        this.$openUrl('/materialPlanOrder/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 9) {
+        this.$openUrl('/materialPlan/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 10) {
+        this.$openUrl('/materialManage/detail?id=' + item.doc_id + '&supFlag=1')
+      } else if (item.doc_type === 11) {
+        this.$openUrl('/packManage/detail?id=' + item.doc_order_id)
+      } else if (item.doc_type === 13) {
+        this.$openUrl('/boxManage/boxDetail?id=' + item.doc_id)
+      } else if (item.doc_type === 14) {
+        this.$openUrl('/workshopManagement/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 17) {
+        this.$openUrl('/sampleOrder/detail?id=' + item.doc_id)
+      } else if (item.doc_type === 18) {
+        this.$openUrl(
+          '/accessoriesManage/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id
+        )
       }
     },
-    readAll () {
-      this.$confirm('是否已读所有通知', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        notify.read({
-          id: null
-        }).then((res) => {
-          this.$message({
-            type: 'success',
-            message: '操作成功'
-          })
-          this.msgList.forEach((item) => {
-            item.status = 2
-          })
-          this.unread = {
-            all: 0,
-            tag: 0,
-            company: 0,
-            system: 0
-          }
+    // 待办事项样式转换
+    changeContentToHtml(str: string): string {
+      return str
+        .replaceAll('修改', '<span style="color:#FA9036">修改</span>')
+        .replaceAll('审核', '<span style="color:#01B48C">审核</span>')
+        .replace(/【.*】/, function (data) {
+          return '<span style="color:#1a95ff">' + data + '</span>'
         })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消操作'
-        })
-      })
     },
-    handleClick (tab, event) {
+    handleClick() {
       this.noMore = false
       this.msgList = []
       this.pages = 1
-      this.getNotify()
+      this.getList()
     },
-    load () {
+    load() {
       this.pages++
-      this.getNotify()
+      this.getList()
+    },
+    getList() {
+      this.loading = true
+      todoInfo
+        .list({
+          limit: 20,
+          page: this.pages,
+          status: this.activeName
+        })
+        .then((res) => {
+          console.log(res)
+          this.msgList = this.msgList.concat(res.data.data)
+          if (res.data.data.length === 0) {
+            this.noMore = true
+          }
+          this.loading = false
+        })
     }
   },
-  mounted () {
-    notify.unread().then((res) => {
-      let data = res.data.data
-      this.unread = {
-        tag: data['工序'] || 0,
-        system: data['系统'] || 0,
-        company: data['公司'] || 0,
-        check: data['审核'] || 0
-      }
-      this.unread.all = this.unread['tag'] + this.unread['system'] + this.unread['company'] + this.unread['check']
-    })
-    this.getNotify()
-  }
-}
+  mounted() {}
+})
 </script>
 <style lang="less" scoped>
 @import '~@/assets/css/otherPage/msgList.less';

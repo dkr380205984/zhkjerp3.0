@@ -168,11 +168,12 @@
         <div class="row">
           <div class="col flex3">
             <div class="label">{{productType}}图片：</div>
-            <div class="imgCtn">
+            <div class="imgCtn"
+              style="max-height:100px">
               <el-image :key="index"
                 class="img"
                 v-for="(item,index) in productInfo.image_data"
-                style="width:100%;height:100%"
+                style="height:100%"
                 :src="item"
                 :preview-src-list="[item]">
                 <div slot="error"
@@ -1412,8 +1413,7 @@
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-date-picker :class="{'error':mustFlag&&!craftInfo.product_time}"
-                style="width:100%"
+              <el-date-picker style="width:100%"
                 v-model="craftInfo.product_time"
                 value-format="yyyy-MM-dd"
                 placeholder="请选择下机时间"></el-date-picker>
@@ -3281,10 +3281,6 @@ export default Vue.extend({
             {
               key: 'title',
               errMsg: '请输入工艺单名称'
-            },
-            {
-              key: 'product_time',
-              errMsg: '请选择下机时间'
             }
           ]) ||
           this.craftInfo.warp_data.color_data.some((item) => {
