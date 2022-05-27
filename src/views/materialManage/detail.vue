@@ -128,7 +128,8 @@
             <div class="title">订购信息</div>
           </div>
           <div class="detailCtn">
-            <div class="checkCtn">
+            <div class="checkCtn"
+              @click="checkType=2;checkDetailFlag=true">
               <el-tooltip class="item"
                 effect="dark"
                 content="点击查看审核日志"
@@ -284,6 +285,14 @@
                   </svg>
                   <span class="text">扣款记录</span>
                 </div>
+                <div class="btn backHoverOrange"
+                  @click="checkType=2;checkFlag=true">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-shenhedingdan"></use>
+                  </svg>
+                  <span class="text">单据审核</span>
+                </div>
               </div>
             </div>
           </div>
@@ -431,7 +440,8 @@
             <div class="title">调取信息</div>
           </div>
           <div class="detailCtn">
-            <div class="checkCtn">
+            <div class="checkCtn"
+              @click="checkType=6;checkDetailFlag=true">
               <el-tooltip class="item"
                 effect="dark"
                 content="点击查看审核日志"
@@ -516,10 +526,15 @@
               </svg>
               <span class="text">物料加工</span>
             </div>
-            <!-- <div class="btn backHoverOrange">
-                  <i class="iconfont">&#xe63b;</i>
-                  <span class="text">单据修改</span>
-                </div> -->
+            <div class="btn backHoverOrange"
+              style="margin-right:12px"
+              @click="checkType=6;checkFlag=true">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">单据审核</span>
+            </div>
             <div class="btn backHoverRed"
               @click="deleteMaterialStock(item.id)">
               <svg class="iconFont"
@@ -2211,6 +2226,16 @@
       :nowPage="true"
       @close="showAssociatedPage = false"
       :show="showAssociatedPage"></associated-page>
+    <zh-check @close="checkFlag=false"
+      @afterCheck="(ev)=>{checkType===2?(materialOrderList.find((item)=>Number(item.id)===Number(materialOrderIndex)).is_check=ev):(materialStockLog.find((item)=>Number(item.id)===Number(materialStockIndex)).is_check=ev)}"
+      :show="checkFlag"
+      :pid="checkType===2?materialOrderIndex:materialStockIndex"
+      :check_type="checkType"
+      :reason="[]"></zh-check>
+    <zh-check-detail :pid="checkType===2?materialOrderIndex:materialStockIndex"
+      :check_type="checkType"
+      :show="checkDetailFlag"
+      @close="checkDetailFlag=false"></zh-check-detail>
   </div>
 </template>
 
@@ -2248,6 +2273,9 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      checkFlag: false,
+      checkDetailFlag: false,
+      checkType: 2, // 标记审核订购单还是调取单
       loading: true,
       saveLock: false,
       mustFlag: false,

@@ -248,13 +248,13 @@ export default Vue.extend({
       oprList: [
         {
           name: (item: any) => {
-            return item.has_material_plan.status === 1 ? '详情' : '添加'
+            return item.has_material_plan.status !== 2 ? '详情' : '添加'
           },
           class: (item: any) => {
-            return item.has_material_plan.status === 1 ? 'hoverBlue' : 'hoverOrange'
+            return item.has_material_plan.status !== 2 ? 'hoverBlue' : 'hoverOrange'
           },
           fn: (item: any) => {
-            if (item.has_material_plan.status === 1) {
+            if (item.has_material_plan.status !== 2) {
               this.$router.push('/materialPlan/detail?id=' + item.order_id + '&sampleOrderIndex=' + item.id)
             } else {
               this.$router.push('/materialPlan/create?id=' + item.order_id + '&sampleOrderIndex=' + item.id)
