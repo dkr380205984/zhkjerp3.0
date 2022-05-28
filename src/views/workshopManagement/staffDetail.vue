@@ -913,7 +913,7 @@ export default Vue.extend({
                   if (itemPro.product_code.indexOf(str) != -1) {
                     let colorGroup = ''
                     itemPro.product_info.forEach((itemColor:any,index:number) => {
-                      colorGroup += (index+1)+'.'+itemColor.color_name+';'
+                      colorGroup += (index+1)+'.'+itemColor.color_name+'；'
                     });
 
                     arr.push({
