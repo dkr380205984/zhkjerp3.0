@@ -578,8 +578,11 @@ export default Vue.extend({
         })
         .then((res) => {
           if (res.data.status) {
-            this.orderInfo = [res.data.data]
-            console.log(this.orderInfo)
+            if (res.data.data.length) {
+              this.orderInfo = res.data.data
+            } else {
+              this.orderInfo = [res.data.data]
+            }
             this.orderInfo.forEach((itemOrder) => {
               // @ts-ignore
               itemOrder.time_data[0].batch_data.forEach((item) => {

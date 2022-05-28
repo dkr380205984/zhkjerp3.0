@@ -69,7 +69,7 @@
               <i class="el-icon-caret-bottom"
                 @click="changeIndex(2,item[itemKey.from].length,item)"></i>
             </div>
-            {{item[itemKey.from][item.whichIndex||0][itemKey.key] || item[itemKey.from][item.whichIndex||0][itemKey.otherkey] || (itemKey.errVal||'未填写')}}
+            {{item[itemKey.from].length>0?(item[itemKey.from][item.whichIndex||0][itemKey.key] || item[itemKey.from][item.whichIndex||0][itemKey.otherkey] || (itemKey.errVal||'未填写')):'未填写'}}
           </template>
           <template v-if="itemKey.from && itemKey.ifImage">
             <div class="imageCtn">

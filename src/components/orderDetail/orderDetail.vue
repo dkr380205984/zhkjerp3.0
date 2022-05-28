@@ -17,7 +17,10 @@
             <div class="row">
               <div class="col">
                 <div class="label">{{orderInfo.order_type===1?'订':'样'}}单号：</div>
-                <div class="text">{{orderInfo.code}}</div>
+                <div class="text">{{orderInfo.code}}
+                  <span v-if="orderInfo.order_type===2&&orderTime"
+                    class="green">(第{{orderTime}}次打样)</span>
+                </div>
               </div>
               <div class="col">
                 <div class="label">创建人：</div>
@@ -426,6 +429,7 @@ export default Vue.extend({
       proId: '',
       productShow: false,
       sampleShow: false,
+      orderTime: 0,
       orderInfo: {
         id: null,
         client_id: '',
@@ -488,6 +492,14 @@ export default Vue.extend({
   watch: {
     data(newVal: OrderDetail) {
       this.orderInfo = newVal
+      if (this.$route.query.sampleOrderIndex) {
+        // 打样次数计算
+        this.orderInfo.time_data.forEach((item, index) => {
+          if (item.id === Number(this.$route.query.sampleOrderIndex)) {
+            this.orderTime = index + 1
+          }
+        })
+      }
       this.getProInfo()
     }
   },
@@ -513,6 +525,14 @@ export default Vue.extend({
         .then((res) => {
           if (res.data.status) {
             this.orderInfo = res.data.data
+            if (this.$route.query.sampleOrderIndex) {
+              // 打样次数计算
+              this.orderInfo.time_data.forEach((item, index) => {
+                if (item.id === Number(this.$route.query.sampleOrderIndex)) {
+                  this.orderTime = index + 1
+                }
+              })
+            }
             this.getProInfo()
           }
         })

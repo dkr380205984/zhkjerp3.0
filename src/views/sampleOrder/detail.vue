@@ -153,7 +153,7 @@
                 <div class="label">完成时间：</div>
                 <div class="text"
                   :class="item.complete_time?'':'gray'">{{item.complete_time || '未填写'}}
-                  <span v-if="item.complete_time"
+                  <span v-if="item.complete_time && Number(item.status)<3"
                     :class="$diffByDate(item.complete_time)>0?'green':'red'">({{$diffByDate(item.complete_time)>0?'还剩'+$diffByDate(item.complete_time)+'天':'逾期'+Math.abs($diffByDate(item.complete_time))+'天'}})</span>
                 </div>
               </div>

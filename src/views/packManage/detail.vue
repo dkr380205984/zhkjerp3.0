@@ -375,7 +375,8 @@
             <div class="title">订购信息</div>
           </div>
           <div class="detailCtn">
-            <div class="checkCtn">
+            <div class="checkCtn"
+              @click="checkDetailFlag=true">
               <el-tooltip class="item"
                 effect="dark"
                 content="点击查看审核日志"
@@ -499,6 +500,14 @@
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">打印订购</span>
+                </div>
+                <div class="btn backHoverOrange"
+                  @click="checkFlag=true">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">审核单据</span>
                 </div>
               </div>
             </div>
@@ -1273,6 +1282,16 @@
         </div>
       </div>
     </div>
+    <zh-check @close="checkFlag=false"
+      @afterCheck="(ev)=>{packOrderLog.find((item)=>Number(item.id)===Number(packOrderLogIndex)).is_check=ev}"
+      :show="checkFlag"
+      :pid="packOrderLogIndex"
+      :check_type="11"
+      :reason="[]"></zh-check>
+    <zh-check-detail :pid="packOrderLogIndex"
+      :check_type="11"
+      :show="checkDetailFlag"
+      @close="checkDetailFlag=false"></zh-check-detail>
   </div>
 </template>
 
@@ -1295,6 +1314,8 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      checkFlag: false,
+      checkDetailFlag: false,
       orderIndex: '0',
       saveLock: false,
       mustFlag: false,

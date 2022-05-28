@@ -3329,17 +3329,21 @@ export default Vue.extend({
           this.craftInfo.warp_data.color_data.forEach((item) => {
             item.color_scheme.forEach((itemColor) => {
               itemColor.number = 0
-              itemColor.material_weight!.forEach((itemWeight) => {
-                itemWeight.weight = 0
-              })
+              if (itemColor.material_weight) {
+                itemColor.material_weight!.forEach((itemWeight) => {
+                  itemWeight.weight = 0
+                })
+              }
             })
           })
           this.craftInfo.weft_data.color_data.forEach((item) => {
             item.color_scheme.forEach((itemColor) => {
               itemColor.number = 0
-              itemColor.material_weight!.forEach((itemWeight) => {
-                itemWeight.weight = 0
-              })
+              if (itemColor.material_weight) {
+                itemColor.material_weight!.forEach((itemWeight) => {
+                  itemWeight.weight = 0
+                })
+              }
             })
           })
           // @ts-ignore

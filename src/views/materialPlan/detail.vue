@@ -14,7 +14,8 @@
             <div class="title">生产计划</div>
           </div>
           <div class="detailCtn">
-            <div class="checkCtn">
+            <div class="checkCtn"
+              @click="checkDetailFlag=true">
               <el-tooltip class="item"
                 effect="dark"
                 content="点击查看审核日志"

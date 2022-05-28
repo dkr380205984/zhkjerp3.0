@@ -2012,7 +2012,6 @@ export default Vue.extend({
             })
             .then((res) => {
               if (res.data.status) {
-                console.log(JSON.parse(res.data.data.draft_method))
                 const oldCraftInfo = res.data.data
 
                 this.craftInfo.warp_data.back_status = oldCraftInfo.warp_data.back_status === 0 ? 2 : 1
@@ -3362,13 +3361,14 @@ export default Vue.extend({
           this.mustFlag = true
           return
         }
+        console.log(this.tableData.warp.data)
         this.tableData.warp.data[1].forEach((item: any) => {
-          if (Number(item) !== 0 && !Number(item)) {
+          if (!item) {
             formCheck = true
           }
         })
         this.tableData.weft.data[1].forEach((item: any) => {
-          if (Number(item) !== 0 && !Number(item)) {
+          if (!item) {
             formCheck = true
           }
         })
