@@ -9,6 +9,8 @@ export interface InspectionInfo {
   color?: string
   part_name?: string
   shoddy_number: string
+  part_shoddy_number: string | number
+  deduct_price: string | number
   shoddy_reason: string | string[]
   client?: string[] | string // 出库单位，存中文，需求如此
 }
