@@ -121,6 +121,8 @@ export default Vue.extend({
         {
           key: 'craft_code',
           name: '工艺单编号',
+          ifCaogao: 'is_draft',
+          caogaoArr: ['稿', '整'],
           ifShow: true,
           ifLock: true,
           index: 0

@@ -17,7 +17,8 @@ Vue.filter('checkFilter', (val: 0 | 1 | 2 | null) => {
   const imgArr = [
     require('@/assets/image/common/waiting.png'),
     require('@/assets/image/common/pass.png'),
-    require('@/assets/image/common/return.png')
+    require('@/assets/image/common/return.png'),
+    require('@/assets/image/common/error.png')
   ]
   return imgArr[index]
 })

@@ -1,6 +1,6 @@
 <template>
   <div id="sampleOrderList"
-    v-loading="mainLoading1"
+    v-loading="loading"
     class="bodyContainer">
     <div class="module"
       v-loading="mainLoading"
@@ -8,7 +8,7 @@
       <div class="titleCtn">
         <div class="title">样单列表</div>
       </div>
-      <zh-drop-down :show="showCharts"
+      <!-- <zh-drop-down :show="showCharts"
         position="bottom"
         hideTitle="点击查看图表"
         style="padding-top: 10px">
@@ -17,7 +17,7 @@
             style="height: 200px"
             v-on:chartsData="chartsData"></zh-charts>
         </div>
-      </zh-drop-down>
+      </zh-drop-down> -->
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
@@ -774,51 +774,51 @@ export default Vue.extend({
       this.option.series[2].data = []
       this.option.series[3].data = []
       this.option.xAxis[0].data = []
-      statistics
-        .sampleOrderProgressChart({
-          order_type: 2,
-          keyword: this.keyword,
-          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
-          is_check: this.status,
-          status: this.type,
-          start_time: this.$GetDateStr(-3),
-          end_time: this.$GetDateStr(14),
-          // start_time: this.date.length > 1 ? this.date[0] : this.$GetDateStr(-3),
-          // end_time: this.date.length > 1 ? this.date[1] : this.$GetDateStr(14),
-          user_id: this.user_id,
-          group_id: this.group_id
-        })
-        .then((res) => {
-          for (let key in res.data.data) {
-            let hasNumber = Object.values(res.data.data[key]).find((res: any) => {
-              return res > 0
-            })
-            this.showCharts = !!hasNumber || this.showCharts
-            this.option.series[0].data.push(res.data.data[key].completed)
-            this.option.series[3].data.push(res.data.data[key].number - res.data.data[key].postpone - res.data.data[key].completed)
-            if (this.option.series[0].data.length < 4) {
-              this.option.series[1].data.push(0)
-              this.option.series[2].data.push(res.data.data[key].postpone)
-            } else {
-              this.option.series[2].data.push(0)
-              this.option.series[1].data.push(res.data.data[key].postpone)
-            }
+      // statistics
+      //   .sampleOrderProgressChart({
+      //     order_type: 2,
+      //     keyword: this.keyword,
+      //     client_id: this.client_id.length > 0 ? this.client_id[2] : '',
+      //     is_check: this.status,
+      //     status: this.type,
+      //     start_time: this.$GetDateStr(-3),
+      //     end_time: this.$GetDateStr(14),
+      //     // start_time: this.date.length > 1 ? this.date[0] : this.$GetDateStr(-3),
+      //     // end_time: this.date.length > 1 ? this.date[1] : this.$GetDateStr(14),
+      //     user_id: this.user_id,
+      //     group_id: this.group_id
+      //   })
+      //   .then((res) => {
+      //     for (let key in res.data.data) {
+      //       let hasNumber = Object.values(res.data.data[key]).find((res: any) => {
+      //         return res > 0
+      //       })
+      //       this.showCharts = !!hasNumber || this.showCharts
+      //       this.option.series[0].data.push(res.data.data[key].completed)
+      //       this.option.series[3].data.push(res.data.data[key].number - res.data.data[key].postpone - res.data.data[key].completed)
+      //       if (this.option.series[0].data.length < 4) {
+      //         this.option.series[1].data.push(0)
+      //         this.option.series[2].data.push(res.data.data[key].postpone)
+      //       } else {
+      //         this.option.series[2].data.push(0)
+      //         this.option.series[1].data.push(res.data.data[key].postpone)
+      //       }
 
-            if (key === new Date().getMonth() + 1 + '-' + new Date().getDate()) {
-              let obj = {
-                value: res.data.data[key].date + '\n今日',
-                textStyle: {
-                  fontSize: 16,
-                  color: '#1A95FF'
-                }
-              }
-              this.option.xAxis[0].data.push(obj)
-              continue
-            }
-            this.option.xAxis[0].data.push(res.data.data[key].date)
-          }
-          this.mainLoading1 = false
-        })
+      //       if (key === new Date().getMonth() + 1 + '-' + new Date().getDate()) {
+      //         let obj = {
+      //           value: res.data.data[key].date + '\n今日',
+      //           textStyle: {
+      //             fontSize: 16,
+      //             color: '#1A95FF'
+      //           }
+      //         }
+      //         this.option.xAxis[0].data.push(obj)
+      //         continue
+      //       }
+      //       this.option.xAxis[0].data.push(res.data.data[key].date)
+      //     }
+      //     this.mainLoading1 = false
+      //   })
 
       sampleOrder
         .list({

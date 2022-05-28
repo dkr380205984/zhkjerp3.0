@@ -98,11 +98,20 @@
             <div class="row">
               <div class="col">
                 <div class="label">{{productType}}图片：</div>
-                <div class="imgCtn">
-                  <img v-for="(item,index) in productInfo.image_data"
-                    :key="index"
+                <div class="imgCtn"
+                  style="max-height:100px">
+                  <el-image :key="index"
                     class="img"
-                    :src="item" />
+                    v-for="(item,index) in productInfo.image_data"
+                    style="height:100%"
+                    :src="item"
+                    :preview-src-list="[item]">
+                    <div slot="error"
+                      class="image-slot">
+                      <i class="el-icon-picture-outline"
+                        style="font-size:42px"></i>
+                    </div>
+                  </el-image>
                 </div>
               </div>
             </div>
@@ -2041,6 +2050,10 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.craftInfo = res.data.data
+          if (this.craftInfo.is_draft === 1) {
+            this.$message('请完善草稿信息')
+            this.$router.push('/craft/update?id=' + this.$route.query.id)
+          }
           this.productInfo = res.data.data.product_info
           this.tableData.warp.data = this.craftInfo.warp_data.warp_rank.map((item: any, index) => {
             return index !== 1

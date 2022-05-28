@@ -14,7 +14,8 @@
             <div class="title">计划加工</div>
           </div>
           <div class="detailCtn">
-            <div class="checkCtn">
+            <div class="checkCtn"
+              @click="checkType=9;checkDetailFlag=true">
               <el-tooltip class="item"
                 effect="dark"
                 content="点击查看审核日志"
@@ -147,6 +148,15 @@
             <div class="title">加工单据</div>
           </div>
           <div class="detailCtn">
+            <div class="checkCtn"
+              @click="checkType=4;checkDetailFlag=true">
+              <el-tooltip class="item"
+                effect="dark"
+                content="点击查看审核日志"
+                placement="bottom">
+                <img :src="item.is_check|checkFilter" />
+              </el-tooltip>
+            </div>
             <div class="row">
               <div class="col">
                 <div class="label">关联计划单：</div>
@@ -315,6 +325,14 @@
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">结余入库</span>
+                </div>
+                <div class="btn backHoverOrange"
+                  @click="checkType=4;checkFlag=true">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">审核单据</span>
                 </div>
               </div>
             </div>
@@ -1533,6 +1551,16 @@
       :orderId="storeSurplusInfo.order_id"
       :orderCode="storeSurplusInfo.order_code"
       :show="storeSurplusFlag"></store-surplus>
+    <zh-check @close="checkFlag=false"
+      @afterCheck="(ev)=>{checkType===9?(materialPlanInfo.find((item)=>Number(item.id)===Number(materialPlanIndex)).is_check=ev):(productionPlanList.find((item)=>Number(item.id)===Number(productionPlanIndex)).is_check=ev)}"
+      :show="checkFlag"
+      :pid="checkType===9?materialPlanIndex:productionPlanIndex"
+      :check_type="checkType"
+      :reason="[]"></zh-check>
+    <zh-check-detail :pid="checkType===9?materialPlanIndex:productionPlanIndex"
+      :check_type="checkType"
+      :show="checkDetailFlag"
+      @close="checkDetailFlag=false"></zh-check-detail>
   </div>
 </template>
 
@@ -1562,6 +1590,9 @@ export default Vue.extend({
     return {
       loading: true,
       saveLock: false,
+      checkFlag: false,
+      checkDetailFlag: false,
+      checkType: 9,
       storeSurplusFlag: false,
       mustFlag: false,
       storeSurplusInfo: {

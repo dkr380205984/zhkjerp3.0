@@ -251,7 +251,7 @@ export default Vue.extend({
       } else if (item.doc_type === 7) {
         this.$openUrl('/materialPlanOrder/detail?id=' + item.doc_id)
       } else if (item.doc_type === 9) {
-        this.$openUrl('/materialPlan/detail?id=' + item.doc_id)
+        this.$openUrl('/materialPlan/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id)
       } else if (item.doc_type === 10) {
         this.$openUrl('/materialManage/detail?id=' + item.doc_id + '&supFlag=1')
       } else if (item.doc_type === 11) {

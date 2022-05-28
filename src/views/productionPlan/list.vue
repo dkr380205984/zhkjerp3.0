@@ -227,8 +227,8 @@ export default Vue.extend({
         {
           key: 'has_material_plan',
           name: '物料计划状态',
-          filterArr: ['', '已添加', '待添加'],
-          classArr: ['', 'blue', 'orange'],
+          filterArr: ['', '已添加', '待添加', '部分添加'],
+          classArr: ['', 'blue', 'gray', 'orange'],
           ifShow: true,
           ifLock: false,
           index: 7,
@@ -283,13 +283,13 @@ export default Vue.extend({
       oprList: [
         {
           name: (item: any) => {
-            return item.has_material_plan.status === 1 ? '生产计划' : '待添加物料计划'
+            return item.has_material_plan.status !== 2 ? '生产计划' : '待添加物料计划'
           },
           class: (item: any) => {
-            return item.has_material_plan.status === 1 ? 'hoverBlue' : 'gray'
+            return item.has_material_plan.status !== 2 ? 'hoverBlue' : 'gray'
           },
           fn: (item: any) => {
-            item.has_material_plan.status === 1
+            item.has_material_plan.status !== 2
               ? this.$router.push('/productionPlan/detail?id=' + item.order_id + '&sampleOrderIndex=' + item.id)
               : this.$message.warning('请先添加物料计划')
           }

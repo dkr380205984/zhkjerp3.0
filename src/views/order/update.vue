@@ -1274,6 +1274,8 @@ export default Vue.extend({
               url: item
             }
           })
+          this.orderInfo.public_files = []
+          this.orderInfo.private_files = []
           this.orderInfo.time_data.batch_data.forEach((item) => {
             item.product_data.forEach((itemChild) => {
               this.getColour(Number(itemChild.product_id), itemChild)
