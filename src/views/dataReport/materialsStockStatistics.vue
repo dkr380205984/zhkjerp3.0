@@ -154,8 +154,59 @@ export default Vue.extend({
             crossStyle: {
               color: '#999'
             }
+          },
+          formatter: (params: any) => {
+            var htmlStr = '<div>'
+            htmlStr += params[0].name + '<br/>' //x轴的名称
+            params.forEach((param: any, index: number) => {
+              var color = param.color //图例颜色
+
+              //为了保证和原来的效果一样，这里自己实现了一个点的效果
+              htmlStr +=
+                '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:' +
+                color +
+                ';"></span>'
+
+              //添加一个汉字，这里你可以格式你的数字或者自定义文本内容
+              htmlStr +=
+                param.seriesName +
+                '：' +
+                '<span style="color:' +
+                color +
+                ';margin-right:10px">' +
+                param.value +
+                '</span>' +
+                (index === 1 ? '万元' : '吨或千米')
+
+              htmlStr += '</div>'
+            })
+
+            return htmlStr
           }
         },
+        dataZoom: [
+          {
+            start: 0, //默认为0
+            end: 100 - 1500 / 31, //默认为100
+            type: 'slider',
+            maxValueSpan: 10, //窗口的大小，显示数据的条数的
+            show: true,
+            handleSize: 0, //滑动条的 左右2个滑动条的大小
+            height: '5%', //组件高度
+            left: 65,
+            right: 85,
+            bottom: 20,
+            borderColor: 'rgba(43,48,67,.8)',
+            fillerColor: '#33384b',
+            zoomLock: true,
+            brushSelect: false,
+            backgroundColor: 'rgba(43,48,67,.8)', //两边未选中的滑动条区域的颜色
+            showDataShadow: false, //是否显示数据阴影 默认auto
+            showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
+            realtime: true, //是否实时更新
+            xAxisIndex: [0] //控制的 x轴
+          }
+        ],
         legend: {
           data: []
         },
@@ -378,8 +429,60 @@ export default Vue.extend({
                 crossStyle: {
                   color: '#999'
                 }
+              },
+              formatter: (params: any) => {
+                var htmlStr = '<div>'
+                htmlStr += params[0].name + '<br/>' //x轴的名称
+                params.forEach((param: any, index: number) => {
+                  var color = param.color //图例颜色
+
+                  if (param.value === '0.00') return
+
+                  //为了保证和原来的效果一样，这里自己实现了一个点的效果
+                  htmlStr +=
+                    '<div><span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:' +
+                    color +
+                    ';"></span>'
+
+                  //添加一个汉字，这里你可以格式你的数字或者自定义文本内容
+                  htmlStr +=
+                    param.seriesName +
+                    '：' +
+                    '<span style="color:' +
+                    color +
+                    ';margin-right:10px">' +
+                    param.value +
+                    '</span>吨或千米'
+
+                  htmlStr += '</div>'
+                })
+
+                return htmlStr
               }
             },
+            dataZoom: [
+              {
+                start: 0, //默认为0
+                end: 100 - 1500 / 31, //默认为100
+                type: 'slider',
+                maxValueSpan: 10, //窗口的大小，显示数据的条数的
+                show: true,
+                handleSize: 0, //滑动条的 左右2个滑动条的大小
+                height: '5%', //组件高度
+                left: 65,
+                right: 85,
+                bottom: 20,
+                borderColor: 'rgba(43,48,67,.8)',
+                fillerColor: '#33384b',
+                zoomLock: true,
+                brushSelect: false,
+                backgroundColor: 'rgba(43,48,67,.8)', //两边未选中的滑动条区域的颜色
+                showDataShadow: false, //是否显示数据阴影 默认auto
+                showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
+                realtime: true, //是否实时更新
+                xAxisIndex: [0] //控制的 x轴
+              }
+            ],
             legend: {
               data: []
             },
@@ -414,7 +517,7 @@ export default Vue.extend({
           })
 
           data.report.forEach((item: any) => {
-            if (item.number !== '0.00') {
+            if (item.number > 5) {
               this.option1.xAxis[0].data.push(item.name)
             }
 
@@ -442,9 +545,11 @@ export default Vue.extend({
             })
 
             data.report.forEach((itemReport: any) => {
-              if (itemReport.number === '0.00') {
+              if (itemReport.number < 5) {
+                console.log(this.option1.series)
                 return
               }
+
               let arr = itemReport.store.map((el: any) => {
                 return el.name
               })
