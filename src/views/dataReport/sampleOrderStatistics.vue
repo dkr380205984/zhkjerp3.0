@@ -256,6 +256,29 @@ export default Vue.extend({
             return htmlStr
           }
         },
+        dataZoom: [
+          {
+            start: 0, //默认为0
+            end: 100 - 1500 / 31, //默认为100
+            type: 'slider',
+            maxValueSpan: 10, //窗口的大小，显示数据的条数的
+            show: true,
+            handleSize: 0, //滑动条的 左右2个滑动条的大小
+            height: '5%', //组件高度
+            left: 65,
+            right: 85,
+            bottom: 20,
+            borderColor: 'rgba(43,48,67,.8)',
+            fillerColor: '#33384b',
+            zoomLock: true,
+            brushSelect: false,
+            backgroundColor: 'rgba(43,48,67,.8)', //两边未选中的滑动条区域的颜色
+            showDataShadow: false, //是否显示数据阴影 默认auto
+            showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
+            realtime: true, //是否实时更新
+            xAxisIndex: [0] //控制的 x轴
+          }
+        ],
         legend: {
           data: ['打样数量', '打样成本']
         },
