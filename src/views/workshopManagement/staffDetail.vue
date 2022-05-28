@@ -230,13 +230,15 @@
                       <div style="display: flex; padding: 0 10px; width: 800px">
                         <div style="flex: 1">产品编号</div>
                         <div style="flex: 1">所属订单号</div>
+                        <div style="flex: 1">包含色组</div>
                         <div style="flex: 1">下单公司</div>
                         <div style="flex: 1">下单时间</div>
                       </div>
                       <el-option v-for="item in orderList" :key="item.value" :label="item.label" :value="item.value">
-                        <div style="display: flex">
+                        <div style="display: flex; white-space: normal;">
                           <span style="flex: 1">{{ item.product_name }}</span>
                           <span style="flex: 1">{{ item.value }}</span>
+                          <span style="width:150px;overflow:hidden;margin-right:10px">{{ item.colorGroup }}</span>
                           <span style="flex: 1"> {{ item.client_name }} </span>
                           <span style="flex: 1">{{ item.created_at }}</span>
                         </div>
@@ -909,11 +911,17 @@ export default Vue.extend({
               res.data.data.forEach((item: any) => {
                 item.product_data.forEach((itemPro: any) => {
                   if (itemPro.product_code.indexOf(str) != -1) {
+                    let colorGroup = ''
+                    itemPro.product_info.forEach((itemColor:any,index:number) => {
+                      colorGroup += (index+1)+'.'+itemColor.color_name+';'
+                    });
+
                     arr.push({
                       value: item.code,
                       id: item.id,
                       created_at: item.created_at,
                       client_name: item.client_name,
+                      colorGroup: colorGroup.slice(0,colorGroup.length-1),
                       product_name: itemPro.product_code
                     })
                   }
