@@ -1,5 +1,5 @@
 <template>
-  <div id="workshopStaffDetail" class="bodyContainer" v-loading="loading">
+  <div id="workshopStaffDetail" class="bodyContainer" style="min-height:1000px;" v-loading="loading">
     <div class="module clearfix">
       <div class="detailCtn">
         <el-checkbox v-model="outCiPin"
@@ -498,6 +498,19 @@
             </div>
           </div>
         </div>
+        <div style="display: flex; justify-content: end">
+          <div class="pageCtn" style="width: 21.2%; margin-bottom: 5px; margin-top: 5px">
+            <el-pagination
+              background
+              :page-size="limit"
+              layout="prev, pager, next"
+              :total="total"
+              :current-page.sync="page"
+              @current-change="changeParams"
+            >
+            </el-pagination>
+          </div>
+        </div>
         <div class="oprCtn">
           <span class="btn borderBtn" @click="closeAddOrder()">取消</span>
           <span class="btn backHoverBlue" @click="confirmSubmit">确认提交</span>
@@ -531,6 +544,9 @@ export default Vue.extend({
       openWindowKey: false,
       autoAssignSizeColor: false,
       reqTime: '',
+      page: 1,
+      limit: 10,
+      total: 0,
       product_arr: [],
       staffList: [],
       orderList: [],
@@ -614,6 +630,7 @@ export default Vue.extend({
           ]
         }
       ],
+      paramsArr: [],
       settlementLogList: [],
       chooseSettlementLogList: [],
       processList: [],
@@ -745,7 +762,12 @@ export default Vue.extend({
       if (value === '') return
 
       this.handleSelect(item, settlementLogIndex, index, itemProIndex, index, settlementLogIndex, 2, value, indexDetail)
+      this.paramsArr = [item, settlementLogIndex, index, itemProIndex, index, settlementLogIndex, 2, value, indexDetail]
       myDOM.popperElm.style.display = 'none'
+    },
+    changeParams(e:any){
+      // @ts-ignore
+      this.handleSelect(...this.paramsArr)
     },
     changeCheck(item: any, bol: boolean) {
       console.log(item, bol)
@@ -835,14 +857,14 @@ export default Vue.extend({
       let params = {}
       if (type === 1) {
         item.product_info[index].order_code = this.orderList[orderIndex].value
-        params = { keyword: item.product_info[index].order_code }
+        params = { keyword: item.product_info[index].order_code, page: 1, limit: 10 }
       } else if (type === 2) {
-        params = { product_code: product_code }
+        params = { product_code: product_code, page: this.page, limit: this.limit }
       }
 
       order.simpleList(params).then((res) => {
         if (type === 1) {
-          order.detail({ id: res.data.data[0].id }).then((ress) => {
+          order.detail({ id: res.data.data.items[0].id }).then((ress) => {
             let data = ress.data.data
             this.productionScheduleUpdate = [
               {
@@ -867,8 +889,9 @@ export default Vue.extend({
             })
           })
         } else if (type === 2) {
-          let data = res.data.data
+          let data = res.data.data.items
           this.productionScheduleUpdate = []
+          this.total = res.data.data.total
 
           data.forEach((items: any, index: number) => {
             this.productionScheduleUpdate.push({
