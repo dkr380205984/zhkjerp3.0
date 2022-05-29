@@ -136,7 +136,7 @@ export default Vue.extend({
             url: '/materialPlanOrder/list?page=1&type=1'
           },
           {
-            name: '工艺单列表',
+            name: '工艺单管理',
             id: '15-3',
             icon: 'icon-gongyidanliebiao',
             url: '/craft/list?page=1'

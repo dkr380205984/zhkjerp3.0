@@ -140,7 +140,8 @@ export default Vue.extend({
       listKey: [],
       originalSetting: [
         {
-          key: 'code',
+          key: 'time_code',
+          otherkey: 'code',
           name: '单据编号',
           ifShow: true,
           ifLock: true,

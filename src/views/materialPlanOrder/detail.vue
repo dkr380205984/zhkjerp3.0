@@ -96,7 +96,7 @@
                   <div class="tcol"></div>
                   <div class="tcol"></div>
                   <div class="tcol green">{{$toFixed(materialOrderTotal.totalNum/1000)}}吨</div>
-                  <div class="tcol green">{{$toFixed(materialOrderTotal.totalPrice/10000)}}万元</div>
+                  <div class="tcol green"></div>
                   <div class="tcol green">{{$toFixed(materialOrderTotal.totalPush/1000)}}吨</div>
                 </div>
               </div>

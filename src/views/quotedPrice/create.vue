@@ -166,9 +166,10 @@
         <div class="lineInfo">
           <div class="text">产品{{index+1}}</div>
           <div class="deleteIcon blue"
-            v-if="$route.query.product_id || $route.query.orderId || $route.query.sampleOrderId">详情
+            v-if="$route.query.product_id || $route.query.orderId || $route.query.sampleOrderId"
+            @click="item.show=!item.show;$forceUpdate()">{{item.show?'关闭':'详情'}}
             <div class="printInfo"
-              v-if="item.product_info">
+              v-if="item.product_info && item.show">
               <div class="items">
                 <div class="label">编号:</div>
                 <div class="contents">{{item.product_info.product_code}}</div>
@@ -347,6 +348,12 @@
                   style="font-size:12px;margin-left:8px;cursor:pointer"
                   @click="showContent?showContent=false:lookPriceDetail(item.type,'material_data')">{{showContent?'关闭说明':'查看说明'}}</span>
               </el-popover>
+              <div class="fr elCtn"
+                style="margin-top:2px">
+                <div class="btn backHoverBlue"
+                  style="line-height:32px;font-weight:normal;"
+                  @click="$openUrl('/setting/?pName=报价单设置&cName=报价模板')">添加新模板</div>
+              </div>
               <div class="fr elCtn"
                 style="margin-right:24px">
                 <el-select v-model="searchQuotedPrice"

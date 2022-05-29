@@ -666,7 +666,8 @@
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
           <div class="btn backHoverOrange"
-            @click="saveOrder(true)">保存为草稿</div>
+            @click="saveOrder(true)"
+            v-if="orderInfo.status<2">保存为草稿</div>
           <div class="btn backHoverBlue"
             @click="saveOrder(false)">修改</div>
         </div>

@@ -91,7 +91,7 @@
           :oprList="oprList"></zh-list>
         <div class="pageCtn">
           <el-pagination background
-            :page-size="5"
+            :page-size="limit"
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
@@ -140,7 +140,8 @@ export default Vue.extend({
       listKey: [],
       originalSetting: [
         {
-          key: 'code',
+          key: 'time_code',
+          otherkey: 'code',
           name: '单据编号',
           ifShow: true,
           ifLock: true,

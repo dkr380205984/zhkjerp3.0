@@ -206,22 +206,12 @@ export default Vue.extend({
           isStatus: true
         },
         {
-          key: 'has_pack_order',
-          name: '包装订购状态',
-          filterArr: ['', '已添加', '待添加'],
-          classArr: ['', 'blue', 'orange'],
-          ifShow: true,
-          ifLock: false,
-          index: 4,
-          isStatus: true
-        },
-        {
           key: 'product_code',
           otherkey: 'system_code',
           name: '产品编号',
           ifShow: true,
           ifLock: false,
-          index: 5,
+          index: 4,
           from: 'product_data',
           mark: true
         },
@@ -231,12 +221,19 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           ifImage: true,
-          index: 6,
+          index: 5,
           from: 'product_data'
         },
         {
           key: 'total_number',
           name: '下单总数',
+          ifShow: true,
+          ifLock: false,
+          index: 6
+        },
+        {
+          key: 'total_transport_number',
+          name: '发货总数',
           ifShow: true,
           ifLock: false,
           index: 7

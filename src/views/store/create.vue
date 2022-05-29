@@ -109,8 +109,9 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverBlue"
-            @click="saveStore">提交</div>
+          <div class="btn"
+            :class="{'backHoverBlue':!$route.query.id,'backHoverOrange':$route.query.id}"
+            @click="saveStore">{{$route.query.id?'修改':'提交'}}</div>
         </div>
       </div>
     </div>
@@ -183,6 +184,32 @@ export default Vue.extend({
         this.userList = res.data.data
       }
     })
+    if (this.$route.query.id) {
+      store
+        .detail({
+          id: Number(this.$route.query.id)
+        })
+        .then((res) => {
+          const data = res.data.data
+          this.storeInfo = {
+            id: data.id,
+            name: data.name,
+            type: data.type,
+            client_id: data.client_id || '',
+            manager_id: data.manager_id || '',
+            tree_data: [],
+            desc: data.desc,
+            store_type: Number(this.$route.query.store_type),
+            secondary_store: data.secondary_store.map((item: any) => {
+              return {
+                id: item.id,
+                name: item.name,
+                is_default: item.is_default
+              }
+            })
+          }
+        })
+    }
     this.$checkCommonInfo([
       {
         checkWhich: 'api/clientType',

@@ -3361,37 +3361,36 @@ export default Vue.extend({
           this.mustFlag = true
           return
         }
-        console.log(this.tableData.warp.data)
-        this.tableData.warp.data[1].forEach((item: any) => {
-          if (!item) {
-            formCheck = true
-          }
-        })
-        this.tableData.weft.data[1].forEach((item: any) => {
-          if (!item) {
-            formCheck = true
-          }
-        })
-        if (formCheck) {
-          this.mustFlag = true
-          this.$message.error('经纬向表格内存在未选择的主夹信息，请检查修改后提交')
-          return
-        }
-        this.tableData.warp.data[2].forEach((item: any) => {
-          if (Number(item) !== 0 && !Number(item)) {
-            formCheck = true
-          }
-        })
-        this.tableData.weft.data[2].forEach((item: any) => {
-          if (Number(item) !== 0 && !Number(item)) {
-            formCheck = true
-          }
-        })
-        if (formCheck) {
-          this.mustFlag = true
-          this.$message.error('经纬向表格内存在非数字填写，请检查修改后提交')
-          return
-        }
+        // this.tableData.warp.data[1].forEach((item: any) => {
+        //   if (!item) {
+        //     formCheck = true
+        //   }
+        // })
+        // this.tableData.weft.data[1].forEach((item: any) => {
+        //   if (!item) {
+        //     formCheck = true
+        //   }
+        // })
+        // if (formCheck) {
+        //   this.mustFlag = true
+        //   this.$message.error('经纬向表格内存在未选择的主夹信息，请检查修改后提交')
+        //   return
+        // }
+        // this.tableData.warp.data[2].forEach((item: any) => {
+        //   if (Number(item) !== 0 && !Number(item)) {
+        //     formCheck = true
+        //   }
+        // })
+        // this.tableData.weft.data[2].forEach((item: any) => {
+        //   if (Number(item) !== 0 && !Number(item)) {
+        //     formCheck = true
+        //   }
+        // })
+        // if (formCheck) {
+        //   this.mustFlag = true
+        //   this.$message.error('经纬向表格内存在非数字填写，请检查修改后提交')
+        //   return
+        // }
         formCheck =
           this.checkSliceData(this.tableData.warp.data[1]) ||
           this.checkSliceData(this.tableData.warp.data[2]) ||

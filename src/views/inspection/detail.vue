@@ -120,7 +120,7 @@
             <div class="col">产品信息</div>
             <div class="col">尺码颜色</div>
             <div class="col">检验数量</div>
-            <div class="col">全次/半次数量</div>
+            <div class="col">全次/半次数</div>
             <div class="col">扣款金额</div>
             <div class="col">次品原因</div>
             <div class="col">操作时间</div>
@@ -140,8 +140,9 @@
             <div class="col"
               :class="{'blue':item.type===1,'orange':item.type===2}">{{item.number}}</div>
             <div class="col"
-              :class="{'gray':!item.shoddy_number&&!item.part_shoddy_number,'red':item.shoddy_number||item.part_shoddy_number}">{{item.shoddy_number||'未填写'}}/{{item.part_shoddy_number||'未填写'}}</div>
-            <div class="col">{{item.deduct_price||0}}元</div>
+              :class="{'gray':!item.shoddy_number&&!item.part_shoddy_number,'red':item.shoddy_number||item.part_shoddy_number}">{{item.shoddy_number||'0'}}/{{item.part_shoddy_number||'0'}}</div>
+            <div class="col"
+              :class="{'red':item.deduct_price}">{{item.deduct_price||0}}元</div>
             <div class="col"
               :class="{'gray':!item.shoddy_reason}">{{item.shoddy_reason||'无'}}</div>
             <div class="col">{{item.complete_time}}</div>
@@ -393,15 +394,15 @@
                           v-if="item.type===2">(无)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-select placeholder="请填写次品原因"
+                        <el-autocomplete placeholder="请填写次品原因"
                           v-model="itemChild.shoddy_reason"
-                          multiple
+                          :fetch-suggestions="searchReason"
                           :disabled="item.type===2">
-                          <el-option v-for="item in shoddy_reason"
+                          <!-- <el-option v-for="item in shoddy_reason"
                             :key="item.value"
                             :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
+                            :value="item.value"></el-option> -->
+                        </el-autocomplete>
                       </div>
                     </div>
                   </div>
@@ -707,6 +708,15 @@ export default Vue.extend({
     }
   },
   methods: {
+    searchReason(str: string, cb: any) {
+      let results = str
+        ? this.shoddy_reason.filter((val: any) => {
+            return val.value.toLowerCase().indexOf(str.toLowerCase()) === 0
+          })
+        : this.shoddy_reason.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
     changeKeyBoard(bol: any) {
       localStorage.showWorkShopKeyBoard = bol
       console.log(localStorage.showWorkShopKeyBoard)
@@ -793,7 +803,9 @@ export default Vue.extend({
       }
     },
     checkList(): ProductionPlanInfo[] {
-      const finded = this.productionPlanMergeList.find((itemFind) => itemFind.process_name === this.productionPlanIndex)
+      const finded = this.$clone(
+        this.productionPlanMergeList.find((itemFind) => itemFind.process_name === this.productionPlanIndex)
+      )
       const checkInfo = finded
         ? finded.childrenMergeInfo.filter((item) => {
             return item.product_info_data.filter((itemChild) => itemChild.check).length > 0
@@ -838,7 +850,7 @@ export default Vue.extend({
               shoddy_number: '',
               part_shoddy_number: '',
               deduct_price: '',
-              shoddy_reason: [],
+              shoddy_reason: '',
               client: []
             }
           })
@@ -853,7 +865,6 @@ export default Vue.extend({
     getCmpData() {
       this.inspectionInfo.forEach((item) =>
         item.child_data.forEach((itemChild) => {
-          itemChild.shoddy_reason = (itemChild.shoddy_reason as string[]).join(',')
           itemChild.client = (itemChild.client as string[]).join(',')
         })
       )
