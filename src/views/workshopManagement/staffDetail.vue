@@ -71,10 +71,10 @@
                     process: '',
                     product_info: [
                       {
-                        code: '',
+                        order_code: '',
                         product_detail_info: [
                           {
-                            order_code: '',
+                            code: '',
                             sizeColorInfo: [
                               {
                                 size_name: '',
@@ -215,7 +215,7 @@
                 >
                   <div class="tcol">
                     <el-select
-                      v-model="itemPro.order_code"
+                      v-model="itemDetail.code"
                       filterable
                       remote
                       placeholder="请输入产品编号"
@@ -224,6 +224,10 @@
                         (ev) => {
                           return $debounce(ev, timer, querySearchAsync1)
                         }
+                      "
+                      :ref="'input' + settlementLogIndex + index + itemProIndex + indexDetail"
+                      @keyup.enter.native="
+                        getChooseOrderList(item, settlementLogIndex, index, itemProIndex, indexDetail)
                       "
                       @change="handleSelect(item, settlementLogIndex, index, itemProIndex, index, settlementLogIndex)"
                     >
@@ -235,10 +239,10 @@
                         <div style="flex: 1">下单时间</div>
                       </div>
                       <el-option v-for="item in orderList" :key="item.value" :label="item.label" :value="item.value">
-                        <div style="display: flex; white-space: normal;">
+                        <div style="display: flex; white-space: normal">
                           <span style="flex: 1">{{ item.product_name }}</span>
                           <span style="flex: 1">{{ item.value }}</span>
-                          <span style="width:150px;overflow:hidden;margin-right:10px">{{ item.colorGroup }}</span>
+                          <span style="width: 150px; overflow: hidden; margin-right: 10px">{{ item.colorGroup }}</span>
                           <span style="flex: 1"> {{ item.client_name }} </span>
                           <span style="flex: 1">{{ item.created_at }}</span>
                         </div>
@@ -397,10 +401,10 @@
                 process: '',
                 product_info: [
                   {
-                    code: '',
+                    order_code: '',
                     product_detail_info: [
                       {
-                        order_code: '',
+                        code: '',
                         sizeColorInfo: [
                           {
                             size_name: '',
@@ -434,11 +438,11 @@
           </div>
         </div>
         <div class="contentCtn" style="padding-top: 15px">
-          <div class="editCtn packOrder" v-for="(item, index) in productionScheduleUpdate" :key="index">
+          <div class="editCtn packOrder">
             <div class="tableCtn">
               <div class="tbody hasTop">
                 <div class="trow">
-                  <div class="tcol">系统编号</div>
+                  <div class="tcol bgGray">订单类型</div>
                   <div class="tcol bgGray">订单号</div>
                   <div class="tcol bgGray">产品编号</div>
                   <div class="tcol bgGray">产品品类</div>
@@ -448,11 +452,11 @@
                   <div class="tcol bgGray">计划生产数量</div>
                   <div class="tcol bgGray">检验入库数量</div>
                   <div class="tcol bgGray" style="flex: 0.2">
-                    <el-checkbox v-model="item.checkAll" @change="checkAllOrder(item)"></el-checkbox>
+                    <el-checkbox v-model="checkAll" @change="checkAllOrder"></el-checkbox>
                   </div>
                 </div>
-                <div class="trow">
-                  <div class="tcol">{{ item.system_code }}</div>
+                <div class="trow" v-for="(item, index) in productionScheduleUpdate" :key="index">
+                  <div class="tcol">{{ item.order_type === 1 ? '订单' : '样单' }}</div>
                   <div class="tcol">{{ item.code }}</div>
                   <div class="tcol noPad" style="flex: 8.82">
                     <div class="trow" v-for="(itemPro, indexPro) in item.product_info" :key="indexPro + 'pro'">
@@ -464,6 +468,8 @@
                       <div class="tcol">
                         <el-image
                           :src="itemPro.img ? itemPro.img : require('@/assets/image/common/noPic.png')"
+                          fit="cover"
+                          style="width: 100px; height: 100px; padding: 10px 0"
                         ></el-image>
                       </div>
                       <div class="tcol noPad" style="flex: 4.005">
@@ -478,7 +484,10 @@
                           <div class="tcol">{{ itemSizeColor.number }}</div>
                           <div class="tcol">{{ itemSizeColor.inspection_number }}</div>
                           <div class="tcol" style="flex: 0.2">
-                            <el-checkbox v-model="itemSizeColor.check" @change="$forceUpdate()"></el-checkbox>
+                            <el-checkbox
+                              v-model="itemSizeColor.check"
+                              @change="changeCheck(itemSizeColor, itemSizeColor.check)"
+                            ></el-checkbox>
                           </div>
                         </div>
                       </div>
@@ -527,6 +536,8 @@ export default Vue.extend({
       orderList: [],
       outCiPin: false,
       searchLoading: false,
+      idDone: false,
+      checkAll: false,
       tabChoose: '',
       // 颜色尺码是否全选
       isCheckAllSizeColor: false,
@@ -722,6 +733,24 @@ export default Vue.extend({
             })
         })
     },
+    getChooseOrderList(
+      item: any,
+      settlementLogIndex: number,
+      index: number,
+      itemProIndex: number,
+      indexDetail: number
+    ) {
+      let myDOM: any = eval('this.$refs.input' + settlementLogIndex + index + itemProIndex + indexDetail)[0]
+      let value = myDOM.$el.querySelector('input').value
+      if (value === '') return
+
+      this.handleSelect(item, settlementLogIndex, index, itemProIndex, index, settlementLogIndex, 2, value, indexDetail)
+      myDOM.popperElm.style.display = 'none'
+    },
+    changeCheck(item: any, bol: boolean) {
+      console.log(item, bol)
+      this.$forceUpdate()
+    },
     getProcessDesc(item: any) {
       process
         .list({
@@ -788,26 +817,37 @@ export default Vue.extend({
       itemIndex: number,
       index: number,
       orderIndex: number,
-      staffIndex: number
+      staffIndex: number,
+      type = 1,
+      product_code = '',
+      indexDetail: number
     ) {
       this.loading = true
+      if (this.isDone) return
+
+      this.idDone = true
       this.lastOneChoose = {
         settlementLogIndex,
         itemIndex,
         itemProIndex: index
       }
-      order
-        .simpleList({
-          keyword: item.product_info[index].order_code
-        })
-        .then((res) => {
+
+      let params = {}
+      if (type === 1) {
+        item.product_info[index].order_code = this.orderList[orderIndex].value
+        params = { keyword: item.product_info[index].order_code }
+      } else if (type === 2) {
+        params = { product_code: product_code }
+      }
+
+      order.simpleList(params).then((res) => {
+        if (type === 1) {
           order.detail({ id: res.data.data[0].id }).then((ress) => {
             let data = ress.data.data
             this.productionScheduleUpdate = [
               {
                 id: data.id,
                 code: data.code,
-                checkAll: false,
                 indexPro: index,
                 indexOrder: orderIndex,
                 indexStaff: staffIndex,
@@ -825,10 +865,39 @@ export default Vue.extend({
                 colorSizeInfo: item.product_info
               })
             })
-            this.addOrder = true
-            this.loading = false
           })
-        })
+        } else if (type === 2) {
+          let data = res.data.data
+          this.productionScheduleUpdate = []
+
+          data.forEach((items: any, index: number) => {
+            this.productionScheduleUpdate.push({
+              id: items.id,
+              code: items.code,
+              indexPro: index,
+              indexOrder: orderIndex,
+              indexStaff: staffIndex,
+              order_type: items.order_type,
+              system_code: items.system_code,
+              product_info: []
+            })
+            items.product_data.forEach((item: any) => {
+              this.productionScheduleUpdate[index].product_info.push({
+                product_code: item.product_code,
+                product_id: item.product_id,
+                name: item.name,
+                img: item.image_data.length > 0 ? item.image_data[0] : '',
+                category: item.category + (item.secondary_category ? '/' + item.secondary_category : ''),
+                colorSizeInfo: item.product_info
+              })
+            })
+          })
+        }
+
+        this.addOrder = true
+        this.loading = false
+        this.idDone = false
+      })
     },
     selectStaff(id: number) {
       this.loading = true
@@ -912,16 +981,16 @@ export default Vue.extend({
                 item.product_data.forEach((itemPro: any) => {
                   if (itemPro.product_code.indexOf(str) != -1) {
                     let colorGroup = ''
-                    itemPro.product_info.forEach((itemColor:any,index:number) => {
-                      colorGroup += (index+1)+'.'+itemColor.color_name+'；'
-                    });
+                    itemPro.product_info.forEach((itemColor: any, index: number) => {
+                      colorGroup += index + 1 + '.' + itemColor.color_name + '；'
+                    })
 
                     arr.push({
                       value: item.code,
                       id: item.id,
                       created_at: item.created_at,
                       client_name: item.client_name,
-                      colorGroup: colorGroup.slice(0,colorGroup.length-1),
+                      colorGroup: colorGroup.slice(0, colorGroup.length - 1),
                       product_name: itemPro.product_code
                     })
                   }
@@ -957,68 +1026,68 @@ export default Vue.extend({
 
       this.settlementLogList.push(obj)
     },
-    checkAllOrder(items: any) {
-      items.product_info.forEach((item: any) => {
-        item.colorSizeInfo.forEach((sizeColor: any) => {
-          sizeColor.check = items.checkAll
+    checkAllOrder(e: any) {
+      this.productionScheduleUpdate.forEach((items: any) => {
+        items.product_info.forEach((item: any) => {
+          item.colorSizeInfo.forEach((sizeColor: any) => {
+            sizeColor.check = e
+          })
         })
+        this.$forceUpdate()
       })
-      this.$forceUpdate()
     },
     confirmSubmit() {
-      let haveTrue = false
+      let arr: any = []
 
-      this.productionScheduleUpdate[0].product_info.forEach((product_info: any) => {
-        product_info.colorSizeInfo.forEach((color: any) => {
-          if (color.check) product_info.check = true
-          if (haveTrue || color.check) {
-            haveTrue = true
-          }
-        })
-      })
+      this.productionScheduleUpdate.forEach((items: any, index: number) => {
+        let haveTrue = false
 
-      if (!haveTrue) return
-
-      let arr: any = [
-        {
-          order_code: this.productionScheduleUpdate[0].code,
-          order_id: this.productionScheduleUpdate[0].id,
-          product_detail_info: []
-        }
-      ]
-
-      this.productionScheduleUpdate[0].product_info.forEach((product_info: any) => {
-        let colorList: any = []
-
-        if (!product_info.check) return
-        arr[0].product_detail_info.push({
-          code: product_info.product_code,
-          product_id: product_info.product_id,
-          sizeColorInfo: []
-        })
-
-        product_info.colorSizeInfo.forEach((color: any) => {
-          colorList.push({
-            name: (color.size_name || '无数据') + '/' + (color.color_name || '无数据'),
-            value: color.size_id + ',' + color.color_id
+        items.product_info.forEach((product_info: any) => {
+          product_info.colorSizeInfo.forEach((color: any) => {
+            if (color.check) product_info.check = true
+            if (haveTrue || color.check) {
+              haveTrue = true
+            }
           })
-          color.colorList = colorList
-          if (!color.check) return
-          color.number = ''
-          color.chooseId = color.size_id + ',' + color.color_id
-          arr[0].product_detail_info[arr[0].product_detail_info.length - 1].sizeColorInfo.push(color)
         })
-      })
 
-      if (this.productionScheduleUpdate[0].indexPro === 0) {
-        this.settlementLogList[this.productionScheduleUpdate[0].indexStaff].processInfo[
-          this.productionScheduleUpdate[0].indexOrder
-        ].product_info = arr
-      } else {
-        this.settlementLogList[this.productionScheduleUpdate[0].indexStaff].processInfo[
-          this.productionScheduleUpdate[0].indexOrder
-        ].product_info[this.productionScheduleUpdate[0].indexPro] = arr[0]
-      }
+        if (!haveTrue) return
+        arr.push({
+          order_code: items.code,
+          order_id: items.id,
+          product_detail_info: []
+        })
+        items.product_info.forEach((product_info: any) => {
+          let colorList: any = []
+
+          if (!product_info.check) return
+          arr[arr.length - 1].product_detail_info.push({
+            code: product_info.product_code,
+            product_id: product_info.product_id,
+            sizeColorInfo: []
+          })
+
+          product_info.colorSizeInfo.forEach((color: any) => {
+            colorList.push({
+              name: (color.size_name || '无数据') + '/' + (color.color_name || '无数据'),
+              value: color.size_id + ',' + color.color_id
+            })
+            color.colorList = colorList
+            if (!color.check) return
+            color.number = ''
+            color.chooseId = color.size_id + ',' + color.color_id
+            arr[arr.length - 1].product_detail_info[
+              arr[arr.length - 1].product_detail_info.length - 1
+            ].sizeColorInfo.push(color)
+          })
+        })
+        if (items.indexPro === 0) {
+          this.settlementLogList[items.indexStaff].processInfo[items.indexOrder].product_info = arr
+        } else {
+          // this.settlementLogList[items.indexStaff].processInfo[items.indexOrder].product_info[items.indexPro] =
+          //   arr[arr.length-1]
+        }
+      })
 
       this.addOrder = false
       this.$forceUpdate()
