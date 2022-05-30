@@ -1,5 +1,5 @@
 <template>
-  <div id="workshopStaffDetail" class="bodyContainer" style="min-height:1000px;" v-loading="loading">
+  <div id="workshopStaffDetail" class="bodyContainer" style="min-height: 1000px" v-loading="loading">
     <div class="module clearfix">
       <div class="detailCtn">
         <el-checkbox v-model="outCiPin"
@@ -23,7 +23,7 @@
           >
             <el-option
               v-for="(item, index) in departmentList"
-              :key="index"
+              :key="index + item.name"
               :value="item.id"
               :label="item.name"
             ></el-option>
@@ -127,8 +127,8 @@
                   placeholder="请选择填写工序说明"
                 >
                   <el-option
-                    v-for="itemSon in item.processDesc"
-                    :key="itemSon.value"
+                    v-for="(itemSon, indexSon) in item.processDesc"
+                    :key="itemSon.value + indexSon"
                     :label="itemSon.label"
                     :value="itemSon.value"
                   >
@@ -175,7 +175,7 @@
               </div>
               <div class="tcol bgGray">操作</div>
             </div>
-            <div class="trow" v-for="(itemPro, itemProIndex) in item.product_info" :key="itemProIndex">
+            <div class="trow" v-for="(itemPro, itemProIndex) in item.product_info" :key="itemProIndex + 'itemProIndex'">
               <div class="tcol" style="flex: 0.3; text-align: center">
                 {{ itemProIndex + 1 }}
               </div>
@@ -198,7 +198,12 @@
                     <div style="flex: 1">下单公司</div>
                     <div style="flex: 1">下单时间</div>
                   </div>
-                  <el-option v-for="item in orderList" :key="item.value" :label="item.label" :value="item.value">
+                  <el-option
+                    v-for="(item, index) in orderList"
+                    :key="item.value + index + 'order'"
+                    :label="item.label"
+                    :value="item.value"
+                  >
                     <div style="display: flex">
                       <span style="flex: 1">{{ item.value }}</span>
                       <span style="flex: 1"> {{ item.client_name }} </span>
@@ -238,7 +243,12 @@
                         <div style="flex: 1">下单公司</div>
                         <div style="flex: 1">下单时间</div>
                       </div>
-                      <el-option v-for="item in orderList" :key="item.value" :label="item.label" :value="item.value">
+                      <el-option
+                        v-for="(item, i) in orderList"
+                        :key="item.value + settlementLogIndex + indexDetail + index + i + 'orderList'"
+                        :label="item.label"
+                        :value="item.value"
+                      >
                         <div style="display: flex; white-space: normal">
                           <span style="flex: 1">{{ item.product_name }}</span>
                           <span style="flex: 1">{{ item.value }}</span>
@@ -331,7 +341,7 @@
                         >
                           <el-option
                             v-for="item in substandardReason"
-                            :key="item.value"
+                            :key="item.value + 'ciPinReason'"
                             :label="item.label"
                             :value="item.value"
                           >
@@ -437,7 +447,7 @@
             <span class="el-icon-close" @click="closeAddOrder()"></span>
           </div>
         </div>
-        <div class="contentCtn" style="padding-top: 15px">
+        <div class="contentCtn" style="padding-top: 15px; max-height: 700px">
           <div class="editCtn packOrder">
             <div class="tableCtn">
               <div class="tbody hasTop">
@@ -455,7 +465,11 @@
                     <el-checkbox v-model="checkAll" @change="checkAllOrder"></el-checkbox>
                   </div>
                 </div>
-                <div class="trow" v-for="(item, index) in productionScheduleUpdate" :key="index">
+                <div
+                  class="trow"
+                  v-for="(item, index) in productionScheduleUpdate"
+                  :key="index + 'productionScheduleUpdate'"
+                >
                   <div class="tcol">{{ item.order_type === 1 ? '订单' : '样单' }}</div>
                   <div class="tcol">{{ item.code }}</div>
                   <div class="tcol noPad" style="flex: 8.82">
@@ -484,10 +498,7 @@
                           <div class="tcol">{{ itemSizeColor.number }}</div>
                           <div class="tcol">{{ itemSizeColor.inspection_number }}</div>
                           <div class="tcol" style="flex: 0.2">
-                            <el-checkbox
-                              v-model="itemSizeColor.check"
-                              @change="changeCheck(itemSizeColor, itemSizeColor.check)"
-                            ></el-checkbox>
+                            <el-checkbox v-model="itemSizeColor.check"></el-checkbox>
                           </div>
                         </div>
                       </div>
@@ -498,18 +509,16 @@
             </div>
           </div>
         </div>
-        <div style="display: flex; justify-content: end">
-          <div class="pageCtn" style="width: 21.2%; margin-bottom: 5px; margin-top: 5px">
-            <el-pagination
-              background
-              :page-size="limit"
-              layout="prev, pager, next"
-              :total="total"
-              :current-page.sync="page"
-              @current-change="changeParams"
-            >
-            </el-pagination>
-          </div>
+        <div style="margin-bottom: 5px; margin-top: 5px; display: flex; justify-content: flex-end; padding-right: 25px">
+          <el-pagination
+            background
+            :page-size="limit"
+            layout="prev, pager, next"
+            :total="total"
+            :current-page.sync="page"
+            @current-change="changeParams"
+          >
+          </el-pagination>
         </div>
         <div class="oprCtn">
           <span class="btn borderBtn" @click="closeAddOrder()">取消</span>
@@ -532,8 +541,9 @@
 import Vue from 'vue'
 import { staff, process, workshop, order } from '@/assets/js/api'
 import zhInput from '@/components/zhInput/zhInput.vue'
+import DeliveryVisualization from '../deliveryVisualization.vue'
 export default Vue.extend({
-  components: { zhInput },
+  components: { zhInput, DeliveryVisualization },
   data(): {
     [propName: string]: any
   } {
@@ -761,17 +771,13 @@ export default Vue.extend({
       let value = myDOM.$el.querySelector('input').value
       if (value === '') return
 
-      this.handleSelect(item, settlementLogIndex, index, itemProIndex, index, settlementLogIndex, 2, value, indexDetail)
-      this.paramsArr = [item, settlementLogIndex, index, itemProIndex, index, settlementLogIndex, 2, value, indexDetail]
+      this.handleSelect(item, settlementLogIndex, index, indexDetail, index, settlementLogIndex, 2, value, indexDetail)
+      this.paramsArr = [item, settlementLogIndex, index, indexDetail, index, settlementLogIndex, 2, value, indexDetail]
       myDOM.popperElm.style.display = 'none'
     },
-    changeParams(e:any){
+    changeParams(e: any) {
       // @ts-ignore
       this.handleSelect(...this.paramsArr)
-    },
-    changeCheck(item: any, bol: boolean) {
-      console.log(item, bol)
-      this.$forceUpdate()
     },
     getProcessDesc(item: any) {
       process
@@ -915,6 +921,7 @@ export default Vue.extend({
               })
             })
           })
+          console.log(this.productionScheduleUpdate)
         }
 
         this.addOrder = true
@@ -1104,12 +1111,8 @@ export default Vue.extend({
             ].sizeColorInfo.push(color)
           })
         })
-        if (items.indexPro === 0) {
-          this.settlementLogList[items.indexStaff].processInfo[items.indexOrder].product_info = arr
-        } else {
-          // this.settlementLogList[items.indexStaff].processInfo[items.indexOrder].product_info[items.indexPro] =
-          //   arr[arr.length-1]
-        }
+
+        this.settlementLogList[items.indexStaff].processInfo[items.indexOrder].product_info = arr
       })
 
       this.addOrder = false
