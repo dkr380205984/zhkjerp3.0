@@ -8,8 +8,13 @@
         v-model="materialPlanIndex">
         <el-tab-pane v-for="(item,index) in materialPlanList"
           :key="index"
-          :name="item.id.toString()"
-          :label="'计划单'+(index+1)">
+          :name="item.id.toString()">
+          <div slot="label">
+            <div style="display:flex;flex-direction:column">
+              <div style="line-height:20px;font-size:14px">计划单{{(index+1)}}</div>
+              <div style="line-height:20px;font-size:14px">{{item.code}}</div>
+            </div>
+          </div>
           <div class="titleCtn">
             <div class="title">计划加工</div>
           </div>
@@ -142,8 +147,13 @@
         v-model="productionPlanIndex">
         <el-tab-pane v-for="(item,index) in productionPlanList"
           :key="index"
-          :name="item.id.toString()"
-          :label="'加工单'+(index+1) +'(' + item.process_name +')'">
+          :name="item.id.toString()">
+          <div slot="label">
+            <div style="display:flex;flex-direction:column">
+              <div style="line-height:20px;font-size:14px">加工单{{(index+1)}}</div>
+              <div style="line-height:20px;font-size:14px">{{item.process_name}}({{item.code}})</div>
+            </div>
+          </div>
           <div class="titleCtn">
             <div class="title">加工单据</div>
           </div>
@@ -159,12 +169,12 @@
             </div>
             <div class="row">
               <div class="col">
-                <div class="label">关联计划单：</div>
-                <div class="text">{{item.plan_code}}</div>
-              </div>
-              <div class="col">
                 <div class="label">加工单号：</div>
                 <div class="text">{{item.code}}</div>
+              </div>
+              <div class="col">
+                <div class="label">关联计划单：</div>
+                <div class="text">{{item.plan_code}}</div>
               </div>
               <div class="col">
                 <div class="label">加工单位：</div>
@@ -339,11 +349,11 @@
           </div>
           <div class="titleCtn"
             style="margin-top:40px"
-            v-if="item.sup_data.length>0">
+            v-if="item.sup_data&&item.sup_data.length>0">
             <div class="title">加工物料补充</div>
           </div>
           <div class="tableCtn"
-            v-if="item.sup_data.length>0">
+            v-if="item.sup_data&&item.sup_data.length>0">
             <div class="thead">
               <div class="trow">
                 <div class="tcol">补纱单编号</div>

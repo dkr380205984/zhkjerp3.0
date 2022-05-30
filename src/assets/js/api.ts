@@ -701,6 +701,19 @@ const materialStock = {
   }) => http.get(`${baseUrl}/store/log/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/store/log/delete`, params, 'application/json'),
   detail: (params: DetailParams) => http.get(`${baseUrl}/store/log/detail`, params),
+  merge: (params: {
+    store_id: string | number
+    secondary_store_id: string | number
+    store_arr: Array<any>
+    material_id: string | number
+    from_store_total_id: Array<any>
+    material_color: string | number
+    attribute: string | number
+    color_code: string | number
+    batch_code: string | number
+    vat_code: string | number
+    number: string | number
+  }) => http.post(`${baseUrl}/combine/store/total`, params, 'application/json'),
 }
 
 // 产品出入库

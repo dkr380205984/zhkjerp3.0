@@ -37,11 +37,10 @@
                   </el-tooltip>
                 </div>
                 <div class="tcol noPad"
-                  style="flex:3">
+                  style="flex:2">
                   <div class="trow">
                     <div class="tcol">产品部位</div>
                     <div class="tcol">计划生产数量</div>
-                    <div class="tcol">操作</div>
                   </div>
                 </div>
               </div>
@@ -74,13 +73,14 @@
                   </div>
                 </div>
                 <div class="tcol noPad"
-                  style="flex:3">
+                  style="flex:2">
                   <div class="trow"
                     v-for="(itemPart,indexPart) in itemChild.info_data"
                     :key="indexPart">
                     <div class="tcol">
                       <div class="elCtn">
-                        <el-select v-model="itemPart.part_id">
+                        <el-select disabled
+                          v-model="itemPart.part_id">
                           <el-option v-for="item in item.part_data"
                             :key="item.id"
                             :value="item.id"
@@ -95,21 +95,6 @@
                           @focus="$focusInput($event)"
                           @change="getMaterialPlanDetail(itemPart.part_id,itemPart.number,itemChild)"></el-input>
                       </div>
-                    </div>
-                    <div class="tcol oprCtn">
-                      <div class="gray"
-                        v-if="item.part_data.length===1">无配件信息</div>
-                      <div class="opr hoverBlue"
-                        v-if="itemChild.info_data.length<item.part_data.length"
-                        @click="$addItem(itemChild.info_data,{
-                          unit: '',
-                          name: '',
-                          part_id: '', // 下拉框选id用
-                          number: ''
-                        })">添加</div>
-                      <div class="opr hoverRed"
-                        v-if="itemChild.info_data.length>1"
-                        @click="$deleteItem(itemChild.info_data,indexPart)">删除</div>
                     </div>
                   </div>
                 </div>
@@ -135,7 +120,8 @@
               <div class="tcol">产品部位</div>
               <div class="tcol">下单数量</div>
               <div class="tcol">计划生产数量</div>
-              <div class="tcol">操作</div>
+              <div class="tcol"
+                style="flex:1.6">操作</div>
             </div>
           </div>
           <div class="tbody"
@@ -154,7 +140,8 @@
                 <div class="tcol">{{item.part_name}}</div>
                 <div class="tcol">{{item.order_number}}</div>
                 <div class="tcol">{{item.number}}</div>
-                <div class="tcol oprCtn">
+                <div class="tcol oprCtn"
+                  style="flex:1.6">
                   <span class="opr blue"
                     @click="$addItem(item.info_data,{
                         process_name_arr:[],
@@ -173,7 +160,7 @@
                   <div class="opr hoverRed"
                     @click="item.info_data=[]">不需要物料</div>
                   <span class="opr orange"
-                    @click="copyMaterialPlanDataInfoFlag=true;copyMaterialPlanDataInfoIndex=index">复制</span>
+                    @click="copyMaterialPlanDataInfoFlag=true;copyMaterialPlanDataInfoIndex=index">复制别组信息</span>
                   <span class="opr green"
                     v-if="showAll"
                     @click="item.showChild=!item.showChild;$forceUpdate()">{{item.showChild?'收起':'展开'}}</span>
@@ -517,17 +504,19 @@
                     </div>
                     <div class="tcol"
                       :class="itemChild.production_number?'blue':'gray'">
-                      <el-input v-model="itemChild.production_number"
-                        placeholder="无计划值"
-                        @focus="$focusInput($event)"
-                        @input="(ev)=>{
+                      <div class="elCtn">
+                        <el-input v-model="itemChild.production_number"
+                          placeholder="无计划值"
+                          @focus="$focusInput($event)"
+                          @input="(ev)=>{
                             itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='kg'||itemChild.unit==='g'?1000:1));
                             itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)
                           }">
-                        <template slot="append">
-                          {{itemChild.unit==='kg'?'g':itemChild.unit}}
-                        </template>
-                      </el-input>
+                          <template slot="append">
+                            {{itemChild.unit==='kg'?'g':itemChild.unit}}
+                          </template>
+                        </el-input>
+                      </div>
                     </div>
                     <div class="tcol">{{itemChild.need_number}}{{itemChild.unit}}</div>
                     <div class="tcol">
@@ -723,7 +712,7 @@ export default Vue.extend({
         process_name: true,
         number: true
       },
-      settingMethod: 2, // 数字取整方式
+      settingMethod: 1, // 数字取整方式
       orderIndex: 0, // 多张订单/样单
       materialPlanInfo: {
         order_id: '',
@@ -957,16 +946,32 @@ export default Vue.extend({
     // 计算所需物料--按尺码颜色
     getMaterialPlanDetail(partId?: number, number?: number, proInfo?: any) {
       if (partId || partId === 0) {
-        const finded = this.materialPlanInfo.material_plan_data.find(
-          (itemFind) =>
-            itemFind.part_id === partId &&
-            itemFind.color_id === proInfo.color_id &&
-            itemFind.size_id === proInfo.size_id
-        )
+        const finded = this.materialPlanInfo.material_plan_data.find((itemFind) => {
+          if (this.materialPlanInfo.type === 1) {
+            return (
+              itemFind.part_id === partId &&
+              itemFind.color_id === proInfo.color_id &&
+              itemFind.size_id === proInfo.size_id
+            )
+          } else {
+            return itemFind.part_id === partId
+          }
+        })
         if (finded) {
           finded.number = number
         }
       }
+      this.materialPlanInfo.material_plan_data.forEach((item: any) => {
+        item.info_data.forEach((itemChild: any) => {
+          itemChild.need_number = this.numberAutoMethod(
+            (Number(itemChild.production_number) * item.number) /
+              (itemChild.unit === 'kg' || itemChild.unit === 'g' ? 1000 : 1)
+          )
+          itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number)
+        })
+      })
+      console.log(this.materialPlanInfo.material_plan_data)
+      this.$forceUpdate()
     },
     getMatId(ev: number[], info: any) {
       info.material_id = ev![2]
