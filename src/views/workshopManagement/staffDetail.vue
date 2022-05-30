@@ -483,7 +483,7 @@
                           :src="itemPro.img.length > 0 ? itemPro.img[0] : require('@/assets/image/common/noPic.png')"
                           :preview-src-list="itemPro.img"
                           fit="cover"
-                          style="width: 80px; height: 80px; padding: 10px 0"
+                          style="width: 45px; height: 45px; padding: 10px 0"
                         ></el-image>
                       </div>
                       <div class="tcol noPad" style="flex: 5.34">
