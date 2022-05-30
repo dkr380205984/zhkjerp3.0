@@ -1579,28 +1579,6 @@
               </template>
               <div class="row">
                 <div class="col">
-                  <div class="label">未审核的样单是否限制后续操作？</div>
-                  <div class="info middle">
-                    <el-radio v-model="sampleOrderCheckConfig.data.not_allow_operate"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="sampleOrderCheckConfig.data.not_allow_operate"
-                      :label="2">否</el-radio>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">未审核的样单是否限制打印？</div>
-                  <div class="info middle">
-                    <el-radio v-model="sampleOrderCheckConfig.data.not_allow_print"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="sampleOrderCheckConfig.data.not_allow_print"
-                      :label="2">否</el-radio>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
                   <div class="label">未审核的样单是否限制添加关联单据 ？</div>
                   <div class="info middle">
                     <el-radio v-model="sampleOrderCheckConfig.data.not_allow_add_rel_doc"
@@ -1710,17 +1688,6 @@
               </template>
               <div class="row">
                 <div class="col">
-                  <div class="label">未审核的订单是否限制打印？</div>
-                  <div class="info middle">
-                    <el-radio v-model="orderCheckConfig.data.not_allow_print"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="orderCheckConfig.data.not_allow_print"
-                      :label="2">否</el-radio>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
                   <div class="label">未审核的订单是否限制添加关联单据 ？</div>
                   <div class="info middle">
                     <el-radio v-model="orderCheckConfig.data.not_allow_add_rel_doc"
@@ -1751,18 +1718,18 @@
           <template v-if="cName ==='原料计划单'">
             <div class="editCtn clearfix"
               style="padding:20px 32px">
-              <template v-if="materialPlanCheckConfig.data.auto_pass===1">
-                <div class="row">
-                  <div class="col">
-                    <div class="label">是否需要系统自动审核通过？</div>
-                    <div class="info middle">
-                      <el-radio v-model="materialPlanCheckConfig.data.auto_pass"
-                        :label="1">需要，并限定通过条件</el-radio>
-                      <el-radio v-model="materialPlanCheckConfig.data.auto_pass"
-                        :label="2">不需要，全部人工审核</el-radio>
-                    </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否需要系统自动审核通过？</div>
+                  <div class="info middle">
+                    <el-radio v-model="materialPlanCheckConfig.data.auto_pass"
+                      :label="1">需要，并限定通过条件</el-radio>
+                    <el-radio v-model="materialPlanCheckConfig.data.auto_pass"
+                      :label="2">不需要，全部人工审核</el-radio>
                   </div>
                 </div>
+              </div>
+              <template v-if="materialPlanCheckConfig.data.auto_pass===1">
                 <div class="row">
                   <div class="col">
                     <div class="label">是否需要限定条件自动通过？</div>
@@ -1825,43 +1792,8 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">报价单对比比例介于该比例之间则自动通过：</div>
-                      <div class="info elCtn"
-                        style="display:flex">
-                        <el-input style="flex:1;margin-right:12px"
-                          placeholder="数值"
-                          v-model="materialPlanCheckConfig.data.contrast_quote_extent">
-                          <template slot="append">%</template>
-                        </el-input>
-                      </div>
-                    </div>
-                  </div>
                 </template>
               </template>
-              <div class="row">
-                <div class="col">
-                  <div class="label">未审核的计划单是否限制后续操作？</div>
-                  <div class="info middle">
-                    <el-radio v-model="materialPlanCheckConfig.data.not_allow_operate"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="materialPlanCheckConfig.data.not_allow_operate"
-                      :label="2">否</el-radio>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">未审核的计划单是否限制打印？</div>
-                  <div class="info middle">
-                    <el-radio v-model="materialPlanCheckConfig.data.not_allow_print"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="materialPlanCheckConfig.data.not_allow_print"
-                      :label="2">否</el-radio>
-                  </div>
-                </div>
-              </div>
               <div class="row">
                 <div class="col">
                   <div class="label">未审核的计划单是否限制添加关联单据 ？</div>
@@ -1964,17 +1896,6 @@
                     <el-radio v-model="materialOrderCheckConfig.data.not_allow_operate"
                       :label="1">是</el-radio>
                     <el-radio v-model="materialOrderCheckConfig.data.not_allow_operate"
-                      :label="2">否</el-radio>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">未审核的订购单是否限制打印？</div>
-                  <div class="info middle">
-                    <el-radio v-model="materialOrderCheckConfig.data.not_allow_print"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="materialOrderCheckConfig.data.not_allow_print"
                       :label="2">否</el-radio>
                   </div>
                 </div>
@@ -2118,28 +2039,6 @@
               </template>
               <div class="row">
                 <div class="col">
-                  <div class="label">未审核的加工单是否限制后续操作？</div>
-                  <div class="info middle">
-                    <el-radio v-model="materialProcessCheckConfig.data.not_allow_operate"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="materialProcessCheckConfig.data.not_allow_operate"
-                      :label="2">否</el-radio>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">未审核的加工单是否限制打印？</div>
-                  <div class="info middle">
-                    <el-radio v-model="materialProcessCheckConfig.data.not_allow_print"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="materialProcessCheckConfig.data.not_allow_print"
-                      :label="2">否</el-radio>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
                   <div class="label">未审核的加工是否限制结算？</div>
                   <div class="info middle">
                     <el-radio v-model="materialProcessCheckConfig.data.not_allow_settle"
@@ -2220,28 +2119,6 @@
                   </div>
                 </template>
               </template>
-              <div class="row">
-                <div class="col">
-                  <div class="label">未审核的调取单是否限制后续操作？</div>
-                  <div class="info middle">
-                    <el-radio v-model="materialStockCheckConfig.data.not_allow_operate"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="materialStockCheckConfig.data.not_allow_operate"
-                      :label="2">否</el-radio>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">未审核的调取单是否限制打印？</div>
-                  <div class="info middle">
-                    <el-radio v-model="materialStockCheckConfig.data.not_allow_print"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="materialStockCheckConfig.data.not_allow_print"
-                      :label="2">否</el-radio>
-                  </div>
-                </div>
-              </div>
               <div class="btnCtn fr"
                 style="margin-top:20px">
                 <div class="btn backHoverBlue"
@@ -2311,43 +2188,8 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">输入可以自动审核通过的报价单对比价格比例：</div>
-                      <div class="info elCtn"
-                        style="display:flex">
-                        <el-input style="flex:1;margin-right:12px"
-                          placeholder="数值"
-                          v-model="accessoriesOrderCheckConfig.data.contrast_quote_extent">
-                          <template slot="append">%</template>
-                        </el-input>
-                      </div>
-                    </div>
-                  </div>
                 </template>
               </template>
-              <div class="row">
-                <div class="col">
-                  <div class="label">未审核的订购单是否限制后续操作？</div>
-                  <div class="info middle">
-                    <el-radio v-model="accessoriesOrderCheckConfig.data.not_allow_operate"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="accessoriesOrderCheckConfig.data.not_allow_operate"
-                      :label="2">否</el-radio>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">未审核的订购单是否限制打印？</div>
-                  <div class="info middle">
-                    <el-radio v-model="accessoriesOrderCheckConfig.data.not_allow_print"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="accessoriesOrderCheckConfig.data.not_allow_print"
-                      :label="2">否</el-radio>
-                  </div>
-                </div>
-              </div>
               <div class="row">
                 <div class="col">
                   <div class="label">未审核的订购单是否限制结算？</div>
@@ -2467,22 +2309,11 @@
               </template>
               <div class="row">
                 <div class="col">
-                  <div class="label">未审核的计划单是否限制后续操作？</div>
+                  <div class="label">未审核的订购单是否限制结算？</div>
                   <div class="info middle">
-                    <el-radio v-model="productionPlanCheckConfig.data.not_allow_operate"
+                    <el-radio v-model="productionPlanCheckConfig.data.not_allow_settle"
                       :label="1">是</el-radio>
-                    <el-radio v-model="productionPlanCheckConfig.data.not_allow_operate"
-                      :label="2">否</el-radio>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">未审核的计划单是否限制打印？</div>
-                  <div class="info middle">
-                    <el-radio v-model="productionPlanCheckConfig.data.not_allow_print"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="productionPlanCheckConfig.data.not_allow_print"
+                    <el-radio v-model="productionPlanCheckConfig.data.not_allow_settle"
                       :label="2">否</el-radio>
                   </div>
                 </div>
@@ -2571,28 +2402,6 @@
                   </div>
                 </template>
               </template>
-              <div class="row">
-                <div class="col">
-                  <div class="label">未审核的订购单是否限制后续操作？</div>
-                  <div class="info middle">
-                    <el-radio v-model="packOrderCheckConfig.data.not_allow_operate"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="packOrderCheckConfig.data.not_allow_operate"
-                      :label="2">否</el-radio>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">未审核的订购单是否限制打印？</div>
-                  <div class="info middle">
-                    <el-radio v-model="packOrderCheckConfig.data.not_allow_print"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="packOrderCheckConfig.data.not_allow_print"
-                      :label="2">否</el-radio>
-                  </div>
-                </div>
-              </div>
               <div class="row">
                 <div class="col">
                   <div class="label">未审核的订购单是否限制结算？</div>
@@ -2690,22 +2499,11 @@
               </template>
               <div class="row">
                 <div class="col">
-                  <div class="label">未审核的订购单是否限制后续操作？</div>
+                  <div class="label">未审核的工资结算单是否限制结算？</div>
                   <div class="info middle">
-                    <el-radio v-model="gongziCheckConfig.data.not_allow_operate"
+                    <el-radio v-model="gongziCheckConfig.data.not_allow_settle"
                       :label="1">是</el-radio>
-                    <el-radio v-model="gongziCheckConfig.data.not_allow_operate"
-                      :label="2">否</el-radio>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">未审核的订购单是否限制打印？</div>
-                  <div class="info middle">
-                    <el-radio v-model="gongziCheckConfig.data.not_allow_print"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="gongziCheckConfig.data.not_allow_print"
+                    <el-radio v-model="gongziCheckConfig.data.not_allow_settle"
                       :label="2">否</el-radio>
                   </div>
                 </div>
@@ -2796,22 +2594,11 @@
               </template>
               <div class="row">
                 <div class="col">
-                  <div class="label">未审核的发货单是否限制后续操作？</div>
+                  <div class="label">未审核的发货单是否限制结算？</div>
                   <div class="info middle">
-                    <el-radio v-model="packOutCheckConfig.data.not_allow_operate"
+                    <el-radio v-model="packOutCheckConfig.data.not_allow_settle"
                       :label="1">是</el-radio>
-                    <el-radio v-model="packOutCheckConfig.data.not_allow_operate"
-                      :label="2">否</el-radio>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="label">未审核的发货单是否限制打印？</div>
-                  <div class="info middle">
-                    <el-radio v-model="packOutCheckConfig.data.not_allow_print"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="packOutCheckConfig.data.not_allow_print"
+                    <el-radio v-model="packOutCheckConfig.data.not_allow_settle"
                       :label="2">否</el-radio>
                   </div>
                 </div>
@@ -4717,7 +4504,7 @@ export default Vue.extend({
       sampleOrderCheckConfig: {
         doc_type: 17,
         data: {
-          auto_pass: 1,
+          auto_pass: 2,
           has_condition: 2, // 是否根据条件判断 1是 2否
           user_id: [],
           client_id: [],
@@ -4731,7 +4518,7 @@ export default Vue.extend({
       orderCheckConfig: {
         doc_type: 1,
         data: {
-          auto_pass: 1,
+          auto_pass: 2,
           has_condition: 2, // 是否根据条件判断 1是 2否
           user_id: [],
           client_id: [],
@@ -4745,7 +4532,7 @@ export default Vue.extend({
       materialPlanCheckConfig: {
         doc_type: 9,
         data: {
-          auto_pass: 1,
+          auto_pass: 2,
           has_condition: 2, // 是否根据条件判断 1是 2否
           user_id: [],
           order_type: '',
@@ -4760,7 +4547,7 @@ export default Vue.extend({
       materialOrderCheckConfig: {
         doc_type: 2,
         data: {
-          auto_pass: 1,
+          auto_pass: 2,
           has_condition: 2, // 是否根据条件判断 1是 2否
           user_id: [],
           total_number: '',
@@ -4774,7 +4561,7 @@ export default Vue.extend({
       materialProcessCheckConfig: {
         doc_type: 3,
         data: {
-          auto_pass: 1,
+          auto_pass: 2,
           has_condition: 2, // 是否根据条件判断 1是 2否
           user_id: [],
           total_number: '',
@@ -4793,7 +4580,7 @@ export default Vue.extend({
       materialStockCheckConfig: {
         doc_type: 6,
         data: {
-          auto_pass: 1,
+          auto_pass: 2,
           has_condition: 2, // 是否根据条件判断 1是 2否
           user_id: [],
           total_number: '',
@@ -4805,7 +4592,7 @@ export default Vue.extend({
       accessoriesOrderCheckConfig: {
         doc_type: 18,
         data: {
-          auto_pass: 1,
+          auto_pass: 2,
           has_condition: 2, // 是否根据条件判断 1是 2否
           user_id: [],
           total_number: '',
@@ -4819,7 +4606,7 @@ export default Vue.extend({
       productionPlanCheckConfig: {
         doc_type: 4,
         data: {
-          auto_pass: 1,
+          auto_pass: 2,
           has_condition: 2, // 是否根据条件判断 1是 2否
           user_id: [],
           total_number: '',
@@ -4831,14 +4618,13 @@ export default Vue.extend({
               max: ''
             }
           ],
-          not_allow_operate: 2, // 	是否限制后续操作 1是 2否
-          not_allow_print: 2 // 限制打印 1是 2否
+          not_allow_settle: 2 // 限制结算 1是 2否
         }
       },
       packOrderCheckConfig: {
         doc_type: 11,
         data: {
-          auto_pass: 1,
+          auto_pass: 2,
           has_condition: 2, // 是否根据条件判断 1是 2否
           user_id: [],
           total_number: '',
@@ -4852,27 +4638,25 @@ export default Vue.extend({
       gongziCheckConfig: {
         doc_type: 14,
         data: {
-          auto_pass: 1,
+          auto_pass: 2,
           has_condition: 2, // 是否根据条件判断 1是 2否
           user_id: [],
           total_number: '',
           total_price: '',
           contrast_quote_extent: '',
-          not_allow_operate: 2, // 	是否限制后续操作 1是 2否
-          not_allow_print: 2 // 限制打印 1是 2否
+           not_allow_settle: 2 // 限制结算 1是 2否
         }
       },
       packOutCheckConfig: {
         doc_type: 13,
         data: {
-          auto_pass: 1,
+          auto_pass: 2,
           has_condition: 2, // 是否根据条件判断 1是 2否
           user_id: [],
           total_number: '',
           total_price: '',
           contrast_quote_extent: '',
-          not_allow_operate: 2, // 	是否限制后续操作 1是 2否
-          not_allow_print: 2 // 限制打印 1是 2否
+          not_allow_settle: 2 // 限制结算 1是 2否
         }
       },
       pName: '',

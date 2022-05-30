@@ -8,8 +8,13 @@
         v-model="materialOrderIndex">
         <el-tab-pane v-for="(item,index) in materialOrderList"
           :key="index"
-          :name="item.id.toString()"
-          :label="'订购单'+(index+1)">
+          :name="item.id.toString()">
+          <div slot="label">
+            <div style="display:flex;flex-direction:column">
+              <div style="line-height:20px;font-size:14px">订购单{{(index+1)}}</div>
+              <div style="line-height:20px;font-size:14px">{{item.code}}</div>
+            </div>
+          </div>
           <div class="titleCtn">
             <div class="title">订购信息</div>
           </div>

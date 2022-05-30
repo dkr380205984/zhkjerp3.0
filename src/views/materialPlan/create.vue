@@ -1291,7 +1291,6 @@ export default Vue.extend({
       })
       this.material_plan_check_data = this.$clone(this.materialPlanInfo.production_plan_data)
       // 处理从工艺单页面进来的逻辑
-      console.log(this.material_plan_check_data)
       if (this.$route.query.product_id) {
         this.material_plan_check_data.forEach((item: any) => {
           if (Number(item.product_id) === Number(this.$route.query.product_id)) {
@@ -1574,6 +1573,13 @@ export default Vue.extend({
       }
     },
     getCmpData() {
+      this.materialPlanInfo.production_plan_data.forEach((item) => {
+        item.product_data.forEach((itemChild) => {
+          itemChild.info_data = itemChild.info_data.filter((itemPart) => {
+            return Number(itemPart.number) && Number(itemPart.number) > 0
+          })
+        })
+      })
       this.materialPlanInfo.order_id = Number(this.orderInfo.time_data[this.orderIndex].id)
       this.materialPlanInfo.material_plan_data.forEach((item) => {
         item.info_data.forEach((itemChild) => {

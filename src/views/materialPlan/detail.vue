@@ -12,7 +12,7 @@
           <div slot="label">
             <div style="display:flex;flex-direction:column">
               <div style="line-height:20px;font-size:14px">计划单{{(indexFather+1)}}</div>
-              <div style="line-height:20px;font-size:14px">{{itemFather.created_at.slice(0,10)}}</div>
+              <div style="line-height:20px;font-size:14px">{{itemFather.code}}</div>
             </div>
           </div>
           <div class="titleCtn">
@@ -204,7 +204,7 @@
                     </el-checkbox>
                   </div>
                   <div class="tcol">{{item.part_name}}</div>
-                  <div class="tcol">{{item.order_number}}</div>
+                  <div class="tcol">{{item.number}}</div>
                   <div class="tcol noPad"
                     style="flex:6">
                     <div class="trow"
@@ -215,7 +215,7 @@
                       <div class="tcol">{{itemChild.material_color}}</div>
                       <div class="tcol">{{itemChild.loss}}%</div>
                       <div class="tcol">{{itemChild.final_number}}kg</div>
-                      <div class="tcol">{{$toFixed(itemChild.final_number/item.order_number*1000)}}g</div>
+                      <div class="tcol">{{$toFixed(itemChild.final_number/item.number*1000)}}g</div>
                     </div>
                   </div>
                 </div>
