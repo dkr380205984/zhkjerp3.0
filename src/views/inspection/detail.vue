@@ -120,7 +120,7 @@
             <div class="col">产品信息</div>
             <div class="col">尺码颜色</div>
             <div class="col">检验数量</div>
-            <div class="col">全次/半次数</div>
+            <div class="col">半次/全次数</div>
             <div class="col">扣款金额</div>
             <div class="col">次品原因</div>
             <div class="col">操作时间</div>
@@ -139,8 +139,10 @@
             <div class="col">{{item.color}}/{{item.size}}</div>
             <div class="col"
               :class="{'blue':item.type===1,'orange':item.type===2}">{{item.number}}</div>
-            <div class="col"
-              :class="{'gray':!item.shoddy_number&&!item.part_shoddy_number,'red':item.shoddy_number||item.part_shoddy_number}">{{item.shoddy_number||'0'}}/{{item.part_shoddy_number||'0'}}</div>
+            <div class="col">
+              <span :class="{'gray':!item.part_shoddy_number,'red':item.part_shoddy_number}">{{item.part_shoddy_number||'0'}}</span>/
+              <span :class="{'gray':!item.shoddy_number,'red':item.shoddy_number}">{{item.shoddy_number||'0'}}</span>
+            </div>
             <div class="col"
               :class="{'red':item.deduct_price}">{{item.deduct_price||0}}元</div>
             <div class="col"
@@ -337,14 +339,12 @@
                     v-if="item.type===1">
                     <div class="label"
                       v-if="indexChild===0">
-                      <span class="text">全次数</span>
-                      <span class="explanation"
-                        v-if="item.type===2">(无)</span>
+                      <span class="text orange">半次数</span>
                     </div>
                     <div class="info elCtn">
                       <zh-input class="inputs"
                         :keyBoard="keyBoard"
-                        v-model="itemChild.shoddy_number"
+                        v-model="itemChild.part_shoddy_number"
                         placeholder="数量"
                         type="number">
                       </zh-input>
@@ -354,12 +354,14 @@
                     v-if="item.type===1">
                     <div class="label"
                       v-if="indexChild===0">
-                      <span class="text">半次数</span>
+                      <span class="text red">全次数</span>
+                      <span class="explanation"
+                        v-if="item.type===2">(无)</span>
                     </div>
                     <div class="info elCtn">
                       <zh-input class="inputs"
                         :keyBoard="keyBoard"
-                        v-model="itemChild.part_shoddy_number"
+                        v-model="itemChild.shoddy_number"
                         placeholder="数量"
                         type="number">
                       </zh-input>

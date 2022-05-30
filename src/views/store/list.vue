@@ -111,8 +111,8 @@
               v-model="color_code"
               @keydown.enter.native="changeRouter"></el-input>
           </div>
-          <!-- <div class="btn backHoverBlue fr"
-            @click="openMerge">合并物料</div> -->
+          <div class="btn backHoverBlue fr"
+            @click="openMerge">合并物料</div>
           <div class="btn backHoverGreen fr"
             @click="goStock(9)">物料入库</div>
           <div class="btn backHoverOrange fr"
@@ -663,7 +663,10 @@
           </div>
         </div>
         <div class="contentCtn">
-          <div class="listCtn"
+          <div class="explainCtn"
+            style="margin:12px 0">搜索并勾选需要合并的物料，合并后，会将这部分物料的数量合并到一个物料上。剩余物料的数量将被清零。</div>
+          <div v-if="mergeStep===1"
+            class="listCtn"
             style="padding:32px 0">
             <div class="filterCtn">
               <div class="elCtn"
@@ -731,7 +734,8 @@
                 <div class="col">{{item.number}}kg</div>
                 <div class="col"
                   style="flex:0.3">
-                  <el-checkbox v-model="item.check"></el-checkbox>
+                  <el-checkbox v-model="item.check"
+                    @change="getMergeCheck($event,item)"></el-checkbox>
                 </div>
               </div>
             </div>
@@ -745,6 +749,120 @@
               </el-pagination>
             </div>
           </div>
+          <div v-if="mergeStep===2"
+            class="listCtn"
+            style="padding:32px 0">
+            <div class="list"
+              v-loading="mergeLoading"
+              style="min-height:100px">
+              <div class="row title">
+                <div class="col">仓库名称</div>
+                <div class="col">待合并物料</div>
+                <div class="col">待合并颜色</div>
+                <div class="col"
+                  v-if="$route.query.store_type==='1'">待合并属性</div>
+                <div class="col">批号/缸号/色号</div>
+                <div class="col">待合并数量</div>
+                <div class="col">操作</div>
+              </div>
+              <div class="row"
+                v-for="item,index in mergeCheckList"
+                :key="item.id">
+                <div class="col">
+                  {{item.store}}/{{item.secondary_store}}
+                </div>
+                <div class="col">{{item.material_name}}</div>
+                <div class="col">{{item.material_color}}</div>
+                <div class="col"
+                  v-if="$route.query.store_type==='1'">{{item.attribute}}</div>
+                <div class="col">{{item.batch_code}}/{{item.vat_code}}/{{item.color_code}}</div>
+                <div class="col">{{item.number}}kg</div>
+                <div class="col">
+                  <div class="oprCtn">
+                    <div class="opr hoverRed"
+                      @click="mergeCheckList.length>2?deleteMerge(index):$message.error('至少有两种物料')">删除</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="list">
+              <div class="row title">
+                <div class="col">合并仓库</div>
+                <div class="col">合并物料</div>
+                <div class="col">合并颜色</div>
+                <div class="col"
+                  v-if="$route.query.store_type==='1'">合并属性</div>
+                <div class="col">批号</div>
+                <div class="col">缸号</div>
+                <div class="col">色号</div>
+                <div class="col">合并数量</div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="elCtn">
+                    <el-cascader :options="storeArr"
+                      placeholder="请选择仓库"
+                      v-model="mergeData.store_arr"
+                      @change="(ev)=>{mergeData.store_id=ev[0];mergeData.secondary_store_id=ev[1];}"></el-cascader>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="elCtn">
+                    <el-select v-model="mergeData.material_id">
+                      <el-option v-for="item in mergeMatList"
+                        :key="item.id"
+                        :value="item.material_id"
+                        :label="item.material_name"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="elCtn">
+                    <el-autocomplete class="inline-input"
+                      v-model="mergeData.material_color"
+                      :fetch-suggestions="searchColor"
+                      placeholder="颜色"></el-autocomplete>
+                  </div>
+                </div>
+                <div class="col"
+                  v-if="$route.query.store_type==='1'">
+                  <div class="elCtn">
+                    <el-select placeholder="属性"
+                      v-model="mergeData.attribute">
+                      <el-option v-for="item in yarnAttributeList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="elCtn">
+                    <el-input placeholder="批号"
+                      v-model="mergeData.batch_code"></el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="elCtn">
+                    <el-input placeholder="缸号"
+                      v-model="mergeData.vat_code"></el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="elCtn">
+                    <el-input placeholder="色号"
+                      v-model="mergeData.color_code"></el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="elCtn">
+                    <el-input placeholder="数量"
+                      v-model="mergeData.number"></el-input>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="oprCtn">
           <span class="btn borderBtn"
@@ -752,7 +870,7 @@
           <span class="btn backHoverOrange"
             @click="mergeStep=1">上一步</span>
           <span class="btn backHoverBlue"
-            @click="mergeStep===1?mergeStep=2:saveMergeMat">{{mergeStep===1?'去合并':'确认合并'}}</span>
+            @click="mergeStep===1?goMergeStep2():saveMergeMat()">{{mergeStep===1?'去合并':'确认合并'}}</span>
         </div>
       </div>
     </div>
@@ -807,6 +925,21 @@ export default Vue.extend({
       mergeStep: 1,
       mergeLoading: false,
       mergeMatFlag: false,
+      mergeCheckList: [],
+      mergeMatList: [],
+      mergeData: {
+        store_id: '',
+        secondary_store_id: '',
+        store_arr: [],
+        material_id: '',
+        from_store_total_id: [],
+        material_color: '',
+        attribute: '',
+        color_code: '',
+        batch_code: '',
+        vat_code: '',
+        number: ''
+      },
       mergeList: [],
       mergeTotal: 0,
       mergePage: 1,
@@ -945,6 +1078,25 @@ export default Vue.extend({
     }
   },
   methods: {
+    deleteMerge(index: number) {
+      this.$deleteItem(this.mergeCheckList, index)
+      this.getMergeMatList()
+    },
+    getMergeCheck(ev: boolean, info: any) {
+      if (ev) {
+        this.mergeCheckList.push(info)
+      } else {
+        let checkNum = null
+        this.mergeCheckList.forEach((item: any, index: number) => {
+          if (item.id === info.id) {
+            checkNum = index
+          }
+        })
+        if (checkNum) {
+          this.mergeCheckList.splice(checkNum, 1)
+        }
+      }
+    },
     openMerge() {
       this.mergeMatFlag = true
       this.mergeFilter = {
@@ -957,10 +1109,63 @@ export default Vue.extend({
       }
       this.getMergeSearchList()
     },
-    saveMergeMat() {},
+    goMergeStep2() {
+      if (this.mergeCheckList.length < 2) {
+        this.$message.error('至少选择两个物料进行合并')
+        return
+      }
+      this.getMergeMatList()
+      this.mergeStep = 2
+    },
+    getMergeMatList() {
+      this.mergeCheckList.forEach((item: any) => {
+        if (!this.mergeMatList.find((itemFind: any) => itemFind.material_id === item.material_id)) {
+          this.mergeMatList.push(item)
+        }
+      })
+      this.mergeData.from_store_total_id = this.mergeCheckList.map((item: any) => item.id)
+      this.mergeData.number = this.mergeCheckList.reduce((total: number, cur: any) => {
+        return total + Number(cur.number)
+      }, 0)
+    },
+    saveMergeMat() {
+      const formCheck = this.$formCheck(this.mergeData, [
+        {
+          key: 'store_arr',
+          errMsg: '请选择仓库',
+          regNormal: 'checkArr'
+        },
+        {
+          key: 'material_id',
+          errMsg: '请选择物料'
+        },
+        {
+          key: 'material_color',
+          errMsg: '请选择颜色'
+        },
+        {
+          key: 'attribute',
+          errMsg: '请选择属性'
+        },
+        {
+          key: 'number',
+          errMsg: '请输入合并数量'
+        }
+      ])
+      if (!formCheck) {
+        console.log(this.mergeData)
+        materialStock.merge(this.mergeData).then((res) => {
+          if (res.data.status) {
+            this.$message.success('合并成功')
+            this.mergeStep = 1
+            this.mergeMatFlag = false
+            this.getList()
+          }
+        })
+      }
+    },
     // 搜索合并物料
     getMergeSearchList() {
-      console.log('haha')
       this.mergeLoading = true
       store
         .searchMat({

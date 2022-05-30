@@ -29,10 +29,12 @@
               <div class="tcol">{{item.client_name}}</div>
               <div class="tcol">{{item.price}}元</div>
               <div class="tcol">{{item.user_name}}</div>
-              <div class="tcol">{{item.reason.join('；')}}</div>
+              <div class="tcol">{{typeof(item.reason)==='string'?item.reason:item.reason.join(';')}}</div>
               <div class="tcol">
-                <div class="imageCtn">
-                  <el-image :src="item.file_url.length>0?item.file_url[0]:require('@/assets/image/common/noPic.png')"
+                <div class="imageCtn"
+                  style="width:auto">
+                  <el-image style="height:100%"
+                    :src="item.file_url&&item.file_url.length>0?item.file_url[0]:require('@/assets/image/common/noPic.png')"
                     :preview-src-list="item.file_url">
                   </el-image>
                 </div>
