@@ -78,6 +78,7 @@
           <div class="btn borderBtn" @click="reset">重置</div>
         </div>
         <div class="btn backHoverBlue" style="margin-bottom: 20px" @click="updateNumber">更新数量</div>
+        <div class="btn backHoverBlue" style="margin-bottom: 20px; margin-left: 20px" @click="$router.push('/workshopManagement/staffInputDetail?isAll=true')">结算详情</div>
         <div class="list">
           <el-table
             ref="multipleTable"

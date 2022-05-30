@@ -30,7 +30,12 @@
           <el-table-column type="selection" width="55" fixed> </el-table-column>
           <el-table-column prop="id" label="序号" width="70" fixed></el-table-column>
           <el-table-column prop="created_at" label="添加时间" width="110" fixed> </el-table-column>
-          <el-table-column prop="user_name" label="操作人" width="110" fixed> </el-table-column>
+          <el-table-column prop="staff_name" label="人员" width="120" fixed>
+            <template slot-scope="scope">
+              <div>{{ scope.row.staff_code.substring(scope.row.staff_code.length - 4) }}</div>
+              <div>{{ scope.row.staff_name }}</div>
+            </template>
+          </el-table-column>
           <el-table-column prop="process_name" label="工序"> </el-table-column>
           <el-table-column prop="staff_name" label="订单号" width="140">
             <template slot-scope="scope">
@@ -70,13 +75,7 @@
               <div v-if="scope.row.is_check === 2" class="red">不通过</div>
             </template>
           </el-table-column>
-          <el-table-column prop="staff_name" label="人员" width="120">
-            <template slot-scope="scope">
-              <div>{{ scope.row.staff_code.substring(scope.row.staff_code.length - 4) }}</div>
-              <div>{{ scope.row.staff_name }}</div>
-            </template>
-          </el-table-column>
-
+          <el-table-column prop="user_name" label="操作人" width="110"> </el-table-column>
           <el-table-column prop="product_code" label="产品编号" width="120"> </el-table-column>
           <el-table-column label="次品原因" width="120">
             <template slot-scope="scope">
