@@ -111,14 +111,14 @@
               v-model="color_code"
               @keydown.enter.native="changeRouter"></el-input>
           </div>
+          <!-- <div class="btn backHoverBlue fr"
+            @click="openMerge">合并物料</div> -->
           <div class="btn backHoverGreen fr"
             @click="goStock(9)">物料入库</div>
           <div class="btn backHoverOrange fr"
             @click="goStock(13)">物料出库</div>
           <div class="btn backHoverBlue fr"
             @click="goStock(7)">物料移库</div>
-          <div class="btn backHoverBlue fr"
-            @click="$router.push('/store/create?store_type='+store_type)">添加仓库</div>
           <div class="btn backHoverGreen fr"
             @click="getStoreList();lookListFlag=true">仓库列表</div>
         </div>
@@ -217,6 +217,8 @@
                   @click="store_type!==5?$router.push('/store/materialDetail?id='+item.id+'&store_type='+store_type):$router.push('/store/productDetail?id='+item.id +'&store_type='+store_type)">详情</div>
                 <div class="opr hoverRed"
                   @click="deleteStore(item.id)">删除</div>
+                <div class="opr hoverOrange"
+                  @click="$router.push('/store/create?id='+item.id+'&store_type='+store_type)">修改</div>
               </div>
             </div>
           </div>
@@ -649,8 +651,118 @@
         </div>
       </div>
     </div>
+    <!-- 合并物料，有需要可以做成组件 -->
+    <div class="popup"
+      v-show="mergeMatFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">{{mergeStep?'勾选物料':'合并物料'}}</span>
+          <div class="closeCtn"
+            @click="mergeMatFlag = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="listCtn"
+            style="padding:32px 0">
+            <div class="filterCtn">
+              <div class="elCtn"
+                style="max-width:200px">
+                <el-cascader :options="storeArr"
+                  clearable
+                  placeholder="搜索仓库"
+                  v-model="mergeFilter.store_arr"
+                  @change="(ev)=>{mergeFilter.store_id=ev[0];mergeFilter.secondary_id=ev[1];getMergeSearchList}"></el-cascader>
+              </div>
+              <div class="elCtn">
+                <el-autocomplete class="inline-input"
+                  v-model="mergeFilter.material_name"
+                  :fetch-suggestions="searchMaterial"
+                  placeholder="物料名称"
+                  @keydown.enter.native="getMergeSearchList"></el-autocomplete>
+              </div>
+              <div class="elCtn"
+                style="max-width:200px">
+                <el-autocomplete class="inline-input"
+                  v-model="mergeFilter.material_color"
+                  :fetch-suggestions="searchColor"
+                  placeholder="物料颜色"
+                  @keydown.enter.native="getMergeSearchList"></el-autocomplete>
+              </div>
+              <div class="elCtn"
+                style="max-width:200px">
+                <el-select clearable
+                  v-model="mergeFilter.attribute"
+                  placeholder="请选择属性"
+                  @change="getMergeSearchList">
+                  <el-option v-for="item in yarnAttributeList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"></el-option>
+                </el-select>
+              </div>
+              <div class="btn backHoverBlue"
+                @click="getMergeSearchList">搜索</div>
+            </div>
+            <div class="list"
+              v-loading="mergeLoading">
+              <div class="row title">
+                <div class="col">仓库名称</div>
+                <div class="col">物料名称</div>
+                <div class="col">物料颜色</div>
+                <div class="col"
+                  v-if="$route.query.store_type==='1'">物料属性</div>
+                <div class="col">批号/缸号/色号</div>
+                <div class="col">库存数量</div>
+                <div class="col"
+                  style="flex:0.3">勾选</div>
+              </div>
+              <div class="row"
+                v-for="item in mergeList"
+                :key="item.id">
+                <div class="col">
+                  {{item.store}}/{{item.secondary_store}}
+                </div>
+                <div class="col">{{item.material_name}}</div>
+                <div class="col">{{item.material_color}}</div>
+                <div class="col"
+                  v-if="$route.query.store_type==='1'">{{item.attribute}}</div>
+                <div class="col">{{item.batch_code}}/{{item.vat_code}}/{{item.color_code}}</div>
+                <div class="col">{{item.number}}kg</div>
+                <div class="col"
+                  style="flex:0.3">
+                  <el-checkbox v-model="item.check"></el-checkbox>
+                </div>
+              </div>
+            </div>
+            <div class="pageCtn">
+              <el-pagination background
+                :page-size="10"
+                layout="prev, pager, next"
+                :total="mergeTotal"
+                :current-page.sync="mergePage"
+                @current-change="getMergeSearchList">
+              </el-pagination>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="mergeMatFlag=false">取消</span>
+          <span class="btn backHoverOrange"
+            @click="mergeStep=1">上一步</span>
+          <span class="btn backHoverBlue"
+            @click="mergeStep===1?mergeStep=2:saveMergeMat">{{mergeStep===1?'去合并':'确认合并'}}</span>
+        </div>
+      </div>
+    </div>
     <div class="bottomFixBar">
       <div class="main">
+        <div class="btnCtn"
+          style="float:left">
+          <div class="btn backHoverBlue"
+            @click="$router.push('/store/create?store_type='+store_type)">添加仓库</div>
+        </div>
         <div class="btnCtn">
           <span class="btn backHoverGreen"
             @click="materialTotalExcelFlag = true">导出库存数量EXCEL</span>
@@ -692,6 +804,20 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      mergeStep: 1,
+      mergeLoading: false,
+      mergeMatFlag: false,
+      mergeList: [],
+      mergeTotal: 0,
+      mergePage: 1,
+      mergeFilter: {
+        store_arr: [],
+        store_id: '',
+        secondary_id: '',
+        material_name: '',
+        material_color: '',
+        attribute: ''
+      },
       storeLoading: true,
       loading: true,
       store_type: 1,
@@ -819,6 +945,46 @@ export default Vue.extend({
     }
   },
   methods: {
+    openMerge() {
+      this.mergeMatFlag = true
+      this.mergeFilter = {
+        store_arr: [],
+        store_id: '',
+        secondary_id: '',
+        material_name: '',
+        material_color: '',
+        attribute: ''
+      }
+      this.getMergeSearchList()
+    },
+    saveMergeMat() {},
+    // 搜索合并物料
+    getMergeSearchList() {
+      console.log('haha')
+      this.mergeLoading = true
+      store
+        .searchMat({
+          store_id: this.mergeFilter.store_id,
+          secondary_id: this.mergeFilter.secondary_id,
+          keyword: '',
+          material_name: this.mergeFilter.material_name,
+          material_color: this.mergeFilter.material_color,
+          attribute: this.mergeFilter.attribute,
+          vat_code: '',
+          color_code: '',
+          batch_code: '',
+          page: this.mergePage,
+          limit: 10,
+          material_type: Number(this.$route.query.store_type)
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.mergeList = res.data.data.items
+            this.mergeTotal = res.data.data.total
+          }
+          this.mergeLoading = false
+        })
+    },
     getStoreSelect() {
       store
         .list({
@@ -931,7 +1097,7 @@ export default Vue.extend({
           vat_code: this.vat_code,
           color_code: this.color_code,
           batch_code: this.batch_code,
-          page: this.page,
+          page: this.mergeFilter.page,
           limit: 10,
           material_type: Number(this.$route.query.store_type)
         })

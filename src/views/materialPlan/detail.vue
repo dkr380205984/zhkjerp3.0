@@ -8,8 +8,13 @@
         v-model="materialPlanIndex">
         <el-tab-pane v-for="(itemFather,indexFather) in materialPlanInfo"
           :key="indexFather"
-          :name="itemFather.id.toString()"
-          :label="'计划单'+(indexFather+1)">
+          :name="itemFather.id.toString()">
+          <div slot="label">
+            <div style="display:flex;flex-direction:column">
+              <div style="line-height:20px;font-size:14px">计划单{{(indexFather+1)}}</div>
+              <div style="line-height:20px;font-size:14px">{{itemFather.created_at.slice(0,10)}}</div>
+            </div>
+          </div>
           <div class="titleCtn">
             <div class="title">生产计划</div>
           </div>

@@ -173,7 +173,7 @@
                 <div class="tcol">下单数量</div>
                 <div class="tcol">计划生产数量</div>
                 <div class="tcol"
-                  style="flex:1.5">操作</div>
+                  style="flex:1.6">操作</div>
               </div>
             </div>
             <div class="tbody"
@@ -193,7 +193,7 @@
                   <div class="tcol">{{item.order_number}}</div>
                   <div class="tcol">{{item.number}}</div>
                   <div class="tcol oprCtn"
-                    style="flex:1.5">
+                    style="flex:1.6">
                     <span class="opr blue"
                       @click="$addItem(item.info_data,{
                         process_name_arr:[],
@@ -212,7 +212,7 @@
                     <div class="opr hoverRed"
                       @click="item.info_data=[]">不需要物料</div>
                     <span class="opr orange"
-                      @click="copyMaterialPlanDataInfoFlag=true;copyMaterialPlanDataInfoIndex=index">复制</span>
+                      @click="copyMaterialPlanDataInfoFlag=true;copyMaterialPlanDataInfoIndex=index">复制别组信息</span>
                     <span class="opr green"
                       v-if="showAll"
                       @click="item.showChild=!item.showChild;$forceUpdate()">{{item.showChild?'收起':'展开'}}</span>
@@ -257,7 +257,7 @@
                         </el-tooltip>
                       </div>
                       <div class="tcol"
-                        style="flex-direction: row;align-items: center;justify-content: start;">原料名称
+                        style="flex-direction: row;align-items: center;justify-content: start;flex:1.5">原料名称
                         <el-tooltip class="item"
                           effect="dark"
                           content="设置成功后请点击此按钮刷新数据"
@@ -348,7 +348,8 @@
                           </el-cascader>
                         </div>
                       </div>
-                      <div class="tcol">
+                      <div class="tcol"
+                        style="flex:1.5">
                         <div class="elCtn"
                           v-if="!itemChild.has_plan">
                           <el-cascader :class="{'error':mustFlag&&itemChild.tree_data.length===0}"
@@ -555,7 +556,7 @@
                         </el-tooltip>
                       </div>
                       <div class="tcol"
-                        style="flex-direction: row;align-items: center;justify-content: start;">原料名称
+                        style="flex-direction: row;align-items: center;justify-content: start;flex:1.5">原料名称
                         <el-tooltip class="item"
                           effect="dark"
                           content="设置成功后请点击此按钮刷新数据"
@@ -646,7 +647,8 @@
                           </el-cascader>
                         </div>
                       </div>
-                      <div class="tcol">
+                      <div class="tcol"
+                        style="flex:1.5">
                         <div class="elCtn"
                           v-if="!itemChild.has_plan">
                           <el-cascader :class="{'error':mustFlag&&itemChild.tree_data.length===0}"
@@ -1288,7 +1290,19 @@ export default Vue.extend({
         return cloneItem
       })
       this.material_plan_check_data = this.$clone(this.materialPlanInfo.production_plan_data)
-      this.material_plan_check_data.forEach((item: any) => (item.check = true))
+      // 处理从工艺单页面进来的逻辑
+      console.log(this.material_plan_check_data)
+      if (this.$route.query.product_id) {
+        this.material_plan_check_data.forEach((item: any) => {
+          if (Number(item.product_id) === Number(this.$route.query.product_id)) {
+            item.check = true
+          } else {
+            item.check = false
+          }
+        })
+      } else {
+        this.material_plan_check_data.forEach((item: any) => (item.check = true))
+      }
     },
     // 计算所需物料--按尺码颜色
     getMaterialPlanDetail(partId?: number, number?: number, proInfo?: any) {
@@ -1787,6 +1801,7 @@ export default Vue.extend({
           this.loading = false
         })
     }
+    //
   },
   beforeRouteLeave(to, from, next) {
     if (this.saveSuccess) {

@@ -293,7 +293,10 @@
           <div class="thead">
             <div class="trow">
               <div class="tcol"
-                style="flex:0.5">序号</div>
+                style="flex:0.5">
+                <el-checkbox v-model="checkAll"
+                  @change="(ev)=>{orderInfo.time_data[0].batch_data.forEach((item)=>item.check=ev);$forceUpdate()}">序号</el-checkbox>
+              </div>
               <div class="tcol">发货时间</div>
               <div class="tcol">批次名称</div>
               <div class="tcol">批次类型</div>
@@ -322,12 +325,14 @@
               <div class="tcol"
                 style="flex:0.5">
                 <span>
-                  <el-checkbox v-model="itemBatch.check">{{itemBatch.batch_number}}</el-checkbox>
+                  <el-checkbox v-model="itemBatch.check"
+                    @change="$forceUpdate()">{{itemBatch.batch_number}}</el-checkbox>
                 </span>
               </div>
               <div class="tcol">
                 <span class="green">{{itemBatch.delivery_time}}
-                  <span :class="$diffByDate(itemBatch.delivery_time)>0?'green':'red'">({{$diffByDate(itemBatch.delivery_time)>0?'还剩'+$diffByDate(itemBatch.delivery_time)+'天':'逾期'+Math.abs($diffByDate(itemBatch.delivery_time))+'天'}})</span>
+                  <span v-if="Number(itemBatch.status)<2"
+                    :class="$diffByDate(itemBatch.delivery_time)>0?'green':'red'">({{$diffByDate(itemBatch.delivery_time)>0?'还剩'+$diffByDate(itemBatch.delivery_time)+'天':'逾期'+Math.abs($diffByDate(itemBatch.delivery_time))+'天'}})</span>
                 </span>
               </div>
               <div class="tcol">
@@ -1874,6 +1879,7 @@ export default Vue.extend({
     return {
       loading: true,
       checkFlag: false,
+      checkAll: false,
       checkDetailFlag: false,
       show_material: false,
       show_production: false,

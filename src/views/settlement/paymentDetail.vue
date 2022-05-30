@@ -2526,6 +2526,8 @@
             @click="goPayment([])">直接付款</div>
           <div class="btn backHoverRed"
             @click="goDeduct([])">直接扣款</div>
+          <div class="btn backHoverGreen"
+            @click="goUrl">导出数据表报</div>
         </div>
       </div>
     </div>
@@ -2898,6 +2900,26 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 跳转单据列表去导数据
+    goUrl() {
+      if (this.$route.query.type === '面料原料单位') {
+        this.$openUrl('/billingManagement/rawMaterialPurchaseOrder')
+      } else if (this.$route.query.type === '纱线原料单位') {
+        this.$openUrl('/billingManagement/rawMaterialPurchaseOrder')
+      } else if (this.$route.query.type === '装饰辅料单位') {
+        this.$openUrl('/billingManagement/auxiliaryMaterialPurchaseOrder')
+      } else if (this.$route.query.type === '原料加工单位') {
+        this.$openUrl('/billingManagement/rawMaterialProcessingOrder')
+      } else if (this.$route.query.type === '生产织造单位') {
+        this.$openUrl('/billingManagement/productionPlan')
+      } else if (this.$route.query.type === '生产加工单位') {
+        this.$openUrl('/billingManagement/productionPlan')
+      } else if (this.$route.query.type === '包装辅料单位') {
+        this.$openUrl('/billingManagement/packingOrder')
+      } else if (this.$route.query.type === '运输单位') {
+        this.$openUrl('/billingManagement/transportationDeliveryOrder')
+      }
+    },
     showProduct(item: any) {
       this.productShow = true
       this.productDetailId = item.product_id

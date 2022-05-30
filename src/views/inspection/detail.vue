@@ -120,7 +120,8 @@
             <div class="col">产品信息</div>
             <div class="col">尺码颜色</div>
             <div class="col">检验数量</div>
-            <div class="col">次品数量</div>
+            <div class="col">全次/半次数</div>
+            <div class="col">扣款金额</div>
             <div class="col">次品原因</div>
             <div class="col">操作时间</div>
             <div class="col">创建人</div>
@@ -139,7 +140,9 @@
             <div class="col"
               :class="{'blue':item.type===1,'orange':item.type===2}">{{item.number}}</div>
             <div class="col"
-              :class="{'gray':!item.shoddy_number,'red':item.shoddy_number}">{{item.shoddy_number||'未填写'}}</div>
+              :class="{'gray':!item.shoddy_number&&!item.part_shoddy_number,'red':item.shoddy_number||item.part_shoddy_number}">{{item.shoddy_number||'0'}}/{{item.part_shoddy_number||'0'}}</div>
+            <div class="col"
+              :class="{'red':item.deduct_price}">{{item.deduct_price||0}}元</div>
             <div class="col"
               :class="{'gray':!item.shoddy_reason}">{{item.shoddy_reason||'无'}}</div>
             <div class="col">{{item.complete_time}}</div>
@@ -308,11 +311,10 @@
                   <div class="once">
                     <div class="label"
                       v-if="indexChild===0">
-                      <span class="text">分配数量</span>
-                      <span class="explanation">(默认)</span>
+                      <span class="text">分配数</span>
                     </div>
                     <div class="info elCtn">
-                      <el-input placeholder="请填写分配数量"
+                      <el-input placeholder="数量"
                         v-model="itemChild.production_number"
                         disabled></el-input>
                     </div>
@@ -320,16 +322,45 @@
                   <div class="once">
                     <div class="label"
                       v-if="indexChild===0">
-                      <span class="text">{{item.type===1?'检验数量':'出库数量'}}</span>
-                      <span class="explanation">(必填)</span>
+                      <span class="text">{{item.type===1?'检验数':'出库数'}}</span>
                     </div>
                     <div class="info elCtn">
-                      <!-- <el-input placeholder="请填写数量"
-                        v-model="itemChild.number"></el-input> -->
                       <zh-input class="inputs"
                         :keyBoard="keyBoard"
                         v-model="itemChild.number"
-                        placeholder="请输入检验数量"
+                        placeholder="数量"
+                        type="number">
+                      </zh-input>
+                    </div>
+                  </div>
+                  <div class="once"
+                    v-if="item.type===1">
+                    <div class="label"
+                      v-if="indexChild===0">
+                      <span class="text">全次数</span>
+                      <span class="explanation"
+                        v-if="item.type===2">(无)</span>
+                    </div>
+                    <div class="info elCtn">
+                      <zh-input class="inputs"
+                        :keyBoard="keyBoard"
+                        v-model="itemChild.shoddy_number"
+                        placeholder="数量"
+                        type="number">
+                      </zh-input>
+                    </div>
+                  </div>
+                  <div class="once"
+                    v-if="item.type===1">
+                    <div class="label"
+                      v-if="indexChild===0">
+                      <span class="text">半次数</span>
+                    </div>
+                    <div class="info elCtn">
+                      <zh-input class="inputs"
+                        :keyBoard="keyBoard"
+                        v-model="itemChild.part_shoddy_number"
+                        placeholder="数量"
                         type="number">
                       </zh-input>
                     </div>
@@ -339,36 +370,39 @@
               <template v-if="item.type===1">
                 <div class="col">
                   <div class="spaceBetween">
-                    <div class="once">
+                    <div class="once"
+                      v-if="item.type===1">
                       <div class="label"
                         v-if="indexChild===0">
-                        <span class="text">次品数量</span>
-                        <span class="explanation"
-                          v-if="item.type===2">(无)</span>
+                        <span class="text">扣款金额</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input placeholder="请填写次品数量"
-                          v-model="itemChild.shoddy_number"
-                          :disabled="item.type===2"></el-input>
+                        <zh-input class="inputs"
+                          :keyBoard="keyBoard"
+                          v-model="itemChild.deduct_price"
+                          placeholder="金额"
+                          type="number">
+                          <template slot="append">元</template>
+                        </zh-input>
                       </div>
                     </div>
                     <div class="once">
                       <div class="label"
                         v-if="indexChild===0">
-                        <span class="text">次品原因</span>
+                        <span class="text">次品或扣款原因说明</span>
                         <span class="explanation"
                           v-if="item.type===2">(无)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-select placeholder="请填写次品原因"
+                        <el-autocomplete placeholder="请填写次品原因"
                           v-model="itemChild.shoddy_reason"
-                          multiple
+                          :fetch-suggestions="searchReason"
                           :disabled="item.type===2">
-                          <el-option v-for="item in shoddy_reason"
+                          <!-- <el-option v-for="item in shoddy_reason"
                             :key="item.value"
                             :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
+                            :value="item.value"></el-option> -->
+                        </el-autocomplete>
                       </div>
                     </div>
                   </div>
@@ -674,6 +708,15 @@ export default Vue.extend({
     }
   },
   methods: {
+    searchReason(str: string, cb: any) {
+      let results = str
+        ? this.shoddy_reason.filter((val: any) => {
+            return val.value.toLowerCase().indexOf(str.toLowerCase()) === 0
+          })
+        : this.shoddy_reason.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
     changeKeyBoard(bol: any) {
       localStorage.showWorkShopKeyBoard = bol
       console.log(localStorage.showWorkShopKeyBoard)
@@ -760,7 +803,9 @@ export default Vue.extend({
       }
     },
     checkList(): ProductionPlanInfo[] {
-      const finded = this.productionPlanMergeList.find((itemFind) => itemFind.process_name === this.productionPlanIndex)
+      const finded = this.$clone(
+        this.productionPlanMergeList.find((itemFind) => itemFind.process_name === this.productionPlanIndex)
+      )
       const checkInfo = finded
         ? finded.childrenMergeInfo.filter((item) => {
             return item.product_info_data.filter((itemChild) => itemChild.check).length > 0
@@ -803,7 +848,9 @@ export default Vue.extend({
               production_number: itemChild.number,
               number: '',
               shoddy_number: '',
-              shoddy_reason: [],
+              part_shoddy_number: '',
+              deduct_price: '',
+              shoddy_reason: '',
               client: []
             }
           })
@@ -818,7 +865,6 @@ export default Vue.extend({
     getCmpData() {
       this.inspectionInfo.forEach((item) =>
         item.child_data.forEach((itemChild) => {
-          itemChild.shoddy_reason = (itemChild.shoddy_reason as string[]).join(',')
           itemChild.client = (itemChild.client as string[]).join(',')
         })
       )
@@ -828,6 +874,7 @@ export default Vue.extend({
         this.$message.error('请勿频繁点击')
         return
       }
+      console.log(this.inspectionInfo)
       const formCheck = this.inspectionInfo.some((item) => {
         return item.child_data.some((itemChild) => {
           return this.$formCheck(itemChild, [
@@ -873,6 +920,8 @@ export default Vue.extend({
                 color: itemChild.color_name,
                 part_name: '',
                 shoddy_number: '',
+                part_shoddy_number: '',
+                deduct_price: '',
                 shoddy_reason: '',
                 client: ''
               })
