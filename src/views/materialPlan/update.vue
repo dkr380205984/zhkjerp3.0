@@ -608,6 +608,7 @@
               <div class="elCtn">
                 <el-input v-model="item.loss"
                   placeholder="原料损耗"
+                  disabled
                   @input="getMaterialFinalNum($event,item)"
                   @focus="$focusInput($event)">
                   <template slot="append">%</template>
@@ -618,6 +619,7 @@
               <div class="elCtn">
                 <el-input v-model="item.final_number"
                   placeholder="最终数量"
+                  disabled
                   @focus="$focusInput($event)">
                   <template slot="append">{{item.unit==='g'?'kg':item.unit}}</template>
                 </el-input>
@@ -743,7 +745,8 @@ export default Vue.extend({
         ],
         material_plan_data: [],
         material_plan_gather_data: []
-      }
+      },
+      material_plan_gather_data: []
     }
   },
   computed: {
@@ -970,7 +973,6 @@ export default Vue.extend({
           itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number)
         })
       })
-      console.log(this.materialPlanInfo.material_plan_data)
       this.$forceUpdate()
     },
     getMatId(ev: number[], info: any) {
@@ -988,7 +990,20 @@ export default Vue.extend({
           itemChild.tree_data = itemChild.tree_data ? itemChild.tree_data.join(',') : itemChild.tree_data
         })
       })
+      // 把物料信息合计的接口给的id还给后端
+      this.$nextTick(() => {
+        this.materialPlanInfo.material_plan_gather_data.forEach((item) => {
+          const finded = this.material_plan_gather_data.find(
+            (itemFind: any) =>
+              item.material_name === itemFind.material_name && item.material_color === itemFind.material_color
+          )
+          if (finded) {
+            item.id = finded.id
+          }
+        })
+      })
     },
+    // 这个地方有个巨大BUG，提交的是getCmp函数在重置物料计划详情数据的时候会导致watch函数覆盖掉原料总表，导致你改了原料总表的任何数据实际上都会被重置掉，懒得改
     saveMaterialPlan() {
       const formCheck =
         // this.materialPlanInfo.production_plan_data.some((item) => {
@@ -1032,7 +1047,7 @@ export default Vue.extend({
           })
         })
       if (!formCheck) {
-        this.loading = true
+        // this.loading = true
         this.getCmpData()
         materialPlan.create(this.materialPlanInfo).then((res) => {
           if (res.data.status) {
@@ -1109,7 +1124,8 @@ export default Vue.extend({
       })
       .then((res) => {
         this.materialPlanInfo = res.data.data
-        // this.materialPlanInfo.type = this.materialPlanInfo.type.toString()
+        // 由于物料合计信息总是被前端重置计算，因此克隆一份物料合计信息最后提交时候赋值id
+        this.material_plan_gather_data = this.$clone(this.materialPlanInfo.material_plan_gather_data)
         this.getUpdateData()
         this.loading = false
       })

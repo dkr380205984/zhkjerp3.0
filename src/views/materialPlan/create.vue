@@ -790,7 +790,8 @@
               <div class="elCtn">
                 <el-input v-model="item.loss"
                   placeholder="原料损耗"
-                  @input="getMaterialFinalNum($event,item)">
+                  @input="getMaterialFinalNum($event,item)"
+                  disabled>
                   <template slot="append">%</template>
                 </el-input>
               </div>
@@ -798,7 +799,8 @@
             <div class="tcol">
               <div class="elCtn">
                 <el-input v-model="item.final_number"
-                  placeholder="最终数量">
+                  placeholder="最终数量"
+                  disabled>
                   <template slot="append">{{item.unit==='g'?'kg':item.unit}}</template>
                 </el-input>
               </div>
@@ -1592,6 +1594,7 @@ export default Vue.extend({
         item.unit = item.unit === 'g' ? 'kg' : item.unit
       })
     },
+    // 这个地方有个巨大BUG，提交的是getCmp函数在重置物料计划详情数据的时候会导致watch函数覆盖掉原料总表，导致你改了原料总表的任何数据实际上都会被重置掉，懒得改
     saveMaterialPlan() {
       if (this.saveLock) {
         this.$message.error('请勿频繁点击')
