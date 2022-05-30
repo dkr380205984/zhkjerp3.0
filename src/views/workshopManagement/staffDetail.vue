@@ -458,8 +458,8 @@
                   <div class="tcol bgGray">产品名称</div>
                   <div class="tcol bgGray">产品描述</div>
                   <div class="tcol bgGray">产品图片</div>
-                  <div class="tcol bgGray">尺码颜色</div>
-                  <div class="tcol bgGray">尺寸克重</div>
+                  <div class="tcol bgGray">尺码/颜色</div>
+                  <div class="tcol bgGray">尺寸/克重</div>
                   <div class="tcol bgGray">计划生产数量</div>
                   <div class="tcol bgGray">检验入库数量</div>
                   <div class="tcol bgGray" style="flex: 0.2">
@@ -496,7 +496,7 @@
                             {{ (itemSizeColor.size_name || '无数据') + '/' + (itemSizeColor.color_name || '无数据') }}
                           </div>
                           <div class="tcol">
-                            {{ itemSizeColor.weight || 0 }}
+                            {{ (itemSizeColor.size_info || '无数据') + '/' + (itemSizeColor.weight || 0) }}
                           </div>
                           <div class="tcol">{{ itemSizeColor.number }}</div>
                           <div class="tcol">{{ itemSizeColor.inspection_number }}</div>
