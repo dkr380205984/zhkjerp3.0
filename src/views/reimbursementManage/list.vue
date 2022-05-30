@@ -77,24 +77,26 @@
             <el-table-column prop="reviewer.name" label="审核人"></el-table-column>
             <el-table-column label="添加时间">
               <template slot-scope="scope">
-                <span>{{scope.row.created_at.slice(0,10)}}</span>
+                <span>{{ scope.row.created_at.slice(0, 10) }}</span>
               </template>
             </el-table-column>
             <el-table-column prop="user.name" label="添加人"></el-table-column>
-            <el-table-column label="操作" width="150">
+            <el-table-column label="操作" width="160">
               <template slot-scope="scope">
-                <span class="opr hoverBlue" @click="$router.push('/reimbursementManage/detail?id=' + scope.row.id)"
-                  >详情</span
-                >
-                <span
-                  class="opr hoverOrange"
-                  v-if="scope.row.status !== 2"
-                  @click="$router.push('/reimbursementManage/update?id=' + scope.row.id)"
-                  >修改</span
-                >
-                <span v-if="scope.row.status !== 2" class="opr hoverRed" @click="deleteReimbursement(scope.row)"
-                  >删除</span
-                >
+                <div style="display:flex;">
+                  <span class="opr hoverBlue" @click="$router.push('/reimbursementManage/detail?id=' + scope.row.id)"
+                    >详情</span
+                  >
+                  <span
+                    class="opr hoverOrange"
+                    v-if="scope.row.status !== 2"
+                    @click="$router.push('/reimbursementManage/update?id=' + scope.row.id)"
+                    >修改</span
+                  >
+                  <span v-if="scope.row.status !== 2" class="opr hoverRed" @click="deleteReimbursement(scope.row)"
+                    >删除</span
+                  >
+                </div>
               </template>
             </el-table-column>
           </el-table>

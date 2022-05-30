@@ -4,7 +4,7 @@
       <div class="titleCtn">
         <div class="title">结算日志</div>
       </div>
-      <div class="listCtn">
+      <div class="listCtn" v-if="!isAll">
         <div class="filterCtn">
           选择月份：
           <div class="elCtn">
@@ -106,7 +106,7 @@
             </el-pagination>
           </div>
         </div>
-        <div style="position: relative; float: left">
+        <div style="position: relative; float: left" v-if="!isAll">
           <span style="margin-top: 20px; margin-left: 32px; display: inline-block">合计</span>
           <span style="margin-top: 20px; margin-left: 32px; display: inline-block">
             本月完成数量：
@@ -154,25 +154,32 @@ export default Vue.extend({
   },
   methods: {
     init() {
-      workshop
-        .list({
+      let params = {}
+
+      if (this.isAll) {
+        params = { page: this.page, limit: 10 }
+      } else {
+        params = {
           staff_id: this.$route.query.id + '',
           page: this.page,
           limit: 10,
           month: +this.month.split('-')[1],
           year: this.month.split('-')[0]
-        })
-        .then((res) => {
-          this.settlementLogList = res.data.data.items
-          this.additional = res.data.data.additional
-          this.total = res.data.data.total
-        })
+        }
+      }
+
+      workshop.list(params).then((res) => {
+        this.settlementLogList = res.data.data.items
+        this.additional = res.data.data.additional
+        this.total = res.data.data.total
+      })
     },
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page) || 1
       this.month = query.month || new Date().getFullYear() + '-' + (new Date().getMonth() + 1)
       this.id = query.id
+      this.isAll = query.isAll
     },
     changeRouter(ev?: any) {
       if (ev !== this.page) {
@@ -183,8 +190,7 @@ export default Vue.extend({
           (this.page || 1) +
           '&month=' +
           this.month +
-          '&id=' +
-          this.$route.query.id
+          (this.isAll ? '&isAll=true' : '&id=' + this.$route.query.id)
       )
     },
     handleSelectionChange(val: any) {

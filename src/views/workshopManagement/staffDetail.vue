@@ -455,10 +455,11 @@
                   <div class="tcol bgGray">订单类型</div>
                   <div class="tcol bgGray">订单号</div>
                   <div class="tcol bgGray">产品编号</div>
-                  <div class="tcol bgGray">产品品类</div>
                   <div class="tcol bgGray">产品名称</div>
+                  <div class="tcol bgGray">产品描述</div>
                   <div class="tcol bgGray">产品图片</div>
                   <div class="tcol bgGray">尺码颜色</div>
+                  <div class="tcol bgGray">尺寸克重</div>
                   <div class="tcol bgGray">计划生产数量</div>
                   <div class="tcol bgGray">检验入库数量</div>
                   <div class="tcol bgGray" style="flex: 0.2">
@@ -472,21 +473,20 @@
                 >
                   <div class="tcol">{{ item.order_type === 1 ? '订单' : '样单' }}</div>
                   <div class="tcol">{{ item.code }}</div>
-                  <div class="tcol noPad" style="flex: 8.82">
+                  <div class="tcol noPad" style="flex: 10.3">
                     <div class="trow" v-for="(itemPro, indexPro) in item.product_info" :key="indexPro + 'pro'">
-                      <div class="tcol">{{ itemPro.product_code }}</div>
-                      <div class="tcol">
-                        {{ itemPro.category }}
-                      </div>
+                      <div class="tcol">{{ itemPro.product_code }}<br />{{ itemPro.category }}</div>
                       <div class="tcol">{{ itemPro.name }}</div>
+                      <div class="tcol">{{ contentHtml(itemPro.desc) }}</div>
                       <div class="tcol">
                         <el-image
-                          :src="itemPro.img ? itemPro.img : require('@/assets/image/common/noPic.png')"
+                          :src="itemPro.img.length > 0 ? itemPro.img[0] : require('@/assets/image/common/noPic.png')"
+                          :preview-src-list="itemPro.img"
                           fit="cover"
-                          style="width: 100px; height: 100px; padding: 10px 0"
+                          style="width: 80px; height: 80px; padding: 10px 0"
                         ></el-image>
                       </div>
-                      <div class="tcol noPad" style="flex: 4.005">
+                      <div class="tcol noPad" style="flex: 5.34">
                         <div
                           class="trow"
                           v-for="(itemSizeColor, indexSizeColor) in itemPro.colorSizeInfo"
@@ -494,6 +494,9 @@
                         >
                           <div class="tcol">
                             {{ (itemSizeColor.size_name || '无数据') + '/' + (itemSizeColor.color_name || '无数据') }}
+                          </div>
+                          <div class="tcol">
+                            {{ itemSizeColor.weight || 0 }}
                           </div>
                           <div class="tcol">{{ itemSizeColor.number }}</div>
                           <div class="tcol">{{ itemSizeColor.inspection_number }}</div>
@@ -731,6 +734,14 @@ export default Vue.extend({
 
       this.loading = false
     },
+    contentHtml(content: string) {
+      if (content === null) return ''
+      // 富文本编辑器的内容如何只获得文字去掉标签
+      // content = content.replace(/<[^>]+>/g, '')
+      // 在上面的基础上还去掉了换行<br/>
+      content = content.replace(/<[^>]+>/g, '').replace(/(\n)/g, '')
+      return content
+    },
     changeDepartment() {
       if (this.department === '') {
         this.$setLocalStorage('department', '')
@@ -886,9 +897,10 @@ export default Vue.extend({
             data.time_data[0].batch_data[0].product_data.forEach((item: any) => {
               this.productionScheduleUpdate[0].product_info.push({
                 product_code: item.product_code,
+                desc: item.desc,
                 product_id: item.product_id,
                 name: item.name,
-                img: item.image_data.length > 0 ? item.image_data[0] : '',
+                img: item.image_data,
                 category: item.category + (item.secondary_category ? '/' + item.secondary_category : ''),
                 colorSizeInfo: item.product_info
               })
@@ -913,15 +925,15 @@ export default Vue.extend({
             items.product_data.forEach((item: any) => {
               this.productionScheduleUpdate[index].product_info.push({
                 product_code: item.product_code,
+                desc: item.desc,
                 product_id: item.product_id,
                 name: item.name,
-                img: item.image_data.length > 0 ? item.image_data[0] : '',
+                img: item.image_data,
                 category: item.category + (item.secondary_category ? '/' + item.secondary_category : ''),
                 colorSizeInfo: item.product_info
               })
             })
           })
-          console.log(this.productionScheduleUpdate)
         }
 
         this.addOrder = true
@@ -1040,11 +1052,9 @@ export default Vue.extend({
       obj.staffId = ''
       obj.staffName = ''
       obj.processInfo.forEach((item: any) => {
-        console.log(item)
         item.product_info.forEach((itemPro: any) => {
           itemPro.product_detail_info.forEach((itemDetailPro: any) => {
             itemDetailPro.sizeColorInfo.forEach((itemColor: any) => {
-              console.log(itemColor)
               itemColor.extra_number = ''
               itemColor.shoddy_number = ''
               itemColor.number = ''
@@ -1145,16 +1155,16 @@ export default Vue.extend({
       }
 
       this.settlementLogList.forEach((settlementLog: any) => {
-        console.log(settlementLog, 'settlementLog')
+        // console.log(settlementLog, 'settlementLog')
         settlementLog.processInfo.forEach((staffInfo: any) => {
-          console.log(staffInfo, 'staffInfo')
+          // console.log(staffInfo, 'staffInfo')
           staffInfo.product_info.forEach((product_info: any) => {
             if (product_info.order_code === '') return
 
             product_info.product_detail_info.forEach((product_detail_info: any) => {
-              console.log(product_detail_info, 'product_detail_info')
+              // console.log(product_detail_info, 'product_detail_info')
               product_detail_info.sizeColorInfo.forEach((sizeColorInfo: any) => {
-                console.log(sizeColorInfo, 'sizeColorInfo')
+                // console.log(sizeColorInfo, 'sizeColorInfo')
                 params.data.push({
                   id: null,
                   order_id: product_info.order_id,
@@ -1188,7 +1198,7 @@ export default Vue.extend({
         if (res.data.status) {
           this.$message.success('提交成功')
           this.numberUpdate = false
-          location.reload()
+          this.$router.push('/workshopManagement/staffInputDetail?isAll=true')
         }
       })
       this.loading = false
