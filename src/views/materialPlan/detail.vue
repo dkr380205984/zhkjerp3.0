@@ -20,7 +20,7 @@
           </div>
           <div class="detailCtn">
             <div class="checkCtn"
-              @click="checkDetailFlag=true">
+              @click="checkDetailFlag=true;is_check=itemFather.is_check">
               <el-tooltip class="item"
                 effect="dark"
                 content="点击查看审核日志"
@@ -49,8 +49,16 @@
               </div>
               <div class="col">
                 <div class="label">采购状态：</div>
-                <div class="text">暂无</div>
+                <div class="text"
+                  :class="itemFather.material_order_progress|filterOrderProgressClass">{{itemFather.material_order_progress|filterOrderProgress}}</div>
               </div>
+              <div class="col">
+                <div class="label">生产计划：</div>
+                <div class="text"
+                  :class="{'hoverBlue':itemFather.weave_plan_count>0,'gray':itemFather.weave_plan_count===0}">{{itemFather.weave_plan_count>0?('已有计划单'+(itemFather.weave_plan_count)+'张'):'暂无生产计划'}}</div>
+              </div>
+            </div>
+            <div class="row">
               <div class="col">
                 <div class="label">备注信息：</div>
                 <div class="text"
@@ -340,7 +348,14 @@
     <zh-check-detail :pid="materialPlanIndex"
       :check_type="9"
       :show="checkDetailFlag"
-      @close="checkDetailFlag=false"></zh-check-detail>
+      @close="checkDetailFlag=false"
+      :is_check="is_check"
+      :errMsg="[
+      '由于【订单数量】发生了修改。该原料计划单已变为异常状态。以下为异常单据处理办法：',
+      '1. 修改此原料计划单，同步最新的下单尺码颜色以及数量，已计划的原料不能删除，但可以将数量改为0。注意：即使该单据有后续采购单、生产单也可进行修改。系统会通知后续操作人员，对后续单据进行修改。',
+      '2. 如果该单据没有后续采购单、生产单，您也可以删除该单据再新建一张。',
+      '3. 如果您不想修改原料计划单，并且该单据有后续采购单、生产单，您也可以直接点击审核通过，并新建一张原料计划单，以补充新的下单数量以及原料数量。'
+      ]"></zh-check-detail>
     <associated-page :data="associatedPage"
       @close="showAssociatedPage = false"
       :nowPage="true"
@@ -367,6 +382,7 @@ export default Vue.extend({
       orderIndex: 0,
       checkFlag: false,
       checkDetailFlag: false,
+      is_check: 0,
       orderInfo: {
         id: null,
         client_id: '',
@@ -428,6 +444,30 @@ export default Vue.extend({
       materialPlanIndex: '0',
       materialPlanInfo: [],
       showAssociatedPage: false
+    }
+  },
+  filters: {
+    filterOrderProgress(val: string) {
+      if (Number(val) === 0) {
+        return '未采购'
+      } else if (Number(val) > 0 && Number(val) < 100) {
+        return '部分采购'
+      } else if (Number(val) >= 100) {
+        return '采购完毕'
+      } else {
+        return '暂无'
+      }
+    },
+    filterOrderProgressClass(val: string) {
+      if (Number(val) === 0) {
+        return 'gray'
+      } else if (Number(val) > 0 && Number(val) < 100) {
+        return 'orange'
+      } else if (Number(val) >= 100) {
+        return 'green'
+      } else {
+        return 'gray'
+      }
     }
   },
   computed: {

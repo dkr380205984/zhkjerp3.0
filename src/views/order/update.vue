@@ -880,7 +880,7 @@ export default Vue.extend({
     getOrderProduct(orderInfo: OrderCreate): ProductInfo[] {
       const flattenArr: ProductInfo[] = [] // 存储return信息
       orderInfo.time_data.batch_data.forEach((itemBatch) => {
-        itemBatch.product_data.forEach((itemPro) => {
+        itemBatch.product_data.forEach((itemPro: any) => {
           if (!itemPro.product_id) {
             return
           }
@@ -894,6 +894,7 @@ export default Vue.extend({
             secondary_category: itemPro.secondary_category,
             size_data: itemPro.size_data!,
             color_data: itemPro.color_data!,
+            style_data: itemPro.style_data,
             part_data: [],
             desc: '',
             image_data: [],
@@ -976,7 +977,6 @@ export default Vue.extend({
     getProductDetail(product: ProductInfo) {
       this.productShow = true
       this.productDetail = product
-      console.log(product)
     },
     beforeAvatarUpload(file: any) {
       const fileName = file.name.lastIndexOf('.') // 取到文件名开始到最后一个点的长度

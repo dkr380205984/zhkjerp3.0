@@ -134,7 +134,7 @@
           </div>
           <div class="detailCtn">
             <div class="checkCtn"
-              @click="checkType=2;checkDetailFlag=true">
+              @click="checkType=2;checkDetailFlag=true;is_check=item.is_check">
               <el-tooltip class="item"
                 effect="dark"
                 content="点击查看审核日志"
@@ -451,7 +451,7 @@
           </div>
           <div class="detailCtn">
             <div class="checkCtn"
-              @click="checkType=6;checkDetailFlag=true">
+              @click="checkType=6;checkDetailFlag=true;is_check=item.is_check">
               <el-tooltip class="item"
                 effect="dark"
                 content="点击查看审核日志"
@@ -1278,6 +1278,10 @@
           <div class="editCtn"
             v-for="(item,index) in materialProcessInfo"
             :key="index">
+            <div class="deleteIcon"
+              @click="materialProcessInfo.length>1?$deleteItem(materialProcessInfo,index):$message.error('至少有一家加工单位')">
+              <i class="el-icon-close"></i>
+            </div>
             <div class="row">
               <div class="col">
                 <div class="label">
@@ -2245,6 +2249,18 @@
     <zh-check-detail :pid="checkType===2?materialOrderIndex:materialStockIndex"
       :check_type="checkType"
       :show="checkDetailFlag"
+      :is_check="is_check"
+      :errMsg="checkType===2?[
+      '由于【计划原料数量】发生了修改。该原料采购单已变为异常状态。以下为异常单据处理办法：',
+      '1. 修改此原料订购单，同步最新的原料数量。注意：已采购的原料不能删除，但可以将数量改为0。实际已入库的原料，可以在原料出入库页面进行结余操作。',
+      '2. 如果该单据没有后续加工单、入库单，您也可以删除该单据再新建一张。',
+      '3. 如果您不想修改原料订购单，您也可以直接点击审核通过，并新建一张原料订购单，以补充新的订购数量。'
+      ]:[
+      '由于【计划单数量】发生了修改。该原料调取单已变为异常状态。以下为异常单据处理办法：',
+      '1. 如果该单据没有后续入库单，您也可以删除该单据再新建一张。',
+      '2. 如果该单据有后续入库单，您也可以直接点击审核通过，实际已入库的原料，可以在原料出入库页面进行结余操作。',
+
+      ]"
       @close="checkDetailFlag=false"></zh-check-detail>
   </div>
 </template>
@@ -2285,6 +2301,7 @@ export default Vue.extend({
     return {
       checkFlag: false,
       checkDetailFlag: false,
+      is_check: 0,
       checkType: 2, // 标记审核订购单还是调取单
       loading: true,
       saveLock: false,

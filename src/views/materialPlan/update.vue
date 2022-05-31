@@ -9,11 +9,7 @@
       </div>
       <div class="tableCtn">
         <div class="description">
-          <span>请输入产品各部位需要原料生产的数量，填写完成后点击
-            <span class="blue">确认生产数量</span>
-            按钮开始填写产品物料信息。
-            <span class="red">注意：</span>
-            未填写计划生产数量的部位，或者填写值为0的产品部位将不计入物料填写。
+          <span>如果订单发生了修改，该单据将变为异常状态，请更新最新的下单尺码颜色和数量。如出现订单内某款尺码或配色组取消了，且该单据后续进行了原料的订购和加工，相应的原料将不能进行删除，但能把数量改为0。如需要删除原料，请先删除关联的原料订购单和加工单。
           </span>
         </div>
         <div class="thead">
@@ -157,8 +153,6 @@
                         final_number: '',
                         unit: 'kg'
                     })">新增物料</span>
-                  <div class="opr hoverRed"
-                    @click="item.info_data=[]">不需要物料</div>
                   <span class="opr orange"
                     @click="copyMaterialPlanDataInfoFlag=true;copyMaterialPlanDataInfoIndex=index">复制别组信息</span>
                   <span class="opr green"
@@ -287,6 +281,7 @@
                         <span class="number2">{{indexChild+1}}</span>
                         <el-cascader placeholder="选择工序"
                           :show-all-levels="false"
+                          :disabled="!itemChild.new&&(Number(materialPlanInfo.weave_plan_count)>0||Number(materialPlanInfo.material_order_progress)>0)"
                           v-model="itemChild.process_name_arr"
                           :options="processList"
                           @change="(ev)=>{itemChild.process_type=ev[0];itemChild.process_name=ev[1]}"
@@ -302,6 +297,7 @@
                           :show-all-levels="false"
                           v-model="itemChild.tree_data"
                           :options="yarnTypeList"
+                          :disabled="!itemChild.new&&(Number(materialPlanInfo.weave_plan_count)>0||Number(materialPlanInfo.material_order_progress)>0)"
                           filterable
                           @change="getMatId($event,itemChild)"
                           clearable>
@@ -315,6 +311,7 @@
                         <el-autocomplete class="inline-input"
                           v-model="itemChild.material_color"
                           :fetch-suggestions="searchColor"
+                          :disabled="!itemChild.new&&(Number(materialPlanInfo.weave_plan_count)>0||Number(materialPlanInfo.material_order_progress)>0)"
                           placeholder="物料颜色"
                           @focus="$focusInput($event)"></el-autocomplete>
                       </div>
@@ -375,11 +372,11 @@
                           production_number: '',
                           loss: '',
                           final_number: '',
-                          unit: 'kg'
+                          unit: 'kg',
+                          new:true
                         })">添加</span>
-                        <span class="opr orange"
-                          @click="$addItem(item.info_data,$clone(itemChild))">复制</span>
-                        <span class="opr red"
+                        <span v-if="itemChild.new||(Number(materialPlanInfo.weave_plan_count)===0&&Number(materialPlanInfo.material_order_progress)===0)"
+                          class="opr red"
                           @click="item.info_data.length>1?$deleteItem(item.info_data,indexChild):$message.error('至少有一项，可以不填')">删除</span>
                       </div>
                     </div>
@@ -438,12 +435,9 @@
                         production_number: '',
                         loss: '',
                         final_number: '',
-                        unit: 'kg'
+                        unit: 'kg',
+                        new:true
                     })">新增物料</span>
-                  <div class="opr hoverRed"
-                    @click="item.info_data=[]">不需要物料</div>
-                  <span class="opr orange"
-                    @click="copyMaterialPlanDataInfoFlag=true;copyMaterialPlanDataInfoIndex=index">复制</span>
                   <span class="opr green"
                     v-if="showAll"
                     @click="item.showChild=!item.showChild;$forceUpdate()">{{item.showChild?'收起':'展开'}}</span>
@@ -473,6 +467,7 @@
                           :show-all-levels="false"
                           v-model="itemChild.process_name_arr"
                           :options="processList"
+                          :disabled="!itemChild.new&&(Number(materialPlanInfo.weave_plan_count)>0||Number(materialPlanInfo.material_order_progress)>0)"
                           @change="(ev)=>{itemChild.process_type=ev[0];itemChild.process_name=ev[1]}"
                           filterable
                           clearable>
@@ -486,6 +481,7 @@
                           :show-all-levels="false"
                           v-model="itemChild.tree_data"
                           :options="yarnTypeList"
+                          :disabled="!itemChild.new&&(Number(materialPlanInfo.weave_plan_count)>0||Number(materialPlanInfo.material_order_progress)>0)"
                           @change="getMatId($event,itemChild)"
                           clearable>
                         </el-cascader>
@@ -499,6 +495,7 @@
                           v-model="itemChild.material_color"
                           :fetch-suggestions="searchColor"
                           placeholder="物料颜色"
+                          :disabled="!itemChild.new&&(Number(materialPlanInfo.weave_plan_count)>0||Number(materialPlanInfo.material_order_progress)>0)"
                           @focus="$focusInput($event)"></el-autocomplete>
                       </div>
                     </div>
@@ -556,9 +553,11 @@
                           production_number: '',
                           loss: '',
                           final_number: '',
-                          unit: 'kg'
+                          unit: 'kg',
+                          new:true
                         })">添加</span>
-                        <span class="opr red"
+                        <span v-if="itemChild.new||(Number(materialPlanInfo.weave_plan_count)===0&&Number(materialPlanInfo.material_order_progress)===0)"
+                          class="opr red"
                           @click="item.info_data.length>1?$deleteItem(item.info_data,indexChild):$message.error('至少有一项，可以不填')">删除</span>
                       </div>
                     </div>
@@ -990,18 +989,18 @@ export default Vue.extend({
           itemChild.tree_data = itemChild.tree_data ? itemChild.tree_data.join(',') : itemChild.tree_data
         })
       })
-      // 把物料信息合计的接口给的id还给后端
-      this.$nextTick(() => {
-        this.materialPlanInfo.material_plan_gather_data.forEach((item) => {
-          const finded = this.material_plan_gather_data.find(
-            (itemFind: any) =>
-              item.material_name === itemFind.material_name && item.material_color === itemFind.material_color
-          )
-          if (finded) {
-            item.id = finded.id
-          }
-        })
-      })
+      // 把物料信息合计的接口给的id还给后端——接口有问题接口好了这段代码可以直接用
+      // this.$nextTick(() => {
+      //   this.materialPlanInfo.material_plan_gather_data.forEach((item) => {
+      //     const finded = this.material_plan_gather_data.find(
+      //       (itemFind: any) =>
+      //         item.material_name === itemFind.material_name && item.material_color === itemFind.material_color
+      //     )
+      //     if (finded) {
+      //       item.id = finded.id
+      //     }
+      //   })
+      // })
     },
     // 这个地方有个巨大BUG，提交的是getCmp函数在重置物料计划详情数据的时候会导致watch函数覆盖掉原料总表，导致你改了原料总表的任何数据实际上都会被重置掉，懒得改
     saveMaterialPlan() {

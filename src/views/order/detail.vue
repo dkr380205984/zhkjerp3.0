@@ -1743,9 +1743,12 @@
             style="margin:12px 0">
             <div class="thead">
               <div class="trow">
-                <div class="tcol">序号</div>
-                <div class="tcol">修改日期</div>
-                <div class="tcol">修改人</div>
+                <div class="tcol"
+                  style="max-width:22px">序号</div>
+                <div class="tcol"
+                  style="max-width:89px">修改日期</div>
+                <div class="tcol"
+                  style="max-width:89px">修改人</div>
                 <div class="tcol">订单修改详情</div>
                 <div class="tcol noPad"
                   style="flex:4">
@@ -1763,18 +1766,21 @@
               <div class="trow"
                 v-for="(item,index) in oprLog"
                 :key="item.id">
-                <div class="tcol">{{index+1}}</div>
-                <div class="tcol">{{item.update_time}}</div>
-                <div class="tcol">{{item.user}}</div>
+                <div class="tcol"
+                  style="max-width:22px">{{index+1}}</div>
+                <div class="tcol"
+                  style="max-width:89px">{{item.update_time}}</div>
+                <div class="tcol"
+                  style="max-width:89px">{{item.user}}</div>
                 <div class="tcol">
                   <div class="line"
                     v-if="item.update_data">
-                    <span class="label">订单修改信息:</span>
+                    <span class="label blue">订单修改信息:</span>
                     <div class="line">{{item.update_data}}</div>
                   </div>
                   <div class="line"
                     v-if="item.order_time_activity_log[0].update_data">
-                    <span class="label">其他修改信息:</span>
+                    <span class="label blue">其他修改信息:</span>
                     <div class="line">{{item.order_time_activity_log[0].update_data}}</div>
                   </div>
                 </div>
@@ -1785,12 +1791,14 @@
                     :key="indexChild">
                     <div class="tcol">
                       <div class="line">
-                        <span class="label">批次名称:</span>
-                        <div class="line">{{itemChild.batch_title}}</div>
+                        <span class="label">
+                          <span class="blue">批次:</span>
+                          <span>第{{itemChild.batch_number}}批</span>
+                        </span>
                       </div>
                       <div class="line"
                         v-if="itemChild.update_data">
-                        <span class="label">批次修改信息:</span>
+                        <span class="label blue">批次修改信息:</span>
                         <div class="line">{{itemChild.update_data}}</div>
                       </div>
                     </div>
@@ -1801,7 +1809,7 @@
                         :key="indexPro">
                         <div class="tcol">
                           <div class="line">
-                            <span class="label">修改信息:</span>
+                            <span class="label blue">修改信息:</span>
                             <div class="line">{{itemPro.update_data}}</div>
                           </div>
                         </div>

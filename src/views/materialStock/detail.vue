@@ -591,7 +591,7 @@
       </div>
       <div class="buttonList">
         <div class="btn backHoverOrange"
-          :class="{'backGray':productionPlanList.filter((item) => {return item.material_info_data.some((itemChild) => itemChild.check) || item.sup_data.some((itemChild) => {return itemChild.info_data.some((itemSon) => itemSon.check)})}).length!==1}"
+          :class="{'backGray':productionPlanList.filter((item) => {return item.material_info_data.some((itemChild) => itemChild.check) || (item.sup_data&&item.sup_data.some((itemChild) => {return itemChild.info_data.some((itemSon) => itemSon.check)}))}).length!==1}"
           @click="goStock(6)"
           style="margin-right:12px">
           <svg class="iconFont"
@@ -604,9 +604,9 @@
           :class="{'backGray':productionPlanList.filter((item) => {
                 return (
                   item.material_info_data.some((itemChild) => itemChild.check) ||
-                  item.sup_data.some((itemChild) => {
+                 item.sup_data&&( item.sup_data.some((itemChild) => {
                     return itemChild.info_data.some((itemSon) => itemSon.check)
-                  })
+                  }))
                 )
               }).length!==1}"
           @click="goStock(5)">
@@ -1380,7 +1380,7 @@ export default Vue.extend({
                   itemChild.process_info!.filter((item) => item.process === '染色').length > 0 &&
                   itemChild
                     .process_info!.filter((item) => item.process === '染色')
-                    .reduce((total, cur) => total + cur.number, 0) < itemChild.number
+                    .reduce((total, cur) => total + Number(cur.number), 0) < Number(itemChild.number)
                 ) {
                   this.materialStockInfo.info_data.push({
                     yarn_type: itemChild.yarn_type,
