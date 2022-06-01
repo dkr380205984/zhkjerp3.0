@@ -211,9 +211,10 @@ export default Vue.extend({
   methods: {
     // 把数字改成金额
     changeNumToPrice(val: string, index: number) {
-      const realNumStr = val.replace(/[^0-9]/gi, '')
-      const numStrArr = realNumStr.split('')
+      const realNumStr = val.replace(/[^0-9|.]/gi, '')
       this.invoiceInfo.data[index].hanPrice = this.$changeNumToHan(Number(realNumStr))
+      const numArr = realNumStr.split('.')
+      const numStrArr = numArr[0].split('')
       const length = Number(numStrArr.length)
       for (let i = length, j = 0; i > 0; i--) {
         j++
@@ -221,7 +222,11 @@ export default Vue.extend({
           numStrArr.splice(i - 1, 0, ',')
         }
       }
-      this.invoiceInfo.data[index].price = numStrArr.join('')
+      if (numArr.length === 2) {
+        this.invoiceInfo.data[index].price = numStrArr.join('') + '.' + numArr[1]
+      } else {
+        this.invoiceInfo.data[index].price = numStrArr.join('')
+      }
     },
     close() {
       this.$emit('close')
