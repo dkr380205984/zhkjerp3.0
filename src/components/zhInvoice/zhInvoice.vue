@@ -254,7 +254,7 @@ export default Vue.extend({
       if (!formCheck) {
         this.saveLock = true
         this.invoiceInfo.data.forEach((item) => {
-          item.price = item.price.replace(/[^0-9]/gi, '')
+          item.price = item.price.replace(/[^0-9|.]/gi, '')
         })
         invoice.create(this.invoiceInfo).then((res) => {
           if (res.data.status) {
