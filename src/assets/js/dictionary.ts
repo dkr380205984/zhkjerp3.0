@@ -314,10 +314,10 @@ const systemModule = [{
   }, {
     id: '19-4',
     name: '删除单据',
-  },{
+  }, {
     id: '19-5',
     name: '按员工录入列表',
-  }, ]
+  },]
 }, {
   id: 20,
   name: '数据报表',
@@ -418,6 +418,13 @@ const systemModule = [{
   }, {
     id: '22-4',
     name: '客户付款详情'
+  }]
+}, {
+  id: 23,
+  name: '文件管理',
+  detail: [{
+    id: '23-1',
+    name: '文件列表'
   }]
 }]
 

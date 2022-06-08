@@ -107,7 +107,7 @@
                         aria-hidden="true">
                         <use xlink:href="#icon-Excel"></use>
                       </svg>
-                      <svg v-else-if="item.split('.')[item.split('.').length-1]==='png'||item.split('.')[item.split('.').length-1]==='jpeg'"
+                      <svg v-else-if="item.split('.')[item.split('.').length-1]==='png'||item.split('.')[item.split('.').length-1]==='jpeg'||item.split('.')[item.split('.').length-1]==='jpg'"
                         class="iconFont"
                         aria-hidden="true">
                         <use xlink:href="#icon-tupian"></use>

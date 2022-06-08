@@ -229,7 +229,7 @@ export default Vue.extend({
         })
         .then((res) => {
           if (res.data.status) {
-            this.msgList = res.data.data
+            this.msgList = res.data.data.items
             this.total = this.msgList.length
           }
           this.msgLoading = false

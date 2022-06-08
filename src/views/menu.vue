@@ -152,6 +152,12 @@ export default Vue.extend({
             id: 16,
             icon: 'icon-xitongshezhi',
             url: '/setting'
+          },
+          {
+            name: '文件列表',
+            id: '23-1',
+            icon: 'icon-wuliaojihua',
+            url: '/fileManage/list?page=1&status=&client_id=&date=&group_id=&user_id=&limit='
           }
         ],
         finance: [

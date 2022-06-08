@@ -110,6 +110,13 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/otherPage/msgList.vue')
     }, {
       meta: {
+        permissions_id: '23-1',
+      },
+      path: '/fileManage/list',
+      name: '文件列表',
+      component: () => import('../views/fileManage/list.vue')
+    }, {
+      meta: {
         permissions_id: '1-1',
       },
       path: '/quotedPrice/create',

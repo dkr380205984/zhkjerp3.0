@@ -140,7 +140,7 @@
             <div class="col"
               :class="{'blue':item.type===1,'orange':item.type===2}">{{item.number}}</div>
             <div class="col">
-              <span :class="{'gray':!item.part_shoddy_number,'red':item.part_shoddy_number}">{{item.part_shoddy_number||'0'}}</span>/
+              <span :class="{'gray':!item.part_shoddy_number,'orange':item.part_shoddy_number}">{{item.part_shoddy_number||'0'}}</span>/
               <span :class="{'gray':!item.shoddy_number,'red':item.shoddy_number}">{{item.shoddy_number||'0'}}</span>
             </div>
             <div class="col"
@@ -339,7 +339,8 @@
                     v-if="item.type===1">
                     <div class="label"
                       v-if="indexChild===0">
-                      <span class="text orange">半次数</span>
+                      <span class="text"
+                        style="color: #FA9036;">半次数</span>
                     </div>
                     <div class="info elCtn">
                       <zh-input class="inputs"
@@ -354,7 +355,8 @@
                     v-if="item.type===1">
                     <div class="label"
                       v-if="indexChild===0">
-                      <span class="text red">全次数</span>
+                      <span class="text"
+                        style="color: #F5222D;">全次数</span>
                       <span class="explanation"
                         v-if="item.type===2">(无)</span>
                     </div>

@@ -42,7 +42,7 @@
               <el-cascader placeholder="请选择关联单位"
                 v-model="storeInfo.tree_data"
                 :options="clientList"
-                @change="(ev)=>{storeInfo.client_id=ev[1]}"
+                @change="(ev)=>{storeInfo.client_id=ev[2]}"
                 :disabled="storeInfo.type===1"></el-cascader>
             </div>
           </div>
@@ -158,6 +158,21 @@ export default Vue.extend({
     }
   },
   methods: {
+    findClientId(id: number): number[] {
+      let arr: number[] = []
+      if (id) {
+        this.clientList.forEach((item: any) => {
+          item.children.forEach((itemChild: any) => {
+            itemChild.children.forEach((itemFind: any) => {
+              if (itemFind.value === id && arr.length === 0) {
+                arr = [item.value, itemChild.value, itemFind.value]
+              }
+            })
+          })
+        })
+      }
+      return arr
+    },
     saveStore() {
       if (this.saveLock) {
         this.$message.error('请勿频繁点击')
@@ -208,6 +223,9 @@ export default Vue.extend({
               }
             })
           }
+          this.$nextTick(() => {
+            this.storeInfo.tree_data = this.findClientId(data.client_id)
+          })
         })
     }
     this.$checkCommonInfo([

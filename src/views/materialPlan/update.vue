@@ -990,17 +990,17 @@ export default Vue.extend({
         })
       })
       // 把物料信息合计的接口给的id还给后端——接口有问题接口好了这段代码可以直接用
-      // this.$nextTick(() => {
-      //   this.materialPlanInfo.material_plan_gather_data.forEach((item) => {
-      //     const finded = this.material_plan_gather_data.find(
-      //       (itemFind: any) =>
-      //         item.material_name === itemFind.material_name && item.material_color === itemFind.material_color
-      //     )
-      //     if (finded) {
-      //       item.id = finded.id
-      //     }
-      //   })
-      // })
+      this.$nextTick(() => {
+        this.materialPlanInfo.material_plan_gather_data.forEach((item) => {
+          const finded = this.material_plan_gather_data.find(
+            (itemFind: any) =>
+              item.material_name === itemFind.material_name && item.material_color === itemFind.material_color
+          )
+          if (finded) {
+            item.id = finded.id
+          }
+        })
+      })
     },
     // 这个地方有个巨大BUG，提交的是getCmp函数在重置物料计划详情数据的时候会导致watch函数覆盖掉原料总表，导致你改了原料总表的任何数据实际上都会被重置掉，懒得改
     saveMaterialPlan() {

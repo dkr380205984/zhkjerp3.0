@@ -72,6 +72,26 @@
           <div class="btn borderBtn"
             @click="reset">重置</div>
         </div>
+        <div class="filterCtn">
+          <div class="elCtn hasIcon">
+            <el-select @change="changeRouter"
+              v-model="group_id"
+              placeholder="筛选负责小组"
+              clearable>
+              <el-option v-for="item in groupList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
+            <el-tooltip class="item"
+              effect="dark"
+              content="保存负责小组筛选"
+              placement="top">
+              <i class="el-icon-upload hoverOrange"
+                @click="$setLocalStorage('group_id',group_id)"></i>
+            </el-tooltip>
+          </div>
+        </div>
         <div class="fixedTableCtn"
           v-loading="loading">
           <div class="original">
@@ -86,6 +106,7 @@
               <div class="column w220">分配/交货时间</div>
               <div class="column">更新日期</div>
               <div class="column">下单公司</div>
+              <div class="column">创建人</div>
               <div class="column w150">操作</div>
             </div>
             <div class="row"
@@ -119,8 +140,9 @@
                 <span>{{item.start_time}}~{{item.end_time}}</span>
                 <span :class="$diffByDate(item.end_time)>0?'green':'red'">({{$diffByDate(item.end_time)>0?'还剩'+$diffByDate(item.end_time)+'天':'逾期'+Math.abs($diffByDate(item.end_time))+'天'}})</span>
               </div>
-              <div class="column">暂无</div>
+              <div class="column">{{item.updated_at}}</div>
               <div class="column">{{item.customer.name}}</div>
+              <div class="column">{{item.user.name}}</div>
               <div class="column w150">操作</div>
             </div>
           </div>
@@ -217,6 +239,9 @@ export default Vue.extend({
   computed: {
     userList() {
       return this.$store.state.api.user.arr
+    },
+    groupList() {
+      return this.$store.state.api.group.arr
     }
   },
   watch: {
@@ -232,6 +257,7 @@ export default Vue.extend({
       this.keyword = query.keyword || ''
       this.status = Number(query.status) || 0
       this.user_id = query.user_id || ''
+      this.group_id = query.group_id || ''
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = query.limit ? Number(query.limit) : 10
     },
@@ -251,7 +277,9 @@ export default Vue.extend({
           '&date=' +
           this.date +
           '&limit=' +
-          this.limit
+          this.limit +
+          '&group_id=' +
+          this.group_id
       )
     },
     reset() {
@@ -263,6 +291,7 @@ export default Vue.extend({
         .then(() => {
           this.keyword = ''
           this.user_id = ''
+          this.group_id = ''
           this.date = []
           this.status = 0
           this.limit = 10
@@ -303,6 +332,11 @@ export default Vue.extend({
         checkWhich: 'api/user',
         getInfoMethed: 'dispatch',
         getInfoApi: 'getUserAsync'
+      },
+      {
+        checkWhich: 'api/group',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getGroupAsync'
       }
     ])
     this.getFilters()

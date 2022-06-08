@@ -110,7 +110,7 @@
                     aria-hidden="true">
                     <use xlink:href="#icon-Excel"></use>
                   </svg>
-                  <svg v-else-if="item.split('.')[item.split('.').length-1]==='png'||item.split('.')[item.split('.').length-1]==='jpeg'"
+                  <svg v-else-if="item.split('.')[item.split('.').length-1]==='png'||item.split('.')[item.split('.').length-1]==='jpeg'||item.split('.')[item.split('.').length-1]==='jpg'"
                     class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-tupian"></use>
@@ -157,7 +157,7 @@
                     aria-hidden="true">
                     <use xlink:href="#icon-Excel"></use>
                   </svg>
-                  <svg v-else-if="item.split('.')[item.split('.').length-1]==='png'||item.split('.')[item.split('.').length-1]==='jpeg'"
+                  <svg v-else-if="item.split('.')[item.split('.').length-1]==='png'||item.split('.')[item.split('.').length-1]==='jpeg'||item.split('.')[item.split('.').length-1]==='jpg'"
                     class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-tupian"></use>
@@ -1730,7 +1730,7 @@
     <div class="popup"
       v-show="oprLogFlag">
       <div class="main"
-        style="width:1000px">
+        style="width:1200px">
         <div class="titleCtn">
           <span class="text">操作记录</span>
           <div class="closeCtn"
@@ -1748,7 +1748,7 @@
                 <div class="tcol"
                   style="max-width:89px">修改日期</div>
                 <div class="tcol"
-                  style="max-width:89px">修改人</div>
+                  style="max-width:66px">修改人</div>
                 <div class="tcol">订单修改详情</div>
                 <div class="tcol noPad"
                   style="flex:4">
@@ -1756,7 +1756,9 @@
                     <div class="tcol">批次修改详情</div>
                     <div class="tcol noPad"
                       style="flex:3">
-                      产品修改详情
+                      <div class="trow">
+                        <div class="tcol">产品修改详情</div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1769,9 +1771,9 @@
                 <div class="tcol"
                   style="max-width:22px">{{index+1}}</div>
                 <div class="tcol"
-                  style="max-width:89px">{{item.update_time}}</div>
+                  style="max-width:89px">{{item.update_time.slice(0,10)}}</div>
                 <div class="tcol"
-                  style="max-width:89px">{{item.user}}</div>
+                  style="max-width:66px">{{item.user}}</div>
                 <div class="tcol">
                   <div class="line"
                     v-if="item.update_data">

@@ -180,7 +180,6 @@
                 <div class="label">加工单位：</div>
                 <div class="text">{{item.client_name}}</div>
               </div>
-
             </div>
             <div class="row">
               <div class="col">
