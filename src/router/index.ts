@@ -413,7 +413,7 @@ const routes: Array<RouteConfig> = [
         permissions_id: '21-11',
       },
       path: '/billingManagement/deductionForm',
-      name: '单据管理-扣款单',
+      name: '单据管理-我方扣款单据',
       component: () => import('../views/billingManagement/deductionForm.vue')
     }, {
       meta: {

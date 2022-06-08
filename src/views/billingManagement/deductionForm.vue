@@ -15,7 +15,7 @@
         <div class="tab" @click="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">辅料订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/transportationDeliveryOrder')">运输出库单</div>
-        <div class="tab active">扣款单</div>
+        <div class="tab active">我方扣款单据</div>
         <div class="tab" @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
       </div>
       <div class="listCtn">
@@ -80,11 +80,12 @@
             <div class="col" style="flex: 0.05">
               <el-checkbox v-model="checkAllPlan" @change="checkAll"></el-checkbox>
             </div>
-            <div class="col" style="flex: 1.3">扣款单号</div>
-            <div class="col">扣款单位</div>
-            <div class="col">扣款金额</div>
+            <div class="col" style="flex: 1.3">票据编号</div>
+            <div class="col">关联单据号</div>
+            <div class="col">关联单位</div>
+            <div class="col">我方扣款金额</div>
             <div class="col">扣款原因</div>
-            <div class="col">审核状态</div>
+            <div class="col">相关图片</div>
             <div class="col">创建人</div>
             <div class="col">创建时间</div>
             <div class="col" style="flex: 1.4">操作</div>
@@ -95,13 +96,29 @@
                 <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
               </div>
               <div class="col" style="flex: 1.3">{{ item.code || '无' }}</div>
-              <div class="col">{{ item.client_name }}</div>
+              <div
+                class="col hoverBlue"
+                style="
+                  cursor: pointer;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  width:100px
+                  flex:unset;
+                  display:block;
+                "
+                :title="item.order_code || '无编号，点击查看详情'"
+                @click="$router.push('/order/detail?id=' + item.order_id)"
+              >
+                <span v-if="item.order_type === 1" class="circle backOrange">订</span>
+                <span v-if="item.order_type === 2" class="circle backBlue">样</span>
+                {{ item.order_code || '无编号，点击查看详情' }}
+              </div>
+              <div class="col">{{ item.client_name || '无' }}</div>
               <div class="col">{{ (+item.price).toFixed(2) }}</div>
               <div class="col">{{ item.reason ? item.reason.toString() : '' }}</div>
               <div class="col">
-                <div v-if="item.is_check === 0" class="orange">审核中</div>
-                <div v-if="item.is_check === 1" class="blue">通过</div>
-                <div v-if="item.is_check === 2" class="red">不通过</div>
+                <el-image style="width: 50px; height: 50px" :src="item.file_url?JSON.parse(item.file_url)[0]:require('@/assets/image/common/noPic.png')" :preview-src-list="item.file_url?JSON.parse(item.file_url):[]"> </el-image>
               </div>
               <div class="col">{{ item.user_name }}</div>
               <div class="col">{{ item.create_time }}</div>
