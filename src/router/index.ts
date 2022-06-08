@@ -417,6 +417,13 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/billingManagement/deductionForm.vue')
     }, {
       meta: {
+        permissions_id: '21-12',
+      },
+      path: '/billingManagement/ourInvoiceList',
+      name: '单据管理-我方发票列表',
+      component: () => import('../views/billingManagement/ourInvoiceList.vue')
+    }, {
+      meta: {
         permissions_id: '17-1',
       },
       path: '/workerManage/create',

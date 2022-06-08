@@ -247,6 +247,9 @@ const invoice = {
       price: string
     }>
   }) => http.post(`${baseUrl}/doc/invoice/save`, params, 'application/json'),
+  delete: (params: {
+    id?: string | number
+  }) => http.post(`${baseUrl}/doc/invoice/delete`, params, 'application/json'),
 }
 
 // 产品品类

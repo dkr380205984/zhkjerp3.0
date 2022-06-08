@@ -17,6 +17,7 @@
         <div class="tab" @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/transportationDeliveryOrder')">运输出库单</div>
         <div class="tab" @click="$router.push('/billingManagement/deductionForm')">扣款单</div>
+        <div class="tab" @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
       </div>
       <div class="listCtn">
         <div class="filterCtn">

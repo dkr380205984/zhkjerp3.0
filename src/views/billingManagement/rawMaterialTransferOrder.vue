@@ -16,6 +16,7 @@
         <div class="tab" @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/transportationDeliveryOrder')">运输出库单</div>
         <div class="tab" @click="$router.push('/billingManagement/deductionForm')">扣款单</div>
+        <div class="tab" @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
       </div>
       <div class="listCtn">
         <div class="filterCtn">
@@ -766,7 +767,7 @@ export default Vue.extend({
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
     },
-     changeJiDu(e: any) {
+    changeJiDu(e: any) {
       this.exportMonth = ''
       if (e != '') {
         this.monthList = this.$forJiDuGetMonth(e, true)
@@ -779,14 +780,22 @@ export default Vue.extend({
 
       let start_time = ''
       let end_time = ''
-      
+
       if (this.exportJiDu !== '') {
         if (this.exportMonth !== '') {
-          start_time = new Date(this.exportYear.getFullYear(), this.exportMonth - 1, 1).toLocaleDateString().replaceAll('/', '-')
-          end_time = new Date(this.exportYear.getFullYear(), this.exportMonth, 0).toLocaleDateString().replaceAll('/', '-')
+          start_time = new Date(this.exportYear.getFullYear(), this.exportMonth - 1, 1)
+            .toLocaleDateString()
+            .replaceAll('/', '-')
+          end_time = new Date(this.exportYear.getFullYear(), this.exportMonth, 0)
+            .toLocaleDateString()
+            .replaceAll('/', '-')
         } else {
-          start_time = new Date(this.exportYear.getFullYear(), (this.exportJiDu - 1) * 3, 1).toLocaleDateString().replaceAll('/', '-')
-          end_time = new Date(this.exportYear.getFullYear(), this.exportJiDu * 3, 0).toLocaleDateString().replaceAll('/', '-')
+          start_time = new Date(this.exportYear.getFullYear(), (this.exportJiDu - 1) * 3, 1)
+            .toLocaleDateString()
+            .replaceAll('/', '-')
+          end_time = new Date(this.exportYear.getFullYear(), this.exportJiDu * 3, 0)
+            .toLocaleDateString()
+            .replaceAll('/', '-')
         }
       } else {
         start_time = this.exportYear.getFullYear() + '-01-01'
