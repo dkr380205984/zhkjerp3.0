@@ -350,7 +350,7 @@ export default Vue.extend({
   },
   computed: {
     clientList() {
-      return this.$store.state.api.clientType.arr.filter((item: { label: string }) => item.label === '包装辅料单位')
+      return this.$store.state.api.clientType.arr.filter((item: { type: any }) => Number(item.type) === 1)
     },
     userList() {
       return this.$store.state.api.user.arr

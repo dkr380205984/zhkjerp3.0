@@ -3,14 +3,15 @@
     v-show="show">
     <div class="main">
       <div class="titleCtn">
-        <span class="text">单据审核详情</span>
+        <span class="text">{{is_check===3?'单据异常处理':'单据审核详情'}}</span>
         <div class="closeCtn"
           @click="close">
           <span class="el-icon-close"></span>
         </div>
       </div>
       <div class="contentCtn">
-        <div class="listCtn">
+        <div class="listCtn"
+          v-if="is_check!==3&&!errMsg">
           <div class="list">
             <div class="row title">
               <div class="col">审核人</div>
@@ -30,6 +31,12 @@
               <div class="col">{{item.desc}}</div>
             </div>
           </div>
+        </div>
+        <div class="errorMsgCtn"
+          v-if="is_check===3&&errMsg&&errMsg.length>0">
+          <div class="errorMsg"
+            v-for="item,index in errMsg"
+            :key="index">{{item}}</div>
         </div>
       </div>
     </div>
@@ -62,6 +69,13 @@ export default Vue.extend({
     check_type: {
       type: Number,
       required: true
+    },
+    //
+    is_check: {
+      type: Number
+    },
+    errMsg: {
+      type: Array
     }
   },
   data() {
@@ -73,17 +87,20 @@ export default Vue.extend({
   watch: {
     show(val) {
       if (val) {
-        check
-          .list({
-            pid: this.pid,
-            check_type: this.check_type
-          })
-          .then((res) => {
-            if (res.data.status) {
-              this.list = res.data.data
-            }
-            this.loading = false
-          })
+        if (this.is_check === 3) {
+        } else {
+          check
+            .list({
+              pid: this.pid,
+              check_type: this.check_type
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.list = res.data.data
+              }
+              this.loading = false
+            })
+        }
       }
     }
   },

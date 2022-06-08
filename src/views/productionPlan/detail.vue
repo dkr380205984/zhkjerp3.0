@@ -159,7 +159,7 @@
           </div>
           <div class="detailCtn">
             <div class="checkCtn"
-              @click="checkType=4;checkDetailFlag=true">
+              @click="checkType=4;checkDetailFlag=true;is_check=item.is_check">
               <el-tooltip class="item"
                 effect="dark"
                 content="点击查看审核日志"
@@ -180,7 +180,6 @@
                 <div class="label">加工单位：</div>
                 <div class="text">{{item.client_name}}</div>
               </div>
-
             </div>
             <div class="row">
               <div class="col">
@@ -1570,7 +1569,14 @@
     <zh-check-detail :pid="checkType===9?materialPlanIndex:productionPlanIndex"
       :check_type="checkType"
       :show="checkDetailFlag"
-      @close="checkDetailFlag=false"></zh-check-detail>
+      @close="checkDetailFlag=false"
+      :is_check="is_check"
+      :errMsg="[
+        ' 由于【计划单生产以及原料数量】发生了修改。该生产计划单已变为异常状态。以下为异常单据处理办法：',
+        '1. 修改此生产计划单，同步最新的生产以及原料分配数量。注意：已计划的产品不能删除，但可以将数量改为0。实际已入库的产品，可以在检验收发页面进行结余操作。',
+        '2. 如果该单据没有后续检验入库单，您也可以删除该单据再新建一张。',
+        '3. 如果您不想修改生产计划单，您也可以直接点击审核通过，并新建一张生产计划单，以补充新的生产数量。'
+      ]"></zh-check-detail>
   </div>
 </template>
 
@@ -1601,6 +1607,7 @@ export default Vue.extend({
       loading: true,
       saveLock: false,
       checkFlag: false,
+      is_check: 0,
       checkDetailFlag: false,
       checkType: 9,
       storeSurplusFlag: false,

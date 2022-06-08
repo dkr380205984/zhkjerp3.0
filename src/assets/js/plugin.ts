@@ -639,7 +639,8 @@ function changeNumToHan(num: number): string {
   var arr1 = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九']
   var arr2 = ['', '十', '百', '千', '万', '十', '百', '千', '亿', '十', '百', '千', '万', '十', '百', '千', '亿']
   if (!num || isNaN(num)) return '零'
-  var english = num.toString().split('')
+  var fengexiaoshu = num.toString().split('.')
+  var english = fengexiaoshu[0]
   var result = ''
   for (var i = 0; i < english.length; i++) {
     var des_i = english.length - 1 - i // 倒序排列设值
@@ -655,6 +656,14 @@ function changeNumToHan(num: number): string {
   result = result.replace(/零+$/, '') // 移除末尾的零
   // 将【一十】换成【十】
   result = result.replace(/^一十/g, '十')
+  // 如果存在小数点
+  if (fengexiaoshu[1]) {
+    result += '点'
+    // @ts-ignore
+    fengexiaoshu[1].split('').forEach((item: number) => {
+      result += arr1[item]
+    })
+  }
   return result
 }
 

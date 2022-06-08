@@ -265,11 +265,11 @@
                           <i class="el-icon-refresh hoverGreen"
                             style="line-height:46px;font-size:18px;cursor:pointer;margin-left:8px"
                             @click="$checkCommonInfo([{
-                        checkWhich: 'api/yarnType',
-                        getInfoMethed: 'dispatch',
-                        getInfoApi: 'getYarnTypeAsync',
-                        forceUpdate:true
-                      }])"></i>
+                            checkWhich: 'api/yarnType',
+                            getInfoMethed: 'dispatch',
+                            getInfoApi: 'getYarnTypeAsync',
+                            forceUpdate:true
+                          }])"></i>
                         </el-tooltip>
                         <el-tooltip class="item"
                           effect="dark"
@@ -328,7 +328,9 @@
                           </svg>
                         </el-tooltip>
                       </div>
-                      <div class="tcol">操作</div>
+                      <div class="tcol"
+                        style="flex-direction: row;align-items: center;justify-content:space-between;">操作
+                      </div>
                     </div>
                     <div class="trow"
                       v-for="(itemChild,indexChild) in item.info_data"
@@ -790,7 +792,8 @@
               <div class="elCtn">
                 <el-input v-model="item.loss"
                   placeholder="原料损耗"
-                  @input="getMaterialFinalNum($event,item)">
+                  @input="getMaterialFinalNum($event,item)"
+                  disabled>
                   <template slot="append">%</template>
                 </el-input>
               </div>
@@ -798,7 +801,8 @@
             <div class="tcol">
               <div class="elCtn">
                 <el-input v-model="item.final_number"
-                  placeholder="最终数量">
+                  placeholder="最终数量"
+                  disabled>
                   <template slot="append">{{item.unit==='g'?'kg':item.unit}}</template>
                 </el-input>
               </div>
@@ -1299,6 +1303,7 @@ export default Vue.extend({
             item.check = false
           }
         })
+        this.getNewMaterialPlanData()
       } else {
         this.material_plan_check_data.forEach((item: any) => (item.check = true))
       }
@@ -1306,17 +1311,31 @@ export default Vue.extend({
     // 计算所需物料--按尺码颜色
     getMaterialPlanDetail(partId?: number, number?: number, proInfo?: any) {
       if (partId || partId === 0) {
-        const finded = this.materialPlanInfo.material_plan_data.find(
-          (itemFind) =>
-            itemFind.part_id === partId &&
-            itemFind.color_id === proInfo.color_id &&
-            itemFind.size_id === proInfo.size_id
-        )
+        const finded = this.materialPlanInfo.material_plan_data.find((itemFind) => {
+          if (this.materialPlanInfo.type === 1) {
+            return (
+              itemFind.part_id === partId &&
+              itemFind.color_id === proInfo.color_id &&
+              itemFind.size_id === proInfo.size_id
+            )
+          } else {
+            return itemFind.part_id === partId
+          }
+        })
         if (finded) {
           finded.number = number
-        } else {
         }
       }
+      this.materialPlanInfo.material_plan_data.forEach((item: any) => {
+        item.info_data.forEach((itemChild: any) => {
+          itemChild.need_number = this.numberAutoMethod(
+            (Number(itemChild.production_number) * item.number) /
+              (itemChild.unit === 'kg' || itemChild.unit === 'g' ? 1000 : 1)
+          )
+          itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number)
+        })
+      })
+      this.$forceUpdate()
     },
     confirmPlanNum() {
       if (this.confirmFlag === 1) {
@@ -1592,6 +1611,7 @@ export default Vue.extend({
         item.unit = item.unit === 'g' ? 'kg' : item.unit
       })
     },
+    // 这个地方有个巨大BUG，提交的是getCmp函数在重置物料计划详情数据的时候会导致watch函数覆盖掉原料总表，导致你改了原料总表的任何数据实际上都会被重置掉，懒得改
     saveMaterialPlan() {
       if (this.saveLock) {
         this.$message.error('请勿频繁点击')
@@ -1663,6 +1683,7 @@ export default Vue.extend({
         item.info_data.forEach((itemChild) => {
           // @ts-ignore
           itemChild.tree_data = itemChild.tree_data && itemChild.tree_data.split(',').map((item) => Number(item))
+          itemChild.unit = itemChild.unit === 'kg' ? 'g' : itemChild.unit
         })
       })
       this.materialPlanInfo.production_plan_data.forEach((item) => {

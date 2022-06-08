@@ -1153,7 +1153,9 @@ export default Vue.extend({
         }
       ])
       if (!formCheck) {
-        console.log(this.mergeData)
+        this.mergeData.vat_code = this.mergeData.vat_code || '无'
+        this.mergeData.color_code = this.mergeData.color_code || '无'
+        this.mergeData.batch_code = this.mergeData.batch_code || '无'
         materialStock.merge(this.mergeData).then((res) => {
           if (res.data.status) {
             this.$message.success('合并成功')
