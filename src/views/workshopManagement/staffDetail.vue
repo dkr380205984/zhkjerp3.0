@@ -52,11 +52,7 @@
               <div
                 class="btn backHoverRed"
                 style="margin-left: 20px; display: flex; align-items: center"
-                @click="
-                  settlementLogList.length > 1
-                    ? $deleteItem(settlementLogList, settlementLogIndex)
-                    : $message.error('至少有一个员工')
-                "
+                @click="deleteStaff(settlementLogList, settlementLogIndex)"
               >
                 <!-- <div class="closeCtn">
                   <span class="el-icon-close" style="cursor: pointer"></span>
@@ -149,11 +145,7 @@
                   <span
                     class="el-icon-close"
                     style="cursor: pointer"
-                    @click="
-                      settlementLog.processInfo.length > 1
-                        ? $deleteItem(settlementLog.processInfo, index)
-                        : $message.error('至少有一道工序')
-                    "
+                    @click="deleteProcess(settlementLog, index)"
                   ></span>
                 </div>
               </div>
@@ -382,12 +374,8 @@
                   </span>
                   <span
                     class="hoverRed"
-                    style="cursor: pointer"
-                    @click="
-                      item.product_info.length > 1
-                        ? $deleteItem(item.product_info, itemProIndex)
-                        : $message.error('至少有一个订单')
-                    "
+                    style="cursor: pointer; margin-left: 20px"
+                    @click="checkDelete(item, itemProIndex)"
                   >
                     删除
                   </span>
@@ -849,6 +837,60 @@ export default Vue.extend({
         this.$deleteItem(itemRoot.checked, 0)
       }
       this.$forceUpdate()
+    },
+    checkDelete(item: any, itemProIndex: number) {
+      this.$confirm('是否删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          item.product_info.length > 1
+            ? this.$deleteItem(item.product_info, itemProIndex)
+            : this.$message.error('至少有一个订单')
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    deleteProcess(settlementLog: any, index: number) {
+      this.$confirm('是否删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          settlementLog.processInfo.length > 1
+            ? this.$deleteItem(settlementLog.processInfo, index)
+            : this.$message.error('至少有一道工序')
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    deleteStaff(settlementLogList: any, settlementLogIndex: number) {
+      this.$confirm('是否删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          settlementLogList.length > 1
+            ? this.$deleteItem(settlementLogList, settlementLogIndex)
+            : this.$message.error('至少有一个员工')
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     handleSelect(
       item: any,

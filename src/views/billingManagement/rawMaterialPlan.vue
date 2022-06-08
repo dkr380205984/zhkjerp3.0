@@ -62,27 +62,18 @@
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select
-              @change="changeRouter"
-              v-model="order_type"
-              placeholder="筛选单据类型"
-              clearable
-            >
+            <el-select @change="changeRouter" v-model="order_type" placeholder="筛选单据类型" clearable>
               <el-option label="全部" value=""></el-option>
               <el-option label="订单" value="1"></el-option>
               <el-option label="样单" value="2"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-select
-              @change="changeRouter"
-              v-model="group_id"
-              placeholder="筛选负责小组"
-              clearable
-            >
+            <el-select @change="changeRouter" v-model="group_id" placeholder="筛选负责小组" clearable>
               <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
             </el-select>
           </div>
+          <div class="btn borderBtn backHoverBlue" style="color: white" @click="oneShowAll">全部展开</div>
         </div>
         <div class="list">
           <div class="row title">
@@ -466,6 +457,12 @@ export default Vue.extend({
 
       this.$forceUpdate()
     },
+    oneShowAll() {
+      this.list.forEach((item: any) => {
+        item.isShow = false
+        this.changeShow(item)
+      })
+    },
     checkAll(res: Boolean) {
       this.list.forEach((item: any) => {
         item.checked = res
@@ -640,7 +637,7 @@ export default Vue.extend({
           group_id: this.group_id,
           start_time: this.date[0],
           end_time: this.date[1],
-          order_type:this.order_type,
+          order_type: this.order_type,
           limit: this.limit,
           page: this.page
         })

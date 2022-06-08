@@ -114,6 +114,7 @@
                 :label="item.name"></el-option>
             </el-select>
           </div>
+          <div class="btn borderBtn backHoverBlue" style="color: white" @click="oneShowAll">全部展开</div>
         </div>
         <div class="list">
           <div class="row title">
@@ -1126,6 +1127,12 @@ export default Vue.extend({
       }
 
       this.$forceUpdate()
+    },
+    oneShowAll() {
+      this.list.forEach((item: any, index: number) => {
+        item.isShow = false
+        this.changeShow(item)
+      })
     },
     getListSetting() {
       this.listKey = []
