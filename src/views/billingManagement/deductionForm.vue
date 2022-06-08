@@ -123,8 +123,10 @@
               <div class="col">{{ item.user_name }}</div>
               <div class="col">{{ item.create_time }}</div>
               <div class="col" style="flex: 1.4">
-                <span class="opr hoverBlue" @click="changeShow(item)">详情</span>
-                <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
+                <!-- <span class="opr hoverBlue" @click="changeShow(item)">详情</span>
+                <span class="opr hoverBlue" @click="changeStatus(item)">审核</span> -->
+                <span class="opr hoverOrange" @click="goDeduct([item],true)">修改</span>
+                <span class="opr hoverRed" @click="deleteThis(item)">删除</span>
               </div>
             </div>
             <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px)">
@@ -304,6 +306,14 @@
         </div>
       </div>
     </div>
+    <!-- 扣款 -->
+    <zh-deduct :type="1"
+      :update="deductUpdate"
+      :show="deductFlag"
+      :data="deductData"
+      :client_name="clientFinancial.name"
+      :client_id="clientFinancial.client_id"
+      @close="deductFlag=false;changeRouter()"></zh-deduct>
   </div>
 </template>
 
@@ -328,6 +338,27 @@ export default Vue.extend({
       mainLoading1: false,
       loading: true,
       showCharts: false,
+      deductUpdate:false,
+      deductData: [],
+      deductFlag:false,
+      clientFinancial: {
+        total_collect_price: 0,
+        total_deduct_price: 0,
+        total_invoice_price: 0,
+        total_order_number: 0,
+        total_order_price: 0,
+        total_order_price_rmb: 0,
+        total_order_price_usd: 0,
+        total_transport_price: 0,
+        total_transport_price_rmb: 0,
+        total_transport_price_usd: 0,
+        total_transport_number: 0,
+        status: 0,
+        name: '',
+        client_type_name: '',
+        alias: '',
+        contacts_data: []
+      },
       checkFlag: false,
       checkAllPlan: false,
       showExportPopup: false,
@@ -693,6 +724,13 @@ export default Vue.extend({
       } else {
         this.contacts_id = ''
       }
+    },
+    goDeduct(data: any[], update?: boolean) {
+      this.deductUpdate = update
+      this.deductData = data
+      this.clientFinancial.name = data[0].client_name
+      this.clientFinancial.client_id = data[0].client_id
+      this.deductFlag = true
     },
     getLocalStorage(ev: any, type: string) {
       if (!ev) {
