@@ -275,7 +275,8 @@
                             <el-option v-for="itemProduct in productList"
                               :key="itemProduct.id"
                               :value="itemProduct.id"
-                              :label="itemProduct.product_code + '/' + itemProduct.name"></el-option>
+                              :label="itemProduct.product_code + '/' + itemProduct.name"
+                              :disabled="proDisable(index,item.id)"></el-option>
                           </el-select>
                           <el-tooltip class="item"
                             effect="dark"
@@ -443,7 +444,8 @@
                         <el-option v-for="item in productList"
                           :key="item.id"
                           :value="item.id"
-                          :label="item.product_code + '/' + item.name"></el-option>
+                          :label="item.product_code + '/' + item.name"
+                          :disabled="proDisable(index,item.id)"></el-option>
                       </el-select>
                     </div>
                   </div>
@@ -877,10 +879,14 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 筛选出每个批次中还未被选中的产品，做个优化
+    proDisable(index: number, id: number) {
+      return !!this.orderInfo.time_data.batch_data[index].product_data.find((item) => item.product_id === id)
+    },
     getOrderProduct(orderInfo: OrderCreate): ProductInfo[] {
       const flattenArr: ProductInfo[] = [] // 存储return信息
       orderInfo.time_data.batch_data.forEach((itemBatch) => {
-        itemBatch.product_data.forEach((itemPro) => {
+        itemBatch.product_data.forEach((itemPro: any) => {
           if (!itemPro.product_id) {
             return
           }
@@ -894,6 +900,7 @@ export default Vue.extend({
             secondary_category: itemPro.secondary_category,
             size_data: itemPro.size_data!,
             color_data: itemPro.color_data!,
+            style_data: itemPro.style_data,
             part_data: [],
             desc: '',
             image_data: [],
@@ -976,7 +983,6 @@ export default Vue.extend({
     getProductDetail(product: ProductInfo) {
       this.productShow = true
       this.productDetail = product
-      console.log(product)
     },
     beforeAvatarUpload(file: any) {
       const fileName = file.name.lastIndexOf('.') // 取到文件名开始到最后一个点的长度

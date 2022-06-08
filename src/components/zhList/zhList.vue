@@ -189,7 +189,8 @@
                   </svg>
                 </el-tooltip>
               </div>
-              <div class="process gray">
+              <div class="process"
+                :class="{'green':item.has_invoice.status===1,'gray':item.has_invoice.status===2}">
                 <el-tooltip class="item"
                   effect="dark"
                   :content="'开票金额'+(item.has_invoice.status===1?('已添加(更新日期:'+item.has_invoice.update_time +')'):'未添加')"

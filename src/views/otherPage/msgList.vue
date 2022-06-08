@@ -188,9 +188,8 @@ export default Vue.extend({
           status: this.activeName
         })
         .then((res) => {
-          console.log(res)
-          this.msgList = this.msgList.concat(res.data.data)
-          if (res.data.data.length === 0) {
+          this.msgList = this.msgList.concat(res.data.data.items)
+          if (res.data.data.items.length === 0) {
             this.noMore = true
           }
           this.loading = false

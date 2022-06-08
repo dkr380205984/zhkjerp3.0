@@ -263,25 +263,6 @@
           </div>
         </div>
       </div>
-      <div class="rightCtn">
-        <div class="module">
-          <div class="titleCtn">
-            <div class="title">
-              版本公告
-              <div class="fr hoverBlue"
-                style="font-size: 16px; font-weight: normal; cursor: pointer"
-                @click="showSystemMessageContent=true;getSystemMessage()">
-                查看历史公告
-              </div>
-            </div>
-          </div>
-          <div class="content">
-            <div class="noMsg"
-              v-show="!systemMessageContent">暂无版本公告</div>
-            <div v-html="systemMessageContent"></div>
-          </div>
-        </div>
-      </div>
     </div>
     <div class="flexCtn">
       <div class="leftCtn">
@@ -304,6 +285,26 @@
               <div class="text"
                 @click.prevent="$openUrl('/tutorialSystem/detail?id=' + item.id)">{{ item.title }}</div>
             </div>
+          </div>
+        </div>
+      </div>
+      <div class="rightCtn">
+        <div class="module">
+          <div class="titleCtn">
+            <div class="title">
+              版本公告
+              <div class="fr hoverBlue"
+                style="font-size: 16px; font-weight: normal; cursor: pointer"
+                @click="showSystemMessageContent=true;getSystemMessage()">
+                查看历史公告
+              </div>
+            </div>
+          </div>
+          <div class="content">
+            <div class="noMsg"
+              v-show="!systemMessageContent">暂无版本公告</div>
+            <div class="msgCtn"
+              v-html="systemMessageContent"></div>
           </div>
         </div>
       </div>
@@ -812,9 +813,8 @@ export default Vue.extend({
       })
     ]).then((res) => {
       this.tutorialSystemArr = res[0].data.data.slice(0, 8)
-      console.log(res[1])
-      this.todoList = res[1].data.data
-      res[1].data.data.forEach((item: any) => {
+      this.todoList = res[1].data.data.items
+      this.todoList.forEach((item: any) => {
         item.html = this.changeContentToHtml(item.content)
       })
     })
