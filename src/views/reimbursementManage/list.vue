@@ -234,8 +234,8 @@ export default Vue.extend({
           limit: this.limit,
           status: this.status,
           group: this.group,
-          start_time: this.timeArr[0],
-          end_time: this.timeArr[1]
+          start_time: this.timeArr[0]+' 00:00:00',
+          end_time: this.timeArr[1]+' 23:59:59'
         })
         .then((res) => {
           this.list = res.data.data.items
