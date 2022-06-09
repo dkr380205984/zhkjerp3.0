@@ -18,6 +18,19 @@
         <div class="tab active">我方扣款单据</div>
         <div class="tab" @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
       </div>
+      <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
+        <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
+        <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+      </div>
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
@@ -191,11 +204,11 @@
     </div>
     <div class="bottomFixBar">
       <div class="main">
-        <div class="fl blue green" style="line-height: 56px; margin-left: 24px">
+        <!-- <div class="fl blue green" style="line-height: 56px; margin-left: 24px">
           <div class="btn backHoverBlue" @click="lostCheck">
             <span class="text">批量审核</span>
           </div>
-        </div>
+        </div> -->
         <div class="btnCtn">
           <div class="borderBtn" @click="$router.go(-1)">返回</div>
           <div class="buttonList" style="margin-left: 12px">

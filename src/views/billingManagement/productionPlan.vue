@@ -18,6 +18,19 @@
         <div class="tab" @click="$router.push('/billingManagement/deductionForm')">我方扣款单据</div>
         <div class="tab" @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
       </div>
+      <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
+        <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
+        <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+      </div>
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">

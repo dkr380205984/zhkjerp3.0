@@ -258,24 +258,76 @@
     </div>
     <div class="bottomFixBar">
       <div class="main">
-        <div class="fl blue green" style="line-height: 56px; margin-left: 24px">
+        <!-- <div class="fl blue green" style="line-height: 56px; margin-left: 24px">
           <div class="btn backHoverBlue" @click="lostCheck">
             <span class="text">批量审核</span>
           </div>
-        </div>
+        </div> -->
         <div class="btnCtn">
           <div class="borderBtn" @click="$router.go(-1)">返回</div>
           <div class="buttonList" style="margin-left: 12px">
-            <!-- <div class="btn backHoverBlue">
-              <span class="text">导出月度报表</span>
+            <div class="btn backHoverBlue" @click="showExportPopup = true">
+              <span class="text" style="margin-left: 0">导出报表</span>
             </div>
-            <div class="btn backHoverBlue">
-              <span class="text">导出季度报表</span>
-            </div>
-            <div class="btn backHoverBlue">
-              <span class="text">导出年度报表</span>
-            </div> -->
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="popup" v-show="showExportPopup">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text"
+            >请选择需要导出的时间段<el-tooltip class="item" effect="dark" content="均为创建时间" placement="top">
+              <i class="el-icon-info"></i> </el-tooltip
+          ></span>
+          <div class="closeCtn" @click="showExportPopup = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="row">
+            <div class="label">年份：</div>
+            <div class="info" style="line-height: 32px">
+              <el-date-picker v-model="exportYear" type="year" placeholder="选择年"> </el-date-picker>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label">季度：</div>
+            <div class="info" style="min-height: 32px; height: auto">
+              <el-select v-model="exportJiDu" placeholder="请选择" @change="changeJiDu">
+                <el-option label="全部" :value="''"></el-option>
+                <el-option label="第一季度" :value="1"></el-option>
+                <el-option label="第二季度" :value="2"></el-option>
+                <el-option label="第三季度" :value="3"></el-option>
+                <el-option label="第四季度" :value="4"></el-option>
+              </el-select>
+            </div>
+          </div>
+          <div class="row" v-if="exportJiDu != ''">
+            <div class="label">月份：</div>
+            <div class="info">
+              <el-select v-model="exportMonth" placeholder="请选择">
+                <el-option
+                  v-for="item in monthList"
+                  :key="item.label + item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label">单位：</div>
+            <div class="info">
+              <el-cascader placeholder="筛选关联客户" v-model="exportClient" filterable :options="clientList" clearable>
+              </el-cascader>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn" @click="showExportPopup = false">取消</span>
+          <span class="btn backHoverBlue" @click="exportExcel">确认</span>
         </div>
       </div>
     </div>
@@ -349,6 +401,11 @@ export default Vue.extend({
       mainLoading: false,
       mainLoading1: false,
       productShow: false,
+      showExportPopup: false,
+      exportClient: [],
+      exportYear: new Date(),
+      exportJiDu: '',
+      exportMonth: '',
       invoiceFlag: false,
       invoiceUpdate: false,
       productDetailId: '',
@@ -434,6 +491,54 @@ export default Vue.extend({
     }
   },
   methods: {
+    changeJiDu(e: any) {
+      this.exportMonth = ''
+      if (e != '') {
+        this.monthList = this.$forJiDuGetMonth(e, true)
+      } else {
+        this.monthList = []
+      }
+    },
+    exportExcel() {
+      this.mainLoading = true
+
+      let start_time = ''
+      let end_time = ''
+
+      if (this.exportJiDu !== '') {
+        if (this.exportMonth !== '') {
+          start_time = new Date(this.exportYear.getFullYear(), this.exportMonth - 1, 1)
+            .toLocaleDateString()
+            .replaceAll('/', '-')
+          end_time = new Date(this.exportYear.getFullYear(), this.exportMonth, 0)
+            .toLocaleDateString()
+            .replaceAll('/', '-')
+        } else {
+          start_time = new Date(this.exportYear.getFullYear(), (this.exportJiDu - 1) * 3, 1)
+            .toLocaleDateString()
+            .replaceAll('/', '-')
+          end_time = new Date(this.exportYear.getFullYear(), this.exportJiDu * 3, 0)
+            .toLocaleDateString()
+            .replaceAll('/', '-')
+        }
+      } else {
+        start_time = this.exportYear.getFullYear() + '-01-01'
+        end_time = this.exportYear.getFullYear() + '-12-31'
+      }
+
+      invoice
+        .list({
+          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
+          start_time: start_time,
+          end_time: end_time,
+          export_excel: 1
+        })
+        .then((res) => {
+          window.location.href = res.data.data
+          this.mainLoading = false
+          this.showExportPopup = false
+        })
+    },
     getContacts(ev: number[]) {
       if (ev && ev.length) {
         client
@@ -561,36 +666,6 @@ export default Vue.extend({
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
-    },
-    exportExcel(data: any) {
-      this.mainLoading = true
-      data.sort(function (a: any, b: any) {
-        return a.index - b.index
-      })
-      this.exportExcelParam.show_row = []
-      data.forEach((item: any) => {
-        if (item.ifExport) {
-          this.exportExcelParam.show_row.push(item.key)
-        }
-      })
-
-      let idArr: any = []
-
-      this.list.forEach((item) => {
-        idArr.push(item.id)
-      })
-
-      this.exportExcelParam['id'] = idArr
-      exportExcel.orderInfo(this.exportExcelParam).then((res: any) => {
-        if (res.data.status) {
-          console.log(res.data.data)
-          this.mainLoading = false
-          window.location.href = res.data.data
-        }
-      })
-      setTimeout(() => {
-        this.mainLoading = false
-      }, 10000)
     },
     changeRouter(ev?: any) {
       if (ev !== this.page) {
