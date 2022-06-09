@@ -427,8 +427,22 @@ const routes: Array<RouteConfig> = [
         permissions_id: '21-12',
       },
       path: '/billingManagement/ourInvoiceList',
-      name: '单据管理-我方发票列表',
+      name: '单据管理-我方发票单据',
       component: () => import('../views/billingManagement/ourInvoiceList.vue')
+    }, {
+      meta: {
+        permissions_id: '21-13',
+      },
+      path: '/billingManagement/collectionList',
+      name: '单据管理-收款单据',
+      component: () => import('../views/billingManagement/collectionList.vue')
+    }, {
+      meta: {
+        permissions_id: '21-14',
+      },
+      path: '/billingManagement/paymentDocument',
+      name: '单据管理-收款单据',
+      component: () => import('../views/billingManagement/paymentDocument.vue')
     }, {
       meta: {
         permissions_id: '17-1',

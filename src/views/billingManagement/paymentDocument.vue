@@ -1,5 +1,5 @@
 <template>
-  <div id="ourInvoiceList" v-loading="loading" class="bodyContainer">
+  <div id="paymentDocument" v-loading="loading" class="bodyContainer">
     <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">系统单据管理</div>
@@ -16,11 +16,11 @@
         <div class="tab" @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/transportationDeliveryOrder')">运输出库单</div>
         <div class="tab" @click="$router.push('/billingManagement/deductionForm')">我方扣款单据</div>
-        <div class="tab active">我方发票单据</div>
+        <div class="tab" @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
       </div>
       <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
         <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
+        <div class="tab active">付款单据</div>
         <div style="width:100px"></div>
         <div style="width:100px"></div>
         <div style="width:100px"></div>
@@ -89,9 +89,8 @@
             </div>
             <div class="col" style="flex: 1.2">票据编号</div>
             <div class="col">关联订单号</div>
-            <div class="col">关联单位</div>
-            <div class="col">对方开票金额</div>
-            <div class="col">发票号码</div>
+            <div class="col">关联客户</div>
+            <div class="col">已收款金额</div>
             <div class="col">备注信息</div>
             <div class="col">操作人</div>
             <div class="col">操作日期</div>
@@ -123,12 +122,11 @@
               </div>
               <div class="col">{{ item.client.name }}</div>
               <div class="col">{{ (+item.price).toFixed(2) }}</div>
-              <div class="col">{{ item.invoice_code }}</div>
               <div class="col">{{ item.desc || '无' }}</div>
               <div class="col">{{ item.user_name }}</div>
               <div class="col">{{ item.created_at }}</div>
               <div class="col">
-                <span class="opr hoverOrange" @click="goInvoice([item],true)">修改</span>
+                <span class="opr hoverOrange" @click="goPayment([item],true)">修改</span>
                 <span class="opr hoverRed" @click="deleteThis(item)">删除</span>
               </div>
             </div>
@@ -321,19 +319,21 @@
         </div>
       </div>
     </div>
-    <zh-invoice :type="1"
-      :update="invoiceUpdate"
-      :show="invoiceFlag"
-      :data="invoiceData"
+    <!-- 付款 -->
+    <zh-payment :type="clientType"
+      :invoiceChange="invoiceChange"
+      :update="paymentUpdate"
+      :show="paymentFlag"
+      :data="paymentData"
       :client_name="clientFinancial.name"
       :client_id="clientFinancial.client_id"
-      @close="invoiceFlag=false;getList()"></zh-invoice>
+      @close="paymentFlag=false;getList()"></zh-payment>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { exportExcel, client, materialPlan, check, invoice } from '@/assets/js/api'
+import { exportExcel, client, materialPlan, check, payment } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
 import { limitArr } from '@/assets/js/dictionary'
 import zhExportSetting from '@/components/zhExportSetting/zhExportSetting.vue'
@@ -349,8 +349,8 @@ export default Vue.extend({
       mainLoading: false,
       mainLoading1: false,
       productShow: false,
-      invoiceFlag: false,
-      invoiceUpdate: false,
+      paymentFlag: false,
+      paymentUpdate: false,
       productDetailId: '',
       additional: {},
       invoiceData: [],
@@ -449,10 +449,10 @@ export default Vue.extend({
         this.contacts_id = ''
       }
     },
-    goInvoice(data: any[], update?: boolean) {
-      this.invoiceUpdate = update
-      this.invoiceData = data
-      this.invoiceFlag = true
+    goPayment(data: any[], update?: boolean) {
+      this.paymentUpdate = update
+      this.paymentData = data
+      this.paymentFlag = true
       this.clientFinancial.name = data[0].client.name
       this.clientFinancial.client_id = data[0].client.id
     },
@@ -597,7 +597,7 @@ export default Vue.extend({
         this.page = 1
       }
       this.$router.push(
-        '/billingManagement/ourInvoiceList?page=' +
+        '/billingManagement/paymentDocument?page=' +
           this.page +
           '&keyword=' +
           this.keyword +
@@ -652,7 +652,7 @@ export default Vue.extend({
     },
     getList() {
       let _this = this
-      invoice
+      payment
         .list({
           order_id: '',
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
@@ -661,7 +661,6 @@ export default Vue.extend({
           start_time: this.date[0],
           end_time: this.date[1],
           user_id: '',
-          invoice_code: '',
           limit: this.limit,
           page: this.page
         })
@@ -678,7 +677,7 @@ export default Vue.extend({
         })
     },
     deleteThis(item: any) {
-      invoice
+      payment
         .delete({
           id: item.id
         })
@@ -739,5 +738,5 @@ export default Vue.extend({
 </script>
 
 <style lang="less">
-@import '~@/assets/css/billingManagement/ourInvoiceList.less';
+@import '~@/assets/css/billingManagement/paymentDocument.less';
 </style>    
