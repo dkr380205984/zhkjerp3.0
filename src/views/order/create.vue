@@ -401,7 +401,7 @@
                               :key="itemProduct.id"
                               :value="itemProduct.id"
                               :label="itemProduct.product_code + '/' + itemProduct.name"
-                              :disabled="proDisable(index,item.id)"></el-option>
+                              :disabled="proDisable(index,itemProduct.id)"></el-option>
                           </el-select>
                           <el-tooltip class="item"
                             effect="dark"
@@ -567,11 +567,11 @@
                         placeholder="选择产品"
                         @change="getColour($event,itemChild)"
                         no-data-text="请先添加/导入产品">
-                        <el-option v-for="item in productList"
-                          :key="item.id"
-                          :value="item.id"
-                          :label="item.product_code + '/' + item.name"
-                          :disabled="proDisable(index,item.id)"></el-option>
+                        <el-option v-for="itemProduct in productList"
+                          :key="itemProduct.id"
+                          :value="itemProduct.id"
+                          :label="itemProduct.product_code + '/' + item.name"
+                          :disabled="proDisable(index,itemProduct.id)"></el-option>
                       </el-select>
                       <el-tooltip class="item"
                         effect="dark"

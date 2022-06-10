@@ -276,7 +276,7 @@
                               :key="itemProduct.id"
                               :value="itemProduct.id"
                               :label="itemProduct.product_code + '/' + itemProduct.name"
-                              :disabled="proDisable(index,item.id)"></el-option>
+                              :disabled="proDisable(index,itemProduct.id)"></el-option>
                           </el-select>
                           <el-tooltip class="item"
                             effect="dark"
@@ -441,11 +441,11 @@
                         placeholder="选择产品"
                         @change="getColour($event,item)"
                         no-data-text="请先添加/导入产品">
-                        <el-option v-for="item in productList"
-                          :key="item.id"
-                          :value="item.id"
-                          :label="item.product_code + '/' + item.name"
-                          :disabled="proDisable(index,item.id)"></el-option>
+                        <el-option v-for="itemPro in productList"
+                          :key="itemPro.id"
+                          :value="itemPro.id"
+                          :label="itemPro.product_code + '/' + item.name"
+                          :disabled="proDisable(index,itemPro.id)"></el-option>
                       </el-select>
                     </div>
                   </div>
@@ -881,7 +881,17 @@ export default Vue.extend({
   methods: {
     // 筛选出每个批次中还未被选中的产品，做个优化
     proDisable(index: number, id: number) {
-      return !!this.orderInfo.time_data.batch_data[index].product_data.find((item) => item.product_id === id)
+      console.log(this.productList)
+      console.log(
+        this.orderInfo.time_data.batch_data[index],
+        id,
+        this.orderInfo.time_data.batch_data[index].product_data.find((item) => item.product_id === id)
+      )
+      if (this.orderInfo.time_data.batch_data[index].product_data.find((item) => item.product_id === id)) {
+        return true
+      } else {
+        return false
+      }
     },
     getOrderProduct(orderInfo: OrderCreate): ProductInfo[] {
       const flattenArr: ProductInfo[] = [] // 存储return信息
