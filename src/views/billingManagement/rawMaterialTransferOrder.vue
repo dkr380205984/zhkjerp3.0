@@ -144,6 +144,7 @@
                 <div v-if="item.is_check === 0" class="orange">未审核</div>
                 <div v-if="item.is_check === 1" class="blue">已通过</div>
                 <div v-if="item.is_check === 2" class="red">已驳回</div>
+                <div v-if="item.is_check === 3" class="red">状态异常</div>
               </div>
               <div class="col">{{ item.user_name }}</div>
               <div class="col">{{ item.created_at }}</div>
