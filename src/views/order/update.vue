@@ -276,7 +276,7 @@
                               :key="itemProduct.id"
                               :value="itemProduct.id"
                               :label="itemProduct.product_code + '/' + itemProduct.name"
-                              :disabled="proDisable(index,item.id)"></el-option>
+                              :disabled="proDisable(index,itemProduct.id)"></el-option>
                           </el-select>
                           <el-tooltip class="item"
                             effect="dark"
@@ -441,11 +441,11 @@
                         placeholder="选择产品"
                         @change="getColour($event,item)"
                         no-data-text="请先添加/导入产品">
-                        <el-option v-for="item in productList"
-                          :key="item.id"
-                          :value="item.id"
-                          :label="item.product_code + '/' + item.name"
-                          :disabled="proDisable(index,item.id)"></el-option>
+                        <el-option v-for="itemPro in productList"
+                          :key="itemPro.id"
+                          :value="itemPro.id"
+                          :label="itemPro.product_code + '/' + item.name"
+                          :disabled="proDisable(index,itemPro.id)"></el-option>
                       </el-select>
                     </div>
                   </div>
@@ -681,7 +681,7 @@
       :show="addProductFlag"
       @close="addProductFlag = false"
       @afterSave="getNewProduct"></product-edit>
-    <product-detail :data="productDetail"
+    <product-detail :id="productDetail.id"
       :show="productShow"
       @close="productShow = false"></product-detail>
   </div>
@@ -692,7 +692,7 @@ import Vue from 'vue'
 import { OrderInfo, OrderTime } from '@/types/order'
 import { moneyArr } from '@/assets/js/dictionary'
 import { ProductInfo } from '@/types/product'
-import { client, order } from '@/assets/js/api'
+import { client, fileManage, order } from '@/assets/js/api'
 interface OrderCreate extends OrderInfo {
   time_data: OrderTime
 }
@@ -881,7 +881,11 @@ export default Vue.extend({
   methods: {
     // 筛选出每个批次中还未被选中的产品，做个优化
     proDisable(index: number, id: number) {
-      return !!this.orderInfo.time_data.batch_data[index].product_data.find((item) => item.product_id === id)
+      if (this.orderInfo.time_data.batch_data[index].product_data.find((item) => item.product_id === id)) {
+        return true
+      } else {
+        return false
+      }
     },
     getOrderProduct(orderInfo: OrderCreate): ProductInfo[] {
       const flattenArr: ProductInfo[] = [] // 存储return信息
@@ -983,6 +987,7 @@ export default Vue.extend({
     getProductDetail(product: ProductInfo) {
       this.productShow = true
       this.productDetail = product
+      console.log(this.productDetail.id)
     },
     beforeAvatarUpload(file: any) {
       const fileName = file.name.lastIndexOf('.') // 取到文件名开始到最后一个点的长度
@@ -1007,18 +1012,37 @@ export default Vue.extend({
     },
     removeFile(file: { url: string; response: { hash: string; key: string } }, orderFile: any[]) {
       if (this.pub_file_list.find((item: any) => item.url === file.url)) {
-        this.$deleteItem(this.pub_file_list, this.pub_file_list.map((item: any) => item.url).indexOf(file.url))
+        fileManage
+          .delete({
+            id: this.pub_file_list.find((item: any) => item.url === file.url).id
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.$message.success('删除成功')
+              this.$deleteItem(this.pub_file_list, this.pub_file_list.map((item: any) => item.url).indexOf(file.url))
+            }
+          })
       } else if (this.pri_file_list.find((item: any) => item.url === file.url)) {
-        this.$deleteItem(this.pri_file_list, this.pri_file_list.map((item: any) => item.url).indexOf(file.url))
+        fileManage
+          .delete({
+            id: this.pri_file_list.find((item: any) => item.url === file.url).id
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.$message.success('删除成功')
+              this.$deleteItem(this.pri_file_list, this.pri_file_list.map((item: any) => item.url).indexOf(file.url))
+            }
+          })
       } else {
         this.$deleteItem(orderFile, orderFile.indexOf('https://file.zwyknit.com/' + file.response.key))
       }
     },
     getCmpData() {
-      this.orderInfo.public_files = this.orderInfo.public_files.concat(this.pub_file_list.map((item: any) => item.url))
-      this.orderInfo.private_files = this.orderInfo.private_files.concat(
-        this.pri_file_list.map((item: any) => item.url)
-      )
+      // 不用拼接文件啦，直接提交新的就行
+      // this.orderInfo.public_files = this.orderInfo.public_files.concat(this.pub_file_list.map((item: any) => item.url))
+      // this.orderInfo.private_files = this.orderInfo.private_files.concat(
+      //   this.pri_file_list.map((item: any) => item.url)
+      // )
       this.orderInfo.client_id = (this.orderInfo.tree_data as number[])[2]
       this.orderInfo.tree_data = (this.orderInfo.tree_data as number[]).join(',')
       this.orderInfo.time_data.total_style = this.totalStyle
@@ -1269,16 +1293,16 @@ export default Vue.extend({
           this.orderInfo.private_files = this.orderInfo.private_files || []
           this.pub_file_list = this.orderInfo.public_files.map((item: any, index: number) => {
             return {
-              name: '文件' + (index + 1) + '.' + item.split('.')[item.split('.').length - 1],
+              name: '文件' + (index + 1) + '.' + item.file_url.split('.')[item.file_url.split('.').length - 1],
               id: index,
               url: item
             }
           })
           this.pri_file_list = this.orderInfo.private_files.map((item: any, index: number) => {
             return {
-              name: '文件' + (index + 1) + '.' + item.split('.')[item.split('.').length - 1],
+              name: '文件' + (index + 1) + '.' + item.file_url.split('.')[item.file_url.split('.').length - 1],
               id: index,
-              url: item
+              url: item.file_url
             }
           })
           this.orderInfo.public_files = []

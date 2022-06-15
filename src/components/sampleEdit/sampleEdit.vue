@@ -390,9 +390,10 @@
                       <span class="text">大身尺寸</span>
                     </div>
                     <div class="info elCtn">
-                      <el-input placeholder="大身尺寸"
-                        v-model="item.size_info">
-                      </el-input>
+                      <el-autocomplete class="inline-input"
+                        v-model="item.size_info"
+                        :fetch-suggestions="searchSizeInfo"
+                        placeholder="大身尺寸"></el-autocomplete>
                     </div>
                   </div>
                 </div>
@@ -444,8 +445,10 @@
                     <span class="text">配件单位</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input placeholder="请输入配件单位"
-                      v-model="item.unit"></el-input>
+                    <el-autocomplete class="inline-input"
+                      v-model="item.unit"
+                      :fetch-suggestions="searchUnit"
+                      placeholder="单位"></el-autocomplete>
                   </div>
                 </div>
               </div>
@@ -771,6 +774,53 @@ export default Vue.extend({
     },
     searchColour(str: string, cb: any) {
       let results = str ? this.colourList.filter(this.createFilter(str)) : this.colourList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    searchSizeInfo(str: string, cb: any) {
+      const unitArr = [
+        {
+          value: '长*宽+须头：'
+        },
+        {
+          value: '长*宽+翻边：'
+        },
+        {
+          value: '长*宽+翻边+毛球：'
+        },
+        {
+          value: '长度*掌宽：'
+        },
+        {
+          value: '长*宽：'
+        }
+      ]
+      let results = str ? unitArr.filter(this.createFilter(str)) : unitArr.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    searchUnit(str: string, cb: any) {
+      const unitArr = [
+        {
+          value: '个'
+        },
+        {
+          value: '条'
+        },
+        {
+          value: '组'
+        },
+        {
+          value: '顶'
+        },
+        {
+          value: '片'
+        },
+        {
+          value: '件'
+        }
+      ]
+      let results = str ? unitArr.filter(this.createFilter(str)) : unitArr.slice(0, 10)
       // 调用 callback 返回建议列表的数据
       cb(results)
     },
@@ -1115,12 +1165,20 @@ export default Vue.extend({
         cvImageLength: 1,
         desc: data.desc,
         style_data: data.style_data.map((item: any) => item.id),
-        component_data: data.component_data.map((item: any) => {
-          return {
-            component_name: item.name,
-            number: item.number
-          }
-        }),
+        component_data:
+          data.component_data.length > 0
+            ? data.component_data.map((item: any) => {
+                return {
+                  component_name: item.name,
+                  number: item.number
+                }
+              })
+            : [
+                {
+                  component_name: '',
+                  number: ''
+                }
+              ],
         size_data: data.size_data.map((item: any) => {
           return {
             id: this.edit ? item.id : '', // 修改的时候不能删除，导入的时候把id去了，前端就可以判断可以删除了

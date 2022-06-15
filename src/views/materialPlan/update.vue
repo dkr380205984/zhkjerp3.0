@@ -949,7 +949,7 @@ export default Vue.extend({
     getMaterialPlanDetail(partId?: number, number?: number, proInfo?: any) {
       if (partId || partId === 0) {
         const finded = this.materialPlanInfo.material_plan_data.find((itemFind) => {
-          if (this.materialPlanInfo.type === 1) {
+          if (Number(this.materialPlanInfo.type) === 1) {
             return (
               itemFind.part_id === partId &&
               itemFind.color_id === proInfo.color_id &&

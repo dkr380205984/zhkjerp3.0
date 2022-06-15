@@ -198,7 +198,7 @@
         :inDetail="true"
         :pid="null"
         :pid_status="null"
-        :id="data.id"
+        :id="data?data.id :productInfo.id"
         :data="productInfo"
         :show="addProductFlag"
         @close="addProductFlag = false"

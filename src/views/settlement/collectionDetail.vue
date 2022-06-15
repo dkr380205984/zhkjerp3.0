@@ -671,6 +671,7 @@
       @close="collectionFlag=false;init()"></zh-collection>
     <!-- 开票 -->
     <zh-invoice :type="1"
+      :invoice_type="1"
       :update="invoiceUpdate"
       :show="invoiceFlag"
       :data="invoiceData"

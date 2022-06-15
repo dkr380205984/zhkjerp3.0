@@ -36,6 +36,76 @@
           </div>
           <div class="tbody">
             <div class="trow"
+              v-if="showWhich.craft_list">
+              <div class="tcol">产品工艺单</div>
+              <div class="tcol noPad"
+                style="flex:5">
+                <div class="trow">
+                  <div class="tcol">工艺单</div>
+                  <div class="tcol noPad"
+                    style="flex:4">
+                    <div class="trow"
+                      v-for="(item,index) in orderLogInfo.craft_list"
+                      :key="index">
+                      <div class="tcol">{{item.code}}</div>
+                      <div class="tcol">{{item.user_name}}</div>
+                      <div class="tcol">{{item.created_at}}</div>
+                      <div class="tcol oprCtn"
+                        style="justify-content:start">
+                        <span class="blue opr"
+                          @click="$openUrl('/craft/detail?id='+item.id)">详情</span>
+                      </div>
+                    </div>
+                    <div class="trow"
+                      v-if="orderLogInfo.craft_list.length===0">
+                      <div class="tcol">-</div>
+                      <div class="tcol">-</div>
+                      <div class="tcol">-</div>
+                      <div class="tcol oprCtn"
+                        style="justify-content:start">
+                        <span class="gray opr">暂无操作</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="trow"
+              v-if="showWhich.quote">
+              <div class="tcol">产品报价单</div>
+              <div class="tcol noPad"
+                style="flex:5">
+                <div class="trow">
+                  <div class="tcol">报价单</div>
+                  <div class="tcol noPad"
+                    style="flex:4">
+                    <div class="trow"
+                      v-for="(item,index) in orderLogInfo.quote"
+                      :key="index">
+                      <div class="tcol">{{item.code}}</div>
+                      <div class="tcol">{{item.user_name}}</div>
+                      <div class="tcol">{{item.created_at}}</div>
+                      <div class="tcol oprCtn"
+                        style="justify-content:start">
+                        <span class="blue opr"
+                          @click="$openUrl('/quotedPrice/detail?id='+item.id)">详情</span>
+                      </div>
+                    </div>
+                    <div class="trow"
+                      v-if="orderLogInfo.quote.length===0">
+                      <div class="tcol">-</div>
+                      <div class="tcol">-</div>
+                      <div class="tcol">-</div>
+                      <div class="tcol oprCtn"
+                        style="justify-content:start">
+                        <span class="gray opr">暂无操作</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="trow"
               v-if="showWhich.material_plan">
               <div class="tcol">原料计划</div>
               <div class="tcol noPad"
@@ -582,6 +652,8 @@ export default Vue.extend({
     showWhich: {
       default: () => {
         return {
+          quote: true,
+          craft_list: true,
           decorate: true,
           inspection: true,
           material: true,
@@ -599,6 +671,8 @@ export default Vue.extend({
     return {
       loading: true,
       orderLogInfo: {
+        quote: [],
+        craft_list: [],
         decorate: [],
         inspection: {
           push: [],

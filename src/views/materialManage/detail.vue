@@ -137,7 +137,7 @@
               @click="checkType=2;checkDetailFlag=true;is_check=item.is_check">
               <el-tooltip class="item"
                 effect="dark"
-                content="点击查看审核日志"
+                :content="item.is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
                 placement="bottom">
                 <img :src="item.is_check|checkFilter" />
               </el-tooltip>
@@ -454,7 +454,7 @@
               @click="checkType=6;checkDetailFlag=true;is_check=item.is_check">
               <el-tooltip class="item"
                 effect="dark"
-                content="点击查看审核日志"
+                :content="item.is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
                 placement="bottom">
                 <img :src="item.is_check|checkFilter" />
               </el-tooltip>
@@ -953,7 +953,7 @@
               </div>
             </div>
           </div>
-          <div class="btn backHoverBlue"
+          <!-- <div class="btn backHoverBlue"
             style="margin-bottom:16px"
             @click="$addItem(materialOrderInfo,{
               order_id: '',
@@ -982,7 +982,7 @@
                   unit: 'kg'
                 }
               ]
-            })">添加订购单位</div>
+            })">添加订购单位</div> -->
         </div>
         <div class="oprCtn">
           <span class="btn borderBtn"
@@ -2277,7 +2277,8 @@ import {
   store,
   materialStock,
   materialSupplement,
-  quotedPrice
+  quotedPrice,
+  checkBeyond
 } from '@/assets/js/api'
 import { CascaderInfo } from '@/types/vuex'
 import { yarnAttributeArr, yarnProcessArr } from '@/assets/js/dictionary'
@@ -2768,8 +2769,9 @@ export default Vue.extend({
           })
         })
     },
-    getMatOrderCmpData() {
+    getMatOrderCmpData(is_check?: number) {
       this.materialOrderInfo.forEach((item, index) => {
+        item.is_check = is_check ? is_check : ''
         item.client_id = item.client_id_arr![2]
         item.order_id = this.materialPlanInfo.order_id
         item.total_price = this.totalOrderPriceList[index]
@@ -2825,18 +2827,57 @@ export default Vue.extend({
       })
       if (!formCheck) {
         this.getMatOrderCmpData()
-        this.loading = true
-        this.saveLock = true
-        materialOrder.create({ data: this.materialOrderInfo }).then((res) => {
-          if (res.data.status) {
-            this.$message.success('物料订购成功')
-            this.materialOrderFlag = false
-            this.resetOrderMaterial()
-            this.init()
-          }
-          this.saveLock = false
-        })
+        this.saveMaterialOrderFn()
+        // const checkArr: any[] = []
+        // this.materialOrderInfo.forEach((item) => {
+        //   item.info_data.forEach((itemChild) => {
+        //     checkArr.push({
+        //       plan_info_id: itemChild.plan_info_id || '',
+        //       sup_info_id: itemChild.sup_info_id || '',
+        //       number: itemChild.number,
+        //       attribute: itemChild.attribute || ''
+        //     })
+        //   })
+        // })
+        // checkBeyond({
+        //   doc_type: 2,
+        //   data: checkArr
+        // }).then((res) => {
+        //   if (res.data.data.length === 0) {
+        //     this.getMatOrderCmpData()
+        //     this.saveMaterialOrderFn()
+        //   } else {
+        //     this.$confirm(res.data.data.join(','), '提示', {
+        //       confirmButtonText: '继续提交',
+        //       cancelButtonText: '取消提交',
+        //       type: 'warning'
+        //     })
+        //       .then(() => {
+        //         this.getMatOrderCmpData(4)
+        //         this.saveMaterialOrderFn()
+        //       })
+        //       .catch(() => {
+        //         this.$message({
+        //           type: 'info',
+        //           message: '已取消提交'
+        //         })
+        //       })
+        //   }
+        // })
       }
+    },
+    saveMaterialOrderFn() {
+      this.loading = true
+      this.saveLock = true
+      materialOrder.create({ data: this.materialOrderInfo }).then((res) => {
+        if (res.data.status) {
+          this.$message.success('物料订购成功')
+          this.materialOrderFlag = false
+          this.resetOrderMaterial()
+          this.init()
+        }
+        this.saveLock = false
+      })
     },
     deleteMaterialOrder(id: number) {
       this.$confirm('是否删除该订购单?', '提示', {

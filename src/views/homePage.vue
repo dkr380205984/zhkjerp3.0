@@ -223,7 +223,13 @@
       <div class="leftCtn">
         <div class="module">
           <div class="titleCtn">
-            <div class="title">待办事项</div>
+            <div class="title">待办事项
+              <div class="fr hoverBlue"
+                style="font-size: 16px; font-weight: normal; cursor: pointer"
+                @click="$router.push('/otherPage/msgList')">
+                查看全部
+              </div>
+            </div>
           </div>
           <div class="content"
             style="overflow: auto">
@@ -809,7 +815,8 @@ export default Vue.extend({
       tutorialSystem.list({ type: 1 }),
       todoInfo.list({
         limit: 10,
-        page: 1
+        page: 1,
+        status: 1
       })
     ]).then((res) => {
       this.tutorialSystemArr = res[0].data.data.slice(0, 8)
