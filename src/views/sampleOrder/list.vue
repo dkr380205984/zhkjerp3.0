@@ -796,6 +796,7 @@ export default Vue.extend({
             this.showCharts = !!hasNumber || this.showCharts
             this.option.series[0].data.push(res.data.data[key].completed)
             this.option.series[3].data.push(
+              // 未进行
               res.data.data[key].number
             )
             if (this.option.series[0].data.length < 4) {
