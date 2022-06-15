@@ -166,7 +166,7 @@
                   <span class="opr"
                     style="cursor:pointer"
                     :class="{'green':item.rel_product_info.product_id,'blue':!item.rel_product_info.product_id}"
-                    @click="item.rel_product_info.product_id?$openUrl(item.rel_order_info.order_type===1?'/order/detail?id='+item.rel_order_info.order_id:'/sampleOrder/detail?id='+item.rel_order_info.order_id):bindOrderFlag=true;bindQuoteId=item.id">{{item.rel_product_info.product_id?item.rel_order_info.order_code:'去绑定'}}</span>
+                    @click="item.rel_product_info.product_id?$openUrl(item.rel_order_info.order_type===1?'/order/detail?id='+item.rel_order_info.order_id:'/sampleOrder/detail?id='+item.rel_order_info.order_id):bindOrderFlag=true;bindQuoteId=item.id">{{item.rel_product_info.product_id?(item.rel_order_info.order_code||'无编号'):'去绑定'}}</span>
                   <span v-if="item.rel_product_info.product_id"
                     class="opr orange"
                     @click="bindOrderFlag=true;bindQuoteId=item.id">修改绑定</span>

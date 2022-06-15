@@ -317,11 +317,12 @@
                   <div class="tcol">样品名称</div>
                   <div class="tcol">样品图片</div>
                   <div class="tcol noPad"
-                    style="flex:2">
+                    style="flex:3">
                     <div class="trow">
                       <div class="tcol">尺码颜色</div>
                       <div class="tcol">单价</div>
                       <div class="tcol">打样数量</div>
+                      <div class="tcol">送样/留底数量</div>
                     </div>
                   </div>
                   <div class="tcol">样品描述</div>
@@ -356,13 +357,14 @@
                       </div>
                     </div>
                     <div class="tcol noPad"
-                      style="flex:2">
+                      style="flex:3">
                       <div class="trow"
                         v-for="(itemChild,indexChild) in item.product_info"
                         :key="indexChild">
                         <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
                         <div class="tcol">{{itemChild.price}}{{orderInfo.settle_unit||'元'}}</div>
                         <div class="tcol">{{itemChild.number}}</div>
+                        <div class="tcol">{{itemChild.sample_number||0}}/{{itemChild.keep_number||0}}</div>
                       </div>
                     </div>
                     <div class="tcol"

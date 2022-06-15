@@ -351,7 +351,7 @@
               <div class="fr elCtn"
                 style="margin-top:2px">
                 <div class="btn backHoverBlue"
-                  style="line-height:32px;font-weight:normal;"
+                  style="line-height:32px;font-weight:normal;font-size:16px"
                   @click="$openUrl('/setting/?pName=报价单设置&cName=报价模板')">添加新模板</div>
               </div>
               <div class="fr elCtn"
