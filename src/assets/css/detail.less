@@ -1,40 +1,49 @@
-.detailCtn{
+.detailCtn {
   padding: 20px 32px;
   position: relative;
-  &.noPad{
+
+  &.noPad {
     padding: 0;
   }
-  .checkCtn{
+
+  .checkCtn {
     position: absolute;
     border-radius: 50%;
     line-height: 110px;
     right: 25px;
     top: -45px;
     cursor: pointer;
-    img{
+
+    img {
       width: 160px;
     }
   }
-  .row{
+
+  .row {
     margin: 18px 0;
     display: flex;
     justify-content: flex-start;
-    .col{
-      flex:1;
+
+    .col {
+      flex: 1;
       margin-right: 72px;
       box-sizing: border-box;
       position: relative;
       display: flex;
-      &.flex2{
+
+      &.flex2 {
         max-width: 579px;
       }
-      &.flex3{
+
+      &.flex3 {
         max-width: 361px;
       }
-      &.flex4{
+
+      &.flex4 {
         max-width: 253.5px;
       }
-      .label{
+
+      .label {
         display: inline-block;
         height: 38px;
         line-height: 38px;
@@ -42,38 +51,46 @@
         width: 6em;
         white-space: nowrap;
       }
-      .text{
+
+      .text {
         display: inline-block;
         min-height: 38px;
         line-height: 38px;
         font-size: @fontMiddle;
       }
-      .imgCtn{
+
+      .imgCtn {
         display: inline-block;
-        img{
+
+        img {
           height: 116px;
           vertical-align: text-top;
           margin-right: 16px;
         }
       }
-      .fileCtn{
+
+      .fileCtn {
         display: flex;
-        .once{
+
+        .once {
           height: 40px;
           display: flex;
           align-items: center;
           margin-right: 12px;
-          .fileIcon{
+
+          .fileIcon {
             color: @blue;
           }
-          .name{
+
+          .name {
             font-size: @fontMiddle;
             color: @font65;
             margin-left: 6px;
           }
-          .opr{
+
+          .opr {
             font-size: @fontMiddle;
-            text-decoration:none;
+            text-decoration: none;
             color: @blue;
           }
         }

@@ -5,7 +5,8 @@
     <order-detail :data="orderInfo"></order-detail>
     <div class="module">
       <el-tabs type="border-card"
-        v-model="materialPlanIndex">
+        v-model="materialPlanIndex"
+        :before-leave="getMaterialPlanDetail">
         <el-tab-pane v-for="(item,index) in materialPlanList"
           :key="index"
           :name="item.id.toString()">
@@ -23,43 +24,43 @@
               @click="checkType=9;checkDetailFlag=true">
               <el-tooltip class="item"
                 effect="dark"
-                content="点击查看审核日志"
+                :content="materialPlanDetail.is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
                 placement="bottom">
-                <img :src="item.is_check|checkFilter" />
+                <img :src="materialPlanDetail.is_check|checkFilter" />
               </el-tooltip>
             </div>
             <div class="row">
               <div class="col">
                 <div class="label">单据编号：</div>
-                <div class="text">{{item.code}}</div>
+                <div class="text">{{materialPlanDetail.code}}</div>
               </div>
               <div class="col">
                 <div class="label">创建人：</div>
-                <div class="text">{{item.user_name}}</div>
+                <div class="text">{{materialPlanDetail.user_name}}</div>
               </div>
               <div class="col">
                 <div class="label">更新时间：</div>
-                <div class="text">{{item.created_at.slice(0,10)}}</div>
+                <div class="text">{{materialPlanDetail.created_at.slice(0,10)}}</div>
               </div>
             </div>
             <div class="row">
               <div class="col flex3">
                 <div class="label">关联订单：</div>
-                <div class="text">{{item.order_code}}</div>
+                <div class="text">{{materialPlanDetail.order_code}}</div>
               </div>
               <div class="col">
                 <div class="label">备注信息：</div>
                 <div class="text"
-                  :class="item.desc?'':'gray'">{{item.desc || '无'}}</div>
+                  :class="materialPlanDetail.desc?'':'gray'">{{materialPlanDetail.desc || '无'}}</div>
               </div>
               <div class="col">
                 <div class="label">计划工序：</div>
-                <div class="text">已计划<span class="green">{{item.weave_plan_count||0}}</span>张</div>
+                <div class="text">已计划<span class="green">{{materialPlanDetail.weave_plan_count||0}}</span>张</div>
               </div>
             </div>
           </div>
           <!-- 按尺码配色填 -->
-          <template v-if="Number(item.type)===1">
+          <template v-if="Number(materialPlanDetail.type)===1">
             <div class="description">
               <span>生产加工的物料信息由物料计划确定，如需补充加工步骤所需的物料请<span class="orange">修改物料计划单</span>。注意！已经分配过生产计划的物料计划单不能被修改。</span>
             </div>
@@ -68,7 +69,7 @@
                 <div class="trow">
                   <div class="tcol">
                     <el-checkbox v-model="checkAllColorSize"
-                      @change="(ev)=>{item.material_plan_data.forEach((item)=>item.check=ev)}">产品信息</el-checkbox>
+                      @change="(ev)=>{materialPlanDetail.material_plan_data.forEach((item)=>item.check=ev)}">产品信息</el-checkbox>
                   </div>
                   <div class="tcol">产品部位</div>
                   <div class="tcol">尺码颜色</div>
@@ -78,7 +79,7 @@
               </div>
               <div class="tbody">
                 <div class="trow"
-                  v-for="(itemPro,indexPro) in item.material_plan_data"
+                  v-for="(itemPro,indexPro) in materialPlanDetail.material_plan_data"
                   :key="indexPro">
                   <div class="tcol">
                     <el-checkbox v-model="itemPro.check"
@@ -105,7 +106,7 @@
                 <div class="trow">
                   <div class="tcol">
                     <el-checkbox v-model="checkAllPro"
-                      @change="(ev)=>{item.material_plan_data.forEach((item)=>item.check=ev)}">产品信息</el-checkbox>
+                      @change="(ev)=>{materialPlanDetail.material_plan_data.forEach((item)=>item.check=ev)}">产品信息</el-checkbox>
                   </div>
                   <div class="tcol">产品部位</div>
                   <div class="tcol">下单数量</div>
@@ -114,7 +115,7 @@
               </div>
               <div class="tbody">
                 <div class="trow"
-                  v-for="(itemPro,indexPro) in item.material_plan_data"
+                  v-for="(itemPro,indexPro) in materialPlanDetail.material_plan_data"
                   :key="indexPro">
                   <div class="tcol">
                     <el-checkbox v-model="itemPro.check"
@@ -162,7 +163,7 @@
               @click="checkType=4;checkDetailFlag=true;is_check=item.is_check">
               <el-tooltip class="item"
                 effect="dark"
-                content="点击查看审核日志"
+                :content="item.is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
                 placement="bottom">
                 <img :src="item.is_check|checkFilter" />
               </el-tooltip>
@@ -1690,6 +1691,37 @@ export default Vue.extend({
       },
       materialPlanList: [],
       materialPlanIndex: '0',
+      materialPlanDetail: {
+        created_at: '',
+        order_id: '',
+        type: '1', // 1、按颜色尺码 2.按产品
+        desc: '',
+        is_draft: 2,
+        production_plan_data: [
+          {
+            product_id: '',
+            part_data: [],
+            product_data: [
+              {
+                material_info: [],
+                size_color: [],
+                color_id: '',
+                size_id: '',
+                add_percent: '',
+                order_number: '',
+                info_data: [
+                  {
+                    part_id: '',
+                    number: ''
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        material_plan_data: [],
+        material_plan_gather_data: []
+      },
       productionPlanFlag: false,
       materialPlanFlag: false,
       materialDivideFlag: false,
@@ -1919,6 +1951,7 @@ export default Vue.extend({
         this.materialPlanList = res[0].data.data
         if (this.materialPlanList.length > 0) {
           this.materialPlanIndex = this.materialPlanList[0].id?.toString()
+          this.getMaterialPlanDetail(this.materialPlanIndex)
         } else {
           this.$message.warning('该订单还未创建物料计划单,请填写计划单信息')
           this.$router.push('/materialPlan/create?id=' + this.$route.query.id)
@@ -2482,8 +2515,7 @@ export default Vue.extend({
     },
     // 被选中的产品信息
     checkList(): MaterailPlanData[] {
-      const finded = this.materialPlanList.find((item) => Number(item.id) === Number(this.materialPlanIndex))
-      return finded ? finded.material_plan_data.filter((item) => item.check) : []
+      return this.materialPlanDetail.material_plan_data.filter((item: any) => item.check)
     },
     // 结余逻辑
     storeSurplus(materialInfo: ProductionMaterialPlanInfo[]) {
@@ -2502,6 +2534,18 @@ export default Vue.extend({
           .children.find((itemChild: any) => {
             return itemChild.value === ev[1]
           }).process_desc || ''
+    },
+    getMaterialPlanDetail(id: string) {
+      console.log(id)
+      this.loading = true
+      materialPlan
+        .detail({
+          id: Number(id)
+        })
+        .then((res) => {
+          this.materialPlanDetail = res.data.data
+          this.loading = false
+        })
     }
   },
   mounted() {

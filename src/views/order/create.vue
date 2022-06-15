@@ -22,6 +22,27 @@
             <div class="label">
               <span class="text">下单公司</span>
               <span class="explanation">(必选)</span>
+              <el-tooltip class="item"
+                effect="dark"
+                content="设置成功后请点击此按钮刷新数据"
+                placement="top">
+                <i class="el-icon-refresh hoverGreen fr"
+                  style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                  @click="$checkCommonInfo([{
+                    checkWhich: 'api/clientType',
+                    getInfoMethed: 'dispatch',
+                    getInfoApi: 'getClientTypeAsync',
+                    forceUpdate:true
+                  }])"></i>
+              </el-tooltip>
+              <el-tooltip class="item"
+                effect="dark"
+                content="添加新客户"
+                placement="top">
+                <i class="el-icon-upload hoverOrange fr"
+                  style="line-height:38px;font-size:18px;cursor:pointer;"
+                  @click="$openUrl('/client/create?type=1')"></i>
+              </el-tooltip>
             </div>
             <div class="info elCtn">
               <el-cascader :class="{'error':mustFlag&&orderInfo.tree_data.length===0}"
@@ -401,7 +422,7 @@
                               :key="itemProduct.id"
                               :value="itemProduct.id"
                               :label="itemProduct.product_code + '/' + itemProduct.name"
-                              :disabled="proDisable(index,item.id)"></el-option>
+                              :disabled="proDisable(index,itemProduct.id)"></el-option>
                           </el-select>
                           <el-tooltip class="item"
                             effect="dark"
@@ -567,11 +588,11 @@
                         placeholder="选择产品"
                         @change="getColour($event,itemChild)"
                         no-data-text="请先添加/导入产品">
-                        <el-option v-for="item in productList"
-                          :key="item.id"
-                          :value="item.id"
-                          :label="item.product_code + '/' + item.name"
-                          :disabled="proDisable(index,item.id)"></el-option>
+                        <el-option v-for="itemProduct in productList"
+                          :key="itemProduct.id"
+                          :value="itemProduct.id"
+                          :label="itemProduct.product_code + '/' + item.name"
+                          :disabled="proDisable(index,itemProduct.id)"></el-option>
                       </el-select>
                       <el-tooltip class="item"
                         effect="dark"

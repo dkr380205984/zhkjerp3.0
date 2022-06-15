@@ -2542,6 +2542,7 @@
       @close="paymentFlag=false;init()"></zh-payment>
     <!-- 开票 -->
     <zh-invoice :type="clientType"
+      :invoice_type="2"
       :update="invoiceUpdate"
       :show="invoiceFlag"
       :data="invoiceData"

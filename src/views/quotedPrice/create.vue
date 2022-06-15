@@ -2409,7 +2409,7 @@ export default Vue.extend({
     }
 
     // 初始化编辑器
-    if (this.quotedPriceInfo.product_data.length === 0) {
+    if (this.quotedPriceInfo.product_data.length === 0 && !this.$route.query.id) {
       this.addPro()
     }
   },

@@ -83,6 +83,7 @@ interface invoiceInfo {
   id?: string
   doc_type: number
   client_id: number | string
+  invoice_type: number
   data: Array<{
     order_id: number | string
     doc_code: string
@@ -97,6 +98,9 @@ export default Vue.extend({
   props: {
     id: {
       default: ''
+    },
+    invoice_type: {
+      type: Number
     },
     client_name: {
       type: String
@@ -142,6 +146,7 @@ export default Vue.extend({
     return {
       saveLock: false,
       invoiceInfo: {
+        invoice_type: 1,
         doc_type: 0,
         client_id: '',
         data: [{ order_id: '', doc_code: '', rel_doc_id: '', price: '', desc: '', invoice_code: '' }]
@@ -233,6 +238,7 @@ export default Vue.extend({
     },
     reset() {
       this.invoiceInfo = {
+        invoice_type: this.invoice_type,
         doc_type: 0,
         client_id: '',
         data: [{ order_id: '', doc_code: '', rel_doc_id: '', price: '', desc: '', invoice_code: '' }]
@@ -253,6 +259,7 @@ export default Vue.extend({
       })
       if (!formCheck) {
         this.saveLock = true
+        this.invoiceInfo.invoice_type = this.invoice_type
         this.invoiceInfo.data.forEach((item) => {
           item.price = item.price.replace(/[^0-9|.]/gi, '')
         })

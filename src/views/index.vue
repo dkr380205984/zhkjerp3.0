@@ -33,7 +33,7 @@
                 <div class="noMsg"
                   v-show="msgList.length===0">暂无新通知</div>
                 <div class="oneMsg"
-                  v-for="item in msgList.items"
+                  v-for="item in msgList"
                   :key="item.id"
                   @click="todoUrl(item)">
                   <div class="oneMsgLeft">

@@ -5,14 +5,15 @@
     <order-detail :data="orderInfo"></order-detail>
     <div class="module">
       <el-tabs type="border-card"
-        v-model="materialPlanIndex">
+        v-model="materialPlanIndex"
+        :before-leave="getMaterialPlanDetail">
         <el-tab-pane v-for="(itemFather,indexFather) in materialPlanInfo"
           :key="indexFather"
           :name="itemFather.id.toString()">
           <div slot="label">
             <div style="display:flex;flex-direction:column">
               <div style="line-height:20px;font-size:14px">计划单{{(indexFather+1)}}</div>
-              <div style="line-height:20px;font-size:14px">{{itemFather.code}}</div>
+              <div style="line-height:20px;font-size:14px">{{materialPlanDetail.code}}</div>
             </div>
           </div>
           <div class="titleCtn">
@@ -20,49 +21,49 @@
           </div>
           <div class="detailCtn">
             <div class="checkCtn"
-              @click="checkDetailFlag=true;is_check=itemFather.is_check">
+              @click="checkDetailFlag=true;is_check=materialPlanDetail.is_check">
               <el-tooltip class="item"
                 effect="dark"
-                content="点击查看审核日志"
+                :content="materialPlanDetail.is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
                 placement="bottom">
-                <img :src="itemFather.is_check|checkFilter" />
+                <img :src="materialPlanDetail.is_check|checkFilter" />
               </el-tooltip>
             </div>
             <div class="row">
               <div class="col">
                 <div class="label">单据编号：</div>
-                <div class="text">{{itemFather.code}}</div>
+                <div class="text">{{materialPlanDetail.code}}</div>
               </div>
               <div class="col">
                 <div class="label">创建人：</div>
-                <div class="text">{{itemFather.user_name}}</div>
+                <div class="text">{{materialPlanDetail.user_name}}</div>
               </div>
               <div class="col">
                 <div class="label">更新时间：</div>
-                <div class="text">{{itemFather.created_at.slice(0,10)}}</div>
+                <div class="text">{{materialPlanDetail.created_at.slice(0,10)}}</div>
               </div>
             </div>
             <div class="row">
               <div class="col">
                 <div class="label">关联订单：</div>
-                <div class="text">{{itemFather.order_code}}</div>
+                <div class="text">{{materialPlanDetail.order_code}}</div>
               </div>
               <div class="col">
                 <div class="label">采购状态：</div>
                 <div class="text"
-                  :class="itemFather.material_order_progress|filterOrderProgressClass">{{itemFather.material_order_progress|filterOrderProgress}}</div>
+                  :class="materialPlanDetail.material_order_progress|filterOrderProgressClass">{{materialPlanDetail.material_order_progress|filterOrderProgress}}</div>
               </div>
               <div class="col">
                 <div class="label">生产计划：</div>
                 <div class="text"
-                  :class="{'hoverBlue':itemFather.weave_plan_count>0,'gray':itemFather.weave_plan_count===0}">{{itemFather.weave_plan_count>0?('已有计划单'+(itemFather.weave_plan_count)+'张'):'暂无生产计划'}}</div>
+                  :class="{'hoverBlue':materialPlanDetail.weave_plan_count>0,'gray':materialPlanDetail.weave_plan_count===0}">{{materialPlanDetail.weave_plan_count>0?('已有计划单'+(materialPlanDetail.weave_plan_count)+'张'):'暂无生产计划'}}</div>
               </div>
             </div>
             <div class="row">
               <div class="col">
                 <div class="label">备注信息：</div>
                 <div class="text"
-                  :class="itemFather.desc?'':'gray'">{{itemFather.desc || '无'}}</div>
+                  :class="materialPlanDetail.desc?'':'gray'">{{materialPlanDetail.desc || '无'}}</div>
               </div>
             </div>
           </div>
@@ -91,7 +92,7 @@
             </div>
             <div class="tbody">
               <div class="trow"
-                v-for="item in itemFather.production_plan_data"
+                v-for="item in materialPlanDetail.production_plan_data"
                 :key="item.product_id">
                 <div class="tcol">
                   <span>{{item.product_code || item.system_code}}</span>
@@ -123,7 +124,7 @@
           <div class="titleCtn">
             <div class="title">工序物料详情</div>
           </div>
-          <template v-if="Number(itemFather.type)===1">
+          <template v-if="Number(materialPlanDetail.type)===1">
             <div class="tableCtn">
               <div class="thead">
                 <div class="trow">
@@ -146,7 +147,7 @@
               </div>
               <div class="tbody">
                 <div class="trow"
-                  v-for="(item,index) in itemFather.material_plan_data"
+                  v-for="(item,index) in materialPlanDetail.material_plan_data"
                   :key="index">
                   <div class="tcol">
                     <el-checkbox v-model="item.check"
@@ -202,7 +203,7 @@
               </div>
               <div class="tbody">
                 <div class="trow"
-                  v-for="(item,index) in itemFather.material_plan_data"
+                  v-for="(item,index) in materialPlanDetail.material_plan_data"
                   :key="index">
                   <div class="tcol">
                     <el-checkbox v-model="item.check"
@@ -246,12 +247,12 @@
             </div>
             <div class="tbody">
               <div class="trow"
-                v-if="itemFather.material_plan_gather_data.length===0">
+                v-if="materialPlanDetail.material_plan_gather_data.length===0">
                 <div class="tcol gray"
                   style="text-align:center">不需要物料</div>
               </div>
               <div class="trow"
-                v-for="(item,index) in itemFather.material_plan_gather_data"
+                v-for="(item,index) in materialPlanDetail.material_plan_gather_data"
                 :key="index">
                 <div class="tcol">{{index+1}}</div>
                 <div class="tcol">{{item.material_name}}</div>
@@ -379,6 +380,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      detailLoading: true,
       orderIndex: 0,
       checkFlag: false,
       checkDetailFlag: false,
@@ -441,6 +443,37 @@ export default Vue.extend({
           }
         ]
       },
+      materialPlanDetail: {
+        created_at: '',
+        order_id: '',
+        type: '1', // 1、按颜色尺码 2.按产品
+        desc: '',
+        is_draft: 2,
+        production_plan_data: [
+          {
+            product_id: '',
+            part_data: [],
+            product_data: [
+              {
+                material_info: [],
+                size_color: [],
+                color_id: '',
+                size_id: '',
+                add_percent: '',
+                order_number: '',
+                info_data: [
+                  {
+                    part_id: '',
+                    number: ''
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        material_plan_data: [],
+        material_plan_gather_data: []
+      },
       materialPlanIndex: '0',
       materialPlanInfo: [],
       showAssociatedPage: false
@@ -497,6 +530,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.materialPlanInfo = res.data.data
             this.materialPlanIndex = this.materialPlanInfo[0].id?.toString()
+            this.getMaterialPlanDetail(this.materialPlanIndex)
           }
           this.loading = false
         })
@@ -558,6 +592,17 @@ export default Vue.extend({
             type: 'info',
             message: '已取消'
           })
+        })
+    },
+    getMaterialPlanDetail(id: string) {
+      this.loading = true
+      materialPlan
+        .detail({
+          id: Number(id)
+        })
+        .then((res) => {
+          this.materialPlanDetail = res.data.data
+          this.loading = false
         })
     }
   },
