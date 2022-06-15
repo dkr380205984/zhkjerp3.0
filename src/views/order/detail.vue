@@ -12,7 +12,7 @@
           @click="checkDetailFlag=true">
           <el-tooltip class="item"
             effect="dark"
-            content="点击查看审核日志"
+            :content="orderInfo.time_data[0].is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
             placement="bottom">
             <img :src="orderInfo.time_data[0].is_check|checkFilter" />
           </el-tooltip>
@@ -105,22 +105,22 @@
                 v-for="(item,index) in orderInfo.public_files"
                 :key="index">
                 <div class="fileIcon">
-                  <svg v-if="item.split('.')[item.split('.').length-1]==='xlsx'"
+                  <svg v-if="item.file_url.split('.')[item.file_url.split('.').length-1]==='xlsx'"
                     class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-Excel"></use>
                   </svg>
-                  <svg v-else-if="item.split('.')[item.split('.').length-1]==='png'||item.split('.')[item.split('.').length-1]==='jpeg'||item.split('.')[item.split('.').length-1]==='jpg'"
+                  <svg v-else-if="item.file_url.split('.')[item.file_url.split('.').length-1]==='png'||item.file_url.split('.')[item.file_url.split('.').length-1]==='jpeg'||item.file_url.split('.')[item.file_url.split('.').length-1]==='jpg'"
                     class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-tupian"></use>
                   </svg>
-                  <svg v-else-if="item.split('.')[item.split('.').length-1]==='word'"
+                  <svg v-else-if="item.file_url.split('.')[item.file_url.split('.').length-1]==='word'"
                     class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-word"></use>
                   </svg>
-                  <svg v-else-if="item.split('.')[item.split('.').length-1]==='pdf'"
+                  <svg v-else-if="item.file_url.split('.')[item.file_url.split('.').length-1]==='pdf'"
                     class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-pdf"></use>
@@ -131,7 +131,7 @@
                     <use xlink:href="#icon-qitawenjian"></use>
                   </svg>
                 </div>
-                <div class="name">文件{{index+1}}.{{item.split('.')[item.split('.').length-1]}}</div>
+                <div class="name">文件{{index+1}}.{{item.file_url.split('.')[item.file_url.split('.').length-1]}}</div>
                 <a class="opr hoverBlue"
                   :href="item"
                   target=_blank>点击下载</a>
@@ -152,22 +152,22 @@
                 v-for="(item,index) in orderInfo.private_files"
                 :key="index">
                 <div class="fileIcon">
-                  <svg v-if="item.split('.')[item.split('.').length-1]==='xlsx'"
+                  <svg v-if="item.file_url.split('.')[item.file_url.split('.').length-1]==='xlsx'"
                     class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-Excel"></use>
                   </svg>
-                  <svg v-else-if="item.split('.')[item.split('.').length-1]==='png'||item.split('.')[item.split('.').length-1]==='jpeg'||item.split('.')[item.split('.').length-1]==='jpg'"
+                  <svg v-else-if="item.file_url.split('.')[item.file_url.split('.').length-1]==='png'||item.file_url.split('.')[item.file_url.split('.').length-1]==='jpeg'||item.file_url.split('.')[item.file_url.split('.').length-1]==='jpg'"
                     class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-tupian"></use>
                   </svg>
-                  <svg v-else-if="item.split('.')[item.split('.').length-1]==='word'"
+                  <svg v-else-if="item.file_url.split('.')[item.file_url.split('.').length-1]==='word'"
                     class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-word"></use>
                   </svg>
-                  <svg v-else-if="item.split('.')[item.split('.').length-1]==='pdf'"
+                  <svg v-else-if="item.file_url.split('.')[item.file_url.split('.').length-1]==='pdf'"
                     class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-pdf"></use>
@@ -178,7 +178,7 @@
                     <use xlink:href="#icon-qitawenjian"></use>
                   </svg>
                 </div>
-                <div class="name">文件{{index+1}}.{{item.split('.')[item.split('.').length-1]}}</div>
+                <div class="name">文件{{index+1}}.{{item.file_url.split('.')[item.file_url.split('.').length-1]}}</div>
                 <a class="opr hoverBlue"
                   :href="item"
                   target=_blank>点击下载</a>
@@ -262,8 +262,11 @@
             <div class="tcol stateCtn">
               <div class="state"
                 @click="item.craft_list_id?$openUrl('/craft/detail?id='+item.craft_list_id):$openUrl('/craft/create?id=' + item.product_id)">
-                <div class="circle"
+                <div v-if="item.category==='梭织'||item.secondary_category==='梭织'"
+                  class="circle"
                   :class="{'backGray':!item.craft_list_id,'backBlue':item.craft_list_id}">工</div>
+                <div v-else
+                  class="gray">无需工艺单</div>
               </div>
               <div class="state"
                 @click="goQuotedPrice(item)">
@@ -1674,7 +1677,7 @@
                   </svg>
                   <span class="text">删除订单</span>
                 </div>
-                <div class="btn backHoverBlue">
+                <!-- <div class="btn backHoverBlue">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-dayindingdan"></use>
@@ -1687,7 +1690,7 @@
                     <use xlink:href="#icon-youjianfenxiang"></use>
                   </svg>
                   <span class="text">邮件分享</span>
-                </div>
+                </div> -->
                 <div class="btn backHoverBlue"
                   @click="$router.push('/quotedPrice/create?orderId='+$route.query.id)">
                   <svg class="iconFont"
@@ -1811,8 +1814,10 @@
                         :key="indexPro">
                         <div class="tcol">
                           <div class="line">
-                            <span class="label blue">修改信息:</span>
-                            <div class="line">{{itemPro.update_data}}</div>
+                            <span class="label blue">产品{{indexPro+1}}修改信息:</span>
+                            <div class="line"
+                              v-for="itemSon in itemPro.product_info_activity_log"
+                              :key="itemSon.id">{{itemSon.update_data}}</div>
                           </div>
                         </div>
                       </div>

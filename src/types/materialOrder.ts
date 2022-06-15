@@ -1,4 +1,5 @@
 export interface MaterialOrderInfo {
+  is_check?: string | number
   created_at?: string
   id?: number | string
   code?: string
@@ -24,6 +25,8 @@ export interface MaterialOrderInfo {
 }
 
 export interface MaterialListInfo {
+  plan_info_id?: string | number
+  sup_info_id?: string | number
   process_info?: any[]
   id?: string | number
   check?: boolean // 前端用

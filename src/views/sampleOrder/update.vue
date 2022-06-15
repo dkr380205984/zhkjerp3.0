@@ -126,7 +126,7 @@
 import Vue from 'vue'
 import { SampleInfo } from '@/types/sample'
 import { SampleOrderInfo, SampleOrderTime } from '@/types/sampleOrder'
-import { client, sampleOrder } from '@/assets/js/api'
+import { client, fileManage, sampleOrder } from '@/assets/js/api'
 interface SampleOrderDetail extends SampleOrderInfo {
   time_data: SampleOrderTime[]
 }
@@ -233,10 +233,10 @@ export default Vue.extend({
       }
     },
     saveSampleOrder() {
-      // 新旧图拼接
-      this.sampleOrderInfo.public_files = this.sampleOrderInfo.public_files.concat(
-        this.file_list.map((item: any) => item.url)
-      )
+      // 新旧图拼接,接口说只要上传新的文件就行了，删除文件调单独接口
+      // this.sampleOrderInfo.public_files = this.sampleOrderInfo.public_files.concat(
+      //   this.file_list.map((item: any) => item.url)
+      // )
       this.sampleOrderInfo.client_id = this.sampleOrderInfo.tree_data[2]
       this.sampleOrderInfo.tree_data = (this.sampleOrderInfo.tree_data as number[]).join(',')
       // @ts-ignore
@@ -260,7 +260,7 @@ export default Vue.extend({
       // const isPNG = file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 10
       if (!isLt2M) {
-        this.$message.error('图片大小不能超过 10MB!')
+        this.$message.error('文件大小不能超过 10MB!')
         return false
       }
     },
@@ -269,7 +269,16 @@ export default Vue.extend({
     },
     removeFile(file: { url: string; response: { hash: string; key: string } }) {
       if (this.file_list.find((item: any) => item.url === file.url)) {
-        this.$deleteItem(this.file_list, this.file_list.map((item: any) => item.url).indexOf(file.url))
+        fileManage
+          .delete({
+            id: this.file_list.find((item: any) => item.url === file.url).id
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.$message.success('删除成功')
+              this.$deleteItem(this.file_list, this.file_list.map((item: any) => item.url).indexOf(file.url))
+            }
+          })
       } else {
         this.$deleteItem(
           this.sampleOrderInfo.public_files,
@@ -317,9 +326,9 @@ export default Vue.extend({
         // 把public_files的东西放到file_list里，因为后台给的文件和upload组件需要的数据结构不同
         this.file_list = res.data.data.public_files.map((item: any, index: number) => {
           return {
-            name: '文件' + (index + 1) + '.' + item.split('.')[item.split('.').length - 1],
-            id: index,
-            url: item
+            name: '文件' + (index + 1) + '.' + item.file_url.split('.')[item.file_url.split('.').length - 1],
+            id: item.id,
+            url: item.file_url
           }
         })
         this.sampleOrderInfo.public_files = []

@@ -66,6 +66,10 @@ const chartsApi = {
   batchLogNew: (params: any) => http.get(`/ever/order/dispatch/calendar`, params), // 发货日历
 }
 
+// 查询单据数量是否超额
+import { CheckBeyondInfo } from '@/types/otherInfo'
+const checkBeyond = (params: CheckBeyondInfo) => http.post(`${baseUrl}/doc/beyond/check`, params, 'application/json')
+
 // 首页
 const homePage = {
   searchAll: (params: {
@@ -252,6 +256,10 @@ const invoice = {
   }) => http.post(`${baseUrl}/doc/invoice/delete`, params, 'application/json'),
 }
 
+// 文件管理
+const fileManage = {
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/file/delete`, params, 'application/json'),
+}
 // 产品品类
 import { CategoryInfo } from '@/types/productSetting'
 const category = {
@@ -1241,6 +1249,8 @@ const statistics = {
   }) => http.get(`${baseUrl}/statistics/store/total`, params),
 }
 export {
+  checkBeyond,
+  fileManage,
   todoInfo,
   checkConfig,
   payment,

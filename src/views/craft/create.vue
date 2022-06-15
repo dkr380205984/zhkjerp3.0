@@ -2165,17 +2165,32 @@ export default Vue.extend({
           this.productInfo = res.data.data
           this.colourList = res.data.data.color_data
           this.loading = false
-        })
-      // 关联工艺单查询
-      craft
-        .list({
-          page: 1,
-          limit: 10,
-          product_id: id
-        })
-        .then((res) => {
-          if (res.data.status) {
-            this.searchList = res.data.data.items
+          if (this.productInfo.category !== '梭织' && this.productInfo.secondary_category !== '梭织') {
+            this.$confirm('检测到该产品非梭织产品，请选择其他产品或返回上一级?', '提示', {
+              confirmButtonText: '选择其他产品',
+              cancelButtonText: '返回上一级',
+              type: 'warning'
+            })
+              .then(() => {
+                this.colourList = []
+              })
+              .catch(() => {
+                this.saveSuccess = true
+                this.$router.go(-1)
+              })
+          } else {
+            // 关联工艺单查询
+            craft
+              .list({
+                page: 1,
+                limit: 10,
+                product_id: id
+              })
+              .then((res) => {
+                if (res.data.status) {
+                  this.searchList = res.data.data.items
+                }
+              })
           }
         })
     },

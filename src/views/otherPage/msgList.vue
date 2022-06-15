@@ -196,7 +196,10 @@ export default Vue.extend({
         })
     }
   },
-  mounted() {}
+  mounted() {
+    this.pages = 1
+    this.getList()
+  }
 })
 </script>
 <style lang="less" scoped>

@@ -384,7 +384,7 @@
               @click="checkDetailFlag=true">
               <el-tooltip class="item"
                 effect="dark"
-                content="点击查看审核日志"
+                :content="item.is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
                 placement="bottom">
                 <img :src="item.is_check|checkFilter" />
               </el-tooltip>
