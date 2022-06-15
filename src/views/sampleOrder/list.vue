@@ -796,7 +796,7 @@ export default Vue.extend({
             this.showCharts = !!hasNumber || this.showCharts
             this.option.series[0].data.push(res.data.data[key].completed)
             this.option.series[3].data.push(
-              res.data.data[key].number - res.data.data[key].postpone - res.data.data[key].completed
+              res.data.data[key].number
             )
             if (this.option.series[0].data.length < 4) {
               this.option.series[1].data.push(0)
