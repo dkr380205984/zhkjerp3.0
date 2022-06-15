@@ -87,6 +87,7 @@
               <el-option value="null" label="全部"></el-option>
               <el-option value="1" label="已审核"></el-option>
               <el-option value="2" label="待审核"></el-option>
+              <el-option value="3" label="状态异常"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
