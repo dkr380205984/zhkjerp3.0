@@ -51,17 +51,17 @@
               <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </div>
-          <!-- <div class="elCtn">
+          <div class="elCtn">
             <el-select v-model="order_type"
               @change="changeRouter">
-              <el-option label="所有单据"
+              <el-option label="全部"
                 :value="null"></el-option>
               <el-option label="订单"
                 :value="1"></el-option>
               <el-option label="样单"
                 :value="2"></el-option>
             </el-select>
-          </div> -->
+          </div>
           <div class="btn borderBtn" @click="reset">重置</div>
         </div>
         <div class="filterCtn">
@@ -158,6 +158,7 @@ export default Vue.extend({
       status: '0',
       date: [],
       total: 1,
+      order_type: 1,
       page: 1,
       showSetting: false,
       listSettingId: null,
@@ -168,7 +169,9 @@ export default Vue.extend({
           name: '单据编号',
           ifShow: true,
           ifLock: true,
-          index: 0
+          index: 0,
+          ifCaogao: 'order_type',
+          caogaoArr: ['订', '样'],
         },
         {
           key: 'client_name',
@@ -323,7 +326,7 @@ export default Vue.extend({
           this.group_id = ''
           this.date = []
           this.status = '0'
-          this.order_type = null
+          this.order_type = 1
           this.limit = 10
           this.changeRouter()
         })
@@ -339,7 +342,7 @@ export default Vue.extend({
       order
         .list({
           is_draft: 2,
-          order_type: 1,
+          order_type: this.order_type,
           keyword: this.keyword,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           page: this.page,
