@@ -441,7 +441,7 @@ const routes: Array<RouteConfig> = [
         permissions_id: '21-14',
       },
       path: '/billingManagement/paymentDocument',
-      name: '单据管理-收款单据',
+      name: '单据管理-付款单据',
       component: () => import('../views/billingManagement/paymentDocument.vue')
     }, {
       meta: {
