@@ -18,8 +18,21 @@ Vue.filter('checkFilter', (val: 0 | 1 | 2 | null) => {
     require('@/assets/image/common/waiting.png'),
     require('@/assets/image/common/pass.png'),
     require('@/assets/image/common/return.png'),
+    require('@/assets/image/common/error.png'),
     require('@/assets/image/common/error.png')
   ]
+  return imgArr[index]
+})
+// 审核状态
+Vue.filter('filterCheck', (val: 0 | 1 | 2 | null) => {
+  const index = Number(val) || 0
+  const imgArr = ['待审核', '已审核', '已驳回', '单据异常', '单据异常']
+  return imgArr[index]
+})
+// 审核状态class
+Vue.filter('filterCheckClass', (val: 0 | 1 | 2 | null) => {
+  const index = Number(val) || 0
+  const imgArr = ['orange', 'green', 'red', 'red', 'red']
   return imgArr[index]
 })
 // 样品转产品过程中的状态转换

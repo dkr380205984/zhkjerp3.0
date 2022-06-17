@@ -64,6 +64,34 @@
         </div>
         <div class="filterCtn">
           <div class="elCtn">
+            <el-select v-model="filter_way"
+              placeholder="采购调取比例"
+              @change="changeRouter"
+              clearable>
+              <el-option value="greater"
+                label="大于100%"></el-option>
+              <el-option value="less"
+                label="小于100%"></el-option>
+              <el-option value="equal"
+                label="等于100%"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-select v-model="is_check"
+              placeholder="审核状态"
+              @change="changeRouter"
+              clearable>
+              <el-option value="0"
+                label="待审核"></el-option>
+              <el-option value="1"
+                label="已审核"></el-option>
+              <el-option value="2"
+                label="已驳回"></el-option>
+              <el-option value="3"
+                label="单据异常"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
             <el-select v-model="limit"
               placeholder="每页展示条数"
               @change="changeRouter">
@@ -179,15 +207,9 @@ export default Vue.extend({
         pre_loss: 0,
         total_material_number: 0,
         total_production_number: 0
-      }
-    }
-  },
-  filters: {
-    filterCheck(type: 0 | 1 | 2) {
-      return ['待审核', '已审核', '已驳回'][type]
-    },
-    filterCheckClass(type: 0 | 1 | 2) {
-      return ['orange', 'green', 'red'][type]
+      },
+      filter_way: '',
+      is_check: ''
     }
   },
   methods: {
@@ -199,6 +221,8 @@ export default Vue.extend({
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
       this.user_id = query.user_id || ''
+      this.filter_way = query.filter_way || ''
+      this.is_check = query.is_check || ''
     },
     changeRouter(ev?: any) {
       if (ev !== this.page) {
@@ -215,8 +239,12 @@ export default Vue.extend({
           this.date +
           '&limit=' +
           this.limit +
-          '&user_id' +
-          this.user_id
+          '&user_id=' +
+          this.user_id +
+          '&filter_way=' +
+          this.filter_way +
+          '&is_check=' +
+          this.is_check
       )
     },
     reset() {
@@ -231,6 +259,7 @@ export default Vue.extend({
           this.date = []
           this.limit = 10
           this.user_id = ''
+          this.filter_way = ''
           this.changeRouter()
         })
         .catch(() => {
@@ -250,7 +279,10 @@ export default Vue.extend({
           order_code: this.order_code,
           start_time: this.date.length > 0 ? this.date[0] : '',
           end_time: this.date.length > 0 ? this.date[1] : '',
-          user_id: this.user_id
+          user_id: this.user_id,
+          filter_way: this.filter_way,
+          filter_progress: this.filter_way ? 1 : '',
+          is_check: this.is_check
         })
         .then((res) => {
           this.list = res.data.data.items

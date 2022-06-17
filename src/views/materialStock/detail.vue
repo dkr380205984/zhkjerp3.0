@@ -253,21 +253,16 @@
         </div>
       </div>
       <div class="buttonList">
-        <div class="btn backHoverBlue">
-          <i class="el-icon-s-grid"></i>
-          <span class="text">调取单操作</span>
-        </div>
-        <div class="otherInfoCtn">
-          <div class="otherInfo">
-            <div class="btn backHoverBlue"
-              @click="goStock(7)">
-              <svg class="iconFont"
-                aria-hidden="true">
-                <use xlink:href="#icon-xiugaidingdan"></use>
-              </svg>
-              <span class="text">调取入库</span>
-            </div>
-          </div>
+        <div class="btn backHoverBlue"
+          :class="{'backGray':materialJHDQList.filter((item) => {
+                return item.info_data.some((itemChild) => itemChild.check)
+              }).length===0}"
+          @click="goStock(7)">
+          <svg class="iconFont"
+            aria-hidden="true">
+            <use xlink:href="#icon-xiugaidingdan"></use>
+          </svg>
+          <span class="text">调取入库</span>
         </div>
       </div>
     </div>
@@ -629,18 +624,19 @@
             <div class="tcol">出入库类型</div>
             <div class="tcol">库存转移</div>
             <div class="tcol noPad"
-              style="flex:5">
+              style="flex:4">
               <div class="trow">
                 <div class="tcol">纱线名称</div>
                 <div class="tcol">颜色/属性</div>
-                <div class="tcol">批号/缸号</div>
-                <div class="tcol">色号</div>
+                <div class="tcol">批号/缸号/色号</div>
                 <div class="tcol">数量</div>
               </div>
             </div>
+            <div class="tcol">审核状态</div>
             <div class="tcol">操作人</div>
             <div class="tcol">操作日期</div>
-            <div class="tcol">操作</div>
+            <div class="tcol"
+              style="min-width:112px">操作</div>
           </div>
         </div>
         <div class="tbody">
@@ -693,22 +689,35 @@
               </template>
             </div>
             <div class="tcol noPad"
-              style="flex:5">
+              style="flex:4">
               <div class="trow"
                 v-for="itemChild in item.info_data"
                 :key="itemChild.id">
                 <div class="tcol">{{itemChild.material_name}}</div>
                 <div class="tcol">{{itemChild.material_color}}/{{itemChild.attribute}}</div>
                 <div class="tcol"
-                  :class="itemChild.batch_code||itemChild.vat_code?'':'gray'">{{itemChild.batch_code||'无'}}/{{itemChild.vat_code||'无'}}</div>
-                <div class="tcol"
-                  :class="itemChild.color_code?'':'gray'">{{itemChild.color_code||'无'}}</div>
+                  :class="itemChild.batch_code||itemChild.vat_code||itemChild.color_code?'':'gray'">{{itemChild.batch_code||'无'}}/{{itemChild.vat_code||'无'}}/{{itemChild.color_code||'无'}}</div>
                 <div class="tcol">{{itemChild.number}}{{itemChild.unit || 'kg'}}</div>
               </div>
             </div>
+            <div class="tcol"
+              :class="item.is_check|filterCheckClass">
+              <span>{{item.is_check|filterCheck}}
+                <el-tooltip v-if="item.is_check===4"
+                  class="item"
+                  effect="dark"
+                  content="由于【分配数量】超过了【计划数量】的10%。该生产计划单已变为异常状态。以下为异常单据处理办法：1. 检查分配数量。如果分配数量录入错误，您可以修改单据，或删除重新创建。2. 如果录入的数量为实际分配数量，则无需操作，或点击审核通过即可。"
+                  placement="top">
+                  <i class="el-icon-warning hoverRed"></i>
+                </el-tooltip>
+              </span>
+            </div>
             <div class="tcol">{{item.user_name}}</div>
             <div class="tcol">{{item.created_at.slice(0,10)}}</div>
-            <div class="tcol oprCtn">
+            <div class="tcol oprCtn"
+              style="font-size:12px;min-width:112px">
+              <div class="opr hoverGreen"
+                @click="materialStockCheckId=item.id;checkFlag=true">审核</div>
               <div class="opr hoverRed"
                 @click="deleteMaterialStockList(item.id)">删除</div>
               <div class="opr hoverBlue"
@@ -1017,6 +1026,13 @@
         </div>
       </div>
     </div>
+    <!-- 审核出入库单,主要是为了审核异常单子 -->
+    <zh-check @close="checkFlag=false"
+      @afterCheck="(ev)=>{materialStockList.find((item)=>Number(item.id)===Number(materialStockCheckId)).is_check=ev}"
+      :show="checkFlag"
+      :pid="materialStockCheckId"
+      :check_type="6"
+      :reason="[]"></zh-check>
     <!-- 结余入库 -->
     <store-surplus @afterSave="storeSurplusFlag=false;init()"
       @close="storeSurplusFlag=false"
@@ -1033,7 +1049,7 @@ import { MaterialOrderInfo } from '@/types/materialOrder'
 import { MaterialStockInfo, MaterialStockLog } from '@/types/materialStock'
 import { ProductionPlanInfo } from '@/types/productionPlan'
 import { MaterialProcessInfo } from '@/types/materialProcess'
-import { materialOrder, store, materialStock, productionPlan, order } from '@/assets/js/api'
+import { materialOrder, store, materialStock, productionPlan, order, checkBeyond } from '@/assets/js/api'
 import { stockType, yarnAttributeArr } from '@/assets/js/dictionary'
 import { OrderInfo, OrderTime } from '@/types/order'
 interface OrderDetail extends OrderInfo {
@@ -1055,6 +1071,8 @@ export default Vue.extend({
       loading: true,
       saveLock: false,
       mustFlag: false,
+      materialStockCheckId: 0,
+      checkFlag: false,
       orderInfo: {
         id: null,
         client_id: '',
@@ -1839,21 +1857,66 @@ export default Vue.extend({
       })
       if (!formCheck) {
         this.getCmpData()
-        this.saveLock = true
-        this.loading = true
-        materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
-          if (res.data.status) {
-            this.$message.success('添加成功')
-            this.materialStockFlag = false
-            this.init()
+        const checkArr: any[] = []
+        this.materialStockInfo.info_data.forEach((item) => {
+          checkArr.push({
+            action_type: 4,
+            rel_doc_info_id: item.rel_doc_info_id,
+            number: item.number,
+            attribute: item.attribute
+          })
+        })
+        checkBeyond({
+          doc_type: 6,
+          data: checkArr
+        }).then((res) => {
+          if (res.data.data.length === 0) {
+            this.saveMaterialStockFn()
+          } else {
+            const createHtml = this.$createElement
+            this.$msgbox({
+              message: createHtml(
+                'p',
+                undefined,
+                res.data.data.map((item: string) => {
+                  return createHtml('p', undefined, item)
+                })
+              ),
+              title: '提示',
+              showCancelButton: true,
+              confirmButtonText: '继续提交',
+              cancelButtonText: '取消提交',
+              type: 'warning'
+            })
+              .then(() => {
+                this.materialStockInfo.is_check = 4
+                this.saveMaterialStockFn()
+              })
+              .catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '已取消提交'
+                })
+              })
           }
-          this.saveLock = false
-          this.loading = false
-          this.mustFlag = false
         })
       } else {
         this.mustFlag = true
       }
+    },
+    saveMaterialStockFn() {
+      this.saveLock = true
+      this.loading = true
+      materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
+        if (res.data.status) {
+          this.$message.success('添加成功')
+          this.materialStockFlag = false
+          this.init()
+        }
+        this.saveLock = false
+        this.loading = false
+        this.mustFlag = false
+      })
     },
     closeStock() {
       this.materialStockFlag = false

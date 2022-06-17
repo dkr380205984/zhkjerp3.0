@@ -120,11 +120,12 @@
             <div class="col">产品信息</div>
             <div class="col">尺码颜色</div>
             <div class="col">检验数量</div>
-            <div class="col">半次/全次数</div>
+            <div class="col">半次(B品)/全次数</div>
             <div class="col">扣款金额</div>
             <div class="col">次品原因</div>
             <div class="col">操作时间</div>
             <div class="col">创建人</div>
+            <div class="col">状态</div>
             <div class="col">操作</div>
           </div>
           <div class="row fontSmall"
@@ -149,8 +150,22 @@
               :class="{'gray':!item.shoddy_reason}">{{item.shoddy_reason||'无'}}</div>
             <div class="col">{{item.complete_time}}</div>
             <div class="col">{{item.user_name}}</div>
+            <div class="col"
+              :class="item.is_check|filterCheckClass">
+              <span>{{item.is_check|filterCheck}}
+                <el-tooltip v-if="item.is_check===4"
+                  class="item"
+                  effect="dark"
+                  content="由于【检验入库数量】超过了【分配数量】的10%。该检验入库单已变为异常状态。以下为异常单据处理办法：1. 检查入库数量。如果入库数量录入错误，您可以删除重新创建。2. 如果录入的数量为实际入库数量，则无需操作，或点击审核通过即可。"
+                  placement="top">
+                  <i class="el-icon-warning hoverRed"></i>
+                </el-tooltip>
+              </span>
+            </div>
             <div class="col">
               <div class="oprCtn">
+                <span class="opr hoverBlue"
+                  @click="checkId=item.id;checkFlag=true">审核</span>
                 <span class="opr hoverRed"
                   @click="deleteInspection(item.id)">删除</span>
               </div>
@@ -172,6 +187,7 @@
             <div class="col">出库单位</div>
             <div class="col">操作时间</div>
             <div class="col">创建人</div>
+            <div class="col">状态</div>
             <div class="col">操作</div>
           </div>
           <div class="row fontSmall"
@@ -189,8 +205,12 @@
             <div class="col">{{item.client}}</div>
             <div class="col">{{item.complete_time}}</div>
             <div class="col">{{item.user_name}}</div>
+            <div class="col"
+              :class="item.is_check|filterCheckClass">{{item.is_check|filterCheck}}</div>
             <div class="col">
               <div class="oprCtn">
+                <span class="opr hoverBlue"
+                  @click="checkId=item.id;checkFlag=true">审核</span>
                 <span class="opr hoverRed"
                   @click="deleteInspection(item.id)">删除</span>
               </div>
@@ -211,6 +231,7 @@
             <div class="col">入库数量</div>
             <div class="col">操作时间</div>
             <div class="col">创建人</div>
+            <div class="col">状态</div>
             <div class="col">操作</div>
           </div>
           <div class="row fontSmall"
@@ -225,8 +246,12 @@
             <div class="col green">{{item.number}}</div>
             <div class="col">{{item.complete_time}}</div>
             <div class="col">{{item.user_name}}</div>
+            <div class="col"
+              :class="item.is_check|filterCheckClass">{{item.is_check|filterCheck}}</div>
             <div class="col">
               <div class="oprCtn">
+                <span class="opr hoverBlue"
+                  @click="checkId=item.id;checkFlag=true">审核</span>
                 <span class="opr hoverRed"
                   @click="deleteInspection(item.id)">删除</span>
               </div>
@@ -340,7 +365,7 @@
                     <div class="label"
                       v-if="indexChild===0">
                       <span class="text"
-                        style="color: #FA9036;">半次数</span>
+                        style="color: #FA9036;">半次品/B品</span>
                     </div>
                     <div class="info elCtn">
                       <zh-input class="inputs"
@@ -562,12 +587,18 @@
     <zh-deduct-detail :show="deductDetailFlag"
       @close="deductDetailFlag = false"
       :data="deductDetail"></zh-deduct-detail>
+    <zh-check @close="checkFlag=false"
+      @afterCheck="(ev)=>{inspectionList.find((item)=>Number(item.id)===Number(checkId)).is_check=ev}"
+      :show="checkFlag"
+      :pid="checkId"
+      :check_type="checkType"
+      :reason="[]"></zh-check>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { order, productionPlan, clientInOrder } from '@/assets/js/api'
+import { order, productionPlan, clientInOrder, check, checkBeyond } from '@/assets/js/api'
 import { ProductionPlanInfo } from '@/types/productionPlan'
 import { InspectionInfo } from '@/types/inspection'
 import { inspection } from '@/assets/js/api'
@@ -584,6 +615,7 @@ interface InspectionInfoMerge {
   complete_time: string
   code?: string
   child_data: InspectionInfo[]
+  is_check?: string | number
 }
 export default Vue.extend({
   components: { zhInput },
@@ -599,6 +631,9 @@ export default Vue.extend({
       deductFlag: false,
       saveLock: false,
       deductDetailFlag: false,
+      checkFlag: false,
+      checkType: 19,
+      checkId: 0,
       keyBoard: localStorage.showWorkShopKeyBoard === 'true',
       deductDetail: [],
       deductInfo: {
@@ -723,7 +758,6 @@ export default Vue.extend({
     },
     changeKeyBoard(bol: any) {
       localStorage.showWorkShopKeyBoard = bol
-      console.log(localStorage.showWorkShopKeyBoard)
     },
     init() {
       this.loading = true
@@ -878,7 +912,6 @@ export default Vue.extend({
         this.$message.error('请勿频繁点击')
         return
       }
-      console.log(this.inspectionInfo)
       const formCheck = this.inspectionInfo.some((item) => {
         return item.child_data.some((itemChild) => {
           return this.$formCheck(itemChild, [
@@ -890,18 +923,64 @@ export default Vue.extend({
         })
       })
       if (!formCheck) {
-        this.getCmpData()
-        this.saveLock = true
-        const formData: InspectionInfo[] = this.$flatten(this.$flatten(this.inspectionInfo))
-        inspection.create({ data: formData }).then((res) => {
-          if (res.data.status) {
-            this.$message.success('检验成功')
-            this.closeInspection()
-            this.init()
+        const checkArr: any = []
+        this.inspectionInfo.forEach((item) => {
+          item.child_data.forEach((itemChild) => {
+            checkArr.push({
+              doc_info_id: itemChild.doc_info_id,
+              number: itemChild.number
+            })
+          })
+        })
+        checkBeyond({
+          doc_type: 19,
+          data: checkArr
+        }).then((res) => {
+          if (res.data.data.length === 0) {
+            this.getCmpData()
+            this.saveInspectionFn()
+          } else {
+            const createHtml = this.$createElement
+            this.$msgbox({
+              message: createHtml(
+                'p',
+                undefined,
+                res.data.data.map((item: string) => {
+                  return createHtml('p', undefined, item)
+                })
+              ),
+              title: '提示',
+              showCancelButton: true,
+              confirmButtonText: '继续提交',
+              cancelButtonText: '取消提交',
+              type: 'warning'
+            })
+              .then(() => {
+                this.getCmpData()
+                this.inspectionInfo.forEach((item) => (item.is_check = 4))
+                this.saveInspectionFn()
+              })
+              .catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '已取消提交'
+                })
+              })
           }
-          this.saveLock = false
         })
       }
+    },
+    saveInspectionFn() {
+      this.saveLock = true
+      const formData: InspectionInfo[] = this.$flatten(this.$flatten(this.inspectionInfo))
+      inspection.create({ data: formData }).then((res) => {
+        if (res.data.status) {
+          this.$message.success('检验成功')
+          this.closeInspection()
+          this.init()
+        }
+        this.saveLock = false
+      })
     },
     saveCprk() {
       if (this.saveLock) {

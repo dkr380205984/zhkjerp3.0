@@ -129,7 +129,7 @@
               @click="checkDetailFlag=true">
               <el-tooltip class="item"
                 effect="dark"
-                :content="item.is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
+                :content="item.is_check>=3?'点击查看异常处理办法':'点击查看审核日志'"
                 placement="bottom">
                 <img :src="item.is_check|checkFilter" />
               </el-tooltip>
@@ -190,15 +190,18 @@
             style="padding-top:0">
             <div class="thead">
               <div class="trow">
-                <div class="tcol">样品编号</div>
-                <div class="tcol">样品名称</div>
+                <div class="tcol"
+                  style="flex:1.2">样品编号</div>
+                <div class="tcol"
+                  style="flex:1.2">样品名称</div>
                 <div class="tcol">样品图片</div>
                 <div class="tcol noPad"
-                  style="flex:2">
+                  style="flex:4">
                   <div class="trow">
                     <div class="tcol">尺码颜色</div>
                     <div class="tcol">单价</div>
                     <div class="tcol">打样数量</div>
+                    <div class="tcol">送样/留底数量</div>
                   </div>
                 </div>
                 <div class="tcol">关联单据</div>
@@ -213,13 +216,15 @@
                 :key="index">
                 <!-- 判断样品信息是否完整 -->
                 <template v-if="item.category && item.color_data.length>0 && item.size_data.length>0">
-                  <div class="tcol">
+                  <div class="tcol"
+                    style="flex:1.2">
                     <span class="blue"
                       @click="sampleDetail=item;sampleShow = true"
                       style="cursor:pointer">{{item.product_code || item.system_code}}</span>
                     <span class="gray">({{item.category}}/{{item.secondary_category}})</span>
                   </div>
                   <div class="tcol"
+                    style="flex:1.2"
                     :class="{'gray':!item.name}">{{item.name || '无名称'}}</div>
                   <div class="tcol">
                     <div class="imageCtn">
@@ -235,13 +240,14 @@
                     </div>
                   </div>
                   <div class="tcol noPad"
-                    style="flex:2">
+                    style="flex:4">
                     <div class="trow"
                       v-for="(itemChild,indexChild) in item.product_info"
                       :key="indexChild">
                       <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
                       <div class="tcol">{{itemChild.price}}元</div>
                       <div class="tcol">{{itemChild.number}}</div>
+                      <div class="tcol">{{itemChild.sample_number||0}}/{{itemChild.keep_number||0}}</div>
                     </div>
                   </div>
                   <div class="tcol stateCtn">
@@ -334,15 +340,8 @@
                     style="flex:2">
                     <div class="trow">
                       <div class="tcol center">
-                        <span>
-                          调取信息
-                          <el-tooltip class="item"
-                            effect="dark"
-                            :content="'更新日期:'+(materialUpdateTime.transfer?materialUpdateTime.transfer:'暂无')"
-                            placement="top">
-                            <i class="el-icon-info blue"></i>
-                          </el-tooltip>
-                        </span>
+                        <span>调取信息</span>
+                        <span>更新日期:{{materialUpdateTime.transfer?materialUpdateTime.transfer:'暂无'}}</span>
                       </div>
                     </div>
                     <div class="trow">
@@ -354,15 +353,8 @@
                     style="flex:2">
                     <div class="trow">
                       <div class="tcol center">
-                        <span>
-                          采购信息
-                          <el-tooltip class="item"
-                            effect="dark"
-                            :content="'更新日期:'+(materialUpdateTime.order?materialUpdateTime.order:'暂无')"
-                            placement="top">
-                            <i class="el-icon-info blue"></i>
-                          </el-tooltip>
-                        </span>
+                        <span>采购信息</span>
+                        <span>更新日期:{{materialUpdateTime.order?materialUpdateTime.order:'暂无'}}</span>
                       </div>
                     </div>
                     <div class="trow">
@@ -374,15 +366,8 @@
                     style="flex:3">
                     <div class="trow">
                       <div class="tcol center">
-                        <span>
-                          加工信息
-                          <el-tooltip class="item"
-                            effect="dark"
-                            :content="'更新日期:'+(materialUpdateTime.process?materialUpdateTime.process:'暂无')"
-                            placement="top">
-                            <i class="el-icon-info blue"></i>
-                          </el-tooltip>
-                        </span>
+                        <span>加工信息</span>
+                        <span>更新日期:{{materialUpdateTime.process?materialUpdateTime.process:'暂无'}}</span>
                       </div>
                     </div>
                     <div class="trow">
@@ -395,15 +380,8 @@
                     style="flex:2">
                     <div class="trow">
                       <div class="tcol center">
-                        <span>
-                          入库信息
-                          <el-tooltip class="item"
-                            effect="dark"
-                            :content="'更新日期:'+(materialUpdateTime.push?materialUpdateTime.push:'暂无')"
-                            placement="top">
-                            <i class="el-icon-info blue"></i>
-                          </el-tooltip>
-                        </span>
+                        <span>入库信息</span>
+                        <span>更新日期:{{materialUpdateTime.push?materialUpdateTime.push:'暂无'}}</span>
                       </div>
                     </div>
                     <div class="trow">
@@ -415,15 +393,8 @@
                     style="flex:2">
                     <div class="trow">
                       <div class="tcol center">
-                        <span>
-                          出库信息
-                          <el-tooltip class="item"
-                            effect="dark"
-                            :content="'更新日期:'+(materialUpdateTime.pop?materialUpdateTime.pop:'暂无')"
-                            placement="top">
-                            <i class="el-icon-info blue"></i>
-                          </el-tooltip>
-                        </span>
+                        <span>出库信息</span>
+                        <span>更新日期:{{materialUpdateTime.pop?materialUpdateTime.pop:'暂无'}}</span>
                       </div>
                     </div>
                     <div class="trow">
@@ -1607,6 +1578,8 @@ export default Vue.extend({
                     size_color_list: [], // 用于下拉框选择尺码颜色
                     product_info: [
                       {
+                        sample_number: '',
+                        keep_number: '',
                         size_color: '', // 用于下拉框选择尺码颜色
                         size_id: '',
                         color_id: '',
@@ -1652,6 +1625,8 @@ export default Vue.extend({
                 size_color_list: [], // 用于下拉框选择尺码颜色
                 product_info: [
                   {
+                    sample_number: '',
+                    keep_number: '',
                     size_color: '', // 用于下拉框选择尺码颜色
                     size_id: '',
                     color_id: '',
@@ -1865,11 +1840,15 @@ export default Vue.extend({
         })
     },
     deleteProChild(id: number, index: number, info: any[]) {
-      this.$confirm('是否删除该尺码颜色?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
+      this.$confirm(
+        '注意：点击确定删除该尺码颜色后，无需点击修改按钮，该尺码颜色将会直接从该样单中删除，是否需要删除?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
         .then(() => {
           sampleOrder
             .deleteProChild({

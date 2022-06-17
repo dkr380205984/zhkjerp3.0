@@ -12,7 +12,7 @@
           @click="checkDetailFlag=true">
           <el-tooltip class="item"
             effect="dark"
-            :content="orderInfo.time_data[0].is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
+            :content="orderInfo.time_data[0].is_check>=3?'点击查看异常处理办法':'点击查看审核日志'"
             placement="bottom">
             <img :src="orderInfo.time_data[0].is_check|checkFilter" />
           </el-tooltip>
@@ -425,15 +425,8 @@
                 style="flex:2">
                 <div class="trow">
                   <div class="tcol center">
-                    <span>
-                      调取信息
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'更新日期:'+(materialUpdateTime.transfer?materialUpdateTime.transfer:'暂无')"
-                        placement="top">
-                        <i class="el-icon-info blue"></i>
-                      </el-tooltip>
-                    </span>
+                    <span>调取信息</span>
+                    <span>更新日期:{{materialUpdateTime.transfer?materialUpdateTime.transfer:'暂无'}}</span>
                   </div>
                 </div>
                 <div class="trow">
@@ -445,15 +438,8 @@
                 style="flex:2">
                 <div class="trow">
                   <div class="tcol center">
-                    <span>
-                      采购信息
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'更新日期:'+(materialUpdateTime.order?materialUpdateTime.order:'暂无')"
-                        placement="top">
-                        <i class="el-icon-info blue"></i>
-                      </el-tooltip>
-                    </span>
+                    <span>采购信息</span>
+                    <span>更新日期:{{materialUpdateTime.order?materialUpdateTime.order:'暂无'}}</span>
                   </div>
                 </div>
                 <div class="trow">
@@ -465,15 +451,8 @@
                 style="flex:3">
                 <div class="trow">
                   <div class="tcol center">
-                    <span>
-                      加工信息
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'更新日期:'+(materialUpdateTime.process?materialUpdateTime.process:'暂无')"
-                        placement="top">
-                        <i class="el-icon-info blue"></i>
-                      </el-tooltip>
-                    </span>
+                    <span>加工信息</span>
+                    <span>更新日期:{{materialUpdateTime.process?materialUpdateTime.process:'暂无'}}</span>
                   </div>
                 </div>
                 <div class="trow">
@@ -486,15 +465,8 @@
                 style="flex:2">
                 <div class="trow">
                   <div class="tcol center">
-                    <span>
-                      入库信息
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'更新日期:'+(materialUpdateTime.push?materialUpdateTime.push:'暂无')"
-                        placement="top">
-                        <i class="el-icon-info blue"></i>
-                      </el-tooltip>
-                    </span>
+                    <span>入库信息</span>
+                    <span>更新日期:{{materialUpdateTime.push?materialUpdateTime.push:'暂无'}}</span>
                   </div>
                 </div>
                 <div class="trow">
@@ -506,15 +478,8 @@
                 style="flex:2">
                 <div class="trow">
                   <div class="tcol center">
-                    <span>
-                      出库信息
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'更新日期:'+(materialUpdateTime.pop?materialUpdateTime.pop:'暂无')"
-                        placement="top">
-                        <i class="el-icon-info blue"></i>
-                      </el-tooltip>
-                    </span>
+                    <span>出库信息</span>
+                    <span>更新日期:{{materialUpdateTime.pop?materialUpdateTime.pop:'暂无'}}</span>
                   </div>
                 </div>
                 <div class="trow">
@@ -643,62 +608,28 @@
             style="height:auto">
             <div class="trow">
               <div class="tcol center"
-                style="min-width: 379px;">
-                <span>
-                  下单信息
-                  <el-tooltip class="item"
-                    effect="dark"
-                    :content="'更新日期:'+(productionUpdateTime.order?productionUpdateTime.order:'暂无')"
-                    placement="top">
-                    <i class="el-icon-info blue"></i>
-                  </el-tooltip>
-                </span>
+                style="min-width: 491px;">
+                <span>下单信息</span>
+                <span>更新日期:{{productionUpdateTime.order?productionUpdateTime.order:'暂无'}}</span>
               </div>
-              <div class="tcol center"
+              <!-- <div class="tcol center"
                 style="min-width: 235px;">
-                <span>
-                  计划信息
-                  <el-tooltip class="item"
-                    effect="dark"
-                    :content="'更新日期:'+(productionUpdateTime.plan?productionUpdateTime.plan:'暂无')"
-                    placement="top">
-                    <i class="el-icon-info blue"></i>
-                  </el-tooltip>
-                </span>
+                <span>计划信息</span>
+                <span>更新日期:{{productionUpdateTime.plan?productionUpdateTime.plan:'暂无'}}</span>
+              </div> -->
+              <div class="tcol center"
+                style="min-width: 329px;">
+                <span>生产分配信息</span>
+                <span>更新日期:{{productionUpdateTime.weave?productionUpdateTime.weave:'暂无'}}</span>
               </div>
               <div class="tcol center"
-                style="min-width: 208px;">
-                <span>
-                  生产分配信息
-                  <el-tooltip class="item"
-                    effect="dark"
-                    :content="'更新日期:'+(productionUpdateTime.weave?productionUpdateTime.weave:'暂无')"
-                    placement="top">
-                    <i class="el-icon-info blue"></i>
-                  </el-tooltip>
-                </span>
+                style="max-width: 198px;">
+                <span>数量更新信息</span>
+                <span>更新日期:{{productionUpdateTime.complete?productionUpdateTime.complete:'暂无'}}</span>
               </div>
               <div class="tcol center">
-                <span>
-                  数量更新信息
-                  <el-tooltip class="item"
-                    effect="dark"
-                    :content="'更新日期:'+(productionUpdateTime.complete?productionUpdateTime.complete:'暂无')"
-                    placement="top">
-                    <i class="el-icon-info blue"></i>
-                  </el-tooltip>
-                </span>
-              </div>
-              <div class="tcol center">
-                <span>
-                  检验收发信息
-                  <el-tooltip class="item"
-                    effect="dark"
-                    :content="'更新日期:'+(productionUpdateTime.inspection?productionUpdateTime.inspection:'暂无')"
-                    placement="top">
-                    <i class="el-icon-info blue"></i>
-                  </el-tooltip>
-                </span>
+                <span>检验收发信息</span>
+                <span>更新日期:{{productionUpdateTime.inspection?productionUpdateTime.inspection:'暂无'}}</span>
               </div>
             </div>
             <div class="trow">
@@ -712,18 +643,18 @@
                     <div class="trow">
                       <div class="tcol">产品尺码</div>
                       <div class="tcol">下单数量</div>
-                      <div class="tcol">计划数量</div>
                       <div class="tcol noPad"
-                        style="flex:6">
+                        style="flex:8">
                         <div class="trow">
                           <div class="tcol">生产单位</div>
                           <div class="tcol noPad"
-                            style="flex:5">
+                            style="flex:6">
                             <div class="trow">
                               <div class="tcol">生产工序</div>
+                              <div class="tcol">计划数量</div>
                               <div class="tcol">完成数量</div>
                               <div class="tcol">检验入库数量</div>
-                              <div class="tcol">次品数量</div>
+                              <div class="tcol">半次/全次数量</div>
                               <div class="tcol">次品率</div>
                             </div>
                           </div>
@@ -753,22 +684,22 @@
                       :key="indexSize">
                       <div class="tcol">{{itemSize.size_name}}</div>
                       <div class="tcol">{{itemSize.data.order_number}}</div>
-                      <div class="tcol">{{itemSize.data.plan_number}}</div>
                       <div class="tcol noPad"
-                        style="flex:6">
+                        style="flex:8">
                         <div class="trow"
                           v-for="(itemClient,indexClient) in itemSize.data.weave_info"
                           :key="indexClient">
                           <div class="tcol">{{itemClient.client_name}}</div>
                           <div class="tcol noPad"
-                            style="flex:5">
+                            style="flex:6">
                             <div class="trow"
                               v-for="(itemChild,indexChild) in itemClient.data"
                               :key="indexChild">
                               <div class="tcol">{{itemChild.process_name}}</div>
+                              <div class="tcol">{{itemChild.data.plan_number}}</div>
                               <div class="tcol">{{itemChild.data.real_number}}</div>
                               <div class="tcol">{{itemChild.data.inspection_number}}</div>
-                              <div class="tcol">{{itemChild.data.shoddy_number}}</div>
+                              <div class="tcol">{{itemChild.data.part_shoddy_number||0}}/{{itemChild.data.shoddy_number}}</div>
                               <div class="tcol">{{itemChild.data.shoddy_pre}}%</div>
                             </div>
                           </div>
@@ -2145,7 +2076,38 @@ export default Vue.extend({
         this.$message.error('请选择要确认完成的批次')
         return
       }
-      this.$confirm('是否确认完成该批次，确认后订单将不能进行其他操作?', '提示', {
+      console.log(batch)
+      let transportFlag = true
+      let transportIndex = 0
+      batch.forEach((item, index) => {
+        item.product_data.forEach((itemPro) => {
+          itemPro.product_info.forEach((itemChild) => {
+            // @ts-ignore
+            if (Number(itemChild.transport_number) === 0) {
+              transportFlag = false
+              transportIndex = index + 1
+            }
+          })
+        })
+      })
+      if (!transportFlag) {
+        this.$confirm('检测到第' + transportIndex + '批次中包含未发货的产品，填写实际发货数量后才能确认完成?', '提示', {
+          confirmButtonText: '填写实际发货数量',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            this.$router.push('/boxManage/orderDetail?id=' + this.$route.query.id)
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消'
+            })
+          })
+        return
+      }
+      this.$confirm('请仔细确认实际发货数量，确认完成后，完成状态无法撤销。?', '提示', {
         confirmButtonText: '确认完成',
         cancelButtonText: '取消',
         type: 'warning'

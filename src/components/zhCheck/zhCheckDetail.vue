@@ -3,7 +3,7 @@
     v-show="show">
     <div class="main">
       <div class="titleCtn">
-        <span class="text">{{is_check===3?'单据异常处理':'单据审核详情'}}</span>
+        <span class="text">{{is_check>=3?'单据异常处理':'单据审核详情'}}</span>
         <div class="closeCtn"
           @click="close">
           <span class="el-icon-close"></span>
@@ -11,7 +11,7 @@
       </div>
       <div class="contentCtn">
         <div class="listCtn"
-          v-if="is_check!==3&&!errMsg">
+          v-if="is_check<3&&!errMsg">
           <div class="list">
             <div class="row title">
               <div class="col">审核人</div>
@@ -33,7 +33,7 @@
           </div>
         </div>
         <div class="errorMsgCtn"
-          v-if="is_check===3&&errMsg&&errMsg.length>0">
+          v-if="is_check>=3&&errMsg&&errMsg.length>0">
           <div class="errorMsg"
             v-for="item,index in errMsg"
             :key="index">{{item}}</div>

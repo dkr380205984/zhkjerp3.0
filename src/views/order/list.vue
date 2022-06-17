@@ -789,6 +789,48 @@ export default Vue.extend({
     },
     getList() {
       this.loading = true
+      order
+        .list({
+          order_type: 1,
+          keyword: this.keyword,
+          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
+          delivery_time: this.delivery_time.slice(0, 10),
+          page: this.page,
+          limit: this.limit,
+          is_check: this.status,
+          status: this.type,
+          start_time: this.date.length > 0 ? this.date[0] : '',
+          end_time: this.date.length > 0 ? this.date[1] : '',
+          user_id: this.user_id,
+          group_id: this.group_id,
+          contacts_id: this.contacts_id
+        })
+        .then((res) => {
+          if (res.data.status) {
+            res.data.data.items.map((item: any) => {
+              this.$set(item, 'isCheck', false)
+              return item
+            })
+            this.list = res.data.data.items
+            this.total = res.data.data.total
+          }
+          this.loading = false
+          this.isClick = false
+        })
+    },
+    getListSetting() {
+      this.listKey = []
+      listSetting
+        .detail({
+          type: 3
+        })
+        .then((res) => {
+          this.listSettingId = res.data.data ? res.data.data.id : null
+          this.listKey = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting)
+          this.exportKey = this.$clone(this.originalExport)
+        })
+    },
+    getEcharts() {
       this.mainLoading1 = true
       this.option.series[0].data = []
       this.option.series[1].data = []
@@ -843,46 +885,6 @@ export default Vue.extend({
           }
           this.mainLoading1 = false
         })
-      order
-        .list({
-          order_type: 1,
-          keyword: this.keyword,
-          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
-          delivery_time: this.delivery_time.slice(0, 10),
-          page: this.page,
-          limit: this.limit,
-          is_check: this.status,
-          status: this.type,
-          start_time: this.date.length > 0 ? this.date[0] : '',
-          end_time: this.date.length > 0 ? this.date[1] : '',
-          user_id: this.user_id,
-          group_id: this.group_id,
-          contacts_id: this.contacts_id
-        })
-        .then((res) => {
-          if (res.data.status) {
-            res.data.data.items.map((item: any) => {
-              this.$set(item, 'isCheck', false)
-              return item
-            })
-            this.list = res.data.data.items
-            this.total = res.data.data.total
-          }
-          this.loading = false
-          this.isClick = false
-        })
-    },
-    getListSetting() {
-      this.listKey = []
-      listSetting
-        .detail({
-          type: 3
-        })
-        .then((res) => {
-          this.listSettingId = res.data.data ? res.data.data.id : null
-          this.listKey = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting)
-          this.exportKey = this.$clone(this.originalExport)
-        })
     }
   },
   watch: {
@@ -913,6 +915,7 @@ export default Vue.extend({
     this.getFilters()
     this.getList()
     this.getListSetting()
+    this.getEcharts()
     this.$checkCommonInfo([
       {
         checkWhich: 'api/group',

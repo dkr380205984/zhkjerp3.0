@@ -31,6 +31,7 @@
 //   value: 10
 // }] //11是补纱线
 export interface MaterialStockLog {
+  is_check?: number
   process_info?: any[]
   check?: boolean
   id?: string | number
@@ -54,6 +55,7 @@ export interface MaterialStockLog {
 }
 export interface MaterialStockInfo {
   id?: number
+  is_check?: string | number
   order_id?: string | number
   material_type: number // 1原料 2辅料
   yarn_type?: number // 1纱线，2面料

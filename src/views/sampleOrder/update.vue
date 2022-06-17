@@ -184,6 +184,8 @@ export default Vue.extend({
                   size_color_list: [], // 用于下拉框选择尺码颜色
                   product_info: [
                     {
+                      sample_number: '',
+                      keep_number: '',
                       size_color: '', // 用于下拉框选择尺码颜色
                       size_id: '',
                       color_id: '',
