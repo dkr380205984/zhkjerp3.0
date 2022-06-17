@@ -10,7 +10,7 @@
         <div class="checkCtn">
           <el-tooltip class="item"
             effect="dark"
-            :content="boxInfo.is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
+            :content="boxInfo.is_check>=3?'点击查看异常处理办法':'点击查看审核日志'"
             placement="bottom">
             <img :src="boxInfo.is_check|checkFilter" />
           </el-tooltip>

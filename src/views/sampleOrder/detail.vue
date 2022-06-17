@@ -129,7 +129,7 @@
               @click="checkDetailFlag=true">
               <el-tooltip class="item"
                 effect="dark"
-                :content="item.is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
+                :content="item.is_check>=3?'点击查看异常处理办法':'点击查看审核日志'"
                 placement="bottom">
                 <img :src="item.is_check|checkFilter" />
               </el-tooltip>
@@ -1840,11 +1840,15 @@ export default Vue.extend({
         })
     },
     deleteProChild(id: number, index: number, info: any[]) {
-      this.$confirm('是否删除该尺码颜色?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
+      this.$confirm(
+        '注意：点击确定删除该尺码颜色后，无需点击修改按钮，该尺码颜色将会直接从该样单中删除，是否需要删除?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
         .then(() => {
           sampleOrder
             .deleteProChild({

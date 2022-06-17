@@ -155,6 +155,7 @@ const deduct = {
     end_time?: string
     export_excel?: 1
   }) => http.get(`${baseUrl}/doc/deduct/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/doc/deduct/delete`, params, 'application/json'),
 }
 
 // 单据收款
@@ -188,9 +189,7 @@ const collection = {
       price: string
     }>
   }) => http.post(`${baseUrl}/doc/collect/save`, params, 'application/json'),
-  delete: (params: {
-    id?: string | number
-  }) => http.post(`${baseUrl}/doc/collect/delete`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/doc/collect/delete`, params, 'application/json'),
 }
 
 // 单据付款，其实和收款一毛一样
@@ -224,9 +223,7 @@ const payment = {
       price: string
     }>
   }) => http.post(`${baseUrl}/doc/pay/save`, params, 'application/json'),
-  delete: (params: {
-    id?: string
-  }) => http.post(`${baseUrl}/doc/pay/delete`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/doc/pay/delete`, params, 'application/json'),
 }
 
 // 单据开票
@@ -257,9 +254,7 @@ const invoice = {
       price: string
     }>
   }) => http.post(`${baseUrl}/doc/invoice/save`, params, 'application/json'),
-  delete: (params: {
-    id?: string | number
-  }) => http.post(`${baseUrl}/doc/invoice/delete`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/doc/invoice/delete`, params, 'application/json'),
 }
 
 // 文件管理
@@ -623,6 +618,8 @@ const materialPlan = {
     is_check?: number
     type?: 1 | 2 // 1.原料计划单 2.辅料计划单
     order_type?: string // 1.订单 2.样单
+    filter_way?: string
+    filter_progress?: string | number
   }) => http.get(`${baseUrl}/material/plan/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/material/plan/detail`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/material/plan/delete`, params, 'application/json')

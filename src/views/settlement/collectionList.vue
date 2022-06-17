@@ -289,7 +289,7 @@ export default Vue.extend({
         this.page = 1
       }
       this.$router.push(
-        '/settlement/paymentList?page=' +
+        '/settlement/collectionList?page=' +
           this.page +
           '&limit=' +
           this.limit +

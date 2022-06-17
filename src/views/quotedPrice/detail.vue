@@ -18,7 +18,7 @@
               @click="checkDetailFlag = true">
               <el-tooltip class="item"
                 effect="dark"
-                :content="quotedPriceInfo.is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
+                :content="quotedPriceInfo.is_check>=3?'点击查看异常处理办法':'点击查看审核日志'"
                 placement="bottom">
                 <img :src="quotedPriceInfo.is_check|checkFilter" />
               </el-tooltip>

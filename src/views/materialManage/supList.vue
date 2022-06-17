@@ -183,14 +183,6 @@ export default Vue.extend({
       }
     }
   },
-  filters: {
-    filterCheck(type: 0 | 1 | 2) {
-      return ['待审核', '已审核', '已驳回'][type]
-    },
-    filterCheckClass(type: 0 | 1 | 2) {
-      return ['orange', 'green', 'red'][type]
-    }
-  },
   methods: {
     getFilters() {
       const query = this.$route.query

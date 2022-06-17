@@ -762,6 +762,47 @@ export default Vue.extend({
     },
     getList() {
       this.loading = true
+      sampleOrder
+        .list({
+          keyword: this.keyword,
+          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
+          page: this.page,
+          limit: this.limit,
+          complete_time: this.complete_time.slice(0, 10),
+          is_check: this.status,
+          start_time: this.date.length > 0 ? this.date[0] : '',
+          end_time: this.date.length > 0 ? this.date[1] : '',
+          user_id: this.user_id,
+          group_id: this.group_id,
+          order_type: 2,
+          contacts_id: this.contacts_id
+        })
+        .then((res) => {
+          if (res.data.status) {
+            res.data.data.items.map((item: any) => {
+              this.$set(item, 'isCheck', false)
+              return item
+            })
+            this.list = res.data.data.items
+            this.total = res.data.data.total
+          }
+          this.loading = false
+          this.isClick = false
+        })
+    },
+    getListSetting() {
+      this.listKey = []
+      listSetting
+        .detail({
+          type: 2
+        })
+        .then((res) => {
+          this.listSettingId = res.data.data ? res.data.data.id : null
+          this.listKey = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting)
+          this.exportKey = this.$clone(this.originalExport)
+        })
+    },
+    getEcharts() {
       this.mainLoading1 = true
       this.option.xAxis[0].data = this.$getEveryDayDateByBetweenDate(
         this.$GetDateStr(-3, 'MM-DD'),
@@ -821,49 +862,10 @@ export default Vue.extend({
           }
           this.mainLoading1 = false
         })
-
-      sampleOrder
-        .list({
-          keyword: this.keyword,
-          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
-          page: this.page,
-          limit: this.limit,
-          complete_time: this.complete_time.slice(0, 10),
-          is_check: this.status,
-          start_time: this.date.length > 0 ? this.date[0] : '',
-          end_time: this.date.length > 0 ? this.date[1] : '',
-          user_id: this.user_id,
-          group_id: this.group_id,
-          order_type: 2,
-          contacts_id: this.contacts_id
-        })
-        .then((res) => {
-          if (res.data.status) {
-            res.data.data.items.map((item: any) => {
-              this.$set(item, 'isCheck', false)
-              return item
-            })
-            this.list = res.data.data.items
-            this.total = res.data.data.total
-          }
-          this.loading = false
-          this.isClick = false
-        })
-    },
-    getListSetting() {
-      this.listKey = []
-      listSetting
-        .detail({
-          type: 2
-        })
-        .then((res) => {
-          this.listSettingId = res.data.data ? res.data.data.id : null
-          this.listKey = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting)
-          this.exportKey = this.$clone(this.originalExport)
-        })
     }
   },
   created() {
+    this.getEcharts()
     this.getFilters()
     this.getList()
     this.getListSetting()

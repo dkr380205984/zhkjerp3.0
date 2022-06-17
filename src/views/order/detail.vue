@@ -12,7 +12,7 @@
           @click="checkDetailFlag=true">
           <el-tooltip class="item"
             effect="dark"
-            :content="orderInfo.time_data[0].is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
+            :content="orderInfo.time_data[0].is_check>=3?'点击查看异常处理办法':'点击查看审核日志'"
             placement="bottom">
             <img :src="orderInfo.time_data[0].is_check|checkFilter" />
           </el-tooltip>
@@ -608,21 +608,22 @@
             style="height:auto">
             <div class="trow">
               <div class="tcol center"
-                style="min-width: 379px;">
+                style="min-width: 491px;">
                 <span>下单信息</span>
                 <span>更新日期:{{productionUpdateTime.order?productionUpdateTime.order:'暂无'}}</span>
               </div>
-              <div class="tcol center"
+              <!-- <div class="tcol center"
                 style="min-width: 235px;">
                 <span>计划信息</span>
                 <span>更新日期:{{productionUpdateTime.plan?productionUpdateTime.plan:'暂无'}}</span>
-              </div>
+              </div> -->
               <div class="tcol center"
-                style="min-width: 208px;">
+                style="min-width: 329px;">
                 <span>生产分配信息</span>
                 <span>更新日期:{{productionUpdateTime.weave?productionUpdateTime.weave:'暂无'}}</span>
               </div>
-              <div class="tcol center">
+              <div class="tcol center"
+                style="max-width: 198px;">
                 <span>数量更新信息</span>
                 <span>更新日期:{{productionUpdateTime.complete?productionUpdateTime.complete:'暂无'}}</span>
               </div>
@@ -642,19 +643,18 @@
                     <div class="trow">
                       <div class="tcol">产品尺码</div>
                       <div class="tcol">下单数量</div>
-                      <div class="tcol">计划数量</div>
                       <div class="tcol noPad"
-                        style="flex:6">
+                        style="flex:8">
                         <div class="trow">
                           <div class="tcol">生产单位</div>
                           <div class="tcol noPad"
-                            style="flex:5">
+                            style="flex:6">
                             <div class="trow">
                               <div class="tcol">生产工序</div>
-                              <div class="tcol">完成数量</div>
+                              <div class="tcol">计划数量</div>
                               <div class="tcol">完成数量</div>
                               <div class="tcol">检验入库数量</div>
-                              <div class="tcol">次品数量</div>
+                              <div class="tcol">半次/全次数量</div>
                               <div class="tcol">次品率</div>
                             </div>
                           </div>
@@ -684,22 +684,22 @@
                       :key="indexSize">
                       <div class="tcol">{{itemSize.size_name}}</div>
                       <div class="tcol">{{itemSize.data.order_number}}</div>
-                      <div class="tcol">{{itemSize.data.plan_number}}</div>
                       <div class="tcol noPad"
-                        style="flex:6">
+                        style="flex:8">
                         <div class="trow"
                           v-for="(itemClient,indexClient) in itemSize.data.weave_info"
                           :key="indexClient">
                           <div class="tcol">{{itemClient.client_name}}</div>
                           <div class="tcol noPad"
-                            style="flex:5">
+                            style="flex:6">
                             <div class="trow"
                               v-for="(itemChild,indexChild) in itemClient.data"
                               :key="indexChild">
                               <div class="tcol">{{itemChild.process_name}}</div>
+                              <div class="tcol">{{itemChild.data.plan_number}}</div>
                               <div class="tcol">{{itemChild.data.real_number}}</div>
                               <div class="tcol">{{itemChild.data.inspection_number}}</div>
-                              <div class="tcol">{{itemChild.data.shoddy_number}}</div>
+                              <div class="tcol">{{itemChild.data.part_shoddy_number||0}}/{{itemChild.data.shoddy_number}}</div>
                               <div class="tcol">{{itemChild.data.shoddy_pre}}%</div>
                             </div>
                           </div>
