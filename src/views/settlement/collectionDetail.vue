@@ -1175,7 +1175,7 @@ export default Vue.extend({
           start_time: this.invoiceDate.length > 1 ? this.invoiceDate[0] : '',
           end_time: this.invoiceDate.length > 1 ? this.invoiceDate[1] : '',
           user_id: this.invoiceUser,
-          page: this.collectionPage,
+          page: this.invoicePage,
           limit: 5
         })
         .then((res) => {
