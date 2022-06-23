@@ -32,6 +32,8 @@ export interface SampleOrderBatch {
       size_id: string | number
       color_id: string | number
       number: string | number
+      sample_number: string | number
+      keep_number: string | number
       price: string | number
     }>
   }>

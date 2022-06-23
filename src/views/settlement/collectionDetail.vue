@@ -294,6 +294,32 @@
           </div>
         </div>
         <div class="filterCtn clearfix">
+          <div class="btn backHoverBlue"
+            @click="goCollection(orderCheckList)">
+            <svg class="iconFont"
+              aria-hidden="true">
+              <use xlink:href="#icon-xiugaidingdan"></use>
+            </svg>
+            <span class="text">批量收款</span>
+          </div>
+          <div class="btn backHoverOrange"
+            @click="goInvoice(orderCheckList)">
+            <svg class="iconFont"
+              aria-hidden="true">
+              <use xlink:href="#icon-xiugaidingdan"></use>
+            </svg>
+            <span class="text">批量开票</span>
+          </div>
+          <div class="btn backHoverRed"
+            @click="goDeduct(orderCheckList)">
+            <svg class="iconFont"
+              aria-hidden="true">
+              <use xlink:href="#icon-xiugaidingdan"></use>
+            </svg>
+            <span class="text">批量扣款</span>
+          </div>
+        </div>
+        <div class="filterCtn clearfix">
           <div class="label">已勾选单据：</div>
           <div class="elCtn check"
             v-for="(item,index) in orderCheckList"
@@ -306,40 +332,6 @@
                   @click="orderCheckList.splice(index,1)"></i>
               </template>
             </el-input>
-          </div>
-          <div class="buttonList fr">
-            <div class="btn backHoverBlue">
-              <i class="el-icon-s-grid"></i>
-              <span class="text">批量操作</span>
-            </div>
-            <div class="otherInfoCtn">
-              <div class="otherInfo">
-                <div class="btn backHoverBlue"
-                  @click="goCollection(orderCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">批量收款</span>
-                </div>
-                <div class="btn backHoverOrange"
-                  @click="goInvoice(orderCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">批量开票</span>
-                </div>
-                <div class="btn backHoverRed"
-                  @click="goDeduct(orderCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">批量扣款</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
         <zh-list :list="orderList"
@@ -364,7 +356,8 @@
       <div class="titleCtn">
         <div class="title">开票单据</div>
       </div>
-      <div class="listCtn">
+      <div class="listCtn"
+        v-loading="invoiceLoading">
         <div class="filterCtn">
           <div class="elCtn">
             <el-input v-model="invoiceOrderCode"
@@ -428,7 +421,8 @@
                 @click="goCollection([{ order_id: item.order_id, doc_code: item.order_code, rel_doc_id: item.rel_doc_id, price: item.price, desc: '', complete_time: $getDate(new Date()) }],false,true)">收款</span>
               <span class="opr orange"
                 @click="goInvoice([item],true)">修改</span>
-              <span class="opr red">删除</span>
+              <span class="opr red"
+                @click="deleteInvoice(item.id)">删除</span>
             </div>
           </div>
           <div class="row">
@@ -458,7 +452,8 @@
       <div class="titleCtn">
         <div class="title">收款单据</div>
       </div>
-      <div class="listCtn">
+      <div class="listCtn"
+        v-loading="collectionLoading">
         <div class="filterCtn">
           <div class="elCtn">
             <el-input v-model="collectionOrderCode"
@@ -518,7 +513,8 @@
             <div class="col oprCtn">
               <span class="opr orange"
                 @click="goCollection([item],true)">修改</span>
-              <span class="opr red">删除</span>
+              <span class="opr red"
+                @click="deleteCollection(item.id)">删除</span>
             </div>
           </div>
           <div class="row">
@@ -547,20 +543,21 @@
       <div class="titleCtn">
         <div class="title">扣款单据</div>
       </div>
-      <div class="listCtn">
+      <div class="listCtn"
+        v-loading="deductLoading">
         <div class="filterCtn">
           <div class="elCtn">
             <el-input v-model="deductOrderCode"
               placeholder="搜索订单号"
-              @keydown.enter.native="getDeductList"></el-input>
+              @keydown.enter.native="getDeductLogList"></el-input>
           </div>
           <div class="elCtn">
             <el-input v-model="deductKeyword"
               placeholder="搜索票据编号"
-              @keydown.enter.native="getDeductList"></el-input>
+              @keydown.enter.native="getDeductLogList"></el-input>
           </div>
           <div class="elCtn">
-            <el-select @change="getDeductList"
+            <el-select @change="getDeductLogList"
               v-model="deductUser"
               placeholder="筛选创建人"
               clearable>
@@ -579,7 +576,7 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               :picker-options="pickerOptions"
-              @change="getDeductList"
+              @change="getDeductLogList"
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
@@ -621,7 +618,8 @@
             <div class="col oprCtn">
               <span class="opr orange"
                 @click="goDeduct([item],true)">修改</span>
-              <span class="opr red">删除</span>
+              <span class="opr red"
+                @click="deleteDeduct(item.id)">删除</span>
             </div>
           </div>
           <div class="row">
@@ -641,7 +639,7 @@
             layout="prev, pager, next"
             :total="deductTotal"
             :current-page.sync="deductPage"
-            @current-change="getDeductList">
+            @current-change="getDeductLogList">
           </el-pagination>
         </div>
       </div>
@@ -651,12 +649,6 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverOrange"
-            @click="goInvoice([])">直接开票</div>
-          <div class="btn backHoverBlue"
-            @click="goCollection([])">直接收款</div>
-          <div class="btn backHoverRed"
-            @click="goDeduct([])">直接扣款</div>
         </div>
       </div>
     </div>
@@ -719,6 +711,7 @@ export default Vue.extend({
   } {
     return {
       invoiceChange: false, // 开票转收款
+      collectionLoading: false,
       collectionFlag: false,
       collectionData: [],
       collectionLog: [],
@@ -730,6 +723,7 @@ export default Vue.extend({
       collectionKeyword: '',
       collectionDate: [],
       collectionUser: '',
+      invoiceLoading: false,
       invoiceFlag: false,
       invoiceData: [],
       invoiceTotalPrice: 0,
@@ -741,6 +735,7 @@ export default Vue.extend({
       invoiceKeyword: '',
       invoiceDate: [],
       invoiceUser: '',
+      deductLoading: false,
       deductFlag: false,
       deductData: [],
       deductLog: [],
@@ -977,7 +972,7 @@ export default Vue.extend({
       this.getOrderList()
       this.getCollectionLogList()
       this.getInvoiceLogList()
-      this.getDeductList()
+      this.getDeductLogList()
     },
     exportExcel(type: number, payType: string) {
       this.loading = true
@@ -1120,6 +1115,7 @@ export default Vue.extend({
         })
     },
     getCollectionLogList() {
+      this.collectionLoading = true
       collection
         .list({
           order_id: '',
@@ -1138,6 +1134,7 @@ export default Vue.extend({
             this.collectionTotal = res.data.data.total
             this.collectionTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000)
           }
+          this.collectionLoading = false
         })
     },
     goCollection(data: any[], update?: boolean, invoiceChange?: boolean) {
@@ -1146,7 +1143,29 @@ export default Vue.extend({
       this.collectionData = data
       this.collectionFlag = true
     },
+    deleteCollection(id: number) {
+      this.$confirm('是否删除该收款单据?', '提示', {
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          collection.delete({ id }).then((res) => {
+            if (res.data.status) {
+              this.$message.success('删除成功')
+              this.getCollectionLogList()
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
     getInvoiceLogList() {
+      this.invoiceLoading = true
       invoice
         .list({
           order_id: '',
@@ -1165,6 +1184,7 @@ export default Vue.extend({
             this.invoiceTotal = res.data.data.total
             this.invoiceTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000)
           }
+          this.invoiceLoading = false
         })
     },
     goInvoice(data: any[], update?: boolean) {
@@ -1172,7 +1192,29 @@ export default Vue.extend({
       this.invoiceData = data
       this.invoiceFlag = true
     },
-    getDeductList() {
+    deleteInvoice(id: number) {
+      this.$confirm('是否删除该开票单据?', '提示', {
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          invoice.delete({ id }).then((res) => {
+            if (res.data.status) {
+              this.$message.success('删除成功')
+              this.getInvoiceLogList()
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    getDeductLogList() {
+      this.deductLoading = true
       deduct
         .list({
           order_id: '',
@@ -1191,12 +1233,34 @@ export default Vue.extend({
             this.deductTotal = res.data.data.total
             this.deductTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000)
           }
+          this.deductLoading = false
         })
     },
     goDeduct(data: any[], update?: boolean) {
       this.deductUpdate = update
       this.deductData = data
       this.deductFlag = true
+    },
+    deleteDeduct(id: number) {
+      this.$confirm('是否删除该扣款单据?', '提示', {
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          deduct.delete({ id }).then((res) => {
+            if (res.data.status) {
+              this.$message.success('删除成功')
+              this.getDeductLogList()
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     }
   },
   mounted() {

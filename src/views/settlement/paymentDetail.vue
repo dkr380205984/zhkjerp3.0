@@ -592,6 +592,38 @@
                   label="待审核"></el-option>
               </el-select>
             </div>
+            <div class="btn backHoverBlue"
+              @click="goPayment(materialOrderCheckList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">批量付款</span>
+            </div>
+            <div class="btn backHoverOrange"
+              @click="goInvoice(materialOrderCheckList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">批量开票</span>
+            </div>
+            <div class="btn backHoverRed"
+              @click="goDeduct(materialOrderCheckList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">批量扣款</span>
+            </div>
+            <div class="btn backHoverOrange"
+              @click="updatePriceFlag=true">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">修改单价</span>
+            </div>
           </div>
           <div class="filterCtn clearfix">
             <div class="label">已勾选单据：</div>
@@ -606,48 +638,6 @@
                     @click="materialOrderCheckList.splice(index,1)"></i>
                 </template>
               </el-input>
-            </div>
-            <div class="buttonList fr">
-              <div class="btn backHoverBlue">
-                <i class="el-icon-s-grid"></i>
-                <span class="text">批量操作</span>
-              </div>
-              <div class="otherInfoCtn">
-                <div class="otherInfo">
-                  <div class="btn backHoverBlue"
-                    @click="goPayment(materialOrderCheckList)">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">批量付款</span>
-                  </div>
-                  <div class="btn backHoverOrange"
-                    @click="goInvoice(materialOrderCheckList)">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">批量开票</span>
-                  </div>
-                  <div class="btn backHoverRed"
-                    @click="goDeduct(materialOrderCheckList)">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">批量扣款</span>
-                  </div>
-                  <div class="btn backHoverOrange"
-                    @click="updatePriceFlag=true">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">修改单价</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
           <div class="list">
@@ -915,6 +905,32 @@
             </div>
           </div>
           <div class="filterCtn clearfix">
+            <div class="btn backHoverBlue"
+              @click="goPayment(materialProcessCheckList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">批量付款</span>
+            </div>
+            <div class="btn backHoverOrange"
+              @click="goInvoice(materialProcessCheckList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">批量开票</span>
+            </div>
+            <div class="btn backHoverRed"
+              @click="goDeduct(materialProcessCheckList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">批量扣款</span>
+            </div>
+          </div>
+          <div class="filterCtn clearfix">
             <div class="label">已勾选单据：</div>
             <div class="elCtn check"
               v-for="(item,index) in materialProcessCheckList"
@@ -927,40 +943,6 @@
                     @click="materialProcessCheckList.splice(index,1)"></i>
                 </template>
               </el-input>
-            </div>
-            <div class="buttonList fr">
-              <div class="btn backHoverBlue">
-                <i class="el-icon-s-grid"></i>
-                <span class="text">批量操作</span>
-              </div>
-              <div class="otherInfoCtn">
-                <div class="otherInfo">
-                  <div class="btn backHoverBlue"
-                    @click="goPayment(materialProcessCheckList)">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">批量付款</span>
-                  </div>
-                  <div class="btn backHoverOrange"
-                    @click="goInvoice(materialProcessCheckList)">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">批量开票</span>
-                  </div>
-                  <div class="btn backHoverRed"
-                    @click="goDeduct(materialProcessCheckList)">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">批量扣款</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
           <div class="list">
@@ -1245,6 +1227,32 @@
             </div>
           </div>
           <div class="filterCtn clearfix">
+            <div class="btn backHoverBlue"
+              @click="goPayment(productionPlanCheckList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">批量付款</span>
+            </div>
+            <div class="btn backHoverOrange"
+              @click="goInvoice(productionPlanCheckList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">批量开票</span>
+            </div>
+            <div class="btn backHoverRed"
+              @click="goDeduct(productionPlanCheckList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">批量扣款</span>
+            </div>
+          </div>
+          <div class="filterCtn clearfix">
             <div class="label">已勾选单据：</div>
             <div class="elCtn check"
               v-for="(item,index) in productionPlanCheckList"
@@ -1257,40 +1265,6 @@
                     @click="productionPlanCheckList.splice(index,1)"></i>
                 </template>
               </el-input>
-            </div>
-            <div class="buttonList fr">
-              <div class="btn backHoverBlue">
-                <i class="el-icon-s-grid"></i>
-                <span class="text">批量操作</span>
-              </div>
-              <div class="otherInfoCtn">
-                <div class="otherInfo">
-                  <div class="btn backHoverBlue"
-                    @click="goPayment(productionPlanCheckList)">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">批量付款</span>
-                  </div>
-                  <div class="btn backHoverOrange"
-                    @click="goInvoice(productionPlanCheckList)">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">批量开票</span>
-                  </div>
-                  <div class="btn backHoverRed"
-                    @click="goDeduct(productionPlanCheckList)">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">批量扣款</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
           <div class="list">
@@ -1607,6 +1581,32 @@
             </div>
           </div>
           <div class="filterCtn clearfix">
+            <div class="btn backHoverBlue"
+              @click="goPayment(packOrderCheckList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">批量付款</span>
+            </div>
+            <div class="btn backHoverOrange"
+              @click="goInvoice(packOrderCheckList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">批量开票</span>
+            </div>
+            <div class="btn backHoverRed"
+              @click="goDeduct(packOrderCheckList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">批量扣款</span>
+            </div>
+          </div>
+          <div class="filterCtn clearfix">
             <div class="label">已勾选单据：</div>
             <div class="elCtn check"
               v-for="(item,index) in packOrderCheckList"
@@ -1619,40 +1619,6 @@
                     @click="packOrderCheckList.splice(index,1)"></i>
                 </template>
               </el-input>
-            </div>
-            <div class="buttonList fr">
-              <div class="btn backHoverBlue">
-                <i class="el-icon-s-grid"></i>
-                <span class="text">批量操作</span>
-              </div>
-              <div class="otherInfoCtn">
-                <div class="otherInfo">
-                  <div class="btn backHoverBlue"
-                    @click="goPayment(packOrderCheckList)">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">批量付款</span>
-                  </div>
-                  <div class="btn backHoverOrange"
-                    @click="goInvoice(packOrderCheckList)">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">批量开票</span>
-                  </div>
-                  <div class="btn backHoverRed"
-                    @click="goDeduct(packOrderCheckList)">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">批量扣款</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
           <div class="list">
@@ -1868,6 +1834,32 @@
             </div>
           </div>
           <div class="filterCtn clearfix">
+            <div class="btn backHoverBlue"
+              @click="goPayment(packOrderCheckList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">批量付款</span>
+            </div>
+            <div class="btn backHoverOrange"
+              @click="goInvoice(packOrderCheckList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">批量开票</span>
+            </div>
+            <div class="btn backHoverRed"
+              @click="goDeduct(packOrderCheckList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">批量扣款</span>
+            </div>
+          </div>
+          <div class="filterCtn clearfix">
             <div class="label">已勾选单据：</div>
             <div class="elCtn check"
               v-for="(item,index) in packOrderCheckList"
@@ -1880,40 +1872,6 @@
                     @click="packOrderCheckList.splice(index,1)"></i>
                 </template>
               </el-input>
-            </div>
-            <div class="buttonList fr">
-              <div class="btn backHoverBlue">
-                <i class="el-icon-s-grid"></i>
-                <span class="text">批量操作</span>
-              </div>
-              <div class="otherInfoCtn">
-                <div class="otherInfo">
-                  <div class="btn backHoverBlue"
-                    @click="goPayment(packOrderCheckList)">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">批量付款</span>
-                  </div>
-                  <div class="btn backHoverOrange"
-                    @click="goInvoice(packOrderCheckList)">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">批量开票</span>
-                  </div>
-                  <div class="btn backHoverRed"
-                    @click="goDeduct(packOrderCheckList)">
-                    <svg class="iconFont"
-                      aria-hidden="true">
-                      <use xlink:href="#icon-xiugaidingdan"></use>
-                    </svg>
-                    <span class="text">批量扣款</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
           <div class="list">
@@ -2224,7 +2182,8 @@
       <div class="titleCtn">
         <div class="title">开票单据</div>
       </div>
-      <div class="listCtn">
+      <div class="listCtn"
+        v-loading="invoiceLoading">
         <div class="filterCtn">
           <div class="elCtn">
             <el-input v-model="invoiceOrderCode"
@@ -2295,7 +2254,8 @@
                 @click="goPayment([{ order_id: item.order_id, doc_code: item.order_code, rel_doc_id: item.rel_doc_id, price: item.price, desc: '', complete_time: $getDate(new Date()) }],false,true)">付款</span>
               <span class="opr orange"
                 @click="goInvoice([item],true)">修改</span>
-              <span class="opr red">删除</span>
+              <span class="opr red"
+                @click="deleteInvoice(item.id)">删除</span>
             </div>
           </div>
           <div class="row">
@@ -2325,7 +2285,8 @@
       <div class="titleCtn">
         <div class="title">付款单据</div>
       </div>
-      <div class="listCtn">
+      <div class="listCtn"
+        v-loading="paymentLoading">
         <div class="filterCtn">
           <div class="elCtn">
             <el-input v-model="paymentOrderCode"
@@ -2387,7 +2348,8 @@
             <div class="col oprCtn">
               <span class="opr orange"
                 @click="goPayment([item],true)">修改</span>
-              <span class="opr red">删除</span>
+              <span class="opr red"
+                @click="deletePayment(item.id)">删除</span>
             </div>
           </div>
           <div class="row">
@@ -2416,20 +2378,21 @@
       <div class="titleCtn">
         <div class="title">扣款单据</div>
       </div>
-      <div class="listCtn">
+      <div class="listCtn"
+        v-loading="deductLoading">
         <div class="filterCtn">
           <div class="elCtn">
             <el-input v-model="deductOrderCode"
               placeholder="搜索订单号"
-              @keydown.enter.native="getDeductList"></el-input>
+              @keydown.enter.native="getDeductLogList"></el-input>
           </div>
           <div class="elCtn">
             <el-input v-model="deductKeyword"
               placeholder="搜索票据编号"
-              @keydown.enter.native="getDeductList"></el-input>
+              @keydown.enter.native="getDeductLogList"></el-input>
           </div>
           <div class="elCtn">
-            <el-select @change="getDeductList"
+            <el-select @change="getDeductLogList"
               v-model="deductUser"
               placeholder="筛选创建人"
               clearable>
@@ -2448,7 +2411,7 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               :picker-options="pickerOptions"
-              @change="getDeductList"
+              @change="getDeductLogList"
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
@@ -2490,7 +2453,8 @@
             <div class="col oprCtn">
               <span class="opr orange"
                 @click="goDeduct([item],true)">修改</span>
-              <span class="opr red">删除</span>
+              <span class="opr red"
+                @click="deleteDeduct(item.id)">删除</span>
             </div>
           </div>
           <div class="row">
@@ -2510,7 +2474,7 @@
             layout="prev, pager, next"
             :total="deductTotal"
             :current-page.sync="deductPage"
-            @current-change="getDeductList">
+            @current-change="getDeductLogList">
           </el-pagination>
         </div>
       </div>
@@ -2520,12 +2484,12 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverOrange"
+          <!-- <div class="btn backHoverOrange"
             @click="goInvoice([])">直接开票</div>
           <div class="btn backHoverBlue"
             @click="goPayment([])">直接付款</div>
           <div class="btn backHoverRed"
-            @click="goDeduct([])">直接扣款</div>
+            @click="goDeduct([])">直接扣款</div> -->
           <div class="btn backHoverGreen"
             @click="goUrl">导出数据表报</div>
         </div>
@@ -2675,6 +2639,7 @@ export default Vue.extend({
       invoiceChange: false,
       productDetailId: '',
       productShow: false,
+      paymentLoading: false,
       paymentFlag: false,
       paymentData: [],
       paymentLog: [],
@@ -2686,6 +2651,7 @@ export default Vue.extend({
       paymentKeyword: '',
       paymentDate: [],
       paymentUser: '',
+      invoiceLoading: false,
       invoiceFlag: false,
       invoiceData: [],
       invoiceTotalPrice: 0,
@@ -2698,6 +2664,7 @@ export default Vue.extend({
       invoiceCode: '',
       invoiceDate: [],
       invoiceUser: '',
+      deductLoading: false,
       deductFlag: false,
       deductData: [],
       deductLog: [],
@@ -3366,6 +3333,7 @@ export default Vue.extend({
       this.$forceUpdate()
     },
     getPaymentLogList() {
+      this.paymentLoading = true
       payment
         .list({
           order_id: '',
@@ -3384,6 +3352,7 @@ export default Vue.extend({
             this.paymentTotal = res.data.data.total
             this.paymentTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000)
           }
+          this.paymentLoading = false
         })
     },
     goPayment(data: any[], update?: boolean, invoiceChange?: boolean) {
@@ -3392,7 +3361,29 @@ export default Vue.extend({
       this.paymentData = data
       this.paymentFlag = true
     },
+    deletePayment(id: number) {
+      this.$confirm('是否删除该付款单据?', '提示', {
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          payment.delete({ id }).then((res) => {
+            if (res.data.status) {
+              this.$message.success('删除成功')
+              this.getPaymentLogList()
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
     getInvoiceLogList() {
+      this.invoiceLoading = true
       invoice
         .list({
           order_id: '',
@@ -3412,6 +3403,7 @@ export default Vue.extend({
             this.invoiceTotal = res.data.data.total
             this.invoiceTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000)
           }
+          this.invoiceLoading = false
         })
     },
     goInvoice(data: any[], update?: boolean) {
@@ -3420,7 +3412,29 @@ export default Vue.extend({
       this.invoiceData = data
       this.invoiceFlag = true
     },
-    getDeductList() {
+    deleteInvoice(id: number) {
+      this.$confirm('是否删除该开票单据?', '提示', {
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          invoice.delete({ id }).then((res) => {
+            if (res.data.status) {
+              this.$message.success('删除成功')
+              this.getInvoiceLogList()
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    getDeductLogList() {
+      this.deductLoading = true
       deduct
         .list({
           order_id: '',
@@ -3439,12 +3453,34 @@ export default Vue.extend({
             this.deductTotal = res.data.data.total
             this.deductTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000)
           }
+          this.deductLoading = false
         })
     },
     goDeduct(data: any[], update?: boolean) {
       this.deductUpdate = update
       this.deductData = data
       this.deductFlag = true
+    },
+    deleteDeduct(id: number) {
+      this.$confirm('是否删除该扣款单据?', '提示', {
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          deduct.delete({ id }).then((res) => {
+            if (res.data.status) {
+              this.$message.success('删除成功')
+              this.getDeductLogList()
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     reset() {
       this.materialOrderFilter = {
@@ -3504,7 +3540,7 @@ export default Vue.extend({
       this.getBill()
       this.getPaymentLogList()
       this.getInvoiceLogList()
-      this.getDeductList()
+      this.getDeductLogList()
     },
     // 原料名称搜索
     searchMaterial(str: string, cb: any) {

@@ -24,7 +24,7 @@
               @click="checkType=9;checkDetailFlag=true">
               <el-tooltip class="item"
                 effect="dark"
-                :content="materialPlanDetail.is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
+                :content="materialPlanDetail.is_check>=3?'点击查看异常处理办法':'点击查看审核日志'"
                 placement="bottom">
                 <img :src="materialPlanDetail.is_check|checkFilter" />
               </el-tooltip>
@@ -163,7 +163,7 @@
               @click="checkType=4;checkDetailFlag=true;is_check=item.is_check">
               <el-tooltip class="item"
                 effect="dark"
-                :content="item.is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
+                :content="item.is_check>=3?'点击查看异常处理办法':'点击查看审核日志'"
                 placement="bottom">
                 <img :src="item.is_check|checkFilter" />
               </el-tooltip>
@@ -581,7 +581,7 @@
                       @change="getProInfo($event,itemPro)">
                       <el-option v-for="(item,index) in checkList()"
                         :key="index"
-                        :value="item.product_id+'/'+ item.part_id+'/'+item.size_id+'/'+ item.color_id"
+                        :value="item.product_id+'/'+ item.part_id+'/'+item.size_id+'/'+ item.color_id + '/'+item.id"
                         :label="item.size_name?(item.name||item.product_code||item.system_code)+'('+ item.category+'/'+item.secondary_category+')'+'/'+ item.part_name+'/'+item.size_name+'/'+ item.color_name:(item.name||item.product_code||item.system_code)+'/'+ item.part_name"></el-option>
                     </el-select>
                   </div>
@@ -1572,18 +1572,29 @@
       :show="checkDetailFlag"
       @close="checkDetailFlag=false"
       :is_check="is_check"
-      :errMsg="[
-        ' 由于【计划单生产以及原料数量】发生了修改。该生产计划单已变为异常状态。以下为异常单据处理办法：',
+      :errMsg="is_check===3?[
+        '由于【计划单生产以及原料数量】发生了修改。该生产计划单已变为异常状态。以下为异常单据处理办法：',
         '1. 修改此生产计划单，同步最新的生产以及原料分配数量。注意：已计划的产品不能删除，但可以将数量改为0。实际已入库的产品，可以在检验收发页面进行结余操作。',
         '2. 如果该单据没有后续检验入库单，您也可以删除该单据再新建一张。',
-        '3. 如果您不想修改生产计划单，您也可以直接点击审核通过，并新建一张生产计划单，以补充新的生产数量。'
-      ]"></zh-check-detail>
+        '3. 如果您不想修改生产计划单，您也可以直接点击审核通过，并新建一张生产计划单，以补充新的生产数量。',]:[
+        '由于【分配数量】超过了【计划数量】的10%。该生产计划单已变为异常状态。以下为异常单据处理办法：',
+        '1. 检查分配数量。如果分配数量录入错误，您可以修改单据，或删除重新创建。',
+        '2. 如果录入的数量为实际分配数量，则无需操作，或点击审核通过即可。']
+      "></zh-check-detail>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { materialPlan, order, productionPlan, materialSupplement, clientInOrder, quotedPrice } from '@/assets/js/api'
+import {
+  materialPlan,
+  order,
+  productionPlan,
+  materialSupplement,
+  clientInOrder,
+  quotedPrice,
+  checkBeyond
+} from '@/assets/js/api'
 import { ProductionMaterialPlanInfo, ProductionPlanInfo } from '@/types/productionPlan'
 import { MaterialPlanInfo, MaterailPlanData } from '@/types/materialPlan'
 import { MaterialSupplementInfo } from '@/types/materialSupplement'
@@ -1999,6 +2010,8 @@ export default Vue.extend({
       info.part_id = Number(idArr[1])
       info.size_id = Number(idArr[2])
       info.color_id = Number(idArr[3])
+      // info.plan_id = Number(idArr[4])
+      info.plan_id = this.materialPlanIndex
     },
     getProductionPlan() {
       const checkLength = this.checkList().length
@@ -2008,6 +2021,8 @@ export default Vue.extend({
       }
       this.productionPlanInfo[0].product_info_data = this.checkList().map((item) => {
         return {
+          // plan_id: item.id,
+          plan_id: Number(this.materialPlanIndex),
           product_id: item.product_id,
           size_id: item.size_id,
           color_id: item.color_id,
@@ -2015,7 +2030,7 @@ export default Vue.extend({
           number: item.number as number,
           price: '',
           total_price: '',
-          select_arr: item.product_id + '/' + item.part_id + '/' + item.size_id + '/' + item.color_id
+          select_arr: item.product_id + '/' + item.part_id + '/' + item.size_id + '/' + item.color_id + '/' + item.id
         }
       })
       this.productionPlanFlag = true
@@ -2175,25 +2190,74 @@ export default Vue.extend({
         // 获取物料信息
         this.getMaterialInfo()
         this.getCmpData()
-        this.saveLock = true
-        this.loading = true
-        productionPlan
-          .create({
-            data: this.productionPlanInfo
+        const checkArr: any[] = []
+        this.productionPlanInfo.forEach((item) => {
+          item.product_info_data.forEach((itemChild) => {
+            checkArr.push({
+              plan_id: itemChild.plan_id,
+              part_id: itemChild.part_id,
+              product_id: itemChild.product_id,
+              size_id: itemChild.size_id,
+              color_id: itemChild.color_id,
+              number: itemChild.number
+            })
           })
-          .then((res) => {
-            if (res.data.status) {
-              this.$message.success('添加成功')
-              this.productionPlanFlag = false
-              this.loading = false
-              this.init()
-            }
-            this.mustFlag = false
-            this.saveLock = false
-          })
+        })
+        checkBeyond({
+          doc_type: 4,
+          data: checkArr
+        }).then((res) => {
+          if (res.data.data.length === 0) {
+            this.saveProductionPlanFn()
+          } else {
+            const createHtml = this.$createElement
+            this.$msgbox({
+              message: createHtml(
+                'p',
+                undefined,
+                res.data.data.map((item: string) => {
+                  return createHtml('p', undefined, item)
+                })
+              ),
+              title: '提示',
+              showCancelButton: true,
+              confirmButtonText: '继续提交',
+              cancelButtonText: '取消提交',
+              type: 'warning'
+            })
+              .then(() => {
+                this.productionPlanInfo.forEach((item) => (item.is_check = 4))
+                this.saveProductionPlanFn()
+              })
+              .catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '已取消提交'
+                })
+              })
+          }
+        })
       } else {
         this.mustFlag = true
       }
+    },
+    saveProductionPlanFn() {
+      this.saveLock = true
+      this.loading = true
+      productionPlan
+        .create({
+          data: this.productionPlanInfo
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.$message.success('添加成功')
+            this.productionPlanFlag = false
+            this.loading = false
+            this.init()
+          }
+          this.mustFlag = false
+          this.saveLock = false
+        })
     },
     goUpdate(info: ProductionPlanInfo) {
       this.productionPlanUpdateInfo = this.$clone(info)

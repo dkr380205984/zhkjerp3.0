@@ -103,7 +103,12 @@
                 <div class="trow">
                   <div class="tcol">尺码颜色</div>
                   <div class="tcol">打样单价</div>
-                  <div class="tcol">打样数量</div>
+                  <div class="tcol"
+                    style="flex:0.8">打样数量</div>
+                  <div class="tcol"
+                    style="flex:0.6">送样数量</div>
+                  <div class="tcol"
+                    style="flex:0.6">留底数量</div>
                   <div class="tcol">操作</div>
                 </div>
               </div>
@@ -151,16 +156,37 @@
                       </el-input>
                     </div>
                   </div>
-                  <div class="tcol">
+                  <div class="tcol"
+                    style="flex:0.8">
                     <div class="elCtn">
                       <el-input v-model="itemChild.number"
                         placeholder="打样数量">
                       </el-input>
                     </div>
                   </div>
+                  <div class="tcol"
+                    style="flex:0.6">
+                    <div class="elCtn">
+                      <el-input :class="{'error':mustFlag&&!itemChild.sample_number}"
+                        v-model="itemChild.sample_number"
+                        placeholder="送样数量">
+                      </el-input>
+                    </div>
+                  </div>
+                  <div class="tcol"
+                    style="flex:0.6">
+                    <div class="elCtn">
+                      <el-input :class="{'error':mustFlag&&!itemChild.keep_number}"
+                        v-model="itemChild.keep_number"
+                        placeholder="留底数量">
+                      </el-input>
+                    </div>
+                  </div>
                   <div class="tcol oprCtn">
                     <div class="opr hoverBlue"
                       @click="$addItem(item.product_info,{
+                        sample_number:'',
+                        keep_number:'',
                         size_color: [], // 用于下拉框选择尺码颜色
                         size_id: '',
                         color_id: '',
@@ -182,6 +208,8 @@
                 size_color_list: [],
                 product_info: [
                   {
+                    sample_number:'',
+                    keep_number:'',
                     size_color: [], 
                     size_id: '',
                     color_id: '',
@@ -375,6 +403,8 @@ export default Vue.extend({
                     size_color_list: [], // 用于下拉框选择尺码颜色
                     product_info: [
                       {
+                        sample_number: '',
+                        keep_number: '',
                         size_color: '', // 用于下拉框选择尺码颜色
                         size_id: '',
                         color_id: '',
@@ -420,6 +450,8 @@ export default Vue.extend({
                 size_color_list: [], // 用于下拉框选择尺码颜色
                 product_info: [
                   {
+                    sample_number: '',
+                    keep_number: '',
                     size_color: '', // 用于下拉框选择尺码颜色
                     size_id: '',
                     color_id: '',
@@ -506,6 +538,8 @@ export default Vue.extend({
             size_color_list: [], // 用于下拉框选择尺码颜色
             product_info: [
               {
+                sample_number: '',
+                keep_number: '',
                 size_color: '', // 用于下拉框选择尺码颜色
                 size_id: '',
                 color_id: '',

@@ -2155,7 +2155,7 @@ export default Vue.extend({
           this.loading = false
         })
     },
-    initProInfo(id: number) {
+    initProInfo(id: number, backFlag?: boolean) {
       this.loading = true
       product
         .detail({
@@ -2167,30 +2167,37 @@ export default Vue.extend({
           this.loading = false
           if (this.productInfo.category !== '梭织' && this.productInfo.secondary_category !== '梭织') {
             this.$confirm('检测到该产品非梭织产品，请选择其他产品或返回上一级?', '提示', {
-              confirmButtonText: '选择其他产品',
+              confirmButtonText: '继续添加',
               cancelButtonText: '返回上一级',
               type: 'warning'
             })
               .then(() => {
-                this.colourList = []
+                this.getSearchList(id)
               })
               .catch(() => {
-                this.saveSuccess = true
-                this.$router.go(-1)
-              })
-          } else {
-            // 关联工艺单查询
-            craft
-              .list({
-                page: 1,
-                limit: 10,
-                product_id: id
-              })
-              .then((res) => {
-                if (res.data.status) {
-                  this.searchList = res.data.data.items
+                if (backFlag) {
+                  this.saveSuccess = true
+                  this.$router.go(-1)
+                } else {
+                  this.getSearchList(id)
                 }
               })
+          } else {
+            this.getSearchList(id)
+          }
+        })
+    },
+    getSearchList(id: number) {
+      // 关联工艺单查询
+      craft
+        .list({
+          page: 1,
+          limit: 10,
+          product_id: id
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.searchList = res.data.data.items
           }
         })
     },
@@ -3984,7 +3991,7 @@ export default Vue.extend({
       this.draftMethodList = res[3].data.data
     })
     if (this.$route.query.id) {
-      this.initProInfo(Number(this.$route.query.id))
+      this.initProInfo(Number(this.$route.query.id), true)
     } else {
       this.getProList()
     }

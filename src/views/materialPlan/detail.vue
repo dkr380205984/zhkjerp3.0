@@ -24,7 +24,7 @@
               @click="checkDetailFlag=true;is_check=materialPlanDetail.is_check">
               <el-tooltip class="item"
                 effect="dark"
-                :content="materialPlanDetail.is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
+                :content="materialPlanDetail.is_check>=3?'点击查看异常处理办法':'点击查看审核日志'"
                 placement="bottom">
                 <img :src="materialPlanDetail.is_check|checkFilter" />
               </el-tooltip>

@@ -137,7 +137,7 @@
               @click="checkType=2;checkDetailFlag=true;is_check=item.is_check">
               <el-tooltip class="item"
                 effect="dark"
-                :content="item.is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
+                :content="item.is_check>=3?'点击查看异常处理办法':'点击查看审核日志'"
                 placement="bottom">
                 <img :src="item.is_check|checkFilter" />
               </el-tooltip>
@@ -454,7 +454,7 @@
               @click="checkType=6;checkDetailFlag=true;is_check=item.is_check">
               <el-tooltip class="item"
                 effect="dark"
-                :content="item.is_check===3?'点击查看异常处理办法':'点击查看审核日志'"
+                :content="item.is_check>=3?'点击查看异常处理办法':'点击查看审核日志'"
                 placement="bottom">
                 <img :src="item.is_check|checkFilter" />
               </el-tooltip>
@@ -809,6 +809,16 @@
                   <div class="once">
                     <span class="text">订购属性</span>
                     <span class="explanation">(选填)</span>
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="统一属性"
+                      placement="top">
+                      <svg class="iconFont copyIcon hoverBlue"
+                        aria-hidden="true"
+                        @click="$copyInfo(item.info_data,['attribute'])">
+                        <use xlink:href='#icon-tongbushuju1'></use>
+                      </svg>
+                    </el-tooltip>
                   </div>
                   <div class="once">
                     <span class="text">订购颜色</span>
@@ -2251,15 +2261,20 @@
       :show="checkDetailFlag"
       :is_check="is_check"
       :errMsg="checkType===2?[
-      '由于【计划原料数量】发生了修改。该原料采购单已变为异常状态。以下为异常单据处理办法：',
+      '情况一：由于【计划原料数量】发生了修改。该原料采购单已变为异常状态。以下为异常单据处理办法：',
       '1. 修改此原料订购单，同步最新的原料数量。注意：已采购的原料不能删除，但可以将数量改为0。实际已入库的原料，可以在原料出入库页面进行结余操作。',
       '2. 如果该单据没有后续加工单、入库单，您也可以删除该单据再新建一张。',
-      '3. 如果您不想修改原料订购单，您也可以直接点击审核通过，并新建一张原料订购单，以补充新的订购数量。'
+      '3. 如果您不想修改原料订购单，您也可以直接点击审核通过，并新建一张原料订购单，以补充新的订购数量。',
+      '情况二：提交超出数量，导致单据异常。以下为异常单据处理办法：',
+      '1. 检查订购数量，如果数量录入错误，您可以修改单据，或删除重新创建。',
+      '2. 如果录入的数量为实际订购数量，则无需操作，或点击审核通过即可。'
       ]:[
-      '由于【计划单数量】发生了修改。该原料调取单已变为异常状态。以下为异常单据处理办法：',
+      '情况一：由于【计划单数量】发生了修改。该原料调取单已变为异常状态。以下为异常单据处理办法：',
       '1. 如果该单据没有后续入库单，您也可以删除该单据再新建一张。',
       '2. 如果该单据有后续入库单，您也可以直接点击审核通过，实际已入库的原料，可以在原料出入库页面进行结余操作。',
-
+      '情况二：提交超出数量，导致单据异常。以下为异常单据处理办法：',
+      '1. 检查调取数量，如果数量录入错误，您可以修改单据，或删除重新创建。',
+      '2. 如果录入的数量为实际调取数量，则无需操作，或点击审核通过即可。'
       ]"
       @close="checkDetailFlag=false"></zh-check-detail>
   </div>
@@ -2826,44 +2841,52 @@ export default Vue.extend({
         ])
       })
       if (!formCheck) {
-        this.getMatOrderCmpData()
-        this.saveMaterialOrderFn()
-        // const checkArr: any[] = []
-        // this.materialOrderInfo.forEach((item) => {
-        //   item.info_data.forEach((itemChild) => {
-        //     checkArr.push({
-        //       plan_info_id: itemChild.plan_info_id || '',
-        //       sup_info_id: itemChild.sup_info_id || '',
-        //       number: itemChild.number,
-        //       attribute: itemChild.attribute || ''
-        //     })
-        //   })
-        // })
-        // checkBeyond({
-        //   doc_type: 2,
-        //   data: checkArr
-        // }).then((res) => {
-        //   if (res.data.data.length === 0) {
-        //     this.getMatOrderCmpData()
-        //     this.saveMaterialOrderFn()
-        //   } else {
-        //     this.$confirm(res.data.data.join(','), '提示', {
-        //       confirmButtonText: '继续提交',
-        //       cancelButtonText: '取消提交',
-        //       type: 'warning'
-        //     })
-        //       .then(() => {
-        //         this.getMatOrderCmpData(4)
-        //         this.saveMaterialOrderFn()
-        //       })
-        //       .catch(() => {
-        //         this.$message({
-        //           type: 'info',
-        //           message: '已取消提交'
-        //         })
-        //       })
-        //   }
-        // })
+        const checkArr: any[] = []
+        this.materialOrderInfo.forEach((item) => {
+          item.info_data.forEach((itemChild) => {
+            checkArr.push({
+              plan_info_id: itemChild.plan_info_id || '',
+              sup_info_id: itemChild.sup_info_id || '',
+              number: itemChild.number,
+              attribute: itemChild.attribute || ''
+            })
+          })
+        })
+        checkBeyond({
+          doc_type: 2,
+          data: checkArr
+        }).then((res) => {
+          if (res.data.data.length === 0) {
+            this.getMatOrderCmpData()
+            this.saveMaterialOrderFn()
+          } else {
+            const createHtml = this.$createElement
+            this.$msgbox({
+              message: createHtml(
+                'p',
+                null,
+                res.data.data.map((item: string) => {
+                  return createHtml('p', null, item)
+                })
+              ),
+              title: '提示',
+              showCancelButton: true,
+              confirmButtonText: '继续提交',
+              cancelButtonText: '取消提交',
+              type: 'warning'
+            })
+              .then(() => {
+                this.getMatOrderCmpData(4)
+                this.saveMaterialOrderFn()
+              })
+              .catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '已取消提交'
+                })
+              })
+          }
+        })
       }
     },
     saveMaterialOrderFn() {
@@ -2990,7 +3013,11 @@ export default Vue.extend({
         })
       } else {
         info.info_data.forEach((item: any) => {
-          item.attribute = '筒纱'
+          if (item.color_name === '白胚') {
+            item.attribute = '绞纱'
+          } else {
+            item.attribute = '筒纱'
+          }
         })
       }
     },
@@ -3097,20 +3124,65 @@ export default Vue.extend({
         ])
       })
       if (!formCheck) {
-        this.saveLock = true
-        materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
-          if (res.data.status) {
-            this.$message.success('调取成功')
-            this.step = 1
-            this.materialStockFlag = false
-            this.init()
+        const checkArr: any[] = []
+        this.materialStockInfo.info_data.forEach((item) => {
+          checkArr.push({
+            action_type: 10,
+            rel_doc_info_id: item.rel_doc_info_id,
+            number: item.number,
+            attribute: item.attribute
+          })
+        })
+        checkBeyond({
+          doc_type: 6,
+          data: checkArr
+        }).then((res) => {
+          if (res.data.data.length === 0) {
+            this.saveMaterialStockFn()
+          } else {
+            const createHtml = this.$createElement
+            this.$msgbox({
+              message: createHtml(
+                'p',
+                null,
+                res.data.data.map((item: string) => {
+                  return createHtml('p', null, item)
+                })
+              ),
+              title: '提示',
+              showCancelButton: true,
+              confirmButtonText: '继续提交',
+              cancelButtonText: '取消提交',
+              type: 'warning'
+            })
+              .then(() => {
+                this.materialStockInfo.is_check = 4
+                this.saveMaterialStockFn()
+              })
+              .catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '已取消提交'
+                })
+              })
           }
-          this.saveLock = false
-          this.mustFlag = false
         })
       } else {
         this.mustFlag = true
       }
+    },
+    saveMaterialStockFn() {
+      this.saveLock = true
+      materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
+        if (res.data.status) {
+          this.$message.success('调取成功')
+          this.step = 1
+          this.materialStockFlag = false
+          this.init()
+        }
+        this.saveLock = false
+        this.mustFlag = false
+      })
     },
     deleteMaterialStock(id: number) {
       this.$confirm('是否删除该调取单?', '提示', {

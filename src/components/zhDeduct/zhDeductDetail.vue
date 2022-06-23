@@ -25,7 +25,7 @@
             <div class="trow"
               v-for="(item,index) in data"
               :key="index">
-              <div class="tcol">暂无</div>
+              <div class="tcol">{{item.code}}</div>
               <div class="tcol">{{item.client_name}}</div>
               <div class="tcol">{{item.price}}元</div>
               <div class="tcol">{{item.user_name}}</div>

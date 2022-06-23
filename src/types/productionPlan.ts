@@ -8,6 +8,7 @@ export interface ProductionPlanInfo {
   process_name?: string
   process_name_arr?: string[]
   process_desc?: string
+  is_check?: string | number
   order_id: number | string
   plan_id?: number | string // 计划单id
   client_id_arr?: number[] // 前端选公司用
@@ -33,6 +34,7 @@ export interface ProductionPlanInfo {
     price: number | string
     total_price: number | string
     image_data?: string[]
+    plan_id?: string | number
     select_arr?: string // 前端用，下拉框选择一个产品尺码配色信息
   }>
   material_info_data: ProductionMaterialPlanInfo[]
