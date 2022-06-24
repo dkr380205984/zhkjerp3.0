@@ -952,7 +952,9 @@
           <span class="btn borderBtn"
             @click="packOrderFlag = false;packOrderUpdateFlag=false">取消</span>
           <span class="btn backHoverBlue"
-            @click="saveOrderPack">{{packOrderUpdateFlag?'修改':'确认'}}</span>
+            @click="saveOrderPack()">{{packOrderUpdateFlag?'修改':'确认'}}</span>
+          <span class="btn backHoverOrange"
+            @click="saveOrderPack(true)">{{packOrderUpdateFlag?'修改并打印':'确认并打印'}}</span>
         </div>
       </div>
     </div>
@@ -1691,7 +1693,7 @@ export default Vue.extend({
         item.tree_data = JSON.stringify(item.tree_data)
       })
     },
-    saveOrderPack() {
+    saveOrderPack(ifprint?: boolean) {
       if (this.saveLock) {
         this.$message.error('请勿频繁点击')
         return
@@ -1732,6 +1734,9 @@ export default Vue.extend({
               this.packOrderFlag = false
               this.packorderUpdateFlag = false
               this.init()
+              if (ifprint) {
+                this.$openUrl('/packManage/printPlan?id=' + res.data.data)
+              }
             }
             this.saveLock = false
           })
@@ -1741,6 +1746,9 @@ export default Vue.extend({
               this.$message.success('订购成功')
               this.packOrderFlag = false
               this.init()
+              if (ifprint) {
+                this.$openUrl('/packManage/printPlan?id=' + res.data.data)
+              }
             }
           })
         }

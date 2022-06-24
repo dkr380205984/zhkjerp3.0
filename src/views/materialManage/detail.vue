@@ -998,7 +998,9 @@
           <span class="btn borderBtn"
             @click="closeOrder">取消</span>
           <span class="btn backHoverBlue"
-            @click="saveMaterialOrder">确认</span>
+            @click="saveMaterialOrder()">确认</span>
+          <span class="btn backHoverOrange"
+            @click="saveMaterialOrder(true)">确认并打印</span>
         </div>
       </div>
     </div>
@@ -1658,7 +1660,9 @@
           <span class="btn borderBtn"
             @click="closeProcess">取消</span>
           <span class="btn backHoverBlue"
-            @click="saveMaterialProcess">确认</span>
+            @click="saveMaterialProcess()">确认</span>
+          <span class="btn backHoverOrange"
+            @click="saveMaterialProcess(true)">确认并打印</span>
         </div>
       </div>
     </div>
@@ -2798,7 +2802,7 @@ export default Vue.extend({
         }
       })
     },
-    saveMaterialOrder() {
+    saveMaterialOrder(ifPrint?: boolean) {
       if (this.saveLock) {
         this.$message.error('请勿频繁点击')
         return
@@ -2858,7 +2862,7 @@ export default Vue.extend({
         }).then((res) => {
           if (res.data.data.length === 0) {
             this.getMatOrderCmpData()
-            this.saveMaterialOrderFn()
+            this.saveMaterialOrderFn(ifPrint)
           } else {
             const createHtml = this.$createElement
             this.$msgbox({
@@ -2877,7 +2881,7 @@ export default Vue.extend({
             })
               .then(() => {
                 this.getMatOrderCmpData(4)
-                this.saveMaterialOrderFn()
+                this.saveMaterialOrderFn(ifPrint)
               })
               .catch(() => {
                 this.$message({
@@ -2889,7 +2893,7 @@ export default Vue.extend({
         })
       }
     },
-    saveMaterialOrderFn() {
+    saveMaterialOrderFn(ifPrint?: boolean) {
       this.loading = true
       this.saveLock = true
       materialOrder.create({ data: this.materialOrderInfo }).then((res) => {
@@ -2898,6 +2902,9 @@ export default Vue.extend({
           this.materialOrderFlag = false
           this.resetOrderMaterial()
           this.init()
+          if (ifPrint) {
+            this.$openUrl('/materialManage/orderPrint?id=' + res.data.data.id)
+          }
         }
         this.saveLock = false
       })
@@ -3127,7 +3134,7 @@ export default Vue.extend({
         const checkArr: any[] = []
         this.materialStockInfo.info_data.forEach((item) => {
           checkArr.push({
-            action_type: 10,
+            action_type: this.$route.query.supFlag ? 12 : 10,
             rel_doc_info_id: item.rel_doc_info_id,
             number: item.number,
             attribute: item.attribute
@@ -3330,7 +3337,7 @@ export default Vue.extend({
         item.material_transfer_id = this.materialProcessFlag === '调取加工' ? this.materialStockIndex : ''
       })
     },
-    saveMaterialProcess() {
+    saveMaterialProcess(ifPrint?: boolean) {
       if (this.saveLock) {
         this.$message.error('请勿频繁点击')
         return
@@ -3375,6 +3382,9 @@ export default Vue.extend({
             this.materialProcessFlag = false
             this.resetProcessMaterial()
             this.init()
+            if (ifPrint) {
+              this.$openUrl('/materialManage/processPrint?id=' + res.data.data)
+            }
           }
           this.saveLock = false
           this.mustFlag = false

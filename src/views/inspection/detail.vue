@@ -923,51 +923,57 @@ export default Vue.extend({
         })
       })
       if (!formCheck) {
-        const checkArr: any = []
-        this.inspectionInfo.forEach((item) => {
-          item.child_data.forEach((itemChild) => {
-            checkArr.push({
-              doc_info_id: itemChild.doc_info_id,
-              number: itemChild.number
+        if (this.inspectionInfo[0].type === 1) {
+          const checkArr: any = []
+          this.inspectionInfo.forEach((item) => {
+            item.child_data.forEach((itemChild) => {
+              checkArr.push({
+                doc_info_id: itemChild.doc_info_id,
+                number: itemChild.number,
+                type: 1
+              })
             })
           })
-        })
-        checkBeyond({
-          doc_type: 19,
-          data: checkArr
-        }).then((res) => {
-          if (res.data.data.length === 0) {
-            this.getCmpData()
-            this.saveInspectionFn()
-          } else {
-            const createHtml = this.$createElement
-            this.$msgbox({
-              message: createHtml(
-                'p',
-                undefined,
-                res.data.data.map((item: string) => {
-                  return createHtml('p', undefined, item)
-                })
-              ),
-              title: '提示',
-              showCancelButton: true,
-              confirmButtonText: '继续提交',
-              cancelButtonText: '取消提交',
-              type: 'warning'
-            })
-              .then(() => {
-                this.getCmpData()
-                this.inspectionInfo.forEach((item) => (item.is_check = 4))
-                this.saveInspectionFn()
+          checkBeyond({
+            doc_type: 19,
+            data: checkArr
+          }).then((res) => {
+            if (res.data.data.length === 0) {
+              this.getCmpData()
+              this.saveInspectionFn()
+            } else {
+              const createHtml = this.$createElement
+              this.$msgbox({
+                message: createHtml(
+                  'p',
+                  undefined,
+                  res.data.data.map((item: string) => {
+                    return createHtml('p', undefined, item)
+                  })
+                ),
+                title: '提示',
+                showCancelButton: true,
+                confirmButtonText: '继续提交',
+                cancelButtonText: '取消提交',
+                type: 'warning'
               })
-              .catch(() => {
-                this.$message({
-                  type: 'info',
-                  message: '已取消提交'
+                .then(() => {
+                  this.getCmpData()
+                  this.inspectionInfo.forEach((item) => (item.is_check = 4))
+                  this.saveInspectionFn()
                 })
-              })
-          }
-        })
+                .catch(() => {
+                  this.$message({
+                    type: 'info',
+                    message: '已取消提交'
+                  })
+                })
+            }
+          })
+        } else {
+          this.getCmpData()
+          this.saveInspectionFn()
+        }
       }
     },
     saveInspectionFn() {
@@ -1016,6 +1022,49 @@ export default Vue.extend({
         this.$message.error('请填写入库数量')
         return
       }
+      const checkArr = formArr.map((item) => {
+        return {
+          doc_info_id: item.doc_info_id,
+          number: item.number,
+          type: 3
+        }
+      })
+      checkBeyond({
+        doc_type: 19,
+        data: checkArr
+      }).then((res) => {
+        if (res.data.data.length === 0) {
+          this.saveCprkFn(formArr)
+        } else {
+          const createHtml = this.$createElement
+          this.$msgbox({
+            message: createHtml(
+              'p',
+              undefined,
+              res.data.data.map((item: string) => {
+                return createHtml('p', undefined, item)
+              })
+            ),
+            title: '提示',
+            showCancelButton: true,
+            confirmButtonText: '继续提交',
+            cancelButtonText: '取消提交',
+            type: 'warning'
+          })
+            .then(() => {
+              formArr.forEach((item: any) => (item.is_check = 4))
+              this.saveCprkFn(formArr)
+            })
+            .catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消提交'
+              })
+            })
+        }
+      })
+    },
+    saveCprkFn(formArr: any[]) {
       this.saveLock = true
       inspection.create({ data: formArr }).then((res) => {
         if (res.data.status) {

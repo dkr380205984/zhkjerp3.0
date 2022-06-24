@@ -350,6 +350,8 @@
       v-if="showMenu"
       :style="`left:${X_position || 0}px;top:${Y_position}px`"
       @click.stop>
+      <div class="setting_item"
+        @click="windowMethod(2)">打印订购单</div>
       <div class="setting_item">设置行高 <el-input-number v-model="lineHeight"
           style="height:32px"
           :precision="1"
@@ -363,11 +365,9 @@
       <div class="setting_item"
         @click="windowMethod(1)">刷新页面</div>
       <div class="setting_item"
-        @click="windowMethod(2)">打印计划单</div>
-      <div class="setting_item"
         @click="windowMethod(3)">{{editFlag?'完成编辑':'编辑模式'}}</div>
       <div class="setting_item"
-        @click="windowMethod(5)">打印设置</div>
+        @click="windowMethod(5)">标题备注设置</div>
     </div>
   </div>
 </template>
@@ -506,6 +506,7 @@ export default Vue.extend({
             .catch((err: any) => {
               console.error(err)
             })
+          this.windowMethod(2)
         }
       })
   }

@@ -20,7 +20,11 @@
         <div class="row">
           <div class="col">
             <div class="label">订单号：</div>
-            <div class="text">{{orderInfo.code}}</div>
+            <div class="text">{{orderInfo.code}}
+              <span class="hoverBlue"
+                style="cursor:pointer;font-size:14px"
+                @click="$copyTextInfo(orderInfo.code)">复制</span>
+            </div>
           </div>
           <div class="col">
             <div class="label">创建人：</div>
@@ -1622,6 +1626,14 @@
                   </svg>
                   <span class="text">邮件分享</span>
                 </div> -->
+                <div class="btn backHoverOrange"
+                  @click="$router.push('/order/create?id='+$route.query.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-caozuojilu"></use>
+                  </svg>
+                  <span class="text">复制订单</span>
+                </div>
                 <div class="btn backHoverBlue"
                   @click="$router.push('/quotedPrice/create?orderId='+$route.query.id)">
                   <svg class="iconFont"
@@ -2061,7 +2073,13 @@ export default Vue.extend({
           })
           .catch((action: any) => {
             if (action === 'cancel') {
-              this.$openUrl('/quotedPrice/list?page=1&keyword=&client_id=&user_id=&status=null&date=')
+              this.$openUrl(
+                '/quotedPrice/list?page=1&keyword=&client_id=' +
+                  this.orderInfo.client_id +
+                  '&contacts_id=' +
+                  this.orderInfo.contacts_id +
+                  '&status=null&date='
+              )
             } else {
               this.$message({
                 type: 'info',

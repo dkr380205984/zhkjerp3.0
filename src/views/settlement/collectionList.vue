@@ -1,5 +1,5 @@
 <template>
-  <div id="paymentList"
+  <div id="collectionList"
     class="bodyContainer">
     <div class="topTagCtn">
       <div class="tag active">
@@ -114,13 +114,57 @@
             <div class="col">公司简称</div>
             <div class="col">公司全称</div>
             <div class="col">客户类型</div>
-            <div class="col">已下单总额</div>
-            <div class="col">已下单总数</div>
-            <div class="col">已发货总额</div>
-            <div class="col">已发货总数</div>
-            <div class="col">已开票总额</div>
-            <div class="col">已收款总额</div>
-            <div class="col">已扣款总额</div>
+            <div class="col sortCol">
+              <span>已下单总额</span>
+              <div class="sortCtn">
+                <div class="el-icon-caret-top"
+                  @click="sortCol='total_order_price';sort='asc';getList()"></div>
+                <div class="el-icon-caret-bottom"
+                  @click="sortCol='total_order_price';sort='desc';getList()"></div>
+              </div>
+            </div>
+            <div class="col">已下单总数 <div class="sortCtn">
+                <div class="el-icon-caret-top"
+                  @click="sortCol='total_order_price';sort='asc';getList()"></div>
+                <div class="el-icon-caret-bottom"
+                  @click="sortCol='total_order_price';sort='desc';getList()"></div>
+              </div>
+            </div>
+            <div class="col">已发货总额 <div class="sortCtn">
+                <div class="el-icon-caret-top"
+                  @click="sortCol='total_order_price';sort='asc';getList()"></div>
+                <div class="el-icon-caret-bottom"
+                  @click="sortCol='total_order_price';sort='desc';getList()"></div>
+              </div>
+            </div>
+            <div class="col">已发货总数 <div class="sortCtn">
+                <div class="el-icon-caret-top"
+                  @click="sortCol='total_transport_number';sort='asc';getList()"></div>
+                <div class="el-icon-caret-bottom"
+                  @click="sortCol='total_transport_number';sort='desc';getList()"></div>
+              </div>
+            </div>
+            <div class="col">已开票总额 <div class="sortCtn">
+                <div class="el-icon-caret-top"
+                  @click="sortCol='total_invoice_price';sort='asc';getList()"></div>
+                <div class="el-icon-caret-bottom"
+                  @click="sortCol='total_invoice_price';sort='desc';getList()"></div>
+              </div>
+            </div>
+            <div class="col">已收款总额 <div class="sortCtn">
+                <div class="el-icon-caret-top"
+                  @click="sortCol='total_collect_price';sort='asc';getList()"></div>
+                <div class="el-icon-caret-bottom"
+                  @click="sortCol='total_collect_price';sort='desc';getList()"></div>
+              </div>
+            </div>
+            <div class="col">已扣款总额 <div class="sortCtn">
+                <div class="el-icon-caret-top"
+                  @click="sortCol='total_deduct_price';sort='asc';getList()"></div>
+                <div class="el-icon-caret-bottom"
+                  @click="sortCol='total_deduct_price';sort='desc';getList()"></div>
+              </div>
+            </div>
             <div class="col">操作</div>
           </div>
           <div class="row"
@@ -226,7 +270,9 @@ export default Vue.extend({
         total_order_price: 0,
         total_transport_number: 0,
         total_transport_price: 0
-      }
+      },
+      sortCol: 'total_order_price',
+      sort: 'desc'
     }
   },
   watch: {
@@ -248,6 +294,8 @@ export default Vue.extend({
       this.loading = true
       client
         .financialList({
+          sortCol: this.sortCol,
+          sort: this.sort,
           limit: this.limit,
           page: this.page,
           name: this.keyword,
@@ -344,6 +392,6 @@ export default Vue.extend({
 })
 </script>
 <style lang="less" scoped>
-@import '~@/assets/css/settlement/paymentList.less';
+@import '~@/assets/css/settlement/collectionList.less';
 </style>
 

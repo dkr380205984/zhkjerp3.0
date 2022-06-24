@@ -11,7 +11,7 @@
       </div>
       <div class="contentCtn">
         <div class="listCtn"
-          v-if="is_check<3&&!errMsg">
+          v-if="is_check<3">
           <div class="list">
             <div class="row title">
               <div class="col">审核人</div>
@@ -25,7 +25,7 @@
               :key="item.id">
               <div class="col">{{item.check_user_name}}</div>
               <div class="col"
-                :class="{'red':item.is_chekc===2,'green':item.is_check===1}">{{item.is_check===1?'通过':'驳回'}}</div>
+                :class="{'red':item.is_check===2,'green':item.is_check===1}">{{item.is_check===1?'通过':'驳回'}}</div>
               <div class="col">{{item.check_time}}</div>
               <div class="col">{{item.check_desc}}</div>
               <div class="col">{{item.desc}}</div>
@@ -87,7 +87,7 @@ export default Vue.extend({
   watch: {
     show(val) {
       if (val) {
-        if (this.is_check === 3) {
+        if (this.is_check >= 3) {
         } else {
           check
             .list({

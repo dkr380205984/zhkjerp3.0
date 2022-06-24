@@ -372,7 +372,7 @@
                           <el-autocomplete :class="{'error':mustFlag&&!itemChild.material_color}"
                             class="inline-input"
                             v-model="itemChild.material_color"
-                            :fetch-suggestions="searchColor"
+                            :fetch-suggestions="(str,cb)=>searchColor(str,cb,item.color_name)"
                             placeholder="物料颜色"></el-autocomplete>
                         </div>
                       </div>
@@ -671,7 +671,7 @@
                           <el-autocomplete :class="{'error':mustFlag&&!itemChild.material_color}"
                             class="inline-input"
                             v-model="itemChild.material_color"
-                            :fetch-suggestions="searchColor"
+                            :fetch-suggestions="(str,cb)=>searchColor(str,cb,item.color_name)"
                             placeholder="物料颜色"></el-autocomplete>
                         </div>
                       </div>
@@ -828,7 +828,9 @@
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
           <div class="btn backHoverBlue"
-            @click="saveMaterialPlan">提交</div>
+            @click="saveMaterialPlan()">提交</div>
+          <div class="btn backHoverOrange"
+            @click="saveMaterialPlan(true)">提交并打印</div>
         </div>
       </div>
     </div>
@@ -1139,8 +1141,9 @@ export default Vue.extend({
       this.copyMaterialPlanDataInfoFlag = false
     },
     // 原料颜色搜索
-    searchColor(str: string, cb: any) {
-      let results = str ? this.yarnColorList.filter(this.createFilter(str)) : this.yarnColorList.slice(0, 10)
+    searchColor(str: string, cb: any, proColor: string) {
+      const realColor = [{ value: proColor }].concat(this.yarnColorList)
+      let results = str ? realColor.filter(this.createFilter(str)) : realColor.slice(0, 10)
       // 调用 callback 返回建议列表的数据
       cb(results)
     },
@@ -1612,7 +1615,7 @@ export default Vue.extend({
       })
     },
     // 这个地方有个巨大BUG，提交的是getCmp函数在重置物料计划详情数据的时候会导致watch函数覆盖掉原料总表，导致你改了原料总表的任何数据实际上都会被重置掉，懒得改
-    saveMaterialPlan() {
+    saveMaterialPlan(ifPrint?: boolean) {
       if (this.saveLock) {
         this.$message.error('请勿频繁点击')
         return
@@ -1669,7 +1672,22 @@ export default Vue.extend({
           if (res.data.status) {
             this.$message.success('添加成功')
             this.saveSuccess = true
-            this.$router.push('/materialPlan/detail?id=' + this.$route.query.id)
+            if (ifPrint) {
+              this.$router.push(
+                '/materialPlan/detail?id=' +
+                  this.$route.query.id +
+                  '&sampleOrderIndex' +
+                  this.$route.query.sampleOrderIndex
+              )
+              this.$openUrl('/materialPlan/print?id=' + res.data.data)
+            } else {
+              this.$router.push(
+                '/materialPlan/detail?id=' +
+                  this.$route.query.id +
+                  '&sampleOrderIndex' +
+                  this.$route.query.sampleOrderIndex
+              )
+            }
           }
           this.saveLock = false
         })

@@ -235,12 +235,25 @@
       </div>
     </div>
     <div class="module">
-      <el-tabs type="border-card">
+      <el-tabs type="border-card"
+        v-model="productIndex">
         <el-tab-pane :label="'产品'+(index+1)"
           v-for="(item,index) in quotedPriceInfo.product_data"
           :key="index">
           <div class="titleCtn">
-            <div class="title">报价信息</div>
+            <div class="title">报价信息
+              <div class="fr elCtn"
+                style="margin-right:24px">
+                <el-select v-model="searchQuotedPrice"
+                  placeholder="导入报价模板"
+                  @change="getModules">
+                  <el-option v-for="item in searchQuotedPriceList"
+                    :key="item.id"
+                    :value="item.id"
+                    :label="item.title"></el-option>
+                </el-select>
+              </div>
+            </div>
           </div>
           <div class="editCtn">
             <div class="row"
@@ -1071,6 +1084,11 @@ export default Vue.extend({
       loading: true,
       unitArr: moneyArr,
       saveSuccess: false,
+      searchQuotedPriceKey: '',
+      searchLoading: false,
+      searchQuotedPrice: '',
+      searchQuotedPriceList: [],
+      searchList: [],
       postData: {
         key: '',
         token: ''
@@ -1276,6 +1294,31 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 获取报价单模板
+    getModules(ev: number) {
+      this.$confirm('选择模版后，会替换当前已选的工序和输入的价格，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          const finded = this.searchQuotedPriceList.find((item: any) => item.id === ev)
+          this.quotedPriceInfo.product_data[this.productIndex].weave_data = JSON.parse(finded.weave_data)
+          this.quotedPriceInfo.product_data[this.productIndex].semi_product_data = JSON.parse(finded.semi_product_data)
+          this.quotedPriceInfo.product_data[this.productIndex].production_data = JSON.parse(finded.production_data)
+          this.quotedPriceInfo.product_data[this.productIndex].pack_material_data = JSON.parse(
+            finded.pack_material_data
+          )
+          // this.quotedPriceInfo.product_data[this.productIndex].other_fee_data = JSON.parse(finded.other_fee_data)
+          this.$message.success('导入成功')
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消导入'
+          })
+        })
+    },
     addPro() {
       this.$addItem(this.quotedPriceInfo.product_data, {
         total_price: '',
@@ -1811,6 +1854,12 @@ export default Vue.extend({
         getInfoApi: 'getClientTypeAsync'
       }
     ])
+    // 报价模板
+    quotedPrice.settingList().then((res) => {
+      if (res.data.status) {
+        this.searchQuotedPriceList = res.data.data
+      }
+    })
     quotedPrice
       .detail({
         id: Number(this.$route.query.id)

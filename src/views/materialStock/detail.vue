@@ -1856,50 +1856,55 @@ export default Vue.extend({
         ])
       })
       if (!formCheck) {
-        this.getCmpData()
-        const checkArr: any[] = []
-        this.materialStockInfo.info_data.forEach((item) => {
-          checkArr.push({
-            action_type: 4,
-            rel_doc_info_id: item.rel_doc_info_id,
-            number: item.number,
-            attribute: item.attribute
-          })
-        })
-        checkBeyond({
-          doc_type: 6,
-          data: checkArr
-        }).then((res) => {
-          if (res.data.data.length === 0) {
-            this.saveMaterialStockFn()
-          } else {
-            const createHtml = this.$createElement
-            this.$msgbox({
-              message: createHtml(
-                'p',
-                undefined,
-                res.data.data.map((item: string) => {
-                  return createHtml('p', undefined, item)
-                })
-              ),
-              title: '提示',
-              showCancelButton: true,
-              confirmButtonText: '继续提交',
-              cancelButtonText: '取消提交',
-              type: 'warning'
+        if (this.materialStockInfo.action_type !== 3 && this.materialStockInfo.action_type !== 5) {
+          this.getCmpData()
+          const checkArr: any[] = []
+          this.materialStockInfo.info_data.forEach((item) => {
+            checkArr.push({
+              action_type: this.materialStockInfo.action_type === 4 ? 4 : 11,
+              rel_doc_info_id: item.rel_doc_info_id,
+              number: item.number,
+              attribute: item.attribute
             })
-              .then(() => {
-                this.materialStockInfo.is_check = 4
-                this.saveMaterialStockFn()
+          })
+          checkBeyond({
+            doc_type: 6,
+            data: checkArr
+          }).then((res) => {
+            if (res.data.data.length === 0) {
+              this.saveMaterialStockFn()
+            } else {
+              const createHtml = this.$createElement
+              this.$msgbox({
+                message: createHtml(
+                  'p',
+                  undefined,
+                  res.data.data.map((item: string) => {
+                    return createHtml('p', undefined, item)
+                  })
+                ),
+                title: '提示',
+                showCancelButton: true,
+                confirmButtonText: '继续提交',
+                cancelButtonText: '取消提交',
+                type: 'warning'
               })
-              .catch(() => {
-                this.$message({
-                  type: 'info',
-                  message: '已取消提交'
+                .then(() => {
+                  this.materialStockInfo.is_check = 4
+                  this.saveMaterialStockFn()
                 })
-              })
-          }
-        })
+                .catch(() => {
+                  this.$message({
+                    type: 'info',
+                    message: '已取消提交'
+                  })
+                })
+            }
+          })
+        } else {
+          this.getCmpData()
+          this.saveMaterialStockFn()
+        }
       } else {
         this.mustFlag = true
       }

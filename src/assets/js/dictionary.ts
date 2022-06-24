@@ -401,13 +401,13 @@ const systemModule = [{
   }, {
     id: '21-11',
     name: '单据管理-我方扣款单据',
-  },{
+  }, {
     id: '21-12',
     name: '单据管理-我方发票单据',
-  },{
+  }, {
     id: '21-13',
     name: '单据管理-收款单据',
-  },{
+  }, {
     id: '21-14',
     name: '单据管理-付款单据',
   },]
@@ -443,6 +443,9 @@ const yarnAttributeArr: CascaderInfo[] = [{
 }, {
   label: '绞纱',
   value: '绞纱'
+}, {
+  label: '面料',
+  value: '面料'
 }]
 
 const yarnProcessArr: CascaderInfo[] = [{

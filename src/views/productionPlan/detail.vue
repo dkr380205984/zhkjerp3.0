@@ -842,7 +842,9 @@
           <span class="btn backHoverOrange"
             @click="materialPlanFlag?materialPlanFlag=false:getMaterialInfo(true)">{{materialPlanFlag?'查看排产信息':'查看物料分配'}}</span>
           <span class="btn backHoverBlue"
-            @click="saveProductionPlan">确认</span>
+            @click="saveProductionPlan()">确认</span>
+          <span class="btn backHoverOrange"
+            @click="saveProductionPlan(true)">确认并打印</span>
         </div>
       </div>
     </div>
@@ -1537,6 +1539,13 @@
             </div>
           </div>
         </div>
+        <div class="btnCtn"
+          style="float:left">
+          <div class="btn backHoverGreen"
+            @click="showAssociatedPage=true">
+            <span class="text">关联页面</span>
+          </div>
+        </div>
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
@@ -1581,6 +1590,10 @@
         '1. 检查分配数量。如果分配数量录入错误，您可以修改单据，或删除重新创建。',
         '2. 如果录入的数量为实际分配数量，则无需操作，或点击审核通过即可。']
       "></zh-check-detail>
+    <associated-page :data="associatedPage"
+      @close="showAssociatedPage = false"
+      :nowPage="true"
+      :show="showAssociatedPage"></associated-page>
   </div>
 </template>
 
@@ -1861,6 +1874,13 @@ export default Vue.extend({
         value: '推荐工序',
         children: []
       },
+      showAssociatedPage: false,
+      associatedPage: [
+        {
+          name: '原料计划',
+          url: '/materialPlan/detail?id=' + this.$route.query.id
+        }
+      ],
       priceProcessList: [] // 报价单报价信息
     }
   },
@@ -2143,7 +2163,7 @@ export default Vue.extend({
         }
       })
     },
-    saveProductionPlan() {
+    saveProductionPlan(ifprint?: boolean) {
       if (this.saveLock) {
         this.$message.error('请勿频繁点击')
         return
@@ -2194,6 +2214,7 @@ export default Vue.extend({
         this.productionPlanInfo.forEach((item) => {
           item.product_info_data.forEach((itemChild) => {
             checkArr.push({
+              process_name: item.process_name,
               plan_id: itemChild.plan_id,
               part_id: itemChild.part_id,
               product_id: itemChild.product_id,
@@ -2208,7 +2229,7 @@ export default Vue.extend({
           data: checkArr
         }).then((res) => {
           if (res.data.data.length === 0) {
-            this.saveProductionPlanFn()
+            this.saveProductionPlanFn(ifprint)
           } else {
             const createHtml = this.$createElement
             this.$msgbox({
@@ -2227,7 +2248,7 @@ export default Vue.extend({
             })
               .then(() => {
                 this.productionPlanInfo.forEach((item) => (item.is_check = 4))
-                this.saveProductionPlanFn()
+                this.saveProductionPlanFn(ifprint)
               })
               .catch(() => {
                 this.$message({
@@ -2241,7 +2262,7 @@ export default Vue.extend({
         this.mustFlag = true
       }
     },
-    saveProductionPlanFn() {
+    saveProductionPlanFn(ifprint?: boolean) {
       this.saveLock = true
       this.loading = true
       productionPlan
@@ -2254,6 +2275,9 @@ export default Vue.extend({
             this.productionPlanFlag = false
             this.loading = false
             this.init()
+            if (ifprint) {
+              this.$openUrl('/productionPlan/print?id=' + res.data.data + '&order_id=' + this.$route.query.id)
+            }
           }
           this.mustFlag = false
           this.saveLock = false

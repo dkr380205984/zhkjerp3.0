@@ -127,7 +127,7 @@ declare module 'vue/types/vue' {
       checkArr: Array<{ key: string, errMsg?: string, regExp?: RegExp, regNormal?: 'isNum' | 'isEmail' | 'isPhone' | 'isNull' | 'checkArr', regNegate?: boolean }>
     ): boolean
     $ifRepeatArray(arr: string[]): boolean
-    findId<T, K extends keyof T>(jsonArr: T[], id: number | string, returnKey: K, findKey: K): T[K]
+    $findId<T, K extends keyof T>(jsonArr: T[], id: number | string, returnKey: K, findKey: K): T[K]
     $sliceToArray<T>(arr: T[], num: number): T[][]
     $copyInfo(info: any, keyArr: string[], callback?: Function): void
     $setLocalStorage(name: string, info: any): void
@@ -138,6 +138,7 @@ declare module 'vue/types/vue' {
     $initEditor(item: any, index?: number): void
     $debounce(val: string, timer: any, fn: Function, time?: number): void
     $focusInput(ev: any): void
+    $copyTextInfo(val: string): void
   }
 }
 new Vue({

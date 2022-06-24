@@ -205,7 +205,7 @@
               </div>
             </div>
           </template>
-          <template v-if="cName === '订单类型'">
+          <template v-if="cName === '批次类型'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
                 <div class="btn backHoverBlue fr"
@@ -1304,14 +1304,14 @@
               <div class="list">
                 <div class="row title">
                   <div class="col">预设名称</div>
-                  <div class="col">绑定品类</div>
+                  <!-- <div class="col">绑定品类</div> -->
                   <div class="col">操作</div>
                 </div>
                 <div class="row"
                   v-for="(item, index) in quotedPriceProductArr"
                   :key="index">
                   <div class="col">{{ item.title }}</div>
-                  <div class="col">{{ item.category_name }}</div>
+                  <!-- <div class="col">{{ item.category_name }}</div> -->
                   <div class="col">
                     <span class="opr hoverBlue"
                       @click="lookQuotedPriceProduct(item)">查看详情</span>
@@ -1452,6 +1452,33 @@
               style="padding:20px 32px">
               <div class="row">
                 <div class="col">
+                  <div class="label">超额类的异常单据是否通知？</div>
+                  <div class="info middle">
+                    <el-radio v-model="pushCheckConfig.allow_push_err_doc"
+                      :label="1">是</el-radio>
+                    <el-radio v-model="pushCheckConfig.allow_push_err_doc"
+                      :label="2">否</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">异常单据推送账号：
+                  </div>
+                  <div class="info elCtn">
+                    <el-select placeholder="请选择账号"
+                      v-model="pushCheckConfig.err_doc_push_user"
+                      multiple>
+                      <el-option v-for="item in userListCommon"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
                   <div class="label">未审核的单据是否通过公众号发送?</div>
                   <div class="info middle">
                     <el-radio v-model="pushCheckConfig.push_status"
@@ -1511,6 +1538,29 @@
           <template v-if="cName ==='样品订单'">
             <div class="editCtn clearfix"
               style="padding:20px 32px">
+              <div class="row">
+                <div class="col">
+                  <div class="label">样品订单逾期是否通知？</div>
+                  <div class="info middle">
+                    <el-radio v-model="sampleOrderCheckConfig.allow_push_sample_order_postpone"
+                      :label="1">是</el-radio>
+                    <el-radio v-model="sampleOrderCheckConfig.allow_push_sample_order_postpone"
+                      :label="2">否</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否提前三天通知样单送样：
+                  </div>
+                  <div class="info elCtn">
+                    <el-radio v-model="sampleOrderCheckConfig.allow_push_sample_order_dispatch_3_day"
+                      :label="1">是</el-radio>
+                    <el-radio v-model="sampleOrderCheckConfig.allow_push_sample_order_dispatch_3_day"
+                      :label="2">否</el-radio>
+                  </div>
+                </div>
+              </div>
               <div class="row">
                 <div class="col">
                   <div class="label">是否需要系统自动审核通过？</div>
@@ -1609,6 +1659,41 @@
           <template v-if="cName ==='大货订单'">
             <div class="editCtn clearfix"
               style="padding:20px 32px">
+              <div class="row">
+                <div class="col">
+                  <div class="label">大货订单逾期是否通知？</div>
+                  <div class="info middle">
+                    <el-radio v-model="orderCheckConfig.all_push_order_postpone"
+                      :label="1">是</el-radio>
+                    <el-radio v-model="orderCheckConfig.all_push_order_postpone"
+                      :label="2">否</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否提前三天通知订单发货：
+                  </div>
+                  <div class="info elCtn">
+                    <el-radio v-model="orderCheckConfig.allow_push_order_dispatch_3_day"
+                      :label="1">是</el-radio>
+                    <el-radio v-model="orderCheckConfig.allow_push_order_dispatch_3_day"
+                      :label="2">否</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否提前七天通知订单发货：
+                  </div>
+                  <div class="info elCtn">
+                    <el-radio v-model="orderCheckConfig.allow_push_order_dispatch_7_day"
+                      :label="1">是</el-radio>
+                    <el-radio v-model="orderCheckConfig.allow_push_order_dispatch_7_day"
+                      :label="2">否</el-radio>
+                  </div>
+                </div>
+              </div>
               <div class="row">
                 <div class="col">
                   <div class="label">是否需要系统自动审核通过？</div>
@@ -2654,8 +2739,9 @@
             <div class="row">
               <div class="label">品类单位：</div>
               <div class="info">
-                <el-input placeholder="请输入品类单位"
-                  v-model="categoryInfo.unit"></el-input>
+                <el-autocomplete placeholder="请输入品类单位"
+                  v-model="categoryInfo.unit"
+                  :fetch-suggestions="searchProUnit"></el-autocomplete>
               </div>
             </div>
             <!-- <div class="row">
@@ -2778,10 +2864,10 @@
           </div>
         </div>
       </template>
-      <template v-if="cName === '订单类型'">
+      <template v-if="cName === '批次类型'">
         <div class="main">
           <div class="titleCtn">
-            <div class="text">新增订单类型</div>
+            <div class="text">新增批次类型</div>
             <div class="closeCtn"
               @click="showPopup = false">
               <i class="el-icon-close"></i>
@@ -2789,9 +2875,9 @@
           </div>
           <div class="contentCtn">
             <div class="row">
-              <div class="label">订单类型：</div>
+              <div class="label">批次类型：</div>
               <div class="info">
-                <el-input placeholder="请输入订单类型"
+                <el-input placeholder="请输入批次类型"
                   v-model="orderTypeInfo.name"></el-input>
               </div>
             </div>
@@ -3808,7 +3894,7 @@
           <div class="contentCtn">
             <div class="editCtn">
               <div class="row">
-                <div class="col">
+                <!-- <div class="col">
                   <div class="label">
                     <span class="text">绑定品类</span>
                   </div>
@@ -3821,7 +3907,7 @@
                         :label="item.name"></el-option>
                     </el-select>
                   </div>
-                </div>
+                </div> -->
                 <div class="col">
                   <div class="label">
                     <span class="text">模板标题</span>
@@ -4386,14 +4472,14 @@ export default Vue.extend({
       postData: { token: '' },
       nav: {
         产品设置: ['品类', '款式', '成分', '配色组', '尺码'],
-        订单设置: ['订单类型', '样单类型'],
+        订单设置: ['批次类型', '样单类型'],
         报价单设置: ['报价模板', '报价说明'],
         工序设置: ['半成品加工', '成品加工工序'],
         工艺单设置: ['边型', '机型', '组织法', '纱线颜色'],
         物料设置: ['纱线原料', '面料原料', '装饰辅料', '包装辅料', '纱线报价', '面料报价'],
         工厂信息设置: ['基本信息', '负责小组/人'],
         系统账户管理: ['系统账户管理'],
-        单据审核设置: [
+        通知和审核设置: [
           '推送设置',
           '样品订单',
           '大货订单',
@@ -4419,6 +4505,8 @@ export default Vue.extend({
         // ]
       },
       pushCheckConfig: {
+        allow_push_err_doc: 1,
+        err_doc_push_user: [],
         push_status: 1,
         push_user: [
           {
@@ -4502,6 +4590,8 @@ export default Vue.extend({
         }
       ],
       sampleOrderCheckConfig: {
+        allow_push_sample_order_postpone: 1,
+        allow_push_sample_order_dispatch_3_day: 1,
         doc_type: 17,
         data: {
           auto_pass: 2,
@@ -4644,7 +4734,7 @@ export default Vue.extend({
           total_number: '',
           total_price: '',
           contrast_quote_extent: '',
-           not_allow_settle: 2 // 限制结算 1是 2否
+          not_allow_settle: 2 // 限制结算 1是 2否
         }
       },
       packOutCheckConfig: {
@@ -5183,6 +5273,23 @@ export default Vue.extend({
         })
       )
     },
+    // 产品品类单位搜索
+    searchProUnit(str: string, cb: any) {
+      const searchList = [
+        { value: '条' },
+        { value: '件' },
+        { value: '个' },
+        { value: '双' },
+        { value: '只' },
+        { value: '顶' },
+        { value: '片' },
+        { value: '米' },
+        { value: '匹' }
+      ]
+      let results = str ? searchList.filter(this.createFilter(str)) : searchList.slice(0, 10)
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
     createFilter(queryString: string) {
       return (restaurant: any) => {
         return restaurant.name.toLowerCase().indexOf(queryString.toLowerCase()) === 0
@@ -5251,7 +5358,7 @@ export default Vue.extend({
         this.getColour()
       } else if (this.cName === '尺码') {
         this.getSize()
-      } else if (this.cName === '订单类型') {
+      } else if (this.cName === '批次类型') {
         this.getOrderType()
       } else if (this.cName === '样单类型') {
         this.getSampleOrderType()
@@ -5322,7 +5429,7 @@ export default Vue.extend({
           }
         ])
         this.getCompany()
-      } else if (this.pName === '单据审核设置') {
+      } else if (this.pName === '通知和审核设置') {
         this.$checkCommonInfo([
           {
             checkWhich: 'api/clientType',
@@ -5344,7 +5451,9 @@ export default Vue.extend({
               if (res.data.status && res.data.data) {
                 this.sampleOrderCheckConfig = {
                   data: res.data.data,
-                  doc_type: 17
+                  doc_type: 17,
+                  allow_push_sample_order_dispatch_3_day: res.data.data.allow_push_sample_order_dispatch_3_day,
+                  allow_push_sample_order_postpone: res.data.data.allow_push_sample_order_postpone
                 }
               }
             })
@@ -5357,7 +5466,10 @@ export default Vue.extend({
               if (res.data.status && res.data.data) {
                 this.orderCheckConfig = {
                   data: res.data.data,
-                  doc_type: 1
+                  doc_type: 1,
+                  all_push_order_postpone: res.data.data.all_push_order_postpone,
+                  allow_push_order_dispatch_3_day: res.data.data.allow_push_order_dispatch_3_day,
+                  allow_push_order_dispatch_7_day: res.data.data.allow_push_order_dispatch_7_day
                 }
               }
             })
@@ -6128,14 +6240,14 @@ export default Vue.extend({
       const formCheck = this.$formCheck(this.orderTypeInfo, [
         {
           key: 'name',
-          errMsg: '请输入订单类型'
+          errMsg: '请输入批次类型'
         }
       ])
       if (!formCheck) {
         orderType.create(this.orderTypeInfo).then((res) => {
           if (res.data.status) {
             this.$message.success({
-              message: '添加订单类型成功'
+              message: '添加批次类型成功'
             })
             this.orderTypeInfo = {
               order_type: 1,
@@ -6148,7 +6260,7 @@ export default Vue.extend({
       }
     },
     deleteOrderType(id: number) {
-      this.$confirm('是否删除该订单类型?', '提示', {
+      this.$confirm('是否删除该批次类型?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -6185,7 +6297,7 @@ export default Vue.extend({
       const formCheck = this.$formCheck(this.sampleOrderTypeInfo, [
         {
           key: 'name',
-          errMsg: '请输入订单类型'
+          errMsg: '请输入批次类型'
         }
       ])
       if (!formCheck) {
@@ -6205,7 +6317,7 @@ export default Vue.extend({
       }
     },
     deleteSampleOrderType(id: number) {
-      this.$confirm('是否删除该订单类型?', '提示', {
+      this.$confirm('是否删除该批次类型?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

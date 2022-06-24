@@ -455,6 +455,18 @@ const unique = (arr: any[], key: string) => {
     return [...new Set(arr)]
   }
 }
+
+const copyTextInfo = (val: string) => {
+  const input = document.createElement('input')
+  document.body.appendChild(input)
+  input.setAttribute('value', val)
+  input.select()
+  if (document.execCommand('copy')) {
+    document.execCommand('copy')
+  }
+  document.body.removeChild(input)
+  Message.Message.success('复制成功')
+}
 // 编辑器通用创建
 const initEditor = (item: any, index?: number) => {
   const id = index === 0 ? '#editor0' : ('#editor' + (index || ''))
@@ -746,5 +758,6 @@ export default {
     Vue.prototype.$focusInput = focusInput
     Vue.prototype.$forJiDuGetMonth = forJiDuGetMonth
     Vue.prototype.$rTime = rTime
+    Vue.prototype.$copyTextInfo = copyTextInfo
   }
 }

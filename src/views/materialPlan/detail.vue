@@ -32,7 +32,11 @@
             <div class="row">
               <div class="col">
                 <div class="label">单据编号：</div>
-                <div class="text">{{materialPlanDetail.code}}</div>
+                <div class="text">{{materialPlanDetail.code}}
+                  <span class="hoverBlue"
+                    style="cursor:pointer;font-size:14px"
+                    @click="$copyTextInfo(materialPlanDetail.code)">复制</span>
+                </div>
               </div>
               <div class="col">
                 <div class="label">创建人：</div>
@@ -341,7 +345,7 @@
       </div>
     </div>
     <zh-check @close="checkFlag=false"
-      @afterCheck="(ev)=>{materialPlanInfo.find((item)=>Number(item.id)===Number(materialPlanIndex)).is_check=ev;$forceUpdate()}"
+      @afterCheck="(ev)=>{materialPlanDetail.is_check=ev;$forceUpdate()}"
       :show="checkFlag"
       :pid="materialPlanIndex"
       :check_type="9"
@@ -474,6 +478,7 @@ export default Vue.extend({
         material_plan_data: [],
         material_plan_gather_data: []
       },
+      orderId: '',
       materialPlanIndex: '0',
       materialPlanInfo: [],
       showAssociatedPage: false
@@ -513,6 +518,14 @@ export default Vue.extend({
         {
           name: '原料出入库',
           url: '/materialStock/detail?id=' + this.$route.query.id
+        },
+        {
+          name: '生产计划',
+          url:
+            '/productionPlan/detail?id=' +
+            this.$route.query.id +
+            '&sampleOrderIndex=' +
+            this.$route.query.sampleOrderIndex
         }
       ]
     }

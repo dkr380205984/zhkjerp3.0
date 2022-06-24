@@ -11,7 +11,11 @@
         <div class="row">
           <div class="col">
             <div class="label">工艺单编号：</div>
-            <div class="text">{{craftInfo.craft_code}}</div>
+            <div class="text">{{craftInfo.craft_code}}
+              <span class="hoverBlue"
+                style="cursor:pointer;font-size:14px"
+                @click="$copyTextInfo(craftInfo.code)">复制</span>
+            </div>
           </div>
           <div class="col">
             <div class="label">创建日期：</div>

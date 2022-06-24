@@ -26,7 +26,11 @@
             <div class="row">
               <div class="col flex3">
                 <div class="label">报价单号：</div>
-                <div class="text blue">{{quotedPriceInfo.code}}</div>
+                <div class="text blue">{{quotedPriceInfo.code}}
+                  <span class="hoverBlue"
+                    style="cursor:pointer;font-size:14px"
+                    @click="$copyTextInfo(quotedPriceInfo.code)">复制</span>
+                </div>
               </div>
               <!-- <div class="col flex3"
                 v-if="quotedPriceInfo.rel_order">
