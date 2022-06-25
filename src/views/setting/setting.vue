@@ -783,12 +783,19 @@
           <template v-if="cName === '纱线原料'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
+                <div class="elCtn">
+                  <el-input v-model="yarnKeyword1"
+                    placeholder="搜索纱线名称"
+                    @keydown.enter="getYarn(1)"></el-input>
+                </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true;yarnInfo1.id=''">添加纱线</div>
                 <div class="btn backHoverOrange fr"
                   @click="showYarn = true">批量导入</div>
                 <div class="btn backHoverGreen fr"
                   @click="downLoadTemplete('yarn1')">下载导入模板</div>
+                <div class="btn backHoverBlue fr"
+                  @click="getYarn(1)">搜索</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -862,12 +869,19 @@
           <template v-if="cName === '面料原料'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
+                <div class="elCtn">
+                  <el-input v-model="yarnKeyword2"
+                    placeholder="搜索面料名称"
+                    @change="getYarn(2)"></el-input>
+                </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true;;yarnInfo2.id=''">添加面料</div>
                 <div class="btn backHoverOrange fr"
                   @click="showYarn = true">批量导入</div>
                 <div class="btn backHoverGreen fr"
                   @click="downLoadTemplete('yarn2')">下载导入模板</div>
+                <div class="btn backHoverBlue fr"
+                  @click="getYarn(2)">搜索</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -980,12 +994,19 @@
           <template v-if="cName === '装饰辅料'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
+                <div class="elCtn">
+                  <el-input v-model="decorateMaterialKeyword"
+                    placeholder="搜索辅料名称"
+                    @keydown.enter="getDecorateMaterial"></el-input>
+                </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true;decorateMaterialInfo.id=''">添加辅料</div>
                 <div class="btn backHoverOrange fr"
                   @click="importExcelData('decorateMaterial')">批量导入</div>
                 <div class="btn backHoverGreen fr"
                   @click="downLoadTemplete('decorateMaterial')">下载导入模板</div>
+                <div class="btn backHoverBlue"
+                  @click="getDecorateMaterial">搜索</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -1025,8 +1046,15 @@
           <template v-if="cName === '包装辅料'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
+                <div class="elCtn">
+                  <el-input v-model="packMaterialKeyword"
+                    placeholder="搜索辅料名称"
+                    @keydown.enter="getPackMaterial"></el-input>
+                </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true">添加辅料</div>
+                <div class="btn backHoverBlue fr"
+                  @click="getPackMaterial">搜索</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -1068,8 +1096,15 @@
           <template v-if="cName === '纱线报价'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
+                <div class="elCtn">
+                  <el-input v-model="yarnPriceKeyword1"
+                    placeholder="搜索纱线名称"
+                    @keydown.enter="getYarnPrice"></el-input>
+                </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true">添加报价</div>
+                <div class="btn backHoverBlue fr"
+                  @click="getYarnPrice">搜索</div>
               </div>
               <div class="list">
                 <div class="tableCtn">
@@ -1133,8 +1168,15 @@
           <template v-if="cName === '面料报价'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
+                <div class="elCtn">
+                  <el-input v-model="yarnPriceKeyword2"
+                    placeholder="搜索面料名称"
+                    @keydown.enter="getMianliaoPrice"></el-input>
+                </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true">添加报价</div>
+                <div class="btn backHoverBlue fr"
+                  @click="getMianliaoPrice">搜索</div>
               </div>
               <div class="list">
                 <div class="tableCtn">
@@ -4381,7 +4423,6 @@ interface CheckConfigInfo {
     client_id: Array<number>
     number?: any
     not_allow_operate: 1 | 2 // 	是否限制后续操作 1是 2否
-    not_allow_print: 1 | 2 // 限制打印 1是 2否
     not_allow_add_rel_doc: 1 | 2 // 是否限制添加关联单据 1是 2否
     not_allow_settle: 1 | 2 // 限制结算 1是 2否
   }
@@ -4470,6 +4511,12 @@ export default Vue.extend({
       yarnAttributeArr: yarnAttributeArr,
       qrCodeUrl: '',
       postData: { token: '' },
+      yarnKeyword1: '',
+      yarnKeyword2: '',
+      decorateMaterialKeyword: '',
+      packMaterialKeyword: '',
+      yarnPriceKeyword1: '',
+      yarnPriceKeyword2: '',
       nav: {
         产品设置: ['品类', '款式', '成分', '配色组', '尺码'],
         订单设置: ['批次类型', '样单类型'],
@@ -4600,7 +4647,6 @@ export default Vue.extend({
           client_id: [],
           number: '',
           not_allow_operate: 2, // 	是否限制后续操作 1是 2否
-          not_allow_print: 2, // 限制打印 1是 2否
           not_allow_add_rel_doc: 2, // 是否限制添加关联单据 1是 2否
           not_allow_settle: 2 // 限制结算 1是 2否
         }
@@ -4614,7 +4660,6 @@ export default Vue.extend({
           client_id: [],
           number: '',
           not_allow_operate: 2, // 	是否限制后续操作 1是 2否
-          not_allow_print: 2, // 限制打印 1是 2否
           not_allow_add_rel_doc: 2, // 是否限制添加关联单据 1是 2否
           not_allow_settle: 2 // 限制结算 1是 2否
         }
@@ -4630,7 +4675,6 @@ export default Vue.extend({
           total_material_number: '',
           contrast_quote_extent: '',
           not_allow_operate: 2, // 	是否限制后续操作 1是 2否
-          not_allow_print: 2, // 限制打印 1是 2否
           not_allow_add_rel_doc: 2 // 是否限制添加关联单据 1是 2否
         }
       },
@@ -4644,7 +4688,6 @@ export default Vue.extend({
           total_price: '',
           contrast_quote_extent: '',
           not_allow_operate: 2, // 	是否限制后续操作 1是 2否
-          not_allow_print: 2, // 限制打印 1是 2否
           not_allow_settle: 2 // 限制结算 1是 2否
         }
       },
@@ -4663,7 +4706,6 @@ export default Vue.extend({
           pengsha: '',
           qiege: '',
           not_allow_operate: 2, // 	是否限制后续操作 1是 2否
-          not_allow_print: 2, // 限制打印 1是 2否
           not_allow_settle: 2 // 限制结算 1是 2否
         }
       },
@@ -4675,8 +4717,7 @@ export default Vue.extend({
           user_id: [],
           total_number: '',
           total_price: '',
-          not_allow_operate: 2, // 	是否限制后续操作 1是 2否
-          not_allow_print: 2 // 限制打印 1是 2否
+          not_allow_operate: 2 // 	是否限制后续操作 1是 2否
         }
       },
       accessoriesOrderCheckConfig: {
@@ -4689,7 +4730,6 @@ export default Vue.extend({
           total_price: '',
           contrast_quote_extent: '',
           not_allow_operate: 2, // 	是否限制后续操作 1是 2否
-          not_allow_print: 2, // 限制打印 1是 2否
           not_allow_settle: 2 // 限制结算 1是 2否
         }
       },
@@ -4721,7 +4761,6 @@ export default Vue.extend({
           total_price: '',
           contrast_quote_extent: '',
           not_allow_operate: 2, // 	是否限制后续操作 1是 2否
-          not_allow_print: 2, // 限制打印 1是 2否
           not_allow_settle: 2 // 限制结算 1是 2否
         }
       },
@@ -7009,10 +7048,12 @@ export default Vue.extend({
     },
     getYarn(type: 1 | 2 | 3, ifAll?: boolean) {
       const limit = ifAll ? 999 : 5
-      yarn.list({ type: type, limit: limit, page: this['yarnPage' + type] }).then((res) => {
-        this['yarnList' + type] = res.data.data.items
-        this['yarnTotal' + type] = res.data.data.total
-      })
+      yarn
+        .list({ type: type, limit: limit, page: this['yarnPage' + type], keyword: this['yarnKeyword' + type] })
+        .then((res) => {
+          this['yarnList' + type] = res.data.data.items
+          this['yarnTotal' + type] = res.data.data.total
+        })
     },
     saveYarn(type: 1 | 2 | 3) {
       const realType = this['yarnTypeList' + type]
@@ -7083,10 +7124,14 @@ export default Vue.extend({
         })
     },
     getDecorateMaterial() {
-      decorateMaterial.list().then((res) => {
-        this.decorateMaterialList = res.data.data
-        this.decorateMaterialTotal = res.data.data.length
-      })
+      decorateMaterial
+        .list({
+          keyword: this.decorateMaterialKeyword
+        })
+        .then((res) => {
+          this.decorateMaterialList = res.data.data
+          this.decorateMaterialTotal = res.data.data.length
+        })
     },
     saveDecorateMaterial() {
       const formCheck = this.$formCheck(this.decorateMaterialInfo, [
@@ -7138,10 +7183,14 @@ export default Vue.extend({
         })
     },
     getPackMaterial() {
-      packMaterial.list().then((res) => {
-        this.packMaterialList = res.data.data
-        this.packMaterialTotal = res.data.data.length
-      })
+      packMaterial
+        .list({
+          keyword: this.packMaterialKeyword
+        })
+        .then((res) => {
+          this.packMaterialList = res.data.data
+          this.packMaterialTotal = res.data.data.length
+        })
     },
     savePackMaterial() {
       const formCheck = this.$formCheck(this.packMaterialInfo, [
@@ -7568,6 +7617,7 @@ export default Vue.extend({
       ])
       yarnPrice
         .list({
+          keyword: this.yarnPriceKeyword1,
           material_type: 1
         })
         .then((res) => {
@@ -7673,6 +7723,7 @@ export default Vue.extend({
       ])
       yarnPrice
         .list({
+          keyword: this.yarnPriceKeyword2,
           material_type: 2
         })
         .then((res) => {

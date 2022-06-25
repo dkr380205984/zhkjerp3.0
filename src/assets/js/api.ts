@@ -105,7 +105,7 @@ interface YarnPrice {
 }
 const yarnPrice = {
   create: (params: YarnPrice) => http.post(`${baseUrl}/yarn/price/save`, params, 'application/json'),
-  list: (params?: { material_type: 1 | 2 }) => http.get(`${baseUrl}/yarn/price/lists`, params),
+  list: (params?: { material_type: 1 | 2, keyword: string }) => http.get(`${baseUrl}/yarn/price/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/yarn/price/delete`, params, 'application/json'),
 }
 // 单据审核
@@ -428,7 +428,7 @@ const yarn = {
 import { DecorateMaterialInfo } from '@/types/materialSetting'
 const decorateMaterial = {
   create: (params: { data: DecorateMaterialInfo[] }) => http.post(`${baseUrl}/decorate/material/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrl}/decorate/material/lists`, params),
+  list: (params?: any) => http.get(`${baseUrl}/decorate/material/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/decorate/material/delete`, params, 'application/json')
 }
 
@@ -436,7 +436,7 @@ const decorateMaterial = {
 import { PackMaterialInfo } from '@/types/materialSetting'
 const packMaterial = {
   create: (params: PackMaterialInfo) => http.post(`${baseUrl}/pack/material/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrl}/pack/material/lists`, params),
+  list: (params?: any) => http.get(`${baseUrl}/pack/material/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/pack/material/delete`, params, 'application/json')
 }
 
