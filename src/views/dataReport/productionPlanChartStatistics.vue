@@ -643,6 +643,15 @@ export default Vue.extend({
         })
       })
     })
+    this.processList.push({
+      label: '织造工序',
+      value: '织造工序',
+      children: [
+        { label: '针织织造', value: '针织织造', process_desc: '' },
+        { label: '梭织织造', value: '梭织织造', process_desc: '' },
+        { label: '制版费', value: '制版费', process_desc: '' }
+      ]
+    })
     this.getFilters()
     this.getList()
     this.$checkCommonInfo([
