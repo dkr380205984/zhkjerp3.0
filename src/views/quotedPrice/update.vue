@@ -1,7 +1,8 @@
 <template>
   <div id="quotedPriceCreate"
     class="bodyContainer"
-    v-loading="loading">
+    v-loading="loading"
+    @keydown="saveSuccess=false">
     <div class="module">
       <div class="titleCtn">
         <div class="title">修改报价单</div>
@@ -1083,7 +1084,7 @@ export default Vue.extend({
     return {
       loading: true,
       unitArr: moneyArr,
-      saveSuccess: false,
+      saveSuccess: true,
       searchQuotedPriceKey: '',
       searchLoading: false,
       searchQuotedPrice: '',
@@ -1294,6 +1295,34 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 报价单专用的上下键处理
+    focusByKeydown(ev: any, key: string, lastKey: string, nextKey: string, indexPro: number, indexChild: number) {
+      if (ev.keyCode === 38) {
+        if (indexChild === 0) {
+          if (lastKey) {
+            // @ts-ignore
+            this.$refs[
+              // @ts-ignore
+              lastKey + '-' + indexPro + '-' + (this.quotedPriceInfo.product_data[indexPro][lastKey].length - 1)
+            ][0].focus()
+          }
+        } else {
+          // @ts-ignore
+          this.$refs[key + '-' + indexPro + '-' + (indexChild - 1)][0].focus()
+        }
+      } else if (ev.keyCode === 40) {
+        // @ts-ignore
+        if (indexChild < this.quotedPriceInfo.product_data[indexPro][key].length - 1) {
+          // @ts-ignore
+          this.$refs[key + '-' + indexPro + '-' + (indexChild + 1)][0].focus()
+        } else {
+          if (nextKey) {
+            // @ts-ignore
+            this.$refs[nextKey + '-' + indexPro + '-0'][0].focus()
+          }
+        }
+      }
+    },
     // 获取报价单模板
     getModules(ev: number) {
       this.$confirm('选择模版后，会替换当前已选的工序和输入的价格，是否继续？', '提示', {

@@ -395,7 +395,9 @@
                     </div>
                     <div class="info elCtn">
                       <el-input placeholder="批号"
-                        v-model="item.batch_code"></el-input>
+                        :ref="'batch_code-'+indexStock+'-'+index"
+                        v-model="item.batch_code"
+                        @keydown.native="$focusByKeydown($event,'batch_code',[indexStock,index],'',['materialStockInfo','info_data'])"></el-input>
                     </div>
                   </div>
                   <div class="once">
@@ -405,7 +407,9 @@
                     </div>
                     <div class="info elCtn">
                       <el-input placeholder="缸号"
-                        v-model="item.vat_code"></el-input>
+                        :ref="'vat_code-'+indexStock+'-'+index"
+                        v-model="item.vat_code"
+                        @keydown.native="$focusByKeydown($event,'vat_code',[indexStock,index],'',['materialStockInfo','info_data'])"></el-input>
                     </div>
                   </div>
                   <div class="once">
@@ -415,7 +419,9 @@
                     </div>
                     <div class="info elCtn">
                       <el-input placeholder="色号"
-                        v-model="item.color_code"></el-input>
+                        :ref="'color_code-'+indexStock+'-'+index"
+                        v-model="item.color_code"
+                        @keydown.native="$focusByKeydown($event,'color_code',[indexStock,index],'',['materialStockInfo','info_data'])"></el-input>
                     </div>
                   </div>
                 </div>
@@ -429,8 +435,10 @@
                       <span class="explanation">(必填)</span>
                     </div>
                     <div class="info elCtn UnitCtn">
-                      <el-input placeholder="数量"
-                        v-model="item.number">
+                      <el-input :ref="'number-'+indexStock+'-'+index"
+                        placeholder="数量"
+                        v-model="item.number"
+                        @keydown.native="$focusByKeydown($event,'number',[indexStock,index],'',['materialStockInfo','info_data'])">
                         <template slot="append">
                           <el-input v-model="item.unit"
                             placeholder="单位"></el-input>
@@ -444,8 +452,10 @@
                       <span class="text">件数</span>
                     </div>
                     <div class="info elCtn">
-                      <el-input placeholder="数量"
-                        v-model="item.item">
+                      <el-input :ref="'item-'+indexStock+'-'+index"
+                        placeholder="件数"
+                        v-model="item.item"
+                        @keydown.native="$focusByKeydown($event,'item',[indexStock,index],'',['materialStockInfo','info_data'])">
                         <template slot="append">件</template>
                       </el-input>
                     </div>

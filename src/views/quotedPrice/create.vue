@@ -1,7 +1,8 @@
 <template>
   <div id="quotedPriceCreate"
     class="bodyContainer"
-    v-loading="loading">
+    v-loading="loading"
+    @keydown="saveSuccess=false">
     <div class="module">
       <div class="titleCtn">
         <div class="title">添加报价单
@@ -460,9 +461,11 @@
                     <template slot="append">元/{{itemYarn.unit==='g'?'kg':itemYarn.unit || '单位'}}</template>
                   </el-input>
                   <el-input class="once"
+                    :ref="'material_data-'+index+'-'+indexYarn"
                     v-model="itemYarn.total_price"
                     placeholder="小计"
-                    :disabled="itemYarn.tree_data.length===0">
+                    :disabled="itemYarn.tree_data.length===0"
+                    @keydown.native="focusByKeydown($event,'material_data','','assist_material_data',index,indexYarn)">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -567,10 +570,12 @@
                     :disabled="!itemDecorateMaterial.material_id">
                     <template slot="append">元/{{itemDecorateMaterial.unit||'单位'}}</template>
                   </el-input>
-                  <el-input class="once"
+                  <el-input :ref="'assist_material_data-'+index+'-'+indexDecorateMaterial"
+                    class="once"
                     v-model="itemDecorateMaterial.total_price"
                     placeholder="小计"
-                    :disabled="!itemDecorateMaterial.material_id">
+                    :disabled="!itemDecorateMaterial.material_id"
+                    @keydown.native="focusByKeydown($event,'assist_material_data','material_data','weave_data',index,indexDecorateMaterial)">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -626,9 +631,11 @@
                   <span class="text">小计</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input v-model="itemWeave.total_price"
+                  <el-input :ref="'weave_data-'+index+'-'+indexWeave"
+                    v-model="itemWeave.total_price"
                     placeholder="小计"
-                    :disabled="!itemWeave.name">
+                    :disabled="!itemWeave.name"
+                    @keydown.native="focusByKeydown($event,'weave_data','assist_material_data','semi_product_data',index,indexWeave)">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -704,9 +711,11 @@
                   <span class="text">小计</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input v-model="itemHalfProcess.total_price"
+                  <el-input :ref="'semi_product_data-'+index+'-'+indexHalfProcess"
+                    v-model="itemHalfProcess.total_price"
                     placeholder="小计"
-                    :disabled="!itemHalfProcess.name">
+                    :disabled="!itemHalfProcess.name"
+                    @keydown.native="focusByKeydown($event,'semi_product_data','weave_data','production_data',index,indexHalfProcess)">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -782,9 +791,11 @@
                   <span class="text">小计</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input v-model="itemFinishedProcess.total_price"
+                  <el-input :ref="'production_data-'+index+'-'+indexFinishedProcess"
+                    v-model="itemFinishedProcess.total_price"
                     placeholder="小计"
-                    :disabled="!itemFinishedProcess.name">
+                    :disabled="!itemFinishedProcess.name"
+                    @keydown.native="focusByKeydown($event,'production_data','semi_product_data','pack_material_data',index,indexFinishedProcess)">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -860,9 +871,11 @@
                   <span class="text">小计</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input v-model="itemPackMaterial.total_price"
+                  <el-input :ref="'pack_material_data-'+index+'-'+indexPackMaterial"
+                    v-model="itemPackMaterial.total_price"
                     placeholder="小计"
-                    :disabled="!itemPackMaterial.material_id">
+                    :disabled="!itemPackMaterial.material_id"
+                    @keydown.native="focusByKeydown($event,'pack_material_data','production_data','other_fee_data',index,indexPackMaterial)">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -913,9 +926,11 @@
                   <span class="text">小计</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input v-model="itemOther.total_price"
+                  <el-input :ref="'other_fee_data-'+index+'-'+indexOther"
+                    v-model="itemOther.total_price"
                     placeholder="小计"
-                    :disabled="!itemOther.name">
+                    :disabled="!itemOther.name"
+                    @keydown.native="focusByKeydown($event,'other_fee_data','pack_material_data','no_production_fee_data',index,indexOther)">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -965,9 +980,11 @@
                   <span class="text">小计</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input v-model="itemNoPro.total_price"
+                  <el-input :ref="'other_fee_data-'+index+'-'+indexNoPro"
+                    v-model="itemNoPro.total_price"
                     placeholder="小计"
-                    :disabled="!itemNoPro.name">
+                    :disabled="!itemNoPro.name"
+                    @keydown.native="focusByKeydown($event,'no_production_fee_data','other_fee_data','',index,indexNoPro)">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -1232,7 +1249,7 @@ export default Vue.extend({
       quotedImage: '',
       notify: null,
       imgId: '',
-      saveSuccess: false,
+      saveSuccess: true,
       saveLock: false,
       timer: '' // 导入报价单防抖定时器
     }
@@ -1360,6 +1377,34 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 报价单专用的上下键处理
+    focusByKeydown(ev: any, key: string, lastKey: string, nextKey: string, indexPro: number, indexChild: number) {
+      if (ev.keyCode === 38) {
+        if (indexChild === 0) {
+          if (lastKey) {
+            // @ts-ignore
+            this.$refs[
+              // @ts-ignore
+              lastKey + '-' + indexPro + '-' + (this.quotedPriceInfo.product_data[indexPro][lastKey].length - 1)
+            ][0].focus()
+          }
+        } else {
+          // @ts-ignore
+          this.$refs[key + '-' + indexPro + '-' + (indexChild - 1)][0].focus()
+        }
+      } else if (ev.keyCode === 40) {
+        // @ts-ignore
+        if (indexChild < this.quotedPriceInfo.product_data[indexPro][key].length - 1) {
+          // @ts-ignore
+          this.$refs[key + '-' + indexPro + '-' + (indexChild + 1)][0].focus()
+        } else {
+          if (nextKey) {
+            // @ts-ignore
+            this.$refs[nextKey + '-' + indexPro + '-0'][0].focus()
+          }
+        }
+      }
+    },
     searchQuotedPriceFn(key: string) {
       if (key) {
         this.seachLoading = true

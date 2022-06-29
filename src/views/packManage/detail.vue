@@ -1081,9 +1081,11 @@
                             v-for="(itemChildPro,indexChildPro) in itemPack.product_info"
                             :key="indexChildPro">
                             <div class="tcol">
-                              <input class="tableInput"
+                              <input :ref="'pack_number-' + index + '-' + indexPack + '-' + indexChildPro"
+                                class="tableInput"
                                 v-model="itemChildPro.pack_number"
-                                placeholder="数量" />
+                                placeholder="数量"
+                                @keydown="$focusByKeydown($event,'pack_number',[index,indexPack,indexChildPro],packPlanInfo,['data','info_data','product_info'])" />
                               <el-tooltip class="item"
                                 effect="dark"
                                 :content="itemChildPro.product_show_info"
@@ -1095,70 +1097,94 @@
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
+                            :ref="'first_box_number-' + index + '-' + indexPack"
                             v-model="itemPack.first_box_number"
                             placeholder="箱号(数字)"
+                            @keydown="$focusByKeydown($event,'first_box_number',[index,indexPack],packPlanInfo,['data','info_data'])"
                             @input="(ev)=>{itemPack.box_count = Number(itemPack.last_box_number)?(Number(itemPack.last_box_number)-Number(itemPack.first_box_number)+1):0}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
+                            :ref="'last_box_number-' + index + '-' + indexPack"
                             v-model="itemPack.last_box_number"
                             placeholder="箱号(数字)"
+                            @keydown="$focusByKeydown($event,'last_box_number',[index,indexPack],packPlanInfo,['data','info_data'])"
                             @input="(ev)=>{itemPack.box_count = Number(itemPack.first_box_number)?(Number(itemPack.last_box_number)-Number(itemPack.first_box_number)+1):0}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
+                            :ref="'box_count-' + index + '-' + indexPack"
                             v-model="itemPack.box_count"
+                            @keydown="$focusByKeydown($event,'box_count',[index,indexPack],packPlanInfo,['data','info_data'])"
                             placeholder="箱数(默认)" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
+                            :ref="'total_gross_weight-' + index + '-' + indexPack"
                             v-model="itemPack.box_gross_weight"
                             placeholder="毛重"
+                            @keydown="$focusByKeydown($event,'total_gross_weight',[index,indexPack],packPlanInfo,['data','info_data'])"
                             @input="(ev)=>{itemPack.total_gross_weight = $toFixed(Number(itemPack.box_gross_weight)*Number(itemPack.box_count))}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
+                            :ref="'total_net_weight-' + index + '-' + indexPack"
                             v-model="itemPack.box_net_weight"
                             placeholder="净重"
+                            @keydown="$focusByKeydown($event,'total_net_weight',[index,indexPack],packPlanInfo,['data','info_data'])"
                             @input="(ev)=>{itemPack.total_net_weight = $toFixed(Number(itemPack.box_net_weight)*Number(itemPack.box_count))}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
+                            :ref="'total_gross_weight-' + index + '-' + indexPack"
                             v-model="itemPack.total_gross_weight"
+                            @keydown="$focusByKeydown($event,'total_gross_weight',[index,indexPack],packPlanInfo,['data','info_data'])"
                             placeholder="总毛重" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
+                            :ref="'total_net_weight-' + index + '-' + indexPack"
                             v-model="itemPack.total_net_weight"
+                            @keydown="$focusByKeydown($event,'total_net_weight',[index,indexPack],packPlanInfo,['data','info_data'])"
                             placeholder="总净重" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
+                            :ref="'length-' + index + '-' + indexPack"
                             v-model="itemPack.length"
                             placeholder="长"
+                            @keydown="$focusByKeydown($event,'length',[index,indexPack],packPlanInfo,['data','info_data'])"
                             @input="(ev)=>{itemPack.single_bulk = $toFixed(Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height)/1000000,3);itemPack.total_bulk =  $toFixed(Number(itemPack.single_bulk)*Number(itemPack.box_count),3)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
+                            :ref="'width-' + index + '-' + indexPack"
                             v-model="itemPack.width"
                             placeholder="宽"
+                            @keydown="$focusByKeydown($event,'width',[index,indexPack],packPlanInfo,['data','info_data'])"
                             @input="(ev)=>{itemPack.single_bulk = $toFixed(Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height)/1000000,3);itemPack.total_bulk =  $toFixed(Number(itemPack.single_bulk)*Number(itemPack.box_count),3)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
+                            :ref="'height-' + index + '-' + indexPack"
                             v-model="itemPack.height"
                             placeholder="高"
+                            @keydown="$focusByKeydown($event,'height',[index,indexPack],packPlanInfo,['data','info_data'])"
                             @input="(ev)=>{itemPack.single_bulk = $toFixed(Number(itemPack.length)*Number(itemPack.width)*Number(itemPack.height)/1000000,3);itemPack.total_bulk =  $toFixed(Number(itemPack.single_bulk)*Number(itemPack.box_count),3)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
+                            :ref="'single_bulk-' + index + '-' + indexPack"
                             v-model="itemPack.single_bulk"
                             placeholder="单箱体积"
+                            @keydown="$focusByKeydown($event,'single_bulk',[index,indexPack],packPlanInfo,['data','info_data'])"
                             @change="(ev)=>{itemPack.total_bulk = Number(itemPack.single_bulk)*Number(itemPack.box_count)}" />
                         </div>
                         <div class="tcol">
                           <input class="tableInput"
+                            :ref="'total_bulk-' + index + '-' + indexPack"
                             v-model="itemPack.total_bulk"
+                            @keydown="$focusByKeydown($event,'total_bulk',[index,indexPack],packPlanInfo,['data','info_data'])"
                             placeholder="总体积" />
                         </div>
                       </div>

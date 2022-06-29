@@ -1584,9 +1584,9 @@
                 <div class="col">
                   <div class="label">样品订单逾期是否通知？</div>
                   <div class="info middle">
-                    <el-radio v-model="sampleOrderCheckConfig.allow_push_sample_order_postpone"
+                    <el-radio v-model="sampleOrderCheckConfig.data.allow_push_sample_order_postpone"
                       :label="1">是</el-radio>
-                    <el-radio v-model="sampleOrderCheckConfig.allow_push_sample_order_postpone"
+                    <el-radio v-model="sampleOrderCheckConfig.data.allow_push_sample_order_postpone"
                       :label="2">否</el-radio>
                   </div>
                 </div>
@@ -1596,9 +1596,9 @@
                   <div class="label">是否提前三天通知样单送样：
                   </div>
                   <div class="info elCtn">
-                    <el-radio v-model="sampleOrderCheckConfig.allow_push_sample_order_dispatch_3_day"
+                    <el-radio v-model="sampleOrderCheckConfig.data.allow_push_sample_order_dispatch_3_day"
                       :label="1">是</el-radio>
-                    <el-radio v-model="sampleOrderCheckConfig.allow_push_sample_order_dispatch_3_day"
+                    <el-radio v-model="sampleOrderCheckConfig.data.allow_push_sample_order_dispatch_3_day"
                       :label="2">否</el-radio>
                   </div>
                 </div>
@@ -1705,9 +1705,9 @@
                 <div class="col">
                   <div class="label">大货订单逾期是否通知？</div>
                   <div class="info middle">
-                    <el-radio v-model="orderCheckConfig.all_push_order_postpone"
+                    <el-radio v-model="orderCheckConfig.data.all_push_order_postpone"
                       :label="1">是</el-radio>
-                    <el-radio v-model="orderCheckConfig.all_push_order_postpone"
+                    <el-radio v-model="orderCheckConfig.data.all_push_order_postpone"
                       :label="2">否</el-radio>
                   </div>
                 </div>
@@ -1717,9 +1717,9 @@
                   <div class="label">是否提前三天通知订单发货：
                   </div>
                   <div class="info elCtn">
-                    <el-radio v-model="orderCheckConfig.allow_push_order_dispatch_3_day"
+                    <el-radio v-model="orderCheckConfig.data.allow_push_order_dispatch_3_day"
                       :label="1">是</el-radio>
-                    <el-radio v-model="orderCheckConfig.allow_push_order_dispatch_3_day"
+                    <el-radio v-model="orderCheckConfig.data.allow_push_order_dispatch_3_day"
                       :label="2">否</el-radio>
                   </div>
                 </div>
@@ -1729,9 +1729,9 @@
                   <div class="label">是否提前七天通知订单发货：
                   </div>
                   <div class="info elCtn">
-                    <el-radio v-model="orderCheckConfig.allow_push_order_dispatch_7_day"
+                    <el-radio v-model="orderCheckConfig.data.allow_push_order_dispatch_7_day"
                       :label="1">是</el-radio>
-                    <el-radio v-model="orderCheckConfig.allow_push_order_dispatch_7_day"
+                    <el-radio v-model="orderCheckConfig.data.allow_push_order_dispatch_7_day"
                       :label="2">否</el-radio>
                   </div>
                 </div>
@@ -5491,8 +5491,6 @@ export default Vue.extend({
                 this.sampleOrderCheckConfig = {
                   data: res.data.data,
                   doc_type: 17,
-                  allow_push_sample_order_dispatch_3_day: res.data.data.allow_push_sample_order_dispatch_3_day,
-                  allow_push_sample_order_postpone: res.data.data.allow_push_sample_order_postpone
                 }
               }
             })
@@ -5506,9 +5504,6 @@ export default Vue.extend({
                 this.orderCheckConfig = {
                   data: res.data.data,
                   doc_type: 1,
-                  all_push_order_postpone: res.data.data.all_push_order_postpone,
-                  allow_push_order_dispatch_3_day: res.data.data.allow_push_order_dispatch_3_day,
-                  allow_push_order_dispatch_7_day: res.data.data.allow_push_order_dispatch_7_day
                 }
               }
             })

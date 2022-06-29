@@ -716,6 +716,105 @@ function rTime(date: string) {
   // @ts-ignore
   return new Date(new Date(json_date) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
 }
+
+
+// 针对上下键做个focus，处理逻辑为遍历父级
+function focusByKeydown(ev: any, key: string, indexArr: number[], father: any, keyArr: any[]) {
+  // @ts-ignore
+  if (!father) {
+    // @ts-ignore
+    father = this.$data
+  }
+  // key:ArrowUp
+  if (ev.keyCode === 38) {
+    if (indexArr.length === 3) {
+      if (indexArr[2] === 0) {
+        if (indexArr[1] === 0) {
+          if (indexArr[0] > 0) {
+            // @ts-ignore
+            this.$refs[
+              key +
+              '-' +
+              (indexArr[0] - 1) +
+              '-' +
+              (father[keyArr[0]][indexArr[0] - 1][keyArr[1]].length - 1) +
+              '-' +
+              (father[keyArr[0]][indexArr[0] - 1][keyArr[1]][
+                father[keyArr[0]][indexArr[0] - 1][keyArr[1]].length - 1
+              ][keyArr[2]].length -
+                1)
+            ][0].focus()
+          }
+        } else {
+          // @ts-ignore
+          this.$refs[
+            key +
+            '-' +
+            indexArr[0] +
+            '-' +
+            (indexArr[1] - 1) +
+            '-' +
+            (father[keyArr[0]][indexArr[0]][keyArr[1]][indexArr[1] - 1][keyArr[2]].length - 1)
+          ][0].focus()
+        }
+      } else {
+        // @ts-ignore
+        this.$refs[key + '-' + indexArr[0] + '-' + indexArr[1] + '-' + (indexArr[2] - 1)][0].focus()
+      }
+    } else if (indexArr.length === 2) {
+      if (indexArr[1] === 0) {
+        if (indexArr[0] > 0) {
+          // @ts-ignore
+          this.$refs[
+            key + '-' + (indexArr[0] - 1) + '-' + (father[keyArr[0]][indexArr[0] - 1][keyArr[1]].length - 1)
+          ][0].focus()
+        }
+      } else {
+        // @ts-ignore
+        this.$refs[key + '-' + indexArr[0] + '-' + (indexArr[1] - 1)][0].focus()
+      }
+    } else if (indexArr.length === 1) {
+      if (indexArr[0] > 0) {
+        // @ts-ignore
+        this.$refs[key + '-' + (indexArr[0] - 1)][0].focus()
+      }
+    }
+  }
+  // key:ArrowDown
+  else if (ev.keyCode === 40) {
+    if (indexArr.length === 3) {
+      if (indexArr[2] === father[keyArr[0]][indexArr[0]][keyArr[1]][indexArr[1]][keyArr[2]].length - 1) {
+        if (indexArr[1] === father[keyArr[0]][indexArr[0]][keyArr[1]].length - 1) {
+          if (indexArr[0] < father[keyArr[0]].length - 1) {
+            // @ts-ignore
+            this.$refs[key + '-' + (indexArr[0] + 1) + '-0-0'][0].focus()
+          }
+        } else {
+          // @ts-ignore
+          this.$refs[key + '-' + indexArr[0] + '-' + (indexArr[1] + 1) + '-0'][0].focus()
+        }
+      } else {
+        // @ts-ignore
+        this.$refs[key + '-' + indexArr[0] + '-' + indexArr[1] + '-' + (indexArr[2] + 1)][0].focus()
+      }
+    } else if (indexArr.length === 2) {
+      if (indexArr[1] === father[keyArr[0]][indexArr[0]][keyArr[1]].length - 1) {
+        if (indexArr[0] < father[keyArr[0]].length - 1) {
+          // @ts-ignore
+          this.$refs[key + '-' + (indexArr[0] + 1) + '-0'][0].focus()
+        }
+      } else {
+        // @ts-ignore
+        this.$refs[key + '-' + indexArr[0] + '-' + (indexArr[1] + 1)][0].focus()
+      }
+    } else if (indexArr.length === 1) {
+      if (indexArr[0] < father[keyArr[0]].length - 1) {
+        // @ts-ignore
+        this.$refs[key + '-' + (indexArr[0] + 1)][0].focus()
+      }
+    }
+  }
+}
 export default {
   install: (Vue: any) => {
     Vue.prototype.$getHash = plugin.getHash
@@ -759,5 +858,6 @@ export default {
     Vue.prototype.$forJiDuGetMonth = forJiDuGetMonth
     Vue.prototype.$rTime = rTime
     Vue.prototype.$copyTextInfo = copyTextInfo
+    Vue.prototype.$focusByKeydown = focusByKeydown
   }
 }

@@ -139,6 +139,7 @@ declare module 'vue/types/vue' {
     $debounce(val: string, timer: any, fn: Function, time?: number): void
     $focusInput(ev: any): void
     $copyTextInfo(val: string): void
+    $focusByKeydown(ev: any, key: string, indexArr: number[], father: any, keyArr: any[]): void
   }
 }
 new Vue({

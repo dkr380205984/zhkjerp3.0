@@ -300,6 +300,21 @@
               </div>
             </div>
           </div>
+          <div class="tableCtn">
+            <div class="thead bgWhite"
+              style="height: auto">
+              <div class="trow">
+                <div class="tcol bgGray"
+                  style="flex:0.3">注意事项</div>
+                <div class="tcol"
+                  style="flex: 4;text-align:left;display:block">
+                  <div style="line-height:22px"
+                    v-for="item,index in descArr"
+                    :key="index">{{item?(index+1)+'.':''}}{{item}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </template>
@@ -491,7 +506,6 @@ export default Vue.extend({
         id: Number(this.$route.query.id)
       })
       .then((res) => {
-        console.log(res)
         if (res.data.status) {
           this.materialOrderInfo = res.data.data
           this.materialInfo = this.$mergeData(this.materialOrderInfo.info_data, {

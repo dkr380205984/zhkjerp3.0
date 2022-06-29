@@ -686,7 +686,7 @@
     </div>
     <!-- 物料订购 -->
     <div class="popup"
-      v-show="materialOrderFlag">
+      v-if="materialOrderFlag">
       <div class="main">
         <div class="titleCtn">
           <span class="text">物料订购</span>
@@ -862,13 +862,17 @@
                   </div>
                 </div>
                 <div class="info elCtn spaceBetween">
-                  <el-input class="once"
+                  <el-input :ref="'price'+ '-'+index+'-'+indexMat"
+                    class="once"
+                    @keydown.native="$focusByKeydown($event,'price',[index,indexMat],'',['materialOrderInfo','info_data'])"
                     @focus="$focusInput($event)"
                     placeholder="单价"
                     v-model="itemMat.price">
                     <template slot="append">元</template>
                   </el-input>
-                  <el-input class="once UnitCtn"
+                  <el-input :ref="'number'+ '-'+index+'-'+indexMat"
+                    class="once UnitCtn"
+                    @keydown.native="$focusByKeydown($event,'number',[index,indexMat],'',['materialOrderInfo','info_data'])"
                     @focus="$focusInput($event)"
                     placeholder="数量"
                     v-model="itemMat.number">
@@ -1006,7 +1010,7 @@
     </div>
     <!-- 物料调取 -->
     <div class="popup"
-      v-show="materialStockFlag">
+      v-if="materialStockFlag">
       <div class="main">
         <div class="titleCtn">
           <span class="text">物料调取</span>
@@ -1188,15 +1192,19 @@
                   </div>
                   <div class="info spaceBetween elCtn">
                     <div class="once">
-                      <el-input :class="{'error':mustFlag&&!item.price}"
+                      <el-input :ref="'price'+ '-'+index"
+                        :class="{'error':mustFlag&&!item.price}"
                         placeholder="调取单价"
+                        @keydown.native="$focusByKeydown($event,'price',[index],materialStockInfo,['info_data'])"
                         v-model="item.price">
                         <template slot="append">元</template>
                       </el-input>
                     </div>
                     <div class="once UnitCtn">
-                      <el-input :class="{'error':mustFlag&&!item.number}"
+                      <el-input :ref="'number'+ '-'+index"
+                        :class="{'error':mustFlag&&!item.number}"
                         placeholder="调取数量"
+                        @keydown.native="$focusByKeydown($event,'number',[index],materialStockInfo,['info_data'])"
                         v-model="item.number">
                         <template slot="append">
                           <el-input v-model="item.unit"
@@ -1277,7 +1285,7 @@
     </div>
     <!-- 物料加工 -->
     <div class="popup"
-      v-show="materialProcessFlag">
+      v-if="materialProcessFlag">
       <div class="main">
         <div class="titleCtn">
           <span class="text">物料加工</span>
@@ -1498,18 +1506,22 @@
                   </div>
                 </div>
                 <div class="info elCtn spaceBetween">
-                  <el-input :class="{'error':mustFlag&&!itemMat.price}"
+                  <el-input :ref="'price'+ '-'+index+'-'+indexMat"
+                    :class="{'error':mustFlag&&!itemMat.price}"
                     class="once"
                     placeholder="单价"
                     v-model="itemMat.price"
-                    @focus="$focusInput($event)">
+                    @focus="$focusInput($event)"
+                    @keydown.native="$focusByKeydown($event,'price',[index,indexMat],'',['materialProcessInfo','info_data'])">
                     <template slot="append">元</template>
                   </el-input>
-                  <el-input :class="{'error':mustFlag&&!itemMat.number}"
+                  <el-input :ref="'number'+ '-'+index+'-'+indexMat"
+                    :class="{'error':mustFlag&&!itemMat.number}"
                     class="once UnitCtn"
                     placeholder="数量"
                     v-model="itemMat.number"
-                    @focus="$focusInput($event)">
+                    @focus="$focusInput($event)"
+                    @keydown.native="$focusByKeydown($event,'number',[index,indexMat],'',['materialProcessInfo','info_data'])">
                     <template slot="append">
                       <el-input v-model="itemMat.unit"
                         placeholder="单位"></el-input>
@@ -1668,7 +1680,7 @@
     </div>
     <!-- 物料订购单修改 -->
     <div class="popup"
-      v-show="materialOrderUpdataFlag">
+      v-if="materialOrderUpdataFlag">
       <div class="main">
         <div class="titleCtn">
           <span class="text">修改物料订购单</span>
@@ -1737,7 +1749,7 @@
                   v-if="indexMat===0">
                   <div class="once">
                     <span class="text">订购属性</span>
-                    <span class="explanation">(选填))</span>
+                    <span class="explanation">(选填)</span>
                   </div>
                   <div class="once">
                     <span class="text">订购颜色</span>
@@ -1776,17 +1788,24 @@
                   </div>
                 </div>
                 <div class="info elCtn spaceBetween">
-                  <el-input class="once"
+                  <el-input :ref="'price'+ '-'+indexMat"
+                    class="once"
+                    @keydown.native="$focusByKeydown($event,'price',[indexMat],materialOrderUpdataInfo,['info_data'])"
+                    @focus="$focusInput($event)"
                     placeholder="单价"
-                    v-model="itemMat.price"
-                    @focus="$focusInput($event)">
+                    v-model="itemMat.price">
                     <template slot="append">元</template>
                   </el-input>
-                  <el-input class="once"
+                  <el-input :ref="'number'+ '-'+indexMat"
+                    class="once UnitCtn"
+                    @keydown.native="$focusByKeydown($event,'number',[indexMat],materialOrderUpdataInfo,['info_data'])"
+                    @focus="$focusInput($event)"
                     placeholder="数量"
-                    v-model="itemMat.number"
-                    @focus="$focusInput($event)">
-                    <template slot="append">{{itemMat.unit}}</template>
+                    v-model="itemMat.number">
+                    <template slot="append">
+                      <el-input v-model="itemMat.unit"
+                        placeholder="单位"></el-input>
+                    </template>
                   </el-input>
                 </div>
               </div>

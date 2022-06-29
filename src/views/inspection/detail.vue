@@ -352,11 +352,12 @@
                       <span class="text">{{item.type===1?'检验数':'出库数'}}</span>
                     </div>
                     <div class="info elCtn">
-                      <zh-input class="inputs"
+                      <zh-input :ref="'number'+ '-' + index + '-' + indexChild"
+                        class="inputs"
+                        @keydown.native="focusByKeydown($event,'number',[index,indexChild],'',['inspectionInfo','child_data'])"
                         :keyBoard="keyBoard"
                         v-model="itemChild.number"
-                        placeholder="数量"
-                        type="number">
+                        placeholder="数量">
                       </zh-input>
                     </div>
                   </div>
@@ -369,10 +370,11 @@
                     </div>
                     <div class="info elCtn">
                       <zh-input class="inputs"
+                        :ref="'part_shoddy_number'+ '-' + index + '-' + indexChild"
                         :keyBoard="keyBoard"
                         v-model="itemChild.part_shoddy_number"
-                        placeholder="数量"
-                        type="number">
+                        @keydown.native="focusByKeydown($event,'part_shoddy_number',[index,indexChild],'',['inspectionInfo','child_data'])"
+                        placeholder="数量">
                       </zh-input>
                     </div>
                   </div>
@@ -387,10 +389,11 @@
                     </div>
                     <div class="info elCtn">
                       <zh-input class="inputs"
+                        :ref="'shoddy_number'+ '-' + index + '-' + indexChild"
                         :keyBoard="keyBoard"
                         v-model="itemChild.shoddy_number"
                         placeholder="数量"
-                        type="number">
+                        @keydown.native="focusByKeydown($event,'shoddy_number',[index,indexChild],'',['inspectionInfo','child_data'])">
                       </zh-input>
                     </div>
                   </div>
@@ -407,10 +410,11 @@
                       </div>
                       <div class="info elCtn">
                         <zh-input class="inputs"
+                          :ref="'deduct_price'+ '-' + index + '-' + indexChild"
                           :keyBoard="keyBoard"
                           v-model="itemChild.deduct_price"
                           placeholder="金额"
-                          type="number">
+                          @keydown.native="focusByKeydown($event,'deduct_price',[index,indexChild],'',['inspectionInfo','child_data'])">
                           <template slot="append">元</template>
                         </zh-input>
                       </div>
@@ -427,10 +431,6 @@
                           v-model="itemChild.shoddy_reason"
                           :fetch-suggestions="searchReason"
                           :disabled="item.type===2">
-                          <!-- <el-option v-for="item in shoddy_reason"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"></el-option> -->
                         </el-autocomplete>
                       </div>
                     </div>
@@ -747,6 +747,103 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 应用了个人组件，做一点点改动
+    focusByKeydown(ev: any, key: string, indexArr: number[], father: any, keyArr: any[]) {
+      // @ts-ignore
+      if (!father) {
+        // @ts-ignore
+        father = this.$data
+      }
+      // key:ArrowUp
+      if (ev.keyCode === 38) {
+        if (indexArr.length === 3) {
+          if (indexArr[2] === 0) {
+            if (indexArr[1] === 0) {
+              if (indexArr[0] > 0) {
+                // @ts-ignore
+                this.$refs[
+                  key +
+                    '-' +
+                    (indexArr[0] - 1) +
+                    '-' +
+                    (father[keyArr[0]][indexArr[0] - 1][keyArr[1]].length - 1) +
+                    '-' +
+                    (father[keyArr[0]][indexArr[0] - 1][keyArr[1]][
+                      father[keyArr[0]][indexArr[0] - 1][keyArr[1]].length - 1
+                    ][keyArr[2]].length -
+                      1)
+                ][0].focus()
+              }
+            } else {
+              // @ts-ignore
+              this.$refs[
+                key +
+                  '-' +
+                  indexArr[0] +
+                  '-' +
+                  (indexArr[1] - 1) +
+                  '-' +
+                  (father[keyArr[0]][indexArr[0]][keyArr[1]][indexArr[1] - 1][keyArr[2]].length - 1)
+              ][0].focus()
+            }
+          } else {
+            // @ts-ignore
+            this.$refs[key + '-' + indexArr[0] + '-' + indexArr[1] + '-' + (indexArr[2] - 1)][0].focus()
+          }
+        } else if (indexArr.length === 2) {
+          if (indexArr[1] === 0) {
+            if (indexArr[0] > 0) {
+              // @ts-ignore
+              this.$refs[
+                key + '-' + (indexArr[0] - 1) + '-' + (father[keyArr[0]][indexArr[0] - 1][keyArr[1]].length - 1)
+              ][0].$refs.input.focus()
+            }
+          } else {
+            // @ts-ignore
+            this.$refs[key + '-' + indexArr[0] + '-' + (indexArr[1] - 1)][0].$refs.input.focus()
+          }
+        } else if (indexArr.length === 1) {
+          if (indexArr[0] > 0) {
+            // @ts-ignore
+            this.$refs[key + '-' + (indexArr[0] - 1)][0].focus()
+          }
+        }
+      }
+      // key:ArrowDown
+      else if (ev.keyCode === 40) {
+        if (indexArr.length === 3) {
+          if (indexArr[2] === father[keyArr[0]][indexArr[0]][keyArr[1]][indexArr[1]][keyArr[2]].length - 1) {
+            if (indexArr[1] === father[keyArr[0]][indexArr[0]][keyArr[1]].length - 1) {
+              if (indexArr[0] < father[keyArr[0]].length - 1) {
+                // @ts-ignore
+                this.$refs[key + '-' + (indexArr[0] + 1) + '-0-0'][0].focus()
+              }
+            } else {
+              // @ts-ignore
+              this.$refs[key + '-' + indexArr[0] + '-' + (indexArr[1] + 1) + '-0'][0].focus()
+            }
+          } else {
+            // @ts-ignore
+            this.$refs[key + '-' + indexArr[0] + '-' + indexArr[1] + '-' + (indexArr[2] + 1)][0].focus()
+          }
+        } else if (indexArr.length === 2) {
+          if (indexArr[1] === father[keyArr[0]][indexArr[0]][keyArr[1]].length - 1) {
+            if (indexArr[0] < father[keyArr[0]].length - 1) {
+              // @ts-ignore
+              this.$refs[key + '-' + (indexArr[0] + 1) + '-0'][0].$refs.input.focus()
+            }
+          } else {
+            // @ts-ignore 这里改了！！！！！！！！！！！！！！！.$refs.input.focus()
+            this.$refs[key + '-' + indexArr[0] + '-' + (indexArr[1] + 1)][0].$refs.input.focus()
+          }
+        } else if (indexArr.length === 1) {
+          if (indexArr[0] < father[keyArr[0]].length - 1) {
+            // @ts-ignore
+            this.$refs[key + '-' + (indexArr[0] + 1)][0].focus()
+          }
+        }
+      }
+    },
     searchReason(str: string, cb: any) {
       let results = str
         ? this.shoddy_reason.filter((val: any) => {

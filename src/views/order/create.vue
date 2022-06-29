@@ -1,7 +1,8 @@
 <template>
   <div id="orderCreate"
     class="bodyContainer"
-    v-loading="loading">
+    v-loading="loading"
+    @keydown="saveSuccess=false">
     <div class="module">
       <div class="titleCtn">
         <div class="title">基本信息</div>
@@ -131,8 +132,7 @@
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-date-picker :class="{'error':mustFlag&&!orderInfo.order_time}"
-                style="width:100%"
+              <el-date-picker style="width:100%"
                 placeholder="请选择下单日期"
                 v-model="orderInfo.time_data.order_time"
                 value-format="yyyy-MM-dd"></el-date-picker>
@@ -458,17 +458,21 @@
                           </div>
                           <div class="tcol">
                             <div class="elCtn">
-                              <el-input :class="{'error':mustFlag&&!itemProInfo.price}"
+                              <el-input :ref="'price'+ '-'+index+'-'+indexPro+'-'+indexProInfo"
+                                :class="{'error':mustFlag&&!itemProInfo.price}"
                                 v-model="itemProInfo.price"
-                                placeholder="单价">
+                                placeholder="单价"
+                                @keydown.native="$focusByKeydown($event,'price',[index,indexPro,indexProInfo],orderInfo.time_data,['batch_data','product_data','product_info'])">
                               </el-input>
                             </div>
                           </div>
                           <div class="tcol">
                             <div class="elCtn">
-                              <el-input :class="{'error':mustFlag&&!itemProInfo.number}"
+                              <el-input :ref="'number'+ '-'+index+'-'+indexPro+'-'+indexProInfo"
+                                :class="{'error':mustFlag&&!itemProInfo.number}"
                                 v-model="itemProInfo.number"
-                                placeholder="数量">
+                                placeholder="数量"
+                                @keydown.native="$focusByKeydown($event,'number',[index,indexPro,indexProInfo],orderInfo.time_data,['batch_data','product_data','product_info'])">
                               </el-input>
                             </div>
                           </div>
@@ -627,18 +631,22 @@
                       </div>
                       <div class="tcol">
                         <div class="elCtn">
-                          <el-input :class="{'error':mustFlag&&!itemPro.price}"
+                          <el-input :ref="'price'+ '-'+index+'-'+indexChild+'-'+indexPro"
+                            :class="{'error':mustFlag&&!itemPro.price}"
                             v-model="itemPro.price"
-                            placeholder="下单单价">
+                            placeholder="下单单价"
+                            @keydown.native="$focusByKeydown($event,'price',[index,indexChild,indexPro],orderInfo.time_data,['batch_data','product_data','product_info'])">
                             <template slot="append">{{orderInfo.settle_unit||'元'}}</template>
                           </el-input>
                         </div>
                       </div>
                       <div class="tcol">
                         <div class="elCtn">
-                          <el-input :class="{'error':mustFlag&&!itemPro.number}"
+                          <el-input :ref="'number'+ '-'+index+'-'+indexChild+'-'+indexPro"
+                            :class="{'error':mustFlag&&!itemPro.number}"
                             v-model="itemPro.number"
-                            placeholder="下单数量">
+                            placeholder="下单数量"
+                            @keydown.native="$focusByKeydown($event,'number',[index,indexChild,indexPro],orderInfo.time_data,['batch_data','product_data','product_info'])">
                           </el-input>
                         </div>
                       </div>
@@ -1058,7 +1066,7 @@ export default Vue.extend({
         key: '',
         token: ''
       },
-      saveSuccess: false,
+      saveSuccess: true,
       copy_product_data: [],
       confirmSampleInfo: [] // 已经确认的样品信息
     }

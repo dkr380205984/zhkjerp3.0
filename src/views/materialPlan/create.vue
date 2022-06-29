@@ -1,7 +1,8 @@
 <template>
   <div id="materialPlanCreate"
     class="bodyContainer"
-    v-loading="loading">
+    v-loading="loading"
+    @keydown="saveSuccess=false">
     <order-detail :data="orderInfo"
       :sampleOrderIndex="orderIndex"></order-detail>
     <div class="module">
@@ -77,7 +78,7 @@
         </div>
         <div class="tbody">
           <div class="trow"
-            v-for="item in materialPlanInfo.production_plan_data"
+            v-for="(item,index) in materialPlanInfo.production_plan_data"
             :key="item.product_id">
             <div class="tcol">
               <span>{{item.product_code || item.system_code}}</span>
@@ -93,9 +94,11 @@
                 <div class="tcol">{{getHasPlanNumber(item.product_id,itemChild.color_name,itemChild.size_name)}}</div>
                 <div class="tcol">
                   <div class="elCtn">
-                    <el-input placeholder="百分比"
+                    <el-input :ref="'add_percent'+ '-'+index+'-'+indexChild"
+                      placeholder="百分比"
                       v-model="itemChild.add_percent"
-                      @input="getPlanNum($event,itemChild)">
+                      @input="getPlanNum($event,itemChild)"
+                      @keydown.native="$focusByKeydown($event,'add_percent',[index,indexChild],materialPlanInfo,['production_plan_data','product_data'])">
                       <template slot="append">%</template>
                     </el-input>
                   </div>
@@ -117,9 +120,11 @@
                     </div>
                     <div class="tcol">
                       <div class="elCtn UnitCtn">
-                        <el-input v-model="itemPart.number"
+                        <el-input :ref="'number'+ '-'+index+'-'+indexChild+'-'+indexPart"
+                          v-model="itemPart.number"
                           placeholder="数量"
-                          @change="getMaterialPlanDetail(itemPart.part_id,itemPart.number,itemChild)">
+                          @change="getMaterialPlanDetail(itemPart.part_id,itemPart.number,itemChild)"
+                          @keydown.native="$focusByKeydown($event,'number',[index,indexChild,indexPart],materialPlanInfo,['production_plan_data','product_data','info_data'])">
                           <template slot="append">
                             <el-input v-model="itemPart.unit"
                               placeholder="单位"
@@ -163,7 +168,8 @@
           </div>
           <el-checkbox v-model="showAll"
             style="margin-bottom:12px">页面使用卡顿？尝试关闭部分信息优化速度</el-checkbox>
-          <div class="flattenTableCtn noPad">
+          <div class="flattenTableCtn noPad"
+            v-if="materialPlanInfo.type==='1'">
             <div class="thead">
               <div class="trow">
                 <div class="tcol"
@@ -382,12 +388,13 @@
                         <div class="elCtn"
                           v-else>
                           <el-input class="UnitCtn"
+                            :ref="'production_number'+ '-'+index+'-'+indexChild"
                             v-model.lazy="itemChild.production_number"
                             placeholder="无计划值"
+                            @keydown.native="$focusByKeydown($event,'production_number',[index,indexChild],materialPlanInfo,['material_plan_data','info_data'])"
                             @input="(ev)=>{
                             itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='g'?1000:1));
-                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)
-                          }">
+                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)}">
                             <template slot="append">
                               <el-input v-model="itemChild.unit"
                                 placeholder="单位"></el-input>
@@ -403,8 +410,10 @@
                       </div>
                       <div class="tcol">
                         <div class="elCtn">
-                          <el-input v-model="itemChild.loss"
+                          <el-input :ref="'loss'+ '-'+index+'-'+indexChild"
+                            v-model="itemChild.loss"
                             placeholder="损耗"
+                            @keydown.native="$focusByKeydown($event,'loss',[index,indexChild],materialPlanInfo,['material_plan_data','info_data'])"
                             @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number)">
                             <template slot="append">%</template>
                           </el-input>
@@ -412,9 +421,11 @@
                       </div>
                       <div class="tcol">
                         <div class="elCtn">
-                          <el-input :class="{'error':mustFlag&&!itemChild.final_number}"
+                          <el-input :ref="'final_number'+ '-'+index+'-'+indexChild"
+                            :class="{'error':mustFlag&&!itemChild.final_number}"
                             v-model="itemChild.final_number"
                             placeholder="数量"
+                            @keydown.native="$focusByKeydown($event,'final_number',[index,indexChild],materialPlanInfo,['material_plan_data','info_data'])"
                             @input="(ev)=>itemChild.loss = $toFixed((itemChild.final_number<=itemChild.need_number || !itemChild.need_number)?0:(itemChild.final_number-itemChild.need_number)/itemChild.need_number*100)">
                             <template slot="append">
                               {{itemChild.unit==='g'?'kg':itemChild.unit}}
@@ -466,7 +477,8 @@
           </div>
           <el-checkbox v-model="showAll"
             style="margin-bottom:12px">页面使用卡顿？尝试关闭部分信息优化速度</el-checkbox>
-          <div class="flattenTableCtn noPad">
+          <div v-if="materialPlanInfo.type==='2'"
+            class="flattenTableCtn noPad">
             <div class="thead">
               <div class="trow">
                 <div class="tcol"
@@ -681,7 +693,9 @@
                         <div class="elCtn"
                           v-else>
                           <el-input class="UnitCtn"
+                            :ref="'production_number'+ '-'+index+'-'+indexChild"
                             v-model="itemChild.production_number"
+                            @keydown.native="$focusByKeydown($event,'production_number',[index,indexChild],materialPlanInfo,['material_plan_data','info_data'])"
                             placeholder="无计划值"
                             @input="(ev)=>{
                             itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='g'?1000:1));
@@ -702,8 +716,10 @@
                       </div>
                       <div class="tcol">
                         <div class="elCtn">
-                          <el-input v-model="itemChild.loss"
+                          <el-input :ref="'loss'+ '-'+index+'-'+indexChild"
+                            v-model="itemChild.loss"
                             placeholder="损耗"
+                            @keydown.native="$focusByKeydown($event,'loss',[index,indexChild],materialPlanInfo,['material_plan_data','info_data'])"
                             @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number)">
                             <template slot="append">%</template>
                           </el-input>
@@ -711,9 +727,11 @@
                       </div>
                       <div class="tcol">
                         <div class="elCtn">
-                          <el-input :class="{'error':mustFlag&&!itemChild.final_number}"
+                          <el-input :ref="'final_number'+ '-'+index+'-'+indexChild"
+                            :class="{'error':mustFlag&&!itemChild.final_number}"
                             v-model="itemChild.final_number"
                             placeholder="数量"
+                            @keydown.native="$focusByKeydown($event,'final_number',[index,indexChild],materialPlanInfo,['material_plan_data','info_data'])"
                             @input="(ev)=>itemChild.loss = $toFixed((itemChild.final_number<=itemChild.need_number || !itemChild.need_number)?0:(itemChild.final_number-itemChild.need_number)/itemChild.need_number*100)">
                             <template slot="append">
                               {{itemChild.unit==='g'?'kg':itemChild.unit}}
@@ -725,19 +743,19 @@
                         <div class="oprCtn">
                           <span class="opr blue"
                             @click="$addItem(item.info_data,{
-                          process_name_arr:[],
-                          process_name: '',
-                          tree_data: [],
-                          material_id: '',
-                          material_type: '',
-                          material_color: '',
-                          assist_material_number: '',
-                          need_number: '',
-                          production_number: '',
-                          loss: '',
-                          final_number: '',
-                          unit: 'g'
-                        })">添加</span>
+                              process_name_arr:[],
+                              process_name: '',
+                              tree_data: [],
+                              material_id: '',
+                              material_type: '',
+                              material_color: '',
+                              assist_material_number: '',
+                              need_number: '',
+                              production_number: '',
+                              loss: '',
+                              final_number: '',
+                              unit: 'g'
+                            })">添加</span>
                           <span class="opr orange"
                             @click="$addItem(item.info_data,$clone(itemChild))">复制</span>
                           <span class="opr red"
@@ -893,7 +911,7 @@ export default Vue.extend({
     return {
       loading: true,
       mustFlag: false,
-      saveSuccess: false,
+      saveSuccess: true,
       saveLock: false,
       showAll: false, // 页面使用卡顿
       copyMaterialPlanDataInfoFlag: false, // 复制一组产品的子项信息

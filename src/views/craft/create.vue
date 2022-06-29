@@ -1,7 +1,7 @@
 <template>
   <div id="craftCreate"
     class="bodyContainer"
-    v-loading="loading">
+    v-loading="loading" @keydown="saveSuccess=false">
     <div class="module"
       v-if="!$route.query.id">
       <div class="titleCtn">
@@ -1527,7 +1527,7 @@ export default Vue.extend({
       saveLock: false,
       mustFlag: false,
       showUsing: false,
-      saveSuccess: false,
+      saveSuccess: true,
       proId: '',
       productShow: false,
       sampleShow: false,

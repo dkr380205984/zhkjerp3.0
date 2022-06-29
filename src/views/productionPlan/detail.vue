@@ -202,6 +202,10 @@
                 <div class="label">工序说明：</div>
                 <div class="text">{{item.process_desc||'无'}}</div>
               </div>
+              <div class="col flex3">
+                <div class="label">创建人：</div>
+                <div class="text">{{item.user_name||'无'}}</div>
+              </div>
               <div class="col">
                 <div class="label">备注信息：</div>
                 <div class="text"
@@ -605,9 +609,11 @@
                         </el-tooltip>
                       </div>
                       <div class="info elCtn">
-                        <el-input :class="{'error':mustFlag&&!itemPro.price}"
+                        <el-input :ref="'price'+ '-'+index+'-'+indexPro"
+                          :class="{'error':mustFlag&&!itemPro.price}"
                           v-model="itemPro.price"
                           placeholder="请输入单价"
+                          @keydown.native="$focusByKeydown($event,'price',[index,indexPro],'',['productionPlanInfo','product_info_data'])"
                           @input="(ev)=>{itemPro.total_price=$toFixed(Number(ev)*Number(itemPro.number))}">
                           <template slot="append">元</template>
                         </el-input>
@@ -620,8 +626,10 @@
                         <span class="explanation">(必填)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input :class="{'error':mustFlag&&!itemPro.number}"
+                        <el-input :ref="'number'+ '-'+index+'-'+indexPro"
+                          :class="{'error':mustFlag&&!itemPro.number}"
                           v-model="itemPro.number"
+                          @keydown.native="$focusByKeydown($event,'number',[index,indexPro],'',['productionPlanInfo','product_info_data'])"
                           :disabled="materialPlanList.find((item) => Number(item.id) === Number(materialPlanIndex))&&materialPlanList.find((item) => Number(item.id) === Number(materialPlanIndex)).type===2"
                           @input="(ev)=>{itemPro.total_price=$toFixed(Number(ev)*Number(itemPro.price))}"
                           placeholder="请输入数量">
@@ -906,8 +914,10 @@
                   <span class="explanation">(不填默认为0)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入承担金额"
-                    v-model="item.bear_price">
+                  <el-input :ref="'bear_price'+ '-'+index"
+                    placeholder="请输入承担金额"
+                    v-model="item.bear_price"
+                    @keydown.native="$focusByKeydown($event,'bear_price',[index],materialSupplementInfo,['client_data'])">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -1405,6 +1415,8 @@
                     <div class="info elCtn">
                       <el-input v-model="itemPro.price"
                         placeholder="请输入单价"
+                        :ref="'price'+'-'+indexPro"
+                        @keydown.native="$focusByKeydown($event,'price',[indexPro],productionPlanUpdateInfo,['product_info_data'])"
                         @focus="$focusInput($event)"
                         @input="(ev)=>{itemPro.total_price=$toFixed(Number(ev)*Number(itemPro.number))}">
                         <template slot="append">元</template>
