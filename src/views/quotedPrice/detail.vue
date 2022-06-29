@@ -26,7 +26,11 @@
             <div class="row">
               <div class="col flex3">
                 <div class="label">报价单号：</div>
-                <div class="text blue">{{quotedPriceInfo.code}}</div>
+                <div class="text blue">{{quotedPriceInfo.code}}
+                  <span class="hoverBlue"
+                    style="cursor:pointer;font-size:14px"
+                    @click="$copyTextInfo(quotedPriceInfo.code)">复制</span>
+                </div>
               </div>
               <!-- <div class="col flex3"
                 v-if="quotedPriceInfo.rel_order">
@@ -910,6 +914,7 @@
           </div>
         </div>
         <div class="contentCtn">
+          <div class="explainCtn">请先搜索需要绑定的订单，点击搜索后的订单，勾选需要绑定的产品，提交完成绑定。</div>
           <div class="row">
             <div class="label">单据类型：</div>
             <div class="info"
@@ -932,19 +937,25 @@
                   :placeholder="'请输入'+(bindOrderType===1?'订单号搜索':'样单号搜索')"
                   @select="selectOrder"></el-autocomplete>
               </div>
+              <div class="info_btn hoverBlue"
+                @click="stickOrder">粘贴</div>
             </div>
           </div>
+          <div class="explainCtn"
+            v-if="orderProList.length===1">已默认选择唯一一款产品!</div>
+          <div class="explainCtn"
+            v-if="orderProList.length>1">请选择需要绑定的产品信息!</div>
           <div class="row">
             <div class="label">绑定{{bindOrderType===1?'产品':'样品'}}：</div>
             <div class="info"
-              style="display: flex;align-items: center;vertical-align:middle">
+              style="display: flex;align-items: center;vertical-align:middle;min-height:32px;height:auto">
               <div class="gray"
                 v-if="orderProList.length===0">暂未选择单据</div>
               <div>
                 <el-radio v-for="item in orderProList"
                   :key="item.system_code"
                   v-model="bindProId"
-                  :label="item.product_id">{{item.product_code}}</el-radio>
+                  :label="item.product_id">{{item.product_code}}({{item.category}}/{{item.secondary_category}})</el-radio>
               </div>
             </div>
           </div>
@@ -1346,6 +1357,20 @@ export default Vue.extend({
     }
   },
   methods: {
+    stickOrder() {
+      if (navigator.clipboard) {
+        navigator.clipboard
+          .readText()
+          .then((v) => {
+            this.bindOrderValue = v
+          })
+          .catch((v) => {
+            this.$message.error('获取剪贴板失败')
+          })
+      } else {
+        this.$message.error('粘贴失败')
+      }
+    },
     // 确认对比
     confirmCompare() {
       if (this.compareIndex === Number(this.quotedIndex)) {
@@ -1978,6 +2003,9 @@ export default Vue.extend({
     },
     selectOrder(ev: any) {
       this.orderProList = ev.proList
+      if (this.orderProList.length === 1) {
+        this.bindProId = this.orderProList[0].product_id
+      }
     },
     getQuotedList() {
       this.init(this.quotedList[this.quotedIndex])

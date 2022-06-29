@@ -60,6 +60,9 @@ export default Vue.extend({
         this.$message.error('请选择要跳转的页面')
       }
     }
+  },
+  mounted() {
+    this.urlArr = this.data
   }
 })
 </script>

@@ -1,7 +1,8 @@
 <template>
   <div id="quotedPriceCreate"
     class="bodyContainer"
-    v-loading="loading">
+    v-loading="loading"
+    @keydown="saveSuccess=false">
     <div class="module">
       <div class="titleCtn">
         <div class="title">修改报价单</div>
@@ -235,12 +236,25 @@
       </div>
     </div>
     <div class="module">
-      <el-tabs type="border-card">
+      <el-tabs type="border-card"
+        v-model="productIndex">
         <el-tab-pane :label="'产品'+(index+1)"
           v-for="(item,index) in quotedPriceInfo.product_data"
           :key="index">
           <div class="titleCtn">
-            <div class="title">报价信息</div>
+            <div class="title">报价信息
+              <div class="fr elCtn"
+                style="margin-right:24px">
+                <el-select v-model="searchQuotedPrice"
+                  placeholder="导入报价模板"
+                  @change="getModules">
+                  <el-option v-for="item in searchQuotedPriceList"
+                    :key="item.id"
+                    :value="item.id"
+                    :label="item.title"></el-option>
+                </el-select>
+              </div>
+            </div>
           </div>
           <div class="editCtn">
             <div class="row"
@@ -1070,7 +1084,12 @@ export default Vue.extend({
     return {
       loading: true,
       unitArr: moneyArr,
-      saveSuccess: false,
+      saveSuccess: true,
+      searchQuotedPriceKey: '',
+      searchLoading: false,
+      searchQuotedPrice: '',
+      searchQuotedPriceList: [],
+      searchList: [],
       postData: {
         key: '',
         token: ''
@@ -1276,6 +1295,59 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 报价单专用的上下键处理
+    focusByKeydown(ev: any, key: string, lastKey: string, nextKey: string, indexPro: number, indexChild: number) {
+      if (ev.keyCode === 38) {
+        if (indexChild === 0) {
+          if (lastKey) {
+            // @ts-ignore
+            this.$refs[
+              // @ts-ignore
+              lastKey + '-' + indexPro + '-' + (this.quotedPriceInfo.product_data[indexPro][lastKey].length - 1)
+            ][0].focus()
+          }
+        } else {
+          // @ts-ignore
+          this.$refs[key + '-' + indexPro + '-' + (indexChild - 1)][0].focus()
+        }
+      } else if (ev.keyCode === 40) {
+        // @ts-ignore
+        if (indexChild < this.quotedPriceInfo.product_data[indexPro][key].length - 1) {
+          // @ts-ignore
+          this.$refs[key + '-' + indexPro + '-' + (indexChild + 1)][0].focus()
+        } else {
+          if (nextKey) {
+            // @ts-ignore
+            this.$refs[nextKey + '-' + indexPro + '-0'][0].focus()
+          }
+        }
+      }
+    },
+    // 获取报价单模板
+    getModules(ev: number) {
+      this.$confirm('选择模版后，会替换当前已选的工序和输入的价格，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          const finded = this.searchQuotedPriceList.find((item: any) => item.id === ev)
+          this.quotedPriceInfo.product_data[this.productIndex].weave_data = JSON.parse(finded.weave_data)
+          this.quotedPriceInfo.product_data[this.productIndex].semi_product_data = JSON.parse(finded.semi_product_data)
+          this.quotedPriceInfo.product_data[this.productIndex].production_data = JSON.parse(finded.production_data)
+          this.quotedPriceInfo.product_data[this.productIndex].pack_material_data = JSON.parse(
+            finded.pack_material_data
+          )
+          // this.quotedPriceInfo.product_data[this.productIndex].other_fee_data = JSON.parse(finded.other_fee_data)
+          this.$message.success('导入成功')
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消导入'
+          })
+        })
+    },
     addPro() {
       this.$addItem(this.quotedPriceInfo.product_data, {
         total_price: '',
@@ -1811,6 +1883,12 @@ export default Vue.extend({
         getInfoApi: 'getClientTypeAsync'
       }
     ])
+    // 报价模板
+    quotedPrice.settingList().then((res) => {
+      if (res.data.status) {
+        this.searchQuotedPriceList = res.data.data
+      }
+    })
     quotedPrice
       .detail({
         id: Number(this.$route.query.id)

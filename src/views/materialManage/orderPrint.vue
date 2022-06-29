@@ -300,6 +300,21 @@
               </div>
             </div>
           </div>
+          <div class="tableCtn">
+            <div class="thead bgWhite"
+              style="height: auto">
+              <div class="trow">
+                <div class="tcol bgGray"
+                  style="flex:0.3">注意事项</div>
+                <div class="tcol"
+                  style="flex: 4;text-align:left;display:block">
+                  <div style="line-height:22px"
+                    v-for="item,index in descArr"
+                    :key="index">{{item?(index+1)+'.':''}}{{item}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </template>
@@ -350,6 +365,8 @@
       v-if="showMenu"
       :style="`left:${X_position || 0}px;top:${Y_position}px`"
       @click.stop>
+      <div class="setting_item"
+        @click="windowMethod(2)">打印订购单</div>
       <div class="setting_item">设置行高 <el-input-number v-model="lineHeight"
           style="height:32px"
           :precision="1"
@@ -363,11 +380,9 @@
       <div class="setting_item"
         @click="windowMethod(1)">刷新页面</div>
       <div class="setting_item"
-        @click="windowMethod(2)">打印计划单</div>
-      <div class="setting_item"
         @click="windowMethod(3)">{{editFlag?'完成编辑':'编辑模式'}}</div>
       <div class="setting_item"
-        @click="windowMethod(5)">打印设置</div>
+        @click="windowMethod(5)">标题备注设置</div>
     </div>
   </div>
 </template>
@@ -491,7 +506,6 @@ export default Vue.extend({
         id: Number(this.$route.query.id)
       })
       .then((res) => {
-        console.log(res)
         if (res.data.status) {
           this.materialOrderInfo = res.data.data
           this.materialInfo = this.$mergeData(this.materialOrderInfo.info_data, {
@@ -506,6 +520,7 @@ export default Vue.extend({
             .catch((err: any) => {
               console.error(err)
             })
+          this.windowMethod(2)
         }
       })
   }

@@ -844,8 +844,10 @@
                         <span class="text">批号</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input placeholder="批号"
-                          v-model="item.batch_code"></el-input>
+                        <el-input :ref="'batch_code'+ '-'+index"
+                          placeholder="批号"
+                          v-model="item.batch_code"
+                          @keydown.native="$focusByKeydown($event,'batch_code',[index],materialStockInfo,['info_data'])"></el-input>
                       </div>
                     </div>
                     <div class="once">
@@ -854,8 +856,10 @@
                         <span class="text">缸号</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input placeholder="缸号"
-                          v-model="item.vat_code"></el-input>
+                        <el-input :ref="'vat_code'+ '-'+index"
+                          placeholder="缸号"
+                          v-model="item.vat_code"
+                          @keydown.native="$focusByKeydown($event,'vat_code',[index],materialStockInfo,['info_data'])"></el-input>
                       </div>
                     </div>
                     <div class="once">
@@ -864,8 +868,10 @@
                         <span class="text">色号</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input placeholder="色号"
-                          v-model="item.color_code"></el-input>
+                        <el-input :ref="'color_code'+ '-'+index"
+                          placeholder="色号"
+                          v-model="item.color_code"
+                          @keydown.native="$focusByKeydown($event,'color_code',[index],materialStockInfo,['info_data'])"></el-input>
                       </div>
                     </div>
                   </div>
@@ -879,9 +885,11 @@
                         <span class="explanation">(必填)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input :class="{'error':mustFlag&&!item.number}"
+                        <el-input :ref="'number'+ '-'+index"
+                          :class="{'error':mustFlag&&!item.number}"
                           placeholder="数量"
-                          v-model="item.number">
+                          v-model="item.number"
+                          @keydown.native="$focusByKeydown($event,'number',[index],materialStockInfo,['info_data'])">
                           <template slot="append">{{item.unit}}</template>
                         </el-input>
                       </div>
@@ -892,8 +900,10 @@
                         <span class="text">件数</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input placeholder="数量"
-                          v-model="item.item">
+                        <el-input :ref="'item'+ '-'+index"
+                          placeholder="数量"
+                          v-model="item.item"
+                          @keydown.native="$focusByKeydown($event,'item',[index],materialStockInfo,['info_data'])">
                           <template slot="append">件</template>
                         </el-input>
                       </div>
@@ -947,9 +957,11 @@
                         <span class="explanation">(必填)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input :class="{'error':mustFlag&&!item.number}"
+                        <el-input :ref="'number'+ '-'+index"
+                          :class="{'error':mustFlag&&!item.number}"
                           placeholder="数量"
-                          v-model="item.number"></el-input>
+                          v-model="item.number"
+                          @keydown.native="$focusByKeydown($event,'number',[index],materialStockInfo,['info_data'])"></el-input>
                       </div>
                     </div>
                     <div class="once">
@@ -959,8 +971,10 @@
                         <span class="explanation">(必填)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input placeholder="件数"
-                          v-model="item.item"></el-input>
+                        <el-input :ref="'item'+ '-'+index"
+                          placeholder="件数"
+                          v-model="item.item"
+                          @keydown.native="$focusByKeydown($event,'item',[index],materialStockInfo,['info_data'])"></el-input>
                       </div>
                     </div>
                   </div>
@@ -1856,50 +1870,55 @@ export default Vue.extend({
         ])
       })
       if (!formCheck) {
-        this.getCmpData()
-        const checkArr: any[] = []
-        this.materialStockInfo.info_data.forEach((item) => {
-          checkArr.push({
-            action_type: 4,
-            rel_doc_info_id: item.rel_doc_info_id,
-            number: item.number,
-            attribute: item.attribute
-          })
-        })
-        checkBeyond({
-          doc_type: 6,
-          data: checkArr
-        }).then((res) => {
-          if (res.data.data.length === 0) {
-            this.saveMaterialStockFn()
-          } else {
-            const createHtml = this.$createElement
-            this.$msgbox({
-              message: createHtml(
-                'p',
-                undefined,
-                res.data.data.map((item: string) => {
-                  return createHtml('p', undefined, item)
-                })
-              ),
-              title: '提示',
-              showCancelButton: true,
-              confirmButtonText: '继续提交',
-              cancelButtonText: '取消提交',
-              type: 'warning'
+        if (this.materialStockInfo.action_type !== 3 && this.materialStockInfo.action_type !== 5) {
+          this.getCmpData()
+          const checkArr: any[] = []
+          this.materialStockInfo.info_data.forEach((item) => {
+            checkArr.push({
+              action_type: this.materialStockInfo.action_type === 4 ? 4 : 11,
+              rel_doc_info_id: item.rel_doc_info_id,
+              number: item.number,
+              attribute: item.attribute
             })
-              .then(() => {
-                this.materialStockInfo.is_check = 4
-                this.saveMaterialStockFn()
+          })
+          checkBeyond({
+            doc_type: 6,
+            data: checkArr
+          }).then((res) => {
+            if (res.data.data.length === 0) {
+              this.saveMaterialStockFn()
+            } else {
+              const createHtml = this.$createElement
+              this.$msgbox({
+                message: createHtml(
+                  'p',
+                  undefined,
+                  res.data.data.map((item: string) => {
+                    return createHtml('p', undefined, item)
+                  })
+                ),
+                title: '提示',
+                showCancelButton: true,
+                confirmButtonText: '继续提交',
+                cancelButtonText: '取消提交',
+                type: 'warning'
               })
-              .catch(() => {
-                this.$message({
-                  type: 'info',
-                  message: '已取消提交'
+                .then(() => {
+                  this.materialStockInfo.is_check = 4
+                  this.saveMaterialStockFn()
                 })
-              })
-          }
-        })
+                .catch(() => {
+                  this.$message({
+                    type: 'info',
+                    message: '已取消提交'
+                  })
+                })
+            }
+          })
+        } else {
+          this.getCmpData()
+          this.saveMaterialStockFn()
+        }
       } else {
         this.mustFlag = true
       }

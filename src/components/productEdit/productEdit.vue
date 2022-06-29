@@ -49,6 +49,14 @@
               <div class="row">
                 <div class="col">
                   <div class="label">搜索产品号查询</div>
+                  <div class="explainCtn"
+                    v-if="copy_product_data&&copy_product_data.length>0">以下为被复制订单的产品编号，您可以点击查询产品编号，并在添加产品的时候导入该产品。
+                    <span class="hoverBlue"
+                      style="margin-right:12px;cursor:pointer"
+                      v-for="item in copy_product_data"
+                      :key="item.product_id"
+                      @click="searchProductCode=item.product_code;searchProduct()">{{item.product_code}};</span>
+                  </div>
                   <div class="info elCtn">
                     <el-input placeholder="输入产品号查询"
                       v-model="searchProductCode"
@@ -722,6 +730,10 @@ export default Vue.extend({
     },
     // 报价单描述信息
     quote_rel_product_data: {
+      required: false
+    },
+    // 复制订单产品信息
+    copy_product_data: {
       required: false
     }
   },

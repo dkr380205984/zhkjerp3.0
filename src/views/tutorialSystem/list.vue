@@ -42,7 +42,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import { tutorialSystem } from '@/assets/js/api'
-import { systemModule } from '@/assets/js/dictionary'
 export default Vue.extend({
   data(): {
     [propName: string]: any
@@ -53,10 +52,93 @@ export default Vue.extend({
       activeName: '',
       systemModule: [
         {
-          id: 99,
-          module: '常见问题'
+          module: '报价单管理',
+          id: 1
         },
-        ...systemModule
+        {
+          module: '样单管理',
+          id: 2
+        },
+        {
+          module: '订单管理',
+          id: 3
+        },
+        {
+          module: '原料计划',
+          id: 4
+        },
+        {
+          module: '原料管理',
+          id: 5
+        },
+        {
+          module: '原料出入库',
+          id: 6
+        },
+        {
+          module: '辅料管理',
+          id: 7
+        },
+        {
+          module: '生产计划',
+          id: 8
+        },
+        {
+          module: '检验收发',
+          id: 9
+        },
+        {
+          module: '车间管理',
+          id: 10
+        },
+        {
+          module: '发货管理',
+          id: 11
+        },
+        {
+          module: '数据报表',
+          id: 12
+        },
+        {
+          module: '单据管理',
+          id: 13
+        },
+        {
+          module: '仓库管理',
+          id: 14
+        },
+        {
+          module: '客户与合作商管理',
+          id: 15
+        },
+        {
+          module: '原料预定购管理',
+          id: 16
+        },
+        {
+          id: 17,
+          module: '工艺单管理'
+        },
+        {
+          id: 18,
+          module: '员工管理'
+        },
+        {
+          id: 19,
+          module: '系统设置'
+        },
+        {
+          id: 20,
+          module: '报销单管理'
+        },
+        {
+          id: 21,
+          module: '财务结算'
+        },
+        {
+          id: 22,
+          module: '首页'
+        }
       ]
     }
   },
@@ -82,7 +164,7 @@ export default Vue.extend({
     }
   },
   mounted() {
-    tutorialSystem.list({ type: 1 }).then((res) => {
+    tutorialSystem.list({ type: 2 }).then((res) => {
       if (res.data.status) {
         this.list = res.data.data
         this.list.forEach((item: any) => {

@@ -93,16 +93,78 @@
               </div>
             </div>
           </div>
+          <div class="tableCtn">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol">其他说明</div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div class="trow">
+                <div class="tcol"
+                  style="display:block">
+                  <div style="line-height:22px"
+                    v-for="item,index in descArr"
+                    :key="index">{{item?(index+1)+'.':''}}{{item}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="setting_sign_style"
         v-if="showMenu"
         :style="`left:${X_position || 0}px;top:${Y_position}px`"
         @click.stop>
+        <div class="setting_item hoverBlue"
+          @click="windowMethod(2)">打印</div>
         <div class="setting_item"
           @click="windowMethod(1)">刷新页面</div>
         <div class="setting_item"
-          @click="windowMethod(2)">打印</div>
+          @click="windowMethod(3)">标题备注设置</div>
+      </div>
+      <div class="popup"
+        v-show="settingFlag">
+        <div class="main">
+          <div class="titleCtn">
+            <span class="text">打印设置</span>
+            <span class="el-icon-close"
+              @click="settingFlag = false"></span>
+          </div>
+          <div class="contentCtn">
+            <div class="row">
+              <span class="label">设置标题：</span>
+              <div class="info">
+                <el-input v-model="title"
+                  placeholder="请输入常用标题"></el-input>
+              </div>
+            </div>
+            <div class="row"
+              v-for="(item,index) in descArr"
+              :key="index">
+              <span class="label">注意事项{{index+1}}：</span>
+              <div class="info">
+                <el-input v-model="descArr[index]"
+                  placeholder="请输入注意事项">
+                </el-input>
+                <div v-if="index===0"
+                  class="info_btn hoverBlue"
+                  @click="$addItem(descArr,'')">添加</div>
+                <div v-if="index>0"
+                  class="info_btn hoverRed"
+                  @click="$deleteItem(descArr,index)">删除</div>
+              </div>
+            </div>
+          </div>
+          <div class="oprCtn">
+            <span class="btn borderBtn"
+              @click="settingFlag = false">取消</span>
+            <span class="btn backHoverOrange"
+              @click="resetSetting">清空设置</span>
+            <span class="btn backHoverBlue"
+              @click="saveSetting">保存</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -177,11 +239,32 @@ export default Vue.extend({
           setTimeout(() => {
             window.print()
           }, 100)
+        } else if (type === 3) {
+          this.settingFlag = true
+          this.showMenu = false
         }
       })
+    },
+    saveSetting() {
+      this.$setLocalStorage('packOrderPrintTitle', this.title)
+      this.$setLocalStorage('packOrderPrintDesc', JSON.stringify(this.descArr))
+      this.$message.success('保存成功')
+      this.settingFlag = false
+    },
+    resetSetting() {
+      this.$setLocalStorage('packOrderPrintTitle', '')
+      this.$setLocalStorage('packOrderPrintDesc', JSON.stringify(['']))
+      this.title = ''
+      this.descArr = ['']
+      this.$message.success('已清空')
+      this.settingFlag = false
     }
   },
   mounted() {
+    this.title = this.$getLocalStorage('packOrderPrintTitle') || ''
+    this.descArr = this.$getLocalStorage('packOrderPrintDesc')
+      ? JSON.parse(this.$getLocalStorage('packOrderPrintDesc'))
+      : ['']
     packManage
       .orderListDetail({
         id: Number(this.$route.query.id)
@@ -189,6 +272,7 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.packOrderInfo = res.data.data
+          this.windowMethod(2)
         }
       })
   }

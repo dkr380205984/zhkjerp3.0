@@ -432,11 +432,14 @@ export default Vue.extend({
       if (ev && ev.length) {
         client
           .detail({
-            id: ev[2]
+            id: ev.length === 1 ? ev[0] : ev[2]
           })
           .then((res) => {
             if (res.data.status) {
               this.contactsList = res.data.data.contacts_data
+              if (ev.length === 1) {
+                this.client_id = [res.data.data.client_type_id, res.data.data.rel_tag_data[0].id, ev[0]]
+              }
             }
           })
       } else {
@@ -484,6 +487,7 @@ export default Vue.extend({
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.contacts_id = Number(query.contacts_id) || ''
       if (this.client_id && this.client_id.length) {
+        // 从别的页面跳进来默认只有client_id，需要处理一下
         this.getContacts(this.client_id)
       }
       this.keyword = query.keyword || ''

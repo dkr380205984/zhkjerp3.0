@@ -7,7 +7,8 @@
       <div class="titleCtn">
         <div class="title">文件列表</div>
       </div>
-      <div class="listCtn">
+      <div class="listCtn"
+        v-loading="loading">
         <div class="filterCtn">
           <div class="elCtn">
             <el-input v-model="keyword"
@@ -88,33 +89,26 @@
             <div class="col">所属公司</div>
             <div class="col">所属小组</div>
             <div class="col">上传人</div>
-            <div class="col">操作</div>
-          </div>
-          <div class="row">
-            <div class="col">文件名称</div>
-            <div class="col">文件标签</div>
-            <div class="col">上传时间</div>
-            <div class="col">所属公司</div>
-            <div class="col">所属小组</div>
-            <div class="col">上传人</div>
-            <div class="col">
-              <div class="opr hoverBlue">下载</div>
-              <div class="opr hoverRed">删除</div>
-              <div class="opr hoverGreen"
-                @click="shareFile">分享</div>
-            </div>
+            <div class="col"
+              style="flex:1.2">操作</div>
           </div>
           <div class="row"
             v-for="item in list"
             :key="item.id">
-            <div class="col">文件名称</div>
-            <div class="col">文件标签</div>
-            <div class="col">上传时间</div>
-            <div class="col">所属公司</div>
-            <div class="col">所属小组</div>
-            <div class="col">上传人</div>
-            <div class="col">
-              <div class="opr hoverBlue">下载</div>
+            <div class="col">{{item.file_name}}</div>
+            <div class="col">{{item.tag}}</div>
+            <div class="col">{{item.updated_at.slice(0,10)}}</div>
+            <div class="col">{{item.client.name}}</div>
+            <div class="col">{{item.groud_name}}</div>
+            <div class="col">{{item.user.user_name}}</div>
+            <div class="col"
+              style="font-size:14px;flex:1.2">
+              <a class="opr hoverBlue"
+                :href="item.file_url"
+                download
+                target=_blank>下载</a>
+              <div class="opr hoverOrange"
+                @click="updateFile(item)">修改</div>
               <div class="opr hoverRed"
                 @click="deleteFile(item.id)">删除</div>
               <div class="opr hoverGreen"
@@ -156,12 +150,12 @@
           <div class="explainCtn">发送通知给该用户，被通知用户，点击通知链接后，可直接下载。 注意：私密文件不可分享。</div>
           <div class="row">
             <div class="label">文件名称：</div>
-            <div class="info text">AAAAAAAAAA</div>
+            <div class="info text">{{shareInfo.file_name}}</div>
           </div>
           <div class="row">
             <div class="label">分享用户：</div>
             <div class="info elCtn">
-              <el-select v-model="user_id"
+              <el-select v-model="shareInfo.user_id"
                 placeholder="选择用户"
                 multiple
                 clearable>
@@ -195,13 +189,14 @@
           <div class="row"
             style="margin-bottom:20px">
             <div class="label">上传文件：</div>
-            <div class="info elCtn">
+            <div class="info elCtn"
+              style="min-height:64px">
               <el-upload class="upload"
                 action="https://upload.qiniup.com/"
                 :before-upload="beforeAvatarUpload"
                 :data="postData"
-                :on-remove="(ev)=>{return removeFile(ev,uploadInfo.file)}"
-                :on-success="(ev)=>{return successFile(ev,uploadInfo.file)}"
+                :on-remove="(ev)=>{return removeFile(ev,uploadInfo.file_url)}"
+                :on-success="(ev)=>{return successFile(ev,uploadInfo)}"
                 ref="uploada">
                 <div class="uploadBtn">
                   <i class="el-icon-upload"></i>
@@ -216,10 +211,10 @@
             <div class="label">文件类型：</div>
             <div class="info elCtn"
               style="align-items:center;display: flex;">
-              <el-radio v-model="uploadInfo.type"
-                label="1">公开文件</el-radio>
-              <el-radio v-model="uploadInfo.type"
-                label="2">私密文件</el-radio>
+              <el-radio v-model="uploadInfo.file_type"
+                label="public_file">公开文件</el-radio>
+              <el-radio v-model="uploadInfo.file_type"
+                label="private_file">私密文件</el-radio>
             </div>
           </div>
           <div class="row">
@@ -238,7 +233,7 @@
           <div class="row">
             <div class="label">文件标签：</div>
             <div class="info elCtn">
-              <el-select v-model="uploadInfo.mark"
+              <el-select v-model="uploadInfo.tag"
                 placeholder="筛选文件标签">
                 <el-option v-for="item in typeArr"
                   :key="item.value"
@@ -256,10 +251,65 @@
         </div>
       </div>
     </div>
+    <div class="popup"
+      v-show="updateFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">修改文件</span>
+          <div class="closeCtn"
+            @click="updateFlag=false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="row"
+            style="margin-bottom:20px">
+            <div class="label">文件名称：</div>
+            <div class="info elCtn">
+              <el-input placeholder="请输入文件名称"
+                v-model="updateInfo.file_name"></el-input>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label">文件类型：</div>
+            <div class="info elCtn"
+              style="align-items:center;display: flex;">
+              <el-radio v-model="updateInfo.file_type"
+                label="public_file">公开文件</el-radio>
+              <el-radio v-model="updateInfo.file_type"
+                label="private_file">私密文件</el-radio>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label">所属公司：</div>
+            <div class="info">{{updateInfo.client.name}}</div>
+          </div>
+          <div class="row">
+            <div class="label">文件标签：</div>
+            <div class="info elCtn">
+              <el-select v-model="updateInfo.tag"
+                placeholder="筛选文件标签">
+                <el-option v-for="item in typeArr"
+                  :key="item.value"
+                  :value="item.value"
+                  :label="item.label"></el-option>
+              </el-select>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="updateFlag=false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="saveUpdateFile">修改</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
+import { fileManage } from '@/assets/js/api'
 import { limitArr } from '@/assets/js/dictionary'
 import Vue from 'vue'
 export default Vue.extend({
@@ -312,43 +362,43 @@ export default Vue.extend({
       },
       typeArr: [
         {
-          value: 1,
+          value: '询价文件',
           label: '询价文件'
         },
         {
-          value: 2,
+          value: '订单合同',
           label: '订单合同'
         },
         {
-          value: 3,
+          value: '工艺资料',
           label: '工艺资料'
         },
         {
-          value: 4,
+          value: '生产资料',
           label: '生产资料'
         },
         {
-          value: 5,
+          value: '辅料资料',
           label: '辅料资料'
         },
         {
-          value: 6,
+          value: '装箱资料',
           label: '装箱资料'
         },
         {
-          value: 7,
+          value: '进仓资料',
           label: '进仓资料'
         },
         {
-          value: 8,
+          value: '财务票据',
           label: '财务票据'
         },
         {
-          value: 9,
+          value: '内部文件',
           label: '内部文件'
         },
         {
-          value: 10,
+          value: '其它文件',
           label: '其它文件'
         }
       ],
@@ -356,15 +406,29 @@ export default Vue.extend({
       showPrintSetting: false,
       shareFlag: false,
       uploadFlag: false,
+      shareInfo: {
+        id: '',
+        user_id: [],
+        file_name: ''
+      },
       uploadInfo: {
-        type: '1',
+        tag: '',
+        file_type: 'public_file',
         client_id: [],
-        mark: '',
-        file: []
+        file_name: '',
+        file_url: ''
       },
       postData: {
         key: '',
         token: ''
+      },
+      updateFlag: false,
+      updateInfo: {
+        tag: '',
+        file_type: 'public_file',
+        client: { name: '' },
+        file_name: '',
+        file_url: ''
       }
     }
   },
@@ -394,15 +458,17 @@ export default Vue.extend({
       const fileNameLength = file.name.length // 取到文件名长度
       const fileFormat = file.name.substring(fileName + 1, fileNameLength) // 截
       this.postData.token = this.token
-      this.postData.key = Date.parse(new Date() + '') + '.' + fileFormat
+      // 保留文件自带的名称
+      this.postData.key = file.name.split('.')[0] + Date.parse(new Date() + '') + '.' + fileFormat
+      this.uploadInfo.file_name = file.name.split('.')[0]
       const isLt2M = file.size / 1024 / 1024 < 20
       if (!isLt2M) {
         this.$message.error('文件大小不能超过 20MB!')
         return false
       }
     },
-    successFile(response: { hash: string; key: string }, orderFile: any[]) {
-      orderFile.push('https://file.zwyknit.com/' + response.key)
+    successFile(response: { hash: string; key: string }, orderFile: any) {
+      orderFile.file_url = 'https://file.zwyknit.com/' + response.key
     },
     removeFile(file: { response: { hash: string; key: string } }, orderFile: any[]) {
       this.$deleteItem(orderFile, orderFile.indexOf('https://file.zwyknit.com/' + file.response.key))
@@ -422,7 +488,29 @@ export default Vue.extend({
         }
       })
     },
-    getList() {},
+    getList() {
+      this.loading = true
+      fileManage
+        .list({
+          limit: this.limit,
+          page: this.page,
+          file_name: this.keyword,
+          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
+          start_time: this.date.length > 0 ? this.date[0] : '',
+          end_time: this.date.length > 0 ? this.date[1] : '',
+          user_id: this.user_id,
+          group_id: this.group_id,
+          tag: this.type
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.list = res.data.data.items
+            this.total = res.data.data.total
+          }
+
+          this.loading = false
+        })
+    },
     reset() {
       this.$confirm('是否重置所有筛选条件?', '提示', {
         confirmButtonText: '确定',
@@ -492,10 +580,55 @@ export default Vue.extend({
         })
     },
     shareFile(info: any) {
+      this.shareInfo.file_name = info.file_name
       this.shareFlag = true
     },
     saveShareFile() {},
-    saveUploadFile() {}
+    saveUploadFile() {
+      const formCheck = this.$formCheck(this.uploadInfo, [
+        {
+          key: 'file_url',
+          errMsg: '请选择文件'
+        },
+        {
+          key: 'tag',
+          errMsg: '请选择文件标签'
+        }
+      ])
+      if (!formCheck) {
+        this.uploadInfo.client_id = this.uploadInfo.client_id.length > 0 ? this.uploadInfo.client_id[2] : ''
+        fileManage.create(this.uploadInfo).then((res) => {
+          if (res.data.status) {
+            this.page = 1
+            this.$message.success('上传成功')
+            this.uploadFlag = false
+            this.uploadInfo.file_url = ''
+            this.getList()
+          }
+        })
+      }
+    },
+    updateFile(info: any) {
+      this.updateInfo = info
+      this.updateFlag = true
+    },
+    saveUpdateFile() {
+      const formData = {
+        id: this.updateInfo.id,
+        tag: this.updateInfo.tag,
+        file_type: this.updateInfo.file_type,
+        client_id: this.updateInfo.client.id,
+        file_name: this.updateInfo.file_name,
+        file_url: this.updateInfo.file_url
+      }
+      fileManage.create(formData).then((res) => {
+        if (res.data.status) {
+          this.$message.success('修改成功')
+          this.updateFlag = false
+          this.getList()
+        }
+      })
+    }
   },
   created() {
     this.getFilters()

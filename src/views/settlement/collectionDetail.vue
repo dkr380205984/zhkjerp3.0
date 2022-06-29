@@ -660,7 +660,8 @@
       :data="collectionData"
       :client_name="clientFinancial.name"
       :client_id="$route.query.id"
-      @close="collectionFlag=false;init()"></zh-collection>
+      @close="collectionFlag=false"
+      @afterCollection="init()"></zh-collection>
     <!-- 开票 -->
     <zh-invoice :type="1"
       :invoice_type="1"
@@ -669,7 +670,8 @@
       :data="invoiceData"
       :client_name="clientFinancial.name"
       :client_id="$route.query.id"
-      @close="invoiceFlag=false;init()"></zh-invoice>
+      @close="invoiceFlag=false"
+      @afterInvoice="init()"></zh-invoice>
     <!-- 扣款 -->
     <zh-deduct :type="1"
       :update="deductUpdate"
@@ -677,7 +679,8 @@
       :data="deductData"
       :client_name="clientFinancial.name"
       :client_id="$route.query.id"
-      @close="deductFlag=false;init()"></zh-deduct>
+      @close="deductFlag=false"
+      @afterDeduct="init()"></zh-deduct>
     <!-- 侧边导航栏 -->
     <zh-side-nav :data="[{
       name:'基本信息',
@@ -799,13 +802,27 @@ export default Vue.extend({
           classArr: ['', 'green', 'orange']
         },
         {
+          key: 'invoice_count',
+          name: '开票金额',
+          ifShow: true,
+          ifLock: false,
+          index: 12
+        },
+        {
           key: 'collect_status',
           name: '收款状态',
           ifShow: true,
           ifLock: false,
-          index: 12,
+          index: 13,
           filterArr: ['', '已收款', '待收款'],
           classArr: ['', 'green', 'orange']
+        },
+        {
+          key: 'collect_count',
+          name: '收款金额',
+          ifShow: true,
+          ifLock: false,
+          index: 14
         },
         {
           key: 'product_code',
@@ -1106,7 +1123,9 @@ export default Vue.extend({
             this.orderList = res.data.data.items
             this.orderList.forEach((item: any) => {
               item.collect_status = item.has_collect.status
+              item.collect_count = item.has_collect.count
               item.invoice_status = item.has_invoice.status
+              item.invoice_count = item.has_invoice.count
             })
             this.orderTotal = res.data.data.total
             this.orderLoading = false

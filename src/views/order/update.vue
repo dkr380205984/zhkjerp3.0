@@ -1,7 +1,8 @@
 <template>
   <div id="orderUpdate"
     class="bodyContainer"
-    v-loading="loading">
+    v-loading="loading"
+    @keydown="saveSuccess=false">
     <div class="module">
       <div class="titleCtn">
         <div class="title">基本信息</div>

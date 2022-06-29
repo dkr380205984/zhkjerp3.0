@@ -202,12 +202,12 @@
       v-if="showMenu"
       :style="`left:${X_position || 0}px;top:${Y_position}px`"
       @click.stop>
+      <div class="setting_item hoverBlue"
+        @click="windowMethod(2)">打印计划单</div>
       <div class="setting_item"
         @click="windowMethod(1)">刷新页面</div>
       <div class="setting_item"
-        @click="windowMethod(2)">打印计划单</div>
-      <div class="setting_item"
-        @click="windowMethod(3)">打印设置</div>
+        @click="windowMethod(3)">标题备注设置</div>
     </div>
   </div>
 </template>
@@ -328,6 +328,10 @@ export default Vue.extend({
     }
   },
   mounted() {
+    this.title = this.$getLocalStorage('productionPlanPrintTitle') || ''
+    this.descArr = this.$getLocalStorage('productionPlanPrintDesc')
+      ? JSON.parse(this.$getLocalStorage('productionPlanPrintDesc'))
+      : ['']
     productionPlan
       .detail({
         id: Number(this.$route.query.id)
@@ -345,6 +349,7 @@ export default Vue.extend({
             .catch((err: any) => {
               console.error(err)
             })
+          this.windowMethod(2)
         }
         this.loading = false
       })

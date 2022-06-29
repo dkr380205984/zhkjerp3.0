@@ -11,7 +11,11 @@
         <div class="row">
           <div class="col">
             <div class="label">样单号：</div>
-            <div class="text">{{sampleOrderInfo.code}}</div>
+            <div class="text">{{sampleOrderInfo.code}}
+              <span class="hoverBlue"
+                style="cursor:pointer;font-size:14px"
+                @click="$copyTextInfo(sampleOrderInfo.code)">复制</span>
+            </div>
           </div>
         </div>
         <div class="row">
@@ -86,8 +90,9 @@
                 </div>
                 <div class="name">文件{{index+1}}.{{item.file_url.split('.')[item.file_url.split('.').length-1]}}</div>
                 <a class="opr hoverBlue"
-                  :href="item"
-                  target=_blank>点击下载</a>
+                  :href="item.file_url "
+                  target=_blank
+                  download>点击下载</a>
               </div>
               <div class="text"
                 v-if="sampleOrderInfo.public_files.length===0">
@@ -260,7 +265,7 @@
                         class="gray">无需工艺单</div>
                     </div>
                     <div class="state"
-                      @click="item.rel_quote_info.quote_id?$openUrl('/quotedPrice/detail?id='+item.rel_quote_info.quote_id):$openUrl('/quotedPrice/create?sampleOrderId=' + $route.query.id + '&product_id='+item.product_id +'&sampleOrderIndex='+ sampleOrderIndex)">
+                      @click="goQuotedPrice(item)">
                       <div class="circle"
                         :class="{'backGray':!item.rel_quote_info.quote_id,'backBlue':item.rel_quote_info.quote_id}">报</div>
                     </div>
@@ -1810,6 +1815,44 @@ export default Vue.extend({
           })
         this.loading = false
       })
+    },
+    goQuotedPrice(item: any) {
+      if (item.rel_quote_info.quote_id) {
+        this.$openUrl('/quotedPrice/detail?id=' + item.rel_quote_info.quote_id)
+      } else {
+        this.$confirm('是否添加新的报价单?', '提示', {
+          distinguishCancelAndClose: true,
+          confirmButtonText: '添加新报价单',
+          cancelButtonText: '去报价单列表查询已有报价单绑定',
+          type: 'warning'
+        })
+          .then(() => {
+            this.$openUrl(
+              '/quotedPrice/create?sampleOrderId=' +
+                this.$route.query.id +
+                '&product_id=' +
+                item.product_id +
+                '&sampleOrderIndex=' +
+                this.sampleOrderIndex
+            )
+          })
+          .catch((action: any) => {
+            if (action === 'cancel') {
+              this.$openUrl(
+                '/quotedPrice/list?page=1&keyword=&client_id=' +
+                  this.sampleOrderInfo.client_id +
+                  '&contacts_id=' +
+                  this.sampleOrderInfo.contacts_id +
+                  '&status=null&date='
+              )
+            } else {
+              this.$message({
+                type: 'info',
+                message: '已取消'
+              })
+            }
+          })
+      }
     },
     deletePro(id: number, index: number, info: any[]) {
       this.$confirm('是否删除该产品?', '提示', {

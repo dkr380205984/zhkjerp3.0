@@ -514,7 +514,8 @@ export default Vue.extend({
           })
         })
       } else {
-        this.productList = this.orderInfo.time_data[this.sampleOrderIndex || 0].batch_data[0].product_data
+        this.productList =
+          this.orderInfo.time_data[this.orderTime - 1 || this.sampleOrderIndex || 0].batch_data[0].product_data
       }
     }
   },

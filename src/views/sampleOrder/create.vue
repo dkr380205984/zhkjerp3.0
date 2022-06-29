@@ -1,7 +1,8 @@
 <template>
   <div id="sampleOrderCreate"
     class="bodyContainer"
-    v-loading="loading">
+    v-loading="loading"
+    @keydown="saveSuccess=false">
     <div class="module">
       <div class="titleCtn">
         <div class="title">基本信息</div>
@@ -272,27 +273,33 @@
                   <div class="tcol"
                     style="flex:0.8">
                     <div class="elCtn">
-                      <el-input :class="{'error':mustFlag&&!itemChild.number}"
+                      <el-input :ref="'number'+ '-'+index+'-'+indexChild"
+                        :class="{'error':mustFlag&&!itemChild.number}"
                         v-model="itemChild.number"
-                        placeholder="打样数量">
+                        placeholder="打样数量"
+                        @keydown.native="$focusByKeydown($event,'number',[index,indexChild],sampleOrderInfo.time_data.batch_data[0],['product_data','product_info'])">
                       </el-input>
                     </div>
                   </div>
                   <div class="tcol"
                     style="flex:0.6">
                     <div class="elCtn">
-                      <el-input :class="{'error':mustFlag&&!itemChild.sample_number}"
+                      <el-input :ref="'sample_number'+ '-'+index+'-'+indexChild"
+                        :class="{'error':mustFlag&&!itemChild.sample_number}"
                         v-model="itemChild.sample_number"
-                        placeholder="送样数量">
+                        placeholder="送样数量"
+                        @keydown.native="$focusByKeydown($event,'sample_number',[index,indexChild],sampleOrderInfo.time_data.batch_data[0],['product_data','product_info'])">
                       </el-input>
                     </div>
                   </div>
                   <div class="tcol"
                     style="flex:0.6">
                     <div class="elCtn">
-                      <el-input :class="{'error':mustFlag&&!itemChild.keep_number}"
+                      <el-input :ref="'keep_number'+ '-'+index+'-'+indexChild"
+                        :class="{'error':mustFlag&&!itemChild.keep_number}"
                         v-model="itemChild.keep_number"
-                        placeholder="留底数量">
+                        placeholder="留底数量"
+                        @keydown.native="$focusByKeydown($event,'keep_number',[index,indexChild],sampleOrderInfo.time_data.batch_data[0],['product_data','product_info'])">
                       </el-input>
                     </div>
                   </div>
@@ -593,7 +600,7 @@ export default Vue.extend({
         category_id: '',
         type_id: ''
       },
-      saveSuccess: false,
+      saveSuccess: true,
       quotedPriceProductList: [] // 报价单转过来的产品信息
     }
   },

@@ -352,11 +352,12 @@
                       <span class="text">{{item.type===1?'检验数':'出库数'}}</span>
                     </div>
                     <div class="info elCtn">
-                      <zh-input class="inputs"
+                      <zh-input :ref="'number'+ '-' + index + '-' + indexChild"
+                        class="inputs"
+                        @keydown.native="focusByKeydown($event,'number',[index,indexChild],'',['inspectionInfo','child_data'])"
                         :keyBoard="keyBoard"
                         v-model="itemChild.number"
-                        placeholder="数量"
-                        type="number">
+                        placeholder="数量">
                       </zh-input>
                     </div>
                   </div>
@@ -369,10 +370,11 @@
                     </div>
                     <div class="info elCtn">
                       <zh-input class="inputs"
+                        :ref="'part_shoddy_number'+ '-' + index + '-' + indexChild"
                         :keyBoard="keyBoard"
                         v-model="itemChild.part_shoddy_number"
-                        placeholder="数量"
-                        type="number">
+                        @keydown.native="focusByKeydown($event,'part_shoddy_number',[index,indexChild],'',['inspectionInfo','child_data'])"
+                        placeholder="数量">
                       </zh-input>
                     </div>
                   </div>
@@ -387,10 +389,11 @@
                     </div>
                     <div class="info elCtn">
                       <zh-input class="inputs"
+                        :ref="'shoddy_number'+ '-' + index + '-' + indexChild"
                         :keyBoard="keyBoard"
                         v-model="itemChild.shoddy_number"
                         placeholder="数量"
-                        type="number">
+                        @keydown.native="focusByKeydown($event,'shoddy_number',[index,indexChild],'',['inspectionInfo','child_data'])">
                       </zh-input>
                     </div>
                   </div>
@@ -407,10 +410,11 @@
                       </div>
                       <div class="info elCtn">
                         <zh-input class="inputs"
+                          :ref="'deduct_price'+ '-' + index + '-' + indexChild"
                           :keyBoard="keyBoard"
                           v-model="itemChild.deduct_price"
                           placeholder="金额"
-                          type="number">
+                          @keydown.native="focusByKeydown($event,'deduct_price',[index,indexChild],'',['inspectionInfo','child_data'])">
                           <template slot="append">元</template>
                         </zh-input>
                       </div>
@@ -427,10 +431,6 @@
                           v-model="itemChild.shoddy_reason"
                           :fetch-suggestions="searchReason"
                           :disabled="item.type===2">
-                          <!-- <el-option v-for="item in shoddy_reason"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"></el-option> -->
                         </el-autocomplete>
                       </div>
                     </div>
@@ -747,6 +747,103 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 应用了个人组件，做一点点改动
+    focusByKeydown(ev: any, key: string, indexArr: number[], father: any, keyArr: any[]) {
+      // @ts-ignore
+      if (!father) {
+        // @ts-ignore
+        father = this.$data
+      }
+      // key:ArrowUp
+      if (ev.keyCode === 38) {
+        if (indexArr.length === 3) {
+          if (indexArr[2] === 0) {
+            if (indexArr[1] === 0) {
+              if (indexArr[0] > 0) {
+                // @ts-ignore
+                this.$refs[
+                  key +
+                    '-' +
+                    (indexArr[0] - 1) +
+                    '-' +
+                    (father[keyArr[0]][indexArr[0] - 1][keyArr[1]].length - 1) +
+                    '-' +
+                    (father[keyArr[0]][indexArr[0] - 1][keyArr[1]][
+                      father[keyArr[0]][indexArr[0] - 1][keyArr[1]].length - 1
+                    ][keyArr[2]].length -
+                      1)
+                ][0].focus()
+              }
+            } else {
+              // @ts-ignore
+              this.$refs[
+                key +
+                  '-' +
+                  indexArr[0] +
+                  '-' +
+                  (indexArr[1] - 1) +
+                  '-' +
+                  (father[keyArr[0]][indexArr[0]][keyArr[1]][indexArr[1] - 1][keyArr[2]].length - 1)
+              ][0].focus()
+            }
+          } else {
+            // @ts-ignore
+            this.$refs[key + '-' + indexArr[0] + '-' + indexArr[1] + '-' + (indexArr[2] - 1)][0].focus()
+          }
+        } else if (indexArr.length === 2) {
+          if (indexArr[1] === 0) {
+            if (indexArr[0] > 0) {
+              // @ts-ignore
+              this.$refs[
+                key + '-' + (indexArr[0] - 1) + '-' + (father[keyArr[0]][indexArr[0] - 1][keyArr[1]].length - 1)
+              ][0].$refs.input.focus()
+            }
+          } else {
+            // @ts-ignore
+            this.$refs[key + '-' + indexArr[0] + '-' + (indexArr[1] - 1)][0].$refs.input.focus()
+          }
+        } else if (indexArr.length === 1) {
+          if (indexArr[0] > 0) {
+            // @ts-ignore
+            this.$refs[key + '-' + (indexArr[0] - 1)][0].focus()
+          }
+        }
+      }
+      // key:ArrowDown
+      else if (ev.keyCode === 40) {
+        if (indexArr.length === 3) {
+          if (indexArr[2] === father[keyArr[0]][indexArr[0]][keyArr[1]][indexArr[1]][keyArr[2]].length - 1) {
+            if (indexArr[1] === father[keyArr[0]][indexArr[0]][keyArr[1]].length - 1) {
+              if (indexArr[0] < father[keyArr[0]].length - 1) {
+                // @ts-ignore
+                this.$refs[key + '-' + (indexArr[0] + 1) + '-0-0'][0].focus()
+              }
+            } else {
+              // @ts-ignore
+              this.$refs[key + '-' + indexArr[0] + '-' + (indexArr[1] + 1) + '-0'][0].focus()
+            }
+          } else {
+            // @ts-ignore
+            this.$refs[key + '-' + indexArr[0] + '-' + indexArr[1] + '-' + (indexArr[2] + 1)][0].focus()
+          }
+        } else if (indexArr.length === 2) {
+          if (indexArr[1] === father[keyArr[0]][indexArr[0]][keyArr[1]].length - 1) {
+            if (indexArr[0] < father[keyArr[0]].length - 1) {
+              // @ts-ignore
+              this.$refs[key + '-' + (indexArr[0] + 1) + '-0'][0].$refs.input.focus()
+            }
+          } else {
+            // @ts-ignore 这里改了！！！！！！！！！！！！！！！.$refs.input.focus()
+            this.$refs[key + '-' + indexArr[0] + '-' + (indexArr[1] + 1)][0].$refs.input.focus()
+          }
+        } else if (indexArr.length === 1) {
+          if (indexArr[0] < father[keyArr[0]].length - 1) {
+            // @ts-ignore
+            this.$refs[key + '-' + (indexArr[0] + 1)][0].focus()
+          }
+        }
+      }
+    },
     searchReason(str: string, cb: any) {
       let results = str
         ? this.shoddy_reason.filter((val: any) => {
@@ -923,51 +1020,57 @@ export default Vue.extend({
         })
       })
       if (!formCheck) {
-        const checkArr: any = []
-        this.inspectionInfo.forEach((item) => {
-          item.child_data.forEach((itemChild) => {
-            checkArr.push({
-              doc_info_id: itemChild.doc_info_id,
-              number: itemChild.number
+        if (this.inspectionInfo[0].type === 1) {
+          const checkArr: any = []
+          this.inspectionInfo.forEach((item) => {
+            item.child_data.forEach((itemChild) => {
+              checkArr.push({
+                doc_info_id: itemChild.doc_info_id,
+                number: itemChild.number,
+                type: 1
+              })
             })
           })
-        })
-        checkBeyond({
-          doc_type: 19,
-          data: checkArr
-        }).then((res) => {
-          if (res.data.data.length === 0) {
-            this.getCmpData()
-            this.saveInspectionFn()
-          } else {
-            const createHtml = this.$createElement
-            this.$msgbox({
-              message: createHtml(
-                'p',
-                undefined,
-                res.data.data.map((item: string) => {
-                  return createHtml('p', undefined, item)
-                })
-              ),
-              title: '提示',
-              showCancelButton: true,
-              confirmButtonText: '继续提交',
-              cancelButtonText: '取消提交',
-              type: 'warning'
-            })
-              .then(() => {
-                this.getCmpData()
-                this.inspectionInfo.forEach((item) => (item.is_check = 4))
-                this.saveInspectionFn()
+          checkBeyond({
+            doc_type: 19,
+            data: checkArr
+          }).then((res) => {
+            if (res.data.data.length === 0) {
+              this.getCmpData()
+              this.saveInspectionFn()
+            } else {
+              const createHtml = this.$createElement
+              this.$msgbox({
+                message: createHtml(
+                  'p',
+                  undefined,
+                  res.data.data.map((item: string) => {
+                    return createHtml('p', undefined, item)
+                  })
+                ),
+                title: '提示',
+                showCancelButton: true,
+                confirmButtonText: '继续提交',
+                cancelButtonText: '取消提交',
+                type: 'warning'
               })
-              .catch(() => {
-                this.$message({
-                  type: 'info',
-                  message: '已取消提交'
+                .then(() => {
+                  this.getCmpData()
+                  this.inspectionInfo.forEach((item) => (item.is_check = 4))
+                  this.saveInspectionFn()
                 })
-              })
-          }
-        })
+                .catch(() => {
+                  this.$message({
+                    type: 'info',
+                    message: '已取消提交'
+                  })
+                })
+            }
+          })
+        } else {
+          this.getCmpData()
+          this.saveInspectionFn()
+        }
       }
     },
     saveInspectionFn() {
@@ -1016,6 +1119,49 @@ export default Vue.extend({
         this.$message.error('请填写入库数量')
         return
       }
+      const checkArr = formArr.map((item) => {
+        return {
+          doc_info_id: item.doc_info_id,
+          number: item.number,
+          type: 3
+        }
+      })
+      checkBeyond({
+        doc_type: 19,
+        data: checkArr
+      }).then((res) => {
+        if (res.data.data.length === 0) {
+          this.saveCprkFn(formArr)
+        } else {
+          const createHtml = this.$createElement
+          this.$msgbox({
+            message: createHtml(
+              'p',
+              undefined,
+              res.data.data.map((item: string) => {
+                return createHtml('p', undefined, item)
+              })
+            ),
+            title: '提示',
+            showCancelButton: true,
+            confirmButtonText: '继续提交',
+            cancelButtonText: '取消提交',
+            type: 'warning'
+          })
+            .then(() => {
+              formArr.forEach((item: any) => (item.is_check = 4))
+              this.saveCprkFn(formArr)
+            })
+            .catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消提交'
+              })
+            })
+        }
+      })
+    },
+    saveCprkFn(formArr: any[]) {
       this.saveLock = true
       inspection.create({ data: formArr }).then((res) => {
         if (res.data.status) {

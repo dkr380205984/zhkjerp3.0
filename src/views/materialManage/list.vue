@@ -63,6 +63,17 @@
             @click="reset">重置</div>
         </div>
         <div class="filterCtn">
+          <div class="elCtn hasIcon">
+            <el-select @change="changeRouter"
+              v-model="group_id"
+              placeholder="筛选负责小组"
+              clearable>
+              <el-option v-for="item in groupList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
+          </div>
           <div class="elCtn">
             <el-select v-model="filter_way"
               placeholder="采购调取比例"
@@ -136,6 +147,19 @@
                 @click="$router.push('/materialManage/detail?id='+item.id)">订购加工</span>
             </div>
           </div>
+          <div class="row title">
+            <div class="col">合计：</div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col green">{{additional.total_material_number}}</div>
+            <div class="col green">{{additional.total_order_number}}</div>
+            <div class="col green">{{additional.total_process_number}}</div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+          </div>
         </div>
         <div class="pageCtn">
           <el-pagination background
@@ -172,6 +196,7 @@ export default Vue.extend({
       order_code: '',
       date: [],
       user_id: '',
+      group_id: '',
       pickerOptions: {
         shortcuts: [
           {
@@ -206,7 +231,9 @@ export default Vue.extend({
       additional: {
         pre_loss: 0,
         total_material_number: 0,
-        total_production_number: 0
+        total_production_number: 0,
+        total_order_number: 0,
+        total_process_number: 0
       },
       filter_way: '',
       is_check: ''
@@ -223,6 +250,7 @@ export default Vue.extend({
       this.user_id = query.user_id || ''
       this.filter_way = query.filter_way || ''
       this.is_check = query.is_check || ''
+      this.group_id = Number(query.group_id) || ''
     },
     changeRouter(ev?: any) {
       if (ev !== this.page) {
@@ -244,7 +272,9 @@ export default Vue.extend({
           '&filter_way=' +
           this.filter_way +
           '&is_check=' +
-          this.is_check
+          this.is_check +
+          '&group_id=' +
+          this.group_id
       )
     },
     reset() {
@@ -260,6 +290,7 @@ export default Vue.extend({
           this.limit = 10
           this.user_id = ''
           this.filter_way = ''
+          this.group_id = ''
           this.changeRouter()
         })
         .catch(() => {
@@ -282,7 +313,8 @@ export default Vue.extend({
           user_id: this.user_id,
           filter_way: this.filter_way,
           filter_progress: this.filter_way ? 1 : '',
-          is_check: this.is_check
+          is_check: this.is_check,
+          group_id: this.group_id
         })
         .then((res) => {
           this.list = res.data.data.items
@@ -306,6 +338,9 @@ export default Vue.extend({
   computed: {
     userList() {
       return this.$store.state.api.user.arr
+    },
+    groupList() {
+      return this.$store.state.api.group.arr
     }
   },
   watch: {
@@ -319,6 +354,11 @@ export default Vue.extend({
     this.getList()
     // this.getListSetting()
     this.$checkCommonInfo([
+      {
+        checkWhich: 'api/group',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getGroupAsync'
+      },
       {
         checkWhich: 'api/user',
         getInfoMethed: 'dispatch',

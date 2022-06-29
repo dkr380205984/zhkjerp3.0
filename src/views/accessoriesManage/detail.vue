@@ -87,31 +87,47 @@
             </div>
           </div>
           <div class="buttonList">
-            <div style="margin-right:12px"
-              class="btn backHoverOrange"
-              @click="Number($getsessionStorage('has_check'))!==1&&(item.has_invoice===1||item.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):materialOrderUpdataInfo=$clone(item);materialOrderUpdataFlag=true">
-              <svg class="iconFont"
-                aria-hidden="true">
-                <use xlink:href="#icon-xiugaidingdan"></use>
-              </svg>
-              <span class="text">单据修改</span>
+            <div class="btn backHoverBlue">
+              <i class="el-icon-s-grid"></i>
+              <span class="text">订购单操作</span>
             </div>
-            <div class="btn backHoverOrange"
-              style="margin-right:12px"
-              @click="checkFlag=true">
-              <svg class="iconFont"
-                aria-hidden="true">
-                <use xlink:href="#icon-xiugaidingdan"></use>
-              </svg>
-              <span class="text">单据审核</span>
-            </div>
-            <div class="btn backHoverRed"
-              @click="deleteMaterialOrder(item.id)">
-              <svg class="iconFont"
-                aria-hidden="true">
-                <use xlink:href="#icon-xiugaidingdan"></use>
-              </svg>
-              <span class="text">删除单据</span>
+            <div class="otherInfoCtn">
+              <div class="otherInfo">
+                <div style="margin-right:12px"
+                  class="btn backHoverOrange"
+                  @click="Number($getsessionStorage('has_check'))!==1&&(item.has_invoice===1||item.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):materialOrderUpdataInfo=$clone(item);materialOrderUpdataFlag=true">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">单据修改</span>
+                </div>
+                <div class="btn backHoverBlue"
+                  @click="$openUrl('/accessoriesManage/print?id='+item.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-dayindingdan"></use>
+                  </svg>
+                  <span class="text">打印订购</span>
+                </div>
+                <div class="btn backHoverRed"
+                  @click="deleteMaterialOrder(item.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">删除单据</span>
+                </div>
+                <div class="btn backHoverOrange"
+                  style="margin-right:12px"
+                  @click="checkFlag=true">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">单据审核</span>
+                </div>
+              </div>
             </div>
           </div>
         </el-tab-pane>
@@ -243,15 +259,19 @@
                     </div>
                   </div>
                   <div class="info elCtn spaceBetween">
-                    <el-input :class="{'error':mustFlag&&!itemMat.price}"
+                    <el-input :ref="'price'+ '-'+index+'-'+indexMat"
+                      :class="{'error':mustFlag&&!itemMat.price}"
                       class="once"
                       placeholder="单价"
+                      @keydown.native="$focusByKeydown($event,'price',[index,indexMat],'',['materialOrderInfo','info_data'])"
                       v-model="itemMat.price">
                       <template slot="append">元</template>
                     </el-input>
-                    <el-input :class="{'error':mustFlag&&!itemMat.number}"
+                    <el-input :ref="'number'+ '-'+index+'-'+indexMat"
+                      :class="{'error':mustFlag&&!itemMat.number}"
                       class="once"
                       placeholder="数量"
+                      @keydown.native="$focusByKeydown($event,'number',[index,indexMat],'',['materialOrderInfo','info_data'])"
                       v-model="itemMat.number">
                       <template slot="append">{{itemMat.unit}}</template>
                     </el-input>
@@ -427,40 +447,6 @@
                     </el-select>
                   </div>
                 </div>
-                <!-- <div class="col">
-                  <div class="spaceBetween">
-                    <div class="once">
-                      <div class="label"
-                        v-if="index===0">
-                        <span class="text">批号</span>
-                      </div>
-                      <div class="info elCtn">
-                        <el-input placeholder="批号"
-                          v-model="item.batch_code"></el-input>
-                      </div>
-                    </div>
-                    <div class="once">
-                      <div class="label"
-                        v-if="index===0">
-                        <span class="text">缸号</span>
-                      </div>
-                      <div class="info elCtn">
-                        <el-input placeholder="缸号"
-                          v-model="item.vat_code"></el-input>
-                      </div>
-                    </div>
-                    <div class="once">
-                      <div class="label"
-                        v-if="index===0">
-                        <span class="text">色号</span>
-                      </div>
-                      <div class="info elCtn">
-                        <el-input placeholder="色号"
-                          v-model="item.color_code"></el-input>
-                      </div>
-                    </div>
-                  </div>
-                </div> -->
                 <div class="col">
                   <div class="label"
                     v-if="index===0">
@@ -468,9 +454,11 @@
                     <span class="explanation">(必填)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input :class="{'error':mustFlag&&!item.number}"
+                    <el-input :ref="'number'+ '-'+index"
+                      :class="{'error':mustFlag&&!item.number}"
                       placeholder="数量"
                       class="UnitCtn"
+                      @keydown.native="$focusByKeydown($event,'number',[index],materialStockInfo,['info_data'])"
                       v-model="item.number">
                       <template slot="append">
                         <el-input v-model="item.unit"
@@ -485,7 +473,9 @@
                     <span class="text">件数</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input placeholder="数量"
+                    <el-input :ref="'item'+ '-'+index"
+                      placeholder="数量"
+                      @keydown.native="$focusByKeydown($event,'item',[index],materialStockInfo,['info_data'])"
                       v-model="item.item">
                       <template slot="append">件</template>
                     </el-input>
@@ -543,6 +533,9 @@
           <span class="btn backHoverBlue"
             @click="saveMaterialOrder(false)"
             v-if="step===1">确认</span>
+          <span class="btn backHoverBlue"
+            @click="saveMaterialOrder(false,true)"
+            v-if="step===1">订购并打印</span>
           <span class="btn backHoverGreen"
             @click="saveMaterialOrder(true)"
             v-if="step===1">订购并入库</span>
@@ -644,15 +637,19 @@
                   </div>
                 </div>
                 <div class="info elCtn spaceBetween">
-                  <el-input class="once"
+                  <el-input :ref="'price'+ '-'+indexMat"
+                    class="once"
                     placeholder="单价"
                     v-model="itemMat.price"
+                    @keydown.native="$focusByKeydown($event,'price',[indexMat],materialOrderUpdataInfo,['info_data'])"
                     @focus="$focusInput($event)">
                     <template slot="append">元</template>
                   </el-input>
-                  <el-input class="once"
+                  <el-input :ref="'number'+ '-'+indexMat"
+                    class="once"
                     placeholder="数量"
                     v-model="itemMat.number"
+                    @keydown.native="$focusByKeydown($event,'number',[indexMat],materialOrderUpdataInfo,['info_data'])"
                     @focus="$focusInput($event)">
                     <template slot="append">{{itemMat.unit}}</template>
                   </el-input>
@@ -1107,7 +1104,7 @@ export default Vue.extend({
         item.order_id = this.orderInfo.time_data[this.orderIndex].id
       })
     },
-    saveMaterialOrder(ifStock: boolean) {
+    saveMaterialOrder(ifStock: boolean, ifPrint?: boolean) {
       if (this.saveLock) {
         this.$message.error('请勿频繁点击')
         return
@@ -1154,6 +1151,9 @@ export default Vue.extend({
               this.materialOrderFlag = false
               this.resetOrderMaterial()
               this.init()
+              if (ifPrint) {
+                this.$openUrl('/accessoriesManage/print?id=' + res.data.data.id)
+              }
             }
           }
           this.saveLock = false

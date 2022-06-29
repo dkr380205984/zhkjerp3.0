@@ -1,7 +1,8 @@
 <template>
   <div id="orderCreate"
     class="bodyContainer"
-    v-loading="loading">
+    v-loading="loading"
+    @keydown="saveSuccess=false">
     <div class="module">
       <div class="titleCtn">
         <div class="title">基本信息</div>
@@ -131,8 +132,7 @@
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-date-picker :class="{'error':mustFlag&&!orderInfo.order_time}"
-                style="width:100%"
+              <el-date-picker style="width:100%"
                 placeholder="请选择下单日期"
                 v-model="orderInfo.time_data.order_time"
                 value-format="yyyy-MM-dd"></el-date-picker>
@@ -458,17 +458,21 @@
                           </div>
                           <div class="tcol">
                             <div class="elCtn">
-                              <el-input :class="{'error':mustFlag&&!itemProInfo.price}"
+                              <el-input :ref="'price'+ '-'+index+'-'+indexPro+'-'+indexProInfo"
+                                :class="{'error':mustFlag&&!itemProInfo.price}"
                                 v-model="itemProInfo.price"
-                                placeholder="单价">
+                                placeholder="单价"
+                                @keydown.native="$focusByKeydown($event,'price',[index,indexPro,indexProInfo],orderInfo.time_data,['batch_data','product_data','product_info'])">
                               </el-input>
                             </div>
                           </div>
                           <div class="tcol">
                             <div class="elCtn">
-                              <el-input :class="{'error':mustFlag&&!itemProInfo.number}"
+                              <el-input :ref="'number'+ '-'+index+'-'+indexPro+'-'+indexProInfo"
+                                :class="{'error':mustFlag&&!itemProInfo.number}"
                                 v-model="itemProInfo.number"
-                                placeholder="数量">
+                                placeholder="数量"
+                                @keydown.native="$focusByKeydown($event,'number',[index,indexPro,indexProInfo],orderInfo.time_data,['batch_data','product_data','product_info'])">
                               </el-input>
                             </div>
                           </div>
@@ -627,18 +631,22 @@
                       </div>
                       <div class="tcol">
                         <div class="elCtn">
-                          <el-input :class="{'error':mustFlag&&!itemPro.price}"
+                          <el-input :ref="'price'+ '-'+index+'-'+indexChild+'-'+indexPro"
+                            :class="{'error':mustFlag&&!itemPro.price}"
                             v-model="itemPro.price"
-                            placeholder="下单单价">
+                            placeholder="下单单价"
+                            @keydown.native="$focusByKeydown($event,'price',[index,indexChild,indexPro],orderInfo.time_data,['batch_data','product_data','product_info'])">
                             <template slot="append">{{orderInfo.settle_unit||'元'}}</template>
                           </el-input>
                         </div>
                       </div>
                       <div class="tcol">
                         <div class="elCtn">
-                          <el-input :class="{'error':mustFlag&&!itemPro.number}"
+                          <el-input :ref="'number'+ '-'+index+'-'+indexChild+'-'+indexPro"
+                            :class="{'error':mustFlag&&!itemPro.number}"
                             v-model="itemPro.number"
-                            placeholder="下单数量">
+                            placeholder="下单数量"
+                            @keydown.native="$focusByKeydown($event,'number',[index,indexChild,indexPro],orderInfo.time_data,['batch_data','product_data','product_info'])">
                           </el-input>
                         </div>
                       </div>
@@ -842,7 +850,8 @@
       @close="addProductFlag = false"
       @afterSave="getNewProduct"
       :quote_product_id="quotedPriceProductInfo.id"
-      :quote_rel_product_data="quotedPriceProductInfo"></product-edit>
+      :quote_rel_product_data="quotedPriceProductInfo"
+      :copy_product_data="copy_product_data"></product-edit>
     <!-- 任何有编辑页面的detail组件请务必去掉编辑功能，noOpr = true,因为wangeditor组件是填充到id里，新增和修改的editor重复了 -->
     <product-detail :noOpr="true"
       :data="productDetail"
@@ -1057,7 +1066,8 @@ export default Vue.extend({
         key: '',
         token: ''
       },
-      saveSuccess: false,
+      saveSuccess: true,
+      copy_product_data: [],
       confirmSampleInfo: [] // 已经确认的样品信息
     }
   },
@@ -1402,6 +1412,68 @@ export default Vue.extend({
           this.mustFlag = true
         }
       }
+    },
+    // 从订单里面拿到产品信息,物料计划单里面抄的
+    getOrderProduct(orderInfo: any): any[] {
+      const flattenArr: any[] = [] // 存储return信息
+      orderInfo.time_data[0].batch_data.forEach((itemBatch: any) => {
+        itemBatch.product_data.forEach((itemPro: any) => {
+          itemPro.product_info.forEach((itemChild: any) =>
+            flattenArr.push({
+              material_info: itemChild.material_info || [],
+              quote_product_id: itemPro.quote_product_id,
+              quote_rel_product_info: itemPro.quote_rel_product_info,
+              color_id: itemChild.color_id,
+              color_name: itemChild.color_name,
+              size_id: itemChild.size_id,
+              size_name: itemChild.size_name,
+              order_number: itemChild.number,
+              price: itemChild.price,
+              product_code: itemPro.product_code,
+              system_code: itemPro.system_code,
+              name: itemPro.name,
+              product_id: itemPro.product_id,
+              category: itemPro.category,
+              secondary_category: itemPro.secondary_category,
+              process_data: itemPro.process_data,
+              plan_number: itemChild.plan_number,
+              part_data: [
+                {
+                  name: '大身',
+                  id: 0, // 大身给零，接口写的
+                  unit: '件'
+                }
+              ].concat(itemPro.part_data as any[])
+            })
+          )
+        })
+      })
+      const mergeArr = this.$mergeData(flattenArr, {
+        mainRule: 'product_id',
+        otherRule: [
+          { name: 'name' },
+          { name: 'system_code' },
+          { name: 'secondary_category' },
+          { name: 'category' },
+          { name: 'product_code' },
+          { name: 'part_data' },
+          { name: 'process_data' },
+          { name: 'quote_product_id' },
+          { name: 'quote_rel_product_info' }
+        ],
+        childrenRule: {
+          mainRule: ['color_id', 'size_id'],
+          otherRule: [
+            { name: 'size_name' },
+            { name: 'color_name' },
+            { name: 'order_number', type: 'add' },
+            { name: 'plan_number', type: 'add' },
+            { name: 'price' },
+            { name: 'material_info' }
+          ]
+        }
+      })
+      return mergeArr
     }
   },
   mounted() {
@@ -1446,6 +1518,26 @@ export default Vue.extend({
         this.confirmSampleInfo = res[1].data.data.filter((item: any) => item.status === 2)
         this.loading = false
       })
+    }
+    // 复制订单
+    if (this.$route.query.id) {
+      order
+        .detail({
+          id: Number(this.$route.query.id)
+        })
+        .then((res) => {
+          if (res.data.status) {
+            const orderInfo = res.data.data
+            this.orderInfo.tree_data = orderInfo.tree_data.split(',').map((item: any) => Number(item))
+            this.getContacts(this.orderInfo.tree_data as number[])
+            this.orderInfo.contacts_id = orderInfo.contacts_id
+            this.orderInfo.group_id = orderInfo.group_id
+            this.orderInfo.time_data.is_before_confirm = orderInfo.time_data[0].is_before_confirm
+            this.orderInfo.time_data.is_send = orderInfo.time_data[0].is_send
+            this.orderInfo.time_data.is_urgent = orderInfo.time_data[0].is_urgent
+            this.copy_product_data = this.getOrderProduct(orderInfo)
+          }
+        })
     }
   },
   beforeRouteLeave(to, from, next) {

@@ -6,6 +6,44 @@
     font-size: @fontMiddle;
   }
 
+  .sortCol {
+    flex-wrap: nowrap;
+
+    .sortCtn {
+      min-width: 7px;
+    }
+  }
+
+  .sortCtn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    color: orange;
+    text-align: center;
+
+    .el-icon-caret-top {
+      position: relative;
+      top: 3px;
+      cursor: pointer;
+
+      &:hover {
+        color: @blue;
+      }
+    }
+
+    .el-icon-caret-bottom {
+      position: relative;
+      bottom: 1px;
+      cursor: pointer;
+
+      &:hover {
+        color: @blue;
+      }
+    }
+  }
+
   .description {
     padding: 18px;
     background: #F0F0F0;

@@ -62,10 +62,24 @@
           <div class="btn borderBtn"
             @click="reset">重置</div>
         </div>
+        <div class="filterCtn">
+          <div class="elCtn hasIcon">
+            <el-select @change="changeRouter"
+              v-model="group_id"
+              placeholder="筛选负责小组"
+              clearable>
+              <el-option v-for="item in groupList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
+          </div>
+        </div>
         <div class="list">
           <div class="row title">
             <div class="col">补纱单号</div>
             <div class="col">关联订单</div>
+            <div class="col">负责小组/人</div>
             <div class="col">补纱单位</div>
             <div class="col">计划数量</div>
             <div class="col">采购数量</div>
@@ -81,6 +95,7 @@
             :key="index">
             <div class="col">{{item.code}}</div>
             <div class="col">{{item.order_code}}</div>
+            <div class="col">{{item.group_name}}</div>
             <div class="col">{{item.client_name}}</div>
             <div class="col">{{item.total_plan_number}}</div>
             <div class="col">{{item.total_order_number || 0}}</div>
@@ -96,19 +111,20 @@
                 @click="$router.push('/materialManage/detail?id='+item.id+'&supFlag=1')">订购加工</span>
             </div>
           </div>
-          <!-- <div class="row">
-            <div class="col green">合计:</div>
-            <div class="col"></div>
-            <div class="col"></div>
-            <div class="col green bold">{{additional.total_material_number}}</div>
-            <div class="col"></div>
-            <div class="col green bold">{{additional.total_production_number}}</div>
+          <div class="row title">
+            <div class="col">合计：</div>
             <div class="col"></div>
             <div class="col"></div>
             <div class="col"></div>
+            <div class="col green">{{additional.total_number}}</div>
+            <div class="col green">{{additional.total_order_number}}</div>
+            <div class="col green">{{additional.total_process_number}}</div>
             <div class="col"></div>
             <div class="col"></div>
-          </div> -->
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+          </div>
           <div class="pageCtn">
             <el-pagination background
               :page-size="limit"
@@ -145,6 +161,7 @@ export default Vue.extend({
       order_code: '',
       date: [],
       user_id: '',
+      group_id: '',
       pickerOptions: {
         shortcuts: [
           {
@@ -179,7 +196,10 @@ export default Vue.extend({
       additional: {
         pre_loss: 0,
         total_material_number: 0,
-        total_production_number: 0
+        total_production_number: 0,
+        total_number: 0,
+        total_order_number: 0,
+        total_process_number: 0
       }
     }
   },
@@ -192,6 +212,7 @@ export default Vue.extend({
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
       this.user_id = query.user_id || ''
+      this.group_id = Number(query.group_id) || ''
     },
     changeRouter(ev?: any) {
       if (ev !== this.page) {
@@ -208,8 +229,10 @@ export default Vue.extend({
           this.date +
           '&limit=' +
           this.limit +
-          '&user_id' +
-          this.user_id
+          '&user_id=' +
+          this.user_id +
+          '&group_id=' +
+          this.group_id
       )
     },
     reset() {
@@ -224,6 +247,7 @@ export default Vue.extend({
           this.date = []
           this.limit = 10
           this.user_id = ''
+          this.group_id = ''
           this.changeRouter()
         })
         .catch(() => {
@@ -243,7 +267,8 @@ export default Vue.extend({
           order_code: this.order_code,
           start_time: this.date.length > 0 ? this.date[0] : '',
           end_time: this.date.length > 0 ? this.date[1] : '',
-          user_id: this.user_id
+          user_id: this.user_id,
+          group_id: this.group_id
         })
         .then((res) => {
           this.list = res.data.data.items
@@ -256,6 +281,9 @@ export default Vue.extend({
   computed: {
     userList() {
       return this.$store.state.api.user.arr
+    },
+    groupList() {
+      return this.$store.state.api.group.arr
     }
   },
   watch: {
@@ -268,6 +296,11 @@ export default Vue.extend({
     this.getFilters()
     this.getList()
     this.$checkCommonInfo([
+      {
+        checkWhich: 'api/group',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getGroupAsync'
+      },
       {
         checkWhich: 'api/user',
         getInfoMethed: 'dispatch',

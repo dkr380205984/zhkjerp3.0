@@ -686,12 +686,27 @@
                     class="red">已驳回</div>
                 </div>
                 <div class="col circleCtn">
-                  <div class="circle"
-                    :class="{'blue':item.has_invoice===1}">票</div>
-                  <div class="circle"
-                    :class="{'green':item.has_pay===1}">付</div>
-                  <div class="circle"
-                    :class="{'red':item.has_deduct===1}">扣</div>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'开票金额:'+item.has_invoice + '元'"
+                    placement="top">
+                    <div class="circle"
+                      :class="{'blue':Number(item.has_invoice)>0}">票</div>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'付款金额:'+item.has_pay + '元'"
+                    placement="top">
+                    <div class="circle"
+                      :class="{'green':Number(item.has_pay)>0}">付</div>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'扣款金额:'+item.has_deduct + '元'"
+                    placement="top">
+                    <div class="circle"
+                      :class="{'red':Number(item.has_deduct)>0}">扣</div>
+                  </el-tooltip>
                 </div>
                 <div class="col">{{ item.user_name }}</div>
                 <div class="col">{{ item.created_at }}</div>
@@ -990,12 +1005,27 @@
                     class="red">已驳回</div>
                 </div>
                 <div class="col circleCtn">
-                  <div class="circle"
-                    :class="{'blue':item.has_invoice===1}">票</div>
-                  <div class="circle"
-                    :class="{'green':item.has_pay===1}">付</div>
-                  <div class="circle"
-                    :class="{'red':item.has_deduct===1}">扣</div>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'开票金额:'+item.has_invoice + '元'"
+                    placement="top">
+                    <div class="circle"
+                      :class="{'blue':Number(item.has_invoice)>0}">票</div>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'付款金额:'+item.has_pay + '元'"
+                    placement="top">
+                    <div class="circle"
+                      :class="{'green':Number(item.has_pay)>0}">付</div>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'扣款金额:'+item.has_deduct + '元'"
+                    placement="top">
+                    <div class="circle"
+                      :class="{'red':Number(item.has_deduct)>0}">扣</div>
+                  </el-tooltip>
                 </div>
                 <div class="col">{{ item.user_name }}</div>
                 <div class="col">{{ item.created_at }}</div>
@@ -1310,12 +1340,27 @@
                     class="red">已驳回</div>
                 </div>
                 <div class="col circleCtn">
-                  <div class="circle"
-                    :class="{'blue':item.has_invoice===1}">票</div>
-                  <div class="circle"
-                    :class="{'green':item.has_pay===1}">付</div>
-                  <div class="circle"
-                    :class="{'red':item.has_deduct===1}">扣</div>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'开票金额:'+item.has_invoice + '元'"
+                    placement="top">
+                    <div class="circle"
+                      :class="{'blue':Number(item.has_invoice)>0}">票</div>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'付款金额:'+item.has_pay + '元'"
+                    placement="top">
+                    <div class="circle"
+                      :class="{'green':Number(item.has_pay)>0}">付</div>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'扣款金额:'+item.has_deduct + '元'"
+                    placement="top">
+                    <div class="circle"
+                      :class="{'red':Number(item.has_deduct)>0}">扣</div>
+                  </el-tooltip>
                 </div>
                 <div class="col">{{ item.user_name }}</div>
                 <div class="col">{{ item.created_at }}</div>
@@ -1662,12 +1707,27 @@
                     class="red">已驳回</div>
                 </div>
                 <div class="col circleCtn">
-                  <div class="circle"
-                    :class="{'blue':item.has_invoice===1}">票</div>
-                  <div class="circle"
-                    :class="{'green':item.has_pay===1}">付</div>
-                  <div class="circle"
-                    :class="{'red':item.has_deduct===1}">扣</div>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'开票金额:'+item.has_invoice + '元'"
+                    placement="top">
+                    <div class="circle"
+                      :class="{'blue':Number(item.has_invoice)>0}">票</div>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'付款金额:'+item.has_pay + '元'"
+                    placement="top">
+                    <div class="circle"
+                      :class="{'green':Number(item.has_pay)>0}">付</div>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'扣款金额:'+item.has_deduct + '元'"
+                    placement="top">
+                    <div class="circle"
+                      :class="{'red':Number(item.has_deduct)>0}">扣</div>
+                  </el-tooltip>
                 </div>
                 <div class="col">{{ item.user_name }}</div>
                 <div class="col">{{ item.created_at }}</div>
@@ -1913,12 +1973,27 @@
                     class="red">已驳回</div>
                 </div>
                 <div class="col circleCtn">
-                  <div class="circle"
-                    :class="{'blue':item.has_invoice===1}">票</div>
-                  <div class="circle"
-                    :class="{'green':item.has_pay===1}">付</div>
-                  <div class="circle"
-                    :class="{'red':item.has_deduct===1}">扣</div>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'开票金额:'+item.has_invoice + '元'"
+                    placement="top">
+                    <div class="circle"
+                      :class="{'blue':Number(item.has_invoice)>0}">票</div>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'付款金额:'+item.has_pay + '元'"
+                    placement="top">
+                    <div class="circle"
+                      :class="{'green':Number(item.has_pay)>0}">付</div>
+                  </el-tooltip>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    :content="'扣款金额:'+item.has_deduct + '元'"
+                    placement="top">
+                    <div class="circle"
+                      :class="{'red':Number(item.has_deduct)>0}">扣</div>
+                  </el-tooltip>
                 </div>
                 <div class="col">{{ item.user_name }}</div>
                 <div class="col">{{ item.created_at }}</div>
@@ -2503,7 +2578,8 @@
       :data="paymentData"
       :client_name="clientFinancial.name"
       :client_id="$route.query.id"
-      @close="paymentFlag=false;init()"></zh-payment>
+      @close="paymentFlag=false"
+      @afterPayment="init()"></zh-payment>
     <!-- 开票 -->
     <zh-invoice :type="clientType"
       :invoice_type="2"
@@ -2512,7 +2588,8 @@
       :data="invoiceData"
       :client_name="clientFinancial.name"
       :client_id="$route.query.id"
-      @close="invoiceFlag=false;init()"></zh-invoice>
+      @close="invoiceFlag=false"
+      @afterInvoice="init()"></zh-invoice>
     <!-- 扣款 -->
     <zh-deduct :type="clientType"
       :update="deductUpdate"
@@ -2520,7 +2597,8 @@
       :data="deductData"
       :client_name="clientFinancial.name"
       :client_id="$route.query.id"
-      @close="deductFlag=false;init()"></zh-deduct>
+      @close="deductFlag=false"
+      @afterDeduct="init()"></zh-deduct>
     <!-- 产品详情 -->
     <product-detail :id="productDetailId"
       :show="productShow"

@@ -71,6 +71,7 @@
                 个人中心<i class="el-icon-arrow-down el-icon--right"></i>
               </span>
               <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="myModule">我的权限</el-dropdown-item>
                 <el-dropdown-item command="changePas">修改密码</el-dropdown-item>
                 <el-dropdown-item command="logout"
                   divided>退出登录</el-dropdown-item>
@@ -143,13 +144,39 @@
         </div>
       </div>
     </div>
+    <div class="popup"
+      v-if="moduleFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">个人权限</span>
+          <span class="el-icon-close"
+            @click="moduleFlag=false"></span>
+        </div>
+        <div class="contentCtn">
+          <div class="row selfModule clearfix"
+            v-for="(item,index) in selfModule"
+            :key="index">
+            <div class="label">{{item.name}}：</div>
+            <div class="info">
+              <span v-for="(itemChild,indexChild) in item.children"
+                :key="indexChild">{{itemChild.name}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <div class="btn backHoverBlue"
+            @click="moduleFlag=false">确认</div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import Pusher from 'pusher-js' // 全局方法
+import { systemModule } from '@/assets/js/dictionary'
 import { navInfo } from '@/types/nav'
-import { changePassword, getCoder, productionProgress, systemMessage, todoInfo } from '@/assets/js/api'
+import { changePassword, getCoder, productionProgress, todoInfo } from '@/assets/js/api'
 export default Vue.extend({
   data(): {
     navData: navInfo[]
@@ -209,6 +236,8 @@ export default Vue.extend({
           url: '/menu'
         }
       ],
+      moduleFlag: false,
+      selfModule: [],
       msgLoading: false
     }
   },
@@ -281,6 +310,22 @@ export default Vue.extend({
         this.$router.push('/login')
       } else if (ev === 'changePas') {
         this.changePasPopupFlag = true
+      } else if (ev === 'myModule') {
+        this.moduleFlag = true
+        if (this.selfModule.length === 0) {
+          const moduleArr = JSON.parse(this.moduleArr)
+          const systemModuleArr = systemModule
+          systemModuleArr.forEach((item) => {
+            if (moduleArr.indexOf(item.id) !== -1) {
+              this.selfModule.push({
+                name: item.name,
+                children: item.detail.filter((item) => {
+                  return moduleArr.indexOf(item.id) !== -1
+                })
+              })
+            }
+          })
+        }
       }
     },
     closePopup() {

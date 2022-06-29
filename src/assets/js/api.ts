@@ -80,7 +80,7 @@ const homePage = {
 
 // 系统教程
 const tutorialSystem = {
-  list: (params: { type: 1 }) => http.get(`${baseUrl}/system/study/lists`, params),
+  list: (params: any) => http.get(`${baseUrl}/system/study/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/system/study/detail`, params),
 }
 
@@ -105,7 +105,7 @@ interface YarnPrice {
 }
 const yarnPrice = {
   create: (params: YarnPrice) => http.post(`${baseUrl}/yarn/price/save`, params, 'application/json'),
-  list: (params?: { material_type: 1 | 2 }) => http.get(`${baseUrl}/yarn/price/lists`, params),
+  list: (params?: { material_type: 1 | 2, keyword: string }) => http.get(`${baseUrl}/yarn/price/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/yarn/price/delete`, params, 'application/json'),
 }
 // 单据审核
@@ -259,6 +259,25 @@ const invoice = {
 
 // 文件管理
 const fileManage = {
+  list: (params?: {
+    page: number | string
+    limit: number | string
+    file_name?: string
+    tag?: string
+    start_time?: string
+    end_time?: string
+    user_id?: string
+    group_id?: string
+    client_id?: string | number
+  }) => http.get(`${baseUrl}/file/lists`, params),
+  create: (params: {
+    id?: string | number
+    file_url: string
+    tag: string
+    file_type: string
+    client_id: string
+    file_name: string
+  }) => http.post(`${baseUrl}/save/file`, params, 'application/json'),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/file/delete`, params, 'application/json'),
 }
 // 产品品类
@@ -409,7 +428,7 @@ const yarn = {
 import { DecorateMaterialInfo } from '@/types/materialSetting'
 const decorateMaterial = {
   create: (params: { data: DecorateMaterialInfo[] }) => http.post(`${baseUrl}/decorate/material/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrl}/decorate/material/lists`, params),
+  list: (params?: any) => http.get(`${baseUrl}/decorate/material/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/decorate/material/delete`, params, 'application/json')
 }
 
@@ -417,7 +436,7 @@ const decorateMaterial = {
 import { PackMaterialInfo } from '@/types/materialSetting'
 const packMaterial = {
   create: (params: PackMaterialInfo) => http.post(`${baseUrl}/pack/material/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrl}/pack/material/lists`, params),
+  list: (params?: any) => http.get(`${baseUrl}/pack/material/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/pack/material/delete`, params, 'application/json')
 }
 
@@ -770,8 +789,19 @@ const productionProgress = {
     limit?: number | string
     user_id?: string | number
     order_type: 1 | 2
-  }) => http.get(`${baseUrl}/production/list`, params),
+  }) => http.get(`${baseUrl}/weave/plan/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/production/detail`, params),
+  updateDetail: (params: {
+    order_ids?: Array<number> // 根据订单id批量查询
+    plan_ids?: Array<number> // 根据生产计划单id批量查询
+  }) => http.get(`${baseUrl}/weave/plan/product/lists`, params),
+  updateNumber: (params: {
+    data: Array<{
+      pid: number | string
+      number: number | string
+      desc: string
+    }>
+  }) => http.post(`${baseUrl}/weave/plan/product/update/log/save`, params, 'application/json'),
   codeInfo: (params: {
     hash: number | string
   }) => http.get(`${baseUrl}/production/code/info`, params),

@@ -95,7 +95,8 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
-          <div class="elCtn">
+          <div class="elCtn"
+            style="width:200px">
             <el-select v-model="limit"
               placeholder="每页展示条数"
               @change="changeRouter">
@@ -103,6 +104,19 @@
                 :key="item.value"
                 :label="item.name"
                 :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn"
+            style="width:200px">
+            <el-select v-model="status"
+              @change="changeRouter"
+              placeholder="生产计划状态">
+              <el-option label="所有单据"
+                :value="null"></el-option>
+              <el-option label="待添加计划"
+                value="0"></el-option>
+              <el-option label="已添加计划"
+                value="1"></el-option>
             </el-select>
           </div>
           <div class="btn backHoverOrange fr"
@@ -155,7 +169,7 @@ export default Vue.extend({
       client_id: [],
       group_id: '',
       user_id: '',
-      status: '0',
+      status: '1',
       date: [],
       total: 1,
       page: 1,
@@ -304,7 +318,7 @@ export default Vue.extend({
       this.page = Number(query.page)
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.keyword = query.keyword || ''
-      this.status = query.status || '0'
+      this.status = query.status === 'null' ? null : query.status
       this.user_id = query.user_id || ''
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.order_type = Number(query.order_type) || null
@@ -370,7 +384,7 @@ export default Vue.extend({
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           page: this.page,
           limit: this.limit,
-          is_check: this.status,
+          has_material_plan: this.status,
           start_time: this.date.length > 0 ? this.date[0] : '',
           end_time: this.date.length > 0 ? this.date[1] : '',
           user_id: this.user_id,

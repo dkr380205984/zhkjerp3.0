@@ -95,7 +95,7 @@ export default Vue.extend({
             name: '检验收发',
             id: '9-3',
             icon: 'icon-shengchanpinjianyan',
-            url: '/inspection/list?page=1&type=1'
+            url: '/inspection/list?page=1&type=1&status=1&order_type=1'
           },
           {
             name: '包装管理',

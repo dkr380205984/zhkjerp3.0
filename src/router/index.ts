@@ -37,6 +37,13 @@ const routes: Array<RouteConfig> = [
     name: '物料订购单打印',
     component: () => import('../views/materialManage/orderPrint.vue')
   }, {
+    meta: {
+      permissions_id: '6-4',
+    },
+    path: '/accessoriesManage/print',
+    name: '辅料订购单打印',
+    component: () => import('../views/accessoriesManage/print.vue')
+  }, {
     path: '/materialManage/processPrint',
     name: '物料加工单打印',
     component: () => import('../views/materialManage/processPrint.vue')
