@@ -119,8 +119,6 @@
             @click="goStock(13)">物料出库</div>
           <div class="btn backHoverBlue fr"
             @click="goStock(7)">物料移库</div>
-          <div class="btn backHoverGreen fr"
-            @click="getStoreList();lookListFlag=true">仓库列表</div>
         </div>
         <div class="list"
           v-loading="loading">
@@ -888,6 +886,8 @@
       <div class="main">
         <div class="btnCtn"
           style="float:left">
+          <div class="btn backHoverGreen fr"
+            @click="getStoreList();lookListFlag=true">仓库列表</div>
           <div class="btn backHoverBlue"
             @click="$router.push('/store/create?store_type='+store_type)">添加仓库</div>
         </div>

@@ -115,53 +115,67 @@
             <div class="col">公司全称</div>
             <div class="col">客户类型</div>
             <div class="col sortCol">
-              <span>已下单总额</span>
+              <span>下单总额</span>
               <div class="sortCtn">
                 <div class="el-icon-caret-top"
+                  :class="{'active':sortCol==='total_order_price'&&sort==='asc'}"
                   @click="sortCol='total_order_price';sort='asc';getList()"></div>
                 <div class="el-icon-caret-bottom"
+                  :class="{'active':sortCol==='total_order_price'&&sort==='desc'}"
                   @click="sortCol='total_order_price';sort='desc';getList()"></div>
               </div>
             </div>
-            <div class="col">已下单总数 <div class="sortCtn">
+            <div class="col">下单总数 <div class="sortCtn">
                 <div class="el-icon-caret-top"
-                  @click="sortCol='total_order_price';sort='asc';getList()"></div>
+                  :class="{'active':sortCol==='total_order_number'&&sort==='asc'}"
+                  @click="sortCol='total_order_number';sort='asc';getList()"></div>
                 <div class="el-icon-caret-bottom"
-                  @click="sortCol='total_order_price';sort='desc';getList()"></div>
+                  :class="{'active':sortCol==='total_order_number'&&sort==='desc'}"
+                  @click="sortCol='total_order_number';sort='desc';getList()"></div>
               </div>
             </div>
-            <div class="col">已发货总额 <div class="sortCtn">
+            <div class="col">发货总额 <div class="sortCtn">
                 <div class="el-icon-caret-top"
-                  @click="sortCol='total_order_price';sort='asc';getList()"></div>
+                  :class="{'active':sortCol==='total_transport_price'&&sort==='asc'}"
+                  @click="sortCol='total_transport_price';sort='asc';getList()"></div>
                 <div class="el-icon-caret-bottom"
-                  @click="sortCol='total_order_price';sort='desc';getList()"></div>
+                  :class="{'active':sortCol==='total_transport_price'&&sort==='desc'}"
+                  @click="sortCol='total_transport_price';sort='desc';getList()"></div>
               </div>
             </div>
-            <div class="col">已发货总数 <div class="sortCtn">
+            <div class="col">发货总数 <div class="sortCtn">
                 <div class="el-icon-caret-top"
+                  :class="{'active':sortCol==='total_transport_number'&&sort==='asc'}"
                   @click="sortCol='total_transport_number';sort='asc';getList()"></div>
                 <div class="el-icon-caret-bottom"
+                  :class="{'active':sortCol==='total_transport_number'&&sort==='desc'}"
                   @click="sortCol='total_transport_number';sort='desc';getList()"></div>
               </div>
             </div>
-            <div class="col">已开票总额 <div class="sortCtn">
+            <div class="col">开票总额 <div class="sortCtn">
                 <div class="el-icon-caret-top"
+                  :class="{'active':sortCol==='total_invoice_price'&&sort==='asc'}"
                   @click="sortCol='total_invoice_price';sort='asc';getList()"></div>
                 <div class="el-icon-caret-bottom"
+                  :class="{'active':sortCol==='total_invoice_price'&&sort==='desc'}"
                   @click="sortCol='total_invoice_price';sort='desc';getList()"></div>
               </div>
             </div>
-            <div class="col">已收款总额 <div class="sortCtn">
+            <div class="col">收款总额 <div class="sortCtn">
                 <div class="el-icon-caret-top"
+                  :class="{'active':sortCol==='total_collect_price'&&sort==='asc'}"
                   @click="sortCol='total_collect_price';sort='asc';getList()"></div>
                 <div class="el-icon-caret-bottom"
+                  :class="{'active':sortCol==='total_collect_price'&&sort==='desc'}"
                   @click="sortCol='total_collect_price';sort='desc';getList()"></div>
               </div>
             </div>
-            <div class="col">已扣款总额 <div class="sortCtn">
+            <div class="col">扣款总额 <div class="sortCtn">
                 <div class="el-icon-caret-top"
+                  :class="{'active':sortCol==='total_deduct_price'&&sort==='asc'}"
                   @click="sortCol='total_deduct_price';sort='asc';getList()"></div>
                 <div class="el-icon-caret-bottom"
+                  :class="{'active':sortCol==='total_deduct_price'&&sort==='desc'}"
                   @click="sortCol='total_deduct_price';sort='desc';getList()"></div>
               </div>
             </div>

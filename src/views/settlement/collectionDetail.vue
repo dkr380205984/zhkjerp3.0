@@ -786,11 +786,12 @@ export default Vue.extend({
           index: 1
         },
         {
-          key: 'contacts_name',
-          name: '公司联系人',
+          key: 'total_price',
+          name: '下单总额',
           ifShow: true,
           ifLock: false,
-          index: 2
+          index: 8,
+          errVal: '0'
         },
         {
           key: 'invoice_status',
@@ -851,6 +852,13 @@ export default Vue.extend({
           index: 5
         },
         {
+          key: 'contacts_name',
+          name: '公司联系人',
+          ifShow: true,
+          ifLock: false,
+          index: 2
+        },
+        {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
@@ -863,14 +871,6 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 7,
-          errVal: '0'
-        },
-        {
-          key: 'total_price',
-          name: '下单总额',
-          ifShow: true,
-          ifLock: false,
-          index: 8,
           errVal: '0'
         },
         {

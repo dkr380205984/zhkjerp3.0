@@ -5,7 +5,7 @@
     <div class="module"
       @click.right="handleClickRight">
       <div class="titleCtn">
-        <div class="title">文件列表</div>
+        <div class="title">文件管理</div>
       </div>
       <div class="listCtn"
         v-loading="loading">
@@ -85,24 +85,26 @@
           <div class="row title">
             <div class="col">文件名称</div>
             <div class="col">文件标签</div>
+            <div class="col">关联单据</div>
             <div class="col">上传时间</div>
             <div class="col">所属公司</div>
             <div class="col">所属小组</div>
             <div class="col">上传人</div>
             <div class="col"
-              style="flex:1.2">操作</div>
+              style="flex:1.5">操作</div>
           </div>
           <div class="row"
             v-for="item in list"
             :key="item.id">
             <div class="col">{{item.file_name}}</div>
             <div class="col">{{item.tag}}</div>
+            <div class="col">{{item.order_id?item.order.code:'无'}}</div>
             <div class="col">{{item.updated_at.slice(0,10)}}</div>
             <div class="col">{{item.client.name}}</div>
-            <div class="col">{{item.groud_name}}</div>
-            <div class="col">{{item.user.user_name}}</div>
+            <div class="col">{{item.group?item.group.name:'无'}}</div>
+            <div class="col">{{item.user.name}}</div>
             <div class="col"
-              style="font-size:14px;flex:1.2">
+              style="font-size:14px;flex:1.5">
               <a class="opr hoverBlue"
                 :href="item.file_url"
                 download
@@ -155,11 +157,11 @@
           <div class="row">
             <div class="label">分享用户：</div>
             <div class="info elCtn">
-              <el-select v-model="shareInfo.user_id"
+              <el-select v-model="shareInfo.share_user_id"
                 placeholder="选择用户"
                 multiple
                 clearable>
-                <el-option v-for="item in userList"
+                <el-option v-for="item in userListShare"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"></el-option>
@@ -408,7 +410,7 @@ export default Vue.extend({
       uploadFlag: false,
       shareInfo: {
         id: '',
-        user_id: [],
+        share_user_id: [],
         file_name: ''
       },
       uploadInfo: {
@@ -444,6 +446,9 @@ export default Vue.extend({
     },
     userList() {
       return this.$store.state.api.user.arr
+    },
+    userListShare() {
+      return this.$store.state.api.user.arr.filter((item: any) => item.value !== this.$getsessionStorage('user_id'))
     },
     groupList() {
       return this.$store.state.api.group.arr
@@ -580,10 +585,28 @@ export default Vue.extend({
         })
     },
     shareFile(info: any) {
+      this.shareInfo.id = info.id
       this.shareInfo.file_name = info.file_name
       this.shareFlag = true
     },
-    saveShareFile() {},
+    saveShareFile() {
+      const formCheck = this.$formCheck(this.shareInfo, [
+        {
+          key: 'share_user_id',
+          errMsg: '请选择分享人',
+          regNormal: 'checkArr'
+        }
+      ])
+      if (!formCheck) {
+        fileManage.share(this.shareInfo).then((res) => {
+          if (res.data.status) {
+            this.$message.success('分享成功')
+            this.shareFlag = false
+            this.getList()
+          }
+        })
+      }
+    },
     saveUploadFile() {
       const formCheck = this.$formCheck(this.uploadInfo, [
         {

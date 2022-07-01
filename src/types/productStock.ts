@@ -29,6 +29,8 @@ export interface ProductStockInfo {
   secondary_store_id: string | number
   store: string
   secondary_store: string
+  rel_doc_id?: string // 关联单号
+  rel_doc_code?: string
   store_arr?: number[] // 前端下拉框用
   tree_data?: string[] | string
   info_data: Array<{
@@ -44,6 +46,7 @@ export interface ProductStockInfo {
     price?: number | string
     number: number | string
     color_size?: string
+    tree_data?: string // 前端用
   }>
 }
 

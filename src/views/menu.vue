@@ -154,7 +154,7 @@ export default Vue.extend({
             url: '/setting'
           },
           {
-            name: '文件列表',
+            name: '文件管理',
             id: '23-1',
             icon: 'icon-wuliaojihua',
             url: '/fileManage/list?page=1&status=&client_id=&date=&group_id=&user_id=&limit='

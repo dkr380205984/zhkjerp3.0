@@ -25,9 +25,9 @@
             <div class="msgBox"
               v-loading="msgLoading">
               <div class="msgOpr">
-                <span>待办事项</span>
+                <span>消息通知</span>
                 <span class="hoverBlue"
-                  @click="getTodoList">刷新待办事项</span>
+                  @click="getTodoList">刷新消息通知</span>
               </div>
               <div class="msgContent">
                 <div class="noMsg"
@@ -53,7 +53,9 @@
                   </div>
                 </div>
               </div>
-              <div class="msgBottom"><span @click="$router.push('/otherPage/msgList')">查看全部</span></div>
+              <div class="msgBottom">
+                <span @click="readAll">当前消息全部已读</span>
+              </div>
             </div>
           </div>
           <!-- <i class="el-icon-setting elIcon"
@@ -146,20 +148,37 @@
     </div>
     <div class="popup"
       v-if="moduleFlag">
-      <div class="main">
+      <div class="main"
+        style="width:1000px">
         <div class="titleCtn">
           <span class="text">个人权限</span>
           <span class="el-icon-close"
             @click="moduleFlag=false"></span>
         </div>
         <div class="contentCtn">
-          <div class="row selfModule clearfix"
-            v-for="(item,index) in selfModule"
-            :key="index">
-            <div class="label">{{item.name}}：</div>
-            <div class="info">
-              <span v-for="(itemChild,indexChild) in item.children"
-                :key="indexChild">{{itemChild.name}}</span>
+          <div class="flattenTableCtn"
+            style="padding-left:0;padding-right:0">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol"
+                  style="max-width:130px;border-right:1px solid #e9e9e9">模块名称</div>
+                <div class="tcol">权限内容</div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div style="border-bottom:1px solid #e9e9e9"
+                class="trow"
+                v-for="(item,index) in selfModule"
+                :key="index">
+                <div class="tcol"
+                  style="max-width:130px;border-right:1px solid #e9e9e9">{{item.name}}</div>
+                <div class="tcol"
+                  style="flex-direction:row;justify-content: flex-start;align-items: center;flex-wrap: wrap;padding:12px">
+                  <span style="margin-right:8px;margin-bottom:8px"
+                    v-for="(itemChild,indexChild) in item.children"
+                    :key="indexChild">{{itemChild.name}}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -252,6 +271,7 @@ export default Vue.extend({
       this.msgLoading = true
       todoInfo
         .list({
+          todo_type: ['NOTICE_TODO', 'SHARE_TODO'],
           limit: 10,
           page: 1,
           status: 1
@@ -295,7 +315,31 @@ export default Vue.extend({
         this.$openUrl(
           '/accessoriesManage/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id
         )
+      } else if (item.doc_type === 19) {
+        this.$openUrl('/inspection/detail?id=' + item.doc_order_id)
+      } else {
+        this.$message.error('暂无该类型')
       }
+      todoInfo
+        .complete({
+          id: [item.id]
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.getTodoList()
+          }
+        })
+    },
+    readAll() {
+      todoInfo
+        .complete({
+          id: this.msgList.map((item: any) => item.id)
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.getTodoList()
+          }
+        })
     },
     commondHandler(ev: string) {
       if (ev === 'logout') {
@@ -492,9 +536,14 @@ export default Vue.extend({
         '开票单',
         '收款单',
         '样单',
-        '辅料采购单'
+        '辅料采购单',
+        '产品检验单'
       ]
-      return arr[val]
+      if (!val) {
+        return '其他'
+      } else {
+        return arr[val]
+      }
     }
   },
   mounted() {
@@ -524,4 +573,11 @@ export default Vue.extend({
 
 <style lang="less" scoped>
 @import '~@/assets/css/index.less';
+</style>
+<style lang="less">
+a {
+  text-decoration: none;
+  color: #1a95ff;
+  cursor: pointer;
+}
 </style>

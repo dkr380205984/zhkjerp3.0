@@ -3,38 +3,45 @@
 @import '../bottomBar.less';
 @import '../table.less';
 @import '../popup.less';
-#orderDetail{
-  .module{
-    .titleIn{
+@import '../edit.less';
+
+#orderDetail {
+  .module {
+    .titleIn {
       color: @blue;
       padding: 0 32px;
       font-size: 18px;
     }
-    .processCtn{
+
+    .processCtn {
       padding: 20px 32px;
-      .process{
+
+      .process {
         width: 100%;
         height: 28px;
-        background: rgba(0,0,0,.45);
+        background: rgba(0, 0, 0, .45);
         line-height: 28px;
         border-radius: 14px;
         font-size: @fontMiddle;
         position: relative;
         margin-bottom: 20px;
-        .active{
+
+        .active {
           background: #61CAAC;
           width: 15%;
           height: 28px;
           border-radius: 14px;
         }
-        .left{
+
+        .left {
           position: absolute;
           top: 0;
           bottom: 0;
           color: #fff;
           left: 12px;
         }
-        .right{
+
+        .right {
           position: absolute;
           top: 0;
           bottom: 0;
@@ -44,49 +51,124 @@
       }
     }
   }
-  .detailCtn{
-    .tableCtn{
+
+  .detailCtn {
+    .tableCtn {
       padding-top: 0;
       padding-left: 0;
       padding-right: 0;
     }
   }
-  .noPadTop{
+
+  .noPadTop {
     padding-top: 0;
   }
-  .noPadBtm{
+
+  .noPadBtm {
     padding-bottom: 0;
   }
-  .samallFont{
-    .trow{
+
+  .samallFont {
+    .trow {
       height: 100%;
     }
-    .tcol{
-      &.center{
+
+    .tcol {
+      &.center {
         text-align: center;
       }
+
       font-size: @fontSmall;
-      &.w100{
+
+      &.w100 {
         min-width: 100px;
         max-width: 150px;
       }
     }
   }
-  .tableCtn{
-    .tbody{
-      .thead{
+
+  .tableCtn {
+    .tbody {
+      .thead {
         border: 0;
         font-size: 14px;
       }
-      .tbody{
+
+      .tbody {
         border: 0;
         font-size: 14px;
       }
     }
   }
-  .zhDropDown{
-    .clickButton{
+
+  .zhDropDown {
+    .clickButton {
       padding: 20px;
     }
   }
-} 
+
+  .editCtn {
+    .col {
+      margin-right: 16px;
+
+      .label {
+        width: auto;
+        text-align: left !important;
+        font-size: @fontSmall;
+      }
+    }
+
+    .opr {
+      font-size: @fontSmall;
+      transform: translate(-9px, 100%);
+    }
+  }
+
+  .stepCtn {
+    display: flex;
+    align-items: center;
+    height: 70px;
+    margin: 12px 0;
+    justify-content: space-around;
+    position: relative;
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .circle {
+        text-align: center;
+        line-height: 40px;
+        width: 40px;
+        color: @blue;
+        border-radius: 50%;
+        border: 1px solid @blue;
+        background: #fff;
+      }
+
+      .name {
+        margin-top: 10px;
+        color: @blue;
+      }
+
+      &.active {
+        .circle {
+          background: @blue;
+          color: #fff;
+        }
+      }
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      height: 1px;
+      left: 0;
+      right: 0;
+      top: 21px;
+      background: #ccc;
+      z-index: -1;
+    }
+  }
+}

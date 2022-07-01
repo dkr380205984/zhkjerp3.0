@@ -87,7 +87,7 @@ const tutorialSystem = {
 // 待办事项
 const todoInfo = {
   list: (params: any) => http.get(`${baseUrl}/todo/lists`, params),
-  complete: (params: { id: number[] }) => http.post(`${baseUrl}/complete/todo`, params, 'application/json'),
+  complete: (params: { id: number[] }) => http.post(`${baseUrl}/todo/complete`, params, 'application/json'),
 }
 // 纱线报价
 interface YarnPrice {
@@ -279,6 +279,10 @@ const fileManage = {
     file_name: string
   }) => http.post(`${baseUrl}/save/file`, params, 'application/json'),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/file/delete`, params, 'application/json'),
+  share: (params: {
+    id: string | number
+    share_user_id: any[]
+  }) => http.post(`${baseUrl}/file/share`, params, 'application/json'),
 }
 // 产品品类
 import { CategoryInfo } from '@/types/productSetting'

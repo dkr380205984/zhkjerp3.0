@@ -121,9 +121,14 @@ export default Vue.extend({
         '开票单',
         '收款单',
         '样单',
-        '辅料采购单'
+        '辅料采购单',
+        '产品检验单'
       ]
-      return arr[val]
+      if (!val) {
+        return '其他'
+      } else {
+        return arr[val]
+      }
     }
   },
   methods: {
@@ -158,6 +163,10 @@ export default Vue.extend({
         this.$openUrl(
           '/accessoriesManage/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id
         )
+      } else if (item.doc_type === 19) {
+        this.$openUrl('/inspection/detail?id=' + item.doc_order_id)
+      } else {
+        this.$message.error('暂无该类型')
       }
     },
     // 待办事项样式转换
@@ -183,6 +192,7 @@ export default Vue.extend({
       this.loading = true
       todoInfo
         .list({
+          todo_type: ['ERROR_TODO', 'CHECK_TODO'],
           limit: 20,
           page: this.pages,
           status: this.activeName

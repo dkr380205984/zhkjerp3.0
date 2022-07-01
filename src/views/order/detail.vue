@@ -225,7 +225,6 @@
             </div>
             <div class="tcol">产品单据状态</div>
             <div class="tcol">产品描述</div>
-            <div class="tcol">修改意见</div>
           </div>
         </div>
         <div class="tbody">
@@ -280,7 +279,6 @@
             </div>
             <div class="tcol"
               v-html="item.desc"></div>
-            <div class="tcol">{{item.client_edit_idea||'无'}}</div>
           </div>
         </div>
       </div>
@@ -1651,7 +1649,7 @@
                   <span class="text">操作记录</span>
                 </div>
                 <div class="btn backHoverRed"
-                  @click="cancelOrder">
+                  @click="cancelOrderFlag=true">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-shanchudingdan"></use>
@@ -1779,6 +1777,386 @@
         </div>
       </div>
     </div>
+    <!-- 取消订单 -->
+    <div class="popup"
+      v-if="cancelOrderFlag">
+      <div class="main"
+        style="width:1200px">
+        <div class="titleCtn">
+          <span class="text">取消订单流程</span>
+          <div class="closeCtn"
+            @click="cancelOrderBack">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn"
+          style="min-height:400px">
+          <div class="stepCtn">
+            <div class="step"
+              :class="{'active':cancleOrderStep===1}">
+              <div class="circle">
+                <span class="white">1</span>
+              </div>
+              <div class="name">原料结余</div>
+            </div>
+            <div class="step"
+              :class="{'active':cancleOrderStep===2}">
+              <div class="circle">
+                <span class="white">2</span>
+              </div>
+              <div class="name">产品结余</div>
+            </div>
+            <div class="step"
+              :class="{'active':cancleOrderStep===3}">
+              <div class="circle">
+                <span class="white">3</span>
+              </div>
+              <div class="name">完成取消</div>
+            </div>
+          </div>
+          <template v-if="cancleOrderStep===1">
+            <div class="editCtn">
+              <div class="row">
+                <div class="col">
+                  <div class="label">
+                    <span class="text">入库仓库</span>
+                    <span class="explanation">(必填)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-cascader :options="yarnStoreArr"
+                      placeholder="请选择仓库"
+                      v-model="materialStockInfo.store_arr"></el-cascader>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
+                    <span class="text">关联单据</span>
+                    <span class="explanation">(默认)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="orderInfo.code"
+                      placeholder="关联单据"
+                      disabled></el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
+                    <span class="text">出入库类型</span>
+                    <span class="explanation">(默认)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <div class="disableInput">订单结余入库</div>
+                  </div>
+                </div>
+              </div>
+              <div class="row"
+                v-for="(item,index) in materialStockInfo.info_data"
+                :key="index">
+                <div class="col"
+                  style="min-width:200px">
+                  <div class="label"
+                    v-if="index===0">
+                    <span class="text">物料名称</span>
+                    <span class="explanation">(必填)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-select placeholder="原料名称"
+                      v-model="item.material_id"
+                      @change="getMatUnit($event,item)">
+                      <el-option v-for="(item,index) in materialDetail"
+                        :key="index"
+                        :label="item.material_name"
+                        :value="item.material_id"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label"
+                    v-if="index===0">
+                    <span class="text">物料颜色</span>
+                    <span class="explanation">(必填)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-autocomplete placeholder="物料颜色"
+                      v-model="item.material_color"
+                      :fetch-suggestions="(str,cb)=>{return searchColor(str,cb,item.colorList)}"></el-autocomplete>
+                  </div>
+                </div>
+                <div class="col"
+                  style="max-width:88px">
+                  <div class="label"
+                    v-if="index===0">
+                    <span class="text">属性</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-autocomplete class="once"
+                      v-model="item.attribute"
+                      :fetch-suggestions="searchAttribute"
+                      placeholder="物料属性"></el-autocomplete>
+                  </div>
+                </div>
+                <div class="col"
+                  style="max-width:88px">
+                  <div class="label"
+                    v-if="index===0">
+                    <span class="text">批号</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input :ref="'batch_code-'+index"
+                      @keydown.native="$focusByKeydown($event,'batch_code',[index],materialStockInfo,['info_data'])"
+                      placeholder="批号"
+                      v-model="item.batch_code"></el-input>
+                  </div>
+                </div>
+                <div class="col"
+                  style="max-width:88px">
+                  <div class="label"
+                    v-if="index===0">
+                    <span class="text">缸号</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input :ref="'vat_code-'+index"
+                      @keydown.native="$focusByKeydown($event,'vat_code',[index],materialStockInfo,['info_data'])"
+                      placeholder="缸号"
+                      v-model="item.vat_code"></el-input>
+                  </div>
+                </div>
+                <div class="col"
+                  style="max-width:88px">
+                  <div class="label"
+                    v-if="index===0">
+                    <span class="text">色号</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input :ref="'color_code-'+index"
+                      @keydown.native="$focusByKeydown($event,'color_code',[index],materialStockInfo,['info_data'])"
+                      placeholder="色号"
+                      v-model="item.color_code"></el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label"
+                    v-if="index===0">
+                    <span class="text">入库数量</span>
+                    <span class="explanation">(必填)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input :ref="'number-'+index"
+                      @keydown.native="$focusByKeydown($event,'number',[index],materialStockInfo,['info_data'])"
+                      placeholder="数量"
+                      v-model="item.number">
+                      <template slot="append">{{item.unit}}</template>
+                    </el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label"
+                    v-if="index===0">
+                    <span class="text">入库件数</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input :ref="'item-'+index"
+                      @keydown.native="$focusByKeydown($event,'item',[index],materialStockInfo,['info_data'])"
+                      placeholder="入库件数"
+                      v-model="item.item"></el-input>
+                  </div>
+                </div>
+                <div class="opr hoverBlue"
+                  v-if="index===0"
+                  @click="$addItem(materialStockInfo.info_data,{
+                    material_name: '',
+                    tree_data: [],
+                    material_id: '',
+                    material_color: '',
+                    color_code: '',
+                    batch_code: '',
+                    vat_code: '',
+                    attribute: '',
+                    number: '',
+                    item: '', // 件数
+                    unit: 'kg',
+                    rel_doc_info_id: '' // 采购单调取单加工单子项id
+                  })">添加</div>
+                <div class="opr hoverRed"
+                  v-if="index>0"
+                  @click="$deleteItem(materialStockInfo.info_data,index)">删除</div>
+              </div>
+              <div class="row">
+                <div class="col"
+                  style="min-width: 685px;">
+                  <div class="label">
+                    <span class="text">备注信息</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="materialStockInfo.desc"
+                      placeholder="备注信息"></el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
+                    <span class="text">入库日期</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-date-picker style="width:100%"
+                      placeholder="请选择入库日期"
+                      v-model="materialStockInfo.complete_time"
+                      value-format="yyyy-MM-dd"></el-date-picker>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+          <template v-if="cancleOrderStep===2">
+            <div class="editCtn">
+              <div class="row">
+                <div class="col">
+                  <div class="label">
+                    <span class="text">入库仓库</span>
+                    <span class="explanation">(必填)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-cascader :options="proStoreArr"
+                      placeholder="请选择仓库"
+                      v-model="productStockInfo.store_arr"></el-cascader>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
+                    <span class="text">关联单据</span>
+                    <span class="explanation">(默认)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="orderInfo.code"
+                      placeholder="关联单据"
+                      disabled></el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
+                    <span class="text">出入库类型</span>
+                    <span class="explanation">(默认)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <div class="disableInput">{{productStockInfo.action_type | productStockTypeFilter}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="row"
+                v-for="(item,index) in productStockInfo.info_data"
+                :key="index">
+                <div class="col"
+                  style="min-width: 685px;">
+                  <div class="label"
+                    v-if="index===0">
+                    <span class="text">产品信息</span>
+                    <span class="explanation">(必选)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-select v-model="item.tree_data"
+                      placeholder="产品信息">
+                      <el-option v-for="(item,index) in productAllList"
+                        :key="index"
+                        :label="item.product_code + '('+item.category + '/' +item.secondary_category+')' + '/' + item.size_name + '/' + item.color_name"
+                        :value="item.product_id+'/'+item.size_id+'/'+item.color_id"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="spaceBetween">
+                    <div class="once">
+                      <div class="label"
+                        v-if="index===0">
+                        <span class="text">产品价值</span>
+                      </div>
+                      <div class="info elCtn">
+                        <el-input :ref="'price-'+index"
+                          v-model="item.price"
+                          placeholder="产品价值"
+                          @keydown.native="$focusByKeydown($event,'price',[index],productStockInfo,['info_data'])"></el-input>
+                      </div>
+                    </div>
+                    <div class="once">
+                      <div class="label"
+                        v-if="index===0">
+                        <span class="text">入库数</span>
+                        <span class="explanation">(不填为0)</span>
+                      </div>
+                      <div class="info elCtn">
+                        <el-input :ref="'number-'+index"
+                          v-model="item.number"
+                          placeholder="入库数"
+                          @keydown.native="$focusByKeydown($event,'number',[index],productStockInfo,['info_data'])"></el-input>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="opr hoverBlue"
+                  v-if="index===0"
+                  @click="$addItem(productStockInfo.info_data,{
+                    product_code: '',
+                    name: '',
+                    category: '',
+                    secondary_category: '',
+                    product_id: '',
+                    size_id: '',
+                    color_id: '',
+                    price: '',
+                    size_name: '',
+                    color_name: '',
+                    number: '',
+                    tree_data: ''
+                  })">添加</div>
+                <div class="opr hoverRed"
+                  v-if="index>0"
+                  @click="$deleteItem(productStockInfo.info_data,index)">删除</div>
+              </div>
+              <div class="row">
+                <div class="col"
+                  style="min-width: 685px;">
+                  <div class="label">
+                    <span class="text">备注信息</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="productStockInfo.desc"
+                      placeholder="备注信息"></el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
+                    <span class="text">入库日期</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-date-picker style="width:100%"
+                      placeholder="请选择入库日期"
+                      v-model="productStockInfo.complete_time"
+                      value-format="yyyy-MM-dd"></el-date-picker>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+          <template v-if="cancleOrderStep===3">
+            <div class="explainCtn orange">确认提交后，订单状态将切换为“已取消”，且状态不能撤回。该订单将从列表中过滤，如需查询，请通过订单状态筛选，进行查询。是否继续？</div>
+          </template>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="cancelOrderBack">取消</span>
+          <span class="btn backHoverOrange"
+            v-if="cancleOrderStep!==1"
+            @click="cancleOrderStep--">上一步</span>
+          <span class="btn backHoverGreen"
+            v-if="cancleOrderStep!==3"
+            @click="cancleOrderStep++">不结余直接下一步</span>
+          <span class="btn backHoverBlue"
+            v-if="cancleOrderStep!==3"
+            @click="cancleOrderStep===1?saveMatRest():saveProRest()">确认结余</span>
+          <span class="btn backHoverBlue"
+            v-if="cancleOrderStep===3"
+            @click="cancelOrder">确认取消</span>
+        </div>
+      </div>
+    </div>
     <!-- 关联单据 -->
     <zh-order-log :order_id="$route.query.id"
       :order_time_id="orderInfo.time_data[0].id"
@@ -1822,15 +2200,18 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { order } from '@/assets/js/api'
-import { OrderBatch, OrderInfo, OrderTime } from '@/types/order'
-import zhCheckDetail from '@/components/zhCheck/zhCheckDetail.vue'
+import { materialStock, order, productStock, store } from '@/assets/js/api'
+import { OrderBatch, OrderInfo, OrderProductFlatten, OrderProductMerge, OrderTime } from '@/types/order'
+import { ProductStockInfo } from '@/types/productStock'
+import { MaterialStockInfo } from '@/types/materialStock'
+import { yarnAttributeArr } from '@/assets/js/dictionary'
 interface OrderDetail extends OrderInfo {
   time_data: OrderTime[]
 }
 export default Vue.extend({
-  components: { zhCheckDetail },
   data(): {
+    materialStockInfo: MaterialStockInfo
+    productStockInfo: ProductStockInfo
     orderInfo: OrderDetail
     [propName: string]: any
   } {
@@ -1842,6 +2223,78 @@ export default Vue.extend({
       show_material: false,
       show_production: false,
       show_financial: false,
+      cancelOrderFlag: false,
+      cancelOrderChangeFlag: false,
+      productAllList: [],
+      cancleOrderStep: 1,
+      proStoreArr: [],
+      yarnStoreArr: [],
+      productStockInfo: {
+        action_type: 2,
+        complete_time: this.$getDate(new Date()),
+        tree_data: [], // 存公司或者移库仓库用
+        client_id: '',
+        move_store_id: '',
+        move_secondary_store_id: '',
+        desc: '',
+        store_id: '',
+        secondary_store_id: '',
+        store: '',
+        secondary_store: '',
+        rel_doc_id: '',
+        rel_doc_code: '',
+        store_arr: [], // 前端下拉框用
+        info_data: [
+          {
+            product_code: '',
+            name: '',
+            category: '',
+            secondary_category: '',
+            product_id: '',
+            size_id: '',
+            color_id: '',
+            price: '',
+            size_name: '',
+            color_name: '',
+            number: '',
+            tree_data: ''
+          }
+        ]
+      },
+      materialStockInfo: {
+        material_type: 1,
+        action_type: 6,
+        rel_doc_type: '',
+        rel_doc_id: '',
+        rel_doc_code: '',
+        complete_time: this.$getDate(new Date()),
+        client_id: '',
+        store_arr: [],
+        tree_data: [],
+        desc: '',
+        store_id: '',
+        secondary_store_id: '',
+        move_store_id: '',
+        move_secondary_store_id: '',
+        move_store_arr: [],
+        info_data: [
+          {
+            material_name: '',
+            tree_data: [],
+            material_id: '',
+            material_color: '',
+            color_code: '',
+            batch_code: '',
+            vat_code: '',
+            attribute: '',
+            number: '',
+            item: '', // 件数
+            unit: 'kg',
+            rel_doc_info_id: '' // 采购单调取单加工单子项id
+          }
+        ],
+        selectList: []
+      },
       orderInfo: {
         id: null,
         client_id: '',
@@ -2058,6 +2511,147 @@ export default Vue.extend({
     }
   },
   methods: {
+    getMatUnit(id: number, info: any) {
+      const finded = this.materialDetail.find((item: any) => item.material_id === id)
+      info.unit = finded.color_info[0].unit
+      info.colorList = finded.color_info
+    },
+    searchAttribute(str: string, cb: Function) {
+      let results = str
+        ? yarnAttributeArr.filter((item: any) => {
+            return item.value.toLowerCase().indexOf(str.toLowerCase()) === 0
+          })
+        : yarnAttributeArr.slice(0, 10)
+      cb(results)
+    },
+    searchColor(str: string, cb: Function, colorList: any[]) {
+      if (colorList) {
+        const realColorList = colorList.map((item) => {
+          return {
+            value: item.material_color
+          }
+        })
+        let results = str
+          ? realColorList.filter((item) => {
+              return item.value.toLowerCase().indexOf(str.toLowerCase()) === 0
+            })
+          : realColorList.slice(0, 10)
+        // 调用 callback 返回建议列表的数据
+        cb(results)
+      } else {
+        cb([])
+      }
+    },
+    saveMatRest() {
+      const formCheck =
+        this.$formCheck(this.materialStockInfo, [
+          {
+            key: 'store_arr',
+            regNormal: 'checkArr',
+            errMsg: '请选择入库仓库'
+          }
+        ]) ||
+        this.materialStockInfo.info_data.some((item) => {
+          return this.$formCheck(item, [
+            {
+              key: 'material_id',
+              errMsg: '请选择物料名称'
+            },
+            {
+              key: 'material_color',
+              errMsg: '请输入物料颜色'
+            },
+            {
+              key: 'number',
+              errMsg: '请输入入库数量'
+            }
+          ])
+        })
+      if (!formCheck) {
+        this.getMatCmpData()
+        materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
+          if (res.data.status) {
+            this.$message.success('结余入库成功')
+            this.cancelOrderFlag = true
+            this.cancleOrderStep = 2
+          }
+        })
+      }
+    },
+    getMatCmpData() {
+      // @ts-ignore
+      this.materialStockInfo.store_id = this.materialStockInfo.store_arr[0]
+      // @ts-ignore
+      this.materialStockInfo.secondary_store_id = this.materialStockInfo.store_arr[1]
+      this.materialStockInfo.info_data.forEach((item) => {
+        item.batch_code = item.batch_code || '无'
+        item.vat_code = item.vat_code || '无'
+        item.color_code = item.color_code || '无'
+      })
+    },
+    getProCmpData() {
+      // @ts-ignore
+      this.productStockInfo.store_id = this.productStockInfo.store_arr[0]
+      // @ts-ignore
+      this.productStockInfo.secondary_store_id = this.productStockInfo.store_arr[1]
+      this.productStockInfo.info_data.forEach((item) => {
+        const arr = item.tree_data!.split('/')
+        item.product_id = arr[0]
+        item.size_id = arr[1]
+        item.color_id = arr[2]
+      })
+    },
+    saveProRest() {
+      const formCheck =
+        this.$formCheck(this.productStockInfo, [
+          {
+            key: 'store_arr',
+            errMsg: '请选择仓库',
+            regNormal: 'checkArr'
+          }
+        ]) ||
+        this.productStockInfo.info_data.some((item) => {
+          return this.$formCheck(item, [
+            {
+              key: 'tree_data',
+              errMsg: '请选择产品信息'
+            },
+            {
+              key: 'number',
+              errMsg: '请输入入库数'
+            }
+          ])
+        })
+      if (!formCheck) {
+        this.getProCmpData()
+        productStock.create(this.productStockInfo).then((res) => {
+          if (res.data.status) {
+            this.$message.success('结余入库成功')
+            this.cancelOrderFlag = true
+            this.cancleOrderStep = 3
+          }
+        })
+      }
+    },
+    // 取消订单关闭
+    cancelOrderBack() {
+      if (!this.cancelOrderChangeFlag) {
+        this.cancelOrderFlag = false
+      } else {
+        this.$confirm('检测到已有原料结余/产品结余操作，现在关闭窗口无法撤销操作，是否继续?', '提示', {
+          confirmButtonText: '继续关闭',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {})
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消'
+            })
+          })
+      }
+    },
     goQuotedPrice(item: any) {
       if (item.rel_quote_info.quote_id) {
         this.$openUrl('/quotedPrice/detail?id=' + item.rel_quote_info.quote_id)
@@ -2095,7 +2689,6 @@ export default Vue.extend({
         this.$message.error('请选择要确认完成的批次')
         return
       }
-      console.log(batch)
       let transportFlag = true
       let transportIndex = 0
       batch.forEach((item, index) => {
@@ -2155,7 +2748,7 @@ export default Vue.extend({
         })
     },
     cancelOrder() {
-      this.$confirm('是否取消该订单?', '提示', {
+      this.$confirm('确认取消?', '提示', {
         confirmButtonText: '确认取消',
         cancelButtonText: '取消',
         type: 'warning'
@@ -2171,7 +2764,7 @@ export default Vue.extend({
                   type: 'success',
                   message: '取消成功!'
                 })
-                this.$router.push('/order/list?page=1&keyword=&client_id=&user_id=&status=null0&date=')
+                window.location.reload()
               }
             })
         })
@@ -2234,6 +2827,59 @@ export default Vue.extend({
           }
           this.loading = false
         })
+    },
+    // 从订单里面拿到产品信息
+    getOrderProduct(orderInfo: OrderDetail): OrderProductMerge[] {
+      const flattenArr: OrderProductFlatten[] = [] // 存储return信息
+      orderInfo.time_data[0].batch_data.forEach((itemBatch) => {
+        itemBatch.product_data.forEach((itemPro) => {
+          itemPro.product_info.forEach((itemChild) =>
+            flattenArr.push({
+              material_info: itemChild.material_info || [],
+              quote_product_id: itemPro.quote_product_id,
+              quote_rel_product_info: itemPro.quote_rel_product_info,
+              color_id: itemChild.color_id,
+              color_name: itemChild.color_name,
+              size_id: itemChild.size_id,
+              size_name: itemChild.size_name,
+              order_number: itemChild.number,
+              price: itemChild.price,
+              product_code: itemPro.product_code,
+              system_code: itemPro.system_code,
+              name: itemPro.name,
+              product_id: itemPro.product_id,
+              category: itemPro.category,
+              secondary_category: itemPro.secondary_category,
+              process_data: itemPro.process_data,
+              plan_number: itemChild.plan_number,
+              part_data: [
+                {
+                  name: '大身',
+                  id: 0, // 大身给零，接口写的
+                  unit: '件'
+                }
+              ].concat(itemPro.part_data as any[])
+            })
+          )
+        })
+      })
+      const mergeArr: OrderProductMerge[] = this.$mergeData(flattenArr, {
+        mainRule: ['product_id', 'color_id', 'size_id'],
+        otherRule: [
+          { name: 'name' },
+          { name: 'system_code' },
+          { name: 'secondary_category' },
+          { name: 'category' },
+          { name: 'product_code' },
+          { name: 'part_data' },
+          { name: 'process_data' },
+          { name: 'quote_product_id' },
+          { name: 'quote_rel_product_info' },
+          { name: 'color_name' },
+          { name: 'size_name' }
+        ]
+      })
+      return mergeArr
     }
   },
   mounted() {
@@ -2256,6 +2902,7 @@ export default Vue.extend({
               )
             })
           })
+          this.productAllList = this.getOrderProduct(this.orderInfo)
           Promise.all([
             order.materialDetail({
               order_id: Number(this.orderInfo.time_data[0].id)
@@ -2285,6 +2932,39 @@ export default Vue.extend({
           this.financialInfo = res.data.data
         }
       })
+    // 结余仓库
+    store.list({}).then((res) => {
+      if (res.data.status) {
+        this.yarnStoreArr = res.data.data
+          .filter((item: any) => item.store_type === 1 || item.store_type === 2)
+          .map((item: any) => {
+            return {
+              label: item.name,
+              value: item.id,
+              children: item.secondary_store.map((itemChild: any) => {
+                return {
+                  label: itemChild.name,
+                  value: itemChild.id
+                }
+              })
+            }
+          })
+        this.proStoreArr = res.data.data
+          .filter((item: any) => item.store_type === 5)
+          .map((item: any) => {
+            return {
+              label: item.name,
+              value: item.id,
+              children: item.secondary_store.map((itemChild: any) => {
+                return {
+                  label: itemChild.name,
+                  value: itemChild.id
+                }
+              })
+            }
+          })
+      }
+    })
   }
 })
 </script>

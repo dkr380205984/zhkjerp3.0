@@ -120,7 +120,7 @@ const routes: Array<RouteConfig> = [
         permissions_id: '23-1',
       },
       path: '/fileManage/list',
-      name: '文件列表',
+      name: '文件管理',
       component: () => import('../views/fileManage/list.vue')
     }, {
       meta: {

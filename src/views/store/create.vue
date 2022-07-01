@@ -187,7 +187,11 @@ export default Vue.extend({
       store.create(this.storeInfo).then((res) => {
         if (res.data.status) {
           this.$message.success('添加成功')
-          this.$router.push('/store/list?page=1&keyword=&user_id=&store_type=' + this.$route.query.store_type)
+          if (this.$route.query.store_type === '5') {
+            this.$router.push('/store/productList?page=1&keyword=&user_id=')
+          } else {
+            this.$router.push('/store/list?page=1&keyword=&user_id=&store_type=' + this.$route.query.store_type)
+          }
         }
         this.saveLock = false
       })

@@ -3519,11 +3519,47 @@
                 <div class="trow">
                   <div class="tcol">纱线名称</div>
                   <div class="tcol"
-                    style="flex: 0.5">属性</div>
+                    style="flex: 0.5;flex-direction: row;align-items: center;justify-content: flex-start;">属性
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="统一属性"
+                      placement="top">
+                      <svg class="iconFont copyIcon hoverBlue"
+                        style="width:16px;height:16px"
+                        aria-hidden="true"
+                        @click="$copyInfo(yarnPrice.info_data,['attribute'])">
+                        <use xlink:href='#icon-tongbushuju1'></use>
+                      </svg>
+                    </el-tooltip>
+                  </div>
                   <div class="tcol"
-                    style="flex: 0.5">颜色</div>
+                    style="flex: 0.5;flex-direction: row;align-items: center;justify-content: flex-start;">颜色
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="统一颜色"
+                      placement="top">
+                      <svg class="iconFont copyIcon hoverBlue"
+                        style="width:16px;height:16px"
+                        aria-hidden="true"
+                        @click="$copyInfo(yarnPrice.info_data,['material_color'])">
+                        <use xlink:href='#icon-tongbushuju1'></use>
+                      </svg>
+                    </el-tooltip>
+                  </div>
                   <div class="tcol"
-                    style="flex: 0.8">报价</div>
+                    style="flex: 0.8;flex-direction: row;align-items: center;justify-content: flex-start;">报价
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="统一报价"
+                      placement="top">
+                      <svg class="iconFont copyIcon hoverBlue"
+                        style="width:16px;height:16px"
+                        aria-hidden="true"
+                        @click="$copyInfo(yarnPrice.info_data,['price'])">
+                        <use xlink:href='#icon-tongbushuju1'></use>
+                      </svg>
+                    </el-tooltip>
+                  </div>
                   <div class="tcol">其它备注</div>
                   <div class="tcol"
                     style="flex: 0.5">操作</div>
@@ -3569,8 +3605,10 @@
                   <div class="tcol"
                     style="flex: 0.8">
                     <div class="elCtn">
-                      <el-input v-model="item.price"
-                        placeholder="单价">
+                      <el-input :ref="'price-'+index"
+                        v-model="item.price"
+                        placeholder="单价"
+                        @keydown.native="$focusByKeydown($event,'price',[index],yarnPrice,['info_data'])">
                         <template slot="append">元/kg</template>
                       </el-input>
                     </div>
@@ -3662,8 +3700,32 @@
               <div class="thead">
                 <div class="trow">
                   <div class="tcol">面料名称</div>
-                  <div class="tcol">颜色</div>
-                  <div class="tcol">报价</div>
+                  <div class="tcol">颜色
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="统一颜色"
+                      placement="top">
+                      <svg class="iconFont copyIcon hoverBlue"
+                        style="width:16px;height:16px"
+                        aria-hidden="true"
+                        @click="$copyInfo(mianliaoPrice.info_data,['material_color'])">
+                        <use xlink:href='#icon-tongbushuju1'></use>
+                      </svg>
+                    </el-tooltip>
+                  </div>
+                  <div class="tcol">报价
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="统一颜色"
+                      placement="top">
+                      <svg class="iconFont copyIcon hoverBlue"
+                        style="width:16px;height:16px"
+                        aria-hidden="true"
+                        @click="$copyInfo(mianliaoPrice.info_data,['price'])">
+                        <use xlink:href='#icon-tongbushuju1'></use>
+                      </svg>
+                    </el-tooltip>
+                  </div>
                   <div class="tcol">其它备注</div>
                   <div class="tcol">操作</div>
                 </div>
@@ -3693,9 +3755,11 @@
                   </div>
                   <div class="tcol">
                     <div class="elCtn">
-                      <el-input v-model="item.price"
-                        placeholder="单价">
-                        <template slot="append">元/kg</template>
+                      <el-input :ref="'price-'+index"
+                        v-model="item.price"
+                        placeholder="单价"
+                        @keydown.native="$focusByKeydown($event,'price',[index],mianliaoPrice,['info_data'])">
+                        <template slot="append">元</template>
                       </el-input>
                     </div>
                   </div>
@@ -5490,7 +5554,7 @@ export default Vue.extend({
               if (res.data.status && res.data.data) {
                 this.sampleOrderCheckConfig = {
                   data: res.data.data,
-                  doc_type: 17,
+                  doc_type: 17
                 }
               }
             })
@@ -5503,7 +5567,7 @@ export default Vue.extend({
               if (res.data.status && res.data.data) {
                 this.orderCheckConfig = {
                   data: res.data.data,
-                  doc_type: 1,
+                  doc_type: 1
                 }
               }
             })

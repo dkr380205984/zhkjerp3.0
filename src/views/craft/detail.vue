@@ -270,7 +270,7 @@
           </div>
           <div class="col flex3">
             <div class="label">筘幅说明：</div>
-            <div class="text">{{craftInfo.warp_data.reed_width_data || '无'}}</div>
+            <div class="text">{{craftInfo.warp_data.reed_width_explain?(craftInfo.warp_data.reed_width_explain.join('+')+'cm'):'无'}}</div>
           </div>
         </div>
         <div class="row">

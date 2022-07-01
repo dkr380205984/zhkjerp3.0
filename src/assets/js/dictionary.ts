@@ -433,7 +433,7 @@ const systemModule = [{
   name: '文件管理',
   detail: [{
     id: '23-1',
-    name: '文件列表'
+    name: '文件管理'
   }]
 }]
 

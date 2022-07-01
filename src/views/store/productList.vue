@@ -57,7 +57,7 @@
           </div>
           <div class="btn borderBtn fr"
             @click="reset">重置</div>
-          <div class="btn borderBtn fr"
+          <div class="btn backHoverBlue fr"
             @click="page=1;listType=!listType;changeRouter()">查看{{listType?'产品库存列表':'产品日志列表'}}</div>
         </div>
         <div class="filterCtn clearfix">
@@ -69,10 +69,6 @@
             @click="goStock(5)">销售出库</div>
           <div class="btn backHoverBlue fr"
             @click="goStock(4)">产品移库</div>
-          <div class="btn backHoverBlue fr"
-            @click="$router.push('/store/create?store_type='+5)">添加仓库</div>
-          <div class="btn backHoverGreen fr"
-            @click="getStoreList();lookListFlag=true">仓库列表</div>
         </div>
         <!-- 日志列表 -->
         <template v-if="listType">
@@ -207,7 +203,7 @@
                   style="flex:3">
                   <div class="trow">
                     <div class="tcol"></div>
-                    <div class="tcol">库存数量</div>
+                    <div class="tcol">{{additional.total_number}}</div>
                     <div class="tcol"></div>
                   </div>
                 </div>
@@ -284,7 +280,8 @@
               v-for="(item,index) in productStockInfo.info_data"
               :key="index">
               <div class="col">
-                <div class="label">
+                <div class="label"
+                  v-if="index===0">
                   <span class="text">产品信息</span>
                   <span class="explanation">(默认)</span>
                 </div>
@@ -293,7 +290,8 @@
                 </div>
               </div>
               <div class="col">
-                <div class="label">
+                <div class="label"
+                  v-if="index===0">
                   <span class="text">尺码颜色</span>
                   <span class="explanation">(默认)</span>
                 </div>
@@ -305,7 +303,8 @@
                 <div class="spaceBetween">
                   <div class="once"
                     v-if="productStockInfo.action_type===5">
-                    <div class="label">
+                    <div class="label"
+                      v-if="index===0">
                       <span class="text">销售单价</span>
                       <span class="explanation">(必填)</span>
                     </div>
@@ -317,7 +316,8 @@
                     </div>
                   </div>
                   <div class="once">
-                    <div class="label">
+                    <div class="label"
+                      v-if="index===0">
                       <span class="text">出库数量</span>
                       <span class="explanation">(必填)</span>
                     </div>
@@ -416,6 +416,23 @@
         </div>
       </div>
     </div>
+    <div class="bottomFixBar">
+      <div class="main">
+        <div class="btnCtn"
+          style="float:left">
+          <div class="btn backHoverGreen fr"
+            @click="getStoreList();lookListFlag=true">仓库列表</div>
+          <div class="btn backHoverBlue"
+            @click="$router.push('/store/create?store_type='+5)">添加仓库</div>
+        </div>
+        <!-- <div class="btnCtn">
+          <span class="btn backHoverGreen"
+            @click="materialTotalExcelFlag = true">导出库存数量EXCEL</span>
+          <span class="btn backHoverGreen"
+            @click="materialLogExcelFlag = true">导出库存日志EXCEL</span>
+        </div> -->
+      </div>
+    </div>
     <product-edit :show="stockInFlag"
       :ifStore="true"
       @close="stockInFlag=false"
@@ -452,6 +469,9 @@ export default Vue.extend({
       storePage: 1,
       storeTotal: 1,
       lookListFlag: false,
+      additional: {
+        total_number: 0
+      },
       productStockInfo: {
         action_type: 1,
         complete_time: this.$getDate(new Date()),
@@ -580,6 +600,7 @@ export default Vue.extend({
             if (res.data.status) {
               this.list = res.data.data.items
               this.total = res.data.data.total
+              this.additional = res.data.data.additional
             }
             this.loading = false
           })
@@ -609,26 +630,26 @@ export default Vue.extend({
         this.productStockInfo.secondary_store_id = mergeArr[0].secondary_store_id
         this.productStockInfo.store = mergeArr[0].store
         this.productStockInfo.secondary_store = mergeArr[0].secondary_store
-        console.log(mergeArr[0])
         this.productStockInfo.info_data = []
         mergeArr[0].childrenMergeInfo.forEach((item: any) => {
           item.info_data.forEach((itemChild: any) => {
-            this.productStockInfo.info_data.push({
-              product_id: item.product_id,
-              product_code: item.product_code,
-              name: item.name,
-              category: item.category,
-              secondary_category: item.secondary_category,
-              size_id: itemChild.size_id,
-              color_id: itemChild.color_id,
-              size_name: itemChild.size_name,
-              color_name: itemChild.color_name,
-              price: '',
-              number: ''
-            })
+            if (itemChild.check) {
+              this.productStockInfo.info_data.push({
+                product_id: item.product_id,
+                product_code: item.product_code,
+                name: item.name,
+                category: item.category,
+                secondary_category: item.secondary_category,
+                size_id: itemChild.size_id,
+                color_id: itemChild.color_id,
+                size_name: itemChild.size_name,
+                color_name: itemChild.color_name,
+                price: '',
+                number: ''
+              })
+            }
           })
         })
-        console.log(this.productStockInfo)
         this.stockFlag = true
       }
     },

@@ -224,6 +224,14 @@
         <div class="module">
           <div class="titleCtn">
             <div class="title">待办事项
+              <el-tooltip class="item"
+                effect="dark"
+                content="您可在设置页面关闭或者开启提醒，并设置提醒的时间或内容"
+                placement="top">
+                <i class="el-icon-setting hoverOrange"
+                  style="line-height:38px;font-size:18px;cursor:pointer;"
+                  @click="$openUrl('/setting/?pName=通知和审核设置&cName=推送设置')"></i>
+              </el-tooltip>
               <div class="fr hoverBlue"
                 style="font-size: 16px; font-weight: normal; cursor: pointer"
                 @click="$router.push('/otherPage/msgList')">
@@ -779,6 +787,10 @@ export default Vue.extend({
         this.$openUrl(
           '/accessoriesManage/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id
         )
+      } else if (item.doc_type === 19) {
+        this.$openUrl('/inspection/detail?id=' + item.doc_order_id)
+      } else {
+        this.$message.error('暂无该类型')
       }
     }
   },
@@ -814,6 +826,7 @@ export default Vue.extend({
     Promise.all([
       tutorialSystem.list({ type: 1 }),
       todoInfo.list({
+        todo_type: ['ERROR_TODO', 'CHECK_TODO'],
         limit: 10,
         page: 1,
         status: 1
