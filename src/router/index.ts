@@ -452,6 +452,20 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/billingManagement/paymentDocument.vue')
     }, {
       meta: {
+        permissions_id: '21-15',
+      },
+      path: '/billingManagement/inspectionReceiptDocument',
+      name: '单据管理-检验入库单据',
+      component: () => import('../views/billingManagement/inspectionReceiptDocument.vue')
+    }, {
+      meta: {
+        permissions_id: '21-16',
+      },
+      path: '/billingManagement/oppositeInvoicing',
+      name: '单据管理-对方发票单据',
+      component: () => import('../views/billingManagement/oppositeInvoicing.vue')
+    }, {
+      meta: {
         permissions_id: '17-1',
       },
       path: '/workerManage/create',
