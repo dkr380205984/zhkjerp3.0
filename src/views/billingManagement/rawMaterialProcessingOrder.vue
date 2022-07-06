@@ -23,7 +23,7 @@
         <div class="tab" @click="$router.push('/billingManagement/oppositeInvoicing')">对方发票单据</div>
         <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
         <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
-        <div style="width: 100px"></div>
+        <!-- <div class="tab" @click="$router.push('/billingManagement/orderQuotationComparison')">订单报价单对比单据</div> -->
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
@@ -150,7 +150,9 @@
               <div class="col">{{ item.client_name }}</div>
               <div class="col">{{ (+item.total_number).toFixed(2) }}</div>
               <div class="col">{{ (+item.total_price).toFixed(2) }}</div>
-              <div class="col" :style="item.total_push_number > item.total_number?'color:red':''">{{ (+item.total_push_number).toFixed(2) }}</div>
+              <div class="col" :style="item.total_push_number > item.total_number ? 'color:red' : ''">
+                {{ (+item.total_push_number).toFixed(2) }}
+              </div>
               <div class="col">{{ (+item.total_push_price).toFixed(2) }}</div>
               <div class="col">
                 <others-fee-data :data="item.others_fee_data"></others-fee-data>

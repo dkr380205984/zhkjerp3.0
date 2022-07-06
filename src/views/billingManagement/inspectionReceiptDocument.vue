@@ -23,7 +23,7 @@
         <div class="tab" @click="$router.push('/billingManagement/oppositeInvoicing')">对方发票单据</div>
         <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
         <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
-        <div style="width: 100px"></div>
+        <!-- <div class="tab" @click="$router.push('/billingManagement/orderQuotationComparison')">订单报价单对比单据</div> -->
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
@@ -262,15 +262,11 @@
           </span>
           <span style="line-height: 35px; margin-left: 40px">
             半次(b品)数量：
-            <span class="green" style="font-weight: bold">
-              {{ additional.total_part_shoddy_number || 0 }} 件
-            </span>
+            <span class="green" style="font-weight: bold"> {{ additional.total_part_shoddy_number || 0 }} 件 </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
             全次数量：
-            <span class="green" style="font-weight: bold">
-              {{ additional.total_shoddy_number || 0 }} 件
-            </span>
+            <span class="green" style="font-weight: bold"> {{ additional.total_shoddy_number || 0 }} 件 </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
             扣款金额：

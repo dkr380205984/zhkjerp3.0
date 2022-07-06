@@ -23,14 +23,14 @@
         <div class="tab" @click="$router.push('/billingManagement/oppositeInvoicing')">对方发票单据</div>
         <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
         <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
+        <!-- <div class="tab" @click="$router.push('/billingManagement/orderQuotationComparison')">订单报价单对比单据</div> -->
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
       </div>
       <div class="listCtn">
         <div class="filterCtn">
@@ -129,7 +129,7 @@
               <div class="col">{{ item.user_name }}</div>
               <div class="col">{{ item.created_at }}</div>
               <div class="col">
-                <span class="opr hoverOrange" @click="goInvoice([item],true)">修改</span>
+                <span class="opr hoverOrange" @click="goInvoice([item], true)">修改</span>
                 <span class="opr hoverRed" @click="deleteThis(item)">删除</span>
               </div>
             </div>
@@ -374,13 +374,18 @@
         </div>
       </div>
     </div>
-    <zh-invoice :type="1"
+    <zh-invoice
+      :type="1"
       :update="invoiceUpdate"
       :show="invoiceFlag"
       :data="invoiceData"
       :client_name="clientFinancial.name"
       :client_id="clientFinancial.client_id"
-      @close="invoiceFlag=false;getList()"></zh-invoice>
+      @close="
+        invoiceFlag = false
+        getList()
+      "
+    ></zh-invoice>
   </div>
 </template>
 
