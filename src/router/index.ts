@@ -466,6 +466,13 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/billingManagement/oppositeInvoicing.vue')
     }, {
       meta: {
+        permissions_id: '21-17',
+      },
+      path: '/billingManagement/orderQuotationComparison',
+      name: '单据管理-订单报价单对比单据',
+      component: () => import('../views/billingManagement/orderQuotationComparison.vue')
+    }, {
+      meta: {
         permissions_id: '17-1',
       },
       path: '/workerManage/create',
