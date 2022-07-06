@@ -1,5 +1,5 @@
 <template>
-  <div id="rawMaterialProcessingOrder" v-loading="loading" class="bodyContainer">
+  <div id="inspectionReceiptDocument" v-loading="loading" class="bodyContainer">
     <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">系统单据管理</div>
@@ -9,9 +9,9 @@
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialSupplement')">原料补充单</div>
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialPurchaseOrder')">原料订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialTransferOrder')">原料调取单</div>
-        <div class="tab active">原料加工单</div>
+        <div class="tab" @click="$router.push('/billingManagement/rawMaterialProcessingOrder')">原料加工单</div>
         <div class="tab" @click="$router.push('/billingManagement/productionPlan')">生产计划单</div>
-        <div class="tab" @click="$router.push('/billingManagement/inspectionReceiptDocument')">检验入库单据</div>
+        <div class="tab active">检验入库单据</div>
         <div class="tab" @click="$router.push('/billingManagement/workshopSettlementLog')">车间结算日志</div>
         <div class="tab" @click="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">辅料订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
@@ -37,7 +37,7 @@
           <div class="elCtn">
             <el-input
               v-model="keyword"
-              placeholder="筛选加工单号/订单号"
+              placeholder="筛选检验单号、关联订单号、产品编号"
               @keydown.enter.native="changeRouter"
             ></el-input>
           </div>
@@ -47,10 +47,10 @@
                 getContacts($event)
                 changeRouter()
               "
-              placeholder="筛选加工单位"
+              placeholder="筛选检验单位"
               v-model="client_id"
               filterable
-              :options="prcessClientList"
+              :options="processClientList"
               clearable
             >
             </el-cascader>
@@ -86,163 +86,167 @@
           <div class="elCtn">
             <el-select @change="changeRouter" v-model="status" placeholder="筛选审核状态">
               <el-option value="null" label="全部"></el-option>
+              <el-option value="0" label="待审核"></el-option>
               <el-option value="1" label="已审核"></el-option>
-              <el-option value="2" label="待审核"></el-option>
+              <el-option value="2" label="已驳回"></el-option>
               <el-option value="3" label="状态异常"></el-option>
             </el-select>
           </div>
-          <div class="elCtn">
-            <el-select @change="changeRouter" v-model="order_type" placeholder="筛选单据类型" clearable>
-              <el-option label="全部" value=""></el-option>
-              <el-option label="订单" value="1"></el-option>
-              <el-option label="样单" value="2"></el-option>
-            </el-select>
-          </div>
-          <div class="elCtn">
-            <el-select @change="changeRouter" v-model="group_id" placeholder="筛选负责小组" clearable>
-              <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
-            </el-select>
-          </div>
-          <div class="btn borderBtn backHoverBlue" style="color: white" @click="oneShowAll">全部展开</div>
         </div>
         <div class="list">
           <div class="row title">
             <div class="col" style="flex: 0.05">
               <el-checkbox v-model="checkAllPlan" @change="checkAll"></el-checkbox>
             </div>
-            <div class="col" style="flex: 1.2">加工单号</div>
-            <div class="col">关联订单号</div>
-            <div class="col">加工单位</div>
-            <div class="col">合计加工数量</div>
-            <div class="col">合计加工金额</div>
-            <div class="col">合计完成数量</div>
-            <div class="col">合计完成金额</div>
-            <div class="col">额外费用</div>
-            <div class="col" style="flex: 0.7">审核状态</div>
+            <div class="col">单据编号</div>
+            <div class="col">检验单位</div>
+            <div class="col" style="flex: 1.2">产品信息</div>
+            <div class="col">尺码颜色</div>
+            <div class="col">检验数量</div>
+            <div class="col">半次(B品)/全次数</div>
+            <div class="col">扣款金额</div>
+            <div class="col">次品原因</div>
+            <div class="col" style="flex: 1.1">操作时间</div>
             <div class="col">创建人</div>
-            <div class="col">创建时间</div>
-            <div class="col" style="flex: 2">操作</div>
+            <div class="col">状态</div>
+            <div class="col" style="flex: 1.1">操作</div>
           </div>
           <div v-for="(item, index) in list" :key="index">
             <div class="row">
               <div class="col" style="flex: 0.05">
                 <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
               </div>
-              <div class="col" style="flex: 1.2">{{ item.code }}</div>
-              <div
-                class="col hoverBlue"
-                style="
-                  cursor: pointer;
-                  white-space: nowrap;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  width:100px
-                  flex:unset;
-                  display:block;
-                "
-                :title="item.order_code || '无编号，点击查看详情'"
-                @click="$router.push('/order/detail?id=' + item.top_order_id)"
-              >
-                <span v-if="item.order_type === 1" class="circle backOrange">订</span>
-                <span v-if="item.order_type === 2" class="circle backBlue">样</span>
-                {{ item.order_code || '无编号，点击查看详情' }}
-              </div>
-              <div class="col">{{ item.client_name }}</div>
-              <div class="col">{{ (+item.total_number).toFixed(2) }}</div>
-              <div class="col">{{ (+item.total_price).toFixed(2) }}</div>
-              <div class="col" :style="item.total_push_number > item.total_number?'color:red':''">{{ (+item.total_push_number).toFixed(2) }}</div>
-              <div class="col">{{ (+item.total_push_price).toFixed(2) }}</div>
+              <div class="col">{{ item.doc_code }}</div>
               <div class="col">
-                <others-fee-data :data="item.others_fee_data"></others-fee-data>
+                {{ item.client_name }}
               </div>
-              <div class="col" style="flex: 0.7">
-                <div v-if="item.is_check === 0" class="orange">未审核</div>
-                <div v-else-if="item.is_check === 1" class="blue">已通过</div>
+              <div class="col" style="flex: 1.2">{{ item.product_code }}/{{ item.part_name }}</div>
+              <div class="col">{{ item.color }}/{{ item.size }}</div>
+              <div class="col">{{ item.number }}</div>
+              <div class="col">
+                <span :class="{ gray: !item.part_shoddy_number, orange: item.part_shoddy_number }">{{
+                  item.part_shoddy_number || '0'
+                }}</span
+                >/
+                <span :class="{ gray: !item.shoddy_number, red: item.shoddy_number }">{{
+                  item.shoddy_number || '0'
+                }}</span>
+              </div>
+              <div class="col" :style="item.deduct_price ? 'color:red' : ''">{{ item.deduct_price || 0 }}元</div>
+              <div class="col" :style="item.shoddy_reason ? '' : 'color:rgba(0,0,0,0.25)'">
+                {{ item.shoddy_reason || '无' }}
+              </div>
+              <div class="col" style="flex: 1.1">{{ item.complete_time }}</div>
+              <div class="col">{{ item.user_name }}</div>
+              <div class="col">
+                <div v-if="item.is_check === 0" class="orange">待审核</div>
+                <div v-else-if="item.is_check === 1" class="blue">已审核</div>
                 <div v-else-if="item.is_check === 2" class="red">已驳回</div>
                 <div v-else class="red">状态异常</div>
               </div>
-              <div class="col">{{ item.user_name }}</div>
-              <div class="col">{{ item.created_at }}</div>
-              <div class="col" style="flex: 2">
-                <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
-                <span class="opr hoverBlue" @click="openPrint(item)">打印</span>
+              <div class="col" style="flex: 1.1">
+                <span class="opr hoverBlue" @click="$router.push('/inspection/detail?id=' + item.order_id)">详情</span>
                 <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
               </div>
             </div>
             <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
-              <div class="tableCtn" v-if="item.detail.info_data.length > 0">
-                <div class="thead">
-                  <div class="trow">
-                    <div class="tcol">加工单号</div>
-                    <div class="tcol">加工单位</div>
-                    <div class="tcol" style="flex: 0.5">工序</div>
-                    <div class="tcol noPad" style="flex: 3">
-                      <div class="trow">
-                        <div class="tcol">纱线名称</div>
-                        <div class="tcol">加工详情</div>
-                        <div class="tcol" style="flex: 0.5">数量</div>
-                        <div class="tcol">完成数量</div>
-                        <div class="tcol" style="flex: 0.5">单价</div>
-                      </div>
+              <div class="tableCtn">
+                <div class="detailCtn">
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">加工工序：</div>
+                      <div class="text">{{ item.detail.process_name || '无' }}</div>
                     </div>
-                    <div class="tcol" style="flex: 0.8">截止日期</div>
-                    <div class="tcol">备注信息</div>
-                    <div class="tcol">额外费用</div>
+                    <div class="col">
+                      <div class="label">工序说明：</div>
+                      <div class="text">{{ item.detail.process_desc || '无' }}</div>
+                    </div>
                   </div>
                 </div>
-                <div class="tbody" style="font-size: 14px">
+                <div class="thead">
                   <div class="trow">
-                    <div class="tcol">
-                      <span class="overText"
-                        >{{ item.detail.code }}
-                        <el-tooltip
-                          class="item"
-                          effect="dark"
-                          :content="
-                            '创建日期：' + item.detail.created_at.slice(0, 10) + ';创建人：' + item.detail.user_name
-                          "
-                          placement="top"
-                        >
-                          <i class="el-icon-timer hoverBlue"></i>
-                        </el-tooltip>
-                      </span>
+                    <div class="tcol">产品信息</div>
+                    <div class="tcol">产品部位</div>
+                    <div class="tcol">尺码颜色</div>
+                    <div class="tcol">加工数量</div>
+                    <div class="tcol">加工单价</div>
+                    <div class="tcol">加工总价</div>
+                  </div>
+                </div>
+                <div class="tbody">
+                  <div class="trow" v-for="(itemPro, indexPro) in item.detail.product_info_data" :key="indexPro">
+                    <div class="tcol hoverBlue" style="cursor: pointer" @click="showProduct(itemPro)">
+                      <span>{{ itemPro.product_code || itemPro.system_code }}</span>
+                      <span>{{ itemPro.category_name }}/{{ itemPro.secondary_category_name }}</span>
                     </div>
-                    <div class="tcol">{{ item.detail.client_name }}</div>
-                    <div class="tcol" style="flex: 0.5">{{ item.detail.process }}</div>
-                    <div class="tcol noPad" style="flex: 3">
-                      <div class="trow" v-for="(itemMat, indexMat) in item.detail.info_data" :key="indexMat">
-                        <div class="tcol">{{ itemMat.material_order_name || itemMat.material_transfer_name }}</div>
-                        <div class="tcol">
-                          <template v-if="item.detail.process === '染色'">
-                            <div class="changeCtn">
-                              <span>白胚</span>
-                              <span class="el-icon-s-unfold blue"></span>
-                              <span>{{ itemMat.after_color }}</span>
-                            </div>
-                          </template>
-                          <template v-if="item.detail.process === '倒纱'">
-                            <span>{{ itemMat.before_attribute }}</span>
-                            <span class="el-icon-s-unfold blue"></span>
-                            <span>{{ itemMat.after_attribute }}</span>
-                          </template>
-                          <template v-if="item.detail.process === '并线'">
-                            <span>{{ itemMat.bingxian_desc }}</span>
-                          </template>
-                          <template v-if="item.detail.process === '膨纱'">
-                            <span>{{ itemMat.pengsha_desc }}</span>
-                          </template>
-                          <template v-if="item.detail.process === '切割'">
-                            <span>{{ itemMat.qiege_desc }}</span>
-                          </template>
-                        </div>
-                        <div class="tcol" style="flex: 0.5">{{ itemMat.number }}{{ itemMat.unit }}</div>
-                        <div class="tcol">{{ item.total_push_number }}</div>
-                        <div class="tcol" style="flex: 0.5">{{ itemMat.price }}元</div>
+                    <div class="tcol">
+                      {{ itemPro.part_name }}
+                    </div>
+                    <div class="tcol">
+                      {{ itemPro.size_name ? itemPro.size_name + '/' + itemPro.color_name : '未选择尺码颜色' }}
+                    </div>
+                    <div class="tcol">{{ itemPro.number }}</div>
+                    <div class="tcol">{{ itemPro.price }}元</div>
+                    <div class="tcol">{{ $toFixed(itemPro.price * itemPro.number) }}元</div>
+                  </div>
+                </div>
+              </div>
+              <div class="tableCtn" v-if="item.detail.material_info_data.length > 0">
+                <div class="thead">
+                  <div class="trow">
+                    <div class="tcol">物料名称</div>
+                    <div class="tcol">物料颜色</div>
+                    <div class="tcol">分配数量</div>
+                  </div>
+                </div>
+                <div class="tbody">
+                  <div class="trow" v-for="(itemMat, indexMat) in item.detail.material_info_data" :key="indexMat">
+                    <div class="tcol">{{ itemMat.material_name }}</div>
+                    <div class="tcol">{{ itemMat.material_color }}</div>
+                    <div class="tcol">{{ itemMat.number }}{{ itemMat.unit }}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="titleCtn" style="margin-top: 40px" v-if="item.detail.sup_data.length > 0">
+                <div class="title">加工物料补充</div>
+              </div>
+              <div class="tableCtn" v-if="item.detail.sup_data.length > 0">
+                <div class="thead">
+                  <div class="trow">
+                    <div class="tcol">补纱单编号</div>
+                    <div class="tcol noPad" style="flex: 2">
+                      <div class="trow">
+                        <div class="tcol">承担单位</div>
+                        <div class="tcol">承担金额</div>
                       </div>
                     </div>
-                    <div class="tcol" style="flex: 0.8">{{ item.detail.delivery_time }}</div>
-                    <div class="tcol">{{ item.detail.desc || '无备注' }}</div>
-                    <div class="tcol"><others-fee-data :data="item.others_fee_data"></others-fee-data></div>
+                    <div class="tcol noPad" style="flex: 3">
+                      <div class="trow">
+                        <div class="tcol">物料名称</div>
+                        <div class="tcol">物料颜色</div>
+                        <div class="tcol">物料数量</div>
+                      </div>
+                    </div>
+                    <div class="tcol">备注信息</div>
+                  </div>
+                </div>
+                <div class="tbody">
+                  <div class="trow" v-for="itemChild in item.detail.sup_data" :key="itemChild.id">
+                    <div class="tcol">{{ itemChild.code }}</div>
+                    <div class="tcol noPad" style="flex: 2">
+                      <div class="trow" v-for="(itemClient, indexClient) in itemChild.client_data" :key="indexClient">
+                        <div class="tcol">{{ itemClient.bear_client_name }}</div>
+                        <div class="tcol">{{ itemClient.bear_price }}元</div>
+                      </div>
+                    </div>
+                    <div class="tcol noPad" style="flex: 3">
+                      <div class="trow" v-for="itemMat in itemChild.info_data" :key="itemMat.id">
+                        <div class="tcol">{{ itemMat.material_name }}</div>
+                        <div class="tcol">{{ itemMat.material_color }}</div>
+                        <div class="tcol">{{ itemMat.number }}{{ itemMat.unit }}</div>
+                      </div>
+                    </div>
+                    <div class="tcol">{{ itemChild.desc }}</div>
                   </div>
                 </div>
               </div>
@@ -251,27 +255,27 @@
         </div>
         <div style="margin-top: 20px">
           <span style="line-height: 35px; margin-left: 40px">
-            合计加工数量：
+            检验数量：
             <span class="green" style="font-weight: bold">
-              {{ (additional.total_number / 1000).toFixed(2) }} 吨或千米
+              {{ (additional.total_number / 10000).toFixed(2) }} 万件
             </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
-            合计加工金额：
+            半次(b品)数量：
             <span class="green" style="font-weight: bold">
-              {{ (additional.total_price / 10000).toFixed(2) }} 万元
+              {{ additional.total_part_shoddy_number || 0 }} 件
             </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
-            合计完成数量：
+            全次数量：
             <span class="green" style="font-weight: bold">
-              {{ (additional.total_push_number / 1000).toFixed(2) }} 吨或千米
+              {{ additional.total_shoddy_number || 0 }} 件
             </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
-            合计完成金额：
+            扣款金额：
             <span class="green" style="font-weight: bold">
-              {{ (additional.total_push_price / 10000).toFixed(2) }} 万元
+              {{ (additional.total_deduct_price / 10000).toFixed(2) }} 万元
             </span>
           </span>
         </div>
@@ -305,10 +309,16 @@
         </div>
       </div>
     </div>
+    <product-detail
+      :id="productDetailId"
+      :show="productShow"
+      :noOpr="true"
+      @close="productShow = false"
+    ></product-detail>
     <div class="popup" v-show="checkFlag">
       <div class="main">
         <div class="titleCtn">
-          <span class="text">原料加工单审核</span>
+          <span class="text">检验入库单审核</span>
           <div class="closeCtn" @click="checkFlag = false">
             <span class="el-icon-close"></span>
           </div>
@@ -392,7 +402,7 @@
                 placeholder="筛选单位 "
                 v-model="exportClient"
                 filterable
-                :options="prcessClientList"
+                :options="processClientList"
                 clearable
               >
               </el-cascader>
@@ -410,7 +420,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { order, listSetting, client, materialProcess, check } from '@/assets/js/api'
+import { order, listSetting, client, productionPlan, check, process, inspection } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
 import { ListSetting } from '@/types/list'
 import { limitArr } from '@/assets/js/dictionary'
@@ -430,21 +440,25 @@ export default Vue.extend({
       mainLoading1: false,
       loading: true,
       showCharts: false,
+      productShow: false,
       checkFlag: false,
       checkAllPlan: false,
       showExportPopup: false,
       exportYear: new Date(),
       exportJiDu: '',
       exportMonth: '',
+      process: '',
+      processList: [],
       monthList: [],
       additional: {},
       reviewerParams: {
         pid: '',
-        check_type: 3,
+        check_type: 19,
         check_desc: '',
         is_check: 1, // 1通过 2没通过
         desc: ''
       },
+      productDetailId: '',
       list: [],
       limitList: limitArr,
       showExport: false,
@@ -803,7 +817,11 @@ export default Vue.extend({
       this.changeRouter()
     },
     openPrint(items: any) {
-      this.$openUrl('/materialManage/processPrint?id=' + items.id)
+      this.$openUrl('/productionPlan/print?id=' + items.id)
+    },
+    showProduct(item: any) {
+      this.productShow = true
+      this.productDetailId = item.product_id
     },
     checkAll(res: Boolean) {
       this.list.forEach((item: any) => {
@@ -854,6 +872,10 @@ export default Vue.extend({
       }
       this.keyword = query.keyword || ''
       this.order_type = query.order_type || ''
+      // @ts-ignore
+      this.process = query.process ? query.process.split(',') : ''
+      // @ts-ignore
+      this.date = query.date ? query.date.split(',') : ['', '']
       this.status = query.status || 'null'
       this.type = Number(query.type) || 'null'
       this.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
@@ -896,7 +918,7 @@ export default Vue.extend({
         end_time = this.exportYear.getFullYear() + '-12-31'
       }
 
-      materialProcess
+      inspection
         .list({
           client_id: this.exportClient.length > 0 ? this.exportClient[2] : '',
           start_time: start_time,
@@ -914,7 +936,7 @@ export default Vue.extend({
         this.page = 1
       }
       this.$router.push(
-        '/billingManagement/rawMaterialProcessingOrder?page=' +
+        '/billingManagement/inspectionReceiptDocument?page=' +
           this.page +
           '&keyword=' +
           this.keyword +
@@ -924,6 +946,8 @@ export default Vue.extend({
           this.user_id +
           '&group_id=' +
           this.group_id +
+          '&process=' +
+          this.process +
           '&order_type=' +
           this.order_type +
           '&status=' +
@@ -949,6 +973,7 @@ export default Vue.extend({
           this.keyword = ''
           this.user_id = ''
           this.group_id = ''
+          this.process = ''
           this.order_type = ''
           this.date = []
           this.type = 'null'
@@ -965,24 +990,25 @@ export default Vue.extend({
         })
     },
     getList() {
-      materialProcess
+      inspection
         .list({
-          is_check: this.status,
-          code: this.keyword,
+          type: 1,
+          page: this.page,
+          limit: 10,
           user_id: this.user_id,
-          group_id: this.group_id,
-          order_type: this.order_type,
-          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
+          is_check: this.status,
+          keyword: this.keyword,
+          client_id: this.client_id,
           start_time: this.date[0],
-          end_time: this.date[1],
-          limit: this.limit,
-          page: this.page
+          end_time: this.date[1]
         })
         .then((res) => {
           if (res.data.status) {
             res.data.data.items.forEach((item: any) => {
               item.detail = {
-                info_data: []
+                product_info_data: [],
+                material_info_data: [],
+                sup_data: []
               }
             })
             this.list = res.data.data.items
@@ -995,7 +1021,7 @@ export default Vue.extend({
     changeShow(item: any) {
       this.loading = true
       if (!item.detail.code) {
-        materialProcess
+        productionPlan
           .detail({
             id: item.id
           })
@@ -1046,20 +1072,47 @@ export default Vue.extend({
     }
   },
   computed: {
-    clientList() {
-      return this.$store.state.api.clientType.arr.filter((item: { type: any }) => Number(item.type) === 1)
-    },
     userList() {
       return this.$store.state.api.user.arr
     },
     groupList() {
       return this.$store.state.api.group.arr
     },
-    prcessClientList(): any {
-      return this.$store.state.api.clientType.arr.filter((item: { label: string }) => item.label === '原料加工单位')
+    processClientList(): any {
+      return this.$store.state.api.clientType.arr.filter(
+        (item: { label: string }) => item.label === '生产织造单位' || item.label === '生产加工单位'
+      )
     }
   },
   created() {
+    process.list({ type: 2 }).then((res) => {
+      let arr: any = []
+      res.data.data.forEach((item: any) => {
+        arr.push({
+          label: item.name,
+          value: item.name
+        })
+      })
+      this.processList.push({
+        label: '半成品加工工序',
+        value: 2,
+        children: arr
+      })
+      process.list({ type: 3 }).then((res) => {
+        let arr: any = []
+        res.data.data.forEach((item: any) => {
+          arr.push({
+            label: item.name,
+            value: item.name
+          })
+        })
+        this.processList.push({
+          label: '成品加工工序',
+          value: 3,
+          children: arr
+        })
+      })
+    })
     this.getFilters()
     this.getList()
     this.getListSetting()
@@ -1085,5 +1138,5 @@ export default Vue.extend({
 </script>
 
 <style lang="less">
-@import '~@/assets/css/billingManagement/rawMaterialProcessingOrder.less';
+@import '~@/assets/css/billingManagement/inspectionReceiptDocument.less';
 </style>    

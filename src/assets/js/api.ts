@@ -109,7 +109,7 @@ const yarnPrice = {
   delete: (params: DeleteParams) => http.post(`${baseUrl}/yarn/price/delete`, params, 'application/json'),
 }
 // 单据审核
-// 单据类型 1订单 2物料订购 3物料加工 4制造计划/生产计划 5报价 6原料出入库/物料调取 7原料预订购 8产品出入库 9物料计划 10补纱 11包装采购 12扣款单 13运输单 14车间管理 15开票单 16收款单
+// 单据类型 1订单 2物料订购 3物料加工 4制造计划/生产计划 5报价 6原料出入库/物料调取 7原料预订购 8产品出入库 9物料计划 10补纱 11包装采购 12扣款单 13运输单 14车间管理 15开票单 16收款单 17样单 18辅料采购单 19检验入库单
 const check = {
   create: (params:
     {
@@ -240,6 +240,7 @@ const invoice = {
     page?: number
     limit?: number
     export_excel?: number
+    invoice_type?: 1 | 2,
   }) => http.get(`${baseUrl}/doc/invoice/lists`, params),
   create: (params: {
     id?: string
@@ -811,7 +812,15 @@ const inspection = {
     plan_id?: string | number
     order_id?: string | number
     client_id?: string | number
-    type: 1 | 2 | null
+    is_check?: string | number
+    user_id?: string | number
+    keyword?: string
+    start_time?: string
+    end_time?: string
+    type?: 1 | 2 | null
+    export_excel?: 1
+    limit?: string | number
+    page?: string | number
   }) => http.get(`${baseUrl}/inspection/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/inspection/delete`, params, 'application/json')
 }

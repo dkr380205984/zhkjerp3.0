@@ -11,17 +11,18 @@
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialTransferOrder')">原料调取单</div>
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialProcessingOrder')">原料加工单</div>
         <div class="tab" @click="$router.push('/billingManagement/productionPlan')">生产计划单</div>
+        <div class="tab" @click="$router.push('/billingManagement/inspectionReceiptDocument')">检验入库单据</div>
         <div class="tab" @click="$router.push('/billingManagement/workshopSettlementLog')">车间结算日志</div>
         <div class="tab" @click="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">辅料订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/transportationDeliveryOrder')">运输出库单</div>
         <div class="tab" @click="$router.push('/billingManagement/deductionForm')">我方扣款单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
       </div>
       <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
+        <div class="tab" @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
+        <div class="tab" @click="$router.push('/billingManagement/oppositeInvoicing')">对方发票单据</div>
         <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
         <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
-        <div style="width:100px"></div>
         <div style="width:100px"></div>
         <div style="width:100px"></div>
         <div style="width:100px"></div>
@@ -149,16 +150,16 @@
               <div class="col">{{ item.client_name }}</div>
               <div class="col">{{ (+item.total_number).toFixed(2) }}</div>
               <div class="col">{{ (+item.total_price).toFixed(2) }}</div>
-              <div class="col">{{ item.total_push_number.toFixed(2) }}</div>
+              <div class="col" :style="(item.total_push_number>item.total_number)?'color:red':''">{{ item.total_push_number.toFixed(2) }}</div>
               <div class="col">{{ item.total_push_price.toFixed(2) }}</div>
               <div class="col">
                 <others-fee-data :data="item.others_fee_data"></others-fee-data>
               </div>
               <div class="col">
-                <div v-if="item.is_check === 0" class="orange">未审核</div>
-                <div v-if="item.is_check === 1" class="blue">已通过</div>
-                <div v-if="item.is_check === 2" class="red">已驳回</div>
-                <div v-if="item.is_check === 3" class="red">状态异常</div>
+               <div v-if="item.is_check === 0" class="orange">未审核</div>
+                <div v-else-if="item.is_check === 1" class="blue">已通过</div>
+                <div v-else-if="item.is_check === 2" class="red">已驳回</div>
+                <div v-else class="red">状态异常</div>
               </div>
               <div class="col" style="flex: 0.7">{{ item.user_name }}</div>
               <div class="col">{{ item.created_at }}</div>
@@ -177,6 +178,7 @@
                     <div class="tcol">{{ $route.query.supFlag ? '补纱单' : '计划单' }}颜色</div>
                     <div class="tcol">订购属性</div>
                     <div class="tcol">订购数量</div>
+                    <div class="tcol">入库数量</div>
                     <div class="tcol">订购单价</div>
                   </div>
                 </div>
@@ -187,6 +189,7 @@
                     <div class="tcol">{{ $route.query.supFlag ? itemChild.sup_color : itemChild.plan_color }}</div>
                     <div class="tcol">{{ itemChild.attribute }}</div>
                     <div class="tcol">{{ itemChild.number }}{{ itemChild.unit }}</div>
+                    <div class="tcol">{{ itemChild.final_push_number }}</div>
                     <div class="tcol">{{ itemChild.price }}元</div>
                   </div>
                 </div>

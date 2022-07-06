@@ -1,5 +1,5 @@
 <template>
-  <div id="collectionList" v-loading="loading" class="bodyContainer">
+  <div id="oppositeInvoicing" v-loading="loading" class="bodyContainer">
     <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">系统单据管理</div>
@@ -20,17 +20,17 @@
       </div>
       <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
         <div class="tab" @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/oppositeInvoicing')">对方发票单据</div>
-        <div class="tab active">收款单据</div>
+        <div class="tab active">对方发票单据</div>
+        <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
         <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
-        <div style="width: 100px"></div>
-        <div style="width: 100px"></div>
-        <div style="width: 100px"></div>
-        <div style="width: 100px"></div>
-        <div style="width: 100px"></div>
-        <div style="width: 100px"></div>
-        <div style="width: 100px"></div>
-        <div style="width: 100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
+        <div style="width:100px"></div>
       </div>
       <div class="listCtn">
         <div class="filterCtn">
@@ -90,8 +90,9 @@
             </div>
             <div class="col" style="flex: 1.2">票据编号</div>
             <div class="col">关联订单号</div>
-            <div class="col">关联客户</div>
-            <div class="col">已收款金额</div>
+            <div class="col">关联单位</div>
+            <div class="col">开票金额</div>
+            <div class="col">发票号码</div>
             <div class="col">备注信息</div>
             <div class="col">操作人</div>
             <div class="col">操作日期</div>
@@ -123,11 +124,12 @@
               </div>
               <div class="col">{{ item.client.name }}</div>
               <div class="col">{{ (+item.price).toFixed(2) }}</div>
+              <div class="col">{{ item.invoice_code }}</div>
               <div class="col">{{ item.desc || '无' }}</div>
               <div class="col">{{ item.user_name }}</div>
               <div class="col">{{ item.created_at }}</div>
               <div class="col">
-                <span class="opr hoverOrange" @click="goCollection([item], true)">修改</span>
+                <span class="opr hoverOrange" @click="goInvoice([item],true)">修改</span>
                 <span class="opr hoverRed" @click="deleteThis(item)">删除</span>
               </div>
             </div>
@@ -372,26 +374,19 @@
         </div>
       </div>
     </div>
-    <!-- 收款 -->
-    <zh-collection
-      :type="1"
-      :update="collectionUpdate"
-      :invoiceChange="invoiceChange"
-      :show="collectionFlag"
-      :data="collectionData"
+    <zh-invoice :type="1"
+      :update="invoiceUpdate"
+      :show="invoiceFlag"
+      :data="invoiceData"
       :client_name="clientFinancial.name"
       :client_id="clientFinancial.client_id"
-      @close="
-        collectionFlag = false
-        getList()
-      "
-    ></zh-collection>
+      @close="invoiceFlag=false;getList()"></zh-invoice>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { exportExcel, client, materialPlan, check, collection } from '@/assets/js/api'
+import { exportExcel, client, materialPlan, check, invoice } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
 import { limitArr } from '@/assets/js/dictionary'
 import zhExportSetting from '@/components/zhExportSetting/zhExportSetting.vue'
@@ -407,15 +402,13 @@ export default Vue.extend({
       mainLoading: false,
       mainLoading1: false,
       productShow: false,
-      invoiceChange: false,
-      collectionUpdate: false,
       showExportPopup: false,
       exportClient: [],
       exportYear: new Date(),
       exportJiDu: '',
       exportMonth: '',
-      collectionFlag: false,
-      collectionData: [],
+      invoiceFlag: false,
+      invoiceUpdate: false,
       productDetailId: '',
       additional: {},
       invoiceData: [],
@@ -534,11 +527,12 @@ export default Vue.extend({
         end_time = this.exportYear.getFullYear() + '-12-31'
       }
 
-      collection
+      invoice
         .list({
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           start_time: start_time,
           end_time: end_time,
+          invoice_type: 2,
           export_excel: 1
         })
         .then((res) => {
@@ -562,10 +556,10 @@ export default Vue.extend({
         this.contacts_id = ''
       }
     },
-    goCollection(data: any[], update?: boolean) {
-      this.collectionUpdate = update
-      this.collectionData = data
-      this.collectionFlag = true
+    goInvoice(data: any[], update?: boolean) {
+      this.invoiceUpdate = update
+      this.invoiceData = data
+      this.invoiceFlag = true
       this.clientFinancial.name = data[0].client.name
       this.clientFinancial.client_id = data[0].client.id
     },
@@ -680,7 +674,7 @@ export default Vue.extend({
         this.page = 1
       }
       this.$router.push(
-        '/billingManagement/collectionList?page=' +
+        '/billingManagement/ourInvoiceList?page=' +
           this.page +
           '&keyword=' +
           this.keyword +
@@ -735,7 +729,7 @@ export default Vue.extend({
     },
     getList() {
       let _this = this
-      collection
+      invoice
         .list({
           order_id: '',
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
@@ -744,6 +738,8 @@ export default Vue.extend({
           start_time: this.date[0],
           end_time: this.date[1],
           user_id: '',
+          invoice_code: '',
+          invoice_type: 2,
           limit: this.limit,
           page: this.page
         })
@@ -760,7 +756,7 @@ export default Vue.extend({
         })
     },
     deleteThis(item: any) {
-      collection
+      invoice
         .delete({
           id: item.id
         })
@@ -821,5 +817,5 @@ export default Vue.extend({
 </script>
 
 <style lang="less">
-@import '~@/assets/css/billingManagement/collectionList.less';
+@import '~@/assets/css/billingManagement/oppositeInvoicing.less';
 </style>    

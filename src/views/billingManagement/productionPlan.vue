@@ -11,25 +11,26 @@
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialTransferOrder')">原料调取单</div>
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialProcessingOrder')">原料加工单</div>
         <div class="tab active">生产计划单</div>
+        <div class="tab" @click="$router.push('/billingManagement/inspectionReceiptDocument')">检验入库单据</div>
         <div class="tab" @click="$router.push('/billingManagement/workshopSettlementLog')">车间结算日志</div>
         <div class="tab" @click="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">辅料订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/transportationDeliveryOrder')">运输出库单</div>
         <div class="tab" @click="$router.push('/billingManagement/deductionForm')">我方扣款单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
       </div>
       <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
+        <div class="tab" @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
+        <div class="tab" @click="$router.push('/billingManagement/oppositeInvoicing')">对方发票单据</div>
         <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
         <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
       </div>
       <div class="listCtn">
         <div class="filterCtn">
@@ -102,31 +103,45 @@
               <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
             </el-select>
           </div>
-          <div class="btn borderBtn backHoverBlue" style="color: white" @click="oneShowAll">全部展开</div>
+          <div class="elCtn">
+            <el-cascader
+              v-model="process"
+              :options="processList"
+              @change="changeRouter"
+              :show-all-levels="false"
+              placeholder="工序筛选"
+              clearable
+            ></el-cascader>
+          </div>
+          <div class="btn borderBtn backHoverBlue" style="color: white; padding: 1px 8px" @click="oneShowAll">
+            全部展开
+          </div>
         </div>
         <div class="list">
           <div class="row title">
             <div class="col" style="flex: 0.05">
               <el-checkbox v-model="checkAllPlan" @change="checkAll"></el-checkbox>
             </div>
-            <div class="col" style="flex: 1.2">生产单号</div>
+            <div class="col">生产单号</div>
             <div class="col">关联订单号</div>
             <div class="col">生产单位</div>
             <div class="col">合计计划数量</div>
             <div class="col">合计计划金额</div>
-            <div class="col">合计完成数量</div>
-            <div class="col">额外费用</div>
+            <div class="col">检验入库数量</div>
+            <div class="col" style="flex:1.1">半次(B品)/全次数</div>
+            <div class="col" style="flex:0.9">加工工序</div>
+            <div class="col" style="flex:0.9">额外费用</div>
             <div class="col">审核状态</div>
             <div class="col">创建人</div>
             <div class="col">创建时间</div>
-            <div class="col" style="flex: 1.55">操作</div>
+            <div class="col" style="flex: 1.88">操作</div>
           </div>
           <div v-for="(item, index) in list" :key="index">
             <div class="row">
               <div class="col" style="flex: 0.05">
                 <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
               </div>
-              <div class="col" style="flex: 1.2">{{ item.code }}</div>
+              <div class="col">{{ item.code }}</div>
               <div
                 class="col hoverBlue"
                 style="
@@ -149,18 +164,28 @@
               <div class="col">{{ (+item.total_number).toFixed(2) }}</div>
               <div class="col">{{ (+item.total_price).toFixed(2) }}</div>
               <div class="col">{{ (+item.total_real_number).toFixed(2) }}</div>
-              <div class="col">
+              <div class="col" style="flex:1.1">
+                <span :class="{ gray: !item.total_part_shoddy_number, orange: item.total_part_shoddy_number }">{{
+                  item.total_part_shoddy_number || '0'
+                }}</span
+                >/
+                <span :class="{ gray: !item.total_shoddy_number, red: item.total_shoddy_number }">{{
+                  item.total_shoddy_number || '0'
+                }}</span>
+              </div>
+              <div class="col" style="flex:0.9">{{ item.process_name }}</div>
+              <div class="col" style="flex:0.9">
                 <others-fee-data :data="item.others_fee_data"></others-fee-data>
               </div>
               <div class="col">
                 <div v-if="item.is_check === 0" class="orange">未审核</div>
-                <div v-if="item.is_check === 1" class="blue">已通过</div>
-                <div v-if="item.is_check === 2" class="red">已驳回</div>
-                <div v-if="item.is_check === 3" class="red">状态异常</div>
+                <div v-else-if="item.is_check === 1" class="blue">已通过</div>
+                <div v-else-if="item.is_check === 2" class="red">已驳回</div>
+                <div v-else class="red">状态异常</div>
               </div>
               <div class="col">{{ item.user_name }}</div>
               <div class="col">{{ item.created_at }}</div>
-              <div class="col" style="flex: 1.55">
+              <div class="col" style="flex: 1.88">
                 <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
                 <span class="opr hoverBlue" @click="openPrint(item)">打印</span>
                 <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
@@ -186,6 +211,9 @@
                     <div class="tcol">产品部位</div>
                     <div class="tcol">尺码颜色</div>
                     <div class="tcol">加工数量</div>
+                    <div class="tcol">入库数量</div>
+                    <div class="tcol">半次(B次)数量</div>
+                    <div class="tcol">全次数量</div>
                     <div class="tcol">加工单价</div>
                     <div class="tcol">加工总价</div>
                   </div>
@@ -203,6 +231,9 @@
                       {{ itemPro.size_name ? itemPro.size_name + '/' + itemPro.color_name : '未选择尺码颜色' }}
                     </div>
                     <div class="tcol">{{ itemPro.number }}</div>
+                    <div class="tcol">{{ itemPro.real_number }}</div>
+                    <div class="tcol">{{ itemPro.part_shoddy_number || 0}}</div>
+                    <div class="tcol">{{ itemPro.shoddy_number || 0 }}</div>
                     <div class="tcol">{{ itemPro.price }}元</div>
                     <div class="tcol">{{ $toFixed(itemPro.price * itemPro.number) }}元</div>
                   </div>
@@ -437,7 +468,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { order, listSetting, client, productionPlan, check } from '@/assets/js/api'
+import { order, listSetting, client, productionPlan, check, process } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
 import { ListSetting } from '@/types/list'
 import { limitArr } from '@/assets/js/dictionary'
@@ -464,6 +495,8 @@ export default Vue.extend({
       exportYear: new Date(),
       exportJiDu: '',
       exportMonth: '',
+      process: '',
+      processList: [],
       monthList: [],
       additional: {},
       reviewerParams: {
@@ -887,6 +920,8 @@ export default Vue.extend({
       }
       this.keyword = query.keyword || ''
       this.order_type = query.order_type || ''
+      // @ts-ignore
+      this.process = query.process ? query.process.split(',') : ''
       this.status = query.status || 'null'
       this.type = Number(query.type) || 'null'
       this.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
@@ -957,6 +992,8 @@ export default Vue.extend({
           this.user_id +
           '&group_id=' +
           this.group_id +
+          '&process=' +
+          this.process +
           '&order_type=' +
           this.order_type +
           '&status=' +
@@ -982,6 +1019,7 @@ export default Vue.extend({
           this.keyword = ''
           this.user_id = ''
           this.group_id = ''
+          this.process = ''
           this.order_type = ''
           this.date = []
           this.type = 'null'
@@ -1004,6 +1042,7 @@ export default Vue.extend({
           code: this.keyword,
           user_id: this.user_id,
           group_id: this.group_id,
+          process_name: this.process ? this.process[1] : '',
           order_type: this.order_type,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           start_time: this.date[0],
@@ -1094,6 +1133,34 @@ export default Vue.extend({
     }
   },
   created() {
+    process.list({ type: 2 }).then((res) => {
+      let arr: any = []
+      res.data.data.forEach((item: any) => {
+        arr.push({
+          label: item.name,
+          value: item.name
+        })
+      })
+      this.processList.push({
+        label: '半成品加工工序',
+        value: 2,
+        children: arr
+      })
+      process.list({ type: 3 }).then((res) => {
+        let arr: any = []
+        res.data.data.forEach((item: any) => {
+          arr.push({
+            label: item.name,
+            value: item.name
+          })
+        })
+        this.processList.push({
+          label: '成品加工工序',
+          value: 3,
+          children: arr
+        })
+      })
+    })
     this.getFilters()
     this.getList()
     this.getListSetting()

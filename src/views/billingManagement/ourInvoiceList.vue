@@ -11,17 +11,18 @@
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialTransferOrder')">原料调取单</div>
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialProcessingOrder')">原料加工单</div>
         <div class="tab" @click="$router.push('/billingManagement/productionPlan')">生产计划单</div>
+        <div class="tab" @click="$router.push('/billingManagement/inspectionReceiptDocument')">检验入库单据</div>
         <div class="tab" @click="$router.push('/billingManagement/workshopSettlementLog')">车间结算日志</div>
         <div class="tab" @click="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">辅料订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/transportationDeliveryOrder')">运输出库单</div>
         <div class="tab" @click="$router.push('/billingManagement/deductionForm')">我方扣款单据</div>
-        <div class="tab active">我方发票单据</div>
       </div>
       <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
+        <div class="tab active">我方发票单据</div>
+        <div class="tab" @click="$router.push('/billingManagement/oppositeInvoicing')">对方发票单据</div>
         <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
         <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
-        <div style="width:100px"></div>
         <div style="width:100px"></div>
         <div style="width:100px"></div>
         <div style="width:100px"></div>
@@ -90,7 +91,7 @@
             <div class="col" style="flex: 1.2">票据编号</div>
             <div class="col">关联订单号</div>
             <div class="col">关联单位</div>
-            <div class="col">对方开票金额</div>
+            <div class="col">开票金额</div>
             <div class="col">发票号码</div>
             <div class="col">备注信息</div>
             <div class="col">操作人</div>
@@ -531,6 +532,7 @@ export default Vue.extend({
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           start_time: start_time,
           end_time: end_time,
+          invoice_type: 1,
           export_excel: 1
         })
         .then((res) => {
@@ -737,6 +739,7 @@ export default Vue.extend({
           end_time: this.date[1],
           user_id: '',
           invoice_code: '',
+          invoice_type: 1,
           limit: this.limit,
           page: this.page
         })
