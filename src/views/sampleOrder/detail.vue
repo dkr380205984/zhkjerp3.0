@@ -385,26 +385,26 @@
                     style="flex:2">
                     <div class="trow">
                       <div class="tcol center">
-                        <span>入库信息</span>
+                        <span>出库信息</span>
                         <span>更新日期:{{materialUpdateTime.push?materialUpdateTime.push:'暂无'}}</span>
                       </div>
                     </div>
                     <div class="trow">
-                      <div class="tcol">入库仓库</div>
-                      <div class="tcol">入库数量</div>
+                      <div class="tcol">出库仓库</div>
+                      <div class="tcol">出库数量</div>
                     </div>
                   </div>
                   <div class="tcol noPad"
                     style="flex:2">
                     <div class="trow">
                       <div class="tcol center">
-                        <span>出库信息</span>
+                        <span>入库信息</span>
                         <span>更新日期:{{materialUpdateTime.pop?materialUpdateTime.pop:'暂无'}}</span>
                       </div>
                     </div>
                     <div class="trow">
-                      <div class="tcol">出库单位</div>
-                      <div class="tcol">出库数量</div>
+                      <div class="tcol">入库单位</div>
+                      <div class="tcol">入库数量</div>
                     </div>
                   </div>
                 </div>
@@ -467,7 +467,7 @@
                     style="flex:2">
                     <div class="trow"
                       v-if="item.final_pop_info.length===0">
-                      <div class="tcol gray">无出库信息</div>
+                      <div class="tcol gray">无入库信息</div>
                     </div>
                     <div class="trow"
                       v-for="(itemPop,indexPop) in  item.final_pop_info"
@@ -480,7 +480,7 @@
                     style="flex:2">
                     <div class="trow"
                       v-if="item.final_push_info.length===0">
-                      <div class="tcol gray">无入库信息</div>
+                      <div class="tcol gray">无出库信息</div>
                     </div>
                     <div class="trow"
                       v-for="(itemPush,indexPush) in  item.final_push_info"

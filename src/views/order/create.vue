@@ -333,10 +333,10 @@
         <div class="tableCtn">
           <div class="thead">
             <div class="trow">
-              <div class="tcol">发货日期</div>
-              <div class="tcol">批次名称</div>
-              <div class="tcol">批次类型</div>
-              <div class="tcol">批次备注</div>
+              <div class="tcol">发货日期(必填)</div>
+              <div class="tcol">批次名称(选填)</div>
+              <div class="tcol">批次类型(选填)</div>
+              <div class="tcol">批次备注(选填)</div>
               <div class="tcol noPad"
                 style="flex:6">
                 <div class="trow">
@@ -344,14 +344,14 @@
                     style="flex:4">
                     <div class="trow">
                       <div class="tcol"
-                        style="flex:1.2">产品编号</div>
+                        style="flex:1.2">产品编号(必选)</div>
                       <div class="tcol noPad"
                         style="flex:4">
                         <div class="trow">
                           <div class="tcol"
-                            style="flex:1.5">尺码颜色</div>
-                          <div class="tcol">单价</div>
-                          <div class="tcol">数量</div>
+                            style="flex:1.5">尺码颜色(必填)</div>
+                          <div class="tcol">单价(必填)</div>
+                          <div class="tcol">数量(必填)</div>
                           <div class="tcol"
                             style="flex:1.5">操作</div>
                         </div>

@@ -37,7 +37,7 @@
                 <div class="trow">
                   <div class="tcol bgGray headTitle">订单号</div>
                   <div class="tcol"
-                    style="flex:1.2">{{ otherInfo.order_code || '暂无' }}</div>
+                    style="flex:1.2">{{ otherInfo.time_code || otherInfo.order_code || '暂无' }}</div>
                   <div class="tcol bgGray headTitle">下单客户</div>
                   <div class="tcol">{{ otherInfo.client_name || '暂无' }}</div>
                   <div class="tcol bgGray headTitle">下单日期</div>

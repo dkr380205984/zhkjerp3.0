@@ -1299,7 +1299,6 @@
           <div class="col">
             <div class="label">
               <span class="text">下机时间</span>
-              <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
               <el-date-picker style="width:100%"

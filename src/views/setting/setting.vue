@@ -1705,9 +1705,9 @@
                 <div class="col">
                   <div class="label">大货订单逾期是否通知？</div>
                   <div class="info middle">
-                    <el-radio v-model="orderCheckConfig.data.all_push_order_postpone"
+                    <el-radio v-model="orderCheckConfig.data.allow_push_order_postpone"
                       :label="1">是</el-radio>
-                    <el-radio v-model="orderCheckConfig.data.all_push_order_postpone"
+                    <el-radio v-model="orderCheckConfig.data.allow_push_order_postpone"
                       :label="2">否</el-radio>
                   </div>
                 </div>
@@ -4701,10 +4701,10 @@ export default Vue.extend({
         }
       ],
       sampleOrderCheckConfig: {
-        allow_push_sample_order_postpone: 1,
-        allow_push_sample_order_dispatch_3_day: 1,
         doc_type: 17,
         data: {
+          allow_push_sample_order_postpone: 2,
+          allow_push_sample_order_dispatch_3_day: 1,
           auto_pass: 2,
           has_condition: 2, // 是否根据条件判断 1是 2否
           user_id: [],
@@ -4723,6 +4723,9 @@ export default Vue.extend({
           user_id: [],
           client_id: [],
           number: '',
+          allow_push_order_postpone: 2,
+          allow_push_order_dispatch_3_day: 2,
+          allow_push_order_dispatch_7_day: 1,
           not_allow_operate: 2, // 	是否限制后续操作 1是 2否
           not_allow_add_rel_doc: 2, // 是否限制添加关联单据 1是 2否
           not_allow_settle: 2 // 限制结算 1是 2否

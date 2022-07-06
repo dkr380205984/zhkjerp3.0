@@ -795,6 +795,10 @@ const productionProgress = {
     order_type: 1 | 2
   }) => http.get(`${baseUrl}/weave/plan/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/production/detail`, params),
+  updateLog: (params: {
+    plan_id?: number | string
+    order_id?: number | string
+  }) => http.get(`${baseUrl}/weave/plan/product/update/log/detail`, params),
   updateDetail: (params: {
     order_ids?: Array<number> // 根据订单id批量查询
     plan_ids?: Array<number> // 根据生产计划单id批量查询

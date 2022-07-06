@@ -14,7 +14,7 @@
             <div class="text">{{craftInfo.craft_code}}
               <span class="hoverBlue"
                 style="cursor:pointer;font-size:14px"
-                @click="$copyTextInfo(craftInfo.code)">复制</span>
+                @click="$copyTextInfo(craftInfo.craft_code)">复制</span>
             </div>
           </div>
           <div class="col">

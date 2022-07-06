@@ -38,7 +38,7 @@
           <div class="tbody hasTop">
             <div class="trow">
               <div class="tcol bgGray headTitle">订单号</div>
-              <div class="tcol">{{materialSupplementInfo.order_code}}</div>
+              <div class="tcol">{{materialSupplementInfo.time_code || materialSupplementInfo.order_code}}</div>
               <div class="tcol bgGray headTitle">补纱单号</div>
               <div class="tcol">{{materialSupplementInfo.code}}</div>
               <div class="tcol bgGray headTitle">补纱单位</div>

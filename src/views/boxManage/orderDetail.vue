@@ -22,11 +22,13 @@
                   <div class="trow">
                     <div class="tcol">产品品类</div>
                     <div class="tcol noPad"
-                      style="flex:3">
+                      style="flex:4">
                       <div class="trow">
                         <div class="tcol">尺码颜色</div>
-                        <div class="tcol">计划发货数量</div>
-                        <div class="tcol">实际发货数量</div>
+                        <div class="tcol">计划发货</div>
+                        <div class="tcol"
+                          v-if="$route.query.id">实际发货</div>
+                        <div class="tcol">本次发货</div>
                       </div>
                     </div>
                   </div>
@@ -56,17 +58,19 @@
                       <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
                     </div>
                     <div class="tcol noPad"
-                      style="flex:3">
+                      style="flex:4">
                       <div class="trow"
                         v-for="(itemChild,indexChild) in itemPro.product_info"
                         :key="indexChild">
                         <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
                         <div class="tcol">{{itemChild.number}}</div>
+                        <div class="tcol"
+                          v-if="$route.query.id">{{itemChild.transport_number}}</div>
                         <div class="tcol">
                           <div class="elCtn">
                             <el-input v-model="itemChild.real_number"
                               @focus="$focusInput($event)"
-                              placeholder="实际发货数量"></el-input>
+                              placeholder="数量"></el-input>
                           </div>
                         </div>
                       </div>
@@ -149,14 +153,10 @@
               </el-tooltip>
             </div>
             <div class="info elCtn">
-              <el-cascader v-if="$route.query.id"
-                v-model="boxInfo.tree_data"
+              <el-cascader v-model="boxInfo.tree_data"
                 placeholder="请选择运输单位"
                 @change="(ev)=>{boxInfo.client_id=ev[2]}"
                 :options="boxClientList"></el-cascader>
-              <el-input v-else
-                v-model="boxInfo.client_name"
-                disabled></el-input>
             </div>
           </div>
           <div class="col"
@@ -303,9 +303,12 @@
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
+          <div class="btn backHoverOrange"
+            v-if="$route.query.id"
+            @click="saveBox(true)">仅保存发货数量</div>
           <div class="btn "
             :class="{'backHoverBlue':$route.query.id,'backHoverOrange':$route.query.boxId}"
-            @click="saveBox">{{$route.query.id?'提交':'修改'}}</div>
+            @click="saveBox(false)">{{$route.query.id?'保存发货单':'修改'}}</div>
         </div>
       </div>
     </div>
@@ -472,25 +475,28 @@ export default Vue.extend({
         })
       })
     },
-    saveBox() {
+    saveBox(ifCaogao?: boolean) {
       if (this.saveLock) {
         this.$message.error('请勿频繁点击')
         return
       }
-      const formCheck = this.$formCheck(this.boxInfo, [
-        {
-          key: 'client_id',
-          errMsg: '请选择运输单位'
-        },
-        {
-          key: 'city',
-          errMsg: '请输入运输城市'
-        },
-        {
-          key: 'total_price',
-          errMsg: '请输入运输总价'
-        }
-      ])
+      let formCheck = false
+      if (!ifCaogao) {
+        formCheck = this.$formCheck(this.boxInfo, [
+          {
+            key: 'client_id',
+            errMsg: '请选择运输单位'
+          },
+          {
+            key: 'city',
+            errMsg: '请输入运输城市'
+          },
+          {
+            key: 'total_price',
+            errMsg: '请输入运输总价'
+          }
+        ])
+      }
       if (!formCheck) {
         this.getCmpData()
         this.saveLock = true
@@ -586,6 +592,12 @@ export default Vue.extend({
             this.orderInfo.forEach((itemOrder) => {
               // @ts-ignore
               itemOrder.time_data[0].batch_data.forEach((item) => {
+                item.product_data.forEach((itemChild) => {
+                  itemChild.product_info.forEach((itemPro) => {
+                    // @ts-ignore
+                    itemPro.real_number = itemPro.number - itemPro.transport_number
+                  })
+                })
                 // @ts-ignore 给批次新增一些发货信息
                 item.total_box_count = ''
                 // @ts-ignore

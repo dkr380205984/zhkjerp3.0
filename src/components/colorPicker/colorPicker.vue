@@ -37,7 +37,8 @@
       <input class="editInput"
         v-model="tips"
         @change="getName"
-        placeholder="颜色" />
+        placeholder="选择颜色"
+        :disabled="!color" />
     </div>
   </div>
 </template>

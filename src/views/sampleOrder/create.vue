@@ -197,18 +197,18 @@
         <div class="tableCtn">
           <div class="thead">
             <div class="trow">
-              <div class="tcol">样品编号</div>
+              <div class="tcol">样品编号(必选)</div>
               <div class="tcol noPad"
                 style="flex:4">
                 <div class="trow">
-                  <div class="tcol">尺码颜色</div>
-                  <div class="tcol">打样单价</div>
+                  <div class="tcol">尺码颜色(必填)</div>
+                  <div class="tcol">打样单价(必填)</div>
                   <div class="tcol"
-                    style="flex:0.8">打样数量</div>
+                    style="flex:0.8">打样数量(必填)</div>
                   <div class="tcol"
-                    style="flex:0.6">送样数量</div>
+                    style="flex:0.6">送样数量(选填)</div>
                   <div class="tcol"
-                    style="flex:0.6">留底数量</div>
+                    style="flex:0.6">留底数量(选填)</div>
                   <div class="tcol">操作</div>
                 </div>
               </div>
@@ -285,9 +285,9 @@
                     style="flex:0.6">
                     <div class="elCtn">
                       <el-input :ref="'sample_number'+ '-'+index+'-'+indexChild"
-                        :class="{'error':mustFlag&&!itemChild.sample_number}"
                         v-model="itemChild.sample_number"
                         placeholder="送样数量"
+                        @input="(ev)=>{itemChild.keep_number=Number(itemChild.number)-Number(ev)}"
                         @keydown.native="$focusByKeydown($event,'sample_number',[index,indexChild],sampleOrderInfo.time_data.batch_data[0],['product_data','product_info'])">
                       </el-input>
                     </div>
@@ -296,9 +296,9 @@
                     style="flex:0.6">
                     <div class="elCtn">
                       <el-input :ref="'keep_number'+ '-'+index+'-'+indexChild"
-                        :class="{'error':mustFlag&&!itemChild.keep_number}"
                         v-model="itemChild.keep_number"
                         placeholder="留底数量"
+                        @input="(ev)=>{itemChild.sample_number=Number(itemChild.number)-Number(ev)}"
                         @keydown.native="$focusByKeydown($event,'keep_number',[index,indexChild],sampleOrderInfo.time_data.batch_data[0],['product_data','product_info'])">
                       </el-input>
                     </div>

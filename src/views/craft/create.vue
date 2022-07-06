@@ -1,7 +1,8 @@
 <template>
   <div id="craftCreate"
     class="bodyContainer"
-    v-loading="loading" @keydown="saveSuccess=false">
+    v-loading="loading"
+    @keydown="saveSuccess=false">
     <div class="module"
       v-if="!$route.query.id">
       <div class="titleCtn">
@@ -1410,7 +1411,6 @@
           <div class="col">
             <div class="label">
               <span class="text">下机时间</span>
-              <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
               <el-date-picker style="width:100%"

@@ -193,6 +193,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Pusher from 'pusher-js' // 全局方法
+import Echo from 'laravel-echo'
 import { systemModule } from '@/assets/js/dictionary'
 import { navInfo } from '@/types/nav'
 import { changePassword, getCoder, productionProgress, todoInfo } from '@/assets/js/api'
@@ -551,17 +552,22 @@ export default Vue.extend({
     window.addEventListener('keydown', this.smqListener, false)
     // 消息通知
     let vue = this
-    let pusher = new Pusher('9df11d97766e328a79c4', {
-      cluster: 'ap3',
-      forceTLS: true
+    let echo = new Echo({
+      broadcaster: 'pusher',
+      key: '9df11d97766e328a79c4',
+      wsHost: window.location.hostname,
+      wsPort: 6001,
+      forceTLS: false,
+      disableStats: true
     })
-    let channel = pusher.subscribe('knit_server_' + this.$getsessionStorage('user_id'))
-    channel.bind('knit_server_event', function (data: any) {
+    // @ts-ignore
+    window.Pusher = Pusher
+    echo.channel(`knit_server_user_id`).listen('knit_server_event', (e: any) => {
       vue.$notify({
-        title: data.content.title,
+        title: e.data.content.title,
         dangerouslyUseHTMLString: true,
         duration: 0,
-        message: vue.changeContentToHtml(data.content)
+        message: vue.changeContentToHtml(e.data.content)
       })
     })
   },

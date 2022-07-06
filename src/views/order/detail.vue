@@ -1648,21 +1648,21 @@
                   </svg>
                   <span class="text">操作记录</span>
                 </div>
-                <div class="btn backHoverRed"
+                <div class="btn backHoverOrange"
                   @click="cancelOrderFlag=true">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-caozuojilu"></use>
+                  </svg>
+                  <span class="text">订单结余</span>
+                </div>
+                <div class="btn backHoverRed"
+                  @click="cancelOrder">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-shanchudingdan"></use>
                   </svg>
                   <span class="text">取消订单</span>
-                </div>
-                <div class="btn backHoverGreen"
-                  @click="$router.push('/boxManage/orderDetail?id='+$route.query.id)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-shanchudingdan"></use>
-                  </svg>
-                  <span class="text">装箱出库</span>
                 </div>
               </div>
             </div>
@@ -1777,13 +1777,13 @@
         </div>
       </div>
     </div>
-    <!-- 取消订单 -->
+    <!-- 订单结余 -->
     <div class="popup"
       v-if="cancelOrderFlag">
       <div class="main"
         style="width:1200px">
         <div class="titleCtn">
-          <span class="text">取消订单流程</span>
+          <span class="text">订单结余</span>
           <div class="closeCtn"
             @click="cancelOrderBack">
             <span class="el-icon-close"></span>
@@ -1805,13 +1805,6 @@
                 <span class="white">2</span>
               </div>
               <div class="name">产品结余</div>
-            </div>
-            <div class="step"
-              :class="{'active':cancleOrderStep===3}">
-              <div class="circle">
-                <span class="white">3</span>
-              </div>
-              <div class="name">完成取消</div>
             </div>
           </div>
           <template v-if="cancleOrderStep===1">
@@ -2135,25 +2128,18 @@
               </div>
             </div>
           </template>
-          <template v-if="cancleOrderStep===3">
-            <div class="explainCtn orange">确认提交后，订单状态将切换为“已取消”，且状态不能撤回。该订单将从列表中过滤，如需查询，请通过订单状态筛选，进行查询。是否继续？</div>
-          </template>
         </div>
         <div class="oprCtn">
           <span class="btn borderBtn"
             @click="cancelOrderBack">取消</span>
           <span class="btn backHoverOrange"
             v-if="cancleOrderStep!==1"
-            @click="cancleOrderStep--">上一步</span>
+            @click="cancleOrderStep--">结余物料</span>
           <span class="btn backHoverGreen"
-            v-if="cancleOrderStep!==3"
-            @click="cancleOrderStep++">不结余直接下一步</span>
+            v-if="cancleOrderStep!==2"
+            @click="cancleOrderStep++">结余产品</span>
           <span class="btn backHoverBlue"
-            v-if="cancleOrderStep!==3"
             @click="cancleOrderStep===1?saveMatRest():saveProRest()">确认结余</span>
-          <span class="btn backHoverBlue"
-            v-if="cancleOrderStep===3"
-            @click="cancelOrder">确认取消</span>
         </div>
       </div>
     </div>
@@ -2628,7 +2614,6 @@ export default Vue.extend({
           if (res.data.status) {
             this.$message.success('结余入库成功')
             this.cancelOrderFlag = true
-            this.cancleOrderStep = 3
           }
         })
       }
@@ -2748,11 +2733,15 @@ export default Vue.extend({
         })
     },
     cancelOrder() {
-      this.$confirm('确认取消?', '提示', {
-        confirmButtonText: '确认取消',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
+      this.$confirm(
+        '确认提交后，订单状态将切换为“已取消”，且状态不能撤回。该订单将从列表中过滤，如需查询，请通过订单状态筛选，进行查询。是否继续？?',
+        '提示',
+        {
+          confirmButtonText: '确认取消',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
         .then(() => {
           order
             .cancel({

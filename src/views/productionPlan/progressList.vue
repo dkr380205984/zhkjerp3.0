@@ -23,27 +23,91 @@
         <div class="title">生产进度列表</div>
       </div>
       <div class="listCtn">
-        <div class="filterCtn">
+        <div class="filterCtn"
+          v-if="listType===2">
+          <div class="elCtn">
+            <el-input v-model="keyword"
+              placeholder="筛选报价/产品/样品编号"
+              @keydown.enter.native="changeRouter"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-cascader @change="changeRouter"
+              placeholder="筛选下单公司"
+              v-model="client_id"
+              :options="clientList"
+              filterable
+              clearable>
+            </el-cascader>
+          </div>
+          <div class="elCtn">
+            <el-select @change="changeRouter"
+              v-model="user_id"
+              placeholder="筛选创建人"
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-select v-model="status"
+              @change="changeRouter"
+              placeholder="生产计划状态">
+              <el-option label="所有单据"
+                :value="null"></el-option>
+              <el-option label="待添加计划"
+                value="0"></el-option>
+              <el-option label="已添加计划"
+                value="1"></el-option>
+            </el-select>
+          </div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
+        </div>
+        <div class="filterCtn"
+          v-if="listType===2">
+          <div class="elCtn hasIcon">
+            <el-select @change="changeRouter"
+              v-model="group_id"
+              placeholder="筛选负责小组"
+              clearable>
+              <el-option v-for="item in groupList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-date-picker v-model="date"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+              @change="changeRouter"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </div>
+          <div class="elCtn">
+            <el-select v-model="limit"
+              placeholder="每页展示条数"
+              @change="changeRouter">
+              <el-option v-for="item in limitList"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="filterCtn"
+          v-if="listType===1">
           <div class="elCtn">
             <el-input v-model="keyword"
               placeholder="筛选客户/加工厂名称"
               @keydown.enter.native="changeRouter"></el-input>
-          </div>
-          <div class="elCtn">
-            <el-select @change="changeRouter"
-              v-model="status"
-              placeholder="筛选加工状态">
-              <el-option label="全部"
-                :value="0"></el-option>
-              <el-option label="已分配"
-                :value="1"></el-option>
-              <el-option label="已逾期"
-                :value="2"></el-option>
-              <el-option label="生产中"
-                :value="3"></el-option>
-              <el-option label="生产完成"
-                :value="4"></el-option>
-            </el-select>
           </div>
           <div class="elCtn">
             <el-select @change="changeRouter"
@@ -69,10 +133,6 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
-          <div class="btn borderBtn"
-            @click="reset">重置</div>
-        </div>
-        <div class="filterCtn">
           <div class="elCtn hasIcon">
             <el-select @change="changeRouter"
               v-model="group_id"
@@ -83,24 +143,19 @@
                 :value="item.id"
                 :label="item.name"></el-option>
             </el-select>
-            <el-tooltip class="item"
-              effect="dark"
-              content="保存负责小组筛选"
-              placement="top">
-              <i class="el-icon-upload hoverOrange"
-                @click="$setLocalStorage('group_id',group_id)"></i>
-            </el-tooltip>
           </div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
         </div>
         <div class="filterCtn clearfix">
           <div class="btn fl"
             style="float:left;margin-left:0"
             :class="{'backHoverBlue':listType===2,'backGray':listType===1}"
-            @click="getList(1)">切换到生产单</div>
+            @click="listType=1;changeRouter()">切换到生产单</div>
           <div class="btn fl"
             style="float:left"
             :class="{'backHoverBlue':listType===1,'backGray':listType===2}"
-            @click="getList(2)">切换到订单</div>
+            @click="listType=2;changeRouter()">切换到订单</div>
           <div class="btn fr backHoverBlue"
             @click="getUpdateDetail">更新生产数量</div>
         </div>
@@ -241,7 +296,7 @@
                 <div class="tcol">{{item.order_code}}</div>
                 <div class="tcol">{{item.weave_code}}</div>
                 <div class="tcol">{{item.client_name}}
-                  (<span class="green">{{item.process_name}}</span>)
+                  <span class="green">({{item.process_name}})</span>
                 </div>
                 <div class="tcol">{{item.product_code}}</div>
                 <div class="tcol">{{item.size_name}}/{{item.color_name}}</div>
@@ -273,63 +328,12 @@
         </div>
       </div>
     </div>
-    <div class="popup"
-      v-if="updateLogFlag">
-      <div class="main"
-        style="width:1200px">
-        <div class="titleCtn">
-          <span class="text">生产更新日志</span>
-          <div class="closeCtn"
-            @click="updateLogFlag=false">
-            <span class="el-icon-close"></span>
-          </div>
-        </div>
-        <div class="contentCtn">
-          <div class="tableCtn"
-            style="padding:32px 0;font-size:12px">
-            <div class="thead">
-              <div class="trow">
-                <div class="tcol">订单号</div>
-                <div class="tcol">生产单号</div>
-                <div class="tcol">单位(工序)</div>
-                <div class="tcol">产品信息</div>
-                <div class="tcol">尺码颜色</div>
-                <div class="tcol">更新数量</div>
-                <div class="tcol">更新时间</div>
-                <div class="tcol">备注信息</div>
-              </div>
-            </div>
-            <div class="tbody">
-              <div class="trow"
-                v-for="item in updateLog"
-                :key="item.id">
-                <div class="tcol">{{item.order_code}}</div>
-                <div class="tcol">{{item.weave_code}}</div>
-                <div class="tcol">{{item.client_name}}
-                  (<span class="green">{{item.process_name}}</span>)
-                </div>
-                <div class="tcol">{{item.product_code}}</div>
-                <div class="tcol">{{item.size_name}}/{{item.color_name}}</div>
-                <div class="tcol">{{item.number}}</div>
-                <div class="tcol">{{item.update_time}}</div>
-                <div class="tcol">{{item.desc}}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="oprCtn">
-          <span class="btn borderBtn"
-            @click="updateLogFlag=false">取消</span>
-          <span class="btn backHoverBlue"
-            @click="updateLogFlag=false">确认</span>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import { limitArr } from '@/assets/js/dictionary'
 import { order, productionProgress } from '@/assets/js/api'
 export default Vue.extend({
   data(): {
@@ -343,9 +347,10 @@ export default Vue.extend({
       page: 1,
       list: [],
       keyword: '',
-      status: 0,
+      status: '1',
       date: [],
       user_id: '',
+      limitList: limitArr,
       pickerOptions: {
         shortcuts: [
           {
@@ -377,12 +382,11 @@ export default Vue.extend({
           }
         ]
       },
+      client_id: [],
       checked: false,
       checkedCount: [],
       updateList: [],
       updateFlag: false,
-      updateLog: [],
-      updateLogFlag: false,
       originalSetting2: [
         {
           key: 'code',
@@ -441,10 +445,19 @@ export default Vue.extend({
         },
         {
           key: 'total_real_number',
-          name: '完成数量',
+          name: '外协更新数量',
           ifShow: true,
           ifLock: false,
           index: 8,
+          class: 'green',
+          errVal: '0'
+        },
+        {
+          key: 'admin_real_number',
+          name: '本厂更新数量',
+          ifShow: true,
+          ifLock: false,
+          index: 9,
           class: 'green',
           errVal: '0'
         },
@@ -453,21 +466,21 @@ export default Vue.extend({
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 9
+          index: 10
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 10
+          index: 11
         },
         {
           key: 'order_time',
           name: '下单日期',
           ifShow: true,
           ifLock: false,
-          index: 11
+          index: 12
         }
       ],
       originalSetting: [
@@ -521,10 +534,19 @@ export default Vue.extend({
         },
         {
           key: 'weave_plan_real_number',
-          name: '已完成数量',
+          name: '外协更新数量',
           ifShow: true,
           ifLock: false,
           index: 7,
+          class: 'blue',
+          errVal: '0'
+        },
+        {
+          key: 'weave_plan_admin_real_number',
+          name: '本厂更新数量',
+          ifShow: true,
+          ifLock: false,
+          index: 8,
           class: 'green',
           errVal: '0'
         },
@@ -533,7 +555,7 @@ export default Vue.extend({
           name: '计划单状态',
           ifShow: true,
           ifLock: false,
-          index: 8,
+          index: 9,
           filterArr: ['', '已创建', '待创建'],
           classArr: ['', 'blue', 'orange']
         },
@@ -542,47 +564,32 @@ export default Vue.extend({
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 8
+          index: 10
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 9
+          index: 11
         },
         {
           key: 'order_time',
           name: '下单日期',
           ifShow: true,
           ifLock: false,
-          index: 10
+          index: 12
         }
       ],
       oprList: [
         {
-          name: '查看生产日志',
+          name: '详情',
           class: 'hoverBlue',
           fn: (item: any) => {
-            productionProgress
-              .updateDetail({
-                // @ts-ignore
-                plan_ids: this.listType === 1 ? [item.id] : [],
-                // @ts-ignore
-                order_ids: this.listType === 2 ? [item.id] : []
-              })
-              .then((res) => {
-                if (res.data.status) {
-                  if (res.data.data.update_log.length > 0) {
-                    // @ts-ignore
-                    this.updateLog = res.data.data.update_log
-                    // @ts-ignore
-                    this.updateLogFlag = true
-                  } else {
-                    this.$message.error('暂无生产日志')
-                  }
-                }
-              })
+            this.$router.push(
+              // @ts-ignore
+              '/productionPlan/progressDetail?' + (this.listType === 1 ? 'planId=' : 'orderId=') + item.id
+            )
           }
         }
       ]
@@ -599,6 +606,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    clientList() {
+      return this.$store.state.api.clientType.arr.filter((item: { type: any }) => Number(item.type) === 1)
+    },
     userList() {
       return this.$store.state.api.user.arr
     },
@@ -624,11 +634,12 @@ export default Vue.extend({
       const query = this.$route.query
       this.page = Number(query.page)
       this.keyword = query.keyword || ''
-      this.status = Number(query.status) || 0
+      this.status = query.status || '1'
       this.user_id = query.user_id || ''
       this.group_id = query.group_id || ''
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = query.limit ? Number(query.limit) : 10
+      this.listType = query.listType ? Number(query.listType) : 1
     },
     changeRouter(ev?: any) {
       if (ev !== this.page) {
@@ -648,7 +659,9 @@ export default Vue.extend({
           '&limit=' +
           this.limit +
           '&group_id=' +
-          this.group_id
+          this.group_id +
+          '&listType=' +
+          this.listType
       )
     },
     reset() {
@@ -706,14 +719,17 @@ export default Vue.extend({
       } else {
         order
           .list({
+            is_draft: 2,
             order_type: 1,
+            keyword: this.keyword,
+            client_id: this.client_id.length > 0 ? this.client_id[2] : '',
             page: this.page,
             limit: this.limit,
-            keyword: this.keyword,
-            // status: this.status,
+            has_material_plan: this.status,
             start_time: this.date.length > 0 ? this.date[0] : '',
             end_time: this.date.length > 0 ? this.date[1] : '',
-            user_id: this.user_id
+            user_id: this.user_id,
+            group_id: this.group_id
           })
           .then((res) => {
             if (res.data.status) {
@@ -786,6 +802,11 @@ export default Vue.extend({
         checkWhich: 'api/group',
         getInfoMethed: 'dispatch',
         getInfoApi: 'getGroupAsync'
+      },
+      {
+        checkWhich: 'api/clientType',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getClientTypeAsync'
       }
     ])
     this.getFilters()

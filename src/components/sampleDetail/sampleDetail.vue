@@ -43,7 +43,6 @@
                           <div class="label">样品款式：</div>
                           <div class="text">{{sampleInfo.style_data.map((item)=>item.name).join(',')}}</div>
                         </div>
-                        <div class="col"></div>
                       </div>
                       <div class="row">
                         <div class="col"

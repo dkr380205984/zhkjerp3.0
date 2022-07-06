@@ -349,7 +349,7 @@ export default Vue.extend({
       this.loading = true
       client
         .financialList({
-          sortCol: this.sortCol,
+          sort_col: this.sortCol,
           sort: this.sort,
           limit: this.limit,
           page: this.page,

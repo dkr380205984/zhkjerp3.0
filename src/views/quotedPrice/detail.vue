@@ -931,13 +931,14 @@
             <div class="label">搜索单据：</div>
             <div class="info">
               <div class="elCtn"
-                style="width:100%">
+                style="width:96%">
                 <el-autocomplete v-model="bindOrderValue"
                   :fetch-suggestions="searchOrder"
                   :placeholder="'请输入'+(bindOrderType===1?'订单号搜索':'样单号搜索')"
                   @select="selectOrder"></el-autocomplete>
               </div>
               <div class="info_btn hoverBlue"
+                style="font-size:16px;padding: 0 20px;right: 33px;"
                 @click="stickOrder">粘贴</div>
             </div>
           </div>

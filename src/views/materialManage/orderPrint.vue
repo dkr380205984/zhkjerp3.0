@@ -37,7 +37,7 @@
                 <div class="tcol bgGray headTitle">采购单号</div>
                 <div class="tcol">{{materialOrderInfo.code || '暂无' }}</div>
                 <div class="tcol bgGray headTitle">订单号</div>
-                <div class="tcol">{{materialOrderInfo.order_code || '暂无' }}</div>
+                <div class="tcol">{{materialOrderInfo.time_code || materialOrderInfo.order_code || '暂无' }}</div>
                 <div class="tcol bgGray headTitle">联系人</div>
                 <div class="tcol">{{materialOrderInfo.contacts_name}}</div>
                 <div class="tcol bgGray headTitle">联系电话</div>
@@ -155,6 +155,21 @@
               </div>
             </div>
           </div>
+          <div class="tableCtn">
+            <div class="thead bgWhite"
+              style="height: auto">
+              <div class="trow">
+                <div class="tcol bgGray"
+                  style="flex:0.3">注意事项</div>
+                <div class="tcol"
+                  style="flex: 4;text-align:left;display:block">
+                  <div style="line-height:22px"
+                    v-for="item,index in descArr"
+                    :key="index">{{item?(index+1)+'.':''}}{{item}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </template>
@@ -192,22 +207,31 @@
               <div class="trow">
                 <div class="tcol bgGray headTitle">采购单号</div>
                 <div class="tcol">{{materialOrderInfo.code || '暂无' }}</div>
-                <div class="tcol bgGray headTitle">采购单位</div>
-                <div class="tcol">{{ materialOrderInfo.client_name || '暂无' }}</div>
+                <div class="tcol bgGray headTitle">订单号</div>
+                <div class="tcol">{{materialOrderInfo.time_code || materialOrderInfo.order_code || '暂无' }}</div>
+                <div class="tcol bgGray headTitle">联系人</div>
+                <div class="tcol">{{materialOrderInfo.contacts_name}}</div>
+                <div class="tcol bgGray headTitle">联系电话</div>
+                <div class="tcol">{{materialOrderInfo.contacts_phone}}</div>
+              </div>
+              <div class="trow">
+                <div class="tcol bgGray headTitle">计划单号</div>
+                <div class="tcol">{{materialOrderInfo.plan_code || '暂无' }}</div>
                 <div class="tcol bgGray headTitle">下单日期</div>
                 <div class="tcol">{{ materialOrderInfo.order_time || '暂无' }}</div>
                 <div class="tcol bgGray headTitle">交货日期</div>
                 <div class="tcol">{{ materialOrderInfo.delivery_time || '暂无' }}</div>
+                <div class="tcol bgGray headTitle">采购单位</div>
+                <div class="tcol">{{ materialOrderInfo.client_name || '暂无' }}</div>
               </div>
               <div class="trow">
                 <div class="tcol bgGray headTitle">订购总数</div>
                 <div class="tcol">{{materialOrderInfo.total_number}}</div>
                 <div class="tcol bgGray headTitle">订购总额</div>
                 <div class="tcol">{{materialOrderInfo.total_price}}元</div>
-                <div class="tcol bgGray headTitle"></div>
-                <div class="tcol"></div>
-                <div class="tcol bgGray headTitle"></div>
-                <div class="tcol"></div>
+                <div class="tcol bgGray headTitle">备注信息</div>
+                <div class="tcol"
+                  style="min-width: 347px;">{{materialOrderInfo.desc}}</div>
               </div>
             </div>
           </div>

@@ -10,7 +10,7 @@
         <span class="text">生产计划</span>
       </div>
       <div class="tag"
-        @click="$router.push('/productionPlan/progressList')">
+        @click="$router.push('/productionPlan/progressList?page=1')">
         <svg class="iconFont"
           aria-hidden="true">
           <use xlink:href='#icon-shengchanjindu'></use>

@@ -63,17 +63,17 @@
               </div>
               <div class="col flex3">
                 <div class="label">{{orderInfo.order_type===1?'下单':'打样'}}时间：</div>
-                <div class="text">{{orderInfo.time_data[0].order_time}}</div>
+                <div class="text">{{orderInfo.time_data[sampleOrderIndex].order_time}}</div>
               </div>
             </div>
             <div class="row">
               <div class="col flex3">
                 <div class="label">{{orderInfo.order_type===1?'下单':'打样'}}款数：</div>
-                <div class="text">{{orderInfo.time_data[0].total_style}}款</div>
+                <div class="text">{{orderInfo.time_data[sampleOrderIndex].total_style}}款</div>
               </div>
               <div class="col flex3">
                 <div class="label">{{orderInfo.order_type===1?'下单':'打样'}}总数：</div>
-                <div class="text">{{orderInfo.time_data[0].total_number}}</div>
+                <div class="text">{{orderInfo.time_data[sampleOrderIndex].total_number}}</div>
               </div>
             </div>
             <div class="row"
@@ -155,12 +155,12 @@
             <div class="thead">
               <div class="trow">
                 <div class="tcol">{{orderInfo.order_type===1?'产':'样'}}品编号</div>
-                <div class="tcol">{{orderInfo.order_type===1?'产':'样'}}品名称</div>
                 <div class="tcol">{{orderInfo.order_type===1?'产':'样'}}品图片</div>
                 <div class="tcol noPad"
-                  style="flex:2">
+                  style="flex:3">
                   <div class="trow">
                     <div class="tcol">尺码颜色</div>
+                    <div class="tcol">克重尺寸</div>
                     <div class="tcol">{{orderInfo.order_type===1?'下单':'打样'}}数量</div>
                   </div>
                 </div>
@@ -177,9 +177,9 @@
                   <span class="blue"
                     style="cursor:pointer"
                     @click="proId=item.product_id;orderInfo.order_type===1?productShow=true:sampleShow=true">{{item.product_code||item.system_code}}</span>
+                  <span :class="{'gray':!item.name}">{{item.name||'无名称'}}</span>
                   <span class="gray">({{item.category}}/{{item.secondary_category}})</span>
                 </div>
-                <div class="tcol">{{item.name}}</div>
                 <div class="tcol">
                   <div class="imageCtn">
                     <el-image style="width:100%;height:100%"
@@ -194,11 +194,14 @@
                   </div>
                 </div>
                 <div class="tcol noPad"
-                  style="flex:2">
+                  style="flex:3">
                   <div class="trow"
                     v-for="(itemChild,indexChild) in item.product_info"
                     :key="indexChild">
                     <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
+                    <div class="tcol">
+                      <span>克重:{{itemChild.weight}}g</span><span>尺寸:{{itemChild.size_info}}</span>
+                    </div>
                     <div class="tcol">{{itemChild.number}}</div>
                   </div>
                 </div>
@@ -247,7 +250,7 @@
               </div>
               <div class="tbody">
                 <div class="trow"
-                  v-for="itemBatch in orderInfo.time_data[0].batch_data"
+                  v-for="itemBatch in orderInfo.time_data[sampleOrderIndex].batch_data"
                   :key="itemBatch.id">
                   <div class="tcol"
                     style="flex:0.72">
@@ -272,21 +275,20 @@
                       :key="itemPro.id">
                       <div class="tcol">
                         <span>{{itemPro.product_code||itemPro.system_code||'无编号'}}</span>
+                        <span :class="{'gray':!itemPro.name}">{{itemPro.name||'无名称'}}</span>
                         <span class="gray">({{itemPro.category}}/{{itemPro.secondary_category}})</span>
                       </div>
                       <div class="tcol">
-                        <div class="trow">
-                          <div class="imageCtn">
-                            <el-image style="width:100%;height:100%;margin-top:2px"
-                              :src="itemPro.image_data.length>0?itemPro.image_data[0]:''"
-                              :preview-src-list="itemPro.image_data">
-                              <div slot="error"
-                                class="image-slot">
-                                <i class="el-icon-picture-outline"
-                                  style="font-size:42px"></i>
-                              </div>
-                            </el-image>
-                          </div>
+                        <div class="imageCtn">
+                          <el-image style="width:100%;height:100%;margin-top:2px"
+                            :src="itemPro.image_data.length>0?itemPro.image_data[0]:''"
+                            :preview-src-list="itemPro.image_data">
+                            <div slot="error"
+                              class="image-slot">
+                              <i class="el-icon-picture-outline"
+                                style="font-size:42px"></i>
+                            </div>
+                          </el-image>
                         </div>
                       </div>
                       <div class="tcol noPad"
@@ -314,7 +316,6 @@
               <div class="thead">
                 <div class="trow">
                   <div class="tcol">样品编号</div>
-                  <div class="tcol">样品名称</div>
                   <div class="tcol">样品图片</div>
                   <div class="tcol noPad"
                     style="flex:3">
@@ -339,10 +340,9 @@
                       <span class="blue"
                         @click="sampleDetail=item;sampleShow = true"
                         style="cursor:pointer">{{item.product_code || item.system_code}}</span>
+                      <span :class="{'gray':!item.name}">{{item.name||'无名称'}}</span>
                       <span class="gray">({{item.category}}/{{item.secondary_category}})</span>
                     </div>
-                    <div class="tcol"
-                      :class="{'gray':!item.name}">{{item.name || '无名称'}}</div>
                     <div class="tcol">
                       <div class="imageCtn">
                         <el-image style="width:100%;height:100%"
