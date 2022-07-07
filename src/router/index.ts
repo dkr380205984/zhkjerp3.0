@@ -100,6 +100,10 @@ const routes: Array<RouteConfig> = [
     name: 'index',
     component: () => import('../views/index.vue'),
     children: [{
+      path: '/product/list',
+      name: '产品列表',
+      component: () => import('../views/product/list.vue')
+    }, {
       path: '/menu',
       name: '其他管理',
       component: () => import('../views/menu.vue')
