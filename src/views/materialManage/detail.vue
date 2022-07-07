@@ -2922,7 +2922,7 @@ export default Vue.extend({
           this.resetOrderMaterial()
           this.init()
           if (ifPrint) {
-            this.$openUrl('/materialManage/orderPrint?id=' + res.data.data.id)
+            this.$openUrl('/materialManage/orderPrint?id=' + res.data.data[0].id)
           }
         }
         this.saveLock = false

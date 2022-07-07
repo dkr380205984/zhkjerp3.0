@@ -589,7 +589,18 @@ const sampleOrder = {
 import { ProductInfo } from '@/types/product'
 const product = {
   create: (params: ProductInfo) => http.post(`${baseUrl}/product/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrl}/product/lists`, params),
+  list: (params?: {
+    limit: string | number
+    page: string | number
+    product_code?: string
+    order_code?: string
+    category_id?: string | number
+    secondary_category_id?: string | number
+    product_name?: string
+    product_type?: string | number
+    user_id?: string | number
+    craft_status?: 0 | 1
+  }) => http.get(`${baseUrl}/product/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/product/detail`, params),
 }
 
@@ -786,7 +797,8 @@ const productionPlan = {
 // 生产进度
 const productionProgress = {
   list: (params: {
-    keyword: string // 计划单/客户/加工单位
+    code?: string
+    keyword?: string // 计划单/客户/加工单位
     status: string | number // 1 已分配 2 已逾期 3 生产中 4 生产完成
     start_time?: string
     end_time?: string
@@ -794,6 +806,8 @@ const productionProgress = {
     limit?: number | string
     user_id?: string | number
     order_type: 1 | 2
+    client_id?: number | string
+    process_name?: string
   }) => http.get(`${baseUrl}/weave/plan/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/production/detail`, params),
   updateLog: (params: {

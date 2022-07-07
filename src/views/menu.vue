@@ -148,6 +148,12 @@ export default Vue.extend({
             url: '/workerManage/list?page=1&keyword=&department=&status=&type=&limit=10'
           },
           {
+            name: '产品管理',
+            id: '24-3',
+            icon: 'icon-gongyidanliebiao',
+            url: '/product/list?page=1'
+          },
+          {
             name: '系统设置',
             id: 16,
             icon: 'icon-xitongshezhi',
