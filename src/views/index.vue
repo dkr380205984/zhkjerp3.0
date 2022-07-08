@@ -552,22 +552,27 @@ export default Vue.extend({
     window.addEventListener('keydown', this.smqListener, false)
     // 消息通知
     let vue = this
-    let echo = new Echo({
-      broadcaster: 'pusher',
-      key: '9df11d97766e328a79c4',
-      wsHost: window.location.hostname,
-      wsPort: 6001,
-      forceTLS: false,
-      disableStats: true
-    })
     // @ts-ignore
     window.Pusher = Pusher
-    echo.channel(`knit_server_user_id`).listen('knit_server_event', (e: any) => {
+    // @ts-ignore
+    window.Echo = new Echo({
+      client: new Pusher('9df11d97766e328a79c4', {
+        wsHost: window.location.hostname,
+        wsPort: 6002,
+        wssPort: 6002,
+        forceTLS: document.location.protocol === 'https:' ? true : false,
+        disableStats: true,
+        enabledTransports: ['ws', 'wss']
+      }),
+      broadcaster: 'pusher'
+    })
+    // @ts-ignore
+    window.Echo.channel(`knit_server_` + this.$getsessionStorage('user_id')).listen('.knit_server_event', (e: any) => {
       vue.$notify({
-        title: e.data.content.title,
+        title: e.content,
         dangerouslyUseHTMLString: true,
         duration: 0,
-        message: vue.changeContentToHtml(e.data.content)
+        message: vue.changeContentToHtml(e.content)
       })
     })
   },
