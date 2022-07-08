@@ -69,8 +69,9 @@
           <div class="elCtn">
             <el-select @change="changeRouter" v-model="status" placeholder="筛选审核状态">
               <el-option value="null" label="全部"></el-option>
+              <el-option value="0" label="待审核"></el-option>
               <el-option value="1" label="已审核"></el-option>
-              <el-option value="2" label="待审核"></el-option>
+              <el-option value="2" label="已驳回"></el-option>
               <el-option value="3" label="状态异常"></el-option>
             </el-select>
           </div>
@@ -142,8 +143,8 @@
                 <div class="blue" v-if="item.material_order_progress >= 100">已完成</div>
               </div>
               <div class="col">
-                <div v-if="item.is_check === 0" class="orange">未审核</div>
-                <div v-else-if="item.is_check === 1" class="blue">已通过</div>
+                <div v-if="item.is_check === 0" class="orange">待审核</div>
+                <div v-else-if="item.is_check === 1" class="blue">已审核</div>
                 <div v-else-if="item.is_check === 2" class="red">已驳回</div>
                 <div v-else class="red">状态异常</div>
               </div>
