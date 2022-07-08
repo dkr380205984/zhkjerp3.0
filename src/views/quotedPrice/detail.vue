@@ -90,7 +90,7 @@
               </div>
               <div class="col flex3">
                 <div class="label">客户报价：</div>
-                <div class="text">{{quotedPriceInfo.real_quote_price}}元</div>
+                <div class="text">{{quotedPriceInfo.real_quote_price}}{{quotedPriceInfo.settle_unit}}</div>
               </div>
               <!-- <div class="col"
                 v-if="quotedPriceInfo.rel_order.length>0">

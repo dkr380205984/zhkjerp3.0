@@ -16,7 +16,7 @@
             <div class="thead">
               <div class="trow">
                 <div class="tcol">订单/批次</div>
-                <div class="tcol">发货时间</div>
+                <div class="tcol">计划发货时间</div>
                 <div class="tcol noPad"
                   style="flex:4.7">
                   <div class="trow">
@@ -43,7 +43,7 @@
               <div class="trow">
                 <div class="tcol">
                   <span>{{itemOrder.code}}</span>
-                  <span>第{{itemBatch.batch_number}}批</span>
+                  <span>{{itemBatch.batch_title}}</span>
                 </div>
                 <div class="tcol">
                   <span class="green">{{itemBatch.delivery_time}}</span>

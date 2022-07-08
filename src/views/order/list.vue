@@ -21,14 +21,11 @@
         <div class="filterCtn">
           <div class="elCtn">
             <el-input v-model="keyword"
-              placeholder="筛选报价/产品/样品编号"
+              placeholder="可搜索订单号或产品编号"
               @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
-            <el-cascader @change="
-                getContacts($event)
-                changeRouter()
-              "
+            <el-cascader @change="getContacts($event);changeRouter()"
               placeholder="筛选下单公司"
               v-model="client_id"
               filterable
@@ -139,9 +136,9 @@
               <el-option label="已完成"
                 :value="3"></el-option>
               <el-option label="已取消"
-                :value="5"></el-option>
-              <el-option label="已延期"
                 :value="6"></el-option>
+              <el-option label="已延期"
+                :value="5"></el-option>
             </el-select>
           </div>
         </div>

@@ -554,25 +554,19 @@ export default Vue.extend({
         })
     },
     exportExcel() {
-      if (!this.checked) {
+      const idArr = this.checkedCount.map((item: any) => item.id)
+      if (idArr.length === 0) {
+        this.$message.error('请选择需要导出的报价单')
         return
       }
       this.mainLoading = true
-      let idArr: any[] = []
-      this.list.forEach((item) => {
-        // console.log(item)
-        idArr.push(item.id)
-      })
-      console.log(idArr)
       exportExcel
         .quoteList({
           client_id: this.client_id,
           id: idArr
         })
         .then((res: any) => {
-          console.log(this.list)
           if (res.data.status) {
-            console.log(res.data.data)
             this.mainLoading = false
             window.location.href = res.data.data
           }

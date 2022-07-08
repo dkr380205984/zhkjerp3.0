@@ -1166,7 +1166,7 @@
             <div class="info elCtn">
               <el-input v-model="quotedPriceInfo.real_quote_price"
                 placeholder="请输入最终客户报价">
-                <template slot="append">元</template>
+                <template slot="append">{{quotedPriceInfo.settle_unit}}</template>
               </el-input>
             </div>
           </div>
