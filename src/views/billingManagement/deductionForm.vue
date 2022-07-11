@@ -76,8 +76,9 @@
           <div class="elCtn">
             <el-select @change="changeRouter" v-model="status" placeholder="筛选审核状态">
               <el-option value="null" label="全部"></el-option>
+              <el-option value="0" label="待审核"></el-option>
               <el-option value="1" label="已审核"></el-option>
-              <el-option value="2" label="待审核"></el-option>
+              <el-option value="2" label="已驳回"></el-option>
             </el-select>
           </div>
           <div class="btn borderBtn" @click="reset">重置</div>
