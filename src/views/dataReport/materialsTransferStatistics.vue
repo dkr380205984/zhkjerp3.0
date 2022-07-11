@@ -44,7 +44,7 @@
         <div class="tab" @click="$router.push('/dataReport/materialsOrderingStatistics')">订购数据统计</div>
         <div class="tab active">调取数据统计</div>
         <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">原料库存数据统计</div>
+        <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">库存数据统计</div>
       </div>
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">
