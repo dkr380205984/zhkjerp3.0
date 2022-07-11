@@ -1218,11 +1218,13 @@ const statistics = {
     group_id: number | string
     contacts_id: number | string
     name: string
+    type: number | string
     start_time: string
     end_time: string
   }) => http.get(`${baseUrl}/statistics/rawmaterial`, params),
   rawMaterialOrder: (params?: {
     order_type: number | string
+    type: number | string
     user_id: number | string
     group_id: number | string
     client_id: number | string
@@ -1233,6 +1235,7 @@ const statistics = {
   }) => http.get(`${baseUrl}/statistics/rawmaterial/order`, params),
   rawMaterialTransfer: (params?: {
     order_type: number | string
+    type: number | string
     user_id: number | string
     group_id: number | string
     store_id: number | string
@@ -1241,6 +1244,7 @@ const statistics = {
     end_time: string
   }) => http.get(`${baseUrl}/statistics/rawmaterial/transfer`, params),
   rawMaterialMachining: (params?: {
+    type: number | string
     order_type: number | string
     user_id: number | string
     group_id: number | string
@@ -1307,6 +1311,7 @@ const statistics = {
   }) => http.get(`${baseUrl}/statistics/receipt/contents`, params),
   storeTotal: (params?: {
     store_id: number | string
+    type: number | string
     name: string
     start_time: string
     end_time: string

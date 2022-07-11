@@ -49,7 +49,7 @@
       <div class="cardCtn">
         <div class="card noBackColor noPad" style="width: 106%">
           <div class="screenCtn">
-            <div class="screen" style="width: 100%">
+            <div class="screen" style="width: 48.5%">
               <el-select
                 @change="
                   getStoreDetail($event)
@@ -60,6 +60,13 @@
                 clearable
               >
                 <el-option v-for="item in storeList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+              </el-select>
+            </div>
+            <div class="screen" style="width: 48.5%">
+              <el-select @change="changeRouter" v-model="filterData.type" placeholder="筛选调取仓库" clearable>
+                <el-option label="纱线/面料" :value="''"></el-option>
+                <el-option label="纱线" :value="1"></el-option>
+                <el-option label="面料" :value="2"></el-option>
               </el-select>
             </div>
             <div class="screen" style="margin-bottom: 0; width: 65.5%">
@@ -90,6 +97,11 @@
             </div>
             <div>
               仓库名称：<span class="blue">{{ alias || '所有' }}</span>
+            </div>
+            <div>
+              原材类型：<span class="blue">{{
+                filterData.type === '' ? '纱线/面料' : filterData.type === 1 ? '纱线' : '面料'
+              }}</span>
             </div>
           </div>
         </div>
@@ -241,6 +253,7 @@ export default Vue.extend({
         client_id: '',
         contacts_id: '',
         group_id: '',
+        type:'',
         orderOrSimpleOrder: '',
         store_id: '',
         name: ''
@@ -331,6 +344,7 @@ export default Vue.extend({
       this.filterData.store_id = Number(query.store_id) || ''
       this.filterData.name = query.name ? query.name : ''
       this.filterData.order_type = query.order_type ? +query.order_type : ''
+      this.filterData.type = query.type ? +query.type : ''
       this.filterData.contacts_id = query.contacts_id || this.$getLocalStorage('create_user') || ''
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.filterData.settle_unit = query.settle_unit
@@ -345,6 +359,7 @@ export default Vue.extend({
         store_id: '',
         group_id: '',
         order_type: '',
+        type: '',
         name: ''
       }
       localStorage.create_user_name = ''
@@ -391,6 +406,8 @@ export default Vue.extend({
           (this.filterData.name || '') +
           '&store_id=' +
           (this.filterData.store_id || '') +
+          '&type=' +
+          (this.filterData.type || '') +
           '&settle_unit=' +
           (this.filterData.settle_unit || '') +
           '&start_time=' +
@@ -406,6 +423,7 @@ export default Vue.extend({
         .storeTotal({
           start_time: this.filterData.start_time,
           store_id: this.filterData.store_id,
+          type: this.filterData.type,
           name: this.filterData.name,
           end_time: this.filterData.end_time
         })

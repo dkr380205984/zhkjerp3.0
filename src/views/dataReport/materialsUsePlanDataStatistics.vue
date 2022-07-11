@@ -62,7 +62,7 @@
                 <el-option label="样单" :value="2"></el-option>
               </el-select>
             </div>
-            <div class="screen" style="margin-bottom: 0; width: 48.5%">
+            <div class="screen" style="margin-bottom: 0; width: 31%">
               <el-select @change="changePeople" v-model="filterData.user_id" placeholder="筛选创建人" clearable>
                 <el-option
                   v-for="item in userList"
@@ -72,7 +72,14 @@
                 ></el-option>
               </el-select>
             </div>
-            <div class="screen" style="margin-bottom: 0; width: 48.5%">
+            <div class="screen" style="margin-bottom: 0; width: 31%">
+              <el-select @change="changeRouter" filterable v-model="filterData.type" clearable>
+                <el-option label="纱线/面料" :value="''"></el-option>
+                <el-option label="纱线" :value="1"></el-option>
+                <el-option label="面料" :value="2"></el-option>
+              </el-select>
+            </div>
+            <div class="screen" style="margin-bottom: 0; width: 31%">
               <el-select
                 @change="(ev) => getLocalStorage(ev, 'group_id')"
                 v-model="filterData.group_id"
@@ -107,6 +114,11 @@
             </div>
             <div>
               原料名称：<span class="blue">{{ filterData.name || '所有' }}</span>
+            </div>
+            <div>
+              原料类型：<span class="blue">{{
+                filterData.type === '' ? '纱线/面料' : filterData.type === 1 ? '纱线' : '面料'
+              }}</span>
             </div>
           </div>
         </div>
@@ -212,7 +224,9 @@
       <div class="main">
         <div class="btnCtn">
           <div class="btn backHoverBlue" @click="$openUrl('/billingManagement/rawMaterialPlan')">查看原料计划单</div>
-          <div class="btn backHoverBlue" @click="$openUrl('/billingManagement/rawMaterialSupplement')">查看原料补充单</div>
+          <div class="btn backHoverBlue" @click="$openUrl('/billingManagement/rawMaterialSupplement')">
+            查看原料补充单
+          </div>
         </div>
       </div>
     </div>
@@ -350,6 +364,7 @@ export default Vue.extend({
         start_time: '',
         end_time: '',
         user_id: '',
+        type: '',
         group_id: '',
         order_type: '',
         name: ''
@@ -408,6 +423,7 @@ export default Vue.extend({
         this.filterData.end_time = query.end_time
       }
       this.filterData.name = query.name ? query.name : ''
+      this.filterData.type = query.type ? Number(query.type) : ''
       this.filterData.client_id = query.client_id
         ? (query.client_id as string).split(',').map((item) => Number(item))
         : []
@@ -456,6 +472,8 @@ export default Vue.extend({
           (this.filterData.order_type || '') +
           '&name=' +
           (this.filterData.name || '') +
+          '&type=' +
+          (this.filterData.type || '') +
           '&sortWay=' +
           (this.sortWay || 1) +
           '&start_time=' +
@@ -471,7 +489,8 @@ export default Vue.extend({
         user_id: '',
         group_id: '',
         order_type: '',
-        name: ''
+        name: '',
+        type: 1
       }
       localStorage.create_user_name = ''
       this.filterData.start_time = new Date().getFullYear() + '-01-01'
@@ -507,6 +526,7 @@ export default Vue.extend({
           user_id: this.filterData.user_id,
           group_id: this.filterData.group_id,
           name: this.filterData.name,
+          type: this.filterData.type,
           order_type: this.filterData.order_type,
           contacts_id: ''
         })

@@ -62,7 +62,7 @@
                 <el-option label="样单" :value="2"></el-option>
               </el-select>
             </div>
-            <div class="screen" style="margin-bottom: 0; width: 48.5%">
+            <div class="screen" style="margin-bottom: 0; width: 31%">
               <el-select @change="changePeople" v-model="filterData.user_id" placeholder="筛选创建人" clearable>
                 <el-option
                   v-for="item in userList"
@@ -72,7 +72,14 @@
                 ></el-option>
               </el-select>
             </div>
-            <div class="screen" style="margin-bottom: 0; width: 48.5%">
+            <div class="screen" style="margin-bottom: 0; width: 31%">
+              <el-select @change="changeRouter" filterable v-model="filterData.type" placeholder="筛选原料" clearable>
+                <el-option label="纱线/面料" value=""></el-option>
+                <el-option label="纱线" :value="1"></el-option>
+                <el-option label="面料" :value="2"></el-option>
+              </el-select>
+            </div>
+            <div class="screen" style="margin-bottom: 0; width: 31%">
               <el-select
                 @change="(ev) => getLocalStorage(ev, 'group_id')"
                 v-model="filterData.group_id"
@@ -110,6 +117,11 @@
             </div>
             <div>
               原料名称：<span class="blue">{{ filterData.name || '所有' }}</span>
+            </div>
+            <div>
+              订单类型：<span class="blue">{{
+                filterData.type === '' ? '纱线/面料' : filterData.type === 1 ? '纱线' : '面料'
+              }}</span>
             </div>
           </div>
         </div>
@@ -374,6 +386,7 @@ export default Vue.extend({
         user_id: '',
         group_id: '',
         order_type: '',
+        type: '',
         name: ''
       },
       reportData: {
@@ -441,6 +454,7 @@ export default Vue.extend({
         user_id: '',
         group_id: '',
         order_type: '',
+        type: '',
         client_id: '',
         name: ''
       }
@@ -465,6 +479,7 @@ export default Vue.extend({
         ? (query.client_id as string).split(',').map((item) => Number(item))
         : []
       this.filterData.order_type = query.order_type ? +query.order_type : ''
+      this.filterData.type = query.type ? +query.type : ''
       this.filterData.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
       this.filterData.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.filterData.settle_unit = query.settle_unit
@@ -510,6 +525,8 @@ export default Vue.extend({
           (this.filterData.user_id || '') +
           '&order_type=' +
           (this.filterData.order_type || '') +
+          '&type=' +
+          (this.filterData.type || '') +
           '&group_id=' +
           (this.filterData.group_id || '') +
           '&name=' +
@@ -552,6 +569,7 @@ export default Vue.extend({
           group_id: this.filterData.group_id,
           name: this.filterData.name,
           order_type: this.filterData.order_type,
+          type: this.filterData.type,
           end_time: this.filterData.end_time
         })
         .then((res) => {
