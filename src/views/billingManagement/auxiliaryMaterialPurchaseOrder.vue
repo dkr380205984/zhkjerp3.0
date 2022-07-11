@@ -150,8 +150,9 @@
               </div>
               <div class="col">
                 <div v-if="item.is_check === 0" class="orange">待审核</div>
-                <div v-if="item.is_check === 1" class="blue">已审核</div>
-                <div v-if="item.is_check === 2" class="red">已驳回</div>
+                <div v-else-if="item.is_check === 1" class="blue">已审核</div>
+                <div v-else-if="item.is_check === 2" class="red">已驳回</div>
+                <div v-else class="red">状态异常</div>
               </div>
               <div class="col" style="flex: 0.5">{{ item.user_name }}</div>
               <div class="col">{{ item.created_at }}</div>
