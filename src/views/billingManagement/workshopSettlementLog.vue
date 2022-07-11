@@ -77,8 +77,9 @@
           <div class="elCtn">
             <el-select @change="changeRouter" v-model="status" placeholder="筛选审核状态">
               <el-option value="null" label="全部"></el-option>
+              <el-option value="0" label="待审核"></el-option>
               <el-option value="1" label="已审核"></el-option>
-              <el-option value="2" label="待审核"></el-option>
+              <el-option value="2" label="已驳回"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
@@ -131,9 +132,9 @@
               <div class="col">{{ (+item.number).toFixed(2) }}</div>
               <div class="col">{{ (+item.total_price).toFixed(2) }}</div>
               <div class="col">
-                <div v-if="item.is_check === 0" class="orange">审核中</div>
-                <div v-if="item.is_check === 1" class="blue">通过</div>
-                <div v-if="item.is_check === 2" class="red">不通过</div>
+                <div v-if="item.is_check === 0" class="orange">待审核</div>
+                <div v-if="item.is_check === 1" class="blue">已审核</div>
+                <div v-if="item.is_check === 2" class="red">已驳回</div>
               </div>
               <div class="col">{{ item.user_name }}</div>
               <div class="col">{{ item.created_at }}</div>
