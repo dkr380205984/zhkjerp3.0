@@ -196,7 +196,7 @@
             <div style="width: 150px">
               <el-select v-model="sortWay" @change="changeRouter">
                 <el-option label="按数量排序" :value="1"> </el-option>
-                <el-option label="按损耗排序" :value="2"> </el-option>
+                <el-option label="按生产总额排序" :value="2"> </el-option>
               </el-select>
             </div>
           </div>
@@ -226,7 +226,7 @@ export default Vue.extend({
   } {
     return {
       loading: false,
-      sortWay: 1,
+      sortWay: 2,
       option1: {
         tooltip: {
           trigger: 'axis',
@@ -257,7 +257,7 @@ export default Vue.extend({
                 ';margin-right:10px">' +
                 param.value +
                 '</span>' +
-                (index === 1 ? '万元' : '万')
+                (index === 1 ? '万' : '万元')
 
               htmlStr += '</div>'
             })
@@ -289,7 +289,7 @@ export default Vue.extend({
           }
         ],
         legend: {
-          data: ['生产数量', '生产总额']
+          data: ['生产总额', '生产数量']
         },
         xAxis: [
           {
@@ -306,34 +306,34 @@ export default Vue.extend({
         yAxis: [
           {
             type: 'value',
-            name: '生产数量',
+            name: '生产总额',
             min: 0,
             max: 25,
             interval: 5,
             axisLabel: {
-              formatter: '{value} 万'
+              formatter: '{value} 万元'
             }
           },
           {
             type: 'value',
-            name: '生产总额',
+            name: '生产数量',
             min: 0,
             max: 500,
             interval: 100,
             axisLabel: {
-              formatter: '{value} 万元'
+              formatter: '{value} 万'
             }
           }
         ],
         series: [
           {
             type: 'bar',
-            name: '生产数量',
+            name: '生产总额',
             data: []
           },
           {
             type: 'line',
-            name: '生产总额',
+            name: '生产数量',
             yAxisIndex: 1,
             data: []
           }
@@ -474,7 +474,7 @@ export default Vue.extend({
           '&client_id=' +
           (this.filterData.client_id || '') +
           '&sortWay=' +
-          (this.sortWay || 1) +
+          (this.sortWay || 2) +
           '&start_time=' +
           (this.filterData.start_time || '') +
           '&end_time=' +
@@ -578,8 +578,8 @@ export default Vue.extend({
 
           data.report.forEach((item: any) => {
             this.option1.xAxis[0].data.push(item.name)
-            this.option1.series[0].data.push((item.total_number / 10000).toFixed(2))
-            this.option1.series[1].data.push((item.total_price / 10000).toFixed(2))
+            this.option1.series[0].data.push((item.total_price / 10000).toFixed(2))
+            this.option1.series[1].data.push((item.total_number / 10000).toFixed(2))
           })
 
           this.loading = false
