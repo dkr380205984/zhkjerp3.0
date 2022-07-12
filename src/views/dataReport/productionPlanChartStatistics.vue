@@ -561,10 +561,10 @@ export default Vue.extend({
 
           if (data.report.length !== 0) {
             let arr = this.getData(data.report, planNumberMax, planNumberMin, planPriceMax, planPriceMin)
-            planNumberMax = arr[0]
-            planNumberMin = arr[1]
-            planPriceMax = arr[2]
-            planPriceMin = arr[3]
+            planNumberMax = arr[2]
+            planNumberMin = arr[3]
+            planPriceMax = arr[0]
+            planPriceMin = arr[1]
           }
 
           // 查看所有 图表更新
