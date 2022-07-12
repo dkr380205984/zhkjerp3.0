@@ -276,6 +276,15 @@
             <div class="otherInfoCtn">
               <div class="otherInfo">
                 <div class="btn backHoverBlue"
+                  style="margin-right:12px"
+                  @click="$router.push('/productionPlan/progressList??page=1&user_id=&status=1&date=&limit=10&group_id=&listType=1&process_name_arr=&client_id=&contacts_id&keyword='+item.code)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">更新数量</span>
+                </div>
+                <div class="btn backHoverBlue"
                   @click="$openUrl('/productionPlan/print?id='+item.id+'&order_id='+$route.query.id)">
                   <svg class="iconFont"
                     aria-hidden="true">
@@ -2636,7 +2645,6 @@ export default Vue.extend({
           }).process_desc || ''
     },
     getMaterialPlanDetail(id: string) {
-      console.log(id)
       this.loading = true
       materialPlan
         .detail({

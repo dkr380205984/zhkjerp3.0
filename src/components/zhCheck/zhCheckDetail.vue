@@ -11,7 +11,7 @@
       </div>
       <div class="contentCtn">
         <div class="listCtn"
-          v-if="is_check<3">
+          v-if="is_check<3||!is_check">
           <div class="list">
             <div class="row title">
               <div class="col">审核人</div>

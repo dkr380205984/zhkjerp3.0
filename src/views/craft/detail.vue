@@ -1710,7 +1710,7 @@ export default Vue.extend({
     // 渲染图像
     getCanvas(colorId: number, index: number) {
       this.showImageLoading = true
-      this.selectColour = colorId ? colorId : -index
+      this.selectColour = colorId ? colorId : index
       setTimeout(() => {
         const warpColor = this.craftInfo.warp_data.color_data.find((item) => item.color_id === colorId)!.color_scheme
         const weftColor = this.craftInfo.weft_data.color_data.find((item) => item.color_id === colorId)!.color_scheme

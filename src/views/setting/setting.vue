@@ -4710,7 +4710,6 @@ export default Vue.extend({
           user_id: [],
           client_id: [],
           number: '',
-          not_allow_operate: 2, // 	是否限制后续操作 1是 2否
           not_allow_add_rel_doc: 2, // 是否限制添加关联单据 1是 2否
           not_allow_settle: 2 // 限制结算 1是 2否
         }
@@ -4726,7 +4725,6 @@ export default Vue.extend({
           allow_push_order_postpone: 2,
           allow_push_order_dispatch_3_day: 2,
           allow_push_order_dispatch_7_day: 1,
-          not_allow_operate: 2, // 	是否限制后续操作 1是 2否
           not_allow_add_rel_doc: 2, // 是否限制添加关联单据 1是 2否
           not_allow_settle: 2 // 限制结算 1是 2否
         }
@@ -4740,8 +4738,6 @@ export default Vue.extend({
           order_type: '',
           total_order_number: '',
           total_material_number: '',
-          contrast_quote_extent: '',
-          not_allow_operate: 2, // 	是否限制后续操作 1是 2否
           not_allow_add_rel_doc: 2 // 是否限制添加关联单据 1是 2否
         }
       },
@@ -4772,7 +4768,6 @@ export default Vue.extend({
           bingxian: '',
           pengsha: '',
           qiege: '',
-          not_allow_operate: 2, // 	是否限制后续操作 1是 2否
           not_allow_settle: 2 // 限制结算 1是 2否
         }
       },
@@ -4784,7 +4779,6 @@ export default Vue.extend({
           user_id: [],
           total_number: '',
           total_price: '',
-          not_allow_operate: 2 // 	是否限制后续操作 1是 2否
         }
       },
       accessoriesOrderCheckConfig: {
@@ -4795,8 +4789,6 @@ export default Vue.extend({
           user_id: [],
           total_number: '',
           total_price: '',
-          contrast_quote_extent: '',
-          not_allow_operate: 2, // 	是否限制后续操作 1是 2否
           not_allow_settle: 2 // 限制结算 1是 2否
         }
       },
@@ -4827,7 +4819,6 @@ export default Vue.extend({
           total_number: '',
           total_price: '',
           contrast_quote_extent: '',
-          not_allow_operate: 2, // 	是否限制后续操作 1是 2否
           not_allow_settle: 2 // 限制结算 1是 2否
         }
       },

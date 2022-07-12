@@ -7,17 +7,20 @@
       </div>
       <div class="listCtn">
         <div class="filterCtn">
-          <div class="elCtn">
+          <div class="elCtn"
+            style="width:200px">
             <el-input placeholder="搜索产品/样品编号"
               v-model="code"
               @keydown.enter.native="changeRouter"></el-input>
           </div>
-          <div class="elCtn">
+          <div class="elCtn"
+            style="width:200px">
             <el-input v-model="product_name"
               placeholder="搜索产品/样品名称"
               @keydown.enter.native="changeRouter"></el-input>
           </div>
-          <div class="elCtn">
+          <div class="elCtn"
+            style="width:200px">
             <el-select v-model="product_type"
               placeholder="请选择类型"
               @change="changeRouter">
@@ -29,7 +32,58 @@
                 :value="2"></el-option>
             </el-select>
           </div>
-          <div class="elCtn">
+          <div class="elCtn"
+            style="width:200px">
+            <el-select v-model="style_data"
+              placeholder="请选择产品款式"
+              @change="changeRouter"
+              clearable>
+              <el-option v-for="item in productStyleList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn"
+            style="width:200px">
+            <el-cascader placeholder="请选择产品品类"
+              v-model="typeArr"
+              :options="productTypeList"
+              clearable
+              @change="changeRouter"></el-cascader>
+          </div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
+        </div>
+        <div class="filterCtn">
+          <div class="elCtn"
+            style="width:130px">
+            <el-input placeholder="库存数量(最低)"
+              v-model="minStore"
+              @keydown.enter.native="changeRouter"></el-input>
+          </div>
+          <span style="position:absolute;transform: translate(-14px, 5px);">~</span>
+          <div class="elCtn"
+            style="width:130px">
+            <el-input placeholder="库存数量(最高)"
+              v-model="maxStore"
+              @keydown.enter.native="changeRouter"></el-input>
+          </div>
+          <div class="elCtn"
+            style="width:130px">
+            <el-input placeholder="价格区间(最低)"
+              v-model="minPrice"
+              @keydown.enter.native="changeRouter"></el-input>
+          </div>
+          <span style="position:absolute;transform: translate(-14px, 5px);">~</span>
+          <div class="elCtn"
+            style="width:130px">
+            <el-input placeholder="价格区间(最高)"
+              v-model="maxPrice"
+              @keydown.enter.native="changeRouter"></el-input>
+          </div>
+          <div class="elCtn"
+            style="width:200px">
             <el-select v-model="user_id"
               placeholder="请选择创建人"
               @change="changeRouter"
@@ -40,20 +94,20 @@
                 :value="item.value"></el-option>
             </el-select>
           </div>
-          <div class="btn borderBtn"
-            @click="reset">重置</div>
+          <div class="elCtn">
+            <el-date-picker v-model="date"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+              @change="changeRouter"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </div>
         </div>
-        <!-- <div class="filterCtn">
-          <div class="elCtn">
-            <el-input placeholder="库存数量筛选"
-              v-model="code"
-              @keydown.enter.native="changeRouter"></el-input>
-          </div>
-          <div class="elCtn">
-          </div>
-          <div class="elCtn">
-          </div>
-        </div> -->
         <zh-list :list="list"
           :listKey="originalSetting"
           :loading="loading"
@@ -69,17 +123,22 @@
         </div>
       </div>
     </div>
+    <product-detail :id="product_id"
+      :show="productShow"
+      @close="productShow = false;getList()"></product-detail>
   </div>
 </template>
 
 <script lang="ts">
 import { product } from '@/assets/js/api'
+import { CascaderInfo } from '@/types/vuex'
 import Vue from 'vue'
 export default Vue.extend({
   data(): {
     [propName: string]: any
   } {
     return {
+      product_id: '',
       code: '',
       product_name: '',
       user_id: '',
@@ -89,16 +148,55 @@ export default Vue.extend({
       page: 1,
       limit: 10,
       total: 1,
+      style_data: '',
+      typeArr: [],
+      minPrice: '',
+      maxPrice: '',
+      minStore: '',
+      maxStore: '',
+      date: [],
+      productShow: false,
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }
+        ]
+      },
       oprList: [
         {
           name: '详情',
           class: 'hoverBlue',
-          fn: (item: any) => {}
-        },
-        {
-          name: '修改',
-          class: 'hoverOrange',
-          fn: (item: any) => {}
+          fn: (item: any) => {
+            // @ts-ignore
+            this.product_id = item.id
+            // @ts-ignore
+            this.productShow = true
+          }
         }
       ],
       originalSetting: [
@@ -191,6 +289,17 @@ export default Vue.extend({
       ]
     }
   },
+  computed: {
+    userList() {
+      return this.$store.state.api.user.arr
+    },
+    productTypeList(): CascaderInfo[] {
+      return this.$store.state.api.productType.arr
+    },
+    productStyleList(): Array<{ name: string; id: number }> {
+      return this.$store.state.api.productStyle.arr
+    }
+  },
   methods: {
     getFilters() {
       const query = this.$route.query
@@ -199,6 +308,13 @@ export default Vue.extend({
       this.product_type = Number(query.product_type) || 0
       this.product_name = query.product_name || ''
       this.code = query.product_code || ''
+      this.minPrice = query.minPrice || ''
+      this.maxPrice = query.maxPrice || ''
+      this.minStore = query.minStore || ''
+      this.maxStore = query.maxStore || ''
+      this.date = query.date ? (query.date as string).split(',') : []
+      this.style_data = Number(query.style_data) || ''
+      this.typeArr = query.typeArr ? (query.typeArr as string).split(',').map((item) => Number(item)) : []
     },
     changeRouter() {
       this.$router.push(
@@ -213,7 +329,21 @@ export default Vue.extend({
           '&user_id=' +
           this.user_id +
           '&product_type=' +
-          this.product_type
+          this.product_type +
+          '&typeArr=' +
+          this.typeArr +
+          '&style_data=' +
+          this.style_data +
+          '&date=' +
+          this.date +
+          '&minPrice=' +
+          this.minPrice +
+          '&maxPrice=' +
+          this.maxPrice +
+          '&minStore=' +
+          this.minStore +
+          '&maxStore=' +
+          this.maxStore
       )
     },
     reset() {
@@ -233,6 +363,7 @@ export default Vue.extend({
         })
     },
     getList() {
+      this.loading = true
       product
         .list({
           page: this.page,
@@ -240,13 +371,23 @@ export default Vue.extend({
           product_code: this.code,
           product_name: this.product_name,
           product_type: this.product_type,
-          user_id: this.user_id
+          user_id: this.user_id,
+          minStore: this.minStore,
+          maxStore: this.maxStore,
+          minPrice: this.minPrice,
+          maxPrice: this.maxPrice,
+          start_time: this.date.length > 0 ? this.date[0] : '',
+          end_time: this.date.length > 0 ? this.date[1] : '',
+          style_data: this.style_data,
+          category_id: this.typeArr.length > 0 ? this.typeArr[0] : '',
+          secondary_category_id: this.typeArr.length > 0 ? this.typeArr[1] : ''
         })
         .then((res) => {
           if (res.data.status) {
             this.list = res.data.data.items
             this.total = res.data.data.total
           }
+          this.loading = false
         })
     }
   },
@@ -259,6 +400,23 @@ export default Vue.extend({
   mounted() {
     this.getFilters()
     this.getList()
+    this.$checkCommonInfo([
+      {
+        checkWhich: 'api/productType',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getProductTypeAsync'
+      },
+      {
+        checkWhich: 'api/productStyle',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getProductStyleAsync'
+      },
+      {
+        checkWhich: 'api/user',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getUserAsync'
+      }
+    ])
   }
 })
 </script>

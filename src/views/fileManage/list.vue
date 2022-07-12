@@ -24,7 +24,8 @@
             </el-select>
           </div>
           <div class="elCtn">
-            <el-cascader placeholder="筛选公司"
+            <el-cascader @change="changeRouter()"
+              placeholder="筛选公司"
               v-model="client_id"
               filterable
               :options="clientList"
@@ -101,7 +102,7 @@
             <div class="col">{{item.order_id?item.order.code:'无'}}</div>
             <div class="col">{{item.updated_at.slice(0,10)}}</div>
             <div class="col">{{item.client.name}}</div>
-            <div class="col">{{item.group?item.group.name:'无'}}</div>
+            <div class="col">{{item.order_id?item.order.group.name:'无'}}</div>
             <div class="col">{{item.user.name}}</div>
             <div class="col"
               style="font-size:14px;flex:1.5">
@@ -311,7 +312,7 @@
 </template>
 
 <script lang="ts">
-import { fileManage } from '@/assets/js/api'
+import { client, fileManage } from '@/assets/js/api'
 import { limitArr } from '@/assets/js/dictionary'
 import Vue from 'vue'
 export default Vue.extend({

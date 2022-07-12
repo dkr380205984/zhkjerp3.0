@@ -40,11 +40,11 @@
         <div class="filterCtn">
           <div class="elCtn">
             <el-input v-model="keyword"
-              placeholder="筛选报价/产品/样品编号"
+              placeholder="可搜索订单号或产品编号"
               @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
-            <el-cascader @change="changeRouter"
+            <el-cascader @change="getContacts($event);changeRouter()"
               placeholder="筛选下单公司"
               v-model="client_id"
               :options="clientList"
@@ -53,14 +53,16 @@
             </el-cascader>
           </div>
           <div class="elCtn">
-            <el-select @change="$setLocalStorage('create_user',user_id);changeRouter()"
-              v-model="user_id"
-              placeholder="筛选创建人"
-              clearable>
-              <el-option v-for="item in userList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"></el-option>
+            <el-select placeholder="请选择公司联系人"
+              v-model="contacts_id"
+              no-data-text="请先选择下单公司"
+              filterable
+              clearable
+              @change="changeRouter">
+              <el-option v-for="item in contactsList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
@@ -79,6 +81,17 @@
         </div>
         <div class="filterCtn">
           <div class="elCtn">
+            <el-select @change="$setLocalStorage('create_user',user_id);changeRouter()"
+              v-model="user_id"
+              placeholder="筛选创建人"
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
             <el-date-picker v-model="date"
               type="daterange"
               align="right"
@@ -91,7 +104,8 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
-          <div class="elCtn">
+          <div class="elCtn"
+            style="max-width:200px">
             <el-select v-model="limit"
               placeholder="每页展示条数"
               @change="changeRouter">
@@ -99,6 +113,25 @@
                 :key="item.value"
                 :label="item.name"
                 :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn"
+            style="max-width:200px">
+            <el-select v-model="type"
+              placeholder="订单状态筛选"
+              @change="changeRouter">
+              <el-option label="全部"
+                value="null"></el-option>
+              <el-option label="已创建"
+                :value="1"></el-option>
+              <el-option label="进行中"
+                :value="2"></el-option>
+              <el-option label="已完成"
+                :value="3"></el-option>
+              <el-option label="已取消"
+                :value="6"></el-option>
+              <el-option label="已延期"
+                :value="5"></el-option>
             </el-select>
           </div>
           <div class="btn backHoverOrange fr"
@@ -148,7 +181,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { order, listSetting } from '@/assets/js/api'
+import { order, listSetting, client } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
 import { limitArr } from '@/assets/js/dictionary'
 export default Vue.extend({
@@ -170,9 +203,12 @@ export default Vue.extend({
       date: [],
       total: 1,
       page: 1,
+      contacts_id: '',
+      contactsList: [],
       showSetting: false,
       listSettingId: null,
       listKey: [],
+      type: 'null',
       originalSetting: [
         {
           key: 'code',
@@ -194,6 +230,15 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 2
+        },
+        {
+          key: 'status',
+          name: '订单状态',
+          ifShow: true,
+          ifLock: false,
+          index: 7,
+          filterArr: ['', '已创建', '进行中', '已完成', '已结算', '已逾期', '已取消'],
+          classArr: ['', 'orange', 'blue', 'green', 'green', 'red', 'gray']
         },
         {
           key: 'has_pack_plan',
@@ -296,13 +341,33 @@ export default Vue.extend({
     }
   },
   methods: {
+    getContacts(ev: number[]) {
+      if (ev && ev.length) {
+        client
+          .detail({
+            id: ev[2]
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.contactsList = res.data.data.contacts_data
+            }
+          })
+      } else {
+        this.contacts_id = ''
+      }
+    },
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
+      this.contacts_id = Number(query.contacts_id) || ''
+      if (this.client_id && this.client_id.length) {
+        this.getContacts(this.client_id)
+      }
       this.keyword = query.keyword || ''
       this.status = query.status || '0'
       this.user_id = query.user_id || ''
+      this.type = Number(query.type) || 'null'
       this.group_id = Number(query.group_id) || ''
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
@@ -318,8 +383,12 @@ export default Vue.extend({
           this.keyword +
           '&client_id=' +
           this.client_id +
+          '&contacts_id=' +
+          this.contacts_id +
           '&user_id=' +
           this.user_id +
+          '&type=' +
+          this.type +
           '&group_id=' +
           this.group_id +
           '&date=' +
@@ -343,6 +412,9 @@ export default Vue.extend({
           this.status = '0'
           this.order_type = null
           this.limit = 10
+          this.contacts_id = ''
+          this.type = 'null'
+          this.contactsList = []
           this.changeRouter()
         })
         .catch(() => {
@@ -365,7 +437,9 @@ export default Vue.extend({
           start_time: this.date.length > 0 ? this.date[0] : '',
           end_time: this.date.length > 0 ? this.date[1] : '',
           user_id: this.user_id,
-          group_id: this.group_id
+          group_id: this.group_id,
+          contacts_id: this.contacts_id,
+          status: this.type
         })
         .then((res) => {
           if (res.data.status) {
