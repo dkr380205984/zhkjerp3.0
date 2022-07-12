@@ -504,16 +504,16 @@
                 <div class="opr hoverBlue"
                   v-if="index===0"
                   @click="$addItem(materialStockInfo.info_data,{
-                  material_id: '',
-                  material_color: '',
-                  color_code: '',
-                  batch_code: '',
-                  vat_code: '',
-                  attribute: '',
-                  number: '',
-                  item: '', // 件数
-                  rel_doc_info_id: '' // 采购单调取单加工单子项id
-                })">添加</div>
+                    material_id: '',
+                    material_color: '',
+                    color_code: '',
+                    batch_code: '',
+                    vat_code: '',
+                    attribute: '',
+                    number: '',
+                    item: '', // 件数
+                    rel_doc_info_id: '' // 采购单调取单加工单子项id
+                  })">添加</div>
                 <div class="opr hoverRed"
                   v-if="index>0"
                   @click="$deleteItem(materialStockInfo.info_data,index)">删除</div>
@@ -1241,6 +1241,7 @@ export default Vue.extend({
           ])
         })
       if (!formCheck) {
+        this.materialStockInfo.order_id = this.orderInfo.time_data[this.orderIndex].id
         materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')

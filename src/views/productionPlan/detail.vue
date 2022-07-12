@@ -2645,7 +2645,6 @@ export default Vue.extend({
           }).process_desc || ''
     },
     getMaterialPlanDetail(id: string) {
-      console.log(id)
       this.loading = true
       materialPlan
         .detail({

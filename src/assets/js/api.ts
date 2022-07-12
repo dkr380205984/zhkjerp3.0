@@ -600,6 +600,7 @@ const product = {
     product_type?: string | number
     user_id?: string | number
     craft_status?: 0 | 1
+    [propName: string]: any
   }) => http.get(`${baseUrl}/product/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/product/detail`, params),
 }

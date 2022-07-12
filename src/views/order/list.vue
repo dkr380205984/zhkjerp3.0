@@ -52,10 +52,12 @@
               placeholder="筛选审核状态">
               <el-option value="null"
                 label="全部"></el-option>
+              <el-option value="0"
+                label="待审核"></el-option>
               <el-option value="1"
                 label="已审核"></el-option>
               <el-option value="2"
-                label="待审核"></el-option>
+                label="已驳回"></el-option>
             </el-select>
           </div>
           <div class="btn borderBtn"
@@ -529,11 +531,20 @@ export default Vue.extend({
           classArr: ['', 'orange', 'blue', 'green', 'green', 'red', 'gray']
         },
         {
+          key: 'is_check',
+          name: '审核状态',
+          ifShow: true,
+          ifLock: false,
+          index: 8,
+          filterArr: ['待审核', '已审核', '已驳回'],
+          classArr: ['orange', 'green', 'red']
+        },
+        {
           key: 'total_number',
           name: '下单总数',
           ifShow: true,
           ifLock: false,
-          index: 8,
+          index: 9,
           errVal: '0'
         },
         {
@@ -541,7 +552,7 @@ export default Vue.extend({
           name: '下单总额',
           ifShow: true,
           ifLock: false,
-          index: 9,
+          index: 10,
           unit: '元',
           errVal: '0'
         },
@@ -550,21 +561,21 @@ export default Vue.extend({
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 10
+          index: 11
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 11
+          index: 12
         },
         {
           key: 'order_time',
           name: '下单日期',
           ifShow: true,
           ifLock: false,
-          index: 12
+          index: 13
         }
       ],
       pickerOptions: {

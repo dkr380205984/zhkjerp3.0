@@ -813,8 +813,8 @@
                     <div class="tcol">加工合计数量</div>
                     <div class="tcol">计划合计费用</div>
                     <div class="tcol">实际合计费用</div>
-                    <div class="tcol">费用平均单价</div>
-                    <div class="tcol">产品平均单价</div>
+                    <div class="tcol">产品计划平均单价</div>
+                    <div class="tcol">产品实际平均单价</div>
                     <div class="tcol">产品平均克重</div>
                     <div class="tcol">操作</div>
                   </div>
@@ -843,8 +843,8 @@
                     </div>
                     <div class="tcol">{{financialInfo.material.material.gather.plan_price}}元</div>
                     <div class="tcol">{{financialInfo.material.material.gather.real_price}}元</div>
-                    <div class="tcol">-</div>
                     <div class="tcol">{{financialInfo.material.material.gather.product_pre_price}}元</div>
+                    <div class="tcol">{{financialInfo.material.material.gather.pre_price}}元</div>
                     <div class="tcol">{{financialInfo.material.material.gather.pre_number}}g</div>
                     <div class="tcol oprCtn">
                       <div class="opr hoverBlue"
