@@ -208,7 +208,7 @@
             :class="{'backHoverBlue':listType===1,'backGray':listType===2}"
             @click="getList(2)">切换到订单</div>
           <div class="btn fr backHoverBlue"
-            @click="getUpdateDetail">更新生产数量</div>
+            @click="getUpdateDetail()">更新生产数量</div>
         </div>
         <div class="fixedTableCtn"
           v-loading="loading"

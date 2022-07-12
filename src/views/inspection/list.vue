@@ -360,7 +360,7 @@ export default Vue.extend({
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           page: this.page,
           limit: this.limit,
-          has_production_plan: this.status,
+          has_weave_plan: this.status,
           start_time: this.date.length > 0 ? this.date[0] : '',
           end_time: this.date.length > 0 ? this.date[1] : '',
           user_id: this.user_id,

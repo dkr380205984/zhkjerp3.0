@@ -1038,6 +1038,10 @@
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
         </div>
+        <div class="btnCtn">
+          <div class="btn backHoverOrange"
+            @click="goStock(2)">客供入库</div>
+        </div>
       </div>
     </div>
     <!-- 审核出入库单,主要是为了审核异常单子 -->
@@ -1063,7 +1067,7 @@ import { MaterialOrderInfo } from '@/types/materialOrder'
 import { MaterialStockInfo, MaterialStockLog } from '@/types/materialStock'
 import { ProductionPlanInfo } from '@/types/productionPlan'
 import { MaterialProcessInfo } from '@/types/materialProcess'
-import { materialOrder, store, materialStock, productionPlan, order, checkBeyond } from '@/assets/js/api'
+import { materialOrder, store, materialStock, productionPlan, order, checkBeyond, materialPlan } from '@/assets/js/api'
 import { stockType, yarnAttributeArr } from '@/assets/js/dictionary'
 import { OrderInfo, OrderTime } from '@/types/order'
 interface OrderDetail extends OrderInfo {
@@ -1190,7 +1194,8 @@ export default Vue.extend({
         materialList: [],
         order_id: '',
         order_code: ''
-      }
+      },
+      materialPlanList: [] // 物料计划单 + 物料补充单需要的物料
     }
   },
   methods: {
@@ -1207,7 +1212,8 @@ export default Vue.extend({
           order_id: Number(this.order_id)
         })
       ]).then((res) => {
-        this.materialOrderList = res[0].data.data
+        // 过滤掉辅料采购单，因为压根没设计辅料采购单出入库
+        this.materialOrderList = res[0].data.data.filter((item: any) => item.material_type === 1)
         this.materialProcessList = []
         res[0].data.data.forEach((item: any) => {
           this.materialProcessList = this.materialProcessList.concat(item.process_info)
@@ -1277,6 +1283,8 @@ export default Vue.extend({
     goStock(type: number) {
       if (type === 1 || type === 4) {
         this.getOrderInfo(type)
+      } else if (type === 2) {
+        this.goKegongInfo()
       } else if (type === 3) {
         this.getProcessInfo(type)
       } else if (type === 5) {
@@ -1333,6 +1341,27 @@ export default Vue.extend({
           })
         })
       }
+    },
+    // 客供入库
+    goKegongInfo() {
+      this.materialStockInfo.client_id = this.orderInfo.client_id
+      this.materialStockInfo.action_type = 2
+      this.materialStockInfo.rel_doc_code = this.orderInfo.code
+      this.materialStockInfo.rel_doc_id = this.orderInfo.id as number
+      this.materialStockInfo.selectList = this.materialPlanList.map((item: any, index: number) => {
+        return {
+          value: index, // 随便定个value吧
+          name: item.material_name + '/' + (item.material_color || '未知颜色'),
+          material_color: item.material_color,
+          material_id: item.material_id,
+          attribute: '',
+          yarn_type: item.yarn_type,
+          number: item.final_number,
+          unit: item.unit
+        }
+      })
+      console.log(this.materialStockInfo)
+      this.materialStockFlag = true
     },
     // 采购单中转入库和最终入库初始化
     getOrderInfo(type: 1 | 4) {
@@ -1459,7 +1488,8 @@ export default Vue.extend({
       info.yarn_type = finded.yarn_type as number
       info.material_id = finded.material_id as number
       info.unit = finded.unit
-      console.log(finded)
+      info.material_color = finded.material_color || ''
+      info.number = finded.number || ''
     },
     // 出库选入库信息的时候赋值
     getStoreOut(value: string, info: MaterialStockLog) {
@@ -1523,7 +1553,6 @@ export default Vue.extend({
           rel_doc_info_id: item.value // 采购单调取单加工单子项id
         }
       })
-      console.log(this.materialStockInfo.info_data)
       this.materialStockFlag = true
     },
     // 半成品加工出库
@@ -1870,7 +1899,11 @@ export default Vue.extend({
         ])
       })
       if (!formCheck) {
-        if (this.materialStockInfo.action_type !== 3 && this.materialStockInfo.action_type !== 5) {
+        if (
+          this.materialStockInfo.action_type !== 3 &&
+          this.materialStockInfo.action_type !== 5 &&
+          this.materialStockInfo.action_type !== 2
+        ) {
           this.getCmpData()
           const checkArr: any[] = []
           this.materialStockInfo.info_data.forEach((item) => {
@@ -1998,6 +2031,39 @@ export default Vue.extend({
           this.order_id = res.data.data.time_data[this.orderIndex].id
           this.init()
         }
+      })
+
+    // 客供入库纱需要用到物料计划单的纱线
+    materialPlan
+      .list({
+        order_id: Number(this.$route.query.id)
+      })
+      .then((res) => {
+        // 处理一下重复的纱线，繁琐
+        res.data.data.forEach((itemFather: any) => {
+          itemFather.material_plan_data.forEach((item: any) => {
+            item.info_data.forEach((itemChild: any) => {
+              const finded = this.materialPlanList.find(
+                (itemFind: any) =>
+                  itemFind.material_id === itemChild.material_id &&
+                  itemFind.material_name === itemChild.material_name &&
+                  itemFind.material_color === itemChild.material_color
+              )
+              if (finded) {
+                finded.final_number += Number(itemChild.final_number)
+              } else {
+                this.materialPlanList.push({
+                  material_id: itemChild.material_id,
+                  material_name: itemChild.material_name,
+                  material_color: itemChild.material_color,
+                  final_number: Number(itemChild.final_number),
+                  unit: itemChild.unit,
+                  yarn_type: itemChild.yarn_type
+                })
+              }
+            })
+          })
+        })
       })
   }
 })
