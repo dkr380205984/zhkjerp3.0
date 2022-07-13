@@ -24,13 +24,13 @@
         <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
         <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
         <!-- <div class="tab" @click="$router.push('/billingManagement/orderQuotationComparison')">订单报价单对比单据</div> -->
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
       </div>
       <div class="listCtn">
         <div class="filterCtn">
@@ -133,14 +133,19 @@
               <div class="col">{{ (+item.price).toFixed(2) }}</div>
               <div class="col">{{ item.reason ? item.reason.toString() : '' }}</div>
               <div class="col">
-                <el-image style="width: 50px; height: 50px" :src="item.file_url?JSON.parse(item.file_url)[0]:require('@/assets/image/common/noPic.png')" :preview-src-list="item.file_url?JSON.parse(item.file_url):[]"> </el-image>
+                <el-image
+                  style="width: 50px; height: 50px"
+                  :src="item.file_url ? item.file_url : require('@/assets/image/common/noPic.png')"
+                  :preview-src-list="item.file_url ? [item.file_url] : ''"
+                >
+                </el-image>
               </div>
               <div class="col">{{ item.user_name }}</div>
               <div class="col">{{ item.create_time }}</div>
               <div class="col" style="flex: 1.4">
                 <!-- <span class="opr hoverBlue" @click="changeShow(item)">详情</span>
                 <span class="opr hoverBlue" @click="changeStatus(item)">审核</span> -->
-                <span class="opr hoverOrange" @click="goDeduct([item],true)">修改</span>
+                <span class="opr hoverOrange" @click="goDeduct([item], true)">修改</span>
                 <span class="opr hoverRed" @click="deleteThis(item)">删除</span>
               </div>
             </div>
@@ -322,13 +327,18 @@
       </div>
     </div>
     <!-- 扣款 -->
-    <zh-deduct :type="1"
+    <zh-deduct
+      :type="1"
       :update="deductUpdate"
       :show="deductFlag"
       :data="deductData"
       :client_name="clientFinancial.name"
       :client_id="clientFinancial.client_id"
-      @close="deductFlag=false;changeRouter()"></zh-deduct>
+      @close="
+        deductFlag = false
+        changeRouter()
+      "
+    ></zh-deduct>
   </div>
 </template>
 
@@ -353,9 +363,9 @@ export default Vue.extend({
       mainLoading1: false,
       loading: true,
       showCharts: false,
-      deductUpdate:false,
+      deductUpdate: false,
       deductData: [],
-      deductFlag:false,
+      deductFlag: false,
       clientFinancial: {
         total_collect_price: 0,
         total_deduct_price: 0,
