@@ -162,11 +162,10 @@
                   <div class="trow">
                     <div class="tcol">包装名称</div>
                     <div class="tcol">包装规格</div>
-                    <div class="tcol">属性或说明</div>
+                    <div class="tcol">属性说明</div>
                     <div class="tcol">面积单价</div>
                     <div class="tcol">数量单价</div>
                     <div class="tcol">订购数量</div>
-                    <div class="tcol">备注信息</div>
                   </div>
                 </div>
                 <div class="tbody">
@@ -187,7 +186,6 @@
                     <div class="tcol">{{ itemChild.bulk_price ? itemChild.bulk_price + '元' : '-' }}</div>
                     <div class="tcol">{{ itemChild.count_price ? itemChild.count_price + '元' : '-' }}</div>
                     <div class="tcol">{{ itemChild.number }}</div>
-                    <div class="tcol">{{ itemChild.desc }}</div>
                   </div>
                 </div>
               </div>
