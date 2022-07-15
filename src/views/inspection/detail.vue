@@ -167,7 +167,7 @@
                 <span class="opr hoverBlue"
                   @click="checkId=item.id;checkFlag=true">审核</span>
                 <span class="opr hoverRed"
-                  @click="deleteInspection(item.id)">删除</span>
+                  @click="deleteInspection(item)">删除</span>
               </div>
             </div>
           </div>
@@ -212,7 +212,7 @@
                 <span class="opr hoverBlue"
                   @click="checkId=item.id;checkFlag=true">审核</span>
                 <span class="opr hoverRed"
-                  @click="deleteInspection(item.id)">删除</span>
+                  @click="deleteInspection(item)">删除</span>
               </div>
             </div>
           </div>
@@ -253,7 +253,7 @@
                 <span class="opr hoverBlue"
                   @click="checkId=item.id;checkFlag=true">审核</span>
                 <span class="opr hoverRed"
-                  @click="deleteInspection(item.id)">删除</span>
+                  @click="deleteInspection(item)">删除</span>
               </div>
             </div>
           </div>
@@ -1174,8 +1174,11 @@ export default Vue.extend({
         this.saveLock = false
       })
     },
-    deleteInspection(id: number) {
-      this.$confirm('是否删除该检验日志?', '提示', {
+    deleteInspection(info: InspectionInfo) {
+      const errMsg = info.deduct_price
+        ? '删除检验入库单据，不会同步删除相应的扣款单。您需要手动去扣款记录弹窗内，删除扣款单,是否删除该日志'
+        : '是否删除该检验日志?'
+      this.$confirm(errMsg, '提示', {
         confirmButtonText: '确认删除',
         cancelButtonText: '取消',
         type: 'warning'
@@ -1183,7 +1186,7 @@ export default Vue.extend({
         .then(() => {
           inspection
             .delete({
-              id
+              id: Number(info.id)
             })
             .then((res) => {
               if (res.data.status) {

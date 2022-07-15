@@ -88,7 +88,8 @@
         </div>
         <div class="list">
           <div class="row title">
-            <div class="col">出库单号</div>
+            <div class="col">发货单号</div>
+            <div class="col">订单号</div>
             <div class="col">运输单位</div>
             <div class="col">运输城市</div>
             <div class="col">合计箱数/箱</div>
@@ -103,6 +104,7 @@
             v-for="item in list"
             :key="item.id">
             <div class="col">{{item.code}}</div>
+            <div class="col">{{item.order_code?item.order_code.join(','):'无'}}</div>
             <div class="col">{{item.client_name}}</div>
             <div class="col">{{item.city}}</div>
             <div class="col">{{item.total_box}}</div>

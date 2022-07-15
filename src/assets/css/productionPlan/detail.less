@@ -4,6 +4,7 @@
 @import '../bottomBar.less';
 @import '../table.less';
 @import '../popup.less';
+@import '../list.less';
 @import '../buttonList.less';
 
 #productionPlanDetail {
@@ -46,6 +47,19 @@
         width: auto;
         text-align: left;
         position: relative;
+      }
+
+      .listCtn {
+        padding: 0;
+
+        .list {
+          min-height: 220px;
+
+          .row {
+            height: 46px;
+            margin: 6px 0;
+          }
+        }
       }
 
       .editCtn {
@@ -114,6 +128,36 @@
           top: 21px;
           background: #ccc;
           z-index: -1;
+        }
+      }
+
+      .selectCtn {
+        margin-bottom: 12px;
+
+        .label {
+          display: block;
+          font-size: @fontBig;
+        }
+
+        .boxCtn {
+          display: flex;
+          flex-wrap: wrap;
+
+          .box {
+            line-height: 32px;
+            padding: 0 12px;
+            background: #F5F7FA;
+            color: #C0C4CC;
+            border-radius: 4px;
+            margin-right: 12px;
+            margin-bottom: 12px;
+
+            .closeIcon {
+              cursor: pointer;
+              font-size: @fontBig;
+              margin-left: 6px;
+            }
+          }
         }
       }
     }

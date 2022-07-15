@@ -1218,9 +1218,9 @@ export default Vue.extend({
         res[0].data.data.forEach((item: any) => {
           this.materialProcessList = this.materialProcessList.concat(item.process_info)
         })
-        // 出入库日志把调取单过滤掉
+        // 出入库日志把调取单过滤掉，把辅料单子过滤掉,辅料单子去辅料页面看
         this.materialStockList = res[1].data.data.filter(
-          (item: any) => item.action_type !== 10 && item.action_type !== 12
+          (item: any) => item.action_type !== 10 && item.action_type !== 12 && item.material_type !== 2
         )
         this.materialJHDQList = res[1].data.data.filter((item: any) => item.action_type === 10) // 计划调取
         console.log(this.materialJHDQList)

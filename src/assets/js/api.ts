@@ -406,7 +406,19 @@ const billDocumentSetting = {
   clientENCreate: (params: ClientEN) => http.post(`${baseUrl}/document/company/save`, params, 'application/json'),
   bankENDetail: () => http.get(`${baseUrl}/document/bank/detail`, {}),
   bankENCreate: (params: BankEN) => http.post(`${baseUrl}/document/bank/save`, params, 'application/json'),
-  HSCodeList: (params: HScodeListParams) => http.get(`${baseUrl}/document/hscode/list`, params)
+  HSCodeList: (params: HScodeListParams) => http.get(`${baseUrl}/document/hscode/lists`, params),
+  normalClientList: (params: any) => http.get(`${baseUrl}/document/common/client/lists`, params),
+  normalClientCreate: (params: any) => http.post(`${baseUrl}/document/common/client/save`, params, 'application/json'),
+  normalClientDelete: (params: DeleteParams) => http.post(`${baseUrl}/document/common/client/delete`, params, 'application/json'),
+  normalCityList: (params: any) => http.get(`${baseUrl}/document/city/lists`, params),
+  normalCityCreate: (params: any) => http.post(`${baseUrl}/document/city/save`, params, 'application/json'),
+  normalCityDelete: (params: DeleteParams) => http.post(`${baseUrl}/document/city/delete`, params, 'application/json'),
+  normalCategoryList: (params: any) => http.get(`${baseUrl}/document/product/lists`, params),
+  normalCategoryCreate: (params: any) => http.post(`${baseUrl}/document/product/save`, params, 'application/json'),
+  normalCategoryDelete: (params: DeleteParams) => http.post(`${baseUrl}/document/product/delete`, params, 'application/json'),
+  normalPayList: (params: any) => http.get(`${baseUrl}/document/payment/lists`, params),
+  normalPayCreate: (params: any) => http.post(`${baseUrl}/document/payment/save`, params, 'application/json'),
+  normalPayDelete: (params: DeleteParams) => http.post(`${baseUrl}/document/payment/delete`, params, 'application/json'),
 }
 
 // 纱线类型
@@ -748,6 +760,7 @@ const materialStock = {
     rel_doc_id?: string | number
     order_type?: string
     export_excel?: 1
+    material_type?: 1 | 2
   }) => http.get(`${baseUrl}/store/log/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/store/log/delete`, params, 'application/json'),
   detail: (params: DetailParams) => http.get(`${baseUrl}/store/log/detail`, params),
@@ -809,6 +822,7 @@ const productionProgress = {
     order_type: 1 | 2
     client_id?: number | string
     process_name?: string
+    group_id?: string | number
   }) => http.get(`${baseUrl}/weave/plan/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/production/detail`, params),
   updateLog: (params: {
@@ -923,6 +937,9 @@ const boxManage = {
 }
 // excel导出
 const exportExcel = {
+  product: (params: {
+    product_id: any[]
+  }) => http.get(`${baseUrl}/export/product`, params),
   materialLog: (params: {
     store_id: string | number
     material_type: number

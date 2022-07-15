@@ -152,12 +152,7 @@
             @click="showSetting = true"
             style="margin-left: 0">列表设置</div>
           <div class="btn backHoverGreen fl"
-            @click="
-              getFilters()
-              getList()
-            ">
-            刷新列表
-          </div>
+            @click="getFilters();getList()">刷新列表</div>
           <div :class="checked ? 'btn backHoverBlue fl' : 'btn backHoverBlue fl noCheck'"
             @click="exportExcelClick()">
             导出Excel
@@ -727,14 +722,13 @@ export default Vue.extend({
 
       let idArr: any = []
 
-      this.list.forEach((item) => {
+      this.checkedCount.forEach((item: any) => {
         idArr.push(item.id)
       })
 
       this.exportExcelParam['id'] = idArr
       exportExcel.orderInfo(this.exportExcelParam).then((res: any) => {
         if (res.data.status) {
-          console.log(res.data.data)
           this.mainLoading = false
           window.location.href = res.data.data
         }

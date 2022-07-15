@@ -998,8 +998,8 @@
                     <div class="tcol">加工合计数量</div>
                     <div class="tcol">计划合计费用</div>
                     <div class="tcol">实际合计费用</div>
-                    <div class="tcol">费用平均单价</div>
-                    <div class="tcol">产品平均单价</div>
+                    <div class="tcol">产品计划平均单价</div>
+                    <div class="tcol">产品实际平均单价</div>
                     <div class="tcol">操作</div>
                   </div>
                 </div>
@@ -1027,8 +1027,8 @@
                     </div>
                     <div class="tcol">{{financialInfo.material.decorate.gather.plan_price}}元</div>
                     <div class="tcol">{{financialInfo.material.decorate.gather.real_price}}元</div>
-                    <div class="tcol">-</div>
                     <div class="tcol">{{financialInfo.material.decorate.gather.product_pre_price}}元</div>
+                    <div class="tcol">{{financialInfo.material.decorate.gather.pre_price}}元</div>
                     <div class="tcol oprCtn">
                       <div class="opr hoverBlue"
                         @click="financialInfo.material.decorate.showDetail=!financialInfo.material.decorate.showDetail;$forceUpdate()">{{financialInfo.material.decorate.showDetail?'收起详情':'展开详情'}}</div>
@@ -1153,8 +1153,8 @@
                     <div class="tcol">生产数量</div>
                     <div class="tcol">实际完成数量</div>
                     <div class="tcol">计划合计费用</div>
-                    <div class="tcol">费用平均单价</div>
-                    <div class="tcol">产品平均单价</div>
+                    <div class="tcol">产品计划平均单价</div>
+                    <div class="tcol">产品实际平均单价</div>
                   </div>
                 </div>
                 <div class="tcol">操作</div>
@@ -1172,8 +1172,8 @@
                     <div class="tcol">{{item.number}}</div>
                     <div class="tcol">{{item.real_number}}</div>
                     <div class="tcol">{{item.total_price}}元</div>
-                    <div class="tcol">-</div>
                     <div class="tcol">{{item.product_pre_price}}元</div>
+                    <div class="tcol">{{item.pre_price}}元</div>
                   </div>
                 </div>
                 <div class="tcol oprCtn">
@@ -1255,8 +1255,8 @@
                   <div class="trow">
                     <div class="tcol">计划订购数量</div>
                     <div class="tcol">计划费用合计</div>
-                    <div class="tcol">费用平均单价</div>
-                    <div class="tcol">产品平均单价</div>
+                    <div class="tcol">产品计划平均单价</div>
+                    <div class="tcol">产品实际平均单价</div>
                     <div class="tcol">操作</div>
                     <div class="tcol"></div>
                   </div>
@@ -1271,8 +1271,8 @@
                   <div class="trow">
                     <div class="tcol">{{financialInfo.pack.gather.plan_number}}</div>
                     <div class="tcol">{{financialInfo.pack.gather.total_price}}元</div>
-                    <div class="tcol">-</div>
                     <div class="tcol">{{financialInfo.pack.gather.product_pre_price}}元</div>
+                    <div class="tcol">{{financialInfo.pack.gather.pre_price}}元</div>
                     <div class="tcol oprCtn">
                       <div class="opr hoverBlue"
                         @click="financialInfo.pack.showDetail=!financialInfo.pack.showDetail;$forceUpdate()">{{financialInfo.pack.showDetail?'收起详情':'展开详情'}}</div>
@@ -1355,8 +1355,8 @@
                         <div class="tcol">完成数量</div>
                         <div class="tcol">额外数量</div>
                         <div class="tcol">合计结算总价</div>
-                        <div class="tcol">费用平均单价</div>
-                        <div class="tcol">产品平均单价</div>
+                        <div class="tcol">产品计划平均单价</div>
+                        <div class="tcol">产品实际平均单价</div>
                         <div class="tcol">操作</div>
                       </div>
                     </div>
@@ -1379,8 +1379,8 @@
                         <div class="tcol">{{item.number}}</div>
                         <div class="tcol">{{item.extra_number}}</div>
                         <div class="tcol">{{item.total_price}}元</div>
-                        <div class="tcol">-</div>
                         <div class="tcol">{{item.product_pre_price}}元</div>
+                        <div class="tcol">{{item.pre_price}}元</div>
                         <div class="tcol oprCtn">
                           <div class="opr hoverBlue"
                             @click="item.showDetail=!item.showDetail;$forceUpdate()">{{item.showDetail?'收起详情':'展开详情'}}</div>

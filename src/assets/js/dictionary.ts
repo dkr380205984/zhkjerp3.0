@@ -410,13 +410,13 @@ const systemModule = [{
   }, {
     id: '21-14',
     name: '单据管理-付款单据',
-  },{
+  }, {
     id: '21-15',
     name: '单据管理-检验入库单据',
-  },{
+  }, {
     id: '21-16',
     name: '单据管理-对方发票单据',
-  },{
+  }, {
     id: '21-17',
     name: '单据管理-订单报价单对比单据',
   },]
@@ -560,6 +560,9 @@ const productStockType = [{
 }, {
   name: '销毁出库',
   value: 6
+}, {
+  name: '订单调取出库',
+  value: 7
 }]
 // 仓库类型
 const storeType = [{

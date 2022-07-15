@@ -1430,6 +1430,11 @@ export default Vue.extend({
         })
         .then((res) => {
           if (res.data.status) {
+            this.quotedPriceInfo.product_data.forEach((item) => {
+              // 在赋值之前把编辑器销毁了再赋值
+              item.editor.destroy()
+              item.editor = null
+            })
             this.quotedPriceInfo = res.data.data
             this.quotedPriceInfo.id = ''
             this.quotedPriceInfo.pid = ''
@@ -1637,11 +1642,18 @@ export default Vue.extend({
     successFile(response: { hash: string; key: string }, index: number) {
       this.quotedPriceInfo.product_data[index].image_data.push('https://file.zwyknit.com/' + response.key)
     },
-    removeFile(file: { response: { hash: string; key: string } }, index: number) {
-      this.$deleteItem(
-        this.quotedPriceInfo.product_data[index].image_data,
-        this.quotedPriceInfo.product_data[index].image_data.indexOf('https://file.zwyknit.com/' + file.response.key)
-      )
+    removeFile(file: { response: { hash: string; key: string }; url: string }, index: number) {
+      if (this.quotedPriceInfo.product_data[index].file_list!.find((item) => item.url === file.url)) {
+        this.$deleteItem(
+          this.quotedPriceInfo.product_data[index].file_list!,
+          this.quotedPriceInfo.product_data[index].file_list!.map((item) => item.url).indexOf(file.url)
+        )
+      } else {
+        this.$deleteItem(
+          this.quotedPriceInfo.product_data[index].image_data,
+          this.quotedPriceInfo.product_data[index].image_data.indexOf('https://file.zwyknit.com/' + file.response.key)
+        )
+      }
     },
     getUnit(ev: string, info: DecorateMaterialInfo) {
       info.unit = this.decorateMaterialList.find((item) => item.id === ev)!.unit
@@ -1969,7 +1981,6 @@ export default Vue.extend({
         this.$nextTick(() => {
           this.$initEditor(item, index)
         })
-
         item.file_list = item.image_data.map((itemImage, index) => {
           return {
             id: index,
@@ -2157,6 +2168,11 @@ export default Vue.extend({
         })
         .then((res) => {
           if (res.data.status) {
+            this.quotedPriceInfo.product_data.forEach((item) => {
+              // 在赋值之前把编辑器销毁了再赋值
+              item.editor.destroy()
+              item.editor = null
+            })
             this.quotedPriceInfo = res.data.data
             this.quotedPriceInfo.id = ''
             this.quotedPriceInfo.pid = this.$route.query.again
