@@ -1,7 +1,9 @@
 <template>
   <div class="zhList fixedTableCtn"
     v-loading="loading">
-    <div class="original">
+    <div class="original"
+      @mousewheel="listenWheel"
+      :ref="listId">
       <div class="row title">
         <div class="column check"
           v-if="check">
@@ -366,6 +368,11 @@
 import Vue from 'vue'
 export default Vue.extend({
   props: {
+    listId: {
+      type: String,
+      required: false,
+      default: 'zhList'
+    },
     check: {
       type: Boolean,
       required: false
@@ -404,6 +411,23 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 监听一下鼠标滚轮
+    listenWheel(ev: any) {
+      const detail = ev.wheelDelta || ev.detail
+      // 定义滚动方向，其实也可以在赋值的时候写
+      const moveForwardStep = 1
+      const moveBackStep = -1
+      // 定义滚动距离
+      let step = 0
+      // 判断滚动方向,这里的100可以改，代表滚动幅度，也就是说滚动幅度是自定义的
+      if (detail < 0) {
+        step = moveForwardStep * 50
+      } else {
+        step = moveBackStep * 50
+      }
+      // @ts-ignore 对需要滚动的元素进行滚动操作
+      this.$refs[this.listId].scrollLeft += step
+    },
     changeIndex(type: 1 | 2, length: number, item: any) {
       if (length === 1) {
         return

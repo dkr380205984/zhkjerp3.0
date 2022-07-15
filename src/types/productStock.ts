@@ -19,7 +19,7 @@
 // }]
 
 export interface ProductStockInfo {
-  action_type: 1 | 2 | 3 | 4 | 5 | 6
+  action_type: 1 | 2 | 3 | 4 | 5 | 6 | 7
   complete_time: string
   client_id?: string | number
   move_store_id?: string | number

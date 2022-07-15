@@ -133,12 +133,130 @@
         </el-tab-pane>
       </el-tabs>
     </div>
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">出入库单据</div>
+      </div>
+      <div class="tableCtn">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol">单据编号</div>
+            <div class="tcol">出入库类型</div>
+            <div class="tcol">库存转移</div>
+            <div class="tcol noPad"
+              style="flex:4">
+              <div class="trow">
+                <div class="tcol">辅料名称</div>
+                <div class="tcol">辅料属性</div>
+                <div class="tcol">数量</div>
+              </div>
+            </div>
+            <div class="tcol">审核状态</div>
+            <div class="tcol">操作人</div>
+            <div class="tcol">操作日期</div>
+            <div class="tcol"
+              style="min-width:112px">操作</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow"
+            v-for="item in materialStockList"
+            :key="item.id">
+            <div class="tcol">{{item.code}}</div>
+            <div class="tcol"
+              :class="item.action_type|materialStockTypeClassFilter">{{item.action_type|materialStockTypeFilter}}</div>
+            <div class="tcol">
+              <template v-if="item.action_type===1">
+                <div class="changeCtn">
+                  <span>{{item.client_name}}</span>
+                  <span class="el-icon-s-unfold green"></span>
+                  <span>{{item.store}}/{{item.secondary_store}}</span>
+                </div>
+              </template>
+              <template v-else-if="item.action_type===2 || item.action_type===4">
+                <div class="changeCtn">
+                  <span>{{item.client_name}}</span>
+                  <span class="el-icon-s-unfold green"></span>
+                  <span>{{item.store}}/{{item.secondary_store}}</span>
+                </div>
+              </template>
+              <template v-else-if="item.action_type===3 || item.action_type===5 || item.action_type===10">
+                <div class="changeCtn">
+                  <span>{{item.store}}/{{item.secondary_store}}</span>
+                  <span class="el-icon-s-unfold orange"></span>
+                  <span>{{item.client_name}}</span>
+                </div>
+              </template>
+              <template v-else-if="item.action_type===6 || item.action_type===9 || item.action_type===11 || item.action_type===12">
+                <div class="changeCtn">
+                  <span>{{item.store}}/{{item.secondary_store}}</span>
+                </div>
+              </template>
+              <template v-else-if="item.action_type===7">
+                <div class="changeCtn">
+                  <span>{{item.store}}/{{item.secondary_store}}</span>
+                  <span class="el-icon-s-unfold orange"></span>
+                  <span>{{item.move_store}}/{{item.move_secondary_store}}</span>
+                </div>
+              </template>
+              <template v-else-if="item.action_type===8">
+                <div class="changeCtn">
+                  <span>{{item.store}}/{{item.secondary_store}}</span>
+                  <span class="el-icon-s-unfold green"></span>
+                  <span>{{item.move_store}}/{{item.move_secondary_store}}</span>
+                </div>
+              </template>
+            </div>
+            <div class="tcol noPad"
+              style="flex:4">
+              <div class="trow"
+                v-for="itemChild in item.info_data"
+                :key="itemChild.id">
+                <div class="tcol">{{itemChild.material_name}}</div>
+                <div class="tcol">{{itemChild.attribute}}</div>
+                <div class="tcol"
+                  :class="itemChild.batch_code||itemChild.vat_code||itemChild.color_code?'':'gray'">{{itemChild.batch_code||'无'}}/{{itemChild.vat_code||'无'}}/{{itemChild.color_code||'无'}}</div>
+                <div class="tcol">{{itemChild.number}}{{itemChild.unit || 'kg'}}</div>
+              </div>
+            </div>
+            <div class="tcol"
+              :class="item.is_check|filterCheckClass">
+              <span>{{item.is_check|filterCheck}}
+                <el-tooltip v-if="item.is_check===4"
+                  class="item"
+                  effect="dark"
+                  content="由于【分配数量】超过了【计划数量】的10%。该生产计划单已变为异常状态。以下为异常单据处理办法：1. 检查分配数量。如果分配数量录入错误，您可以修改单据，或删除重新创建。2. 如果录入的数量为实际分配数量，则无需操作，或点击审核通过即可。"
+                  placement="top">
+                  <i class="el-icon-warning hoverRed"></i>
+                </el-tooltip>
+              </span>
+            </div>
+            <div class="tcol">{{item.user_name}}</div>
+            <div class="tcol">{{item.created_at.slice(0,10)}}</div>
+            <div class="tcol oprCtn"
+              style="font-size:12px;min-width:112px">
+              <div class="opr hoverGreen"
+                @click="materialStockCheckId=item.id;checkFlag=true">审核</div>
+              <div class="opr hoverRed"
+                @click="deleteMaterialStockList(item.id)">删除</div>
+              <div class="opr hoverBlue"
+                @click="$openUrl('/store/materialLogPrint?id='+item.id + '&type=' + item.action_type)">打印</div>
+            </div>
+          </div>
+          <div class="trow"
+            v-if="materialStockList.length===0">
+            <div class="tcol gray"
+              style="text-align:center">暂无单据</div>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- 物料订购 -->
     <div class="popup"
       v-show="materialOrderFlag">
       <div class="main">
         <div class="titleCtn">
-          <span class="text">辅料订购</span>
+          <span class="text">辅料订购/入库</span>
           <div class="closeCtn"
             @click="closeOrder">
             <span class="el-icon-close"></span>
@@ -446,64 +564,154 @@
                 <div class="col">
                 </div>
               </div>
-              <div class="row"
-                v-for="(item,index) in materialStockInfo.info_data"
-                :key="index">
-                <div class="col">
-                  <div class="label"
-                    v-if="index===0">
-                    <span class="text">单据物料</span>
-                    <span class="explanation">(必选)</span>
+              <template v-if="materialStockInfo.action_type===2">
+                <div class="row"
+                  v-for="(itemMat,indexMat) in materialStockInfo.info_data"
+                  :key="indexMat">
+                  <div class="col">
+                    <div class="label"
+                      v-if="indexMat===0">
+                      <span class="text">物料名称</span>
+                      <span class="explanation">(必选)</span>
+                    </div>
+                    <div class="info elCtn">
+                      <el-select :class="{'error':mustFlag&&!itemMat.material_id}"
+                        placeholder="请选择物料名称"
+                        v-model="itemMat.material_id"
+                        @change="getUnit($event,itemMat)">
+                        <el-option v-for="item in decorateMaterialList"
+                          :key="item.id"
+                          :value="item.id"
+                          :label="item.name"></el-option>
+                      </el-select>
+                    </div>
                   </div>
-                  <div class="info elCtn">
-                    <el-select :class="{'error':mustFlag&&!item.rel_doc_info_id}"
-                      placeholder="单据物料"
-                      v-model="item.rel_doc_info_id"
-                      @change="getMatId($event,item)">
-                      <el-option v-for="item in materialStockInfo.selectList"
-                        :key="item.value"
-                        :label="item.name"
-                        :value="item.value"></el-option>
-                    </el-select>
+                  <div class="col">
+                    <div class="label"
+                      v-if="indexMat===0">
+                      <span class="text">物料信息</span>
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="设置成功后请点击此按钮刷新数据"
+                        placement="top">
+                        <i class="el-icon-refresh hoverGreen fr"
+                          style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                          @click="$checkCommonInfo([{
+                          checkWhich: 'api/decorateMaterial',
+                          getInfoMethed: 'dispatch',
+                          getInfoApi: 'getDecorateMaterialAsync',
+                          forceUpdate:true
+                        }])"></i>
+                      </el-tooltip>
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="添加新物料"
+                        placement="top">
+                        <i class="el-icon-upload hoverOrange fr"
+                          style="line-height:38px;font-size:18px;cursor:pointer;"
+                          @click="$openUrl('/setting/?pName=物料设置&cName=装饰辅料')"></i>
+                      </el-tooltip>
+                    </div>
+                    <div class="info elCtn">
+                      <el-input placeholder="订购颜色、材质、属性或尺寸"
+                        v-model="itemMat.attribute">
+                      </el-input>
+                    </div>
                   </div>
+                  <div class="col">
+                    <div class="label spaceBetween"
+                      v-if="indexMat===0">
+                      <div class="once">
+                        <span class="text">入库数量</span>
+                        <span class="explanation">(必填)</span>
+                      </div>
+                    </div>
+                    <div class="info elCtn spaceBetween">
+                      <el-input :class="{'error':mustFlag&&!itemMat.number}"
+                        class="once"
+                        placeholder="数量"
+                        v-model="itemMat.number">
+                        <template slot="append">{{itemMat.unit}}</template>
+                      </el-input>
+                    </div>
+                  </div>
+                  <div class="opr hoverBlue"
+                    v-if="indexMat===0"
+                    @click="$addItem(materialStockInfo.info_data,{
+                      material_id: '',
+                      material_color: '',
+                      color_code: '',
+                      batch_code: '',
+                      vat_code: '',
+                      attribute: '',
+                      number: '',
+                      item: '', // 件数
+                      rel_doc_info_id: '' // 采购单调取单加工单子项id
+                    })">添加</div>
+                  <div class="opr hoverRed"
+                    v-if="indexMat>0"
+                    @click="$deleteItem(materialStockInfo.info_data,index)">删除</div>
                 </div>
-                <div class="col">
-                  <div class="label"
-                    v-if="index===0">
-                    <span class="text">数量</span>
-                    <span class="explanation">(必填)</span>
+              </template>
+              <template v-else>
+                <div class="row"
+                  v-for="(item,index) in materialStockInfo.info_data"
+                  :key="index">
+                  <div class="col">
+                    <div class="label"
+                      v-if="index===0">
+                      <span class="text">单据物料</span>
+                      <span class="explanation">(必选)</span>
+                    </div>
+                    <div class="info elCtn">
+                      <el-select :class="{'error':mustFlag&&!item.rel_doc_info_id}"
+                        placeholder="单据物料"
+                        v-model="item.rel_doc_info_id"
+                        @change="getMatId($event,item)">
+                        <el-option v-for="item in materialStockInfo.selectList"
+                          :key="item.value"
+                          :label="item.name"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
                   </div>
-                  <div class="info elCtn">
-                    <el-input :ref="'number'+ '-'+index"
-                      :class="{'error':mustFlag&&!item.number}"
-                      placeholder="数量"
-                      class="UnitCtn"
-                      @keydown.native="$focusByKeydown($event,'number',[index],materialStockInfo,['info_data'])"
-                      v-model="item.number">
-                      <template slot="append">
-                        <el-input v-model="item.unit"
-                          placeholder="单位"></el-input>
-                      </template>
-                    </el-input>
+                  <div class="col">
+                    <div class="label"
+                      v-if="index===0">
+                      <span class="text">数量</span>
+                      <span class="explanation">(必填)</span>
+                    </div>
+                    <div class="info elCtn">
+                      <el-input :ref="'number'+ '-'+index"
+                        :class="{'error':mustFlag&&!item.number}"
+                        placeholder="数量"
+                        class="UnitCtn"
+                        @keydown.native="$focusByKeydown($event,'number',[index],materialStockInfo,['info_data'])"
+                        v-model="item.number">
+                        <template slot="append">
+                          <el-input v-model="item.unit"
+                            placeholder="单位"></el-input>
+                        </template>
+                      </el-input>
+                    </div>
                   </div>
-                </div>
-                <div class="col">
-                  <div class="label"
-                    v-if="index===0">
-                    <span class="text">件数</span>
+                  <div class="col">
+                    <div class="label"
+                      v-if="index===0">
+                      <span class="text">件数</span>
+                    </div>
+                    <div class="info elCtn">
+                      <el-input :ref="'item'+ '-'+index"
+                        placeholder="数量"
+                        @keydown.native="$focusByKeydown($event,'item',[index],materialStockInfo,['info_data'])"
+                        v-model="item.item">
+                        <template slot="append">件</template>
+                      </el-input>
+                    </div>
                   </div>
-                  <div class="info elCtn">
-                    <el-input :ref="'item'+ '-'+index"
-                      placeholder="数量"
-                      @keydown.native="$focusByKeydown($event,'item',[index],materialStockInfo,['info_data'])"
-                      v-model="item.item">
-                      <template slot="append">件</template>
-                    </el-input>
-                  </div>
-                </div>
-                <div class="opr hoverBlue"
-                  v-if="index===0"
-                  @click="$addItem(materialStockInfo.info_data,{
+                  <div class="opr hoverBlue"
+                    v-if="index===0"
+                    @click="$addItem(materialStockInfo.info_data,{
                     material_id: '',
                     material_color: '',
                     color_code: '',
@@ -514,10 +722,11 @@
                     item: '', // 件数
                     rel_doc_info_id: '' // 采购单调取单加工单子项id
                   })">添加</div>
-                <div class="opr hoverRed"
-                  v-if="index>0"
-                  @click="$deleteItem(materialStockInfo.info_data,index)">删除</div>
-              </div>
+                  <div class="opr hoverRed"
+                    v-if="index>0"
+                    @click="$deleteItem(materialStockInfo.info_data,index)">删除</div>
+                </div>
+              </template>
               <div class="row">
                 <div class="col"
                   style="max-width:322px">
@@ -806,8 +1015,10 @@
           </div>
         </div>
         <div class="btnCtn">
+          <div class="btn backHoverOrange"
+            @click="goStock()">客供入库</div>
           <div class="btn backHoverBlue"
-            @click="materialOrderFlag = true">订购辅料</div>
+            @click="materialOrderFlag = true;step=1">订购辅料</div>
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
         </div>
@@ -1003,6 +1214,7 @@ export default Vue.extend({
       orderIndex: 0,
       storeList: [],
       showPrice: false,
+      materialStockList: [],
       priceMaterialList: [] // 报价单报价信息
     }
   },
@@ -1055,6 +1267,10 @@ export default Vue.extend({
         materialOrder.list({
           order_id: this.orderInfo.time_data[this.orderIndex].id,
           material_type: 2
+        }),
+        materialStock.list({
+          order_id: this.orderInfo.time_data[this.orderIndex].id,
+          material_type: 2
         })
       ]).then((res) => {
         this.loading = false
@@ -1062,6 +1278,9 @@ export default Vue.extend({
         if (this.materialOrderList.length > 0) {
           this.materialOrderIndex = this.materialOrderList[0].id!.toString()
         }
+        this.materialStockList = res[1].data.data.filter(
+          (item: any) => item.action_type !== 10 && item.action_type !== 12
+        )
       })
     },
     getUnit(ev: number, info: any) {
@@ -1186,36 +1405,56 @@ export default Vue.extend({
         this.mustFlag = true
       }
     },
-    goStock(materialOrderList: MaterialOrderInfo[]) {
-      materialOrderList.forEach((item) => {
-        this.materialStockInfo.rel_doc_code = item.code
-        this.materialStockInfo.rel_doc_id = item.id as number
-        item.info_data.forEach((itemChild) => {
-          this.materialStockInfo.selectList!.push({
-            value: itemChild.id as number,
-            name: itemChild.material_name + '/' + itemChild.attribute,
-            material_color: itemChild.material_color,
-            material_id: itemChild.material_id,
-            attribute: itemChild.attribute,
-            number: itemChild.number,
-            unit: itemChild.unit
+    goStock(materialOrderList?: MaterialOrderInfo[]) {
+      if (materialOrderList) {
+        materialOrderList.forEach((item) => {
+          this.materialStockInfo.rel_doc_code = item.code
+          this.materialStockInfo.rel_doc_id = item.id as number
+          item.info_data.forEach((itemChild) => {
+            this.materialStockInfo.selectList!.push({
+              value: itemChild.id as number,
+              name: itemChild.material_name + '/' + itemChild.attribute,
+              material_color: itemChild.material_color,
+              material_id: itemChild.material_id,
+              attribute: itemChild.attribute,
+              number: itemChild.number,
+              unit: itemChild.unit
+            })
           })
         })
-      })
-      this.materialStockInfo.info_data = this.materialStockInfo.selectList!.map((item: any) => {
-        return {
-          material_id: item.material_id,
-          material_color: item.material_color,
-          color_code: '',
-          batch_code: '',
-          vat_code: '',
-          attribute: item.attribute,
-          number: item.number,
-          item: '', // 件数
-          unit: item.unit,
-          rel_doc_info_id: item.value // 采购单调取单加工单子项id
-        }
-      })
+        this.materialStockInfo.info_data = this.materialStockInfo.selectList!.map((item: any) => {
+          return {
+            material_id: item.material_id,
+            material_color: item.material_color,
+            color_code: '',
+            batch_code: '',
+            vat_code: '',
+            attribute: item.attribute,
+            number: item.number,
+            item: '', // 件数
+            unit: item.unit,
+            rel_doc_info_id: item.value // 采购单调取单加工单子项id
+          }
+        })
+      } else {
+        this.materialStockInfo.client_id = this.orderInfo.client_id
+        this.materialStockInfo.rel_doc_code = this.orderInfo.code
+        this.materialStockInfo.rel_doc_id = Number(this.$route.query.sampleOrderIndex)
+        this.materialStockInfo.action_type = 2
+        this.materialStockInfo.info_data = [
+          {
+            material_id: '',
+            material_color: '',
+            color_code: '',
+            batch_code: '',
+            vat_code: '',
+            attribute: '',
+            number: '',
+            item: '', // 件数
+            rel_doc_info_id: '' // 采购单调取单加工单子项id
+          }
+        ]
+      }
       this.step = 2
       this.materialOrderFlag = true
     },
@@ -1231,12 +1470,12 @@ export default Vue.extend({
         this.materialStockInfo.info_data.some((item) => {
           return this.$formCheck(item, [
             {
-              key: 'rel_doc_info_id',
-              errMsg: '请选择单据物料'
-            },
-            {
               key: 'material_id',
               errMsg: '请选择物料'
+            },
+            {
+              key: 'number',
+              errMsg: '请输入数量'
             }
           ])
         })

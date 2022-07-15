@@ -658,6 +658,7 @@
               <div class="col circleCtn">票据状态</div>
               <div class="col">创建人</div>
               <div class="col">创建时间</div>
+              <div class="col">入库时间</div>
               <div class="col oprWidth">操作</div>
             </div>
             <div v-for="(item, index) in materialOrderList"
@@ -710,6 +711,7 @@
                 </div>
                 <div class="col">{{ item.user_name }}</div>
                 <div class="col">{{ item.created_at }}</div>
+                <div class="col">暂无</div>
                 <div class="col oprWidth">
                   <span class="opr hoverBlue"
                     @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>

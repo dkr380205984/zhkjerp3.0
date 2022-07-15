@@ -19,11 +19,12 @@
               <div class="tcol">操作人</div>
               <div class="tcol">扣款原因</div>
               <div class="tcol">图片信息</div>
+              <div class="tcol">操作</div>
             </div>
           </div>
           <div class="tbody">
             <div class="trow"
-              v-for="(item,index) in data"
+              v-for="(item,index) in list"
               :key="index">
               <div class="tcol">{{item.code}}</div>
               <div class="tcol">{{item.client_name}}</div>
@@ -39,6 +40,10 @@
                   </el-image>
                 </div>
               </div>
+              <div class="tcol oprCtn">
+                <div class="opr hoverRed"
+                  @click="deleteDeduct(item.id,index)">删除</div>
+              </div>
             </div>
           </div>
         </div>
@@ -52,6 +57,7 @@
 </template>
 
 <script lang="ts">
+import { deduct } from '@/assets/js/api'
 import Vue from 'vue'
 interface deductInfo {
   rel_doc_id: number | string
@@ -85,9 +91,40 @@ export default Vue.extend({
       required: false
     }
   },
+  data() {
+    return {
+      list: []
+    }
+  },
+  watch: {
+    data(newVal: any) {
+      this.list = newVal
+    }
+  },
   methods: {
     close() {
       this.$emit('close')
+    },
+    deleteDeduct(id: number, index: number) {
+      this.$confirm('是否删除该扣款单据?', '提示', {
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          deduct.delete({ id }).then((res) => {
+            if (res.data.status) {
+              this.$message.success('删除成功')
+              this.list.splice(index, 1)
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     }
   }
 })

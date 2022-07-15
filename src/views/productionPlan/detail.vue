@@ -130,6 +130,16 @@
           </template>
           <div class="buttonList">
             <div class="btn backHoverOrange"
+              style="margin-right:12px"
+              :class="{'backGray':checkList().length===0}"
+              @click="goStock()">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">库存调取</span>
+            </div>
+            <div class="btn backHoverOrange"
               :class="{'backGray':checkList().length===0}"
               @click="getProductionPlan">
               <svg class="iconFont"
@@ -420,6 +430,77 @@
                   <div class="opr hoverRed"
                     @click="deleteMaterialSupplement(itemChild.id)">删除</div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+    <div class="module"
+      v-if="productStockLog.length>0">
+      <el-tabs type="border-card"
+        v-model="productStockIndex">
+        <el-tab-pane v-for="(item,index) in productStockLog"
+          :key="index"
+          :name="item.id.toString()">
+          <div slot="label">
+            <div style="display:flex;flex-direction:column">
+              <div style="line-height:20px;font-size:14px">调取单{{(index+1)}}</div>
+              <div style="line-height:20px;font-size:14px">({{item.code}})</div>
+            </div>
+          </div>
+          <div class="titleCtn">
+            <div class="title">调取单据</div>
+          </div>
+          <div class="detailCtn">
+            <div class="checkCtn"
+              @click="checkType=4;checkDetailFlag=true;is_check=item.is_check">
+              <el-tooltip class="item"
+                effect="dark"
+                :content="item.is_check>=3?'点击查看异常处理办法':'点击查看审核日志'"
+                placement="bottom">
+                <img :src="item.is_check|checkFilter" />
+              </el-tooltip>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="label">调取单号：</div>
+                <div class="text">{{item.code}}</div>
+              </div>
+              <div class="col">
+                <div class="label">调取仓库：</div>
+                <div class="text">{{item.store}}/{{item.secondary_store}}</div>
+              </div>
+              <div class="col">
+                <div class="label">创建人：</div>
+                <div class="text">{{item.user_name}}</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="label">创建日期：</div>
+                <div class="text">{{item.created_at}}</div>
+              </div>
+            </div>
+          </div>
+          <div class="tableCtn">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol">产品信息</div>
+                <div class="tcol">尺码颜色</div>
+                <div class="tcol">调取数量</div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div class="trow"
+                v-for="(itemChild,indexChild) in item.info_data"
+                :key="indexChild">
+                <div class="tcol">
+                  <span>{{itemChild.product_code}}</span>
+                  <span>{{itemChild.category}}/{{itemChild.secondary_category}}</span>
+                </div>
+                <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
+                <div class="tcol">{{itemChild.number}}</div>
               </div>
             </div>
           </div>
@@ -1508,6 +1589,262 @@
         </div>
       </div>
     </div>
+    <!-- 库存调取 -->
+    <div class="popup"
+      v-show="stockFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <div class="title">库存调取</div>
+          <div class="closeCtn"
+            @click="stockFlag = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="stepCtn">
+            <div class="step"
+              :class="{'active':step===1}">
+              <div class="circle">
+                <span class="white">1</span>
+              </div>
+              <div class="name">选择库存</div>
+            </div>
+            <div class="step"
+              :class="{'active':step===2}">
+              <div class="circle">
+                <span class="white">2</span>
+              </div>
+              <div class="name">调取信息</div>
+            </div>
+          </div>
+          <template v-if="step===1">
+            <div class="selectCtn">
+              <div class="label">已选择产品：</div>
+              <div class="boxCtn">
+                <div class="box"
+                  v-for="item in checkList()"
+                  :key="item.id">
+                  {{item.product_code}}({{item.category}}/{{item.secondary_category}}/{{item.size_name}}/{{item.color_name}})
+                  <span class="el-icon-search closeIcon hoverGreen"
+                    @click="productStockFilter.product_code=item.product_code;searchProduct()"></span>
+                </div>
+              </div>
+            </div>
+            <div class="listCtn">
+              <div class="filterCtn">
+                <div class="elCtn">
+                  <el-cascader :options="storeArr"
+                    clearable
+                    placeholder="请选择仓库"
+                    v-model="productStockFilter.storeArr"
+                    @change="(ev)=>{productStockFilter.store_id=ev[0];productStockFilter.secondary_id=ev[1];searchProduct()}"></el-cascader>
+                </div>
+                <div class="elCtn">
+                  <el-input v-model="productStockFilter.product_code"
+                    placeholder="搜索产品编号"
+                    @keydown.enter.native="searchProduct"></el-input>
+                </div>
+                <div class="elCtn">
+                  <el-input v-model="productStockFilter.name"
+                    placeholder="搜索产品名称"
+                    @keydown.enter.native="searchProduct"></el-input>
+                </div>
+                <div class="btn backHoverBlue fr"
+                  @click="searchProduct">搜索</div>
+              </div>
+              <div class="tableCtn noPad"
+                v-loading="searchLoading">
+                <div class="thead">
+                  <div class="trow">
+                    <div class="tcol">仓库名称</div>
+                    <div class="tcol">产品编号品类</div>
+                    <div class="tcol">产品名称</div>
+                    <div class="tcol">客户款号</div>
+                    <div class="tcol">产品图片</div>
+                    <div class="tcol noPad"
+                      style="flex:3">
+                      <div class="trow">
+                        <div class="tcol">尺码颜色</div>
+                        <div class="tcol">库存数量</div>
+                        <div class="tcol">操作</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tbody">
+                  <div class="trow"
+                    v-for="item in productStockList"
+                    :key="item.id">
+                    <div class="tcol">{{item.store}}/{{item.secondary_store}}</div>
+                    <div class="tcol">{{item.product_code}}({{item.category}}/{{item.secondary_category}})</div>
+                    <div class="tcol">{{item.name}}</div>
+                    <div class="tcol">{{item.style_code}}</div>
+                    <div class="tcol">
+                      <div class="imageCtn">
+                        <el-image style="width:100%;height:100%"
+                          :src="item.image_data&&item.image_data.length>0?item.image_data[0]:''"
+                          :preview-src-list="item.image_data">
+                          <div slot="error"
+                            class="image-slot">
+                            <i class="el-icon-picture-outline"
+                              style="font-size:42px"></i>
+                          </div>
+                        </el-image>
+                      </div>
+                    </div>
+                    <div class="tcol noPad"
+                      style="flex:3">
+                      <div class="trow"
+                        v-for="(itemChild,indexChild) in item.info_data"
+                        :key="indexChild">
+                        <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
+                        <div class="tcol">{{itemChild.number}}</div>
+                        <div class="tcol">
+                          <el-checkbox v-model="itemChild.check"
+                            @change="checkProductStock($event,item,itemChild)"></el-checkbox>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="pageCtn">
+                  <el-pagination background
+                    :page-size="5"
+                    layout="prev, pager, next"
+                    :total="searchTotal"
+                    :current-page.sync="searchPage"
+                    @current-change="searchProduct">
+                  </el-pagination>
+                </div>
+              </div>
+            </div>
+            <div class="selectCtn">
+              <div class="label">计划调取产品：</div>
+              <div class="boxCtn">
+                <div class="box"
+                  v-for="(item,index) in productStockCheckList"
+                  :key="index">
+                  {{item.product_code}}({{item.category}}/{{item.secondary_category}}/{{item.size_name}}/{{item.color_name}})
+                  <span class="el-icon-circle-close closeIcon hoverRed"
+                    @click="$deleteItem(productStockCheckList,index)"></span>
+                </div>
+              </div>
+            </div>
+          </template>
+          <template v-if="step===2">
+            <div class="editCtn">
+              <div class="row">
+                <div class="col">
+                  <div class="label">
+                    <span class="text">来源仓库</span>
+                  </div>
+                  <div class="info elCtn">
+                    <div class="disableInput">{{productStockInfo.store}}</div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
+                    <span class="text">出入库类型</span>
+                    <span class="explanation">(默认)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <div class="disableInput">订单库存调取</div>
+                  </div>
+                </div>
+              </div>
+              <div class="row"
+                v-for="(item,index) in productStockInfo.info_data"
+                :key="index">
+                <div class="col">
+                  <div class="label"
+                    v-if="index===0">
+                    <span class="text">库存产品</span>
+                    <span class="explanation">(必选)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-select placeholder="请选择库存物料"
+                      v-model="item.tree_data"
+                      @change="getMatId($event,item)">
+                      <el-option v-for="item in productStockCheckList"
+                        :key="item.id"
+                        :value="item.id"
+                        :label="item.product_code+'('+item.category +'/'+item.secondary_category +'/'+item.size_name +'/'+item.color_name +')'"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label"
+                    v-if="index===0">
+                    <span class="text">单据产品</span>
+                    <span class="explanation">(必选)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-select placeholder="请选择单据物料"
+                      v-model="item.rel_doc_info_id">
+                      <el-option v-for="item in checkList()"
+                        :key="item.id"
+                        :value="item.id"
+                        :label="item.product_code+'('+item.category +'/'+item.secondary_category +'/'+item.size_name +'/'+item.color_name +')'"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label"
+                    v-if="index===0">
+                    <span class="text">调取数量</span>
+                    <span class="explanation">(必填)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="item.number"
+                      placeholder="调取数量"></el-input>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col"
+                  style="max-width:280px">
+                  <div class="label">
+                    <span class="text">调取日期</span>
+                    <span class="explanation">(默认)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-date-picker style="width:100%"
+                      class="once"
+                      placeholder="调取日期"
+                      value-format="yyyy-MM-dd"
+                      v-model="productStockInfo.complete_time"></el-date-picker>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
+                    <span class="text">备注信息</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input placeholder="备注信息"
+                      v-model="productStockInfo.desc"></el-input>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+        <div class="oprCtn">
+          <div class="oprCtn">
+            <span class="btn borderBtn"
+              @click="closeStock">取消</span>
+            <span class="btn backHoverBlue"
+              @click="goCheckRealStock"
+              v-if="step===1">填写实际调取值</span>
+            <span class="btn backHoverOrange"
+              @click="step=1"
+              v-if="step===2">上一步</span>
+            <span class="btn backHoverBlue"
+              @click="saveProductStock"
+              v-if="step===2">确认调取</span>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="bottomFixBar">
       <div class="main">
         <!-- 报价单表格 -->
@@ -1627,7 +1964,9 @@ import {
   materialSupplement,
   clientInOrder,
   quotedPrice,
-  checkBeyond
+  checkBeyond,
+  store,
+  productStock
 } from '@/assets/js/api'
 import { ProductionMaterialPlanInfo, ProductionPlanInfo } from '@/types/productionPlan'
 import { MaterialPlanInfo, MaterailPlanData } from '@/types/materialPlan'
@@ -1635,11 +1974,13 @@ import { MaterialSupplementInfo } from '@/types/materialSupplement'
 import { CascaderInfo } from '@/types/vuex'
 import { OrderInfo, OrderTime } from '@/types/order'
 import { QuotedPriceInfo } from '@/types/quotedPrice'
+import { ProductStockInfo } from '@/types/productStock'
 interface OrderDetail extends OrderInfo {
   time_data: OrderTime[]
 }
 export default Vue.extend({
   data(): {
+    productStockInfo: ProductStockInfo
     materialPlanList: MaterialPlanInfo[]
     productionPlanInfo: ProductionPlanInfo[]
     productionPlanUpdateInfo: ProductionPlanInfo
@@ -1902,6 +2243,55 @@ export default Vue.extend({
           url: '/materialPlan/detail?id=' + this.$route.query.id
         }
       ],
+      step: 1,
+      stockFlag: false,
+      storeArr: [],
+      searchLoading: false,
+      searchPage: 1,
+      searchTotal: 1,
+      productStockFilter: {
+        product_code: '',
+        name: '',
+        storeArr: [],
+        store_id: '',
+        secondary_id: ''
+      },
+      productStockCheckList: [],
+      productStockList: [],
+      productStockInfo: {
+        action_type: 7,
+        complete_time: this.$getDate(new Date()),
+        tree_data: [], // 存公司或者移库仓库用
+        client_id: '',
+        move_store_id: '',
+        move_secondary_store_id: '',
+        desc: '',
+        store_id: '',
+        secondary_store_id: '',
+        store: '',
+        secondary_store: '',
+        rel_doc_id: '',
+        rel_doc_code: '',
+        store_arr: [], // 前端下拉框用
+        info_data: [
+          {
+            product_code: '',
+            name: '',
+            category: '',
+            secondary_category: '',
+            product_id: '',
+            size_id: '',
+            color_id: '',
+            price: '',
+            size_name: '',
+            color_name: '',
+            color_size: '',
+            number: ''
+          }
+        ]
+      },
+      productStockIndex: '',
+      productStockLog: [],
       priceProcessList: [] // 报价单报价信息
     }
   },
@@ -1997,6 +2387,10 @@ export default Vue.extend({
         }),
         productionPlan.list({
           order_id: this.order_id
+        }),
+        store.proLog({
+          rel_doc_id: this.$route.query.sampleOrderIndex,
+          action_type: 7
         })
       ]).then((res) => {
         this.loading = false
@@ -2012,7 +2406,239 @@ export default Vue.extend({
         if (this.productionPlanList.length > 0) {
           this.productionPlanIndex = this.productionPlanList[0].id?.toString()
         }
+        this.productStockLog = res[2].data.data
+        if (this.productStockLog.length > 0) {
+          this.productStockIndex = this.productStockLog[0].id?.toString()
+        }
       })
+    },
+    closeStock() {
+      this.$confirm('关闭页面会导致已填写的数据丢失，且不会保存，是否确认关闭订购页面?', '提示', {
+        confirmButtonText: '确认关闭',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.stockFlag = false
+          this.resetProductStock()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消关闭'
+          })
+        })
+    },
+    resetProductStock() {
+      this.productStockFilter = {
+        product_code: '',
+        name: '',
+        storeArr: [],
+        store_id: '',
+        secondary_id: ''
+      }
+      this.productStockCheckList = []
+      this.productStockList = []
+      this.productStockInfo = {
+        action_type: 7,
+        complete_time: this.$getDate(new Date()),
+        tree_data: [], // 存公司或者移库仓库用
+        client_id: '',
+        move_store_id: '',
+        move_secondary_store_id: '',
+        desc: '',
+        store_id: '',
+        secondary_store_id: '',
+        store: '',
+        secondary_store: '',
+        rel_doc_id: '',
+        rel_doc_code: '',
+        store_arr: [], // 前端下拉框用
+        info_data: [
+          {
+            product_code: '',
+            name: '',
+            category: '',
+            secondary_category: '',
+            product_id: '',
+            size_id: '',
+            color_id: '',
+            price: '',
+            size_name: '',
+            color_name: '',
+            color_size: '',
+            number: ''
+          }
+        ]
+      }
+    },
+    goCheckRealStock() {
+      if (this.productStockCheckList.length === 0) {
+        this.$message.error('请选择需要调取的产品')
+      } else {
+        this.productStockInfo.rel_doc_id = this.$route.query.sampleOrderIndex as string
+        if (this.productStockCheckList.length === 1) {
+          this.productStockInfo.info_data.forEach((item) => {
+            item.tree_data = this.productStockCheckList[0].id
+            this.getProId(this.productStockCheckList[0].id, item)
+          })
+        }
+        this.step = 2
+      }
+    },
+    getProId(id: number, info: any) {
+      const finded = this.productStockCheckList.find((item: any) => item.id === id)
+      info.product_id = finded.product_id
+      info.color_id = finded.color_id
+      info.size_id = finded.size_id
+    },
+    checkProductStock(ev: boolean, info: any, itemChild: any) {
+      if (ev) {
+        if (
+          this.productStockCheckList.find(
+            (item: any) =>
+              item.id ===
+              info.product_id +
+                '/' +
+                info.size_id +
+                '/' +
+                itemChild.color_id +
+                '/' +
+                itemChild.store_id +
+                '/' +
+                info.secondary_store_id
+          )
+        ) {
+          this.$message.error('请不要重复选择仓库信息')
+        } else if (
+          this.productStockCheckList.length > 0 &&
+          this.productStockCheckList.find(
+            (item: any) => item.store_id !== info.store_id || item.secondary_store_id !== info.secondary_store_id
+          )
+        ) {
+          this.$message.error('只能选择同一仓库的物料进行调取，如有需要请分两次调取')
+        } else {
+          this.productStockCheckList.push({
+            id:
+              info.product_id +
+              '/' +
+              info.size_id +
+              '/' +
+              itemChild.color_id +
+              '/' +
+              itemChild.store_id +
+              '/' +
+              info.secondary_store_id,
+            product_code: info.product_code,
+            category: info.category,
+            secondary_category: info.secondary_category,
+            product_id: info.product_id,
+            color_id: itemChild.color_id,
+            size_id: itemChild.size_id,
+            color_name: itemChild.color_name,
+            size_name: itemChild.size_name,
+            number: itemChild.number
+          })
+          this.productStockInfo.store = info.store + '/' + info.second_store
+          this.productStockInfo.store_id = info.store_id
+          this.productStockInfo.secondary_store_id = info.secondary_store_id
+          this.$message.success('选取成功')
+        }
+      } else {
+        let deleteIndex = null
+        this.productStockCheckList.find((item: any, index: number) => {
+          return (
+            item.id ===
+              info.product_id +
+                '/' +
+                info.size_id +
+                '/' +
+                itemChild.color_id +
+                '/' +
+                itemChild.store_id +
+                '/' +
+                info.secondary_store_id && (deleteIndex = index)
+          )
+        })
+        if (deleteIndex === 0 || deleteIndex) {
+          this.$deleteItem(this.productStockCheckList, deleteIndex)
+        }
+      }
+    },
+    searchProduct() {
+      this.searchLoading = true
+      store
+        .searchPro({
+          product_code: this.productStockFilter.product_code,
+          name: this.productStockFilter.name,
+          store_id: this.productStockFilter.store_id,
+          secondary_id: this.productStockFilter.secondary_id,
+          page: this.searchPage,
+          limit: 5
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.productStockList = res.data.data.items
+            this.searchTotal = res.data.data.total
+          }
+          this.searchLoading = false
+        })
+    },
+    // 调取库存
+    goStock() {
+      const checkLength = this.checkList().length
+      if (checkLength === 0) {
+        this.$message.error('请选择产品信息进行调取操作')
+        return
+      }
+      this.productStockInfo.info_data = this.checkList().map((item) => {
+        return {
+          rel_doc_info_id: item.id,
+          product_code: item.product_code,
+          name: '',
+          category: item.category,
+          secondary_category: item.secondary_category,
+          price: '',
+          size_name: item.size_name,
+          color_name: item.color_name,
+          color_size: '',
+          plan_id: Number(this.materialPlanIndex),
+          product_id: item.product_id,
+          size_id: item.size_id,
+          color_id: item.color_id,
+          number: item.number as number
+        }
+      })
+      this.stockFlag = true
+    },
+    saveProductStock() {
+      const formCheck =
+        this.$formCheck(this.productStockInfo, [
+          {
+            key: 'store_id',
+            errMsg: '请选择调取仓库'
+          }
+        ]) ||
+        this.productStockInfo.info_data.some((item) => {
+          return this.$formCheck(item, [
+            {
+              key: 'number',
+              errMsg: '请输入数量'
+            }
+          ])
+        })
+      if (!formCheck) {
+        this.loading = true
+        productStock.create(this.productStockInfo).then((res) => {
+          if (res.data.status) {
+            this.$message.success('调取成功')
+            this.resetProductStock()
+            this.stockFlag = false
+            this.init()
+          }
+          this.loading = false
+        })
+      }
     },
     searchReason(str: string, cb: any) {
       const reasonArr = [
@@ -2763,6 +3389,27 @@ export default Vue.extend({
         }
       })
 
+    // 仓库列表
+    store
+      .list({
+        store_type: 5
+      })
+      .then((res) => {
+        if (res.data.status) {
+          this.storeArr = res.data.data.map((item: any) => {
+            return {
+              label: item.name,
+              value: item.id,
+              children: item.secondary_store.map((itemChild: any) => {
+                return {
+                  label: itemChild.name,
+                  value: itemChild.id
+                }
+              })
+            }
+          })
+        }
+      })
     this.$checkCommonInfo([
       {
         checkWhich: 'api/clientType',
