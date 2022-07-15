@@ -33,9 +33,9 @@
           </div>
         </div>
         <div class="errorMsgCtn"
-          v-if="is_check>=3&&errMsg&&errMsg.length>0">
+          v-if="is_check>=3&&errMsgSelf&&errMsgSelf.length>0">
           <div class="errorMsg"
-            v-for="item,index in errMsg"
+            v-for="item,index in errMsgSelf"
             :key="index">{{item.extra_msg || item.content}}</div>
         </div>
       </div>
@@ -70,7 +70,10 @@ export default Vue.extend({
       type: Number,
       required: true
     },
-    //
+    errMsg: {
+      type: Array,
+      required: false
+    },
     is_check: {
       type: Number
     }
@@ -79,7 +82,7 @@ export default Vue.extend({
     return {
       list: [],
       loading: true,
-      errMsg: []
+      errMsgSelf: []
     }
   },
   watch: {
@@ -93,7 +96,17 @@ export default Vue.extend({
             })
             .then((res) => {
               if (res.data.status) {
-                this.errMsg = res.data.data
+                this.errMsgSelf = res.data.data
+                if (this.errMsg) {
+                  this.errMsgSelf = this.errMsgSelf.concat(
+                    // @ts-ignore
+                    this.errMsg.map((item) => {
+                      return {
+                        content: item
+                      }
+                    })
+                  )
+                }
               }
             })
         } else {
