@@ -1,7 +1,10 @@
 <template>
   <div id="productList"
-    class="bodyContainer">
-    <div class="module">
+    class="bodyContainer"
+    v-loading="loading">
+    <div class="module"
+      v-loading="mainLoading"
+      element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">产品列表</div>
       </div>
@@ -107,8 +110,14 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
+          <div :class="checkedCount.length>0 ? 'btn backHoverBlue fl' : 'btn backHoverBlue fl noCheck'"
+            @click="exportExcel()">
+            导出Excel
+          </div>
         </div>
         <zh-list :list="list"
+          :check="true"
+          :checkedCount="checkedCount"
           :listKey="originalSetting"
           :loading="loading"
           :oprList="oprList"></zh-list>
@@ -130,7 +139,7 @@
 </template>
 
 <script lang="ts">
-import { product } from '@/assets/js/api'
+import { exportExcel, product } from '@/assets/js/api'
 import { CascaderInfo } from '@/types/vuex'
 import Vue from 'vue'
 export default Vue.extend({
@@ -145,6 +154,7 @@ export default Vue.extend({
       product_type: 0,
       list: [],
       loading: false,
+      mainLoading: false,
       page: 1,
       limit: 10,
       total: 1,
@@ -155,6 +165,7 @@ export default Vue.extend({
       minStore: '',
       maxStore: '',
       date: [],
+      checkedCount: [],
       productShow: false,
       pickerOptions: {
         shortcuts: [
@@ -255,11 +266,19 @@ export default Vue.extend({
           errVal: '0'
         },
         {
+          key: 'quote_price',
+          name: '报价单价格',
+          ifShow: true,
+          ifLock: false,
+          index: 7,
+          errVal: '暂无'
+        },
+        {
           key: 'has_craft',
           name: '工艺单',
           ifShow: true,
           ifLock: false,
-          index: 7,
+          index: 8,
           filterArr: ['', '待创建', '已创建'],
           classArr: ['', 'orange', 'blue']
         },
@@ -268,7 +287,7 @@ export default Vue.extend({
           name: '报价单',
           ifShow: true,
           ifLock: false,
-          index: 8,
+          index: 9,
           filterArr: ['', '待创建', '已创建'],
           classArr: ['', 'orange', 'blue']
         },
@@ -277,14 +296,14 @@ export default Vue.extend({
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 9
+          index: 10
         },
         {
           key: 'update_at',
           name: '创建时间',
           ifShow: true,
           ifLock: false,
-          index: 10
+          index: 11
         }
       ]
     }
@@ -301,6 +320,19 @@ export default Vue.extend({
     }
   },
   methods: {
+    exportExcel() {
+      if (this.checkedCount.length === 0) {
+        this.$message.error('请选择需要导出的产品')
+        return
+      }
+      this.mainLoading = true
+      exportExcel.product({ product_id: this.checkedCount.map((item: any) => item.id) }).then((res: any) => {
+        if (res.data.status) {
+          window.location.href = res.data.data
+        }
+        this.mainLoading = false
+      })
+    },
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)

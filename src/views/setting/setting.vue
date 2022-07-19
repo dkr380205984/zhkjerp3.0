@@ -690,7 +690,8 @@
                 <div class="elCtn fl">
                   <el-input placeholder="请输入HS编码查询"
                     v-model="searchHSCode"
-                    clearable></el-input>
+                    clearable
+                    @keydown.native.enter="getHSCode"></el-input>
                 </div>
                 <div class="btn backHoverBlue fl"
                   @click="getHSCode(1)">点击查询</div>
@@ -776,6 +777,184 @@
                   :total="HSCodeTotal"
                   :current-page.sync="HSCodePage"
                   @current-change="getHSCode">
+                </el-pagination>
+              </div>
+            </div>
+          </template>
+          <template v-if="cName === '常用公司设置'">
+            <div class="listCtn">
+              <div class="filterCtn clearfix">
+                <div class="elCtn">
+                  <el-input placeholder="请输入公司名称按回车查询"
+                    v-model="searchNormalClient"
+                    clearable
+                    @keydown.native.enter="getNormalClientList(1)"></el-input>
+                </div>
+                <div class="btn backHoverBlue fl"
+                  @click="showPopup = true">添加常用公司</div>
+              </div>
+              <div class="list">
+                <div class="row title">
+                  <div class="col">公司名称</div>
+                  <div class="col">公司地址</div>
+                  <div class="col">更新日期</div>
+                  <div class="col">操作</div>
+                </div>
+                <div class="row"
+                  v-for="item in normalClientList"
+                  :key="item.id">
+                  <div class="col">{{item.name}}</div>
+                  <div class="col">{{item.address}}</div>
+                  <div class="col">{{item.updated_at.slice(0,10)}}</div>
+                  <div class="col oprCtn">
+                    <div class="opr hoverOrange"
+                      @click="normalClient=item;showPopup=true">修改</div>
+                    <div class="opr hoverRed"
+                      @click="deleteNormalClient(item.id)">删除</div>
+                  </div>
+                </div>
+              </div>
+              <div class="pageCtn">
+                <el-pagination background
+                  :page-size="5"
+                  layout="prev, pager, next"
+                  :total="normalClientTotal"
+                  :current-page.sync="normalClientPage"
+                  @current-change="getNormalClientList">
+                </el-pagination>
+              </div>
+            </div>
+          </template>
+          <template v-if="cName === '常用城市设置'">
+            <div class="listCtn">
+              <div class="filterCtn clearfix">
+                <div class="elCtn">
+                  <el-input placeholder="请输入城市名称按回车查询"
+                    v-model="searchNormalCity"
+                    clearable
+                    @keydown.native.enter="getNormalCityList(1)"></el-input>
+                </div>
+                <div class="btn backHoverBlue fl"
+                  @click="showPopup = true">添加常用城市</div>
+              </div>
+              <div class="list">
+                <div class="row title">
+                  <div class="col">常用国家(Country)</div>
+                  <div class="col">常用城市 (City Name)</div>
+                  <div class="col">更新日期</div>
+                  <div class="col">操作</div>
+                </div>
+                <div class="row"
+                  v-for="item in normalCityList"
+                  :key="item.id">
+                  <div class="col">{{item.country}}</div>
+                  <div class="col">{{item.city}}</div>
+                  <div class="col">{{item.updated_at.slice(0,10)}}</div>
+                  <div class="col oprCtn">
+                    <div class="opr hoverOrange"
+                      @click="normalCity=item;showPopup=true">修改</div>
+                    <div class="opr hoverRed"
+                      @click="deleteNormalCity(item.id)">删除</div>
+                  </div>
+                </div>
+              </div>
+              <div class="pageCtn">
+                <el-pagination background
+                  :page-size="5"
+                  layout="prev, pager, next"
+                  :total="normalCityTotal"
+                  :current-page.sync="normalCityPage"
+                  @current-change="getNormalCityList">
+                </el-pagination>
+              </div>
+            </div>
+          </template>
+          <template v-if="cName === '常用品名设置'">
+            <div class="listCtn">
+              <div class="filterCtn clearfix">
+                <div class="elCtn">
+                  <el-input placeholder="请输入品名名称按回车查询"
+                    v-model="searchNormalCategory"
+                    clearable
+                    @keydown.native.enter="getNormalCategoryList(1)"></el-input>
+                </div>
+                <div class="btn backHoverBlue fl"
+                  @click="showPopup = true">添加品名</div>
+              </div>
+              <div class="list">
+                <div class="row title">
+                  <div class="col">中文品类</div>
+                  <div class="col">英文品名</div>
+                  <div class="col">单位</div>
+                  <div class="col">更新日期</div>
+                  <div class="col">操作</div>
+                </div>
+                <div class="row"
+                  v-for="item in normalCategoryList"
+                  :key="item.id">
+                  <div class="col">{{item.name}}</div>
+                  <div class="col">{{item.english}}</div>
+                  <div class="col">{{item.unit}}</div>
+                  <div class="col">{{item.updated_at.slice(0,10)}}</div>
+                  <div class="col oprCtn">
+                    <div class="opr hoverOrange"
+                      @click="normalCategory=item;showPopup=true">修改</div>
+                    <div class="opr hoverRed"
+                      @click="deleteNormalCategory(item.id)">删除</div>
+                  </div>
+                </div>
+              </div>
+              <div class="pageCtn">
+                <el-pagination background
+                  :page-size="5"
+                  layout="prev, pager, next"
+                  :total="normalCategoryTotal"
+                  :current-page.sync="normalCategoryPage"
+                  @current-change="getNormalCategoryList">
+                </el-pagination>
+              </div>
+            </div>
+          </template>
+          <template v-if="cName === '常用付款方式'">
+            <div class="listCtn">
+              <div class="filterCtn clearfix">
+                <div class="elCtn">
+                  <el-input placeholder="请输入付款名称按回车查询"
+                    v-model="searchNormalPay"
+                    clearable
+                    @keydown.native.enter="getNormalPayList(1)"></el-input>
+                </div>
+                <div class="btn backHoverBlue fl"
+                  @click="showPopup = true">添加付款方式</div>
+              </div>
+              <div class="list">
+                <div class="row title">
+                  <div class="col">中文名称</div>
+                  <div class="col">英文代号</div>
+                  <div class="col">更新日期</div>
+                  <div class="col">操作</div>
+                </div>
+                <div class="row"
+                  v-for="item in normalPayList"
+                  :key="item.id">
+                  <div class="col">{{item.name}}</div>
+                  <div class="col">{{item.english}}</div>
+                  <div class="col">{{item.updated_at.slice(0,10)}}</div>
+                  <div class="col oprCtn">
+                    <div class="opr hoverOrange"
+                      @click="normalPay=item;showPopup=true">修改</div>
+                    <div class="opr hoverRed"
+                      @click="deleteNormalPay(item.id)">删除</div>
+                  </div>
+                </div>
+              </div>
+              <div class="pageCtn">
+                <el-pagination background
+                  :page-size="5"
+                  layout="prev, pager, next"
+                  :total="normalPayTotal"
+                  :current-page.sync="normalPayPage"
+                  @current-change="getNormalPayList">
                 </el-pagination>
               </div>
             </div>
@@ -2742,6 +2921,145 @@
     </div>
     <div class="popup"
       v-show="showPopup">
+      <template v-if="cName === '常用公司设置'">
+        <div class="main">
+          <div class="titleCtn">
+            <div class="text">{{normalClient.id?'修改':'新增'}}常用公司</div>
+            <div class="closeCtn"
+              @click="showPopup = false">
+              <i class="el-icon-close"></i>
+            </div>
+          </div>
+          <div class="contentCtn">
+            <div class="row">
+              <div class="label">公司名称：</div>
+              <div class="info">
+                <el-input placeholder="请输入公司名称"
+                  v-model="normalClient.name"></el-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">公司地址：</div>
+              <div class="info">
+                <el-input placeholder="请输入公司地址"
+                  v-model="normalClient.address"></el-input>
+              </div>
+            </div>
+          </div>
+          <div class="oprCtn">
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveNormalClient">确定</div>
+          </div>
+        </div>
+      </template>
+      <template v-if="cName === '常用城市设置'">
+        <div class="main">
+          <div class="titleCtn">
+            <div class="text">{{normalCity.id?'修改':'新增'}}常用城市</div>
+            <div class="closeCtn"
+              @click="showPopup = false">
+              <i class="el-icon-close"></i>
+            </div>
+          </div>
+          <div class="contentCtn">
+            <div class="row">
+              <div class="label">国家名称：</div>
+              <div class="info">
+                <el-input placeholder="请输入国家名称"
+                  v-model="normalCity.country"></el-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">城市名称：</div>
+              <div class="info">
+                <el-input placeholder="请输入城市名称"
+                  v-model="normalCity.city"></el-input>
+              </div>
+            </div>
+          </div>
+          <div class="oprCtn">
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveNormalCity">确定</div>
+          </div>
+        </div>
+      </template>
+      <template v-if="cName === '常用品名设置'">
+        <div class="main">
+          <div class="titleCtn">
+            <div class="text">{{normalCategory.id?'修改':'新增'}}常用品名</div>
+            <div class="closeCtn"
+              @click="showPopup = false">
+              <i class="el-icon-close"></i>
+            </div>
+          </div>
+          <div class="contentCtn">
+            <div class="row">
+              <div class="label">品类名称：</div>
+              <div class="info">
+                <el-input placeholder="请输入品类名称"
+                  v-model="normalCategory.name"></el-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">英文名称：</div>
+              <div class="info">
+                <el-input placeholder="请输入英文名称"
+                  v-model="normalCategory.english"></el-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">单位：</div>
+              <div class="info">
+                <el-input placeholder="请输入单位"
+                  v-model="normalCategory.unit"></el-input>
+              </div>
+            </div>
+          </div>
+          <div class="oprCtn">
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveNormalCategory">确定</div>
+          </div>
+        </div>
+      </template>
+      <template v-if="cName === '常用付款方式'">
+        <div class="main">
+          <div class="titleCtn">
+            <div class="text">{{normalPay.id?'修改':'新增'}}付款方式</div>
+            <div class="closeCtn"
+              @click="showPopup = false">
+              <i class="el-icon-close"></i>
+            </div>
+          </div>
+          <div class="contentCtn">
+            <div class="row">
+              <div class="label">付款方式：</div>
+              <div class="info">
+                <el-input placeholder="请输入付款方式"
+                  v-model="normalPay.name"></el-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">英文名称：</div>
+              <div class="info">
+                <el-input placeholder="请输入英文名称"
+                  v-model="normalPay.english"></el-input>
+              </div>
+            </div>
+          </div>
+          <div class="oprCtn">
+            <div class="btn borderBtn"
+              @click="showPopup = false">取消</div>
+            <div class="btn backHoverBlue"
+              @click="saveNormalPay">确定</div>
+          </div>
+        </div>
+      </template>
       <template v-if="cName === '品类'">
         <div class="main">
           <div class="titleCtn">
@@ -4603,17 +4921,17 @@ export default Vue.extend({
           '包装采购单',
           '工资结算单',
           '发货单'
-        ]
+        ],
         // 打印设置: ['打印设置']
-        // 单证设置: [
-        //   '英文工厂信息',
-        //   '英文银行信息',
-        //   'HS编码设置',
-        //   '常用公司设置',
-        //   '常用城市设置',
-        //   '常用品名设置',
-        //   '常用付款方式'
-        // ]
+        单证设置: [
+          '英文工厂信息',
+          '英文银行信息',
+          'HS编码设置',
+          '常用公司设置',
+          '常用城市设置',
+          '常用品名设置',
+          '常用付款方式'
+        ]
       },
       pushCheckConfig: {
         allow_push_err_doc: 1,
@@ -4778,7 +5096,7 @@ export default Vue.extend({
           has_condition: 2, // 是否根据条件判断 1是 2否
           user_id: [],
           total_number: '',
-          total_price: '',
+          total_price: ''
         }
       },
       accessoriesOrderCheckConfig: {
@@ -4996,6 +5314,42 @@ export default Vue.extend({
       HSCodeTotal: 1,
       HSCodeList: [],
       searchHSCode: '',
+      normalClient: {
+        name: '',
+        address: '',
+        id: ''
+      },
+      normalClientPage: 1,
+      normalClientTotal: 1,
+      normalClientList: [],
+      searchNormalClient: '',
+      normalCity: {
+        country: '',
+        city: '',
+        id: ''
+      },
+      normalCityPage: 1,
+      normalCityTotal: 1,
+      normalCityList: [],
+      searchNormalCity: '',
+      normalCategory: {
+        id: '',
+        name: '',
+        english: ''
+      },
+      normalCategoryPage: 1,
+      normalCategoryTotal: 1,
+      normalCategoryList: [],
+      searchNormalCategory: '',
+      normalPay: {
+        name: '',
+        englist: '',
+        id: ''
+      },
+      normalPayPage: 1,
+      normalPayTotal: 1,
+      normalPayList: [],
+      searchNormalPay: '',
       yarnList1: [],
       yarnInfo1: {
         id: null,
@@ -5479,6 +5833,14 @@ export default Vue.extend({
         this.getBankEN()
       } else if (this.cName === 'HS编码设置') {
         this.getHSCode()
+      } else if (this.cName === '常用公司设置') {
+        this.getNormalClientList()
+      } else if (this.cName === '常用城市设置') {
+        this.getNormalCityList()
+      } else if (this.cName === '常用品名设置') {
+        this.getNormalCategoryList()
+      } else if (this.cName === '常用付款方式') {
+        this.getNormalPayList()
       } else if (this.cName === '纱线原料') {
         this.getYarnType(1)
         this.getYarn(1)
@@ -7018,7 +7380,243 @@ export default Vue.extend({
           this.HSCodeTotal = res.data.total
         })
     },
-    buildYarnList() {
+    getNormalClientList(page?: number) {
+      const pages = page || this.normalClientPage
+      billDocumentSetting
+        .normalClientList({
+          page: pages,
+          limit: 5,
+          name: this.searchNormalClient
+        })
+        .then((res) => {
+          this.normalClientList = res.data.data.items
+          this.normalClientTotal = res.data.data.total
+        })
+    },
+    saveNormalClient() {
+      const formCheck = this.$formCheck(this.normalClient, [
+        {
+          key: 'name',
+          errMsg: '请输入公司名称'
+        }
+      ])
+      if (!formCheck) {
+        billDocumentSetting.normalClientCreate(this.normalClient).then((res) => {
+          if (res.data.status) {
+            this.$message.success('保存成功')
+            this.showPopup = false
+            this.getNormalClientList()
+          }
+        })
+      }
+    },
+    deleteNormalClient(id: number) {
+      this.$confirm('是否删除该常用公司?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          billDocumentSetting
+            .normalClientDelete({
+              id: id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.getNormalClientList(1)
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    getNormalCityList(page?: number) {
+      const pages = page || this.normalCityPage
+      billDocumentSetting
+        .normalCityList({
+          page: pages,
+          limit: 5,
+          name: this.searchNormalCity
+        })
+        .then((res) => {
+          this.normalCityList = res.data.data.items
+          this.normalCityTotal = res.data.data.total
+        })
+    },
+    saveNormalCity() {
+      const formCheck = this.$formCheck(this.normalCity, [
+        {
+          key: 'country',
+          errMsg: '请输入国家名称'
+        },
+        {
+          key: 'city',
+          errMsg: '请输入城市名称'
+        }
+      ])
+      if (!formCheck) {
+        billDocumentSetting.normalCityCreate(this.normalCity).then((res) => {
+          if (res.data.status) {
+            this.$message.success('保存成功')
+            this.showPopup = false
+            this.getNormalCityList()
+          }
+        })
+      }
+    },
+    deleteNormalCity(id: number) {
+      this.$confirm('是否删除该常用城市?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          billDocumentSetting
+            .normalCityDelete({
+              id: id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.getNormalCityList(1)
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    getNormalCategoryList(page?: number) {
+      const pages = page || this.normalCategoryPage
+      billDocumentSetting
+        .normalCategoryList({
+          page: pages,
+          limit: 5,
+          name: this.searchNormalCategory
+        })
+        .then((res) => {
+          this.normalCategoryList = res.data.data.items
+          this.normalCategoryTotal = res.data.data.total
+        })
+    },
+    saveNormalCategory() {
+      const formCheck = this.$formCheck(this.normalCategory, [
+        {
+          key: 'name',
+          errMsg: '请输入中文品名'
+        }
+      ])
+      if (!formCheck) {
+        billDocumentSetting.normalCategoryCreate(this.normalCategory).then((res) => {
+          if (res.data.status) {
+            this.$message.success('保存成功')
+            this.showPopup = false
+            this.getNormalCategoryList()
+          }
+        })
+      }
+    },
+    deleteNormalCategory(id: number) {
+      this.$confirm('是否删除该品名?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          billDocumentSetting
+            .normalCategoryDelete({
+              id: id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.getNormalCategoryList(1)
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    getNormalPayList(page?: number) {
+      const pages = page || this.normalPayPage
+      billDocumentSetting
+        .normalPayList({
+          page: pages,
+          limit: 5,
+          name: this.searchNormalPay
+        })
+        .then((res) => {
+          this.normalPayList = res.data.data.items
+          this.normalPayTotal = res.data.data.total
+        })
+    },
+    saveNormalPay() {
+      const formCheck = this.$formCheck(this.normalPay, [
+        {
+          key: 'name',
+          errMsg: '请输入付款名称'
+        }
+      ])
+      if (!formCheck) {
+        billDocumentSetting.normalPayCreate(this.normalPay).then((res) => {
+          if (res.data.status) {
+            this.$message.success('保存成功')
+            this.showPopup = false
+            this.getNormalPayList()
+          }
+        })
+      }
+    },
+    deleteNormalPay(id: number) {
+      this.$confirm('是否删除该付款类型?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          billDocumentSetting
+            .normalPayDelete({
+              id: id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.getNormalPayList(1)
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    buildYarnList(page?: number) {
       this.layoutData.yarnNameList = []
       let thresholdValues = Number(this.layoutData.thresholdValues)
       let fixedNum = thresholdValues.toString().split('.')[1] ? thresholdValues.toString().split('.')[1].length : 0

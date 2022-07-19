@@ -202,11 +202,11 @@
           <div class="btn fl"
             style="float:left;margin-left:0"
             :class="{'backHoverBlue':listType===2,'backGray':listType===1}"
-            @click="getList(1)">切换到生产单</div>
+            @click="listType=1;page=1;changeRouter()">切换到生产单</div>
           <div class="btn fl"
             style="float:left"
             :class="{'backHoverBlue':listType===1,'backGray':listType===2}"
-            @click="getList(2)">切换到订单</div>
+            @click="listType=2;page=1;changeRouter()">切换到订单</div>
           <div class="btn fr backHoverBlue"
             @click="getUpdateDetail()">更新生产数量</div>
         </div>
@@ -324,7 +324,9 @@
         </div>
         <div class="contentCtn">
           <div class="fixedTableCtn">
-            <div class="original">
+            <div class="original"
+              @mousewheel="listenWheel"
+              ref='xixihaha'>
               <div class="row title">
                 <div class="column">订单号</div>
                 <div class="column">生产单号</div>
@@ -353,7 +355,7 @@
                 <div class="column">{{item.order_number}}</div>
                 <div class="column">{{item.number}}</div>
                 <div class="column green">{{item.real_number}}
-                  <span :class="{'green':Number(item.number-item.real_number)>=0,'red':Number(item.number-item.real_number)<0}">({{Number(item.number-item.real_number)>=0?'+':'-'}}{{Math.abs(item.number-item.real_number)}})</span>
+                  <span :class="{'red':Number(item.number-item.real_number)>0,'green':Number(item.number-item.real_number)<=0}">({{Number(item.number-item.real_number)>0?'-':'+'}}{{Math.abs(item.number-item.real_number)}})</span>
                 </div>
                 <div class="column">{{item.update_time}}</div>
                 <div class="column">{{item.desc}}</div>
@@ -549,25 +551,51 @@ export default Vue.extend({
           errVal: '0'
         },
         {
+          key: 'status',
+          name: '进度状态',
+          ifShow: true,
+          ifLock: false,
+          index: 10,
+          filterArr: ['', '已创建', '进行中', '已完成', '已逾期'],
+          classArr: ['', 'orange', 'blue', 'green', 'red']
+        },
+        {
+          key: 'complete_time',
+          name: '完成日期',
+          ifShow: true,
+          ifLock: false,
+          index: 11,
+          errVal: '未完成'
+        },
+        {
+          key: 'delay_day',
+          name: '逾期日期',
+          ifShow: true,
+          ifLock: false,
+          index: 12,
+          unit: '天',
+          errVal: '0'
+        },
+        {
           key: 'group_name',
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 10
+          index: 13
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 11
+          index: 14
         },
         {
-          key: 'order_time',
+          key: 'created_at',
           name: '下单日期',
           ifShow: true,
           ifLock: false,
-          index: 12
+          index: 13
         }
       ],
       originalSetting: [
@@ -767,6 +795,23 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 监听一下鼠标滚轮
+    listenWheel(ev: any) {
+      const detail = ev.wheelDelta || ev.detail
+      // 定义滚动方向，其实也可以在赋值的时候写
+      const moveForwardStep = 1
+      const moveBackStep = -1
+      // 定义滚动距离
+      let step = 0
+      // 判断滚动方向,这里的100可以改，代表滚动幅度，也就是说滚动幅度是自定义的
+      if (detail < 0) {
+        step = moveForwardStep * 50
+      } else {
+        step = moveBackStep * 50
+      }
+      // @ts-ignore 对需要滚动的元素进行滚动操作
+      this.$refs.xixihaha.scrollLeft += step
+    },
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)
@@ -878,7 +923,8 @@ export default Vue.extend({
             client_id: this.client_id.length > 0 ? this.client_id[2] : '',
             start_time: this.date.length > 0 ? this.date[0] : '',
             end_time: this.date.length > 0 ? this.date[1] : '',
-            user_id: this.user_id
+            user_id: this.user_id,
+            group_id: this.group_id
           })
           .then((res) => {
             if (res.data.status) {

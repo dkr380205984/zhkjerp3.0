@@ -40,7 +40,8 @@
           <div class="elCtn">
             <el-select @change="changeRouter"
               v-model="status"
-              placeholder="员工状态筛选">
+              placeholder="员工状态筛选"
+              clearable>
               <el-option value="1"
                 label="在职"></el-option>
               <el-option value="2"
@@ -50,7 +51,8 @@
           <div class="elCtn">
             <el-select @change="changeRouter"
               v-model="type"
-              placeholder="工种筛选">
+              placeholder="工种筛选"
+              clearable>
               <el-option value="1"
                 label="临时工"></el-option>
               <el-option value="2"

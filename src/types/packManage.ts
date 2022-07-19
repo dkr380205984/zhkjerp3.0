@@ -6,6 +6,7 @@ export interface PackPlanInfo {
   delivery_time: string
   delivery_batch: string | number // 存批次id
   batch_name: string
+  batch_number?: string
   total_delivery_number: string | number
   data: PackPlanInfoData[]
   gather_info: Array<{

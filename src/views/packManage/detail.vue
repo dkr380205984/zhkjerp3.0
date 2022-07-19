@@ -961,7 +961,8 @@
     <!-- 装箱计划 -->
     <div class="popup"
       v-show="packPlanFlag">
-      <div class="main">
+      <div class="main"
+        style="width: 1300px;">
         <div class="titleCtn">
           <span class="text">装箱计划</span>
           <div class="closeCtn"
@@ -969,7 +970,8 @@
             <span class="el-icon-close"></span>
           </div>
         </div>
-        <div class="contentCtn">
+        <div class="contentCtn"
+          style="max-height: 800px;">
           <template v-if="packPlanStep===1">
             <div class="editCtn packPlan">
               <div class="row">
@@ -978,7 +980,7 @@
                     <span class="text">发货批次</span>
                   </div>
                   <div class="info">
-                    <el-input v-model="packPlanInfo.delivery_batch"
+                    <el-input v-model="packPlanInfo.batch_number"
                       placeholder="请输入发货批次"></el-input>
                   </div>
                 </div>
@@ -1004,7 +1006,9 @@
                   </div>
                 </div>
               </div>
-              <div class="tableCtn specialTable">
+              <div class="tableCtn specialTable"
+                ref="packPlan"
+                @mousewheel="listenWheel">
                 <div class="thead">
                   <div class="trow outTrow">
                     <div class="tcol noPad"
@@ -1554,6 +1558,23 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 监听一下鼠标滚轮
+    listenWheel(ev: any) {
+      const detail = ev.wheelDelta || ev.detail
+      // 定义滚动方向，其实也可以在赋值的时候写
+      const moveForwardStep = 1
+      const moveBackStep = -1
+      // 定义滚动距离
+      let step = 0
+      // 判断滚动方向,这里的100可以改，代表滚动幅度，也就是说滚动幅度是自定义的
+      if (detail < 0) {
+        step = moveForwardStep * 50
+      } else {
+        step = moveBackStep * 50
+      }
+      // @ts-ignore 对需要滚动的元素进行滚动操作
+      this.$refs.packPlan.scrollLeft += step
+    },
     init() {
       this.loading = true
       Promise.all([
@@ -1806,6 +1827,7 @@ export default Vue.extend({
         item.product_data.forEach((itemPro) => {
           itemPro.product_info.forEach((itemChild) => {
             if (itemChild.check) {
+              this.packPlanInfo.batch_number = '第' + item.batch_number + '批'
               this.packPlanInfo.batch_name = item.batch_title
               this.packPlanInfo.delivery_batch = item.id as number
               if (type === 1) {

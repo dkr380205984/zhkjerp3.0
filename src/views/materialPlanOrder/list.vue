@@ -41,7 +41,7 @@
             style="width:200px">
             <el-input v-model="material_name"
               placeholder="搜索物料名称"
-              @click.native.enter="changeRouter"></el-input>
+              @keydown.native.enter="changeRouter"></el-input>
           </div>
           <div class="btn backHoverBlue fr"
             @click="addFlag = true">添加预订购</div>

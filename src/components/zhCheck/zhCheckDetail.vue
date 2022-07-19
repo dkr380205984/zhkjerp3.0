@@ -36,7 +36,7 @@
           v-if="is_check>=3&&errMsg&&errMsg.length>0">
           <div class="errorMsg"
             v-for="item,index in errMsg"
-            :key="index">{{item}}</div>
+            :key="index">{{item.extra_msg || item.content}}</div>
         </div>
       </div>
     </div>
@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { check } from '@/assets/js/api'
+import { check, todoInfo } from '@/assets/js/api'
 export default Vue.extend({
   props: {
     pid: {
@@ -73,21 +73,29 @@ export default Vue.extend({
     //
     is_check: {
       type: Number
-    },
-    errMsg: {
-      type: Array
     }
   },
   data() {
     return {
       list: [],
-      loading: true
+      loading: true,
+      errMsg: []
     }
   },
   watch: {
     show(val) {
       if (val) {
         if (this.is_check >= 3) {
+          todoInfo
+            .list({
+              doc_id: this.pid,
+              todo_type: 'ERROR_TODO'
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.errMsg = res.data.data
+              }
+            })
         } else {
           check
             .list({
