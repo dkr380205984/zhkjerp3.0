@@ -83,7 +83,7 @@
             <el-table-column prop="user.name" label="添加人"></el-table-column>
             <el-table-column label="操作" width="160">
               <template slot-scope="scope">
-                <div style="display:flex;">
+                <div style="display: flex">
                   <span class="opr hoverBlue" @click="$router.push('/reimbursementManage/detail?id=' + scope.row.id)"
                     >详情</span
                   >
@@ -224,9 +224,19 @@ export default Vue.extend({
     },
     getList() {
       this.loading = true
-      receipt.total().then((res) => {
-        this.totalAmount = res.data.data
-      })
+      receipt
+        .total({
+          keyword: this.keyword,
+          page: this.page,
+          limit: this.limit,
+          status: this.status,
+          group: this.group,
+          start_time: this.timeArr[0] + ' 00:00:00',
+          end_time: this.timeArr[1] + ' 23:59:59'
+        })
+        .then((res) => {
+          this.totalAmount = res.data.data
+        })
       receipt
         .list({
           keyword: this.keyword,
@@ -234,8 +244,8 @@ export default Vue.extend({
           limit: this.limit,
           status: this.status,
           group: this.group,
-          start_time: this.timeArr[0]+' 00:00:00',
-          end_time: this.timeArr[1]+' 23:59:59'
+          start_time: this.timeArr[0] + ' 00:00:00',
+          end_time: this.timeArr[1] + ' 23:59:59'
         })
         .then((res) => {
           this.list = res.data.data.items

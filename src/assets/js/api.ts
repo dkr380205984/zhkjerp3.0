@@ -1132,7 +1132,15 @@ const receipt = {
     limit?: string
     receipt_id: string
   }) => http.get(`${baseUrl}/receipt/reviewer/list`, params),
-  total: () => http.get(`${baseUrl}/receipt/total`),
+  total: (params: {
+    limit: number | string
+    page: number | string
+    keyword: string
+    group: string
+    start_time: string
+    end_time: string
+    status: string | number
+  }) => http.get(`${baseUrl}/receipt/total`, params),
 }
 
 interface CheckConfigInfo {
