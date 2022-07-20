@@ -100,6 +100,16 @@ Vue.filter('orderBatchClassFilter', (val: 0 | 1 | 2 | 3 | 4 | 5) => {
   return statusArr[val]
 })
 
+// 产品加工单状态
+Vue.filter('productionFilter', (val: 0 | 1 | 2 | 3 | 4 | 5) => {
+  const statusArr = ['', '已创建', '进行中', '已完成', '已逾期']
+  return statusArr[val]
+})
+
+Vue.filter('productionClassFilter', (val: 0 | 1 | 2 | 3 | 4 | 5) => {
+  const statusArr = ['', 'orange', 'blue', 'green', 'red']
+  return statusArr[val]
+})
 
 // 计价方式
 Vue.filter('packCalcFilter', (val: 0 | 1 | 2 | 3) => {

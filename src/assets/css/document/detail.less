@@ -1,0 +1,38 @@
+@import '../common.less';
+@import '../detail.less';
+@import '../table.less';
+@import '../bottomBar.less';
+@import '../list.less';
+
+#documentDetail {
+  .headerCtn {
+    display: flex;
+    flex-direction: column;
+
+    .top {
+      margin-bottom: 16px;
+
+      .title {
+        font-size: 24px;
+        text-align: center;
+      }
+    }
+
+    .bottom {
+      .bottom_item {
+        float: left;
+        width: 300px;
+
+        &.right {
+          float: right;
+        }
+
+        &::after,
+        &::before {
+          content: '';
+          clear: both;
+        }
+      }
+    }
+  }
+}

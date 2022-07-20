@@ -411,7 +411,8 @@
       <zh-drop-down :buttonStyle="'padding:20px'"
         :show="show_material"
         hideTitle="点击查看图表">
-        <div class="tableCtn samallFont">
+        <!-- 老接口 -->
+        <!-- <div class="tableCtn samallFont">
           <div class="thead"
             style="height:auto">
             <div class="trow">
@@ -566,6 +567,173 @@
                 </div>
                 <div class="trow"
                   v-for="(itemPop,indexPop) in  item.final_pop_info"
+                  :key="indexPop">
+                  <div class="tcol">{{itemPop.client_name}}</div>
+                  <div class="tcol">{{itemPop.number}}{{itemPop.unit}}</div>
+                </div>
+              </div>
+            </div>
+            <div class="trow"
+              v-if="materialDetail.length===0">
+              <div class="tcol gray"
+                style="text-align:center">暂无物料信息</div>
+            </div>
+          </div>
+        </div> -->
+        <!-- 新接口 -->
+        <div class="tableCtn samallFont">
+          <div class="thead"
+            style="height:auto">
+            <div class="trow">
+              <div class="tcol w100">原料名称</div>
+              <div class="tcol noPad"
+                style="flex:2">
+                <div class="trow">
+                  <div class="tcol">颜色</div>
+                  <div class="tcol">数量</div>
+                </div>
+              </div>
+              <div class="tcol noPad"
+                style="flex:2">
+                <div class="trow">
+                  <div class="tcol center">
+                    <span>调取信息</span>
+                    <span>更新日期:{{materialUpdateTime.transfer?materialUpdateTime.transfer:'暂无'}}</span>
+                  </div>
+                </div>
+                <div class="trow">
+                  <div class="tcol">调取仓库</div>
+                  <div class="tcol">调取数量</div>
+                </div>
+              </div>
+              <div class="tcol noPad"
+                style="flex:2">
+                <div class="trow">
+                  <div class="tcol center">
+                    <span>采购信息</span>
+                    <span>更新日期:{{materialUpdateTime.order?materialUpdateTime.order:'暂无'}}</span>
+                  </div>
+                </div>
+                <div class="trow">
+                  <div class="tcol">采购单位</div>
+                  <div class="tcol">采购数量</div>
+                </div>
+              </div>
+              <div class="tcol noPad"
+                style="flex:3">
+                <div class="trow">
+                  <div class="tcol center">
+                    <span>加工信息</span>
+                    <span>更新日期:{{materialUpdateTime.process?materialUpdateTime.process:'暂无'}}</span>
+                  </div>
+                </div>
+                <div class="trow">
+                  <div class="tcol">加工单位</div>
+                  <div class="tcol">加工工序</div>
+                  <div class="tcol">加工数量</div>
+                </div>
+              </div>
+              <div class="tcol noPad"
+                style="flex:2">
+                <div class="trow">
+                  <div class="tcol center">
+                    <span>入库信息</span>
+                    <span>更新日期:{{materialUpdateTime.push?materialUpdateTime.push:'暂无'}}</span>
+                  </div>
+                </div>
+                <div class="trow">
+                  <div class="tcol">入库仓库</div>
+                  <div class="tcol">入库数量</div>
+                </div>
+              </div>
+              <div class="tcol noPad"
+                style="flex:2">
+                <div class="trow">
+                  <div class="tcol center">
+                    <span>出库信息</span>
+                    <span>更新日期:{{materialUpdateTime.pop?materialUpdateTime.pop:'暂无'}}</span>
+                  </div>
+                </div>
+                <div class="trow">
+                  <div class="tcol">出库单位</div>
+                  <div class="tcol">出库数量</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tbody">
+            <div class="trow"
+              v-for="(item,index) in materialDetail"
+              :key="index + 'plan'">
+              <div class="tcol w100">{{item.material_name}}</div>
+              <div class="tcol noPad"
+                style="flex:2">
+                <div class="trow">
+                  <div class="tcol">{{item.material_color}}</div>
+                  <div class="tcol">{{item.number}}{{item.unit}}</div>
+                </div>
+              </div>
+              <div class="tcol noPad"
+                style="flex:2">
+                <div class="trow"
+                  v-if="item.material_transfer.length===0">
+                  <div class="tcol gray">无调取信息</div>
+                </div>
+                <div class="trow"
+                  v-for="(itemTransfer,indexTransfer) in item.material_transfer"
+                  :key="indexTransfer">
+                  <div class="tcol">{{itemTransfer.store_name}}</div>
+                  <div class="tcol">{{itemTransfer.number}}</div>
+                </div>
+              </div>
+              <div class="tcol noPad"
+                style="flex:2">
+                <div class="trow"
+                  v-if="item.material_order.length===0">
+                  <div class="tcol gray">无订购信息</div>
+                </div>
+                <div class="trow"
+                  v-for="(itemOrder,indexOrder) in item.material_order"
+                  :key="indexOrder">
+                  <div class="tcol">{{itemOrder.client_name}}</div>
+                  <div class="tcol">{{itemOrder.number}}{{itemOrder.unit}}</div>
+                </div>
+              </div>
+              <div class="tcol noPad"
+                style="flex:3">
+                <div class="trow"
+                  v-for="(itemProcess,indexProcess) in item.material_process"
+                  :key="indexProcess">
+                  <div class="trow"
+                    v-if="item.material_process.length===0">
+                    <div class="tcol gray">无加工信息</div>
+                  </div>
+                  <div class="tcol">{{itemProcess.client_name}}</div>
+                  <div class="tcol">{{itemProcess.process}}</div>
+                  <div class="tcol">{{itemProcess.number}}{{itemProcess.unit}}</div>
+                </div>
+              </div>
+              <div class="tcol noPad"
+                style="flex:2">
+                <div class="trow"
+                  v-if="item.final_push.length===0">
+                  <div class="tcol gray">无入库信息</div>
+                </div>
+                <div class="trow"
+                  v-for="(itemPush,indexPush) in  item.final_push"
+                  :key="indexPush">
+                  <div class="tcol">{{itemPush.client_name}}</div>
+                  <div class="tcol">{{itemPush.number}}{{itemPush.unit}}</div>
+                </div>
+              </div>
+              <div class="tcol noPad"
+                style="flex:2">
+                <div class="trow"
+                  v-if="item.final_pop.length===0">
+                  <div class="tcol gray">无出库信息</div>
+                </div>
+                <div class="trow"
+                  v-for="(itemPop,indexPop) in  item.final_pop"
                   :key="indexPop">
                   <div class="tcol">{{itemPop.client_name}}</div>
                   <div class="tcol">{{itemPop.number}}{{itemPop.unit}}</div>
@@ -1256,7 +1424,7 @@
                     <div class="tcol">计划订购数量</div>
                     <div class="tcol">计划费用合计</div>
                     <div class="tcol">产品计划平均单价</div>
-                    <div class="tcol">产品实际平均单价</div>
+                    <div class="tcol">-</div>
                     <div class="tcol">操作</div>
                     <div class="tcol"></div>
                   </div>
@@ -1272,7 +1440,7 @@
                     <div class="tcol">{{financialInfo.pack.gather.plan_number}}</div>
                     <div class="tcol">{{financialInfo.pack.gather.total_price}}元</div>
                     <div class="tcol">{{financialInfo.pack.gather.product_pre_price}}元</div>
-                    <div class="tcol">{{financialInfo.pack.gather.pre_price}}元</div>
+                    <div class="tcol">-</div>
                     <div class="tcol oprCtn">
                       <div class="opr hoverBlue"
                         @click="financialInfo.pack.showDetail=!financialInfo.pack.showDetail;$forceUpdate()">{{financialInfo.pack.showDetail?'收起详情':'展开详情'}}</div>
@@ -1356,7 +1524,7 @@
                         <div class="tcol">额外数量</div>
                         <div class="tcol">合计结算总价</div>
                         <div class="tcol">产品计划平均单价</div>
-                        <div class="tcol">产品实际平均单价</div>
+                        <div class="tcol">-</div>
                         <div class="tcol">操作</div>
                       </div>
                     </div>
@@ -1380,7 +1548,7 @@
                         <div class="tcol">{{item.extra_number}}</div>
                         <div class="tcol">{{item.total_price}}元</div>
                         <div class="tcol">{{item.product_pre_price}}元</div>
-                        <div class="tcol">{{item.pre_price}}元</div>
+                        <div class="tcol">-</div>
                         <div class="tcol oprCtn">
                           <div class="opr hoverBlue"
                             @click="item.showDetail=!item.showDetail;$forceUpdate()">{{item.showDetail?'收起详情':'展开详情'}}</div>

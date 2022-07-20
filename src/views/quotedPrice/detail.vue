@@ -684,7 +684,7 @@
       <div class="main">
         <div class="fl"
           style="line-height:56px">
-          合计：
+          系统报价：
           <span>
             <span class="blue"
               style="font-weight:bold;font-size:20px;">{{realTotalPrice}}</span>元

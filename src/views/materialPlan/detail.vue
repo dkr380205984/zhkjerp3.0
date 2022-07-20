@@ -517,7 +517,11 @@ export default Vue.extend({
         },
         {
           name: '原料出入库',
-          url: '/materialStock/detail?id=' + this.$route.query.id
+          url:
+            '/materialStock/detail?id=' +
+            this.$route.query.id +
+            '&sampleOrderIndex=' +
+            this.$route.query.sampleOrderIndex
         },
         {
           name: '生产计划',

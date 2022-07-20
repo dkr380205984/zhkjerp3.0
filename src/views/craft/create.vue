@@ -3431,7 +3431,11 @@ export default Vue.extend({
             if (res.data.status) {
               this.$message.success('添加成功')
               this.saveSuccess = true
-              this.$router.push('/craft/detail?id=' + res.data.data)
+              if (ifCaogao) {
+                this.$router.push('/craft/list?page=1')
+              } else {
+                this.$router.push('/craft/detail?id=' + res.data.data)
+              }
             }
             this.saveLock = false
           })

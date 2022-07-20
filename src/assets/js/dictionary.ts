@@ -451,6 +451,22 @@ const systemModule = [{
     id: '24-3',
     name: '产品列表',
   }]
+}, {
+  id: 25,
+  name: '单证管理',
+  detail: [{
+    id: '25-1',
+    name: '添加单证',
+  }, {
+    id: '25-2',
+    name: '修改单证',
+  }, {
+    id: '25-3',
+    name: '单证列表',
+  }, {
+    id: '25-4',
+    name: '删除单证',
+  }]
 }]
 
 const yarnAttributeArr: CascaderInfo[] = [{

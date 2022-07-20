@@ -283,6 +283,10 @@
               </div>
             </div>
           </template>
+          <!-- 单证流程 -->
+          <template v-if="itemKey.specialForOrderPrcess === 'document'">
+            形箱货出申
+          </template>
         </div>
         <div class="column w130">
           <!-- 给操作栏留的占位符 -->
