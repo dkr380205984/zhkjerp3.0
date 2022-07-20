@@ -1035,12 +1035,12 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="borderBtn"
-            @click="$router.go(-1)">返回</div>
-        </div>
-        <div class="btnCtn">
           <div class="btn backHoverOrange"
             @click="goStock(2)">客供入库</div>
+        </div>
+        <div class="btnCtn">
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
         </div>
       </div>
     </div>
@@ -1223,7 +1223,6 @@ export default Vue.extend({
           (item: any) => item.action_type !== 10 && item.action_type !== 12 && item.material_type !== 2
         )
         this.materialJHDQList = res[1].data.data.filter((item: any) => item.action_type === 10) // 计划调取
-        console.log(this.materialJHDQList)
         this.materialBSDQList = res[1].data.data.filter((item: any) => item.action_type === 12) // 补纱调取
         // 统计入库日志用于出库
         const flattenStock = this.$flatten(
@@ -1245,7 +1244,8 @@ export default Vue.extend({
             'batch_code',
             'vat_code',
             'color_code',
-            'material_id'
+            'material_id',
+            'yarn_type'
           ],
           otherRule: [{ name: 'number', type: 'add' }]
         })
@@ -1270,7 +1270,6 @@ export default Vue.extend({
       }
     },
     getAllCheck(ev: boolean, info: any) {
-      console.log(info)
       info.info_data
         ? info.info_data.forEach((item: any) => (item.check = ev))
         : info.material_info_data.forEach((item: any) => (item.check = ev))
@@ -1360,7 +1359,6 @@ export default Vue.extend({
           unit: item.unit
         }
       })
-      console.log(this.materialStockInfo)
       this.materialStockFlag = true
     },
     // 采购单中转入库和最终入库初始化
@@ -1500,6 +1498,8 @@ export default Vue.extend({
       info.batch_code = valueArr[3]
       info.vat_code = valueArr[4]
       info.color_code = valueArr[5]
+      // @ts-ignore
+      info.yarn_type = valueArr[6]
     },
     // 加工单中转出库初始化
     getProcessInfo(type: 3) {
@@ -1573,6 +1573,7 @@ export default Vue.extend({
         this.$message.error('只能选择一张加工单进行出库操作')
         return
       }
+      console.log(this.productionPlanList)
       this.materialStockInfo.action_type = 5
       this.materialStockInfo.selectList = []
       this.productionPlanList.forEach((item) => {
@@ -1588,6 +1589,7 @@ export default Vue.extend({
               material_id: itemChild.material_id,
               attribute: itemChild.yarn_type === 1 ? '筒纱' : '面料', // 根据最终入库是筒纱推测最终出库也是筒纱
               number: itemChild.number,
+              yarn_type: itemChild.yarn_type,
               unit: itemChild.unit
             })
           }
@@ -1605,6 +1607,7 @@ export default Vue.extend({
                 material_id: itemChild.material_id,
                 attribute: itemChild.yarn_type === 1 ? '筒纱' : '面料', // 根据最终入库是筒纱推测最终出库也是筒纱
                 number: itemChild.number,
+                yarn_type: itemChild.yarn_type,
                 unit: itemChild.unit
               })
             }
@@ -1619,7 +1622,6 @@ export default Vue.extend({
             itemFind.material_color === item.material_color &&
             itemFind.attribute === '筒纱'
         )
-        console.log(inList)
         if (inList.length === 0) {
           this.materialStockInfo.info_data.push({
             stockInList: inList,
@@ -1648,6 +1650,7 @@ export default Vue.extend({
               number: itemStore.number as string,
               item: '', // 件数
               unit: item.unit,
+              yarn_type: itemStore.yarn_type,
               rel_doc_info_id: item.value,
               out_id:
                 itemStore.material_id +
@@ -1660,7 +1663,9 @@ export default Vue.extend({
                 '分隔符' +
                 itemStore.vat_code +
                 '分隔符' +
-                itemStore.color_code
+                itemStore.color_code +
+                '分隔符' +
+                itemStore.yarn_type
             })
           })
         }
@@ -1681,6 +1686,7 @@ export default Vue.extend({
           this.$message.error('只能选择一张调取单进行入库操作')
           return
         }
+        console.log(this.materialJHDQList)
         this.materialStockInfo.action_type = 11
         this.materialStockInfo.selectList = []
         this.materialStockInfo.info_data = []
@@ -1697,7 +1703,8 @@ export default Vue.extend({
                 color_code: itemChild.color_code,
                 batch_code: itemChild.batch_code,
                 number: itemChild.number,
-                unit: itemChild.unit
+                unit: itemChild.unit,
+                yarn_type: itemChild.yarn_type
               })
             }
           })
@@ -1713,6 +1720,7 @@ export default Vue.extend({
                   .forEach((itemProcess) => {
                     this.materialStockInfo.info_data.push({
                       material_id: itemChild.material_id as number,
+                      yarn_type: itemChild.yarn_type,
                       material_color: itemProcess.after_color,
                       vat_code: itemChild.vat_code,
                       color_code: itemChild.color_code,
@@ -1732,6 +1740,7 @@ export default Vue.extend({
                 ) {
                   this.materialStockInfo.info_data.push({
                     material_id: itemChild.material_id as number,
+                    yarn_type: itemChild.yarn_type,
                     material_color: itemChild.material_color as string,
                     vat_code: itemChild.vat_code,
                     color_code: itemChild.color_code,
@@ -1754,6 +1763,7 @@ export default Vue.extend({
                   ),
                   material_id: itemChild.material_id,
                   material_color: itemChild.material_color,
+                  yarn_type: itemChild.yarn_type,
                   attribute: itemChild.attribute,
                   vat_code: itemChild.vat_code,
                   color_code: itemChild.color_code,
@@ -1787,6 +1797,7 @@ export default Vue.extend({
             if (itemChild.check) {
               this.materialStockInfo.selectList!.push({
                 value: itemChild.id as number,
+                yarn_type: itemChild.yarn_type,
                 name: itemChild.material_name + '/' + (itemChild.material_color || '未知颜色'),
                 material_color: itemChild.material_color,
                 material_id: itemChild.material_id,
@@ -1812,6 +1823,7 @@ export default Vue.extend({
                   .forEach((itemProcess) => {
                     this.materialStockInfo.info_data.push({
                       material_id: itemChild.material_id as number,
+                      yarn_type: itemChild.yarn_type,
                       material_color: itemProcess.after_color,
                       vat_code: itemChild.vat_code,
                       color_code: itemChild.color_code,
@@ -1831,6 +1843,7 @@ export default Vue.extend({
                 ) {
                   this.materialStockInfo.info_data.push({
                     material_id: itemChild.material_id as number,
+                    yarn_type: itemChild.yarn_type,
                     material_color: itemChild.material_color as string,
                     vat_code: itemChild.vat_code,
                     color_code: itemChild.color_code,
@@ -1851,6 +1864,7 @@ export default Vue.extend({
                   stockInList: this.storeInList.filter(
                     (itemFind: any) => itemFind.material_id === itemChild.material_id
                   ),
+                  yarn_type: itemChild.yarn_type,
                   material_id: itemChild.material_id,
                   material_color: itemChild.material_color,
                   attribute: itemChild.attribute,
@@ -1898,6 +1912,23 @@ export default Vue.extend({
           }
         ])
       })
+      // 前端检测物料类型是否都是纱线
+      let yarnType: any = 'init'
+      let ifAllSame = true
+      this.materialStockInfo.info_data.forEach((item) => {
+        if (yarnType === 'init') {
+          yarnType = item.yarn_type
+        } else if (yarnType !== item.yarn_type) {
+          ifAllSame = false
+        }
+      })
+      if (!ifAllSame) {
+        this.$message.error('请选择相同类型的物料进行入库')
+        return
+      }
+      this.materialStockInfo.store_id = yarnType === 1 ? -1 : -2
+      console.log(this.materialStockInfo)
+      return
       if (!formCheck) {
         if (
           this.materialStockInfo.action_type !== 3 &&
@@ -2036,9 +2067,10 @@ export default Vue.extend({
     // 客供入库纱需要用到物料计划单的纱线
     materialPlan
       .list({
-        order_id: Number(this.$route.query.id)
+        order_id: Number(this.$route.query.sampleOrderIndex)
       })
       .then((res) => {
+        console.log(res.data.data)
         // 处理一下重复的纱线，繁琐
         res.data.data.forEach((itemFather: any) => {
           itemFather.material_plan_data.forEach((item: any) => {

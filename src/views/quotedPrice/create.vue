@@ -1043,7 +1043,14 @@
     </div>
     <div class="module">
       <div class="titleCtn">
-        <div class="title">订单费用</div>
+        <div class="title">订单费用
+          <el-tooltip effect="dark"
+            content="计算公式：系统报价 = 产品成本价之和 ➗ (1 - 佣金百分比 - 税率 - 预计利润百分比)"
+            placement="top">
+            <div class="el-icon el-icon-question"></div>
+          </el-tooltip>
+
+        </div>
       </div>
       <div class="editCtn">
         <div class="row">
@@ -1177,7 +1184,7 @@
       <div class="main">
         <div class="fl"
           style="line-height:56px">
-          合计：<span class="blue">{{realTotalPrice}}元<span v-if="quotedPriceInfo.settle_unit!=='元'">{{'/'+realTotalPriceChange+quotedPriceInfo.settle_unit}}</span></span>
+          系统报价：<span class="blue">{{realTotalPrice}}元<span v-if="quotedPriceInfo.settle_unit!=='元'">{{'/'+realTotalPriceChange+quotedPriceInfo.settle_unit}}</span></span>
         </div>
         <div class="btnCtn">
           <div class="borderBtn"

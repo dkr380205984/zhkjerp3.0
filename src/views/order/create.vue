@@ -353,7 +353,7 @@
                           <div class="tcol">单价(必填)</div>
                           <div class="tcol">数量(必填)</div>
                           <div class="tcol"
-                            style="flex:1.5">操作</div>
+                            style="flex:1.4">操作</div>
                         </div>
                       </div>
                     </div>
@@ -477,7 +477,7 @@
                             </div>
                           </div>
                           <div class="tcol oprCtn"
-                            style="flex:1.5;font-size:12px">
+                            style="flex:1.4;font-size:12px">
                             <div class="opr hoverBlue"
                               @click="$addItem(item.product_data, {
                                   product_id: '',
@@ -491,7 +491,7 @@
                                       price: ''
                                     }
                                   ]
-                                })">新增</div>
+                                })">新增产品</div>
                             <div class="opr hoverBlue"
                               @click="$addItem(itemPro.product_info,{
                                   size_color: [], // 用于下拉框选择尺码颜色
@@ -499,7 +499,7 @@
                                   color_id: '',
                                   number: '',
                                   price: ''
-                                })">新增尺码</div>
+                                })">新增尺码颜色</div>
                             <div class="opr hoverRed"
                               @click="tableDelete(orderInfo.time_data.batch_data,index,item.product_data,indexPro,itemPro.product_info,indexProInfo)">删除</div>
                           </div>

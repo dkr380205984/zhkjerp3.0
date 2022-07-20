@@ -637,7 +637,7 @@ const order = {
   deleteBatch: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/batch`, params, 'application/json'), // 删除订单里的批次
   processList: (params: { order_id: string | number, product_id?: string | number }) => http.get(`${baseUrl}/order/all/process`, params), // 订单相关所有工序
   logList: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/rel/doc/info`, params), // 订单相关所有单据信息
-  materialDetail: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/material/info`, params), // 物料汇总表
+  materialDetail: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/material/info/new`, params), // 物料汇总表
   productionDetail: (params: { order_time_id: string | number }) => http.get(`${baseUrl}/order/weave/info`, params), // 生产汇总表
 }
 

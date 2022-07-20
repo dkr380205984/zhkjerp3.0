@@ -1,0 +1,63 @@
+@import '../../common.less';
+@import '../../table.less';
+
+#CLEdit {
+  .title1 {
+    font-size: 32px;
+    font-weight: bold;
+    color: rgb(104, 104, 104);
+  }
+
+  .title2,
+  .title3 {
+    color: @font65;
+    font-size: @fontSmall;
+    text-align: center;
+    margin: 4px;
+  }
+
+  .title3 {
+    color: @blue;
+  }
+
+  &.tableCtn {
+    .icon1 {
+      position: absolute;
+      line-height: 40px;
+      right: -28px;
+      font-weight: bold;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .tbody {
+      border-top: 1px solid @borderColor;
+      margin-bottom: 16px;
+
+      .label {
+        line-height: 32px;
+      }
+
+      .trow {
+        position: relative;
+      }
+
+      &.noBorder {
+        .trow {
+          border-bottom: 0;
+        }
+
+        .tcol {
+          border-right: 0;
+          min-height: 40px;
+
+          &.infoCtn {
+            flex-direction: row;
+            align-items: center;
+            justify-content: start;
+          }
+        }
+      }
+    }
+  }
+}

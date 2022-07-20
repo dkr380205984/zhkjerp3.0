@@ -164,6 +164,12 @@ export default Vue.extend({
             id: '23-1',
             icon: 'icon-wuliaojihua',
             url: '/fileManage/list?page=1&status=&client_id=&date=&group_id=&user_id=&limit='
+          },
+          {
+            name: '单证管理',
+            id: '25-3',
+            icon: 'icon-wuliaojihua',
+            url: '/document/list?page=1&date=&keyword='
           }
         ],
         finance: [

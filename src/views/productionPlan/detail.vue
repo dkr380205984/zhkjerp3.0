@@ -222,6 +222,13 @@
                   :class="{'gray':!item.desc}">{{item.desc || '无'}}</div>
               </div>
             </div>
+            <div class="row">
+              <div class="col flex3">
+                <div class="label">进度状态：</div>
+                <div class="text"
+                  :class="item.status|productionClassFilter">{{item.status|productionFilter}}</div>
+              </div>
+            </div>
           </div>
           <div class="tableCtn"
             style="padding-top:0">

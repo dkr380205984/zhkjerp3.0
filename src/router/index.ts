@@ -786,6 +786,41 @@ const routes: Array<RouteConfig> = [
       path: '/settlement/paymentDetail',
       name: '客户付款详情',
       component: () => import('../views/settlement/paymentDetail.vue')
+    }, {
+      meta: {
+        permissions_id: '25-3',
+      },
+      path: '/document/list',
+      name: '单证列表',
+      component: () => import('../views/document/list.vue')
+    }, {
+      meta: {
+        permissions_id: '25-1',
+      },
+      path: '/document/create',
+      name: '单证添加',
+      component: () => import('../views/document/create.vue')
+    }, {
+      path: '/document/detail',
+      name: '单证详情',
+      component: () => import('../views/document/detail.vue'),
+      children: [{
+        path: '/document/detail/CL/edit',
+        name: '形式发票编辑',
+        component: () => import('../views/document/CL/edit.vue')
+      }, {
+        path: '/document/detail/CL/print',
+        name: '形式发票详情',
+        component: () => import('../views/document/CL/print.vue')
+      }, {
+        path: '/document/detail/PL/edit',
+        name: '装箱单编辑',
+        component: () => import('../views/document/PL/edit.vue')
+      }, {
+        path: '/document/detail/PL/print',
+        name: '装箱单详情',
+        component: () => import('../views/document/PL/print.vue')
+      }]
     }]
   }
 ]
