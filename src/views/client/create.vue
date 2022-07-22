@@ -9,6 +9,15 @@
         <div class="row">
           <div class="col">
             <div class="label">
+              <span class="text">公司编号</span>
+            </div>
+            <div class="info elCtn">
+              <el-input placeholder="请输入公司编号"
+                v-model="clientInfo.code"></el-input>
+            </div>
+          </div>
+          <div class="col">
+            <div class="label">
               <span class="text">公司简称</span>
               <span class="explanation">(必填)</span>
             </div>
@@ -26,7 +35,9 @@
                 v-model="clientInfo.alias"></el-input>
             </div>
           </div>
-          <div class="col">
+        </div>
+        <div class="row">
+          <div class="col flex3">
             <div class="label">
               <span class="text">公司类型</span>
               <span class="explanation">(必选)</span>
@@ -42,9 +53,7 @@
               </el-select>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col flex3">
+          <div class="col">
             <div class="label">
               <span class="text">公司地址</span>
             </div>
@@ -174,6 +183,7 @@ export default Vue.extend({
       clientTagList: [],
       clientInfo: {
         id: null,
+        code: '',
         name: '',
         alias: '',
         contacts_data: [

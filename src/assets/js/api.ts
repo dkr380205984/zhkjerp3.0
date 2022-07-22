@@ -502,6 +502,7 @@ const user = {
   list: (params?: ListParams) => http.get(`${baseUrl}/user/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/user/delete`, params, 'application/json'),
   getSms: (params: { phone: string }) => http.post(`${baseUrl}/user/add/send/sms`, params, 'application/json'),
+  check: (params: { id: string | number }) => http.post(`${baseUrl}/user/check/status`, params, 'application/json') // 启用禁用用户
 }
 
 // 报价单
@@ -591,7 +592,7 @@ const sampleOrder = {
   confirm: (params: { id: string | number, status: 1 | 2 | 3 | 4 | 5 | 6 }) => http.post(`${baseUrl}/order/product/confirm`, params, 'application/json'),
   confirmList: (params: { order_id: number, status?: number[] }) => http.get(`${baseUrl}/order/confirm/product/lists`, params),
   deletePro: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product`, params, 'application/json'), // 删除产品
-  materialDetail: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/material/info`, params),
+  materialDetail: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/material/info/new`, params),
   deleteProChild: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product/info`, params, 'application/json'), // 删除产品子项
   clientCheck: (params: { order_id: string | number }) => http.post(`${baseUrl}/order/time/client/confirm`, params, 'application/json'), // 客户确认完成
   completeCheck: (params: { order_id: string | number }) => http.post(`${baseUrl}/order/time/complete`, params, 'application/json'), // 打样次数确认完成

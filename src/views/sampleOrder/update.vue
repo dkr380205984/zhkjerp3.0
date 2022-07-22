@@ -257,7 +257,7 @@ export default Vue.extend({
       const fileNameLength = file.name.length // 取到文件名长度
       const fileFormat = file.name.substring(fileName + 1, fileNameLength) // 截
       this.postData.token = this.token
-      this.postData.key = Date.parse(new Date() + '') + '.' + fileFormat
+      this.postData.key = file.name.split('.')[0] + Date.parse(new Date() + '') + '.' + fileFormat
       // const isJPG = file.type === 'image/jpeg'
       // const isPNG = file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 10

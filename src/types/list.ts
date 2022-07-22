@@ -12,6 +12,7 @@ export interface ListSetting {
   mark?: boolean // 在有数组对象的时候标记哪个字段需要箭头
   index: number
   unit?: string // 有些情况下需要单位
+  unitKey?: string // 有些情况下单位在字段里
   filterArr?: string[] // 通常用于用于状态适配，如status = 1|2|3 filterArr:['待审核','已审核','未通过']
   class?: string // 用于改字体颜色用的
   classArr?: string[] // 一般配合filterArr一起用，不同状态用不同颜色标记

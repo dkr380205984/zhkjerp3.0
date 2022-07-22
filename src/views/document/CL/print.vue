@@ -55,7 +55,7 @@
       </div>
     </div>
     <div class="tbody"
-      v-for="(itemOrder,indexOrder) in orderInfo"
+      v-for="(itemOrder,indexOrder) in CLInfo.orderInfo"
       :key="indexOrder">
       <div class="trow">
         <div class="tcol">ORDER NO</div>
@@ -161,31 +161,31 @@
         <div class="trow">
           <div class="tcol">
             <div class="label">Bank:</div>
-            <div class="text"></div>
+            <div class="text">{{CLInfo.bank}}</div>
           </div>
         </div>
         <div class="trow">
           <div class="tcol">
             <div class="label">Address:</div>
-            <div class="text"></div>
+            <div class="text">{{CLInfo.address}}</div>
           </div>
         </div>
         <div class="trow">
           <div class="tcol">
             <div class="label">SWIFT:</div>
-            <div class="text"></div>
+            <div class="text">{{CLInfo.code}}</div>
           </div>
         </div>
         <div class="trow">
           <div class="tcol">
             <div class="label">Beneficiary:</div>
-            <div class="text"></div>
+            <div class="text">{{CLInfo.beneficiary}}</div>
           </div>
         </div>
         <div class="trow">
           <div class="tcol">
             <div class="label">Account No:</div>
-            <div class="text"></div>
+            <div class="text">{{CLInfo.account_no}}</div>
           </div>
         </div>
       </div>
@@ -194,7 +194,7 @@
         <div class="trow">
           <div class="tcol">
             <div class="label">Remark:</div>
-            <div class="text"></div>
+            <div class="text">{{CLInfo.remarks}}</div>
           </div>
         </div>
       </div>
@@ -203,22 +203,55 @@
 </template>
 
 <script lang="ts">
+import { CLInfo } from '@/types/document'
 import Vue from 'vue'
 export default Vue.extend({
-  data() {
+  data(): {
+    CLInfo: CLInfo
+    [propName: string]: any
+  } {
     return {
       CLInfo: {
-        from: '',
-        to: '',
-        payment_terms: '',
-        shipment_date: '',
-        name: '',
+        document_id: this.$route.params.id,
+        bank: '',
         address: '',
         code: '',
         beneficiary: '',
-        account_no: ''
-      },
-      orderInfo: []
+        account_no: '',
+        remarks: '',
+        to_company_name: '',
+        to_company_address: '',
+        invoice: '',
+        po: '',
+        order_date: '',
+        from_address: '',
+        to_address: '',
+        payment: '',
+        shipment_date: '',
+        total_for: '',
+        orderInfo: [
+          {
+            order_data: [
+              {
+                style_no: '',
+                desc: '',
+                qty_pcs: '',
+                unit_price: '',
+                amount: ''
+              }
+            ],
+            price_data: [
+              {
+                content: '',
+                price: ''
+              }
+            ],
+            order_no: '',
+            pcs: '',
+            amount: ''
+          }
+        ]
+      }
     }
   },
   computed: {

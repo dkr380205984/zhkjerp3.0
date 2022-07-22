@@ -51,7 +51,7 @@
                 :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?itemKey.caogaoArr[0]:itemKey.caogaoArr[1]}}</span>
               <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')"
                 class="text">
-                {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unit}}</span>
+                {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unitKey?item[itemKey.unitKey]:itemKey.unit}}</span>
             </template>
           </template>
           <!-- 图片元素 -->
@@ -340,7 +340,7 @@
                   :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?itemKey.caogaoArr[0]:itemKey.caogaoArr[1]}}</span>
                 <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')"
                   class="text">
-                  {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unit}}</span>
+                  {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unitKey?item[itemKey.unitKey]:itemKey.unit}}</span>
               </template>
             </template>
           </div>

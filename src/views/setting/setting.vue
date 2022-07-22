@@ -1487,7 +1487,9 @@
                   <div class="col">岗位</div>
                   <div class="col">小组</div>
                   <div class="col">管理员权限</div>
-                  <div class="col">操作</div>
+                  <div class="col">启用账号</div>
+                  <div class="col"
+                    style="flex:2">操作</div>
                 </div>
                 <div class="row"
                   v-for="(item, index) in userArr"
@@ -1498,7 +1500,12 @@
                   <div class="col">{{ item.station }}</div>
                   <div class="col">{{ item.group_name }}</div>
                   <div class="col">{{ item.has_check === 1 ? '管理员' : '普通用户' }}</div>
-                  <div class="col">
+                  <div class="col">{{item.status===1?'启用':'禁用'}}</div>
+                  <div class="col"
+                    style="flex:2">
+                    <span class="opr"
+                      :class="{'hoverRed':item.status===1,'hoverGreen':item.status!==1}"
+                      @click="checkUser(item.id)">{{item.status===1?'禁用':'启用'}}</span>
                     <span class="opr hoverRed"
                       @click="deleteUser(item.id)">删除</span>
                     <span class="opr hoverOrange"
@@ -8051,7 +8058,62 @@ export default Vue.extend({
         this.userInfo.module_info = []
       }
     },
-    deleteUser(id: number) {},
+    checkUser(id: number) {
+      this.$confirm('是否修改用户状态?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          user
+            .check({
+              id: id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '修改成功!'
+                })
+                this.getUser()
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消修改'
+          })
+        })
+    },
+    deleteUser(id: number) {
+      this.$confirm('是否删除该用户?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          user
+            .delete({
+              id: id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.getUser()
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
     getQuotedPriceProduct() {
       this.$checkCommonInfo([
         {

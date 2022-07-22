@@ -280,7 +280,7 @@
           <div class="tcol infoCtn">
             <div class="label">Address:</div>
             <div class="elCtn">
-              <el-input placeholder="银行抵制"
+              <el-input placeholder="银行地址"
                 v-model="CLInfo.address"></el-input>
             </div>
           </div>

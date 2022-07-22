@@ -98,6 +98,7 @@
         </div>
         <div class="list">
           <div class="row title">
+            <div class="col">公司编号</div>
             <div class="col">公司简称</div>
             <div class="col">公司全称</div>
             <div class="col">客户类型</div>
@@ -110,6 +111,7 @@
           <div class="row"
             v-for="item in list"
             :key="item.id">
+            <div class="col">{{item.code}}</div>
             <div class="col">{{item.name}}</div>
             <div class="col">{{item.alias}}</div>
             <div class="col">{{item.client_type_name}}</div>
@@ -119,7 +121,7 @@
             <div class="col"
               :class="{'green':item.workshop_id!=='0','orange':item.workshop_id==='0'}">{{item.workshop_id==='0'?'未绑定':('已绑定'+item.workshop.name)}}</div>
             <div class="col oprCtn"
-              style="flex:1.8">
+              style="flex:1.8;font-size:12px">
               <span class="opr hoverGreen"
                 @click="deletebindClient(item.id)">{{item.workshop_id==='0'?'暂无操作':'解除绑定'}}</span>
               <span class="opr hoverBlue"

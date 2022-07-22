@@ -178,23 +178,44 @@ export default Vue.extend({
         this.$message.error('请勿频繁点击')
         return
       }
-      this.storeInfo.secondary_store.forEach((item, index) => {
-        if (index === this.isDefault) {
-          item.is_default = 1
-        }
-      })
-      this.saveLock = true
-      store.create(this.storeInfo).then((res) => {
-        if (res.data.status) {
-          this.$message.success('添加成功')
-          if (this.$route.query.store_type === '5') {
-            this.$router.push('/store/productList?page=1&keyword=&user_id=')
-          } else {
-            this.$router.push('/store/list?page=1&keyword=&user_id=&store_type=' + this.$route.query.store_type)
+      const formCheck =
+        this.$formCheck(this.storeInfo, [
+          {
+            key: 'name',
+            errMsg: '请输入仓库名称'
+          },
+          {
+            key: 'manager_id',
+            errMsg: '请选择仓库管理员'
           }
-        }
-        this.saveLock = false
-      })
+        ]) ||
+        this.storeInfo.secondary_store.some((item) => {
+          return this.$formCheck(item, [
+            {
+              key: 'name',
+              errMsg: '请输入二级仓库名称'
+            }
+          ])
+        })
+      if (!formCheck) {
+        this.storeInfo.secondary_store.forEach((item, index) => {
+          if (index === this.isDefault) {
+            item.is_default = 1
+          }
+        })
+        this.saveLock = true
+        store.create(this.storeInfo).then((res) => {
+          if (res.data.status) {
+            this.$message.success('添加成功')
+            if (this.$route.query.store_type === '5') {
+              this.$router.push('/store/productList?page=1&keyword=&user_id=')
+            } else {
+              this.$router.push('/store/list?page=1&keyword=&user_id=&store_type=' + this.$route.query.store_type)
+            }
+          }
+          this.saveLock = false
+        })
+      }
     }
   },
   mounted() {

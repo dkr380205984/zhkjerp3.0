@@ -256,7 +256,7 @@
               </div>
               <div class="col">
                 <div class="label"
-                  v-if="productStockInfo.action_type===5||productStockInfo.action_type===4">
+                  v-if="productStockInfo.action_type===5||productStockInfo.action_type===4||productStockInfo.action_type===1">
                   <span class="text">{{productStockInfo.action_type===5?'选择单位':'选择仓库'}}</span>
                   <span class="explanation">(必选)</span>
                 </div>
@@ -268,7 +268,7 @@
                     @change="(ev)=>{productStockInfo.client_id=ev[2]}"
                     filterable>
                   </el-cascader>
-                  <el-cascader v-if="productStockInfo.action_type===4"
+                  <el-cascader v-if="productStockInfo.action_type===4 || productStockInfo.action_type===1"
                     :options="storeArr"
                     placeholder="请选择仓库"
                     v-model="productStockInfo.tree_data"
@@ -318,12 +318,12 @@
                   <div class="once">
                     <div class="label"
                       v-if="index===0">
-                      <span class="text">出库数量</span>
+                      <span class="text">{{productStockInfo.action_type===1?'入库':'出库'}}数量</span>
                       <span class="explanation">(必填)</span>
                     </div>
                     <div class="info elCtn">
                       <el-input v-model="item.number"
-                        placeholder="出库数量"></el-input>
+                        placeholder="数量"></el-input>
                     </div>
                   </div>
                 </div>
@@ -333,7 +333,7 @@
               <div class="col"
                 style="max-width:280px">
                 <div class="label">
-                  <span class="text">出库日期</span>
+                  <span class="text">{{productStockInfo.action_type===1?'入库':'出库'}}日期</span>
                   <span class="explanation">(默认)</span>
                 </div>
                 <div class="info elCtn">
@@ -360,7 +360,7 @@
           <span class="btn borderBtn"
             @click="stockFlag = false">取消</span>
           <span class="btn backHoverBlue"
-            @click="saveProductStock">确认出库</span>
+            @click="saveProductStock">确认{{productStockInfo.action_type===1?'入库':'出库'}}</span>
         </div>
       </div>
     </div>
@@ -607,12 +607,49 @@ export default Vue.extend({
       }
     },
     goStock(type: 1 | 5 | 6) {
+      const checkInfo = this.list.filter((item) => {
+        return item.info_data.some((itemChild) => itemChild.check)
+      })
       if (type === 1) {
-        this.stockInFlag = true
+        if (checkInfo.length === 0) {
+          this.stockInFlag = true
+        } else {
+          const mergeArr = this.$mergeData(checkInfo, {
+            mainRule: ['store_id', 'secondary_store_id'],
+            otherRule: [{ name: 'store' }, { name: 'secondary_store' }]
+          })
+          if (mergeArr.length > 1) {
+            this.$message.error('只能选择同一仓库/二级仓库的产品进行操作')
+            return
+          }
+          this.productStockInfo.action_type = type
+          this.productStockInfo.store_id = mergeArr[0].store_id
+          this.productStockInfo.secondary_store_id = mergeArr[0].secondary_store_id
+          this.productStockInfo.store = mergeArr[0].store
+          this.productStockInfo.secondary_store = mergeArr[0].secondary_store
+          this.productStockInfo.info_data = []
+          mergeArr[0].childrenMergeInfo.forEach((item: any) => {
+            item.info_data.forEach((itemChild: any) => {
+              if (itemChild.check) {
+                this.productStockInfo.info_data.push({
+                  product_id: item.product_id,
+                  product_code: item.product_code,
+                  name: item.name,
+                  category: item.category,
+                  secondary_category: item.secondary_category,
+                  size_id: itemChild.size_id,
+                  color_id: itemChild.color_id,
+                  size_name: itemChild.size_name,
+                  color_name: itemChild.color_name,
+                  price: '',
+                  number: ''
+                })
+              }
+            })
+          })
+          this.stockFlag = true
+        }
       } else {
-        const checkInfo = this.list.filter((item) => {
-          return item.info_data.some((itemChild) => itemChild.check)
-        })
         if (checkInfo.length === 0) {
           this.$message.error('请选择产品进行操作')
           return

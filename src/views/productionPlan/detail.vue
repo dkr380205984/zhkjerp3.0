@@ -161,7 +161,10 @@
           :name="item.id.toString()">
           <div slot="label">
             <div style="display:flex;flex-direction:column">
-              <div style="line-height:20px;font-size:14px">加工单{{(index+1)}}</div>
+              <div style="line-height:20px;font-size:14px">加工单{{(index+1)}}
+                <i class="el-icon-warning red"
+                  v-if="item.is_check>1&&productionPlanIndex!==item.id.toString()"></i>
+              </div>
               <div style="line-height:20px;font-size:14px">{{item.process_name}}({{item.code}})</div>
             </div>
           </div>
