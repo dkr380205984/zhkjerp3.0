@@ -70,6 +70,11 @@
         </div>
         <div class="filterCtn">
           <div class="elCtn">
+            <el-input placeholder="搜索公司编号"
+              v-model="code"
+              @change="changeRouter"></el-input>
+          </div>
+          <div class="elCtn">
             <el-select placeholder="客户标签筛选"
               v-model="tag_id"
               @change="changeRouter"
@@ -210,7 +215,8 @@ export default Vue.extend({
       bindFlag: false,
       clientTagList: [],
       limitList: limitArr,
-      only_delete: 0
+      only_delete: 0,
+      code: ''
     }
   },
   computed: {
@@ -239,6 +245,7 @@ export default Vue.extend({
       this.keyword = query.keyword
       this.clientType = Number(query.clientType) || ''
       this.only_delete = Number(query.only_delete) || 0
+      this.code = query.code || ''
       this.clientTagList = this.clientType
         ? this.clientTypeList.find((item: any) => item.id === Number(query.clientType)).public_tag
         : []
@@ -263,7 +270,9 @@ export default Vue.extend({
           '&tag_id=' +
           this.tag_id +
           '&only_delete=' +
-          this.only_delete
+          this.only_delete +
+          '&code=' +
+          this.code
       )
     },
     reset() {
@@ -290,6 +299,7 @@ export default Vue.extend({
       this.loading = true
       client
         .list({
+          code: this.code,
           limit: this.limit,
           page: this.page,
           name: this.keyword,

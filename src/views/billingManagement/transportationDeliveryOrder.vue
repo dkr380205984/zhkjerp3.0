@@ -1,28 +1,47 @@
 <template>
-  <div id="transportationDeliveryOrder" v-loading="loading" class="bodyContainer">
-    <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
+  <div id="transportationDeliveryOrder"
+    v-loading="loading"
+    class="bodyContainer">
+    <div class="module"
+      v-loading="mainLoading"
+      element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">系统单据管理</div>
       </div>
       <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
-        <div class="tab" @click="$router.push('/billingManagement/rawMaterialPlan')">原料计划单</div>
-        <div class="tab" @click="$router.push('/billingManagement/rawMaterialSupplement')">原料补充单</div>
-        <div class="tab" @click="$router.push('/billingManagement/rawMaterialPurchaseOrder')">原料订购单</div>
-        <div class="tab" @click="$router.push('/billingManagement/rawMaterialTransferOrder')">原料调取单</div>
-        <div class="tab" @click="$router.push('/billingManagement/rawMaterialProcessingOrder')">原料加工单</div>
-        <div class="tab" @click="$router.push('/billingManagement/productionPlan')">生产计划单</div>
-        <div class="tab" @click="$router.push('/billingManagement/inspectionReceiptDocument')">检验入库单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/workshopSettlementLog')">车间结算日志</div>
-        <div class="tab" @click="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">辅料订购单</div>
-        <div class="tab" @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/rawMaterialPlan')">原料计划单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/rawMaterialSupplement')">原料补充单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/rawMaterialPurchaseOrder')">原料订购单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/rawMaterialTransferOrder')">原料调取单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/rawMaterialProcessingOrder')">原料加工单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/productionPlan')">生产计划单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/inspectionReceiptDocument')">检验入库单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/workshopSettlementLog')">车间结算日志</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">辅料订购单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
         <div class="tab active">运输出库单</div>
-        <div class="tab" @click="$router.push('/billingManagement/deductionForm')">我方扣款单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/deductionForm')">我方扣款单据</div>
       </div>
       <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
-        <div class="tab" @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/oppositeInvoicing')">对方发票单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/oppositeInvoicing')">对方发票单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/collectionList')">收款单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
         <!-- <div class="tab" @click="$router.push('/billingManagement/orderQuotationComparison')">订单报价单对比单据</div> -->
         <div style="width:100px"></div>
         <div style="width:100px"></div>
@@ -35,15 +54,12 @@
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input
-              v-model="keyword"
+            <el-input v-model="keyword"
               placeholder="筛选运输单号/订单号"
-              @keydown.enter.native="changeRouter"
-            ></el-input>
+              @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
-            <el-cascader
-              @change="
+            <el-cascader @change="
                 getContacts($event)
                 changeRouter()
               "
@@ -51,23 +67,22 @@
               v-model="client_id"
               filterable
               :options="boxClientList"
-              clearable
-            >
+              clearable>
             </el-cascader>
           </div>
           <div class="elCtn">
-            <el-select
-              @change="(ev) => getLocalStorage(ev, 'create_user')"
+            <el-select @change="(ev) => getLocalStorage(ev, 'create_user')"
               v-model="user_id"
               placeholder="筛选创建人"
-              clearable
-            >
-              <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-date-picker
-              v-model="date"
+            <el-date-picker v-model="date"
               type="daterange"
               align="right"
               unlink-panels
@@ -76,63 +91,91 @@
               end-placeholder="结束日期"
               :picker-options="pickerOptions"
               @change="changeRouter"
-              value-format="yyyy-MM-dd"
-            >
+              value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
-          <div class="btn borderBtn" @click="reset">重置</div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select @change="changeRouter" v-model="status" placeholder="筛选审核状态">
-              <el-option value="null" label="全部"></el-option>
-              <el-option value="1" label="已审核"></el-option>
-              <el-option value="2" label="待审核"></el-option>
+            <el-select @change="changeRouter"
+              v-model="status"
+              placeholder="筛选审核状态">
+              <el-option value="null"
+                label="全部"></el-option>
+              <el-option value="1"
+                label="已审核"></el-option>
+              <el-option value="2"
+                label="待审核"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter" v-model="group_id" placeholder="筛选负责小组" clearable>
-              <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+            <el-select @change="changeRouter"
+              v-model="group_id"
+              placeholder="筛选负责小组"
+              clearable>
+              <el-option v-for="item in groupList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
             </el-select>
           </div>
-          <div class="btn borderBtn backHoverBlue" style="color: white" @click="oneShowAll">全部展开</div>
+          <div class="btn borderBtn backHoverBlue"
+            style="color: white"
+            @click="oneShowAll">全部展开</div>
         </div>
         <div class="list">
           <div class="row title">
-            <div class="col" style="flex: 0.05">
-              <el-checkbox v-model="checkAllPlan" @change="checkAll"></el-checkbox>
+            <div class="col"
+              style="flex: 0.05">
+              <el-checkbox v-model="checkAllPlan"
+                @change="checkAll"></el-checkbox>
             </div>
-            <div class="col" style="flex: 1.3">发货单号</div>
+            <div class="col"
+              style="flex: 1.3">发货单号</div>
             <div class="col">运输单位</div>
             <div class="col">合计运输立方</div>
             <div class="col">合计运输金额</div>
             <div class="col">审核状态</div>
             <div class="col">创建人</div>
             <div class="col">创建时间</div>
-            <div class="col" style="flex: 1.4">操作</div>
+            <div class="col"
+              style="flex: 1.4">操作</div>
           </div>
-          <div v-for="(item, index) in list" :key="index">
+          <div v-for="(item, index) in list"
+            :key="index">
             <div class="row">
-              <div class="col" style="flex: 0.05">
-                <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
+              <div class="col"
+                style="flex: 0.05">
+                <el-checkbox v-model="item.checked"
+                  @change="$forceUpdate()"></el-checkbox>
               </div>
-              <div class="col" style="flex: 1.3">{{ item.code }}</div>
+              <div class="col"
+                style="flex: 1.3">{{ item.code }}</div>
               <div class="col">{{ item.client_name }}</div>
               <div class="col">{{ (+item.total_bulk).toFixed(2) }}</div>
               <div class="col">{{ (+item.total_price).toFixed(2) }}</div>
               <div class="col">
-                <div v-if="item.is_check === 0" class="orange">审核中</div>
-                <div v-if="item.is_check === 1" class="blue">通过</div>
-                <div v-if="item.is_check === 2" class="red">不通过</div>
+                <div v-if="item.is_check === 0"
+                  class="orange">审核中</div>
+                <div v-if="item.is_check === 1"
+                  class="blue">通过</div>
+                <div v-if="item.is_check === 2"
+                  class="red">不通过</div>
               </div>
               <div class="col">{{ item.user_name }}</div>
               <div class="col">{{ item.created_at }}</div>
-              <div class="col" style="flex: 1.4">
-                <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
-                <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
+              <div class="col"
+                style="flex: 1.4">
+                <span class="opr hoverBlue"
+                  @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
+                <span class="opr hoverBlue"
+                  @click="changeStatus(item)">审核</span>
               </div>
             </div>
-            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
+            <div v-show="item.isShow"
+              style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
               <div class="detailCtn">
                 <div class="row">
                   <div class="col">
@@ -188,14 +231,19 @@
                   </div>
                 </div>
               </div>
-              <div class="tableCtn" v-for="(itema, index) in item.detail.packPlanLogCopy" :key="index + 'tszd'">
-                <div class="thead" v-if="itema">
+              <div class="tableCtn"
+                v-for="(itema, index) in item.detail.packPlanLogCopy"
+                :key="index + 'tszd'">
+                <div class="thead"
+                  v-if="itema">
                   <div class="trow">
                     <div class="tcol">计划单号</div>
                     <div class="tcol">订单号</div>
-                    <div class="tcol noPad" style="flex: 8">
+                    <div class="tcol noPad"
+                      style="flex: 8">
                       <div class="trow">
-                        <div class="tcol noPad" style="flex: 4">
+                        <div class="tcol noPad"
+                          style="flex: 4">
                           <div class="trow">
                             <div class="tcol">产品</div>
                             <div class="tcol">尺码颜色</div>
@@ -203,22 +251,33 @@
                             <div class="tcol">实际装箱数量</div>
                           </div>
                         </div>
-                        <div class="tcol" style="flex: 0.5">总箱数</div>
-                        <div class="tcol" style="flex: 0.5">总毛重</div>
-                        <div class="tcol" style="flex: 0.5">总净重</div>
-                        <div class="tcol" style="flex: 0.5">总体积</div>
+                        <div class="tcol"
+                          style="flex: 0.5">总箱数</div>
+                        <div class="tcol"
+                          style="flex: 0.5">总毛重</div>
+                        <div class="tcol"
+                          style="flex: 0.5">总净重</div>
+                        <div class="tcol"
+                          style="flex: 0.5">总体积</div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="tbody" v-if="itema">
+                <div class="tbody"
+                  v-if="itema">
                   <div class="trow">
                     <div class="tcol">{{ itema.code }}</div>
                     <div class="tcol">{{ itema.order_code }}</div>
-                    <div class="tcol noPad" style="flex: 8">
-                      <div class="trow" v-for="(itemData, indexData) in itema.data" :key="indexData">
-                        <div class="tcol noPad" style="flex: 4">
-                          <div class="trow" v-for="(itemPro, indexPro) in itemData.product_info" :key="indexPro">
+                    <div class="tcol noPad"
+                      style="flex: 8">
+                      <div class="trow"
+                        v-for="(itemData, indexData) in itema.data"
+                        :key="indexData">
+                        <div class="tcol noPad"
+                          style="flex: 4">
+                          <div class="trow"
+                            v-for="(itemPro, indexPro) in itemData.product_info"
+                            :key="indexPro">
                             <div class="tcol">
                               <span>{{ itemPro.product_code }}</span>
                               <span>{{ itemPro.category }}/{{ itemPro.secondary_category }}</span>
@@ -228,25 +287,35 @@
                             <div class="tcol">{{ itemPro.transport_number }}</div>
                           </div>
                         </div>
-                        <div class="tcol" style="flex: 0.5">{{ itemData.total_box_count }}箱</div>
-                        <div class="tcol" style="flex: 0.5">{{ itemData.total_gross_weight }}kg</div>
-                        <div class="tcol" style="flex: 0.5">{{ itemData.total_net_weight }}kg</div>
-                        <div class="tcol" style="flex: 0.5">{{ itemData.total_bulk }}m³</div>
+                        <div class="tcol"
+                          style="flex: 0.5">{{ itemData.total_box_count }}箱</div>
+                        <div class="tcol"
+                          style="flex: 0.5">{{ itemData.total_gross_weight }}kg</div>
+                        <div class="tcol"
+                          style="flex: 0.5">{{ itemData.total_net_weight }}kg</div>
+                        <div class="tcol"
+                          style="flex: 0.5">{{ itemData.total_bulk }}m³</div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="detailCtn" v-for="(itemBatch, indexBatch) in item.detail.orderBatchCopy" :key="indexBatch">
-                <div class="tableCtn noPadBtm" style="padding-left: 0; padding-right: 0">
+              <div class="detailCtn"
+                v-for="(itemBatch, indexBatch) in item.detail.orderBatchCopy"
+                :key="indexBatch">
+                <div class="tableCtn noPadBtm"
+                  style="padding-left: 0; padding-right: 0">
                   <div class="thead">
                     <div class="trow">
-                      <div class="tcol" style="flex: 0.72">批次序号</div>
+                      <div class="tcol"
+                        style="flex: 0.72">批次序号</div>
                       <div class="tcol">发货时间</div>
-                      <div class="tcol noPad" style="flex: 8.7">
+                      <div class="tcol noPad"
+                        style="flex: 8.7">
                         <div class="trow">
                           <div class="tcol">产品品类</div>
-                          <div class="tcol noPad" style="flex: 3">
+                          <div class="tcol noPad"
+                            style="flex: 3">
                             <div class="trow">
                               <div class="tcol">尺码颜色</div>
                               <div class="tcol">计划发货数量</div>
@@ -263,20 +332,27 @@
                   </div>
                   <div class="tbody">
                     <div class="trow">
-                      <div class="tcol" style="flex: 0.72">
+                      <div class="tcol"
+                        style="flex: 0.72">
                         <span>第{{ itemBatch.batch_number }}批</span>
                       </div>
                       <div class="tcol">
                         <span class="green">{{ itemBatch.delivery_time }}</span>
                       </div>
-                      <div class="tcol noPad" style="flex: 8.7">
-                        <div class="trow" v-for="itemPro in itemBatch.product_data" :key="itemPro.id">
+                      <div class="tcol noPad"
+                        style="flex: 8.7">
+                        <div class="trow"
+                          v-for="itemPro in itemBatch.product_data"
+                          :key="itemPro.id">
                           <div class="tcol">
                             <span>{{ itemPro.product_code || itemPro.system_code || '无编号' }}</span>
                             <span class="gray">({{ itemPro.category }}/{{ itemPro.secondary_category }})</span>
                           </div>
-                          <div class="tcol noPad" style="flex: 3">
-                            <div class="trow" v-for="(itemChild, indexChild) in itemPro.product_info" :key="indexChild">
+                          <div class="tcol noPad"
+                            style="flex: 3">
+                            <div class="trow"
+                              v-for="(itemChild, indexChild) in itemPro.product_info"
+                              :key="indexChild">
                               <div class="tcol">{{ itemChild.size_name }}/{{ itemChild.color_name }}</div>
                               <div class="tcol">{{ itemChild.number }}</div>
                               <div class="tcol">{{ itemChild.real_number }}</div>
@@ -302,8 +378,12 @@
                   </div>
                 </div>
                 <div class="tbody">
-                  <div class="trow" v-for="(item, index) in item.detail.batchInfo" :key="index">
-                    <div class="tcol hoverBlue" style="cursor: pointer" @click="showProduct(item)">
+                  <div class="trow"
+                    v-for="(item, index) in item.detail.batchInfo"
+                    :key="index">
+                    <div class="tcol hoverBlue"
+                      style="cursor: pointer"
+                      @click="showProduct(item)">
                       {{ item.product_code }}
                       <span>({{ item.category }}/{{ item.secondary_category }})</span>
                     </div>
@@ -319,127 +399,158 @@
         <div style="margin-top: 20px">
           <span style="line-height: 35px; margin-left: 40px">
             合计运输立方：
-            <span class="green" style="font-weight: bold"> {{ additional.total_number }} 立方 </span>
+            <span class="green"
+              style="font-weight: bold"> {{ additional.total_number }} 立方 </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
             合计运输金额：
-            <span class="green" style="font-weight: bold">
+            <span class="green"
+              style="font-weight: bold">
               {{ (additional.total_price / 10000).toFixed(2) }} 万元
             </span>
           </span>
         </div>
         <div class="pageCtn">
-          <el-pagination
-            background
+          <el-pagination background
             :page-size="limit"
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
-            @current-change="changeRouter"
-          >
+            @current-change="changeRouter">
           </el-pagination>
         </div>
       </div>
     </div>
     <div class="bottomFixBar">
       <div class="main">
-        <div class="fl blue green" style="line-height: 56px; margin-left: 24px">
-          <div class="btn backHoverBlue" @click="lostCheck">
+        <div class="fl blue green"
+          style="line-height: 56px; margin-left: 24px">
+          <div class="btn backHoverBlue"
+            @click="lostCheck">
             <span class="text">批量审核</span>
           </div>
         </div>
         <div class="btnCtn">
-          <div class="borderBtn" @click="$router.go(-1)">返回</div>
-          <div class="buttonList" style="margin-left: 12px">
-            <div class="btn backHoverBlue" @click="showExportPopup = true">
-              <span class="text" style="margin-left: 0">导出报表</span>
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
+          <div class="buttonList"
+            style="margin-left: 12px">
+            <div class="btn backHoverBlue"
+              @click="showExportPopup = true">
+              <span class="text"
+                style="margin-left: 0">导出报表</span>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <product-detail
-      :id="productDetailId"
+    <product-detail :id="productDetailId"
       :show="productShow"
       :noOpr="true"
-      @close="productShow = false"
-    ></product-detail>
-    <div class="popup" v-show="checkFlag">
+      @close="productShow = false"></product-detail>
+    <div class="popup"
+      v-show="checkFlag">
       <div class="main">
         <div class="titleCtn">
           <span class="text">运输出库单审核</span>
-          <div class="closeCtn" @click="checkFlag = false">
+          <div class="closeCtn"
+            @click="checkFlag = false">
             <span class="el-icon-close"></span>
           </div>
         </div>
         <div class="contentCtn">
           <div class="row">
             <div class="label">是否通过：</div>
-            <div class="info" style="line-height: 32px">
-              <el-radio v-model="reviewerParams.is_check" :label="1">通过</el-radio>
-              <el-radio v-model="reviewerParams.is_check" :label="2">驳回</el-radio>
+            <div class="info"
+              style="line-height: 32px">
+              <el-radio v-model="reviewerParams.is_check"
+                :label="1">通过</el-radio>
+              <el-radio v-model="reviewerParams.is_check"
+                :label="2">驳回</el-radio>
             </div>
           </div>
-          <div class="row" v-if="reviewerParams.is_check === 2">
+          <div class="row"
+            v-if="reviewerParams.is_check === 2">
             <div class="label">驳回理由：</div>
-            <div class="info" style="min-height: 32px; height: auto">
-              <el-input placeholder="请输入驳回理由" v-model="reviewerParams.check_desc"></el-input>
+            <div class="info"
+              style="min-height: 32px; height: auto">
+              <el-input placeholder="请输入驳回理由"
+                v-model="reviewerParams.check_desc"></el-input>
             </div>
           </div>
-          <div class="row" v-else></div>
+          <div class="row"
+            v-else></div>
           <div class="row">
             <div class="label">备注信息：</div>
             <div class="info">
-              <el-input placeholder="请输入备注信息" v-model="reviewerParams.desc"></el-input>
+              <el-input placeholder="请输入备注信息"
+                v-model="reviewerParams.desc"></el-input>
             </div>
           </div>
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn" @click="checkFlag = false">取消</span>
-          <span class="btn backHoverBlue" @click="agreeCheck">确认</span>
+          <span class="btn borderBtn"
+            @click="checkFlag = false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="agreeCheck">确认</span>
         </div>
       </div>
     </div>
-    <div class="popup" v-show="showExportPopup">
+    <div class="popup"
+      v-show="showExportPopup">
       <div class="main">
         <div class="titleCtn">
-          <span class="text"
-            >请选择需要导出的时间段<el-tooltip class="item" effect="dark" content="均为创建时间" placement="top">
-              <i class="el-icon-info"></i> </el-tooltip
-          ></span>
-          <div class="closeCtn" @click="showExportPopup = false">
+          <span class="text">请选择需要导出的时间段<el-tooltip class="item"
+              effect="dark"
+              content="均为创建时间"
+              placement="top">
+              <i class="el-icon-info"></i>
+            </el-tooltip></span>
+          <div class="closeCtn"
+            @click="showExportPopup = false">
             <span class="el-icon-close"></span>
           </div>
         </div>
         <div class="contentCtn">
           <div class="row">
             <div class="label">年份：</div>
-            <div class="info" style="line-height: 32px">
-              <el-date-picker v-model="exportYear" type="year" placeholder="选择年"> </el-date-picker>
+            <div class="info"
+              style="line-height: 32px">
+              <el-date-picker v-model="exportYear"
+                type="year"
+                placeholder="选择年"> </el-date-picker>
             </div>
           </div>
           <div class="row">
             <div class="label">季度：</div>
-            <div class="info" style="min-height: 32px; height: auto">
-              <el-select v-model="exportJiDu" placeholder="请选择" @change="changeJiDu">
-                <el-option label="全部" :value="''"></el-option>
-                <el-option label="第一季度" :value="1"></el-option>
-                <el-option label="第二季度" :value="2"></el-option>
-                <el-option label="第三季度" :value="3"></el-option>
-                <el-option label="第四季度" :value="4"></el-option>
+            <div class="info"
+              style="min-height: 32px; height: auto">
+              <el-select v-model="exportJiDu"
+                placeholder="请选择"
+                @change="changeJiDu">
+                <el-option label="全部"
+                  :value="''"></el-option>
+                <el-option label="第一季度"
+                  :value="1"></el-option>
+                <el-option label="第二季度"
+                  :value="2"></el-option>
+                <el-option label="第三季度"
+                  :value="3"></el-option>
+                <el-option label="第四季度"
+                  :value="4"></el-option>
               </el-select>
             </div>
           </div>
-          <div class="row" v-if="exportJiDu != ''">
+          <div class="row"
+            v-if="exportJiDu != ''">
             <div class="label">月份：</div>
             <div class="info">
-              <el-select v-model="exportMonth" placeholder="请选择">
-                <el-option
-                  v-for="item in monthList"
+              <el-select v-model="exportMonth"
+                placeholder="请选择">
+                <el-option v-for="item in monthList"
                   :key="item.label + item.value"
                   :label="item.label"
-                  :value="item.value"
-                >
+                  :value="item.value">
                 </el-option>
               </el-select>
             </div>
@@ -447,14 +558,20 @@
           <div class="row">
             <div class="label">单位：</div>
             <div class="info">
-              <el-cascader placeholder="筛选单位 " v-model="exportClient" filterable :options="boxClientList" clearable>
+              <el-cascader placeholder="筛选单位 "
+                v-model="exportClient"
+                filterable
+                :options="boxClientList"
+                clearable>
               </el-cascader>
             </div>
           </div>
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn" @click="showExportPopup = false">取消</span>
-          <span class="btn backHoverBlue" @click="exportExcel">确认</span>
+          <span class="btn borderBtn"
+            @click="showExportPopup = false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="exportExcel">确认</span>
         </div>
       </div>
     </div>
@@ -509,6 +626,7 @@ export default Vue.extend({
       contacts_id: '',
       contactsList: [],
       client_id: [],
+      single_client_id: '',
       checked: false,
       group_id: '',
       user_id: '',
@@ -837,6 +955,7 @@ export default Vue.extend({
   methods: {
     getContacts(ev: number[]) {
       if (ev && ev.length) {
+        this.single_client_id = ''
         client
           .detail({
             id: ev[2]
@@ -914,6 +1033,7 @@ export default Vue.extend({
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
+      this.single_client_id = query.single_client_id || ''
     },
     changeJiDu(e: any) {
       this.exportMonth = ''
@@ -987,7 +1107,9 @@ export default Vue.extend({
           '&limit=' +
           this.limit +
           '&contacts_id=' +
-          this.contacts_id
+          this.contacts_id +
+          '&single_client_id=' +
+          this.single_client_id
       )
     },
     reset() {
@@ -1022,7 +1144,7 @@ export default Vue.extend({
           code: this.keyword,
           user_id: this.user_id,
           group_id: this.group_id,
-          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
+          client_id: this.single_client_id ? this.single_client_id : this.client_id.length > 0 ? this.client_id[2] : '',
           start_time: this.date[0],
           end_time: this.date[1],
           limit: this.limit,

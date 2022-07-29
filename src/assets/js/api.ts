@@ -89,6 +89,19 @@ const todoInfo = {
   list: (params: any) => http.get(`${baseUrl}/todo/lists`, params),
   complete: (params: { id: number[] }) => http.post(`${baseUrl}/todo/complete`, params, 'application/json'),
 }
+
+// 单证管理
+import { CLInfo, DocumentInfo } from '@/types/document'
+const documentInfo = {
+  create: (params: DocumentInfo) => http.post(`${baseUrl}/document/save`, params, 'application/json'),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/document/detail`, params),
+  list: (params: ListParams) => http.get(`${baseUrl}/document/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/document/delete`, params, 'application/json'),
+  createCL: (params: CLInfo) => http.post(`${baseUrl}/document/invoice/save`, params, 'application/json'),
+  detailCL: (params: { document_id: number }) => http.get(`${baseUrl}/document/invoice/detail`, params),
+}
+
+
 // 纱线报价
 interface YarnPrice {
   id: string | number
@@ -463,6 +476,7 @@ const client = {
   create: (params: ClientInfo) => http.post(`${baseUrl}/client/save`, params, 'application/json'),
   detail: (params: DetailParams) => http.get(`${baseUrl}/client/detail`, params),
   list: (params?: {
+    code?: string
     limit?: number | string
     page?: number | string
     name?: string
@@ -1345,6 +1359,7 @@ const statistics = {
   }) => http.get(`${baseUrl}/statistics/store/total`, params),
 }
 export {
+  documentInfo,
   checkBeyond,
   fileManage,
   todoInfo,

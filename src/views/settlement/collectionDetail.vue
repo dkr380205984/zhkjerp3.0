@@ -284,8 +284,6 @@
           <div class="elCtn">
             <el-select v-model="order_type"
               @change="getOrderList">
-              <el-option label="所有单据"
-                :value="null"></el-option>
               <el-option label="订单"
                 :value="1"></el-option>
               <el-option label="样单"
@@ -398,7 +396,7 @@
         <div class="list">
           <div class="row title">
             <div class="col">票据编号</div>
-            <div class="col">关联订单号</div>
+            <div class="col">关联单号</div>
             <div class="col">开票金额</div>
             <div class="col">开票号码</div>
             <div class="col">备注信息</div>
@@ -410,7 +408,10 @@
             v-for="item in invoiceLog"
             :key="item.id">
             <div class="col">{{item.code}}</div>
-            <div class="col">{{item.order_code||'未关联订单'}}</div>
+            <div class="col"
+              style="cursor:pointer"
+              :class="{'blue':item.order_id||item.rel_doc_id,'gray':!item.order_id&&!item.rel_doc_id}"
+              @click="goOrderUrl(item)">{{item.order_id||item.rel_doc_id?(item.order_code||item.rel_doc_code||'无编号'):'未关联单据'}}</div>
             <div class="col">{{item.price}}元</div>
             <div class="col">{{item.invoice_code}}</div>
             <div class="col">{{item.desc}}</div>
@@ -494,7 +495,7 @@
         <div class="list">
           <div class="row title">
             <div class="col">票据编号</div>
-            <div class="col">关联订单号</div>
+            <div class="col">关联单号</div>
             <div class="col">收款金额</div>
             <div class="col">备注信息</div>
             <div class="col">收款人</div>
@@ -505,7 +506,10 @@
             v-for="item in collectionLog"
             :key="item.id">
             <div class="col">{{item.code}}</div>
-            <div class="col">{{item.order_code||'未关联订单'}}</div>
+            <div class="col"
+              style="cursor:pointer"
+              :class="{'blue':item.order_id||item.rel_doc_id,'gray':!item.order_id&&!item.rel_doc_id}"
+              @click="goOrderUrl(item)">{{item.order_id||item.rel_doc_id?(item.order_code||item.rel_doc_code||'无编号'):'未关联单据'}}</div>
             <div class="col">{{item.price}}元</div>
             <div class="col">{{item.desc}}</div>
             <div class="col">{{item.user_name}}</div>
@@ -585,7 +589,7 @@
         <div class="list">
           <div class="row title">
             <div class="col">票据编号</div>
-            <div class="col">关联订单号</div>
+            <div class="col">关联单号</div>
             <div class="col">扣款金额</div>
             <div class="col">扣款原因</div>
             <div class="col">图片信息</div>
@@ -597,7 +601,10 @@
             v-for="item in deductLog"
             :key="item.id">
             <div class="col">{{item.code}}</div>
-            <div class="col">{{item.order_code||'未关联订单'}}</div>
+            <div class="col"
+              style="cursor:pointer"
+              :class="{'blue':item.order_id||item.rel_doc_id,'gray':!item.order_id&&!item.rel_doc_id}"
+              @click="goOrderUrl(item)">{{item.order_id||item.rel_doc_id?(item.order_code||item.rel_doc_code||'无编号'):'未关联单据'}}</div>
             <div class="col">{{item.price}}元</div>
             <div class="col">{{item.reason}}</div>
             <div class="col">
@@ -653,7 +660,7 @@
       </div>
     </div>
     <!-- 收款 -->
-    <zh-collection :type="1"
+    <zh-collection :type="order_type===1?1:17"
       :update="collectionUpdate"
       :invoiceChange="invoiceChange"
       :show="collectionFlag"
@@ -661,9 +668,10 @@
       :client_name="clientFinancial.name"
       :client_id="$route.query.id"
       @close="collectionFlag=false"
-      @afterCollection="init()"></zh-collection>
+      @afterCollection="init()">
+    </zh-collection>
     <!-- 开票 -->
-    <zh-invoice :type="1"
+    <zh-invoice :type="order_type===1?1:17"
       :invoice_type="1"
       :update="invoiceUpdate"
       :show="invoiceFlag"
@@ -673,7 +681,7 @@
       @close="invoiceFlag=false"
       @afterInvoice="init()"></zh-invoice>
     <!-- 扣款 -->
-    <zh-deduct :type="1"
+    <zh-deduct :type="order_type===1?1:17"
       :update="deductUpdate"
       :show="deductFlag"
       :data="deductData"
@@ -776,7 +784,8 @@ export default Vue.extend({
           ifLock: true,
           ifCaogao: 'order_type',
           caogaoArr: ['订', '样'],
-          index: 0
+          index: 0,
+          errVal: '无编号'
         },
         {
           key: 'client_name',
@@ -990,6 +999,13 @@ export default Vue.extend({
       this.getCollectionLogList()
       this.getInvoiceLogList()
       this.getDeductLogList()
+    },
+    goOrderUrl(info: any) {
+      if (info.doc_type === 1) {
+        this.$openUrl('/order/detail?id=' + info.rel_doc_id)
+      } else if (info.doc_type === 17) {
+        this.$openUrl('/sampleOrder/detail?id=' + info.rel_doc_id)
+      }
     },
     exportExcel(type: number, payType: string) {
       this.loading = true

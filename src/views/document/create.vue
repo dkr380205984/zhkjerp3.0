@@ -159,7 +159,7 @@
           <div class="col">
             <div class="label">
               <span class="text">PO Number</span>
-              <span class="explanation">(必选)</span>
+              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-input placeholder="请输入Po号"
@@ -194,7 +194,7 @@
           <div class="col flex3">
             <div class="label">
               <span class="text">TO (Company Name)</span>
-              <span class="explanation">(必选)</span>
+              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-autocomplete v-model="documentInfo.to_company_name"
@@ -206,7 +206,7 @@
           <div class="col">
             <div class="label">
               <span class="text">TO (Address)</span>
-              <span class="explanation">(必选)</span>
+              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-input v-model="documentInfo.to_company_address"
@@ -218,7 +218,7 @@
           <div class="col">
             <div class="label">
               <span class="text">Order Date</span>
-              <span class="explanation">(必选)</span>
+              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-date-picker v-model="documentInfo.order_date"
@@ -231,7 +231,7 @@
           <div class="col">
             <div class="label">
               <span class="text">EX-factory Date</span>
-              <span class="explanation">(必选)</span>
+              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-date-picker v-model="documentInfo.ex_factory_date"
@@ -244,7 +244,7 @@
           <div class="col">
             <div class="label">
               <span class="text">Shipment Date</span>
-              <span class="explanation">(必选)</span>
+              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-date-picker v-model="documentInfo.shipment_date"
@@ -259,10 +259,10 @@
           <div class="col">
             <div class="label">
               <span class="text">From</span>
-              <span class="explanation">(必选)</span>
+              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
-              <el-autocomplete v-model="documentInfo.from"
+              <el-autocomplete v-model="documentInfo.from_address"
                 :fetch-suggestions="querySearchPortName"
                 placeholder="请选择生产地"></el-autocomplete>
             </div>
@@ -270,10 +270,10 @@
           <div class="col">
             <div class="label">
               <span class="text">To</span>
-              <span class="explanation">(必选)</span>
+              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
-              <el-autocomplete v-model="documentInfo.to"
+              <el-autocomplete v-model="documentInfo.to_address"
                 :fetch-suggestions="querySearchPortName"
                 placeholder="请选择发货地"></el-autocomplete>
             </div>
@@ -281,7 +281,7 @@
           <div class="col">
             <div class="label">
               <span class="text">Currency System</span>
-              <span class="explanation">(必选)</span>
+              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-select v-model="documentInfo.currency_system"
@@ -290,7 +290,7 @@
                 <el-option v-for="(item,index) in moneyArr"
                   :key="index"
                   :label="`${item.name}(${item.sign})`"
-                  :value="item.value">
+                  :value="item.sign">
                 </el-option>
               </el-select>
             </div>
@@ -300,7 +300,7 @@
           <div class="col flex3">
             <div class="label">
               <span class="text">Loading Port</span>
-              <span class="explanation">(必选)</span>
+              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-autocomplete v-model="documentInfo.loading_port"
@@ -311,7 +311,7 @@
           <div class="col flex3">
             <div class="label">
               <span class="text">Destination Port</span>
-              <span class="explanation">(必选)</span>
+              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-autocomplete v-model="documentInfo.destination_port"
@@ -339,7 +339,7 @@
 import Vue from 'vue'
 import { DocumentInfo } from '@/types/document'
 import { limitArr, moneyArr } from '@/assets/js/dictionary'
-import { client, order } from '@/assets/js/api'
+import { client, documentInfo, order } from '@/assets/js/api'
 export default Vue.extend({
   data(): {
     documentInfo: DocumentInfo
@@ -466,7 +466,6 @@ export default Vue.extend({
       ],
       documentInfo: {
         id: '',
-        document_orders: [],
         po: '',
         invoice: '',
         payment: '',
@@ -479,7 +478,8 @@ export default Vue.extend({
         to_address: '',
         loading_port: '',
         destination_port: '',
-        currency_system: ''
+        currency_system: '',
+        rel_order: []
       },
       paymentList: [],
       portList: [],
@@ -640,12 +640,11 @@ export default Vue.extend({
     },
     saveDocument() {
       console.log(this.checkedCount)
+      if (this.checkedCount.length === 0) {
+        this.$message.error('请选择订单')
+        return
+      }
       const formCheck = this.$formCheck(this.documentInfo, [
-        {
-          key: 'document_orders',
-          regNormal: 'checkArr',
-          errMsg: '请选择订单'
-        },
         {
           key: 'po',
           errMsg: '请输入PO号'
@@ -679,11 +678,11 @@ export default Vue.extend({
           errMsg: '请选择发货日期'
         },
         {
-          key: 'from',
+          key: 'from_address',
           errMsg: '请输入生产地'
         },
         {
-          key: 'to',
+          key: 'to_address',
           errMsg: '请输入发货地'
         },
         {
@@ -699,6 +698,14 @@ export default Vue.extend({
           errMsg: '请输入到达港口'
         }
       ])
+      if (!formCheck) {
+        this.documentInfo.rel_order = this.checkedCount.map((item: any) => item.id) //先保存一份字符串看看够不够用
+        documentInfo.create(this.documentInfo).then((res) => {
+          if (res.data.status) {
+            this.$message.success('添加成功')
+          }
+        })
+      }
     }
   },
   mounted() {

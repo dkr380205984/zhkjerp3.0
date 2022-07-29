@@ -1,0 +1,49 @@
+@import '../../common.less';
+@import '../../table.less';
+
+#EDPrint {
+  .title1 {
+    font-size: 32px;
+    font-weight: bold;
+    color: rgb(104, 104, 104);
+  }
+
+  &.tableCtn {
+    .tbody {
+      border-top: 1px solid @borderColor;
+      margin-bottom: 16px;
+
+      .trow {
+        &.noBorder {
+          .tcol {
+            border-right: 0;
+          }
+
+        }
+      }
+
+      .infoCtn {
+        flex-direction: row;
+        align-items: center;
+        justify-content: start;
+      }
+
+      .infoCtnCol {
+        flex-direction: column;
+        justify-content: start;
+        height: 64px;
+        padding: 8px;
+
+        .label {
+          font-size: 14px;
+          line-height: 32px;
+        }
+
+        .text {
+          font-size: 16px;
+          line-height: 32px;
+        }
+      }
+    }
+  }
+}

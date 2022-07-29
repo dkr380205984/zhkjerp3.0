@@ -372,7 +372,7 @@ export default Vue.extend({
     },
     getFilters() {
       const query = this.$route.query
-      this.page = Number(query.page)
+      this.page = Number(query.page) || 1
       this.limit = Number(query.limit) || 10
       this.type = Number(query.type)
       this.tag_id = Number(query.tag_id) || ''

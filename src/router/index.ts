@@ -820,6 +820,14 @@ const routes: Array<RouteConfig> = [
         path: '/document/detail/PL/print',
         name: '装箱单详情',
         component: () => import('../views/document/PL/print.vue')
+      }, {
+        path: '/document/detail/ED/edit',
+        name: '出口货物报关单编辑',
+        component: () => import('../views/document/ED/edit.vue')
+      }, {
+        path: '/document/detail/ED/print',
+        name: '出口货物报关单详情',
+        component: () => import('../views/document/ED/print.vue')
       }]
     }]
   }

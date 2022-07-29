@@ -649,7 +649,7 @@
                 </el-checkbox>
               </div>
               <div class="col">订购单号</div>
-              <div class="col">关联订单号</div>
+              <div class="col">关联单号</div>
               <div class="col numberWidth">订购数量</div>
               <div class="col numberWidth">订购金额</div>
               <div class="col numberWidth">入库数量</div>
@@ -672,8 +672,10 @@
                 </div>
                 <div class="col blue"
                   style="cursor:pointer"
-                  @click="$openUrl('/materialManage/detail?id='+item.plan_id)">{{ item.code }}</div>
-                <div class="col">{{ item.order_code}}</div>
+                  @click="openMaterialOrder(item)">{{ item.code }}</div>
+                <div class="col blue"
+                  style="cursor:pointer"
+                  @click="$openUrl('/order/detail?id=' + item.top_order_id)">{{ item.order_code}}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_push_number) }}</div>
@@ -685,6 +687,8 @@
                     class="blue">已通过</div>
                   <div v-if="item.is_check === 2"
                     class="red">已驳回</div>
+                  <div v-if="item.is_check > 2"
+                    class="red">异常</div>
                 </div>
                 <div class="col circleCtn">
                   <el-tooltip class="item"
@@ -971,7 +975,7 @@
                 </el-checkbox>
               </div>
               <div class="col">加工单号</div>
-              <div class="col">关联订单号</div>
+              <div class="col">关联单号</div>
               <div class="col numberWidth">加工数量</div>
               <div class="col numberWidth">加工金额</div>
               <div class="col numberWidth">完成数量</div>
@@ -993,7 +997,9 @@
                 <div class="col blue"
                   style="cursor:pointer"
                   @click="$openUrl('/materialManage/detail?id='+item.plan_id)">{{ item.code }}</div>
-                <div class="col">{{item.order_code}}</div>
+                <div class="col blue"
+                  style="cursor:pointer"
+                  @click="$openUrl('/order/detail?id=' + item.top_order_id)">{{ item.order_code}}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_push_number) }}</div>
@@ -1005,6 +1011,8 @@
                     class="blue">已通过</div>
                   <div v-if="item.is_check === 2"
                     class="red">已驳回</div>
+                  <div v-if="item.is_check > 2"
+                    class="red">异常</div>
                 </div>
                 <div class="col circleCtn">
                   <el-tooltip class="item"
@@ -1308,7 +1316,7 @@
                 </el-checkbox>
               </div>
               <div class="col">生产单号</div>
-              <div class="col">关联订单号</div>
+              <div class="col">关联单号</div>
               <div class="col numberWidth">计划数量</div>
               <div class="col numberWidth">计划金额</div>
               <div class="col numberWidth">完成数量</div>
@@ -1329,7 +1337,9 @@
                 <div class="col blue"
                   style="cursor:pointer"
                   @click="$openUrl('/productionPlan/detail?id='+item.order_id+'&sampleOrderIndex='+item.top_order_id)">{{ item.code }}</div>
-                <div class="col">{{item.order_code}}</div>
+                <div class="col blue"
+                  style="cursor:pointer"
+                  @click="$openUrl('/order/detail?id=' + item.top_order_id)">{{ item.order_code}}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_real_number) }}</div>
@@ -1340,6 +1350,8 @@
                     class="blue">已通过</div>
                   <div v-if="item.is_check === 2"
                     class="red">已驳回</div>
+                  <div v-if="item.is_check > 2"
+                    class="red">异常</div>
                 </div>
                 <div class="col circleCtn">
                   <el-tooltip class="item"
@@ -1677,7 +1689,7 @@
                 </el-checkbox>
               </div>
               <div class="col">订购单号</div>
-              <div class="col">关联订单号</div>
+              <div class="col">关联单号</div>
               <div class="col numberWidth">订购数量</div>
               <div class="col numberWidth">订购金额</div>
               <div class="col">审核状态</div>
@@ -1697,7 +1709,9 @@
                 <div class="col blue"
                   style="cursor:pointer"
                   @click="$openUrl('/packManage/detail?id=' + item.top_order_id)">{{ item.code }}</div>
-                <div class="col">{{item.order_code}}</div>
+                <div class="col blue"
+                  style="cursor:pointer"
+                  @click="$openUrl('/productionPlan/detail?id='+item.order_id+'&sampleOrderIndex='+item.top_order_id)">{{ item.code }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
                 <div class="col">
@@ -1707,6 +1721,8 @@
                     class="blue">已通过</div>
                   <div v-if="item.is_check === 2"
                     class="red">已驳回</div>
+                  <div v-if="item.is_check > 2"
+                    class="red">异常</div>
                 </div>
                 <div class="col circleCtn">
                   <el-tooltip class="item"
@@ -2308,7 +2324,7 @@
         <div class="list">
           <div class="row title">
             <div class="col">票据编号</div>
-            <div class="col">关联订单号</div>
+            <div class="col">关联单号</div>
             <div class="col">开票金额</div>
             <div class="col">开票号码</div>
             <div class="col">备注信息</div>
@@ -2320,7 +2336,7 @@
             v-for="item in invoiceLog"
             :key="item.id">
             <div class="col">{{item.code}}</div>
-            <div class="col">{{item.order_code||'未关联订单'}}</div>
+            <div class="col">{{item.rel_doc_code || '未关联'}}</div>
             <div class="col">{{item.price}}元</div>
             <div class="col">{{item.invoice_code}}</div>
             <div class="col">{{item.desc}}</div>
@@ -2406,7 +2422,7 @@
         <div class="list">
           <div class="row title">
             <div class="col">票据编号</div>
-            <div class="col">关联订单号</div>
+            <div class="col">关联单号</div>
             <div class="col">付款金额</div>
             <div class="col">备注信息</div>
             <div class="col">付款人</div>
@@ -2417,7 +2433,7 @@
             v-for="item in paymentLog"
             :key="item.id">
             <div class="col">{{item.code}}</div>
-            <div class="col">{{item.order_code||'未关联订单'}}</div>
+            <div class="col">{{item.rel_doc_code || '未关联'}}</div>
             <div class="col">{{item.price}}元</div>
             <div class="col">{{item.desc}}</div>
             <div class="col">{{item.user_name}}</div>
@@ -2497,7 +2513,7 @@
         <div class="list">
           <div class="row title">
             <div class="col">票据编号</div>
-            <div class="col">关联订单号</div>
+            <div class="col">关联单号</div>
             <div class="col">扣款金额</div>
             <div class="col">扣款原因</div>
             <div class="col">图片信息</div>
@@ -2509,7 +2525,7 @@
             v-for="item in deductLog"
             :key="item.id">
             <div class="col">{{item.code}}</div>
-            <div class="col">{{item.order_code||'未关联订单'}}</div>
+            <div class="col">{{item.rel_doc_code || '未关联'}}</div>
             <div class="col">{{item.price}}元</div>
             <div class="col">{{item.reason}}</div>
             <div class="col">
@@ -2862,11 +2878,11 @@ export default Vue.extend({
       },
       productionPlanList: [],
       productionPlanCheckList: [],
-      packOrderFilter: {
+      packOrderSts: {
         total_number: 0,
         total_price: 0
       },
-      packOrderSts: {
+      packOrderFilter: {
         date: [],
         user_id: '',
         keyword: '',
@@ -2948,24 +2964,90 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 物料订购单跳转
+    openMaterialOrder(info: any) {
+      if (info.plan_id) {
+        this.$router.push('/materialManage/detail?id=' + info.plan_id)
+      } else if (info.sup_id) {
+        this.$router.push('/materialManage/detail?id=' + info.sup_id + '&supFlag=1')
+      } else if (info.reserve_id) {
+        this.$router.push('/materialPlanOrder/detail?id=' + info.client_id)
+      }
+    },
     // 跳转单据列表去导数据
     goUrl() {
       if (this.$route.query.type === '面料原料单位') {
-        this.$openUrl('/billingManagement/rawMaterialPurchaseOrder')
+        this.$openUrl(
+          '/billingManagement/rawMaterialPurchaseOrder?single_client_id=' +
+            this.$route.query.id +
+            '&group_id=' +
+            this.materialOrderFilter.group_id +
+            '&keyword=' +
+            this.materialOrderFilter.keyword
+        )
       } else if (this.$route.query.type === '纱线原料单位') {
-        this.$openUrl('/billingManagement/rawMaterialPurchaseOrder')
+        this.$openUrl(
+          '/billingManagement/rawMaterialPurchaseOrder?single_client_id=' +
+            this.$route.query.id +
+            '&group_id=' +
+            this.materialOrderFilter.group_id +
+            '&keyword=' +
+            this.materialOrderFilter.keyword
+        )
       } else if (this.$route.query.type === '装饰辅料单位') {
-        this.$openUrl('/billingManagement/auxiliaryMaterialPurchaseOrder')
+        this.$openUrl(
+          '/billingManagement/auxiliaryMaterialPurchaseOrder?single_client_id=' +
+            this.$route.query.id +
+            '&group_id=' +
+            this.accessoriesFilter.group_id +
+            '&keyword=' +
+            this.accessoriesFilter.keyword
+        )
       } else if (this.$route.query.type === '原料加工单位') {
-        this.$openUrl('/billingManagement/rawMaterialProcessingOrder')
+        this.$openUrl(
+          '/billingManagement/rawMaterialProcessingOrder?single_client_id=' +
+            this.$route.query.id +
+            '&group_id=' +
+            this.materialProcessFilter.group_id +
+            '&keyword=' +
+            this.materialProcessFilter.keyword
+        )
       } else if (this.$route.query.type === '生产织造单位') {
-        this.$openUrl('/billingManagement/productionPlan')
+        this.$openUrl(
+          '/billingManagement/productionPlan?single_client_id=' +
+            this.$route.query.id +
+            '&group_id=' +
+            this.productionPlanFilter.group_id +
+            '&keyword=' +
+            this.productionPlanFilter.keyword
+        )
       } else if (this.$route.query.type === '生产加工单位') {
-        this.$openUrl('/billingManagement/productionPlan')
+        this.$openUrl(
+          '/billingManagement/productionPlan?single_client_id=' +
+            this.$route.query.id +
+            '&group_id=' +
+            this.productionPlanFilter.group_id +
+            '&keyword=' +
+            this.productionPlanFilter.keyword
+        )
       } else if (this.$route.query.type === '包装辅料单位') {
-        this.$openUrl('/billingManagement/packingOrder')
+        this.$openUrl(
+          '/billingManagement/packingOrder?single_client_id=' +
+            this.$route.query.id +
+            '&group_id=' +
+            this.packOrderFilter.group_id +
+            '&keyword=' +
+            this.packOrderFilter.keyword
+        )
       } else if (this.$route.query.type === '运输单位') {
-        this.$openUrl('/billingManagement/transportationDeliveryOrder')
+        this.$openUrl(
+          '/billingManagement/transportationDeliveryOrder?single_client_id=' +
+            this.$route.query.id +
+            '&group_id=' +
+            this.boxManageFilter.group_id +
+            '&keyword=' +
+            this.boxManageFilter.keyword
+        )
       }
     },
     showProduct(item: any) {
@@ -2980,9 +3062,10 @@ export default Vue.extend({
           // 物料订购单
           materialOrder
             .list({
+              code: this.materialOrderFilter.keyword,
               export_excel: 1,
               client_id: Number(this.$route.query.id),
-              group_id: this.materialOrderFilter.gourp_id,
+              group_id: this.materialOrderFilter.group_id,
               is_check: this.materialOrderFilter.is_check,
               has_invoice: this.materialOrderFilter.has_invoice,
               has_deduct: this.materialOrderFilter.has_deduct,
@@ -2993,7 +3076,7 @@ export default Vue.extend({
                   : '',
               end_time:
                 this.materialOrderFilter.date && this.materialOrderFilter.date.length > 0
-                  ? this.materialOrderFilter.date[0]
+                  ? this.materialOrderFilter.date[1]
                   : '',
               start_push_time:
                 this.materialOrderFilter.pushDate && this.materialOrderFilter.pushDate.length > 0
@@ -3001,7 +3084,7 @@ export default Vue.extend({
                   : '',
               end_push_time:
                 this.materialOrderFilter.pushDate && this.materialOrderFilter.pushDate.length > 0
-                  ? this.materialOrderFilter.pushDate[0]
+                  ? this.materialOrderFilter.pushDate[1]
                   : ''
             })
             .then((res) => {
@@ -3012,8 +3095,9 @@ export default Vue.extend({
           // 物料加工单
           materialProcess
             .list({
+              code: this.materialProcessFilter.keyword,
               client_id: Number(this.$route.query.id),
-              group_id: this.materialProcessFilter.gourp_id,
+              group_id: this.materialProcessFilter.group_id,
               is_check: this.materialProcessFilter.is_check,
               has_invoice: this.materialProcessFilter.has_invoice,
               has_deduct: this.materialProcessFilter.has_deduct,
@@ -3024,7 +3108,7 @@ export default Vue.extend({
                   : '',
               end_time:
                 this.materialProcessFilter.date && this.materialProcessFilter.date.length > 0
-                  ? this.materialProcessFilter.date[0]
+                  ? this.materialProcessFilter.date[1]
                   : '',
               export_excel: 1
             })
@@ -3036,9 +3120,10 @@ export default Vue.extend({
           // 生产计划单
           productionPlan
             .list({
+              code: this.productionPlanFilter.keyword,
               client_id: Number(this.$route.query.id),
               export_excel: 1,
-              group_id: this.productionPlanFilter.gourp_id,
+              group_id: this.productionPlanFilter.group_id,
               is_check: this.productionPlanFilter.is_check,
               has_invoice: this.productionPlanFilter.has_invoice,
               has_deduct: this.productionPlanFilter.has_deduct,
@@ -3049,7 +3134,7 @@ export default Vue.extend({
                   : '',
               end_time:
                 this.productionPlanFilter.date && this.productionPlanFilter.date.length > 0
-                  ? this.productionPlanFilter.date[0]
+                  ? this.productionPlanFilter.date[1]
                   : ''
             })
             .then((res) => {
@@ -3060,8 +3145,9 @@ export default Vue.extend({
           // 包装订购单
           packManage
             .orderList({
+              code: this.packOrderFilter.keyword,
               client_id: Number(this.$route.query.id),
-              group_id: this.packOrderFilter.gourp_id,
+              group_id: this.packOrderFilter.group_id,
               is_check: this.packOrderFilter.is_check,
               has_invoice: this.packOrderFilter.has_invoice,
               has_deduct: this.packOrderFilter.has_deduct,
@@ -3069,7 +3155,7 @@ export default Vue.extend({
               start_time:
                 this.packOrderFilter.date && this.packOrderFilter.date.length > 0 ? this.packOrderFilter.date[0] : '',
               end_time:
-                this.packOrderFilter.date && this.packOrderFilter.date.length > 0 ? this.packOrderFilter.date[0] : '',
+                this.packOrderFilter.date && this.packOrderFilter.date.length > 0 ? this.packOrderFilter.date[1] : '',
               export_excel: 1
             })
             .then((res) => {
@@ -3080,8 +3166,9 @@ export default Vue.extend({
           // 发货单
           boxManage
             .list({
+              code: this.boxManageFilter.keyword,
               client_id: Number(this.$route.query.id),
-              group_id: this.boxManageFilter.gourp_id,
+              group_id: this.boxManageFilter.group_id,
               is_check: this.boxManageFilter.is_check,
               has_invoice: this.boxManageFilter.has_invoice,
               has_deduct: this.boxManageFilter.has_deduct,
@@ -3089,7 +3176,7 @@ export default Vue.extend({
               start_time:
                 this.boxManageFilter.date && this.boxManageFilter.date.length > 0 ? this.boxManageFilter.date[0] : '',
               end_time:
-                this.boxManageFilter.date && this.boxManageFilter.date.length > 0 ? this.boxManageFilter.date[0] : '',
+                this.boxManageFilter.date && this.boxManageFilter.date.length > 0 ? this.boxManageFilter.date[1] : '',
               export_excel: 1
             })
             .then((res) => {
@@ -3186,10 +3273,11 @@ export default Vue.extend({
         // 物料订购单
         materialOrder
           .list({
+            code: this.materialOrderFilter.keyword,
             client_id: Number(this.$route.query.id),
             page: this.listPage,
             limit: 10,
-            group_id: this.materialOrderFilter.gourp_id,
+            group_id: this.materialOrderFilter.group_id,
             is_check: this.materialOrderFilter.is_check,
             has_invoice: this.materialOrderFilter.has_invoice,
             has_deduct: this.materialOrderFilter.has_deduct,
@@ -3200,7 +3288,7 @@ export default Vue.extend({
                 : '',
             end_time:
               this.materialOrderFilter.date && this.materialOrderFilter.date.length > 0
-                ? this.materialOrderFilter.date[0]
+                ? this.materialOrderFilter.date[1]
                 : '',
             start_push_time:
               this.materialOrderFilter.pushDate && this.materialOrderFilter.pushDate.length > 0
@@ -3208,7 +3296,7 @@ export default Vue.extend({
                 : '',
             end_push_time:
               this.materialOrderFilter.pushDate && this.materialOrderFilter.pushDate.length > 0
-                ? this.materialOrderFilter.pushDate[0]
+                ? this.materialOrderFilter.pushDate[1]
                 : ''
           })
           .then((res) => {
@@ -3221,9 +3309,10 @@ export default Vue.extend({
         // 物料加工单
         materialProcess
           .list({
+            code: this.materialProcessFilter.keyword,
             client_id: Number(this.$route.query.id),
             page: this.listPage,
-            group_id: this.materialProcessFilter.gourp_id,
+            group_id: this.materialProcessFilter.group_id,
             is_check: this.materialProcessFilter.is_check,
             has_invoice: this.materialProcessFilter.has_invoice,
             has_deduct: this.materialProcessFilter.has_deduct,
@@ -3234,7 +3323,7 @@ export default Vue.extend({
                 : '',
             end_time:
               this.materialProcessFilter.date && this.materialProcessFilter.date.length > 0
-                ? this.materialProcessFilter.date[0]
+                ? this.materialProcessFilter.date[1]
                 : '',
             limit: 10
           })
@@ -3248,9 +3337,10 @@ export default Vue.extend({
         // 生产计划单
         productionPlan
           .list({
+            code: this.productionPlanFilter.keyword,
             client_id: Number(this.$route.query.id),
             page: this.listPage,
-            group_id: this.productionPlanFilter.gourp_id,
+            group_id: this.productionPlanFilter.group_id,
             is_check: this.productionPlanFilter.is_check,
             has_invoice: this.productionPlanFilter.has_invoice,
             has_deduct: this.productionPlanFilter.has_deduct,
@@ -3261,7 +3351,7 @@ export default Vue.extend({
                 : '',
             end_time:
               this.productionPlanFilter.date && this.productionPlanFilter.date.length > 0
-                ? this.productionPlanFilter.date[0]
+                ? this.productionPlanFilter.date[1]
                 : '',
             limit: 10
           })
@@ -3275,9 +3365,10 @@ export default Vue.extend({
         // 包装订购单
         packManage
           .orderList({
+            code: this.packOrderFilter.keyword,
             client_id: Number(this.$route.query.id),
             page: this.listPage,
-            group_id: this.packOrderFilter.gourp_id,
+            group_id: this.packOrderFilter.group_id,
             is_check: this.packOrderFilter.is_check,
             has_invoice: this.packOrderFilter.has_invoice,
             has_deduct: this.packOrderFilter.has_deduct,
@@ -3285,7 +3376,7 @@ export default Vue.extend({
             start_time:
               this.packOrderFilter.date && this.packOrderFilter.date.length > 0 ? this.packOrderFilter.date[0] : '',
             end_time:
-              this.packOrderFilter.date && this.packOrderFilter.date.length > 0 ? this.packOrderFilter.date[0] : '',
+              this.packOrderFilter.date && this.packOrderFilter.date.length > 0 ? this.packOrderFilter.date[1] : '',
             limit: 10
           })
           .then((res) => {
@@ -3298,9 +3389,10 @@ export default Vue.extend({
         // 发货单
         boxManage
           .list({
+            code: this.boxManageFilter.keyword,
             client_id: Number(this.$route.query.id),
             page: this.listPage,
-            group_id: this.boxManageFilter.gourp_id,
+            group_id: this.boxManageFilter.group_id,
             is_check: this.boxManageFilter.is_check,
             has_invoice: this.boxManageFilter.has_invoice,
             has_deduct: this.boxManageFilter.has_deduct,
@@ -3308,7 +3400,7 @@ export default Vue.extend({
             start_time:
               this.boxManageFilter.date && this.boxManageFilter.date.length > 0 ? this.boxManageFilter.date[0] : '',
             end_time:
-              this.boxManageFilter.date && this.boxManageFilter.date.length > 0 ? this.boxManageFilter.date[0] : '',
+              this.boxManageFilter.date && this.boxManageFilter.date.length > 0 ? this.boxManageFilter.date[1] : '',
             limit: 10
           })
           .then((res) => {

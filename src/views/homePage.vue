@@ -302,6 +302,24 @@
           </div>
         </div>
       </div>
+      <div class="middleCtn">
+        <div class="module">
+          <div class="titleCtn">
+            <div class="title">
+              织为云微信公众号
+              <div class="fr hoverBlue"
+                style="font-size: 16px; font-weight: normal; cursor: pointer">
+                查看教学
+              </div>
+            </div>
+          </div>
+          <div class="content">
+            <div class="imgCtn">
+              <img :src="wxImg" />
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="rightCtn">
         <div class="module">
           <div class="titleCtn">
@@ -393,6 +411,7 @@ import { tutorialSystem, systemMessage } from '@/assets/js/api'
 export default Vue.extend({
   data() {
     return {
+      wxImg: require('@/assets/image/common/wx.jpg'),
       activeNames: '',
       systemMessageContent: '',
       systemMessageContentList: [],

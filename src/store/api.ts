@@ -282,7 +282,7 @@ const apiActions = {
               value: itemChild.id as number,
               children: itemChild.rel_client!.map((itemClient) => {
                 return {
-                  label: itemClient.name,
+                  label: itemChild.code ? (itemChild.code + '-' + itemClient.name) : itemClient.name,
                   value: itemClient.id as number
                 }
               })
@@ -294,7 +294,7 @@ const apiActions = {
               value: itemChild.id as number,
               children: itemChild.rel_client!.map((itemClient) => {
                 return {
-                  label: itemClient.name,
+                  label: itemChild.code ? (itemChild.code + '-' + itemClient.name) : itemClient.name,
                   value: itemClient.id as number
                 }
               })

@@ -3508,21 +3508,31 @@ export default Vue.extend({
       return [
         {
           name: '物料计划单',
-          url:
-            '/materialPlan/detail?id=' +
-            // @ts-ignore
-            this.materialPlanInfo.top_order_id +
-            '&sampleOrderIndex=' +
-            this.materialPlanInfo.order_id
+          url: this.$route.query.supFlag
+            ? '/materialPlan/detail?id=' +
+              // @ts-ignore
+              this.materialSupplementInfo.top_order_id +
+              '&sampleOrderIndex=' +
+              this.materialSupplementInfo.order_id
+            : '/materialPlan/detail?id=' +
+              // @ts-ignore
+              this.materialPlanInfo.top_order_id +
+              '&sampleOrderIndex=' +
+              this.materialPlanInfo.order_id
         },
         {
           name: '物料出入库',
-          url:
-            '/materialStock/detail?id=' +
-            // @ts-ignore
-            this.materialPlanInfo.top_order_id +
-            '&sampleOrderIndex=' +
-            this.materialPlanInfo.order_id
+          url: this.$route.query.supFlag
+            ? '/materialStock/detail?id=' +
+              // @ts-ignore
+              this.materialSupplementInfo.top_order_id +
+              '&sampleOrderIndex=' +
+              this.materialSupplementInfo.order_id
+            : '/materialStock/detail?id=' +
+              // @ts-ignore
+              this.materialPlanInfo.top_order_id +
+              '&sampleOrderIndex=' +
+              this.materialPlanInfo.order_id
         }
       ]
     },
@@ -3542,6 +3552,8 @@ export default Vue.extend({
               unit: item.unit,
               loss: 0,
               final_number: item.number,
+              total_order_number: item.total_order_number,
+              total_transfer_number: item.total_transfer_number,
               material_type: 1
             }
           })

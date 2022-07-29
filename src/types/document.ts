@@ -1,8 +1,6 @@
-import { OrderInfo } from "./order"
-
 export interface DocumentInfo {
   id?: string | number
-  document_orders: number[] | OrderInfo[]
+  rel_order: string | number[]
   po: string
   invoice: string
   payment: string
@@ -16,9 +14,10 @@ export interface DocumentInfo {
   loading_port: string
   destination_port: string
   currency_system: string
+  orders?: any[]
 }
 export interface CLInfo {
-  document_id: string
+  document_id?: string
   bank: string
   address: string
   code: string
@@ -34,8 +33,12 @@ export interface CLInfo {
   to_address: string
   payment: string
   shipment_date: string
-  total_for: string
-  orderInfo: Array<{
+  total_for: {
+    price: string | number
+    number: string | number
+    enPrice: string
+  }
+  order_info: Array<{
     order_data: Array<{
       style_no: string
       desc: string

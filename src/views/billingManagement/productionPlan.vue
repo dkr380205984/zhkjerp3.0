@@ -634,6 +634,7 @@ export default Vue.extend({
       contacts_id: '',
       contactsList: [],
       client_id: [],
+      single_client_id: '',
       checked: false,
       group_id: '',
       user_id: '',
@@ -963,6 +964,7 @@ export default Vue.extend({
   methods: {
     getContacts(ev: number[]) {
       if (ev && ev.length) {
+        this.single_client_id = ''
         client
           .detail({
             id: ev[2]
@@ -1046,6 +1048,7 @@ export default Vue.extend({
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
+      this.single_client_id = query.single_client_id || ''
     },
     changeJiDu(e: any) {
       this.exportMonth = ''
@@ -1123,7 +1126,9 @@ export default Vue.extend({
           '&limit=' +
           this.limit +
           '&contacts_id=' +
-          this.contacts_id
+          this.contacts_id +
+          '&single_client_id=' +
+          this.single_client_id
       )
     },
     reset() {
@@ -1162,7 +1167,7 @@ export default Vue.extend({
           group_id: this.group_id,
           process_name: this.process ? this.process[1] : '',
           order_type: this.order_type,
-          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
+          client_id: this.single_client_id ? this.single_client_id : this.client_id.length > 0 ? this.client_id[2] : '',
           start_time: this.date[0],
           end_time: this.date[1],
           limit: this.limit,

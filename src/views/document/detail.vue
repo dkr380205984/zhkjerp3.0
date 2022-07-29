@@ -6,67 +6,67 @@
       <div class="titleCtn">
         <div class="title">基本信息</div>
       </div>
-      <div class="detailCtn">
+      <div class="detailCtn documentDetail">
         <div class="row">
           <div class="col flex3">
             <div class="label">Po Number：</div>
-            <div class="text"></div>
+            <div class="text">{{documentInfo.po}}</div>
           </div>
           <div class="col flex3">
             <div class="label">Invoice Number：</div>
-            <div class="text"></div>
+            <div class="text">{{documentInfo.invoice}}</div>
           </div>
         </div>
         <div class="row">
           <div class="col">
             <div class="label">Order Date：</div>
-            <div class="text"></div>
+            <div class="text">{{documentInfo.order_date}}</div>
           </div>
           <div class="col">
             <div class="label">Ex-factory Date：</div>
-            <div class="text"></div>
+            <div class="text">{{documentInfo.ex_factory_date}}</div>
           </div>
           <div class="col">
             <div class="label">Shipment Date：</div>
-            <div class="text"></div>
+            <div class="text">{{documentInfo.shipment_date}}</div>
           </div>
         </div>
         <div class="row">
           <div class="col flex3">
             <div class="label">From：</div>
-            <div class="text"></div>
+            <div class="text">{{documentInfo.from_address}}</div>
           </div>
           <div class="col flex3">
             <div class="label">To：</div>
-            <div class="text"></div>
+            <div class="text">{{documentInfo.to_address}}</div>
           </div>
         </div>
         <div class="row">
           <div class="col">
             <div class="label">Loading Port：</div>
-            <div class="text"></div>
+            <div class="text">{{documentInfo.loading_port}}</div>
           </div>
           <div class="col">
             <div class="label">Destination Port：</div>
-            <div class="text"></div>
+            <div class="text">{{documentInfo.destination_port}}</div>
           </div>
           <div class="col">
             <div class="label">Currency System：</div>
-            <div class="text"></div>
+            <div class="text">{{documentInfo.currency_system}}</div>
           </div>
         </div>
         <div class="row">
           <div class="col">
             <div class="label">Payment Term：</div>
-            <div class="text"></div>
+            <div class="text">{{documentInfo.payment}}</div>
           </div>
           <div class="col">
             <div class="label">Company Name：</div>
-            <div class="text"></div>
+            <div class="text">{{documentInfo.to_company_name}}</div>
           </div>
           <div class="col">
             <div class="label">Company Address：</div>
-            <div class="text"></div>
+            <div class="text">{{documentInfo.to_company_address}}</div>
           </div>
         </div>
       </div>
@@ -84,28 +84,32 @@
           </div>
         </div>
         <div class="tbody">
-          <div class="trow">
-            <div class="tcol">订单号</div>
-            <div class="tcol">下单公司</div>
-            <div class="tcol">下单数量</div>
+          <div class="trow"
+            v-for="(item,index) in documentInfo.rel_order"
+            :key="index">
+            <div class="tcol">{{item.order_code}}</div>
+            <div class="tcol">{{item.client}}</div>
+            <div class="tcol">{{item.order_number}}</div>
           </div>
         </div>
       </div>
     </div>
     <div class="topTagCtn">
       <div class="tag"
-        :class="{'acitve':type==='CL'}"
+        :class="{'active':type==='CL'}"
         @click="goRouter('CL')">
         <span class="text">形式发票</span>
         <span class="text">Commercial Invoice</span>
       </div>
       <div class="tag"
-        :class="{'acitve':type==='PL'}"
+        :class="{'active':type==='PL'}"
         @click="goRouter('PL')">
         <span class="text">装箱单</span>
         <span class="text">Packing list</span>
       </div>
-      <div class="tag">
+      <div class="tag"
+        :class="{'active':type==='ED'}"
+        @click="goRouter('ED')">
         <span class="text">出口货物报关单</span>
         <span class="text">Export declaration</span>
       </div>
@@ -134,16 +138,29 @@
 </template>
 
 <script lang="ts">
+import { billDocumentSetting, documentInfo } from '@/assets/js/api'
+import { ClientEN } from '@/types/billDocumentSetting'
+import { DocumentInfo } from '@/types/document'
 import Vue from 'vue'
 export default Vue.extend({
   data(): {
+    clientEN: ClientEN
+    documentInfo: DocumentInfo
     [propName: string]: any
   } {
     return {
       loading: false,
+      clientEN: {
+        name: '',
+        code: '',
+        address: '',
+        signature: '',
+        tel: '',
+        fax: '',
+        special_seal: ''
+      },
       documentInfo: {
         id: '',
-        document_orders: [],
         po: '',
         invoice: '',
         payment: '',
@@ -156,7 +173,9 @@ export default Vue.extend({
         to_address: '',
         loading_port: '',
         destination_port: '',
-        currency_system: ''
+        currency_system: '',
+        rel_order: [],
+        orders: []
       },
       type: ''
     }
@@ -164,17 +183,28 @@ export default Vue.extend({
   methods: {
     goRouter(type: string) {
       this.type = type
-      this.$router.push('/document/detail/' + type + '/print')
+      this.$router.push('/document/detail/' + type + '/print?id=' + this.$route.query.id)
     },
     edit() {
-      this.$router.push('/document/detail/' + this.type + '/edit')
+      this.$router.push('/document/detail/' + this.type + '/edit?id=' + this.$route.query.id)
     }
   },
   mounted() {
-    console.log(this.$route)
+    if (this.$route.name?.includes('编辑')) {
+      this.editFlag = true
+    }
     if (this.$route.name === '形式发票详情' || this.$route.name === '形式发票编辑') {
       this.type = 'CL'
     }
+    Promise.all([
+      documentInfo.detail({
+        id: Number(this.$route.query.id)
+      }),
+      billDocumentSetting.clientENDetail()
+    ]).then((res) => {
+      this.documentInfo = res[0].data.data
+      this.clientEN = res[1].data.data
+    })
   }
 })
 </script>
