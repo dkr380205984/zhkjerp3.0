@@ -182,6 +182,7 @@
                     <div class="tcol">订购数量</div>
                     <div class="tcol">入库数量</div>
                     <div class="tcol">订购单价</div>
+                    <div class="tcol">结算单价</div>
                   </div>
                 </div>
                 <div class="tbody">
@@ -193,6 +194,7 @@
                     <div class="tcol">{{ itemChild.number }}{{ itemChild.unit }}</div>
                     <div class="tcol">{{ itemChild.final_push_number }}</div>
                     <div class="tcol">{{ itemChild.price }}元</div>
+                    <div class="tcol">{{ itemChild.settle_price }}元</div>
                   </div>
                 </div>
               </div>

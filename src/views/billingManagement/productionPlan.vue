@@ -150,22 +150,21 @@
             全部展开
           </div>
         </div>
-        <div class="list"
-          style="font-size:12px">
+        <div class="list">
           <div class="row title">
             <div class="col"
               style="flex: 0.05">
               <el-checkbox v-model="checkAllPlan"
                 @change="checkAll"></el-checkbox>
             </div>
-            <div class="col">生产单号</div>
+            <div class="col" style="flex:2.1">生产单号</div>
             <div class="col">关联订单号</div>
             <div class="col">生产单位</div>
             <div class="col">合计计划数量</div>
             <div class="col">合计计划金额</div>
             <div class="col">检验入库数量</div>
             <div class="col"
-              style="flex:1.1">半次(B品)/全次数</div>
+              style="flex:1.1">半次/全次数</div>
             <div class="col"
               style="flex:0.9">加工工序</div>
             <div class="col"
@@ -173,9 +172,9 @@
             <div class="col">生产状态</div>
             <div class="col">审核状态</div>
             <div class="col">创建人</div>
-            <div class="col">创建时间</div>
+            <div class="col" style="flex:1.52">创建时间</div>
             <div class="col"
-              style="flex:1.7">操作</div>
+              style="flex:2.33">操作</div>
           </div>
           <div v-for="(item, index) in list"
             :key="index">
@@ -185,7 +184,7 @@
                 <el-checkbox v-model="item.checked"
                   @change="$forceUpdate()"></el-checkbox>
               </div>
-              <div class="col">{{ item.code }}</div>
+              <div class="col" style="flex:2.1" >{{ item.code }}</div>
               <div class="col hoverBlue"
                 style="
                   cursor: pointer;
@@ -244,9 +243,9 @@
                   class="red">状态异常</div>
               </div>
               <div class="col">{{ item.user_name }}</div>
-              <div class="col">{{ item.created_at }}</div>
+              <div class="col" style="flex:1.52">{{ item.created_at }}</div>
               <div class="col"
-                style="flex:1.7;padding:0">
+                style="flex:2.33;">
                 <span class="opr hoverBlue"
                   @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
                 <span class="opr hoverBlue"

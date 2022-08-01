@@ -125,7 +125,14 @@
               <div class="col">{{ item.client.name }}</div>
               <div class="col">{{ (+item.price).toFixed(2) }}</div>
               <div class="col">{{ item.invoice_code }}</div>
-              <div class="col">{{ item.desc || '无' }}</div>
+              <div
+                class="col"
+                style="overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2"
+              >
+                <el-tooltip class="item" effect="dark" :content="item.desc || '无'" placement="top-start">
+                  <div>{{ item.desc || '无' }}</div>
+                </el-tooltip>
+              </div>
               <div class="col">{{ item.user_name }}</div>
               <div class="col">{{ item.created_at }}</div>
               <div class="col">
