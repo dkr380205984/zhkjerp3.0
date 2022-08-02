@@ -123,7 +123,13 @@
                   display:block;
                 "
                 :title="item.order_code || '无编号，点击查看详情'"
-                @click="$router.push('/order/detail?id=' + item.order_id)"
+                @click="
+                  $router.push(
+                    (item.order_type === 1 || item.order_type === null || item.order_type === undefined
+                      ? '/order/detail?id='
+                      : '/sampleOrder/detail?id=') + item.order_id
+                  )
+                "
               >
                 <span v-if="item.order_type === 1" class="circle backOrange">订</span>
                 <span v-if="item.order_type === 2" class="circle backBlue">样</span>

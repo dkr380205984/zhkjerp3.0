@@ -24,13 +24,13 @@
         <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
         <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
         <!-- <div class="tab" @click="$router.push('/billingManagement/orderQuotationComparison')">订单报价单对比单据</div> -->
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
-        <div style="width:100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
+        <div style="width: 100px"></div>
       </div>
       <div class="listCtn">
         <div class="filterCtn">
@@ -122,7 +122,13 @@
                   display:block;
                 "
                 :title="item.order_code || '无编号，点击查看详情'"
-                @click="$router.push('/order/detail?id=' + item.top_order_id)"
+                @click="
+                  $router.push(
+                    (item.order_type === 1 || item.order_type === null || item.order_type === undefined
+                      ? '/order/detail?id='
+                      : '/sampleOrder/detail?id=') + item.top_order_id
+                  )
+                "
               >
                 <span v-if="item.order_type === 1" class="circle backOrange">订</span>
                 <span v-if="item.order_type === 2" class="circle backBlue">样</span>

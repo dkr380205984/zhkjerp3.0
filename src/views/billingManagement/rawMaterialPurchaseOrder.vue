@@ -103,6 +103,16 @@
               <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
             </el-select>
           </div>
+          <div class="elCtn">
+            <el-select @change="changeRouter" v-model="orderTypes" placeholder="筛选订购类型" clearable>
+              <el-option value="" label="全部"></el-option>
+              <el-option value="plan" label="计划订购"></el-option>
+              <el-option value="sub" label="补纱订购"></el-option>
+              <el-option value="reserve" label="预订购"></el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="filterCtn" style="overflow: hidden">
           <div class="btn borderBtn backHoverBlue" style="color: white" @click="oneShowAll">全部展开</div>
         </div>
         <div class="list">
@@ -112,12 +122,12 @@
             </div>
             <div class="col" style="flex: 1.2">订购单号</div>
             <div class="col">关联订单号</div>
+            <div class="col">订购类型</div>
             <div class="col">订购单位</div>
             <div class="col">合计订购数量</div>
             <div class="col">合计订购金额</div>
             <div class="col">合计入库数量</div>
             <div class="col">合计入库金额</div>
-            <div class="col">额外费用</div>
             <div class="col">审核状态</div>
             <div class="col" style="flex: 0.7">创建人</div>
             <div class="col">创建时间</div>
@@ -141,11 +151,22 @@
                   display:block;
                 "
                 :title="item.order_code || '无编号，点击查看详情'"
-                @click="$router.push('/order/detail?id=' + item.top_order_id)"
+                @click="
+                  $router.push(
+                    (item.order_type === 1 || item.order_type === null || item.order_type === undefined
+                      ? '/order/detail?id='
+                      : '/sampleOrder/detail?id=') + item.top_order_id
+                  )
+                "
               >
                 <span v-if="item.order_type === 1" class="circle backOrange">订</span>
                 <span v-if="item.order_type === 2" class="circle backBlue">样</span>
                 {{ item.order_code || '无编号，点击查看详情' }}
+              </div>
+              <div class="col">
+                <div v-if="item.plan_id">计划订购</div>
+                <div v-if="item.reserve_id">预订购</div>
+                <div v-if="item.sup_id">补纱订购</div>
               </div>
               <div class="col">{{ item.client_name }}</div>
               <div class="col">{{ (+item.total_number).toFixed(2) }}</div>
@@ -154,9 +175,6 @@
                 {{ item.total_push_number.toFixed(2) }}
               </div>
               <div class="col">{{ item.total_push_price.toFixed(2) }}</div>
-              <div class="col">
-                <others-fee-data :data="item.others_fee_data"></others-fee-data>
-              </div>
               <div class="col">
                 <div v-if="item.is_check === 0" class="orange">未审核</div>
                 <div v-else-if="item.is_check === 1" class="blue">已通过</div>
@@ -173,6 +191,24 @@
             </div>
             <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
               <div class="tableCtn" style="padding-top: 0">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">额外费用：</div>
+                    <div class="text"><others-fee-data :data="item.others_fee_data"></others-fee-data></div>
+                  </div>
+                  <div class="col">
+                    <div class="label">关联计划单：</div>
+                    <div
+                      :class="item.detail.plan_code ? 'hoverBlue text' : 'text'"
+                      :style="item.detail.plan_code ? { cursor: 'pointer' } : {}"
+                      @click="
+                        item.detail.plan_code ? $router.push('/materialManage/detail?id=' + item.detail.plan_id) : ''
+                      "
+                    >
+                      {{ item.detail.plan_code || '无' }}
+                    </div>
+                  </div>
+                </div>
                 <div class="thead">
                   <div class="trow">
                     <div class="tcol">原料名称</div>
@@ -194,7 +230,7 @@
                     <div class="tcol">{{ itemChild.number }}{{ itemChild.unit }}</div>
                     <div class="tcol">{{ itemChild.final_push_number }}</div>
                     <div class="tcol">{{ itemChild.price }}元</div>
-                    <div class="tcol">{{ itemChild.settle_price }}元</div>
+                    <div class="tcol">{{ itemChild.settle_price || 0 }}元</div>
                   </div>
                 </div>
               </div>
@@ -402,6 +438,7 @@ export default Vue.extend({
       checked: false,
       additional: {},
       group_id: '',
+      ordertypes: '',
       user_id: '',
       order_type: '',
       type: 'null',
@@ -797,6 +834,7 @@ export default Vue.extend({
       this.keyword = query.keyword || ''
       this.order_type = query.order_type || ''
       this.status = query.status || 'null'
+      this.orderTypes = query.orderTypes || ''
       this.type = Number(query.type) || 'null'
       this.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
@@ -871,6 +909,8 @@ export default Vue.extend({
           this.order_type +
           '&status=' +
           this.status +
+          '&orderTypes=' +
+          this.orderTypes +
           '&type=' +
           this.type +
           '&date=' +
@@ -896,6 +936,7 @@ export default Vue.extend({
           this.date = []
           this.type = 'null'
           this.status = 'null'
+          this.orderTypes = 'null'
           this.contacts_id = ''
           this.limit = 10
           this.changeRouter()
@@ -908,20 +949,27 @@ export default Vue.extend({
         })
     },
     getList() {
+      let obj: any = {
+        is_check: this.status,
+        code: this.keyword,
+        material_type: 1,
+        order_type: this.order_type,
+        user_id: this.user_id,
+        group_id: this.group_id,
+        client_id: this.client_id.length > 0 ? this.client_id[2] : '',
+        start_time: this.date[0],
+        end_time: this.date[1],
+        limit: this.limit,
+        page: this.page
+      }
+
+      if (this.orderTypes) {
+        obj[this.orderTypes] = 1
+      }
+
       materialOrder
-        .list({
-          is_check: this.status,
-          code: this.keyword,
-          material_type: 1,
-          order_type: this.order_type,
-          user_id: this.user_id,
-          group_id: this.group_id,
-          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
-          start_time: this.date[0],
-          end_time: this.date[1],
-          limit: this.limit,
-          page: this.page
-        })
+        // @ts-ignore
+        .list(obj)
         .then((res) => {
           if (res.data.status) {
             res.data.data.items.forEach((item: any) => {
