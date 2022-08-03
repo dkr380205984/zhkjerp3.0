@@ -107,7 +107,7 @@
             <el-select @change="changeRouter" v-model="orderTypes" placeholder="筛选订购类型" clearable>
               <el-option value="" label="全部"></el-option>
               <el-option value="plan" label="计划订购"></el-option>
-              <el-option value="sub" label="补纱订购"></el-option>
+              <el-option value="sup" label="补纱订购"></el-option>
               <el-option value="reserve" label="预订购"></el-option>
             </el-select>
           </div>
