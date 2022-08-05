@@ -715,7 +715,7 @@
                 </div>
                 <div class="col">{{ item.user_name }}</div>
                 <div class="col">{{ item.created_at }}</div>
-                <div class="col">暂无</div>
+                <div class="col">{{item.push_time}}</div>
                 <div class="col oprWidth">
                   <span class="opr hoverBlue"
                     @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
@@ -999,7 +999,7 @@
                   @click="$openUrl('/materialManage/detail?id='+item.plan_id)">{{ item.code }}</div>
                 <div class="col blue"
                   style="cursor:pointer"
-                  @click="$openUrl('/order/detail?id=' + item.top_order_id)">{{ item.order_code}}</div>
+                  @click="$openUrl('/order/detail?id=' + item.top_order_id)">{{ item.order_code || '无编号'}}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_push_number) }}</div>
@@ -1336,7 +1336,7 @@
                 </div>
                 <div class="col blue"
                   style="cursor:pointer"
-                  @click="$openUrl('/productionPlan/detail?id='+item.order_id+'&sampleOrderIndex='+item.top_order_id)">{{ item.code }}</div>
+                  @click="$openUrl('/productionPlan/detail?id='+item.top_order_id+'&sampleOrderIndex='+item.order_id)">{{ item.code }}</div>
                 <div class="col blue"
                   style="cursor:pointer"
                   @click="$openUrl('/order/detail?id=' + item.top_order_id)">{{ item.order_code}}</div>
@@ -1711,7 +1711,7 @@
                   @click="$openUrl('/packManage/detail?id=' + item.top_order_id)">{{ item.code }}</div>
                 <div class="col blue"
                   style="cursor:pointer"
-                  @click="$openUrl('/productionPlan/detail?id='+item.order_id+'&sampleOrderIndex='+item.top_order_id)">{{ item.code }}</div>
+                  @click="$openUrl('/productionPlan/detail?id='+item.top_order_id+'&sampleOrderIndex='+item.order_id)">{{ item.order_code }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
                 <div class="col">
@@ -2972,6 +2972,9 @@ export default Vue.extend({
         this.$router.push('/materialManage/detail?id=' + info.sup_id + '&supFlag=1')
       } else if (info.reserve_id) {
         this.$router.push('/materialPlanOrder/detail?id=' + info.client_id)
+      } else {
+        // 都没有说明是辅料单子，不需要计划
+        this.$router.push('/accessoriesManage/detail?id=' + info.top_order_id + '&sampleOrderIndex=' + info.order_id)
       }
     },
     // 跳转单据列表去导数据

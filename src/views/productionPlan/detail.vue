@@ -176,7 +176,8 @@
           <div class="rowCtn"
             v-for="(item,index) in productionPlanList"
             :key="index">
-            <div class="row">
+            <div class="row"
+              @click.prevent="item.show=!item.show;$forceUpdate()">
               <div class="col"
                 style="max-width:36px">{{index+1}}</div>
               <div class="col">{{item.code}}</div>
@@ -202,8 +203,7 @@
               <div class="col">{{item.end_time}}</div>
               <div class="col">{{item.user_name}}</div>
               <div class="col">
-                <div class="opr hoverBlue"
-                  @click="item.show=!item.show;$forceUpdate()">{{item.show?'收回':'展开'}}</div>
+                <div class="opr hoverBlue">{{item.show?'收回':'展开'}}</div>
                 <div class="buttonList"
                   style="margin:0;padding:0">
                   <div class="btn hoverBlue"
@@ -222,7 +222,7 @@
                         <span class="text">更新数量</span>
                       </div>
                       <div class="btn backHoverBlue"
-                        @click="$openUrl('/productionPlan/print?id='+item.id+'&order_id='+$route.query.id)">
+                        @click.stop="$openUrl('/productionPlan/print?id='+item.id+'&order_id='+$route.query.id)">
                         <svg class="iconFont"
                           aria-hidden="true">
                           <use xlink:href="#icon-xiugaidingdan"></use>
@@ -230,7 +230,7 @@
                         <span class="text">打印单据</span>
                       </div>
                       <div class="btn backHoverRed"
-                        @click="deleteProductionPlan(item.id)">
+                        @click.stop="deleteProductionPlan(item.id)">
                         <svg class="iconFont"
                           aria-hidden="true">
                           <use xlink:href="#icon-xiugaidingdan"></use>
@@ -238,7 +238,7 @@
                         <span class="text">删除单据</span>
                       </div>
                       <div class="btn backHoverOrange"
-                        @click="Number($getsessionStorage('has_check'))!==1&&(item.has_invoice===1||item.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):goUpdate(item)">
+                        @click.stop="Number($getsessionStorage('has_check'))!==1&&(item.has_invoice===1||item.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):goUpdate(item)">
                         <svg class="iconFont"
                           aria-hidden="true">
                           <use xlink:href="#icon-xiugaidingdan"></use>
@@ -246,7 +246,7 @@
                         <span class="text">修改单据</span>
                       </div>
                       <div class="btn backHoverGreen"
-                        @click="goMaterialSupplement(item)">
+                        @click.stop="goMaterialSupplement(item)">
                         <svg class="iconFont"
                           aria-hidden="true">
                           <use xlink:href="#icon-xiugaidingdan"></use>
@@ -254,7 +254,7 @@
                         <span class="text">补充物料</span>
                       </div>
                       <div class="btn backHoverGreen"
-                        @click="goDeduct(item,4)">
+                        @click.stop="goDeduct(item,4)">
                         <svg class="iconFont"
                           aria-hidden="true">
                           <use xlink:href="#icon-xiugaidingdan"></use>
@@ -263,7 +263,7 @@
                       </div>
                       <div class="btn"
                         :class="item.deduct_data && item.deduct_data.length>0?'backHoverBlue':'backGray'"
-                        @click="getDeduct(item.deduct_data)">
+                        @click.stop="getDeduct(item.deduct_data)">
                         <svg class="iconFont"
                           aria-hidden="true">
                           <use xlink:href="#icon-xiugaidingdan"></use>
@@ -271,7 +271,7 @@
                         <span class="text">扣款记录</span>
                       </div>
                       <div class="btn backHoverOrange"
-                        @click="divideProductionPlan(item)">
+                        @click.stop="divideProductionPlan(item)">
                         <svg class="iconFont"
                           aria-hidden="true">
                           <use xlink:href="#icon-xiugaidingdan"></use>
@@ -279,7 +279,7 @@
                         <span class="text">拆分单据</span>
                       </div>
                       <div class="btn backHoverOrange"
-                        @click="storeSurplus(item.material_info_data)">
+                        @click.stop="storeSurplus(item.material_info_data)">
                         <svg class="iconFont"
                           aria-hidden="true">
                           <use xlink:href="#icon-xiugaidingdan"></use>
@@ -287,7 +287,7 @@
                         <span class="text">结余入库</span>
                       </div>
                       <div class="btn backHoverOrange"
-                        @click="checkType=4;checkFlag=true">
+                        @click.stop="checkType=4;checkFlag=true">
                         <svg class="iconFont"
                           aria-hidden="true">
                           <use xlink:href="#icon-xiugaidingdan"></use>

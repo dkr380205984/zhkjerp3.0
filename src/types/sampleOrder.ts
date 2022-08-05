@@ -73,4 +73,5 @@ export interface SampleOrderInfo {
   settle_unit: string // 报价币种
   rel_quote_id?: number | string
   time_data: SampleOrderTime | SampleOrderTime[]
+  editor?: any
 }

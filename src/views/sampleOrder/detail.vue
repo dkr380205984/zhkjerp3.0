@@ -51,7 +51,7 @@
           <div class="col">
             <div class="label">备注信息：</div>
             <div class="text"
-              :class="{'gray':!sampleOrderInfo.desc}">{{sampleOrderInfo.desc || '无备注信息'}}</div>
+              v-html="sampleOrderInfo.desc"></div>
           </div>
         </div>
         <div class="row">

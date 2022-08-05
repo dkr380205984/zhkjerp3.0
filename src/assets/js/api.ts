@@ -633,7 +633,7 @@ const product = {
 }
 
 // 订单 
-import { OrderInfo } from '@/types/order'
+import { OrderInfo, SendInfo } from '@/types/order'
 const order = {
   create: (params: OrderInfo) => http.post(`${baseUrl}/order/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrl}/order/lists`, params),
@@ -654,6 +654,10 @@ const order = {
   logList: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/rel/doc/info`, params), // 订单相关所有单据信息
   materialDetail: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/material/info/new`, params), // 物料汇总表
   productionDetail: (params: { order_time_id: string | number }) => http.get(`${baseUrl}/order/weave/info`, params), // 生产汇总表
+  updateSendInfo: (params: {
+    send_info: SendInfo
+    order_time_id: string | number
+  }) => http.post(`${baseUrl}/update/order/send/info`, params, 'application/json'),
 }
 
 // 跟单据相关的所有单位

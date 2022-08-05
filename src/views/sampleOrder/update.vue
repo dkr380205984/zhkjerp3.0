@@ -101,9 +101,8 @@
             <div class="label">
               <span class="text">备注信息</span>
             </div>
-            <div class="info elCtn">
-              <el-input placeholder="请输入备注信息"
-                v-model="sampleOrderInfo.desc"></el-input>
+            <div id='editorOrder'
+              style="z-index: 0;position: relative;">
             </div>
           </div>
         </div>
@@ -154,6 +153,7 @@ export default Vue.extend({
         order_type: 2,
         code: '',
         desc: '',
+        editor: '',
         time_data: {
           id: '',
           order_time: '',
@@ -243,6 +243,7 @@ export default Vue.extend({
       this.sampleOrderInfo.tree_data = (this.sampleOrderInfo.tree_data as number[]).join(',')
       // @ts-ignore
       this.sampleOrderInfo.time_data = null
+      this.sampleOrderInfo.editor = ''
       this.loading = true
       sampleOrder.create(this.sampleOrderInfo).then((res) => {
         if (res.data.status) {
@@ -335,6 +336,9 @@ export default Vue.extend({
         })
         this.sampleOrderInfo.public_files = []
         this.loading = false
+        this.$nextTick(() => {
+          this.$initEditor(this.sampleOrderInfo, 'Order')
+        })
       })
   }
 })

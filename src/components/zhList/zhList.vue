@@ -21,7 +21,6 @@
         :key="index+Math.random(1)">
         <div class="column check"
           v-if="check">
-          <el-checkbox></el-checkbox>
         </div>
         <div class="column"
           v-for="itemKey in listKey"
@@ -51,7 +50,8 @@
                 :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?itemKey.caogaoArr[0]:itemKey.caogaoArr[1]}}</span>
               <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')"
                 class="text">
-                {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unitKey?item[itemKey.unitKey]:itemKey.unit}}</span>
+                {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unitKey?item[itemKey.unitKey]:itemKey.unit}}
+              </span>
             </template>
           </template>
           <!-- 图片元素 -->
@@ -389,7 +389,16 @@
                   :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?itemKey.caogaoArr[0]:itemKey.caogaoArr[1]}}</span>
                 <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')"
                   class="text">
-                  {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unitKey?item[itemKey.unitKey]:itemKey.unit}}</span>
+                  {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unitKey?item[itemKey.unitKey]:itemKey.unit}}
+                  <!-- 订单紧急专用标记 -->
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="加急"
+                    placement="top"
+                    v-if="itemKey.is_urgent&&item.is_urgent===1">
+                    <i class="el-icon-warning red"></i>
+                  </el-tooltip>
+                </span>
               </template>
             </template>
           </div>
@@ -545,6 +554,11 @@ export default Vue.extend({
       }
       this.$forceUpdate()
       // this.allCheck = this.checkedCount.length === this.list.length;
+    }
+  },
+  watch: {
+    list(val) {
+      this.allCheck = false
     }
   }
 })

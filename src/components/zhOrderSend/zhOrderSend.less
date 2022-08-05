@@ -1,0 +1,41 @@
+@import '../../assets/css/common.less';
+@import '../../assets/css/popup.less';
+@import '../../assets/css/edit.less';
+
+.zhOrderSend {
+  .main {
+    max-width: 800px;
+  }
+
+  .editCtn {
+    padding: 0;
+
+    .row {
+      position: relative;
+
+      .opr {
+        position: absolute;
+        width: auto;
+        white-space: nowrap;
+        cursor: pointer;
+        transform: none;
+        font-size: @fontMiddle;
+        right: -28px;
+        margin: 0;
+        bottom: 0;
+        height: 32px;
+        line-height: 32px;
+        top: auto;
+      }
+
+      .col {
+        margin-right: 12px;
+
+        .label {
+          font-size: 16px;
+          text-align: left;
+        }
+      }
+    }
+  }
+}

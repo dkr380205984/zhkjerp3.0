@@ -1006,7 +1006,7 @@ export default Vue.extend({
 
       materialProcess
         .list({
-          client_id: this.exportClient.length > 0 ? this.exportClient[2] : '',
+          client_id: this.exportClient.length > 0 ? this.exportClient[2] : this.$route.query.single_client_id || '',
           start_time: start_time,
           end_time: end_time,
           export_excel: 1

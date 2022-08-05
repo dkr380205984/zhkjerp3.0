@@ -30,6 +30,34 @@
                 value="4"></el-option>
               <el-option label="物料计划单"
                 value="5"></el-option>
+              <el-option label="原料采购单"
+                value="6"></el-option>
+              <el-option label="辅料采购单"
+                value="7"></el-option>
+              <el-option label="原料调取单"
+                value="8"></el-option>
+              <el-option label="原料加工单"
+                value="9"></el-option>
+              <el-option label="原料入库单"
+                value="10"></el-option>
+              <el-option label="辅料入库单"
+                value="11"></el-option>
+              <el-option label="原料出库单"
+                value="12"></el-option>
+              <el-option label="生产计划单"
+                value="13"></el-option>
+              <el-option label="装箱计划单"
+                value="14"></el-option>
+              <el-option label="装箱采购单"
+                value="15"></el-option>
+              <el-option label="装箱运输单"
+                value="16"></el-option>
+              <el-option label="检验入库单"
+                value="17"></el-option>
+              <el-option label="检验出库单"
+                value="18"></el-option>
+              <el-option label="成品入库单"
+                value="19"></el-option>
             </el-select>
           </el-input>
           <div class="btn backHoverBlue"
@@ -170,6 +198,292 @@
             </div>
             <div class="noMsg"
               v-if="searchList.materialPlan.length === 0">暂无相关信息</div>
+          </div>
+          <div class="block"
+            v-show="searchType === '0' || searchType === '6'">
+            <div class="titled">相关物料采购</div>
+            <div class="info title">
+              <span class="text">编号</span>
+              <span class="text">订/样单编号</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+            </div>
+            <div class="info"
+              v-for="item in searchList.materialOrder"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/materialManage/detail?id=' + item.plan_id||item.sup_id)"></span>
+              <span class="text">{{ item.order_code }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
+            </div>
+            <div class="noMsg"
+              v-if="searchList.materialOrder.length === 0">暂无相关信息</div>
+          </div>
+          <div class="block"
+            v-show="searchType === '0' || searchType === '7'">
+            <div class="titled">相关辅料采购</div>
+            <div class="info title">
+              <span class="text">编号</span>
+              <span class="text">订/样单编号</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+            </div>
+            <div class="info"
+              v-for="item in searchList.decorateOrder"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/accessoriesManage/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id)"></span>
+              <span class="text">{{ item.order_code }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
+            </div>
+            <div class="noMsg"
+              v-if="searchList.decorateOrder.length === 0">暂无相关信息</div>
+          </div>
+          <div class="block"
+            v-show="searchType === '0' || searchType === '8'">
+            <div class="titled">相关物料调取</div>
+            <div class="info title">
+              <span class="text">编号</span>
+              <span class="text">订/样单编号</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+            </div>
+            <div class="info"
+              v-for="item in searchList.materialStock"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/materialManage/detail?id=' + item.plan_id||item.sup_id)"></span>
+              <span class="text">{{ item.order_code }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
+            </div>
+            <div class="noMsg"
+              v-if="searchList.materialStock.length === 0">暂无相关信息</div>
+          </div>
+          <div class="block"
+            v-show="searchType === '0' || searchType === '9'">
+            <div class="titled">相关物料加工</div>
+            <div class="info title">
+              <span class="text">编号</span>
+              <span class="text">订/样单编号</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+            </div>
+            <div class="info"
+              v-for="item in searchList.materialProcess"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/materialManage/detail?id=' + item.plan_id||item.sup_id)"></span>
+              <span class="text">{{ item.order_code }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
+            </div>
+            <div class="noMsg"
+              v-if="searchList.materialProcess.length === 0">暂无相关信息</div>
+          </div>
+          <div class="block"
+            v-show="searchType === '0' || searchType === '10'">
+            <div class="titled">相关物料入库</div>
+            <div class="info title">
+              <span class="text">编号</span>
+              <span class="text">订/样单编号</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+            </div>
+            <div class="info"
+              v-for="item in searchList.materialPush"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/materialStock/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id)"></span>
+              <span class="text">{{ item.order_code }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
+            </div>
+            <div class="noMsg"
+              v-if="searchList.materialPush.length === 0">暂无相关信息</div>
+          </div>
+          <div class="block"
+            v-show="searchType === '0' || searchType === '12'">
+            <div class="titled">相关物料出库</div>
+            <div class="info title">
+              <span class="text">编号</span>
+              <span class="text">订/样单编号</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+            </div>
+            <div class="info"
+              v-for="item in searchList.materialPop"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/materialStock/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id)"></span>
+              <span class="text">{{ item.order_code }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
+            </div>
+            <div class="noMsg"
+              v-if="searchList.materialPop.length === 0">暂无相关信息</div>
+          </div>
+          <div class="block"
+            v-show="searchType === '0' || searchType === '13'">
+            <div class="titled">相关生产计划</div>
+            <div class="info title">
+              <span class="text">编号</span>
+              <span class="text">订/样单编号</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+            </div>
+            <div class="info"
+              v-for="item in searchList.productionPlan"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/productionPlan/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id)"></span>
+              <span class="text">{{ item.order_code }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
+            </div>
+            <div class="noMsg"
+              v-if="searchList.productionPlan.length === 0">暂无相关信息</div>
+          </div>
+          <div class="block"
+            v-show="searchType === '0' || searchType === '14'">
+            <div class="titled">相关装箱计划</div>
+            <div class="info title">
+              <span class="text">编号</span>
+              <span class="text">订/样单编号</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+            </div>
+            <div class="info"
+              v-for="item in searchList.packPlan"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/packManage/detail?id=' + item.doc_order_id)"></span>
+              <span class="text">{{ item.order_code }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
+            </div>
+            <div class="noMsg"
+              v-if="searchList.packPlan.length === 0">暂无相关信息</div>
+          </div>
+          <div class="block"
+            v-show="searchType === '0' || searchType === '15'">
+            <div class="titled">相关装箱采购</div>
+            <div class="info title">
+              <span class="text">编号</span>
+              <span class="text">订/样单编号</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+            </div>
+            <div class="info"
+              v-for="item in searchList.packOrder"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/packManage/detail?id=' + item.doc_order_id)"></span>
+              <span class="text">{{ item.order_code }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
+            </div>
+            <div class="noMsg"
+              v-if="searchList.packOrder.length === 0">暂无相关信息</div>
+          </div>
+          <div class="block"
+            v-show="searchType === '0' || searchType === '16'">
+            <div class="titled">相关装箱运输</div>
+            <div class="info title">
+              <span class="text">编号</span>
+              <span class="text">订/样单编号</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+            </div>
+            <div class="info"
+              v-for="item in searchList.packOut"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/boxManage/boxDetail?' + item.id)"></span>
+              <span class="text">{{ item.order_code }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
+            </div>
+            <div class="noMsg"
+              v-if="searchList.packOut.length === 0">暂无相关信息</div>
+          </div>
+          <div class="block"
+            v-show="searchType === '0' || searchType === '17'">
+            <div class="titled">相关检验入库</div>
+            <div class="info title">
+              <span class="text">编号</span>
+              <span class="text">订/样单编号</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+            </div>
+            <div class="info"
+              v-for="item in searchList.inspectionPush"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/inspection/detail?id=' + item.doc_order_id)"></span>
+              <span class="text">{{ item.order_code }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
+            </div>
+            <div class="noMsg"
+              v-if="searchList.inspectionPush.length === 0">暂无相关信息</div>
+          </div>
+          <div class="block"
+            v-show="searchType === '0' || searchType === '18'">
+            <div class="titled">相关检验出库</div>
+            <div class="info title">
+              <span class="text">编号</span>
+              <span class="text">订/样单编号</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+            </div>
+            <div class="info"
+              v-for="item in searchList.inspectionPop"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/inspection/detail?id=' + item.doc_order_id)"></span>
+              <span class="text">{{ item.order_code }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
+            </div>
+            <div class="noMsg"
+              v-if="searchList.inspectionPop.length === 0">暂无相关信息</div>
+          </div>
+          <div class="block"
+            v-show="searchType === '0' || searchType === '19'">
+            <div class="titled">相关成品入库</div>
+            <div class="info title">
+              <span class="text">编号</span>
+              <span class="text">订/样单编号</span>
+              <span class="text">创建时间</span>
+              <span class="text">创建人</span>
+            </div>
+            <div class="info"
+              v-for="item in searchList.produtionPush"
+              :key="item.id">
+              <span class="text hoverBlue"
+                v-html="item.code"
+                @click="$openUrl('/inspection/detail?id=' + item.doc_order_id)"></span>
+              <span class="text">{{ item.order_code }}</span>
+              <span class="text">{{ item.create_time }}</span>
+              <span class="text">{{ item.user_name }}</span>
+            </div>
+            <div class="noMsg"
+              v-if="searchList.produtionPush.length === 0">暂无相关信息</div>
           </div>
         </div>
       </div>
@@ -628,7 +942,21 @@ export default Vue.extend({
         sampleOrder: [],
         quotedPrice: [],
         materialPlan: [],
-        craft: []
+        craft: [],
+        materialOrder: [],
+        decorateOrder: [],
+        materialStock: [],
+        materialProcess: [],
+        materialPush: [],
+        materialPop: [],
+        decoratePush: [],
+        productionPlan: [],
+        packPlan: [],
+        packOrder: [],
+        packOut: [],
+        inspectionPush: [],
+        inspectionPop: [],
+        produtionPush: []
       },
       tutorialSystemArr: [],
       todoList: []
@@ -706,7 +1034,21 @@ export default Vue.extend({
                 sampleOrder: res.data.data.sample_order,
                 quotedPrice: res.data.data.quote,
                 materialPlan: res.data.data.material_plan,
-                craft: res.data.data.craft_list
+                craft: res.data.data.craft_list,
+                materialOrder: res.data.data.material_order,
+                decorateOrder: res.data.data.decorate_order,
+                materialStock: res.data.data.material_transfer,
+                materialProcess: res.data.data.material_process,
+                materialPush: res.data.data.final_push,
+                materialPop: res.data.data.final_pop,
+                decoratePush: res.data.data.decorate_final_push,
+                productionPlan: res.data.data.weave_plan,
+                packPlan: res.data.data.pack_plan,
+                packOrder: res.data.data.pack_order,
+                packOut: res.data.data.transport_dispatch,
+                inspectionPush: res.data.data.inspection_push,
+                inspectionPop: res.data.data.inspection_pop,
+                produtionPush: res.data.data.pro_inspection
               }
             }
           }

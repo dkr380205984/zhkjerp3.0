@@ -79,7 +79,7 @@
               'red':item.total_order_number+item.total_transfer_number>item.final_number,
               'green':item.total_order_number+item.total_transfer_number===item.final_number,
               'orange':item.total_order_number+item.total_transfer_number<item.final_number
-              }">{{(item.total_order_number+item.total_transfer_number>item.final_number?'+':'')+(item.total_order_number+item.total_transfer_number - item.final_number)}}{{item.unit}}</div>
+              }">{{(item.total_order_number+item.total_transfer_number>item.final_number?'+':'')+($toFixed(item.total_order_number+item.total_transfer_number - item.final_number))}}{{item.unit}}</div>
           </div>
         </div>
       </div>
@@ -962,6 +962,9 @@
                   <el-input placeholder="自动计算"
                     v-model="totalOrderNumberList[index]"
                     disabled>
+                    <template slot="append">
+                      {{item.info_data[0].unit}}
+                    </template>
                   </el-input>
                 </div>
               </div>
@@ -1890,7 +1893,6 @@
                   <el-input placeholder="自动计算"
                     v-model="totalOrderNumber"
                     disabled>
-                    <template slot="append">kg</template>
                   </el-input>
                 </div>
               </div>
@@ -2811,7 +2813,7 @@ export default Vue.extend({
       this.materialOrderInfo.forEach((item, index) => {
         item.is_check = is_check ? is_check : ''
         item.client_id = item.client_id_arr![2]
-        item.order_id = this.materialPlanInfo.order_id
+        item.order_id = this.materialPlanInfo.order_id || this.materialSupplementInfo.order_id
         item.total_price = this.totalOrderPriceList[index]
         item.total_number = this.totalOrderNumberList[index]
         if (this.$route.query.supFlag) {

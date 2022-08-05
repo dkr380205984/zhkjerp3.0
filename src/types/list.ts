@@ -20,4 +20,5 @@ export interface ListSetting {
   isStatus?: boolean // 给订单状态专门设置的
   isProgress?: boolean // 给订单进度专门设置的
   specialForOrderPrcess?: 'order' | 'sampleOrder' // 订单样单流程专用，理论上不应该出现在组件里
+  is_urgent?: boolean // 订单样单加急状态专用
 }

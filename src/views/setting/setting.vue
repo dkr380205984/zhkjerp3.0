@@ -969,7 +969,7 @@
                 <div class="elCtn">
                   <el-input v-model="yarnKeyword1"
                     placeholder="搜索纱线名称"
-                    @keydown.enter="getYarn(1)"></el-input>
+                    @keydown.native.enter="getYarn(1)"></el-input>
                 </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true;yarnInfo1.id=''">添加纱线</div>
@@ -1055,7 +1055,7 @@
                 <div class="elCtn">
                   <el-input v-model="yarnKeyword2"
                     placeholder="搜索面料名称"
-                    @change="getYarn(2)"></el-input>
+                    @keydown.native.enter="getYarn(2)"></el-input>
                 </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true;;yarnInfo2.id=''">添加面料</div>
@@ -1180,7 +1180,7 @@
                 <div class="elCtn">
                   <el-input v-model="decorateMaterialKeyword"
                     placeholder="搜索辅料名称"
-                    @keydown.enter="getDecorateMaterial"></el-input>
+                    @keydown.native.enter="getDecorateMaterial"></el-input>
                 </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true;decorateMaterialInfo.id=''">添加辅料</div>
@@ -1232,7 +1232,7 @@
                 <div class="elCtn">
                   <el-input v-model="packMaterialKeyword"
                     placeholder="搜索辅料名称"
-                    @keydown.enter="getPackMaterial"></el-input>
+                    @keydown.native.enter="getPackMaterial"></el-input>
                 </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true">添加辅料</div>
@@ -1282,7 +1282,7 @@
                 <div class="elCtn">
                   <el-input v-model="yarnPriceKeyword1"
                     placeholder="搜索纱线名称"
-                    @keydown.enter="getYarnPrice"></el-input>
+                    @keydown.native.enter="getYarnPrice"></el-input>
                 </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true">添加报价</div>
@@ -1354,7 +1354,7 @@
                 <div class="elCtn">
                   <el-input v-model="yarnPriceKeyword2"
                     placeholder="搜索面料名称"
-                    @keydown.enter="getMianliaoPrice"></el-input>
+                    @keydown.native.enter="getMianliaoPrice"></el-input>
                 </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true">添加报价</div>
@@ -1510,8 +1510,8 @@
                     <span class="opr"
                       :class="{'hoverRed':item.status===1,'hoverGreen':item.status!==1}"
                       @click="checkUser(item.id)">{{item.status===1?'禁用':'启用'}}</span>
-                    <span class="opr hoverRed"
-                      @click="deleteUser(item.id)">删除</span>
+                    <!-- <span class="opr hoverRed"
+                      @click="deleteUser(item.id)">删除</span> -->
                     <span class="opr hoverOrange"
                       @click="getUpdateUser(item)">修改</span>
                   </div>

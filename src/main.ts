@@ -145,7 +145,7 @@ declare module 'vue/types/vue' {
     $setSessionStorage(name: string, info: any): void
     $getsessionStorage(name: string): string
     $openUrl(url: string): void
-    $initEditor(item: any, index?: number): void
+    $initEditor(item: any, index?: number | string): void
     $debounce(val: string, timer: any, fn: Function, time?: number): void
     $focusInput(ev: any): void
     $copyTextInfo(val: string): void

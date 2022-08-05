@@ -912,7 +912,7 @@ export default Vue.extend({
 
       materialOrder
         .list({
-          client_id: this.exportClient.length > 0 ? this.exportClient[2] : '',
+          client_id: this.exportClient.length > 0 ? this.exportClient[2] : this.$route.query.single_client_id || '',
           material_type: 2,
           start_time: start_time,
           end_time: end_time,

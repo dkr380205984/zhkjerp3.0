@@ -57,8 +57,6 @@
           </div>
           <div class="btn borderBtn fr"
             @click="reset">重置</div>
-          <div class="btn backHoverBlue fr"
-            @click="page=1;listType=!listType;changeRouter()">查看{{listType?'产品库存列表':'产品日志列表'}}</div>
         </div>
         <div class="filterCtn clearfix">
           <div class="btn backHoverGreen fr"
@@ -83,8 +81,8 @@
                   <div class="trow">
                     <div class="tcol">产品信息</div>
                     <div class="tcol">尺码颜色</div>
-                    <div class="tcol">库存数量</div>
-                    <div class="tcol">销售单价</div>
+                    <div class="tcol">数量</div>
+                    <div class="tcol">单价</div>
                   </div>
                 </div>
                 <div class="tcol">操作人</div>
@@ -125,8 +123,11 @@
                     v-for="(itemChild,indexChild) in item.info_data"
                     :key="indexChild">
                     <div class="tcol">
-                      <span>{{itemChild.product_code}}</span>
-                      <span>{{itemChild.category}}/{{itemChild.secondary_category}}</span>
+                      <span class="blue">
+                        <span style="cursor:pointer"
+                          @click="productId=itemChild.product_id;productShow=true">{{itemChild.product_code}}</span>
+                        <span>({{itemChild.category}}/{{itemChild.secondary_category}})</span>
+                      </span>
                     </div>
                     <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
                     <div class="tcol">{{itemChild.number}}</div>
@@ -134,7 +135,7 @@
                   </div>
                 </div>
                 <div class="tcol">{{item.user_name}}</div>
-                <div class="tcol">操作日期</div>
+                <div class="tcol">{{item.created_at}}</div>
               </div>
             </div>
           </div>
@@ -153,7 +154,7 @@
                   style="flex:3">
                   <div class="trow">
                     <div class="tcol">尺码颜色</div>
-                    <div class="tcol">库存数量</div>
+                    <div class="tcol">数量</div>
                     <div class="tcol">操作</div>
                   </div>
                 </div>
@@ -164,7 +165,13 @@
                 v-for="item in list"
                 :key="item.id">
                 <div class="tcol">{{item.store}}/{{item.secondary_store}}</div>
-                <div class="tcol">{{item.product_code}}({{item.category}}/{{item.secondary_category}})</div>
+                <div class="tcol">
+                  <span class="blue">
+                    <span style="cursor:pointer"
+                      @click="productId=item.product_id;productShow=true">{{item.product_code}}</span>
+                    <span>({{item.category}}/{{item.secondary_category}})</span>
+                  </span>
+                </div>
                 <div class="tcol">{{item.name}}</div>
                 <div class="tcol">{{item.style_code}}</div>
                 <div class="tcol">
@@ -420,6 +427,8 @@
       <div class="main">
         <div class="btnCtn"
           style="float:left">
+          <div class="btn backHoverBlue fr"
+            @click="page=1;listType=!listType;changeRouter()">查看{{listType?'产品库存列表':'产品日志列表'}}</div>
           <div class="btn backHoverGreen fr"
             @click="getStoreList();lookListFlag=true">仓库列表</div>
           <div class="btn backHoverBlue"
@@ -433,6 +442,9 @@
         </div> -->
       </div>
     </div>
+    <product-detail :id="productId"
+      :show="productShow"
+      @close="productShow = false"></product-detail>
     <product-edit :show="stockInFlag"
       :ifStore="true"
       @close="stockInFlag=false"
@@ -452,6 +464,8 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      productShow: false,
+      productId: '',
       storeArr: [],
       store_id: '',
       secondary_id: '',
