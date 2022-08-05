@@ -89,6 +89,19 @@ const todoInfo = {
   list: (params: any) => http.get(`${baseUrl}/todo/lists`, params),
   complete: (params: { id: number[] }) => http.post(`${baseUrl}/todo/complete`, params, 'application/json'),
 }
+
+// 单证管理
+import { CLInfo, DocumentInfo } from '@/types/document'
+const documentInfo = {
+  create: (params: DocumentInfo) => http.post(`${baseUrl}/document/save`, params, 'application/json'),
+  detail: (params: DetailParams) => http.get(`${baseUrl}/document/detail`, params),
+  list: (params: ListParams) => http.get(`${baseUrl}/document/lists`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/document/delete`, params, 'application/json'),
+  createCL: (params: CLInfo) => http.post(`${baseUrl}/document/invoice/save`, params, 'application/json'),
+  detailCL: (params: { document_id: number }) => http.get(`${baseUrl}/document/invoice/detail`, params),
+}
+
+
 // 纱线报价
 interface YarnPrice {
   id: string | number
@@ -463,6 +476,7 @@ const client = {
   create: (params: ClientInfo) => http.post(`${baseUrl}/client/save`, params, 'application/json'),
   detail: (params: DetailParams) => http.get(`${baseUrl}/client/detail`, params),
   list: (params?: {
+    code?: string
     limit?: number | string
     page?: number | string
     name?: string
@@ -502,6 +516,7 @@ const user = {
   list: (params?: ListParams) => http.get(`${baseUrl}/user/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/user/delete`, params, 'application/json'),
   getSms: (params: { phone: string }) => http.post(`${baseUrl}/user/add/send/sms`, params, 'application/json'),
+  check: (params: { id: string | number }) => http.post(`${baseUrl}/user/check/status`, params, 'application/json') // 启用禁用用户
 }
 
 // 报价单
@@ -591,7 +606,7 @@ const sampleOrder = {
   confirm: (params: { id: string | number, status: 1 | 2 | 3 | 4 | 5 | 6 }) => http.post(`${baseUrl}/order/product/confirm`, params, 'application/json'),
   confirmList: (params: { order_id: number, status?: number[] }) => http.get(`${baseUrl}/order/confirm/product/lists`, params),
   deletePro: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product`, params, 'application/json'), // 删除产品
-  materialDetail: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/material/info`, params),
+  materialDetail: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/material/info/new`, params),
   deleteProChild: (params: DeleteParams) => http.post(`${baseUrl}/order/delete/rel/product/info`, params, 'application/json'), // 删除产品子项
   clientCheck: (params: { order_id: string | number }) => http.post(`${baseUrl}/order/time/client/confirm`, params, 'application/json'), // 客户确认完成
   completeCheck: (params: { order_id: string | number }) => http.post(`${baseUrl}/order/time/complete`, params, 'application/json'), // 打样次数确认完成
@@ -618,7 +633,7 @@ const product = {
 }
 
 // 订单 
-import { OrderInfo } from '@/types/order'
+import { OrderInfo, SendInfo } from '@/types/order'
 const order = {
   create: (params: OrderInfo) => http.post(`${baseUrl}/order/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrl}/order/lists`, params),
@@ -639,6 +654,10 @@ const order = {
   logList: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/rel/doc/info`, params), // 订单相关所有单据信息
   materialDetail: (params: { order_id: string | number }) => http.get(`${baseUrl}/order/material/info/new`, params), // 物料汇总表
   productionDetail: (params: { order_time_id: string | number }) => http.get(`${baseUrl}/order/weave/info`, params), // 生产汇总表
+  updateSendInfo: (params: {
+    send_info: SendInfo
+    order_time_id: string | number
+  }) => http.post(`${baseUrl}/update/order/send/info`, params, 'application/json'),
 }
 
 // 跟单据相关的所有单位
@@ -1344,6 +1363,7 @@ const statistics = {
   }) => http.get(`${baseUrl}/statistics/store/total`, params),
 }
 export {
+  documentInfo,
   checkBeyond,
   fileManage,
   todoInfo,

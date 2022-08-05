@@ -438,7 +438,8 @@ export default Vue.extend({
           name: '系统编号',
           ifShow: true,
           ifLock: true,
-          index: 0
+          index: 0,
+          is_urgent: true
         },
         {
           key: 'code',

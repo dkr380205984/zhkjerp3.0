@@ -271,7 +271,8 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 7,
-          errVal: '暂无'
+          errVal: '0',
+          unitKey: 'quote_unit'
         },
         {
           key: 'has_craft',
@@ -299,7 +300,7 @@ export default Vue.extend({
           index: 10
         },
         {
-          key: 'update_at',
+          key: 'created_at',
           name: '创建时间',
           ifShow: true,
           ifLock: false,

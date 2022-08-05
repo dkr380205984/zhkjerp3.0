@@ -354,6 +354,7 @@ export default Vue.extend({
       loading: true,
       saveLock: false,
       editSampleShow: false,
+      mustFlag: false,
       sampleId: '',
       sampleShow: false,
       sampleUpdateList: [],

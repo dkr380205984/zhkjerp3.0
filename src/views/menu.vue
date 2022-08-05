@@ -154,16 +154,16 @@ export default Vue.extend({
             url: '/product/list?page=1'
           },
           {
-            name: '系统设置',
-            id: 16,
-            icon: 'icon-xitongshezhi',
-            url: '/setting'
-          },
-          {
             name: '文件管理',
             id: '23-1',
             icon: 'icon-wuliaojihua',
             url: '/fileManage/list?page=1&status=&client_id=&date=&group_id=&user_id=&limit='
+          },
+          {
+            name: '系统设置',
+            id: 16,
+            icon: 'icon-xitongshezhi',
+            url: '/setting'
           },
           {
             name: '单证管理',

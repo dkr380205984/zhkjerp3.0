@@ -7,6 +7,48 @@
 @import '../bottomBar.less';
 
 #sampleOrderDetail {
+  .scrollCtn {
+    overflow: auto;
+    width: 100%;
+    height: auto;
+
+    .tableCtn {
+      width: 2100px;
+
+      .tcol {
+        min-width: 100px;
+        flex: none;
+        flex-grow: 0;
+        flex-shrink: 0;
+
+        .changeCtn {
+          flex-direction: row;
+
+          .el-icon-s-unfold {
+            margin: 0 4px;
+          }
+        }
+
+        .text {
+          max-width: 100px;
+          min-width: 100px;
+        }
+
+        &.flex2 {
+          flex: 2
+        }
+
+        &.flex3 {
+          flex: 3
+        }
+
+        &.flex4 {
+          flex: 4
+        }
+      }
+    }
+  }
+
   .titleIn {
     color: @blue;
     padding: 0 32px;

@@ -21,6 +21,8 @@ export interface MaterialSupplementInfo {
     number: string | number
     tree_data: string | string[]
     unit: string
+    total_order_number?: string | number
+    total_transfer_number?: string | number
     material_type: 1 | 2 //1原料 2辅料
   }>
 }

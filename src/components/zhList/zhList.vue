@@ -2,7 +2,7 @@
   <div class="zhList fixedTableCtn"
     v-loading="loading">
     <div class="original"
-      @mousewheel="listenWheel"
+      @mousewheel.prevent="listenWheel"
       :ref="listId">
       <div class="row title">
         <div class="column check"
@@ -21,7 +21,6 @@
         :key="index+Math.random(1)">
         <div class="column check"
           v-if="check">
-          <el-checkbox></el-checkbox>
         </div>
         <div class="column"
           v-for="itemKey in listKey"
@@ -51,7 +50,8 @@
                 :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?itemKey.caogaoArr[0]:itemKey.caogaoArr[1]}}</span>
               <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')"
                 class="text">
-                {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unit}}</span>
+                {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unitKey?item[itemKey.unitKey]:itemKey.unit}}
+              </span>
             </template>
           </template>
           <!-- 图片元素 -->
@@ -79,6 +79,9 @@
                 :preview-src-list="item[itemKey.from][item.whichIndex||0][itemKey.key]">
               </el-image>
             </div>
+          </template>
+          <template v-if="itemKey.from && !itemKey.ifImage && !itemKey.mark">
+            {{item[itemKey.from].length>0?(item[itemKey.from][item.whichIndex||0][itemKey.key] || item[itemKey.from][item.whichIndex||0][itemKey.otherkey] || (itemKey.errVal||'未填写')):'未填写'}}
           </template>
           <!-- 特殊元素，给订单流程搞得特殊值 -->
           <template v-if="itemKey.specialForOrderPrcess === 'order'">
@@ -285,7 +288,53 @@
           </template>
           <!-- 单证流程 -->
           <template v-if="itemKey.specialForOrderPrcess === 'document'">
-            形箱货出申
+            <div class="processCtn">
+              <div class="circle"
+                :class="{'green':item.status_commercial_invoice===1,'gray':item.status_commercial_invoice===2}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  content="形式发票"
+                  placement="top">
+                  <span class="text">形</span>
+                </el-tooltip>
+              </div>
+              <div class="circle"
+                :class="{'green':item.status_packing_list===1,'gray':item.status_packing_list===2}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  content="装箱单"
+                  placement="top">
+                  <span class="text">箱</span>
+                </el-tooltip>
+              </div>
+              <div class="circle"
+                :class="{'green':item.status_entrustiong_transport===1,'gray':item.status_entrustiong_transport===2}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  content="货运委托书"
+                  placement="top">
+                  <span class="text">货</span>
+                </el-tooltip>
+              </div>
+              <div class="circle"
+                :class="{'green':item.status_export_declaration===1,'gray':item.status_export_declaration===2}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  content="出口货物报关单"
+                  placement="top">
+                  <span class="text">出</span>
+                </el-tooltip>
+              </div>
+              <div class="circle"
+                :class="{'green':item.status_declare_elements===1,'gray':item.status_declare_elements===2}">
+                <el-tooltip class="item"
+                  effect="dark"
+                  content="申报要素"
+                  placement="top">
+                  <span class="text">申</span>
+                </el-tooltip>
+              </div>
+            </div>
           </template>
         </div>
         <div class="column w130">
@@ -340,7 +389,16 @@
                   :class="item[itemKey.ifCaogao]===1?'backOrange':'backBlue'">{{item[itemKey.ifCaogao]===1?itemKey.caogaoArr[0]:itemKey.caogaoArr[1]}}</span>
                 <span :class="itemKey.class || (itemKey.classArr?itemKey.classArr[item[itemKey.key]]:'')"
                   class="text">
-                  {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unit}}</span>
+                  {{itemKey.filterArr?itemKey.filterArr[item[itemKey.key]]:item[itemKey.key] ||item[itemKey.otherkey] || (itemKey.errVal||'未填写')}}{{itemKey.unitKey?item[itemKey.unitKey]:itemKey.unit}}
+                  <!-- 订单紧急专用标记 -->
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="加急"
+                    placement="top"
+                    v-if="itemKey.is_urgent&&item.is_urgent===1">
+                    <i class="el-icon-warning red"></i>
+                  </el-tooltip>
+                </span>
               </template>
             </template>
           </div>
@@ -496,6 +554,11 @@ export default Vue.extend({
       }
       this.$forceUpdate()
       // this.allCheck = this.checkedCount.length === this.list.length;
+    }
+  },
+  watch: {
+    list(val) {
+      this.allCheck = false
     }
   }
 })

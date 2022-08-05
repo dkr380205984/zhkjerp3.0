@@ -49,9 +49,12 @@
 </template>
 
 <script lang="ts">
+import { documentInfo } from '@/assets/js/api'
+import { DocumentInfo } from '@/types/document'
 import Vue from 'vue'
 export default Vue.extend({
   data(): {
+    list: DocumentInfo[]
     [propName: string]: any
   } {
     return {
@@ -95,37 +98,25 @@ export default Vue.extend({
       },
       originalSetting: [
         {
-          key: 'po_number',
+          key: 'po',
           name: 'PO Number',
           ifShow: true,
           ifLock: true,
           index: 0
         },
         {
-          key: 'invoice_number',
+          key: 'invoice',
           name: 'Invoice Number',
           ifShow: true,
           ifLock: true,
           index: 1
         },
         {
-          key: 'product_code',
-          otherkey: 'system_code',
-          name: '产品编号',
+          key: 'to_company_name',
+          name: 'To',
           ifShow: true,
-          ifLock: false,
-          index: 4,
-          from: 'product_data',
-          mark: true
-        },
-        {
-          key: 'image_data',
-          name: '产品图片',
-          ifShow: true,
-          ifLock: false,
-          ifImage: true,
-          index: 5,
-          from: 'product_data'
+          ifLock: true,
+          index: 2
         },
         {
           key: '',
@@ -136,39 +127,61 @@ export default Vue.extend({
           specialForOrderPrcess: 'document'
         },
         {
+          key: 'product_code',
+          name: '产品编号',
+          ifShow: true,
+          ifLock: false,
+          index: 3,
+          from: 'orders',
+          mark: true
+        },
+        {
+          key: 'image',
+          name: '产品图片',
+          ifShow: true,
+          ifLock: false,
+          ifImage: true,
+          index: 4,
+          from: 'orders'
+        },
+        {
           key: 'order_number',
           name: '订单总数',
           ifShow: true,
           ifLock: false,
-          index: 5
+          index: 6,
+          from: 'orders'
         },
         {
           key: 'order_time',
           name: '下单日期',
           ifShow: true,
           ifLock: false,
-          index: 5
+          index: 7,
+          from: 'orders'
         },
         {
-          key: 'create_time',
+          key: 'order_date',
           name: '添加日期',
           ifShow: true,
           ifLock: false,
-          index: 5
+          index: 8
         },
         {
-          key: 'user_name',
+          key: 'user',
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 12
+          index: 9
         }
       ],
       oprList: [
         {
           name: '详情',
           class: 'hoverBlue',
-          fn: (item: any) => {}
+          fn: (item: any) => {
+            this.$router.push('/document/detail/CL/print?id=' + item.id)
+          }
         },
         {
           name: '修改',
@@ -184,7 +197,19 @@ export default Vue.extend({
               cancelButtonText: '取消',
               type: 'warning'
             })
-              .then(() => {})
+              .then(() => {
+                documentInfo
+                  .delete({
+                    id: item.id
+                  })
+                  .then((res) => {
+                    if (res.data.status) {
+                      this.$message.success('删除成功')
+                      // @ts-ignore
+                      this.getList()
+                    }
+                  })
+              })
               .catch(() => {
                 this.$message({
                   type: 'info',
@@ -198,7 +223,24 @@ export default Vue.extend({
   },
   methods: {
     changeRouter() {},
-    getFilters() {}
+    getFilters() {},
+    getList() {
+      documentInfo
+        .list({
+          page: this.page,
+          limit: this.limit
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.list = res.data.data.items
+            this.total = res.data.data.total
+          }
+        })
+    }
+  },
+  created() {
+    this.getFilters()
+    this.getList()
   }
 })
 </script>

@@ -154,14 +154,309 @@
     </div>
     <div class="module"
       v-if="productionPlanList.length>0">
-      <el-tabs type="border-card"
+      <div class="titleCtn">
+        <div class="title">加工单据</div>
+      </div>
+      <div class="listCtn">
+        <div class="list">
+          <div class="row title">
+            <div class="col"
+              style="max-width:36px">序号</div>
+            <div class="col">加工单编号</div>
+            <div class="col">加工单位</div>
+            <div class="col">加工工序</div>
+            <div class="col">审核状态</div>
+            <div class="col">生产状态</div>
+            <div class="col">结算状态</div>
+            <div class="col">加工日期</div>
+            <div class="col">交货日期</div>
+            <div class="col">创建人</div>
+            <div class="col">操作</div>
+          </div>
+          <div class="rowCtn"
+            v-for="(item,index) in productionPlanList"
+            :key="index">
+            <div class="row"
+              @click.prevent="item.show=!item.show;$forceUpdate()">
+              <div class="col"
+                style="max-width:36px">{{index+1}}</div>
+              <div class="col">{{item.code}}</div>
+              <div class="col">{{item.client_name}}</div>
+              <div class="col">{{item.process_name}}</div>
+              <div class="col"
+                :class="item.is_check|filterCheckClass">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="item.is_check>=3?'点击查看异常处理办法':'点击查看审核日志'"
+                  placement="top">
+                  <span style="cursor:pointer"
+                    @click="productionPlanIndex=item.id;checkType=4;checkDetailFlag=true;is_check=item.is_check">{{item.is_check|filterCheck}}</span>
+                </el-tooltip>
+              </div>
+              <div class="col"
+                :class="item.status|productionClassFilter">
+                {{item.status|productionFilter}}
+              </div>
+              <div class="col"
+                :class="{'green':item.has_invoice===1||item.has_pay===1,'gray':item.has_invoice!==1&&item.has_pay!==1}">{{item.has_invoice===1||item.has_pay===1?'已结算':'待结算'}}</div>
+              <div class="col">{{item.start_time}}</div>
+              <div class="col">{{item.end_time}}</div>
+              <div class="col">{{item.user_name}}</div>
+              <div class="col">
+                <div class="opr hoverBlue">{{item.show?'收回':'展开'}}</div>
+                <div class="buttonList"
+                  style="margin:0;padding:0">
+                  <div class="btn hoverBlue"
+                    style="padding:0">
+                    <span class="text">操作</span>
+                  </div>
+                  <div class="otherInfoCtn">
+                    <div class="otherInfo">
+                      <div class="btn backHoverBlue"
+                        style="margin-right:12px"
+                        @click="$router.push('/productionPlan/progressList??page=1&user_id=&status=1&date=&limit=10&group_id=&listType=1&process_name_arr=&client_id=&contacts_id&keyword='+item.code)">
+                        <svg class="iconFont"
+                          aria-hidden="true">
+                          <use xlink:href="#icon-xiugaidingdan"></use>
+                        </svg>
+                        <span class="text">更新数量</span>
+                      </div>
+                      <div class="btn backHoverBlue"
+                        @click.stop="$openUrl('/productionPlan/print?id='+item.id+'&order_id='+$route.query.id)">
+                        <svg class="iconFont"
+                          aria-hidden="true">
+                          <use xlink:href="#icon-xiugaidingdan"></use>
+                        </svg>
+                        <span class="text">打印单据</span>
+                      </div>
+                      <div class="btn backHoverRed"
+                        @click.stop="deleteProductionPlan(item.id)">
+                        <svg class="iconFont"
+                          aria-hidden="true">
+                          <use xlink:href="#icon-xiugaidingdan"></use>
+                        </svg>
+                        <span class="text">删除单据</span>
+                      </div>
+                      <div class="btn backHoverOrange"
+                        @click.stop="Number($getsessionStorage('has_check'))!==1&&(item.has_invoice===1||item.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):goUpdate(item)">
+                        <svg class="iconFont"
+                          aria-hidden="true">
+                          <use xlink:href="#icon-xiugaidingdan"></use>
+                        </svg>
+                        <span class="text">修改单据</span>
+                      </div>
+                      <div class="btn backHoverGreen"
+                        @click.stop="goMaterialSupplement(item)">
+                        <svg class="iconFont"
+                          aria-hidden="true">
+                          <use xlink:href="#icon-xiugaidingdan"></use>
+                        </svg>
+                        <span class="text">补充物料</span>
+                      </div>
+                      <div class="btn backHoverGreen"
+                        @click.stop="goDeduct(item,4)">
+                        <svg class="iconFont"
+                          aria-hidden="true">
+                          <use xlink:href="#icon-xiugaidingdan"></use>
+                        </svg>
+                        <span class="text">单据扣款</span>
+                      </div>
+                      <div class="btn"
+                        :class="item.deduct_data && item.deduct_data.length>0?'backHoverBlue':'backGray'"
+                        @click.stop="getDeduct(item.deduct_data)">
+                        <svg class="iconFont"
+                          aria-hidden="true">
+                          <use xlink:href="#icon-xiugaidingdan"></use>
+                        </svg>
+                        <span class="text">扣款记录</span>
+                      </div>
+                      <div class="btn backHoverOrange"
+                        @click.stop="divideProductionPlan(item)">
+                        <svg class="iconFont"
+                          aria-hidden="true">
+                          <use xlink:href="#icon-xiugaidingdan"></use>
+                        </svg>
+                        <span class="text">拆分单据</span>
+                      </div>
+                      <div class="btn backHoverOrange"
+                        @click.stop="storeSurplus(item.material_info_data)">
+                        <svg class="iconFont"
+                          aria-hidden="true">
+                          <use xlink:href="#icon-xiugaidingdan"></use>
+                        </svg>
+                        <span class="text">结余入库</span>
+                      </div>
+                      <div class="btn backHoverOrange"
+                        @click.stop="checkType=4;checkFlag=true">
+                        <svg class="iconFont"
+                          aria-hidden="true">
+                          <use xlink:href="#icon-xiugaidingdan"></use>
+                        </svg>
+                        <span class="text">审核单据</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="otherInfo clearfix"
+              v-show="item.show">
+              <div class="editCtn">
+                <div class="row">
+                  <div class="col flex3">
+                    <div class="label">工序说明：</div>
+                    <div class="text">{{item.process_desc||'无'}}</div>
+                  </div>
+                  <div class="col">
+                    <div class="label">关联计划单：</div>
+                    <div class="text">{{item.plan_code}}</div>
+                  </div>
+                  <div class="col">
+                    <div class="label">备注信息：</div>
+                    <div class="text"
+                      :class="{'gray':!item.desc}">{{item.desc || '无'}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="titleCtn">
+                <div class="title">产品加工信息</div>
+              </div>
+              <div class="tableCtn">
+                <div class="thead">
+                  <div class="trow">
+                    <div class="tcol">序号</div>
+                    <div class="tcol">产品信息</div>
+                    <div class="tcol">产品部位</div>
+                    <div class="tcol">尺码颜色</div>
+                    <div class="tcol">加工数量</div>
+                    <div class="tcol">加工单价</div>
+                    <div class="tcol">加工总价</div>
+                  </div>
+                </div>
+                <div class="tbody">
+                  <div class="trow"
+                    v-for="(itemPro,indexPro) in item.product_info_data"
+                    :key="indexPro">
+                    <div class="tcol">{{indexPro+1}}</div>
+                    <div class="tcol">
+                      <span>{{itemPro.product_code||itemPro.system_code}}</span>
+                      <span>{{itemPro.category_name}}/{{itemPro.secondary_category_name}}</span>
+                    </div>
+                    <div class="tcol">
+                      {{itemPro.part_name}}
+                    </div>
+                    <div class="tcol">{{itemPro.size_name?itemPro.size_name + '/' + itemPro.color_name:'未选择尺码颜色'}}</div>
+                    <div class="tcol">{{itemPro.number}}</div>
+                    <div class="tcol">{{itemPro.price}}元</div>
+                    <div class="tcol">{{$toFixed(itemPro.price*itemPro.number)}}元</div>
+                  </div>
+                </div>
+              </div>
+              <div class="titleCtn"
+                v-if="item.material_info_data.length>0">
+                <div class="title">物料分配信息</div>
+              </div>
+              <div class="tableCtn clearfix"
+                v-if="item.material_info_data.length>0">
+                <div class="thead">
+                  <div class="trow">
+                    <div class="tcol">序号</div>
+                    <div class="tcol">物料名称</div>
+                    <div class="tcol">物料颜色</div>
+                    <div class="tcol">分配数量</div>
+                  </div>
+                </div>
+                <div class="tbody">
+                  <div class="trow"
+                    v-for="(itemMat,indexMat) in item.material_info_data"
+                    :key="indexMat">
+                    <div class="tcol">
+                      <el-checkbox v-model="itemMat.check">{{indexMat+1}}</el-checkbox>
+                    </div>
+                    <div class="tcol">{{itemMat.material_name}}</div>
+                    <div class="tcol">{{itemMat.material_color}}</div>
+                    <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="titleCtn"
+                v-if="item.sup_data&&item.sup_data.length>0">
+                <div class="title">加工物料补充</div>
+              </div>
+              <div class="tableCtn"
+                v-if="item.sup_data&&item.sup_data.length>0">
+                <div class="thead">
+                  <div class="trow">
+                    <div class="tcol">补纱单编号</div>
+                    <div class="tcol noPad"
+                      style="flex:2">
+                      <div class="trow">
+                        <div class="tcol">承担单位</div>
+                        <div class="tcol">承担金额</div>
+                      </div>
+                    </div>
+                    <div class="tcol noPad"
+                      style="flex:3">
+                      <div class="trow">
+                        <div class="tcol">物料名称</div>
+                        <div class="tcol">物料颜色</div>
+                        <div class="tcol">物料数量</div>
+                      </div>
+                    </div>
+                    <div class="tcol">备注信息</div>
+                    <div class="tcol">操作</div>
+                  </div>
+                </div>
+                <div class="tbody">
+                  <div class="trow"
+                    v-for="itemChild in item.sup_data"
+                    :key="itemChild.id">
+                    <div class="tcol">{{itemChild.code}}</div>
+                    <div class="tcol noPad"
+                      style="flex:2">
+                      <div class="trow"
+                        v-for="(itemClient,indexClient) in itemChild.client_data"
+                        :key="indexClient">
+                        <div class="tcol">{{itemClient.bear_client_name}}</div>
+                        <div class="tcol">{{itemClient.bear_price}}元</div>
+                      </div>
+                    </div>
+                    <div class="tcol noPad"
+                      style="flex:3">
+                      <div class="trow"
+                        v-for="itemMat in itemChild.info_data"
+                        :key="itemMat.id">
+                        <div class="tcol">{{itemMat.material_name}}</div>
+                        <div class="tcol">{{itemMat.material_color}}</div>
+                        <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
+                      </div>
+                    </div>
+                    <div class="tcol">{{itemChild.desc}}</div>
+                    <div class="tcol oprCtn">
+                      <div class="opr hoverBlue"
+                        @click="$openUrl('/materialManage/supPrint?id='+itemChild.id)">打印</div>
+                      <div class="opr hoverRed"
+                        @click="deleteMaterialSupplement(itemChild.id)">删除</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 旧的加工单展示方式 -->
+      <!-- <el-tabs type="border-card"
         v-model="productionPlanIndex">
         <el-tab-pane v-for="(item,index) in productionPlanList"
           :key="index"
           :name="item.id.toString()">
           <div slot="label">
             <div style="display:flex;flex-direction:column">
-              <div style="line-height:20px;font-size:14px">加工单{{(index+1)}}</div>
+              <div style="line-height:20px;font-size:14px">加工单{{(index+1)}}
+                <i class="el-icon-warning red"
+                  v-if="item.is_check>1&&productionPlanIndex!==item.id.toString()"></i>
+              </div>
               <div style="line-height:20px;font-size:14px">{{item.process_name}}({{item.code}})</div>
             </div>
           </div>
@@ -441,7 +736,7 @@
             </div>
           </div>
         </el-tab-pane>
-      </el-tabs>
+      </el-tabs> -->
     </div>
     <div class="module"
       v-if="productStockLog.length>0">
@@ -2208,7 +2503,7 @@ export default Vue.extend({
         ]
       },
       productionPlanList: [],
-      productionPlanIndex: '0',
+      productionPlanIndex: '0', // 这个记录id用于和接口沟通
       materialSupplementFlag: false,
       materialSupplementSelect: [], // 可补的纱线
       materialSupplementInfo: {

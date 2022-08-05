@@ -1,7 +1,7 @@
 @import '../../common.less';
 @import '../../table.less';
 
-#PLPrint {
+#PLEdit {
   .title1 {
     font-size: 32px;
     font-weight: bold;
@@ -20,27 +20,27 @@
     color: @blue;
   }
 
-  .marginTop {
-    margin-top: 16px;
-  }
-
-  .rowModle {
-    display: flex;
-
-    .bodyCtn {
-      flex: 1;
-
-      &:first-child {
-        flex: 2;
-        margin-right: 16px;
-      }
-    }
-  }
-
   &.tableCtn {
+    .icon1 {
+      position: absolute;
+      line-height: 40px;
+      right: -28px;
+      font-weight: bold;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
     .tbody {
       border-top: 1px solid @borderColor;
       margin-bottom: 16px;
+
+      .label {
+        line-height: 32px;
+      }
+
+      .trow {
+        position: relative;
+      }
 
       &.noBorder {
         .trow {
@@ -49,13 +49,13 @@
 
         .tcol {
           border-right: 0;
+          min-height: 40px;
 
           &.infoCtn {
             flex-direction: row;
             align-items: center;
             justify-content: start;
           }
-
         }
       }
     }

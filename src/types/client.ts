@@ -1,6 +1,7 @@
 // 公司类型
 export interface ClientTypeInfo {
   name: string
+  code?: string
   client_type_id?: null | string | number // 只有在rel_tag里才有这个
   id?: null | string | number
   type: number | string
@@ -11,6 +12,7 @@ export interface ClientTypeInfo {
 
 export interface ClientInfo {
   id?: null | string | number
+  code: string
   name: string
   alias: string // 简称
   contacts_data: Array<{

@@ -1,0 +1,98 @@
+@import '../../assets/css/common.less';
+@import '../../assets/css/popup.less';
+@import '../../assets/css/edit.less';
+@import '../../assets/css/table.less';
+
+.zhOrderCheck {
+  .stepCtn {
+    display: flex;
+    align-items: center;
+    height: 70px;
+    margin: 12px 0;
+    justify-content: space-around;
+    position: relative;
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+
+      .circle {
+        text-align: center;
+        line-height: 40px;
+        width: 40px;
+        color: @blue;
+        border-radius: 50%;
+        border: 1px solid @blue;
+        background: #fff;
+      }
+
+      .name {
+        margin-top: 10px;
+        color: @blue;
+      }
+
+      &.active {
+        .circle {
+          background: @blue;
+          color: #fff;
+        }
+      }
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      height: 1px;
+      left: 0;
+      right: 0;
+      top: 21px;
+      background: #ccc;
+      z-index: -1;
+    }
+  }
+
+  .tableCtn {
+    padding: 0;
+
+    .flexRow {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: start;
+    }
+  }
+
+  .editCtn {
+    padding: 0;
+
+    .row {
+      position: relative;
+
+      .opr {
+        position: absolute;
+        width: auto;
+        white-space: nowrap;
+        cursor: pointer;
+        transform: none;
+        font-size: @fontMiddle;
+        right: -28px;
+        margin: 0;
+        bottom: 0;
+        height: 32px;
+        line-height: 32px;
+        top: auto;
+      }
+
+      .col {
+        margin-right: 12px;
+
+        .label {
+          font-size: 16px;
+          text-align: left;
+        }
+      }
+    }
+  }
+}

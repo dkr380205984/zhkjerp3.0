@@ -1,28 +1,51 @@
 @import '../../assets/css/common.less';
 @import '../../assets/css/fixedTable.less';
-.zhList{
+
+.zhList {
   .column {
-    &.orderProcess{
+    &.orderProcess {
       max-width: 290px;
       min-width: 290px;
     }
-    &.sampleOrderProcess{
+
+    &.sampleOrderProcess {
       max-width: 210px;
       min-width: 210px;
     }
   }
- 
-  .processCtn{
+
+  .processCtn {
     display: flex;
     align-items: center;
-    .process{
+
+    .process {
       margin-right: 4px;
-      .iconFont{
-         font-size:26px;
+
+      .iconFont {
+        font-size: 26px;
+      }
+    }
+
+    .circle {
+      border: 1px solid;
+      text-align: center;
+      cursor: pointer;
+
+      &.green {
+        color: @green;
+      }
+
+      &.gray {
+        color: @font45;
+      }
+
+      &.blue {
+        color: @blue;
       }
     }
   }
-  .circle{
+
+  .circle {
     max-width: 20px;
     min-width: 20px;
     height: 20px;
@@ -33,15 +56,18 @@
     font-size: 12px;
     margin-right: 4px;
   }
-  .text{
-    white-space:normal!important;
+
+  .text {
+    white-space: normal !important;
     word-wrap: break-word;
     overflow: auto;
   }
-  .check{
-    max-width: 20px!important;
-    min-width: 20px!important;
-    span{
+
+  .check {
+    max-width: 20px !important;
+    min-width: 20px !important;
+
+    span {
       cursor: pointer;
     }
   }

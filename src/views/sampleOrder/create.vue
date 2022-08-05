@@ -358,7 +358,14 @@
           </div>
           <div class="col flex3">
             <div class="label">
-              <span class="text">是否加急打样</span>
+              <span class="text">是否加急打样
+                <el-tooltip class="item"
+                  effect="dark"
+                  content="标记为加急生产的订单会默认排序在列表最前面"
+                  placement="top-start">
+                  <em class="el-icon-question"></em>
+                </el-tooltip>
+              </span>
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
@@ -432,9 +439,8 @@
             <div class="label">
               <span class="text">备注信息</span>
             </div>
-            <div class="info elCtn">
-              <el-input placeholder="请输入备注信息"
-                v-model="sampleOrderInfo.desc"></el-input>
+            <div id='editorOrder'
+              style="z-index: 0;position: relative;">
             </div>
           </div>
         </div>
@@ -546,6 +552,7 @@ export default Vue.extend({
         order_type: 2,
         code: '',
         desc: '',
+        editor: '',
         time_data: {
           id: '',
           order_time: this.$getDate(new Date()),
@@ -717,7 +724,7 @@ export default Vue.extend({
       const fileNameLength = file.name.length // 取到文件名长度
       const fileFormat = file.name.substring(fileName + 1, fileNameLength) // 截
       this.postData.token = this.token
-      this.postData.key = Date.parse(new Date() + '') + '.' + fileFormat
+      this.postData.key = file.name.split('.')[0] + Date.parse(new Date() + '') + '.' + fileFormat
       // const isJPG = file.type === 'image/jpeg'
       // const isPNG = file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 10
@@ -749,6 +756,7 @@ export default Vue.extend({
           itemChild.color_id = itemChild.size_color!.split('/')[1]
         })
       })
+      this.sampleOrderInfo.editor = ''
     },
     saveSampleOrder(ifCaogao: boolean) {
       if (this.saveLock) {
@@ -860,6 +868,7 @@ export default Vue.extend({
     }
   },
   mounted() {
+    this.$initEditor(this.sampleOrderInfo, 'Order')
     // 这个页面调用了添加样品组件，已经拿过token了
     this.$checkCommonInfo([
       {

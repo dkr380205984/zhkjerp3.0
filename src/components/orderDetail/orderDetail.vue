@@ -63,7 +63,7 @@
               </div>
               <div class="col flex3">
                 <div class="label">{{orderInfo.order_type===1?'下单':'打样'}}时间：</div>
-                <div class="text">{{orderInfo.time_data[sampleOrderIndex].order_time}}</div>
+                <div class="text">{{orderInfo.time_data[sampleOrderIndex].orderTime}}</div>
               </div>
             </div>
             <div class="row">
@@ -81,17 +81,22 @@
               <div class="col">
                 <div class="label">产前样寄送：</div>
                 <div class="text"
-                  :class="orderInfo.time_data[0].is_send===1?'green':'gray'">{{orderInfo.time_data[0].is_send===1?'是':'否'}}</div>
+                  :class="orderInfo.time_data[orderTime-1].is_send===1?'green':'gray'">{{orderInfo.time_data[orderTime-1].is_send===1?'是':'否'}}
+                  <span class="hoverBlue"
+                    style="cursor:pointer"
+                    v-if="orderInfo.time_data[orderTime-1].is_send===1"
+                    @click="sendFlag=true">(查看详情)</span>
+                </div>
               </div>
               <div class="col">
                 <div class="label">产前确认：</div>
                 <div class="text"
-                  :class="orderInfo.time_data[0].is_before_confirm===1?'green':'gray'">{{orderInfo.time_data[0].is_before_confirm===1?'是':'否'}}</div>
+                  :class="orderInfo.time_data[orderTime-1].is_before_confirm===1?'green':'gray'">{{orderInfo.time_data[orderTime-1].is_before_confirm===1?'是':'否'}}</div>
               </div>
               <div class="col">
                 <div class="label">是否加急：</div>
                 <div class="text"
-                  :class="orderInfo.time_data[0].is_urgent===1?'green':'gray'">{{orderInfo.time_data[0].is_urgent===1?'是':'否'}}</div>
+                  :class="orderInfo.time_data[orderTime-1].is_urgent===1?'red':'gray'">{{orderInfo.time_data[orderTime-1].is_urgent===1?'【加急订单】':'否'}}</div>
               </div>
             </div>
             <div class="row">
@@ -144,7 +149,7 @@
               <div class="col">
                 <div class="label">备注信息：</div>
                 <div class="text"
-                  :class="orderInfo.desc?'':'gray'">{{orderInfo.desc || '无备注信息'}}</div>
+                  v-html="orderInfo.desc"></div>
               </div>
             </div>
           </div>
@@ -386,6 +391,12 @@
         </el-tab-pane>
       </el-tabs>
     </div>
+    <!-- 产前寄送样 -->
+    <zh-order-send :editFlag="true"
+      :time_id="orderInfo.time_data[orderTime-1].id"
+      :data="orderInfo.time_data[orderTime-1].send_info"
+      :show="sendFlag"
+      @close="sendFlag=false"></zh-order-send>
     <!-- 不需要操作的产品详情 -->
     <product-detail :id="proId"
       :show="productShow"
@@ -426,12 +437,13 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      sendFlag: false,
       cardName: '基本信息',
       productList: [],
       proId: '',
       productShow: false,
       sampleShow: false,
-      orderTime: 0,
+      orderTime: 1,
       orderInfo: {
         id: null,
         client_id: '',
@@ -455,6 +467,8 @@ export default Vue.extend({
             total_number: '',
             total_price: '',
             is_urgent: 2,
+            is_send: 2,
+
             batch_data: [
               {
                 id: '',

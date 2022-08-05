@@ -159,7 +159,8 @@
           <div class="tbody hasTop">
             <div class="trow">
               <div class="tcol bgGray label">其他说明</div>
-              <div class="tcol">{{sampleOrderInfo.desc || '无'}}</div>
+              <div class="tcol"
+                v-html="sampleOrderInfo.desc"></div>
             </div>
           </div>
         </div>

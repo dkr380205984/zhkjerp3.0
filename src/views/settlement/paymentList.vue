@@ -372,7 +372,7 @@ export default Vue.extend({
     },
     getFilters() {
       const query = this.$route.query
-      this.page = Number(query.page)
+      this.page = Number(query.page) || 1
       this.limit = Number(query.limit) || 10
       this.type = Number(query.type)
       this.tag_id = Number(query.tag_id) || ''
@@ -437,6 +437,7 @@ export default Vue.extend({
     }
   },
   created() {
+    this.page = Number(this.$route.query.page) || 1
     // 由于列表需要用到type数据，所以这里不用checkCommonInfo
     clientType.list().then((res) => {
       this.clientTypeList = res.data.data.filter((item: { type: string }) => Number(item.type) === Number(this.type))

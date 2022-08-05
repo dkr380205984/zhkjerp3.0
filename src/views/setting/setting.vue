@@ -314,6 +314,7 @@
               </div>
               <div class="list">
                 <div class="row title">
+                  <div class="col">工序编号</div>
                   <div class="col">加工工序</div>
                   <div class="col">工序说明</div>
                   <div class="col">操作</div>
@@ -321,6 +322,7 @@
                 <div class="row"
                   v-for="(item, index) in halfProcessArr"
                   :key="index">
+                  <div class="col">{{ item.code }}</div>
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
                     {{item.process_desc || "暂无工序说明"}}
@@ -355,6 +357,7 @@
               </div>
               <div class="list">
                 <div class="row title">
+                  <div class="col">成品加工工序编号</div>
                   <div class="col">成品加工工序</div>
                   <div class="col">工序说明</div>
                   <div class="col">操作</div>
@@ -362,6 +365,7 @@
                 <div class="row"
                   v-for="(item, index) in staffProcessArr"
                   :key="index">
+                  <div class="col">{{ item.code }}</div>
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
                     {{item.process_desc || "暂无工序说明"}}
@@ -965,7 +969,7 @@
                 <div class="elCtn">
                   <el-input v-model="yarnKeyword1"
                     placeholder="搜索纱线名称"
-                    @keydown.enter="getYarn(1)"></el-input>
+                    @keydown.native.enter="getYarn(1)"></el-input>
                 </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true;yarnInfo1.id=''">添加纱线</div>
@@ -1051,7 +1055,7 @@
                 <div class="elCtn">
                   <el-input v-model="yarnKeyword2"
                     placeholder="搜索面料名称"
-                    @change="getYarn(2)"></el-input>
+                    @keydown.native.enter="getYarn(2)"></el-input>
                 </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true;;yarnInfo2.id=''">添加面料</div>
@@ -1176,7 +1180,7 @@
                 <div class="elCtn">
                   <el-input v-model="decorateMaterialKeyword"
                     placeholder="搜索辅料名称"
-                    @keydown.enter="getDecorateMaterial"></el-input>
+                    @keydown.native.enter="getDecorateMaterial"></el-input>
                 </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true;decorateMaterialInfo.id=''">添加辅料</div>
@@ -1228,7 +1232,7 @@
                 <div class="elCtn">
                   <el-input v-model="packMaterialKeyword"
                     placeholder="搜索辅料名称"
-                    @keydown.enter="getPackMaterial"></el-input>
+                    @keydown.native.enter="getPackMaterial"></el-input>
                 </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true">添加辅料</div>
@@ -1278,7 +1282,7 @@
                 <div class="elCtn">
                   <el-input v-model="yarnPriceKeyword1"
                     placeholder="搜索纱线名称"
-                    @keydown.enter="getYarnPrice"></el-input>
+                    @keydown.native.enter="getYarnPrice"></el-input>
                 </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true">添加报价</div>
@@ -1350,7 +1354,7 @@
                 <div class="elCtn">
                   <el-input v-model="yarnPriceKeyword2"
                     placeholder="搜索面料名称"
-                    @keydown.enter="getMianliaoPrice"></el-input>
+                    @keydown.native.enter="getMianliaoPrice"></el-input>
                 </div>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true">添加报价</div>
@@ -1487,7 +1491,9 @@
                   <div class="col">岗位</div>
                   <div class="col">小组</div>
                   <div class="col">管理员权限</div>
-                  <div class="col">操作</div>
+                  <div class="col">启用账号</div>
+                  <div class="col"
+                    style="flex:2">操作</div>
                 </div>
                 <div class="row"
                   v-for="(item, index) in userArr"
@@ -1498,9 +1504,14 @@
                   <div class="col">{{ item.station }}</div>
                   <div class="col">{{ item.group_name }}</div>
                   <div class="col">{{ item.has_check === 1 ? '管理员' : '普通用户' }}</div>
-                  <div class="col">
-                    <span class="opr hoverRed"
-                      @click="deleteUser(item.id)">删除</span>
+                  <div class="col">{{item.status===1?'启用':'禁用'}}</div>
+                  <div class="col"
+                    style="flex:2">
+                    <span class="opr"
+                      :class="{'hoverRed':item.status===1,'hoverGreen':item.status!==1}"
+                      @click="checkUser(item.id)">{{item.status===1?'禁用':'启用'}}</span>
+                    <!-- <span class="opr hoverRed"
+                      @click="deleteUser(item.id)">删除</span> -->
                     <span class="opr hoverOrange"
                       @click="getUpdateUser(item)">修改</span>
                   </div>
@@ -3313,6 +3324,13 @@
           </div>
           <div class="contentCtn">
             <div class="row">
+              <div class="label">工序编号：</div>
+              <div class="info">
+                <el-input placeholder="请输入工序编号"
+                  v-model="halfProcessInfo.code"></el-input>
+              </div>
+            </div>
+            <div class="row">
               <div class="label">加工工序：</div>
               <div class="info">
                 <el-input placeholder="请输入加工工序"
@@ -3351,6 +3369,13 @@
             </div>
           </div>
           <div class="contentCtn">
+            <div class="row">
+              <div class="label">成品加工编号：</div>
+              <div class="info">
+                <el-input placeholder="请输入成品加工工序编号"
+                  v-model="staffProcessInfo.code"></el-input>
+              </div>
+            </div>
             <div class="row">
               <div class="label">成品加工工序：</div>
               <div class="info">
@@ -5244,6 +5269,7 @@ export default Vue.extend({
       materialProcessPage: 1,
       halfProcessList: [],
       halfProcessInfo: {
+        code: '',
         type: 2,
         name: '',
         process_desc: '',
@@ -5255,6 +5281,7 @@ export default Vue.extend({
       staffProcessList: [],
       processHalfDescList: [''],
       staffProcessInfo: {
+        code: '',
         type: 3,
         name: '',
         process_desc: '',
@@ -6130,7 +6157,14 @@ export default Vue.extend({
           this.$downloadExcel([], [{ title: '原料加工工序名称', key: 'name' }], '原料加工工序模板')
           break
         case 'semiProcess':
-          this.$downloadExcel([], [{ title: '生产工序名称', key: 'name' }], '生产工序模板')
+          this.$downloadExcel(
+            [],
+            [
+              { title: '生产工序名称', key: 'name' },
+              { title: '生产工序编号', key: 'code' }
+            ],
+            '生产工序模板'
+          )
           break
         case 'staffProcess':
           this.$downloadExcel([], [{ title: '成品加工工序名称', key: 'name' }], '成品加工工序模板')
@@ -6280,6 +6314,7 @@ export default Vue.extend({
           typeObj = {
             id: [false, null],
             name: ['生产工序名称'],
+            code: ['生产工序编号'],
             type: [false, 2]
           }
           api = process.create
@@ -6288,6 +6323,7 @@ export default Vue.extend({
           typeObj = {
             id: [false, null],
             name: ['成品加工工序名称'],
+            code: ['成品加工工序编号'],
             type: [false, 3]
           }
           api = process.create
@@ -7025,6 +7061,7 @@ export default Vue.extend({
     updateHalfProcess(item: any) {
       this.isHalfUpdate = true
       this.showPopup = true
+      this.halfProcessInfo.code = item.code || ''
       this.halfProcessInfo.name = item.name
       this.halfProcessInfo.id = item.id
       if (item.process_desc !== null) {
@@ -7034,6 +7071,7 @@ export default Vue.extend({
     updateStaffProcess(item: any) {
       this.isStaffProcessUpdate = true
       this.showPopup = true
+      this.staffProcessInfo.code = item.code
       this.staffProcessInfo.name = item.name
       this.staffProcessInfo.id = item.id
       if (item.process_desc !== null) {
@@ -8051,7 +8089,62 @@ export default Vue.extend({
         this.userInfo.module_info = []
       }
     },
-    deleteUser(id: number) {},
+    checkUser(id: number) {
+      this.$confirm('是否修改用户状态?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          user
+            .check({
+              id: id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '修改成功!'
+                })
+                this.getUser()
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消修改'
+          })
+        })
+    },
+    deleteUser(id: number) {
+      this.$confirm('是否删除该用户?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          user
+            .delete({
+              id: id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.getUser()
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
     getQuotedPriceProduct() {
       this.$checkCommonInfo([
         {

@@ -1,6 +1,7 @@
-.editCtn{
+.editCtn {
   padding: 20px 32px;
-  .deleteIcon{
+
+  .deleteIcon {
     cursor: pointer;
     width: 20px;
     height: 20px;
@@ -11,69 +12,87 @@
     background: @red;
     float: right;
     margin-right: -20px;
-    &:hover{
+
+    &:hover {
       background: @hoverRed;
     }
   }
-  .row{
+
+  .row {
     display: flex;
     margin-bottom: 8px;
-    &:nth-last-child(1){
+
+    &:nth-last-child(1) {
       margin-bottom: 0;
     }
-    .col{
+
+    .col {
       flex: 1;
       margin-right: 72px;
-      &.flex2{
+
+      &.flex2 {
         max-width: 579px;
       }
-      &.flex3{
+
+      &.flex3 {
         max-width: 361px;
       }
-      &.flex4{
+
+      &.flex4 {
         max-width: 253.5px;
       }
-      .label{
+
+      .label {
         display: block;
         height: 38px;
         line-height: 38px;
         font-size: @fontMiddle;
-        .text{
+
+        .text {
           color: @font85;
         }
-        .explanation{
+
+        .explanation {
           margin-left: 5px;
           color: @font25;
         }
+
         // 右浮动一般为操作按钮
-        .fr{
+        .fr {
           cursor: pointer;
         }
       }
-      .info{
+
+      .info {
         display: block;
-        min-height:32px;
+        min-height: 32px;
       }
-      .spaceBetween{
+
+      .spaceBetween {
         display: flex;
         justify-content: space-between;
-        .once{
-          flex:1;
+
+        .once {
+          flex: 1;
           margin-right: 12px;
-          &:nth-last-child(1){
+
+          &:nth-last-child(1) {
             margin-right: 0;
           }
         }
       }
-      .cvImageCtn{
+
+      .cvImageCtn {
         min-height: 100px;
-        .cvImage{
+
+        .cvImage {
           position: relative;
           height: 100px;
           max-width: 112px;
           width: auto;
           display: inline-block;
-          img{
+
+          img {
             min-width: 60px;
             width: 100%;
             height: 100%;
@@ -81,35 +100,40 @@
             padding-right: 12px;
           }
         }
-        .icon{
+
+        .icon {
           position: absolute;
           right: 16px;
           top: 4px;
           cursor: pointer;
           color: @red;
           font-weight: bold;
-          &:hover{
+
+          &:hover {
             color: @hoverRed;
           }
         }
       }
     }
-    .opr{
+
+    .opr {
       position: relative;
       width: 0;
       white-space: nowrap;
       cursor: pointer;
-      transform: translate(-60px,100%);
+      transform: translate(-60px, 100%);
       font-size: @fontMiddle;
-      top:-26px;
+      top: -26px;
       margin: 0;
     }
   }
-  .oprRow{
+
+  .oprRow {
     margin-right: 72px;
   }
+
   // 模拟输入库disable的元素
-  .disableInput{
+  .disableInput {
     height: 100%;
     line-height: 30px;
     border: 1px solid #DCDFE6;

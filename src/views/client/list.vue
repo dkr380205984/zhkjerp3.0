@@ -70,6 +70,11 @@
         </div>
         <div class="filterCtn">
           <div class="elCtn">
+            <el-input placeholder="搜索公司编号"
+              v-model="code"
+              @change="changeRouter"></el-input>
+          </div>
+          <div class="elCtn">
             <el-select placeholder="客户标签筛选"
               v-model="tag_id"
               @change="changeRouter"
@@ -98,6 +103,7 @@
         </div>
         <div class="list">
           <div class="row title">
+            <div class="col">公司编号</div>
             <div class="col">公司简称</div>
             <div class="col">公司全称</div>
             <div class="col">客户类型</div>
@@ -110,6 +116,7 @@
           <div class="row"
             v-for="item in list"
             :key="item.id">
+            <div class="col">{{item.code}}</div>
             <div class="col">{{item.name}}</div>
             <div class="col">{{item.alias}}</div>
             <div class="col">{{item.client_type_name}}</div>
@@ -119,7 +126,7 @@
             <div class="col"
               :class="{'green':item.workshop_id!=='0','orange':item.workshop_id==='0'}">{{item.workshop_id==='0'?'未绑定':('已绑定'+item.workshop.name)}}</div>
             <div class="col oprCtn"
-              style="flex:1.8">
+              style="flex:1.8;font-size:12px">
               <span class="opr hoverGreen"
                 @click="deletebindClient(item.id)">{{item.workshop_id==='0'?'暂无操作':'解除绑定'}}</span>
               <span class="opr hoverBlue"
@@ -208,7 +215,8 @@ export default Vue.extend({
       bindFlag: false,
       clientTagList: [],
       limitList: limitArr,
-      only_delete: 0
+      only_delete: 0,
+      code: ''
     }
   },
   computed: {
@@ -237,6 +245,7 @@ export default Vue.extend({
       this.keyword = query.keyword
       this.clientType = Number(query.clientType) || ''
       this.only_delete = Number(query.only_delete) || 0
+      this.code = query.code || ''
       this.clientTagList = this.clientType
         ? this.clientTypeList.find((item: any) => item.id === Number(query.clientType)).public_tag
         : []
@@ -261,7 +270,9 @@ export default Vue.extend({
           '&tag_id=' +
           this.tag_id +
           '&only_delete=' +
-          this.only_delete
+          this.only_delete +
+          '&code=' +
+          this.code
       )
     },
     reset() {
@@ -288,6 +299,7 @@ export default Vue.extend({
       this.loading = true
       client
         .list({
+          code: this.code,
           limit: this.limit,
           page: this.page,
           name: this.keyword,

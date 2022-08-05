@@ -27,6 +27,8 @@ import zhSideNav from './zhSideNav/zhSideNav.vue'
 import zhDropDown from './zhDropDown/zhDropDown.vue'
 import zhInvoice from './zhInvoice/zhInvoice.vue'
 import zhPayment from './zhPayment/zhPayment.vue'
+import zhOrderSend from './zhOrderSend/zhOrderSend.vue'
+import zhOrderCheck from './zhOrderCheck/zhOrderCheck.vue'
 import vue from '@handsontable/vue'
 export default {
   install: (Vue: any) => {
@@ -59,5 +61,7 @@ export default {
     Vue.component('zhDropDown', zhDropDown)
     Vue.component('zhInvoice', zhInvoice)
     Vue.component('zhPayment', zhPayment)
+    Vue.component('zhOrderSend', zhOrderSend)
+    Vue.component('zhOrderCheck', zhOrderCheck)
   }
 }

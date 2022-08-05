@@ -655,9 +655,8 @@
             <div class="label">
               <span class="text">备注信息</span>
             </div>
-            <div class="info elCtn">
-              <el-input placeholder="请输入订单描述及备注信息"
-                v-model="orderInfo.desc"></el-input>
+            <div id='editorOrder'
+              style="z-index: 0;position: relative;">
             </div>
           </div>
         </div>
@@ -720,6 +719,7 @@ export default Vue.extend({
         order_type: 1,
         code: '',
         desc: '',
+        editor: '',
         time_data: {
           id: '',
           order_time: this.$getDate(new Date()),
@@ -732,6 +732,10 @@ export default Vue.extend({
           is_urgent: 2,
           is_before_confirm: 2,
           is_send: 2,
+          send_info: {
+            other_desc: '',
+            info: []
+          },
           batch_data: [
             {
               id: '',
@@ -995,7 +999,7 @@ export default Vue.extend({
       const fileNameLength = file.name.length // 取到文件名长度
       const fileFormat = file.name.substring(fileName + 1, fileNameLength) // 截
       this.postData.token = this.token
-      this.postData.key = Date.parse(new Date() + '') + '.' + fileFormat
+      this.postData.key = file.name.split('.')[0] + Date.parse(new Date() + '') + '.' + fileFormat
       const isJPG = file.type === 'image/jpeg'
       const isPNG = file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 10
@@ -1057,6 +1061,7 @@ export default Vue.extend({
           })
         })
       })
+      this.orderInfo.editor = ''
     },
     deleteInfo(itemBatch: any, itemPro: any, itemChild: any, indexBatch: number, indexPro: number, indexChild: number) {
       if (itemPro.product_info.length === 1) {
@@ -1322,6 +1327,9 @@ export default Vue.extend({
           })
         }
         this.loading = false
+        this.$nextTick(() => {
+          this.$initEditor(this.orderInfo, 'Order')
+        })
       })
   },
   beforeRouteLeave(to, from, next) {

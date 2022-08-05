@@ -1,6 +1,15 @@
 import { PartInfo } from "./product";
 import { CraftMaterialInfo } from "./craft";
 import { QuotedPriceProduct } from "./quotedPrice";
+export interface SendInfo {
+  other_desc: string
+  info: Array<{
+    order_type: string
+    number: string | number
+    send_time: string
+  }>
+  client_confirm_idea?: string
+}
 // 批次
 export interface OrderBatch {
   id?: number | null | string
@@ -58,6 +67,7 @@ export interface OrderBatch {
 
 // 第几次下单，样单为多次打样，订单可能翻单
 export interface OrderTime {
+  send_info?: SendInfo
   order_type?: string | number
   order_id?: number | null | string // 再次打样的时候用
   id?: number | null | string
@@ -94,6 +104,7 @@ export interface OrderInfo {
   exchange_rate?: string | number//汇率
   rel_quote_id?: number | string
   time_data: OrderTime | OrderTime[]
+  editor?: any // 编辑器
 }
 
 // 从订单里面处理出来的产品表格信息——展平

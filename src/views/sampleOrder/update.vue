@@ -101,9 +101,8 @@
             <div class="label">
               <span class="text">备注信息</span>
             </div>
-            <div class="info elCtn">
-              <el-input placeholder="请输入备注信息"
-                v-model="sampleOrderInfo.desc"></el-input>
+            <div id='editorOrder'
+              style="z-index: 0;position: relative;">
             </div>
           </div>
         </div>
@@ -154,6 +153,7 @@ export default Vue.extend({
         order_type: 2,
         code: '',
         desc: '',
+        editor: '',
         time_data: {
           id: '',
           order_time: '',
@@ -243,6 +243,7 @@ export default Vue.extend({
       this.sampleOrderInfo.tree_data = (this.sampleOrderInfo.tree_data as number[]).join(',')
       // @ts-ignore
       this.sampleOrderInfo.time_data = null
+      this.sampleOrderInfo.editor = ''
       this.loading = true
       sampleOrder.create(this.sampleOrderInfo).then((res) => {
         if (res.data.status) {
@@ -257,7 +258,7 @@ export default Vue.extend({
       const fileNameLength = file.name.length // 取到文件名长度
       const fileFormat = file.name.substring(fileName + 1, fileNameLength) // 截
       this.postData.token = this.token
-      this.postData.key = Date.parse(new Date() + '') + '.' + fileFormat
+      this.postData.key = file.name.split('.')[0] + Date.parse(new Date() + '') + '.' + fileFormat
       // const isJPG = file.type === 'image/jpeg'
       // const isPNG = file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 10
@@ -335,6 +336,9 @@ export default Vue.extend({
         })
         this.sampleOrderInfo.public_files = []
         this.loading = false
+        this.$nextTick(() => {
+          this.$initEditor(this.sampleOrderInfo, 'Order')
+        })
       })
   }
 })

@@ -79,7 +79,7 @@
               'red':item.total_order_number+item.total_transfer_number>item.final_number,
               'green':item.total_order_number+item.total_transfer_number===item.final_number,
               'orange':item.total_order_number+item.total_transfer_number<item.final_number
-              }">{{(item.total_order_number+item.total_transfer_number>item.final_number?'+':'')+(item.total_order_number+item.total_transfer_number - item.final_number)}}{{item.unit}}</div>
+              }">{{(item.total_order_number+item.total_transfer_number>item.final_number?'+':'')+($toFixed(item.total_order_number+item.total_transfer_number - item.final_number))}}{{item.unit}}</div>
           </div>
         </div>
       </div>
@@ -962,6 +962,9 @@
                   <el-input placeholder="自动计算"
                     v-model="totalOrderNumberList[index]"
                     disabled>
+                    <template slot="append">
+                      {{item.info_data[0].unit}}
+                    </template>
                   </el-input>
                 </div>
               </div>
@@ -1890,7 +1893,6 @@
                   <el-input placeholder="自动计算"
                     v-model="totalOrderNumber"
                     disabled>
-                    <template slot="append">kg</template>
                   </el-input>
                 </div>
               </div>
@@ -2811,7 +2813,7 @@ export default Vue.extend({
       this.materialOrderInfo.forEach((item, index) => {
         item.is_check = is_check ? is_check : ''
         item.client_id = item.client_id_arr![2]
-        item.order_id = this.materialPlanInfo.order_id
+        item.order_id = this.materialPlanInfo.order_id || this.materialSupplementInfo.order_id
         item.total_price = this.totalOrderPriceList[index]
         item.total_number = this.totalOrderNumberList[index]
         if (this.$route.query.supFlag) {
@@ -3508,21 +3510,31 @@ export default Vue.extend({
       return [
         {
           name: '物料计划单',
-          url:
-            '/materialPlan/detail?id=' +
-            // @ts-ignore
-            this.materialPlanInfo.top_order_id +
-            '&sampleOrderIndex=' +
-            this.materialPlanInfo.order_id
+          url: this.$route.query.supFlag
+            ? '/materialPlan/detail?id=' +
+              // @ts-ignore
+              this.materialSupplementInfo.top_order_id +
+              '&sampleOrderIndex=' +
+              this.materialSupplementInfo.order_id
+            : '/materialPlan/detail?id=' +
+              // @ts-ignore
+              this.materialPlanInfo.top_order_id +
+              '&sampleOrderIndex=' +
+              this.materialPlanInfo.order_id
         },
         {
           name: '物料出入库',
-          url:
-            '/materialStock/detail?id=' +
-            // @ts-ignore
-            this.materialPlanInfo.top_order_id +
-            '&sampleOrderIndex=' +
-            this.materialPlanInfo.order_id
+          url: this.$route.query.supFlag
+            ? '/materialStock/detail?id=' +
+              // @ts-ignore
+              this.materialSupplementInfo.top_order_id +
+              '&sampleOrderIndex=' +
+              this.materialSupplementInfo.order_id
+            : '/materialStock/detail?id=' +
+              // @ts-ignore
+              this.materialPlanInfo.top_order_id +
+              '&sampleOrderIndex=' +
+              this.materialPlanInfo.order_id
         }
       ]
     },
@@ -3542,6 +3554,8 @@ export default Vue.extend({
               unit: item.unit,
               loss: 0,
               final_number: item.number,
+              total_order_number: item.total_order_number,
+              total_transfer_number: item.total_transfer_number,
               material_type: 1
             }
           })

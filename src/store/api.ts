@@ -282,7 +282,7 @@ const apiActions = {
               value: itemChild.id as number,
               children: itemChild.rel_client!.map((itemClient) => {
                 return {
-                  label: itemClient.name,
+                  label: itemClient.code ? (itemClient.code + '-' + itemClient.name) : itemClient.name,
                   value: itemClient.id as number
                 }
               })
@@ -294,7 +294,7 @@ const apiActions = {
               value: itemChild.id as number,
               children: itemChild.rel_client!.map((itemClient) => {
                 return {
-                  label: itemClient.name,
+                  label: itemClient.code ? (itemClient.code + '-' + itemClient.name) : itemClient.name,
                   value: itemClient.id as number
                 }
               })
@@ -333,7 +333,12 @@ const apiActions = {
       type: 2
     }).then((res) => {
       if (res.data.status) {
-        content.commit('getHalfProcess', res.data.data)
+        content.commit('getHalfProcess', res.data.data.map((item: any) => {
+          return {
+            id: item.id,
+            name: item.code ? (item.code + '-' + item.name) : item.name
+          }
+        }))
       }
     })
   },
@@ -342,14 +347,24 @@ const apiActions = {
       type: 3
     }).then((res) => {
       if (res.data.status) {
-        content.commit('getStaffProcess', res.data.data)
+        content.commit('getStaffProcess', res.data.data.map((item: any) => {
+          return {
+            id: item.id,
+            name: item.code ? (item.code + '-' + item.name) : item.name
+          }
+        }))
       }
     })
   },
   getGroupAsync(content: ActionContext<ApiState, any>) {
     group.list().then((res) => {
       if (res.data.status) {
-        content.commit('getGroup', res.data.data)
+        content.commit('getGroup', res.data.data.map((item: any) => {
+          return {
+            id: item.id,
+            name: item.code ? (item.code + '-' + item.name) : item.name
+          }
+        }))
       }
     })
   },

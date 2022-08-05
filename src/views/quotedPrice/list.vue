@@ -139,14 +139,29 @@
             style="margin-left:0">列表设置</div>
           <div class="btn backHoverGreen fl"
             @click="getFilters();getList()">刷新列表</div>
-          <div :class="checked?'btn backHoverBlue fl':'btn backHoverBlue fl noCheck'"
+          <div :class="orderCheckList.length>0?'btn backHoverBlue fl':'btn backHoverBlue fl noCheck'"
             @click="exportExcel()">导出Excel</div>
+        </div>
+        <div class="filterCtn clearfix checkCtn">
+          <div class="label">已勾选单据：</div>
+          <div class="elCtn check"
+            v-for="(item,index) in orderCheckList"
+            :key="item.id">
+            <el-input v-model="item.code"
+              disabled>
+              <template slot="append">
+                <i class="el-icon-close hoverRed"
+                  style="cursor:pointer"
+                  @click="orderCheckList.splice(index,1)"></i>
+              </template>
+            </el-input>
+          </div>
         </div>
         <zh-list :list="list"
           :listKey="listKey"
           :loading="loading"
           :check="true"
-          :checkedCount="checkedCount"
+          :checkedCount="orderCheckList"
           :oprList="oprList"></zh-list>
         <div class="pageCtn">
           <el-pagination background
@@ -208,7 +223,7 @@ export default Vue.extend({
       listSettingId: null,
       listKey: [],
       date: [],
-      checkedCount: [],
+      orderCheckList: [],
       checked: false,
       originalSetting: [
         {
@@ -407,13 +422,6 @@ export default Vue.extend({
     $route() {
       this.getFilters()
       this.getList()
-    },
-    checkedCount(newVal) {
-      if (newVal.length > 0) {
-        this.checked = true
-      } else {
-        this.checked = false
-      }
     }
   },
   computed: {
@@ -554,7 +562,7 @@ export default Vue.extend({
         })
     },
     exportExcel() {
-      const idArr = this.checkedCount.map((item: any) => item.id)
+      const idArr = this.orderCheckList.map((item: any) => item.id)
       if (idArr.length === 0) {
         this.$message.error('请选择需要导出的报价单')
         return

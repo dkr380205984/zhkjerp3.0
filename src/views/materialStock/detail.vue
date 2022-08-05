@@ -111,7 +111,10 @@
                     <div class="tcol">{{itemChild.number - itemChild.process_info.filter((item)=>item.process==='染色').reduce((total,cur)=>(total+Number(cur.number)),0)}}{{itemChild.unit||'kg'}}</div>
                   </div>
                 </div>
-                <div class="tcol">{{itemChild.final_push_number||0}}{{itemChild.unit||'kg'}}</div>
+                <div class="tcol"
+                  style="flex-direction:row;align-items:center;justify-content:start">{{itemChild.final_push_number||0}}{{itemChild.unit||'kg'}}
+                  (<span :class="{'green':Number(itemChild.final_push_number)>=Number(itemChild.number),'red':Number(itemChild.final_push_number)<Number(itemChild.number)}">{{Number(itemChild.final_push_number)>Number(itemChild.number)>0?'+':''}}{{Number(itemChild.final_push_number)-Number(itemChild.number)}}{{itemChild.unit||'kg'}}</span>)
+                </div>
               </div>
             </div>
           </div>
@@ -1927,8 +1930,6 @@ export default Vue.extend({
         return
       }
       this.materialStockInfo.store_id = yarnType === 1 ? -1 : -2
-      console.log(this.materialStockInfo)
-      return
       if (!formCheck) {
         if (
           this.materialStockInfo.action_type !== 3 &&

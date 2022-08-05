@@ -466,7 +466,8 @@ export default Vue.extend({
           ifLock: true,
           ifCaogao: 'is_draft',
           caogaoArr: ['稿', '整'],
-          index: 0
+          index: 0,
+          is_urgent: true
         },
         {
           key: 'code',

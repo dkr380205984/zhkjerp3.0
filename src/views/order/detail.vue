@@ -88,17 +88,27 @@
           <div class="col">
             <div class="label">产前样寄送：</div>
             <div class="text"
-              :class="orderInfo.time_data[0].is_send===1?'green':'gray'">{{orderInfo.time_data[0].is_send===1?'是':'否'}}</div>
+              :class="orderInfo.time_data[0].is_send===1?'green':'gray'">{{orderInfo.time_data[0].is_send===1?'是':'否'}}
+              <span class="hoverBlue"
+                style="cursor:pointer"
+                v-if="orderInfo.time_data[0].is_send===1"
+                @click="sendFlag=true">(查看详情)</span>
+            </div>
           </div>
           <div class="col">
             <div class="label">产前确认：</div>
             <div class="text"
-              :class="orderInfo.time_data[0].is_before_confirm===1?'green':'gray'">{{orderInfo.time_data[0].is_before_confirm===1?'是':'否'}}</div>
+              :class="orderInfo.time_data[0].is_before_confirm===1?'green':'gray'">{{orderInfo.time_data[0].is_before_confirm===1?'是':'否'}}
+              <span class="hoverBlue"
+                style="cursor:pointer"
+                v-if="orderInfo.time_data[0].is_before_confirm===1"
+                @click="proCheckFlag=true">(产前确认)</span>
+            </div>
           </div>
           <div class="col">
             <div class="label">是否加急：</div>
             <div class="text"
-              :class="orderInfo.time_data[0].is_urgent===1?'green':'gray'">{{orderInfo.time_data[0].is_urgent===1?'是':'否'}}</div>
+              :class="orderInfo.time_data[0].is_urgent===1?'red':'gray'">{{orderInfo.time_data[0].is_urgent===1?'【加急订单】':'否'}}</div>
           </div>
         </div>
         <div class="row">
@@ -198,7 +208,7 @@
           <div class="col">
             <div class="label">备注信息：</div>
             <div class="text"
-              :class="orderInfo.desc?'':'gray'">{{orderInfo.desc || '无备注信息'}}</div>
+              v-html="orderInfo.desc"></div>
           </div>
         </div>
       </div>
@@ -410,7 +420,9 @@
       </div>
       <zh-drop-down :buttonStyle="'padding:20px'"
         :show="show_material"
-        hideTitle="点击查看图表">
+        :showAsync="!show_material"
+        hideTitle="点击查看图表"
+        @beforeShow="getMaterialDetail">
         <!-- 老接口 -->
         <!-- <div class="tableCtn samallFont">
           <div class="thead"
@@ -581,169 +593,195 @@
           </div>
         </div> -->
         <!-- 新接口 -->
-        <div class="tableCtn samallFont">
-          <div class="thead"
-            style="height:auto">
-            <div class="trow">
-              <div class="tcol w100">原料名称</div>
-              <div class="tcol noPad"
-                style="flex:2">
-                <div class="trow">
-                  <div class="tcol">颜色</div>
-                  <div class="tcol">数量</div>
-                </div>
-              </div>
-              <div class="tcol noPad"
-                style="flex:2">
-                <div class="trow">
-                  <div class="tcol center">
-                    <span>调取信息</span>
-                    <span>更新日期:{{materialUpdateTime.transfer?materialUpdateTime.transfer:'暂无'}}</span>
+        <div class="scrollCtn"
+          @mousewheel.prevent="listenWheel"
+          ref="materialRef">
+          <div class="tableCtn samallFont">
+            <div class="thead"
+              style="height:auto">
+              <div class="trow">
+                <div class="tcol">单据编号</div>
+                <div class="tcol">原料名称</div>
+                <div class="tcol noPad flex2">
+                  <div class="trow">
+                    <div class="tcol">颜色</div>
+                    <div class="tcol">数量</div>
                   </div>
                 </div>
-                <div class="trow">
-                  <div class="tcol">调取仓库</div>
-                  <div class="tcol">调取数量</div>
-                </div>
-              </div>
-              <div class="tcol noPad"
-                style="flex:2">
-                <div class="trow">
-                  <div class="tcol center">
-                    <span>采购信息</span>
-                    <span>更新日期:{{materialUpdateTime.order?materialUpdateTime.order:'暂无'}}</span>
+                <div class="tcol noPad flex3">
+                  <div class="trow">
+                    <div class="tcol center">
+                      <span>调取信息</span>
+                      <span>更新日期:{{materialUpdateTime.transfer?materialUpdateTime.transfer:'暂无'}}</span>
+                    </div>
+                  </div>
+                  <div class="trow">
+                    <div class="tcol">调取仓库</div>
+                    <div class="tcol">调取数量</div>
+                    <div class="tcol">调取颜色</div>
                   </div>
                 </div>
-                <div class="trow">
-                  <div class="tcol">采购单位</div>
-                  <div class="tcol">采购数量</div>
-                </div>
-              </div>
-              <div class="tcol noPad"
-                style="flex:3">
-                <div class="trow">
-                  <div class="tcol center">
-                    <span>加工信息</span>
-                    <span>更新日期:{{materialUpdateTime.process?materialUpdateTime.process:'暂无'}}</span>
+                <div class="tcol noPad flex3">
+                  <div class="trow">
+                    <div class="tcol center">
+                      <span>采购信息</span>
+                      <span>更新日期:{{materialUpdateTime.order?materialUpdateTime.order:'暂无'}}</span>
+                    </div>
+                  </div>
+                  <div class="trow">
+                    <div class="tcol">采购单位</div>
+                    <div class="tcol">采购数量</div>
+                    <div class="tcol">采购颜色</div>
                   </div>
                 </div>
-                <div class="trow">
-                  <div class="tcol">加工单位</div>
-                  <div class="tcol">加工工序</div>
-                  <div class="tcol">加工数量</div>
-                </div>
-              </div>
-              <div class="tcol noPad"
-                style="flex:2">
-                <div class="trow">
-                  <div class="tcol center">
-                    <span>入库信息</span>
-                    <span>更新日期:{{materialUpdateTime.push?materialUpdateTime.push:'暂无'}}</span>
+                <div class="tcol noPad flex4">
+                  <div class="trow">
+                    <div class="tcol center">
+                      <span>加工信息</span>
+                      <span>更新日期:{{materialUpdateTime.process?materialUpdateTime.process:'暂无'}}</span>
+                    </div>
+                  </div>
+                  <div class="trow">
+                    <div class="tcol">加工单位</div>
+                    <div class="tcol">加工工序</div>
+                    <div class="tcol">加工数量</div>
+                    <div class="tcol">加工工序</div>
                   </div>
                 </div>
-                <div class="trow">
-                  <div class="tcol">入库仓库</div>
-                  <div class="tcol">入库数量</div>
-                </div>
-              </div>
-              <div class="tcol noPad"
-                style="flex:2">
-                <div class="trow">
-                  <div class="tcol center">
-                    <span>出库信息</span>
-                    <span>更新日期:{{materialUpdateTime.pop?materialUpdateTime.pop:'暂无'}}</span>
+                <div class="tcol noPad flex2">
+                  <div class="trow">
+                    <div class="tcol center">
+                      <span>入库信息</span>
+                      <span>更新日期:{{materialUpdateTime.push?materialUpdateTime.push:'暂无'}}</span>
+                    </div>
+                  </div>
+                  <div class="trow">
+                    <div class="tcol">入库仓库</div>
+                    <div class="tcol">入库数量</div>
                   </div>
                 </div>
-                <div class="trow">
-                  <div class="tcol">出库单位</div>
-                  <div class="tcol">出库数量</div>
+                <div class="tcol noPad flex2">
+                  <div class="trow">
+                    <div class="tcol center">
+                      <span>出库信息</span>
+                      <span>更新日期:{{materialUpdateTime.pop?materialUpdateTime.pop:'暂无'}}</span>
+                    </div>
+                  </div>
+                  <div class="trow">
+                    <div class="tcol">出库单位</div>
+                    <div class="tcol">出库数量</div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="tbody">
-            <div class="trow"
-              v-for="(item,index) in materialDetail"
-              :key="index + 'plan'">
-              <div class="tcol w100">{{item.material_name}}</div>
-              <div class="tcol noPad"
-                style="flex:2">
-                <div class="trow">
-                  <div class="tcol">{{item.material_color}}</div>
-                  <div class="tcol">{{item.number}}{{item.unit}}</div>
-                </div>
-              </div>
-              <div class="tcol noPad"
-                style="flex:2">
+            <div class="tbody">
+              <template v-for="(itemFather,indexFather) in materialDetail">
                 <div class="trow"
-                  v-if="item.material_transfer.length===0">
-                  <div class="tcol gray">无调取信息</div>
-                </div>
-                <div class="trow"
-                  v-for="(itemTransfer,indexTransfer) in item.material_transfer"
-                  :key="indexTransfer">
-                  <div class="tcol">{{itemTransfer.store_name}}</div>
-                  <div class="tcol">{{itemTransfer.number}}</div>
-                </div>
-              </div>
-              <div class="tcol noPad"
-                style="flex:2">
-                <div class="trow"
-                  v-if="item.material_order.length===0">
-                  <div class="tcol gray">无订购信息</div>
-                </div>
-                <div class="trow"
-                  v-for="(itemOrder,indexOrder) in item.material_order"
-                  :key="indexOrder">
-                  <div class="tcol">{{itemOrder.client_name}}</div>
-                  <div class="tcol">{{itemOrder.number}}{{itemOrder.unit}}</div>
-                </div>
-              </div>
-              <div class="tcol noPad"
-                style="flex:3">
-                <div class="trow"
-                  v-for="(itemProcess,indexProcess) in item.material_process"
-                  :key="indexProcess">
-                  <div class="trow"
-                    v-if="item.material_process.length===0">
-                    <div class="tcol gray">无加工信息</div>
+                  v-for="(item,index) in itemFather.data"
+                  :key=" 'plan'+index + '-' + indexFather">
+                  <div class="tcol"><span class="text">{{itemFather.plan_code}}</span></div>
+                  <div class="tcol"><span class="text">{{item.material_name}}</span></div>
+                  <div class="tcol noPad flex2">
+                    <div class="trow">
+                      <div class="tcol"><span class="text">{{item.material_color}}</span></div>
+                      <div class="tcol"><span class="text">{{item.number}}{{item.unit}}</span></div>
+                    </div>
                   </div>
-                  <div class="tcol">{{itemProcess.client_name}}</div>
-                  <div class="tcol">{{itemProcess.process}}</div>
-                  <div class="tcol">{{itemProcess.number}}{{itemProcess.unit}}</div>
+                  <div class="tcol noPad flex3">
+                    <div class="trow"
+                      v-if="item.material_transfer.length===0">
+                      <div class="tcol gray">无调取信息</div>
+                    </div>
+                    <div class="trow"
+                      v-for="(itemTransfer,indexTransfer) in item.material_transfer"
+                      :key="indexTransfer">
+                      <div class="tcol"><span class="text">{{itemTransfer.store}}</span></div>
+                      <div class="tcol"><span class="text">{{itemTransfer.number}}</span></div>
+                      <div class="tcol"><span class="text">{{itemTransfer.material_color}}</span></div>
+                    </div>
+                  </div>
+                  <div class="tcol noPad flex3">
+                    <div class="trow"
+                      v-if="item.material_order.length===0">
+                      <div class="tcol gray">无订购信息</div>
+                    </div>
+                    <div class="trow"
+                      v-for="(itemOrder,indexOrder) in item.material_order"
+                      :key="indexOrder">
+                      <div class="tcol"><span class="text">{{itemOrder.client_name}}</span></div>
+                      <div class="tcol"><span class="text">{{itemOrder.number}}{{itemOrder.unit}}</span></div>
+                      <div class="tcol"><span class="text">{{itemOrder.material_color}}</span></div>
+                    </div>
+                  </div>
+                  <div class="tcol noPad flex4">
+                    <div class="trow"
+                      v-if="item.material_process.length===0">
+                      <div class="tcol gray">无加工信息</div>
+                    </div>
+                    <div class="trow"
+                      v-for="(itemProcess,indexProcess) in item.material_process"
+                      :key="indexProcess">
+                      <div class="tcol"><span class="text">{{itemProcess.client_name}}</span></div>
+                      <div class="tcol"><span class="text">{{itemProcess.process}}</span></div>
+                      <div class="tcol"><span class="text">{{itemProcess.number}}{{itemProcess.unit}}</span></div>
+                      <div class="tcol">
+                        <template v-if="itemProcess.process==='染色'">
+                          <div class="changeCtn text">
+                            <span>白胚</span>
+                            <span class="el-icon-s-unfold blue"></span>
+                            <span>{{itemProcess.after_color}}</span>
+                          </div>
+                        </template>
+                        <template v-if="itemProcess.process==='倒纱'">
+                          <div class="changeCtn text">
+                            <span>{{itemProcess.before_attribute}}</span>
+                            <span class="el-icon-s-unfold blue"></span>
+                            <span>{{itemProcess.after_attribute}}</span>
+                          </div>
+                        </template>
+                        <template v-if="itemProcess.process==='并线'">
+                          <span class="text">{{itemProcess.bingxian_desc}}</span>
+                        </template>
+                        <template v-if="itemProcess.process==='膨纱'">
+                          <span class="text">{{itemProcess.pengsha_desc}}</span>
+                        </template>
+                        <template v-if="itemProcess.process==='切割'">
+                          <span class="text">{{itemProcess.qiege_desc}}</span>
+                        </template>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tcol noPad flex2">
+                    <div class="trow"
+                      v-if="item.final_push.length===0">
+                      <div class="tcol gray">无入库信息</div>
+                    </div>
+                    <div class="trow"
+                      v-for="(itemPush,indexPush) in  item.final_push"
+                      :key="indexPush">
+                      <div class="tcol"><span class="text">{{itemPush.store}}</span></div>
+                      <div class="tcol"><span class="text">{{itemPush.number}}{{itemPush.unit}}</span></div>
+                    </div>
+                  </div>
+                  <div class="tcol noPad flex2">
+                    <div class="trow"
+                      v-if="item.final_pop.length===0">
+                      <div class="tcol gray">无出库信息</div>
+                    </div>
+                    <div class="trow"
+                      v-for="(itemPop,indexPop) in item.final_pop"
+                      :key="indexPop">
+                      <div class="tcol"><span class="text">{{itemPop.client_name}}</span></div>
+                      <div class="tcol"><span class="text">{{itemPop.number}}{{itemPop.unit}}</span></div>
+                    </div>
+                  </div>
                 </div>
+              </template>
+              <div class="trow"
+                v-if="materialDetail.length===0">
+                <div class="tcol gray"
+                  style="text-align:center">暂无物料信息</div>
               </div>
-              <div class="tcol noPad"
-                style="flex:2">
-                <div class="trow"
-                  v-if="item.final_push.length===0">
-                  <div class="tcol gray">无入库信息</div>
-                </div>
-                <div class="trow"
-                  v-for="(itemPush,indexPush) in  item.final_push"
-                  :key="indexPush">
-                  <div class="tcol">{{itemPush.client_name}}</div>
-                  <div class="tcol">{{itemPush.number}}{{itemPush.unit}}</div>
-                </div>
-              </div>
-              <div class="tcol noPad"
-                style="flex:2">
-                <div class="trow"
-                  v-if="item.final_pop.length===0">
-                  <div class="tcol gray">无出库信息</div>
-                </div>
-                <div class="trow"
-                  v-for="(itemPop,indexPop) in  item.final_pop"
-                  :key="indexPop">
-                  <div class="tcol">{{itemPop.client_name}}</div>
-                  <div class="tcol">{{itemPop.number}}{{itemPop.unit}}</div>
-                </div>
-              </div>
-            </div>
-            <div class="trow"
-              v-if="materialDetail.length===0">
-              <div class="tcol gray"
-                style="text-align:center">暂无物料信息</div>
             </div>
           </div>
         </div>
@@ -772,6 +810,8 @@
       </div>
       <zh-drop-down :buttonStyle="'padding:20px'"
         :show="show_production"
+        :showAsync="!show_production"
+        @beforeShow="getProductionDetail"
         hideTitle="点击查看图表">
         <div class="tableCtn samallFont">
           <div class="thead"
@@ -2311,6 +2351,15 @@
         </div>
       </div>
     </div>
+    <!-- 产前寄送样 -->
+    <zh-order-send :editFlag="true"
+      :time_id="orderInfo.time_data[0].id"
+      :data="orderInfo.time_data[0].send_info"
+      :show="sendFlag"
+      @close="sendFlag=false"></zh-order-send>
+    <!-- 产前确认 -->
+    <zh-order-check :show="proCheckFlag"
+      @close="proCheckFlag=false"></zh-order-check>
     <!-- 关联单据 -->
     <zh-order-log :order_id="$route.query.id"
       :order_time_id="orderInfo.time_data[0].id"
@@ -2370,6 +2419,8 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      proCheckFlag: false,
+      sendFlag: false,
       loading: true,
       checkFlag: false,
       checkAll: false,
@@ -2463,6 +2514,16 @@ export default Vue.extend({
         desc: '',
         time_data: [
           {
+            send_info: {
+              other_desc: '',
+              info: [
+                {
+                  order_type: '',
+                  send_time: '',
+                  number: ''
+                }
+              ]
+            },
             id: '',
             order_time: '',
             order_type_id: '',
@@ -2665,6 +2726,23 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 监听一下鼠标滚轮
+    listenWheel(ev: any) {
+      const detail = ev.wheelDelta || ev.detail
+      // 定义滚动方向，其实也可以在赋值的时候写
+      const moveForwardStep = 1
+      const moveBackStep = -1
+      // 定义滚动距离
+      let step = 0
+      // 判断滚动方向,这里的100可以改，代表滚动幅度，也就是说滚动幅度是自定义的
+      if (detail < 0) {
+        step = moveForwardStep * 50
+      } else {
+        step = moveBackStep * 50
+      }
+      // @ts-ignore 对需要滚动的元素进行滚动操作
+      this.$refs.materialRef.scrollLeft += step
+    },
     getMatUnit(id: number, info: any) {
       const finded = this.materialDetail.find((item: any) => item.material_id === id)
       info.unit = finded.color_info[0].unit
@@ -3037,6 +3115,56 @@ export default Vue.extend({
         ]
       })
       return mergeArr
+    },
+    getMaterialDetail(init?: boolean) {
+      if (this.materialDetail.length === 0) {
+        order
+          .materialDetail({
+            order_id: Number(this.orderInfo.time_data[0].id)
+          })
+          .then((res) => {
+            this.loading = false
+            if (res.data.status) {
+              this.materialDetail = res.data.data.data
+              this.materialProgress = res.data.data.progress
+              this.materialUpdateTime = res.data.data.update_time
+              this.$nextTick(() => {
+                if (!init) {
+                  this.show_material = true
+                }
+              })
+            }
+          })
+      } else {
+        this.$nextTick(() => {
+          this.show_material = true
+        })
+      }
+    },
+    getProductionDetail(init?: boolean) {
+      if (this.productionDetail.length === 0) {
+        order
+          .productionDetail({
+            order_time_id: Number(this.orderInfo.time_data[0].id)
+          })
+          .then((res) => {
+            this.loading = false
+            if (res.data.status) {
+              this.productionDetail = res.data.data.data
+              this.productionProgress = res.data.data.progress
+              this.productionUpdateTime = res.data.data.update_time
+              this.$nextTick(() => {
+                if (!init) {
+                  this.show_production = true
+                }
+              })
+            }
+          })
+      } else {
+        this.$nextTick(() => {
+          this.show_production = true
+        })
+      }
     }
   },
   mounted() {
@@ -3060,35 +3188,25 @@ export default Vue.extend({
             })
           })
           this.productAllList = this.getOrderProduct(this.orderInfo)
-          Promise.all([
-            order.materialDetail({
-              order_id: Number(this.orderInfo.time_data[0].id)
-            }),
-            order.productionDetail({
-              order_time_id: Number(this.orderInfo.time_data[0].id)
-            })
-          ]).then((res) => {
-            this.materialDetail = res[0].data.data.data
-            this.materialProgress = res[0].data.data.progress
-            this.productionDetail = res[1].data.data.data
-            this.productionProgress = res[1].data.data.progress
-            this.productionUpdateTime = res[1].data.data.update_time
-            this.materialUpdateTime = res[0].data.data.update_time
-            this.loading = false
-          })
+          // 无loading加载汇总表
+          this.getMaterialDetail(true)
+          this.getProductionDetail(true)
+          this.loading = false
         }
       })
-    // 财务信息
-    order
-      .financial({
-        order_id: Number(this.$route.query.id),
-        product_id: ''
-      })
-      .then((res) => {
-        if (res.data.status) {
-          this.financialInfo = res.data.data
-        }
-      })
+    // 财务信息--仅管理员可见
+    if (Number(this.$getsessionStorage('has_check')) === 1) {
+      order
+        .financial({
+          order_id: Number(this.$route.query.id),
+          product_id: ''
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.financialInfo = res.data.data
+          }
+        })
+    }
     // 结余仓库
     store.list({}).then((res) => {
       if (res.data.status) {

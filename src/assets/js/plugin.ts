@@ -468,7 +468,7 @@ const copyTextInfo = (val: string) => {
   Message.Message.success('复制成功')
 }
 // 编辑器通用创建
-const initEditor = (item: any, index?: number) => {
+const initEditor = (item: any, index?: number | string) => {
   const id = index === 0 ? '#editor0' : ('#editor' + (index || ''))
   item.editor = new E(id)
   item.editor.config.menus = [

@@ -706,11 +706,22 @@
                 <el-radio :label="1">是</el-radio>
                 <el-radio :label="2">否</el-radio>
               </el-radio-group>
+              <span class="hoverBlue"
+                style="margin-left:12px;cursor:pointer;font-size:14px"
+                @click="sendFlag = true"
+                v-show="orderInfo.time_data.is_send===1">编辑寄送要求</span>
             </div>
           </div>
           <div class="col">
             <div class="label">
-              <span class="text">是否需要产前信息确认</span>
+              <span class="text">是否需要产前信息确认
+                <el-tooltip class="item"
+                  effect="dark"
+                  content="是否需要确认产前原料、半成品、成品信息"
+                  placement="top-start">
+                  <em class="el-icon-question"></em>
+                </el-tooltip>
+              </span>
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
@@ -722,7 +733,14 @@
           </div>
           <div class="col">
             <div class="label">
-              <span class="text">是否加急生产</span>
+              <span class="text">是否加急生产
+                <el-tooltip class="item"
+                  effect="dark"
+                  content="标记为加急生产的订单会默认排序在列表最前面"
+                  placement="top-start">
+                  <em class="el-icon-question"></em>
+                </el-tooltip>
+              </span>
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
@@ -737,7 +755,7 @@
           <div class="col">
             <div class="label">
               <span class="text">下单款数</span>
-              <span class="explanation">(自动计算))</span>
+              <span class="explanation">(自动计算)</span>
             </div>
             <div class="info elCtn">
               <el-input placeholder="请输入下单总数"
@@ -823,9 +841,8 @@
             <div class="label">
               <span class="text">备注信息</span>
             </div>
-            <div class="info elCtn">
-              <el-input placeholder="请输入订单描述及备注信息"
-                v-model="orderInfo.desc"></el-input>
+            <div id='editorOrder'
+              style="z-index: 0;position: relative;">
             </div>
           </div>
         </div>
@@ -843,6 +860,9 @@
         </div>
       </div>
     </div>
+    <zh-order-send :show="sendFlag"
+      @close="sendFlag=false"
+      @saveInfo="(ev)=>{orderInfo.time_data.send_info=ev;sendFlag=false;$message.success('保存成功')}"></zh-order-send>
     <product-edit :pid="pid"
       :pid_status="pid_status"
       :id="proId"
@@ -885,6 +905,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      sendFlag: false,
       showTable: true,
       loading: false,
       saveLock: false,
@@ -923,6 +944,16 @@ export default Vue.extend({
           is_urgent: 2,
           is_before_confirm: 2,
           is_send: 2,
+          send_info: {
+            other_desc: '',
+            info: [
+              {
+                order_type: '',
+                send_time: '',
+                number: ''
+              }
+            ]
+          },
           batch_data: [
             {
               id: '',
@@ -953,7 +984,8 @@ export default Vue.extend({
               ]
             }
           ]
-        }
+        },
+        editor: ''
       },
       addProductFlag: false,
       productList: [],
@@ -1276,7 +1308,7 @@ export default Vue.extend({
       const fileNameLength = file.name.length // 取到文件名长度
       const fileFormat = file.name.substring(fileName + 1, fileNameLength) // 截
       this.postData.token = this.token
-      this.postData.key = Date.parse(new Date() + '') + '.' + fileFormat
+      this.postData.key = file.name.split('.')[0] + Date.parse(new Date() + '') + '.' + fileFormat
       // const isJPG = file.type === 'image/jpeg'
       // const isPNG = file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 10
@@ -1296,6 +1328,7 @@ export default Vue.extend({
       this.$deleteItem(orderFile, orderFile.indexOf('https://file.zwyknit.com/' + file.response.key))
     },
     getCmpData() {
+      this.orderInfo.editor = ''
       this.orderInfo.pid = Number(this.$route.query.sampleOrderId) ? Number(this.$route.query.sampleOrderId) : null
       this.orderInfo.client_id = this.orderInfo.tree_data!.length > 0 ? (this.orderInfo.tree_data as number[])[2] : ''
       this.orderInfo.tree_data =
@@ -1477,6 +1510,7 @@ export default Vue.extend({
     }
   },
   mounted() {
+    this.$initEditor(this.orderInfo, 'Order')
     // 这个页面调用了添加产品组件，已经拿过token了
     this.$checkCommonInfo([
       {
