@@ -477,6 +477,13 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/billingManagement/orderQuotationComparison.vue')
     }, {
       meta: {
+        permissions_id: '21-18',
+      },
+      path: '/billingManagement/shaXianInOutList',
+      name: '单据管理-补纱入出库单据',
+      component: () => import('../views/billingManagement/shaXianInOutList.vue')
+    }, {
+      meta: {
         permissions_id: '17-1',
       },
       path: '/workerManage/create',

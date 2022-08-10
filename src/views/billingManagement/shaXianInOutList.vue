@@ -1,11 +1,11 @@
 <template>
-  <div id="rawMaterialPlan" v-loading="loading" class="bodyContainer">
+  <div id="shaXianInOutList" v-loading="loading" class="bodyContainer">
     <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">系统单据管理</div>
       </div>
       <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
-        <div class="tab active">原料计划单</div>
+        <div class="tab" @click="$router.push('/billingManagement/rawMaterialPlan')">原料计划单</div>
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialSupplement')">原料补充单</div>
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialPurchaseOrder')">原料订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialTransferOrder')">原料调取单</div>
@@ -23,7 +23,8 @@
         <div class="tab" @click="$router.push('/billingManagement/oppositeInvoicing')">对方发票单据</div>
         <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
         <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/shaXianInOutList')">纱线出入库单据</div>
+        <!-- <div class="tab" @click="$router.push('/billingManagement/orderQuotationComparison')">订单报价单对比单据</div> -->
+        <div class="tab active">纱线出入库单据</div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
@@ -96,15 +97,15 @@
             <div class="col" style="flex: 0.05">
               <el-checkbox v-model="checkAllPlan" @change="checkAll"></el-checkbox>
             </div>
-            <div class="col" style="flex: 1.2">计划单号</div>
+            <div class="col" style="flex: 1.3">单据编号</div>
+            <div class="col">出入库类型</div>
+            <div class="col">库存转移</div>
             <div class="col">关联订单号</div>
-            <div class="col">合计计划<br />生产数量</div>
-            <div class="col">合计计划<br />原料数量</div>
-            <div class="col">平均损耗</div>
-            <div class="col">采购状态</div>
+            <div class="col">关联单据</div>
+            <div class="col">单据类型</div>
             <div class="col">审核状态</div>
-            <div class="col">创建人</div>
             <div class="col">创建时间</div>
+            <div class="col">创建人</div>
             <div class="col" style="flex: 1.4">操作</div>
           </div>
           <div v-for="(item, index) in list" :key="index">
@@ -112,7 +113,57 @@
               <div class="col" style="flex: 0.05">
                 <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
               </div>
-              <div class="col" style="flex: 1.2">{{ item.code }}</div>
+              <div class="col" style="flex: 1.3">{{ item.code }}</div>
+              <div class="col">{{ stockTypeList[item.action_type].name }}</div>
+              <div class="col">
+                <template v-if="item.action_type === 1">
+                  <div class="changeCtn">
+                    <span>{{ item.client_name }}</span>
+                    <span class="el-icon-s-unfold green"></span>
+                    <span>{{ item.store }}/{{ item.secondary_store }}</span>
+                  </div>
+                </template>
+                <template v-else-if="item.action_type === 2 || item.action_type === 4">
+                  <div class="changeCtn">
+                    <span>{{ item.client_name }}</span>
+                    <span class="el-icon-s-unfold green"></span>
+                    <span>{{ item.store }}/{{ item.secondary_store }}</span>
+                  </div>
+                </template>
+                <template v-else-if="item.action_type === 3 || item.action_type === 5 || item.action_type === 10">
+                  <div class="changeCtn">
+                    <span>{{ item.store }}/{{ item.secondary_store }}</span>
+                    <span class="el-icon-s-unfold orange"></span>
+                    <span>{{ item.client_name }}</span>
+                  </div>
+                </template>
+                <template
+                  v-else-if="
+                    item.action_type === 6 ||
+                    item.action_type === 9 ||
+                    item.action_type === 11 ||
+                    item.action_type === 12
+                  "
+                >
+                  <div class="changeCtn">
+                    <span>{{ item.store }}/{{ item.secondary_store }}</span>
+                  </div>
+                </template>
+                <template v-else-if="item.action_type === 7">
+                  <div class="changeCtn">
+                    <span>{{ item.store }}/{{ item.secondary_store }}</span>
+                    <span class="el-icon-s-unfold orange"></span>
+                    <span>{{ item.move_store }}/{{ item.move_secondary_store }}</span>
+                  </div>
+                </template>
+                <template v-else-if="item.action_type === 8">
+                  <div class="changeCtn">
+                    <span>{{ item.store }}/{{ item.secondary_store }}</span>
+                    <span class="el-icon-s-unfold green"></span>
+                    <span>{{ item.move_store }}/{{ item.move_secondary_store }}</span>
+                  </div>
+                </template>
+              </div>
               <div
                 class="col hoverBlue"
                 style="
@@ -137,24 +188,18 @@
                 <span v-if="item.order_type === 2" class="circle backBlue">样</span>
                 {{ item.order_code || '无编号，点击查看详情' }}
               </div>
-              <div class="col">{{ (+item.total_production_number).toFixed(2) }}</div>
-              <div class="col">{{ (+item.total_plan_number).toFixed(2) }}</div>
-              <div class="col">{{ (+item.pre_loss).toFixed(2) }}%</div>
               <div class="col">
-                <div class="green" v-if="item.material_order_progress > 0 && item.material_order_progress < 100">
-                  采购中
-                </div>
-                <div class="orange" v-if="item.material_order_progress === 0">未进行</div>
-                <div class="blue" v-if="item.material_order_progress >= 100">已完成</div>
+                {{ item.rel_doc_code || '无' }}
               </div>
+              <div class="col">222</div>
               <div class="col">
                 <div v-if="item.is_check === 0" class="orange">待审核</div>
                 <div v-else-if="item.is_check === 1" class="blue">已审核</div>
                 <div v-else-if="item.is_check === 2" class="red">已驳回</div>
                 <div v-else class="red">状态异常</div>
               </div>
-              <div class="col">{{ item.user_name }}</div>
               <div class="col">{{ item.created_at }}</div>
+              <div class="col">{{ item.user_name }}</div>
               <div class="col" style="flex: 1.4">
                 <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
                 <span class="opr hoverBlue" @click="openPrint(item)">打印</span>
@@ -165,98 +210,29 @@
               <div class="tableCtn">
                 <div class="thead">
                   <div class="trow">
-                    <div class="tcol">产品品类</div>
-                    <div class="tcol noPad" style="flex: 7">
-                      <div class="trow">
-                        <div class="tcol">尺码颜色</div>
-                        <div class="tcol">下单数量</div>
-                        <div class="tcol">已计划</div>
-                        <div class="tcol">总数量百分比</div>
-                        <div class="tcol noPad" style="flex: 2">
-                          <div class="trow">
-                            <div class="tcol">产品部位</div>
-                            <div class="tcol">计划生产数量</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <div class="tcol">纱线名称</div>
+                    <div class="tcol">纱线属性</div>
+                    <div class="tcol">纱线颜色</div>
+                    <div class="tcol">批/缸/色号</div>
+                    <div class="tcol">数量</div>
                   </div>
                 </div>
                 <div class="tbody">
-                  <div class="trow" v-for="itemSon in item.detail.production_plan_data" :key="itemSon.product_id">
-                    <div class="tcol hoverBlue" style="cursor: pointer" @click="showProduct(itemSon)">
-                      <span>{{ itemSon.product_code || itemSon.system_code }}</span>
-                      <span>{{ itemSon.category }}/{{ itemSon.secondary_category }}</span>
+                  <div class="trow" v-for="itemSon in item.detail.info_data" :key="itemSon.id+'itemSon'">
+                    <div class="tcol">
+                      {{itemSon.material_name}}
                     </div>
-                    <div class="tcol noPad" style="flex: 7">
-                      <div class="trow" v-for="(itemChild, indexChild) in itemSon.product_data" :key="indexChild">
-                        <div class="tcol">{{ itemChild.size_name }}/{{ itemChild.color_name }}</div>
-                        <div class="tcol">{{ itemChild.order_number }}</div>
-                        <div class="tcol">
-                          {{
-                            itemChild.info_data.reduce((total, cur) => {
-                              return total + cur.number
-                            }, 0)
-                          }}
-                        </div>
-                        <div class="tcol">{{ itemChild.add_percent }}%</div>
-                        <div class="tcol noPad" style="flex: 2">
-                          <div class="trow" v-for="(itemPart, indexPart) in itemChild.info_data" :key="indexPart">
-                            <div class="tcol">{{ itemPart.part_name }}</div>
-                            <div class="tcol">{{ itemPart.number }}</div>
-                          </div>
-                        </div>
-                      </div>
+                    <div class="tcol">
+                      {{itemSon.attribute}}
                     </div>
-                  </div>
-                </div>
-              </div>
-              <div class="tableCtn">
-                <div class="thead">
-                  <div class="trow">
-                    <div class="tcol" style="flex: 1.3">产品信息</div>
-                    <div class="tcol">尺码颜色</div>
-                    <div class="tcol">产品部位</div>
-                    <div class="tcol">计划生产数量</div>
-                    <div class="tcol noPad" style="flex: 6">
-                      <div class="trow">
-                        <div class="tcol">工序名称</div>
-                        <div class="tcol">物料名称</div>
-                        <div class="tcol">物料颜色</div>
-                        <div class="tcol">损耗</div>
-                        <div class="tcol">合计最终数量</div>
-                        <div class="tcol">平均所需物料</div>
-                      </div>
+                    <div class="tcol">
+                      {{itemSon.material_color}}
                     </div>
-                  </div>
-                </div>
-                <div class="tbody">
-                  <div class="trow" v-for="(itemSon, index) in item.detail.material_plan_data" :key="index + 'i'">
-                    <div class="tcol hoverBlue" style="flex: 1.3; cursor: pointer" @click="showProduct(itemSon)">
-                      <div>{{ itemSon.product_code || itemSon.system_code }}</div>
-                      <div>{{ itemSon.category }}/{{ itemSon.secondary_category }}</div>
+                    <div class="tcol">
+                      {{itemSon.batch_code}}/{{itemSon.vat_code}}/{{itemSon.color_code}}
                     </div>
-                    <div class="tcol">{{ itemSon.size_name }}/{{ itemSon.color_name }}</div>
-                    <div class="tcol">{{ itemSon.part_name }}</div>
-                    <div class="tcol">{{ itemSon.number }}</div>
-                    <div class="tcol noPad" style="flex: 6">
-                      <div class="trow" v-if="itemSon.info_data.length === 0">
-                        <div class="tcol gray" style="text-align: center">不需要物料</div>
-                      </div>
-                      <div class="trow" v-for="(itemChild, indexChild) in itemSon.info_data" :key="indexChild">
-                        <div class="tcol">{{ itemChild.process_name }}</div>
-                        <div class="tcol">{{ itemChild.material_name }}</div>
-                        <div class="tcol">{{ itemChild.material_color }}</div>
-                        <div class="tcol">{{ itemChild.loss }}%</div>
-                        <div class="tcol">{{ itemChild.final_number }}{{ itemChild.unit }}</div>
-                        <div class="tcol">
-                          {{
-                            itemChild.unit === 'kg'
-                              ? $toFixed((itemChild.final_number / itemSon.number) * 1000) + 'g'
-                              : $toFixed(itemChild.final_number / itemSon.number) + itemChild.unit
-                          }}
-                        </div>
-                      </div>
+                    <div class="tcol">
+                      {{itemSon.number}}{{itemSon.unit}}
                     </div>
                   </div>
                 </div>
@@ -365,9 +341,9 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { exportExcel, client, materialPlan, check } from '@/assets/js/api'
+import { exportExcel, client, materialStock, check } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
-import { limitArr } from '@/assets/js/dictionary'
+import { limitArr, stockType } from '@/assets/js/dictionary'
 import zhExportSetting from '@/components/zhExportSetting/zhExportSetting.vue'
 import zhCharts from '@/components/zhCharts/zhCharts.vue'
 import zhDropDown from '@/components/zhDropDown/zhDropDown.vue'
@@ -395,6 +371,7 @@ export default Vue.extend({
         is_check: 1, // 1通过 2没通过
         desc: ''
       },
+      stockTypeList: stockType,
       limitList: limitArr,
       exportKey: [],
       keyword: '',
@@ -462,7 +439,7 @@ export default Vue.extend({
     changeShow(item: any) {
       this.loading = true
       if (!item.detail.code) {
-        materialPlan
+        materialStock
           .detail({
             id: item.id
           })
@@ -528,7 +505,7 @@ export default Vue.extend({
       this.changeRouter()
     },
     openPrint(items: any) {
-      materialPlan
+      materialStock
         .detail({
           id: items.id
         })
@@ -652,15 +629,9 @@ export default Vue.extend({
     },
     getList() {
       let _this = this
-      materialPlan
+      materialStock
         .list({
-          is_check: this.status,
-          code: this.keyword,
-          user_id: this.user_id,
-          group_id: this.group_id,
-          start_time: this.date[0],
-          end_time: this.date[1],
-          order_type: this.order_type,
+          material_type: 1,
           limit: this.limit,
           page: this.page
         })
@@ -726,5 +697,5 @@ export default Vue.extend({
 </script>
 
 <style lang="less">
-@import '~@/assets/css/billingManagement/rawMaterialPlan.less';
+@import '~@/assets/css/billingManagement/shaXianInOutList.less';
 </style>    

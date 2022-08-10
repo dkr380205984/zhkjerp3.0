@@ -24,7 +24,7 @@
         <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
         <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
         <!-- <div class="tab" @click="$router.push('/billingManagement/orderQuotationComparison')">订单报价单对比单据</div> -->
-        <div style="width: 100px"></div>
+        <div class="tab" @click="$router.push('/billingManagement/shaXianInOutList')">纱线出入库单据</div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
@@ -122,27 +122,26 @@
             <div class="col" style="flex: 0.05">
               <el-checkbox v-model="checkAllPlan" @change="checkAll"></el-checkbox>
             </div>
-            <div class="col" style="flex: 2.1">生产单号</div>
+            <div class="col" style="flex: 1.9">生产单号</div>
             <div class="col">关联订单号</div>
             <div class="col">生产单位</div>
             <div class="col">合计计划数量</div>
-            <div class="col">合计计划金额</div>
+            <div class="col" style="flex:1.3">合计计划金额</div>
             <div class="col">检验入库数量</div>
-            <div class="col" style="flex: 1.1">半次/全次数</div>
-            <div class="col" style="flex: 0.9">加工工序</div>
-            <div class="col" style="flex: 0.9">额外费用</div>
+            <div class="col">半次/全次数</div>
+            <div class="col">加工工序</div>
             <div class="col">生产状态</div>
             <div class="col">审核状态</div>
             <div class="col">创建人</div>
-            <div class="col" style="flex: 1.52">创建时间</div>
-            <div class="col" style="flex: 2.33">操作</div>
+            <div class="col" style="flex: 1.4">创建时间</div>
+            <div class="col" style="flex: 2">操作</div>
           </div>
           <div v-for="(item, index) in list" :key="index">
             <div class="row">
               <div class="col" style="flex: 0.05">
                 <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
               </div>
-              <div class="col" style="flex: 2.1">{{ item.code }}</div>
+              <div class="col" style="flex: 1.9">{{ item.code }}</div>
               <div
                 class="col hoverBlue"
                 style="
@@ -169,9 +168,9 @@
               </div>
               <div class="col">{{ item.client_name }}</div>
               <div class="col">{{ (+item.total_number).toFixed(2) }}</div>
-              <div class="col">{{ (+item.total_price).toFixed(2) }}</div>
+              <div class="col" style="flex:1.3">{{ (+item.total_price).toFixed(2) }}</div>
               <div class="col">{{ (+item.total_real_number).toFixed(2) }}</div>
-              <div class="col" style="flex: 1.1">
+              <div class="col">
                 <span :class="{ gray: !item.total_part_shoddy_number, orange: item.total_part_shoddy_number }">{{
                   item.total_part_shoddy_number || '0'
                 }}</span
@@ -180,10 +179,7 @@
                   item.total_shoddy_number || '0'
                 }}</span>
               </div>
-              <div class="col" style="flex: 0.9">{{ item.process_name }}</div>
-              <div class="col" style="flex: 0.9">
-                <others-fee-data :data="item.others_fee_data"></others-fee-data>
-              </div>
+              <div class="col">{{ item.process_name }}</div>
               <div class="col">
                 <div v-if="item.status === 1" class="orange">已创建</div>
                 <div v-else-if="item.is_check === 2" class="blue">进行中</div>
@@ -197,8 +193,8 @@
                 <div v-else class="red">状态异常</div>
               </div>
               <div class="col">{{ item.user_name }}</div>
-              <div class="col" style="flex: 1.52">{{ item.created_at }}</div>
-              <div class="col" style="flex: 2.33">
+              <div class="col" style="flex: 1.4">{{ item.created_at }}</div>
+              <div class="col" style="flex: 2">
                 <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
                 <span class="opr hoverBlue" @click="openPrint(item)">打印</span>
                 <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
@@ -209,12 +205,12 @@
                 <div class="detailCtn">
                   <div class="row">
                     <div class="col">
-                      <div class="label">加工工序：</div>
-                      <div class="text">{{ item.detail.process_name || '无' }}</div>
-                    </div>
-                    <div class="col">
                       <div class="label">工序说明：</div>
                       <div class="text">{{ item.detail.process_desc || '无' }}</div>
+                    </div>
+                    <div class="col">
+                      <div class="label">额外费用：</div>
+                      <div class="text"><others-fee-data :data="item.others_fee_data"></others-fee-data></div>
                     </div>
                   </div>
                 </div>
