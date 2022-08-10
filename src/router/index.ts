@@ -484,6 +484,13 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/billingManagement/shaXianInOutList.vue')
     }, {
       meta: {
+        permissions_id: '21-19',
+      },
+      path: '/billingManagement/fabricWarehousing',
+      name: '单据管理-面料入出库单据',
+      component: () => import('../views/billingManagement/fabricWarehousing.vue')
+    }, {
+      meta: {
         permissions_id: '17-1',
       },
       path: '/workerManage/create',

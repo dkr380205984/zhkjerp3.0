@@ -25,7 +25,7 @@
         <div class="tab active">付款单据</div>
         <!-- <div class="tab" @click="$router.push('/billingManagement/orderQuotationComparison')">订单报价单对比单据</div> -->
         <div class="tab" @click="$router.push('/billingManagement/shaXianInOutList')">纱线出入库单据</div>
-        <div style="width: 100px"></div>
+        <div class="tab" @click="$router.push('/billingManagement/fabricWarehousing')">面料出入库单据</div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>

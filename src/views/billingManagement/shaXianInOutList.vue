@@ -25,7 +25,7 @@
         <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
         <!-- <div class="tab" @click="$router.push('/billingManagement/orderQuotationComparison')">订单报价单对比单据</div> -->
         <div class="tab active">纱线出入库单据</div>
-        <div style="width: 100px"></div>
+        <div class="tab" @click="$router.push('/billingManagement/fabricWarehousing')">面料出入库单据</div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
@@ -220,13 +220,13 @@
                 <div class="tbody">
                   <div class="trow" v-for="itemSon in item.detail.info_data" :key="itemSon.id+'itemSon'">
                     <div class="tcol">
-                      {{itemSon.material_name}}
+                      {{itemSon.material_name || '无'}}
                     </div>
                     <div class="tcol">
-                      {{itemSon.attribute}}
+                      {{itemSon.attribute || '无'}}
                     </div>
                     <div class="tcol">
-                      {{itemSon.material_color}}
+                      {{itemSon.material_color || '无'}}
                     </div>
                     <div class="tcol">
                       {{itemSon.batch_code}}/{{itemSon.vat_code}}/{{itemSon.color_code}}
