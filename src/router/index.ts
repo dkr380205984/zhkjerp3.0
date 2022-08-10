@@ -491,6 +491,13 @@ const routes: Array<RouteConfig> = [
       component: () => import('../views/billingManagement/fabricWarehousing.vue')
     }, {
       meta: {
+        permissions_id: '21-20',
+      },
+      path: '/billingManagement/auxiliaryInOutList',
+      name: '单据管理-辅料入出库单据',
+      component: () => import('../views/billingManagement/auxiliaryInOutList.vue')
+    }, {
+      meta: {
         permissions_id: '17-1',
       },
       path: '/workerManage/create',

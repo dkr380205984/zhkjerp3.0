@@ -779,7 +779,7 @@ const materialStock = {
     rel_doc_id?: string | number
     order_type?: string
     export_excel?: 1
-    material_type?: 1 | 2
+    material_type?: 1 | 2 | 3 | 4 | 5 //1.纱线 2.面料 3.毛料 4.装饰辅料 5.包装辅料
   }) => http.get(`${baseUrl}/store/log/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/store/log/delete`, params, 'application/json'),
   detail: (params: DetailParams) => http.get(`${baseUrl}/store/log/detail`, params),
