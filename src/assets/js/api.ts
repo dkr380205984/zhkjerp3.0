@@ -585,6 +585,10 @@ const store = {
     page?: string | number
     limit?: string | number
   }) => http.get(`${baseUrl}/product/store/log/lists`, params),
+  proLogDetail: (params: {
+    [propName: string]: any
+    id?: string | number
+  }) => http.get(`${baseUrl}/product/store/log/detail`, params),
 }
 
 // 样品

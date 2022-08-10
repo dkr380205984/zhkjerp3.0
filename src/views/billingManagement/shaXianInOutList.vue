@@ -27,7 +27,7 @@
         <div class="tab active">纱线出入库单据</div>
         <div class="tab" @click="$router.push('/billingManagement/fabricWarehousing')">面料出入库单据</div>
         <div class="tab" @click="$router.push('/billingManagement/auxiliaryInOutList')">辅料出入库单据</div>
-        <div style="width: 100px"></div>
+        <div class="tab" @click="$router.push('/billingManagement/productStoreLogList')">产品出入库单据</div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
@@ -577,7 +577,7 @@ export default Vue.extend({
         this.page = 1
       }
       this.$router.push(
-        '/billingManagement/rawMaterialPlan?page=' +
+        '/billingManagement/shaXianInOutList?page=' +
           this.page +
           '&keyword=' +
           this.keyword +

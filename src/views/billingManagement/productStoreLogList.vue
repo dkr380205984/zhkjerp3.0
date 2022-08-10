@@ -1,5 +1,5 @@
 <template>
-  <div id="ourInvoiceList" v-loading="loading" class="bodyContainer">
+  <div id="productStoreLogList" v-loading="loading" class="bodyContainer">
     <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">系统单据管理</div>
@@ -19,7 +19,7 @@
         <div class="tab" @click="$router.push('/billingManagement/deductionForm')">我方扣款单据</div>
       </div>
       <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
-        <div class="tab active">我方发票单据</div>
+        <div class="tab" @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
         <div class="tab" @click="$router.push('/billingManagement/oppositeInvoicing')">对方发票单据</div>
         <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
         <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
@@ -27,7 +27,7 @@
         <div class="tab" @click="$router.push('/billingManagement/shaXianInOutList')">纱线出入库单据</div>
         <div class="tab" @click="$router.push('/billingManagement/fabricWarehousing')">面料出入库单据</div>
         <div class="tab" @click="$router.push('/billingManagement/auxiliaryInOutList')">辅料出入库单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/productStoreLogList')">产品出入库单据</div>
+        <div class="tab active">产品出入库单据</div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
@@ -37,34 +37,19 @@
           <div class="elCtn">
             <el-input
               v-model="keyword"
-              placeholder="票据编号搜索"
+              placeholder="筛选计划单号/订单号"
               @keydown.enter.native="changeRouter"
-              @clear="changeRouter"
-              clearable
             ></el-input>
           </div>
           <div class="elCtn">
-            <el-input
-              v-model="order_code"
-              placeholder="关联订单号搜索"
-              clearable
-              @keydown.enter.native="changeRouter"
-              @clear="changeRouter"
-            ></el-input>
-          </div>
-          <div class="elCtn">
-            <el-cascader
-              @change="
-                getContacts($event)
-                changeRouter()
-              "
-              placeholder="关联客户名称"
-              v-model="client_id"
-              filterable
-              :options="clientList"
+            <el-select
+              @change="(ev) => getLocalStorage(ev, 'create_user')"
+              v-model="user_id"
+              placeholder="筛选创建人"
               clearable
             >
-            </el-cascader>
+              <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
           </div>
           <div class="elCtn">
             <el-date-picker
@@ -81,21 +66,44 @@
             >
             </el-date-picker>
           </div>
+          <div class="elCtn">
+            <el-select @change="changeRouter" v-model="status" placeholder="筛选审核状态">
+              <el-option value="null" label="全部"></el-option>
+              <el-option value="0" label="待审核"></el-option>
+              <el-option value="1" label="已审核"></el-option>
+              <el-option value="2" label="已驳回"></el-option>
+              <el-option value="3" label="状态异常"></el-option>
+            </el-select>
+          </div>
           <div class="btn borderBtn" @click="reset">重置</div>
+        </div>
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-select @change="changeRouter" v-model="order_type" placeholder="筛选单据类型" clearable>
+              <el-option label="全部" value=""></el-option>
+              <el-option label="订单" value="1"></el-option>
+              <el-option label="样单" value="2"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-select @change="changeRouter" v-model="group_id" placeholder="筛选负责小组" clearable>
+              <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+            </el-select>
+          </div>
+          <div class="btn borderBtn backHoverBlue" style="color: white" @click="oneShowAll">全部展开</div>
         </div>
         <div class="list">
           <div class="row title">
             <div class="col" style="flex: 0.05">
               <el-checkbox v-model="checkAllPlan" @change="checkAll"></el-checkbox>
             </div>
-            <div class="col" style="flex: 1.2">票据编号</div>
+            <div class="col" style="flex: 1.3">单据编号</div>
+            <div class="col">出入库类型</div>
+            <div class="col">库存转移</div>
             <div class="col">关联订单号</div>
-            <div class="col">关联单位</div>
-            <div class="col">开票金额</div>
-            <div class="col">发票号码</div>
-            <div class="col">备注信息</div>
-            <div class="col">操作人</div>
-            <div class="col">操作日期</div>
+            <div class="col">审核状态</div>
+            <div class="col">创建时间</div>
+            <div class="col">创建人</div>
             <div class="col">操作</div>
           </div>
           <div v-for="(item, index) in list" :key="index">
@@ -103,7 +111,57 @@
               <div class="col" style="flex: 0.05">
                 <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
               </div>
-              <div class="col" style="flex: 1.2">{{ item.code }}</div>
+              <div class="col" style="flex: 1.3">{{ item.code }}</div>
+              <div class="col">{{ stockTypeList[item.action_type].name }}</div>
+              <div class="col">
+                <template v-if="item.action_type === 1">
+                  <div class="changeCtn">
+                    <span>{{ item.client_name }}</span>
+                    <span class="el-icon-s-unfold green"></span>
+                    <span>{{ item.store }}/{{ item.secondary_store }}</span>
+                  </div>
+                </template>
+                <template v-else-if="item.action_type === 2 || item.action_type === 4">
+                  <div class="changeCtn">
+                    <span>{{ item.client_name }}</span>
+                    <span class="el-icon-s-unfold green"></span>
+                    <span>{{ item.store }}/{{ item.secondary_store }}</span>
+                  </div>
+                </template>
+                <template v-else-if="item.action_type === 3 || item.action_type === 5 || item.action_type === 10">
+                  <div class="changeCtn">
+                    <span>{{ item.store }}/{{ item.secondary_store }}</span>
+                    <span class="el-icon-s-unfold orange"></span>
+                    <span>{{ item.client_name }}</span>
+                  </div>
+                </template>
+                <template
+                  v-else-if="
+                    item.action_type === 6 ||
+                    item.action_type === 9 ||
+                    item.action_type === 11 ||
+                    item.action_type === 12
+                  "
+                >
+                  <div class="changeCtn">
+                    <span>{{ item.store }}/{{ item.secondary_store }}</span>
+                  </div>
+                </template>
+                <template v-else-if="item.action_type === 7">
+                  <div class="changeCtn">
+                    <span>{{ item.store }}/{{ item.secondary_store }}</span>
+                    <span class="el-icon-s-unfold orange"></span>
+                    <span>{{ item.move_store }}/{{ item.move_secondary_store }}</span>
+                  </div>
+                </template>
+                <template v-else-if="item.action_type === 8">
+                  <div class="changeCtn">
+                    <span>{{ item.store }}/{{ item.secondary_store }}</span>
+                    <span class="el-icon-s-unfold green"></span>
+                    <span>{{ item.move_store }}/{{ item.move_secondary_store }}</span>
+                  </div>
+                </template>
+              </div>
               <div
                 class="col hoverBlue"
                 style="
@@ -120,7 +178,7 @@
                   $router.push(
                     (item.order_type === 1 || item.order_type === null || item.order_type === undefined
                       ? '/order/detail?id='
-                      : '/sampleOrder/detail?id=') + item.order_id
+                      : '/sampleOrder/detail?id=') + item.top_order_id
                   )
                 "
               >
@@ -128,121 +186,47 @@
                 <span v-if="item.order_type === 2" class="circle backBlue">样</span>
                 {{ item.order_code || '无编号，点击查看详情' }}
               </div>
-              <div class="col">{{ item.client.name }}</div>
-              <div class="col">{{ (+item.price).toFixed(2) }}</div>
-              <div class="col">{{ item.invoice_code }}</div>
-              <div
-                class="col"
-                style="overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2"
-              >
-                <el-tooltip class="item" effect="dark" :content="item.desc || '无'" placement="top-start">
-                  <div>{{ item.desc || '无' }}</div>
-                </el-tooltip>
-              </div>
-              <div class="col">{{ item.user_name }}</div>
-              <div class="col">{{ item.created_at }}</div>
               <div class="col">
-                <span class="opr hoverOrange" @click="goInvoice([item], true)">修改</span>
-                <span class="opr hoverRed" @click="deleteThis(item)">删除</span>
+                <div v-if="item.is_check === 0" class="orange">待审核</div>
+                <div v-else-if="item.is_check === 1" class="blue">已审核</div>
+                <div v-else-if="item.is_check === 2" class="red">已驳回</div>
+                <div v-else class="red">状态异常</div>
+              </div>
+              <div class="col">{{ item.created_at }}</div>
+              <div class="col">{{ item.user_name }}</div>
+              <div class="col">
+                <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
+                <span class="opr hoverBlue" @click="openPrint(item)">打印</span>
+                <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
               </div>
             </div>
             <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
               <div class="tableCtn">
                 <div class="thead">
                   <div class="trow">
-                    <div class="tcol">产品品类</div>
-                    <div class="tcol noPad" style="flex: 7">
-                      <div class="trow">
-                        <div class="tcol">尺码颜色</div>
-                        <div class="tcol">下单数量</div>
-                        <div class="tcol">已计划</div>
-                        <div class="tcol">总数量百分比</div>
-                        <div class="tcol noPad" style="flex: 2">
-                          <div class="trow">
-                            <div class="tcol">产品部位</div>
-                            <div class="tcol">计划生产数量</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="tbody">
-                  <div class="trow" v-for="itemSon in item.detail.production_plan_data" :key="itemSon.product_id">
-                    <div class="tcol hoverBlue" style="cursor: pointer" @click="showProduct(itemSon)">
-                      <span>{{ itemSon.product_code || itemSon.system_code }}</span>
-                      <span>{{ itemSon.category }}/{{ itemSon.secondary_category }}</span>
-                    </div>
-                    <div class="tcol noPad" style="flex: 7">
-                      <div class="trow" v-for="(itemChild, indexChild) in itemSon.product_data" :key="indexChild">
-                        <div class="tcol">{{ itemChild.size_name }}/{{ itemChild.color_name }}</div>
-                        <div class="tcol">{{ itemChild.order_number }}</div>
-                        <div class="tcol">
-                          {{
-                            itemChild.info_data.reduce((total, cur) => {
-                              return total + cur.number
-                            }, 0)
-                          }}
-                        </div>
-                        <div class="tcol">{{ itemChild.add_percent }}%</div>
-                        <div class="tcol noPad" style="flex: 2">
-                          <div class="trow" v-for="(itemPart, indexPart) in itemChild.info_data" :key="indexPart">
-                            <div class="tcol">{{ itemPart.part_name }}</div>
-                            <div class="tcol">{{ itemPart.number }}</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="tableCtn">
-                <div class="thead">
-                  <div class="trow">
-                    <div class="tcol" style="flex: 1.3">产品信息</div>
+                    <div class="tcol">产品编号品类</div>
+                    <div class="tcol">产品名称</div>
+                    <div class="tcol">客户款号</div>
                     <div class="tcol">尺码颜色</div>
-                    <div class="tcol">产品部位</div>
-                    <div class="tcol">计划生产数量</div>
-                    <div class="tcol noPad" style="flex: 6">
-                      <div class="trow">
-                        <div class="tcol">工序名称</div>
-                        <div class="tcol">物料名称</div>
-                        <div class="tcol">物料颜色</div>
-                        <div class="tcol">损耗</div>
-                        <div class="tcol">合计最终数量</div>
-                        <div class="tcol">平均所需物料</div>
-                      </div>
-                    </div>
+                    <div class="tcol">单价</div>
+                    <div class="tcol">数量</div>
                   </div>
                 </div>
                 <div class="tbody">
-                  <div class="trow" v-for="(itemSon, index) in item.detail.material_plan_data" :key="index + 'i'">
-                    <div class="tcol hoverBlue" style="flex: 1.3; cursor: pointer" @click="showProduct(itemSon)">
-                      <div>{{ itemSon.product_code || itemSon.system_code }}</div>
-                      <div>{{ itemSon.category }}/{{ itemSon.secondary_category }}</div>
+                  <div class="trow" v-for="itemSon in item.detail.info_data" :key="itemSon.id + 'itemSon'">
+                    <div class="tcol">
+                      <div>{{ itemSon.product_code || '无编号' }}</div>
+                      <div>({{ itemSon.category || '无' }} / {{ itemSon.secondary_category || '无' }})</div>
                     </div>
-                    <div class="tcol">{{ itemSon.size_name }}/{{ itemSon.color_name }}</div>
-                    <div class="tcol">{{ itemSon.part_name }}</div>
-                    <div class="tcol">{{ itemSon.number }}</div>
-                    <div class="tcol noPad" style="flex: 6">
-                      <div class="trow" v-if="itemSon.info_data.length === 0">
-                        <div class="tcol gray" style="text-align: center">不需要物料</div>
-                      </div>
-                      <div class="trow" v-for="(itemChild, indexChild) in itemSon.info_data" :key="indexChild">
-                        <div class="tcol">{{ itemChild.process_name }}</div>
-                        <div class="tcol">{{ itemChild.material_name }}</div>
-                        <div class="tcol">{{ itemChild.material_color }}</div>
-                        <div class="tcol">{{ itemChild.loss }}%</div>
-                        <div class="tcol">{{ itemChild.final_number }}{{ itemChild.unit }}</div>
-                        <div class="tcol">
-                          {{
-                            itemChild.unit === 'kg'
-                              ? $toFixed((itemChild.final_number / itemSon.number) * 1000) + 'g'
-                              : $toFixed(itemChild.final_number / itemSon.number) + itemChild.unit
-                          }}
-                        </div>
-                      </div>
+                    <div class="tcol">
+                      {{ itemSon.product_name || '无产品名称'}}
                     </div>
+                    <div class="tcol">{{ itemSon.style_code }}</div>
+                    <div class="tcol">{{ itemSon.size_name || '无' }} / {{ itemSon.color_name || '无' }}</div>
+                    <div class="tcol">
+                      {{ itemSon.price ? itemSon.price + '元' : '未填写' }}
+                    </div>
+                    <div class="tcol">{{ itemSon.number }}{{ itemSon.unit }}</div>
                   </div>
                 </div>
               </div>
@@ -251,10 +235,20 @@
         </div>
         <div style="margin-top: 20px">
           <span style="line-height: 35px; margin-left: 40px"
-            >合计开票金额：
+            >合计计划生产数量：
             <span style="font-weight: bold" class="green">
-              {{ (additional.total_price / 10000).toFixed(2) }} 万元
+              {{ (additional.total_production_number / 10000).toFixed(2) }} 万件
             </span>
+          </span>
+          <span style="line-height: 35px; margin-left: 40px"
+            >合计计划原料数量：
+            <span class="green" style="font-weight: bold">
+              {{ (additional.total_material_number / 1000).toFixed(2) }} 吨或千米
+            </span>
+          </span>
+          <span style="line-height: 35px; margin-left: 40px">
+            平均损耗：
+            <span class="green" style="font-weight: bold"> {{ additional.pre_loss }} % </span>
           </span>
         </div>
         <div class="pageCtn">
@@ -272,76 +266,24 @@
     </div>
     <div class="bottomFixBar">
       <div class="main">
-        <!-- <div class="fl blue green" style="line-height: 56px; margin-left: 24px">
+        <div class="fl blue green" style="line-height: 56px; margin-left: 24px">
           <div class="btn backHoverBlue" @click="lostCheck">
             <span class="text">批量审核</span>
           </div>
-        </div> -->
+        </div>
         <div class="btnCtn">
           <div class="borderBtn" @click="$router.go(-1)">返回</div>
           <div class="buttonList" style="margin-left: 12px">
-            <div class="btn backHoverBlue" @click="showExportPopup = true">
-              <span class="text" style="margin-left: 0">导出报表</span>
+            <!-- <div class="btn backHoverBlue">
+              <span class="text">导出月度报表</span>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="popup" v-show="showExportPopup">
-      <div class="main">
-        <div class="titleCtn">
-          <span class="text"
-            >请选择需要导出的时间段<el-tooltip class="item" effect="dark" content="均为创建时间" placement="top">
-              <i class="el-icon-info"></i> </el-tooltip
-          ></span>
-          <div class="closeCtn" @click="showExportPopup = false">
-            <span class="el-icon-close"></span>
-          </div>
-        </div>
-        <div class="contentCtn">
-          <div class="row">
-            <div class="label">年份：</div>
-            <div class="info" style="line-height: 32px">
-              <el-date-picker v-model="exportYear" type="year" placeholder="选择年"> </el-date-picker>
+            <div class="btn backHoverBlue">
+              <span class="text">导出季度报表</span>
             </div>
+            <div class="btn backHoverBlue">
+              <span class="text">导出年度报表</span>
+            </div> -->
           </div>
-          <div class="row">
-            <div class="label">季度：</div>
-            <div class="info" style="min-height: 32px; height: auto">
-              <el-select v-model="exportJiDu" placeholder="请选择" @change="changeJiDu">
-                <el-option label="全部" :value="''"></el-option>
-                <el-option label="第一季度" :value="1"></el-option>
-                <el-option label="第二季度" :value="2"></el-option>
-                <el-option label="第三季度" :value="3"></el-option>
-                <el-option label="第四季度" :value="4"></el-option>
-              </el-select>
-            </div>
-          </div>
-          <div class="row" v-if="exportJiDu != ''">
-            <div class="label">月份：</div>
-            <div class="info">
-              <el-select v-model="exportMonth" placeholder="请选择">
-                <el-option
-                  v-for="item in monthList"
-                  :key="item.label + item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select>
-            </div>
-          </div>
-          <div class="row">
-            <div class="label">单位：</div>
-            <div class="info">
-              <el-cascader placeholder="筛选关联客户" v-model="exportClient" filterable :options="clientList" clearable>
-              </el-cascader>
-            </div>
-          </div>
-        </div>
-        <div class="oprCtn">
-          <span class="btn borderBtn" @click="showExportPopup = false">取消</span>
-          <span class="btn backHoverBlue" @click="exportExcel">确认</span>
         </div>
       </div>
     </div>
@@ -387,26 +329,14 @@
         </div>
       </div>
     </div>
-    <zh-invoice
-      :type="1"
-      :update="invoiceUpdate"
-      :show="invoiceFlag"
-      :data="invoiceData"
-      :client_name="clientFinancial.name"
-      :client_id="clientFinancial.client_id"
-      @close="
-        invoiceFlag = false
-        getList()
-      "
-    ></zh-invoice>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { exportExcel, client, materialPlan, check, invoice } from '@/assets/js/api'
+import { exportExcel, client, store, check } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
-import { limitArr } from '@/assets/js/dictionary'
+import { limitArr, stockType } from '@/assets/js/dictionary'
 import zhExportSetting from '@/components/zhExportSetting/zhExportSetting.vue'
 import zhCharts from '@/components/zhCharts/zhCharts.vue'
 import zhDropDown from '@/components/zhDropDown/zhDropDown.vue'
@@ -420,16 +350,8 @@ export default Vue.extend({
       mainLoading: false,
       mainLoading1: false,
       productShow: false,
-      showExportPopup: false,
-      exportClient: [],
-      exportYear: new Date(),
-      exportJiDu: '',
-      exportMonth: '',
-      invoiceFlag: false,
-      invoiceUpdate: false,
       productDetailId: '',
       additional: {},
-      invoiceData: [],
       loading: true,
       showCharts: false,
       list: [],
@@ -442,29 +364,11 @@ export default Vue.extend({
         is_check: 1, // 1通过 2没通过
         desc: ''
       },
-      clientFinancial: {
-        total_collect_price: 0,
-        total_deduct_price: 0,
-        total_invoice_price: 0,
-        total_order_number: 0,
-        total_order_price: 0,
-        total_order_price_rmb: 0,
-        total_order_price_usd: 0,
-        total_transport_price: 0,
-        total_transport_price_rmb: 0,
-        total_transport_price_usd: 0,
-        total_transport_number: 0,
-        status: 0,
-        name: '',
-        client_type_name: '',
-        alias: '',
-        contacts_data: []
-      },
+      stockTypeList: stockType,
       limitList: limitArr,
       exportKey: [],
       keyword: '',
       contacts_id: '',
-      order_code: '',
       contactsList: [],
       client_id: [],
       group_id: '',
@@ -510,55 +414,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    changeJiDu(e: any) {
-      this.exportMonth = ''
-      if (e != '') {
-        this.monthList = this.$forJiDuGetMonth(e, true)
-      } else {
-        this.monthList = []
-      }
-    },
-    exportExcel() {
-      this.mainLoading = true
-
-      let start_time = ''
-      let end_time = ''
-
-      if (this.exportJiDu !== '') {
-        if (this.exportMonth !== '') {
-          start_time = new Date(this.exportYear.getFullYear(), this.exportMonth - 1, 1)
-            .toLocaleDateString()
-            .replaceAll('/', '-')
-          end_time = new Date(this.exportYear.getFullYear(), this.exportMonth, 0)
-            .toLocaleDateString()
-            .replaceAll('/', '-')
-        } else {
-          start_time = new Date(this.exportYear.getFullYear(), (this.exportJiDu - 1) * 3, 1)
-            .toLocaleDateString()
-            .replaceAll('/', '-')
-          end_time = new Date(this.exportYear.getFullYear(), this.exportJiDu * 3, 0)
-            .toLocaleDateString()
-            .replaceAll('/', '-')
-        }
-      } else {
-        start_time = this.exportYear.getFullYear() + '-01-01'
-        end_time = this.exportYear.getFullYear() + '-12-31'
-      }
-
-      invoice
-        .list({
-          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
-          start_time: start_time,
-          end_time: end_time,
-          invoice_type: 1,
-          export_excel: 1
-        })
-        .then((res) => {
-          window.location.href = res.data.data
-          this.mainLoading = false
-          this.showExportPopup = false
-        })
-    },
     getContacts(ev: number[]) {
       if (ev && ev.length) {
         client
@@ -574,18 +429,11 @@ export default Vue.extend({
         this.contacts_id = ''
       }
     },
-    goInvoice(data: any[], update?: boolean) {
-      this.invoiceUpdate = update
-      this.invoiceData = data
-      this.invoiceFlag = true
-      this.clientFinancial.name = data[0].client.name
-      this.clientFinancial.client_id = data[0].client.id
-    },
     changeShow(item: any) {
       this.loading = true
       if (!item.detail.code) {
-        materialPlan
-          .detail({
+        store
+          .proLogDetail({
             id: item.id
           })
           .then((ress) => {
@@ -650,8 +498,8 @@ export default Vue.extend({
       this.changeRouter()
     },
     openPrint(items: any) {
-      materialPlan
-        .detail({
+      store
+        .proLogDetail({
           id: items.id
         })
         .then((res) => {
@@ -687,12 +535,42 @@ export default Vue.extend({
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
     },
+    exportExcel(data: any) {
+      this.mainLoading = true
+      data.sort(function (a: any, b: any) {
+        return a.index - b.index
+      })
+      this.exportExcelParam.show_row = []
+      data.forEach((item: any) => {
+        if (item.ifExport) {
+          this.exportExcelParam.show_row.push(item.key)
+        }
+      })
+
+      let idArr: any = []
+
+      this.list.forEach((item) => {
+        idArr.push(item.id)
+      })
+
+      this.exportExcelParam['id'] = idArr
+      exportExcel.orderInfo(this.exportExcelParam).then((res: any) => {
+        if (res.data.status) {
+          console.log(res.data.data)
+          this.mainLoading = false
+          window.location.href = res.data.data
+        }
+      })
+      setTimeout(() => {
+        this.mainLoading = false
+      }, 10000)
+    },
     changeRouter(ev?: any) {
       if (ev !== this.page) {
         this.page = 1
       }
       this.$router.push(
-        '/billingManagement/ourInvoiceList?page=' +
+        '/billingManagement/productStoreLogList?page=' +
           this.page +
           '&keyword=' +
           this.keyword +
@@ -708,8 +586,6 @@ export default Vue.extend({
           this.type +
           '&order_type=' +
           this.order_type +
-          '&order_code=' +
-          this.order_code +
           '&date=' +
           this.date +
           '&limit=' +
@@ -730,7 +606,6 @@ export default Vue.extend({
           this.user_id = ''
           this.group_id = ''
           this.order_type = ''
-          this.order_code = ''
           this.date = []
           this.type = 'null'
           this.status = 'null'
@@ -747,17 +622,8 @@ export default Vue.extend({
     },
     getList() {
       let _this = this
-      invoice
-        .list({
-          order_id: '',
-          client_id: this.client_id.length > 0 ? this.client_id[2] : '',
-          order_code: this.order_code,
-          code: this.keyword,
-          start_time: this.date[0],
-          end_time: this.date[1],
-          user_id: '',
-          invoice_code: '',
-          invoice_type: 1,
+      store
+        .proLog({
           limit: this.limit,
           page: this.page
         })
@@ -771,18 +637,6 @@ export default Vue.extend({
             this.additional = res.data.data.additional
           }
           this.loading = false
-        })
-    },
-    deleteThis(item: any) {
-      invoice
-        .delete({
-          id: item.id
-        })
-        .then((res) => {
-          if (res.status) {
-            this.$message.success('删除成功')
-            this.getList()
-          }
         })
     }
   },
@@ -835,5 +689,5 @@ export default Vue.extend({
 </script>
 
 <style lang="less">
-@import '~@/assets/css/billingManagement/ourInvoiceList.less';
+@import '~@/assets/css/billingManagement/productStoreLogList.less';
 </style>    
