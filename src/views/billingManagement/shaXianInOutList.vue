@@ -37,9 +37,12 @@
           <div class="elCtn">
             <el-input
               v-model="keyword"
-              placeholder="筛选计划单号/订单号"
+              placeholder="单据编号/关联订单号"
               @keydown.enter.native="changeRouter"
             ></el-input>
+          </div>
+          <div class="elCtn">
+            <el-input v-model="shaxianName" placeholder="纱线名称搜索" @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
             <el-select
@@ -66,6 +69,9 @@
             >
             </el-date-picker>
           </div>
+          <div class="btn borderBtn" @click="reset">重置</div>
+        </div>
+        <div class="filterCtn">
           <div class="elCtn">
             <el-select @change="changeRouter" v-model="status" placeholder="筛选审核状态">
               <el-option value="null" label="全部"></el-option>
@@ -75,21 +81,32 @@
               <el-option value="3" label="状态异常"></el-option>
             </el-select>
           </div>
-          <div class="btn borderBtn" @click="reset">重置</div>
+          <div class="elCtn">
+            <el-select @change="changeRouter" v-model="action_type" clearable="" placeholder="筛选出入库类型">
+              <el-option
+                v-for="item in stockTypeList"
+                :key="item.value + item.name"
+                :value="item.value"
+                :label="item.name"
+              ></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-select @change="changeRouter" v-model="store_id" placeholder="筛选仓库" clearable>
+              <el-option v-for="item in storeList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-cascader v-model="client_id"
+              placeholder="请选择单位信息"
+              :options="yarnClientAllList"
+              filterable
+              clearable
+              @change="changeRouter">
+            </el-cascader>
+          </div>
         </div>
-        <div class="filterCtn">
-          <div class="elCtn">
-            <el-select @change="changeRouter" v-model="order_type" placeholder="筛选单据类型" clearable>
-              <el-option label="全部" value=""></el-option>
-              <el-option label="订单" value="1"></el-option>
-              <el-option label="样单" value="2"></el-option>
-            </el-select>
-          </div>
-          <div class="elCtn">
-            <el-select @change="changeRouter" v-model="group_id" placeholder="筛选负责小组" clearable>
-              <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
-            </el-select>
-          </div>
+        <div class="filterCtn" style="overflow: hidden">
           <div class="btn borderBtn backHoverBlue" style="color: white" @click="oneShowAll">全部展开</div>
         </div>
         <div class="list">
@@ -102,7 +119,6 @@
             <div class="col">库存转移</div>
             <div class="col">关联订单号</div>
             <div class="col">关联单据</div>
-            <div class="col">单据类型</div>
             <div class="col">审核状态</div>
             <div class="col">创建时间</div>
             <div class="col">创建人</div>
@@ -114,7 +130,7 @@
                 <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
               </div>
               <div class="col" style="flex: 1.3">{{ item.code }}</div>
-              <div class="col">{{ stockTypeList[item.action_type].name }}</div>
+              <div class="col">{{ stockTypeList[item.action_type - 1].name }}</div>
               <div class="col">
                 <template v-if="item.action_type === 1">
                   <div class="changeCtn">
@@ -191,7 +207,6 @@
               <div class="col">
                 {{ item.rel_doc_code || '无' }}
               </div>
-              <div class="col">222</div>
               <div class="col">
                 <div v-if="item.is_check === 0" class="orange">待审核</div>
                 <div v-else-if="item.is_check === 1" class="blue">已审核</div>
@@ -202,7 +217,7 @@
               <div class="col">{{ item.user_name }}</div>
               <div class="col" style="flex: 1.4">
                 <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
-                <span class="opr hoverBlue" @click="openPrint(item)">打印</span>
+                <span class="opr hoverBlue" @click="$openUrl('/store/materialLogPrint?id='+item.id + '&type=' + item.action_type)">打印</span>
                 <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
               </div>
             </div>
@@ -218,22 +233,18 @@
                   </div>
                 </div>
                 <div class="tbody">
-                  <div class="trow" v-for="itemSon in item.detail.info_data" :key="itemSon.id+'itemSon'">
+                  <div class="trow" v-for="itemSon in item.detail.info_data" :key="itemSon.id + 'itemSon'">
                     <div class="tcol">
-                      {{itemSon.material_name || '无'}}
+                      {{ itemSon.material_name || '无' }}
                     </div>
                     <div class="tcol">
-                      {{itemSon.attribute || '无'}}
+                      {{ itemSon.attribute || '无' }}
                     </div>
                     <div class="tcol">
-                      {{itemSon.material_color || '无'}}
+                      {{ itemSon.material_color || '无' }}
                     </div>
-                    <div class="tcol">
-                      {{itemSon.batch_code}}/{{itemSon.vat_code}}/{{itemSon.color_code}}
-                    </div>
-                    <div class="tcol">
-                      {{itemSon.number}}{{itemSon.unit}}
-                    </div>
+                    <div class="tcol">{{ itemSon.batch_code }}/{{ itemSon.vat_code }}/{{ itemSon.color_code }}</div>
+                    <div class="tcol">{{ itemSon.number }}{{ itemSon.unit }}</div>
                   </div>
                 </div>
               </div>
@@ -242,20 +253,10 @@
         </div>
         <div style="margin-top: 20px">
           <span style="line-height: 35px; margin-left: 40px"
-            >合计计划生产数量：
+            >合计数量：
             <span style="font-weight: bold" class="green">
-              {{ (additional.total_production_number / 10000).toFixed(2) }} 万件
+              {{ (additional.total_number).toFixed(2) }}
             </span>
-          </span>
-          <span style="line-height: 35px; margin-left: 40px"
-            >合计计划原料数量：
-            <span class="green" style="font-weight: bold">
-              {{ (additional.total_material_number / 1000).toFixed(2) }} 吨或千米
-            </span>
-          </span>
-          <span style="line-height: 35px; margin-left: 40px">
-            平均损耗：
-            <span class="green" style="font-weight: bold"> {{ additional.pre_loss }} % </span>
           </span>
         </div>
         <div class="pageCtn">
@@ -341,7 +342,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { exportExcel, client, materialStock, check } from '@/assets/js/api'
+import { exportExcel, client, materialStock, check, store } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
 import { limitArr, stockType } from '@/assets/js/dictionary'
 import zhExportSetting from '@/components/zhExportSetting/zhExportSetting.vue'
@@ -366,7 +367,8 @@ export default Vue.extend({
       checkAllPlan: false,
       reviewerParams: {
         pid: '',
-        check_type: 9,
+        check_type: 6,
+        yarn_type: 1,
         check_desc: '',
         is_check: 1, // 1通过 2没通过
         desc: ''
@@ -379,6 +381,10 @@ export default Vue.extend({
       contactsList: [],
       client_id: [],
       group_id: '',
+      storeList: [],
+      store_id: '',
+      shaxianName: '',
+      action_type: '',
       user_id: '',
       order_type: '',
       type: 'null',
@@ -504,19 +510,6 @@ export default Vue.extend({
       }
       this.changeRouter()
     },
-    openPrint(items: any) {
-      materialStock
-        .detail({
-          id: items.id
-        })
-        .then((res) => {
-          let idArr: any = []
-          res.data.data.material_plan_data.forEach((item: any) => {
-            idArr.push(item.id)
-          })
-          this.$openUrl('/materialPlan/print?id=' + items.id + '&proId=' + JSON.stringify(idArr))
-        })
-    },
     changeStatus(row: any) {
       this.checkFlag = true
       this.reviewerParams.pid = row.id
@@ -587,6 +580,12 @@ export default Vue.extend({
           this.user_id +
           '&group_id=' +
           this.group_id +
+          '&shaxianName=' +
+          this.shaxianName +
+          '&action_type=' +
+          this.action_type +
+          '&store_id=' +
+          this.store_id +
           '&status=' +
           this.status +
           '&type=' +
@@ -612,7 +611,10 @@ export default Vue.extend({
           this.keyword = ''
           this.user_id = ''
           this.group_id = ''
+          this.store_id = ''
           this.order_type = ''
+          this.shaxianName = ''
+          this.action_type = ''
           this.date = []
           this.type = 'null'
           this.status = 'null'
@@ -632,6 +634,15 @@ export default Vue.extend({
       materialStock
         .list({
           material_type: 1,
+          code: this.keyword,
+          start_time: this.date[0],
+          end_time: this.date[1],
+          is_check: this.status,
+          material_name: this.shaxianName,
+          action_type: this.action_type,
+          user_id: this.user_id,
+          store_id: this.store_id,
+          client_id: this.client_id[2],
           limit: this.limit,
           page: this.page
         })
@@ -662,6 +673,15 @@ export default Vue.extend({
     }
   },
   computed: {
+    yarnClientAllList() {
+      return this.$store.state.api.clientType.arr.filter(
+        (item: { label: string }) =>
+          item.label === '纱线原料单位' ||
+          item.label === '原料加工单位' ||
+          item.label === '生产织造单位' ||
+          item.label === '生产加工单位'
+      )
+    },
     clientList() {
       return this.$store.state.api.clientType.arr.filter((item: { type: any }) => Number(item.type) === 1)
     },
@@ -673,6 +693,9 @@ export default Vue.extend({
     }
   },
   created() {
+    store.list().then((res) => {
+      this.storeList = res.data.data
+    })
     this.getFilters()
     this.getList()
     this.$checkCommonInfo([

@@ -774,6 +774,7 @@ const materialStock = {
     start_time?: string
     end_time?: string
     store_id?: string | number
+    material_name?: string
     page?: string | number
     limit?: string | number
     user_id?: string | number
