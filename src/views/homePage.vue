@@ -537,7 +537,7 @@
       <div class="leftCtn">
         <div class="module">
           <div class="titleCtn">
-            <div class="title">待办事项
+            <div class="title">待办事项以及系统通知
               <el-tooltip class="item"
                 effect="dark"
                 content="您可在设置页面关闭或者开启提醒，并设置提醒的时间或内容"
@@ -1121,19 +1121,52 @@ export default Vue.extend({
       if (item.doc_type === 1) {
         this.$openUrl('/order/detail?id=' + item.doc_id)
       } else if (item.doc_type === 2) {
-        this.$openUrl('/materialManage/detail?id=' + item.doc_order_id || item.doc_order_time_id)
+        this.$openUrl(
+          '/materialManage/detail?id=' +
+            (item.doc_order_id || item.doc_order_time_id) +
+            '&orderDocId=' +
+            item.doc_id +
+            (item.doc_order_time_id ? '&supFlag=true' : '')
+        )
       } else if (item.doc_type === 3) {
-        this.$openUrl('/materialManage/detail?id=' + item.doc_order_id || item.doc_order_time_id)
+        this.$openUrl(
+          '/materialManage/detail?id=' +
+            (item.doc_order_id || item.doc_order_time_id) +
+            '&processDocId=' +
+            item.doc_id +
+            (item.doc_order_time_id ? '&supFlag=true' : '')
+        )
       } else if (item.doc_type === 4) {
-        this.$openUrl('/productionPlan/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id)
+        this.$openUrl(
+          '/productionPlan/detail?id=' +
+            item.doc_order_id +
+            '&sampleOrderIndex=' +
+            item.doc_order_time_id +
+            '&productionDocId=' +
+            item.doc_id
+        )
       } else if (item.doc_type === 5) {
         this.$openUrl('/quotedPrice/detail?id=' + item.doc_id)
       } else if (item.doc_type === 6) {
-        this.$openUrl('/materialStock/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id)
+        this.$openUrl(
+          '/materialStock/detail?id=' +
+            item.doc_order_id +
+            '&sampleOrderIndex=' +
+            item.doc_order_time_id +
+            '&stockDocId=' +
+            item.doc_id
+        )
       } else if (item.doc_type === 7) {
         this.$openUrl('/materialPlanOrder/detail?id=' + item.doc_id)
       } else if (item.doc_type === 9) {
-        this.$openUrl('/materialPlan/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id)
+        this.$openUrl(
+          '/materialPlan/detail?id=' +
+            item.doc_order_id +
+            '&sampleOrderIndex=' +
+            item.doc_order_time_id +
+            '&materialPlanId=' +
+            item.doc_id
+        )
       } else if (item.doc_type === 10) {
         this.$openUrl('/materialManage/detail?id=' + item.doc_id + '&supFlag=1')
       } else if (item.doc_type === 11) {
@@ -1143,7 +1176,7 @@ export default Vue.extend({
       } else if (item.doc_type === 14) {
         this.$openUrl('/workshopManagement/detail?id=' + item.doc_id)
       } else if (item.doc_type === 17) {
-        this.$openUrl('/sampleOrder/detail?id=' + item.doc_id)
+        this.$openUrl('/sampleOrder/detail?id=' + item.doc_id + '&sampleOrderIndex=' + item.doc_order_time_id)
       } else if (item.doc_type === 18) {
         this.$openUrl(
           '/accessoriesManage/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id

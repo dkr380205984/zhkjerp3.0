@@ -8,16 +8,14 @@
         <div class="fl">
           <div class="ptitle">{{title?title: company_name + '补纱单'}}</div>
           <div class="prow">
-            <div class="pcol"
-              style="width: 838px;">
+            <div class="pcol">
               <div class="label">系统编号：</div>
               <div class="info"
                 style="white-space: nowrap;">{{materialSupplementInfo.code}}</div>
             </div>
           </div>
           <div class="prow">
-            <div class="pcol"
-              style="width: 838px;">
+            <div class="pcol">
               <div class="label">创建信息：</div>
               <div class="info"
                 style="white-space: nowrap;">{{ materialSupplementInfo.created_at?materialSupplementInfo.created_at.slice(0, 10):'' }}{{materialSupplementInfo.user_name?'，' + materialSupplementInfo.user_name:''}}{{materialSupplementInfo.user_phone?'，' + materialSupplementInfo.user_phone:''}}</div>
@@ -25,11 +23,15 @@
           </div>
         </div>
         <div class="fr">
-          <!-- <div class="remark">打开微信扫一扫 更新每日生产进度</div> -->
           <div class="pImage">
-            <img :src="qrCodeUrl"
-              width="100%"
+            <img :src="qrCodePCUrl"
               alt="" />
+            <span class="imgText">扫一扫打开电脑端系统</span>
+          </div>
+          <div class="pImage">
+            <img :src="qrCodeWXUrl"
+              alt="" />
+            <span class="imgText">使用织为云工厂小程序扫一扫</span>
           </div>
         </div>
       </div>
@@ -37,7 +39,7 @@
         <div class="tableCtn">
           <div class="tbody hasTop">
             <div class="trow">
-              <div class="tcol bgGray headTitle">订单号</div>
+              <div class="tcol bgGray headTitle">关联订单号</div>
               <div class="tcol">{{materialSupplementInfo.time_code || materialSupplementInfo.order_code}}</div>
               <div class="tcol bgGray headTitle">补纱单号</div>
               <div class="tcol">{{materialSupplementInfo.code}}</div>
@@ -70,7 +72,7 @@
               <div class="tcol bgGray label">合计值</div>
               <div class="tcol"
                 style="flex:2">
-                {{ item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.number),0)}}{{item.childrenMergeInfo[0].unit}}
+                {{$toFixed(item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.number),0))}}{{item.childrenMergeInfo[0].unit}}
               </div>
             </div>
             <div class="trow bgGray">
@@ -173,7 +175,8 @@ export default Vue.extend({
       showMenu: false,
       lineHeight: 1,
       company_name: window.sessionStorage.getItem('company_name'),
-      qrCodeUrl: '',
+      qrCodePCUrl: '',
+      qrCodeWXUrl: '',
       settingFlag: false,
       title: '',
       materialInfo: [],
@@ -247,9 +250,18 @@ export default Vue.extend({
             mainRule: ['material_name', 'material_id']
           })
           const QRCode = require('qrcode')
-          QRCode.toDataURL('/materialManage/detail?id=' + `${this.materialSupplementInfo.order_id}`)
+          QRCode.toDataURL(`/materialManage/detail?id=${this.materialSupplementInfo.id}&supFlag=true`)
             .then((url: any) => {
-              this.qrCodeUrl = url
+              this.qrCodePCUrl = url
+            })
+            .catch((err: any) => {
+              console.error(err)
+            })
+          QRCode.toDataURL(
+            `/pages/billingManagement/rawMaterialSupplement/rawMaterialSupplementDetail?id=${this.materialSupplementInfo.id}`
+          )
+            .then((url: any) => {
+              this.qrCodeWXUrl = url
             })
             .catch((err: any) => {
               console.error(err)

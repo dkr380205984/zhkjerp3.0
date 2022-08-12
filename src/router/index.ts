@@ -52,6 +52,10 @@ const routes: Array<RouteConfig> = [
     name: '原料出入库打印',
     component: () => import('../views/store/materialLogPrint.vue')
   }, {
+    path: '/store/productLogPrint',
+    name: '产品出入库打印',
+    component: () => import('../views/store/productLogPrint.vue')
+  }, {
     path: '/tagEditPrint/tagPrint',
     name: '产品标签打印',
     component: () => import('../views/tagEditPrint/tagPrint.vue')

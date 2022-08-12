@@ -8,7 +8,7 @@
       <div class="pmain">
         <div class="phead clearfix">
           <div class="fl">
-            <div class="ptitle">{{title?title:company_name+'物料采购单'}}</div>
+            <div class="ptitle">{{title?title:company_name+'原料采购单'}}</div>
             <div class="prow">
               <div class="pcol">
                 <div class="label">系统采购单编号：</div>
@@ -24,9 +24,14 @@
           </div>
           <div class="fr">
             <div class="pImage">
-              <img :src="qrCodeUrl"
-                width="100%"
+              <img :src="qrCodePCUrl"
                 alt="" />
+              <span class="imgText">扫一扫打开电脑端系统</span>
+            </div>
+            <div class="pImage">
+              <img :src="qrCodeWXUrl"
+                alt="" />
+              <span class="imgText">使用织为云工厂小程序扫一扫</span>
             </div>
           </div>
         </div>
@@ -36,22 +41,22 @@
               <div class="trow">
                 <div class="tcol bgGray headTitle">采购单号</div>
                 <div class="tcol">{{materialOrderInfo.code || '暂无' }}</div>
-                <div class="tcol bgGray headTitle">订单号</div>
+                <div class="tcol bgGray headTitle">关联订单号</div>
                 <div class="tcol">{{materialOrderInfo.time_code || materialOrderInfo.order_code || '暂无' }}</div>
+                <div class="tcol bgGray headTitle">关联计划单号</div>
+                <div class="tcol">{{materialOrderInfo.plan_code || '暂无' }}</div>
+                <div class="tcol bgGray headTitle">采购单位</div>
+                <div class="tcol">{{ materialOrderInfo.client_name || '暂无' }}</div>
+              </div>
+              <div class="trow">
                 <div class="tcol bgGray headTitle">联系人</div>
                 <div class="tcol">{{materialOrderInfo.contacts_name}}</div>
                 <div class="tcol bgGray headTitle">联系电话</div>
                 <div class="tcol">{{materialOrderInfo.contacts_phone}}</div>
-              </div>
-              <div class="trow">
-                <div class="tcol bgGray headTitle">计划单号</div>
-                <div class="tcol">{{materialOrderInfo.plan_code || '暂无' }}</div>
                 <div class="tcol bgGray headTitle">下单日期</div>
                 <div class="tcol">{{ materialOrderInfo.order_time || '暂无' }}</div>
                 <div class="tcol bgGray headTitle">交货日期</div>
                 <div class="tcol">{{ materialOrderInfo.delivery_time || '暂无' }}</div>
-                <div class="tcol bgGray headTitle">采购单位</div>
-                <div class="tcol">{{ materialOrderInfo.client_name || '暂无' }}</div>
               </div>
               <div class="trow">
                 <div class="tcol bgGray headTitle">订购总数</div>
@@ -148,7 +153,7 @@
                       :style="tableLineHeight">
                       <div class="deleteIcon hoverRed"
                         v-show="editFlag"
-                        @click="item.childrenMergeInfo.length>1?$deleteItem(item.childrenMergeInfo,indexChild):$deleteItem(materialPlanInfo,index)">删除本行</div>
+                        @click="item.childrenMergeInfo.length>1?$deleteItem(item.childrenMergeInfo,indexChild):$deleteItem(materiaOrderInfo,index)">删除本行</div>
                     </div>
                   </div>
                 </div>
@@ -158,14 +163,28 @@
           <div class="tableCtn">
             <div class="thead bgWhite"
               style="height: auto">
+              <div class="trow"
+                v-for="(item,index) in materialOrderInfo.others_fee_data"
+                :key="index">
+                <div class="tcol bgGray headTitle">额外费用名称</div>
+                <div class="tcol">
+                  {{item.name}}
+                </div>
+                <div class="tcol bgGray headTitle">额外费用金额</div>
+                <div class="tcol">
+                  {{item.price}}元
+                </div>
+                <div class="tcol bgGray headTitle">额外费用备注</div>
+                <div class="tcol">
+                  {{item.desc}}
+                </div>
+              </div>
               <div class="trow">
                 <div class="tcol bgGray"
                   style="flex:0.3">注意事项</div>
                 <div class="tcol"
                   style="flex: 4;text-align:left;display:block">
-                  <div style="line-height:22px"
-                    v-for="item,index in descArr"
-                    :key="index">{{item?(index+1)+'.':''}}{{item}}</div>
+                  <div v-html="descArr.desc"></div>
                 </div>
               </div>
             </div>
@@ -195,9 +214,14 @@
           </div>
           <div class="fr">
             <div class="pImage">
-              <img :src="qrCodeUrl"
-                width="100%"
+              <img :src="qrCodePCUrl"
                 alt="" />
+              <span class="imgText">扫一扫打开电脑端系统</span>
+            </div>
+            <div class="pImage">
+              <img :src="qrCodeWXUrl"
+                alt="" />
+              <span class="imgText">使用织为云工厂小程序扫一扫</span>
             </div>
           </div>
         </div>
@@ -207,22 +231,22 @@
               <div class="trow">
                 <div class="tcol bgGray headTitle">采购单号</div>
                 <div class="tcol">{{materialOrderInfo.code || '暂无' }}</div>
-                <div class="tcol bgGray headTitle">订单号</div>
+                <div class="tcol bgGray headTitle">关联订单号</div>
                 <div class="tcol">{{materialOrderInfo.time_code || materialOrderInfo.order_code || '暂无' }}</div>
+                <div class="tcol bgGray headTitle">关联计划单号</div>
+                <div class="tcol">{{materialOrderInfo.plan_code || '暂无' }}</div>
+                <div class="tcol bgGray headTitle">采购单位</div>
+                <div class="tcol">{{ materialOrderInfo.client_name || '暂无' }}</div>
+              </div>
+              <div class="trow">
                 <div class="tcol bgGray headTitle">联系人</div>
                 <div class="tcol">{{materialOrderInfo.contacts_name}}</div>
                 <div class="tcol bgGray headTitle">联系电话</div>
                 <div class="tcol">{{materialOrderInfo.contacts_phone}}</div>
-              </div>
-              <div class="trow">
-                <div class="tcol bgGray headTitle">计划单号</div>
-                <div class="tcol">{{materialOrderInfo.plan_code || '暂无' }}</div>
                 <div class="tcol bgGray headTitle">下单日期</div>
                 <div class="tcol">{{ materialOrderInfo.order_time || '暂无' }}</div>
                 <div class="tcol bgGray headTitle">交货日期</div>
                 <div class="tcol">{{ materialOrderInfo.delivery_time || '暂无' }}</div>
-                <div class="tcol bgGray headTitle">采购单位</div>
-                <div class="tcol">{{ materialOrderInfo.client_name || '暂无' }}</div>
               </div>
               <div class="trow">
                 <div class="tcol bgGray headTitle">订购总数</div>
@@ -317,7 +341,7 @@
                       :style="tableLineHeight">
                       <div class="deleteIcon hoverRed"
                         v-show="editFlag"
-                        @click="item.childrenMergeInfo.length>1?$deleteItem(item.childrenMergeInfo,indexChild):$deleteItem(materialPlanInfo,index)">删除本行</div>
+                        @click="item.childrenMergeInfo.length>1?$deleteItem(item.childrenMergeInfo,indexChild):$deleteItem(materiaOrderInfo,index)">删除本行</div>
                     </div>
                   </div>
                 </div>
@@ -327,14 +351,28 @@
           <div class="tableCtn">
             <div class="thead bgWhite"
               style="height: auto">
+              <div class="trow"
+                v-for="(item,index) in materialOrderInfo.others_fee_data"
+                :key="index">
+                <div class="tcol bgGray headTitle">额外费用名称</div>
+                <div class="tcol">
+                  {{item.name}}
+                </div>
+                <div class="tcol bgGray headTitle">额外费用金额</div>
+                <div class="tcol">
+                  {{item.price}}元
+                </div>
+                <div class="tcol bgGray headTitle">额外费用备注</div>
+                <div class="tcol">
+                  {{item.desc}}
+                </div>
+              </div>
               <div class="trow">
                 <div class="tcol bgGray"
                   style="flex:0.3">注意事项</div>
                 <div class="tcol"
                   style="flex: 4;text-align:left;display:block">
-                  <div style="line-height:22px"
-                    v-for="item,index in descArr"
-                    :key="index">{{item?(index+1)+'.':''}}{{item}}</div>
+                  <div v-html="descArr.desc"></div>
                 </div>
               </div>
             </div>
@@ -358,20 +396,12 @@
                 placeholder="请输入常用标题"></el-input>
             </div>
           </div>
-          <div class="row"
-            v-for="(item,index) in descArr"
-            :key="index">
-            <span class="label">注意事项{{index+1}}：</span>
+          <div class="row">
+            <span class="label">注意事项：</span>
             <div class="info">
-              <el-input v-model="descArr[index]"
-                placeholder="请输入注意事项">
-              </el-input>
-              <div v-if="index===0"
-                class="info_btn hoverBlue"
-                @click="$addItem(descArr,'')">添加</div>
-              <div v-if="index>0"
-                class="info_btn hoverRed"
-                @click="$deleteItem(descArr,index)">删除</div>
+              <div id='editorMaterialOrder'
+                style="z-index: 0;position: relative;">
+              </div>
             </div>
           </div>
         </div>
@@ -462,9 +492,13 @@ export default Vue.extend({
         ]
       },
       materialInfo: [],
-      qrCodeUrl: '',
+      qrCodePCUrl: '',
+      qrCodeWXUrl: '',
       settingFlag: false,
-      descArr: []
+      descArr: {
+        desc: '',
+        editor: ''
+      }
     }
   },
   computed: {
@@ -506,25 +540,41 @@ export default Vue.extend({
       })
     },
     saveSetting() {
+      const realSave = {
+        editor: '',
+        desc: this.descArr.desc
+      }
       this.$setLocalStorage('materialOrderPrintTitle', this.title)
-      this.$setLocalStorage('materialOrderPrintDesc', JSON.stringify(this.descArr))
+      this.$setLocalStorage('materialOrderPrintDesc', JSON.stringify(realSave))
       this.$message.success('保存成功')
       this.settingFlag = false
     },
     resetSetting() {
       this.$setLocalStorage('materialOrderPrintTitle', '')
-      this.$setLocalStorage('materialOrderPrintDesc', JSON.stringify(['']))
+      this.$setLocalStorage(
+        'materialOrderPrintDesc',
+        JSON.stringify({
+          editor: '',
+          desc: ''
+        })
+      )
       this.title = ''
-      this.descArr = ['']
+      this.descArr = {
+        editor: '',
+        desc: ''
+      }
       this.$message.success('已清空')
       this.settingFlag = false
     }
   },
   mounted() {
-    this.title = this.$getLocalStorage('materialPlanPrintTitle') || ''
-    this.descArr = this.$getLocalStorage('materialPlanPrintDesc')
-      ? JSON.parse(this.$getLocalStorage('materialPlanPrintDesc'))
-      : ['']
+    this.title = this.$getLocalStorage('materialOrderPrintTitle') || ''
+    this.descArr = this.$getLocalStorage('materialOrderPrintDesc')
+      ? JSON.parse(this.$getLocalStorage('materialOrderPrintDesc'))
+      : {
+          editor: '',
+          desc: ''
+        }
     materialOrder
       .detail({
         id: Number(this.$route.query.id)
@@ -537,16 +587,32 @@ export default Vue.extend({
           })
           // 生成二维码
           const QRCode = require('qrcode')
-          QRCode.toDataURL('/materialManage/detail?id=' + `${this.materialOrderInfo.order_id}` + '&ifprint=true')
+          QRCode.toDataURL(
+            '/materialManage/detail?id=' +
+              (this.materialOrderInfo.plan_id
+                ? this.materialOrderInfo.plan_id
+                : this.materialOrderInfo.sup_id + '&supFlag=1')
+          )
             .then((url: any) => {
-              this.qrCodeUrl = url
+              this.qrCodePCUrl = url
             })
             .catch((err: any) => {
               console.error(err)
             })
-          this.windowMethod(2)
+          QRCode.toDataURL(
+            '/pages/billingManagement/rawMaterialPurchaseOrder/rawMaterialPurchaseOrderDetail?id=' +
+              this.materialOrderInfo.id
+          )
+            .then((url: any) => {
+              this.qrCodeWXUrl = url
+            })
+            .catch((err: any) => {
+              console.error(err)
+            })
+          // this.windowMethod(2)
         }
       })
+    this.$initEditor(this.descArr, 'MaterialOrder')
   }
 })
 </script>

@@ -101,7 +101,7 @@
             <div class="col">{{item.total_order_number || 0}}</div>
             <div class="col">{{item.total_production_number || 0}}</div>
             <div class="col"
-              :class="item.material_order_progress>=100?'orange':'green'">{{item.material_order_progress}}%</div>
+              :class="item.material_order_progress>=100?'green':'orange'">{{item.material_order_progress}}%</div>
             <div class="col"
               :class="item.is_check|filterCheckClass">{{item.is_check|filterCheck}}</div>
             <div class="col">{{item.user_name}}</div>

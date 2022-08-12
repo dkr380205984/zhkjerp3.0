@@ -645,7 +645,8 @@
         <div class="tbody">
           <div class="trow"
             v-for="item in materialStockList"
-            :key="item.id">
+            :key="item.id"
+            :class="{'backMark':item.id===Number($route.query.stockDocId)}">
             <div class="tcol">{{item.code}}</div>
             <div class="tcol"
               :class="item.action_type|materialStockTypeClassFilter">{{item.action_type|materialStockTypeFilter}}</div>

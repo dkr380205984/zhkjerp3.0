@@ -6,7 +6,7 @@
     <div class="pmain">
       <div class="phead clearfix">
         <div class="fl">
-          <div class="ptitle">{{ company_name + (orderType===1?'订单':'样单') }}</div>
+          <div class="ptitle">{{ company_name + (orderType===1?'订单':'样单') }}(第{{Number($route.query.sampleOrderIndex)+1}}次打样)</div>
           <div class="prow">
             <div class="pcol wa">
               <div class="label">系统{{orderType===1?'订单':'样单'}}编号：</div>
@@ -23,11 +23,15 @@
           </div>
         </div>
         <div class="fr">
-          <!-- <div class="remark">打开微信扫一扫 更新每日生产进度</div> -->
           <div class="pImage">
-            <img :src="qrCodeUrl"
-              width="100%"
+            <img :src="qrCodePCUrl"
               alt="" />
+            <span class="imgText">扫一扫打开电脑端系统</span>
+          </div>
+          <div class="pImage">
+            <img :src="qrCodeWXUrl"
+              alt="" />
+            <span class="imgText">使用织为云工厂小程序扫一扫</span>
           </div>
         </div>
       </div>
@@ -37,12 +41,12 @@
             <div class="trow">
               <div class="tcol bgGray">{{orderType===1?'订单':'样单'}}号</div>
               <div class="tcol">{{sampleOrderInfo.code || '无'}}</div>
+              <div class="tcol bgGray">{{orderType===1?'':'样单类型'}}</div>
+              <div class="tcol">{{orderType===1?'':sampleOrderInfo.time_data[$route.query.sampleOrderIndex].order_type}}</div>
               <div class="tcol bgGray">下单日期</div>
               <div class="tcol">{{sampleOrderInfo.time_data[$route.query.sampleOrderIndex].order_time}}</div>
               <div class="tcol bgGray">完成日期</div>
               <div class="tcol">{{sampleOrderInfo.time_data[$route.query.sampleOrderIndex].complete_time}}</div>
-              <div class="tcol bgGray">{{orderType===1?'':'样单类型'}}</div>
-              <div class="tcol">{{orderType===1?'':sampleOrderInfo.time_data[$route.query.sampleOrderIndex].order_type}}</div>
             </div>
             <div class="trow">
               <div class="tcol bgGray">客户名称</div>
@@ -51,14 +55,14 @@
               <div class="tcol">{{sampleOrderInfo.contacts_name}}</div>
               <div class="tcol bgGray">负责人/组</div>
               <div class="tcol">{{sampleOrderInfo.group_name}}</div>
-              <div class="tcol bgGray">{{orderType===2?'打样次数':''}}</div>
-              <div class="tcol">{{orderType===2?'第'+(Number($route.query.sampleOrderIndex)+1)+'次':''}}</div>
+              <div class="tcol bgGray">{{orderType===1?'':'打样次数'}}</div>
+              <div class="tcol">{{orderType===1?'':'第'+(Number($route.query.sampleOrderIndex)+1)+'次'}}</div>
             </div>
             <div class="trow">
               <div class="tcol bgGray">{{orderType===1?'产品':'样品'}}编号</div>
               <div class="tcol">{{sampleInfo.product_code||sampleInfo.system_code}}</div>
               <div class="tcol bgGray">客户款号</div>
-              <div class="tcol">{{sampleInfo.style_data?sampleInfo.style_data.map((item)=>item.name).join(','):'无'}}</div>
+              <div class="tcol">{{sampleInfo.style_code || '无'}}</div>
               <div class="tcol bgGray">{{orderType===1?'产品':'样品'}}名称</div>
               <div class="tcol">{{sampleInfo.name||'无'}}</div>
               <div class="tcol bgGray">{{orderType===1?'产品':'样品'}}品类</div>
@@ -85,6 +89,7 @@
               <div class="tcol bgGray label">克重</div>
               <div class="tcol bgGray">尺寸描述</div>
               <div class="tcol bgGray label">打样数量</div>
+              <div class="tcol bgGray label">送样/留底数量</div>
             </div>
             <div class="trow"
               v-for="item in sampleOrderInfo.time_data[$route.query.sampleOrderIndex].batch_data[0].product_data[sampleIndex].product_info"
@@ -94,6 +99,7 @@
               <div class="tcol label">{{findSize(sampleInfo.size_data,item.size_name,'weight')}}</div>
               <div class="tcol">{{findSize(sampleInfo.size_data,item.size_name,'size_info')}}</div>
               <div class="tcol label">{{item.number}}</div>
+              <div class="tcol label">{{item.sample_number||0}}/{{item.keep_number||0}}</div>
             </div>
           </div>
         </div>
@@ -209,7 +215,8 @@ export default Vue.extend({
   } {
     return {
       company_name: window.sessionStorage.getItem('company_name'),
-      qrCodeUrl: '',
+      qrCodePCUrl: '',
+      qrCodeWXUrl: '',
       showMenu: false,
       X_position: 0,
       Y_position: 0,
@@ -322,7 +329,11 @@ export default Vue.extend({
       })
     },
     findSize(sizeArr: any[], sizeName: string, key: string) {
-      return sizeArr.find((item) => item.name === sizeName)[key]
+      if (sizeArr) {
+        return sizeArr.find((item) => item.name === sizeName) ? sizeArr.find((item) => item.name === sizeName)[key] : ''
+      } else {
+        return ''
+      }
     }
   },
   mounted() {
@@ -340,11 +351,25 @@ export default Vue.extend({
           if (this.sampleInfoList.length > 1) {
             this.$message.warning('可通过右键菜单选择其他样品进行打印')
           }
-          // 生成二维码
           const QRCode = require('qrcode')
-          QRCode.toDataURL(`${this.sampleOrderInfo.id}`)
+          QRCode.toDataURL(
+            this.orderType === 1
+              ? `/order/detail?id=${this.sampleOrderInfo.id}`
+              : `/sampleOrder/detail?id=${this.sampleOrderInfo.id}`
+          )
             .then((url: any) => {
-              this.qrCodeUrl = url
+              this.qrCodePCUrl = url
+            })
+            .catch((err: any) => {
+              console.error(err)
+            })
+          QRCode.toDataURL(
+            this.orderType === 1
+              ? `/pages/orderDetail/orderDetail?id=${this.sampleOrderInfo.id}`
+              : `/pages/sampleOrderDetail/sampleOrderDetail?id=${this.sampleOrderInfo.id}`
+          )
+            .then((url: any) => {
+              this.qrCodeWXUrl = url
             })
             .catch((err: any) => {
               console.error(err)

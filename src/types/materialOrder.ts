@@ -37,7 +37,7 @@ export interface MaterialListInfo {
   yarn_type?: number // 1纱线，2面料
   before_color?: string | null
   attribute?: string
-  price: string
+  price: number | string
   number: string | number
   material_order_name?: string // 后端根据采购单查询的物料
   material_transfer_name?: string

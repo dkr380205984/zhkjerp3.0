@@ -20,12 +20,6 @@
         </svg>
         <span class="text">面料原料仓库</span>
       </div>
-      <!-- <div class="tag"
-        :class="{'active':store_type===3}"
-        @click="store_type=3;changeRouter">
-        <i class="icon">图标</i>
-        <span class="text">毛料原料仓库</span>
-      </div> -->
       <div class="tag"
         :class="{'active':store_type===4}"
         @click="store_type=4;changeRouter">
@@ -43,15 +37,6 @@
         </svg>
         <span class="text">产品仓库</span>
       </div>
-      <!--<div class="tag"
-        :class="{'active':store_type===6}"
-        @click="store_type=6;changeRouter">
-        <svg class="iconFont"
-          aria-hidden="true">
-          <use xlink:href='#icon-baozhuangfuliaocangku'></use>
-        </svg>
-        <span class="text">包装辅料仓库</span>
-      </div> -->
     </div>
     <div class="module">
       <div class="listCtn">
@@ -112,23 +97,24 @@
               @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="btn backHoverBlue fr"
-            @click="openMerge">合并物料</div>
+            @click="openMerge">合并{{typeName}}</div>
           <div class="btn backHoverGreen fr"
-            @click="goStock(9)">物料入库</div>
+            @click="goStock(9)">{{typeName}}入库</div>
           <div class="btn backHoverOrange fr"
-            @click="goStock(13)">物料出库</div>
+            @click="goStock(13)">{{typeName}}出库</div>
           <div class="btn backHoverBlue fr"
-            @click="goStock(7)">物料移库</div>
+            @click="goStock(7)">{{typeName}}移库</div>
         </div>
         <div class="list"
           v-loading="loading">
           <div class="row title">
             <div class="col">仓库名称</div>
-            <div class="col">物料名称</div>
-            <div class="col">物料颜色</div>
+            <div class="col">{{typeName}}名称</div>
+            <div class="col">{{$route.query.store_type==='4'?'辅料颜色、材质、属性或尺寸':(typeName+'颜色')}}</div>
             <div class="col"
-              v-if="$route.query.store_type==='1'">物料属性</div>
-            <div class="col">批号/缸号/色号</div>
+              v-if="$route.query.store_type==='1'">{{typeName}}属性</div>
+            <div class="col"
+              v-if="$route.query.store_type==='1' || $route.query.store_type==='2'">批号/缸号/色号</div>
             <div class="col">库存数量</div>
             <div class="col">操作</div>
           </div>
@@ -145,7 +131,8 @@
             <div class="col">{{item.material_color}}</div>
             <div class="col"
               v-if="$route.query.store_type==='1'">{{item.attribute}}</div>
-            <div class="col">{{item.batch_code}}/{{item.vat_code}}/{{item.color_code}}</div>
+            <div class="col"
+              v-if="$route.query.store_type==='1' || $route.query.store_type==='2'">{{item.batch_code}}/{{item.vat_code}}/{{item.color_code}}</div>
             <div class="col">{{item.number}}kg</div>
             <div class="col">
               <div class="oprCtn">
@@ -327,7 +314,7 @@
                     style="flex:2">
                     <div class="label"
                       v-if="index===0">
-                      <span class="text">物料名称</span>
+                      <span class="text">{{typeName}}名称</span>
                       <span class="explanation">(必选)</span>
                     </div>
                     <div class="info elCtn">
@@ -372,19 +359,20 @@
                   <div class="once">
                     <div class="label"
                       v-if="index===0">
-                      <span class="text">颜色</span>
+                      <span class="text">{{$route.query.store_type==='4'?'颜色、材质、属性或尺寸':'颜色'}}</span>
                       <span class="explanation">(必选)</span>
                     </div>
                     <div class="info elCtn">
                       <el-autocomplete class="inline-input"
                         v-model="item.material_color"
                         :fetch-suggestions="searchColor"
-                        placeholder="颜色"></el-autocomplete>
+                        placeholder="请输入"></el-autocomplete>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="col">
+              <div class="col"
+                v-if="$route.query.store_type!=='4'">
                 <div class="spaceBetween">
                   <div class="once">
                     <div class="label"
@@ -1076,7 +1064,6 @@ export default Vue.extend({
       totalNumber: ''
     }
   },
-  filters: {},
   watch: {
     store_type(val) {
       this.changeRouter()
@@ -1615,6 +1602,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    typeName() {
+      return ['', '纱线', '面料', '', '辅料'][Number(this.$route.query.store_type)]
+    },
     yarnClientInList() {
       return this.$store.state.api.clientType.arr.filter((item: { label: string }) => item.label === '纱线原料单位')
     },

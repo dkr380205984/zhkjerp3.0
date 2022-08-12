@@ -22,7 +22,7 @@
             </el-cascader>
           </div>
           <div class="elCtn">
-            <el-select @change="$setLocalStorage('create_user',user_id);changeRouter()"
+            <el-select @change="$setLocalStorage('create_user',user_id,true);changeRouter()"
               v-model="user_id"
               placeholder="筛选创建人"
               clearable>
@@ -53,7 +53,7 @@
               @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
-            <el-select @change="$setLocalStorage('group_id',group_id);changeRouter()"
+            <el-select @change="$setLocalStorage('group_id',group_id,true);changeRouter()"
               v-model="group_id"
               placeholder="筛选负责小组"
               clearable>

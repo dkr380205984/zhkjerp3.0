@@ -1702,7 +1702,7 @@ export default Vue.extend({
               this.$router.push(
                 '/materialPlan/detail?id=' +
                   this.$route.query.id +
-                  '&sampleOrderIndex' +
+                  '&sampleOrderIndex=' +
                   this.$route.query.sampleOrderIndex
               )
             }

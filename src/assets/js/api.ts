@@ -585,6 +585,7 @@ const store = {
     page?: string | number
     limit?: string | number
   }) => http.get(`${baseUrl}/product/store/log/lists`, params),
+  proDetail: (params: DetailParams) => http.get(`${baseUrl}/product/store/log/detail`, params),
 }
 
 // 样品

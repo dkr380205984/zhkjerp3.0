@@ -87,6 +87,7 @@
                 </div>
                 <div class="tcol">操作人</div>
                 <div class="tcol">操作日期</div>
+                <div class="tcol">操作</div>
               </div>
             </div>
             <div class="tbody">
@@ -136,6 +137,10 @@
                 </div>
                 <div class="tcol">{{item.user_name}}</div>
                 <div class="tcol">{{item.created_at}}</div>
+                <div class="tcol oprCtn">
+                  <div class="opr hoverBlue"
+                    @click="$openUrl('/store/productLogPrint?id=' + item.id)">打印</div>
+                </div>
               </div>
             </div>
           </div>
@@ -558,8 +563,8 @@ export default Vue.extend({
       this.store_id = Number(query.store_id) || ''
       this.secondary_id = Number(query.secondary_id) || ''
       this.store_arr = Number(query.store_id) ? [Number(query.store_id), Number(query.secondary_id)] : []
-      this.name = query.name
-      this.product_code = query.product_code
+      this.name = query.name || ''
+      this.product_code = query.product_code || ''
     },
     changeRouter(ev?: any) {
       if (ev !== this.page) {
@@ -574,9 +579,9 @@ export default Vue.extend({
           this.store_id +
           '&secondary_id=' +
           this.secondary_id +
-          '&product_code' +
+          '&product_code=' +
           this.product_code +
-          '&name' +
+          '&name=' +
           this.name
       )
     },

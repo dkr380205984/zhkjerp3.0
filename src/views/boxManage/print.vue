@@ -10,7 +10,7 @@
             <div class="ptitle">{{title?title: company_name + '装箱出库单'}}</div>
             <div class="prow">
               <div class="pcol wa">
-                <div class="label">系统编号：</div>
+                <div class="label">单据编号：</div>
                 <div class="info"
                   style="white-space: nowrap;">{{boxInfo.code}}</div>
               </div>
@@ -25,11 +25,15 @@
             </div>
           </div>
           <div class="fr">
-            <!-- <div class="remark">打开微信扫一扫 更新每日生产进度</div> -->
             <div class="pImage">
-              <img :src="qrCodeUrl"
-                width="100%"
+              <img :src="qrCodePCUrl"
                 alt="" />
+              <span class="imgText">扫一扫打开电脑端系统</span>
+            </div>
+            <div class="pImage">
+              <img :src="qrCodeWXUrl"
+                alt="" />
+              <span class="imgText">使用织为云工厂小程序扫一扫</span>
             </div>
           </div>
         </div>
@@ -254,6 +258,7 @@ export default Vue.extend({
       batchInfo: [],
       orderBatchCopy: [], // 前端保存的订单发货具体信息，只能看，不能做任何操作
       boxInfo: {
+        id: '',
         code: '',
         user_name: '',
         created_at: '',
@@ -280,7 +285,8 @@ export default Vue.extend({
       loading: true,
       showMenu: false,
       company_name: window.sessionStorage.getItem('company_name'),
-      qrCodeUrl: '',
+      qrCodePCUrl: '',
+      qrCodeWXUrl: '',
       settingFlag: false,
       title: '',
       descArr: [''] // 注意事项
@@ -355,6 +361,23 @@ export default Vue.extend({
           // @ts-ignore
           this.batchInfo = this.boxInfo.rel_batch
           this.orderInfoCopy = this.boxInfo.order_transport_info ? JSON.parse(this.boxInfo.order_transport_info) : []
+          const QRCode = require('qrcode')
+          QRCode.toDataURL(`/boxManage/boxDetai?id=${this.boxInfo.id}`)
+            .then((url: any) => {
+              this.qrCodePCUrl = url
+            })
+            .catch((err: any) => {
+              console.error(err)
+            })
+          QRCode.toDataURL(
+            `/pages/billingManagement/transportationDeliveryOrder/transportationDeliveryOrderDetail?id==${this.boxInfo.id}`
+          )
+            .then((url: any) => {
+              this.qrCodeWXUrl = url
+            })
+            .catch((err: any) => {
+              console.error(err)
+            })
         }
       })
   }
