@@ -624,6 +624,7 @@ export default Vue.extend({
     }
   },
   mounted() {
+    this.materialPlanIndex = this.$route.query.materialPlanId || '0'
     order
       .detail({
         id: Number(this.$route.query.id)

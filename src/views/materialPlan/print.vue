@@ -9,7 +9,7 @@
         <div class="pmain">
           <div class="phead clearfix">
             <div class="fl">
-              <div class="ptitle">{{title?title:company_name+'物料计划单'}}</div>
+              <div class="ptitle">{{title?title:company_name+'原料计划单'}}</div>
               <div class="prow">
                 <div class="pcol">
                   <div class="label">系统计划单编号：</div>
@@ -25,9 +25,14 @@
             </div>
             <div class="fr">
               <div class="pImage">
-                <img :src="qrCodeUrl"
-                  width="100%"
+                <img :src="qrCodePCUrl"
                   alt="" />
+                <span class="imgText">扫一扫打开电脑端系统</span>
+              </div>
+              <div class="pImage">
+                <img :src="qrCodeWXUrl"
+                  alt="" />
+                <span class="imgText">使用织为云工厂小程序扫一扫</span>
               </div>
             </div>
           </div>
@@ -35,7 +40,7 @@
             <div class="tableCtn">
               <div class="tbody hasTop">
                 <div class="trow">
-                  <div class="tcol bgGray headTitle">订单号</div>
+                  <div class="tcol bgGray headTitle">关联订单号</div>
                   <div class="tcol"
                     style="flex:1.2">{{ otherInfo.time_code || otherInfo.order_code || '暂无' }}</div>
                   <div class="tcol bgGray headTitle">下单客户</div>
@@ -167,9 +172,7 @@
                   <div class="tcol bgGray label">注意事项</div>
                   <div class="tcol"
                     style="flex: 4;text-align:left;display:block">
-                    <div style="line-height:22px"
-                      v-for="item,index in descArr"
-                      :key="index">{{item?(index+1)+'.':''}}{{item}}</div>
+                    <div v-html="descArr.desc"></div>
                   </div>
                 </div>
               </div>
@@ -199,9 +202,14 @@
             </div>
             <div class="fr">
               <div class="pImage">
-                <img :src="qrCodeUrl"
-                  width="100%"
+                <img :src="qrCodePCUrl"
                   alt="" />
+                <span class="imgText">扫一扫打开电脑端系统</span>
+              </div>
+              <div class="pImage">
+                <img :src="qrCodeWXUrl"
+                  alt="" />
+                <span class="imgText">使用织为云工厂小程序扫一扫</span>
               </div>
             </div>
           </div>
@@ -209,7 +217,7 @@
             <div class="tableCtn">
               <div class="tbody hasTop">
                 <div class="trow">
-                  <div class="tcol bgGray headTitle">订单号</div>
+                  <div class="tcol bgGray headTitle">关联订单号</div>
                   <div class="tcol"
                     style="flex:1.2">{{ otherInfo.order_code || '暂无' }}</div>
                   <div class="tcol bgGray headTitle">下单客户</div>
@@ -341,9 +349,7 @@
                     style="flex:0.3">注意事项</div>
                   <div class="tcol"
                     style="flex: 4;text-align:left;display:block">
-                    <div style="line-height:22px"
-                      v-for="item,index in descArr"
-                      :key="index">{{item?(index+1)+'.':''}}{{item}}</div>
+                    <div v-html="descArr.desc"></div>
                   </div>
                 </div>
               </div>
@@ -368,20 +374,12 @@
                 placeholder="请输入常用标题"></el-input>
             </div>
           </div>
-          <div class="row"
-            v-for="(item,index) in descArr"
-            :key="index">
-            <span class="label">注意事项{{index+1}}：</span>
+          <div class="row">
+            <span class="label">注意事项：</span>
             <div class="info">
-              <el-input v-model="descArr[index]"
-                placeholder="请输入注意事项">
-              </el-input>
-              <div v-if="index===0"
-                class="info_btn hoverBlue"
-                @click="$addItem(descArr,'')">添加</div>
-              <div v-if="index>0"
-                class="info_btn hoverRed"
-                @click="$deleteItem(descArr,index)">删除</div>
+              <div id='editorMaterialPlan'
+                style="z-index: 0;position: relative;">
+              </div>
             </div>
           </div>
         </div>
@@ -439,7 +437,8 @@ export default Vue.extend({
       loading: true,
       lineHeight: 1,
       showMenu: false,
-      qrCodeUrl: '',
+      qrCodePCUrl: '',
+      qrCodeWXUrl: '',
       X_position: 0,
       Y_position: 0,
       materialPlanIndex: '0',
@@ -458,7 +457,10 @@ export default Vue.extend({
       editFlag: false,
       settingFlag: false,
       title: '',
-      descArr: [''] // 注意事项
+      descArr: {
+        desc: '',
+        editor: ''
+      } // 注意事项
     }
   },
   methods: {
@@ -496,8 +498,12 @@ export default Vue.extend({
       })
     },
     saveSetting() {
+      const realSave = {
+        editor: '',
+        desc: this.descArr.desc
+      }
       this.$setLocalStorage('materialPlanPrintTitle', this.title)
-      this.$setLocalStorage('materialPlanPrintDesc', JSON.stringify(this.descArr))
+      this.$setLocalStorage('materialPlanPrintDesc', JSON.stringify(realSave))
       this.$message.success('保存成功')
       this.settingFlag = false
     },
@@ -505,7 +511,10 @@ export default Vue.extend({
       this.$setLocalStorage('materialPlanPrintTitle', '')
       this.$setLocalStorage('materialPlanPrintDesc', JSON.stringify(['']))
       this.title = ''
-      this.descArr = ['']
+      this.descArr = {
+        editor: '',
+        desc: ''
+      }
       this.$message.success('已清空')
       this.settingFlag = false
     }
@@ -515,7 +524,11 @@ export default Vue.extend({
     this.title = this.$getLocalStorage('materialPlanPrintTitle') || ''
     this.descArr = this.$getLocalStorage('materialPlanPrintDesc')
       ? JSON.parse(this.$getLocalStorage('materialPlanPrintDesc'))
-      : ['']
+      : {
+          editor: '',
+          desc: ''
+        }
+
     materialPlan
       .detail({
         id: Number(this.$route.query.id)
@@ -554,9 +567,18 @@ export default Vue.extend({
         })
         // 生成二维码
         const QRCode = require('qrcode')
-        QRCode.toDataURL('/materialPlan/detail?id=' + `${this.otherInfo.top_order_id}` + '&ifprint=true')
+        QRCode.toDataURL(
+          `/materialPlan/detail?id=${this.otherInfo.order_id}&sampleOrderIndex${this.otherInfo.top_order_id}&ifprint=true`
+        )
           .then((url: any) => {
-            this.qrCodeUrl = url
+            this.qrCodePCUrl = url
+          })
+          .catch((err: any) => {
+            console.error(err)
+          })
+        QRCode.toDataURL(`/pages/billingManagement/rawMaterialPlan/rawMaterialPlanDetail?id=${this.otherInfo.id}`)
+          .then((url: any) => {
+            this.qrCodeWXUrl = url
           })
           .catch((err: any) => {
             console.error(err)
@@ -564,6 +586,7 @@ export default Vue.extend({
         this.windowMethod(2)
         this.loading = false
       })
+    this.$initEditor(this.descArr, 'MaterialPlan')
   },
   computed: {
     tableLineHeight(): object {

@@ -79,7 +79,7 @@
               content="保存负责小组筛选"
               placement="top">
               <i class="el-icon-upload hoverOrange"
-                @click="$setLocalStorage('group_id',group_id)"></i>
+                @click="$setLocalStorage('group_id',group_id,true)"></i>
             </el-tooltip>
           </div>
           <div class="elCtn">

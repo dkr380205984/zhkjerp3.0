@@ -22,11 +22,15 @@
           </div>
         </div>
         <div class="fr">
-          <!-- <div class="remark">打开微信扫一扫 更新每日生产进度</div> -->
           <div class="pImage">
-            <img :src="qrCodeUrl"
-              width="100%"
+            <img :src="qrCodePCUrl"
               alt="" />
+            <span class="imgText">扫一扫打开电脑端系统</span>
+          </div>
+          <div class="pImage">
+            <img :src="qrCodeWXUrl"
+              alt="" />
+            <span class="imgText">使用织为云工厂小程序扫一扫</span>
           </div>
         </div>
       </div>
@@ -48,7 +52,7 @@
                 <div class="tcol bgGray">报价标题</div>
                 <div class="tcol">{{ quotedPriceInfo.title }}</div>
                 <div class="tcol bgGray">系统报价</div>
-                <div class="tcol">{{ quotedPriceInfo.system_total_price }}</div>
+                <div class="tcol">{{ $toFixed(quotedPriceInfo.system_total_price/(quotedPriceInfo.exchange_rate||100)*100) }}{{quotedPriceInfo.settle_unit}}</div>
                 <div class="tcol bgGray">实际报价</div>
                 <div class="tcol">{{ quotedPriceInfo.real_quote_price }}</div>
                 <div class="tcol bgGray">审核状态</div>
@@ -287,7 +291,8 @@ export default Vue.extend({
   } {
     return {
       company_name: window.sessionStorage.getItem('company_name'),
-      qrCodeUrl: '',
+      qrCodePCUrl: '',
+      qrCodeWXUrl: '',
       showMenu: false,
       X_position: 0,
       Y_position: 0,
@@ -465,15 +470,21 @@ export default Vue.extend({
         id: Number(this.$route.query.id)
       })
       .then((res) => {
-        // console.log(res.data.data)
         this.quotedPriceInfo = res.data.data
 
-        // 生成二维码
+        // 生成系统二维码
         const QRCode = require('qrcode')
-        QRCode.toDataURL(`${this.quotedPriceInfo.code}`)
+        QRCode.toDataURL(`/quotedPrice/detail?id=${this.quotedPriceInfo.id}`)
           .then((url: any) => {
-            this.qrCodeUrl = url
-            // console.log(this.qrCodeUrl)
+            this.qrCodePCUrl = url
+          })
+          .catch((err: any) => {
+            console.error(err)
+          })
+        // 生成小程序二维码
+        QRCode.toDataURL(`/pages/quotedPriceDetail/quotedPriceDetail?id=${this.quotedPriceInfo.id}`)
+          .then((url: any) => {
+            this.qrCodeWXUrl = url
           })
           .catch((err: any) => {
             console.error(err)

@@ -1,6 +1,7 @@
 import { PackPlanInfo } from "./packManage"
 
 export interface BoxInfo {
+  id?: string | number
   code?: string
   user_name?: string
   created_at?: string

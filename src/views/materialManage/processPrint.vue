@@ -8,7 +8,7 @@
       <div class="pmain">
         <div class="phead clearfix">
           <div class="fl">
-            <div class="ptitle">{{title?title:company_name+'物料加工单'}}</div>
+            <div class="ptitle">{{title?title:company_name+'原料加工单'}}</div>
             <div class="prow">
               <div class="pcol">
                 <div class="label">系统采购单编号：</div>
@@ -24,9 +24,14 @@
           </div>
           <div class="fr">
             <div class="pImage">
-              <img :src="qrCodeUrl"
-                width="100%"
+              <img :src="qrCodePCUrl"
                 alt="" />
+              <span class="imgText">扫一扫打开电脑端系统</span>
+            </div>
+            <div class="pImage">
+              <img :src="qrCodeWXUrl"
+                alt="" />
+              <span class="imgText">使用织为云工厂小程序扫一扫</span>
             </div>
           </div>
         </div>
@@ -109,13 +114,13 @@
                         <template v-if="materialProcessInfo.process==='染色'">
                           <div class="changeCtn">
                             <span>白胚</span>
-                            <span class="el-icon-s-unfold"></span>
+                            <span class="el-icon-right"></span>
                             <span>{{itemChild.after_color}}</span>
                           </div>
                         </template>
                         <template v-if="materialProcessInfo.process==='倒纱'">
                           <span>{{itemChild.before_attribute}}</span>
-                          <span class="el-icon-s-unfold"></span>
+                          <span class="el-icon-right"></span>
                           <span>{{itemChild.after_attribute}}</span>
                         </template>
                         <template v-if="materialProcessInfo.process==='并线'">
@@ -170,6 +175,35 @@
               </div>
             </div>
           </div>
+          <div class="tableCtn">
+            <div class="thead bgWhite"
+              style="height: auto">
+              <div class="trow"
+                v-for="(item,index) in materialProcessInfo.others_fee_data"
+                :key="index">
+                <div class="tcol bgGray headTitle">额外费用名称</div>
+                <div class="tcol">
+                  {{item.name}}
+                </div>
+                <div class="tcol bgGray headTitle">额外费用金额</div>
+                <div class="tcol">
+                  {{item.price}}元
+                </div>
+                <div class="tcol bgGray headTitle">额外费用备注</div>
+                <div class="tcol">
+                  {{item.desc}}
+                </div>
+              </div>
+              <div class="trow">
+                <div class="tcol bgGray"
+                  style="flex:0.3">注意事项</div>
+                <div class="tcol"
+                  style="flex: 4;text-align:left;display:block">
+                  <div v-html="descArr.desc"></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </template>
@@ -195,9 +229,14 @@
           </div>
           <div class="fr">
             <div class="pImage">
-              <img :src="qrCodeUrl"
-                width="100%"
+              <img :src="qrCodePCUrl"
                 alt="" />
+              <span class="imgText">扫一扫打开电脑端系统</span>
+            </div>
+            <div class="pImage">
+              <img :src="qrCodeWXUrl"
+                alt="" />
+              <span class="imgText">使用织为云工厂小程序扫一扫</span>
             </div>
           </div>
         </div>
@@ -278,13 +317,13 @@
                         <template v-if="materialProcessInfo.process==='染色'">
                           <div class="changeCtn">
                             <span>白胚</span>
-                            <span class="el-icon-s-unfold"></span>
+                            <span class="el-icon-right"></span>
                             <span>{{itemChild.after_color}}</span>
                           </div>
                         </template>
                         <template v-if="materialProcessInfo.process==='倒纱'">
                           <span>{{itemChild.before_attribute}}</span>
-                          <span class="el-icon-s-unfold"></span>
+                          <span class="el-icon-right"></span>
                           <span>{{itemChild.after_attribute}}</span>
                         </template>
                         <template v-if="materialProcessInfo.process==='并线'">
@@ -339,6 +378,35 @@
               </div>
             </div>
           </div>
+          <div class="tableCtn">
+            <div class="thead bgWhite"
+              style="height: auto">
+              <div class="trow"
+                v-for="(item,index) in materialProcessInfo.others_fee_data"
+                :key="index">
+                <div class="tcol bgGray headTitle">额外费用名称</div>
+                <div class="tcol">
+                  {{item.name}}
+                </div>
+                <div class="tcol bgGray headTitle">额外费用金额</div>
+                <div class="tcol">
+                  {{item.price}}元
+                </div>
+                <div class="tcol bgGray headTitle">额外费用备注</div>
+                <div class="tcol">
+                  {{item.desc}}
+                </div>
+              </div>
+              <div class="trow">
+                <div class="tcol bgGray"
+                  style="flex:0.3">注意事项</div>
+                <div class="tcol"
+                  style="flex: 4;text-align:left;display:block">
+                  <div v-html="descArr.desc"></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </template>
@@ -358,20 +426,12 @@
                 placeholder="请输入常用标题"></el-input>
             </div>
           </div>
-          <div class="row"
-            v-for="(item,index) in descArr"
-            :key="index">
-            <span class="label">注意事项{{index+1}}：</span>
+          <div class="row">
+            <span class="label">注意事项：</span>
             <div class="info">
-              <el-input v-model="descArr[index]"
-                placeholder="请输入注意事项">
-              </el-input>
-              <div v-if="index===0"
-                class="info_btn hoverBlue"
-                @click="$addItem(descArr,'')">添加</div>
-              <div v-if="index>0"
-                class="info_btn hoverRed"
-                @click="$deleteItem(descArr,index)">删除</div>
+              <div id='editorMaterialProcess'
+                style="z-index: 0;position: relative;">
+              </div>
             </div>
           </div>
         </div>
@@ -431,6 +491,8 @@ export default Vue.extend({
       lineHeight: 1,
       editFlag: false,
       materialProcessInfo: {
+        total_price: 0,
+        total_number: 0,
         created_at: '',
         order_id: '',
         plan_id: '',
@@ -466,9 +528,13 @@ export default Vue.extend({
         ]
       },
       materialInfo: [],
-      qrCodeUrl: '',
+      qrCodePCUrl: '',
+      qrCodeWXUrl: '',
       settingFlag: false,
-      descArr: []
+      descArr: {
+        desc: '',
+        editor: ''
+      }
     }
   },
   computed: {
@@ -510,34 +576,55 @@ export default Vue.extend({
       })
     },
     saveSetting() {
-      this.$setLocalStorage('materialOrderPrintTitle', this.title)
-      this.$setLocalStorage('materialOrderPrintDesc', JSON.stringify(this.descArr))
+      const realSave = {
+        editor: '',
+        desc: this.descArr.desc
+      }
+      this.$setLocalStorage('materialProcessPrintTitle', this.title)
+      this.$setLocalStorage('materialProcessPrintDesc', JSON.stringify(realSave))
       this.$message.success('保存成功')
       this.settingFlag = false
     },
     resetSetting() {
-      this.$setLocalStorage('materialOrderPrintTitle', '')
-      this.$setLocalStorage('materialOrderPrintDesc', JSON.stringify(['']))
+      this.$setLocalStorage('materialProcessPrintTitle', '')
+      this.$setLocalStorage(
+        'materialProcessPrintDesc',
+        JSON.stringify({
+          desc: '',
+          editor: ''
+        })
+      )
       this.title = ''
-      this.descArr = ['']
+      this.descArr = {
+        desc: '',
+        editor: ''
+      }
       this.$message.success('已清空')
       this.settingFlag = false
     }
   },
   mounted() {
-    this.title = this.$getLocalStorage('materialPlanPrintTitle') || ''
-    this.descArr = this.$getLocalStorage('materialPlanPrintDesc')
-      ? JSON.parse(this.$getLocalStorage('materialPlanPrintDesc'))
-      : ['']
+    this.title = this.$getLocalStorage('materialProcessPrintTitle') || ''
+    this.descArr = this.$getLocalStorage('materialProcessPrintDesc')
+      ? JSON.parse(this.$getLocalStorage('materialProcessPrintDesc'))
+      : {
+          desc: '',
+          editor: ''
+        }
     materialProcess
       .detail({
         id: Number(this.$route.query.id)
       })
       .then((res) => {
-        console.log(res)
         if (res.data.status) {
           this.materialProcessInfo = res.data.data
           this.materialProcessInfo.info_data.forEach((item) => {
+            this.materialProcessInfo.total_price = 0
+            this.materialProcessInfo.total_number = 0
+            // @ts-ignore
+            this.materialProcessInfo.total_price += Number(item.price) * Number(item.number)
+            // @ts-ignore
+            this.materialProcessInfo.total_number += Number(item.number)
             item.material_name = item.material_order_name || item.material_transfer_name
           })
           this.materialInfo = this.$mergeData(this.materialProcessInfo.info_data, {
@@ -545,9 +632,24 @@ export default Vue.extend({
           })
           // 生成二维码
           const QRCode = require('qrcode')
-          QRCode.toDataURL('/materialManage/detail?id=' + `${this.materialProcessInfo.order_id}` + '&ifprint=true')
+          QRCode.toDataURL(
+            '/materialManage/detail?id=' +
+              (this.materialProcessInfo.plan_id
+                ? this.materialProcessInfo.plan_id
+                : this.materialProcessInfo.sup_id + '&supFlag=1')
+          )
             .then((url: any) => {
-              this.qrCodeUrl = url
+              this.qrCodePCUrl = url
+            })
+            .catch((err: any) => {
+              console.error(err)
+            })
+          QRCode.toDataURL(
+            '/pages/billingManagement/rawMaterialProcessingOrder/rawMaterialProcessingOrderDetail?id=' +
+              this.materialProcessInfo.id
+          )
+            .then((url: any) => {
+              this.qrCodeWXUrl = url
             })
             .catch((err: any) => {
               console.error(err)
@@ -555,6 +657,7 @@ export default Vue.extend({
           this.windowMethod(2)
         }
       })
+    this.$initEditor(this.descArr, 'MaterialProcess')
   }
 })
 </script>

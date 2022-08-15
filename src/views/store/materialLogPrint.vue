@@ -25,13 +25,13 @@
             </div>
           </div>
         </div>
-        <div class="fr">
+        <!-- <div class="fr">
           <div class="pImage">
             <img :src="qrCodeUrl"
               width="100%"
               alt="" />
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="pbody">
         <div class="tableCtn">
@@ -67,7 +67,7 @@
             style="border-top:0">
             <div class="trow">
               <div class="tcol">关联单据编号</div>
-              <div class="tcol bgWhite">{{materialStockInfo.order_code}}</div>
+              <div class="tcol bgWhite">{{type===1||type===2||type===4||type===6||type===8||type===9?materialStockInfo.order_code:materialStockInfo.rel_doc_code}}</div>
               <div class="tcol">操作类型</div>
               <div class="tcol bgWhite">{{type|materialStockTypeFilter}}</div>
               <div class="tcol">备注信息</div>
@@ -77,7 +77,7 @@
           <div class="thead"
             style="border-top:0">
             <div class="trow">
-              <div class="tcol">来源单位</div>
+              <div class="tcol">{{type===1||type===2||type===4||type===6||type===8||type===9?'来源':'出库'}}单位</div>
               <div class="tcol bgWhite">{{materialStockInfo.client_name}}</div>
               <div class="tcol">{{type===1||type===2||type===4||type===6||type===8||type===9?'送货人':'提货人'}}签字</div>
               <div class="tcol bgWhite"></div>
@@ -105,6 +105,7 @@ export default Vue.extend({
       user_name: window.sessionStorage.getItem('user_name'),
       company_name: window.sessionStorage.getItem('company_name'),
       materialStockInfo: {
+        top_order_id: '',
         material_type: 1,
         action_type: 9,
         rel_doc_type: '',
@@ -145,14 +146,23 @@ export default Vue.extend({
         if (res.data.status) {
           this.materialStockInfo = res.data.data
           // 生成二维码
-          const QRCode = require('qrcode')
-          QRCode.toDataURL(`${Number(this.$route.query.id)}`)
-            .then((url: any) => {
-              this.qrCodeUrl = url
-            })
-            .catch((err: any) => {
-              console.error(err)
-            })
+          // const QRCode = require('qrcode')
+          // QRCode.toDataURL(
+          //   `/materialStock/detail?id=${this.materialStockInfo.top_order_id}&sampleOrderIndex=${this.materialStockInfo.order_id}`
+          // )
+          //   .then((url: any) => {
+          //     this.qrCodeUrl = url
+          //   })
+          //   .catch((err: any) => {
+          //     console.error(err)
+          //   })
+          // QRCode.toDataURL(`${Number(this.$route.query.id)}`)
+          //   .then((url: any) => {
+          //     this.qrCodeUrl = url
+          //   })
+          //   .catch((err: any) => {
+          //     console.error(err)
+          //   })
           setTimeout(() => {
             window.print()
           }, 1000)

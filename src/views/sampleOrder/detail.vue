@@ -1820,7 +1820,16 @@ export default Vue.extend({
         this.sampleOrderInfo = res[0].data.data
         this.confirmSampleInfo = res[1].data.data.filter((item: any) => item.status === 2)
         this.unConfirmSampleInfo = res[1].data.data.filter((item: any) => item.status !== 2)
-        this.sampleOrderIndex = (this.sampleOrderInfo.time_data.length - 1).toString()
+        if (this.$route.query.sampleOrderIndex) {
+          this.sampleOrderInfo.time_data.forEach((item, index) => {
+            if (item.id === Number(this.$route.query.sampleOrderIndex)) {
+              this.sampleOrderIndex = index.toString()
+            }
+          })
+        } else {
+          this.sampleOrderIndex = (this.sampleOrderInfo.time_data.length - 1).toString()
+        }
+
         this.$checkCommonInfo([
           {
             checkWhich: 'api/sampleOrderType',

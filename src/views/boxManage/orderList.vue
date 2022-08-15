@@ -81,7 +81,7 @@
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select @change="$setLocalStorage('create_user',user_id);changeRouter()"
+            <el-select @change="$setLocalStorage('create_user',user_id,true);changeRouter()"
               v-model="user_id"
               placeholder="筛选创建人"
               clearable>

@@ -55,6 +55,7 @@ export interface MaterialStockLog {
 }
 export interface MaterialStockInfo {
   id?: number
+  top_order_id?: string | number
   is_check?: string | number
   order_id?: string | number
   material_type: number // 1原料 2辅料

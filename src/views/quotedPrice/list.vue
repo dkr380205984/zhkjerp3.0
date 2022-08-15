@@ -272,7 +272,7 @@ export default Vue.extend({
           ifLock: false,
           index: 5,
           errVal: '0',
-          unit: '元'
+          unitKey: 'settle_unit'
         },
         {
           key: 'real_quote_price',
@@ -554,6 +554,7 @@ export default Vue.extend({
           // 产品信息需要在列表里展示，配合列表设置要把产品信息拿到最外层
           res.data.data.items.map((item: any) => {
             this.$set(item, 'isCheck', false)
+            item.system_total_price = this.$toFixed((item.system_total_price * 100) / (item.exchange_rate || 100))
             return item
           })
           this.list = res.data.data.items

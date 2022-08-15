@@ -169,6 +169,7 @@
                     <div class="elCtn">
                       <el-input :class="{'error':mustFlag&&!itemChild.sample_number}"
                         v-model="itemChild.sample_number"
+                        @input="(ev)=>{itemChild.keep_number=Number(itemChild.number)-Number(ev)}"
                         placeholder="送样数量">
                       </el-input>
                     </div>
@@ -178,6 +179,7 @@
                     <div class="elCtn">
                       <el-input :class="{'error':mustFlag&&!itemChild.keep_number}"
                         v-model="itemChild.keep_number"
+                        @input="(ev)=>{itemChild.sample_number=Number(itemChild.number)-Number(ev)}"
                         placeholder="留底数量">
                       </el-input>
                     </div>
@@ -303,9 +305,8 @@
             <div class="label">
               <span class="text">备注信息</span>
             </div>
-            <div class="info elCtn">
-              <el-input placeholder="请输入备注信息"
-                v-model="sampleOrderTime.batch_data[0].desc"></el-input>
+            <div class="info elCtn"
+              v-html="sampleOrderTime.batch_data[0].desc">
             </div>
           </div>
         </div>

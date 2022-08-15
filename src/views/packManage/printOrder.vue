@@ -10,7 +10,7 @@
             <div class="ptitle">{{title?title: company_name + '包装订购单'}}</div>
             <div class="prow">
               <div class="pcol wa">
-                <div class="label">系统编号：</div>
+                <div class="label">单据编号：</div>
                 <div class="info"
                   style="white-space: nowrap;">{{packOrderInfo.code}}</div>
               </div>
@@ -25,11 +25,15 @@
             </div>
           </div>
           <div class="fr">
-            <!-- <div class="remark">打开微信扫一扫 更新每日生产进度</div> -->
             <div class="pImage">
-              <img :src="qrCodeUrl"
-                width="100%"
+              <img :src="qrCodePCUrl"
                 alt="" />
+              <span class="imgText">扫一扫打开电脑端系统</span>
+            </div>
+            <div class="pImage">
+              <img :src="qrCodeWXUrl"
+                alt="" />
+              <span class="imgText">使用织为云工厂小程序扫一扫</span>
             </div>
           </div>
         </div>
@@ -37,8 +41,8 @@
           <div class="tableCtn">
             <div class="tbody hasTop">
               <div class="trow">
-                <div class="tcol bgGray headTitle">单据编号</div>
-                <div class="tcol">{{packOrderInfo.code}}</div>
+                <div class="tcol bgGray headTitle">关联订单号</div>
+                <div class="tcol">{{packOrderInfo.order_code}}</div>
                 <div class="tcol bgGray headTitle">订购总额</div>
                 <div class="tcol">{{packOrderInfo.total_price}}元</div>
                 <div class="tcol bgGray headTitle">订购日期</div>
@@ -94,18 +98,14 @@
             </div>
           </div>
           <div class="tableCtn">
-            <div class="thead">
+            <div class="thead bgWhite"
+              style="height: auto">
               <div class="trow">
-                <div class="tcol">其他说明</div>
-              </div>
-            </div>
-            <div class="tbody">
-              <div class="trow">
+                <div class="tcol bgGray"
+                  style="flex:0.3">注意事项</div>
                 <div class="tcol"
-                  style="display:block">
-                  <div style="line-height:22px"
-                    v-for="item,index in descArr"
-                    :key="index">{{item?(index+1)+'.':''}}{{item}}</div>
+                  style="flex: 4;text-align:left;display:block">
+                  <div v-html="descArr.desc"></div>
                 </div>
               </div>
             </div>
@@ -139,20 +139,12 @@
                   placeholder="请输入常用标题"></el-input>
               </div>
             </div>
-            <div class="row"
-              v-for="(item,index) in descArr"
-              :key="index">
-              <span class="label">注意事项{{index+1}}：</span>
+            <div class="row">
+              <span class="label">注意事项：</span>
               <div class="info">
-                <el-input v-model="descArr[index]"
-                  placeholder="请输入注意事项">
-                </el-input>
-                <div v-if="index===0"
-                  class="info_btn hoverBlue"
-                  @click="$addItem(descArr,'')">添加</div>
-                <div v-if="index>0"
-                  class="info_btn hoverRed"
-                  @click="$deleteItem(descArr,index)">删除</div>
+                <div id='editorPackOrder'
+                  style="z-index: 0;position: relative;">
+                </div>
               </div>
             </div>
           </div>
@@ -215,10 +207,14 @@ export default Vue.extend({
       loading: true,
       showMenu: false,
       company_name: window.sessionStorage.getItem('company_name'),
-      qrCodeUrl: '',
+      qrCodePCUrl: '',
+      qrCodeWXUrl: '',
       settingFlag: false,
       title: '',
-      descArr: [''] // 注意事项
+      descArr: {
+        desc: '',
+        editor: ''
+      } // 注意事项
     }
   },
   methods: {
@@ -246,16 +242,29 @@ export default Vue.extend({
       })
     },
     saveSetting() {
+      const realSave = {
+        editor: '',
+        desc: this.descArr.desc
+      }
       this.$setLocalStorage('packOrderPrintTitle', this.title)
-      this.$setLocalStorage('packOrderPrintDesc', JSON.stringify(this.descArr))
+      this.$setLocalStorage('packOrderPrintDesc', JSON.stringify(realSave))
       this.$message.success('保存成功')
       this.settingFlag = false
     },
     resetSetting() {
       this.$setLocalStorage('packOrderPrintTitle', '')
-      this.$setLocalStorage('packOrderPrintDesc', JSON.stringify(['']))
+      this.$setLocalStorage(
+        'packOrderPrintDesc',
+        JSON.stringify({
+          desc: '',
+          editor: ''
+        })
+      )
       this.title = ''
-      this.descArr = ['']
+      this.descArr = {
+        desc: '',
+        editor: ''
+      }
       this.$message.success('已清空')
       this.settingFlag = false
     }
@@ -264,7 +273,10 @@ export default Vue.extend({
     this.title = this.$getLocalStorage('packOrderPrintTitle') || ''
     this.descArr = this.$getLocalStorage('packOrderPrintDesc')
       ? JSON.parse(this.$getLocalStorage('packOrderPrintDesc'))
-      : ['']
+      : {
+          desc: '',
+          editor: ''
+        }
     packManage
       .orderListDetail({
         id: Number(this.$route.query.id)
@@ -272,9 +284,25 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.packOrderInfo = res.data.data
+          const QRCode = require('qrcode')
+          QRCode.toDataURL(`/packManage/detail?id=${this.packOrderInfo.order_id}`)
+            .then((url: any) => {
+              this.qrCodePCUrl = url
+            })
+            .catch((err: any) => {
+              console.error(err)
+            })
+          QRCode.toDataURL(`/pages/billingManagement/packingOrder/packingOrderDetail?id=${this.packOrderInfo.id}`)
+            .then((url: any) => {
+              this.qrCodeWXUrl = url
+            })
+            .catch((err: any) => {
+              console.error(err)
+            })
           this.windowMethod(2)
         }
       })
+    this.$initEditor(this.descArr, 'PackOrder')
   }
 })
 </script>

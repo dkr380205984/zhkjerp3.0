@@ -6921,6 +6921,7 @@ export default Vue.extend({
             if (res.data.status) {
               this.$message.success('添加成功')
               this.halfProcessInfo = {
+                code: '',
                 type: 2,
                 process_desc: '',
                 name: '',
@@ -6938,6 +6939,7 @@ export default Vue.extend({
       this.showPopup = false
       this.isHalfUpdate = false
       this.halfProcessInfo = {
+        code: '',
         type: 2,
         process_desc: '',
         name: '',
@@ -7006,6 +7008,7 @@ export default Vue.extend({
             if (res.data.status) {
               this.$message.success('添加成功')
               this.staffProcessInfo = {
+                code: '',
                 type: 3,
                 process_desc: '',
                 name: '',
@@ -7023,6 +7026,7 @@ export default Vue.extend({
       this.showPopup = false
       this.isStaffProcessUpdate = false
       this.staffProcessInfo = {
+        code: '',
         type: 3,
         process_desc: '',
         name: '',

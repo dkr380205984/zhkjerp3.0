@@ -59,20 +59,24 @@
               @change="storePage=1;$forceUpdate()"></el-input>
           </div>
           <div class="btn backHoverGreen fr"
-            @click="goStock(9)">物料入库</div>
+            @click="goStock(9)">{{typeName}}入库</div>
           <div class="btn backHoverOrange fr"
-            @click="goStock(13)">物料出库</div>
+            @click="goStock(13)">{{typeName}}出库</div>
           <div class="btn backHoverBlue fr"
-            @click="goStock(7)">物料移库</div>
+            @click="goStock(7)">{{typeName}}移库</div>
         </div>
         <div class="list">
           <div class="row title">
-            <div class="col">物料名称</div>
-            <div class="col">物料颜色</div>
-            <div class="col">物料属性</div>
-            <div class="col">批号</div>
-            <div class="col">缸号</div>
-            <div class="col">色号</div>
+            <div class="col">{{typeName}}名称</div>
+            <div class="col"
+              v-if="typeName!=='辅料'">{{typeName}}颜色</div>
+            <div class="col">{{typeName}}属性</div>
+            <div class="col"
+              v-if="typeName!=='辅料'">批号</div>
+            <div class="col"
+              v-if="typeName!=='辅料'">缸号</div>
+            <div class="col"
+              v-if="typeName!=='辅料'">色号</div>
             <div class="col">库存数</div>
             <div class="col">操作</div>
           </div>
@@ -82,12 +86,16 @@
             <div class="col">
               <el-checkbox v-model="item.check">{{item.material_name}}</el-checkbox>
             </div>
-            <div class="col">{{item.material_color}}</div>
+            <div class="col"
+              v-if="typeName!=='辅料'">{{item.material_color}}</div>
             <div class="col">{{item.attribute || '无属性'}}</div>
-            <div class="col">{{item.batch_code}}</div>
-            <div class="col">{{item.vat_code}}</div>
-            <div class="col">{{item.color_code}}</div>
-            <div class="col">{{item.number}}kg</div>
+            <div class="col"
+              v-if="typeName!=='辅料'">{{item.batch_code}}</div>
+            <div class="col"
+              v-if="typeName!=='辅料'">{{item.vat_code}}</div>
+            <div class="col"
+              v-if="typeName!=='辅料'">{{item.color_code}}</div>
+            <div class="col">{{item.number}}{{item.unit}}</div>
             <div class="col">
               <div class="oprCtn">
                 <span class="opr hoverGreen"
@@ -177,9 +185,10 @@
               <div class="tcol noPad"
                 style="flex:4">
                 <div class="trow">
-                  <div class="tcol">物料名称</div>
-                  <div class="tcol">颜色/属性</div>
-                  <div class="tcol">批号/缸号/色号</div>
+                  <div class="tcol">{{typeName}}名称</div>
+                  <div class="tcol">{{typeName==='辅料'?'辅料颜色、材质、属性或尺寸':'颜色/属性'}}</div>
+                  <div class="tcol"
+                    v-if="typeName!=='辅料'">批号/缸号/色号</div>
                   <div class="tcol">数量</div>
                 </div>
               </div>
@@ -252,10 +261,14 @@
                   v-for="itemChild in item.info_data"
                   :key="itemChild.id">
                   <div class="tcol">{{itemChild.material_name}}</div>
-                  <div class="tcol">{{itemChild.material_color}}/{{itemChild.attribute ||'无属性'}}</div>
+                  <div class="tcol">
+                    <span v-if="typeName!=='辅料'">{{itemChild.material_color}}</span>
+                    <span>{{itemChild.attribute ||'无属性'}}</span>
+                  </div>
                   <div class="tcol"
+                    v-if="typeName!=='辅料'"
                     :class="itemChild.batch_code||itemChild.vat_code?'':'gray'">{{itemChild.batch_code||'无'}}/{{itemChild.vat_code||'无'}}/{{itemChild.color_code||'无'}}</div>
-                  <div class="tcol">{{itemChild.number}}kg</div>
+                  <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
                 </div>
               </div>
               <div class="tcol">
@@ -825,34 +838,37 @@ export default Vue.extend({
     }
   },
   computed: {
+    typeName() {
+      return ['', '纱线', '面料', '', '辅料'][Number(this.$route.query.store_type)]
+    },
     decorateMaterialList(): any[] {
       return this.$store.state.api.decorateMaterial.arr
     },
     storeTotalList(): any[] {
       return this.storeDetail.store_total
         .filter((item: any) => {
-          if (this.storeTotalFilter.material_name) {
+          if (this.storeTotalFilter.material_name && item.material_name) {
             return item.material_name.toLowerCase().indexOf(this.storeTotalFilter.material_name.toLowerCase()) !== -1
           } else {
             return true
           }
         })
         .filter((item: any) => {
-          if (this.storeTotalFilter.vat_code) {
+          if (this.storeTotalFilter.vat_code && item.vat_code) {
             return item.vat_code.toLowerCase().indexOf(this.storeTotalFilter.vat_code.toLowerCase()) !== -1
           } else {
             return true
           }
         })
         .filter((item: any) => {
-          if (this.storeTotalFilter.color_code) {
+          if (this.storeTotalFilter.color_code && item.color_code) {
             return item.color_code.toLowerCase().indexOf(this.storeTotalFilter.color_code.toLowerCase()) !== -1
           } else {
             return true
           }
         })
         .filter((item: any) => {
-          if (this.storeTotalFilter.batch_code) {
+          if (this.storeTotalFilter.batch_code && item.batch_code) {
             return item.batch_code.toLowerCase().indexOf(this.storeTotalFilter.batch_code.toLowerCase()) !== -1
           } else {
             return true
@@ -863,28 +879,28 @@ export default Vue.extend({
     storeTotal(): number {
       return this.storeDetail.store_total
         .filter((item: any) => {
-          if (this.storeTotalFilter.material_name) {
+          if (this.storeTotalFilter.material_name && item.material_name) {
             return item.material_name.toLowerCase().indexOf(this.storeTotalFilter.material_name.toLowerCase()) !== -1
           } else {
             return true
           }
         })
         .filter((item: any) => {
-          if (this.storeTotalFilter.vat_code) {
+          if (this.storeTotalFilter.vat_code && item.vat_code) {
             return item.vat_code.toLowerCase().indexOf(this.storeTotalFilter.vat_code.toLowerCase()) !== -1
           } else {
             return true
           }
         })
         .filter((item: any) => {
-          if (this.storeTotalFilter.color_code) {
+          if (this.storeTotalFilter.color_code && item.color_code) {
             return item.color_code.toLowerCase().indexOf(this.storeTotalFilter.color_code.toLowerCase()) !== -1
           } else {
             return true
           }
         })
         .filter((item: any) => {
-          if (this.storeTotalFilter.batch_code) {
+          if (this.storeTotalFilter.batch_code && item.batch_code) {
             return item.batch_code.toLowerCase().indexOf(this.storeTotalFilter.batch_code.toLowerCase()) !== -1
           } else {
             return true

@@ -413,17 +413,22 @@ const plugin = {
     }
   },
   // 设置localstorage
-  setLocalStorage(name: string, info: any) {
+  setLocalStorage(name: string, info: any, ifMessage?: boolean) {
     window.localStorage.setItem(name, info)
-    Message.Message.success('已保存')
+    if (ifMessage) {
+      Message.Message.success('已保存')
+    }
+
   },
   getLocalStorage(name: string) {
     return window.localStorage.getItem(name)
   },
   // 设置localstorage
-  setSessionStorage(name: string, info: any) {
+  setSessionStorage(name: string, info: any, ifMessage?: boolean) {
     window.sessionStorage.setItem(name, info)
-    Message.Message.success('已保存')
+    if (ifMessage) {
+      Message.Message.success('已保存')
+    }
   },
   getsessionStorage(name: string) {
     return window.sessionStorage.getItem(name)

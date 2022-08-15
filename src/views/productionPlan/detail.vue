@@ -177,7 +177,8 @@
             v-for="(item,index) in productionPlanList"
             :key="index">
             <div class="row"
-              @click.prevent="item.show=!item.show;$forceUpdate()">
+              @click.prevent="item.show=!item.show;$forceUpdate()"
+              :class="{'backMark':Number($route.query.productionDocId)===item.id}">
               <div class="col"
                 style="max-width:36px">{{index+1}}</div>
               <div class="col">{{item.code}}</div>

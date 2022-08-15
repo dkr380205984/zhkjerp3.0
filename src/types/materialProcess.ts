@@ -1,5 +1,6 @@
 import { MaterialListInfo } from "./materialOrder";
 export interface MaterialProcessInfo {
+  sup_id?: string | number
   code?: string
   created_at?: string
   id?: number
@@ -13,6 +14,8 @@ export interface MaterialProcessInfo {
   client_name?: string
   order_time: string
   delivery_time: string
+  total_price?: string | number
+  total_number?: string | number
   others_fee_data: Array<{
     desc: string // 额外费用备注
     name: string

@@ -338,7 +338,8 @@
                 style="font-size:14px">
                 <div class="trow"
                   v-for="itemProcess in item.process_info"
-                  :key="itemProcess.id">
+                  :key="itemProcess.id"
+                  :class="{'backMark':itemProcess.id===materialProcessIndex}">
                   <div class="tcol">
                     <span class="overText">{{itemProcess.code}}
                       <el-tooltip class="item"
@@ -2580,6 +2581,7 @@ export default Vue.extend({
       materialProcessList: [],
       materialOrderIndex: '0', // el-tab-pane组件需要字符串
       materialStockIndex: '0',
+      materialProcessIndex: '',
       yarnAttributeList: yarnAttributeArr,
       yarnProcessList: yarnProcessArr,
       showPrice: false,
@@ -2622,7 +2624,23 @@ export default Vue.extend({
         }
         this.materialOrderList = res[1].data.data
         if (this.materialOrderList.length > 0) {
-          this.materialOrderIndex = this.materialOrderList[0].id!.toString()
+          if (this.$route.query.orderDocId) {
+            // 订购单消息通知跳转
+            this.materialOrderIndex = this.$route.query.orderDocId
+          } else if (this.$route.query.processDocId) {
+            // 加工单消息通知跳转
+            this.materialOrderList.forEach((item: any) => {
+              const finded = item.process_info.find((itemFind: any) => {
+                return Number(itemFind.id) === Number(this.$route.query.processDocId)
+              })
+              if (finded) {
+                this.materialOrderIndex = item.id.toString()
+              }
+            })
+            this.materialProcessIndex = Number(this.$route.query.processDocId)
+          } else {
+            this.materialOrderIndex = this.materialOrderList[0].id!.toString()
+          }
         }
         this.materialStockLog = res[2].data.data
         if (this.materialStockLog.length > 0) {

@@ -23,11 +23,15 @@
           </div>
         </div>
         <div class="fr">
-          <!-- <div class="remark">打开微信扫一扫 更新每日生产进度</div> -->
           <div class="pImage">
-            <img :src="qrCodeUrl"
-              width="100%"
+            <img :src="qrCodePCUrl"
               alt="" />
+            <span class="imgText">扫一扫打开电脑端系统</span>
+          </div>
+          <div class="pImage">
+            <img :src="qrCodeWXUrl"
+              alt="" />
+            <span class="imgText">使用织为云工厂小程序扫一扫</span>
           </div>
         </div>
       </div>
@@ -35,30 +39,31 @@
         <div class="tableCtn">
           <div class="tbody hasTop">
             <div class="trow">
-              <div class="tcol bgGray label">订单号</div>
+              <div class="tcol bgGray label">关联订单号</div>
               <div class="tcol">{{productionPlanInfo.order_code}}</div>
+              <div class="tcol bgGray label">关联订单下单客户</div>
+              <div class="tcol">{{showClient?company_name:'***'}}</div>
               <div class="tcol bgGray label">生产单位</div>
               <div class="tcol">{{productionPlanInfo.client_name}}</div>
-              <div class="tcol bgGray label">开单日期</div>
-              <div class="tcol">{{productionPlanInfo.start_time}}</div>
-              <div class="tcol bgGray label">分配总数</div>
-              <div class="tcol">{{totalNumber}}</div>
-            </div>
-            <div class="trow">
-              <div class="tcol bgGray label">下单客户</div>
-              <div class="tcol">{{company_name}}</div>
               <div class="tcol bgGray label">生产工序</div>
               <div class="tcol">{{productionPlanInfo.process_name}}</div>
-              <div class="tcol bgGray label">完成日期</div>
-              <div class="tcol">{{productionPlanInfo.end_time}}</div>
-              <div class="tcol bgGray label">分配总额</div>
-              <div class="tcol">{{totalPrice}}元</div>
             </div>
             <div class="trow">
               <div class="tcol bgGray label">联系人</div>
               <div class="tcol">{{productionPlanInfo.contacts_name}}</div>
               <div class="tcol bgGray label">联系电话</div>
               <div class="tcol">{{productionPlanInfo.contacts_phone}}</div>
+              <div class="tcol bgGray label">开单日期</div>
+              <div class="tcol">{{productionPlanInfo.start_time}}</div>
+
+              <div class="tcol bgGray label">完成日期</div>
+              <div class="tcol">{{productionPlanInfo.end_time}}</div>
+            </div>
+            <div class="trow">
+              <div class="tcol bgGray label">分配总数</div>
+              <div class="tcol">{{totalNumber}}</div>
+              <div class="tcol bgGray label">分配总额</div>
+              <div class="tcol">{{totalPrice}}元</div>
               <div class="tcol bgGray label">工序说明</div>
               <div class="tcol"
                 style="min-width:369px">{{productionPlanInfo.process_desc}}</div>
@@ -75,8 +80,8 @@
               <div class="tcol">产品编号</div>
               <div class="tcol">产品图片</div>
               <div class="tcol">尺码颜色</div>
-              <div class="tcol">产品部位</div>
-              <div class="tcol">尺寸克重</div>
+              <div class="tcol">部位/成分</div>
+              <div class="tcol">尺寸/克重</div>
               <div class="tcol">分配单价</div>
               <div class="tcol">分配数量</div>
             </div>
@@ -98,15 +103,17 @@
               </div>
               <div class="tcol">{{itemPro.size_name}}/{{itemPro.color_name}}</div>
               <div class="tcol">
-                <div>{{itemPro.part_name}}/
-                  <span style="margin-right:4px"
-                    v-for="item,index in itemPro.rel_component"
-                    :key="item.id">{{item.component_name}}{{item.number}}%
-                    <template v-if="index!==itemPro.rel_component.length-1">+</template>
-                  </span>
-                </div>
+                {{itemPro.part_name}}
+                <span style="margin-right:4px"
+                  v-for="item,index in itemPro.rel_component"
+                  :key="item.id">{{item.component_name}}{{item.number}}%
+                  <template v-if="index!==itemPro.rel_component.length-1">+</template>
+                </span>
               </div>
-              <div class="tcol">{{itemPro.size_info}}/{{itemPro.weight||0}}g</div>
+              <div class="tcol">
+                <span>{{itemPro.size_info}}</span>
+                <span>{{itemPro.weight||0}}g</span>
+              </div>
               <div class="tcol">{{itemPro.price}}元</div>
               <div class="tcol">{{itemPro.number}}</div>
             </div>
@@ -137,18 +144,30 @@
           </div>
         </div>
         <div class="tableCtn">
-          <div class="thead">
-            <div class="trow">
-              <div class="tcol">其他说明</div>
+          <div class="thead bgWhite"
+            style="height: auto">
+            <div class="trow"
+              v-for="(item,index) in productionPlanInfo.others_fee_data"
+              :key="index">
+              <div class="tcol bgGray headTitle">额外费用名称</div>
+              <div class="tcol">
+                {{item.name}}
+              </div>
+              <div class="tcol bgGray headTitle">额外费用金额</div>
+              <div class="tcol">
+                {{item.price}}元
+              </div>
+              <div class="tcol bgGray headTitle">额外费用备注</div>
+              <div class="tcol">
+                {{item.desc}}
+              </div>
             </div>
-          </div>
-          <div class="tbody">
             <div class="trow">
+              <div class="tcol bgGray"
+                style="flex:0.3">注意事项</div>
               <div class="tcol"
-                style="display:block">
-                <div style="line-height:22px"
-                  v-for="item,index in descArr"
-                  :key="index">{{item?(index+1)+'.':''}}{{item}}</div>
+                style="flex: 4;text-align:left;display:block">
+                <div v-html="descArr.desc"></div>
               </div>
             </div>
           </div>
@@ -171,20 +190,12 @@
                 placeholder="请输入常用标题"></el-input>
             </div>
           </div>
-          <div class="row"
-            v-for="(item,index) in descArr"
-            :key="index">
-            <span class="label">注意事项{{index+1}}：</span>
+          <div class="row">
+            <span class="label">注意事项：</span>
             <div class="info">
-              <el-input v-model="descArr[index]"
-                placeholder="请输入注意事项">
-              </el-input>
-              <div v-if="index===0"
-                class="info_btn hoverBlue"
-                @click="$addItem(descArr,'')">添加</div>
-              <div v-if="index>0"
-                class="info_btn hoverRed"
-                @click="$deleteItem(descArr,index)">删除</div>
+              <div id='editorProductionPlan'
+                style="z-index: 0;position: relative;">
+              </div>
             </div>
           </div>
         </div>
@@ -208,6 +219,8 @@
         @click="windowMethod(1)">刷新页面</div>
       <div class="setting_item"
         @click="windowMethod(3)">标题备注设置</div>
+      <div class="setting_item"
+        @click="windowMethod(4)">{{showClient?'不显示':'显示'}}下单客户</div>
     </div>
   </div>
 </template>
@@ -224,12 +237,17 @@ export default Vue.extend({
     return {
       loading: true,
       showMenu: false,
+      showClient: true,
       user_name: window.sessionStorage.getItem('user_name'),
       company_name: window.sessionStorage.getItem('company_name'),
-      qrCodeUrl: '',
+      qrCodePCUrl: '',
+      qrCodeWXUrl: '',
       settingFlag: false,
       title: '',
-      descArr: [''], // 注意事项
+      descArr: {
+        desc: '',
+        editor: ''
+      },
       productionPlanInfo: {
         process_type: '',
         order_id: '',
@@ -309,29 +327,49 @@ export default Vue.extend({
         } else if (type === 3) {
           this.settingFlag = true
           this.showMenu = false
+        } else if (type === 4) {
+          this.showClient = !this.showClient
+          this.$setLocalStorage('productionPlanPrintShow', this.showClient)
         }
       })
     },
     saveSetting() {
+      const realSave = {
+        editor: '',
+        desc: this.descArr.desc
+      }
       this.$setLocalStorage('productionPlanPrintTitle', this.title)
-      this.$setLocalStorage('productionPlanPrintDesc', JSON.stringify(this.descArr))
+      this.$setLocalStorage('productionPlanPrintDesc', JSON.stringify(realSave))
       this.$message.success('保存成功')
       this.settingFlag = false
     },
     resetSetting() {
       this.$setLocalStorage('productionPlanPrintTitle', '')
-      this.$setLocalStorage('productionPlanPrintDesc', JSON.stringify(['']))
+      this.$setLocalStorage(
+        'productionPlanPrintDesc',
+        JSON.stringify({
+          desc: '',
+          editor: ''
+        })
+      )
       this.title = ''
-      this.descArr = ['']
+      this.descArr = {
+        editor: '',
+        desc: this.descArr.desc
+      }
       this.$message.success('已清空')
       this.settingFlag = false
     }
   },
   mounted() {
+    this.showClient = this.$getLocalStorage('productionPlanPrintShow') || true
     this.title = this.$getLocalStorage('productionPlanPrintTitle') || ''
     this.descArr = this.$getLocalStorage('productionPlanPrintDesc')
       ? JSON.parse(this.$getLocalStorage('productionPlanPrintDesc'))
-      : ['']
+      : {
+          desc: '',
+          editor: ''
+        }
     productionPlan
       .detail({
         id: Number(this.$route.query.id)
@@ -341,18 +379,29 @@ export default Vue.extend({
           this.productionPlanInfo = res.data.data
           const QRCode = require('qrcode')
           QRCode.toDataURL(
-            `/inspection/detail?id=${this.$route.query.order_id}&code=${res.data.data.code}&product_id=${res.data.data.product_info_data[0].product_id}&isBarcodeScanner=true`
+            `/inspection/detail?id=${this.$route.query.order_id}&code=${this.productionPlanInfo.code}&product_id=${this.productionPlanInfo.product_info_data[0].product_id}&isBarcodeScanner=true`
           )
             .then((url: any) => {
-              this.qrCodeUrl = url
+              this.qrCodePCUrl = url
             })
             .catch((err: any) => {
               console.error(err)
             })
+          QRCode.toDataURL(
+            `/pages/billingManagement/productionPlan/productionPlanDetail?id=${this.productionPlanInfo.id}`
+          )
+            .then((url: any) => {
+              this.qrCodeWXUrl = url
+            })
+            .catch((err: any) => {
+              console.error(err)
+            })
+
           this.windowMethod(2)
         }
         this.loading = false
       })
+    this.$initEditor(this.descArr, 'ProductionPlan')
   }
 })
 </script>

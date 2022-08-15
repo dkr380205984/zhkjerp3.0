@@ -1,14 +1,18 @@
 <template>
-  <div id="workshopManagementList" class="bodyContainer">
+  <div id="workshopManagementList"
+    class="bodyContainer">
     <div class="topTagCtn">
       <div class="tag active">
-        <svg class="iconFont" aria-hidden="true">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-andingdanluru"></use>
         </svg>
         <span class="text">按订单录入</span>
       </div>
-      <div class="tag" @click="$router.push('/workshopManagement/staffList')">
-        <svg class="iconFont" aria-hidden="true">
+      <div class="tag"
+        @click="$router.push('/workshopManagement/staffList')">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-anyuangongluru"></use>
         </svg>
         <span class="text">按员工录入</span>
@@ -21,34 +25,31 @@
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input
-              v-model="keyword"
+            <el-input v-model="keyword"
               placeholder="筛选报价/产品/样品编号"
-              @keydown.enter.native="changeRouter"
-            ></el-input>
+              @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
-            <el-cascader
-              @change="changeRouter"
+            <el-cascader @change="changeRouter"
               placeholder="筛选下单公司"
               v-model="client_id"
               :options="clientList"
               filterable
-              clearable
-            >
+              clearable>
             </el-cascader>
           </div>
           <div class="elCtn">
-            <el-select
-              @change="
-                $setLocalStorage('create_user', user_id)
+            <el-select @change="
+                $setLocalStorage('create_user', user_id,true)
                 changeRouter()
               "
               v-model="user_id"
               placeholder="筛选创建人"
-              clearable
-            >
-              <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
@@ -62,25 +63,26 @@
                 :value="2"></el-option>
             </el-select>
           </div>
-          <div class="btn borderBtn" @click="reset">重置</div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select
-              @change="
+            <el-select @change="
                 $setLocalStorage('group_id', group_id)
                 changeRouter()
               "
               v-model="group_id"
               placeholder="筛选负责小组"
-              clearable
-            >
-              <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+              clearable>
+              <el-option v-for="item in groupList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-date-picker
-              v-model="date"
+            <el-date-picker v-model="date"
               type="daterange"
               align="right"
               unlink-panels
@@ -89,50 +91,52 @@
               end-placeholder="结束日期"
               :picker-options="pickerOptions"
               @change="changeRouter"
-              value-format="yyyy-MM-dd"
-            >
+              value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
           <div class="elCtn">
-            <el-select v-model="limit" placeholder="每页展示条数" @change="changeRouter">
-              <el-option v-for="item in limitList" :key="item.value" :label="item.name" :value="item.value"></el-option>
+            <el-select v-model="limit"
+              placeholder="每页展示条数"
+              @change="changeRouter">
+              <el-option v-for="item in limitList"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value"></el-option>
             </el-select>
           </div>
-          <div class="btn backHoverOrange fr" @click="showSetting = true">列表设置</div>
-          <div
-            class="btn backHoverGreen fr"
+          <div class="btn backHoverOrange fr"
+            @click="showSetting = true">列表设置</div>
+          <div class="btn backHoverGreen fr"
             @click="
               getFilters()
               getList()
-            "
-          >
+            ">
             刷新列表
           </div>
         </div>
-        <zh-list :list="list" :listKey="listKey" :loading="loading" :oprList="oprList"></zh-list>
+        <zh-list :list="list"
+          :listKey="listKey"
+          :loading="loading"
+          :oprList="oprList"></zh-list>
         <div class="pageCtn">
-          <el-pagination
-            background
+          <el-pagination background
             :page-size="limit"
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
-            @current-change="changeRouter"
-          >
+            @current-change="changeRouter">
           </el-pagination>
         </div>
       </div>
     </div>
     <!-- 列表设置 -->
-    <zh-list-setting
-      @close="showSetting = false"
+    <zh-list-setting @close="showSetting = false"
       @afterSave="getListSetting"
       :show="showSetting"
       :id="listSettingId"
       :type="9"
       :data.sync="listKey"
-      :originalData="originalSetting"
-    ></zh-list-setting>
+      :originalData="originalSetting"></zh-list-setting>
   </div>
 </template>
 
@@ -171,7 +175,7 @@ export default Vue.extend({
           ifLock: true,
           index: 0,
           ifCaogao: 'order_type',
-          caogaoArr: ['订', '样'],
+          caogaoArr: ['订', '样']
         },
         {
           key: 'client_name',

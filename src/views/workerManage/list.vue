@@ -34,7 +34,7 @@
               content="保存部门筛选"
               placement="top">
               <i class="el-icon-upload hoverOrange"
-                @click="$setLocalStorage('department', department)"></i>
+                @click="$setLocalStorage('department', department,true)"></i>
             </el-tooltip>
           </div>
           <div class="elCtn">

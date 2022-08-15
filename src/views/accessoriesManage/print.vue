@@ -23,9 +23,14 @@
         </div>
         <div class="fr">
           <div class="pImage">
-            <img :src="qrCodeUrl"
-              width="100%"
+            <img :src="qrCodePCUrl"
               alt="" />
+            <span class="imgText">扫一扫打开电脑端系统</span>
+          </div>
+          <div class="pImage">
+            <img :src="qrCodeWXUrl"
+              alt="" />
+            <span class="imgText">使用织为云工厂小程序扫一扫</span>
           </div>
         </div>
       </div>
@@ -35,22 +40,22 @@
             <div class="trow">
               <div class="tcol bgGray headTitle">采购单号</div>
               <div class="tcol">{{materialOrderInfo.code || '暂无' }}</div>
-              <div class="tcol bgGray headTitle">订单号</div>
+              <div class="tcol bgGray headTitle">关联订单号</div>
               <div class="tcol">{{materialOrderInfo.order_code || '暂无' }}</div>
+              <div class="tcol bgGray headTitle">关联计划单号</div>
+              <div class="tcol">{{materialOrderInfo.plan_code || '暂无' }}</div>
+              <div class="tcol bgGray headTitle">采购单位</div>
+              <div class="tcol">{{ materialOrderInfo.client_name || '暂无' }}</div>
+            </div>
+            <div class="trow">
               <div class="tcol bgGray headTitle">联系人</div>
               <div class="tcol">{{materialOrderInfo.contacts_name}}</div>
               <div class="tcol bgGray headTitle">联系电话</div>
               <div class="tcol">{{materialOrderInfo.contacts_phone}}</div>
-            </div>
-            <div class="trow">
-              <div class="tcol bgGray headTitle">计划单号</div>
-              <div class="tcol">{{materialOrderInfo.plan_code || '暂无' }}</div>
               <div class="tcol bgGray headTitle">下单日期</div>
               <div class="tcol">{{ materialOrderInfo.order_time || '暂无' }}</div>
               <div class="tcol bgGray headTitle">交货日期</div>
               <div class="tcol">{{ materialOrderInfo.delivery_time || '暂无' }}</div>
-              <div class="tcol bgGray headTitle">采购单位</div>
-              <div class="tcol">{{ materialOrderInfo.client_name || '暂无' }}</div>
             </div>
             <div class="trow">
               <div class="tcol bgGray headTitle">订购总数</div>
@@ -157,14 +162,28 @@
         <div class="tableCtn">
           <div class="thead bgWhite"
             style="height: auto">
+            <div class="trow"
+              v-for="(item,index) in materialOrderInfo.others_fee_data"
+              :key="index">
+              <div class="tcol bgGray headTitle">额外费用名称</div>
+              <div class="tcol">
+                {{item.name}}
+              </div>
+              <div class="tcol bgGray headTitle">额外费用金额</div>
+              <div class="tcol">
+                {{item.price}}元
+              </div>
+              <div class="tcol bgGray headTitle">额外费用备注</div>
+              <div class="tcol">
+                {{item.desc}}
+              </div>
+            </div>
             <div class="trow">
               <div class="tcol bgGray"
                 style="flex:0.3">注意事项</div>
               <div class="tcol"
                 style="flex: 4;text-align:left;display:block">
-                <div style="line-height:22px"
-                  v-for="item,index in descArr"
-                  :key="index">{{item?(index+1)+'.':''}}{{item}}</div>
+                <div v-html="descArr.desc"></div>
               </div>
             </div>
           </div>
@@ -187,20 +206,12 @@
                 placeholder="请输入常用标题"></el-input>
             </div>
           </div>
-          <div class="row"
-            v-for="(item,index) in descArr"
-            :key="index">
-            <span class="label">注意事项{{index+1}}：</span>
+          <div class="row">
+            <span class="label">注意事项：</span>
             <div class="info">
-              <el-input v-model="descArr[index]"
-                placeholder="请输入注意事项">
-              </el-input>
-              <div v-if="index===0"
-                class="info_btn hoverBlue"
-                @click="$addItem(descArr,'')">添加</div>
-              <div v-if="index>0"
-                class="info_btn hoverRed"
-                @click="$deleteItem(descArr,index)">删除</div>
+              <div id='editorAccessoriesOrder'
+                style="z-index: 0;position: relative;">
+              </div>
             </div>
           </div>
         </div>
@@ -244,10 +255,14 @@ import Vue from 'vue'
 export default Vue.extend({
   data() {
     return {
-      qrCodeUrl: '',
+      qrCodePCUrl: '',
+      qrCodeWXUrl: '',
       materialInfo: [],
       settingFlag: false,
-      descArr: [''],
+      descArr: {
+        desc: '',
+        editor: ''
+      },
       loading: false,
       showMenu: false,
       X_position: 0,
@@ -258,10 +273,12 @@ export default Vue.extend({
       editFlag: false,
       showPrintSetting: false,
       materialOrderInfo: {
+        id: '',
         created_at: '',
         total_number: 0,
         total_price: 0,
         material_type: 2,
+        top_order_id: '',
         order_id: '',
         plan_id: '',
         client_id: '',
@@ -326,16 +343,31 @@ export default Vue.extend({
       e.stopPropagation()
     },
     saveSetting() {
-      this.$setLocalStorage('materialOrderPrintTitle', this.title)
-      this.$setLocalStorage('materialOrderPrintDesc', JSON.stringify(this.descArr))
+      const realSave = {
+        editor: '',
+        desc: this.descArr.desc
+      }
+      this.$setLocalStorage('accessoriesManagePrintTitle', this.title)
+      this.$setLocalStorage('accessoriesManagePrintDesc', JSON.stringify(realSave))
       this.$message.success('保存成功')
       this.settingFlag = false
     },
     resetSetting() {
-      this.$setLocalStorage('materialOrderPrintTitle', '')
-      this.$setLocalStorage('materialOrderPrintDesc', JSON.stringify(['']))
+      this.$setLocalStorage('accessoriesManagePrintTitle', '')
+      this.$setLocalStorage(
+        'accessoriesManagePrintDesc',
+        JSON.stringify([
+          {
+            editor: '',
+            desc: this.descArr.desc
+          }
+        ])
+      )
       this.title = ''
-      this.descArr = ['']
+      this.descArr = {
+        desc: '',
+        editor: ''
+      }
       this.$message.success('已清空')
       this.settingFlag = false
     }
@@ -344,7 +376,10 @@ export default Vue.extend({
     this.title = this.$getLocalStorage('accessoriesManagePrintTitle') || ''
     this.descArr = this.$getLocalStorage('accessoriesManagePrintDesc')
       ? JSON.parse(this.$getLocalStorage('accessoriesManagePrintDesc'))
-      : ['']
+      : {
+          desc: '',
+          editor: ''
+        }
     materialOrder
       .detail({
         id: Number(this.$route.query.id)
@@ -357,9 +392,20 @@ export default Vue.extend({
           })
           // 生成二维码
           const QRCode = require('qrcode')
-          QRCode.toDataURL('/materialManage/detail?id=' + `${this.materialOrderInfo.order_id}` + '&ifprint=true')
+          QRCode.toDataURL(
+            `/accessoriesManage/detail?id=${this.materialOrderInfo.top_order_id}&sampleOrderIndex=${this.materialOrderInfo.order_id} `
+          )
             .then((url: any) => {
-              this.qrCodeUrl = url
+              this.qrCodePCUrl = url
+            })
+            .catch((err: any) => {
+              console.error(err)
+            })
+          QRCode.toDataURL(
+            `/pages/billingManagement/auxiliaryMaterialPurchaseOrder/auxiliaryMaterialPurchaseOrderDetail?id=${this.materialOrderInfo.id}`
+          )
+            .then((url: any) => {
+              this.qrCodeWXUrl = url
             })
             .catch((err: any) => {
               console.error(err)
@@ -367,6 +413,7 @@ export default Vue.extend({
           this.windowMethod(2)
         }
       })
+    this.$initEditor(this.descArr, 'AccessoriesOrder')
   }
 })
 </script>
