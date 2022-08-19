@@ -2722,6 +2722,10 @@ export default Vue.extend({
     },
     goOrderMaterial(type: '白胚' | '色纱') {
       if (this.checkMaterialOrderList().length > 0) {
+        if (Array.from(new Set(this.checkMaterialOrderList().map((item: any) => item.yarn_type))).length > 1) {
+          this.$message.error('只能同时订购一种类型的原料')
+          return
+        }
         this.materialOrderFlag = true
         if (type === '色纱') {
           this.materialOrderInfo[0].info_data = this.checkMaterialOrderList().map((item) => {
@@ -3059,7 +3063,7 @@ export default Vue.extend({
         })
       } else {
         info.info_data.forEach((item: any) => {
-          if (item.color_name === '白胚') {
+          if (item.material_color === '白胚') {
             item.attribute = '绞纱'
           } else {
             item.attribute = '筒纱'

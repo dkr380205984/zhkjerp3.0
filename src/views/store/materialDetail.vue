@@ -67,6 +67,8 @@
         </div>
         <div class="list">
           <div class="row title">
+            <div class="col"
+              style="max-width:20px"></div>
             <div class="col">{{typeName}}名称</div>
             <div class="col"
               v-if="typeName!=='辅料'">{{typeName}}颜色</div>
@@ -83,9 +85,11 @@
           <div class="row"
             v-for="item in storeTotalList"
             :key="item.id">
-            <div class="col">
-              <el-checkbox v-model="item.check">{{item.material_name}}</el-checkbox>
+            <div class="col"
+              style="max-width:20px">
+              <el-checkbox v-model="item.check"></el-checkbox>
             </div>
+            <div class="col">{{item.material_name}}</div>
             <div class="col"
               v-if="typeName!=='辅料'">{{item.material_color}}</div>
             <div class="col">{{item.attribute || '无属性'}}</div>
@@ -134,7 +138,16 @@
               placeholder="筛选出入库类型"
               @change="logPage=1;$forceUpdate()"
               clearable>
-              <el-option v-for="item in stockTypeList"
+              <el-option v-for="item in [
+                  {
+                    name: '所有入库单',
+                    value: -1
+                  },
+                  {
+                    name: '所有出库单',
+                    value: -2
+                  }
+                ].concat(stockTypeList)"
                 :key="item.value"
                 :value="item.value"
                 :label="item.name"></el-option>
@@ -917,8 +930,16 @@ export default Vue.extend({
           }
         })
         .filter((item: MaterialStockInfo) => {
-          if (this.storeLogFilter.action_type) {
+          if (
+            this.storeLogFilter.action_type &&
+            this.storeLogFilter.action_type !== -1 &&
+            this.storeLogFilter.action_type !== -2
+          ) {
             return item.action_type === this.storeLogFilter.action_type
+          } else if (this.storeLogFilter.action_type === -1) {
+            return [1, 2, 4, 6, 8, 9, 11].indexOf(item.action_type) !== -1
+          } else if (this.storeLogFilter.action_type === -2) {
+            return [3, 5, 7, 10, 12].indexOf(item.action_type) !== -1
           } else {
             return true
           }

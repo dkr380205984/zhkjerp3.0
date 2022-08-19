@@ -187,6 +187,7 @@ const collection = {
     doc_type?: number | string
     start_time?: string
     end_time?: string
+    settle_unit?: string
     export_excel?: 1
   }) => http.get(`${baseUrl}/doc/collect/lists`, params),
   create: (params: {
@@ -569,11 +570,13 @@ const store = {
     page?: string | number
     limit?: string | number
     material_type?: number | string
+    store_type?: string | number
     attribute?: string
   }) => http.get(`${baseUrl}/store/total/lists`, params), // 这个接口用于筛选仓库有多少物料
   getMatName: (params: {
     material_name: string
-    material_type: number
+    material_type?: number
+    store_type?: string | number
   }) => http.get(`${baseUrl}/search/material/by/name`, params), // 这个接口用于筛选某一类型的物料列表
   searchPro: (params: {
     [propName: string]: any
@@ -965,6 +968,24 @@ const exportExcel = {
   product: (params: {
     product_id: any[]
   }) => http.get(`${baseUrl}/export/product`, params),
+  productLog: (params: {
+    store_id: string | number
+    category_id: string | number
+    secondary_category_id: string | number
+    client_id: string
+    start_time: string
+    end_time: string
+    action_type: string | number
+  }) => http.get(`${baseUrl}/export/product/store/log`, params),
+  productTotal: (params: {
+    store_id: string | number
+    category_id: string | number
+    secondary_category_id: string | number
+    client_id: string
+    start_time: string
+    end_time: string
+    action_type: string | number
+  }) => http.get(`${baseUrl}/export/product/store/total`, params),
   materialLog: (params: {
     store_id: string | number
     material_type: number

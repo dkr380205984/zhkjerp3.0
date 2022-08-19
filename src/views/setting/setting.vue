@@ -1770,94 +1770,135 @@
           <template v-if="cName ==='样品订单'">
             <div class="editCtn clearfix"
               style="padding:20px 32px">
+              <div class="smallTitle">发货通知</div>
               <div class="row">
                 <div class="col">
-                  <div class="label">样品订单逾期是否通知？</div>
+                  <div class="label">通知条件(单选)</div>
                   <div class="info middle">
-                    <el-radio v-model="sampleOrderCheckConfig.data.allow_push_sample_order_postpone"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="sampleOrderCheckConfig.data.allow_push_sample_order_postpone"
-                      :label="2">否</el-radio>
+                    <el-radio v-model="sampleOrderCheckConfig.data.dispatch_notice_condition"
+                      :label="1">提前三天通知</el-radio>
+                    <el-radio v-model="sampleOrderCheckConfig.data.dispatch_notice_condition"
+                      :label="2">逾期通知</el-radio>
+                    <el-radio v-model="sampleOrderCheckConfig.data.dispatch_notice_condition"
+                      :label="3">不通知</el-radio>
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="label">是否提前三天通知样单送样：
-                  </div>
+                  <div class="label">通知对象(系统默认)</div>
                   <div class="info elCtn">
-                    <el-radio v-model="sampleOrderCheckConfig.data.allow_push_sample_order_dispatch_3_day"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="sampleOrderCheckConfig.data.allow_push_sample_order_dispatch_3_day"
-                      :label="2">否</el-radio>
+                    <el-radio>仅样单创建人</el-radio>
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="label">是否需要系统自动审核通过？</div>
-                  <div class="info middle">
-                    <el-radio v-model="sampleOrderCheckConfig.data.auto_pass"
-                      :label="1">需要，并限定通过条件</el-radio>
-                    <el-radio v-model="sampleOrderCheckConfig.data.auto_pass"
-                      :label="2">不需要，全部人工审核</el-radio>
+                  <div class="label">通知途径</div>
+                  <div class="info elCtn">
+                    <el-radio>默认包含系统通知</el-radio>
+                    <el-checkbox true-label='1'
+                      false-label='2'
+                      v-model="sampleOrderCheckConfig.data.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                   </div>
                 </div>
               </div>
-              <template v-if="sampleOrderCheckConfig.data.auto_pass===1">
+              <div class="smallTitle">审核通知</div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">通知条件(单选)</div>
+                  <div class="info middle">
+                    <el-radio v-model="sampleOrderCheckConfig.data.check_notice_condition"
+                      :label="1">不通知，且需要人工审核</el-radio>
+                    <el-radio v-model="sampleOrderCheckConfig.data.check_notice_condition"
+                      :label="2">不通知，且均自动审核通过</el-radio>
+                    <el-radio v-model="sampleOrderCheckConfig.data.check_notice_condition"
+                      :label="3">通知，并设置通知条件</el-radio>
+                  </div>
+                </div>
+              </div>
+              <template v-if="sampleOrderCheckConfig.data.check_notice_condition===3">
                 <div class="row">
                   <div class="col">
-                    <div class="label">是否需要限定条件自动通过？</div>
-                    <div class="info middle">
-                      <el-radio v-model="sampleOrderCheckConfig.data.has_condition"
-                        :label="2">不需要限定，全部通过</el-radio>
-                      <el-radio v-model="sampleOrderCheckConfig.data.has_condition"
-                        :label="1">需要，并填写限定条件</el-radio>
+                    <div class="label">请选择可以自动审核通过的下单客户（可多选）：</div>
+                    <div class="info elCtn">
+                      <el-cascader placeholder="筛选下单公司"
+                        v-model="sampleOrderCheckConfig.data.client_id"
+                        filterable
+                        :props="{ multiple: true}"
+                        :options="clientList"
+                        clearable>
+                      </el-cascader>
                     </div>
                   </div>
                 </div>
-                <template v-if="sampleOrderCheckConfig.data.has_condition===1">
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">请选择可以自动审核通过的下单客户（可多选）：</div>
-                      <div class="info elCtn">
-                        <el-cascader placeholder="筛选下单公司"
-                          v-model="sampleOrderCheckConfig.data.client_id"
-                          filterable
-                          :props="{ multiple: true}"
-                          :options="clientList"
-                          clearable>
-                        </el-cascader>
-                      </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                    <div class="info elCtn">
+                      <el-select placeholder="请选择创建人"
+                        v-model="sampleOrderCheckConfig.data.user_id"
+                        filterable
+                        multiple
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                      <div class="info elCtn">
-                        <el-select placeholder="请选择创建人"
-                          v-model="sampleOrderCheckConfig.data.user_id"
-                          filterable
-                          multiple
-                          clearable>
-                          <el-option v-for="item in userListCommon"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下打样数量，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="打样数量"
+                        v-model="sampleOrderCheckConfig.data.number"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下打样数量，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="打样数量"
-                          v-model="sampleOrderCheckConfig.data.number"></el-input>
-                      </div>
+                </div>
+              </template>
+              <template v-if="sampleOrderCheckConfig.data.check_notice_condition!==2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in sampleOrderCheckConfig.data.check_notice_user"
+                  :key="index">
+                  <div class="col">
+                    <div class="label"
+                      style="display:flex;height:32px;line-height:32px">
+                      {{index+1}}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox true-label='1'
+                        false-label='2'
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
-                </template>
+                  <span class="opr hoverBlue"
+                    style="top: -71px;"
+                    v-if="index===0"
+                    @click="$addItem(sampleOrderCheckConfig.data.check_notice_user,{user_id:'',notice_for_wechat:'2'})">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px;"
+                    v-if="index>0"
+                    @click="$deleteItem(sampleOrderCheckConfig.data.check_notice_user,index)">删除</span>
+                </div>
               </template>
               <div class="row">
                 <div class="col">
@@ -1891,118 +1932,147 @@
           <template v-if="cName ==='大货订单'">
             <div class="editCtn clearfix"
               style="padding:20px 32px">
+              <div class="smallTitle">发货通知</div>
               <div class="row">
                 <div class="col">
-                  <div class="label">大货订单逾期是否通知？</div>
+                  <div class="label">通知条件(单选)</div>
                   <div class="info middle">
-                    <el-radio v-model="orderCheckConfig.data.allow_push_order_postpone"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="orderCheckConfig.data.allow_push_order_postpone"
-                      :label="2">否</el-radio>
+                    <el-radio v-model="orderCheckConfig.data.dispatch_notice_condition"
+                      :label="1">提前七天通知</el-radio>
+                    <el-radio v-model="orderCheckConfig.data.dispatch_notice_condition"
+                      :label="2">逾期通知</el-radio>
+                    <el-radio v-model="orderCheckConfig.data.dispatch_notice_condition"
+                      :label="3">不通知</el-radio>
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="label">是否提前三天通知订单发货：
-                  </div>
+                  <div class="label">通知对象(系统默认)</div>
                   <div class="info elCtn">
-                    <el-radio v-model="orderCheckConfig.data.allow_push_order_dispatch_3_day"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="orderCheckConfig.data.allow_push_order_dispatch_3_day"
-                      :label="2">否</el-radio>
+                    <el-radio>仅订单创建人</el-radio>
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="label">是否提前七天通知订单发货：
-                  </div>
+                  <div class="label">通知途径</div>
                   <div class="info elCtn">
-                    <el-radio v-model="orderCheckConfig.data.allow_push_order_dispatch_7_day"
-                      :label="1">是</el-radio>
-                    <el-radio v-model="orderCheckConfig.data.allow_push_order_dispatch_7_day"
-                      :label="2">否</el-radio>
+                    <el-radio>默认包含系统通知</el-radio>
+                    <el-checkbox true-label='1'
+                      false-label='2'
+                      v-model="orderCheckConfig.data.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                   </div>
                 </div>
               </div>
+              <div class="smallTitle">审核通知</div>
               <div class="row">
                 <div class="col">
-                  <div class="label">是否需要系统自动审核通过？</div>
+                  <div class="label">通知条件(单选)</div>
                   <div class="info middle">
-                    <el-radio v-model="orderCheckConfig.data.auto_pass"
-                      :label="1">需要，并限定通过条件</el-radio>
-                    <el-radio v-model="orderCheckConfig.data.auto_pass"
-                      :label="2">不需要，全部人工审核</el-radio>
+                    <el-radio v-model="orderCheckConfig.data.check_notice_condition"
+                      :label="1">不通知，且需要人工审核</el-radio>
+                    <el-radio v-model="orderCheckConfig.data.check_notice_condition"
+                      :label="2">不通知，且均自动审核通过</el-radio>
+                    <el-radio v-model="orderCheckConfig.data.check_notice_condition"
+                      :label="3">通知，并设置通知条件</el-radio>
                   </div>
                 </div>
               </div>
-              <template v-if="orderCheckConfig.data.auto_pass===1">
+              <template v-if="orderCheckConfig.data.check_notice_condition===3">
                 <div class="row">
                   <div class="col">
-                    <div class="label">是否需要限定条件自动通过？</div>
-                    <div class="info middle">
-                      <el-radio v-model="orderCheckConfig.data.has_condition"
-                        :label="2">不需要限定，全部通过</el-radio>
-                      <el-radio v-model="orderCheckConfig.data.has_condition"
-                        :label="1">需要，并填写限定条件</el-radio>
+                    <div class="label">请选择可以自动审核通过的下单客户（可多选）：</div>
+                    <div class="info elCtn">
+                      <el-cascader placeholder="筛选下单公司"
+                        v-model="orderCheckConfig.data.client_id"
+                        filterable
+                        :props="{ multiple: true}"
+                        :options="clientList"
+                        clearable>
+                      </el-cascader>
                     </div>
                   </div>
-                </div> <template v-if="orderCheckConfig.data.has_condition===1">
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">请选择可以自动审核通过的下单客户（可多选）：</div>
-                      <div class="info elCtn">
-                        <el-cascader placeholder="筛选下单公司"
-                          v-model="orderCheckConfig.data.client_id"
-                          filterable
-                          :props="{ multiple: true}"
-                          :options="clientList"
-                          clearable>
-                        </el-cascader>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                    <div class="info elCtn">
+                      <el-select placeholder="请选择创建人"
+                        v-model="orderCheckConfig.data.user_id"
+                        filterable
+                        multiple
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
                     </div>
                   </div>
-
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                      <div class="info elCtn">
-                        <el-select placeholder="请选择创建人"
-                          v-model="orderCheckConfig.data.user_id"
-                          filterable
-                          multiple
-                          clearable>
-                          <el-option v-for="item in userListCommon"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下大货数量，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="大货数量"
+                        v-model="orderCheckConfig.data.number"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下大货数量，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="大货数量"
-                          v-model="orderCheckConfig.data.number"></el-input>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">未审核的订单是否限制后续操作？</div>
-                      <div class="info middle">
-                        <el-radio v-model="orderCheckConfig.data.not_allow_operate"
-                          :label="1">是</el-radio>
-                        <el-radio v-model="orderCheckConfig.data.not_allow_operate"
-                          :label="2">否</el-radio>
-                      </div>
-                    </div>
-                  </div>
-                </template>
+                </div>
               </template>
+              <template v-if="orderCheckConfig.data.check_notice_condition!==2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in orderCheckConfig.data.check_notice_user"
+                  :key="index">
+                  <div class="col">
+                    <div class="label"
+                      style="display:flex;height:32px;line-height:32px">
+                      {{index+1}}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox true-label='1'
+                        false-label='2'
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
+                    </div>
+                  </div>
+                  <span class="opr hoverBlue"
+                    style="top: -71px;"
+                    v-if="index===0"
+                    @click="$addItem(orderCheckConfig.data.check_notice_user,{user_id:'',notice_for_wechat:'2'})">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px;"
+                    v-if="index>0"
+                    @click="$deleteItem(orderCheckConfig.data.check_notice_user,index)">删除</span>
+                </div>
+              </template>
+              <div class="row">
+                <div class="col">
+                  <div class="label">未审核的订单是否限制后续操作？</div>
+                  <div class="info middle">
+                    <el-radio v-model="orderCheckConfig.data.not_allow_operate"
+                      :label="1">是</el-radio>
+                    <el-radio v-model="orderCheckConfig.data.not_allow_operate"
+                      :label="2">否</el-radio>
+                  </div>
+                </div>
+              </div>
               <div class="row">
                 <div class="col">
                   <div class="label">未审核的订单是否限制添加关联单据 ？</div>
@@ -2035,81 +2105,112 @@
           <template v-if="cName ==='原料计划单'">
             <div class="editCtn clearfix"
               style="padding:20px 32px">
+              <div class="smallTitle">审核通知</div>
               <div class="row">
                 <div class="col">
-                  <div class="label">是否需要系统自动审核通过？</div>
+                  <div class="label">通知条件(单选)</div>
                   <div class="info middle">
-                    <el-radio v-model="materialPlanCheckConfig.data.auto_pass"
-                      :label="1">需要，并限定通过条件</el-radio>
-                    <el-radio v-model="materialPlanCheckConfig.data.auto_pass"
-                      :label="2">不需要，全部人工审核</el-radio>
+                    <el-radio v-model="materialPlanCheckConfig.data.check_notice_condition"
+                      :label="1">不通知，且需要人工审核</el-radio>
+                    <el-radio v-model="materialPlanCheckConfig.data.check_notice_condition"
+                      :label="2">不通知，且均自动审核通过</el-radio>
+                    <el-radio v-model="materialPlanCheckConfig.data.check_notice_condition"
+                      :label="3">通知，并设置通知条件</el-radio>
                   </div>
                 </div>
               </div>
-              <template v-if="materialPlanCheckConfig.data.auto_pass===1">
+              <template v-if="materialPlanCheckConfig.data.check_notice_condition===3">
                 <div class="row">
                   <div class="col">
-                    <div class="label">是否需要限定条件自动通过？</div>
-                    <div class="info middle">
-                      <el-radio v-model="materialPlanCheckConfig.data.has_condition"
-                        :label="2">不需要限定，全部通过</el-radio>
-                      <el-radio v-model="materialPlanCheckConfig.data.has_condition"
-                        :label="1">需要，并填写限定条件</el-radio>
+                    <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                    <div class="info elCtn">
+                      <el-select placeholder="请选择创建人"
+                        v-model="materialPlanCheckConfig.data.user_id"
+                        filterable
+                        multiple
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
                     </div>
                   </div>
                 </div>
-                <template v-if="materialPlanCheckConfig.data.has_condition===1">
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                      <div class="info elCtn">
-                        <el-select placeholder="请选择创建人"
-                          v-model="materialPlanCheckConfig.data.user_id"
-                          filterable
-                          multiple
-                          clearable>
-                          <el-option v-for="item in userListCommon"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">按照单据类型：</div>
+                    <div class="info elCtn">
+                      <el-select placeholder="单据类型"
+                        v-model="materialPlanCheckConfig.data.order_type"
+                        clearable>
+                        <el-option label="仅订单自动通过"
+                          :value="1"></el-option>
+                        <el-option label="仅样单自动通过"
+                          :value="2"></el-option>
+                      </el-select>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">按照单据类型：</div>
-                      <div class="info elCtn">
-                        <el-select placeholder="单据类型"
-                          v-model="materialPlanCheckConfig.data.order_type"
-                          clearable>
-                          <el-option label="仅订单自动通过"
-                            :value="1"></el-option>
-                          <el-option label="仅样单自动通过"
-                            :value="2"></el-option>
-                        </el-select>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下下单数量，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="下单数量"
+                        v-model="materialPlanCheckConfig.data.total_order_number"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下下单数量，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="下单数量"
-                          v-model="materialPlanCheckConfig.data.total_order_number"></el-input>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下原料数量，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="原料数量"
+                        v-model="materialPlanCheckConfig.data.total_material_number"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下原料数量，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="原料数量"
-                          v-model="materialPlanCheckConfig.data.total_material_number"></el-input>
-                      </div>
+                </div>
+              </template>
+              <template v-if="materialPlanCheckConfig.data.check_notice_condition!==2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in materialPlanCheckConfig.data.check_notice_user"
+                  :key="index">
+                  <div class="col">
+                    <div class="label"
+                      style="display:flex;height:32px;line-height:32px">
+                      {{index+1}}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox true-label='1'
+                        false-label='2'
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
-                </template>
+                  <span class="opr hoverBlue"
+                    style="top: -71px;"
+                    v-if="index===0"
+                    @click="$addItem(materialPlanCheckConfig.data.check_notice_user,{user_id:'',notice_for_wechat:'2'})">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px;"
+                    v-if="index>0"
+                    @click="$deleteItem(materialPlanCheckConfig.data.check_notice_user,index)">删除</span>
+                </div>
               </template>
               <div class="row">
                 <div class="col">
@@ -2119,6 +2220,37 @@
                       :label="1">是</el-radio>
                     <el-radio v-model="materialPlanCheckConfig.data.not_allow_add_rel_doc"
                       :label="2">否</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="smallTitle">修改异常通知</div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否通知(单选)</div>
+                  <div class="info middle">
+                    <el-radio v-model="materialPlanCheckConfig.data.update_notice_condition"
+                      :label="1">通知</el-radio>
+                    <el-radio v-model="materialPlanCheckConfig.data.update_notice_condition"
+                      :label="2">不通知</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">通知对象(系统默认)</div>
+                  <div class="info elCtn">
+                    <el-radio>仅计划单创建人</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">通知途径</div>
+                  <div class="info elCtn">
+                    <el-radio>默认包含系统通知</el-radio>
+                    <el-checkbox true-label='1'
+                      false-label='2'
+                      v-model="materialPlanCheckConfig.data.update_notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                   </div>
                 </div>
               </div>
@@ -2132,79 +2264,110 @@
           <template v-if="cName ==='原料采购单'">
             <div class="editCtn clearfix"
               style="padding:20px 32px">
+              <div class="smallTitle">审核通知</div>
               <div class="row">
                 <div class="col">
-                  <div class="label">是否需要系统自动审核通过？</div>
+                  <div class="label">通知条件(单选)</div>
                   <div class="info middle">
-                    <el-radio v-model="materialOrderCheckConfig.data.auto_pass"
-                      :label="1">需要，并限定通过条件</el-radio>
-                    <el-radio v-model="materialOrderCheckConfig.data.auto_pass"
-                      :label="2">不需要，全部人工审核</el-radio>
+                    <el-radio v-model="materialOrderCheckConfig.data.check_notice_condition"
+                      :label="1">不通知，且需要人工审核</el-radio>
+                    <el-radio v-model="materialOrderCheckConfig.data.check_notice_condition"
+                      :label="2">不通知，且均自动审核通过</el-radio>
+                    <el-radio v-model="materialOrderCheckConfig.data.check_notice_condition"
+                      :label="3">通知，并设置通知条件</el-radio>
                   </div>
                 </div>
               </div>
-              <template v-if="materialOrderCheckConfig.data.auto_pass===1">
+              <template v-if="materialOrderCheckConfig.data.check_notice_condition===3">
                 <div class="row">
                   <div class="col">
-                    <div class="label">是否需要限定条件自动通过？</div>
-                    <div class="info middle">
-                      <el-radio v-model="materialOrderCheckConfig.data.has_condition"
-                        :label="2">不需要限定，全部通过</el-radio>
-                      <el-radio v-model="materialOrderCheckConfig.data.has_condition"
-                        :label="1">需要，并填写限定条件</el-radio>
+                    <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                    <div class="info elCtn">
+                      <el-select placeholder="请选择创建人"
+                        v-model="materialOrderCheckConfig.data.user_id"
+                        filterable
+                        multiple
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
                     </div>
                   </div>
                 </div>
-                <template v-if="materialOrderCheckConfig.data.has_condition===1">
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                      <div class="info elCtn">
-                        <el-select placeholder="请选择创建人"
-                          v-model="materialOrderCheckConfig.data.user_id"
-                          filterable
-                          multiple
-                          clearable>
-                          <el-option v-for="item in userListCommon"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下采购总价，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="采购总价"
+                        v-model="materialOrderCheckConfig.data.total_price"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下采购总价，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="采购总价"
-                          v-model="materialOrderCheckConfig.data.total_price"></el-input>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下采购总数，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="采购总数"
+                        v-model="materialOrderCheckConfig.data.total_number"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下采购总数，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="采购总数"
-                          v-model="materialOrderCheckConfig.data.total_number"></el-input>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">输入可以自动审核通过的价格比例：</div>
+                    <div class="info elCtn"
+                      style="display:flex">
+                      <el-input style="flex:1;margin-right:12px"
+                        placeholder="数值"
+                        v-model="materialOrderCheckConfig.data.contrast_quote_extent">
+                        <template slot="append">%</template>
+                      </el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">输入可以自动审核通过的价格比例：</div>
-                      <div class="info elCtn"
-                        style="display:flex">
-                        <el-input style="flex:1;margin-right:12px"
-                          placeholder="数值"
-                          v-model="materialOrderCheckConfig.data.contrast_quote_extent">
-                          <template slot="append">%</template>
-                        </el-input>
-                      </div>
+                </div>
+              </template>
+              <template v-if="materialOrderCheckConfig.data.check_notice_condition!==2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in materialOrderCheckConfig.data.check_notice_user"
+                  :key="index">
+                  <div class="col">
+                    <div class="label"
+                      style="display:flex;height:32px;line-height:32px">
+                      {{index+1}}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox true-label='1'
+                        false-label='2'
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
-                </template>
+                  <span class="opr hoverBlue"
+                    style="top: -71px;"
+                    v-if="index===0"
+                    @click="$addItem(materialOrderCheckConfig.data.check_notice_user,{user_id:'',notice_for_wechat:'2'})">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px;"
+                    v-if="index>0"
+                    @click="$deleteItem(materialOrderCheckConfig.data.check_notice_user,index)">删除</span>
+                </div>
               </template>
               <div class="row">
                 <div class="col">
@@ -2228,6 +2391,90 @@
                   </div>
                 </div>
               </div>
+              <div class="smallTitle">修改异常通知</div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否通知(单选)</div>
+                  <div class="info middle">
+                    <el-radio v-model="materialOrderCheckConfig.data.update_notice_condition"
+                      :label="1">通知</el-radio>
+                    <el-radio v-model="materialOrderCheckConfig.data.update_notice_condition"
+                      :label="2">不通知</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">通知对象(系统默认)</div>
+                  <div class="info elCtn">
+                    <el-radio>仅订购单创建人</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">通知途径</div>
+                  <div class="info elCtn">
+                    <el-radio>默认包含系统通知</el-radio>
+                    <el-checkbox true-label='1'
+                      false-label='2'
+                      v-model="materialOrderCheckConfig.data.update_notice_for_wechat">手机端-微信公众号通知</el-checkbox>
+                  </div>
+                </div>
+              </div>
+              <div class="smallTitle">超额异常通知</div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否通知(单选)</div>
+                  <div class="info middle">
+                    <el-radio v-model="materialOrderCheckConfig.data.beyond_notice_condition"
+                      :label="1">通知</el-radio>
+                    <el-radio v-model="materialOrderCheckConfig.data.beyond_notice_condition"
+                      :label="2">不通知</el-radio>
+                  </div>
+                </div>
+              </div>
+              <template v-if="materialOrderCheckConfig.data.beyond_notice_condition!==2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in materialOrderCheckConfig.data.beyond_notice_user"
+                  :key="index + 'chaoe'">
+                  <div class="col">
+                    <div class="label"
+                      style="display:flex;height:32px;line-height:32px">
+                      {{index+1}}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox true-label='1'
+                        false-label='2'
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
+                    </div>
+                  </div>
+                  <span class="opr hoverBlue"
+                    style="top: -71px;"
+                    v-if="index===0"
+                    @click="$addItem(materialOrderCheckConfig.data.beyond_notice_user,{user_id:'',notice_for_wechat:'2'})">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px;"
+                    v-if="index>0"
+                    @click="$deleteItem(materialOrderCheckConfig.data.beyond_notice_user,index)">删除</span>
+                </div>
+              </template>
               <div class="btnCtn fr"
                 style="margin-top:20px">
                 <div class="btn backHoverBlue"
@@ -2238,121 +2485,152 @@
           <template v-if="cName ==='原料加工单'">
             <div class="editCtn clearfix"
               style="padding:20px 32px">
+              <div class="smallTitle">审核通知</div>
               <div class="row">
                 <div class="col">
-                  <div class="label">是否需要系统自动审核通过？</div>
+                  <div class="label">通知条件(单选)</div>
                   <div class="info middle">
-                    <el-radio v-model="materialProcessCheckConfig.data.auto_pass"
-                      :label="1">需要，并限定通过条件</el-radio>
-                    <el-radio v-model="materialProcessCheckConfig.data.auto_pass"
-                      :label="2">不需要，全部人工审核</el-radio>
+                    <el-radio v-model="materialProcessCheckConfig.data.check_notice_condition"
+                      :label="1">不通知，且需要人工审核</el-radio>
+                    <el-radio v-model="materialProcessCheckConfig.data.check_notice_condition"
+                      :label="2">不通知，且均自动审核通过</el-radio>
+                    <el-radio v-model="materialProcessCheckConfig.data.check_notice_condition"
+                      :label="3">通知，并设置通知条件</el-radio>
                   </div>
                 </div>
               </div>
-              <template v-if="materialProcessCheckConfig.data.auto_pass===1">
+              <template v-if="materialProcessCheckConfig.data.check_notice_condition===3">
                 <div class="row">
                   <div class="col">
-                    <div class="label">是否需要限定条件自动通过？</div>
-                    <div class="info middle">
-                      <el-radio v-model="materialProcessCheckConfig.data.has_condition"
-                        :label="2">不需要限定，全部通过</el-radio>
-                      <el-radio v-model="materialProcessCheckConfig.data.has_condition"
-                        :label="1">需要，并填写限定条件</el-radio>
+                    <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                    <div class="info elCtn">
+                      <el-select placeholder="请选择创建人"
+                        v-model="materialProcessCheckConfig.data.user_id"
+                        filterable
+                        multiple
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
                     </div>
                   </div>
                 </div>
-                <template v-if="materialProcessCheckConfig.data.has_condition===1">
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                      <div class="info elCtn">
-                        <el-select placeholder="请选择创建人"
-                          v-model="materialProcessCheckConfig.data.user_id"
-                          filterable
-                          multiple
-                          clearable>
-                          <el-option v-for="item in userListCommon"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下加工总价，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="加工总价"
+                        v-model="materialProcessCheckConfig.data.total_price"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下加工总价，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="加工总价"
-                          v-model="materialProcessCheckConfig.data.total_price"></el-input>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下加工总数，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="加工总数"
+                        v-model="materialProcessCheckConfig.data.total_number"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下加工总数，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="加工总数"
-                          v-model="materialProcessCheckConfig.data.total_number"></el-input>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">是否根据工序单价自动通过？</div>
+                    <div class="info middle">
+                      <el-radio v-model="materialProcessCheckConfig.data.by_process_price"
+                        :label="1">是</el-radio>
+                      <el-radio v-model="materialProcessCheckConfig.data.by_process_price"
+                        :label="2">否</el-radio>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">是否根据工序单价自动通过？</div>
-                      <div class="info middle">
-                        <el-radio v-model="materialProcessCheckConfig.data.by_process_price"
-                          :label="1">是</el-radio>
-                        <el-radio v-model="materialProcessCheckConfig.data.by_process_price"
-                          :label="2">否</el-radio>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">按工序单价：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="加工单价"
+                        v-model="materialProcessCheckConfig.data.ranse">
+                        <template slot="prepend">染色低于</template>
+                        <template slot="append">元</template>
+                      </el-input>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-input placeholder="加工单价"
+                        v-model="materialProcessCheckConfig.data.daosha">
+                        <template slot="prepend">倒纱低于</template>
+                        <template slot="append">元</template>
+                      </el-input>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-input placeholder="加工单价"
+                        v-model="materialProcessCheckConfig.data.bingxian">
+                        <template slot="prepend">并线低于</template>
+                        <template slot="append">元</template>
+                      </el-input>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-input placeholder="加工单价"
+                        v-model="materialProcessCheckConfig.data.pengsha">
+                        <template slot="prepend">膨纱低于</template>
+                        <template slot="append">元</template>
+                      </el-input>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-input placeholder="加工单价"
+                        v-model="materialProcessCheckConfig.data.qiege">
+                        <template slot="prepend">切割低于</template>
+                        <template slot="append">元</template>
+                      </el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">按工序单价：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="加工单价"
-                          v-model="materialProcessCheckConfig.data.ranse">
-                          <template slot="prepend">染色低于</template>
-                          <template slot="append">元</template>
-                        </el-input>
-                      </div>
-                      <div class="info elCtn"
-                        style="margin-top:12px">
-                        <el-input placeholder="加工单价"
-                          v-model="materialProcessCheckConfig.data.daosha">
-                          <template slot="prepend">倒纱低于</template>
-                          <template slot="append">元</template>
-                        </el-input>
-                      </div>
-                      <div class="info elCtn"
-                        style="margin-top:12px">
-                        <el-input placeholder="加工单价"
-                          v-model="materialProcessCheckConfig.data.bingxian">
-                          <template slot="prepend">并线低于</template>
-                          <template slot="append">元</template>
-                        </el-input>
-                      </div>
-                      <div class="info elCtn"
-                        style="margin-top:12px">
-                        <el-input placeholder="加工单价"
-                          v-model="materialProcessCheckConfig.data.pengsha">
-                          <template slot="prepend">膨纱低于</template>
-                          <template slot="append">元</template>
-                        </el-input>
-                      </div>
-                      <div class="info elCtn"
-                        style="margin-top:12px">
-                        <el-input placeholder="加工单价"
-                          v-model="materialProcessCheckConfig.data.qiege">
-                          <template slot="prepend">切割低于</template>
-                          <template slot="append">元</template>
-                        </el-input>
-                      </div>
+                </div>
+              </template>
+              <template v-if="materialProcessCheckConfig.data.check_notice_condition!==2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in materialProcessCheckConfig.data.check_notice_user"
+                  :key="index">
+                  <div class="col">
+                    <div class="label"
+                      style="display:flex;height:32px;line-height:32px">
+                      {{index+1}}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox true-label='1'
+                        false-label='2'
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
-                </template>
+                  <span class="opr hoverBlue"
+                    style="top: -71px;"
+                    v-if="index===0"
+                    @click="$addItem(materialProcessCheckConfig.data.check_notice_user,{user_id:'',notice_for_wechat:'2'})">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px;"
+                    v-if="index>0"
+                    @click="$deleteItem(materialProcessCheckConfig.data.check_notice_user,index)">删除</span>
+                </div>
               </template>
               <div class="row">
                 <div class="col">
@@ -2362,6 +2640,37 @@
                       :label="1">是</el-radio>
                     <el-radio v-model="materialProcessCheckConfig.data.not_allow_settle"
                       :label="2">否</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="smallTitle">修改异常通知</div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否通知(单选)</div>
+                  <div class="info middle">
+                    <el-radio v-model="materialProcessCheckConfig.data.update_notice_condition"
+                      :label="1">通知</el-radio>
+                    <el-radio v-model="materialProcessCheckConfig.data.update_notice_condition"
+                      :label="2">不通知</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">通知对象(系统默认)</div>
+                  <div class="info elCtn">
+                    <el-radio>仅订购单创建人</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">通知途径</div>
+                  <div class="info elCtn">
+                    <el-radio>默认包含系统通知</el-radio>
+                    <el-checkbox true-label='1'
+                      false-label='2'
+                      v-model="materialProcessCheckConfig.data.update_notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                   </div>
                 </div>
               </div>
@@ -2375,66 +2684,181 @@
           <template v-if="cName ==='原料调取单'">
             <div class="editCtn"
               style="padding:20px 32px">
+              <div class="smallTitle">审核通知</div>
               <div class="row">
                 <div class="col">
-                  <div class="label">是否需要系统自动审核通过？</div>
+                  <div class="label">通知条件(单选)</div>
                   <div class="info middle">
-                    <el-radio v-model="materialStockCheckConfig.data.auto_pass"
-                      :label="1">需要，并限定通过条件</el-radio>
-                    <el-radio v-model="materialStockCheckConfig.data.auto_pass"
-                      :label="2">不需要，全部人工审核</el-radio>
+                    <el-radio v-model="materialStockCheckConfig.data.check_notice_condition"
+                      :label="1">不通知，且需要人工审核</el-radio>
+                    <el-radio v-model="materialStockCheckConfig.data.check_notice_condition"
+                      :label="2">不通知，且均自动审核通过</el-radio>
+                    <el-radio v-model="materialStockCheckConfig.data.check_notice_condition"
+                      :label="3">通知，并设置通知条件</el-radio>
                   </div>
                 </div>
               </div>
-              <template v-if="materialStockCheckConfig.data.auto_pass===1">
+              <template v-if="materialStockCheckConfig.data.check_notice_condition===3">
                 <div class="row">
                   <div class="col">
-                    <div class="label">是否需要限定条件自动通过？</div>
-                    <div class="info middle">
-                      <el-radio v-model="materialStockCheckConfig.data.has_condition"
-                        :label="2">不需要限定，全部通过</el-radio>
-                      <el-radio v-model="materialStockCheckConfig.data.has_condition"
-                        :label="1">需要，并填写限定条件</el-radio>
+                    <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                    <div class="info elCtn">
+                      <el-select placeholder="请选择创建人"
+                        v-model="materialStockCheckConfig.data.user_id"
+                        filterable
+                        multiple
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
                     </div>
                   </div>
                 </div>
-                <template v-if="materialStockCheckConfig.data.has_condition===1">
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                      <div class="info elCtn">
-                        <el-select placeholder="请选择创建人"
-                          v-model="materialStockCheckConfig.data.user_id"
-                          filterable
-                          multiple
-                          clearable>
-                          <el-option v-for="item in userListCommon"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下调取总价，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="调取总价"
+                        v-model="materialStockCheckConfig.data.total_price"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下调取总价，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="调取总价"
-                          v-model="materialStockCheckConfig.data.total_price"></el-input>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下调取总数，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="调取总数"
+                        v-model="materialStockCheckConfig.data.total_number"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下调取总数，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="调取总数"
-                          v-model="materialStockCheckConfig.data.total_number"></el-input>
-                      </div>
+                </div>
+              </template>
+              <template v-if="materialStockCheckConfig.data.check_notice_condition!==2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in materialStockCheckConfig.data.check_notice_user"
+                  :key="index">
+                  <div class="col">
+                    <div class="label"
+                      style="display:flex;height:32px;line-height:32px">
+                      {{index+1}}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox true-label='1'
+                        false-label='2'
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
-                </template>
+                  <span class="opr hoverBlue"
+                    style="top: -71px;"
+                    v-if="index===0"
+                    @click="$addItem(materialStockCheckConfig.data.check_notice_user,{user_id:'',notice_for_wechat:'2'})">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px;"
+                    v-if="index>0"
+                    @click="$deleteItem(materialStockCheckConfig.data.check_notice_user,index)">删除</span>
+                </div>
+              </template>
+              <div class="smallTitle">修改异常通知</div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否通知(单选)</div>
+                  <div class="info middle">
+                    <el-radio v-model="materialStockCheckConfig.data.update_notice_condition"
+                      :label="1">通知</el-radio>
+                    <el-radio v-model="materialStockCheckConfig.data.update_notice_condition"
+                      :label="2">不通知</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">通知对象(系统默认)</div>
+                  <div class="info elCtn">
+                    <el-radio>仅订购单创建人</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">通知途径</div>
+                  <div class="info elCtn">
+                    <el-radio>默认包含系统通知</el-radio>
+                    <el-checkbox true-label='1'
+                      false-label='2'
+                      v-model="materialStockCheckConfig.data.update_notice_for_wechat">手机端-微信公众号通知</el-checkbox>
+                  </div>
+                </div>
+              </div>
+              <div class="smallTitle">超额异常通知</div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否通知(单选)</div>
+                  <div class="info middle">
+                    <el-radio v-model="materialStockCheckConfig.data.beyond_notice_condition"
+                      :label="1">通知</el-radio>
+                    <el-radio v-model="materialStockCheckConfig.data.beyond_notice_condition"
+                      :label="2">不通知</el-radio>
+                  </div>
+                </div>
+              </div>
+              <template v-if="materialStockCheckConfig.data.beyond_notice_condition!==2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in materialStockCheckConfig.data.beyond_notice_user"
+                  :key="index + 'chaoe'">
+                  <div class="col">
+                    <div class="label"
+                      style="display:flex;height:32px;line-height:32px">
+                      {{index+1}}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox true-label='1'
+                        false-label='2'
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
+                    </div>
+                  </div>
+                  <span class="opr hoverBlue"
+                    style="top: -71px;"
+                    v-if="index===0"
+                    @click="$addItem(materialStockCheckConfig.data.beyond_notice_user,{user_id:'',notice_for_wechat:'2'})">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px;"
+                    v-if="index>0"
+                    @click="$deleteItem(materialStockCheckConfig.data.beyond_notice_user,index)">删除</span>
+                </div>
               </template>
               <div class="btnCtn fr"
                 style="margin-top:20px">
@@ -2446,66 +2870,97 @@
           <template v-if="cName ==='辅料采购单'">
             <div class="editCtn clearfix"
               style="padding:20px 32px">
+              <div class="smallTitle">审核通知</div>
               <div class="row">
                 <div class="col">
-                  <div class="label">是否需要系统自动审核通过？</div>
+                  <div class="label">通知条件(单选)</div>
                   <div class="info middle">
-                    <el-radio v-model="accessoriesOrderCheckConfig.data.auto_pass"
-                      :label="1">需要，并限定通过条件</el-radio>
-                    <el-radio v-model="accessoriesOrderCheckConfig.data.auto_pass"
-                      :label="2">不需要，全部人工审核</el-radio>
+                    <el-radio v-model="accessoriesOrderCheckConfig.data.check_notice_condition"
+                      :label="1">不通知，且需要人工审核</el-radio>
+                    <el-radio v-model="accessoriesOrderCheckConfig.data.check_notice_condition"
+                      :label="2">不通知，且均自动审核通过</el-radio>
+                    <el-radio v-model="accessoriesOrderCheckConfig.data.check_notice_condition"
+                      :label="3">通知，并设置通知条件</el-radio>
                   </div>
                 </div>
               </div>
-              <template v-if="accessoriesOrderCheckConfig.data.auto_pass===1">
+              <template v-if="accessoriesOrderCheckConfig.data.check_notice_condition===3">
                 <div class="row">
                   <div class="col">
-                    <div class="label">是否需要限定条件自动通过？</div>
-                    <div class="info middle">
-                      <el-radio v-model="accessoriesOrderCheckConfig.data.has_condition"
-                        :label="2">不需要限定，全部通过</el-radio>
-                      <el-radio v-model="accessoriesOrderCheckConfig.data.has_condition"
-                        :label="1">需要，并填写限定条件</el-radio>
+                    <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                    <div class="info elCtn">
+                      <el-select placeholder="请选择创建人"
+                        v-model="accessoriesOrderCheckConfig.data.user_id"
+                        filterable
+                        multiple
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
                     </div>
                   </div>
                 </div>
-                <template v-if="accessoriesOrderCheckConfig.data.has_condition===1">
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                      <div class="info elCtn">
-                        <el-select placeholder="请选择创建人"
-                          v-model="accessoriesOrderCheckConfig.data.user_id"
-                          filterable
-                          multiple
-                          clearable>
-                          <el-option v-for="item in userListCommon"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下采购总价，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="采购总价"
+                        v-model="accessoriesOrderCheckConfig.data.total_price"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下采购总价，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="采购总价"
-                          v-model="accessoriesOrderCheckConfig.data.total_price"></el-input>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下采购总数，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="采购总数"
+                        v-model="accessoriesOrderCheckConfig.data.total_number"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下采购总数，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="采购总数"
-                          v-model="accessoriesOrderCheckConfig.data.total_number"></el-input>
-                      </div>
+                </div>
+              </template>
+              <template v-if="accessoriesOrderCheckConfig.data.check_notice_condition!==2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in accessoriesOrderCheckConfig.data.check_notice_user"
+                  :key="index">
+                  <div class="col">
+                    <div class="label"
+                      style="display:flex;height:32px;line-height:32px">
+                      {{index+1}}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox true-label='1'
+                        false-label='2'
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
-                </template>
+                  <span class="opr hoverBlue"
+                    style="top: -71px;"
+                    v-if="index===0"
+                    @click="$addItem(accessoriesOrderCheckConfig.data.check_notice_user,{user_id:'',notice_for_wechat:'2'})">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px;"
+                    v-if="index>0"
+                    @click="$deleteItem(accessoriesOrderCheckConfig.data.check_notice_user,index)">删除</span>
+                </div>
               </template>
               <div class="row">
                 <div class="col">
@@ -2515,6 +2970,37 @@
                       :label="1">是</el-radio>
                     <el-radio v-model="accessoriesOrderCheckConfig.data.not_allow_settle"
                       :label="2">否</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="smallTitle">修改异常通知</div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否通知(单选)</div>
+                  <div class="info middle">
+                    <el-radio v-model="accessoriesOrderCheckConfig.data.update_notice_condition"
+                      :label="1">通知</el-radio>
+                    <el-radio v-model="accessoriesOrderCheckConfig.data.update_notice_condition"
+                      :label="2">不通知</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">通知对象(系统默认)</div>
+                  <div class="info elCtn">
+                    <el-radio>仅订购单创建人</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">通知途径</div>
+                  <div class="info elCtn">
+                    <el-radio>默认包含系统通知</el-radio>
+                    <el-checkbox true-label='1'
+                      false-label='2'
+                      v-model="accessoriesOrderCheckConfig.data.update_notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                   </div>
                 </div>
               </div>
@@ -2528,101 +3014,132 @@
           <template v-if="cName ==='生产计划单'">
             <div class="editCtn"
               style="padding:20px 32px">
+              <div class="smallTitle">审核通知</div>
               <div class="row">
                 <div class="col">
-                  <div class="label">是否需要系统自动审核通过？</div>
+                  <div class="label">通知条件(单选)</div>
                   <div class="info middle">
-                    <el-radio v-model="productionPlanCheckConfig.data.auto_pass"
-                      :label="1">需要，并限定通过条件</el-radio>
-                    <el-radio v-model="productionPlanCheckConfig.data.auto_pass"
-                      :label="2">不需要，全部人工审核</el-radio>
+                    <el-radio v-model="productionPlanCheckConfig.data.check_notice_condition"
+                      :label="1">不通知，且需要人工审核</el-radio>
+                    <el-radio v-model="productionPlanCheckConfig.data.check_notice_condition"
+                      :label="2">不通知，且均自动审核通过</el-radio>
+                    <el-radio v-model="productionPlanCheckConfig.data.check_notice_condition"
+                      :label="3">通知，并设置通知条件</el-radio>
                   </div>
                 </div>
               </div>
-              <template v-if="productionPlanCheckConfig.data.auto_pass===1">
+              <template v-if="productionPlanCheckConfig.data.check_notice_condition===3">
                 <div class="row">
                   <div class="col">
-                    <div class="label">是否需要限定条件自动通过？</div>
-                    <div class="info middle">
-                      <el-radio v-model="productionPlanCheckConfig.data.has_condition"
-                        :label="2">不需要限定，全部通过</el-radio>
-                      <el-radio v-model="productionPlanCheckConfig.data.has_condition"
-                        :label="1">需要，并填写限定条件</el-radio>
+                    <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                    <div class="info elCtn">
+                      <el-select placeholder="请选择创建人"
+                        v-model="productionPlanCheckConfig.data.user_id"
+                        filterable
+                        multiple
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
                     </div>
                   </div>
                 </div>
-                <template v-if="productionPlanCheckConfig.data.has_condition===1">
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                      <div class="info elCtn">
-                        <el-select placeholder="请选择创建人"
-                          v-model="productionPlanCheckConfig.data.user_id"
-                          filterable
-                          multiple
-                          clearable>
-                          <el-option v-for="item in userListCommon"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下生产数量，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="生产数量"
+                        v-model="productionPlanCheckConfig.data.total_number"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下生产数量，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="生产数量"
-                          v-model="productionPlanCheckConfig.data.total_number"></el-input>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下生产总价，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="生产总价"
+                        v-model="productionPlanCheckConfig.data.total_price"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下生产总价，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="生产总价"
-                          v-model="productionPlanCheckConfig.data.total_price"></el-input>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row"
-                    v-for="item,index in productionPlanCheckConfig.data.contrast_quote_extent"
-                    :key="index">
-                    <div class="col">
-                      <div class="label"
-                        v-if="index===0">报价单工序对比比例介于该比例之间则自动通过：</div>
-                      <div class="info elCtn"
-                        style="display:flex">
-                        <el-input style="flex:1;margin-right:12px"
-                          placeholder="输入工序"
-                          v-model="item.process_name">
-                        </el-input>
-                        <el-input style="flex:1;margin-right:12px"
-                          placeholder="低于"
-                          v-model="item.min">
-                          <template slot="append">%</template>
-                        </el-input>
-                        <el-input style="flex:1"
-                          placeholder="高于"
-                          v-model="item.max">
-                          <template slot="append">%</template>
-                        </el-input>
-                        <div class="opr hoverBlue"
-                          @click="$addItem(productionPlanCheckConfig.data.contrast_quote_extent,{
+                </div>
+                <div class="row"
+                  v-for="item,index in productionPlanCheckConfig.data.contrast_quote_extent"
+                  :key="index">
+                  <div class="col">
+                    <div class="label"
+                      v-if="index===0">报价单工序对比比例介于该比例之间则自动通过：</div>
+                    <div class="info elCtn"
+                      style="display:flex">
+                      <el-input style="flex:1;margin-right:12px"
+                        placeholder="输入工序"
+                        v-model="item.process_name">
+                      </el-input>
+                      <el-input style="flex:1;margin-right:12px"
+                        placeholder="低于"
+                        v-model="item.min">
+                        <template slot="append">%</template>
+                      </el-input>
+                      <el-input style="flex:1"
+                        placeholder="高于"
+                        v-model="item.max">
+                        <template slot="append">%</template>
+                      </el-input>
+                      <div class="opr hoverBlue"
+                        @click="$addItem(productionPlanCheckConfig.data.contrast_quote_extent,{
                       process_name:'',
                       min:'',
                       max:''
                     })"
-                          v-if="index===0">新增</div>
-                        <div class="opr hoverRed"
-                          @click="$deleteItem(productionPlanCheckConfig.data.contrast_quote_extent,index)"
-                          v-if="index>0">删除</div>
-                      </div>
+                        v-if="index===0">新增</div>
+                      <div class="opr hoverRed"
+                        @click="$deleteItem(productionPlanCheckConfig.data.contrast_quote_extent,index)"
+                        v-if="index>0">删除</div>
                     </div>
                   </div>
-                </template>
+                </div>
+              </template>
+              <template v-if="productionPlanCheckConfig.data.check_notice_condition!==2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in productionPlanCheckConfig.data.check_notice_user"
+                  :key="index">
+                  <div class="col">
+                    <div class="label"
+                      style="display:flex;height:32px;line-height:32px">
+                      {{index+1}}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox true-label='1'
+                        false-label='2'
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
+                    </div>
+                  </div>
+                  <span class="opr hoverBlue"
+                    style="top: -71px;"
+                    v-if="index===0"
+                    @click="$addItem(productionPlanCheckConfig.data.check_notice_user,{user_id:'',notice_for_wechat:'2'})">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px;"
+                    v-if="index>0"
+                    @click="$deleteItem(productionPlanCheckConfig.data.check_notice_user,index)">删除</span>
+                </div>
               </template>
               <div class="row">
                 <div class="col">
@@ -2635,6 +3152,90 @@
                   </div>
                 </div>
               </div>
+              <div class="smallTitle">修改异常通知</div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否通知(单选)</div>
+                  <div class="info middle">
+                    <el-radio v-model="productionPlanCheckConfig.data.update_notice_condition"
+                      :label="1">通知</el-radio>
+                    <el-radio v-model="productionPlanCheckConfig.data.update_notice_condition"
+                      :label="2">不通知</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">通知对象(系统默认)</div>
+                  <div class="info elCtn">
+                    <el-radio>仅计划单创建人</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">通知途径</div>
+                  <div class="info elCtn">
+                    <el-radio>默认包含系统通知</el-radio>
+                    <el-checkbox true-label='1'
+                      false-label='2'
+                      v-model="productionPlanCheckConfig.data.update_notice_for_wechat">手机端-微信公众号通知</el-checkbox>
+                  </div>
+                </div>
+              </div>
+              <div class="smallTitle">超额异常通知</div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否通知(单选)</div>
+                  <div class="info middle">
+                    <el-radio v-model="productionPlanCheckConfig.data.beyond_notice_condition"
+                      :label="1">通知</el-radio>
+                    <el-radio v-model="productionPlanCheckConfig.data.beyond_notice_condition"
+                      :label="2">不通知</el-radio>
+                  </div>
+                </div>
+              </div>
+              <template v-if="productionPlanCheckConfig.data.beyond_notice_condition!==2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in productionPlanCheckConfig.data.beyond_notice_user"
+                  :key="index + 'chaoe'">
+                  <div class="col">
+                    <div class="label"
+                      style="display:flex;height:32px;line-height:32px">
+                      {{index+1}}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox true-label='1'
+                        false-label='2'
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
+                    </div>
+                  </div>
+                  <span class="opr hoverBlue"
+                    style="top: -71px;"
+                    v-if="index===0"
+                    @click="$addItem(productionPlanCheckConfig.data.beyond_notice_user,{user_id:'',notice_for_wechat:'2'})">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px;"
+                    v-if="index>0"
+                    @click="$deleteItem(productionPlanCheckConfig.data.beyond_notice_user,index)">删除</span>
+                </div>
+              </template>
               <div class="btnCtn fr"
                 style="margin-top:20px">
                 <div class="btn backHoverBlue"
@@ -2645,79 +3246,110 @@
           <template v-if="cName ==='包装采购单'">
             <div class="editCtn clearfix"
               style="padding:20px 32px">
+              <div class="smallTitle">审核通知</div>
               <div class="row">
                 <div class="col">
-                  <div class="label">是否需要系统自动审核通过？</div>
+                  <div class="label">通知条件(单选)</div>
                   <div class="info middle">
-                    <el-radio v-model="packOrderCheckConfig.data.auto_pass"
-                      :label="1">需要，并限定通过条件</el-radio>
-                    <el-radio v-model="packOrderCheckConfig.data.auto_pass"
-                      :label="2">不需要，全部人工审核</el-radio>
+                    <el-radio v-model="packOrderCheckConfig.data.check_notice_condition"
+                      :label="1">不通知，且需要人工审核</el-radio>
+                    <el-radio v-model="packOrderCheckConfig.data.check_notice_condition"
+                      :label="2">不通知，且均自动审核通过</el-radio>
+                    <el-radio v-model="packOrderCheckConfig.data.check_notice_condition"
+                      :label="3">通知，并设置通知条件</el-radio>
                   </div>
                 </div>
               </div>
-              <template v-if="packOrderCheckConfig.data.auto_pass===1">
+              <template v-if="packOrderCheckConfig.data.check_notice_condition===3">
                 <div class="row">
                   <div class="col">
-                    <div class="label">是否需要限定条件自动通过？</div>
-                    <div class="info middle">
-                      <el-radio v-model="packOrderCheckConfig.data.has_condition"
-                        :label="2">不需要限定，全部通过</el-radio>
-                      <el-radio v-model="packOrderCheckConfig.data.has_condition"
-                        :label="1">需要，并填写限定条件</el-radio>
+                    <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                    <div class="info elCtn">
+                      <el-select placeholder="请选择创建人"
+                        v-model="packOrderCheckConfig.data.user_id"
+                        filterable
+                        multiple
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
                     </div>
                   </div>
                 </div>
-                <template v-if="packOrderCheckConfig.data.has_condition===1">
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                      <div class="info elCtn">
-                        <el-select placeholder="请选择创建人"
-                          v-model="packOrderCheckConfig.data.user_id"
-                          filterable
-                          multiple
-                          clearable>
-                          <el-option v-for="item in userListCommon"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下采购数量，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="采购数量"
+                        v-model="packOrderCheckConfig.data.total_number"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下采购数量，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="采购数量"
-                          v-model="packOrderCheckConfig.data.total_number"></el-input>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下采购总价，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="采购总价"
+                        v-model="packOrderCheckConfig.data.total_price"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下采购总价，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="采购总价"
-                          v-model="packOrderCheckConfig.data.total_price"></el-input>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">输入可以自动审核通过的报价单对比价格比例：</div>
+                    <div class="info elCtn"
+                      style="display:flex">
+                      <el-input style="flex:1;margin-right:12px"
+                        placeholder="数值"
+                        v-model="packOrderCheckConfig.data.contrast_quote_extent">
+                        <template slot="append">%</template>
+                      </el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">输入可以自动审核通过的报价单对比价格比例：</div>
-                      <div class="info elCtn"
-                        style="display:flex">
-                        <el-input style="flex:1;margin-right:12px"
-                          placeholder="数值"
-                          v-model="packOrderCheckConfig.data.contrast_quote_extent">
-                          <template slot="append">%</template>
-                        </el-input>
-                      </div>
+                </div>
+              </template>
+              <template v-if="packOrderCheckConfig.data.check_notice_condition!==2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in packOrderCheckConfig.data.check_notice_user"
+                  :key="index">
+                  <div class="col">
+                    <div class="label"
+                      style="display:flex;height:32px;line-height:32px">
+                      {{index+1}}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox true-label='1'
+                        false-label='2'
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
-                </template>
+                  <span class="opr hoverBlue"
+                    style="top: -71px;"
+                    v-if="index===0"
+                    @click="$addItem(packOrderCheckConfig.data.check_notice_user,{user_id:'',notice_for_wechat:'2'})">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px;"
+                    v-if="index>0"
+                    @click="$deleteItem(packOrderCheckConfig.data.check_notice_user,index)">删除</span>
+                </div>
               </template>
               <div class="row">
                 <div class="col">
@@ -2740,79 +3372,110 @@
           <template v-if="cName ==='工资结算单'">
             <div class="editCtn clearfix"
               style="padding:20px 32px">
+              <div class="smallTitle">审核通知</div>
               <div class="row">
                 <div class="col">
-                  <div class="label">是否需要系统自动审核通过？</div>
+                  <div class="label">通知条件(单选)</div>
                   <div class="info middle">
-                    <el-radio v-model="gongziCheckConfig.data.auto_pass"
-                      :label="1">需要，并限定通过条件</el-radio>
-                    <el-radio v-model="gongziCheckConfig.data.auto_pass"
-                      :label="2">不需要，全部人工审核</el-radio>
+                    <el-radio v-model="gongziCheckConfig.data.check_notice_condition"
+                      :label="1">不通知，且需要人工审核</el-radio>
+                    <el-radio v-model="gongziCheckConfig.data.check_notice_condition"
+                      :label="2">不通知，且均自动审核通过</el-radio>
+                    <el-radio v-model="gongziCheckConfig.data.check_notice_condition"
+                      :label="3">通知，并设置通知条件</el-radio>
                   </div>
                 </div>
               </div>
-              <template v-if="gongziCheckConfig.data.auto_pass===1">
+              <template v-if="gongziCheckConfig.data.check_notice_condition===3">
                 <div class="row">
                   <div class="col">
-                    <div class="label">是否需要限定条件自动通过？</div>
-                    <div class="info middle">
-                      <el-radio v-model="gongziCheckConfig.data.has_condition"
-                        :label="2">不需要限定，全部通过</el-radio>
-                      <el-radio v-model="gongziCheckConfig.data.has_condition"
-                        :label="1">需要，并填写限定条件</el-radio>
+                    <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                    <div class="info elCtn">
+                      <el-select placeholder="请选择创建人"
+                        v-model="gongziCheckConfig.data.user_id"
+                        filterable
+                        multiple
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
                     </div>
                   </div>
                 </div>
-                <template v-if="gongziCheckConfig.data.has_condition===1">
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                      <div class="info elCtn">
-                        <el-select placeholder="请选择创建人"
-                          v-model="gongziCheckConfig.data.user_id"
-                          filterable
-                          multiple
-                          clearable>
-                          <el-option v-for="item in userListCommon"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下结算数量，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="结算数量"
+                        v-model="gongziCheckConfig.data.total_number"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下结算数量，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="结算数量"
-                          v-model="gongziCheckConfig.data.total_number"></el-input>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下结算总价，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="结算总价"
+                        v-model="gongziCheckConfig.data.total_price"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下结算总价，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="结算总价"
-                          v-model="gongziCheckConfig.data.total_price"></el-input>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">输入可以自动审核通过的报价单对比价格比例：</div>
+                    <div class="info elCtn"
+                      style="display:flex">
+                      <el-input style="flex:1;margin-right:12px"
+                        placeholder="数值"
+                        v-model="gongziCheckConfig.data.contrast_quote_extent">
+                        <template slot="append">%</template>
+                      </el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">输入可以自动审核通过的报价单对比价格比例：</div>
-                      <div class="info elCtn"
-                        style="display:flex">
-                        <el-input style="flex:1;margin-right:12px"
-                          placeholder="数值"
-                          v-model="gongziCheckConfig.data.contrast_quote_extent">
-                          <template slot="append">%</template>
-                        </el-input>
-                      </div>
+                </div>
+              </template>
+              <template v-if="gongziCheckConfig.data.check_notice_condition!==2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in gongziCheckConfig.data.check_notice_user"
+                  :key="index">
+                  <div class="col">
+                    <div class="label"
+                      style="display:flex;height:32px;line-height:32px">
+                      {{index+1}}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox true-label='1'
+                        false-label='2'
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
-                </template>
+                  <span class="opr hoverBlue"
+                    style="top: -71px;"
+                    v-if="index===0"
+                    @click="$addItem(gongziCheckConfig.data.check_notice_user,{user_id:'',notice_for_wechat:'2'})">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px;"
+                    v-if="index>0"
+                    @click="$deleteItem(gongziCheckConfig.data.check_notice_user,index)">删除</span>
+                </div>
               </template>
               <div class="row">
                 <div class="col">
@@ -2825,6 +3488,59 @@
                   </div>
                 </div>
               </div>
+              <div class="smallTitle">超额异常通知</div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否通知(单选)</div>
+                  <div class="info middle">
+                    <el-radio v-model="gongziCheckConfig.data.beyond_notice_condition"
+                      :label="1">通知</el-radio>
+                    <el-radio v-model="gongziCheckConfig.data.beyond_notice_condition"
+                      :label="2">不通知</el-radio>
+                  </div>
+                </div>
+              </div>
+              <template v-if="gongziCheckConfig.data.beyond_notice_condition!==2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in gongziCheckConfig.data.beyond_notice_user"
+                  :key="index + 'chaoe'">
+                  <div class="col">
+                    <div class="label"
+                      style="display:flex;height:32px;line-height:32px">
+                      {{index+1}}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox true-label='1'
+                        false-label='2'
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
+                    </div>
+                  </div>
+                  <span class="opr hoverBlue"
+                    style="top: -71px;"
+                    v-if="index===0"
+                    @click="$addItem(gongziCheckConfig.data.beyond_notice_user,{user_id:'',notice_for_wechat:'2'})">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px;"
+                    v-if="index>0"
+                    @click="$deleteItem(gongziCheckConfig.data.beyond_notice_user,index)">删除</span>
+                </div>
+              </template>
               <div class="btnCtn fr"
                 style="margin-top:20px">
                 <div class="btn backHoverBlue"
@@ -2835,79 +3551,110 @@
           <template v-if="cName ==='发货单'">
             <div class="editCtn clearfix"
               style="padding:20px 32px">
+              <div class="smallTitle">审核通知</div>
               <div class="row">
                 <div class="col">
-                  <div class="label">是否需要系统自动审核通过？</div>
+                  <div class="label">通知条件(单选)</div>
                   <div class="info middle">
-                    <el-radio v-model="packOutCheckConfig.data.auto_pass"
-                      :label="1">需要，并限定通过条件</el-radio>
-                    <el-radio v-model="packOutCheckConfig.data.auto_pass"
-                      :label="2">不需要，全部人工审核</el-radio>
+                    <el-radio v-model="packOutCheckConfig.data.check_notice_condition"
+                      :label="1">不通知，且需要人工审核</el-radio>
+                    <el-radio v-model="packOutCheckConfig.data.check_notice_condition"
+                      :label="2">不通知，且均自动审核通过</el-radio>
+                    <el-radio v-model="packOutCheckConfig.data.check_notice_condition"
+                      :label="3">通知，并设置通知条件</el-radio>
                   </div>
                 </div>
               </div>
-              <template v-if="packOutCheckConfig.data.auto_pass===1">
+              <template v-if="packOutCheckConfig.data.check_notice_condition===3">
                 <div class="row">
                   <div class="col">
-                    <div class="label">是否需要限定条件自动通过？</div>
-                    <div class="info middle">
-                      <el-radio v-model="packOutCheckConfig.data.has_condition"
-                        :label="2">不需要限定，全部通过</el-radio>
-                      <el-radio v-model="packOutCheckConfig.data.has_condition"
-                        :label="1">需要，并填写限定条件</el-radio>
+                    <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
+                    <div class="info elCtn">
+                      <el-select placeholder="请选择创建人"
+                        v-model="packOutCheckConfig.data.user_id"
+                        filterable
+                        multiple
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
                     </div>
                   </div>
                 </div>
-                <template v-if="packOutCheckConfig.data.has_condition===1">
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
-                      <div class="info elCtn">
-                        <el-select placeholder="请选择创建人"
-                          v-model="packOutCheckConfig.data.user_id"
-                          filterable
-                          multiple
-                          clearable>
-                          <el-option v-for="item in userListCommon"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下发货数量，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="发货数量"
+                        v-model="packOutCheckConfig.data.total_number"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下发货数量，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="发货数量"
-                          v-model="packOutCheckConfig.data.total_number"></el-input>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">少于以下发货总价，则自动通过：</div>
+                    <div class="info elCtn">
+                      <el-input placeholder="发货总价"
+                        v-model="packOutCheckConfig.data.total_price"></el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">少于以下发货总价，则自动通过：</div>
-                      <div class="info elCtn">
-                        <el-input placeholder="发货总价"
-                          v-model="packOutCheckConfig.data.total_price"></el-input>
-                      </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">输入可以自动审核通过的报价单对比价格比例：</div>
+                    <div class="info elCtn"
+                      style="display:flex">
+                      <el-input style="flex:1;margin-right:12px"
+                        placeholder="数值"
+                        v-model="packOutCheckConfig.data.contrast_quote_extent">
+                        <template slot="append">%</template>
+                      </el-input>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="label">输入可以自动审核通过的报价单对比价格比例：</div>
-                      <div class="info elCtn"
-                        style="display:flex">
-                        <el-input style="flex:1;margin-right:12px"
-                          placeholder="数值"
-                          v-model="packOutCheckConfig.data.contrast_quote_extent">
-                          <template slot="append">%</template>
-                        </el-input>
-                      </div>
+                </div>
+              </template>
+              <template v-if="packOutCheckConfig.data.check_notice_condition!==2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item,index) in packOutCheckConfig.data.check_notice_user"
+                  :key="index">
+                  <div class="col">
+                    <div class="label"
+                      style="display:flex;height:32px;line-height:32px">
+                      {{index+1}}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top:12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox true-label='1'
+                        false-label='2'
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
-                </template>
+                  <span class="opr hoverBlue"
+                    style="top: -71px;"
+                    v-if="index===0"
+                    @click="$addItem(packOutCheckConfig.data.check_notice_user,{user_id:'',notice_for_wechat:'2'})">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px;"
+                    v-if="index>0"
+                    @click="$deleteItem(packOutCheckConfig.data.check_notice_user,index)">删除</span>
+                </div>
               </template>
               <div class="row">
                 <div class="col">
@@ -4934,7 +5681,7 @@ export default Vue.extend({
         工厂信息设置: ['基本信息', '负责小组/人'],
         系统账户管理: ['系统账户管理'],
         通知和审核设置: [
-          '推送设置',
+          // '推送设置',
           '样品订单',
           '大货订单',
           '原料计划单',
@@ -5046,37 +5793,55 @@ export default Vue.extend({
       sampleOrderCheckConfig: {
         doc_type: 17,
         data: {
-          allow_push_sample_order_postpone: 2,
-          allow_push_sample_order_dispatch_3_day: 1,
-          auto_pass: 2,
-          has_condition: 2, // 是否根据条件判断 1是 2否
-          user_id: [],
-          client_id: [],
+          check_notice_condition: 1, // 1 不通知人工审核 2不通知自动通过 3 通知带条件复制
+          user_id: [], // 自动审核创建人id数组
+          client_id: [], // 自动审核下单公司id数组
           number: '',
+          not_allow_operate: 2, // 是否限制后续操作 1是 2否
           not_allow_add_rel_doc: 2, // 是否限制添加关联单据 1是 2否
-          not_allow_settle: 2 // 限制结算 1是 2否
+          not_allow_settle: 2, // 限制结算 1是 2否
+          dispatch_notice_condition: 1, // 1提前三天通知 2逾期通知 3不通知复制
+          notice_for_wechat: '2',
+          check_notice_user: [
+            {
+              user_id: '',
+              notice_for_wechat: '2'
+            }
+          ]
         }
       },
       orderCheckConfig: {
         doc_type: 1,
         data: {
-          auto_pass: 2,
-          has_condition: 2, // 是否根据条件判断 1是 2否
-          user_id: [],
-          client_id: [],
+          check_notice_condition: 1, // 1 不通知人工审核 2不通知自动通过 3 通知带条件复制
+          user_id: [], // 自动审核创建人id数组
+          client_id: [], // 自动审核下单公司id数组
           number: '',
-          allow_push_order_postpone: 2,
-          allow_push_order_dispatch_3_day: 2,
-          allow_push_order_dispatch_7_day: 1,
+          not_allow_operate: 2, // 是否限制后续操作 1是 2否
           not_allow_add_rel_doc: 2, // 是否限制添加关联单据 1是 2否
-          not_allow_settle: 2 // 限制结算 1是 2否
+          not_allow_settle: 2, // 限制结算 1是 2否
+          dispatch_notice_condition: 1, // 1提前三天通知 2逾期通知 3不通知复制
+          notice_for_wechat: '2',
+          check_notice_user: [
+            {
+              user_id: '',
+              notice_for_wechat: '2'
+            }
+          ]
         }
       },
       materialPlanCheckConfig: {
         doc_type: 9,
         data: {
-          auto_pass: 2,
-          has_condition: 2, // 是否根据条件判断 1是 2否
+          update_notice_condition: 1,
+          update_notice_for_wechat: '2',
+          check_notice_condition: 2,
+          check_notice_user: [
+            {
+              user_id: '',
+              notice_for_wechat: '2'
+            }
+          ],
           user_id: [],
           order_type: '',
           total_order_number: '',
@@ -5087,8 +5852,22 @@ export default Vue.extend({
       materialOrderCheckConfig: {
         doc_type: 2,
         data: {
-          auto_pass: 2,
-          has_condition: 2, // 是否根据条件判断 1是 2否
+          update_notice_condition: 1,
+          update_notice_for_wechat: '2',
+          check_notice_condition: 2,
+          check_notice_user: [
+            {
+              user_id: '',
+              notice_for_wechat: '2'
+            }
+          ],
+          beyond_notice_user: [
+            {
+              user_id: '',
+              notice_for_wechat: '2'
+            }
+          ],
+          beyond_notice_condition: 1,
           user_id: [],
           total_number: '',
           total_price: '',
@@ -5100,8 +5879,15 @@ export default Vue.extend({
       materialProcessCheckConfig: {
         doc_type: 3,
         data: {
-          auto_pass: 2,
-          has_condition: 2, // 是否根据条件判断 1是 2否
+          check_notice_condition: 2,
+          check_notice_user: [
+            {
+              user_id: '',
+              notice_for_wechat: '2'
+            }
+          ],
+          update_notice_condition: 1,
+          update_notice_for_wechat: '2',
           user_id: [],
           total_number: '',
           total_price: '',
@@ -5117,8 +5903,22 @@ export default Vue.extend({
       materialStockCheckConfig: {
         doc_type: 6,
         data: {
-          auto_pass: 2,
-          has_condition: 2, // 是否根据条件判断 1是 2否
+          update_notice_condition: 1,
+          update_notice_for_wechat: '2',
+          check_notice_condition: 2,
+          check_notice_user: [
+            {
+              user_id: '',
+              notice_for_wechat: '2'
+            }
+          ],
+          beyond_notice_user: [
+            {
+              user_id: '',
+              notice_for_wechat: '2'
+            }
+          ],
+          beyond_notice_condition: 1,
           user_id: [],
           total_number: '',
           total_price: ''
@@ -5127,8 +5927,15 @@ export default Vue.extend({
       accessoriesOrderCheckConfig: {
         doc_type: 18,
         data: {
-          auto_pass: 2,
-          has_condition: 2, // 是否根据条件判断 1是 2否
+          update_notice_condition: 1,
+          update_notice_for_wechat: '2',
+          check_notice_condition: 2,
+          check_notice_user: [
+            {
+              user_id: '',
+              notice_for_wechat: '2'
+            }
+          ],
           user_id: [],
           total_number: '',
           total_price: '',
@@ -5138,8 +5945,22 @@ export default Vue.extend({
       productionPlanCheckConfig: {
         doc_type: 4,
         data: {
-          auto_pass: 2,
-          has_condition: 2, // 是否根据条件判断 1是 2否
+          update_notice_condition: 1,
+          update_notice_for_wechat: '2',
+          check_notice_condition: 2,
+          check_notice_user: [
+            {
+              user_id: '',
+              notice_for_wechat: '2'
+            }
+          ],
+          beyond_notice_user: [
+            {
+              user_id: '',
+              notice_for_wechat: '2'
+            }
+          ],
+          beyond_notice_condition: 1,
           user_id: [],
           total_number: '',
           total_price: '',
@@ -5156,8 +5977,13 @@ export default Vue.extend({
       packOrderCheckConfig: {
         doc_type: 11,
         data: {
-          auto_pass: 2,
-          has_condition: 2, // 是否根据条件判断 1是 2否
+          check_notice_condition: 2,
+          check_notice_user: [
+            {
+              user_id: '',
+              notice_for_wechat: '2'
+            }
+          ],
           user_id: [],
           total_number: '',
           total_price: '',
@@ -5168,8 +5994,20 @@ export default Vue.extend({
       gongziCheckConfig: {
         doc_type: 14,
         data: {
-          auto_pass: 2,
-          has_condition: 2, // 是否根据条件判断 1是 2否
+          check_notice_condition: 2,
+          check_notice_user: [
+            {
+              user_id: '',
+              notice_for_wechat: '2'
+            }
+          ],
+          beyond_notice_user: [
+            {
+              user_id: '',
+              notice_for_wechat: '2'
+            }
+          ],
+          beyond_notice_condition: 1,
           user_id: [],
           total_number: '',
           total_price: '',
@@ -5180,8 +6018,13 @@ export default Vue.extend({
       packOutCheckConfig: {
         doc_type: 13,
         data: {
-          auto_pass: 2,
-          has_condition: 2, // 是否根据条件判断 1是 2否
+          check_notice_condition: 2,
+          check_notice_user: [
+            {
+              user_id: '',
+              notice_for_wechat: '2'
+            }
+          ],
           user_id: [],
           total_number: '',
           total_price: '',

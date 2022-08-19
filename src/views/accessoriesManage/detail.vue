@@ -94,6 +94,15 @@
             <div class="otherInfoCtn">
               <div class="otherInfo">
                 <div style="margin-right:12px"
+                  class="btn backHoverBlue"
+                  @click="goStock([item])">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">订购入库</span>
+                </div>
+                <div style="margin-right:12px"
                   class="btn backHoverOrange"
                   @click="Number($getsessionStorage('has_check'))!==1&&(item.has_invoice===1||item.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):materialOrderUpdataInfo=$clone(item);materialOrderUpdataFlag=true">
                   <svg class="iconFont"
@@ -1406,6 +1415,7 @@ export default Vue.extend({
       }
     },
     goStock(materialOrderList?: MaterialOrderInfo[]) {
+      console.log(materialOrderList)
       if (materialOrderList) {
         materialOrderList.forEach((item) => {
           this.materialStockInfo.rel_doc_code = item.code
@@ -1549,6 +1559,31 @@ export default Vue.extend({
           }
         })
       }
+    },
+    deleteMaterialStockList(id: string) {
+      this.$confirm('是否删除该出入库单据?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          materialStock
+            .delete({
+              id: id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message.success('删除成功')
+                this.init()
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     }
   },
   mounted() {

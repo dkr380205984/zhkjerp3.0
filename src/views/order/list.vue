@@ -549,7 +549,7 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 10,
-          unit: '元',
+          unitKey: 'settle_unit',
           errVal: '0'
         },
         {

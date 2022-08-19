@@ -162,23 +162,27 @@
             </div>
           </div>
           <div class="col">
-            <div class="row">
-              <div class="col">
-                <div class="infoCtn">
-                  <span class="title">我方已开票金额</span>
-                  <span class="number green">{{clientFinancial.total_invoice_price}}
-                    <span class="unit">万元</span>
-                  </span>
-                </div>
-              </div>
-              <div class="col">
-                <div class="infoCtn">
-                  <span class="title">我方已收款金额</span>
-                  <span class="number green">{{clientFinancial.total_collect_price}}
-                    <span class="unit">万元</span>
-                  </span>
-                </div>
-              </div>
+            <div class="infoCtn">
+              <span class="title">我方已开票金额</span>
+              <span class="number green">{{clientFinancial.total_invoice_price}}
+                <span class="unit">万元</span>
+              </span>
+            </div>
+          </div>
+          <div class="col">
+            <div class="infoCtn">
+              <span class="title">我方已收款金额(元)</span>
+              <span class="number green">{{clientFinancial.total_collect_price_rmb}}
+                <span class="unit">万元</span>
+              </span>
+            </div>
+          </div>
+          <div class="col">
+            <div class="infoCtn">
+              <span class="title">我方已收款金额(美元)</span>
+              <span class="number green">{{clientFinancial.total_collect_price_usd}}
+                <span class="unit">万美元</span>
+              </span>
             </div>
           </div>
         </div>
@@ -492,6 +496,23 @@
           </div>
           <div class="backHoverBlue btn">搜索</div>
         </div>
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-select placeholder="筛选币种"
+              v-model="collectionSettle"
+              @change="getCollectionLogList"
+              clearable>
+              <el-option v-for="item in unitArr"
+                :key="item.name"
+                :label="item.name"
+                :value="item.name"
+                class="between">
+                <span>{{item.name}}</span>
+                <span class="gray">({{item.short}})</span>
+              </el-option>
+            </el-select>
+          </div>
+        </div>
         <div class="list">
           <div class="row title">
             <div class="col">票据编号</div>
@@ -510,7 +531,7 @@
               style="cursor:pointer"
               :class="{'blue':item.order_id||item.rel_doc_id,'gray':!item.order_id&&!item.rel_doc_id}"
               @click="goOrderUrl(item)">{{item.order_id||item.rel_doc_id?(item.order_code||item.rel_doc_code||'无编号'):'未关联单据'}}</div>
-            <div class="col">{{item.price}}元</div>
+            <div class="col">{{item.price}}{{item.settle_unit}}</div>
             <div class="col">{{item.desc}}</div>
             <div class="col">{{item.user_name}}</div>
             <div class="col">{{item.created_at}}</div>
@@ -734,6 +755,7 @@ export default Vue.extend({
       collectionKeyword: '',
       collectionDate: [],
       collectionUser: '',
+      collectionSettle: '',
       invoiceLoading: false,
       invoiceFlag: false,
       invoiceData: [],
@@ -800,7 +822,8 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 8,
-          errVal: '0'
+          errVal: '0',
+          unitKey: 'settle_unit'
         },
         {
           key: 'invoice_status',
@@ -816,7 +839,9 @@ export default Vue.extend({
           name: '开票金额',
           ifShow: true,
           ifLock: false,
-          index: 12
+          index: 12,
+          errVal: '0',
+          unit: '元'
         },
         {
           key: 'collect_status',
@@ -832,7 +857,9 @@ export default Vue.extend({
           name: '收款金额',
           ifShow: true,
           ifLock: false,
-          index: 14
+          index: 14,
+          errVal: '0',
+          unitKey: 'collect_unit'
         },
         {
           key: 'product_code',
@@ -896,7 +923,8 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 10,
-          errVal: '0'
+          errVal: '0',
+          unitKey: 'settle_unit'
         }
       ],
       oprList: [
@@ -1140,6 +1168,7 @@ export default Vue.extend({
             this.orderList.forEach((item: any) => {
               item.collect_status = item.has_collect.status
               item.collect_count = item.has_collect.count
+              item.collect_unit = item.has_collect.unit
               item.invoice_status = item.has_invoice.status
               item.invoice_count = item.has_invoice.count
             })
@@ -1161,6 +1190,7 @@ export default Vue.extend({
           end_time: this.collectionDate.length > 1 ? this.collectionDate[1] : '',
           user_id: this.collectionUser,
           page: this.collectionPage,
+          settle_unit: this.collectionSettle,
           limit: 5
         })
         .then((res) => {

@@ -110,7 +110,8 @@
         <div class="description">当前统计默认值：下单年份：{{year}}年；下单客户：默认所有；币种：{{settle_unit||'所有'}}；合作状态：{{status===0?'暂停合作':status===1?'合作中':'全部'}}</div>
         <div class="list"
           v-loading="loading">
-          <div class="row title">
+          <div class="row title"
+            style="font-size:14px">
             <div class="col">公司简称</div>
             <div class="col">公司全称</div>
             <div class="col">客户类型</div>
@@ -161,13 +162,23 @@
                   @click="sortCol='total_invoice_price';sort='desc';getList()"></div>
               </div>
             </div>
-            <div class="col">收款总额 <div class="sortCtn">
+            <div class="col"
+              style="flex:1.1">收款总额￥<div class="sortCtn">
                 <div class="el-icon-caret-top"
-                  :class="{'active':sortCol==='total_collect_price'&&sort==='asc'}"
-                  @click="sortCol='total_collect_price';sort='asc';getList()"></div>
+                  :class="{'active':sortCol==='total_collect_price_rmb'&&sort==='asc'}"
+                  @click="sortCol='total_collect_price_rmb';sort='asc';getList()"></div>
                 <div class="el-icon-caret-bottom"
-                  :class="{'active':sortCol==='total_collect_price'&&sort==='desc'}"
-                  @click="sortCol='total_collect_price';sort='desc';getList()"></div>
+                  :class="{'active':sortCol==='total_collect_price_rmb'&&sort==='desc'}"
+                  @click="sortCol='total_collect_price_rmb';sort='desc';getList()"></div>
+              </div>
+            </div>
+            <div class="col">收款总额$<div class="sortCtn">
+                <div class="el-icon-caret-top"
+                  :class="{'active':sortCol==='total_collect_price_usd'&&sort==='asc'}"
+                  @click="sortCol='total_collect_price_usd';sort='asc';getList()"></div>
+                <div class="el-icon-caret-bottom"
+                  :class="{'active':sortCol==='total_collect_price_usd'&&sort==='desc'}"
+                  @click="sortCol='total_collect_price_usd';sort='desc';getList()"></div>
               </div>
             </div>
             <div class="col">扣款总额 <div class="sortCtn">
@@ -214,7 +225,9 @@
             </div>
             <div class="col">{{item.total_transport_number}}万件</div>
             <div class="col">{{item.total_invoice_price}}万元</div>
-            <div class="col">{{item.total_collect_price}}万元</div>
+            <div class="col"
+              style="flex:1.1">{{item.total_collect_price_rmb}}万元</div>
+            <div class="col">{{item.total_collect_price_usd}}万美元</div>
             <div class="col">{{item.total_deduct_price}}万元</div>
             <div class="col oprCtn">
               <span class="opr hoverBlue"
@@ -230,7 +243,8 @@
             <div class="col green bold">{{totalData.total_transport_price}}万{{settle_unit||'元'}}</div>
             <div class="col green bold">{{totalData.total_transport_number}}万件</div>
             <div class="col green bold">{{totalData.total_invoice_price}}万元</div>
-            <div class="col green bold">{{totalData.total_collect_price}}万元</div>
+            <div class="col green bold">{{totalData.total_collect_price_rmb}}万元</div>
+            <div class="col green bold">{{totalData.total_collect_price_usd}}万美元</div>
             <div class="col green bold">{{totalData.total_deduct_price}}万元</div>
             <div class="col"></div>
           </div>
@@ -241,8 +255,15 @@
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
-            @current-change="changeRouter">
+            @current-change="changeRouter($event,true)">
           </el-pagination>
+        </div>
+      </div>
+    </div>
+    <div class="bottomFixBar">
+      <div class="main">
+        <div class="btnCtn">
+          <span class="btn backHoverGreen">导出EXCEL</span>
         </div>
       </div>
     </div>
@@ -261,6 +282,7 @@ export default Vue.extend({
       loading: true,
       keyword: '',
       list: [],
+      totalList: [],
       page: 1,
       total: 1,
       limit: 10,
@@ -305,6 +327,10 @@ export default Vue.extend({
       this.changeRouter()
     },
     getList() {
+      if (this.totalList.length > 0 && this.$route.query.justChangePage) {
+        this.list = this.totalList.slice((this.page - 1) * this.limit, this.page * this.limit)
+        return
+      }
       this.loading = true
       client
         .financialList({
@@ -321,10 +347,10 @@ export default Vue.extend({
           year: this.year
         })
         .then((res) => {
-          console.log(res)
           if (res.data.status) {
-            this.list = res.data.data.items
-            this.total = res.data.data.total
+            this.total = res.data.data.items.length
+            this.totalList = res.data.data.items
+            this.list = res.data.data.items.slice((this.page - 1) * this.limit, this.page * this.limit)
             this.totalData = res.data.data.additional
           }
           this.loading = false
@@ -332,12 +358,12 @@ export default Vue.extend({
     },
     getFilters() {
       const query = this.$route.query
-      this.page = Number(query.page)
+      this.page = Number(query.page) || 1
       this.limit = Number(query.limit) || 10
-      this.type = Number(query.type)
+      this.type = query.type || ''
       this.tag_id = Number(query.tag_id) || ''
       this.status = query.status ? (query.status === 'null' ? null : Number(query.status)) : 1
-      this.keyword = query.keyword
+      this.keyword = query.keyword || ''
       this.clientType = Number(query.clientType) || ''
       this.only_delete = Number(query.only_delete) || 0
       this.year = query.year || '' + new Date().getFullYear().toString()
@@ -346,7 +372,8 @@ export default Vue.extend({
         ? this.clientTypeList.find((item: any) => item.id === Number(query.clientType)).public_tag
         : []
     },
-    changeRouter(ev?: any) {
+    // 这个页面分页前端做
+    changeRouter(ev?: any, justChangePage?: boolean) {
       if (ev !== this.page) {
         this.page = 1
       }
@@ -370,7 +397,9 @@ export default Vue.extend({
           '&year=' +
           this.year +
           '&settle_unit=' +
-          this.settle_unit
+          this.settle_unit +
+          '&justChangePage=' +
+          (justChangePage || '')
       )
     },
     reset() {

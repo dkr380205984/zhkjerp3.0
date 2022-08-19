@@ -275,8 +275,60 @@
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
-            @current-change="changeRouter">
+            @current-change="changeRouter($event,true)">
           </el-pagination>
+        </div>
+      </div>
+    </div>
+    <div class="bottomFixBar">
+      <div class="main">
+        <div class="btnCtn">
+          <span class="btn backHoverGreen"
+            @click="excelFlag = true">导出EXCEL</span>
+        </div>
+      </div>
+    </div>
+    <div class="popup"
+      v-show="excelFlag">
+      <div class="main"
+        style="width:500px">
+        <div class="titleCtn">
+          <span class="text">导出EXCEL筛选条件</span>
+          <div class="closeCtn"
+            @click="excelFlag=false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="row">
+            <div class="label"
+              style="line-height:32px">选择类型：</div>
+            <div class="elCtn info">
+              <el-select placeholder="客户类型筛选"
+                v-model="clientTypeExcel"
+                clearable>
+                <el-option v-for="item in clientTypeList"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.name"></el-option>
+              </el-select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label"
+              style="line-height:32px">选择年份：</div>
+            <div class="elCtn info">
+              <el-date-picker type="year"
+                v-model="excelYear"
+                placeholder="选择年份"></el-date-picker>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="excelFlag=false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="exportExcel">确认导出</span>
         </div>
       </div>
     </div>
@@ -292,9 +344,14 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      clientTypeExcel: '',
+      yearExcel: '',
+      excelYear: '',
+      excelFlag: false,
       loading: true,
       keyword: '',
       list: [],
+      totalList: [],
       page: 1,
       total: 1,
       limit: 10,
@@ -337,6 +394,7 @@ export default Vue.extend({
     }
   },
   methods: {
+    exportExcel() {},
     getClientTag(ev: number) {
       if (ev) {
         this.clientTagList = this.clientTypeList.find((item: { id: number }) => item.id === ev).children
@@ -346,6 +404,10 @@ export default Vue.extend({
       this.changeRouter()
     },
     getList() {
+      if (this.totalList.length > 0 && this.$route.query.justChangePage) {
+        this.list = this.totalList.slice((this.page - 1) * this.limit, this.page * this.limit)
+        return
+      }
       this.loading = true
       client
         .financialList({
@@ -363,8 +425,9 @@ export default Vue.extend({
         })
         .then((res) => {
           if (res.data.status) {
-            this.list = res.data.data.items
-            this.total = res.data.data.total
+            this.total = res.data.data.items.length
+            this.totalList = res.data.data.items
+            this.list = res.data.data.items.slice((this.page - 1) * this.limit, this.page * this.limit)
             this.totalData = res.data.data.additional
           }
           this.loading = false
@@ -374,10 +437,10 @@ export default Vue.extend({
       const query = this.$route.query
       this.page = Number(query.page) || 1
       this.limit = Number(query.limit) || 10
-      this.type = Number(query.type)
+      this.type = query.type || ''
       this.tag_id = Number(query.tag_id) || ''
       this.status = query.status ? (query.status === 'null' ? null : Number(query.status)) : 1
-      this.keyword = query.keyword
+      this.keyword = query.keyword || ''
       this.clientType = Number(query.clientType) || ''
       this.only_delete = Number(query.only_delete) || 0
       this.year = query.year || '' + new Date().getFullYear().toString()
@@ -386,11 +449,10 @@ export default Vue.extend({
         ? this.clientTypeList.find((item: any) => item.id === Number(query.clientType)).public_tag
         : []
     },
-    changeRouter(ev?: any) {
+    changeRouter(ev?: any, justChangePage?: boolean) {
       if (ev !== this.page) {
         this.page = 1
       }
-
       this.$router.push(
         '/settlement/paymentList?page=' +
           this.page +
@@ -411,7 +473,9 @@ export default Vue.extend({
           '&year=' +
           this.year +
           '&settle_unit=' +
-          this.settle_unit
+          this.settle_unit +
+          '&justChangePage=' +
+          (justChangePage || '')
       )
     },
     reset() {

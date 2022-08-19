@@ -592,11 +592,11 @@
                     <i class="el-icon-refresh hoverGreen fr"
                       style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
                       @click="$checkCommonInfo([{
-                    checkWhich: 'api/clientType',
-                    getInfoMethed: 'dispatch',
-                    getInfoApi: 'getClientTypeAsync',
-                    forceUpdate:true
-                  }])"></i>
+                        checkWhich: 'api/clientType',
+                        getInfoMethed: 'dispatch',
+                        getInfoApi: 'getClientTypeAsync',
+                        forceUpdate:true
+                      }])"></i>
                   </el-tooltip>
                   <el-tooltip class="item"
                     effect="dark"
@@ -610,6 +610,7 @@
                 <div class="info elCtn">
                   <el-cascader :class="{'error':mustFlag&&item.tree_data.length===0}"
                     placeholder="请选择订购单位"
+                    filterable
                     v-model="item.tree_data"
                     :options="packClientList"
                     @change="(ev)=>{item.client_id=ev[2]}"></el-cascader>

@@ -252,6 +252,7 @@
           <div class="col">
             <div class="label">
               <span class="text">运输单价</span>
+              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-input v-model="boxInfo.price"
@@ -293,7 +294,6 @@
           <div class="col">
             <div class="label">
               <span class="text">运输总价</span>
-              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-input disabled

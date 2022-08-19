@@ -12,14 +12,17 @@
         <div class="filterCtn">
           <div class="elCtn">
             <el-input v-model="keyword"
-              placeholder="搜索文件名称"></el-input>
+              placeholder="搜索文件名称"
+              @change="changeRouter()"></el-input>
           </div>
           <div class="elCtn">
             <el-select v-model="type"
-              placeholder="筛选文件标签">
+              placeholder="筛选文件标签"
+              @change="changeRouter()"
+              clearable>
               <el-option v-for="item in typeArr"
-                :key="item.value"
-                :value="item.value"
+                :key="item.label"
+                :value="item.label"
                 :label="item.label"></el-option>
             </el-select>
           </div>
@@ -35,7 +38,8 @@
           <div class="elCtn hasIcon">
             <el-select v-model="group_id"
               placeholder="筛选负责小组"
-              clearable>
+              clearable
+              @change="changeRouter()">
               <el-option v-for="item in groupList"
                 :key="item.id"
                 :value="item.id"
@@ -49,7 +53,8 @@
           <div class="elCtn hasIcon">
             <el-select v-model="user_id"
               placeholder="筛选创建人"
-              clearable>
+              clearable
+              @change="changeRouter()">
               <el-option v-for="item in userList"
                 :key="item.value"
                 :label="item.label"
@@ -65,14 +70,14 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               :picker-options="pickerOptions"
-              @change="changeRouter"
+              @change="changeRouter()"
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
           <div class="elCtn">
             <el-select v-model="limit"
               placeholder="每页展示条数"
-              @change="changeRouter">
+              @change="changeRouter()">
               <el-option v-for="item in limitList"
                 :key="item.value"
                 :label="item.name"
@@ -540,7 +545,10 @@ export default Vue.extend({
           })
         })
     },
-    changeRouter() {
+    changeRouter(ev?: any) {
+      if (ev !== this.page) {
+        this.page = 1
+      }
       this.$router.push(
         '/fileManage/list?page=' +
           this.page +
@@ -565,7 +573,7 @@ export default Vue.extend({
       this.page = Number(query.page)
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.keyword = query.keyword || ''
-      this.type = Number(query.type) || ''
+      this.type = query.type || ''
       this.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.date = query.date ? (query.date as string).split(',') : []

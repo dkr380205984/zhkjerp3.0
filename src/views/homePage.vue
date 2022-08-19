@@ -622,7 +622,8 @@
             <div class="title">
               织为云微信公众号
               <div class="fr hoverBlue"
-                style="font-size: 16px; font-weight: normal; cursor: pointer">
+                style="font-size: 16px; font-weight: normal; cursor: pointer"
+                @click="wxFlag =true">
                 查看教学
               </div>
             </div>
@@ -715,6 +716,19 @@
         </div>
       </div>
     </div>
+    <div class="popup"
+      v-show="wxFlag">
+      <div class="main"
+        style="width: 1000px">
+        <div style="text-align:right;cursor:pointer;line-height:44px;margin-right:12px"
+          class="hoverRed"
+          @click="wxFlag=false">关闭教学</div>
+        <el-image class="img"
+          :src="wxjx"
+          style="height:1024px"
+          :preview-src-list="[require('@/assets/image/common/WXJX1.png'),require('@/assets/image/common/WXJX2.png'),require('@/assets/image/common/WXJX3.png'),require('@/assets/image/common/WXJX4.png')]"></el-image>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -725,6 +739,8 @@ import { tutorialSystem, systemMessage } from '@/assets/js/api'
 export default Vue.extend({
   data() {
     return {
+      wxFlag: false,
+      wxjx: require('@/assets/image/common/WXJX.png'),
       wxImg: require('@/assets/image/common/wx.jpg'),
       activeNames: '',
       systemMessageContent: '',

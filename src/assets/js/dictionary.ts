@@ -525,50 +525,55 @@ const moneyArr = [{
   tax_prop: '0'
 }]
 
-// 出入库类型
-const stockType = [{
-  name: '中转入库', // 采购单半成品原料入库
-  value: 1
-}, {
-  name: '客供入库',
-  value: 2
-}, {
-  name: '中转出库', // 物料加工出库
-  value: 3
-}, {
-  name: '订购最终入库', // 采购单，以4为准统计入库值
-  value: 4
-}, {
-  name: '单据生产出库', // 织造半成品单位出库
-  value: 5
-}, {
-  name: '订单结余入库',
-  value: 6
-}, {
-  name: '移库出库',
-  value: 7
-}, {
-  name: '移库入库',
-  value: 8
-}, {
-  name: '仓库入库',
-  value: 9
-}, {
-  name: '调取出库',
-  value: 10
-}, {
-  name: '调取最终入库',
-  value: 11
-}, {
-  name: '补纱调取出库',
-  value: 12
-}, {
-  name: '仓库出库',
-  value: 13
-}, {
-  name: '预订购入库',
-  value: 14
-}]
+// 出入库类型 
+const stockType = [
+  // {
+  //   name: '中转入库', // 采购单半成品原料入库
+  //   value: 1
+  // }, 
+  {
+    name: '客供入库',
+    value: 2
+  },
+  // {
+  //   name: '加工出库', // 物料加工出库
+  //   value: 3
+  // }, 
+  {
+    name: '订购最终入库', // 采购单，以4为准统计入库值
+    value: 4
+  },
+  {
+    name: '单据生产出库', // 织造半成品单位出库
+    value: 5
+  }, {
+    name: '订单结余入库',
+    value: 6
+  }, {
+    name: '移库出库',
+    value: 7
+  }, {
+    name: '移库入库',
+    value: 8
+  }, {
+    name: '仓库入库',
+    value: 9
+  }, {
+    name: '调取出库',
+    value: 10
+  }, {
+    name: '调取最终入库',
+    value: 11
+  }, {
+    name: '补纱调取出库',
+    value: 12
+  }, {
+    name: '仓库出库',
+    value: 13
+  }, {
+    name: '预订购入库',
+    value: 14
+  }]
 
 const productStockType = [{
   name: '普通入库',

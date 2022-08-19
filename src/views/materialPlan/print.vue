@@ -51,18 +51,6 @@
                     style="flex:0.73">负责人/小组</div>
                   <div class="tcol">{{ otherInfo.group_name || '暂无' }}</div>
                 </div>
-                <div class="trow">
-                  <div class="tcol bgGray headTitle"></div>
-                  <div class="tcol"
-                    style="flex:1.2"></div>
-                  <div class="tcol bgGray headTitle"></div>
-                  <div class="tcol"></div>
-                  <div class="tcol bgGray headTitle"></div>
-                  <div class="tcol"></div>
-                  <div class="tcol bgGray headTitle"
-                    style="flex:0.73"></div>
-                  <div class="tcol"></div>
-                </div>
               </div>
             </div>
             <div class="tableCtn"
