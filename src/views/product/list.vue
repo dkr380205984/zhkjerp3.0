@@ -218,7 +218,7 @@ export default Vue.extend({
           ifLock: true,
           index: 0,
           ifCaogao: 'product_type',
-          caogaoArr: ['样', '产']
+          caogaoArr: ['产', '样']
         },
         {
           key: 'name',

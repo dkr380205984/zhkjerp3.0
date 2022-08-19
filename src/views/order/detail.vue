@@ -51,12 +51,12 @@
         </div>
         <div class="row">
           <div class="col flex3">
-            <div class="label">下单币种：</div>
-            <div class="text">{{orderInfo.settle_unit}}</div>
+            <div class="label">下单款数：</div>
+            <div class="text">{{orderInfo.time_data[0].total_style}}款</div>
           </div>
           <div class="col flex3">
-            <div class="label">币种汇率</div>
-            <div class="text">{{orderInfo.settle_tax}}</div>
+            <div class="label">下单总数：</div>
+            <div class="text">{{orderInfo.time_data[0].total_number}}</div>
           </div>
         </div>
         <div class="row">
@@ -71,13 +71,13 @@
           </div>
         </div>
         <div class="row">
-          <div class="col">
-            <div class="label">下单款数：</div>
-            <div class="text">{{orderInfo.time_data[0].total_style}}款</div>
+          <div class="col flex3">
+            <div class="label">下单币种：</div>
+            <div class="text">{{orderInfo.settle_unit}}</div>
           </div>
-          <div class="col">
-            <div class="label">下单总数：</div>
-            <div class="text">{{orderInfo.time_data[0].total_number}}</div>
+          <div class="col flex3">
+            <div class="label">币种汇率</div>
+            <div class="text">{{orderInfo.settle_tax}}</div>
           </div>
           <div class="col">
             <div class="label">下单总额：</div>

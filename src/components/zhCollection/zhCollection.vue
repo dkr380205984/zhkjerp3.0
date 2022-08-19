@@ -20,6 +20,21 @@
             </el-input>
           </div>
         </div>
+        <div class="row">
+          <div class="info">
+            <el-select placeholder="收款单位"
+              v-model="collectionInfo.settle_unit">
+              <el-option v-for="item in unitArr"
+                :key="item.name"
+                :label="item.name"
+                :value="item.name"
+                class="between">
+                <span>{{item.name}}</span>
+                <span class="gray">({{item.short}})</span>
+              </el-option>
+            </el-select>
+          </div>
+        </div>
         <div v-for="(item,index) in collectionInfo.data"
           :key="index">
           <div class="blue"
@@ -45,7 +60,7 @@
               <el-input placeholder="收款金额(必填)"
                 v-model="item.price"
                 @input="changeNumToPrice($event,index)">
-                <template slot="append">元</template>
+                <template slot="append">{{collectionInfo.settle_unit}}</template>
               </el-input>
             </div>
           </div>
@@ -54,7 +69,7 @@
               <el-input placeholder="数字金额(默认)"
                 v-model="item.hanPrice"
                 disabled>
-                <template slot="append">元</template>
+                <template slot="append">{{collectionInfo.settle_unit}}</template>
               </el-input>
             </div>
           </div>
@@ -81,10 +96,12 @@
 <script lang="ts">
 import Vue from 'vue'
 import { collection } from '@/assets/js/api'
+import { moneyArr } from '@/assets/js/dictionary'
 interface CollectionInfo {
   id?: string
   doc_type: number
   client_id: number | string
+  settle_unit: string
   data: Array<{
     order_id: number | string
     doc_code: string
@@ -152,8 +169,10 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      unitArr: moneyArr,
       saveLock: false,
       collectionInfo: {
+        settle_unit: '元',
         doc_type: 0,
         client_id: '',
         data: [
@@ -192,6 +211,8 @@ export default Vue.extend({
         if (this.update) {
           // @ts-ignore
           this.collectionInfo.client_id = this.client_id || this.data[0].client_id
+          // @ts-ignore
+          this.collectionInfo.settle_unit = this.data[0].settle_unit
         } else {
           this.collectionInfo.client_id = this.client_id
         }
@@ -233,23 +254,36 @@ export default Vue.extend({
   methods: {
     // 把数字改成金额
     changeNumToPrice(val: string, index: number) {
-      const realNumStr = val.replace(/[^0-9]/gi, '')
-      const numStrArr = realNumStr.split('')
+      const realNumStr = val.replace(/[^\d.]/g, '')
+      const numStrArr = realNumStr.split('.')
+      let zhengshu = ''
+      let xiaoshu = ''
+      if (numStrArr.length > 2) {
+        this.collectionInfo.data[index].hanPrice = '请输入正确数字'
+        return
+      } else if (numStrArr.length === 2) {
+        zhengshu = numStrArr[0]
+        xiaoshu = numStrArr[1]
+      } else {
+        zhengshu = numStrArr[0]
+      }
+      const zhengshuArr = zhengshu.split('')
       this.collectionInfo.data[index].hanPrice = this.$changeNumToHan(Number(realNumStr))
-      const length = Number(numStrArr.length)
+      const length = Number(zhengshuArr.length)
       for (let i = length, j = 0; i > 0; i--) {
         j++
         if (j % 3 === 0 && i !== 1) {
-          numStrArr.splice(i - 1, 0, ',')
+          zhengshuArr.splice(i - 1, 0, ',')
         }
       }
-      this.collectionInfo.data[index].price = numStrArr.join('')
+      this.collectionInfo.data[index].price = zhengshuArr.join('') + (numStrArr.length === 2 ? '.' + xiaoshu : '')
     },
     close() {
       this.$emit('close')
     },
     reset() {
       this.collectionInfo = {
+        settle_unit: '元',
         doc_type: 0,
         client_id: '',
         data: [
@@ -281,7 +315,7 @@ export default Vue.extend({
         this.saveLock = true
         // 把提交金额替换回来
         this.collectionInfo.data.forEach((item) => {
-          item.price = item.price.replace(/[^0-9]/gi, '')
+          item.price = item.price.replace(/[^\d.]/g, '')
         })
         collection.create(this.collectionInfo).then((res) => {
           if (res.data.status) {

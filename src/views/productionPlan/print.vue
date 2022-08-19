@@ -41,8 +41,8 @@
             <div class="trow">
               <div class="tcol bgGray label">关联订单号</div>
               <div class="tcol">{{productionPlanInfo.order_code}}</div>
-              <div class="tcol bgGray label">关联订单下单客户</div>
-              <div class="tcol">{{showClient?company_name:'***'}}</div>
+              <div class="tcol bgGray label">下单客户</div>
+              <div class="tcol">{{showClient?productionPlanInfo.order_client:'***'}}</div>
               <div class="tcol bgGray label">生产单位</div>
               <div class="tcol">{{productionPlanInfo.client_name}}</div>
               <div class="tcol bgGray label">生产工序</div>
@@ -55,7 +55,6 @@
               <div class="tcol">{{productionPlanInfo.contacts_phone}}</div>
               <div class="tcol bgGray label">开单日期</div>
               <div class="tcol">{{productionPlanInfo.start_time}}</div>
-
               <div class="tcol bgGray label">完成日期</div>
               <div class="tcol">{{productionPlanInfo.end_time}}</div>
             </div>

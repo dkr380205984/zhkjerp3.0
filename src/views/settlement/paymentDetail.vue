@@ -624,6 +624,14 @@
               </svg>
               <span class="text">修改单价</span>
             </div>
+            <div class="btn backHoverBlue"
+              @click="changeShowAll(materialOrderList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">全部展开</span>
+            </div>
           </div>
           <div class="filterCtn clearfix">
             <div class="label">已勾选单据：</div>
@@ -678,7 +686,8 @@
                   @click="$openUrl('/order/detail?id=' + item.top_order_id)">{{ item.order_code}}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
-                <div class="col numberWidth">{{ $toFixed(item.total_push_number) }}</div>
+                <div class="col numberWidth"
+                  :class="{'red':item.total_push_number>item.total_number}">{{ $toFixed(item.total_push_number) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_push_price) }}</div>
                 <div class="col">
                   <div v-if="item.is_check === 0"
@@ -949,6 +958,14 @@
                 <use xlink:href="#icon-xiugaidingdan"></use>
               </svg>
               <span class="text">批量扣款</span>
+            </div>
+            <div class="btn backHoverBlue"
+              @click="changeShowAll(materialProcessList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">全部展开</span>
             </div>
           </div>
           <div class="filterCtn clearfix">
@@ -1290,6 +1307,14 @@
                 <use xlink:href="#icon-xiugaidingdan"></use>
               </svg>
               <span class="text">批量扣款</span>
+            </div>
+            <div class="btn backHoverBlue"
+              @click="changeShowAll(productionPlanList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">全部展开</span>
             </div>
           </div>
           <div class="filterCtn clearfix">
@@ -1664,6 +1689,14 @@
               </svg>
               <span class="text">批量扣款</span>
             </div>
+            <div class="btn backHoverBlue"
+              @click="changeShowAll(packOrderList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">全部展开</span>
+            </div>
           </div>
           <div class="filterCtn clearfix">
             <div class="label">已勾选单据：</div>
@@ -1935,6 +1968,14 @@
                 <use xlink:href="#icon-xiugaidingdan"></use>
               </svg>
               <span class="text">批量扣款</span>
+            </div>
+            <div class="btn backHoverBlue"
+              @click="changeShowAll(boxManageList)">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">全部展开</span>
             </div>
           </div>
           <div class="filterCtn clearfix">
@@ -3414,6 +3455,11 @@ export default Vue.extend({
           })
       }
     },
+    changeShowAll(info: any[]) {
+      info.forEach((item) => {
+        this.changeShow(item)
+      })
+    },
     changeShow(item: any) {
       this.listLoading = true
       if (!item.detail) {
@@ -3425,8 +3471,8 @@ export default Vue.extend({
             .then((res) => {
               if (res.status) {
                 item.detail = res.data.data
-                console.log(item.detail)
                 item.isShow = true
+                this.$forceUpdate()
               }
               this.listLoading = false
             })
@@ -3439,6 +3485,7 @@ export default Vue.extend({
               if (res.status) {
                 item.detail = res.data.data
                 item.isShow = true
+                this.$forceUpdate()
               }
               this.listLoading = false
             })
@@ -3451,6 +3498,7 @@ export default Vue.extend({
               if (res.status) {
                 item.detail = res.data.data
                 item.isShow = true
+                this.$forceUpdate()
               }
               this.listLoading = false
             })
@@ -3463,6 +3511,7 @@ export default Vue.extend({
               if (res.status) {
                 item.detail = res.data.data
                 item.isShow = true
+                this.$forceUpdate()
               }
               this.listLoading = false
             })
@@ -3475,6 +3524,7 @@ export default Vue.extend({
               if (res.status) {
                 item.detail = res.data.data
                 item.isShow = true
+                this.$forceUpdate()
               }
               this.listLoading = false
             })
@@ -3483,8 +3533,6 @@ export default Vue.extend({
         item.isShow = !item.isShow
         this.listLoading = false
       }
-
-      this.$forceUpdate()
     },
     getCheckInfo(ev: boolean, item: any, checkList: any[]) {
       if (ev) {

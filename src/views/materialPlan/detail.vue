@@ -13,7 +13,7 @@
           <div slot="label">
             <div style="display:flex;flex-direction:column">
               <div style="line-height:20px;font-size:14px">计划单{{(indexFather+1)}}</div>
-              <div style="line-height:20px;font-size:14px">{{materialPlanDetail.code}}</div>
+              <div style="line-height:20px;font-size:14px">{{itemFather.code}}</div>
             </div>
           </div>
           <div class="titleCtn">

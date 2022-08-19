@@ -223,6 +223,7 @@
               <div class="tcol">物料颜色</div>
               <div class="tcol">物料属性</div>
               <div class="tcol">入库数量</div>
+              <div class="tcol">入库总价</div>
             </div>
           </div>
           <div class="tbody">
@@ -242,6 +243,7 @@
               <div class="tcol"></div>
               <div class="tcol"></div>
               <div class="tcol green">{{$toFixed(materialStsTotal/1000)}}吨</div>
+              <div class="tcol"></div>
             </div>
           </div>
         </div>

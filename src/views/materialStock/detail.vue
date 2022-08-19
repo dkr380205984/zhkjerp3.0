@@ -756,7 +756,7 @@
                 </div>
                 <div class="info elCtn">
                   <el-select v-model="materialStockInfo.stock_id"
-                    placeholder="本厂仓库/主仓库（默认)"
+                    placeholder="默认主仓库"
                     disabled></el-select>
                 </div>
               </div>

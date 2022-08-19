@@ -54,7 +54,7 @@
               :fetch-suggestions="searchMaterial"
               placeholder="物料名称"
               @keydown.enter.native="changeRouter"
-              @change="changeRouter"></el-autocomplete>
+              @select="changeRouter"></el-autocomplete>
           </div>
           <div class="elCtn">
             <el-autocomplete class="inline-input"
@@ -133,7 +133,7 @@
               v-if="$route.query.store_type==='1'">{{item.attribute}}</div>
             <div class="col"
               v-if="$route.query.store_type==='1' || $route.query.store_type==='2'">{{item.batch_code}}/{{item.vat_code}}/{{item.color_code}}</div>
-            <div class="col">{{item.number}}kg</div>
+            <div class="col">{{item.number}}{{item.unit}}</div>
             <div class="col">
               <div class="oprCtn">
                 <span class="opr hoverGreen"
@@ -151,8 +151,9 @@
             <div class="col"></div>
             <div class="col"
               v-if="$route.query.store_type==='1'"></div>
-            <div class="col"></div>
-            <div class="col green">{{totalNumber}}kg</div>
+            <div class="col"
+              v-if="$route.query.store_type==='1' || $route.query.store_type==='2'"></div>
+            <div class="col green">{{totalNumber}}{{typeName==='面料'?'m':typeName==='纱线'?'kg':''}}</div>
             <div class="col"></div>
           </div>
         </div>
@@ -1075,6 +1076,9 @@ export default Vue.extend({
     }
   },
   methods: {
+    getUnit(ev: number, info: any) {
+      info.unit = this.decorateMaterialList.find((item: any) => item.id === ev).unit
+    },
     deleteMerge(index: number) {
       this.$deleteItem(this.mergeCheckList, index)
       this.getMergeMatList()
@@ -1179,7 +1183,7 @@ export default Vue.extend({
           batch_code: '',
           page: this.mergePage,
           limit: 10,
-          material_type: Number(this.$route.query.store_type)
+          store_type: Number(this.$route.query.store_type)
         })
         .then((res) => {
           if (res.data.status) {
@@ -1222,7 +1226,7 @@ export default Vue.extend({
       store
         .getMatName({
           material_name: str,
-          material_type: Number(this.$route.query.store_type)
+          store_type: Number(this.$route.query.store_type)
         })
         .then((res) => {
           const data = res.data.data.map((item: any) => {
@@ -1301,9 +1305,9 @@ export default Vue.extend({
           vat_code: this.vat_code,
           color_code: this.color_code,
           batch_code: this.batch_code,
-          page: this.mergeFilter.page,
+          page: this.page,
           limit: 10,
-          material_type: Number(this.$route.query.store_type)
+          store_type: Number(this.$route.query.store_type)
         })
         .then((res) => {
           if (res.data.status) {
@@ -1315,6 +1319,7 @@ export default Vue.extend({
         })
     },
     goStock(type: 9 | 13, info?: StoreTotalInfo) {
+      console.log(info)
       if (info) {
         this.materialStockInfo.length = 1
         this.materialStockInfo[0].store_arr = [info.store_id, info.secondary_store_id]
@@ -1332,7 +1337,7 @@ export default Vue.extend({
             number: '',
             item: '',
             rel_doc_info_id: '',
-            unit: info.unit || 'kg'
+            unit: info.unit || (this.typeName === '面料' ? 'm' : this.typeName === '纱线' ? 'kg' : '')
           }
         ]
       } else {
@@ -1356,11 +1361,11 @@ export default Vue.extend({
                 number: '',
                 item: '',
                 rel_doc_info_id: '',
-                unit: item.unit || 'kg'
+                unit: item.unit || (this.typeName === '面料' ? 'm' : this.typeName === '纱线' ? 'kg' : '')
               })
             } else {
               this.materialStockInfo.push({
-                material_type: Number(this.$route.query.store_type),
+                material_type: Number(this.$route.query.store_type) === 4 ? 2 : 1,
                 action_type: type,
                 rel_doc_type: '',
                 rel_doc_id: '',
@@ -1387,7 +1392,7 @@ export default Vue.extend({
                     number: '',
                     item: '',
                     rel_doc_info_id: '',
-                    unit: item.unit || 'kg'
+                    unit: item.unit || (this.typeName === '面料' ? 'm' : this.typeName === '纱线' ? 'kg' : '')
                   }
                 ]
               })
@@ -1397,7 +1402,7 @@ export default Vue.extend({
       if (this.materialStockInfo.length === 0) {
         this.materialStockInfo = [
           {
-            material_type: Number(this.$route.query.store_type),
+            material_type: Number(this.$route.query.store_type) === 4 ? 2 : 1,
             action_type: type,
             rel_doc_type: '',
             rel_doc_id: '',
@@ -1423,7 +1428,7 @@ export default Vue.extend({
                 attribute: '',
                 number: '',
                 item: '', // 件数
-                unit: 'kg',
+                unit: this.typeName === '面料' ? 'm' : this.typeName === '纱线' ? 'kg' : '',
                 rel_doc_info_id: '' // 采购单调取单加工单子项id
               }
             ],
@@ -1469,7 +1474,7 @@ export default Vue.extend({
     },
     getCmpData() {
       this.materialStockInfo.forEach((itemStock) => {
-        itemStock.material_type = Number(this.$route.query.store_type)
+        itemStock.material_type = Number(this.$route.query.store_type) === 4 ? 2 : 1
         itemStock.info_data.forEach((item) => {
           item.batch_code = item.batch_code || '无'
           item.vat_code = item.vat_code || '无'
@@ -1533,7 +1538,7 @@ export default Vue.extend({
       })
     },
     exportMaterialTotalExcel() {
-      this.materialTotalExcel.material_type = this.$route.query.store_type
+      this.materialTotalExcel.material_type = Number(this.$route.query.store_type) === 4 ? 2 : 1
       exportExcel.materialTotal(this.materialTotalExcel).then((res) => {
         if (res.data.status) {
           this.$message.success('导出成功')

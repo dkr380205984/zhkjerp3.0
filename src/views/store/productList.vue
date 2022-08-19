@@ -439,12 +439,158 @@
           <div class="btn backHoverBlue"
             @click="$router.push('/store/create?store_type='+5)">添加仓库</div>
         </div>
-        <!-- <div class="btnCtn">
+        <div class="btnCtn">
           <span class="btn backHoverGreen"
-            @click="materialTotalExcelFlag = true">导出库存数量EXCEL</span>
+            @click="productTotalExcelFlag = true">导出库存数量EXCEL</span>
           <span class="btn backHoverGreen"
-            @click="materialLogExcelFlag = true">导出库存日志EXCEL</span>
-        </div> -->
+            @click="productLogExcelFlag = true">导出库存日志EXCEL</span>
+        </div>
+      </div>
+    </div>
+    <!-- 导出日志excel -->
+    <div class="popup"
+      v-show="productLogExcelFlag">
+      <div class="main"
+        style="width:500px">
+        <div class="titleCtn">
+          <span class="text">导出EXCEL筛选条件</span>
+          <div class="closeCtn"
+            @click="productLogExcelFlag=false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="row">
+            <div class="label"
+              style="line-height:32px">选择仓库：</div>
+            <div class="elCtn info">
+              <el-cascader :options="storeArr"
+                placeholder="请选择仓库"
+                v-model="productLogExcel.store_arr"
+                @change="(ev)=>{productLogExcel.store_id=ev[0];productLogExcel.secondary_store_id=ev[1]}"></el-cascader>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label"
+              style="line-height:32px">选择日期：</div>
+            <div class="elCtn info">
+              <el-date-picker v-model="productLogExcelDate"
+                type="daterange"
+                align="right"
+                unlink-panels
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :picker-options="pickerOptions">
+              </el-date-picker>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label"
+              style="line-height:32px">操作类型：</div>
+            <div class="elCtn info">
+              <el-select v-model="productLogExcel.action_type"
+                clearable>
+                <el-option v-for="item in productStockType"
+                  :key="item.name"
+                  :value="item.value"
+                  :label="item.name"></el-option>
+              </el-select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label"
+              style="line-height:32px">选择单位：</div>
+            <div class="elCtn info">
+              <el-cascader placeholder="请选择要导出的单位"
+                :show-all-levels="false"
+                v-model="productLogExcel.client_arr"
+                :options="clientList"
+                @change="(ev)=>{productLogExcel.client_id=ev[2]}"
+                clearable>
+              </el-cascader>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="productLogExcelFlag=false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="exportProductLogExcel">确认导出</span>
+        </div>
+      </div>
+    </div>
+    <!-- 导出总的excel -->
+    <div class="popup"
+      v-show="productTotalExcelFlag">
+      <div class="main"
+        style="width:500px">
+        <div class="titleCtn">
+          <span class="text">导出EXCEL筛选条件</span>
+          <div class="closeCtn"
+            @click="productTotalExcelFlag=false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="row">
+            <div class="label"
+              style="line-height:32px">选择仓库：</div>
+            <div class="elCtn info">
+              <el-cascader :options="storeArr"
+                placeholder="请选择仓库"
+                v-model="productTotalExcel.store_arr"
+                @change="(ev)=>{productTotalExcel.store_id=ev[0];productTotalExcel.secondary_store_id=ev[1]}"></el-cascader>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label"
+              style="line-height:32px">选择日期：</div>
+            <div class="elCtn info">
+              <el-date-picker v-model="productTotalExceDate"
+                type="daterange"
+                align="right"
+                unlink-panels
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :picker-options="pickerOptions">
+              </el-date-picker>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label"
+              style="line-height:32px">操作类型：</div>
+            <div class="elCtn info">
+              <el-select v-model="productTotalExcel.action_type"
+                clearable>
+                <el-option v-for="item in productStockType"
+                  :key="item.name"
+                  :value="item.value"
+                  :label="item.name"></el-option>
+              </el-select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label"
+              style="line-height:32px">选择单位：</div>
+            <div class="elCtn info">
+              <el-cascader placeholder="请选择要导出的单位"
+                :show-all-levels="false"
+                v-model="productTotalExcel.client_arr"
+                :options="clientList"
+                @change="(ev)=>{productTotalExcel.client_id=ev[2]}"
+                clearable>
+              </el-cascader>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="productTotalExcelFlag=false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="exportProductTotalExcel">确认导出</span>
+        </div>
       </div>
     </div>
     <product-detail :id="productId"
@@ -458,8 +604,9 @@
 </template>
 
 <script lang="ts">
-import { productStock, store } from '@/assets/js/api'
+import { exportExcel, productStock, store } from '@/assets/js/api'
 import { ProductStoreInfo, ProductStockInfo } from '@/types/productStock'
+import { productStockType } from '@/assets/js/dictionary'
 import Vue from 'vue'
 export default Vue.extend({
   data(): {
@@ -468,6 +615,64 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      productStockType: productStockType,
+      productTotalExcelFlag: false,
+      productLogExcelFlag: false,
+      productTotalExceDate: '',
+      productLogExcelDate: '',
+      productLogExcel: {
+        store_id: '',
+        category_id: '',
+        secondary_category_id: '',
+        client_id: '',
+        start_time: '',
+        end_time: '',
+        action_type: '',
+        client_arr: [],
+        category_arr: []
+      },
+      productTotalExcel: {
+        store_id: '',
+        category_id: '',
+        secondary_category_id: '',
+        client_id: '',
+        start_time: '',
+        end_time: '',
+        action_type: '',
+        client_arr: [],
+        category_arr: []
+      },
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker: any) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }
+        ]
+      },
       loading: true,
       productShow: false,
       productId: '',
@@ -534,6 +739,32 @@ export default Vue.extend({
     }
   },
   methods: {
+    exportProductLogExcel() {
+      this.productLogExcel.start_time = this.productLogExcelDate.length > 0 ? this.productLogExcelDate[0] : ''
+      this.productLogExcel.end_time = this.productLogExcelDate.length > 0 ? this.productLogExcelDate[1] : ''
+      this.loading = true
+      exportExcel.productLog(this.productLogExcel).then((res) => {
+        if (res.data.status) {
+          this.$message.success('导出成功')
+          this.$openUrl(res.data.data)
+        }
+        this.loading = false
+        this.productLogExcelFlag = false
+      })
+    },
+    exportProductTotalExcel() {
+      this.productTotalExcel.start_time = this.productTotalExceDate.length > 0 ? this.productTotalExceDate[0] : ''
+      this.productTotalExcel.end_time = this.productTotalExceDate.length > 0 ? this.productTotalExceDate[1] : ''
+      this.loading = true
+      exportExcel.productTotal(this.productTotalExcel).then((res) => {
+        if (res.data.status) {
+          this.$message.success('导出成功')
+          this.$openUrl(res.data.data)
+        }
+        this.loading = false
+        this.productTotalExcelFlag = false
+      })
+    },
     getStoreSelect() {
       store
         .list({
