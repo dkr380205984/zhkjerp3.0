@@ -126,15 +126,15 @@
             <div class="col">关联订单号</div>
             <div class="col">生产单位</div>
             <div class="col">合计计划数量</div>
-            <div class="col" style="flex:1.3">合计计划金额</div>
-            <div class="col">检验入库数量</div>
-            <div class="col">半次/全次数</div>
+            <div class="col" style="flex: 1.3">合计计划金额</div>
+            <div class="col" style="flex: 1.9">检验入库数量</div>
+            <div class="col" style="flex: 0.8">半次/全次数</div>
             <div class="col">加工工序</div>
             <div class="col">生产状态</div>
             <div class="col">审核状态</div>
             <div class="col">创建人</div>
             <div class="col" style="flex: 1.4">创建时间</div>
-            <div class="col" style="flex: 2">操作</div>
+            <div class="col" style="flex: 2.08">操作</div>
           </div>
           <div v-for="(item, index) in list" :key="index">
             <div class="row">
@@ -168,9 +168,14 @@
               </div>
               <div class="col">{{ item.client_name }}</div>
               <div class="col">{{ (+item.total_number).toFixed(2) }}</div>
-              <div class="col" style="flex:1.3">{{ (+item.total_price).toFixed(2) }}</div>
-              <div class="col">{{ (+item.total_real_number).toFixed(2) }}</div>
-              <div class="col">
+              <div class="col" style="flex: 1.3">{{ (+item.total_price).toFixed(2) }}</div>
+              <div class="col" style="flex: 1.9">
+                <div>{{ (+item.total_real_number).toFixed(2) }}</div>
+                （<span :class="item.total_real_number - item.total_number >= 0 ? 'green' : 'red'"
+                  >{{ (((item.total_real_number - item.total_number) / item.total_number) * 100).toFixed(0) }}%</span
+                >）
+              </div>
+              <div class="col" style="flex: 0.8">
                 <span :class="{ gray: !item.total_part_shoddy_number, orange: item.total_part_shoddy_number }">{{
                   item.total_part_shoddy_number || '0'
                 }}</span
@@ -194,7 +199,7 @@
               </div>
               <div class="col">{{ item.user_name }}</div>
               <div class="col" style="flex: 1.4">{{ item.created_at }}</div>
-              <div class="col" style="flex: 2">
+              <div class="col" style="flex: 2.08">
                 <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
                 <span class="opr hoverBlue" @click="openPrint(item)">打印</span>
                 <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
