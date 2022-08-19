@@ -510,7 +510,17 @@ export default Vue.extend({
       exportJiDu: '',
       exportMonth: '',
       process: '',
-      processList: [],
+      processList: [
+        {
+          label: '织造工序',
+          value: '织造工序',
+          children: [
+            { label: '针织织造', value: '针织织造', process_desc: '' },
+            { label: '梭织织造', value: '梭织织造', process_desc: '' },
+            { label: '制版费', value: '制版费', process_desc: '' }
+          ]
+        }
+      ],
       monthList: [],
       additional: {},
       reviewerParams: {
@@ -1179,6 +1189,7 @@ export default Vue.extend({
           children: arr
         })
       })
+      this.processList.push()
     })
     this.getFilters()
     this.getList()
