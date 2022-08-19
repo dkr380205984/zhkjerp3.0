@@ -1019,7 +1019,8 @@
                   @click="$openUrl('/order/detail?id=' + item.top_order_id)">{{ item.order_code || '无编号'}}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
-                <div class="col numberWidth">{{ $toFixed(item.total_push_number) }}</div>
+                <div class="col numberWidth"
+                  :class="{'red':Number(item.total_push_number)<Number(item.total_number)}">{{ $toFixed(item.total_push_number) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_push_price) }}</div>
                 <div class="col">
                   <div v-if="item.is_check === 0"
@@ -1367,7 +1368,9 @@
                   @click="$openUrl('/order/detail?id=' + item.top_order_id)">{{ item.order_code}}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
                 <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
-                <div class="col numberWidth">{{ $toFixed(item.total_real_number) }}</div>
+
+                <div class="col numberWidth"
+                  :class="{'red':Number(item.total_real_number)<Number(item.total_number)}">{{ $toFixed(item.total_real_number) }} ({{Number(item.total_real_number)>Number(item.total_number)?'+':''}}{{parseInt((Number(item.total_real_number)-Number(item.total_number))/Number(item.total_number)*100) + '%'}})</div>
                 <div class="col">
                   <div v-if="item.is_check === 0"
                     class="orange">未审核</div>
