@@ -1550,7 +1550,8 @@ export default Vue.extend({
       ])
       if (!formCheck) {
         this.loading = true
-        this.materialOrderUpdataInfo.order_id = this.$route.query.id as string
+        this.materialOrderUpdataInfo.order_id = this.orderInfo.time_data[this.orderIndex].id
+        // this.materialOrderUpdataInfo.order_id = this.$route.query.id as string
         materialOrder.create({ data: [this.materialOrderUpdataInfo] }).then((res) => {
           if (res.data.status) {
             this.$message.success('修改成功')
