@@ -248,7 +248,7 @@
                           style="margin-left:4px"></i>
                       </el-tooltip>
                     </div>
-                    <div class="col">预计数量</div>
+                    <div class="col">预计数量/描述</div>
                     <div class="col">预计损耗</div>
                     <div class="col">单价</div>
                     <div class="col">总价</div>
@@ -265,7 +265,10 @@
                         </span>
                       </div>
                     </div>
-                    <div class="col">{{itemYarn.weight}}{{itemYarn.unit}}
+                    <div class="col"
+                      v-if="itemYarn.desc">{{itemYarn.desc}}</div>
+                    <div class="col"
+                      v-if="!itemYarn.desc">{{itemYarn.weight}}{{itemYarn.unit}}
                       <div class="tips"
                         v-if="compareDesc[index] && compareDesc[index].material_data[indexYarn].weightChange">
                         <span :class="{'lightRed':compareDesc[index].material_data[indexYarn].weightChange==='up','lightGreen':compareDesc[index].material_data[indexYarn].weightChange==='down'}">
@@ -1076,7 +1079,8 @@ export default Vue.extend({
                 loss: '',
                 price: '',
                 total_price: '',
-                unit: 'kg'
+                unit: 'kg',
+                desc: ''
               }
             ],
             assist_material_data: [
@@ -1086,7 +1090,8 @@ export default Vue.extend({
                 loss: '',
                 price: '',
                 total_price: '',
-                unit: ''
+                unit: '',
+                desc: ''
               }
             ],
             weave_data: [
@@ -1182,7 +1187,8 @@ export default Vue.extend({
                 loss: '',
                 price: '',
                 total_price: '',
-                unit: 'kg'
+                unit: 'kg',
+                desc: ''
               }
             ],
             assist_material_data: [
@@ -1192,7 +1198,8 @@ export default Vue.extend({
                 loss: '',
                 price: '',
                 total_price: '',
-                unit: ''
+                unit: '',
+                desc: ''
               }
             ],
             weave_data: [

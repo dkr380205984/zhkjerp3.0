@@ -313,6 +313,14 @@
                     <div class="text">{{item.plan_code}}</div>
                   </div>
                   <div class="col">
+                    <div class="label">额外费用：</div>
+                    <div class="text">
+                      <others-fee-data :data="item.others_fee_data"></others-fee-data>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
                     <div class="label">备注信息：</div>
                     <div class="text"
                       :class="{'gray':!item.desc}">{{item.desc || '无'}}</div>
@@ -1882,6 +1890,52 @@
                 </div>
               </div>
             </div>
+            <div class="row"
+              v-for="(itemOther,indexOther) in productionPlanUpdateInfo.others_fee_data"
+              :key="'other'+indexOther">
+              <div class="col">
+                <div class="label"
+                  v-if="indexOther===0">
+                  <span class="text">额外费用名称</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input placeholder="请输入额外费用名称"
+                    v-model="itemOther.name"></el-input>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label"
+                  v-if="indexOther===0">
+                  <span class="text">额外费用金额</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input placeholder="请输入额外费用金额"
+                    v-model="itemOther.price">
+                    <template slot="append">元</template>
+                  </el-input>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label"
+                  v-if="indexOther===0">
+                  <span class="text">额外费用备注</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input placeholder="请输入额外费用备注"
+                    v-model="itemOther.desc"></el-input>
+                </div>
+              </div>
+              <div class="opr hoverBlue"
+                v-if="indexOther===0"
+                @click="$addItem(item.others_fee_data,{
+                  desc: '',
+                  name: '',
+                  price: ''
+                })">添加</div>
+              <div class="opr hoverRed"
+                v-if="indexOther>0"
+                @click="$deleteItem(item.others_fee_data,indexOther)">删除</div>
+            </div>
           </div>
         </div>
         <div class="oprCtn">
@@ -2620,7 +2674,7 @@ export default Vue.extend({
           value: '成品加工工序',
           children: this.$store.state.api.staffProcess.arr.map((item: any) => {
             return {
-              label: item.name,
+              label: item.code ? item.code + '-' + item.name : item.name,
               value: item.name,
               process_desc: item.process_desc
             }
@@ -2631,7 +2685,7 @@ export default Vue.extend({
           value: '半成品加工工序',
           children: this.$store.state.api.halfProcess.arr.map((item: any) => {
             return {
-              label: item.name,
+              label: item.code ? item.code + '-' + item.name : item.name,
               value: item.name,
               process_desc: item.process_desc
             }

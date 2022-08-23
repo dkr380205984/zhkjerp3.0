@@ -617,12 +617,12 @@
               <span class="text">批量扣款</span>
             </div>
             <div class="btn backHoverOrange"
-              @click="updatePriceFlag=true">
+              @click="updatePriceFlag = true">
               <svg class="iconFont"
                 aria-hidden="true">
                 <use xlink:href="#icon-xiugaidingdan"></use>
               </svg>
-              <span class="text">修改单价</span>
+              <span class="text">更新结算单价</span>
             </div>
             <div class="btn backHoverBlue"
               @click="changeShowAll(materialOrderList)">
@@ -2668,6 +2668,7 @@
       @close="productShow = false"></product-detail>
     <!-- 批量修改结算单价功能 -->
     <div class="popup"
+      id="updatePrice"
       v-show="updatePriceFlag">
       <div class="main">
         <div class="titleCtn">
@@ -2678,75 +2679,80 @@
           </div>
         </div>
         <div class="contentCtn">
-          <!-- <div class="description">搜索物料订购信息批量修改结算单价。</div> -->
-          <div class="row">
-            <div class="label">物料名称：</div>
-            <div class="info elCtn">
-              <el-autocomplete v-model="updatePriceInfo.material_name"
-                :fetch-suggestions="searchMaterial"
-                placeholder="物料名称搜索"></el-autocomplete>
+          <div class="explainCtn">必须筛选日期后才能进行搜索（注意日期跨度尽量不要超过三个月）</div>
+          <div class="listCtn">
+            <div class="filterCtn">
+              <div class="elCtn">
+                <el-autocomplete v-model="updatePriceInfo.material_name"
+                  :fetch-suggestions="searchMaterial"
+                  placeholder="物料名称搜索"></el-autocomplete>
+              </div>
+              <div class="elCtn">
+                <el-autocomplete :fetch-suggestions="searchAttribute"
+                  v-model="updatePriceInfo.attribute"
+                  placeholder="物料属性"></el-autocomplete>
+              </div>
+              <div class="elCtn">
+                <el-select v-model="updatePriceInfo.material_color"
+                  placeholder="请选择种类"
+                  clearable>
+                  <el-option label="色纱"
+                    value="色纱"></el-option>
+                  <el-option label="白胚"
+                    value="白胚"></el-option>
+                </el-select>
+              </div>
+              <div class="elCtn"
+                style="width:250px">
+                <el-date-picker v-model="updatePriceInfo.date"
+                  type="daterange"
+                  align="right"
+                  unlink-panels
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  :picker-options="pickerOptions"
+                  value-format="yyyy-MM-dd"
+                  @change="getMatStsList">
+                </el-date-picker>
+              </div>
+            </div>
+            <div class="tableCtn">
+              <div class="thead">
+                <div class="trow">
+                  <div class="tcol">日期</div>
+                  <div class="tcol noPad"
+                    style="flex:9">
+                    <div class="trow">
+                      <div class="tcol">序号</div>
+                      <div class="tcol">原料名称</div>
+                      <div class="tcol">颜色</div>
+                      <div class="tcol">属性</div>
+                      <div class="tcol">订购单价</div>
+                      <div class="tcol">订购总数</div>
+                      <div class="tcol">结算单价</div>
+                      <div class="tcol">填写时间</div>
+                      <div class="tcol">填写人</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tbody">
+                <div class="trow">
+                  <div class="tcol"
+                    style="text-align:center">
+                    请筛选日期后搜索纱线数据
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="row">
-            <div class="label">物料属性：</div>
-            <div class="info elCtn">
-              <el-autocomplete :fetch-suggestions="searchAttribute"
-                v-model="updatePriceInfo.attribute"
-                placeholder="物料属性"></el-autocomplete>
-            </div>
-          </div>
-          <div class="row">
-            <div class="label">物料颜色：</div>
-            <div class="info elCtn">
-              <el-radio style="line-height:32px"
-                v-model="updatePriceInfo.material_color"
-                :label="null">色纱</el-radio>
-              <el-radio style="line-height:32px"
-                v-model="updatePriceInfo.material_color"
-                :label="'白胚'">白胚</el-radio>
-            </div>
-          </div>
-          <div class="row">
-            <div class="label">日期范围：</div>
-            <div class="info elCtn">
-              <el-date-picker v-model="updatePriceInfo.date"
-                type="daterange"
-                align="right"
-                unlink-panels
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                :picker-options="pickerOptions"
-                value-format="yyyy-MM-dd">
-              </el-date-picker>
-            </div>
-          </div>
-          <div class="row">
-            <div class="label">结算单价：</div>
-            <div class="info elCtn">
-              <el-input v-model="updatePriceInfo.settle_price"
-                placeholder="请输入结算单价">
-                <template slot="append">元</template>
-              </el-input>
-            </div>
-          </div>
-          <!-- <div class="row">
-            <div class="label">修改范围：</div>
-            <div class="info elCtn">
-              <el-radio style="line-height:32px"
-                v-model="updatePriceInfo.client_id"
-                :label="$route.query.id">仅当前付款单位</el-radio>
-              <el-radio style="line-height:32px"
-                v-model="updatePriceInfo.client_id"
-                :label="null">所有单位</el-radio>
-            </div>
-          </div> -->
         </div>
         <div class="oprCtn">
           <span class="btn borderBtn"
             @click="updatePriceFlag=false">取消</span>
           <span class="btn backHoverBlue"
-            @click="saveUpdatePrice">确认修改</span>
+            @click="saveUpdatePrice">提交更新</span>
         </div>
       </div>
     </div>
@@ -2982,6 +2988,7 @@ export default Vue.extend({
         date: [],
         client_id: null
       },
+      updatePriceList: [],
       yarnAttributeList: yarnAttributeArr,
       yarnList: []
     }
@@ -3008,6 +3015,19 @@ export default Vue.extend({
     }
   },
   methods: {
+    getMatStsList(date: string[]) {
+      materialOrder
+        .stsList({
+          client_id: Number(this.$route.query.id),
+          start_time: date[0],
+          end_time: date[1]
+        })
+        .then((res) => {
+          if (res.data.status) {
+            // const mergeList = this.$mergeData(res.data.data)
+          }
+        })
+    },
     // 物料订购单跳转
     openMaterialOrder(info: any) {
       if (info.plan_id) {

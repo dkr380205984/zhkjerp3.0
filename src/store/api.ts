@@ -336,7 +336,8 @@ const apiActions = {
         content.commit('getHalfProcess', res.data.data.map((item: any) => {
           return {
             id: item.id,
-            name: item.code ? (item.code + '-' + item.name) : item.name
+            name: item.name,
+            code: item.code
           }
         }))
       }
@@ -350,7 +351,8 @@ const apiActions = {
         content.commit('getStaffProcess', res.data.data.map((item: any) => {
           return {
             id: item.id,
-            name: item.code ? (item.code + '-' + item.name) : item.name
+            name: item.name,
+            code: item.code
           }
         }))
       }
