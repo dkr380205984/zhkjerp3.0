@@ -128,7 +128,7 @@
               <div class="col" style="flex: 0.05">
                 <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
               </div>
-              <div class="col" style="flex: 1.2">{{ item.code }}</div>
+              <div class="col hoverBlue" style="flex: 1.2;cursor:pointer" @click="$router.push('/materialManage/detail?id='+item.plan_id)">{{ item.code }}</div>
               <div
                 class="col hoverBlue"
                 style="

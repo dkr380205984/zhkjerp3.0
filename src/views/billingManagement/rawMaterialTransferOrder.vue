@@ -118,7 +118,13 @@
               <div class="col" style="flex: 0.05">
                 <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
               </div>
-              <div class="col" style="flex: 1.2">{{ item.code }}</div>
+              <div
+                class="col hoverBlue"
+                style="flex: 1.2; cursor: pointer"
+                @click="$router.push('/materialManage/detail?id=' + item.rel_doc_id)"
+              >
+                {{ item.code }}
+              </div>
               <div
                 class="col hoverBlue"
                 style="
@@ -832,7 +838,8 @@ export default Vue.extend({
         .list({
           start_time: start_time,
           end_time: end_time,
-          export_excel: 1
+          export_excel: 1,
+          action_type: [10, 12]
         })
         .then((res) => {
           window.location.href = res.data.data

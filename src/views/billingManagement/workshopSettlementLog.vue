@@ -109,7 +109,7 @@
               <div class="col" style="flex: 0.05">
                 <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
               </div>
-              <div class="col">{{ item.id }}</div>
+              <div class="col hoverBlue" style="cursor:pointer" @click="$router.push('/workshopManagement/staffInputDetail?id='+item.staff_id)">{{ item.id }}</div>
               <div
                 class="col hoverBlue"
                 style="
