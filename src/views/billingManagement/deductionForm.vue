@@ -110,7 +110,7 @@
               <div class="col" style="flex: 0.05">
                 <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
               </div>
-              <div class="col" style="flex: 1.3">{{ item.code || '无' }}</div>
+              <div class="col hoverBlue" style="flex: 1.3;cursor:pointer" @click="$router.push('/settlement/collectionDetail?id='+item.client_id)">{{ item.code || '无' }}</div>
               <div
                 class="col hoverBlue"
                 style="
