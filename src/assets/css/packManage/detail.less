@@ -1,6 +1,7 @@
 @import '../common.less';
 @import '../table.less';
 @import '../detail.less';
+@import '../list.less';
 @import '../buttonList.less';
 @import '../fixedTable.less';
 @import '../popup.less';
@@ -8,6 +9,15 @@
 @import '../bottomBar.less';
 
 #packManageDetail {
+  .list {
+    .otherInfo {
+      border-top: 0;
+      border: 1px solid rgb(232, 232, 232);
+      transform: translateY(-1px);
+      box-shadow: 0 0;
+    }
+  }
+
   .backGray {
     background: @font25;
     cursor: not-allowed;
@@ -62,6 +72,13 @@
   .popup {
     .main {
       width: 1200px;
+
+      .rowCtn {
+        padding: 12px;
+        background: #dcdcdc;
+        border: 1px dotted #aaa;
+        border-top: 0;
+      }
 
       .label {
         line-height: 38px;
@@ -122,10 +139,4 @@
     }
   }
 
-  .rowCtn {
-    padding: 12px;
-    background: #dcdcdc;
-    border: 1px dotted #aaa;
-    border-top: 0;
-  }
 }

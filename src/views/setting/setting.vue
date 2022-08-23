@@ -6342,7 +6342,8 @@ export default Vue.extend({
             loss: '',
             price: '',
             total_price: '',
-            unit: 'kg'
+            unit: 'kg',
+            desc: ''
           }
         ],
         assist_material_data: [
@@ -6353,7 +6354,8 @@ export default Vue.extend({
             loss: '',
             price: '',
             total_price: '',
-            unit: ''
+            unit: '',
+            desc: ''
           }
         ],
         weave_data: [
@@ -9040,7 +9042,8 @@ export default Vue.extend({
                 loss: '',
                 price: '',
                 total_price: '',
-                unit: 'kg'
+                unit: 'kg',
+                desc: ''
               }
             ],
             assist_material_data: [
@@ -9051,7 +9054,8 @@ export default Vue.extend({
                 loss: '',
                 price: '',
                 total_price: '',
-                unit: ''
+                unit: '',
+                desc: ''
               }
             ],
             weave_data: [

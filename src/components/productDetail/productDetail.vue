@@ -166,9 +166,29 @@
                           </div>
                         </div>
                         <div class="menu">
-                          <span class="opration">打印</span>
+                          <span class="opration"
+                            @click="productInfo.craft_list_id?$openUrl('/craft/print?id='+productInfo.craft_list_id):$message.error('暂无工艺单')">打印</span>
                           <span class="opration"
                             @click="productInfo.craft_list_id?$openUrl('/craft/detail?id='+productInfo.craft_list_id):$openUrl('/craft/create?id='+productInfo.id)">{{productInfo.craft_list_id?'详情':'添加'}}</span>
+                        </div>
+                      </div>
+                      <div class="rect">
+                        <div class="rectMain">
+                          <div class="icon"
+                            :class="productInfo.quote_rel_product_id?'yellow':'gray'">
+                            <img :src="require('@/assets/image/common/price_icon.png')" />
+                          </div>
+                          <div class="rectContent">
+                            <div class="text title">报价单</div>
+                            <!-- <div class="text">创建人没给</div>
+                            <div class="text">创建时间没给</div> -->
+                          </div>
+                        </div>
+                        <div class="menu">
+                          <span class="opration"
+                            @click="productInfo.quote_rel_product_id?$openUrl('/quotedPrice/print?id='+productInfo.quote_rel_product_id):$message.error('暂无报价单')">打印</span>
+                          <span class="opration"
+                            @click="productInfo.quote_rel_product_id?$openUrl('/quotedPrice/detail?id='+productInfo.quote_rel_product_id):$message.error('暂无报价单')">{{productInfo.quote_rel_product_id?'详情':'无操作'}}</span>
                         </div>
                       </div>
                     </div>
