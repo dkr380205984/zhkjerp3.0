@@ -452,6 +452,12 @@
                     v-model="itemYarn.desc"
                     placeholder="面料描述"
                     :disabled="itemYarn.tree_data.length===0">
+                    <template slot="append">
+                      <input class="unit"
+                        v-model="itemYarn.unit"
+                        placeholder="单位"
+                        :disabled="itemYarn.tree_data.length===0" />
+                    </template>
                   </el-input>
                 </div>
               </div>
@@ -1505,6 +1511,9 @@ export default Vue.extend({
     // 获取纱线报价
     getYarnPrice(ev: number[], info: any) {
       if (ev && ev.length > 0) {
+        if (ev[0] === 2) {
+          info.unit = 'm'
+        }
         yarn
           .detail({
             id: ev[2]
@@ -1799,13 +1808,13 @@ export default Vue.extend({
                       key: 'tree_data',
                       errMsg: '请选择产品' + (index + 1) + '原料',
                       regNormal: 'checkArr'
+                    },
+                    {
+                      key: 'unit',
+                      errMsg: '物料的单位只能为g，kg或m',
+                      regExp: /^g$|^m$|^kg$/,
+                      regNegate: true
                     }
-                    // {
-                    //   key: 'unit',
-                    //   errMsg: '物料的单位只能为g，kg或m',
-                    //   regExp: /^g$|^m$|^kg$/,
-                    //   regNegate: true
-                    // }
                   ])
                 )
               }) ||

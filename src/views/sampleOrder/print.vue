@@ -151,8 +151,9 @@
           <div class="tbody">
             <div class="trow"
               style="min-height:120px">
-              <div class="tcol">{{sampleInfo.desc || '无'}}</div>
-              <div class="tcol">暂无</div>
+              <div class="tcol"
+                v-html="sampleInfo.desc"></div>
+              <div class="tcol"></div>
               <div class="tcol"
                 v-for="(item,index) in sampleInfo.image_data"
                 :key="index">

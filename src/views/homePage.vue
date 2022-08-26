@@ -944,14 +944,14 @@ export default Vue.extend({
           id: '18-3',
           icon: 'icon-chexiaodanguanli',
           url: '/reimbursementManage/list?page=1&status='
-        },
-        {
-          opr: '财务结算',
-          isChecked: false,
-          id: 22,
-          icon: 'icon-chexiaodanguanli',
-          url: '/settlement/collectionList?page=1&status='
         }
+        // {
+        //   opr: '财务结算',
+        //   isChecked: false,
+        //   id: 22,
+        //   icon: 'icon-chexiaodanguanli',
+        //   url: '/settlement/collectionList?page=1&status='
+        // }
       ],
       searchList: {
         order: [],

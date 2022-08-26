@@ -112,7 +112,7 @@
                     {{ itemYarn.material_name }}
                   </div>
                   <div class="tcol">
-                    <template v-if="!itemYarn.weight">{{ itemYarn.weight }}{{ itemYarn.unit }}</template>
+                    <template v-if="itemYarn.weight">{{ itemYarn.weight }}{{ itemYarn.unit }}</template>
                     <template v-if="itemYarn.desc">{{ itemYarn.desc }}</template>
                   </div>
                   <div class="tcol">{{ itemYarn.loss }}%</div>

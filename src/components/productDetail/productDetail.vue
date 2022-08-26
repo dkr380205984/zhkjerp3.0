@@ -180,15 +180,38 @@
                           </div>
                           <div class="rectContent">
                             <div class="text title">报价单</div>
-                            <!-- <div class="text">创建人没给</div>
-                            <div class="text">创建时间没给</div> -->
                           </div>
                         </div>
                         <div class="menu">
-                          <span class="opration"
-                            @click="productInfo.quote_rel_product_id?$openUrl('/quotedPrice/print?id='+productInfo.quote_rel_product_id):$message.error('暂无报价单')">打印</span>
-                          <span class="opration"
-                            @click="productInfo.quote_rel_product_id?$openUrl('/quotedPrice/detail?id='+productInfo.quote_rel_product_id):$message.error('暂无报价单')">{{productInfo.quote_rel_product_id?'详情':'无操作'}}</span>
+                          <template v-if="productInfo.quote_rel_product_id">
+                            <span class="opration"
+                              @click="$openUrl('/quotedPrice/print?id='+productInfo.quote_rel_product_id)">打印</span>
+                            <span class="opration"
+                              @click="$openUrl('/quotedPrice/detail?id='+productInfo.quote_rel_product_id)">详情</span>
+                          </template>
+                          <template v-else>
+                            <span class="opration">无操作</span>
+                          </template>
+                        </div>
+                      </div>
+                      <div class="rect">
+                        <div class="rectMain">
+                          <div class="icon"
+                            :class="productInfo.quote_rel_product_id?'yellow':'gray'">
+                            <img :src="require('@/assets/image/common/plan_icon.png')" />
+                          </div>
+                          <div class="rectContent">
+                            <div class="text title">订单</div>
+                          </div>
+                        </div>
+                        <div class="menu">
+                          <template v-if="productInfo.order_id">
+                            <span class="opration"
+                              @click="$openUrl('/order/detail?id='+productInfo.order_id)">详情</span>
+                          </template>
+                          <template v-else>
+                            <span class="opration">无操作</span>
+                          </template>
                         </div>
                       </div>
                     </div>

@@ -943,6 +943,7 @@
         <div class="titleCtn">
           <div class="title"
             style="display: flex;align-items: center;">财务概览
+            <span style="font-size:14px;margin-left:8px">(绑定报价单后可进行流程工序价格对比)</span>
           </div>
         </div>
         <template>

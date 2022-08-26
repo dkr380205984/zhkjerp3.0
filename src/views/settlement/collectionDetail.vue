@@ -238,10 +238,10 @@
               clearable>
               <el-option v-for="item in unitArr"
                 :key="item.name"
-                :label="item.name"
+                :label="item.label"
                 :value="item.name"
                 class="between">
-                <span>{{item.name}}</span>
+                <span>{{item.label}}</span>
                 <span class="gray">({{item.short}})</span>
               </el-option>
             </el-select>
@@ -504,10 +504,10 @@
               clearable>
               <el-option v-for="item in unitArr"
                 :key="item.name"
-                :label="item.name"
+                :label="item.label"
                 :value="item.name"
                 class="between">
-                <span>{{item.name}}</span>
+                <span>{{item.label}}</span>
                 <span class="gray">({{item.short}})</span>
               </el-option>
             </el-select>
@@ -826,6 +826,15 @@ export default Vue.extend({
           unitKey: 'settle_unit'
         },
         {
+          key: 'total_transport_price',
+          name: '发货总额',
+          ifShow: true,
+          ifLock: false,
+          index: 10,
+          errVal: '0',
+          unitKey: 'settle_unit'
+        },
+        {
           key: 'invoice_status',
           name: '开票状态',
           ifShow: true,
@@ -916,15 +925,6 @@ export default Vue.extend({
           ifLock: false,
           index: 9,
           errVal: '0'
-        },
-        {
-          key: 'total_transport_price',
-          name: '发货总额',
-          ifShow: true,
-          ifLock: false,
-          index: 10,
-          errVal: '0',
-          unitKey: 'settle_unit'
         }
       ],
       oprList: [

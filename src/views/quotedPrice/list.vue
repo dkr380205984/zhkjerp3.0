@@ -281,7 +281,7 @@ export default Vue.extend({
           ifLock: false,
           index: 6,
           errVal: '0',
-          unit: '元'
+          unitKey: 'settle_unit'
         },
         {
           key: 'has_order',

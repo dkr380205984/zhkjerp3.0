@@ -94,7 +94,8 @@
         </div>
         <div class="description">当前统计默认值：下单年份：{{year}}年；下单客户：默认所有；币种：{{settle_unit||'所有'}}；合作状态：{{status===0?'暂停合作':status===1?'合作中':'全部'}}</div>
         <div class="list"
-          v-loading="loading">
+          v-loading="loading"
+          style="font-size:14px">
           <div class="row title">
             <div class="col">公司简称</div>
             <div class="col">公司全称</div>
@@ -319,8 +320,9 @@
               style="line-height:32px">选择年份：</div>
             <div class="elCtn info">
               <el-date-picker type="year"
-                v-model="excelYear"
-                placeholder="选择年份"></el-date-picker>
+                v-model="yearExcel"
+                placeholder="选择年份"
+                value-format="yyyy"></el-date-picker>
             </div>
           </div>
         </div>
@@ -345,8 +347,7 @@ export default Vue.extend({
   } {
     return {
       clientTypeExcel: '',
-      yearExcel: '',
-      excelYear: '',
+      yearExcel: new Date().getFullYear().toString(),
       excelFlag: false,
       loading: true,
       keyword: '',
@@ -394,7 +395,24 @@ export default Vue.extend({
     }
   },
   methods: {
-    exportExcel() {},
+    exportExcel() {
+      if (!this.clientTypeExcel || !this.yearExcel) {
+        this.$message.error('请选择类型和年份')
+        return
+      }
+      client
+        .financialList({
+          client_type_id: [this.clientTypeExcel],
+          year: this.yearExcel,
+          export_excel: 1
+        })
+        .then((res) => {
+          if (res.data.status) {
+            window.location.href = res.data.data
+            this.$message.success('导出成功')
+          }
+        })
+    },
     getClientTag(ev: number) {
       if (ev) {
         this.clientTagList = this.clientTypeList.find((item: { id: number }) => item.id === ev).children

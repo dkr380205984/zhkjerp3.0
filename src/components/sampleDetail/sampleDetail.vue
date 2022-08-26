@@ -147,14 +147,54 @@
                           </div>
                           <div class="rectContent">
                             <div class="text title">工艺单</div>
-                            <!-- <div class="text">创建人没给</div>
-                            <div class="text">创建时间没给</div> -->
                           </div>
                         </div>
                         <div class="menu">
                           <span class="opration">打印</span>
                           <span class="opration"
                             @click="sampleInfo.craft_list_id?$openUrl('/craft/detail?id='+sampleInfo.craft_list_id):$openUrl('/craft/create?id='+sampleInfo.id)">{{sampleInfo.craft_list_id?'详情':'添加'}}</span>
+                        </div>
+                      </div>
+                      <div class="rect">
+                        <div class="rectMain">
+                          <div class="icon"
+                            :class="sampleInfo.quote_rel_product_id?'yellow':'gray'">
+                            <img :src="require('@/assets/image/common/price_icon.png')" />
+                          </div>
+                          <div class="rectContent">
+                            <div class="text title">报价单</div>
+                          </div>
+                        </div>
+                        <div class="menu">
+                          <template v-if="sampleInfo.quote_rel_product_id">
+                            <span class="opration"
+                              @click="$openUrl('/quotedPrice/print?id='+sampleInfo.quote_rel_product_id)">打印</span>
+                            <span class="opration"
+                              @click="$openUrl('/quotedPrice/detail?id='+sampleInfo.quote_rel_product_id)">详情</span>
+                          </template>
+                          <template v-else>
+                            <span class="opration">无操作</span>
+                          </template>
+                        </div>
+                      </div>
+                      <div class="rect">
+                        <div class="rectMain">
+                          <div class="icon"
+                            :class="sampleInfo.quote_rel_product_id?'yellow':'gray'">
+                            <img :src="require('@/assets/image/common/plan_icon.png')" />
+                          </div>
+                          <div class="rectContent">
+                            <div class="text title">样单</div>
+                          </div>
+                        </div>
+                        <div class="menu">
+                          <template v-if="sampleInfo.order_id">
+                            <span class="opration"
+                              @click="$openUrl('/sampleOrder/detail?id='+sampleInfo.order_id)">详情</span>
+                          </template>
+                          <template v-else>
+                            <span class="opration">无操作</span>
+                          </template>
                         </div>
                       </div>
                     </div>

@@ -338,8 +338,10 @@
                     <div class="tcol">产品部位</div>
                     <div class="tcol">尺码颜色</div>
                     <div class="tcol">加工数量</div>
+                    <div class="tcol">检验/完成数量</div>
                     <div class="tcol">加工单价</div>
                     <div class="tcol">加工总价</div>
+                    <div class="tcol">检验/完成总价</div>
                   </div>
                 </div>
                 <div class="tbody">
@@ -356,8 +358,10 @@
                     </div>
                     <div class="tcol">{{itemPro.size_name?itemPro.size_name + '/' + itemPro.color_name:'未选择尺码颜色'}}</div>
                     <div class="tcol">{{itemPro.number}}</div>
+                    <div class="tcol">{{itemPro.inspection_number}}</div>
                     <div class="tcol">{{itemPro.price}}元</div>
                     <div class="tcol">{{$toFixed(itemPro.price*itemPro.number)}}元</div>
+                    <div class="tcol">{{$toFixed(itemPro.price*itemPro.inspection_number)}}元</div>
                   </div>
                 </div>
               </div>
@@ -1455,12 +1459,12 @@
                 </div>
                 <div class="col">
                   <div class="label">
-                    <span class="text">原分配单位</span>
+                    <span class="text">原分配工序</span>
                     <span class="explanation">(默认)</span>
                   </div>
                   <div class="info elCtn">
                     <el-input disabled
-                      placeholder="默认为加工单位"
+                      placeholder="默认为加工工序"
                       v-model="productionDivideInfo[0].process_name"></el-input>
                   </div>
                 </div>
@@ -1831,7 +1835,7 @@
                       <span class="explanation">(默认)</span>
                     </div>
                     <div class="info elCtn">
-                      <el-input disabled
+                      <el-input :disabled="productionPlanUpdateInfo.material_info_data.length>0"
                         v-model="itemPro.number"
                         @input="(ev)=>{itemPro.total_price=$toFixed(Number(ev)*Number(itemPro.price))}"
                         placeholder="请输入数量">
@@ -2754,7 +2758,7 @@ export default Vue.extend({
         this.materialPlanList = res[0].data.data
         if (this.materialPlanList.length > 0) {
           this.materialPlanIndex = this.materialPlanList[0].id?.toString()
-          this.getMaterialPlanDetail(this.materialPlanIndex)
+          // this.getMaterialPlanDetail(this.materialPlanIndex) // 组件自带的before-leave会触发这个函数
         } else {
           this.$message.warning('该订单还未创建物料计划单,请填写计划单信息')
           this.$router.push('/materialPlan/create?id=' + this.$route.query.id)
@@ -3464,6 +3468,7 @@ export default Vue.extend({
       this.productionDivideInfo[index].id = ''
       this.productionDivideInfo[index].total_number = ''
       this.productionDivideInfo[index].product_info_data.forEach((item) => {
+        item.id = ''
         item.total_price = ''
         item.number = ''
         item.select_arr = item.product_id + '/' + item.part_id + '/' + item.size_id + '/' + item.color_id

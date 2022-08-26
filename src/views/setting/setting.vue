@@ -1797,8 +1797,8 @@
                   <div class="label">通知途径</div>
                   <div class="info elCtn">
                     <el-radio>默认包含系统通知</el-radio>
-                    <el-checkbox true-label='1'
-                      false-label='2'
+                    <el-checkbox :true-label="1"
+                      :false-label="2"
                       v-model="sampleOrderCheckConfig.data.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                   </div>
                 </div>
@@ -1885,8 +1885,8 @@
                     <div class="info elCtn"
                       style="margin-top:12px">
                       <el-radio>默认包含系统通知</el-radio>
-                      <el-checkbox true-label='1'
-                        false-label='2'
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
                         v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
@@ -1959,8 +1959,8 @@
                   <div class="label">通知途径</div>
                   <div class="info elCtn">
                     <el-radio>默认包含系统通知</el-radio>
-                    <el-checkbox true-label='1'
-                      false-label='2'
+                    <el-checkbox :true-label="1"
+                      :false-label="2"
                       v-model="orderCheckConfig.data.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                   </div>
                 </div>
@@ -2047,8 +2047,8 @@
                     <div class="info elCtn"
                       style="margin-top:12px">
                       <el-radio>默认包含系统通知</el-radio>
-                      <el-checkbox true-label='1'
-                        false-label='2'
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
                         v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
@@ -2197,8 +2197,8 @@
                     <div class="info elCtn"
                       style="margin-top:12px">
                       <el-radio>默认包含系统通知</el-radio>
-                      <el-checkbox true-label='1'
-                        false-label='2'
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
                         v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
@@ -2248,8 +2248,8 @@
                   <div class="label">通知途径</div>
                   <div class="info elCtn">
                     <el-radio>默认包含系统通知</el-radio>
-                    <el-checkbox true-label='1'
-                      false-label='2'
+                    <el-checkbox :true-label="1"
+                      :false-label="2"
                       v-model="materialPlanCheckConfig.data.update_notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                   </div>
                 </div>
@@ -2354,8 +2354,8 @@
                     <div class="info elCtn"
                       style="margin-top:12px">
                       <el-radio>默认包含系统通知</el-radio>
-                      <el-checkbox true-label='1'
-                        false-label='2'
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
                         v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
@@ -2416,8 +2416,8 @@
                   <div class="label">通知途径</div>
                   <div class="info elCtn">
                     <el-radio>默认包含系统通知</el-radio>
-                    <el-checkbox true-label='1'
-                      false-label='2'
+                    <el-checkbox :true-label="1"
+                      :false-label="2"
                       v-model="materialOrderCheckConfig.data.update_notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                   </div>
                 </div>
@@ -2460,8 +2460,8 @@
                     <div class="info elCtn"
                       style="margin-top:12px">
                       <el-radio>默认包含系统通知</el-radio>
-                      <el-checkbox true-label='1'
-                        false-label='2'
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
                         v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
@@ -2617,8 +2617,8 @@
                     <div class="info elCtn"
                       style="margin-top:12px">
                       <el-radio>默认包含系统通知</el-radio>
-                      <el-checkbox true-label='1'
-                        false-label='2'
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
                         v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
@@ -2668,8 +2668,8 @@
                   <div class="label">通知途径</div>
                   <div class="info elCtn">
                     <el-radio>默认包含系统通知</el-radio>
-                    <el-checkbox true-label='1'
-                      false-label='2'
+                    <el-checkbox :true-label="1"
+                      :false-label="2"
                       v-model="materialProcessCheckConfig.data.update_notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                   </div>
                 </div>
@@ -2761,8 +2761,8 @@
                     <div class="info elCtn"
                       style="margin-top:12px">
                       <el-radio>默认包含系统通知</el-radio>
-                      <el-checkbox true-label='1'
-                        false-label='2'
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
                         v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
@@ -2801,8 +2801,8 @@
                   <div class="label">通知途径</div>
                   <div class="info elCtn">
                     <el-radio>默认包含系统通知</el-radio>
-                    <el-checkbox true-label='1'
-                      false-label='2'
+                    <el-checkbox :true-label="1"
+                      :false-label="2"
                       v-model="materialStockCheckConfig.data.update_notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                   </div>
                 </div>
@@ -2845,8 +2845,8 @@
                     <div class="info elCtn"
                       style="margin-top:12px">
                       <el-radio>默认包含系统通知</el-radio>
-                      <el-checkbox true-label='1'
-                        false-label='2'
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
                         v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
@@ -2947,8 +2947,8 @@
                     <div class="info elCtn"
                       style="margin-top:12px">
                       <el-radio>默认包含系统通知</el-radio>
-                      <el-checkbox true-label='1'
-                        false-label='2'
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
                         v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
@@ -2998,8 +2998,8 @@
                   <div class="label">通知途径</div>
                   <div class="info elCtn">
                     <el-radio>默认包含系统通知</el-radio>
-                    <el-checkbox true-label='1'
-                      false-label='2'
+                    <el-checkbox :true-label="1"
+                      :false-label="2"
                       v-model="accessoriesOrderCheckConfig.data.update_notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                   </div>
                 </div>
@@ -3126,8 +3126,8 @@
                     <div class="info elCtn"
                       style="margin-top:12px">
                       <el-radio>默认包含系统通知</el-radio>
-                      <el-checkbox true-label='1'
-                        false-label='2'
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
                         v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
@@ -3177,8 +3177,8 @@
                   <div class="label">通知途径</div>
                   <div class="info elCtn">
                     <el-radio>默认包含系统通知</el-radio>
-                    <el-checkbox true-label='1'
-                      false-label='2'
+                    <el-checkbox :true-label="1"
+                      :false-label="2"
                       v-model="productionPlanCheckConfig.data.update_notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                   </div>
                 </div>
@@ -3221,8 +3221,8 @@
                     <div class="info elCtn"
                       style="margin-top:12px">
                       <el-radio>默认包含系统通知</el-radio>
-                      <el-checkbox true-label='1'
-                        false-label='2'
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
                         v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
@@ -3336,8 +3336,8 @@
                     <div class="info elCtn"
                       style="margin-top:12px">
                       <el-radio>默认包含系统通知</el-radio>
-                      <el-checkbox true-label='1'
-                        false-label='2'
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
                         v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
@@ -3462,8 +3462,8 @@
                     <div class="info elCtn"
                       style="margin-top:12px">
                       <el-radio>默认包含系统通知</el-radio>
-                      <el-checkbox true-label='1'
-                        false-label='2'
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
                         v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
@@ -3526,8 +3526,8 @@
                     <div class="info elCtn"
                       style="margin-top:12px">
                       <el-radio>默认包含系统通知</el-radio>
-                      <el-checkbox true-label='1'
-                        false-label='2'
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
                         v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
@@ -3641,8 +3641,8 @@
                     <div class="info elCtn"
                       style="margin-top:12px">
                       <el-radio>默认包含系统通知</el-radio>
-                      <el-checkbox true-label='1'
-                        false-label='2'
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
                         v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
                     </div>
                   </div>
@@ -4078,7 +4078,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="label">加工工序：</div>
+              <div class="label isMust">加工工序：</div>
               <div class="info">
                 <el-input placeholder="请输入加工工序"
                   v-model="halfProcessInfo.name"></el-input>
@@ -4124,7 +4124,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="label">成品加工工序：</div>
+              <div class="label isMust">成品加工工序：</div>
               <div class="info">
                 <el-input placeholder="请输入成品加工工序"
                   v-model="staffProcessInfo.name"></el-input>

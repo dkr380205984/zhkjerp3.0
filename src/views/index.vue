@@ -250,6 +250,12 @@ export default Vue.extend({
           url: '/billingManagement/rawMaterialPlan?page=1'
         },
         {
+          name: '财务结算',
+          id: 22,
+          icon: 'icon-shujubaobiao',
+          url: '/settlement/collectionList?page=1&status='
+        },
+        {
           name: '其它管理',
           id: null,
           icon: 'icon-qitaguanli1',

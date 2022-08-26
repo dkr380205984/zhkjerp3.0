@@ -292,7 +292,8 @@
                       v-model="itemYarn.tree_data"
                       :options="yarnTypeList"
                       clearable
-                      filterable></el-cascader>
+                      filterable
+                      @change="(ev)=>{ev[0]==='2'?itemYarn.unit='m':''}"></el-cascader>
                   </div>
                 </div>
               </div>
@@ -332,6 +333,12 @@
                     v-model="itemYarn.desc"
                     placeholder="面料描述"
                     :disabled="itemYarn.tree_data.length===0">
+                    <template slot="append">
+                      <input class="unit"
+                        v-model="itemYarn.unit"
+                        placeholder="单位"
+                        :disabled="itemYarn.tree_data.length===0" />
+                    </template>
                   </el-input>
                 </div>
               </div>
