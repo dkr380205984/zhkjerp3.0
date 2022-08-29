@@ -221,7 +221,7 @@ export default Vue.extend({
   methods: {
     getFilters() {
       const query = this.$route.query
-      this.page = Number(query.page)
+      this.page = Number(query.page) || 1
       this.search_client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.material_type = Number(query.material_type) || ''
       this.material_name = query.material_name || ''
@@ -272,7 +272,7 @@ export default Vue.extend({
           keyword: this.keyword,
           client_id: this.search_client_id.length > 0 ? this.search_client_id[2] : '',
           page: this.page,
-          limit: 10,
+          limit: 5,
           material_name: this.material_name,
           year: this.year
         })

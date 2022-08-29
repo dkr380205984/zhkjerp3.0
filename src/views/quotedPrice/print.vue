@@ -99,7 +99,7 @@
               <div class="tbody hasTop">
                 <div class="trow">
                   <div class="tcol bgGray">原料或辅料名称</div>
-                  <div class="tcol bgGray">预计数量</div>
+                  <div class="tcol bgGray">预计数量/描述</div>
                   <div class="tcol bgGray">预计损耗</div>
                   <div class="tcol bgGray">单价</div>
                   <div class="tcol bgGray">总价</div>
@@ -111,7 +111,10 @@
                     <div class="circle backHoverOrange">原</div>
                     {{ itemYarn.material_name }}
                   </div>
-                  <div class="tcol">{{ itemYarn.weight }}{{ itemYarn.unit }}</div>
+                  <div class="tcol">
+                    <template v-if="itemYarn.weight">{{ itemYarn.weight }}{{ itemYarn.unit }}</template>
+                    <template v-if="itemYarn.desc">{{ itemYarn.desc }}</template>
+                  </div>
                   <div class="tcol">{{ itemYarn.loss }}%</div>
                   <div class="tcol">{{ itemYarn.price }}元</div>
                   <div class="tcol">{{ $toFixed(itemYarn.total_price) }}元</div>
@@ -123,7 +126,10 @@
                     <div class="circle backHoverGreen">辅</div>
                     {{ itemDecorateMaterial.material_name }}
                   </div>
-                  <div class="tcol">{{ itemDecorateMaterial.number }}{{ itemDecorateMaterial.unit }}</div>
+                  <div class="tcol">
+                    <template v-if="!itemDecorateMaterial.desc">{{ itemDecorateMaterial.number }}{{ itemDecorateMaterial.unit }}</template>
+                    <template v-else>{{ itemDecorateMaterial.desc }}</template>
+                  </div>
                   <div class="tcol">{{ itemDecorateMaterial.loss }}%</div>
                   <div class="tcol">{{ itemDecorateMaterial.price }}元</div>
                   <div class="tcol">{{ $toFixed(itemDecorateMaterial.total_price) }}元</div>
@@ -343,7 +349,8 @@ export default Vue.extend({
                 loss: '',
                 price: '',
                 total_price: '',
-                unit: 'kg'
+                unit: 'kg',
+                desc: ''
               }
             ],
             assist_material_data: [
@@ -353,7 +360,8 @@ export default Vue.extend({
                 loss: '',
                 price: '',
                 total_price: '',
-                unit: ''
+                unit: '',
+                desc: ''
               }
             ],
             weave_data: [

@@ -142,6 +142,7 @@
     </div>
     <div class="module"
       v-if="packPlanLog.length>0">
+      <!-- 旧的计划单展示方式 -->
       <el-tabs type="border-card"
         v-model="packPlanLogIndex">
         <el-tab-pane v-for="(item,index) in packPlanLog"
@@ -365,7 +366,160 @@
     </div>
     <div class="module"
       v-if="packOrderLog.length>0">
-      <el-tabs type="border-card"
+      <div class="titleCtn">
+        <div class="title">订购单据</div>
+      </div>
+      <div class="listCtn">
+        <div class="list">
+          <div class="row title">
+            <div class="col"
+              style="max-width:36px">序号</div>
+            <div class="col">订购单号</div>
+            <div class="col">订购单位</div>
+            <div class="col">订购总数</div>
+            <div class="col">订购总价</div>
+            <div class="col">审核状态</div>
+            <div class="col">结算状态</div>
+            <div class="col">订购日期</div>
+            <div class="col">交货日期</div>
+            <div class="col">创建人</div>
+            <div class="col">操作</div>
+          </div>
+          <div class="rowCtn"
+            v-for="(item,index) in packOrderLog"
+            :key="index">
+            <div class="row"
+              @click.prevent="item.show=!item.show;$forceUpdate()">
+              <div class="col"
+                style="max-width:36px">{{index+1}}</div>
+              <div class="col">{{item.code}}</div>
+              <div class="col">{{item.client_name}}</div>
+              <div class="col">{{item.total_number}}</div>
+              <div class="col">{{item.total_price}}元</div>
+              <div class="col"
+                :class="item.is_check|filterCheckClass">
+                <el-tooltip class="item"
+                  effect="dark"
+                  :content="item.is_check>=3?'点击查看异常处理办法':'点击查看审核日志'"
+                  placement="top">
+                  <span style="cursor:pointer"
+                    @click="productionPlanIndex=item.id;checkType=4;checkDetailFlag=true;is_check=item.is_check">{{item.is_check|filterCheck}}</span>
+                </el-tooltip>
+              </div>
+              <div class="col"
+                :class="{'green':item.has_invoice===1||item.has_pay===1,'gray':item.has_invoice!==1&&item.has_pay!==1}">{{item.has_invoice===1||item.has_pay===1?'已结算':'待结算'}}</div>
+              <div class="col">{{item.order_time}}</div>
+              <div class="col">{{item.delivery_time}}</div>
+              <div class="col">{{item.user_name}}</div>
+              <div class="col">
+                <div class="opr hoverBlue">{{item.show?'收回':'展开'}}</div>
+                <div class="buttonList"
+                  style="margin:0;padding:0">
+                  <div class="btn hoverBlue"
+                    style="padding:0">
+                    <span class="text">操作</span>
+                  </div>
+                  <div class="otherInfoCtn">
+                    <div class="otherInfo">
+                      <div class="btn backHoverOrange"
+                        @click="Number($getsessionStorage('has_check'))!==1&&(item.has_invoice===1||item.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):goUpdatePlanOrder(item)">
+                        <svg class="iconFont"
+                          aria-hidden="true">
+                          <use xlink:href="#icon-xiugaidingdan"></use>
+                        </svg>
+                        <span class="text">修改订购</span>
+                      </div>
+                      <div class="btn backHoverRed"
+                        @click="Number($getsessionStorage('has_check'))!==1&&(item.has_invoice===1||item.has_pay===1)?$message.error('单据已结算，无法删除，可联系管理员操作'):deleteOrderPack(item.id)">
+                        <svg class="iconFont"
+                          aria-hidden="true">
+                          <use xlink:href="#icon-shanchudingdan"></use>
+                        </svg>
+                        <span class="text">删除订购</span>
+                      </div>
+                      <div class="btn backHoverBlue"
+                        @click="$openUrl('/packManage/printOrder?id=' + item.id)">
+                        <svg class="iconFont"
+                          aria-hidden="true">
+                          <use xlink:href="#icon-xiugaidingdan"></use>
+                        </svg>
+                        <span class="text">打印订购</span>
+                      </div>
+                      <div class="btn backHoverOrange"
+                        @click="checkFlag=true">
+                        <svg class="iconFont"
+                          aria-hidden="true">
+                          <use xlink:href="#icon-xiugaidingdan"></use>
+                        </svg>
+                        <span class="text">审核单据</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="otherInfo clearfix"
+              v-show="item.show">
+              <div class="editCtn">
+                <div class="row">
+                  <div class="col flex3">
+                    <div class="label">额外费用：</div>
+                    <div class="text">
+                      <others-fee-data :data="item.others_fee_data"></others-fee-data>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="label">备注信息：</div>
+                    <div class="text"
+                      :class="{'gray':!item.desc}">{{item.desc || '无'}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="titleCtn">
+                <div class="title">包装订购信息</div>
+              </div>
+              <div class="tableCtn">
+                <div class="thead">
+                  <div class="trow">
+                    <div class="tcol">包装名称</div>
+                    <div class="tcol">包装规格</div>
+                    <div class="tcol">面积单价</div>
+                    <div class="tcol">数量单价</div>
+                    <div class="tcol">订购数量</div>
+                    <div class="tcol">订购总价</div>
+                    <div class="tcol">备注信息</div>
+                  </div>
+                </div>
+                <div class="tbody">
+                  <div class="trow"
+                    v-for="(itemChild,indexChild) in item.info_data"
+                    :key="indexChild">
+                    <div class="tcol">{{itemChild.pack_material_name}}</div>
+                    <div class="tcol">
+                      <template v-if="Number(itemChild.price_type)===1">
+                        {{itemChild.length}}*{{itemChild.width}}*{{itemChild.height}}cm
+                      </template>
+                      <template v-else-if="Number(itemChild.price_type)===2">
+                        {{itemChild.length}}*{{itemChild.width}}cm + {{itemChild.height}}cm
+                      </template>
+                      <template v-else-if="Number(itemChild.price_type)===3">
+                        {{itemChild.length}}
+                      </template>
+                    </div>
+                    <div class="tcol">{{itemChild.bulk_price?(itemChild.bulk_price +'元'):'-'}}</div>
+                    <div class="tcol">{{itemChild.count_price?(itemChild.count_price +'元'):'-'}}</div>
+                    <div class="tcol">{{itemChild.number}}</div>
+                    <div class="tcol">{{$toFixed(itemChild.number*itemChild.count_price)}}元</div>
+                    <div class="tcol">{{itemChild.desc}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 旧的订购单展示方式 -->
+      <!-- <el-tabs type="border-card"
         v-model="packOrderLogIndex">
         <el-tab-pane v-for="(item,index) in packOrderLog"
           :key="index"
@@ -518,7 +672,7 @@
             </div>
           </div>
         </el-tab-pane>
-      </el-tabs>
+      </el-tabs> -->
     </div>
     <div class="bottomFixBar">
       <div class="main">

@@ -141,7 +141,13 @@
               <div class="col" style="flex: 0.05">
                 <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
               </div>
-              <div class="col hoverBlue" style="flex: 1.9;cursor:pointer" @click="$router.push('/productionPlan/detail?id='+item.top_order_id)">{{ item.code }}</div>
+              <div
+                class="col hoverBlue"
+                style="flex: 1.9; cursor: pointer"
+                @click="$router.push('/productionPlan/detail?id=' + item.top_order_id)"
+              >
+                {{ item.code }}
+              </div>
               <div
                 class="col hoverBlue"
                 style="
@@ -171,8 +177,10 @@
               <div class="col" style="flex: 1.3">{{ (+item.total_price).toFixed(2) }}</div>
               <div class="col" style="flex: 1.9">
                 <div>{{ (+item.total_real_number).toFixed(2) }}</div>
-                （<span :class="item.total_real_number - item.total_number >= 0 ? 'green' : 'red'"
-                  >{{ (((item.total_real_number - item.total_number) / item.total_number) * 100).toFixed(0) }}%</span
+                （<span :class="item.total_real_number - (item.total_number || 0) >= 0 ? 'green' : 'red'"
+                  >{{
+                    ((((item.total_real_number - (item.total_number || 0)) / item.total_number) * 100) || 0).toFixed(0)
+                  }}%</span
                 >）
               </div>
               <div class="col" style="flex: 0.8">
@@ -225,9 +233,10 @@
                     <div class="tcol">产品部位</div>
                     <div class="tcol">尺码颜色</div>
                     <div class="tcol">加工数量</div>
-                    <div class="tcol">入库数量</div>
                     <div class="tcol">半次(B次)数量</div>
                     <div class="tcol">全次数量</div>
+                    <div class="tcol">入库数量</div>
+                    <div class="tcol">完成金额</div>
                     <div class="tcol">加工单价</div>
                     <div class="tcol">加工总价</div>
                   </div>
@@ -245,9 +254,10 @@
                       {{ itemPro.size_name ? itemPro.size_name + '/' + itemPro.color_name : '未选择尺码颜色' }}
                     </div>
                     <div class="tcol">{{ itemPro.number }}</div>
-                    <div class="tcol">{{ itemPro.real_number }}</div>
                     <div class="tcol">{{ itemPro.part_shoddy_number || 0 }}</div>
                     <div class="tcol">{{ itemPro.shoddy_number || 0 }}</div>
+                    <div class="tcol">{{ itemPro.inspection_number || 0 }}</div>
+                    <div class="tcol">{{ itemPro.inspection_price || 0 }}元</div>
                     <div class="tcol">{{ itemPro.price }}元</div>
                     <div class="tcol">{{ $toFixed(itemPro.price * itemPro.number) }}元</div>
                   </div>

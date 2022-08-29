@@ -56,6 +56,22 @@
                 <div class="tcol bgGray headTitle">交货日期</div>
                 <div class="tcol">{{packOrderInfo.delivery_time}}</div>
               </div>
+              <div class="trow"
+                v-for="(item,index) in packOrderInfo.others_fee_data"
+                :key="index">
+                <div class="tcol bgGray headTitle">额外费用名称</div>
+                <div class="tcol">
+                  {{item.name}}
+                </div>
+                <div class="tcol bgGray headTitle">额外费用金额</div>
+                <div class="tcol">
+                  {{item.price}}元
+                </div>
+                <div class="tcol bgGray headTitle">额外费用备注</div>
+                <div class="tcol">
+                  {{item.desc}}
+                </div>
+              </div>
               <div class="trow">
                 <div class="tcol bgGray headTitle"
                   style="max-width:142.5px">备注信息</div>
