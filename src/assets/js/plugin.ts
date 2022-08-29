@@ -496,7 +496,7 @@ const initEditor = (item: any, index?: number | string) => {
   item.editor.config.onchange = (html: any) => {
     item.desc = html // 绑定当前逐渐地值
   }
-  item.editor.config.height = 100
+  item.editor.config.height = 130
   item.editor.create()
   if (item.desc) {
     Vue.nextTick(() => {

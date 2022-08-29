@@ -292,7 +292,8 @@
                       v-model="itemYarn.tree_data"
                       :options="yarnTypeList"
                       clearable
-                      filterable></el-cascader>
+                      filterable
+                      @change="(ev)=>{ev[0]==='2'?itemYarn.unit='m':''}"></el-cascader>
                   </div>
                 </div>
               </div>
@@ -302,7 +303,8 @@
                   <div class="once">预计数量</div>
                   <div class="once">预计损耗</div>
                 </div>
-                <div class="info elCtn spaceBetween">
+                <div class="info elCtn spaceBetween"
+                  v-if="itemYarn.tree_data[0]!==2">
                   <el-input class="once unitAppend"
                     v-model="itemYarn.weight"
                     placeholder="数量"
@@ -323,6 +325,20 @@
                     @input="itemYarn.price?cmpTotalPrice(itemYarn):''"
                     :disabled="itemYarn.tree_data.length===0">
                     <template slot="append">%</template>
+                  </el-input>
+                </div>
+                <div class="info elCtn"
+                  v-else>
+                  <el-input class="once unitAppend"
+                    v-model="itemYarn.desc"
+                    placeholder="面料描述"
+                    :disabled="itemYarn.tree_data.length===0">
+                    <template slot="append">
+                      <input class="unit"
+                        v-model="itemYarn.unit"
+                        placeholder="单位"
+                        :disabled="itemYarn.tree_data.length===0" />
+                    </template>
                   </el-input>
                 </div>
               </div>
@@ -410,32 +426,14 @@
                 </div>
               </div>
               <div class="col">
-                <div class="label spaceBetween"
+                <div class="label"
                   v-if="indexDecorateMaterial===0">
-                  <div class="once">预计数量</div>
-                  <div class="once">预计损耗</div>
+                  辅料说明
                 </div>
-                <div class="info elCtn spaceBetween">
-                  <el-input class="once unitAppend"
-                    v-model="itemDecorateMaterial.number"
-                    placeholder="数量"
-                    @focus="$focusInput($event)"
-                    @input="itemDecorateMaterial.price?cmpTotalPrice(itemDecorateMaterial):''"
+                <div class="info elCtn">
+                  <el-input v-model="itemDecorateMaterial.desc"
+                    placeholder="辅料说明"
                     :disabled="!itemDecorateMaterial.material_id">
-                    <template slot="append">
-                      <input class="unit"
-                        v-model="itemDecorateMaterial.unit"
-                        placeholder="单位"
-                        :disabled="!itemDecorateMaterial.material_id" />
-                    </template>
-                  </el-input>
-                  <el-input class="once"
-                    v-model="itemDecorateMaterial.loss"
-                    placeholder="损耗"
-                    @focus="$focusInput($event)"
-                    @input="itemDecorateMaterial.price?cmpTotalPrice(itemDecorateMaterial):''"
-                    :disabled="!itemDecorateMaterial.material_id">
-                    <template slot="append">%</template>
                   </el-input>
                 </div>
               </div>
@@ -472,7 +470,8 @@
                   number: '',
                   loss: '',
                   price: '',
-                  total_price: ''
+                  total_price: '',
+                  desc:''
                 })">添加</div>
               <div class="opr hoverRed"
                 v-else
@@ -1139,7 +1138,8 @@ export default Vue.extend({
                 loss: '',
                 price: '',
                 total_price: '',
-                unit: 'g'
+                unit: 'g',
+                desc: ''
               }
             ],
             assist_material_data: [
@@ -1150,7 +1150,8 @@ export default Vue.extend({
                 loss: '',
                 price: '',
                 total_price: '',
-                unit: ''
+                unit: '',
+                desc: ''
               }
             ],
             weave_data: [
@@ -1372,7 +1373,8 @@ export default Vue.extend({
             loss: '',
             price: '',
             total_price: '',
-            unit: 'g'
+            unit: 'g',
+            desc: ''
           }
         ],
         assist_material_data: [
@@ -1384,7 +1386,8 @@ export default Vue.extend({
             loss: '',
             price: '',
             total_price: '',
-            unit: ''
+            unit: '',
+            desc: ''
           }
         ],
         weave_data: [
@@ -1615,21 +1618,7 @@ export default Vue.extend({
                       key: 'tree_data',
                       errMsg: '请选择产品' + (index + 1) + '原料',
                       regNormal: 'checkArr'
-                    },
-                    // {
-                    //   key: 'weight',
-                    //   errMsg: '请输入产品' + (index + 1) + '原料预计数量'
-                    // },
-                    {
-                      key: 'unit',
-                      errMsg: '物料的单位只能为g，kg或m',
-                      regExp: /^g$|^m$|^kg$/,
-                      regNegate: true
                     }
-                    // {
-                    //   key: 'price',
-                    //   errMsg: '请输入产品' + (index + 1) + '原料单价'
-                    // }
                   ])
                 )
               }) ||
@@ -1640,19 +1629,7 @@ export default Vue.extend({
                     {
                       key: 'material_id',
                       errMsg: '请选择产品' + (index + 1) + '装饰辅料'
-                    },
-                    // {
-                    //   key: 'number',
-                    //   errMsg: '请输入产品' + (index + 1) + '装饰辅料预计数量'
-                    // },
-                    {
-                      key: 'unit',
-                      errMsg: '请输入产品' + (index + 1) + '装饰辅料数量单位'
                     }
-                    // {
-                    //   key: 'price',
-                    //   errMsg: '请输入产品' + (index + 1) + '装饰辅料单价'
-                    // }
                   ])
                 )
               }) ||

@@ -497,7 +497,7 @@ const client = {
 import { ClientTypeInfo } from '@/types/client'
 const clientType = {
   create: (params: ClientTypeInfo) => http.post(`${baseUrl}/client/tag/save`, params, 'application/json'),
-  list: (params?: ListParams) => http.get(`${baseUrl}/client/type/lists`, params),
+  list: (params?: any) => http.get(`${baseUrl}/client/type/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/client/tag/delete`, params, 'application/json')
 }
 
@@ -724,7 +724,12 @@ const materialOrder = {
     [propName: string]: any
   }) => http.get(`${baseUrl}/material/order/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/material/order/detail`, params),
-  delete: (params: DetailParams) => http.post(`${baseUrl}/material/order/delete`, params, 'application/json')
+  delete: (params: DetailParams) => http.post(`${baseUrl}/material/order/delete`, params, 'application/json'),
+  stsList: (params: {
+    client_id: string | number
+    start_time: string
+    end_time: string
+  }) => http.get(`${baseUrl}/material/order/info/lists`, params),
 }
 
 // 原料预订购

@@ -515,14 +515,16 @@ const moneyArr = [{
   id: 1,
   sign: '￥',
   default: '100',
-  tax_prop: '12'
+  tax_prop: '12',
+  label: '仅人民币'
 }, {
   name: '美元',
   short: 'USD',
   id: 2,
   sign: 'US$',
   default: '670',
-  tax_prop: '0'
+  tax_prop: '0',
+  label: '仅美元'
 }]
 
 // 出入库类型 

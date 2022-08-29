@@ -765,7 +765,7 @@ export default Vue.extend({
           value: '成品加工工序',
           children: this.$store.state.api.staffProcess.arr.map((item: any) => {
             return {
-              label: item.name,
+              label: item.code ? item.code + '-' + item.name : item.name,
               value: item.name
             }
           })
@@ -775,7 +775,7 @@ export default Vue.extend({
           value: '半成品加工工序',
           children: this.$store.state.api.halfProcess.arr.map((item: any) => {
             return {
-              label: item.name,
+              label: item.code ? item.code + '-' + item.name : item.name,
               value: item.name
             }
           })

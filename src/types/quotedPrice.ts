@@ -73,6 +73,7 @@ export interface QuotedPriceProduct {
     loss: number | string
     price: number | string
     unit: string
+    desc: string
     total_price: number | string
     price_info?: any[] // 前端用查询纱线报价
   }>
@@ -85,6 +86,7 @@ export interface QuotedPriceProduct {
     price: number | string
     unit: string
     total_price: number | string
+    desc: string
   }>
   weave_data: Array<{
     id?: number | string
