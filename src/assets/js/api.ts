@@ -514,7 +514,7 @@ import { UserInfo } from '@/types/user'
 const user = {
   update: (params: UserInfo) => http.post(`${baseUrl}/user/edit`, params, 'application/json'), // 内部用户
   create: (params: UserInfo) => http.post(`${baseUrl}/user/add`, params, 'application/json'), // 内部用户
-  list: (params?: ListParams) => http.get(`${baseUrl}/user/lists`, params),
+  list: (params?: any) => http.get(`${baseUrl}/user/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/user/delete`, params, 'application/json'),
   getSms: (params: { phone: string }) => http.post(`${baseUrl}/user/add/send/sms`, params, 'application/json'),
   check: (params: { id: string | number }) => http.post(`${baseUrl}/user/check/status`, params, 'application/json') // 启用禁用用户
@@ -819,7 +819,7 @@ const productStock = {
 }
 
 // 生产计划
-import { ProductionPlanInfo } from '@/types/productionPlan'
+import { ProductionPlanInfo, ProductionPrintInfo } from '@/types/productionPlan'
 const productionPlan = {
   create: (params: { data: ProductionPlanInfo[] }) => http.post(`${baseUrl}/weave/plan/save`, params, 'application/json'),
   update: (params: ProductionPlanInfo) => http.post(`${baseUrl}/weave/plan/edit`, params, 'application/json'),
@@ -839,6 +839,13 @@ const productionPlan = {
   }) => http.get(`${baseUrl}/weave/plan/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/weave/plan/delete`, params, 'application/json'),
   detail: (params: DetailParams) => http.get(`${baseUrl}/weave/plan/detail`, params),
+  createCode: (params: { data: ProductionPrintInfo[] }) => http.post(`${baseUrl}/weave/flow/save`, params, 'application/json'), // 生产流转卡
+  listCode: (params: {
+    pid?: number[] | string[]
+    limit?: number
+    page?: number
+    [propName: string]: any
+  }) => http.get(`${baseUrl}/weave/flow/lists`, params),
 }
 
 // 生产进度
@@ -884,6 +891,7 @@ const materialSupplement = {
   create: (params: MaterialSupplementInfo) => http.post(`${baseUrl}/material/sup/save`, params, 'application/json'),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/material/sup/delete`, params, 'application/json'),
   list: (params: {
+    bear_client_id?: string | number
     top_order_id?: string | number // 最外层order_id
     plan_id?: string | number
     order_id?: string | number // time_data里的

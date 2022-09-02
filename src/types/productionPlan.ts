@@ -1,5 +1,20 @@
 import { MaterialSupplementInfo } from "./materialSupplement";
 
+// 生产流转码
+export interface ProductionPrintInfo {
+  number: string | number
+  total_pack: string | number
+  weight: string | number
+  total_weight: string | number
+  pid: string | number
+  product_code?: string // 以下都是前端展示用
+  size_name?: string
+  color_name?: string
+  category_name?: string
+  secondary_category_name?: string
+  plan_number?: string
+}
+
 export interface ProductionPlanInfo {
   id?: string | number
   code?: string
@@ -35,6 +50,8 @@ export interface ProductionPlanInfo {
     total_price: number | string
     image_data?: string[]
     plan_id?: string | number
+    category_name?: string
+    secondary_category_name?: string
     select_arr?: string // 前端用，下拉框选择一个产品尺码配色信息
   }>
   material_info_data: ProductionMaterialPlanInfo[]

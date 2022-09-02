@@ -132,6 +132,16 @@
             <div class="btn backHoverOrange"
               style="margin-right:12px"
               :class="{'backGray':checkList().length===0}"
+              @click.stop="goPrint()">
+              <svg class="iconFont"
+                aria-hidden="true">
+                <use xlink:href="#icon-xiugaidingdan"></use>
+              </svg>
+              <span class="text">打印流转码</span>
+            </div>
+            <div class="btn backHoverOrange"
+              style="margin-right:12px"
+              :class="{'backGray':checkList().length===0}"
               @click="goStock()">
               <svg class="iconFont"
                 aria-hidden="true">
@@ -201,7 +211,8 @@
               <div class="col"
                 :class="{'green':item.has_invoice===1||item.has_pay===1,'gray':item.has_invoice!==1&&item.has_pay!==1}">{{item.has_invoice===1||item.has_pay===1?'已结算':'待结算'}}</div>
               <div class="col">{{item.start_time}}</div>
-              <div class="col">{{item.end_time}}</div>
+              <div class="col"
+                :class="$diffByDate(item.end_time)>0?'green':'red'">{{item.end_time}}({{$diffByDate(item.end_time)>0?'还剩'+$diffByDate(item.end_time)+'天':'逾期'+Math.abs($diffByDate(item.end_time))+'天'}})</div>
               <div class="col">{{item.user_name}}</div>
               <div class="col">
                 <div class="opr hoverBlue">{{item.show?'收回':'展开'}}</div>
@@ -213,15 +224,6 @@
                   </div>
                   <div class="otherInfoCtn">
                     <div class="otherInfo">
-                      <div class="btn backHoverBlue"
-                        style="margin-right:12px"
-                        @click="$router.push('/productionPlan/progressList??page=1&user_id=&status=1&date=&limit=10&group_id=&listType=1&process_name_arr=&client_id=&contacts_id&keyword='+item.code)">
-                        <svg class="iconFont"
-                          aria-hidden="true">
-                          <use xlink:href="#icon-xiugaidingdan"></use>
-                        </svg>
-                        <span class="text">更新数量</span>
-                      </div>
                       <div class="btn backHoverBlue"
                         @click.stop="$openUrl('/productionPlan/print?id='+item.id+'&order_id='+$route.query.id)">
                         <svg class="iconFont"
@@ -262,15 +264,6 @@
                         </svg>
                         <span class="text">单据扣款</span>
                       </div>
-                      <div class="btn"
-                        :class="item.deduct_data && item.deduct_data.length>0?'backHoverBlue':'backGray'"
-                        @click.stop="getDeduct(item.deduct_data)">
-                        <svg class="iconFont"
-                          aria-hidden="true">
-                          <use xlink:href="#icon-xiugaidingdan"></use>
-                        </svg>
-                        <span class="text">扣款记录</span>
-                      </div>
                       <div class="btn backHoverOrange"
                         @click.stop="divideProductionPlan(item)">
                         <svg class="iconFont"
@@ -295,6 +288,15 @@
                         </svg>
                         <span class="text">审核单据</span>
                       </div>
+                      <div class="btn backHoverBlue"
+                        style="margin-right:12px"
+                        @click="$router.push('/productionPlan/progressList??page=1&user_id=&status=1&date=&limit=10&group_id=&listType=1&process_name_arr=&client_id=&contacts_id&keyword='+item.code)">
+                        <svg class="iconFont"
+                          aria-hidden="true">
+                          <use xlink:href="#icon-xiugaidingdan"></use>
+                        </svg>
+                        <span class="text">更新完成数量</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -302,6 +304,9 @@
             </div>
             <div class="otherInfo clearfix"
               v-show="item.show">
+              <div class="titleCtn">
+                <div class="title">基本信息</div>
+              </div>
               <div class="editCtn">
                 <div class="row">
                   <div class="col flex3">
@@ -312,35 +317,74 @@
                     <div class="label">关联计划单：</div>
                     <div class="text">{{item.plan_code}}</div>
                   </div>
-                  <div class="col">
-                    <div class="label">额外费用：</div>
-                    <div class="text">
-                      <others-fee-data :data="item.others_fee_data"></others-fee-data>
+                  <div class="row">
+                    <div class="col">
+                      <div class="label">备注信息：</div>
+                      <div class="text"
+                        :class="{'gray':!item.desc}">{{item.desc || '无'}}</div>
                     </div>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col">
-                    <div class="label">备注信息：</div>
-                    <div class="text"
-                      :class="{'gray':!item.desc}">{{item.desc || '无'}}</div>
+              </div>
+              <div class="tableCtn">
+                <div class="thead">
+                  <div class="trow">
+                    <div class="tcol">计划生产费用</div>
+                    <div class="tcol">实际生产费用</div>
+                    <div class="tcol">额外费用</div>
+                    <div class="tcol">扣款费用</div>
+                    <div class="tcol">补原料承担费用</div>
+                    <div class="tcol">计划合计费用</div>
+                    <div class="tcol">实际合计费用</div>
+                  </div>
+                </div>
+                <div class="tbody">
+                  <div class="trow">
+                    <div class="tcol green">{{$toFixed(item.total_price - item.others_fee)}}元</div>
+                    <div class="tcol green">{{item.real_fee}}元</div>
+                    <div class="tcol"
+                      :class="{'green':item.others_fee>0,'gray':item.others_fee===0}">{{item.others_fee}}元</div>
+                    <div class="tcol"
+                      :class="{'red':item.deduct_fee>0,'gray':item.deduct_fee===0}">{{item.deduct_fee}}元</div>
+                    <div class="tcol"
+                      :class="{'red':item.sup_fee>0,'gray':item.sup_fee===0}">{{item.sup_fee}}元</div>
+                    <div class="tcol green">{{$toFixed(item.total_price - item.deduct_fee - item.sup_fee)}}元</div>
+                    <div class="tcol green">{{$toFixed(item.real_fee + item.others_fee - item.deduct_fee - item.sup_fee)}}元</div>
+                  </div>
+                  <div class="trow">
+                    <div class="tcol gray">详情见下表</div>
+                    <div class="tcol gray">详情见下表</div>
+                    <div class="tcol">
+                      <others-fee-data :data="item.others_fee_data"></others-fee-data>
+                    </div>
+                    <div class="tcol">
+                      <span style="cursor:pointer"
+                        :class="item.deduct_data && item.deduct_data.length>0?'blue':'gray'"
+                        @click="getDeduct(item.deduct_data)">扣款费用明细</span>
+                    </div>
+                    <div class="tcol gray">详情见下表</div>
+                    <div class="tcol gray">计划费用</div>
+                    <div class="tcol gray">实际费用</div>
                   </div>
                 </div>
               </div>
-              <div class="titleCtn">
+              <div class="titleCtn"
+                style="border-top: 1px solid #e9e9e9;">
                 <div class="title">产品加工信息</div>
               </div>
               <div class="tableCtn">
                 <div class="thead">
                   <div class="trow">
-                    <div class="tcol">序号</div>
-                    <div class="tcol">产品信息</div>
+                    <div class="tcol"
+                      style="max-width:50px">序号</div>
+                    <div class="tcol"
+                      style="flex:2">产品信息</div>
                     <div class="tcol">产品部位</div>
                     <div class="tcol">尺码颜色</div>
-                    <div class="tcol">加工数量</div>
+                    <div class="tcol">计划数量</div>
                     <div class="tcol">检验/完成数量</div>
-                    <div class="tcol">加工单价</div>
-                    <div class="tcol">加工总价</div>
+                    <div class="tcol">计划单价</div>
+                    <div class="tcol">计划总价</div>
                     <div class="tcol">检验/完成总价</div>
                   </div>
                 </div>
@@ -348,8 +392,10 @@
                   <div class="trow"
                     v-for="(itemPro,indexPro) in item.product_info_data"
                     :key="indexPro">
-                    <div class="tcol">{{indexPro+1}}</div>
-                    <div class="tcol">
+                    <div class="tcol"
+                      style="max-width:50px">{{indexPro+1}}</div>
+                    <div class="tcol"
+                      style="flex:2">
                       <span>{{itemPro.product_code||itemPro.system_code}}</span>
                       <span>{{itemPro.category_name}}/{{itemPro.secondary_category_name}}</span>
                     </div>
@@ -366,6 +412,7 @@
                 </div>
               </div>
               <div class="titleCtn"
+                style="border-top: 1px solid #e9e9e9;"
                 v-if="item.material_info_data.length>0">
                 <div class="title">物料分配信息</div>
               </div>
@@ -373,7 +420,8 @@
                 v-if="item.material_info_data.length>0">
                 <div class="thead">
                   <div class="trow">
-                    <div class="tcol">序号</div>
+                    <div class="tcol"
+                      style="max-width:50px">序号</div>
                     <div class="tcol">物料名称</div>
                     <div class="tcol">物料颜色</div>
                     <div class="tcol">分配数量</div>
@@ -383,7 +431,8 @@
                   <div class="trow"
                     v-for="(itemMat,indexMat) in item.material_info_data"
                     :key="indexMat">
-                    <div class="tcol">
+                    <div class="tcol"
+                      style="max-width:50px">
                       <el-checkbox v-model="itemMat.check">{{indexMat+1}}</el-checkbox>
                     </div>
                     <div class="tcol">{{itemMat.material_name}}</div>
@@ -393,6 +442,7 @@
                 </div>
               </div>
               <div class="titleCtn"
+                style="border-top: 1px solid #e9e9e9;"
                 v-if="item.sup_data&&item.sup_data.length>0">
                 <div class="title">加工物料补充</div>
               </div>
@@ -458,298 +508,6 @@
           </div>
         </div>
       </div>
-      <!-- 旧的加工单展示方式 -->
-      <!-- <el-tabs type="border-card"
-        v-model="productionPlanIndex">
-        <el-tab-pane v-for="(item,index) in productionPlanList"
-          :key="index"
-          :name="item.id.toString()">
-          <div slot="label">
-            <div style="display:flex;flex-direction:column">
-              <div style="line-height:20px;font-size:14px">加工单{{(index+1)}}
-                <i class="el-icon-warning red"
-                  v-if="item.is_check>1&&productionPlanIndex!==item.id.toString()"></i>
-              </div>
-              <div style="line-height:20px;font-size:14px">{{item.process_name}}({{item.code}})</div>
-            </div>
-          </div>
-          <div class="titleCtn">
-            <div class="title">加工单据</div>
-          </div>
-          <div class="detailCtn">
-            <div class="checkCtn"
-              @click="checkType=4;checkDetailFlag=true;is_check=item.is_check">
-              <el-tooltip class="item"
-                effect="dark"
-                :content="item.is_check>=3?'点击查看异常处理办法':'点击查看审核日志'"
-                placement="bottom">
-                <img :src="item.is_check|checkFilter" />
-              </el-tooltip>
-            </div>
-            <div class="row">
-              <div class="col">
-                <div class="label">加工单号：</div>
-                <div class="text">{{item.code}}</div>
-              </div>
-              <div class="col">
-                <div class="label">关联计划单：</div>
-                <div class="text">{{item.plan_code}}</div>
-              </div>
-              <div class="col">
-                <div class="label">加工单位：</div>
-                <div class="text">{{item.client_name}}</div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col">
-                <div class="label">加工日期：</div>
-                <div class="text">{{item.start_time}}</div>
-              </div>
-              <div class="col">
-                <div class="label">交货日期：</div>
-                <div class="text">{{item.end_time}}</div>
-              </div>
-              <div class="col">
-                <div class="label">结算状态：</div>
-                <div class="text"
-                  :class="{'green':item.has_invoice===1||item.has_pay===1,'gray':item.has_invoice!==1&&item.has_pay!==1}">{{item.has_invoice===1||item.has_pay===1?'已结算':'待结算'}}</div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col flex3">
-                <div class="label">工序说明：</div>
-                <div class="text">{{item.process_desc||'无'}}</div>
-              </div>
-              <div class="col flex3">
-                <div class="label">创建人：</div>
-                <div class="text">{{item.user_name||'无'}}</div>
-              </div>
-              <div class="col">
-                <div class="label">备注信息：</div>
-                <div class="text"
-                  :class="{'gray':!item.desc}">{{item.desc || '无'}}</div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col flex3">
-                <div class="label">进度状态：</div>
-                <div class="text"
-                  :class="item.status|productionClassFilter">{{item.status|productionFilter}}</div>
-              </div>
-            </div>
-          </div>
-          <div class="tableCtn"
-            style="padding-top:0">
-            <div class="thead">
-              <div class="trow">
-                <div class="tcol">序号</div>
-                <div class="tcol">产品信息</div>
-                <div class="tcol">产品部位</div>
-                <div class="tcol">尺码颜色</div>
-                <div class="tcol">加工数量</div>
-                <div class="tcol">加工单价</div>
-                <div class="tcol">加工总价</div>
-              </div>
-            </div>
-            <div class="tbody">
-              <div class="trow"
-                v-for="(itemPro,indexPro) in item.product_info_data"
-                :key="indexPro">
-                <div class="tcol">{{indexPro+1}}</div>
-                <div class="tcol">
-                  <span>{{itemPro.product_code||itemPro.system_code}}</span>
-                  <span>{{itemPro.category_name}}/{{itemPro.secondary_category_name}}</span>
-                </div>
-                <div class="tcol">
-                  {{itemPro.part_name}}
-                </div>
-                <div class="tcol">{{itemPro.size_name?itemPro.size_name + '/' + itemPro.color_name:'未选择尺码颜色'}}</div>
-                <div class="tcol">{{itemPro.number}}</div>
-                <div class="tcol">{{itemPro.price}}元</div>
-                <div class="tcol">{{$toFixed(itemPro.price*itemPro.number)}}元</div>
-              </div>
-            </div>
-          </div>
-          <div class="tableCtn"
-            v-if="item.material_info_data.length>0">
-            <div class="thead">
-              <div class="trow">
-                <div class="tcol">序号</div>
-                <div class="tcol">物料名称</div>
-                <div class="tcol">物料颜色</div>
-                <div class="tcol">分配数量</div>
-              </div>
-            </div>
-            <div class="tbody">
-              <div class="trow"
-                v-for="(itemMat,indexMat) in item.material_info_data"
-                :key="indexMat">
-                <div class="tcol">
-                  <el-checkbox v-model="itemMat.check">{{indexMat+1}}</el-checkbox>
-                </div>
-                <div class="tcol">{{itemMat.material_name}}</div>
-                <div class="tcol">{{itemMat.material_color}}</div>
-                <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
-              </div>
-            </div>
-          </div>
-          <div class="buttonList">
-            <div class="btn backHoverBlue">
-              <i class="el-icon-s-grid"></i>
-              <span class="text">加工单操作</span>
-            </div>
-            <div class="otherInfoCtn">
-              <div class="otherInfo">
-                <div class="btn backHoverBlue"
-                  style="margin-right:12px"
-                  @click="$router.push('/productionPlan/progressList??page=1&user_id=&status=1&date=&limit=10&group_id=&listType=1&process_name_arr=&client_id=&contacts_id&keyword='+item.code)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">更新数量</span>
-                </div>
-                <div class="btn backHoverBlue"
-                  @click="$openUrl('/productionPlan/print?id='+item.id+'&order_id='+$route.query.id)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">打印单据</span>
-                </div>
-                <div class="btn backHoverRed"
-                  @click="deleteProductionPlan(item.id)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">删除单据</span>
-                </div>
-                <div class="btn backHoverOrange"
-                  @click="Number($getsessionStorage('has_check'))!==1&&(item.has_invoice===1||item.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):goUpdate(item)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">修改单据</span>
-                </div>
-                <div class="btn backHoverGreen"
-                  @click="goMaterialSupplement(item)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">补充物料</span>
-                </div>
-                <div class="btn backHoverGreen"
-                  @click="goDeduct(item,4)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">单据扣款</span>
-                </div>
-                <div class="btn"
-                  :class="item.deduct_data && item.deduct_data.length>0?'backHoverBlue':'backGray'"
-                  @click="getDeduct(item.deduct_data)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">扣款记录</span>
-                </div>
-                <div class="btn backHoverOrange"
-                  @click="divideProductionPlan(item)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">拆分单据</span>
-                </div>
-                <div class="btn backHoverOrange"
-                  @click="storeSurplus(item.material_info_data)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">结余入库</span>
-                </div>
-                <div class="btn backHoverOrange"
-                  @click="checkType=4;checkFlag=true">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">审核单据</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="titleCtn"
-            style="margin-top:40px"
-            v-if="item.sup_data&&item.sup_data.length>0">
-            <div class="title">加工物料补充</div>
-          </div>
-          <div class="tableCtn"
-            v-if="item.sup_data&&item.sup_data.length>0">
-            <div class="thead">
-              <div class="trow">
-                <div class="tcol">补纱单编号</div>
-                <div class="tcol noPad"
-                  style="flex:2">
-                  <div class="trow">
-                    <div class="tcol">承担单位</div>
-                    <div class="tcol">承担金额</div>
-                  </div>
-                </div>
-                <div class="tcol noPad"
-                  style="flex:3">
-                  <div class="trow">
-                    <div class="tcol">物料名称</div>
-                    <div class="tcol">物料颜色</div>
-                    <div class="tcol">物料数量</div>
-                  </div>
-                </div>
-                <div class="tcol">备注信息</div>
-                <div class="tcol">操作</div>
-              </div>
-            </div>
-            <div class="tbody">
-              <div class="trow"
-                v-for="itemChild in item.sup_data"
-                :key="itemChild.id">
-                <div class="tcol">{{itemChild.code}}</div>
-                <div class="tcol noPad"
-                  style="flex:2">
-                  <div class="trow"
-                    v-for="(itemClient,indexClient) in itemChild.client_data"
-                    :key="indexClient">
-                    <div class="tcol">{{itemClient.bear_client_name}}</div>
-                    <div class="tcol">{{itemClient.bear_price}}元</div>
-                  </div>
-                </div>
-                <div class="tcol noPad"
-                  style="flex:3">
-                  <div class="trow"
-                    v-for="itemMat in itemChild.info_data"
-                    :key="itemMat.id">
-                    <div class="tcol">{{itemMat.material_name}}</div>
-                    <div class="tcol">{{itemMat.material_color}}</div>
-                    <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
-                  </div>
-                </div>
-                <div class="tcol">{{itemChild.desc}}</div>
-                <div class="tcol oprCtn">
-                  <div class="opr hoverBlue"
-                    @click="$openUrl('/materialManage/supPrint?id='+itemChild.id)">打印</div>
-                  <div class="opr hoverRed"
-                    @click="deleteMaterialSupplement(itemChild.id)">删除</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </el-tab-pane>
-      </el-tabs> -->
     </div>
     <div class="module"
       v-if="productStockLog.length>0">
@@ -1142,7 +900,7 @@
                 </div>
                 <div class="col">
                   <div class="label">
-                    <span class="text">订购总数</span>
+                    <span class="text">加工总数</span>
                   </div>
                   <div class="info elCtn">
                     <el-input v-model="totalPlanNumberList[index]"
@@ -1940,6 +1698,33 @@
                 v-if="indexOther>0"
                 @click="$deleteItem(item.others_fee_data,indexOther)">删除</div>
             </div>
+            <div class="row">
+              <div class="col">
+                <div class="label">
+                  <span class="text">加工总价</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input v-model="totalPlanPrice"
+                    placeholder="自动计算"
+                    disabled>
+                    <template slot="append">元</template>
+                  </el-input>
+                </div>
+              </div>
+              <div class="col">
+                <div class="label">
+                  <span class="text">加工总数</span>
+                </div>
+                <div class="info elCtn">
+                  <el-input v-model="totalPlanNumber"
+                    placeholder="自动计算"
+                    disabled>
+                    <template slot="append">kg</template>
+                  </el-input>
+                </div>
+              </div>
+              <div class="col"></div>
+            </div>
           </div>
         </div>
         <div class="oprCtn">
@@ -2190,19 +1975,17 @@
           </template>
         </div>
         <div class="oprCtn">
-          <div class="oprCtn">
-            <span class="btn borderBtn"
-              @click="closeStock">取消</span>
-            <span class="btn backHoverBlue"
-              @click="goCheckRealStock"
-              v-if="step===1">填写实际调取值</span>
-            <span class="btn backHoverOrange"
-              @click="step=1"
-              v-if="step===2">上一步</span>
-            <span class="btn backHoverBlue"
-              @click="saveProductStock"
-              v-if="step===2">确认调取</span>
-          </div>
+          <span class="btn borderBtn"
+            @click="closeStock">取消</span>
+          <span class="btn backHoverBlue"
+            @click="goCheckRealStock"
+            v-if="step===1">填写实际调取值</span>
+          <span class="btn backHoverOrange"
+            @click="step=1"
+            v-if="step===2">上一步</span>
+          <span class="btn backHoverBlue"
+            @click="saveProductStock"
+            v-if="step===2">确认调取</span>
         </div>
       </div>
     </div>
@@ -2271,6 +2054,108 @@
         </div>
       </div>
     </div>
+    <!-- 打印生产流转码 -->
+    <div class="popup"
+      v-show="printFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <div class="text">打印生产流转码
+            <el-radio style="margin-left:12px"
+              v-model="printType"
+              :label="1">固定数量模式</el-radio>
+            <el-radio v-model="printType"
+              :label="2">自由数量模式</el-radio>
+          </div>
+          <div class="closeCtn"
+            @click="printFlag=false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="tableCtn"
+            style="padding-left:0;padding-right:0">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol">产品编号品类</div>
+                <div class="tcol">尺码/颜色</div>
+                <div class="tcol">计划生产数量</div>
+                <div class="tcol">每包装袋件数</div>
+                <div class="tcol">所需袋数</div>
+                <div class="tcol">单件回厂克重</div>
+                <div class="tcol">每袋回厂克重</div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div class="trow"
+                v-for="(item,index) in productionPrintInfo"
+                :key="index">
+                <div class="tcol">{{item.product_code}}({{item.category_name}}/{{item.secondary_category_name}})</div>
+                <div class="tcol">{{item.size_name}}/{{item.color_name}}</div>
+                <div class="tcol">{{item.plan_number}}</div>
+                <div class="tcol">
+                  <template v-if="printType===1">
+                    <div class="elCtn">
+                      <el-input v-model="item.number"
+                        placeholder="件数">
+                        <template slot="append">件/袋</template>
+                      </el-input>
+                    </div>
+                  </template>
+                  <template v-if="printType===2">
+                    根据实际可装袋数量
+                  </template>
+                </div>
+                <div class="tcol">
+                  <template v-if="printType===1">
+                    总数:{{Number(item.number)?Math.ceil(item.plan_number/item.number):'0'}}袋
+                  </template>
+                  <template v-if="printType===2">
+                    <div class="elCtn">
+                      <el-input v-model="item.total_pack"
+                        placeholder="袋数">
+                        <template slot="append">袋</template>
+                      </el-input>
+                    </div>
+                  </template>
+                </div>
+                <div class="tcol">
+                  <div class="elCtn">
+                    <el-input v-model="item.weight"
+                      placeholder="件数">
+                      <template slot="append">g/件</template>
+                    </el-input>
+                  </div>
+                </div>
+                <div class="tcol">
+                  <template v-if="printType===1">
+                    <span>总重:{{Number(item.weight)*Number(item.plan_number)}}g</span>
+                    <span v-if="item.plan_number%Number(item.number)">尾袋:{{Number(item.weight)*(item.plan_number%Number(item.number))}}g</span>
+                  </template>
+                  <template v-if="printType===2">
+                    根据实际数量计算
+                  </template>
+                </div>
+              </div>
+              <div class="trow">
+                <div class="tcol">合计</div>
+                <div class="tcol"></div>
+                <div class="tcol"></div>
+                <div class="tcol"></div>
+                <div class="tcol">{{totalPrintNumber}}袋</div>
+                <div class="tcol"></div>
+                <div class="tcol"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="printFlag=false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="saveProductionPrint">确认并打印</span>
+        </div>
+      </div>
+    </div>
     <!-- 扣款 -->
     <zh-deduct :show="deductFlag"
       @close="deductFlag = false;init()"
@@ -2329,7 +2214,7 @@ import {
   store,
   productStock
 } from '@/assets/js/api'
-import { ProductionMaterialPlanInfo, ProductionPlanInfo } from '@/types/productionPlan'
+import { ProductionMaterialPlanInfo, ProductionPlanInfo, ProductionPrintInfo } from '@/types/productionPlan'
 import { MaterialPlanInfo, MaterailPlanData } from '@/types/materialPlan'
 import { MaterialSupplementInfo } from '@/types/materialSupplement'
 import { CascaderInfo } from '@/types/vuex'
@@ -2348,11 +2233,14 @@ export default Vue.extend({
     productionDivideInfo: ProductionPlanInfo[]
     productionPlanList: ProductionPlanInfo[]
     materialSupplementInfo: MaterialSupplementInfo
+    productionPrintInfo: ProductionPrintInfo[]
     orderInfo: OrderDetail
     [propName: string]: any
   } {
     return {
       loading: true,
+      printFlag: false,
+      printType: 1,
       saveLock: false,
       checkFlag: false,
       is_check: 0,
@@ -2602,6 +2490,10 @@ export default Vue.extend({
         {
           name: '原料计划',
           url: '/materialPlan/detail?id=' + this.$route.query.id
+        },
+        {
+          name: '检验收发',
+          url: '/inspection/detail?id=' + this.$route.query.id
         }
       ],
       step: 1,
@@ -2653,10 +2545,23 @@ export default Vue.extend({
       },
       productStockIndex: '',
       productStockLog: [],
-      priceProcessList: [] // 报价单报价信息
+      priceProcessList: [], // 报价单报价信息
+      productionPrintInfo: []
     }
   },
   computed: {
+    totalPrintNumber(): number {
+      return this.productionPrintInfo.reduce((total: number, item: any) => {
+        return (
+          total +
+          (this.printType === 1
+            ? Number(item.number)
+              ? Math.ceil(item.plan_number / item.number)
+              : 0
+            : item.total_pack)
+        )
+      }, 0)
+    },
     processClientList(): CascaderInfo[] {
       return this.$store.state.api.clientType.arr.filter(
         (item: { label: string }) => item.label === '生产织造单位' || item.label === '生产加工单位'
@@ -2708,6 +2613,23 @@ export default Vue.extend({
         })
       })
       return this.$flatten(this.$flatten(checkListToChange))
+    },
+    totalPlanNumber(): string {
+      return this.productionPlanUpdateInfo.product_info_data
+        .reduce((total, current) => {
+          return total + Number(current.number)
+        }, 0)
+        .toFixed(2)
+    },
+    totalPlanPrice(): string {
+      return (
+        this.productionPlanUpdateInfo.product_info_data.reduce((total, current) => {
+          return total + Number(current.number) * Number(current.price)
+        }, 0) +
+        this.productionPlanUpdateInfo.others_fee_data.reduce((total, current) => {
+          return total + Number(current.price)
+        }, 0)
+      ).toFixed(2)
     },
     totalPlanNumberList(): string[] {
       return this.productionPlanInfo.map((item) => {
@@ -2767,10 +2689,72 @@ export default Vue.extend({
         if (this.productionPlanList.length > 0) {
           this.productionPlanIndex = this.productionPlanList[0].id?.toString()
         }
+        // 算一下乱七八糟一堆费用
+        this.productionPlanList.forEach((item) => {
+          // @ts-ignore
+          item.others_fee = item.others_fee_data.reduce((total, cur) => {
+            return total + Number(cur.price)
+          }, 0)
+          // @ts-ignore
+          item.deduct_fee = item.deduct_data.reduce((total, cur) => {
+            return total + Number(cur.price)
+          }, 0)
+          // @ts-ignore
+          item.sup_fee = item.sup_data.reduce((total, cur) => {
+            return (
+              total +
+              cur.client_data.reduce((totalChild, curChild) => {
+                return totalChild + (curChild.bear_client_id === item.client_id ? Number(curChild.bear_price) : 0)
+              }, 0)
+            )
+          }, 0)
+          // @ts-ignore
+          item.real_fee = this.$toFixed(
+            item.product_info_data.reduce((total, cur) => {
+              // @ts-ignore
+              return total + Number(cur.real_number) * Number(cur.price)
+            }, 0)
+          )
+        })
         this.productStockLog = res[2].data.data
         if (this.productStockLog.length > 0) {
           this.productStockIndex = this.productStockLog[0].id?.toString()
         }
+      })
+    },
+    goPrint() {
+      this.productionPrintInfo = []
+      this.printFlag = true
+      this.checkList().forEach((item: any) => {
+        this.productionPrintInfo.push({
+          pid: item.id,
+          product_code: item.product_code,
+          secondary_category_name: item.secondary_category,
+          category_name: item.category,
+          size_name: item.size_name,
+          color_name: item.color_name,
+          plan_number: item.order_number,
+          number: '',
+          total_pack: '',
+          weight: '',
+          total_weight: ''
+        })
+      })
+    },
+    saveProductionPrint() {
+      this.loading = true
+      if (this.printType === 1) {
+        this.productionPrintInfo.forEach((item) => {
+          item.total_weight = Number(item.plan_number) * Number(item.weight)
+          item.total_pack = Math.ceil(Number(item.plan_number) / Number(item.number))
+        })
+      }
+      productionPlan.createCode({ data: this.productionPrintInfo }).then((res) => {
+        if (res.data.status) {
+          this.$message.success('添加成功')
+          this.$openUrl('/productionPlan/codePrint?id=' + res.data.data)
+        }
+        this.loading = false
       })
     },
     closeStock() {
@@ -3308,6 +3292,8 @@ export default Vue.extend({
     },
     updateProductionPlan() {
       this.loading = true
+      this.productionPlanUpdateInfo.total_price = this.totalPlanPrice
+      this.productionPlanUpdateInfo.total_number = this.totalPlanNumber
       productionPlan.update(this.productionPlanUpdateInfo).then((res) => {
         if (res.data.status) {
           this.$message.success('修改成功')
@@ -3411,7 +3397,7 @@ export default Vue.extend({
       }
     },
     deleteMaterialSupplement(id: number) {
-      this.$confirm('是否删除该补纱单据?', '提示', {
+      this.$confirm('是否删除该补纱单据，删除该单据后需要在扣款单据列表手动删除与本条对应的扣款日志?', '提示', {
         confirmButtonText: '确认删除',
         cancelButtonText: '取消',
         type: 'warning'

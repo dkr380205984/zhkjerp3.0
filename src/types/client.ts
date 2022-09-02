@@ -13,6 +13,7 @@ export interface ClientTypeInfo {
 export interface ClientInfo {
   id?: null | string | number
   code: string
+  workshop_id?: string | null
   name: string
   alias: string // 简称
   contacts_data: Array<{

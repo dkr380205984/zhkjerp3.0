@@ -735,6 +735,7 @@
                   <el-cascader placeholder="请选择订购单位"
                     v-model="item.client_id_arr"
                     :options="orderClientList"
+                    filterable
                     @change="getMatAttr($event,item)"></el-cascader>
                 </div>
               </div>

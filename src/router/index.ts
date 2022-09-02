@@ -72,6 +72,10 @@ const routes: Array<RouteConfig> = [
     name: '生产计划单打印',
     component: () => import('../views/productionPlan/print.vue')
   }, {
+    path: '/productionPlan/codePrint',
+    name: '生产流转码打印',
+    component: () => import('../views/productionPlan/codePrint.vue')
+  }, {
     path: '/materialManage/supPrint',
     name: '补纱单打印',
     component: () => import('../views/materialManage/supPrint.vue')
@@ -671,6 +675,13 @@ const routes: Array<RouteConfig> = [
       path: '/productionPlan/progressList',
       name: '生产进度列表',
       component: () => import('../views/productionPlan/progressList.vue')
+    }, {
+      meta: {
+        permissions_id: '8-3',
+      },
+      path: '/productionPlan/codeList',
+      name: '生产流转卡列表',
+      component: () => import('../views/productionPlan/codeList.vue')
     }, {
       path: '/productionPlan/detail',
       name: '生产计划详情',

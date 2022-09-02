@@ -304,6 +304,7 @@ export default Vue.extend({
       // })
       if (!formCheck) {
         this.saveLock = true
+        this.clientInfo.workshop_id = (this.$route.query.uuid as string) || ''
         client.create(this.clientInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
@@ -336,6 +337,11 @@ export default Vue.extend({
         getInfoApi: 'getClientTypeAsync'
       }
     ])
+    // 优化绑定操作
+    if (this.$route.query.uuid) {
+      this.clientInfo.contacts_data[0].name = this.$route.query.username as string
+      this.clientInfo.contacts_data[0].phone = this.$route.query.phone as string
+    }
   }
 })
 </script>

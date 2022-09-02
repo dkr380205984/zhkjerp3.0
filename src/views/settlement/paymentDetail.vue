@@ -129,11 +129,23 @@
           </div>
           <div class="row">
             <div class="col">
-              <div class="infoCtn">
-                <span class="title">扣款金额</span>
-                <span class="number orange">{{clientFinancial.total_deduct_price}}
-                  <span class="unit">万元</span>
-                </span>
+              <div class="row">
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">扣款金额</span>
+                    <span class="number orange">{{clientFinancial.total_deduct_price}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">额外费用</span>
+                    <span class="number orange">{{clientFinancial.total_others_fee}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="col">
@@ -207,11 +219,23 @@
           </div>
           <div class="row">
             <div class="col">
-              <div class="infoCtn">
-                <span class="title">扣款金额</span>
-                <span class="number orange">{{clientFinancial.total_deduct_price}}
-                  <span class="unit">万元</span>
-                </span>
+              <div class="row">
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">扣款金额</span>
+                    <span class="number orange">{{clientFinancial.total_deduct_price}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">额外费用</span>
+                    <span class="number orange">{{clientFinancial.total_others_fee}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="col">
@@ -285,11 +309,23 @@
           </div>
           <div class="row">
             <div class="col">
-              <div class="infoCtn">
-                <span class="title">扣款金额</span>
-                <span class="number orange">{{clientFinancial.total_deduct_price}}
-                  <span class="unit">万元</span>
-                </span>
+              <div class="row">
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">扣款金额</span>
+                    <span class="number orange">{{clientFinancial.total_deduct_price}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">额外费用</span>
+                    <span class="number orange">{{clientFinancial.total_others_fee}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="col">
@@ -363,11 +399,23 @@
           </div>
           <div class="row">
             <div class="col">
-              <div class="infoCtn">
-                <span class="title">扣款金额</span>
-                <span class="number orange">{{clientFinancial.total_deduct_price}}
-                  <span class="unit">万元</span>
-                </span>
+              <div class="row">
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">扣款金额</span>
+                    <span class="number orange">{{clientFinancial.total_deduct_price}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">额外费用</span>
+                    <span class="number orange">{{clientFinancial.total_others_fee}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="col">
@@ -441,11 +489,23 @@
           </div>
           <div class="row">
             <div class="col">
-              <div class="infoCtn">
-                <span class="title">扣款金额</span>
-                <span class="number orange">{{clientFinancial.total_deduct_price}}
-                  <span class="unit">万元</span>
-                </span>
+              <div class="row">
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">扣款金额</span>
+                    <span class="number orange">{{clientFinancial.total_deduct_price}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">额外费用</span>
+                    <span class="number orange">{{clientFinancial.total_others_fee}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="col">
@@ -1414,6 +1474,9 @@
               </div>
               <div v-if="item.isShow"
                 style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
+                <div class="titleCtn">
+                  <div class="title">基本信息</div>
+                </div>
                 <div class="detailCtn"
                   style="padding-bottom:0">
                   <div class="row">
@@ -1424,6 +1487,48 @@
                     <div class="col">
                       <div class="label">工序说明：</div>
                       <div class="text">{{ item.detail.process_desc || '无' }}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tableCtn">
+                  <div class="thead">
+                    <div class="trow">
+                      <div class="tcol">计划生产费用</div>
+                      <div class="tcol">实际生产费用</div>
+                      <div class="tcol">额外费用</div>
+                      <div class="tcol">扣款费用</div>
+                      <div class="tcol">补原料承担费用</div>
+                      <div class="tcol">计划合计费用</div>
+                      <div class="tcol">实际合计费用</div>
+                    </div>
+                  </div>
+                  <div class="tbody">
+                    <div class="trow">
+                      <div class="tcol green">{{$toFixed(item.total_price - item.others_fee)}}元</div>
+                      <div class="tcol green">{{item.real_fee}}元</div>
+                      <div class="tcol"
+                        :class="{'green':item.others_fee>0,'gray':item.others_fee===0}">{{item.others_fee}}元</div>
+                      <div class="tcol"
+                        :class="{'red':item.deduct_fee>0,'gray':item.deduct_fee===0}">{{item.deduct_fee}}元</div>
+                      <div class="tcol"
+                        :class="{'red':item.sup_fee>0,'gray':item.sup_fee===0}">{{item.sup_fee}}元</div>
+                      <div class="tcol green">{{$toFixed(item.total_price - item.deduct_fee - item.sup_fee)}}元</div>
+                      <div class="tcol green">{{$toFixed(item.real_fee + item.others_fee - item.deduct_fee - item.sup_fee)}}元</div>
+                    </div>
+                    <div class="trow">
+                      <div class="tcol gray">详情见下表</div>
+                      <div class="tcol gray">详情见下表</div>
+                      <div class="tcol">
+                        <others-fee-data :data="item.others_fee_data"></others-fee-data>
+                      </div>
+                      <div class="tcol">
+                        <span style="cursor:pointer"
+                          :class="item.deduct_data && item.deduct_data.length>0?'blue':'gray'"
+                          @click="getDeduct(item.deduct_data)">扣款费用明细</span>
+                      </div>
+                      <div class="tcol gray">详情见下表</div>
+                      <div class="tcol gray">计划费用</div>
+                      <div class="tcol gray">实际费用</div>
                     </div>
                   </div>
                 </div>
@@ -1457,29 +1562,10 @@
                         {{ itemPro.size_name ? itemPro.size_name + '/' + itemPro.color_name : '未选择尺码颜色' }}
                       </div>
                       <div class="tcol">{{ itemPro.number }}</div>
+                      <div class="tcol">{{ itemPro.inspection_number || 0 }}</div>
                       <div class="tcol">{{ itemPro.price }}元</div>
                       <div class="tcol">{{ $toFixed(itemPro.price * itemPro.number) }}元</div>
-                      <div class="tcol">{{ itemPro.inspection_number || 0 }}</div>
                       <div class="tcol">{{ itemPro.inspection_price }}元</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="tableCtn"
-                  v-if="item.detail.material_info_data.length > 0">
-                  <div class="thead">
-                    <div class="trow">
-                      <div class="tcol">物料名称</div>
-                      <div class="tcol">物料颜色</div>
-                      <div class="tcol">分配数量</div>
-                    </div>
-                  </div>
-                  <div class="tbody">
-                    <div class="trow"
-                      v-for="(itemMat, indexMat) in item.detail.material_info_data"
-                      :key="indexMat">
-                      <div class="tcol">{{ itemMat.material_name }}</div>
-                      <div class="tcol">{{ itemMat.material_color }}</div>
-                      <div class="tcol">{{ itemMat.number }}{{ itemMat.unit }}</div>
                     </div>
                   </div>
                 </div>
@@ -2320,202 +2406,6 @@
       </div>
     </div>
     <div class="module"
-      id="开票单据">
-      <div class="titleCtn">
-        <div class="title">开票单据</div>
-      </div>
-      <div class="listCtn"
-        v-loading="invoiceLoading">
-        <div class="filterCtn">
-          <div class="elCtn">
-            <el-input v-model="invoiceOrderCode"
-              placeholder="搜索订单号"
-              @keydown.enter.native="getInvoiceLogList"></el-input>
-          </div>
-          <div class="elCtn">
-            <el-input v-model="invoiceKeyword"
-              placeholder="搜索票据编号"
-              @keydown.enter.native="getInvoiceLogList"></el-input>
-          </div>
-          <div class="elCtn">
-            <el-select @change="getInvoiceLogList"
-              v-model="invoiceUser"
-              placeholder="筛选创建人"
-              clearable>
-              <el-option v-for="item in userList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"></el-option>
-            </el-select>
-          </div>
-          <div class="elCtn">
-            <el-date-picker v-model="invoiceDate"
-              type="daterange"
-              align="right"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :picker-options="pickerOptions"
-              @change="getInvoiceLogList"
-              value-format="yyyy-MM-dd">
-            </el-date-picker>
-          </div>
-          <div class="backHoverBlue btn">搜索</div>
-        </div>
-        <div class="filterCtn clearfix">
-          <div class="elCtn">
-            <el-input v-model="invoiceCode"
-              placeholder="搜索开票号码"
-              @keydown.enter.native="getInvoiceLogList"></el-input>
-          </div>
-        </div>
-        <div class="list">
-          <div class="row title">
-            <div class="col">票据编号</div>
-            <div class="col">关联单号</div>
-            <div class="col">开票金额</div>
-            <div class="col">开票号码</div>
-            <div class="col">备注信息</div>
-            <div class="col">开票人</div>
-            <div class="col">开票日期</div>
-            <div class="col">操作</div>
-          </div>
-          <div class="row"
-            v-for="item in invoiceLog"
-            :key="item.id">
-            <div class="col">{{item.code}}</div>
-            <div class="col">{{item.rel_doc_code || '未关联'}}</div>
-            <div class="col">{{item.price}}元</div>
-            <div class="col">{{item.invoice_code}}</div>
-            <div class="col">{{item.desc}}</div>
-            <div class="col">{{item.user_name}}</div>
-            <div class="col">{{item.created_at}}</div>
-            <div class="col oprCtn">
-              <span class="opr blue"
-                @click="goPayment([{ order_id: item.order_id, doc_code: item.order_code, rel_doc_id: item.rel_doc_id, price: item.price, desc: '', complete_time: $getDate(new Date()) }],false,true)">付款</span>
-              <span class="opr orange"
-                @click="goInvoice([item],true)">修改</span>
-              <span class="opr red"
-                @click="deleteInvoice(item.id)">删除</span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">合计：</div>
-            <div class="col"></div>
-            <div class="col green bold">{{invoiceTotalPrice}}万元</div>
-            <div class="col"></div>
-            <div class="col"></div>
-            <div class="col"></div>
-            <div class="col"></div>
-            <div class="col"></div>
-          </div>
-        </div>
-        <div class="pageCtn">
-          <el-pagination background
-            :page-size="5"
-            layout="prev, pager, next"
-            :total="invoiceTotal"
-            :current-page.sync="invoicePage"
-            @current-change="getInvoiceLogList">
-          </el-pagination>
-        </div>
-      </div>
-    </div>
-    <div class="module"
-      id="付款单据">
-      <div class="titleCtn">
-        <div class="title">付款单据</div>
-      </div>
-      <div class="listCtn"
-        v-loading="paymentLoading">
-        <div class="filterCtn">
-          <div class="elCtn">
-            <el-input v-model="paymentOrderCode"
-              placeholder="搜索订单号"
-              @keydown.enter.native="getPaymentLogList"></el-input>
-          </div>
-          <div class="elCtn">
-            <el-input v-model="paymentKeyword"
-              placeholder="搜索票据编号"
-              @keydown.enter.native="getPaymentLogList"></el-input>
-          </div>
-          <div class="elCtn">
-            <el-select @change="getPaymentLogList"
-              v-model="paymentUser"
-              placeholder="筛选创建人"
-              clearable>
-              <el-option v-for="item in userList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"></el-option>
-            </el-select>
-          </div>
-          <div class="elCtn">
-            <el-date-picker v-model="paymentDate"
-              type="daterange"
-              align="right"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :picker-options="pickerOptions"
-              @change="getPaymentLogList"
-              value-format="yyyy-MM-dd">
-            </el-date-picker>
-          </div>
-          <div class="backHoverBlue btn">搜索</div>
-        </div>
-        <div class="filterCtn clearfix">
-        </div>
-        <div class="list">
-          <div class="row title">
-            <div class="col">票据编号</div>
-            <div class="col">关联单号</div>
-            <div class="col">付款金额</div>
-            <div class="col">备注信息</div>
-            <div class="col">付款人</div>
-            <div class="col">付款日期</div>
-            <div class="col">操作</div>
-          </div>
-          <div class="row"
-            v-for="item in paymentLog"
-            :key="item.id">
-            <div class="col">{{item.code}}</div>
-            <div class="col">{{item.rel_doc_code || '未关联'}}</div>
-            <div class="col">{{item.price}}元</div>
-            <div class="col">{{item.desc}}</div>
-            <div class="col">{{item.user_name}}</div>
-            <div class="col">{{item.created_at}}</div>
-            <div class="col oprCtn">
-              <span class="opr orange"
-                @click="goPayment([item],true)">修改</span>
-              <span class="opr red"
-                @click="deletePayment(item.id)">删除</span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">合计：</div>
-            <div class="col"></div>
-            <div class="col green bold">{{paymentTotalPrice}}万元</div>
-            <div class="col"></div>
-            <div class="col"></div>
-            <div class="col"></div>
-            <div class="col"></div>
-          </div>
-        </div>
-        <div class="pageCtn">
-          <el-pagination background
-            :page-size="5"
-            layout="prev, pager, next"
-            :total="paymentTotal"
-            :current-page.sync="paymentPage"
-            @current-change="getPaymentLogList">
-          </el-pagination>
-        </div>
-      </div>
-    </div>
-    <div class="module"
       id="扣款单据">
       <div class="titleCtn">
         <div class="title">扣款单据</div>
@@ -2621,17 +2511,213 @@
         </div>
       </div>
     </div>
+    <div class="module"
+      id="付款单据">
+      <div class="titleCtn">
+        <div class="title">付款单据</div>
+      </div>
+      <div class="listCtn"
+        v-loading="paymentLoading">
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-input v-model="paymentOrderCode"
+              placeholder="搜索订单号"
+              @keydown.enter.native="getPaymentLogList"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-input v-model="paymentKeyword"
+              placeholder="搜索票据编号"
+              @keydown.enter.native="getPaymentLogList"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-select @change="getPaymentLogList"
+              v-model="paymentUser"
+              placeholder="筛选创建人"
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-date-picker v-model="paymentDate"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+              @change="getPaymentLogList"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </div>
+          <div class="backHoverBlue btn">搜索</div>
+        </div>
+        <div class="filterCtn clearfix">
+        </div>
+        <div class="list">
+          <div class="row title">
+            <div class="col">票据编号</div>
+            <div class="col">关联单号</div>
+            <div class="col">付款金额</div>
+            <div class="col">备注信息</div>
+            <div class="col">付款人</div>
+            <div class="col">付款日期</div>
+            <div class="col">操作</div>
+          </div>
+          <div class="row"
+            v-for="item in paymentLog"
+            :key="item.id">
+            <div class="col">{{item.code}}</div>
+            <div class="col">{{item.rel_doc_code || '未关联'}}</div>
+            <div class="col">{{item.price}}元</div>
+            <div class="col">{{item.desc}}</div>
+            <div class="col">{{item.user_name}}</div>
+            <div class="col">{{item.created_at}}</div>
+            <div class="col oprCtn">
+              <span class="opr orange"
+                @click="goPayment([item],true)">修改</span>
+              <span class="opr red"
+                @click="deletePayment(item.id)">删除</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">合计：</div>
+            <div class="col"></div>
+            <div class="col green bold">{{paymentTotalPrice}}万元</div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+          </div>
+        </div>
+        <div class="pageCtn">
+          <el-pagination background
+            :page-size="5"
+            layout="prev, pager, next"
+            :total="paymentTotal"
+            :current-page.sync="paymentPage"
+            @current-change="getPaymentLogList">
+          </el-pagination>
+        </div>
+      </div>
+    </div>
+    <div class="module"
+      id="开票单据">
+      <div class="titleCtn">
+        <div class="title">开票单据</div>
+      </div>
+      <div class="listCtn"
+        v-loading="invoiceLoading">
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-input v-model="invoiceOrderCode"
+              placeholder="搜索订单号"
+              @keydown.enter.native="getInvoiceLogList"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-input v-model="invoiceKeyword"
+              placeholder="搜索票据编号"
+              @keydown.enter.native="getInvoiceLogList"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-select @change="getInvoiceLogList"
+              v-model="invoiceUser"
+              placeholder="筛选创建人"
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-date-picker v-model="invoiceDate"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+              @change="getInvoiceLogList"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </div>
+          <div class="backHoverBlue btn">搜索</div>
+        </div>
+        <div class="filterCtn clearfix">
+          <div class="elCtn">
+            <el-input v-model="invoiceCode"
+              placeholder="搜索开票号码"
+              @keydown.enter.native="getInvoiceLogList"></el-input>
+          </div>
+        </div>
+        <div class="list">
+          <div class="row title">
+            <div class="col">票据编号</div>
+            <div class="col">关联单号</div>
+            <div class="col">开票金额</div>
+            <div class="col">开票号码</div>
+            <div class="col">备注信息</div>
+            <div class="col">开票人</div>
+            <div class="col">开票日期</div>
+            <div class="col">操作</div>
+          </div>
+          <div class="row"
+            v-for="item in invoiceLog"
+            :key="item.id">
+            <div class="col">{{item.code}}</div>
+            <div class="col">{{item.rel_doc_code || '未关联'}}</div>
+            <div class="col">{{item.price}}元</div>
+            <div class="col">{{item.invoice_code}}</div>
+            <div class="col">{{item.desc}}</div>
+            <div class="col">{{item.user_name}}</div>
+            <div class="col">{{item.created_at}}</div>
+            <div class="col oprCtn">
+              <span class="opr blue"
+                @click="goPayment([{ order_id: item.order_id, doc_code: item.order_code, rel_doc_id: item.rel_doc_id, price: item.price, desc: '', complete_time: $getDate(new Date()) }],false,true)">付款</span>
+              <span class="opr orange"
+                @click="goInvoice([item],true)">修改</span>
+              <span class="opr red"
+                @click="deleteInvoice(item.id)">删除</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">合计：</div>
+            <div class="col"></div>
+            <div class="col green bold">{{invoiceTotalPrice}}万元</div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+          </div>
+        </div>
+        <div class="pageCtn">
+          <el-pagination background
+            :page-size="5"
+            layout="prev, pager, next"
+            :total="invoiceTotal"
+            :current-page.sync="invoicePage"
+            @current-change="getInvoiceLogList">
+          </el-pagination>
+        </div>
+      </div>
+    </div>
     <div class="bottomFixBar">
       <div class="main">
+        <div class="btnCtn"
+          style="float:left"
+          v-if="clientType===2||clientType===3||clientType===4">
+          <div class="btn backHoverGreen"
+            @click="getAssociatedPage">查看其他关联单据</div>
+        </div>
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
-          <!-- <div class="btn backHoverOrange"
-            @click="goInvoice([])">直接开票</div>
-          <div class="btn backHoverBlue"
-            @click="goPayment([])">直接付款</div>
-          <div class="btn backHoverRed"
-            @click="goDeduct([])">直接扣款</div> -->
           <div class="btn backHoverGreen"
             @click="goUrl">导出数据表报</div>
         </div>
@@ -2666,6 +2752,9 @@
       :client_id="$route.query.id"
       @close="deductFlag=false"
       @afterDeduct="init()"></zh-deduct>
+    <zh-deduct-detail :show="deductDetailFlag"
+      @close="deductDetailFlag = false"
+      :data="deductDetail"></zh-deduct-detail>
     <!-- 产品详情 -->
     <product-detail :id="productDetailId"
       :show="productShow"
@@ -2770,7 +2859,8 @@
                       <div class="tcol">{{itemChild.attribute}}</div>
                       <div class="tcol blue">{{itemChild.price}}元/kg</div>
                       <div class="tcol">{{itemChild.number}}kg</div>
-                      <div class="tcol">{{itemChild.settle_price===0?'未填写':itemChild.settle_price}}</div>
+                      <div class="tcol"
+                        :class="{'blue':itemChild.settle_price,'gray':!itemChild.settle_price}">{{itemChild.settle_price===0?'未填写':itemChild.settle_price+'元'}}</div>
                       <div class="tcol">
                         <div class="elCtn">
                           <el-input placeholder="单价"
@@ -2792,6 +2882,11 @@
         </div>
       </div>
     </div>
+    <!-- 关联页面 -->
+    <associated-page :data="associatedPage"
+      :nowPage="false"
+      @close="showAssociatedPage = false"
+      :show="showAssociatedPage"></associated-page>
   </div>
 </template>
 
@@ -3029,7 +3124,11 @@ export default Vue.extend({
       updatePriceYarnList: [],
       yarnAttributeList: yarnAttributeArr,
       yarnList: [],
-      showAllFlag: true
+      showAllFlag: true,
+      deductDetailFlag: false,
+      deductDetail: [],
+      associatedPage: [],
+      showAssociatedPage: false
     }
   },
   computed: {
@@ -3054,6 +3153,65 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 查看其他关联单据
+    getAssociatedPage() {
+      if (this.clientType === 4) {
+        this.associatedPage = [
+          {
+            name: '关联补纱单',
+            url:
+              '/billingManagement/rawMaterialSupplement?page=1&keyword=&client_id=&user_id=&group_id=&status=null&type=null&date=&limit=10&contacts_id=&single_client_id=' +
+              this.$route.query.id
+          },
+          {
+            name: '检验入库单据',
+            url:
+              '/billingManagement/inspectionReceiptDocument?page=2&keyword=&client_id=&user_id=&group_id=&process=&order_type=&status=null&type=null&date=&limit=10&contacts_id=&single_client_id=' +
+              this.$route.query.id
+          }
+        ]
+      } else if (this.clientType === 2) {
+        if (this.$route.query.type === '纱线原料单位') {
+          this.associatedPage = [
+            {
+              name: '关联补纱单',
+              url:
+                '/billingManagement/rawMaterialSupplement?page=1&keyword=&client_id=&user_id=&group_id=&status=null&type=null&date=&limit=10&contacts_id=&single_client_id=' +
+                this.$route.query.id
+            },
+            {
+              name: '关联出入库单',
+              url:
+                '/billingManagement/shaXianInOutList?page=2&keyword=&client_id=&user_id=&group_id=&shaxianName=&action_type=&store_id=&status=null&type=null&order_type=&date=&limit=10&contacts_id=&single_client_id=' +
+                this.$route.query.id
+            }
+          ]
+        } else if (this.$route.query.type === '面料原料单位') {
+          this.associatedPage = [
+            {
+              name: '关联补纱单',
+              url:
+                '/billingManagement/rawMaterialSupplement?page=1&keyword=&client_id=&user_id=&group_id=&status=null&type=null&date=&limit=10&contacts_id=&single_client_id=' +
+                this.$route.query.id
+            },
+            {
+              name: '关联出入库单',
+              url:
+                '/billingManagement/fabricWarehousing?page=1&keyword=&client_id=&user_id=&group_id=&store_id=&status=null&material_name=&action_type=&type=null&order_type=&date=&limit=10&contacts_id=&single_client_id=' +
+                this.$route.query.id
+            }
+          ]
+        } else if (this.$route.query.type === '装饰辅料单位') {
+          this.associatedPage = [
+            {
+              name: '关联出入库单',
+              url: '/billingManagement/auxiliaryInOutList?&single_client_id=' + this.$route.query.id
+            }
+          ]
+        }
+      }
+      this.showAssociatedPage = true
+    },
     getMatStsList(date: string[]) {
       materialOrder
         .stsList({
@@ -3684,6 +3842,26 @@ export default Vue.extend({
             .then((res) => {
               if (res.status) {
                 item.detail = res.data.data
+                // 算一下乱七八糟一堆费用
+                item.others_fee = item.detail.others_fee_data.reduce((total: any, cur: any) => {
+                  return total + Number(cur.price)
+                }, 0)
+                item.deduct_fee = item.detail.deduct_data.reduce((total: any, cur: any) => {
+                  return total + Number(cur.price)
+                }, 0)
+                item.sup_fee = item.detail.sup_data.reduce((total: any, cur: any) => {
+                  return (
+                    total +
+                    cur.client_data.reduce((totalChild: any, curChild: any) => {
+                      return totalChild + (curChild.bear_client_id === item.client_id ? Number(curChild.bear_price) : 0)
+                    }, 0)
+                  )
+                }, 0)
+                item.real_fee = this.$toFixed(
+                  item.detail.product_info_data.reduce((total: any, cur: any) => {
+                    return total + Number(cur.real_number) * Number(cur.price)
+                  }, 0)
+                )
                 item.isShow = true
                 this.$forceUpdate()
               }
@@ -3719,6 +3897,14 @@ export default Vue.extend({
       } else {
         item.isShow = !item.isShow
         this.listLoading = false
+      }
+    },
+    getDeduct(info: any[]) {
+      if (!info || info.length === 0) {
+        this.$message.warning('暂无扣款信息')
+      } else {
+        this.deductDetail = info
+        this.deductDetailFlag = true
       }
     },
     getCheckInfo(ev: boolean, item: any, checkList: any[]) {

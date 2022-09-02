@@ -17,6 +17,14 @@
         </svg>
         <span class="text">生产进度</span>
       </div>
+      <!-- <div class="tag"
+        @click="$router.push('/productionPlan/codeList?page=1')">
+        <svg class="iconFont"
+          aria-hidden="true">
+          <use xlink:href='#icon-shengchanjindu'></use>
+        </svg>
+        <span class="text">生产流转码</span>
+      </div> -->
     </div>
     <div class="module">
       <div class="titleCtn">

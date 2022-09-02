@@ -178,13 +178,13 @@ export default Vue.extend({
             id: '18-3',
             icon: 'icon-chexiaodanguanli',
             url: '/reimbursementManage/list?page=1&status='
-          },
-          {
-            name: '财务结算',
-            id: 22,
-            icon: 'icon-chexiaodanguanli',
-            url: '/settlement/collectionList?page=1&status='
           }
+          // {
+          //   name: '财务结算',
+          //   id: 22,
+          //   icon: 'icon-chexiaodanguanli',
+          //   url: '/settlement/collectionList?page=1&status='
+          // }
         ]
       }
     }

@@ -163,6 +163,9 @@
           <div class="box"
             v-for="item in clientBindList"
             :key="item.id">
+            <div class="close hoverGreen"
+              style="top:30px"
+              @click="$router.push('/client/create?uuid='+item.uuid + '&username=' + item.user.name + '&phone=' +item.user.user_name)">绑定新单位</div>
             <div class="close hoverRed"
               @click="cancelBind(item.uuid)">忽略</div>
             <div class="userName">{{item.user.name}}</div>

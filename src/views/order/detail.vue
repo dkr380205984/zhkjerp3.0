@@ -145,7 +145,7 @@
                     <use xlink:href="#icon-qitawenjian"></use>
                   </svg>
                 </div>
-                <div class="name">文件{{index+1}}.{{item.file_url.split('.')[item.file_url.split('.').length-1]}}</div>
+                <div class="name">{{item.file_name}}.{{item.file_url.split('.')[item.file_url.split('.').length-1]}}</div>
                 <a class="opr hoverBlue"
                   :href="item"
                   target=_blank>点击下载</a>
@@ -192,7 +192,7 @@
                     <use xlink:href="#icon-qitawenjian"></use>
                   </svg>
                 </div>
-                <div class="name">文件{{index+1}}.{{item.file_url.split('.')[item.file_url.split('.').length-1]}}</div>
+                <div class="name">{{item.file_name}}.{{item.file_url.split('.')[item.file_url.split('.').length-1]}}</div>
                 <a class="opr hoverBlue"
                   :href="item"
                   target=_blank>点击下载</a>

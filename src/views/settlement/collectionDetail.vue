@@ -545,7 +545,7 @@
           <div class="row">
             <div class="col">合计：</div>
             <div class="col"></div>
-            <div class="col green bold">{{collectionTotalPrice}}万元</div>
+            <div class="col green bold">{{collectionTotalPriceRMB}}万元/{{collectionTotalPriceUSD}}万美元</div>
             <div class="col"></div>
             <div class="col"></div>
             <div class="col"></div>
@@ -688,6 +688,7 @@
       :data="collectionData"
       :client_name="clientFinancial.name"
       :client_id="$route.query.id"
+      :settleUnit="settleUnit"
       @close="collectionFlag=false"
       @afterCollection="init()">
     </zh-collection>
@@ -743,11 +744,13 @@ export default Vue.extend({
   } {
     return {
       invoiceChange: false, // 开票转收款
+      settleUnit: '元',
       collectionLoading: false,
       collectionFlag: false,
       collectionData: [],
       collectionLog: [],
-      collectionTotalPrice: 0,
+      collectionTotalPriceRMB: 0,
+      collectionTotalPriceUSD: 0,
       collectionTotal: 1,
       collectionPage: 1,
       collectionUpdate: false,
@@ -867,8 +870,7 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 14,
-          errVal: '0',
-          unitKey: 'collect_unit'
+          errVal: '0'
         },
         {
           key: 'product_code',
@@ -1167,8 +1169,11 @@ export default Vue.extend({
             this.orderList = res.data.data.items
             this.orderList.forEach((item: any) => {
               item.collect_status = item.has_collect.status
-              item.collect_count = item.has_collect.count
-              item.collect_unit = item.has_collect.unit
+              item.collect_count =
+                item.has_collect.count +
+                '元' +
+                (item.has_collect.count_usd ? '/' + item.has_collect.count_usd + '美元' : '')
+              // item.collect_unit = item.has_collect.unit
               item.invoice_status = item.has_invoice.status
               item.invoice_count = item.has_invoice.count
             })
@@ -1197,15 +1202,22 @@ export default Vue.extend({
           if (res.data.status) {
             this.collectionLog = res.data.data.items
             this.collectionTotal = res.data.data.total
-            this.collectionTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000)
+            this.collectionTotalPriceUSD = this.$toFixed(res.data.data.additional.total_price_usd / 10000)
+            this.collectionTotalPriceRMB = this.$toFixed(res.data.data.additional.total_price_rmb / 10000)
           }
           this.collectionLoading = false
         })
     },
     goCollection(data: any[], update?: boolean, invoiceChange?: boolean) {
+      // 优化结算单位冲突问题
+      if (data.length && Array.from(new Set(data.map((item) => item.settle_unit))).length > 1) {
+        this.$message.error('请选择下单结算单位相同的单据进行结算')
+        return
+      }
       this.invoiceChange = invoiceChange
       this.collectionUpdate = update
       this.collectionData = data
+      this.settleUnit = data[0] ? data[0].settle_unit : '元'
       this.collectionFlag = true
     },
     deleteCollection(id: number) {

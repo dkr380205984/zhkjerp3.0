@@ -178,7 +178,7 @@
             <div class="col">{{item.name}}</div>
             <div class="col">{{item.alias}}</div>
             <div class="col">{{item.client_type_name}}</div>
-            <div class="col">{{$toFixed(item.total_plan_price/10000)}}万元</div>
+            <div class="col">{{$toFixed(item.total_plan_price)}}万元</div>
             <div class="col">
               <template v-if="item.client_type_name==='纱线原料单位'||item.client_type_name==='原料加工单位'">
                 {{$toFixed(item.total_plan_number/1000)}}吨
@@ -196,7 +196,7 @@
                 {{$toFixed(item.total_plan_number)}}立方
               </template>
             </div>
-            <div class="col">{{$toFixed(item.total_real_price/10000)}}万元</div>
+            <div class="col">{{$toFixed(item.total_real_price)}}万元</div>
             <div class="col">
               <template v-if="item.client_type_name==='纱线原料单位'||item.client_type_name==='原料加工单位'">
                 {{$toFixed(item.total_real_number/1000)}}吨
