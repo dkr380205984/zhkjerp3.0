@@ -194,7 +194,7 @@ export default Vue.extend({
       loading: false,
       alias: '',
       packName: '',
-      sortWay: 1,
+      sortWay: 2,
       option1: {
         tooltip: {
           trigger: 'axis',
@@ -225,7 +225,7 @@ export default Vue.extend({
                 ';margin-right:10px">' +
                 param.value +
                 '</span>' +
-                (index === 1 ? '万元' : '千个')
+                (index === 1 ? '千个' : '万元')
 
               htmlStr += '</div>'
             })
@@ -257,7 +257,7 @@ export default Vue.extend({
           }
         ],
         legend: {
-          data: ['订购数量', '订购金额']
+          data: ['订购金额', '订购数量']
         },
         xAxis: [
           {
@@ -271,16 +271,6 @@ export default Vue.extend({
         yAxis: [
           {
             type: 'value',
-            name: '订购数量',
-            min: 0,
-            max: 25,
-            interval: 5,
-            axisLabel: {
-              formatter: '{value} 千个'
-            }
-          },
-          {
-            type: 'value',
             name: '订购金额',
             min: 0,
             max: 500,
@@ -288,17 +278,27 @@ export default Vue.extend({
             axisLabel: {
               formatter: '{value} 万元'
             }
+          },
+          {
+            type: 'value',
+            name: '订购数量',
+            min: 0,
+            max: 25,
+            interval: 5,
+            axisLabel: {
+              formatter: '{value} 千个'
+            }
           }
         ],
         series: [
           {
             type: 'bar',
-            name: '订购数量',
+            name: '订购金额',
             data: []
           },
           {
             type: 'line',
-            name: '订购金额',
+            name: '订购数量',
             yAxisIndex: 1,
             data: []
           }
@@ -533,19 +533,19 @@ export default Vue.extend({
           }
 
           // 每月下单总数 图表更新
-          this.option1.yAxis[1].max = Math.ceil(Math.ceil(orderPriceMax / 10000 / 5)) * 5 || 10
-          this.option1.yAxis[1].min = orderPriceMin && orderPriceMin < 0 ? Math.ceil(orderPriceMin / 10000) : 0
-          this.option1.yAxis[1].interval = Math.ceil(orderPriceMax / 10000 / 5) || 10
+          this.option1.yAxis[0].max = Math.ceil(Math.ceil(orderPriceMax / 10000 / 5)) * 5 || 10
+          this.option1.yAxis[0].min = orderPriceMin && orderPriceMin < 0 ? Math.ceil(orderPriceMin / 10000) : 0
+          this.option1.yAxis[0].interval = Math.ceil(orderPriceMax / 10000 / 5) || 10
 
           // 每月下单总额 图表更新
-          this.option1.yAxis[0].max = Math.ceil(Math.ceil(orderNumberMax / 10000 / 5)) * 5 || 10
-          this.option1.yAxis[0].min = orderNumberMin && orderNumberMin < 0 ? Math.ceil(orderNumberMin / 10000) : 0
-          this.option1.yAxis[0].interval = Math.ceil(orderNumberMax / 10000 / 5) || 10
+          this.option1.yAxis[1].max = Math.ceil(Math.ceil(orderNumberMax / 1000 / 5)) * 5 || 10
+          this.option1.yAxis[1].min = orderNumberMin && orderNumberMin < 0 ? Math.ceil(orderNumberMin / 1000) : 0
+          this.option1.yAxis[1].interval = Math.ceil(orderNumberMax / 1000 / 5) || 10
 
           data.report.forEach((item: any) => {
             this.option1.xAxis[0].data.push(item.name)
-            this.option1.series[0].data.push((item.total_number / 1000).toFixed(2))
-            this.option1.series[1].data.push((item.total_price / 10000).toFixed(2))
+            this.option1.series[1].data.push((item.total_number / 1000).toFixed(2))
+            this.option1.series[0].data.push((item.total_price / 10000).toFixed(2))
           })
           this.loading = false
         })

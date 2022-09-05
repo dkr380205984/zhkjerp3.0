@@ -235,7 +235,7 @@
                     <div class="tcol">加工数量</div>
                     <div class="tcol">半次(B次)数量</div>
                     <div class="tcol">全次数量</div>
-                    <div class="tcol">入库数量</div>
+                    <div class="tcol">检验/完成数量</div>
                     <div class="tcol">完成金额</div>
                     <div class="tcol">加工单价</div>
                     <div class="tcol">加工总价</div>

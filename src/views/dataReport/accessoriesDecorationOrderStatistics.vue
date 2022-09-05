@@ -108,11 +108,7 @@
           <div class="contentGrid">
             <div>
               订单类型：<span class="blue">{{
-                filterData.order_type === ''
-                  ? '订单/样单'
-                  : filterData.order_type === 1
-                  ? '订单'
-                  : '样单'
+                filterData.order_type === '' ? '订单/样单' : filterData.order_type === 1 ? '订单' : '样单'
               }}</span>
             </div>
             <div>
@@ -231,7 +227,9 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue" @click="$openUrl('/billingManagement/auxiliaryMaterialPurchaseOrder')">查看辅料订购单</div>
+          <div class="btn backHoverBlue" @click="$openUrl('/billingManagement/auxiliaryMaterialPurchaseOrder')">
+            查看辅料订购单
+          </div>
         </div>
       </div>
     </div>
@@ -251,7 +249,7 @@ export default Vue.extend({
     return {
       loading: false,
       alias: '',
-      sortWay: 1,
+      sortWay: 2,
       option1: {
         tooltip: {
           trigger: 'axis',
@@ -282,7 +280,7 @@ export default Vue.extend({
                 ';margin-right:10px">' +
                 param.value +
                 '</span>' +
-                (index === 1 ? '万元' : '千个')
+                (index === 1 ? '千个' : '万元')
 
               htmlStr += '</div>'
             })
@@ -314,7 +312,7 @@ export default Vue.extend({
           }
         ],
         legend: {
-          data: ['订购数量','订购金额']
+          data: ['订购金额', '订购数量']
         },
         xAxis: [
           {
@@ -330,32 +328,32 @@ export default Vue.extend({
             type: 'value',
             name: '',
             min: 0,
-            max: 25,
-            interval: 5,
+            max: 500,
+            interval: 100,
             axisLabel: {
-              formatter: '{value} 千个'
+              formatter: '{value} 万元'
             }
           },
           {
             type: 'value',
             name: '',
             min: 0,
-            max: 500,
-            interval: 100,
+            max: 25,
+            interval: 5,
             axisLabel: {
-              formatter: '{value} 万元'
+              formatter: '{value} 千个'
             }
           }
         ],
         series: [
           {
             type: 'bar',
-            name:'订购数量',
+            name: '订购金额',
             data: []
           },
           {
             type: 'line',
-            name:'订购金额',
+            name: '订购数量',
             yAxisIndex: 1,
             data: []
           }
@@ -489,7 +487,7 @@ export default Vue.extend({
         group_id: '',
         order_type: '',
         client_id: '',
-        name: '',
+        name: ''
       }
       localStorage.create_user_name = ''
       this.filterData.start_time = new Date().getFullYear() + '-01-01'
@@ -603,19 +601,19 @@ export default Vue.extend({
 
           if (this.activeName === 'first') {
             //   采购数量 图表更新
-            this.option1.yAxis[0].max = Math.ceil(Math.ceil(planNumberMax / 1000 / 5)) * 5 || 10
-            this.option1.yAxis[0].min = planNumberMin && planNumberMin < 0 ? Math.ceil(planNumberMin / 1000) : 0
-            this.option1.yAxis[0].interval = Math.ceil(planNumberMax / 1000 / 5) || 10
+            this.option1.yAxis[1].max = Math.ceil(Math.ceil(planNumberMax / 1000 / 5)) * 5 || 10
+            this.option1.yAxis[1].min = planNumberMin && planNumberMin < 0 ? Math.ceil(planNumberMin / 1000) : 0
+            this.option1.yAxis[1].interval = Math.ceil(planNumberMax / 1000 / 5) || 10
 
             //   采购金额 图表更新
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(planPriceMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[1].min = planPriceMin && planPriceMin < 0 ? Math.ceil(planPriceMin / 10000) : 0
-            this.option1.yAxis[1].interval = Math.ceil(planPriceMax / 10000 / 5) || 10
+            this.option1.yAxis[0].max = Math.ceil(Math.ceil(planPriceMax / 10000 / 5)) * 5 || 10
+            this.option1.yAxis[0].min = planPriceMin && planPriceMin < 0 ? Math.ceil(planPriceMin / 10000) : 0
+            this.option1.yAxis[0].interval = Math.ceil(planPriceMax / 10000 / 5) || 10
 
             data.plan.report.forEach((item: any) => {
               this.option1.xAxis[0].data.push(item.name)
-              this.option1.series[0].data.push((item.total_number / 1000).toFixed(2))
-              this.option1.series[1].data.push((item.total_price / 10000).toFixed(2))
+              this.option1.series[1].data.push((item.total_number / 1000).toFixed(2))
+              this.option1.series[0].data.push((item.total_price / 10000).toFixed(2))
             })
           } else if (this.activeName === 'second') {
             //   采购数量 图表更新

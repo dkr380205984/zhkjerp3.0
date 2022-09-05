@@ -169,7 +169,7 @@ export default Vue.extend({
                 ';margin-right:10px">' +
                 param.value +
                 '</span>' +
-                (index === 1 ? '万元' : '立方')
+                (index === 1 ? '立方' : '万元')
 
               htmlStr += '</div>'
             })

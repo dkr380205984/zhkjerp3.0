@@ -265,7 +265,7 @@ export default Vue.extend({
     return {
       loading: false,
       alias: '',
-      sortWay: 1,
+      sortWay: 2,
       option1: {
         tooltip: {
           trigger: 'axis',
@@ -627,26 +627,26 @@ export default Vue.extend({
           }
 
           if (this.activeName === 'first') {
-            this.option1.legend.data = ['采购数量', '订购金额']
-            this.option1.series[0].name = '采购数量'
-            this.option1.series[1].name = '订购金额'
-            this.option1.yAxis[0].name = '采购数量'
-            this.option1.yAxis[1].name = '订购金额'
+            this.option1.legend.data = ['订购金额', '采购数量']
+            this.option1.series[0].name = '订购金额'
+            this.option1.series[1].name = '采购数量'
+            this.option1.yAxis[0].name = '订购金额'
+            this.option1.yAxis[1].name = '采购数量'
 
             //   采购数量 图表更新
-            this.option1.yAxis[0].max = Math.ceil(Math.ceil(planNumberMax / 1000 / 5)) * 5 || 10
-            this.option1.yAxis[0].min = planNumberMin && planNumberMin < 0 ? Math.ceil(planNumberMin / 1000) : 0
-            this.option1.yAxis[0].interval = Math.ceil(planNumberMax / 1000 / 5) || 10
+            this.option1.yAxis[1].max = Math.ceil(Math.ceil(planNumberMax / 1000 / 5)) * 5 || 10
+            this.option1.yAxis[1].min = planNumberMin && planNumberMin < 0 ? Math.ceil(planNumberMin / 1000) : 0
+            this.option1.yAxis[1].interval = Math.ceil(planNumberMax / 1000 / 5) || 10
 
             //   采购金额 图表更新
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(planPriceMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[1].min = planPriceMin && planPriceMin < 0 ? Math.ceil(planPriceMin / 10000) : 0
-            this.option1.yAxis[1].interval = Math.ceil(planPriceMax / 10000 / 5) || 10
+            this.option1.yAxis[0].max = Math.ceil(Math.ceil(planPriceMax / 10000 / 5)) * 5 || 10
+            this.option1.yAxis[0].min = planPriceMin && planPriceMin < 0 ? Math.ceil(planPriceMin / 10000) : 0
+            this.option1.yAxis[0].interval = Math.ceil(planPriceMax / 10000 / 5) || 10
 
             data.plan.report.forEach((item: any) => {
               this.option1.xAxis[0].data.push(item.name)
-              this.option1.series[0].data.push((item.total_number / 1000).toFixed(2))
-              this.option1.series[1].data.push((item.total_price / 10000).toFixed(2))
+              this.option1.series[1].data.push((item.total_number / 1000).toFixed(2))
+              this.option1.series[0].data.push((item.total_price / 10000).toFixed(2))
             })
           } else if (this.activeName === 'second') {
             this.option1.legend.data = ['入库数量', '入库金额']

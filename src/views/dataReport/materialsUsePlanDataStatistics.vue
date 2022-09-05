@@ -501,20 +501,19 @@ export default Vue.extend({
       n1 = arr.reduce((num1: any, num2: any) => {
         return +num1.final_number > +num2.final_number ? num1 : num2
       })
+
       n2 = arr.reduce((num1: any, num2: any) => {
         return +num1.final_number < +num2.final_number ? num1 : num2
       })
+
       n3 = arr.reduce((num1: any, num2: any) => {
         return +num1.loss > +num2.loss ? num1 : num2
-      })
-      n4 = arr.reduce((num1: any, num2: any) => {
-        return +num1.loss < +num2.loss ? num1 : num2
       })
 
       n1 = +n1.final_number
       n2 = +n2.final_number
       n3 = +n3.loss
-      n4 = +n4.loss
+      n4 = 0
       return [n1, n2, n3, n4]
     },
     getList() {
@@ -613,9 +612,9 @@ export default Vue.extend({
             this.option1.yAxis[0].min = allFinalNumberMin && allFinalNumberMin < 0 ? allFinalNumberMin : 0
             this.option1.yAxis[0].interval = Math.ceil(allFinalNumberMax / 1000 / 5) || 10
 
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(allLossMax / allFinalNumberMax / 5)) * 50 || 10
+            this.option1.yAxis[1].max = Math.ceil(Math.ceil(allLossMax / allFinalNumberMax / 5)) * 100 || 10
             this.option1.yAxis[1].min = allLossMin && allLossMin > 0 ? (allLossMin / allFinalNumberMin) * 100 : 0
-            this.option1.yAxis[1].interval = Math.ceil(allLossMax / allFinalNumberMax / 5) * 10 || 10
+            this.option1.yAxis[1].interval = Math.ceil(allLossMax / allFinalNumberMax / 5) * 100 || 10
 
             data.all.forEach((item: any) => {
               if (item.final_number / 1000 < 1) return
@@ -631,10 +630,10 @@ export default Vue.extend({
             this.option1.yAxis[0].interval = Math.ceil(materialSupFinalNumberMax / 1000 / 5) || 10
 
             this.option1.yAxis[1].max =
-              Math.ceil(Math.ceil(materialSupLossMax / materialSupFinalNumberMax / 5)) * 50 || 10
+              Math.ceil(Math.ceil(materialSupLossMax / materialSupFinalNumberMax / 5)) * 100 || 10
             this.option1.yAxis[1].min =
               materialSupLossMin && materialSupLossMin > 0 ? (materialSupLossMin / materialSupFinalNumberMin) * 100 : 0
-            this.option1.yAxis[1].interval = Math.ceil(materialSupLossMax / materialSupFinalNumberMax / 5) * 10 || 10
+            this.option1.yAxis[1].interval = Math.ceil(materialSupLossMax / materialSupFinalNumberMax / 5) * 100 || 10
 
             data.material_sup.forEach((item: any) => {
               this.option1.xAxis[0].data.push(item.name)
@@ -647,9 +646,9 @@ export default Vue.extend({
             this.option1.yAxis[0].min = rawFinalNumberMin && rawFinalNumberMin < 0 ? rawFinalNumberMin : 0
             this.option1.yAxis[0].interval = Math.ceil(rawFinalNumberMax / 1000 / 5) || 10
 
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(rawLossMax / rawFinalNumberMax / 5)) * 50 || 10
+            this.option1.yAxis[1].max = Math.ceil(Math.ceil(rawLossMax / rawFinalNumberMax / 5)) * 100 || 10
             this.option1.yAxis[1].min = rawLossMin && rawLossMin > 0 ? (rawLossMin / rawFinalNumberMin) * 100 : 0
-            this.option1.yAxis[1].interval = Math.ceil(rawLossMax / rawFinalNumberMax / 5) * 10 || 10
+            this.option1.yAxis[1].interval = Math.ceil(rawLossMax / rawFinalNumberMax / 5) * 100 || 10
 
             data.raw.forEach((item: any) => {
               if (item.final_number / 1000 < 1) return

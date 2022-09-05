@@ -267,7 +267,7 @@ export default Vue.extend({
     return {
       loading: false,
       alias: '',
-      sortWay: 1,
+      sortWay: 2,
       option1: {
         tooltip: {
           trigger: 'axis',
@@ -298,7 +298,7 @@ export default Vue.extend({
                 ';margin-right:10px">' +
                 param.value +
                 '</span>' +
-                (index === 1 ? '万元' : '吨或千米')
+                (index === 1 ? '吨或千米' : '万元')
 
               htmlStr += '</div>'
             })
@@ -330,7 +330,7 @@ export default Vue.extend({
           }
         ],
         legend: {
-          data: ['加工数量', '加工金额']
+          data: ['加工金额', '加工数量']
         },
         xAxis: [
           {
@@ -344,16 +344,6 @@ export default Vue.extend({
         yAxis: [
           {
             type: 'value',
-            name: '加工数量',
-            min: 0,
-            max: 25,
-            interval: 5,
-            axisLabel: {
-              formatter: '{value} 吨或千米'
-            }
-          },
-          {
-            type: 'value',
             name: '加工金额',
             min: 0,
             max: 500,
@@ -361,17 +351,27 @@ export default Vue.extend({
             axisLabel: {
               formatter: '{value} 万元'
             }
+          },
+          {
+            type: 'value',
+            name: '加工数量',
+            min: 0,
+            max: 25,
+            interval: 5,
+            axisLabel: {
+              formatter: '{value} 吨或千米'
+            }
           }
         ],
         series: [
           {
             type: 'bar',
-            name: '加工数量',
+            name: '加工金额',
             data: []
           },
           {
             type: 'line',
-            name: '加工金额',
+            name: '加工数量',
             yAxisIndex: 1,
             data: []
           }
@@ -627,35 +627,35 @@ export default Vue.extend({
 
           if (this.activeName === 'first') {
             //   采购数量 图表更新
-            this.option1.yAxis[0].max = Math.ceil(Math.ceil(planNumberMax / 1000 / 5)) * 5 || 10
-            this.option1.yAxis[0].min = planNumberMin && planNumberMin < 0 ? Math.ceil(planNumberMin / 1000) : 0
-            this.option1.yAxis[0].interval = Math.ceil(planNumberMax / 1000 / 5) || 10
+            this.option1.yAxis[1].max = Math.ceil(Math.ceil(planNumberMax / 1000 / 5)) * 5 || 10
+            this.option1.yAxis[1].min = planNumberMin && planNumberMin < 0 ? Math.ceil(planNumberMin / 1000) : 0
+            this.option1.yAxis[1].interval = Math.ceil(planNumberMax / 1000 / 5) || 10
 
             //   采购金额 图表更新
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(planPriceMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[1].min = planPriceMin && planPriceMin < 0 ? Math.ceil(planPriceMin / 10000) : 0
-            this.option1.yAxis[1].interval = Math.ceil(planPriceMax / 10000 / 5) || 10
+            this.option1.yAxis[0].max = Math.ceil(Math.ceil(planPriceMax / 10000 / 5)) * 5 || 10
+            this.option1.yAxis[0].min = planPriceMin && planPriceMin < 0 ? Math.ceil(planPriceMin / 10000) : 0
+            this.option1.yAxis[0].interval = Math.ceil(planPriceMax / 10000 / 5) || 10
 
             data.plan.report.forEach((item: any) => {
               this.option1.xAxis[0].data.push(item.name)
-              this.option1.series[0].data.push((item.total_number / 1000).toFixed(2))
-              this.option1.series[1].data.push((item.total_price / 10000).toFixed(2))
+              this.option1.series[1].data.push((item.total_number / 1000).toFixed(2))
+              this.option1.series[0].data.push((item.total_price / 10000).toFixed(2))
             })
           } else if (this.activeName === 'second') {
             //   采购数量 图表更新
-            this.option1.yAxis[0].max = Math.ceil(Math.ceil(realNumberMax / 1000 / 5)) * 5 || 10
-            this.option1.yAxis[0].min = realNumberMin && realNumberMin < 0 ? Math.ceil(realNumberMin / 1000) : 0
-            this.option1.yAxis[0].interval = Math.ceil(realNumberMax / 1000 / 5) || 10
+            this.option1.yAxis[1].max = Math.ceil(Math.ceil(realNumberMax / 1000 / 5)) * 5 || 10
+            this.option1.yAxis[1].min = realNumberMin && realNumberMin < 0 ? Math.ceil(realNumberMin / 1000) : 0
+            this.option1.yAxis[1].interval = Math.ceil(realNumberMax / 1000 / 5) || 10
 
             //   采购金额 图表更新
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(realPriceMax / 10000 / 5)) * 5 || 10
-            this.option1.yAxis[1].min = realPriceMin && realPriceMin < 0 ? Math.ceil(realPriceMin / 10000) : 0
-            this.option1.yAxis[1].interval = Math.ceil(realPriceMax / 10000 / 5) || 10
+            this.option1.yAxis[0].max = Math.ceil(Math.ceil(realPriceMax / 10000 / 5)) * 5 || 10
+            this.option1.yAxis[0].min = realPriceMin && realPriceMin < 0 ? Math.ceil(realPriceMin / 10000) : 0
+            this.option1.yAxis[0].interval = Math.ceil(realPriceMax / 10000 / 5) || 10
 
             data.real.report.forEach((item: any) => {
               this.option1.xAxis[0].data.push(item.name)
-              this.option1.series[0].data.push((item.total_number / 1000).toFixed(2))
-              this.option1.series[1].data.push((item.total_price / 10000).toFixed(2))
+              this.option1.series[1].data.push((item.total_number / 1000).toFixed(2))
+              this.option1.series[0].data.push((item.total_price / 10000).toFixed(2))
             })
           }
           this.loading = false
