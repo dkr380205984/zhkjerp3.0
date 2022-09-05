@@ -701,8 +701,14 @@ const routes: Array<RouteConfig> = [
       path: '/packManage/detail',
       name: '包装管理详情',
       component: () => import('../views/packManage/detail.vue')
-    },
-    {
+    }, {
+      meta: {
+        permissions_id: '19-3',
+      },
+      path: '/workshopManagement/payTimeList',
+      name: '车间管理日志',
+      component: () => import('../views/workshopManagement/payTimeList.vue')
+    }, {
       meta: {
         permissions_id: '19-3',
       },
@@ -721,15 +727,22 @@ const routes: Array<RouteConfig> = [
         permissions_id: '19-2',
       },
       path: '/workshopManagement/detail',
-      name: '车间管理详情',
+      name: '车间管理订单添加',
       component: () => import('../views/workshopManagement/detail.vue')
     }, {
       meta: {
         permissions_id: '19-2',
       },
       path: '/workshopManagement/staffDetail',
-      name: ' 车间管理详情',
+      name: ' 车间管理员工添加',
       component: () => import('../views/workshopManagement/staffDetail.vue')
+    }, {
+      meta: {
+        permissions_id: '19-2',
+      },
+      path: '/workshopManagement/payTimeDetail',
+      name: ' 车间管理计时添加',
+      component: () => import('../views/workshopManagement/payTimeDetail.vue')
     }, {
       meta: {
         permissions_id: '19-2',

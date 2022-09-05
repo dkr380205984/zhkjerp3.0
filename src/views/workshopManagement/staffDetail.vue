@@ -53,8 +53,18 @@
                 style="justify-content: start; border-bottom: 1px solid #e9e9e9"
                 v-if="settlementLog.show"
               >
-                <div class="tcol titleFix">
-                  <el-select v-model="settlementLog.staff_id" filterable placeholder="请选择员工" @change="selectStaff">
+                <div class="tcol titleFix" style="font-size: 14px">
+                  {{
+                    settlementLog.staffName
+                      ? settlementLog.staffCode.substr(
+                          settlementLog.staffCode.length - 4,
+                          settlementLog.staffCode.length
+                        ) +
+                        ' ' +
+                        settlementLog.staffName
+                      : '在下方选择员工'
+                  }}
+                  <!-- <el-select v-model="settlementLog.staff_id" filterable placeholder="请选择员工" @change="selectStaff">
                     <el-option
                       v-for="(staff, StaffIndex) in staffList"
                       :key="StaffIndex + 'StaffIndex'"
@@ -62,7 +72,7 @@
                       :value="staff.id"
                     >
                     </el-option>
-                  </el-select>
+                  </el-select> -->
                 </div>
                 <div class="tcol noPad" style="overflow: unset">
                   <div class="trow" v-for="(item, index) in settlementLog.processInfo" :key="'process' + index">
@@ -114,7 +124,7 @@
                             v-model="itemPro.order_code"
                             filterable
                             remote
-                            placeholder="请输入订单编号"
+                            placeholder="按订单号搜索"
                             :loading="searchLoading"
                           >
                             <div style="display: flex; padding: 0 10px; width: 500px">
@@ -147,7 +157,7 @@
                                 v-model="itemDetail.code"
                                 filterable
                                 remote
-                                placeholder="请输入产品编号"
+                                placeholder="按产品编号搜索"
                                 :loading="searchLoading"
                               >
                                 <div style="display: flex; padding: 0 10px; width: 800px">
@@ -1275,10 +1285,12 @@
       >
         添加下个员工
       </div> -->
+      添加员工：
       <div class="elCtn">
         <el-select
           v-model="selectStaffIdList"
           multiple
+          filterable
           collapse-tags
           @change="selectListStaffMore"
           placeholder="添加员工"
@@ -1292,16 +1304,37 @@
           </el-option>
         </el-select>
       </div>
-      设置复制项
       <div class="elCtn" style="margin-left: 20px">
-        <el-select v-model="copyOption" multiple collapse-tags placeholder="设置复制项">
+        <el-checkbox-group v-model="copyOption">
+          <el-dropdown :hide-on-click="false" trigger="click">
+            <el-button size="small" type="primary">
+              设置复制项<i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
+            <el-tooltip class="item" effect="dark" placement="right" style="margin-left: 10px">
+              <div slot="content">
+                注：订单如未勾选，尺码颜色将无法复制
+              </div>
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item> <el-checkbox label="process">生产工序</el-checkbox></el-dropdown-item>
+              <el-dropdown-item> <el-checkbox label="proces_desc">工序说明</el-checkbox></el-dropdown-item>
+              <el-dropdown-item> <el-checkbox label="price">结算单价</el-checkbox></el-dropdown-item>
+              <el-dropdown-item> <el-checkbox label="order_code">订单编号</el-checkbox></el-dropdown-item>
+              <el-dropdown-item> <el-checkbox label="size_color">尺码颜色</el-checkbox></el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-checkbox-group>
+      </div>
+      <!-- <div class="elCtn" style="margin-left: 20px">
+        <el-select id="copyClick" v-model="copyOption" multiple collapse-tags placeholder="设置复制项">
           <el-option label="生产工序" value="process"> </el-option>
           <el-option label="工序说明" value="proces_desc"> </el-option>
           <el-option label="结算单价" value="price"> </el-option>
           <el-option label="订单编号" value="order_code"> </el-option>
           <el-option label="尺码颜色" value="size_color"> </el-option>
         </el-select>
-      </div>
+      </div> -->
       <!-- <div style="margin-right: 10px" class="btn backHoverBlue fr" @click="copyUp">复制上一组</div> -->
     </div>
     <!-- 生产进度 -->
@@ -2206,7 +2239,8 @@ export default Vue.extend({
         if (res.data.status) {
           this.$message.success('提交成功')
           this.numberUpdate = false
-          this.$router.push('/workshopManagement/staffInputDetail?isAll=true')
+          // this.$router.push('/workshopManagement/staffInputDetail?isAll=true')
+          this.$router.push('/workshopManagement/payTimeList?page=1&type=1  ')
         }
       })
       this.loading = false
@@ -2277,9 +2311,10 @@ export default Vue.extend({
       e.forEach((id: Number) => {
         let finder = this.settlementLogList.find((item: any) => item.staffId === id)
         if (finder === undefined) {
+          let staffInfo = this.staffList.find((item: any) => item.id === id)
           this.$addItem(this.settlementLogList, {
-            staffName: '',
-            staffCode: '',
+            staffName: staffInfo.name,
+            staffCode: staffInfo.code,
             staffId: id,
             staff_id: id,
             show: true,
@@ -2379,10 +2414,10 @@ export default Vue.extend({
       return item
     })
 
-    this.selectStaffIdList = this.staffArr.map((item:any) => {
+    this.selectStaffIdList = this.staffArr.map((item: any) => {
       return item.id
     })
-    
+
     let arr: any = [
       {
         value: 0,

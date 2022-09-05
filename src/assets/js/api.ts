@@ -1111,29 +1111,35 @@ const staff = {
 // 车间管理
 const workshop = {
   save: (params: {
+    type?: number
     data: Array<{
-      order_id: number | string
-      staff_id: number | string
-      process_name: number | string
-      process_type: number | string
-      process_desc: string
-      extra_number: number | string
+      order_id?: number | string
+      staff_id?: number | string
+      process_name?: number | string
+      process_type?: number | string
+      process_desc?: string
+      extra_number?: number | string
       order_product_id?: number | string
-      product_id: number | string
-      size_id: number | string
-      color_id: number | string
-      number: number | string
-      price: number | string
-      total_price: number | string
-      shoddy_number: number | string
-      shoddy_reason: string
-      complete_time: string
+      product_id?: number | string
+      size_id?: number | string
+      color_id?: number | string
+      number?: number | string
+      price?: number | string
+      total_price?: number | string
+      shoddy_number?: number | string
+      shoddy_reason?: string
+      complete_time?: string
+      desc?: string
+      time_type?: string | number
+      time_count?: string | number
     }>
   }) => http.post(`${baseUrl}/production/inspection/save`, params),
   list: (params: {
     order_id?: string | number
     is_check?: string | number
     code?: string
+    ids?: Array<any>
+    type?: string | number
     keyword?: string
     department?: string
     staff_id?: string | number

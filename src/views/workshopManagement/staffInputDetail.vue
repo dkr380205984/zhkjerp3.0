@@ -4,30 +4,8 @@
       <div class="titleCtn">
         <div class="title">结算日志</div>
       </div>
-      <div class="listCtn" v-if="!isAll">
-        <div class="filterCtn">
-          选择月份：
-          <div class="elCtn">
-            <el-date-picker
-              v-model="month"
-              type="month"
-              placeholder="选择月"
-              value-format="yyyy-M"
-              @change="changeRouter"
-            >
-            </el-date-picker>
-          </div>
-        </div>
-      </div>
-      <div class="tableCtn">
-        <el-table
-          ref="chooseSettlementLogList"
-          @selection-change="handleSelectionChange"
-          :data="settlementLogList"
-          tooltip-effect="dark"
-          style="width: 100%"
-        >
-          <el-table-column type="selection" width="55" fixed> </el-table-column>
+      <div class="tableCtn" v-if="$route.query.type == 1">
+        <el-table :data="settlementLogList" tooltip-effect="dark" style="width: 100%">
           <el-table-column prop="id" label="序号" width="70" fixed></el-table-column>
           <el-table-column prop="created_at" label="添加时间" width="110" fixed> </el-table-column>
           <el-table-column prop="staff_name" label="人员" width="120" fixed>
@@ -48,14 +26,42 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="product_code" label="产品编号" width="120"> </el-table-column>
           <el-table-column label="颜色尺码" width="120">
             <template slot-scope="scope">{{
               (scope.row.size_name || '无尺码数据') + '/' + (scope.row.color_name || '无颜色数据')
             }}</template>
           </el-table-column>
-          <el-table-column prop="number" label="完成数量" width="120"> </el-table-column>
-          <el-table-column prop="extra_number" label="额外数量" width="120"> </el-table-column>
-          <el-table-column prop="shoddy_number" label="次品数量" width="120"> </el-table-column>
+          <el-table-column prop="number" label="完成数量" width="120">
+            <template slot-scope="scope">
+              <zh-input
+                v-model="scope.row.number"
+                placeholder="请输入完成数量"
+                :keyBoard="keyBoard"
+                type="number"
+              ></zh-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="extra_number" label="额外数量" width="120">
+            <template slot-scope="scope">
+              <zh-input
+                v-model="scope.row.extra_number"
+                placeholder="请输额外数量"
+                :keyBoard="keyBoard"
+                type="number"
+              ></zh-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="shoddy_number" label="次品数量" width="120">
+            <template slot-scope="scope">
+              <zh-input
+                v-model="scope.row.shoddy_number"
+                placeholder="请输次品数量"
+                :keyBoard="keyBoard"
+                type="number"
+              ></zh-input>
+            </template>
+          </el-table-column>
           <el-table-column label="工序说明" width="120">
             <template slot-scope="scope">
               <el-tooltip
@@ -76,56 +82,117 @@
             </template>
           </el-table-column>
           <el-table-column prop="user_name" label="操作人" width="110"> </el-table-column>
-          <el-table-column prop="product_code" label="产品编号" width="120"> </el-table-column>
           <el-table-column label="次品原因" width="120">
+            <template slot-scope="scope">
+              <el-select
+                style="height: 32px"
+                v-model="scope.row.shoddy_reason"
+                multiple
+                filterable
+                allow-create
+                default-first-option
+                collapse-tags
+                placeholder="请选择次品原因"
+              >
+                <el-option
+                  v-for="item in substandardReason"
+                  :key="item.value + 'ciPinReason'"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column prop="price" label="结算单价(元/件)" fixed="right" width="150"> </el-table-column>
+          <el-table-column prop="total_price" label="结算总价(元)" fixed="right" width="120"> </el-table-column>
+        </el-table>
+      </div>
+      <div class="tableCtn" v-if="$route.query.type == 2">
+        <el-table :data="settlementLogList" tooltip-effect="dark" :row-key="rowKey" style="width: 100%">
+          <el-table-column prop="id" label="序号" width="70" fixed></el-table-column>
+          <el-table-column prop="staff_name" label="员工姓名" width="130" fixed>
+            <template slot-scope="scope">
+              <div>
+                {{ scope.row.staff_code.substring(scope.row.staff_code.length - 4) }} - {{ scope.row.staff_name }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="process_name" label="生产工序" width="110" fixed> </el-table-column>
+          <el-table-column label="工序说明" width="110" fixed>
             <template slot-scope="scope">
               <el-tooltip
                 class="item"
                 effect="dark"
-                :content="scope.row.shoddy_reason || '无次品原因'"
+                :content="scope.row.process_desc || '无工序说明'"
                 placement="top-start"
               >
                 <span class="blue" style="cursor: pointer">查看</span>
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column prop="price" label="结算单价(元/件)" fixed="right" width="150"> </el-table-column>
-          <el-table-column prop="total_price" label="结算总价(元)" fixed="right" width="120"> </el-table-column>
+          <el-table-column prop="price" label="计时方式" width="140">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.time_type" placeholder="请选择" style="height: 32px !important">
+                <el-option label="按小时计时" value="1"> </el-option>
+                <el-option label="按天计时" value="2"> </el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column prop="price" label="结算单价" width="110">
+            <template slot-scope="scope">
+              <zh-input
+                v-model="scope.row.price"
+                placeholder="请输入单价"
+                :keyBoard="keyBoard"
+                type="number"
+              ></zh-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="时长" width="120">
+            <template slot-scope="scope">
+              <zh-input
+                v-model="scope.row.time_count"
+                placeholder="请输入时长"
+                :keyBoard="keyBoard"
+                type="number"
+              ></zh-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="审核状态" width="120">
+            <template slot-scope="scope">
+              <div v-if="scope.row.is_check === 0" class="orange">审核中</div>
+              <div v-if="scope.row.is_check === 1" class="blue">通过</div>
+              <div v-if="scope.row.is_check === 2" class="red">不通过</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="total_price" label="结算总价(元)" width="120">
+            <template slot-scope="scope">
+              <div>{{(scope.row.price || 0) * (scope.row.time_count || 0)}} 元</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="desc" label="备注" width="120">
+            <template slot-scope="scope">
+              <zh-input v-model="scope.row.desc" placeholder="请输入备注" :keyBoard="keyBoard"></zh-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="160" fixed="right">
+            <template slot-scope="scope">
+              <div style="display: flex; justify-content: center">
+                <div class="hoverOrange opr">修改</div>
+                <div class="hoverBlue opr" @click="changeStatus(scope.row)">审核</div>
+                <div class="hoverRed opr" @click="lostDelete(scope.row.id)">删除</div>
+              </div>
+            </template>
+          </el-table-column>
         </el-table>
-        <div class="listCtn">
-          <div class="pageCtn">
-            <el-pagination
-              background
-              :page-size="10"
-              layout="prev, pager, next"
-              :total="total"
-              :current-page.sync="page"
-              @current-change="changeRouter"
-            >
-            </el-pagination>
-          </div>
-        </div>
-        <div style="position: relative; float: left" v-if="!isAll">
-          <span style="margin-top: 20px; margin-left: 32px; display: inline-block">合计</span>
-          <span style="margin-top: 20px; margin-left: 32px; display: inline-block">
-            本月完成数量：
-            <span class="green" style="font-weight: bold"> {{ additional.total_number }} 件 </span>
-          </span>
-          <span style="margin-top: 20px; margin-left: 32px; display: inline-block">
-            本月完成金额：
-            <span class="green" style="font-weight: bold"> {{ additional.total_price }} 元 </span>
-          </span>
-        </div>
-        <div class="buttonList" style="margin-bottom: 20px">
-          <div style="margin-top: 20px; margin-left: 32px" class="btn backHoverBlue" @click="lostAgree">批量通过</div>
-          <div style="margin-top: 20px; margin-left: 32px" class="btn backHoverRed" @click="lostDelete">批量删除</div>
-        </div>
       </div>
     </div>
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
           <div class="borderBtn" @click="$router.go(-1)">返回</div>
+          <div class="btn backHoverBlue fr" @click="workSave">提交修改</div>
         </div>
       </div>
     </div>
@@ -146,39 +213,88 @@ export default Vue.extend({
       total: 0,
       page: 1,
       month: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
-      additional: {},
       settlementLogList: [],
-      chooseSettlementLogList: []
+      keyBoard: false,
+      substandardReason: [
+        {
+          value: '织造原因',
+          label: '织造原因'
+        },
+        {
+          value: '捻须原因',
+          label: '捻须原因'
+        },
+        {
+          value: '拉毛原因',
+          label: '拉毛原因'
+        },
+        {
+          value: '刺毛原因',
+          label: '刺毛原因'
+        },
+        {
+          value: '水洗原因',
+          label: '水洗原因'
+        },
+        {
+          value: '车缝原因',
+          label: '车缝原因'
+        },
+        {
+          value: '套口原因',
+          label: '套口原因'
+        },
+        {
+          value: '整烫原因',
+          label: '整烫原因'
+        },
+        {
+          value: '手工原因',
+          label: '手工原因'
+        },
+        {
+          value: '其它原因',
+          label: '其它原因'
+        }
+      ]
     }
   },
   methods: {
     init() {
-      let params = {}
-
-      if (this.isAll) {
-        params = { page: this.page, limit: 10 }
-      } else {
-        params = {
-          staff_id: this.$route.query.id + '',
-          page: this.page,
-          limit: 10,
-          month: +this.month.split('-')[1],
-          year: this.month.split('-')[0]
-        }
+      let params: {
+        ids: Array<any>
+        type: string | number
+      } = {
+        // @ts-ignore
+        ids: this.$route.query.ids.split(','),
+        type: this.$route.query.type + ''
       }
 
       workshop.list(params).then((res) => {
-        this.settlementLogList = res.data.data.items
-        this.additional = res.data.data.additional
-        this.total = res.data.data.total
+        this.settlementLogList = res.data.data
+      })
+    },
+    workSave() {
+      if(this.type == 2){
+        this.settlementLogList.forEach((item:any) => {
+          item.total_price = (item.price || 0) * (item.time_count || 0)
+        });
+      }
+      workshop.save({ type: this.type, data: this.settlementLogList }).then((res) => {
+        if (res.data.status) {
+          this.$message.success('提交成功')
+          this.numberUpdate = false
+          // this.$router.push('/workshopManagement/staffInputDetail?isAll=true')
+          this.$router.push('/workshopManagement/payTimeList?page=1&type=' + this.type)
+        }
       })
     },
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page) || 1
       this.month = query.month || new Date().getFullYear() + '-' + (new Date().getMonth() + 1)
-      this.id = query.id
-      this.isAll = query.isAll
+      this.ids = query.ids
+      this.type = query.type
     },
     changeRouter(ev?: any) {
       if (ev !== this.page) {
@@ -189,56 +305,11 @@ export default Vue.extend({
           (this.page || 1) +
           '&month=' +
           this.month +
-          (this.isAll ? '&isAll=true' : '&id=' + this.$route.query.id)
+          '&ids=' +
+          this.ids +
+          '&type=' +
+          this.type
       )
-    },
-    handleSelectionChange(val: any) {
-      this.chooseSettlementLogList = val
-    },
-    lostAgree() {
-      if (this.chooseSettlementLogList.length === 0) {
-        this.$message.error('请选择至少一条日志')
-        return
-      }
-
-      let arr: any = []
-      this.chooseSettlementLogList.forEach((settlementLog: any) => {
-        arr.push(settlementLog.id)
-      })
-
-      workshop
-        .check({
-          id: arr,
-          is_check: 1
-        })
-        .then((res) => {
-          if (res.data.status === true) {
-            this.$message.success('审核成功')
-            this.init()
-          }
-        })
-    },
-    lostDelete() {
-      if (this.chooseSettlementLogList.length === 0) {
-        this.$message.error('请选择至少一条日志')
-        return
-      }
-
-      let arr: any = []
-      this.chooseSettlementLogList.forEach((settlementLog: any) => {
-        arr.push(settlementLog.id)
-      })
-
-      workshop
-        .delete({
-          id: arr
-        })
-        .then((res) => {
-          if (res.data.status === true) {
-            this.$message.success('删除成功')
-            this.init()
-          }
-        })
     }
   },
   watch: {

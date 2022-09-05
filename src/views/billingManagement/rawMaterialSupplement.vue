@@ -107,7 +107,13 @@
               <div class="col" style="flex: 0.05">
                 <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
               </div>
-              <div class="col hoverBlue" style="flex: 1.2;cursor:pointer" @click="$router.push('/materialManage/detail?id='+item.id)">{{ item.code }}</div>
+              <div
+                class="col hoverBlue"
+                style="flex: 1.2; cursor: pointer"
+                @click="$router.push('/materialManage/detail?id=' + item.id)"
+              >
+                {{ item.code }}
+              </div>
               <div
                 class="col hoverBlue"
                 style="cursor: pointer;
@@ -1066,7 +1072,12 @@ export default Vue.extend({
   computed: {
     clientList() {
       return this.$store.state.api.clientType.arr.filter(
-        (item: { label: string }) => item.label === '纱线原料单位' || item.label === '面料原料单位'
+        (item: { label: string }) =>
+          item.label === '纱线原料单位' ||
+          item.label === '面料原料单位' ||
+          item.label === '生产加工单位' ||
+          item.label === '原料加工单位' ||
+          item.label === '生产织造单位'
       )
     },
     userList() {

@@ -107,7 +107,7 @@ export default Vue.extend({
             name: '车间管理',
             id: '19-3',
             icon: 'icon-chejianguanli',
-            url: '/workshopManagement/list?page=1&type=1'
+            url: '/workshopManagement/payTimeList?page=1&type=1'
           },
           {
             name: '发货管理',

@@ -1,54 +1,14 @@
 @import '../common.less';
 @import '../table.less';
+@import '../list.less';
 @import '../detail.less';
 @import '../buttonList.less';
 @import '../fixedTable.less';
 @import '../popup.less';
 @import '../bottomBar.less';
 @import '../edit.less';
-@import '../list.less';
 
-#workshopStaffDetail {
-  .titleFix {
-    max-width: 120px;
-    min-width: 120px;
-
-    .zhInputCtn {
-      height: unset;
-    }
-
-    .zhInput {
-      padding: 0;
-    }
-  }
-
-  .el-select__tags {
-    padding-left: 14px;
-  }
-
-  .el-dropdown {
-    .el-button--small {
-      font-size: 16px;
-      padding: 6px 15px;
-    }
-  }
-
-  .fixedTableCtn {
-    box-shadow: 3px 0px 6px rgb(0 0 0 / 16%);
-  }
-
-  .fixedTableCtn ::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background-color: #1A95FF;
-    background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.1) 75%, transparent 75%, transparent);
-  }
-
-  .tbody {
-    border-left: unset;
-    border-bottom: unset;
-    border-top: unset;
-  }
-
+#payTimeDetail {
   .specialTable {
     display: block;
     width: 100%;
@@ -58,6 +18,10 @@
     padding-bottom: 0;
 
     .thead {
+      width: 2070px;
+    }
+
+    .tbody {
       width: 2070px;
     }
 
