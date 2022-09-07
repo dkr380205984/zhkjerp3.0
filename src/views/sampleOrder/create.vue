@@ -348,6 +348,14 @@
             <div class="label">
               <span class="text">计划完成时间</span>
               <span class="explanation">(必选)</span>
+              <el-tooltip class="item"
+                effect="dark"
+                content="完成时间早于下单时间，请再次确认"
+                placement="top"
+                v-if="sampleOrderInfo.time_data.complete_time && $diffByDate(sampleOrderInfo.time_data.complete_time)<0">
+                <i class="el-icon-warning red"
+                  style="margin-left:12px"></i>
+              </el-tooltip>
             </div>
             <div class="info elCtn">
               <el-date-picker :class="{'error':mustFlag&&!sampleOrderInfo.time_data.complete_time}"

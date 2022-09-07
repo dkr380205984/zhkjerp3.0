@@ -176,7 +176,7 @@
                 {{ item.order_code || '无编号，点击查看详情' }}
               </div>
               <div class="col">{{ item.client_name }}</div>
-              <div class="col">{{ (+item.total_plan_number).toFixed(2) }}</div>
+              <div class="col">{{ $toFixed(item.total_plan_number,3,true) }}</div>
               <div class="col">
                 <el-tooltip class="item"
                   effect="dark"
@@ -250,7 +250,7 @@
                         v-for="(itemClient, indexClient) in item.detail.client_data"
                         :key="indexClient">
                         <div class="tcol">{{ itemClient.bear_client_name }}</div>
-                        <div class="tcol">{{ itemClient.bear_price }}元</div>
+                        <div class="tcol">{{ $toFixed(itemClient.bear_price,3,true) }}元</div>
                       </div>
                     </div>
                     <div class="tcol noPad"
@@ -260,7 +260,7 @@
                         :key="itemMat.id">
                         <div class="tcol">{{ itemMat.material_name }}</div>
                         <div class="tcol">{{ itemMat.material_color }}</div>
-                        <div class="tcol">{{ itemMat.number }}{{ itemMat.unit }}</div>
+                        <div class="tcol">{{ $toFixed(itemMat.number,3,true) }}{{ itemMat.unit }}</div>
                       </div>
                     </div>
                     <div class="tcol">{{ item.detail.desc || '无' }}</div>
@@ -275,21 +275,21 @@
             合计补原料数量：
             <span class="green"
               style="font-weight: bold">
-              {{ (additional.total_number / 1000).toFixed(2) }} 吨或千米
+              {{ $toFixed(additional.total_number / 1000,3,true) }} 吨或千米
             </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
             合计本厂承担金额：
             <span class="green"
               style="font-weight: bold">
-              {{ (-additional.self_client_price / 10000).toFixed(2) }} 万元
+              -{{ $toFixed(additional.self_client_price / 10000,3,true) }} 万元
             </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
             合计外协承担金额：
             <span class="green"
               style="font-weight: bold">
-              {{ (additional.client_price / 10000).toFixed(2) }} 万元
+              {{ $toFixed(additional.client_price / 10000,3,true) }} 万元
             </span>
           </span>
         </div>

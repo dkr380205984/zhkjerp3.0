@@ -1,33 +1,56 @@
 <template>
-  <div id="deductionForm" v-loading="loading" class="bodyContainer">
-    <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
+  <div id="deductionForm"
+    v-loading="loading"
+    class="bodyContainer">
+    <div class="module"
+      v-loading="mainLoading"
+      element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">系统单据管理</div>
       </div>
       <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
-        <div class="tab" @click="$router.push('/billingManagement/rawMaterialPlan')">原料计划单</div>
-        <div class="tab" @click="$router.push('/billingManagement/rawMaterialSupplement')">原料补充单</div>
-        <div class="tab" @click="$router.push('/billingManagement/rawMaterialPurchaseOrder')">原料订购单</div>
-        <div class="tab" @click="$router.push('/billingManagement/rawMaterialTransferOrder')">原料调取单</div>
-        <div class="tab" @click="$router.push('/billingManagement/rawMaterialProcessingOrder')">原料加工单</div>
-        <div class="tab" @click="$router.push('/billingManagement/productionPlan')">生产计划单</div>
-        <div class="tab" @click="$router.push('/billingManagement/inspectionReceiptDocument')">检验入库单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/workshopSettlementLog')">车间结算日志</div>
-        <div class="tab" @click="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">辅料订购单</div>
-        <div class="tab" @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
-        <div class="tab" @click="$router.push('/billingManagement/transportationDeliveryOrder')">运输出库单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/rawMaterialPlan')">原料计划单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/rawMaterialSupplement')">原料补充单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/rawMaterialPurchaseOrder')">原料订购单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/rawMaterialTransferOrder')">原料调取单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/rawMaterialProcessingOrder')">原料加工单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/productionPlan')">生产计划单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/inspectionReceiptDocument')">检验入库单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/workshopSettlementLog')">车间结算日志</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">辅料订购单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/transportationDeliveryOrder')">运输出库单</div>
         <div class="tab active">我方扣款单据</div>
       </div>
       <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
-        <div class="tab" @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/oppositeInvoicing')">对方发票单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/oppositeInvoicing')">对方发票单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/collectionList')">收款单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
         <!-- <div class="tab" @click="$router.push('/billingManagement/orderQuotationComparison')">订单报价单对比单据</div> -->
-        <div class="tab" @click="$router.push('/billingManagement/shaXianInOutList')">纱线出入库单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/fabricWarehousing')">面料出入库单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/auxiliaryInOutList')">辅料出入库单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/productStoreLogList')">产品出入库单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/shaXianInOutList')">纱线出入库单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/fabricWarehousing')">面料出入库单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/auxiliaryInOutList')">辅料出入库单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/productStoreLogList')">产品出入库单据</div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
@@ -35,8 +58,7 @@
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-cascader
-              @change="
+            <el-cascader @change="
                 getContacts($event)
                 changeRouter()
               "
@@ -44,23 +66,22 @@
               v-model="client_id"
               filterable
               :options="clientList"
-              clearable
-            >
+              clearable>
             </el-cascader>
           </div>
           <div class="elCtn">
-            <el-select
-              @change="(ev) => getLocalStorage(ev, 'create_user')"
+            <el-select @change="(ev) => getLocalStorage(ev, 'create_user')"
               v-model="user_id"
               placeholder="筛选创建人"
-              clearable
-            >
-              <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-date-picker
-              v-model="date"
+            <el-date-picker v-model="date"
               type="daterange"
               align="right"
               unlink-panels
@@ -69,33 +90,48 @@
               end-placeholder="结束日期"
               :picker-options="pickerOptions"
               @change="changeRouter"
-              value-format="yyyy-MM-dd"
-            >
+              value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter" v-model="status" placeholder="筛选审核状态">
-              <el-option value="null" label="全部"></el-option>
-              <el-option value="0" label="待审核"></el-option>
-              <el-option value="1" label="已审核"></el-option>
-              <el-option value="2" label="已驳回"></el-option>
+            <el-select @change="changeRouter"
+              v-model="status"
+              placeholder="筛选审核状态">
+              <el-option value="null"
+                label="全部"></el-option>
+              <el-option value="0"
+                label="待审核"></el-option>
+              <el-option value="1"
+                label="已审核"></el-option>
+              <el-option value="2"
+                label="已驳回"></el-option>
             </el-select>
           </div>
-          <div class="btn borderBtn" @click="reset">重置</div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select @change="changeRouter" v-model="group_id" placeholder="筛选负责小组" clearable>
-              <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+            <el-select @change="changeRouter"
+              v-model="group_id"
+              placeholder="筛选负责小组"
+              clearable>
+              <el-option v-for="item in groupList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
             </el-select>
           </div>
         </div>
         <div class="list">
           <div class="row title">
-            <div class="col" style="flex: 0.05">
-              <el-checkbox v-model="checkAllPlan" @change="checkAll"></el-checkbox>
+            <div class="col"
+              style="flex: 0.05">
+              <el-checkbox v-model="checkAllPlan"
+                @change="checkAll"></el-checkbox>
             </div>
-            <div class="col" style="flex: 1.3">票据编号</div>
+            <div class="col"
+              style="flex: 1.3">票据编号</div>
             <div class="col">关联单据号</div>
             <div class="col">关联单位</div>
             <div class="col">我方扣款金额</div>
@@ -103,16 +139,21 @@
             <div class="col">相关图片</div>
             <div class="col">创建人</div>
             <div class="col">创建时间</div>
-            <div class="col" style="flex: 1.4">操作</div>
+            <div class="col"
+              style="flex: 1.4">操作</div>
           </div>
-          <div v-for="(item, index) in list" :key="index">
+          <div v-for="(item, index) in list"
+            :key="index">
             <div class="row">
-              <div class="col" style="flex: 0.05">
-                <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
+              <div class="col"
+                style="flex: 0.05">
+                <el-checkbox v-model="item.checked"
+                  @change="$forceUpdate()"></el-checkbox>
               </div>
-              <div class="col hoverBlue" style="flex: 1.3;cursor:pointer" @click="$router.push('/settlement/collectionDetail?id='+item.client_id)">{{ item.code || '无' }}</div>
-              <div
-                class="col hoverBlue"
+              <div class="col hoverBlue"
+                style="flex: 1.3;cursor:pointer"
+                @click="$router.push('/settlement/collectionDetail?id='+item.client_id)">{{ item.code || '无' }}</div>
+              <div class="col hoverBlue"
                 style="
                   cursor: pointer;
                   white-space: nowrap;
@@ -129,45 +170,42 @@
                       ? '/order/detail?id='
                       : '/sampleOrder/detail?id=') + item.order_id
                   )
-                "
-              >
-                <span v-if="item.order_type === 1" class="circle backOrange">订</span>
-                <span v-if="item.order_type === 2" class="circle backBlue">样</span>
+                ">
+                <span v-if="item.order_type === 1"
+                  class="circle backOrange">订</span>
+                <span v-if="item.order_type === 2"
+                  class="circle backBlue">样</span>
                 {{ item.order_code || '无编号，点击查看详情' }}
               </div>
               <div class="col">{{ item.client_name || '无' }}</div>
-              <div class="col">{{ (+item.price).toFixed(2) }}</div>
-              <div
-                class="col"
-                style="overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2"
-              >
-                <el-tooltip
-                  class="item"
+              <div class="col">{{ $toFixed(item.price,3,true)}}</div>
+              <div class="col"
+                style="overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2">
+                <el-tooltip class="item"
                   effect="dark"
                   :content="item.reason ? item.reason.toString() : '无'"
-                  placement="top-start"
-                >
+                  placement="top-start">
                   <div>{{ item.reason ? item.reason.toString() : '无' }}</div>
                 </el-tooltip>
               </div>
               <div class="col">
-                <el-image
-                  style="width: 50px; height: 50px"
+                <el-image style="width: 50px; height: 50px"
                   :src="item.file_url ? item.file_url : require('@/assets/image/common/noPic.png')"
-                  :preview-src-list="item.file_url ? [item.file_url] : ''"
-                >
+                  :preview-src-list="item.file_url ? [item.file_url] : ''">
                 </el-image>
               </div>
               <div class="col">{{ item.user_name }}</div>
               <div class="col">{{ item.create_time }}</div>
-              <div class="col" style="flex: 1.4">
-                <!-- <span class="opr hoverBlue" @click="changeShow(item)">详情</span>
-                <span class="opr hoverBlue" @click="changeStatus(item)">审核</span> -->
-                <span class="opr hoverOrange" @click="goDeduct([item], true)">修改</span>
-                <span class="opr hoverRed" @click="deleteThis(item)">删除</span>
+              <div class="col"
+                style="flex: 1.4">
+                <span class="opr hoverOrange"
+                  @click="goDeduct([item], true)">修改</span>
+                <span class="opr hoverRed"
+                  @click="deleteThis(item)">删除</span>
               </div>
             </div>
-            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px)">
+            <div v-show="item.isShow"
+              style="border: 1px solid #e8e8e8; transform: translateY(-1px)">
               <div class="titleCtn">
                 <div class="title">订购信息</div>
               </div>
@@ -183,7 +221,9 @@
                   </div>
                 </div>
                 <div class="tbody">
-                  <div class="trow" v-for="(itemChild, indexChild) in item.detail.info_data" :key="indexChild">
+                  <div class="trow"
+                    v-for="(itemChild, indexChild) in item.detail.info_data"
+                    :key="indexChild">
                     <div class="tcol">{{ itemChild.pack_material_name }}</div>
                     <div class="tcol">
                       <template v-if="Number(itemChild.price_type) === 1">
@@ -209,20 +249,19 @@
         <div style="margin-top: 20px">
           <span style="line-height: 35px; margin-left: 40px">
             合计扣款金额：
-            <span class="green" style="font-weight: bold">
-              {{ (additional.total_price / 10000).toFixed(2) }} 万元
+            <span class="green"
+              style="font-weight: bold">
+              {{ $toFixed(additional.total_price / 10000,3,true)}} 万元
             </span>
           </span>
         </div>
         <div class="pageCtn">
-          <el-pagination
-            background
+          <el-pagination background
             :page-size="limit"
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
-            @current-change="changeRouter"
-          >
+            @current-change="changeRouter">
           </el-pagination>
         </div>
       </div>
@@ -235,91 +274,122 @@
           </div>
         </div> -->
         <div class="btnCtn">
-          <div class="borderBtn" @click="$router.go(-1)">返回</div>
-          <div class="buttonList" style="margin-left: 12px">
-            <div class="btn backHoverBlue" @click="showExportPopup = true">
-              <span class="text" style="margin-left: 0">导出报表</span>
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
+          <div class="buttonList"
+            style="margin-left: 12px">
+            <div class="btn backHoverBlue"
+              @click="showExportPopup = true">
+              <span class="text"
+                style="margin-left: 0">导出报表</span>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="popup" v-show="checkFlag">
+    <div class="popup"
+      v-show="checkFlag">
       <div class="main">
         <div class="titleCtn">
           <span class="text">辅料订购单审核</span>
-          <div class="closeCtn" @click="checkFlag = false">
+          <div class="closeCtn"
+            @click="checkFlag = false">
             <span class="el-icon-close"></span>
           </div>
         </div>
         <div class="contentCtn">
           <div class="row">
             <div class="label">是否通过：</div>
-            <div class="info" style="line-height: 32px">
-              <el-radio v-model="reviewerParams.is_check" :label="1">通过</el-radio>
-              <el-radio v-model="reviewerParams.is_check" :label="2">驳回</el-radio>
+            <div class="info"
+              style="line-height: 32px">
+              <el-radio v-model="reviewerParams.is_check"
+                :label="1">通过</el-radio>
+              <el-radio v-model="reviewerParams.is_check"
+                :label="2">驳回</el-radio>
             </div>
           </div>
-          <div class="row" v-if="reviewerParams.is_check === 2">
+          <div class="row"
+            v-if="reviewerParams.is_check === 2">
             <div class="label">驳回理由：</div>
-            <div class="info" style="min-height: 32px; height: auto">
-              <el-input placeholder="请输入驳回理由" v-model="reviewerParams.check_desc"></el-input>
+            <div class="info"
+              style="min-height: 32px; height: auto">
+              <el-input placeholder="请输入驳回理由"
+                v-model="reviewerParams.check_desc"></el-input>
             </div>
           </div>
-          <div class="row" v-else></div>
+          <div class="row"
+            v-else></div>
           <div class="row">
             <div class="label">备注信息：</div>
             <div class="info">
-              <el-input placeholder="请输入备注信息" v-model="reviewerParams.desc"></el-input>
+              <el-input placeholder="请输入备注信息"
+                v-model="reviewerParams.desc"></el-input>
             </div>
           </div>
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn" @click="checkFlag = false">取消</span>
-          <span class="btn backHoverBlue" @click="agreeCheck">确认</span>
+          <span class="btn borderBtn"
+            @click="checkFlag = false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="agreeCheck">确认</span>
         </div>
       </div>
     </div>
-    <div class="popup" v-show="showExportPopup">
+    <div class="popup"
+      v-show="showExportPopup">
       <div class="main">
         <div class="titleCtn">
-          <span class="text"
-            >请选择需要导出的时间段<el-tooltip class="item" effect="dark" content="均为创建时间" placement="top">
-              <i class="el-icon-info"></i> </el-tooltip
-          ></span>
-          <div class="closeCtn" @click="showExportPopup = false">
+          <span class="text">请选择需要导出的时间段<el-tooltip class="item"
+              effect="dark"
+              content="均为创建时间"
+              placement="top">
+              <i class="el-icon-info"></i>
+            </el-tooltip></span>
+          <div class="closeCtn"
+            @click="showExportPopup = false">
             <span class="el-icon-close"></span>
           </div>
         </div>
         <div class="contentCtn">
           <div class="row">
             <div class="label">年份：</div>
-            <div class="info" style="line-height: 32px">
-              <el-date-picker v-model="exportYear" type="year" placeholder="选择年"> </el-date-picker>
+            <div class="info"
+              style="line-height: 32px">
+              <el-date-picker v-model="exportYear"
+                type="year"
+                placeholder="选择年"> </el-date-picker>
             </div>
           </div>
           <div class="row">
             <div class="label">季度：</div>
-            <div class="info" style="min-height: 32px; height: auto">
-              <el-select v-model="exportJiDu" placeholder="请选择" @change="changeJiDu">
-                <el-option label="全部" :value="''"></el-option>
-                <el-option label="第一季度" :value="1"></el-option>
-                <el-option label="第二季度" :value="2"></el-option>
-                <el-option label="第三季度" :value="3"></el-option>
-                <el-option label="第四季度" :value="4"></el-option>
+            <div class="info"
+              style="min-height: 32px; height: auto">
+              <el-select v-model="exportJiDu"
+                placeholder="请选择"
+                @change="changeJiDu">
+                <el-option label="全部"
+                  :value="''"></el-option>
+                <el-option label="第一季度"
+                  :value="1"></el-option>
+                <el-option label="第二季度"
+                  :value="2"></el-option>
+                <el-option label="第三季度"
+                  :value="3"></el-option>
+                <el-option label="第四季度"
+                  :value="4"></el-option>
               </el-select>
             </div>
           </div>
-          <div class="row" v-if="exportJiDu != ''">
+          <div class="row"
+            v-if="exportJiDu != ''">
             <div class="label">月份：</div>
             <div class="info">
-              <el-select v-model="exportMonth" placeholder="请选择">
-                <el-option
-                  v-for="item in monthList"
+              <el-select v-model="exportMonth"
+                placeholder="请选择">
+                <el-option v-for="item in monthList"
                   :key="item.label + item.value"
                   :label="item.label"
-                  :value="item.value"
-                >
+                  :value="item.value">
                 </el-option>
               </el-select>
             </div>
@@ -327,26 +397,25 @@
           <div class="row">
             <div class="label">单位：</div>
             <div class="info">
-              <el-cascader
-                placeholder="筛选扣款单位 "
+              <el-cascader placeholder="筛选扣款单位 "
                 v-model="exportClient"
                 filterable
                 :options="clientList"
-                clearable
-              >
+                clearable>
               </el-cascader>
             </div>
           </div>
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn" @click="showExportPopup = false">取消</span>
-          <span class="btn backHoverBlue" @click="exportExcel">确认</span>
+          <span class="btn borderBtn"
+            @click="showExportPopup = false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="exportExcel">确认</span>
         </div>
       </div>
     </div>
     <!-- 扣款 -->
-    <zh-deduct
-      :type="1"
+    <zh-deduct :type="1"
       :update="deductUpdate"
       :show="deductFlag"
       :data="deductData"
@@ -355,8 +424,7 @@
       @close="
         deductFlag = false
         changeRouter()
-      "
-    ></zh-deduct>
+      "></zh-deduct>
   </div>
 </template>
 

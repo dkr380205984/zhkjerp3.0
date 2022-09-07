@@ -141,7 +141,7 @@ const deduct = {
   create: (params:
     {
       id?: string
-      doc_type: number
+      doc_type: number | string
       client_id: number | string
       data: Array<{
         order_id: number | string
@@ -192,7 +192,7 @@ const collection = {
   }) => http.get(`${baseUrl}/doc/collect/lists`, params),
   create: (params: {
     id?: string
-    doc_type: number
+    doc_type: number | string
     client_id: number | string
     data: Array<{
       order_id: number | string
@@ -226,7 +226,7 @@ const payment = {
   }) => http.get(`${baseUrl}/doc/pay/lists`, params),
   create: (params: {
     id?: string
-    doc_type: number
+    doc_type: number | string
     client_id: number | string
     data: Array<{
       order_id: number | string
@@ -258,7 +258,7 @@ const invoice = {
   }) => http.get(`${baseUrl}/doc/invoice/lists`, params),
   create: (params: {
     id?: string
-    doc_type: number
+    doc_type: number | string
     client_id: number | string
     data: Array<{
       order_id: number | string

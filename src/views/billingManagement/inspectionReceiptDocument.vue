@@ -159,7 +159,7 @@
               <div class="col"
                 style="flex: 1.2">{{ item.product_code }}/{{ item.part_name }}</div>
               <div class="col">{{ item.color }}/{{ item.size }}</div>
-              <div class="col">{{ item.number }}</div>
+              <div class="col">{{$toFixed(item.number,3,true) }}</div>
               <div class="col">
                 <span :class="{ gray: !item.part_shoddy_number, orange: item.part_shoddy_number }">{{
                   item.part_shoddy_number || '0'
@@ -169,7 +169,7 @@
                 }}</span>
               </div>
               <div class="col"
-                :style="item.deduct_price ? 'color:red' : ''">{{ item.deduct_price || 0 }}元</div>
+                :style="item.deduct_price ? 'color:red' : ''">{{ $toFixed(item.deduct_price || 0,3,true) }}元</div>
               <div class="col"
                 :style="item.shoddy_reason ? '' : 'color:rgba(0,0,0,0.25)'">
                 {{ item.shoddy_reason || '无' }}
@@ -325,24 +325,24 @@
             检验数量：
             <span class="green"
               style="font-weight: bold">
-              {{ (additional.total_number / 10000).toFixed(2) }} 万件
+              {{ $toFixed(additional.total_number / 10000,3,true) }} 万件
             </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
             半次(b品)数量：
             <span class="green"
-              style="font-weight: bold"> {{ additional.total_part_shoddy_number || 0 }} 件 </span>
+              style="font-weight: bold"> {{  $toFixed(additional.total_part_shoddy_number || 0 ,3,true)}} 件 </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
             全次数量：
             <span class="green"
-              style="font-weight: bold"> {{ additional.total_shoddy_number || 0 }} 件 </span>
+              style="font-weight: bold"> {{  $toFixed(additional.total_shoddy_number || 0 ,3,true)}} 件 </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
             扣款金额：
             <span class="green"
               style="font-weight: bold">
-              {{ (additional.total_deduct_price / 10000).toFixed(2) }} 万元
+              {{  $toFixed(additional.total_deduct_price / 10000,3,true) }} 万元
             </span>
           </span>
         </div>

@@ -541,7 +541,8 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 9,
-          errVal: '0'
+          errVal: '0',
+          numberToString: true
         },
         {
           key: 'total_price',
@@ -550,7 +551,8 @@ export default Vue.extend({
           ifLock: false,
           index: 10,
           unitKey: 'settle_unit',
-          errVal: '0'
+          errVal: '0',
+          numberToString: true
         },
         {
           key: 'group_name',

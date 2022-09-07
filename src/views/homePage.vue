@@ -191,7 +191,7 @@
               :key="item.id">
               <span class="text hoverBlue"
                 v-html="item.code"
-                @click="$openUrl('/materialPlan/detail?id=' + item.id)"></span>
+                @click="$openUrl('/materialPlan/detail?id=' + item.doc_order_id + '&sampleOrderIndex=' + item.doc_order_time_id + '&planId='+ item.id)"></span>
               <span class="text">{{ item.order_code }}</span>
               <span class="text">{{ item.create_time }}</span>
               <span class="text">{{ item.user_name }}</span>

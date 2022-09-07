@@ -86,7 +86,7 @@
               @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn"
-            style="width:200px">
+            style="width:130px">
             <el-select v-model="user_id"
               placeholder="请选择创建人"
               @change="changeRouter"
@@ -110,6 +110,9 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
+          <!-- <div class="btn backHoverBlue">
+            添加产品
+          </div> -->
           <div :class="checkedCount.length>0 ? 'btn backHoverBlue fl' : 'btn backHoverBlue fl noCheck'"
             @click="exportExcel()">
             导出Excel

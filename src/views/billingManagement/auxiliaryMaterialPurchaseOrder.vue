@@ -192,13 +192,13 @@
                 {{ item.order_code }}
               </div>
               <div class="col">{{ item.client_name }}</div>
-              <div class="col">{{ (+item.total_number).toFixed(2) }}</div>
-              <div class="col">{{ (+item.total_price).toFixed(2) }}</div>
+              <div class="col">{{ $toFixed(item.total_number,3,true) }}</div>
+              <div class="col">{{ $toFixed(item.total_price,3,true) }}</div>
               <div class="col"
                 :style="item.total_push_number > item.total_number ? 'color:red' : ''">
-                {{ (+item.total_push_number).toFixed(2) }}
+                {{ $toFixed(item.total_push_number,3,true) }}
               </div>
-              <div class="col">{{ (+item.total_push_price).toFixed(2) }}</div>
+              <div class="col">{{ $toFixed(item.total_push_price,3,true) }}</div>
               <div class="col">
                 <others-fee-data :data="item.others_fee_data"></others-fee-data>
               </div>
@@ -255,28 +255,28 @@
             合计订购数量：
             <span class="green"
               style="font-weight: bold">
-              {{ (additional.total_order_number / 10000).toFixed(2) }} 万个
+              {{ $toFixed(additional.total_order_number / 10000,3,true) }} 万个
             </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
             合计订购金额：
             <span class="green"
               style="font-weight: bold">
-              {{ (additional.total_order_price / 10000).toFixed(2) }} 万元
+              {{ $toFixed(additional.total_order_price / 10000,3,true) }} 万元
             </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
             合计入库金额：
             <span class="green"
               style="font-weight: bold">
-              {{ (additional.total_push_number / 10000).toFixed(2) }} 万元
+              {{ $toFixed(additional.total_push_number / 10000,3,true) }} 万元
             </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
             合计入库金额：
             <span class="green"
               style="font-weight: bold">
-              {{ (additional.total_push_price / 10000).toFixed(2) }} 万元
+              {{ $toFixed(additional.total_push_price / 10000,3,true) }} 万元
             </span>
           </span>
         </div>

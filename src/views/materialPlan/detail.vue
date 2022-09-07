@@ -546,7 +546,8 @@ export default Vue.extend({
         .then((res) => {
           if (res.data.status) {
             this.materialPlanInfo = res.data.data
-            this.materialPlanIndex = this.materialPlanInfo[0].id?.toString()
+            // 其他页面跳转进来的
+            this.materialPlanIndex = this.$route.query.planId || this.materialPlanInfo[0].id!.toString()
             this.getMaterialPlanDetail(this.materialPlanIndex)
           }
           this.loading = false

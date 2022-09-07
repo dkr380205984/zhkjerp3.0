@@ -309,7 +309,7 @@
           <span style="line-height: 35px; margin-left: 40px">合计数量：
             <span style="font-weight: bold"
               class="green">
-              {{ (additional.total_number).toFixed(2) }}
+              {{ $toFixed(additional.total_number,3,true) }}
             </span>
           </span>
         </div>

@@ -217,13 +217,13 @@
                 {{ item.order_code || '无编号，点击查看详情' }}
               </div>
               <div class="col">{{ item.client_name }}</div>
-              <div class="col">{{ (+item.total_number).toFixed(2) }}</div>
+              <div class="col">{{ $toFixed(item.total_number,3,true) }}</div>
               <div class="col"
-                style="flex: 1.3">{{ (+item.total_price).toFixed(2) }}</div>
+                style="flex: 1.3">{{ $toFixed(item.total_price,3,true)}}</div>
               <div class="col"
                 style="flex: 1.9">
-                <div>{{ (+item.total_real_number).toFixed(2) }}</div>
-                （<span :class="item.total_real_number - item.total_number >= 0 ? 'green' : 'red'">{{ (((item.total_real_number - item.total_number) / item.total_number) * 100).toFixed(0) }}%</span>）
+                <div>{{ $toFixed(item.total_real_number,3,true) }}</div>
+                （<span :class="item.total_real_number - item.total_number >= 0 ? 'green' : 'red'">{{ $toFixed(((item.total_real_number - item.total_number) / item.total_number) * 100 || 0) }}%</span>）
               </div>
               <div class="col"
                 style="flex: 0.8">
@@ -314,12 +314,12 @@
                     <div class="tcol">
                       {{ itemPro.size_name ? itemPro.size_name + '/' + itemPro.color_name : '未选择尺码颜色' }}
                     </div>
-                    <div class="tcol">{{ itemPro.number }}</div>
-                    <div class="tcol">{{ itemPro.real_number }}</div>
+                    <div class="tcol">{{ $toFixed(itemPro.number,3,true) }}</div>
+                    <div class="tcol">{{ $toFixed(itemPro.real_number,3,true) }}</div>
                     <div class="tcol">{{ itemPro.part_shoddy_number || 0 }}</div>
                     <div class="tcol">{{ itemPro.shoddy_number || 0 }}</div>
                     <div class="tcol">{{ itemPro.price }}元</div>
-                    <div class="tcol">{{ $toFixed(itemPro.price * itemPro.number) }}元</div>
+                    <div class="tcol">{{ $toFixed(itemPro.price * itemPro.number,3,true) }}元</div>
                   </div>
                 </div>
               </div>
@@ -406,28 +406,28 @@
             合计计划数量：
             <span class="green"
               style="font-weight: bold">
-              {{ (additional.total_number / 10000).toFixed(2) }} 万件
+              {{ $toFixed(additional.total_number / 10000,3,true) }} 万件
             </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
             合计计划金额：
             <span class="green"
               style="font-weight: bold">
-              {{ (additional.total_price / 10000).toFixed(2) }} 万元
+              {{ $toFixed(additional.total_price / 10000,3,true) }} 万元
             </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
             合计完成数量：
             <span class="green"
               style="font-weight: bold">
-              {{ (additional.total_real_number / 10000).toFixed(2) }} 万件
+              {{ $toFixed(additional.total_real_number / 10000,3,true) }} 万件
             </span>
           </span>
           <span style="line-height: 35px; margin-left: 40px">
             合计完成金额：
             <span class="green"
               style="font-weight: bold">
-              {{ (additional.total_real_price / 10000).toFixed(2) }} 万元
+              {{ $toFixed(additional.total_real_price / 10000,3,true) }} 万元
             </span>
           </span>
         </div>

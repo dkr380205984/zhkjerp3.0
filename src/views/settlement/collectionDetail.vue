@@ -110,7 +110,7 @@
               <div class="col">
                 <div class="infoCtn">
                   <span class="title">订单下单数量</span>
-                  <span class="number blue">{{clientFinancial.total_order_number}}
+                  <span class="number blue">{{$toFixed(clientFinancial.total_order_number,3,true)}}
                     <span class="unit">万</span>
                   </span>
                 </div>
@@ -119,9 +119,9 @@
                 <div class="infoCtn">
                   <span class="title">订单下单总额</span>
                   <span class="number blue">
-                    <template v-if="!settle_unit_sts"> {{clientFinancial.total_order_price}}</template>
-                    <template v-else-if="settle_unit_sts==='元'"> {{clientFinancial.total_order_price_rmb}}</template>
-                    <template v-else-if="settle_unit_sts==='美元'"> {{clientFinancial.total_order_price_usd}}</template>
+                    <template v-if="!settle_unit_sts"> {{$toFixed(clientFinancial.total_order_price,3,true)}}</template>
+                    <template v-else-if="settle_unit_sts==='元'"> {{$toFixed(clientFinancial.total_order_price_rmb,3,true)}}</template>
+                    <template v-else-if="settle_unit_sts==='美元'"> {{$toFixed(clientFinancial.total_order_price_usd,3,true)}}</template>
                     <span class="unit">万{{settle_unit_sts?settle_unit_sts:'元'}}</span>
                   </span>
                 </div>
@@ -133,7 +133,7 @@
               <div class="col">
                 <div class="infoCtn">
                   <span class="title">实际发货数量</span>
-                  <span class="number green">{{clientFinancial.total_transport_number}}
+                  <span class="number green">{{$toFixed(clientFinancial.total_transport_number,3,true)}}
                     <span class="unit">万</span>
                   </span>
                 </div>
@@ -142,9 +142,9 @@
                 <div class="infoCtn">
                   <span class="title">实际发货总额</span>
                   <span class="number green">
-                    <template v-if="!settle_unit_sts"> {{clientFinancial.total_transport_price}}</template>
-                    <template v-else-if="settle_unit_sts==='元'"> {{clientFinancial.total_transport_price_rmb}}</template>
-                    <template v-else-if="settle_unit_sts==='美元'"> {{clientFinancial.total_transport_price_usd}}</template>
+                    <template v-if="!settle_unit_sts"> {{$toFixed(clientFinancial.total_transport_price,3,true)}}</template>
+                    <template v-else-if="settle_unit_sts==='元'"> {{$toFixed(clientFinancial.total_transport_price_rmb,3,true)}}</template>
+                    <template v-else-if="settle_unit_sts==='美元'"> {{$toFixed(clientFinancial.total_transport_price_usd,3,true)}}</template>
                     <span class="unit">万{{settle_unit_sts?settle_unit_sts:'元'}}</span>
                   </span>
                 </div>
@@ -156,7 +156,7 @@
           <div class="col">
             <div class="infoCtn">
               <span class="title">客户扣款金额</span>
-              <span class="number orange">{{clientFinancial.total_deduct_price}}
+              <span class="number orange">{{$toFixed(clientFinancial.total_deduct_price,3,true)}}
                 <span class="unit">万元</span>
               </span>
             </div>
@@ -164,7 +164,7 @@
           <div class="col">
             <div class="infoCtn">
               <span class="title">我方已开票金额</span>
-              <span class="number green">{{clientFinancial.total_invoice_price}}
+              <span class="number green">{{$toFixed(clientFinancial.total_invoice_price,3,true)}}
                 <span class="unit">万元</span>
               </span>
             </div>
@@ -172,7 +172,7 @@
           <div class="col">
             <div class="infoCtn">
               <span class="title">我方已收款金额(元)</span>
-              <span class="number green">{{clientFinancial.total_collect_price_rmb}}
+              <span class="number green">{{$toFixed(clientFinancial.total_collect_price_rmb,3,true)}}
                 <span class="unit">万元</span>
               </span>
             </div>
@@ -180,7 +180,7 @@
           <div class="col">
             <div class="infoCtn">
               <span class="title">我方已收款金额(美元)</span>
-              <span class="number green">{{clientFinancial.total_collect_price_usd}}
+              <span class="number green">{{$toFixed(clientFinancial.total_collect_price_usd,3,true)}}
                 <span class="unit">万美元</span>
               </span>
             </div>
@@ -416,7 +416,7 @@
               style="cursor:pointer"
               :class="{'blue':item.order_id||item.rel_doc_id,'gray':!item.order_id&&!item.rel_doc_id}"
               @click="goOrderUrl(item)">{{item.order_id||item.rel_doc_id?(item.order_code||item.rel_doc_code||'无编号'):'未关联单据'}}</div>
-            <div class="col">{{item.price}}元</div>
+            <div class="col">{{$toFixed(item.price,3,true)}}元</div>
             <div class="col">{{item.invoice_code}}</div>
             <div class="col">{{item.desc}}</div>
             <div class="col">{{item.user_name}}</div>
@@ -531,7 +531,7 @@
               style="cursor:pointer"
               :class="{'blue':item.order_id||item.rel_doc_id,'gray':!item.order_id&&!item.rel_doc_id}"
               @click="goOrderUrl(item)">{{item.order_id||item.rel_doc_id?(item.order_code||item.rel_doc_code||'无编号'):'未关联单据'}}</div>
-            <div class="col">{{item.price}}{{item.settle_unit}}</div>
+            <div class="col">{{$toFixed(item.price,3,true)}}{{item.settle_unit}}</div>
             <div class="col">{{item.desc}}</div>
             <div class="col">{{item.user_name}}</div>
             <div class="col">{{item.created_at}}</div>
@@ -626,7 +626,7 @@
               style="cursor:pointer"
               :class="{'blue':item.order_id||item.rel_doc_id,'gray':!item.order_id&&!item.rel_doc_id}"
               @click="goOrderUrl(item)">{{item.order_id||item.rel_doc_id?(item.order_code||item.rel_doc_code||'无编号'):'未关联单据'}}</div>
-            <div class="col">{{item.price}}元</div>
+            <div class="col">{{$toFixed(item.price,3,true)}}元</div>
             <div class="col">{{item.reason}}</div>
             <div class="col">
               <div class="imageCtn">
@@ -653,7 +653,7 @@
           <div class="row">
             <div class="col">合计：</div>
             <div class="col"></div>
-            <div class="col green bold">{{deductTotalPrice}}万元</div>
+            <div class="col green bold">{{$toFixed(deductTotalPrice,3,true)}}万元</div>
             <div class="col"></div>
             <div class="col"></div>
             <div class="col"></div>
@@ -737,9 +737,11 @@
 <script lang="ts">
 import { client, collection, deduct, order, invoice } from '@/assets/js/api'
 import { moneyArr } from '@/assets/js/dictionary'
+import { ListSetting } from '@/types/list'
 import Vue from 'vue'
 export default Vue.extend({
   data(): {
+    originalSetting: ListSetting[]
     [propName: string]: any
   } {
     return {
@@ -803,8 +805,8 @@ export default Vue.extend({
       },
       originalSetting: [
         {
-          key: 'code',
-          name: '单据编号',
+          key: 'system_code',
+          name: '系统单据编号',
           ifShow: true,
           ifLock: true,
           ifCaogao: 'order_type',
@@ -813,10 +815,18 @@ export default Vue.extend({
           errVal: '无编号'
         },
         {
+          key: 'code',
+          name: '单据编号',
+          ifShow: true,
+          ifLock: true,
+          index: 0,
+          errVal: '无编号'
+        },
+        {
           key: 'client_name',
           name: '下单公司',
           ifShow: true,
-          ifLock: true,
+          ifLock: false,
           index: 1
         },
         {
@@ -826,7 +836,8 @@ export default Vue.extend({
           ifLock: false,
           index: 8,
           errVal: '0',
-          unitKey: 'settle_unit'
+          unitKey: 'settle_unit',
+          numberToString: true
         },
         {
           key: 'total_transport_price',
@@ -835,7 +846,8 @@ export default Vue.extend({
           ifLock: false,
           index: 10,
           errVal: '0',
-          unitKey: 'settle_unit'
+          unitKey: 'settle_unit',
+          numberToString: true
         },
         {
           key: 'invoice_status',
@@ -853,7 +865,8 @@ export default Vue.extend({
           ifLock: false,
           index: 12,
           errVal: '0',
-          unit: '元'
+          unit: '元',
+          numberToString: true
         },
         {
           key: 'collect_status',
@@ -918,7 +931,8 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 7,
-          errVal: '0'
+          errVal: '0',
+          numberToString: true
         },
         {
           key: 'total_transport_number',
@@ -926,7 +940,8 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 9,
-          errVal: '0'
+          errVal: '0',
+          numberToString: true
         }
       ],
       oprList: [
@@ -1170,10 +1185,9 @@ export default Vue.extend({
             this.orderList.forEach((item: any) => {
               item.collect_status = item.has_collect.status
               item.collect_count =
-                item.has_collect.count +
+                this.$toFixed(item.has_collect.count, 3, true) +
                 '元' +
-                (item.has_collect.count_usd ? '/' + item.has_collect.count_usd + '美元' : '')
-              // item.collect_unit = item.has_collect.unit
+                (item.has_collect.count_usd ? '/' + this.$toFixed(item.has_collect.count_usd, 3, true) + '美元' : '')
               item.invoice_status = item.has_invoice.status
               item.invoice_count = item.has_invoice.count
             })
@@ -1202,8 +1216,8 @@ export default Vue.extend({
           if (res.data.status) {
             this.collectionLog = res.data.data.items
             this.collectionTotal = res.data.data.total
-            this.collectionTotalPriceUSD = this.$toFixed(res.data.data.additional.total_price_usd / 10000)
-            this.collectionTotalPriceRMB = this.$toFixed(res.data.data.additional.total_price_rmb / 10000)
+            this.collectionTotalPriceUSD = this.$toFixed(res.data.data.additional.total_price_usd / 10000, 3, true)
+            this.collectionTotalPriceRMB = this.$toFixed(res.data.data.additional.total_price_rmb / 10000, 3, true)
           }
           this.collectionLoading = false
         })
@@ -1259,7 +1273,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.invoiceLog = res.data.data.items
             this.invoiceTotal = res.data.data.total
-            this.invoiceTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000)
+            this.invoiceTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000, 3, true)
           }
           this.invoiceLoading = false
         })

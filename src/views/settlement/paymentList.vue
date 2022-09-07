@@ -178,45 +178,45 @@
             <div class="col">{{item.name}}</div>
             <div class="col">{{item.alias}}</div>
             <div class="col">{{item.client_type_name}}</div>
-            <div class="col">{{$toFixed(item.total_plan_price)}}万元</div>
+            <div class="col">{{$toFixed(item.total_plan_price,3,true)}}万元</div>
             <div class="col">
               <template v-if="item.client_type_name==='纱线原料单位'||item.client_type_name==='原料加工单位'">
-                {{$toFixed(item.total_plan_number/1000)}}吨
+                {{$toFixed(item.total_plan_number/1000,3,true)}}吨
               </template>
               <template v-else-if="item.client_type_name==='面料原料单位'">
-                {{$toFixed(item.total_plan_number/1000)}}千米
+                {{$toFixed(item.total_plan_number/1000,3,true)}}千米
               </template>
               <template v-else-if="item.client_type_name==='装饰辅料单位'||item.client_type_name==='包装辅料单位'">
-                {{$toFixed(item.total_plan_number/10000)}}万个
+                {{$toFixed(item.total_plan_number/10000,3,true)}}万个
               </template>
               <template v-else-if="item.client_type_name==='生产织造单位' || item.client_type_name==='生产加工单位'">
-                {{$toFixed(item.total_plan_number/10000)}}万件
+                {{$toFixed(item.total_plan_number/10000,3,true)}}万件
               </template>
               <template v-else-if="item.client_type_name==='运输单位'">
-                {{$toFixed(item.total_plan_number)}}立方
+                {{$toFixed(item.total_plan_number,3,true)}}立方
               </template>
             </div>
             <div class="col">{{$toFixed(item.total_real_price)}}万元</div>
             <div class="col">
               <template v-if="item.client_type_name==='纱线原料单位'||item.client_type_name==='原料加工单位'">
-                {{$toFixed(item.total_real_number/1000)}}吨
+                {{$toFixed(item.total_real_number/1000,3,true)}}吨
               </template>
               <template v-else-if="item.client_type_name==='面料原料单位'">
-                {{$toFixed(item.total_real_number/1000)}}千米
+                {{$toFixed(item.total_real_number/1000,3,true)}}千米
               </template>
               <template v-else-if="item.client_type_name==='装饰辅料单位'||item.client_type_name==='包装辅料单位'">
-                {{$toFixed(item.total_real_number/10000)}}万个
+                {{$toFixed(item.total_real_number/10000,3,true)}}万个
               </template>
               <template v-else-if="item.client_type_name==='生产织造单位' || item.client_type_name==='生产加工单位'">
-                {{$toFixed(item.total_real_number/10000)}}万件
+                {{$toFixed(item.total_real_number/10000,3,true)}}万件
               </template>
               <template v-else-if="item.client_type_name==='运输单位'">
-                {{$toFixed(item.total_real_number)}}立方
+                {{$toFixed(item.total_real_number,3,true)}}立方
               </template>
             </div>
-            <div class="col">{{$toFixed(item.total_invoice_price)}}万元</div>
-            <div class="col">{{$toFixed(item.total_pay_price)}}万元</div>
-            <div class="col">{{$toFixed(item.total_deduct_price)}}万元</div>
+            <div class="col">{{$toFixed(item.total_invoice_price,3,true)}}万元</div>
+            <div class="col">{{$toFixed(item.total_pay_price,3,true)}}万元</div>
+            <div class="col">{{$toFixed(item.total_deduct_price,3,true)}}万元</div>
             <div class="col oprCtn">
               <span class="opr hoverBlue"
                 @click="$router.push('/settlement/paymentDetail?id='+item.id + '&type=' + item.client_type_name)">详情</span>
@@ -226,47 +226,47 @@
             <div class="col green">合计：</div>
             <div class="col"></div>
             <div class="col"></div>
-            <div class="col green bold">{{$toFixed(totalData.total_plan_price/10000)}}万元</div>
+            <div class="col green bold">{{$toFixed(totalData.total_plan_price/10000,3,true)}}万元</div>
             <div class="col green bold">
               <template v-if="!clientTypeName">-</template>
               <template v-else-if="clientTypeName==='纱线原料单位'||clientTypeName==='原料加工单位'">
-                {{$toFixed(totalData.total_plan_number/1000)}}吨
+                {{$toFixed(totalData.total_plan_number/1000,3,true)}}吨
               </template>
               <template v-else-if="clientTypeName==='面料原料单位'">
-                {{$toFixed(totalData.total_plan_number/1000)}}千米
+                {{$toFixed(totalData.total_plan_number/1000,3,true)}}千米
               </template>
               <template v-else-if="clientTypeName==='装饰辅料单位'||clientTypeName==='包装辅料单位'">
-                {{$toFixed(totalData.total_plan_number/10000)}}万个
+                {{$toFixed(totalData.total_plan_number/10000,3,true)}}万个
               </template>
               <template v-else-if="clientTypeName==='生产织造单位' || clientTypeName==='生产加工单位'">
-                {{$toFixed(totalData.total_plan_number/10000)}}万件
+                {{$toFixed(totalData.total_plan_number/10000,3,true)}}万件
               </template>
               <template v-else-if="clientTypeName==='运输单位'">
-                {{$toFixed(totalData.total_plan_number)}}立方
+                {{$toFixed(totalData.total_plan_number,3,true)}}立方
               </template>
             </div>
-            <div class="col green bold">{{$toFixed(totalData.total_real_price/10000)}}万元</div>
+            <div class="col green bold">{{$toFixed(totalData.total_real_price/10000,3,true)}}万元</div>
             <div class="col green bold">
               <template v-if="!clientTypeName">-</template>
               <template v-else-if="clientTypeName==='纱线原料单位'||clientTypeName==='原料加工单位'">
-                {{$toFixed(totalData.total_real_number/1000)}}吨
+                {{$toFixed(totalData.total_real_number/1000,3,true)}}吨
               </template>
               <template v-else-if="clientTypeName==='面料原料单位'">
-                {{$toFixed(totalData.total_real_number/1000)}}千米
+                {{$toFixed(totalData.total_real_number/1000,3,true)}}千米
               </template>
               <template v-else-if="clientTypeName==='装饰辅料单位'||clientTypeName==='包装辅料单位'">
-                {{$toFixed(totalData.total_real_number/10000)}}万个
+                {{$toFixed(totalData.total_real_number/10000,3,true)}}万个
               </template>
               <template v-else-if="clientTypeName==='生产织造单位' || clientTypeName==='生产加工单位'">
-                {{$toFixed(totalData.total_real_number/10000)}}万件
+                {{$toFixed(totalData.total_real_number/10000,3,true)}}万件
               </template>
               <template v-else-if="clientTypeName==='运输单位'">
-                {{$toFixed(totalData.total_real_number)}}立方
+                {{$toFixed(totalData.total_real_number,3,true)}}立方
               </template>
             </div>
-            <div class="col green bold">{{$toFixed(totalData.total_invoice_price)}}万元</div>
-            <div class="col green bold">{{$toFixed(totalData.total_pay_price)}}万元</div>
-            <div class="col green bold">{{$toFixed(totalData.total_deduct_price)}}万元</div>
+            <div class="col green bold">{{$toFixed(totalData.total_invoice_price,3,true)}}万元</div>
+            <div class="col green bold">{{$toFixed(totalData.total_pay_price,3,true)}}万元</div>
+            <div class="col green bold">{{$toFixed(totalData.total_deduct_price,3,true)}}万元</div>
             <div class="col"></div>
           </div>
         </div>
@@ -283,6 +283,89 @@
     </div>
     <div class="bottomFixBar">
       <div class="main">
+        <div class="btnCtn"
+          style="float:left">
+          <div class="buttonList">
+            <div class="btn backHoverBlue">
+              <i class="el-icon-s-grid"></i>
+              <span class="text">批量导入单据</span>
+            </div>
+            <div class="otherInfoCtn">
+              <div class="otherInfo">
+                <div class="btn backHoverOrange"
+                  @click="importExcelData('开票单据')">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">开票单据</span>
+                </div>
+                <div class="btn backHoverBlue"
+                  @click="importExcelData('付款单据')">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">付款单据</span>
+                </div>
+                <div class="btn backHoverRed"
+                  @click="importExcelData('扣款单据')">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">扣款单据</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="buttonList">
+            <div class="btn backHoverBlue">
+              <i class="el-icon-s-grid"></i>
+              <span class="text">下载导入模板</span>
+            </div>
+            <div class="otherInfoCtn">
+              <div class="otherInfo">
+                <div class="btn backHoverOrange"
+                  @click="downloadExcel('开票单据模板')">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">开票单据</span>
+                </div>
+                <div class="btn backHoverBlue"
+                  @click="downloadExcel('付款单据模板')">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">付款单据</span>
+                </div>
+                <div class="btn backHoverRed"
+                  @click="downloadExcel('扣款单据模板')">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">扣款单据</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <span class="btn hoverBlue">
+            <el-tooltip class="item"
+              effect="dark"
+              placement="top">
+              <div slot="content">
+                第一步：下载导入模板。<br />
+                第二步：填写模板信息。注意：单位名称必须与系统添加的名称保持一致；金额字段必须为数字；日期字段的格式必须为yyyy-mm-dd（2022-01-01）；订单号必须为系统订单编号；关联单据编号必须为系统关联编号；否则会出现无法导入或者导入错误的情况。<br />
+                第三步：导入模板，完成导入
+              </div>
+              <span>导入教程</span>
+            </el-tooltip>
+          </span>
+        </div>
         <div class="btnCtn">
           <span class="btn backHoverGreen"
             @click="excelFlag = true">导出EXCEL</span>
@@ -339,7 +422,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { client, clientType } from '@/assets/js/api'
+import { client, clientType, deduct, invoice, payment } from '@/assets/js/api'
 import { limitArr, moneyArr } from '@/assets/js/dictionary'
 export default Vue.extend({
   data(): {
@@ -395,6 +478,176 @@ export default Vue.extend({
     }
   },
   methods: {
+    downloadExcel(type: string) {
+      if (type === '开票单据模板') {
+        this.$downloadExcel(
+          [],
+          [
+            { title: '开票单位', key: 'client_zh' },
+            { title: '关联单号', key: 'doc_code' },
+            { title: '开票号码', key: 'invoice_code' },
+            { title: '开票金额', key: 'price' },
+            { title: '备注信息', key: 'desc' }
+          ],
+          type
+        )
+      } else if (type === '扣款单据模板') {
+        this.$downloadExcel(
+          [],
+          [
+            { title: '扣款单位', key: 'client_zh' },
+            { title: '关联单号', key: 'doc_code' },
+            { title: '扣款金额', key: 'price' },
+            { title: '扣款原因', key: 'desc' }
+          ],
+          type
+        )
+      } else if (type === '付款单据模板') {
+        this.$downloadExcel(
+          [],
+          [
+            { title: '付款单位', key: 'client_zh' },
+            { title: '关联单号', key: 'doc_code' },
+            { title: '付款金额', key: 'price' },
+            { title: '备注信息', key: 'desc' }
+          ],
+          type
+        )
+      }
+    },
+    importExcelData(type: string) {
+      const inputFile = document.createElement('input')
+      inputFile.type = 'file'
+      inputFile.accept = '.xlsx,.xls'
+      inputFile.addEventListener('change', (e) => {
+        this.getExcelData(e, this.saveImportData, type)
+      })
+      let click = document.createEvent('MouseEvents')
+      click.initEvent('click', true, true)
+      inputFile.dispatchEvent(click)
+    },
+    getExcelData(file: any, callBack: any, type: string) {
+      const _this = this
+      const XLSX = require('xlsx')
+      const files = file.target.files
+      const fileReader = new FileReader()
+      fileReader.onload = function (e: any) {
+        try {
+          const data = e.target.result
+          const bytes = new Uint8Array(data) // 无符号整型数组
+          const len = bytes.byteLength
+          const binarys = new Array(len) // 创建定长数组，存储文本
+          for (let i = 0; i < len; i++) {
+            binarys[i] = String.fromCharCode(bytes[i])
+          }
+          const workbook = XLSX.read(binarys.join(''), { type: 'binary' })
+          if (!workbook) {
+            return null
+          }
+          const r: any = {}
+          workbook.SheetNames.forEach((name: string) => {
+            // 遍历每张纸数据
+            r[name] = XLSX.utils.sheet_to_json(workbook.Sheets[name])
+          })
+          callBack && callBack(r, type)
+        } catch (e) {
+          _this.$message.error('文件类型不正确')
+        }
+      }
+      fileReader.readAsArrayBuffer(files[0])
+    },
+    saveImportData(data: any, type: string) {
+      let typeObj: any = {}
+      if (type === '开票单据') {
+        typeObj = {
+          doc_code: ['关联单号'],
+          client_zh: ['开票单位'],
+          price: ['开票金额'],
+          desc: ['备注信息'],
+          invoice_code: ['开票号码']
+        }
+      } else if (type === '付款单据') {
+        typeObj = {
+          doc_code: ['关联单号'],
+          client_zh: ['付款单位'],
+          price: ['付款金额'],
+          desc: ['备注信息']
+        }
+      } else if (type === '扣款单据') {
+        typeObj = {
+          doc_code: ['关联单号'],
+          client_zh: ['扣款单位'],
+          price: ['扣款金额'],
+          desc: ['扣款原因'],
+          file_url: [false, null]
+        }
+      }
+      let submitData = []
+      for (const prop in data) {
+        for (const key in data[prop]) {
+          let obj: any = {}
+          for (const indexType in typeObj) {
+            if (typeObj[indexType][0]) {
+              obj[indexType] = data[prop][key][typeObj[indexType][0]] || data[prop][key][typeObj[indexType][1]]
+              if (obj[indexType] === undefined) {
+                this.$message.error('解析失败，请使用标准模板或检测必填数据是否存在空的情况！！！')
+                return
+              }
+            } else {
+              obj[indexType] = typeObj[indexType][1]
+            }
+          }
+          submitData.push(obj)
+        }
+      }
+      if (submitData.length === 0) {
+        this.$message.warning('未读取到可用参数')
+        return
+      }
+      if (type === '开票单据') {
+        invoice
+          .create({
+            id: '',
+            doc_type: '',
+            client_id: '',
+            data: submitData
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.$message.success('导入成功')
+              this.getList()
+            }
+          })
+      } else if (type === '付款单据') {
+        payment
+          .create({
+            id: '',
+            doc_type: '',
+            client_id: '',
+            data: submitData
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.$message.success('导入成功')
+              this.getList()
+            }
+          })
+      } else if (type === '扣款单据') {
+        deduct
+          .create({
+            id: '',
+            doc_type: '',
+            client_id: '',
+            data: submitData
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.$message.success('导入成功')
+              this.getList()
+            }
+          })
+      }
+    },
     exportExcel() {
       if (!this.clientTypeExcel || !this.yearExcel) {
         this.$message.error('请选择类型和年份')

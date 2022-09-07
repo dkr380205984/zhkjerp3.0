@@ -81,8 +81,9 @@
       <div class="oprCtn">
         <span class="btn borderBtn"
           @click="$emit('close')">取消</span>
-        <span class="btn backHoverBlue"
-          @click="saveSendInfo">{{editFlag?'修改':'保存'}}</span>
+        <span class="btn"
+          @click="saveSendInfo"
+          :class="editFlag?'backHoverOrange':'backHoverBlue'">{{editFlag?'修改':'保存'}}</span>
       </div>
     </div>
   </div>
@@ -112,6 +113,15 @@ export default Vue.extend({
         if (this.data) {
           // @ts-ignore
           this.sendInfo = this.data
+          if (this.sendInfo.info.length === 0) {
+            this.sendInfo.info = [
+              {
+                order_type: '',
+                send_time: '',
+                number: ''
+              }
+            ]
+          }
         }
       }
     }

@@ -301,7 +301,7 @@
                       {{ itemSon.material_color || '无' }}
                     </div>
                     <div class="tcol">{{ itemSon.batch_code }}/{{ itemSon.vat_code }}/{{ itemSon.color_code }}</div>
-                    <div class="tcol">{{ itemSon.number }}{{ itemSon.unit }}</div>
+                    <div class="tcol">{{ $toFixed(itemSon.number,3,true) }}{{ itemSon.unit }}</div>
                   </div>
                 </div>
               </div>
@@ -312,7 +312,7 @@
           <span style="line-height: 35px; margin-left: 40px">合计数量：
             <span style="font-weight: bold"
               class="green">
-              {{ $toFixed(additional.total_number) }}
+              {{ $toFixed(additional.total_number,3,true) }}
             </span>
           </span>
         </div>

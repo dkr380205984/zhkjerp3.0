@@ -33,7 +33,7 @@ export interface OrderBatch {
     image_data?: string[]
     color_data?: any[]
     size_data?: any[]
-    product_id: string | number
+    product_id?: string | number | null
     product_code?: string
     category?: string
     secondary_category?: string
