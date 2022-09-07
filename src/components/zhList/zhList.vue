@@ -43,6 +43,12 @@
                 class="text">
                 {{item[itemKey.key].progress || itemKey.errVal}}%</span>
             </template>
+            <!-- 数字转带逗号字符串专用 -->
+            <template v-else-if="itemKey.numberToString">
+              <span :class="itemKey.class"
+                class="text">
+                {{$toFixed(item[itemKey.key],3,true)}}{{itemKey.unitKey?item[itemKey.unitKey]:itemKey.unit}}</span>
+            </template>
             <template v-else>
               <!-- 草稿标记 -->
               <span class="circle"
@@ -381,6 +387,12 @@
                 <span :class="itemKey.class"
                   class="text">
                   {{item[itemKey.key].progress || itemKey.errVal}}%</span>
+              </template>
+              <!-- 数字转带逗号字符串专用 -->
+              <template v-else-if="itemKey.numberToString">
+                <span :class="itemKey.class"
+                  class="text">
+                  {{$toFixed(item[itemKey.key],3,true)}}{{itemKey.unitKey?item[itemKey.unitKey]:itemKey.unit}}</span>
               </template>
               <template v-else>
                 <!-- 草稿标记 -->

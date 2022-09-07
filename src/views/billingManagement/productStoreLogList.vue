@@ -1,32 +1,55 @@
 <template>
-  <div id="productStoreLogList" v-loading="loading" class="bodyContainer">
-    <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
+  <div id="productStoreLogList"
+    v-loading="loading"
+    class="bodyContainer">
+    <div class="module"
+      v-loading="mainLoading"
+      element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">系统单据管理</div>
       </div>
       <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
-        <div class="tab" @click="$router.push('/billingManagement/rawMaterialPlan')">原料计划单</div>
-        <div class="tab" @click="$router.push('/billingManagement/rawMaterialSupplement')">原料补充单</div>
-        <div class="tab" @click="$router.push('/billingManagement/rawMaterialPurchaseOrder')">原料订购单</div>
-        <div class="tab" @click="$router.push('/billingManagement/rawMaterialTransferOrder')">原料调取单</div>
-        <div class="tab" @click="$router.push('/billingManagement/rawMaterialProcessingOrder')">原料加工单</div>
-        <div class="tab" @click="$router.push('/billingManagement/productionPlan')">生产计划单</div>
-        <div class="tab" @click="$router.push('/billingManagement/inspectionReceiptDocument')">检验入库单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/workshopSettlementLog')">车间结算日志</div>
-        <div class="tab" @click="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">辅料订购单</div>
-        <div class="tab" @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
-        <div class="tab" @click="$router.push('/billingManagement/transportationDeliveryOrder')">运输出库单</div>
-        <div class="tab" @click="$router.push('/billingManagement/deductionForm')">我方扣款单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/rawMaterialPlan')">原料计划单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/rawMaterialSupplement')">原料补充单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/rawMaterialPurchaseOrder')">原料订购单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/rawMaterialTransferOrder')">原料调取单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/rawMaterialProcessingOrder')">原料加工单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/productionPlan')">生产计划单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/inspectionReceiptDocument')">检验入库单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/workshopSettlementLog')">车间结算日志</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">辅料订购单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/transportationDeliveryOrder')">运输出库单</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/deductionForm')">我方扣款单据</div>
       </div>
       <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
-        <div class="tab" @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/oppositeInvoicing')">对方发票单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/oppositeInvoicing')">对方发票单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/collectionList')">收款单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/paymentDocument')">付款单据</div>
         <!-- <div class="tab" @click="$router.push('/billingManagement/orderQuotationComparison')">订单报价单对比单据</div> -->
-        <div class="tab" @click="$router.push('/billingManagement/shaXianInOutList')">纱线出入库单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/fabricWarehousing')">面料出入库单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/auxiliaryInOutList')">辅料出入库单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/shaXianInOutList')">纱线出入库单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/fabricWarehousing')">面料出入库单据</div>
+        <div class="tab"
+          @click="$router.push('/billingManagement/auxiliaryInOutList')">辅料出入库单据</div>
         <div class="tab active">产品出入库单据</div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
@@ -35,33 +58,29 @@
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input
-              v-model="keyword"
+            <el-input v-model="keyword"
               placeholder="单据编号/关联订单号"
-              @keydown.enter.native="changeRouter"
-            ></el-input>
+              @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
-            <el-input
-              v-model="product_code"
+            <el-input v-model="product_code"
               placeholder="筛选产品编号"
               clearable
-              @keydown.enter.native="changeRouter"
-            ></el-input>
+              @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
-            <el-select
-              @change="(ev) => getLocalStorage(ev, 'create_user')"
+            <el-select @change="(ev) => getLocalStorage(ev, 'create_user')"
               v-model="user_id"
               placeholder="筛选创建人"
-              clearable
-            >
-              <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-date-picker
-              v-model="date"
+            <el-date-picker v-model="date"
               type="daterange"
               align="right"
               unlink-panels
@@ -70,58 +89,76 @@
               end-placeholder="结束日期"
               :picker-options="pickerOptions"
               @change="changeRouter"
-              value-format="yyyy-MM-dd"
-            >
+              value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
-          <div class="btn borderBtn" @click="reset">重置</div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select @change="changeRouter" v-model="status" placeholder="筛选审核状态">
-              <el-option value="null" label="全部"></el-option>
-              <el-option value="0" label="待审核"></el-option>
-              <el-option value="1" label="已审核"></el-option>
-              <el-option value="2" label="已驳回"></el-option>
-              <el-option value="3" label="状态异常"></el-option>
+            <el-select @change="changeRouter"
+              v-model="status"
+              placeholder="筛选审核状态">
+              <el-option value="null"
+                label="全部"></el-option>
+              <el-option value="0"
+                label="待审核"></el-option>
+              <el-option value="1"
+                label="已审核"></el-option>
+              <el-option value="2"
+                label="已驳回"></el-option>
+              <el-option value="3"
+                label="状态异常"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter" v-model="action_type" clearable="" placeholder="筛选出入库类型">
-              <el-option
-                v-for="item in stockTypeList"
+            <el-select @change="changeRouter"
+              v-model="action_type"
+              clearable=""
+              placeholder="筛选出入库类型">
+              <el-option v-for="item in stockTypeList"
                 :key="item.value + item.name"
                 :value="item.value"
+                :label="item.name"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-select @change="changeRouter"
+              v-model="store_id"
+              placeholder="筛选仓库"
+              clearable>
+              <el-option v-for="item in storeList"
+                :key="item.id"
                 :label="item.name"
-              ></el-option>
+                :value="item.id"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-select @change="changeRouter" v-model="store_id" placeholder="筛选仓库" clearable>
-              <el-option v-for="item in storeList" :key="item.id" :label="item.name" :value="item.id"></el-option>
-            </el-select>
-          </div>
-          <div class="elCtn">
-            <el-cascader
-              v-model="client_id"
+            <el-cascader v-model="client_id"
               placeholder="请选择单位信息"
               :options="yarnClientAllList"
               filterable
               clearable
-              @change="changeRouter"
-            >
+              @change="changeRouter">
             </el-cascader>
           </div>
         </div>
-        <div class="filterCtn" style="overflow: hidden">
-          <div class="btn borderBtn backHoverBlue" style="color: white" @click="oneShowAll">全部展开</div>
+        <div class="filterCtn"
+          style="overflow: hidden">
+          <div class="btn borderBtn backHoverBlue"
+            style="color: white"
+            @click="oneShowAll">全部展开</div>
         </div>
         <div class="list">
           <div class="row title">
-            <div class="col" style="flex: 0.05">
-              <el-checkbox v-model="checkAllPlan" @change="checkAll"></el-checkbox>
+            <div class="col"
+              style="flex: 0.05">
+              <el-checkbox v-model="checkAllPlan"
+                @change="checkAll"></el-checkbox>
             </div>
-            <div class="col" style="flex: 1.3">单据编号</div>
+            <div class="col"
+              style="flex: 1.3">单据编号</div>
             <div class="col">出入库类型</div>
             <div class="col">库存转移</div>
             <div class="col">关联订单号</div>
@@ -130,12 +167,16 @@
             <div class="col">创建人</div>
             <div class="col">操作</div>
           </div>
-          <div v-for="(item, index) in list" :key="index">
+          <div v-for="(item, index) in list"
+            :key="index">
             <div class="row">
-              <div class="col" style="flex: 0.05">
-                <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
+              <div class="col"
+                style="flex: 0.05">
+                <el-checkbox v-model="item.checked"
+                  @change="$forceUpdate()"></el-checkbox>
               </div>
-              <div class="col" style="flex: 1.3">{{ item.code }}</div>
+              <div class="col"
+                style="flex: 1.3">{{ item.code }}</div>
               <div class="col">{{ stockTypeList[item.action_type - 1].name }}</div>
               <div class="col">
                 <template v-if="item.action_type === 1">
@@ -159,14 +200,12 @@
                     <span>{{ item.client_name }}</span>
                   </div>
                 </template>
-                <template
-                  v-else-if="
+                <template v-else-if="
                     item.action_type === 6 ||
                     item.action_type === 9 ||
                     item.action_type === 11 ||
                     item.action_type === 12
-                  "
-                >
+                  ">
                   <div class="changeCtn">
                     <span>{{ item.store }}/{{ item.secondary_store }}</span>
                   </div>
@@ -186,8 +225,7 @@
                   </div>
                 </template>
               </div>
-              <div
-                class="col hoverBlue"
+              <div class="col hoverBlue"
                 style="
                   cursor: pointer;
                   white-space: nowrap;
@@ -204,27 +242,36 @@
                       ? '/order/detail?id='
                       : '/sampleOrder/detail?id=') + item.top_order_id
                   )
-                "
-              >
-                <span v-if="item.order_type === 1" class="circle backOrange">订</span>
-                <span v-if="item.order_type === 2" class="circle backBlue">样</span>
+                ">
+                <span v-if="item.order_type === 1"
+                  class="circle backOrange">订</span>
+                <span v-if="item.order_type === 2"
+                  class="circle backBlue">样</span>
                 {{ item.order_code || '无编号，点击查看详情' }}
               </div>
               <div class="col">
-                <div v-if="item.is_check === 0" class="orange">待审核</div>
-                <div v-else-if="item.is_check === 1" class="blue">已审核</div>
-                <div v-else-if="item.is_check === 2" class="red">已驳回</div>
-                <div v-else class="red">状态异常</div>
+                <div v-if="item.is_check === 0"
+                  class="orange">待审核</div>
+                <div v-else-if="item.is_check === 1"
+                  class="blue">已审核</div>
+                <div v-else-if="item.is_check === 2"
+                  class="red">已驳回</div>
+                <div v-else
+                  class="red">状态异常</div>
               </div>
               <div class="col">{{ item.created_at }}</div>
               <div class="col">{{ item.user_name }}</div>
               <div class="col">
-                <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
-                <span class="opr hoverBlue" @click="$openUrl('/store/productLogPrint?id=' + item.id)">打印</span>
-                <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
+                <span class="opr hoverBlue"
+                  @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
+                <span class="opr hoverBlue"
+                  @click="$openUrl('/store/productLogPrint?id=' + item.id)">打印</span>
+                <span class="opr hoverBlue"
+                  @click="changeStatus(item)">审核</span>
               </div>
             </div>
-            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
+            <div v-show="item.isShow"
+              style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
               <div class="tableCtn">
                 <div class="thead">
                   <div class="trow">
@@ -237,7 +284,9 @@
                   </div>
                 </div>
                 <div class="tbody">
-                  <div class="trow" v-for="itemSon in item.detail.info_data" :key="itemSon.id + 'itemSon'">
+                  <div class="trow"
+                    v-for="itemSon in item.detail.info_data"
+                    :key="itemSon.id + 'itemSon'">
                     <div class="tcol">
                       <div>{{ itemSon.product_code || '无编号' }}</div>
                       <div>({{ itemSon.category || '无' }} / {{ itemSon.secondary_category || '无' }})</div>
@@ -250,7 +299,7 @@
                     <div class="tcol">
                       {{ itemSon.price ? itemSon.price + '元' : '未填写' }}
                     </div>
-                    <div class="tcol">{{ itemSon.number }}{{ itemSon.unit }}</div>
+                    <div class="tcol">{{ $toFixed(itemSon.number,3,true) }}{{ itemSon.unit }}</div>
                   </div>
                 </div>
               </div>
@@ -258,36 +307,38 @@
           </div>
         </div>
         <div style="margin-top: 20px">
-          <span style="line-height: 35px; margin-left: 40px"
-            >合计数量：
-            <span style="font-weight: bold" class="green">
-              {{ additional.total_number.toFixed(2) }}
+          <span style="line-height: 35px; margin-left: 40px">合计数量：
+            <span style="font-weight: bold"
+              class="green">
+              {{ $toFixed(additional.total_number,3,true) }}
             </span>
           </span>
         </div>
         <div class="pageCtn">
-          <el-pagination
-            background
+          <el-pagination background
             :page-size="limit"
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
-            @current-change="changeRouter"
-          >
+            @current-change="changeRouter">
           </el-pagination>
         </div>
       </div>
     </div>
     <div class="bottomFixBar">
       <div class="main">
-        <div class="fl blue green" style="line-height: 56px; margin-left: 24px">
-          <div class="btn backHoverBlue" @click="lostCheck">
+        <div class="fl blue green"
+          style="line-height: 56px; margin-left: 24px">
+          <div class="btn backHoverBlue"
+            @click="lostCheck">
             <span class="text">批量审核</span>
           </div>
         </div>
         <div class="btnCtn">
-          <div class="borderBtn" @click="$router.go(-1)">返回</div>
-          <div class="buttonList" style="margin-left: 12px">
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
+          <div class="buttonList"
+            style="margin-left: 12px">
             <!-- <div class="btn backHoverBlue">
               <span class="text">导出月度报表</span>
             </div>
@@ -301,45 +352,55 @@
         </div>
       </div>
     </div>
-    <product-detail
-      :id="productDetailId"
+    <product-detail :id="productDetailId"
       :show="productShow"
       :noOpr="true"
-      @close="productShow = false"
-    ></product-detail>
-    <div class="popup" v-show="checkFlag">
+      @close="productShow = false"></product-detail>
+    <div class="popup"
+      v-show="checkFlag">
       <div class="main">
         <div class="titleCtn">
           <span class="text">原料计划单审核</span>
-          <div class="closeCtn" @click="checkFlag = false">
+          <div class="closeCtn"
+            @click="checkFlag = false">
             <span class="el-icon-close"></span>
           </div>
         </div>
         <div class="contentCtn">
           <div class="row">
             <div class="label">是否通过：</div>
-            <div class="info" style="line-height: 32px">
-              <el-radio v-model="reviewerParams.is_check" :label="1">通过</el-radio>
-              <el-radio v-model="reviewerParams.is_check" :label="2">驳回</el-radio>
+            <div class="info"
+              style="line-height: 32px">
+              <el-radio v-model="reviewerParams.is_check"
+                :label="1">通过</el-radio>
+              <el-radio v-model="reviewerParams.is_check"
+                :label="2">驳回</el-radio>
             </div>
           </div>
-          <div class="row" v-if="reviewerParams.is_check === 2">
+          <div class="row"
+            v-if="reviewerParams.is_check === 2">
             <div class="label">驳回理由：</div>
-            <div class="info" style="min-height: 32px; height: auto">
-              <el-input placeholder="请输入驳回理由" v-model="reviewerParams.check_desc"></el-input>
+            <div class="info"
+              style="min-height: 32px; height: auto">
+              <el-input placeholder="请输入驳回理由"
+                v-model="reviewerParams.check_desc"></el-input>
             </div>
           </div>
-          <div class="row" v-else></div>
+          <div class="row"
+            v-else></div>
           <div class="row">
             <div class="label">备注信息：</div>
             <div class="info">
-              <el-input placeholder="请输入备注信息" v-model="reviewerParams.desc"></el-input>
+              <el-input placeholder="请输入备注信息"
+                v-model="reviewerParams.desc"></el-input>
             </div>
           </div>
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn" @click="checkFlag = false">取消</span>
-          <span class="btn backHoverBlue" @click="agreeCheck">确认</span>
+          <span class="btn borderBtn"
+            @click="checkFlag = false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="agreeCheck">确认</span>
         </div>
       </div>
     </div>

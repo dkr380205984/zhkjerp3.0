@@ -299,35 +299,43 @@
             </svg>
           </el-tooltip>
         </div>
-        <div class="btn backHoverBlue"
-          @click="$addItem(orderInfo.time_data.batch_data, {
-            id: '',
-            batch_number: orderInfo.time_data.batch_data.length+1,
-            batch_title: '',
-            batch_type_id: '',
-            delivery_time: '',
-            is_urgent: 2,
-            is_draft: 2,
-            total_style: '',
-            total_number: '',
-            total_price: '',
-            desc: '',
-            product_data: [
-              {
-                product_id: '',
-                size_color_list: [], // 用于下拉框选择尺码颜色
-                product_info: [
-                  {
-                    size_color: '', // 用于下拉框选择尺码颜色
-                    size_id: '',
-                    color_id: '',
-                    number: '',
-                    price: ''
-                  }
-                ]
-              }
-            ]
-        })">添加新批次</div>
+        <div>
+          <div class="btn backHoverOrange"
+            style="margin-right:22px"
+            @click="importExcelData">导入批次</div>
+          <div class="btn backHoverGreen"
+            style="margin-right:22px"
+            @click="downloadExcel">下载导入模板</div>
+          <div class="btn backHoverBlue"
+            @click="$addItem(orderInfo.time_data.batch_data, {
+              id: '',
+              batch_number: orderInfo.time_data.batch_data.length+1,
+              batch_title: '',
+              batch_type_id: '',
+              delivery_time: '',
+              is_urgent: 2,
+              is_draft: 2,
+              total_style: '',
+              total_number: '',
+              total_price: '',
+              desc: '',
+              product_data: [
+                {
+                  product_id: '',
+                  size_color_list: [], // 用于下拉框选择尺码颜色
+                  product_info: [
+                    {
+                      size_color: '', // 用于下拉框选择尺码颜色
+                      size_id: '',
+                      color_id: '',
+                      number: '',
+                      price: ''
+                    }
+                  ]
+                }
+              ]
+            })">添加新批次</div>
+        </div>
       </div>
       <div v-if="showTable">
         <div class="tableCtn">
@@ -367,12 +375,20 @@
               v-for="(item,index) in orderInfo.time_data.batch_data"
               :key="'tableIcon_'+index">
               <div class="tcol">
-                <div class="info elCtn">
+                <div class="info elCtn"
+                  style="margin-right:10px">
                   <el-date-picker :class="{'error':mustFlag&&!item.delivery_time}"
-                    style="width:100%"
                     placeholder="发货日期"
                     v-model="item.delivery_time"
                     value-format="yyyy-MM-dd"></el-date-picker>
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="发货时间早于下单时间，请再次确认"
+                    placement="top"
+                    v-if="item.delivery_time && $diffByDate(item.delivery_time)<0">
+                    <i class="el-icon-warning red"
+                      style="position:absolute ;right: 0;top: 0;bottom: 0;margin: auto;line-height:46px"></i>
+                  </el-tooltip>
                 </div>
               </div>
               <div class="tcol">
@@ -1153,6 +1169,148 @@ export default Vue.extend({
     }
   },
   methods: {
+    downloadExcel() {
+      this.$downloadExcel(
+        [],
+        [
+          { title: '发货日期(必填)', key: 'delivery_time' },
+          { title: '批次名称', key: 'batch_title' },
+          { title: '批次类型', key: 'batch_type_id' },
+          { title: '批次备注', key: 'desc' },
+          { title: '产品编号(必填)', key: 'product_code' },
+          { title: '尺码(必填)', key: 'size_name' },
+          { title: '颜色(必填)', key: 'color_name' },
+          { title: '单价(必填)', key: 'price' },
+          { title: '数量(必填)', key: 'number' }
+        ],
+        '导入批次模板'
+      )
+    },
+    importExcelData() {
+      const inputFile = document.createElement('input')
+      inputFile.type = 'file'
+      inputFile.accept = '.xlsx,.xls'
+      inputFile.addEventListener('change', (e) => {
+        this.getExcelData(e, this.saveImportData)
+      })
+      let click = document.createEvent('MouseEvents')
+      click.initEvent('click', true, true)
+      inputFile.dispatchEvent(click)
+    },
+    getExcelData(file: any, callBack: any) {
+      const _this = this
+      const XLSX = require('xlsx')
+      const files = file.target.files
+      const fileReader = new FileReader()
+      fileReader.onload = function (e: any) {
+        try {
+          const data = e.target.result
+          const bytes = new Uint8Array(data) // 无符号整型数组
+          const len = bytes.byteLength
+          const binarys = new Array(len) // 创建定长数组，存储文本
+          for (let i = 0; i < len; i++) {
+            binarys[i] = String.fromCharCode(bytes[i])
+          }
+          const workbook = XLSX.read(binarys.join(''), { type: 'binary' })
+          if (!workbook) {
+            return null
+          }
+          const r: any = {}
+          workbook.SheetNames.forEach((name: string) => {
+            // 遍历每张纸数据
+            r[name] = XLSX.utils.sheet_to_json(workbook.Sheets[name])
+          })
+          callBack && callBack(r)
+        } catch (e) {
+          _this.$message.error('文件类型不正确')
+        }
+      }
+      fileReader.readAsArrayBuffer(files[0])
+    },
+    // 把数据转到系统上来
+    saveImportData(data: any) {
+      let typeObj: any = {
+        delivery_time: ['发货日期(必填)'],
+        batch_title: ['批次名称'],
+        batch_type_id: ['批次类型'],
+        desc: ['批次备注'],
+        product_code: ['产品编号(必填)'],
+        size_name: ['尺码(必填)'],
+        color_name: ['颜色(必填)'],
+        price: ['单价(必填)'],
+        number: ['数量(必填)']
+      }
+      let submitData = []
+      for (const prop in data) {
+        for (const key in data[prop]) {
+          let obj: any = {}
+          for (const indexType in typeObj) {
+            if (typeObj[indexType][0]) {
+              obj[indexType] = data[prop][key][typeObj[indexType][0]] || data[prop][key][typeObj[indexType][1]]
+              if (obj[indexType] === undefined) {
+                this.$message.error('解析失败，请使用标准模板或检测必填数据是否存在空的情况！！！')
+                return
+              }
+            } else {
+              obj[indexType] = typeObj[indexType][1]
+            }
+          }
+          submitData.push(obj)
+        }
+      }
+      if (submitData.length === 0) {
+        this.$message.warning('未读取到可用参数')
+        return
+      }
+      submitData.forEach((item) => {
+        const finded = this.orderTypeList.find((itemFind) => itemFind.name === item.batch_type_id)
+        const batch_type_id = finded ? finded.name : ''
+        const productFind = this.productList.find((itemFind) => itemFind.product_code === item.product_code)
+        const product_id = productFind ? productFind.id : ''
+        const colorSizeList: { label: string; value: string }[] = []
+        let colorSize = ''
+        if (productFind) {
+          productFind.size_data.forEach((itemSize: any) => {
+            productFind.color_data.forEach((itemColor: any) => {
+              colorSizeList.push({
+                label: itemSize.name + '/' + itemColor.name,
+                value: itemSize.id + '/' + itemColor.id
+              })
+            })
+          })
+          const finded = colorSizeList.find((itemFind) => itemFind.label === item.size_name + '/' + item.color_name)
+          colorSize = finded?.value || ''
+        }
+        this.orderInfo.time_data.batch_data.push({
+          id: '',
+          batch_number: this.orderInfo.time_data.batch_data.length + 1,
+          batch_title: item.batch_title,
+          batch_type_id: batch_type_id,
+          delivery_time: item.delivery_time,
+          is_urgent: 2,
+          is_draft: 2,
+          total_style: '',
+          total_number: '',
+          total_price: '',
+          desc: '',
+          product_data: [
+            {
+              product_id: product_id,
+              size_color_list: colorSizeList, // 用于下拉框选择尺码颜色
+              product_info: [
+                {
+                  size_color: colorSize, // 用于下拉框选择尺码颜色
+                  size_id: colorSize ? colorSize.split('/')[0] : '',
+                  color_id: colorSize ? colorSize.split('/')[1] : '',
+                  number: item.number,
+                  price: item.price
+                }
+              ]
+            }
+          ]
+        })
+      })
+    },
     tableDelete(
       orderInfo_batch_data: Array<any>,
       index: number,

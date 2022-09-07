@@ -1,0 +1,66 @@
+#codePrint {
+  max-width: 982px;
+
+  .codeContainer {
+    padding: 10px;
+    height: 260px;
+    width: 358px;
+    box-sizing: border-box;
+    display: inline-block;
+
+    .titleCtn {
+      text-align: center;
+      line-height: 32px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .contentCtn {
+      font-size: 14px;
+      display: flex;
+
+      .imgCtn {
+        display: flex;
+        flex-direction: column;
+        width: 60px;
+
+        img {
+          width: 60px;
+          height: 60px;
+        }
+
+        .text {
+          text-align: center;
+        }
+      }
+    }
+
+    .otherInfo {
+      margin-left: 12px;
+      padding: 10px 0;
+
+      .info {
+        display: flex;
+        height: 32px;
+        line-height: 16px;
+
+        .label {
+          min-width: 8em;
+          text-align: left;
+        }
+
+        .text {
+          word-break: break-all;
+        }
+      }
+
+      .bottom {
+        .label {
+          display: block;
+          font-weight: bold;
+          margin-bottom: 12px;
+        }
+      }
+    }
+  }
+}

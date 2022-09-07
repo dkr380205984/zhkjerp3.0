@@ -6,49 +6,53 @@
 @import '../bottomBar.less';
 
 #oppositeInvoicing {
-    .listCtn {
-        .w130 {
-            min-width: 130px;
-        }
+  .listCtn {
+    .w130 {
+      min-width: 130px;
     }
 
-    .circle {
-        max-width: 20px;
-        min-width: 20px;
-        height: 20px;
-        text-align: center;
-        line-height: 19px;
-        border-radius: 50%;
-        color: #fff;
-        font-size: 12px;
-        display: inline-block;
-        margin-right: 4px;
+    .list {
+      font-size: 14px;
+    }
+  }
+
+  .circle {
+    max-width: 20px;
+    min-width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 19px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 12px;
+    display: inline-block;
+    margin-right: 4px;
+  }
+
+  .tab {
+    color: #A3A3A3;
+    font-size: 16px;
+    font-weight: normal;
+    padding-bottom: 5px;
+    cursor: pointer;
+  }
+
+  .tab.active {
+    color: #229CFB;
+    border-bottom: 2px solid #229CFB;
+  }
+
+  .filterCtn {
+    .btn {
+      float: left;
     }
 
-    .tab {
-        color: #A3A3A3;
-        font-size: 16px;
-        font-weight: normal;
-        padding-bottom: 5px;
-        cursor: pointer;
+    .borderBtn {
+      float: right;
     }
 
-    .tab.active {
-        color: #229CFB;
-        border-bottom: 2px solid #229CFB;
+    .fr {
+      float: right;
     }
-
-    .filterCtn {
-        .btn {
-            float: left;
-        }
-
-        .borderBtn {
-            float: right;
-        }
-
-        .fr {
-            float: right;
-        }
-    }
+  }
 }

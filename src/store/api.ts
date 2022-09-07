@@ -385,7 +385,9 @@ const apiActions = {
     })
   },
   getUserAsync(content: ActionContext<ApiState, any>) {
-    user.list().then((res) => {
+    user.list({
+      status: 1
+    }).then((res) => {
       content.commit('getUser', res.data.data.map((item: any) => {
         return {
           value: item.id,

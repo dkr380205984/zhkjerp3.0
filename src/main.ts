@@ -32,7 +32,7 @@ Vue.filter('filterCheck', (val: 0 | 1 | 2 | null) => {
 // 审核状态class
 Vue.filter('filterCheckClass', (val: 0 | 1 | 2 | null) => {
   const index = Number(val) || 0
-  const imgArr = ['orange', 'green', 'red', 'red', 'red']
+  const imgArr = ['gray', 'green', 'red', 'red', 'red']
   return imgArr[index]
 })
 // 样品转产品过程中的状态转换
@@ -107,7 +107,7 @@ Vue.filter('productionFilter', (val: 0 | 1 | 2 | 3 | 4 | 5) => {
 })
 
 Vue.filter('productionClassFilter', (val: 0 | 1 | 2 | 3 | 4 | 5) => {
-  const statusArr = ['', 'orange', 'blue', 'green', 'red']
+  const statusArr = ['', 'gray', 'blue', 'green', 'red']
   return statusArr[val]
 })
 
@@ -150,6 +150,7 @@ declare module 'vue/types/vue' {
     $focusInput(ev: any): void
     $copyTextInfo(val: string): void
     $focusByKeydown(ev: any, key: string, indexArr: number[], father: any, keyArr: any[]): void
+    $toFixed(num: number, precision?: number, changeToPrice?: boolean): number
   }
 }
 new Vue({

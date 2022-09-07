@@ -23,7 +23,11 @@
         <div v-for="(item,index) in paymentInfo.data"
           :key="index">
           <div class="blue"
-            style="margin-left:6px">付款单据{{index+1}}</div>
+            style="margin-left:6px">付款单据{{index+1}}
+            <i class="el-icon-close hoverRed fr"
+              style="font-size:20px;cursor:pointer"
+              @click="paymentInfo.data.length===1?$message.error('至少有一项'):$deleteItem(paymentInfo.data,index)"></i>
+          </div>
           <div class="row">
             <div class="info">
               <el-input disabled
@@ -70,6 +74,16 @@
       <div class="oprCtn">
         <span class="btn borderBtn"
           @click="close">取消</span>
+        <span class="btn backHoverOrange"
+          v-if="!update"
+          @click="$addItem(paymentInfo.data,{
+            order_id: '',
+            doc_code: '',
+            rel_doc_id: '',
+            price: '',
+            desc: '',
+            complete_time: $getDate(new Date())
+          })">添加</span>
         <span class="btn"
           :class="{'backHoverBlue':!update,'backHoverOrange':update}"
           @click="savePayment">{{update?'修改':'确认'}}</span>

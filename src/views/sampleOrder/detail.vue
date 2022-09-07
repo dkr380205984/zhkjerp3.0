@@ -328,8 +328,13 @@
           </div>
           <zh-drop-down :buttonStyle="'padding:20px'"
             :show="show_material"
-            hideTitle="点击查看图表">
-            <div class="scrollCtn">
+            :showAsync="!show_material"
+            hideTitle="点击查看图表"
+            @beforeShow="getMaterialDetail">
+            <!-- 新接口，老接口代码已删除 -->
+            <div class="scrollCtn"
+              @mousewheel.prevent="listenWheel"
+              ref="materialRef">
               <div class="tableCtn samallFont">
                 <div class="thead"
                   style="height:auto">
@@ -409,16 +414,16 @@
                   </div>
                 </div>
                 <div class="tbody">
-                  <template v-for="itemFather in materialDetail">
+                  <template v-for="(itemFather,indexFather) in materialDetail">
                     <div class="trow"
                       v-for="(item,index) in itemFather.data"
-                      :key="index + 'plan'">
+                      :key=" 'plan'+index + '-' + indexFather">
                       <div class="tcol"><span class="text">{{itemFather.plan_code}}</span></div>
                       <div class="tcol"><span class="text">{{item.material_name}}</span></div>
                       <div class="tcol noPad flex2">
                         <div class="trow">
                           <div class="tcol"><span class="text">{{item.material_color}}</span></div>
-                          <div class="tcol"><span class="text">{{item.number}}{{item.unit}}</span></div>
+                          <div class="tcol"><span class="text">{{$toFixed(item.number,3,true)}}{{item.unit}}</span></div>
                         </div>
                       </div>
                       <div class="tcol noPad flex3">
@@ -443,7 +448,7 @@
                           v-for="(itemOrder,indexOrder) in item.material_order"
                           :key="indexOrder">
                           <div class="tcol"><span class="text">{{itemOrder.client_name}}</span></div>
-                          <div class="tcol"><span class="text">{{itemOrder.number}}{{itemOrder.unit}}</span></div>
+                          <div class="tcol"><span class="text">{{$toFixed(itemOrder.number,3,true)}}{{itemOrder.unit}}</span></div>
                           <div class="tcol"><span class="text">{{itemOrder.material_color}}</span></div>
                         </div>
                       </div>
@@ -457,7 +462,7 @@
                           :key="indexProcess">
                           <div class="tcol"><span class="text">{{itemProcess.client_name}}</span></div>
                           <div class="tcol"><span class="text">{{itemProcess.process}}</span></div>
-                          <div class="tcol"><span class="text">{{itemProcess.number}}{{itemProcess.unit}}</span></div>
+                          <div class="tcol"><span class="text">{{$toFixed(itemProcess.number,3,true)}}{{itemProcess.unit}}</span></div>
                           <div class="tcol">
                             <template v-if="itemProcess.process==='染色'">
                               <div class="changeCtn text">
@@ -494,7 +499,7 @@
                           v-for="(itemPush,indexPush) in  item.final_push"
                           :key="indexPush">
                           <div class="tcol"><span class="text">{{itemPush.store}}</span></div>
-                          <div class="tcol"><span class="text">{{itemPush.number}}{{itemPush.unit}}</span></div>
+                          <div class="tcol"><span class="text">{{$toFixed(itemPush.number,3,true)}}{{itemPush.unit}}</span></div>
                         </div>
                       </div>
                       <div class="tcol noPad flex2">
@@ -506,7 +511,7 @@
                           v-for="(itemPop,indexPop) in item.final_pop"
                           :key="indexPop">
                           <div class="tcol"><span class="text">{{itemPop.client_name}}</span></div>
-                          <div class="tcol"><span class="text">{{itemPop.number}}{{itemPop.unit}}</span></div>
+                          <div class="tcol"><span class="text">{{$toFixed(itemPop.number,3,true)}}{{itemPop.unit}}</span></div>
                         </div>
                       </div>
                     </div>
@@ -558,9 +563,9 @@
               :key="index">
               <div class="trow">
                 <div class="tcol">{{item.product_code}}</div>
-                <div class="tcol">{{item.total_number}}</div>
+                <div class="tcol">{{$toFixed(item.total_number,3,true)}}</div>
                 <div class="tcol">{{item.pre_price}}{{sampleOrderInfo.settle_unit}}</div>
-                <div class="tcol">{{item.total_price}}{{sampleOrderInfo.settle_unit}}</div>
+                <div class="tcol">{{$toFixed(item.total_price,3,true)}}{{sampleOrderInfo.settle_unit}}</div>
                 <div class="tcol oprCtn">
                   <div class="opr hoverBlue"
                     @click="item.showDetail=!item.showDetail;$forceUpdate()">{{item.showDetail?'收起详情':'展开详情'}}</div>
@@ -582,9 +587,9 @@
                     v-for="(itemChild,indexChild) in item.detail"
                     :key="indexChild">
                     <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                    <div class="tcol">{{itemChild.number}}</div>
+                    <div class="tcol">{{$toFixed(itemChild.number,3,true)}}</div>
                     <div class="tcol">{{itemChild.price}}{{sampleOrderInfo.settle_unit}}</div>
-                    <div class="tcol">{{itemChild.total_price}}{{sampleOrderInfo.settle_unit}}</div>
+                    <div class="tcol">{{$toFixed(itemChild.total_price,3,true)}}{{sampleOrderInfo.settle_unit}}</div>
                     <div class="tcol"></div>
                   </div>
                 </div>
@@ -596,7 +601,7 @@
                   <div class="tcol">报价费用</div>
                   <div class="tcol">-</div>
                   <div class="tcol blue">{{item.quote_info.price}}{{sampleOrderInfo.settle_unit}}</div>
-                  <div class="tcol blue">{{item.quote_info.total_price}}{{sampleOrderInfo.settle_unit}}</div>
+                  <div class="tcol blue">{{$toFixed(item.quote_info.total_price,3,true)}}{{sampleOrderInfo.settle_unit}}</div>
                   <div class="tcol"
                     :class="{'red':item.quote_info.change.indexOf('上浮')!==-1,'green':item.quote_info.change.indexOf('下降')!==-1}">{{item.quote_info.change}}</div>
                 </div>
@@ -616,8 +621,8 @@
                     <div class="tcol">加工合计数量</div>
                     <div class="tcol">计划合计费用</div>
                     <div class="tcol">实际合计费用</div>
-                    <div class="tcol">费用平均单价</div>
-                    <div class="tcol">产品平均单价</div>
+                    <div class="tcol">产品计划平均单价</div>
+                    <div class="tcol">产品实际平均单价</div>
                     <div class="tcol">产品平均克重</div>
                     <div class="tcol">操作</div>
                   </div>
@@ -630,24 +635,24 @@
                   <div>原料费用</div>
                 </div>
                 <div class="tcol">
-                  <div>计划：{{financialInfo.material.material.gather.material_order.plan}}</div>
-                  <div>实际：{{financialInfo.material.material.gather.material_order.plan}}</div>
+                  <div>计划：{{$toFixed(financialInfo.material.material.gather.material_order.plan,3,true)}}</div>
+                  <div>实际：{{$toFixed(financialInfo.material.material.gather.material_order.plan,3,true)}}</div>
                 </div>
                 <div class="tcol noPad"
                   style="flex:8">
                   <div class="trow">
                     <div class="tcol">
-                      <div>计划：{{financialInfo.material.material.gather.material_transfer.plan}}</div>
-                      <div>实际：{{financialInfo.material.material.gather.material_transfer.plan}}</div>
+                      <div>计划：{{$toFixed(financialInfo.material.material.gather.material_transfer.plan,3,true)}}</div>
+                      <div>实际：{{$toFixed(financialInfo.material.material.gather.material_transfer.plan,3,true)}}</div>
                     </div>
                     <div class="tcol">
-                      <div>计划：{{financialInfo.material.material.gather.material_process.plan}}</div>
-                      <div>实际：{{financialInfo.material.material.gather.material_process.plan}}</div>
+                      <div>计划：{{$toFixed(financialInfo.material.material.gather.material_process.plan,3,true)}}</div>
+                      <div>实际：{{$toFixed(financialInfo.material.material.gather.material_process.plan,3,true)}}</div>
                     </div>
-                    <div class="tcol">{{financialInfo.material.material.gather.plan_price}}元</div>
-                    <div class="tcol">{{financialInfo.material.material.gather.real_price}}元</div>
-                    <div class="tcol">-</div>
+                    <div class="tcol">{{$toFixed(financialInfo.material.material.gather.plan_price,3,true)}}元</div>
+                    <div class="tcol">{{$toFixed(financialInfo.material.material.gather.real_price,3,true)}}元</div>
                     <div class="tcol">{{financialInfo.material.material.gather.product_pre_price}}元</div>
+                    <div class="tcol">{{financialInfo.material.material.gather.pre_price}}元</div>
                     <div class="tcol">{{financialInfo.material.material.gather.pre_number}}g</div>
                     <div class="tcol oprCtn">
                       <div class="opr hoverBlue"
@@ -690,11 +695,11 @@
                         :key="indexMat">
                         <div class="tcol">{{itemMat.material_name}}</div>
                         <div class="tcol">{{itemMat.attribute}}/{{itemMat.material_color}}</div>
-                        <div class="tcol">{{itemMat.number}}</div>
-                        <div class="tcol">{{itemMat.real_number}}</div>
+                        <div class="tcol">{{$toFixed(itemMat.number,3,true)}}</div>
+                        <div class="tcol">{{$toFixed(itemMat.real_number,3,true)}}</div>
                         <div class="tcol">{{itemMat.price}}元</div>
-                        <div class="tcol">{{itemMat.total_price}}元</div>
-                        <div class="tcol">{{itemMat.real_total_price}}元</div>
+                        <div class="tcol">{{$toFixed(itemMat.total_price,3,true)}}元</div>
+                        <div class="tcol">{{$toFixed(itemMat.real_total_price,3,true)}}元</div>
                         <div class="tcol"></div>
                       </div>
                     </div>
@@ -711,11 +716,11 @@
                         :key="indexMat">
                         <div class="tcol">{{itemMat.material_name}}</div>
                         <div class="tcol">{{itemMat.attribute}}/{{itemMat.material_color}}</div>
-                        <div class="tcol">{{itemMat.number}}</div>
-                        <div class="tcol">{{itemMat.real_number}}</div>
+                        <div class="tcol">{{$toFixed(itemMat.number,3,true)}}</div>
+                        <div class="tcol">{{$toFixed(itemMat.real_number,3,true)}}</div>
                         <div class="tcol">{{itemMat.price}}元</div>
-                        <div class="tcol">{{itemMat.total_price}}元</div>
-                        <div class="tcol">{{itemMat.real_total_price}}元</div>
+                        <div class="tcol">{{$toFixed(itemMat.total_price,3,true)}}元</div>
+                        <div class="tcol">{{$toFixed(itemMat.real_total_price,3,true)}}元</div>
                         <div class="tcol"></div>
                       </div>
                     </div>
@@ -755,11 +760,11 @@
                             <span>{{itemMat.qiege_desc}}</span>
                           </template>
                         </div>
-                        <div class="tcol">{{itemMat.number}}</div>
-                        <div class="tcol">{{itemMat.real_number}}</div>
+                        <div class="tcol">{{$toFixed(itemMat.number,3,true)}}</div>
+                        <div class="tcol">{{$toFixed(itemMat.real_number,3,true)}}</div>
                         <div class="tcol">{{itemMat.price}}元</div>
-                        <div class="tcol">{{itemMat.total_price}}元</div>
-                        <div class="tcol">{{itemMat.real_total_price}}元</div>
+                        <div class="tcol">{{$toFixed(itemMat.total_price,3,true)}}元</div>
+                        <div class="tcol">{{$toFixed(itemMat.real_total_price,3,true)}}元</div>
                         <div class="tcol"></div>
                       </div>
                     </div>
@@ -776,11 +781,11 @@
                     <div class="trow">
                       <div class="tcol">-</div>
                       <div class="tcol">-</div>
-                      <div class="tcol blue">{{financialInfo.material.material.gather.quote_info.quote_total_price}}元</div>
+                      <div class="tcol blue">{{$toFixed(financialInfo.material.material.gather.quote_info.quote_total_price,3,true)}}元</div>
                       <div class="tcol">-</div>
                       <div class="tcol blue">-</div>
                       <div class="tcol blue">{{financialInfo.material.material.gather.quote_info.pre_product_price}}元</div>
-                      <div class="tcol blue">{{financialInfo.material.material.gather.quote_info.number}}g</div>
+                      <div class="tcol blue">{{$toFixed(financialInfo.material.material.gather.quote_info.number,3,true)}}g</div>
                       <div class="tcol"
                         :class="{'red':financialInfo.material.material.gather.quote_info.change.indexOf('上浮')!==-1,'green':financialInfo.material.material.gather.quote_info.change.indexOf('下降')!==-1}">{{financialInfo.material.material.gather.quote_info.change}}</div>
                     </div>
@@ -801,8 +806,8 @@
                     <div class="tcol">加工合计数量</div>
                     <div class="tcol">计划合计费用</div>
                     <div class="tcol">实际合计费用</div>
-                    <div class="tcol">费用平均单价</div>
-                    <div class="tcol">产品平均单价</div>
+                    <div class="tcol">产品计划平均单价</div>
+                    <div class="tcol">产品实际平均单价</div>
                     <div class="tcol">操作</div>
                   </div>
                 </div>
@@ -814,24 +819,24 @@
                   <div>辅料费用</div>
                 </div>
                 <div class="tcol">
-                  <div>计划：{{financialInfo.material.decorate.gather.material_order.plan}}</div>
-                  <div>实际：{{financialInfo.material.decorate.gather.material_order.plan}}</div>
+                  <div>计划：{{$toFixed(financialInfo.material.decorate.gather.material_order.plan,3,true)}}</div>
+                  <div>实际：{{$toFixed(financialInfo.material.decorate.gather.material_order.plan,3,true)}}</div>
                 </div>
                 <div class="tcol noPad"
                   style="flex:7">
                   <div class="trow">
                     <div class="tcol">
-                      <div>计划：{{financialInfo.material.decorate.gather.material_transfer.plan}}</div>
-                      <div>实际：{{financialInfo.material.decorate.gather.material_transfer.plan}}</div>
+                      <div>计划：{{$toFixed(financialInfo.material.decorate.gather.material_transfer.plan,3,true)}}</div>
+                      <div>实际：{{$toFixed(financialInfo.material.decorate.gather.material_transfer.plan,3,true)}}</div>
                     </div>
                     <div class="tcol">
-                      <div>计划：{{financialInfo.material.decorate.gather.material_process.plan}}</div>
-                      <div>实际：{{financialInfo.material.decorate.gather.material_process.plan}}</div>
+                      <div>计划：{{$toFixed(financialInfo.material.decorate.gather.material_process.plan,3,true)}}</div>
+                      <div>实际：{{$toFixed(financialInfo.material.decorate.gather.material_process.plan,3,true)}}</div>
                     </div>
-                    <div class="tcol">{{financialInfo.material.decorate.gather.plan_price}}元</div>
-                    <div class="tcol">{{financialInfo.material.decorate.gather.real_price}}元</div>
-                    <div class="tcol">-</div>
+                    <div class="tcol">{{$toFixed(financialInfo.material.decorate.gather.plan_price,3,true)}}元</div>
+                    <div class="tcol">{{$toFixed(financialInfo.material.decorate.gather.real_price,3,true)}}元</div>
                     <div class="tcol">{{financialInfo.material.decorate.gather.product_pre_price}}元</div>
+                    <div class="tcol">{{financialInfo.material.decorate.gather.pre_price}}元</div>
                     <div class="tcol oprCtn">
                       <div class="opr hoverBlue"
                         @click="financialInfo.material.decorate.showDetail=!financialInfo.material.decorate.showDetail;$forceUpdate()">{{financialInfo.material.decorate.showDetail?'收起详情':'展开详情'}}</div>
@@ -872,11 +877,11 @@
                         :key="indexMat">
                         <div class="tcol">{{itemMat.material_name}}</div>
                         <div class="tcol">{{itemMat.attribute}}/{{itemMat.material_color}}</div>
-                        <div class="tcol">{{itemMat.number}}</div>
-                        <div class="tcol">{{itemMat.real_number}}</div>
+                        <div class="tcol">{{$toFixed(itemMat.number,3,true)}}</div>
+                        <div class="tcol">{{$toFixed(itemMat.real_number,3,true)}}</div>
                         <div class="tcol">{{itemMat.price}}元</div>
-                        <div class="tcol">{{itemMat.total_price}}元</div>
-                        <div class="tcol">{{itemMat.real_total_price}}元</div>
+                        <div class="tcol">{{$toFixed(itemMat.total_price,3,true)}}元</div>
+                        <div class="tcol">{{$toFixed(itemMat.real_total_price,3,true)}}元</div>
                       </div>
                     </div>
                   </div>
@@ -892,11 +897,11 @@
                         :key="indexMat">
                         <div class="tcol">{{itemMat.material_name}}</div>
                         <div class="tcol">{{itemMat.attribute}}/{{itemMat.material_color}}</div>
-                        <div class="tcol">{{itemMat.number}}</div>
-                        <div class="tcol">{{itemMat.real_number}}</div>
+                        <div class="tcol">{{$toFixed(itemMat.number,3,true)}}</div>
+                        <div class="tcol">{{$toFixed(itemMat.real_number,3,true)}}</div>
                         <div class="tcol">{{itemMat.price}}元</div>
-                        <div class="tcol">{{itemMat.total_price}}元</div>
-                        <div class="tcol">{{itemMat.real_total_price}}元</div>
+                        <div class="tcol">{{$toFixed(itemMat.total_price,3,true)}}元</div>
+                        <div class="tcol">{{$toFixed(itemMat.real_total_price,3,true)}}元</div>
                       </div>
                     </div>
                   </div>
@@ -912,11 +917,11 @@
                         :key="indexMat">
                         <div class="tcol">{{itemMat.material_order_name || itemMat.material_transfer_name}}</div>
                         <div class="tcol">{{itemMat.after_attribute}}/{{itemMat.after_color}}</div>
-                        <div class="tcol">{{itemMat.number}}</div>
-                        <div class="tcol">{{itemMat.real_number}}</div>
+                        <div class="tcol">{{$toFixed(itemMat.number,3,true)}}</div>
+                        <div class="tcol">{{$toFixed(itemMat.real_number,3,true)}}</div>
                         <div class="tcol">{{itemMat.price}}元</div>
-                        <div class="tcol">{{itemMat.total_price}}元</div>
-                        <div class="tcol">{{itemMat.real_total_price}}元</div>
+                        <div class="tcol">{{$toFixed(itemMat.total_price,3,true)}}元</div>
+                        <div class="tcol">{{$toFixed(itemMat.real_total_price,3,true)}}元</div>
                       </div>
                     </div>
                   </div>
@@ -932,7 +937,7 @@
                     <div class="trow">
                       <div class="tcol">-</div>
                       <div class="tcol">-</div>
-                      <div class="tcol blue">{{financialInfo.material.decorate.gather.quote_info.quote_total_price}}元</div>
+                      <div class="tcol blue">{{$toFixed(financialInfo.material.decorate.gather.quote_info.quote_total_price,3,true)}}元</div>
                       <div class="tcol">-</div>
                       <div class="tcol blue">-</div>
                       <div class="tcol blue">{{financialInfo.material.decorate.gather.quote_info.pre_product_price}}元</div>
@@ -956,8 +961,8 @@
                     <div class="tcol">生产数量</div>
                     <div class="tcol">实际完成数量</div>
                     <div class="tcol">计划合计费用</div>
-                    <div class="tcol">费用平均单价</div>
-                    <div class="tcol">产品平均单价</div>
+                    <div class="tcol">产品计划平均单价</div>
+                    <div class="tcol">产品实际平均单价</div>
                   </div>
                 </div>
                 <div class="tcol">操作</div>
@@ -972,11 +977,11 @@
                   style="flex:6">
                   <div class="trow">
                     <div class="tcol">{{item.process_desc}}</div>
-                    <div class="tcol">{{item.number}}</div>
-                    <div class="tcol">{{item.real_number}}</div>
-                    <div class="tcol">{{item.total_price}}元</div>
-                    <div class="tcol">-</div>
+                    <div class="tcol">{{$toFixed(item.number,3,true)}}</div>
+                    <div class="tcol">{{$toFixed(item.real_number,3,true)}}</div>
+                    <div class="tcol">{{$toFixed(item.total_price,3,true)}}元</div>
                     <div class="tcol">{{item.product_pre_price}}元</div>
+                    <div class="tcol">{{item.pre_price}}元</div>
                   </div>
                 </div>
                 <div class="tcol oprCtn">
@@ -1017,10 +1022,10 @@
                           <span>({{itemPro.category_name}}/{{itemPro.secondary_category_name}})</span>
                         </div>
                         <div class="tcol">{{itemPro.size_name}}/{{itemPro.color_name}}</div>
-                        <div class="tcol">{{itemPro.number}}</div>
-                        <div class="tcol">{{itemPro.real_number}}</div>
+                        <div class="tcol">{{$toFixed(itemPro.number,3,true)}}</div>
+                        <div class="tcol">{{$toFixed(itemPro.real_number,3,true)}}</div>
                         <div class="tcol">{{itemPro.price}}元</div>
-                        <div class="tcol">{{itemPro.total_price}}元</div>
+                        <div class="tcol">{{$toFixed(itemPro.total_price,3,true)}}元</div>
                       </div>
                     </div>
                     <div class="tcol"></div>
@@ -1037,7 +1042,7 @@
                       <div class="tcol">-</div>
                       <div class="tcol">-</div>
                       <div class="tcol">-</div>
-                      <div class="tcol blue">{{item.quote_info.quote_total_price}}元</div>
+                      <div class="tcol blue">{{$toFixed(item.quote_info.quote_total_price,3,true)}}元</div>
                       <div class="tcol blue">-</div>
                       <div class="tcol blue">{{item.quote_info.pre_product_price}}元</div>
                     </div>
@@ -1063,8 +1068,8 @@
                         <div class="tcol">完成数量</div>
                         <div class="tcol">额外数量</div>
                         <div class="tcol">合计结算总价</div>
-                        <div class="tcol">费用平均单价</div>
-                        <div class="tcol">产品平均单价</div>
+                        <div class="tcol">产品计划平均单价</div>
+                        <div class="tcol">-</div>
                         <div class="tcol">操作</div>
                       </div>
                     </div>
@@ -1084,11 +1089,11 @@
                     <div class="tcol noPad"
                       style="flex:6">
                       <div class="trow">
-                        <div class="tcol">{{item.number}}</div>
+                        <div class="tcol">{{$toFixed(item.number,3,true)}}</div>
                         <div class="tcol">{{item.extra_number}}</div>
-                        <div class="tcol">{{item.total_price}}元</div>
-                        <div class="tcol">-</div>
+                        <div class="tcol">{{$toFixed(item.total_price,3,true)}}元</div>
                         <div class="tcol">{{item.product_pre_price}}元</div>
+                        <div class="tcol">-</div>
                         <div class="tcol oprCtn">
                           <div class="opr hoverBlue"
                             @click="item.showDetail=!item.showDetail;$forceUpdate()">{{item.showDetail?'收起详情':'展开详情'}}</div>
@@ -1140,10 +1145,10 @@
                             :key="indexChild">
                             <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
                             <div class="tcol">{{itemChild.price}}元</div>
-                            <div class="tcol">{{itemChild.number}}</div>
+                            <div class="tcol">{{$toFixed(itemChild.number,3,true)}}</div>
                             <div class="tcol">{{itemChild.extra_number}}</div>
                             <div class="tcol red">{{itemChild.shoddy_number}}</div>
-                            <div class="tcol">{{itemChild.total_price}}元</div>
+                            <div class="tcol">{{$toFixed(itemChild.total_price,3,true)}}元</div>
                           </div>
                         </div>
                       </div>
@@ -1151,30 +1156,6 @@
                   </div>
                 </div>
               </template>
-              <!-- <div class="thead"
-              v-if="item.quote_info">
-              <div class="trow">
-                <div class="tcol">报价费用</div>
-                <div class="tcol noPad"
-                  style="flex:7">
-                  <div class="trow">
-                    <div class="tcol">-</div>
-                    <div class="tcol noPad"
-                      style="flex:6">
-                      <div class="trow">
-                        <div class="tcol">-</div>
-                        <div class="tcol">-</div>
-                        <div class="tcol blue">{{item.quote_info.quote_total_price}}元</div>
-                        <div class="tcol blue">{{item.quote_info.pre_price}}元</div>
-                        <div class="tcol blue">{{item.quote_info.pre_product_price}}元</div>
-                        <div class="tcol"
-                          :class="{'red':item.quote_info.change.indexOf('上浮')!==-1,'green':item.quote_info.change.indexOf('下降')!==-1}">{{item.quote_info.change}}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div> -->
             </div>
           </div>
         </template>
@@ -1851,6 +1832,31 @@ export default Vue.extend({
           })
         this.loading = false
       })
+    },
+    getMaterialDetail(init?: boolean) {
+      if (this.materialDetail.length === 0) {
+        order
+          .materialDetail({
+            order_id: Number(this.orderInfo.time_data[0].id)
+          })
+          .then((res) => {
+            this.loading = false
+            if (res.data.status) {
+              this.materialDetail = res.data.data.data
+              this.materialProgress = res.data.data.progress
+              this.materialUpdateTime = res.data.data.update_time
+              this.$nextTick(() => {
+                if (!init) {
+                  this.show_material = true
+                }
+              })
+            }
+          })
+      } else {
+        this.$nextTick(() => {
+          this.show_material = true
+        })
+      }
     },
     goQuotedPrice(item: any) {
       if (item.rel_quote_info.quote_id) {

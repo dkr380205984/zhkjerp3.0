@@ -109,12 +109,53 @@
             </div>
             <div class="otherInfo clearfix"
               v-show="item.show">
+              <div class="titleCtn">
+                <div class="title">基本信息</div>
+              </div>
               <div class="editCtn">
                 <div class="row">
                   <div class="col">
                     <div class="label">备注信息：</div>
                     <div class="text"
                       :class="{'gray':!item.desc}">{{item.desc || '无'}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="tableCtn">
+                <div class="thead">
+                  <div class="trow">
+                    <div class="tcol">计划订购费用</div>
+                    <div class="tcol">实际订购费用</div>
+                    <div class="tcol">额外费用</div>
+                    <div class="tcol">扣款费用</div>
+                    <div class="tcol">计划合计费用</div>
+                    <div class="tcol">实际合计费用</div>
+                  </div>
+                </div>
+                <div class="trow">
+                  <div class="tcol green">{{$toFixed(item.total_price - item.others_fee)}}元</div>
+                  <div class="tcol green">{{item.real_fee}}元</div>
+                  <div class="tcol"
+                    :class="{'green':item.others_fee>0,'gray':item.others_fee===0}">{{item.others_fee}}元</div>
+                  <div class="tcol"
+                    :class="{'red':item.deduct_fee>0,'gray':item.deduct_fee===0}">{{item.deduct_fee}}元</div>
+                  <div class="tcol green">{{$toFixed(item.total_price - item.deduct_fee)}}元</div>
+                  <div class="tcol green">{{$toFixed(item.real_fee + item.others_fee - item.deduct_fee)}}元</div>
+                </div>
+                <div class="tbody">
+                  <div class="trow">
+                    <div class="tcol gray">详情见下表</div>
+                    <div class="tcol gray">详情见下表</div>
+                    <div class="tcol">
+                      <others-fee-data :data="item.others_fee_data"></others-fee-data>
+                    </div>
+                    <div class="tcol">
+                      <span style="cursor:pointer"
+                        :class="item.deduct_data && item.deduct_data.length>0?'blue':'gray'"
+                        @click="getDeduct(item.deduct_data)">扣款费用明细</span>
+                    </div>
+                    <div class="tcol gray">计划费用</div>
+                    <div class="tcol gray">实际费用</div>
                   </div>
                 </div>
               </div>
@@ -1424,6 +1465,30 @@ export default Vue.extend({
         if (this.materialOrderList.length > 0) {
           this.materialOrderIndex = this.materialOrderList[0].id!.toString()
         }
+        // 算一下乱七八糟一堆费用
+        this.materialOrderList.forEach((item) => {
+          // @ts-ignore
+          item.others_fee = item.others_fee_data.reduce((total, cur) => {
+            return total + Number(cur.price)
+          }, 0)
+          // @ts-ignore
+          item.deduct_fee = item.deduct_data.reduce((total, cur) => {
+            return total + Number(cur.price)
+          }, 0)
+          // @ts-ignore
+          item.real_fee = this.$toFixed(
+            item.info_data.reduce((total, cur) => {
+              // @ts-ignore
+              return total + Number(cur.final_push_number) * Number(cur.price)
+            }, 0)
+          )
+          item.total_price = this.$toFixed(
+            item.info_data.reduce((total, cur) => {
+              // @ts-ignore
+              return total + Number(cur.number) * Number(cur.price)
+            }, 0)
+          )
+        })
         this.materialStockList = res[1].data.data.filter(
           (item: any) => item.action_type !== 10 && item.action_type !== 12
         )

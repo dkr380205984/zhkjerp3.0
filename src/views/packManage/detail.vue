@@ -460,18 +460,47 @@
             </div>
             <div class="otherInfo clearfix"
               v-show="item.show">
+              <div class="titleCtn">
+                <div class="title">基本信息</div>
+              </div>
               <div class="editCtn">
                 <div class="row">
-                  <div class="col flex3">
-                    <div class="label">额外费用：</div>
-                    <div class="text">
-                      <others-fee-data :data="item.others_fee_data"></others-fee-data>
-                    </div>
-                  </div>
                   <div class="col">
                     <div class="label">备注信息：</div>
                     <div class="text"
                       :class="{'gray':!item.desc}">{{item.desc || '无'}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="tableCtn">
+                <div class="thead">
+                  <div class="trow">
+                    <div class="tcol">计划订购费用</div>
+                    <div class="tcol">额外费用</div>
+                    <div class="tcol">扣款费用</div>
+                    <div class="tcol">计划合计费用</div>
+                  </div>
+                </div>
+                <div class="trow">
+                  <div class="tcol green">{{$toFixed(item.total_price - item.others_fee)}}元</div>
+                  <div class="tcol"
+                    :class="{'green':item.others_fee>0,'gray':item.others_fee===0}">{{item.others_fee}}元</div>
+                  <div class="tcol"
+                    :class="{'red':item.deduct_fee>0,'gray':item.deduct_fee===0}">{{item.deduct_fee}}元</div>
+                  <div class="tcol green">{{$toFixed(item.total_price - item.deduct_fee)}}元</div>
+                </div>
+                <div class="tbody">
+                  <div class="trow">
+                    <div class="tcol gray">详情见下表</div>
+                    <div class="tcol">
+                      <others-fee-data :data="item.others_fee_data"></others-fee-data>
+                    </div>
+                    <div class="tcol">
+                      <span style="cursor:pointer"
+                        :class="item.deduct_data && item.deduct_data.length>0?'blue':'gray'"
+                        @click="getDeduct(item.deduct_data)">扣款费用明细</span>
+                    </div>
+                    <div class="tcol gray">计划费用</div>
                   </div>
                 </div>
               </div>
@@ -1744,6 +1773,25 @@ export default Vue.extend({
         if (this.packOrderLog.length > 0) {
           this.packOrderLogIndex = this.packOrderLog[0].id!.toString()
         }
+        // 算一下乱七八糟一堆费用
+        this.packOrderLog.forEach((item) => {
+          // @ts-ignore
+          item.others_fee = item.others_fee_data.reduce((total, cur) => {
+            return total + Number(cur.price)
+          }, 0)
+          // @ts-ignore 这句话暂时放在这，后端接口补完扣款费用后删掉
+          item.deduct_data = []
+          // @ts-ignore
+          item.deduct_fee = item.deduct_data.reduce((total, cur) => {
+            return total + Number(cur.price)
+          }, 0)
+          item.total_price = this.$toFixed(
+            item.info_data.reduce((total, cur) => {
+              // @ts-ignore
+              return total + Number(cur.number) * Number(cur.count_price)
+            }, 0)
+          )
+        })
         this.packPlanLog = res[1].data.data
         if (this.packPlanLog.length > 0) {
           this.packPlanLogIndex = this.packPlanLog[0].id!.toString()

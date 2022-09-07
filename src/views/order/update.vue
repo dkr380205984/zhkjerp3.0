@@ -538,6 +538,10 @@
                 <el-radio :label="1">是</el-radio>
                 <el-radio :label="2">否</el-radio>
               </el-radio-group>
+              <span class="hoverBlue"
+                style="margin-left:12px;cursor:pointer;font-size:14px"
+                @click="sendFlag = true"
+                v-show="orderInfo.time_data.is_send===1">编辑寄送要求</span>
             </div>
           </div>
           <div class="col">
@@ -675,6 +679,12 @@
         </div>
       </div>
     </div>
+    <zh-order-send :editFlag="true"
+      :show="sendFlag"
+      :time_id="orderInfo.time_data.id"
+      :data="orderInfo.time_data.send_info"
+      @close="sendFlag=false"
+      @saveInfo="(ev)=>{orderInfo.time_data.send_info=ev;sendFlag=false;$message.success('保存成功')}"></zh-order-send>
     <product-edit :pid="pid"
       :pid_status="pid_status"
       :id="proId"
@@ -705,6 +715,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      sendFlag: false,
       showTable: true,
       unitArr: moneyArr,
       orderInfo: {

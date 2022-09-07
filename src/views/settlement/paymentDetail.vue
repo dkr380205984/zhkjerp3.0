@@ -89,7 +89,7 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">计划订购数量</span>
-                    <span class="number blue">{{$route.query.type==='装饰辅料单位'?$toFixed(clientFinancial.total_plan_number/10000):$toFixed(clientFinancial.total_plan_number/1000)}}
+                    <span class="number blue">{{$route.query.type==='装饰辅料单位'?$toFixed(clientFinancial.total_plan_number/10000,3,true):$toFixed(clientFinancial.total_plan_number/1000,3,true)}}
                       <span class="unit">{{$route.query.type==='纱线原料单位'?'吨':$route.query.type==='面料原料单位'?'千米':'万'}}</span>
                     </span>
                   </div>
@@ -98,7 +98,7 @@
                   <div class="infoCtn">
                     <span class="title">计划订购总额</span>
                     <span class="number blue">
-                      {{$toFixed(clientFinancial.total_plan_price/10000)}}
+                      {{$toFixed(clientFinancial.total_plan_price/10000,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -110,7 +110,7 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">实际入库数量</span>
-                    <span class="number blue">{{$route.query.type==='装饰辅料单位'?$toFixed(clientFinancial.total_real_number/10000):$toFixed(clientFinancial.total_real_number/1000)}}
+                    <span class="number blue">{{$route.query.type==='装饰辅料单位'?$toFixed(clientFinancial.total_real_number/10000,3,true):$toFixed(clientFinancial.total_real_number/1000,3,true)}}
                       <span class="unit">{{$route.query.type==='纱线原料单位'?'吨':$route.query.type==='面料原料单位'?'千米':'万'}}</span>
                     </span>
                   </div>
@@ -119,7 +119,7 @@
                   <div class="infoCtn">
                     <span class="title">实际入库总额</span>
                     <span class="number green">
-                      {{$toFixed(clientFinancial.total_real_price/10000)}}
+                      {{$toFixed(clientFinancial.total_real_price/10000,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -129,11 +129,23 @@
           </div>
           <div class="row">
             <div class="col">
-              <div class="infoCtn">
-                <span class="title">扣款金额</span>
-                <span class="number orange">{{clientFinancial.total_deduct_price}}
-                  <span class="unit">万元</span>
-                </span>
+              <div class="row">
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">合计额外费用</span>
+                    <span class="number blue">{{$toFixed(clientFinancial.total_others_fee,3,true)}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">合计扣款金额</span>
+                    <span class="number orange">{{$toFixed(clientFinancial.total_deduct_price,3,true)}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="col">
@@ -141,7 +153,7 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">对方已开票金额</span>
-                    <span class="number green">{{clientFinancial.total_invoice_price}}
+                    <span class="number green">{{$toFixed(clientFinancial.total_invoice_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -149,11 +161,34 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">我方已付款金额</span>
-                    <span class="number green">{{clientFinancial.total_pay_price}}
+                    <span class="number green">{{$toFixed(clientFinancial.total_pay_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="infoCtn"
+                style="padding:0">
+                <p style="margin:8px 12px;">
+                  <span style="font-weight:bold">1.补原料统计：</span>
+                  <span>共涉及补原料</span>
+                  <span class="blue">{{clientFinancial.sup.number}}kg</span>
+                  <span>，需要承担</span>
+                  <span class="red">{{clientFinancial.sup.price}}元</span>
+                  <span>，详情见关联页面-补原料单列表。</span>
+                </p>
+                <p style="margin:8px 12px;">
+                  <span style="font-weight:bold">2.逾期率统计：</span>
+                  <span>共出现逾期</span>
+                  <span class="blue">{{clientFinancial.delay.delay}}次</span>
+                  <span>，约占所有单据的</span>
+                  <span class="red">{{clientFinancial.delay.pre}}%</span>
+                  <span>，详情见关联页面-生产计划单列表。</span>
+                </p>
               </div>
             </div>
           </div>
@@ -167,7 +202,7 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">计划加工数量</span>
-                    <span class="number blue">{{$toFixed(clientFinancial.total_plan_number/1000)}}
+                    <span class="number blue">{{$toFixed(clientFinancial.total_plan_number/1000,3,true)}}
                       <span class="unit">吨或千米</span>
                     </span>
                   </div>
@@ -176,7 +211,7 @@
                   <div class="infoCtn">
                     <span class="title">计划加工总额</span>
                     <span class="number blue">
-                      {{$toFixed(clientFinancial.total_plan_price/10000)}}
+                      {{$toFixed(clientFinancial.total_plan_price/10000,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -188,7 +223,7 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">实际加工数量</span>
-                    <span class="number green">{{$toFixed(clientFinancial.total_real_number/1000)}}
+                    <span class="number green">{{$toFixed(clientFinancial.total_real_number/1000,3,true)}}
                       <span class="unit">吨或千米</span>
                     </span>
                   </div>
@@ -197,7 +232,7 @@
                   <div class="infoCtn">
                     <span class="title">实际加工总额</span>
                     <span class="number green">
-                      {{$toFixed(clientFinancial.total_real_price/10000)}}
+                      {{$toFixed(clientFinancial.total_real_price/10000,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -207,11 +242,23 @@
           </div>
           <div class="row">
             <div class="col">
-              <div class="infoCtn">
-                <span class="title">扣款金额</span>
-                <span class="number orange">{{clientFinancial.total_deduct_price}}
-                  <span class="unit">万元</span>
-                </span>
+              <div class="row">
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">合计额外费用</span>
+                    <span class="number blue">{{$toFixed(clientFinancial.total_others_fee,3,true)}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">合计扣款金额</span>
+                    <span class="number orange">{{$toFixed(clientFinancial.total_deduct_price,3,true)}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="col">
@@ -219,7 +266,7 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">对方已开票金额</span>
-                    <span class="number green">{{clientFinancial.total_invoice_price}}
+                    <span class="number green">{{$toFixed(clientFinancial.total_invoice_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -227,11 +274,34 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">我方已付款金额</span>
-                    <span class="number green">{{clientFinancial.total_pay_price}}
+                    <span class="number green">{{$toFixed(clientFinancial.total_pay_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="infoCtn"
+                style="padding:0">
+                <p style="margin:8px 12px;">
+                  <span style="font-weight:bold">1.补原料统计：</span>
+                  <span>共涉及补原料</span>
+                  <span class="blue">{{clientFinancial.sup.number}}kg</span>
+                  <span>，需要承担</span>
+                  <span class="red">{{clientFinancial.sup.price}}元</span>
+                  <span>，详情见关联页面-补原料单列表。</span>
+                </p>
+                <p style="margin:8px 12px;">
+                  <span style="font-weight:bold">2.逾期率统计：</span>
+                  <span>共出现逾期</span>
+                  <span class="blue">{{clientFinancial.delay.delay}}次</span>
+                  <span>，约占所有单据的</span>
+                  <span class="red">{{clientFinancial.delay.pre}}%</span>
+                  <span>，详情见关联页面-生产计划单列表。</span>
+                </p>
               </div>
             </div>
           </div>
@@ -245,7 +315,7 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">计划生产数量</span>
-                    <span class="number blue">{{$toFixed(clientFinancial.total_plan_number/10000)}}
+                    <span class="number blue">{{$toFixed(clientFinancial.total_plan_number/10000,3,true)}}
                       <span class="unit">万件</span>
                     </span>
                   </div>
@@ -254,7 +324,7 @@
                   <div class="infoCtn">
                     <span class="title">计划生产总额</span>
                     <span class="number blue">
-                      {{$toFixed(clientFinancial.total_plan_price/10000)}}
+                      {{$toFixed(clientFinancial.total_plan_price/10000,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -266,7 +336,7 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">实际生产数量</span>
-                    <span class="number green">{{$toFixed(clientFinancial.total_real_number/10000)}}
+                    <span class="number green">{{$toFixed(clientFinancial.total_real_number/10000,3,true)}}
                       <span class="unit">万件</span>
                     </span>
                   </div>
@@ -275,7 +345,7 @@
                   <div class="infoCtn">
                     <span class="title">实际生产总额</span>
                     <span class="number green">
-                      {{$toFixed(clientFinancial.total_real_price/10000)}}
+                      {{$toFixed(clientFinancial.total_real_price/10000,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -285,11 +355,23 @@
           </div>
           <div class="row">
             <div class="col">
-              <div class="infoCtn">
-                <span class="title">扣款金额</span>
-                <span class="number orange">{{clientFinancial.total_deduct_price}}
-                  <span class="unit">万元</span>
-                </span>
+              <div class="row">
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">合计额外费用</span>
+                    <span class="number blue">{{$toFixed(clientFinancial.total_others_fee,3,true)}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">合计扣款金额</span>
+                    <span class="number orange">{{$toFixed(clientFinancial.total_deduct_price,3,true)}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="col">
@@ -297,7 +379,7 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">对方已开票金额</span>
-                    <span class="number green">{{clientFinancial.total_invoice_price}}
+                    <span class="number green">{{$toFixed(clientFinancial.total_invoice_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -305,11 +387,44 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">我方已付款金额</span>
-                    <span class="number green">{{clientFinancial.total_pay_price}}
+                    <span class="number green">{{$toFixed(clientFinancial.total_pay_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="infoCtn"
+                style="padding:0">
+                <p style="margin:8px 12px;">
+                  <span style="font-weight:bold">1.补原料统计：</span>
+                  <span>共涉及补原料</span>
+                  <span class="blue">{{clientFinancial.sup.number}}kg</span>
+                  <span>，需要承担</span>
+                  <span class="red">{{clientFinancial.sup.price}}元</span>
+                  <span>，详情见关联页面-补原料单列表。</span>
+                </p>
+                <p style="margin:8px 12px;">
+                  <span style="font-weight:bold">2.检验入库统计：</span>
+                  <span>共出现逾期</span>
+                  <span class="blue">{{clientFinancial.shoddy.shoddy_number}}件</span>
+                  <span>，全次品</span>
+                  <span class="red">{{clientFinancial.shoddy.part_shoddy_number}}件</span>
+                  <span>，需扣款</span>
+                  <span class="red">{{clientFinancial.shoddy.deduct_price}}元</span>
+                  <span>，详情见关联页面-检验入库单列表。</span>
+                </p>
+                <p style="margin:8px 12px;">
+                  <span style="font-weight:bold">3.逾期率统计：</span>
+                  <span>共出现逾期</span>
+                  <span class="blue">{{clientFinancial.delay.delay}}次</span>
+                  <span>，约占所有单据的</span>
+                  <span class="red">{{clientFinancial.delay.pre}}%</span>
+                  <span>，详情见关联页面-生产计划单列表。</span>
+                </p>
               </div>
             </div>
           </div>
@@ -323,7 +438,7 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">计划订购数量</span>
-                    <span class="number blue">{{$toFixed(clientFinancial.total_plan_number/10000)}}
+                    <span class="number blue">{{$toFixed(clientFinancial.total_plan_number/10000,3,true)}}
                       <span class="unit">万个</span>
                     </span>
                   </div>
@@ -332,7 +447,7 @@
                   <div class="infoCtn">
                     <span class="title">计划订购总额</span>
                     <span class="number blue">
-                      {{$toFixed(clientFinancial.total_plan_price/10000)}}
+                      {{$toFixed(clientFinancial.total_plan_price/10000,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -344,7 +459,7 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">实际订购数量</span>
-                    <span class="number green">{{$toFixed(clientFinancial.total_real_number/10000)}}
+                    <span class="number green">{{$toFixed(clientFinancial.total_real_number/10000,3,true)}}
                       <span class="unit">万个</span>
                     </span>
                   </div>
@@ -353,7 +468,7 @@
                   <div class="infoCtn">
                     <span class="title">实际订购总额</span>
                     <span class="number green">
-                      {{$toFixed(clientFinancial.total_real_price/10000)}}
+                      {{$toFixed(clientFinancial.total_real_price/10000,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -363,11 +478,23 @@
           </div>
           <div class="row">
             <div class="col">
-              <div class="infoCtn">
-                <span class="title">扣款金额</span>
-                <span class="number orange">{{clientFinancial.total_deduct_price}}
-                  <span class="unit">万元</span>
-                </span>
+              <div class="row">
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">合计额外费用</span>
+                    <span class="number blue">{{$toFixed(clientFinancial.total_others_fee,3,true)}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">合计扣款金额</span>
+                    <span class="number orange">{{$toFixed(clientFinancial.total_deduct_price,3,true)}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="col">
@@ -375,7 +502,7 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">对方已开票金额</span>
-                    <span class="number green">{{clientFinancial.total_invoice_price}}
+                    <span class="number green">{{$toFixed(clientFinancial.total_invoice_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -383,7 +510,7 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">我方已付款金额</span>
-                    <span class="number green">{{clientFinancial.total_pay_price}}
+                    <span class="number green">{{$toFixed(clientFinancial.total_pay_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -401,7 +528,7 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">计划发货立方</span>
-                    <span class="number blue">{{$toFixed(clientFinancial.total_plan_number)}}
+                    <span class="number blue">{{$toFixed(clientFinancial.total_plan_number,3,true)}}
                       <span class="unit">立方</span>
                     </span>
                   </div>
@@ -410,7 +537,7 @@
                   <div class="infoCtn">
                     <span class="title">计划发货总额</span>
                     <span class="number blue">
-                      {{$toFixed(clientFinancial.total_plan_price/10000)}}
+                      {{$toFixed(clientFinancial.total_plan_price/10000,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -422,7 +549,7 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">实际发货数量</span>
-                    <span class="number green">{{$toFixed(clientFinancial.total_real_number)}}
+                    <span class="number green">{{$toFixed(clientFinancial.total_real_number,3,true)}}
                       <span class="unit">立方</span>
                     </span>
                   </div>
@@ -431,7 +558,7 @@
                   <div class="infoCtn">
                     <span class="title">实际发货总额</span>
                     <span class="number green">
-                      {{$toFixed(clientFinancial.total_real_price/10000)}}
+                      {{$toFixed(clientFinancial.total_real_price/10000,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -441,11 +568,23 @@
           </div>
           <div class="row">
             <div class="col">
-              <div class="infoCtn">
-                <span class="title">扣款金额</span>
-                <span class="number orange">{{clientFinancial.total_deduct_price}}
-                  <span class="unit">万元</span>
-                </span>
+              <div class="row">
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">合计额外费用</span>
+                    <span class="number blue">{{$toFixed(clientFinancial.total_others_fee,3,true)}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="infoCtn">
+                    <span class="title">合计扣款金额</span>
+                    <span class="number orange">{{$toFixed(clientFinancial.total_deduct_price,3,true)}}
+                      <span class="unit">万元</span>
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="col">
@@ -453,7 +592,7 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">对方已开票金额</span>
-                    <span class="number green">{{clientFinancial.total_invoice_price}}
+                    <span class="number green">{{$toFixed(clientFinancial.total_invoice_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -461,7 +600,7 @@
                 <div class="col">
                   <div class="infoCtn">
                     <span class="title">我方已付款金额</span>
-                    <span class="number green">{{clientFinancial.total_pay_price}}
+                    <span class="number green">{{$toFixed(clientFinancial.total_pay_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -684,11 +823,11 @@
                 <div class="col blue"
                   style="cursor:pointer"
                   @click="$openUrl('/order/detail?id=' + item.top_order_id)">{{ item.order_code}}</div>
-                <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
-                <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_number,3,true) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_price,3,true) }}</div>
                 <div class="col numberWidth"
-                  :class="{'red':item.total_push_number>item.total_number}">{{ $toFixed(item.total_push_number) }}</div>
-                <div class="col numberWidth">{{ $toFixed(item.total_push_price) }}</div>
+                  :class="{'red':item.total_push_number>item.total_number}">{{ $toFixed(item.total_push_number,3,true) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_push_price,3,true) }}</div>
                 <div class="col">
                   <div v-if="item.is_check === 0"
                     class="orange">未审核</div>
@@ -728,12 +867,6 @@
                 <div class="col oprWidth">
                   <span class="opr hoverBlue"
                     @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
-                  <!-- <span class="opr hoverOrange"
-                    @click="goInvoice([item])">开票</span>
-                  <span class="opr hoverBlue"
-                    @click="goPayment([item])">付款</span>
-                  <span class="opr hoverRed"
-                    @click="goDeduct([item])">扣款</span> -->
                 </div>
               </div>
               <div v-if="item.isShow"
@@ -770,7 +903,7 @@
                         <div class="tcol">{{ itemChild.material_color }}</div>
                         <div class="tcol">{{itemChild.plan_color || itemChild.sup_color  }}</div>
                         <div class="tcol">{{ itemChild.attribute }}</div>
-                        <div class="tcol">{{ itemChild.number }}{{ itemChild.unit }}</div>
+                        <div class="tcol">{{ $toFixed(itemChild.number,3,true) }}{{ itemChild.unit }}</div>
                         <div class="tcol">{{ itemChild.price }}元</div>
                         <div class="tcol">{{itemChild.settle_price?itemChild.settle_price+'元' : '暂无'}}</div>
                       </div>
@@ -796,7 +929,7 @@
                         <div class="tcol">{{itemMat.material_name}}</div>
                         <div class="tcol">{{itemMat.material_color}}</div>
                         <div class="tcol">{{itemMat.attribute}}</div>
-                        <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
+                        <div class="tcol">{{ $toFixed(itemMat.number,3,true)}}{{itemMat.unit}}</div>
                       </div>
                     </div>
                   </template>
@@ -808,28 +941,35 @@
                 合计订购数量：
                 <span class="green"
                   style="font-weight: bold">
-                  {{  $route.query.type==='装饰辅料单位'?$toFixed(materialOrderSts.total_order_number / 10000):$toFixed(materialOrderSts.total_order_number / 1000) }} <span class="unit">{{$route.query.type==='纱线原料单位'?'吨':$route.query.type==='面料原料单位'?'千米':'万'}}</span>
+                  {{  $route.query.type==='装饰辅料单位'?$toFixed(materialOrderSts.total_order_number / 10000,3,true):$toFixed(materialOrderSts.total_order_number / 1000,3,true) }} <span class="unit">{{$route.query.type==='纱线原料单位'?'吨':$route.query.type==='面料原料单位'?'千米':'万'}}</span>
                 </span>
               </span>
               <span style="line-height: 35px; margin-left: 40px">
                 合计订购金额：
                 <span class="green"
                   style="font-weight: bold">
-                  {{ (materialOrderSts.total_order_price / 10000).toFixed(2) }} 万元
+                  {{ $toFixed(materialOrderSts.total_order_price / 10000,3,true) }} 万元
                 </span>
               </span>
               <span style="line-height: 35px; margin-left: 40px">
                 合计入库数量：
                 <span class="green"
                   style="font-weight: bold">
-                  {{ $route.query.type==='装饰辅料单位'?$toFixed(materialOrderSts.total_push_number / 10000):$toFixed(materialOrderSts.total_push_number / 1000) }} <span class="unit">{{$route.query.type==='纱线原料单位'?'吨':$route.query.type==='面料原料单位'?'千米':'万'}}</span>
+                  {{ $route.query.type==='装饰辅料单位'?$toFixed(materialOrderSts.total_push_number / 10000,3,true):$toFixed(materialOrderSts.total_push_number / 1000,3,true) }} <span class="unit">{{$route.query.type==='纱线原料单位'?'吨':$route.query.type==='面料原料单位'?'千米':'万'}}</span>
                 </span>
               </span>
               <span style="line-height: 35px; margin-left: 40px">
                 合计入库金额：
                 <span class="green"
                   style="font-weight: bold">
-                  {{ (materialOrderSts.total_push_price / 10000).toFixed(2) }} 万元
+                  {{ $toFixed(materialOrderSts.total_push_price / 10000,3,true) }} 万元
+                </span>
+              </span>
+              <span style="line-height: 35px; margin-left: 40px">
+                合计额外费用：
+                <span class="green"
+                  style="font-weight: bold">
+                  {{ $toFixed(materialOrderSts.total_others_fee / 10000,3,true) }} 万元
                 </span>
               </span>
             </div>
@@ -1017,11 +1157,11 @@
                 <div class="col blue"
                   style="cursor:pointer"
                   @click="$openUrl('/order/detail?id=' + item.top_order_id)">{{ item.order_code || '无编号'}}</div>
-                <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
-                <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_number,3,true) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_price,3,true) }}</div>
                 <div class="col numberWidth"
-                  :class="{'red':Number(item.total_push_number)<Number(item.total_number)}">{{ $toFixed(item.total_push_number) }}</div>
-                <div class="col numberWidth">{{ $toFixed(item.total_push_price) }}</div>
+                  :class="{'red':Number(item.total_push_number)<Number(item.total_number)}">{{ $toFixed(item.total_push_number,3,true) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_push_price,3,true) }}</div>
                 <div class="col">
                   <div v-if="item.is_check === 0"
                     class="orange">未审核</div>
@@ -1137,7 +1277,7 @@
                             </template>
                           </div>
                           <div class="tcol"
-                            style="flex: 0.5">{{ itemMat.number }}{{ itemMat.unit }}</div>
+                            style="flex: 0.5">{{ $toFixed(itemMat.number,3,true) }}{{ itemMat.unit }}</div>
                           <div class="tcol"
                             style="flex: 0.5">{{ itemMat.price }}元</div>
                         </div>
@@ -1158,28 +1298,35 @@
                 合计加工数量：
                 <span class="green"
                   style="font-weight: bold">
-                  {{ (materialProcessSts.total_number / 1000).toFixed(2) }} 吨或千米
+                  {{ $toFixed(materialProcessSts.total_number / 1000,3,true) }} 吨或千米
                 </span>
               </span>
               <span style="line-height: 35px; margin-left: 40px">
                 合计加工金额：
                 <span class="green"
                   style="font-weight: bold">
-                  {{ (materialProcessSts.total_price / 10000).toFixed(2) }} 万元
+                  {{ $toFixed(materialProcessSts.total_price / 10000,3,true) }} 万元
                 </span>
               </span>
               <span style="line-height: 35px; margin-left: 40px">
                 合计完成数量：
                 <span class="green"
                   style="font-weight: bold">
-                  {{ (materialProcessSts.total_push_number / 1000).toFixed(2) }} 吨或千米
+                  {{ $toFixed(materialProcessSts.total_push_number / 1000,3,true) }} 吨或千米
                 </span>
               </span>
               <span style="line-height: 35px; margin-left: 40px">
                 合计完成金额：
                 <span class="green"
                   style="font-weight: bold">
-                  {{ (materialProcessSts.total_push_price / 10000).toFixed(2) }} 万元
+                  {{ $toFixed(materialProcessSts.total_push_price / 10000,3,true) }} 万元
+                </span>
+              </span>
+              <span style="line-height: 35px; margin-left: 40px">
+                合计额外费用：
+                <span class="green"
+                  style="font-weight: bold">
+                  {{ $toFixed(materialProcessSts.total_others_fee / 10000,3,true) }} 万元
                 </span>
               </span>
             </div>
@@ -1367,10 +1514,10 @@
                 <div class="col blue"
                   style="cursor:pointer"
                   @click="$openUrl('/order/detail?id=' + item.top_order_id)">{{ item.order_code}}</div>
-                <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
-                <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_number,3,true) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_price,3,true) }}</div>
                 <div class="col numberWidth"
-                  :class="{'red':Number(item.total_real_number)<Number(item.total_number)}">{{ $toFixed(item.total_real_number) }} ({{Number(item.total_real_number)>Number(item.total_number)?'+':''}}{{parseInt((Number(item.total_real_number)-Number(item.total_number))/Number(item.total_number)*100) + '%'}})</div>
+                  :class="{'red':Number(item.total_real_number)<Number(item.total_number)}">{{ $toFixed(item.total_real_number,3,true) }} ({{Number(item.total_real_number)>Number(item.total_number)?'+':''}}{{parseInt((Number(item.total_real_number)-Number(item.total_number))/Number(item.total_number)*100) + '%'}})</div>
                 <div class="col numberWidth">{{item.total_part_shoddy_number}}/{{item.total_shoddy_number}}</div>
                 <div class="col">
                   <div v-if="item.is_check === 0"
@@ -1414,6 +1561,9 @@
               </div>
               <div v-if="item.isShow"
                 style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
+                <div class="titleCtn">
+                  <div class="title">基本信息</div>
+                </div>
                 <div class="detailCtn"
                   style="padding-bottom:0">
                   <div class="row">
@@ -1424,6 +1574,48 @@
                     <div class="col">
                       <div class="label">工序说明：</div>
                       <div class="text">{{ item.detail.process_desc || '无' }}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tableCtn">
+                  <div class="thead">
+                    <div class="trow">
+                      <div class="tcol">计划生产费用</div>
+                      <div class="tcol">实际生产费用</div>
+                      <div class="tcol">额外费用</div>
+                      <div class="tcol">扣款费用</div>
+                      <div class="tcol">补原料承担费用</div>
+                      <div class="tcol">计划合计费用</div>
+                      <div class="tcol">实际合计费用</div>
+                    </div>
+                  </div>
+                  <div class="tbody">
+                    <div class="trow">
+                      <div class="tcol green">{{$toFixed(item.total_price - item.others_fee,3,true)}}元</div>
+                      <div class="tcol green">{{$toFixed(item.real_fee,3,true)}}元</div>
+                      <div class="tcol"
+                        :class="{'green':item.others_fee>0,'gray':item.others_fee===0}">{{$toFixed(item.others_fee,3,true)}}元</div>
+                      <div class="tcol"
+                        :class="{'red':item.deduct_fee>0,'gray':item.deduct_fee===0}">{{$toFixed(item.deduct_fee,3,true)}}元</div>
+                      <div class="tcol"
+                        :class="{'red':item.sup_fee>0,'gray':item.sup_fee===0}">{{$toFixed(item.sup_fee,3,true)}}元</div>
+                      <div class="tcol green">{{$toFixed(item.total_price - item.deduct_fee - item.sup_fee,3,true)}}元</div>
+                      <div class="tcol green">{{$toFixed(item.real_fee + item.others_fee - item.deduct_fee - item.sup_fee,3,true)}}元</div>
+                    </div>
+                    <div class="trow">
+                      <div class="tcol gray">详情见下表</div>
+                      <div class="tcol gray">详情见下表</div>
+                      <div class="tcol">
+                        <others-fee-data :data="item.others_fee_data"></others-fee-data>
+                      </div>
+                      <div class="tcol">
+                        <span style="cursor:pointer"
+                          :class="item.deduct_data && item.deduct_data.length>0?'blue':'gray'"
+                          @click="getDeduct(item.deduct_data)">扣款费用明细</span>
+                      </div>
+                      <div class="tcol gray">详情见下表</div>
+                      <div class="tcol gray">计划费用</div>
+                      <div class="tcol gray">实际费用</div>
                     </div>
                   </div>
                 </div>
@@ -1456,30 +1648,11 @@
                       <div class="tcol">
                         {{ itemPro.size_name ? itemPro.size_name + '/' + itemPro.color_name : '未选择尺码颜色' }}
                       </div>
-                      <div class="tcol">{{ itemPro.number }}</div>
+                      <div class="tcol">{{ $toFixed(itemPro.number,3,true) }}</div>
+                      <div class="tcol">{{ $toFixed(itemPro.inspection_number || 0,3,true) }}</div>
                       <div class="tcol">{{ itemPro.price }}元</div>
-                      <div class="tcol">{{ $toFixed(itemPro.price * itemPro.number) }}元</div>
-                      <div class="tcol">{{ itemPro.inspection_number || 0 }}</div>
-                      <div class="tcol">{{ itemPro.inspection_price }}元</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="tableCtn"
-                  v-if="item.detail.material_info_data.length > 0">
-                  <div class="thead">
-                    <div class="trow">
-                      <div class="tcol">物料名称</div>
-                      <div class="tcol">物料颜色</div>
-                      <div class="tcol">分配数量</div>
-                    </div>
-                  </div>
-                  <div class="tbody">
-                    <div class="trow"
-                      v-for="(itemMat, indexMat) in item.detail.material_info_data"
-                      :key="indexMat">
-                      <div class="tcol">{{ itemMat.material_name }}</div>
-                      <div class="tcol">{{ itemMat.material_color }}</div>
-                      <div class="tcol">{{ itemMat.number }}{{ itemMat.unit }}</div>
+                      <div class="tcol">{{ $toFixed(itemPro.price * itemPro.number,3,true) }}元</div>
+                      <div class="tcol">{{ $toFixed(itemPro.inspection_price,3,true) }}元</div>
                     </div>
                   </div>
                 </div>
@@ -1546,28 +1719,35 @@
                 合计计划数量：
                 <span class="green"
                   style="font-weight: bold">
-                  {{ (productionPlanSts.total_number / 10000).toFixed(2) }} 万件
+                  {{ $toFixed(productionPlanSts.total_number / 10000,3,true) }} 万件
                 </span>
               </span>
               <span style="line-height: 35px; margin-left: 40px">
                 合计计划金额：
                 <span class="green"
                   style="font-weight: bold">
-                  {{ (productionPlanSts.total_price / 10000).toFixed(2) }} 万元
+                  {{ $toFixed(productionPlanSts.total_price / 10000,3,true) }} 万元
                 </span>
               </span>
               <span style="line-height: 35px; margin-left: 40px">
                 合计完成数量：
                 <span class="green"
                   style="font-weight: bold">
-                  {{ (productionPlanSts.total_real_number / 10000).toFixed(2) }} 万件
+                  {{ $toFixed(productionPlanSts.total_real_number / 10000,3,true)}} 万件
                 </span>
               </span>
               <span style="line-height: 35px; margin-left: 40px">
                 合计完成金额：
                 <span class="green"
                   style="font-weight: bold">
-                  {{ (productionPlanSts.total_real_price / 10000).toFixed(2) }} 万元
+                  {{ $toFixed(productionPlanSts.total_real_price / 10000,3,true)}} 万元
+                </span>
+              </span>
+              <span style="line-height: 35px; margin-left: 40px">
+                合计额外费用：
+                <span class="green"
+                  style="font-weight: bold">
+                  {{ $toFixed(productionPlanSts.total_others_fee / 10000,3,true) }} 万元
                 </span>
               </span>
             </div>
@@ -1753,8 +1933,8 @@
                 <div class="col blue"
                   style="cursor:pointer"
                   @click="$openUrl('/productionPlan/detail?id='+item.top_order_id+'&sampleOrderIndex='+item.order_id)">{{ item.order_code }}</div>
-                <div class="col numberWidth">{{ $toFixed(item.total_number) }}</div>
-                <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_number,3,true) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_price,3,true) }}</div>
                 <div class="col">
                   <div v-if="item.is_check === 0"
                     class="orange">未审核</div>
@@ -1828,7 +2008,7 @@
                       <div class="tcol">{{ itemChild.desc }}</div>
                       <div class="tcol">{{ itemChild.bulk_price ? itemChild.bulk_price + '元' : '-' }}</div>
                       <div class="tcol">{{ itemChild.count_price ? itemChild.count_price + '元' : '-' }}</div>
-                      <div class="tcol">{{ itemChild.number }}</div>
+                      <div class="tcol">{{ $toFixed(itemChild.number,3,true) }}</div>
                       <div class="tcol">{{ itemChild.desc }}</div>
                     </div>
                   </div>
@@ -1840,14 +2020,21 @@
                 合计订购数量：
                 <span class="green"
                   style="font-weight: bold">
-                  {{ (packOrderSts.total_number / 10000).toFixed(2) }} 万个
+                  {{ $toFixed(packOrderSts.total_number / 10000,3,true) }} 万个
                 </span>
               </span>
               <span style="line-height: 35px; margin-left: 40px">
                 合计订购金额：
                 <span class="green"
                   style="font-weight: bold">
-                  {{ (packOrderSts.total_price / 10000).toFixed(2) }} 万元
+                  {{ $toFixed(packOrderSts.total_price / 10000,3,true) }} 万元
+                </span>
+              </span>
+              <span style="line-height: 35px; margin-left: 40px">
+                合计额外费用：
+                <span class="green"
+                  style="font-weight: bold">
+                  {{ $toFixed(packOrderSts.total_others_fee / 10000,3,true) }} 万元
                 </span>
               </span>
             </div>
@@ -2029,8 +2216,8 @@
                 <div class="col blue"
                   style="cursor:pointer"
                   @click="$openUrl('/boxManage/boxDetail?id=' + item.id)">{{ item.code }}</div>
-                <div class="col numberWidth">{{ $toFixed(item.total_bulk) }}</div>
-                <div class="col numberWidth">{{ $toFixed(item.total_price) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_bulk,3,true) }}</div>
+                <div class="col numberWidth">{{ $toFixed(item.total_price,3,true) }}</div>
                 <div class="col">
                   <div v-if="item.is_check === 0"
                     class="orange">未审核</div>
@@ -2075,21 +2262,21 @@
                   <div class="row">
                     <div class="col">
                       <div class="label">总箱数：</div>
-                      <div class="text">{{ item.detail.total_box }}箱</div>
+                      <div class="text">{{ $toFixed(item.detail.total_box,3,true) }}箱</div>
                     </div>
                     <div class="col">
                       <div class="label">总毛重：</div>
-                      <div class="text">{{ item.detail.total_gross_weight }}kg</div>
+                      <div class="text">{{ $toFixed(item.detail.total_gross_weight,3,true) }}kg</div>
                     </div>
                     <div class="col">
                       <div class="label">总净重：</div>
-                      <div class="text">{{ item.detail.total_net_weight }}kg</div>
+                      <div class="text">{{ $toFixed(item.detail.total_net_weight,3,true) }}kg</div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col">
                       <div class="label">总体积：</div>
-                      <div class="text">{{ item.detail.total_bulk }}m³</div>
+                      <div class="text">{{ $toFixed(item.detail.total_bulk,3,true) }}m³</div>
                     </div>
                     <div class="col">
                       <div class="label">运输单价：</div>
@@ -2107,7 +2294,7 @@
                     </div>
                     <div class="col">
                       <div class="label">运输总价：</div>
-                      <div class="text">{{ item.detail.total_price }}元</div>
+                      <div class="text">{{ $toFixed(item.detail.total_price,3,true) }}元</div>
                     </div>
                     <div class="col"></div>
                   </div>
@@ -2126,168 +2313,6 @@
                     </div>
                   </div>
                 </div>
-                <!-- <div class="tableCtn"
-                  v-for="(itema, index) in item.detail.packPlanLogCopy"
-                  :key="index + 'tszd'">
-                  <div class="thead"
-                    v-if="itema">
-                    <div class="trow">
-                      <div class="tcol">计划单号</div>
-                      <div class="tcol">订单号</div>
-                      <div class="tcol noPad"
-                        style="flex: 8">
-                        <div class="trow">
-                          <div class="tcol noPad"
-                            style="flex: 4">
-                            <div class="trow">
-                              <div class="tcol">产品</div>
-                              <div class="tcol">尺码颜色</div>
-                              <div class="tcol">计划装箱数量</div>
-                              <div class="tcol">实际装箱数量</div>
-                            </div>
-                          </div>
-                          <div class="tcol"
-                            style="flex: 0.5">总箱数</div>
-                          <div class="tcol"
-                            style="flex: 0.5">总毛重</div>
-                          <div class="tcol"
-                            style="flex: 0.5">总净重</div>
-                          <div class="tcol"
-                            style="flex: 0.5">总体积</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="tbody"
-                    v-if="itema">
-                    <div class="trow">
-                      <div class="tcol">{{ itema.code }}</div>
-                      <div class="tcol">{{ itema.order_code }}</div>
-                      <div class="tcol noPad"
-                        style="flex: 8">
-                        <div class="trow"
-                          v-for="(itemData, indexData) in itema.data"
-                          :key="indexData">
-                          <div class="tcol noPad"
-                            style="flex: 4">
-                            <div class="trow"
-                              v-for="(itemPro, indexPro) in itemData.product_info"
-                              :key="indexPro">
-                              <div class="tcol">
-                                <span>{{ itemPro.product_code }}</span>
-                                <span>{{ itemPro.category }}/{{ itemPro.secondary_category }}</span>
-                              </div>
-                              <div class="tcol">{{ itemPro.size_name }}/{{ itemPro.color_name }}</div>
-                              <div class="tcol">{{ itemPro.pack_number_all }}</div>
-                              <div class="tcol">{{ itemPro.transport_number }}</div>
-                            </div>
-                          </div>
-                          <div class="tcol"
-                            style="flex: 0.5">{{ itemData.total_box_count }}箱</div>
-                          <div class="tcol"
-                            style="flex: 0.5">{{ itemData.total_gross_weight }}kg</div>
-                          <div class="tcol"
-                            style="flex: 0.5">{{ itemData.total_net_weight }}kg</div>
-                          <div class="tcol"
-                            style="flex: 0.5">{{ itemData.total_bulk }}m³</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="detailCtn"
-                  v-for="(itemBatch, indexBatch) in item.detail.orderBatchCopy"
-                  :key="indexBatch">
-                  <div class="tableCtn noPadBtm"
-                    style="padding-left: 0; padding-right: 0">
-                    <div class="thead">
-                      <div class="trow">
-                        <div class="tcol"
-                          style="flex: 0.72">批次序号</div>
-                        <div class="tcol">发货时间</div>
-                        <div class="tcol noPad"
-                          style="flex: 8.7">
-                          <div class="trow">
-                            <div class="tcol">产品品类</div>
-                            <div class="tcol noPad"
-                              style="flex: 3">
-                              <div class="trow">
-                                <div class="tcol">尺码颜色</div>
-                                <div class="tcol">计划发货数量</div>
-                                <div class="tcol">实际发货数量</div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="tcol">箱数</div>
-                        <div class="tcol">总毛重kg</div>
-                        <div class="tcol">总净重kg</div>
-                        <div class="tcol">总体积m³</div>
-                      </div>
-                    </div>
-                    <div class="tbody">
-                      <div class="trow">
-                        <div class="tcol"
-                          style="flex: 0.72">
-                          <span>第{{ itemBatch.batch_number }}批</span>
-                        </div>
-                        <div class="tcol">
-                          <span class="green">{{ itemBatch.delivery_time }}</span>
-                        </div>
-                        <div class="tcol noPad"
-                          style="flex: 8.7">
-                          <div class="trow"
-                            v-for="itemPro in itemBatch.product_data"
-                            :key="itemPro.id">
-                            <div class="tcol">
-                              <span>{{ itemPro.product_code || itemPro.system_code || '无编号' }}</span>
-                              <span class="gray">({{ itemPro.category }}/{{ itemPro.secondary_category }})</span>
-                            </div>
-                            <div class="tcol noPad"
-                              style="flex: 3">
-                              <div class="trow"
-                                v-for="(itemChild, indexChild) in itemPro.product_info"
-                                :key="indexChild">
-                                <div class="tcol">{{ itemChild.size_name }}/{{ itemChild.color_name }}</div>
-                                <div class="tcol">{{ itemChild.number }}</div>
-                                <div class="tcol">{{ itemChild.real_number }}</div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="tcol">{{ itemBatch.total_box_count }}箱</div>
-                        <div class="tcol">{{ itemBatch.total_gross_weight }}kg</div>
-                        <div class="tcol">{{ itemBatch.total_net_weight }}kg</div>
-                        <div class="tcol">{{ itemBatch.total_bulk }}m³</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="tableCtn">
-                  <div class="thead">
-                    <div class="trow">
-                      <div class="tcol">产品信息</div>
-                      <div class="tcol">尺码颜色</div>
-                      <div class="tcol">计划发货数量</div>
-                      <div class="tcol">实际发货数量</div>
-                    </div>
-                  </div>
-                  <div class="tbody">
-                    <div class="trow"
-                      v-for="(item, index) in item.detail.batchInfo"
-                      :key="index">
-                      <div class="tcol hoverBlue"
-                        style="cursor: pointer"
-                        @click="showProduct(item)">
-                        {{ item.product_code }}
-                        <span>({{ item.category }}/{{ item.secondary_category }})</span>
-                      </div>
-                      <div class="tcol">{{ item.size_name }}/{{ item.color_name }}</div>
-                      <div class="tcol">{{ item.number }}</div>
-                      <div class="tcol">{{ item.transport_number }}</div>
-                    </div>
-                  </div>
-                </div> -->
               </div>
             </div>
           </div>
@@ -2296,14 +2321,21 @@
               合计运输立方：
               <span class="green"
                 style="font-weight: bold">
-                {{ (boxManageSts.total_number / 10000).toFixed(2) }} 立方
+                {{ $toFixed(boxManageSts.total_number / 10000,3,true) }} 立方
               </span>
             </span>
             <span style="line-height: 35px; margin-left: 40px">
               合计运输金额：
               <span class="green"
                 style="font-weight: bold">
-                {{ (boxManageSts.total_price / 10000).toFixed(2) }} 万元
+                {{ $toFixed(boxManageSts.total_price / 10000,3,true) }} 万元
+              </span>
+            </span>
+            <span style="line-height: 35px; margin-left: 40px">
+              合计额外费用：
+              <span class="green"
+                style="font-weight: bold">
+                {{ $toFixed(boxManageSts.total_others_fee / 10000,3,true) }} 万元
               </span>
             </span>
           </div>
@@ -2315,6 +2347,205 @@
             :total="listTotal"
             :current-page.sync="listPage"
             @current-change="getBill">
+          </el-pagination>
+        </div>
+      </div>
+    </div>
+    <div class="module"
+      id="扣款单据">
+      <div class="titleCtn">
+        <div class="title">扣款单据</div>
+      </div>
+      <div class="listCtn"
+        v-loading="deductLoading">
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-input v-model="deductOrderCode"
+              placeholder="搜索订单号"
+              @keydown.enter.native="getDeductLogList"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-input v-model="deductKeyword"
+              placeholder="搜索票据编号"
+              @keydown.enter.native="getDeductLogList"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-select @change="getDeductLogList"
+              v-model="deductUser"
+              placeholder="筛选创建人"
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-date-picker v-model="deductDate"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+              @change="getDeductLogList"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </div>
+          <div class="backHoverBlue btn">搜索</div>
+        </div>
+        <div class="list">
+          <div class="row title">
+            <div class="col">票据编号</div>
+            <div class="col">关联单号</div>
+            <div class="col">扣款金额</div>
+            <div class="col">扣款原因</div>
+            <div class="col">图片信息</div>
+            <div class="col">开票人</div>
+            <div class="col">开票日期</div>
+            <div class="col">操作</div>
+          </div>
+          <div class="row"
+            v-for="item in deductLog"
+            :key="item.id">
+            <div class="col">{{item.code}}</div>
+            <div class="col">{{item.rel_doc_code || '未关联'}}</div>
+            <div class="col">{{$toFixed(item.price,3,true)}}元</div>
+            <div class="col">{{item.reason}}</div>
+            <div class="col">
+              <div class="imageCtn">
+                <el-image style="width:100%;height:100%"
+                  :src="item.file_url?item.file_url:''"
+                  :preview-src-list="[item.file_url]">
+                  <div slot="error"
+                    class="image-slot">
+                    <i class="el-icon-picture-outline"
+                      style="font-size:42px"></i>
+                  </div>
+                </el-image>
+              </div>
+            </div>
+            <div class="col">{{item.user_name}}</div>
+            <div class="col">{{item.create_time}}</div>
+            <div class="col oprCtn">
+              <span class="opr orange"
+                @click="goDeduct([item],true)">修改</span>
+              <span class="opr red"
+                @click="deleteDeduct(item.id)">删除</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">合计：</div>
+            <div class="col"></div>
+            <div class="col green bold">{{deductTotalPrice}}万元</div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+          </div>
+        </div>
+        <div class="pageCtn">
+          <el-pagination background
+            :page-size="5"
+            layout="prev, pager, next"
+            :total="deductTotal"
+            :current-page.sync="deductPage"
+            @current-change="getDeductLogList">
+          </el-pagination>
+        </div>
+      </div>
+    </div>
+    <div class="module"
+      id="付款单据">
+      <div class="titleCtn">
+        <div class="title">付款单据</div>
+      </div>
+      <div class="listCtn"
+        v-loading="paymentLoading">
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-input v-model="paymentOrderCode"
+              placeholder="搜索订单号"
+              @keydown.enter.native="getPaymentLogList"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-input v-model="paymentKeyword"
+              placeholder="搜索票据编号"
+              @keydown.enter.native="getPaymentLogList"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-select @change="getPaymentLogList"
+              v-model="paymentUser"
+              placeholder="筛选创建人"
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-date-picker v-model="paymentDate"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+              @change="getPaymentLogList"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </div>
+          <div class="backHoverBlue btn">搜索</div>
+        </div>
+        <div class="filterCtn clearfix">
+        </div>
+        <div class="list">
+          <div class="row title">
+            <div class="col">票据编号</div>
+            <div class="col">关联单号</div>
+            <div class="col">付款金额</div>
+            <div class="col">备注信息</div>
+            <div class="col">付款人</div>
+            <div class="col">付款日期</div>
+            <div class="col">操作</div>
+          </div>
+          <div class="row"
+            v-for="item in paymentLog"
+            :key="item.id">
+            <div class="col">{{item.code}}</div>
+            <div class="col">{{item.rel_doc_code || '未关联'}}</div>
+            <div class="col">{{$toFixed(item.price,3,true)}}元</div>
+            <div class="col">{{item.desc}}</div>
+            <div class="col">{{item.user_name}}</div>
+            <div class="col">{{item.created_at}}</div>
+            <div class="col oprCtn">
+              <span class="opr orange"
+                @click="goPayment([item],true)">修改</span>
+              <span class="opr red"
+                @click="deletePayment(item.id)">删除</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">合计：</div>
+            <div class="col"></div>
+            <div class="col green bold">{{paymentTotalPrice}}万元</div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+          </div>
+        </div>
+        <div class="pageCtn">
+          <el-pagination background
+            :page-size="5"
+            layout="prev, pager, next"
+            :total="paymentTotal"
+            :current-page.sync="paymentPage"
+            @current-change="getPaymentLogList">
           </el-pagination>
         </div>
       </div>
@@ -2386,7 +2617,7 @@
             :key="item.id">
             <div class="col">{{item.code}}</div>
             <div class="col">{{item.rel_doc_code || '未关联'}}</div>
-            <div class="col">{{item.price}}元</div>
+            <div class="col">{{$toFixed(item.price,3,true)}}元</div>
             <div class="col">{{item.invoice_code}}</div>
             <div class="col">{{item.desc}}</div>
             <div class="col">{{item.user_name}}</div>
@@ -2422,216 +2653,17 @@
         </div>
       </div>
     </div>
-    <div class="module"
-      id="付款单据">
-      <div class="titleCtn">
-        <div class="title">付款单据</div>
-      </div>
-      <div class="listCtn"
-        v-loading="paymentLoading">
-        <div class="filterCtn">
-          <div class="elCtn">
-            <el-input v-model="paymentOrderCode"
-              placeholder="搜索订单号"
-              @keydown.enter.native="getPaymentLogList"></el-input>
-          </div>
-          <div class="elCtn">
-            <el-input v-model="paymentKeyword"
-              placeholder="搜索票据编号"
-              @keydown.enter.native="getPaymentLogList"></el-input>
-          </div>
-          <div class="elCtn">
-            <el-select @change="getPaymentLogList"
-              v-model="paymentUser"
-              placeholder="筛选创建人"
-              clearable>
-              <el-option v-for="item in userList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"></el-option>
-            </el-select>
-          </div>
-          <div class="elCtn">
-            <el-date-picker v-model="paymentDate"
-              type="daterange"
-              align="right"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :picker-options="pickerOptions"
-              @change="getPaymentLogList"
-              value-format="yyyy-MM-dd">
-            </el-date-picker>
-          </div>
-          <div class="backHoverBlue btn">搜索</div>
-        </div>
-        <div class="filterCtn clearfix">
-        </div>
-        <div class="list">
-          <div class="row title">
-            <div class="col">票据编号</div>
-            <div class="col">关联单号</div>
-            <div class="col">付款金额</div>
-            <div class="col">备注信息</div>
-            <div class="col">付款人</div>
-            <div class="col">付款日期</div>
-            <div class="col">操作</div>
-          </div>
-          <div class="row"
-            v-for="item in paymentLog"
-            :key="item.id">
-            <div class="col">{{item.code}}</div>
-            <div class="col">{{item.rel_doc_code || '未关联'}}</div>
-            <div class="col">{{item.price}}元</div>
-            <div class="col">{{item.desc}}</div>
-            <div class="col">{{item.user_name}}</div>
-            <div class="col">{{item.created_at}}</div>
-            <div class="col oprCtn">
-              <span class="opr orange"
-                @click="goPayment([item],true)">修改</span>
-              <span class="opr red"
-                @click="deletePayment(item.id)">删除</span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">合计：</div>
-            <div class="col"></div>
-            <div class="col green bold">{{paymentTotalPrice}}万元</div>
-            <div class="col"></div>
-            <div class="col"></div>
-            <div class="col"></div>
-            <div class="col"></div>
-          </div>
-        </div>
-        <div class="pageCtn">
-          <el-pagination background
-            :page-size="5"
-            layout="prev, pager, next"
-            :total="paymentTotal"
-            :current-page.sync="paymentPage"
-            @current-change="getPaymentLogList">
-          </el-pagination>
-        </div>
-      </div>
-    </div>
-    <div class="module"
-      id="扣款单据">
-      <div class="titleCtn">
-        <div class="title">扣款单据</div>
-      </div>
-      <div class="listCtn"
-        v-loading="deductLoading">
-        <div class="filterCtn">
-          <div class="elCtn">
-            <el-input v-model="deductOrderCode"
-              placeholder="搜索订单号"
-              @keydown.enter.native="getDeductLogList"></el-input>
-          </div>
-          <div class="elCtn">
-            <el-input v-model="deductKeyword"
-              placeholder="搜索票据编号"
-              @keydown.enter.native="getDeductLogList"></el-input>
-          </div>
-          <div class="elCtn">
-            <el-select @change="getDeductLogList"
-              v-model="deductUser"
-              placeholder="筛选创建人"
-              clearable>
-              <el-option v-for="item in userList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"></el-option>
-            </el-select>
-          </div>
-          <div class="elCtn">
-            <el-date-picker v-model="deductDate"
-              type="daterange"
-              align="right"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :picker-options="pickerOptions"
-              @change="getDeductLogList"
-              value-format="yyyy-MM-dd">
-            </el-date-picker>
-          </div>
-          <div class="backHoverBlue btn">搜索</div>
-        </div>
-        <div class="list">
-          <div class="row title">
-            <div class="col">票据编号</div>
-            <div class="col">关联单号</div>
-            <div class="col">扣款金额</div>
-            <div class="col">扣款原因</div>
-            <div class="col">图片信息</div>
-            <div class="col">开票人</div>
-            <div class="col">开票日期</div>
-            <div class="col">操作</div>
-          </div>
-          <div class="row"
-            v-for="item in deductLog"
-            :key="item.id">
-            <div class="col">{{item.code}}</div>
-            <div class="col">{{item.rel_doc_code || '未关联'}}</div>
-            <div class="col">{{item.price}}元</div>
-            <div class="col">{{item.reason}}</div>
-            <div class="col">
-              <div class="imageCtn">
-                <el-image style="width:100%;height:100%"
-                  :src="item.file_url?item.file_url:''"
-                  :preview-src-list="[item.file_url]">
-                  <div slot="error"
-                    class="image-slot">
-                    <i class="el-icon-picture-outline"
-                      style="font-size:42px"></i>
-                  </div>
-                </el-image>
-              </div>
-            </div>
-            <div class="col">{{item.user_name}}</div>
-            <div class="col">{{item.create_time}}</div>
-            <div class="col oprCtn">
-              <span class="opr orange"
-                @click="goDeduct([item],true)">修改</span>
-              <span class="opr red"
-                @click="deleteDeduct(item.id)">删除</span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">合计：</div>
-            <div class="col"></div>
-            <div class="col green bold">{{deductTotalPrice}}万元</div>
-            <div class="col"></div>
-            <div class="col"></div>
-            <div class="col"></div>
-            <div class="col"></div>
-            <div class="col"></div>
-          </div>
-        </div>
-        <div class="pageCtn">
-          <el-pagination background
-            :page-size="5"
-            layout="prev, pager, next"
-            :total="deductTotal"
-            :current-page.sync="deductPage"
-            @current-change="getDeductLogList">
-          </el-pagination>
-        </div>
-      </div>
-    </div>
     <div class="bottomFixBar">
       <div class="main">
+        <div class="btnCtn"
+          style="float:left"
+          v-if="clientType===2||clientType===3||clientType===4">
+          <div class="btn backHoverGreen"
+            @click="getAssociatedPage">查看其他关联单据</div>
+        </div>
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
-          <!-- <div class="btn backHoverOrange"
-            @click="goInvoice([])">直接开票</div>
-          <div class="btn backHoverBlue"
-            @click="goPayment([])">直接付款</div>
-          <div class="btn backHoverRed"
-            @click="goDeduct([])">直接扣款</div> -->
           <div class="btn backHoverGreen"
             @click="goUrl">导出数据表报</div>
         </div>
@@ -2666,6 +2698,9 @@
       :client_id="$route.query.id"
       @close="deductFlag=false"
       @afterDeduct="init()"></zh-deduct>
+    <zh-deduct-detail :show="deductDetailFlag"
+      @close="deductDetailFlag = false"
+      :data="deductDetail"></zh-deduct-detail>
     <!-- 产品详情 -->
     <product-detail :id="productDetailId"
       :show="productShow"
@@ -2770,7 +2805,8 @@
                       <div class="tcol">{{itemChild.attribute}}</div>
                       <div class="tcol blue">{{itemChild.price}}元/kg</div>
                       <div class="tcol">{{itemChild.number}}kg</div>
-                      <div class="tcol">{{itemChild.settle_price===0?'未填写':itemChild.settle_price}}</div>
+                      <div class="tcol"
+                        :class="{'blue':itemChild.settle_price,'gray':!itemChild.settle_price}">{{itemChild.settle_price===0?'未填写':itemChild.settle_price+'元'}}</div>
                       <div class="tcol">
                         <div class="elCtn">
                           <el-input placeholder="单价"
@@ -2792,6 +2828,11 @@
         </div>
       </div>
     </div>
+    <!-- 关联页面 -->
+    <associated-page :data="associatedPage"
+      :nowPage="false"
+      @close="showAssociatedPage = false"
+      :show="showAssociatedPage"></associated-page>
   </div>
 </template>
 
@@ -2870,7 +2911,20 @@ export default Vue.extend({
         name: '',
         client_type_name: '',
         alias: '',
-        contacts_data: []
+        contacts_data: [],
+        sup: {
+          number: 0,
+          price: 0
+        },
+        delay: {
+          pre: 0,
+          delay: 0
+        },
+        shoddy: {
+          shoddy_number: 0,
+          part_shoddy_number: 0,
+          deduct_price: 0
+        }
       },
       pickerOptions: {
         shortcuts: [
@@ -2922,7 +2976,8 @@ export default Vue.extend({
         total_order_number: 0,
         total_order_price: 0,
         total_push_number: 0,
-        total_push_price: 0
+        total_push_price: 0,
+        total_other_fee: 0
       },
       materialOrderList: [],
       materialOrderCheckList: [],
@@ -2941,7 +2996,8 @@ export default Vue.extend({
         total_price: 0,
         total_push_number: 0,
         total_push_price: 0,
-        total_settle_price: 0
+        total_settle_price: 0,
+        total_other_fee: 0
       },
       materialProcessList: [],
       materialProcessCheckList: [],
@@ -2960,13 +3016,15 @@ export default Vue.extend({
         total_price: 0,
         total_push_number: 0,
         total_push_price: 0,
-        total_settle_price: 0
+        total_settle_price: 0,
+        total_other_fee: 0
       },
       productionPlanList: [],
       productionPlanCheckList: [],
       packOrderSts: {
         total_number: 0,
-        total_price: 0
+        total_price: 0,
+        total_other_fee: 0
       },
       packOrderFilter: {
         date: [],
@@ -2992,7 +3050,8 @@ export default Vue.extend({
       },
       boxManageSts: {
         total_number: 0,
-        total_price: 0
+        total_price: 0,
+        total_other_fee: 0
       },
       boxManageList: [],
       boxManageCheckList: [],
@@ -3029,7 +3088,11 @@ export default Vue.extend({
       updatePriceYarnList: [],
       yarnAttributeList: yarnAttributeArr,
       yarnList: [],
-      showAllFlag: true
+      showAllFlag: true,
+      deductDetailFlag: false,
+      deductDetail: [],
+      associatedPage: [],
+      showAssociatedPage: false
     }
   },
   computed: {
@@ -3054,6 +3117,65 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 查看其他关联单据
+    getAssociatedPage() {
+      if (this.clientType === 4) {
+        this.associatedPage = [
+          {
+            name: '关联补纱单',
+            url:
+              '/billingManagement/rawMaterialSupplement?page=1&keyword=&client_id=&user_id=&group_id=&status=null&type=null&date=&limit=10&contacts_id=&single_client_id=' +
+              this.$route.query.id
+          },
+          {
+            name: '检验入库单据',
+            url:
+              '/billingManagement/inspectionReceiptDocument?page=2&keyword=&client_id=&user_id=&group_id=&process=&order_type=&status=null&type=null&date=&limit=10&contacts_id=&single_client_id=' +
+              this.$route.query.id
+          }
+        ]
+      } else if (this.clientType === 2) {
+        if (this.$route.query.type === '纱线原料单位') {
+          this.associatedPage = [
+            {
+              name: '关联补纱单',
+              url:
+                '/billingManagement/rawMaterialSupplement?page=1&keyword=&client_id=&user_id=&group_id=&status=null&type=null&date=&limit=10&contacts_id=&single_client_id=' +
+                this.$route.query.id
+            },
+            {
+              name: '关联出入库单',
+              url:
+                '/billingManagement/shaXianInOutList?page=2&keyword=&client_id=&user_id=&group_id=&shaxianName=&action_type=&store_id=&status=null&type=null&order_type=&date=&limit=10&contacts_id=&single_client_id=' +
+                this.$route.query.id
+            }
+          ]
+        } else if (this.$route.query.type === '面料原料单位') {
+          this.associatedPage = [
+            {
+              name: '关联补纱单',
+              url:
+                '/billingManagement/rawMaterialSupplement?page=1&keyword=&client_id=&user_id=&group_id=&status=null&type=null&date=&limit=10&contacts_id=&single_client_id=' +
+                this.$route.query.id
+            },
+            {
+              name: '关联出入库单',
+              url:
+                '/billingManagement/fabricWarehousing?page=1&keyword=&client_id=&user_id=&group_id=&store_id=&status=null&material_name=&action_type=&type=null&order_type=&date=&limit=10&contacts_id=&single_client_id=' +
+                this.$route.query.id
+            }
+          ]
+        } else if (this.$route.query.type === '装饰辅料单位') {
+          this.associatedPage = [
+            {
+              name: '关联出入库单',
+              url: '/billingManagement/auxiliaryInOutList?&single_client_id=' + this.$route.query.id
+            }
+          ]
+        }
+      }
+      this.showAssociatedPage = true
+    },
     getMatStsList(date: string[]) {
       materialOrder
         .stsList({
@@ -3684,6 +3806,26 @@ export default Vue.extend({
             .then((res) => {
               if (res.status) {
                 item.detail = res.data.data
+                // 算一下乱七八糟一堆费用
+                item.others_fee = item.detail.others_fee_data.reduce((total: any, cur: any) => {
+                  return total + Number(cur.price)
+                }, 0)
+                item.deduct_fee = item.detail.deduct_data.reduce((total: any, cur: any) => {
+                  return total + Number(cur.price)
+                }, 0)
+                item.sup_fee = item.detail.sup_data.reduce((total: any, cur: any) => {
+                  return (
+                    total +
+                    cur.client_data.reduce((totalChild: any, curChild: any) => {
+                      return totalChild + (curChild.bear_client_id === item.client_id ? Number(curChild.bear_price) : 0)
+                    }, 0)
+                  )
+                }, 0)
+                item.real_fee = this.$toFixed(
+                  item.detail.product_info_data.reduce((total: any, cur: any) => {
+                    return total + Number(cur.real_number) * Number(cur.price)
+                  }, 0)
+                )
                 item.isShow = true
                 this.$forceUpdate()
               }
@@ -3719,6 +3861,14 @@ export default Vue.extend({
       } else {
         item.isShow = !item.isShow
         this.listLoading = false
+      }
+    },
+    getDeduct(info: any[]) {
+      if (!info || info.length === 0) {
+        this.$message.warning('暂无扣款信息')
+      } else {
+        this.deductDetail = info
+        this.deductDetailFlag = true
       }
     },
     getCheckInfo(ev: boolean, item: any, checkList: any[]) {
@@ -3760,7 +3910,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.paymentLog = res.data.data.items
             this.paymentTotal = res.data.data.total
-            this.paymentTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000)
+            this.paymentTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000, 3, true)
           }
           this.paymentLoading = false
         })
@@ -3811,7 +3961,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.invoiceLog = res.data.data.items
             this.invoiceTotal = res.data.data.total
-            this.invoiceTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000)
+            this.invoiceTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000, 3, true)
           }
           this.invoiceLoading = false
         })
@@ -3861,7 +4011,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.deductLog = res.data.data.items
             this.deductTotal = res.data.data.total
-            this.deductTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000)
+            this.deductTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000, 3, true)
           }
           this.deductLoading = false
         })

@@ -11,6 +11,7 @@ export interface ListSetting {
   from?: string // 隶属于某数组对象，常用于一个订单有多个产品
   mark?: boolean // 在有数组对象的时候标记哪个字段需要箭头
   index: number
+  numberToString?: boolean // 是否要转成带逗号的字符串
   unit?: string // 有些情况下需要单位
   unitKey?: string // 有些情况下单位在字段里
   filterArr?: string[] // 通常用于用于状态适配，如status = 1|2|3 filterArr:['待审核','已审核','未通过']
