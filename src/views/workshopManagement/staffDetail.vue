@@ -42,10 +42,10 @@
         <div class="cover" style="position: relative; z-index: 99">
           <div class="fixedLeft tbody">
             <div class="trow" style="justify-content: start">
-              <div class="tcol bgGray titleFix">员工姓名</div>
-              <div class="tcol bgGray titleFix">生产工序</div>
-              <div class="tcol bgGray titleFix">工序说明</div>
-              <div class="tcol bgGray titleFix">结算单价</div>
+              <div class="tcol bgGray" style="width: 101px">员工姓名</div>
+              <div class="tcol bgGray" style="width: 101px">生产工序</div>
+              <div class="tcol bgGray" style="width: 101px">工序说明</div>
+              <div class="tcol bgGray" style="width: 101px">结算单价</div>
             </div>
             <div v-for="(settlementLog, settlementLogIndex) in settlementLogList" :key="'process' + settlementLogIndex">
               <div
@@ -53,7 +53,7 @@
                 style="justify-content: start; border-bottom: 1px solid #e9e9e9"
                 v-if="settlementLog.show"
               >
-                <div class="tcol titleFix" style="font-size: 14px">
+                <div class="tcol" style="font-size: 14px; max-width: 101px">
                   {{
                     settlementLog.staffName
                       ? settlementLog.staffCode.substr(
@@ -76,7 +76,7 @@
                 </div>
                 <div class="tcol noPad" style="overflow: unset">
                   <div class="trow" v-for="(item, index) in settlementLog.processInfo" :key="'process' + index">
-                    <div class="tcol titleFix">
+                    <div class="tcol" style="max-width: 101px">
                       <el-cascader
                         v-model="item.process"
                         filterable
@@ -86,7 +86,7 @@
                         @change="getProcessDesc(item)"
                       ></el-cascader>
                     </div>
-                    <div class="tcol titleFix">
+                    <div class="tcol" style="max-width: 101px">
                       <el-select
                         v-model="item.process_desc"
                         multiple
@@ -105,7 +105,7 @@
                         </el-option>
                       </el-select>
                     </div>
-                    <div class="tcol titleFix" style="border-right: unset">
+                    <div class="tcol noPad" style="border-right: unset; width: 101px">
                       <zh-input
                         v-model="item.price"
                         placeholder="输入结算单价"
@@ -113,13 +113,13 @@
                         type="number"
                       ></zh-input>
                     </div>
-                    <div class="tcol noPad" style="width: 0">
+                    <div class="tcol noPad" style="max-width: 0">
                       <div
                         class="trow"
                         v-for="(itemPro, itemProIndex) in item.product_info"
                         :key="itemProIndex + 'itemProIndex'"
                       >
-                        <div class="tcol titleFix">
+                        <div class="tcol">
                           <el-select
                             v-model="itemPro.order_code"
                             filterable
@@ -596,10 +596,10 @@
         </div>
         <div class="tbody" style="overflow: auto" @mousewheel.prevent="listenWheel" ref="listId">
           <div class="trow" style="justify-content: start">
-            <div class="tcol bgGray titleFix">员工姓名</div>
-            <div class="tcol bgGray titleFix">生产工序</div>
-            <div class="tcol bgGray titleFix">工序说明</div>
-            <div class="tcol bgGray titleFix">结算单价</div>
+            <div class="tcol bgGray" style="min-width: 101px">员工姓名</div>
+            <div class="tcol bgGray" style="min-width: 101px">生产工序</div>
+            <div class="tcol bgGray" style="min-width: 101px">工序说明</div>
+            <div class="tcol bgGray" style="min-width: 101px">结算单价</div>
             <div class="tcol bgGray titleFix">订单号</div>
             <div class="tcol bgGray titleFix">产品编号</div>
             <div class="tcol bgGray" style="min-width: 150px">尺码颜色</div>
@@ -615,7 +615,7 @@
               style="justify-content: start; border-bottom: 1px solid #e9e9e9"
               v-if="settlementLog.show"
             >
-              <div class="tcol titleFix">
+              <div class="tcol" style="min-width: 101px; max-width: 101px">
                 <el-select v-model="settlementLog.staff_id" filterable placeholder="请选择员工" @change="selectStaff">
                   <el-option
                     v-for="(staff, StaffIndex) in staffList"
@@ -628,7 +628,7 @@
               </div>
               <div class="tcol noPad" style="overflow: unset">
                 <div class="trow" v-for="(item, index) in settlementLog.processInfo" :key="'process' + index">
-                  <div class="tcol titleFix">
+                  <div class="tcol" style="min-width: 101px; max-width: 101px">
                     <el-cascader
                       v-model="item.process"
                       filterable
@@ -638,7 +638,7 @@
                       @change="getProcessDesc(item)"
                     ></el-cascader>
                   </div>
-                  <div class="tcol titleFix">
+                  <div class="tcol" style="min-width: 101px; max-width: 101px">
                     <el-select
                       v-model="item.process_desc"
                       multiple
@@ -657,7 +657,7 @@
                       </el-option>
                     </el-select>
                   </div>
-                  <div class="tcol titleFix">
+                  <div class="tcol" style="min-width: 101px; max-width: 101px">
                     <zh-input
                       v-model="item.price"
                       placeholder="输入结算单价"
@@ -732,13 +732,22 @@
                                 }
                               "
                               :ref="'input' + settlementLogIndex + index + itemProIndex + indexDetail"
-                              @keyup.enter.native="
-                                getChooseOrderList(item, settlementLogIndex, index, itemProIndex, indexDetail)
-                              "
                               @change="
-                                handleSelect(item, settlementLogIndex, index, itemProIndex, index, settlementLogIndex)
+                                handleSelect(
+                                  item,
+                                  settlementLogIndex,
+                                  index,
+                                  itemProIndex,
+                                  index,
+                                  settlementLogIndex,
+                                  2,
+                                  itemDetail.code
+                                )
                               "
                             >
+                              <!-- @keyup.enter.native="
+                                getChooseOrderList(item, settlementLogIndex, index, itemProIndex, indexDetail)
+                              " -->
                               <div style="display: flex; padding: 0 10px; width: 800px">
                                 <div style="flex: 1">产品编号</div>
                                 <div style="flex: 1">所属订单号</div>
@@ -747,19 +756,19 @@
                                 <div style="flex: 1">下单时间</div>
                               </div>
                               <el-option
-                                v-for="(item, i) in orderList"
-                                :key="item.value + settlementLogIndex + indexDetail + index + i + 'orderList'"
-                                :label="item.label"
-                                :value="item.value"
+                                v-for="(itemSon, i) in orderList"
+                                :key="itemSon.value + settlementLogIndex + indexDetail + index + i + 'orderList'"
+                                :label="itemSon.product_name"
+                                :value="itemSon.product_name + ',' + itemSon.value"
                               >
                                 <div style="display: flex; white-space: normal">
-                                  <span style="flex: 1">{{ item.product_name }}</span>
-                                  <span style="flex: 1">{{ item.value }}</span>
+                                  <span style="flex: 1">{{ itemSon.product_name }}</span>
+                                  <span style="flex: 1">{{ itemSon.value }}</span>
                                   <span style="width: 150px; overflow: hidden; margin-right: 10px">{{
-                                    item.colorGroup
+                                    itemSon.colorGroup
                                   }}</span>
-                                  <span style="flex: 1"> {{ item.client_name }} </span>
-                                  <span style="flex: 1">{{ item.created_at }}</span>
+                                  <span style="flex: 1"> {{ itemSon.client_name }} </span>
+                                  <span style="flex: 1">{{ itemSon.created_at }}</span>
                                 </div>
                               </el-option>
                             </el-select>
@@ -1311,9 +1320,7 @@
               设置复制项<i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-tooltip class="item" effect="dark" placement="right" style="margin-left: 10px">
-              <div slot="content">
-                注：订单如未勾选，尺码颜色将无法复制
-              </div>
+              <div slot="content">注：订单如未勾选，尺码颜色将无法复制</div>
               <i class="el-icon-question"></i>
             </el-tooltip>
             <el-dropdown-menu slot="dropdown">
@@ -1857,8 +1864,9 @@ export default Vue.extend({
       staffIndex: number,
       type = 1,
       product_code = '',
-      indexDetail: number
+      types: number
     ) {
+      console.log(item)
       this.loading = true
       if (this.isDone) return
 
@@ -1873,7 +1881,7 @@ export default Vue.extend({
       if (type === 1) {
         params = { keyword: item.product_info[index].order_code, page: 1, limit: 10 }
       } else if (type === 2) {
-        params = { product_code: product_code, page: this.page, limit: this.limit }
+        params = { product_code: product_code.split(',')[0], page: this.page, limit: this.limit }
       }
 
       order.simpleList(params).then((res) => {
@@ -2162,6 +2170,7 @@ export default Vue.extend({
           })
         })
         this.settlementLogList[items.indexStaff].processInfo[items.indexOrder].product_info[items.indexPro] = arr[0]
+        this.checkAll = false
       })
 
       this.addOrder = false
@@ -2625,8 +2634,10 @@ export default Vue.extend({
 </style>
 <style lang="less">
 #workshopStaffDetail {
-  .el-input__suffix {
-    display: none;
+  .tbody {
+    .el-input__suffix {
+      display: none;
+    }
   }
 
   .zhInputCtn {

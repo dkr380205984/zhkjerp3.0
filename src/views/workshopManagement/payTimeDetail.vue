@@ -103,7 +103,7 @@
                     type="number"
                   ></zh-input>
                 </div>
-                <div class="tcol">{{ (process.price || 0) * (process.time_count || 0) }} 元</div>
+                <div class="tcol">{{ ((process.price || 0) * (process.time_count || 0)).toFixed(3) }} 元</div>
                 <div class="tcol">
                   <zh-input v-model="process.desc" placeholder="请输入备注" :keyBoard="keyBoard"></zh-input>
                 </div>

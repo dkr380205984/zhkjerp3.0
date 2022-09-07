@@ -97,7 +97,9 @@
                 <el-table-column prop="process_name" label="生产工序" width="110" fixed> </el-table-column>
                 <el-table-column label="工序说明" width="110" fixed>
                   <template slot-scope="scope">
+                    <div v-if="scope.row.process_desc.length <= 10">{{ scope.row.process_desc }}</div>
                     <el-tooltip
+                      v-else
                       class="item"
                       effect="dark"
                       :content="scope.row.process_desc || '无工序说明'"
@@ -118,7 +120,19 @@
                     </div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="product_code" label="产品编号" width="160"> </el-table-column>
+                <el-table-column prop="product_code" label="产品编号" width="160">
+                  <template slot-scope="scope">
+                    <span
+                      class="blue"
+                      style="cursor: pointer"
+                      @click="
+                        productDetail = scope.row.product_id
+                        productShow = true
+                      "
+                      >{{ scope.row.product_code || scope.row.system_code }}</span
+                    >
+                  </template>
+                </el-table-column>
                 <el-table-column prop="price" label="结算单价" width="110">
                   <template slot-scope="scope">
                     <div>{{ scope.row.price }} 元</div>
@@ -185,7 +199,9 @@
                 <el-table-column prop="process_name" label="生产工序" width="110" fixed> </el-table-column>
                 <el-table-column label="工序说明" width="110" fixed>
                   <template slot-scope="scope">
+                    <div v-if="scope.row.process_desc.length <= 10">{{ scope.row.process_desc }}</div>
                     <el-tooltip
+                      v-else
                       class="item"
                       effect="dark"
                       :content="scope.row.process_desc || '无工序说明'"
@@ -317,6 +333,7 @@
         </div>
       </div>
     </div>
+    <product-detail :id="productDetail" :show="productShow" @close="productShow = false" :noOpr="true"></product-detail>
   </div>
 </template>
 
@@ -333,8 +350,10 @@ export default Vue.extend({
     return {
       loading: true,
       checkFlag: false,
+      productShow: false,
       list: [],
       limitList: limitArr,
+      productDetail: {},
       reviewerParams: {
         pid: '',
         check_type: 14,
