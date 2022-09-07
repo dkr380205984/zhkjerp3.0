@@ -23,7 +23,7 @@
               @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn"
-            style="width:200px">
+            style="width:150px">
             <el-select v-model="product_type"
               placeholder="请选择类型"
               @change="changeRouter">
@@ -54,6 +54,10 @@
               :options="productTypeList"
               clearable
               @change="changeRouter"></el-cascader>
+          </div>
+          <div class="btn backHoverBlue"
+            @click="addSampleFlag=true">
+            添加样品
           </div>
           <div class="btn borderBtn"
             @click="reset">重置</div>
@@ -110,9 +114,10 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
-          <!-- <div class="btn backHoverBlue">
+          <div class="btn backHoverBlue"
+            @click="addProductFlag=true">
             添加产品
-          </div> -->
+          </div>
           <div :class="checkedCount.length>0 ? 'btn backHoverBlue fl' : 'btn backHoverBlue fl noCheck'"
             @click="exportExcel()">
             导出Excel
@@ -135,6 +140,12 @@
         </div>
       </div>
     </div>
+    <product-edit :show="addProductFlag"
+      @close="addProductFlag = false"
+      @afterSave="getList"></product-edit>
+    <sample-edit :show="addSampleFlag"
+      @close="addSampleFlag = false"
+      @afterSave="getList"></sample-edit>
     <product-detail :id="product_id"
       :show="productShow"
       @close="productShow = false;getList()"></product-detail>
@@ -150,6 +161,8 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      addProductFlag: false,
+      addSampleFlag: false,
       product_id: '',
       code: '',
       product_name: '',
@@ -210,6 +223,23 @@ export default Vue.extend({
             this.product_id = item.id
             // @ts-ignore
             this.productShow = true
+          }
+        },
+        {
+          name: '删除',
+          class: 'hoverRed',
+          fn: (item: any) => {
+            product
+              .delete({
+                id: item.id
+              })
+              .then((res) => {
+                if (res.data.status) {
+                  this.$message.success('删除成功')
+                  // @ts-ignore
+                  this.getList()
+                }
+              })
           }
         }
       ],

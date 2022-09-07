@@ -638,6 +638,7 @@ const product = {
     [propName: string]: any
   }) => http.get(`${baseUrl}/product/lists`, params),
   detail: (params: DetailParams) => http.get(`${baseUrl}/product/detail`, params),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/product/delete`, params, 'application/json'),
 }
 
 // 订单 
