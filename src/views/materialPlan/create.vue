@@ -1243,7 +1243,7 @@ export default Vue.extend({
               product_code: itemPro.product_code,
               system_code: itemPro.system_code,
               name: itemPro.name,
-              product_id: itemPro.product_id,
+              product_id: itemPro.product_id as number,
               category: itemPro.category,
               secondary_category: itemPro.secondary_category,
               process_data: itemPro.process_data,

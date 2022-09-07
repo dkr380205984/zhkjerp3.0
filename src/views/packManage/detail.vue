@@ -2121,7 +2121,7 @@ export default Vue.extend({
         product_info: father.product_info.map((item) => {
           return {
             product_show_info: item.product_show_info + '/' + item.size_name + '/' + item.color_name,
-            product_id: item.product_id,
+            product_id: item.product_id as number,
             size_id: item.size_id,
             color_id: item.color_id,
             pack_number: ''

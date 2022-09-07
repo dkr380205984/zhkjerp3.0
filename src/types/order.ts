@@ -117,7 +117,7 @@ export interface OrderProductFlatten {
   order_number: string | number
   price: string | number
   product_code?: string
-  product_id: string | number
+  product_id: string | number | null
   category?: string
   system_code?: string
   name?: string

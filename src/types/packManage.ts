@@ -32,7 +32,7 @@ export interface PackPlanInfoData {
     category?: string
     secondary_category?: string
     product_show_info?: string // 前端记录产品展示信息
-    product_id: number | string
+    product_id?: number | string | null
     size_id: number | string
     size_name?: string
     color_id: number | string
@@ -56,8 +56,8 @@ export interface PackPlanInfoData {
     total_bulk: string
     desc: string
     product_info: Array<{
-      product_show_info?: string
-      product_id: number | string
+      product_show_info?: string | null
+      product_id: number | string | null
       size_id: number | string
       color_id: number | string
       pack_number: number | string
