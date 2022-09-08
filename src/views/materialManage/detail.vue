@@ -2264,6 +2264,7 @@
       </div>
     </div>
     <zh-deduct :show="deductFlag"
+      :deduct_type="1"
       @close="deductFlag = false"
       :type="deductInfo.type"
       :id="deductInfo.doc_id"

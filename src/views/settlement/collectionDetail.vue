@@ -704,6 +704,7 @@
       @afterInvoice="init()"></zh-invoice>
     <!-- 扣款 -->
     <zh-deduct :type="order_type===1?1:17"
+      :deduct_type="2"
       :update="deductUpdate"
       :show="deductFlag"
       :data="deductData"

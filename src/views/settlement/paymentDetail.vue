@@ -98,7 +98,7 @@
                   <div class="infoCtn">
                     <span class="title">计划订购总额</span>
                     <span class="number blue">
-                      {{$toFixed(clientFinancial.total_plan_price/10000,3,true)}}
+                      {{$toFixed(clientFinancial.total_plan_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -119,7 +119,7 @@
                   <div class="infoCtn">
                     <span class="title">实际入库总额</span>
                     <span class="number green">
-                      {{$toFixed(clientFinancial.total_real_price/10000,3,true)}}
+                      {{$toFixed(clientFinancial.total_real_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -211,7 +211,7 @@
                   <div class="infoCtn">
                     <span class="title">计划加工总额</span>
                     <span class="number blue">
-                      {{$toFixed(clientFinancial.total_plan_price/10000,3,true)}}
+                      {{$toFixed(clientFinancial.total_plan_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -232,7 +232,7 @@
                   <div class="infoCtn">
                     <span class="title">实际加工总额</span>
                     <span class="number green">
-                      {{$toFixed(clientFinancial.total_real_price/10000,3,true)}}
+                      {{$toFixed(clientFinancial.total_real_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -324,7 +324,7 @@
                   <div class="infoCtn">
                     <span class="title">计划生产总额</span>
                     <span class="number blue">
-                      {{$toFixed(clientFinancial.total_plan_price/10000,3,true)}}
+                      {{$toFixed(clientFinancial.total_plan_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -345,7 +345,7 @@
                   <div class="infoCtn">
                     <span class="title">实际生产总额</span>
                     <span class="number green">
-                      {{$toFixed(clientFinancial.total_real_price/10000,3,true)}}
+                      {{$toFixed(clientFinancial.total_real_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -409,7 +409,7 @@
                 </p>
                 <p style="margin:8px 12px;">
                   <span style="font-weight:bold">2.检验入库统计：</span>
-                  <span>共出现逾期</span>
+                  <span>共出现次品</span>
                   <span class="blue">{{clientFinancial.shoddy.shoddy_number}}件</span>
                   <span>，全次品</span>
                   <span class="red">{{clientFinancial.shoddy.part_shoddy_number}}件</span>
@@ -447,7 +447,7 @@
                   <div class="infoCtn">
                     <span class="title">计划订购总额</span>
                     <span class="number blue">
-                      {{$toFixed(clientFinancial.total_plan_price/10000,3,true)}}
+                      {{$toFixed(clientFinancial.total_plan_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -468,7 +468,7 @@
                   <div class="infoCtn">
                     <span class="title">实际订购总额</span>
                     <span class="number green">
-                      {{$toFixed(clientFinancial.total_real_price/10000,3,true)}}
+                      {{$toFixed(clientFinancial.total_real_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -537,7 +537,7 @@
                   <div class="infoCtn">
                     <span class="title">计划发货总额</span>
                     <span class="number blue">
-                      {{$toFixed(clientFinancial.total_plan_price/10000,3,true)}}
+                      {{$toFixed(clientFinancial.total_plan_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -558,7 +558,7 @@
                   <div class="infoCtn">
                     <span class="title">实际发货总额</span>
                     <span class="number green">
-                      {{$toFixed(clientFinancial.total_real_price/10000,3,true)}}
+                      {{$toFixed(clientFinancial.total_real_price,3,true)}}
                       <span class="unit">万元</span>
                     </span>
                   </div>
@@ -2691,6 +2691,7 @@
       @afterInvoice="init()"></zh-invoice>
     <!-- 扣款 -->
     <zh-deduct :type="clientType"
+      :deduct_type="1"
       :update="deductUpdate"
       :show="deductFlag"
       :data="deductData"

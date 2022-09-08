@@ -143,6 +143,7 @@ const deduct = {
       id?: string
       doc_type: number | string
       client_id: number | string
+      deduct_type?: number
       data: Array<{
         order_id: number | string
         doc_code: string
@@ -250,16 +251,17 @@ const invoice = {
     start_time?: string
     invoice_code?: string
     end_time?: string
-    user_id?: string,
+    user_id?: string
     page?: number
     limit?: number
     export_excel?: number
-    invoice_type?: 1 | 2,
+    invoice_type?: number
   }) => http.get(`${baseUrl}/doc/invoice/lists`, params),
   create: (params: {
     id?: string
     doc_type: number | string
     client_id: number | string
+    invoice_type?: number
     data: Array<{
       order_id: number | string
       doc_code: string

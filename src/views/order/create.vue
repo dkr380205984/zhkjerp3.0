@@ -1231,9 +1231,9 @@ export default Vue.extend({
     saveImportData(data: any) {
       let typeObj: any = {
         delivery_time: ['发货日期(必填)'],
-        batch_title: ['批次名称'],
-        batch_type_id: ['批次类型'],
-        desc: ['批次备注'],
+        batch_title: ['批次名称', ''],
+        batch_type_id: ['批次类型', ''],
+        desc: ['批次备注', ''],
         product_code: ['产品编号(必填)'],
         size_name: ['尺码(必填)'],
         color_name: ['颜色(必填)'],
@@ -1246,7 +1246,7 @@ export default Vue.extend({
           let obj: any = {}
           for (const indexType in typeObj) {
             if (typeObj[indexType][0]) {
-              obj[indexType] = data[prop][key][typeObj[indexType][0]] || data[prop][key][typeObj[indexType][1]]
+              obj[indexType] = data[prop][key][typeObj[indexType][0]] || typeObj[indexType][1]
               if (obj[indexType] === undefined) {
                 this.$message.error('解析失败，请使用标准模板或检测必填数据是否存在空的情况！！！')
                 return
@@ -1263,6 +1263,12 @@ export default Vue.extend({
         return
       }
       submitData.forEach((item) => {
+        const time: any = new Date((item.delivery_time - 1) * 24 * 3600000 + 1)
+        time.setYear(time.getFullYear() - 70)
+        const year = time.getFullYear()
+        const month = time.getMonth() + 1
+        const date = time.getDate() - 1
+        item.delivery_time = year + '-' + (month < 10 ? '0' + month : month) + '-' + (date < 10 ? '0' + date : date)
         const finded = this.orderTypeList.find((itemFind) => itemFind.name === item.batch_type_id)
         const batch_type_id = finded ? finded.name : ''
         const productFind = this.productList.find((itemFind) => itemFind.product_code === item.product_code)
@@ -1292,7 +1298,7 @@ export default Vue.extend({
           total_style: '',
           total_number: '',
           total_price: '',
-          desc: '',
+          desc: item.desc,
           product_data: [
             {
               product_id: product_id,

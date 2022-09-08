@@ -416,6 +416,7 @@
     </div>
     <!-- 扣款 -->
     <zh-deduct :type="1"
+      :deduct_type="1"
       :update="deductUpdate"
       :show="deductFlag"
       :data="deductData"

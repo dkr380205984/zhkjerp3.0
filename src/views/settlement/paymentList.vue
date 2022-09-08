@@ -309,7 +309,7 @@
                   <span class="text">付款单据</span>
                 </div>
                 <div class="btn backHoverRed"
-                  @click="importExcelData('扣款单据')">
+                  @click="importExcelData('我方扣款单据')">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
@@ -483,11 +483,11 @@ export default Vue.extend({
         this.$downloadExcel(
           [],
           [
-            { title: '开票单位', key: 'client_zh' },
-            { title: '关联单号', key: 'doc_code' },
-            { title: '开票号码', key: 'invoice_code' },
-            { title: '开票金额', key: 'price' },
-            { title: '备注信息', key: 'desc' }
+            { title: '开票单位(必填)', key: 'client_zh' },
+            { title: '关联单号(选填)', key: 'doc_code' },
+            { title: '开票号码(必填)', key: 'invoice_code' },
+            { title: '开票金额(必填)', key: 'price' },
+            { title: '备注信息(选填)', key: 'desc' }
           ],
           type
         )
@@ -495,10 +495,10 @@ export default Vue.extend({
         this.$downloadExcel(
           [],
           [
-            { title: '扣款单位', key: 'client_zh' },
-            { title: '关联单号', key: 'doc_code' },
-            { title: '扣款金额', key: 'price' },
-            { title: '扣款原因', key: 'desc' }
+            { title: '扣款单位(必填)', key: 'client_zh' },
+            { title: '关联单号(选填)', key: 'doc_code' },
+            { title: '扣款金额(必填)', key: 'price' },
+            { title: '扣款原因(必填)', key: 'reason' }
           ],
           type
         )
@@ -506,10 +506,11 @@ export default Vue.extend({
         this.$downloadExcel(
           [],
           [
-            { title: '付款单位', key: 'client_zh' },
-            { title: '关联单号', key: 'doc_code' },
-            { title: '付款金额', key: 'price' },
-            { title: '备注信息', key: 'desc' }
+            { title: '付款单位(必填)', key: 'client_zh' },
+            { title: '关联单号(选填)', key: 'doc_code' },
+            { title: '付款金额(必填)', key: 'price' },
+            { title: '备注信息(选填)', key: 'desc' },
+            { title: '付款日期(必填)', key: 'complete_time' }
           ],
           type
         )
@@ -560,25 +561,26 @@ export default Vue.extend({
       let typeObj: any = {}
       if (type === '开票单据') {
         typeObj = {
-          doc_code: ['关联单号'],
-          client_zh: ['开票单位'],
-          price: ['开票金额'],
-          desc: ['备注信息'],
-          invoice_code: ['开票号码']
+          doc_code: ['关联单号(选填)', ''],
+          client_zh: ['开票单位(必填)'],
+          price: ['开票金额(必填)'],
+          desc: ['备注信息(选填)', ''],
+          invoice_code: ['开票号码(必填)']
         }
       } else if (type === '付款单据') {
         typeObj = {
-          doc_code: ['关联单号'],
-          client_zh: ['付款单位'],
-          price: ['付款金额'],
-          desc: ['备注信息']
+          doc_code: ['关联单号(选填)', ''],
+          client_zh: ['付款单位(必填)'],
+          price: ['付款金额(必填)'],
+          desc: ['备注信息(选填)', '']
         }
-      } else if (type === '扣款单据') {
+      } else if (type === '我方扣款单据') {
         typeObj = {
-          doc_code: ['关联单号'],
-          client_zh: ['扣款单位'],
-          price: ['扣款金额'],
-          desc: ['扣款原因'],
+          doc_code: ['关联单号(选填)', ''],
+          client_zh: ['扣款单位(必填)'],
+          price: ['扣款金额(必填)'],
+          reason: ['扣款原因(选填)', ''],
+          complete_time: ['付款日期(必填)'],
           file_url: [false, null]
         }
       }
@@ -588,7 +590,7 @@ export default Vue.extend({
           let obj: any = {}
           for (const indexType in typeObj) {
             if (typeObj[indexType][0]) {
-              obj[indexType] = data[prop][key][typeObj[indexType][0]] || data[prop][key][typeObj[indexType][1]]
+              obj[indexType] = data[prop][key][typeObj[indexType][0]] || typeObj[indexType][1]
               if (obj[indexType] === undefined) {
                 this.$message.error('解析失败，请使用标准模板或检测必填数据是否存在空的情况！！！')
                 return
@@ -610,6 +612,7 @@ export default Vue.extend({
             id: '',
             doc_type: '',
             client_id: '',
+            invoice_type: 2,
             data: submitData
           })
           .then((res) => {
@@ -619,6 +622,15 @@ export default Vue.extend({
             }
           })
       } else if (type === '付款单据') {
+        // excel日期格式转前端日期格式
+        submitData.forEach((item) => {
+          const time: any = new Date((item.complete_time - 1) * 24 * 3600000 + 1)
+          time.setYear(time.getFullYear() - 70)
+          const year = time.getFullYear()
+          const month = time.getMonth() + 1
+          const date = time.getDate() - 1
+          item.complete_time = year + '-' + (month < 10 ? '0' + month : month) + '-' + (date < 10 ? '0' + date : date)
+        })
         payment
           .create({
             id: '',
@@ -632,12 +644,13 @@ export default Vue.extend({
               this.getList()
             }
           })
-      } else if (type === '扣款单据') {
+      } else if (type === '我方扣款单据') {
         deduct
           .create({
             id: '',
             doc_type: '',
             client_id: '',
+            deduct_type: 1,
             data: submitData
           })
           .then((res) => {
