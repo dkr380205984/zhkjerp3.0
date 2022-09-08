@@ -85,7 +85,7 @@
           <el-table-column label="次品原因" width="120">
             <template slot-scope="scope">
               <el-select
-                style="height: 32px"
+                style="height: 32px!important"
                 v-model="scope.row.shoddy_reason"
                 multiple
                 filterable
@@ -261,6 +261,7 @@ export default Vue.extend({
   },
   methods: {
     init() {
+      this.loading = true
       let params: {
         ids: Array<any>
         type: string | number
@@ -272,6 +273,7 @@ export default Vue.extend({
 
       workshop.list(params).then((res) => {
         this.settlementLogList = res.data.data
+        this.loading = false
       })
     },
     workSave() {

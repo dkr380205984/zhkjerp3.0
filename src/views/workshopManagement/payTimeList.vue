@@ -287,7 +287,7 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn" style="float: left">
-          <div class="btn backHoverOrange" @click="lostEdit">批量修改</div>
+          <div class="btn backHoverOrange" @click="lostEdit()">批量修改</div>
           <div class="btn backHoverBlue" @click="lostAgree">批量通过</div>
           <div class="btn backHoverRed" style="margin-left: 32px" @click="lostDelete(false)">批量删除</div>
         </div>
@@ -353,7 +353,7 @@ export default Vue.extend({
       productShow: false,
       list: [],
       limitList: limitArr,
-      productDetail: {},
+      productDetail: "",
       reviewerParams: {
         pid: '',
         check_type: 14,
