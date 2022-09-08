@@ -1298,7 +1298,7 @@ export default Vue.extend({
           total_style: '',
           total_number: '',
           total_price: '',
-          desc: '',
+          desc: item.desc,
           product_data: [
             {
               product_id: product_id,
