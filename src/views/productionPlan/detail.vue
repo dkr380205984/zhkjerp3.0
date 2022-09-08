@@ -188,7 +188,7 @@
             :key="index">
             <div class="row"
               @click.prevent="item.show=!item.show;$forceUpdate()"
-              :class="{'backMark':Number($route.query.productionDocId)===item.id}">
+              :class="{'backMark':Number($route.query.productionDocId)===item.id,'activeBlue':item.show}">
               <div class="col"
                 style="max-width:36px">{{index+1}}</div>
               <div class="col">{{item.code}}</div>
@@ -1486,6 +1486,10 @@
           </div>
         </div>
         <div class="contentCtn">
+          <div class="explainCtn"
+            v-if="productionPlanUpdateInfo.material_info_data.length>0">
+            由于当前单据进行了原料分配，无法修改生产数量！如需修改生产数量，请删除重填。如需更新结算数量，请点击操作-更新完成数量。
+          </div>
           <div class="editCtn">
             <div class="row">
               <div class="col">
@@ -2158,6 +2162,7 @@
     </div>
     <!-- 扣款 -->
     <zh-deduct :show="deductFlag"
+      :deduct_type="1"
       @close="deductFlag = false;init()"
       :type="deductInfo.type"
       :data="[{id:deductInfo.doc_id,code:deductInfo.doc_code}]"

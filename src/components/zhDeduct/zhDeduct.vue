@@ -109,6 +109,7 @@ interface deductInfo {
   id?: string
   doc_type: number
   client_id: number | string
+  deduct_type?: number
   data: Array<{
     order_id: number | string
     doc_code: string
@@ -159,6 +160,10 @@ export default Vue.extend({
     update: {
       type: Boolean,
       default: false
+    },
+    deduct_type: {
+      type: Number,
+      required: true
     }
   },
   data(): {
@@ -168,6 +173,7 @@ export default Vue.extend({
     return {
       saveLock: false,
       deductInfo: {
+        deduct_type: 1,
         doc_type: 0,
         client_id: '',
         data: [{ order_id: '', doc_code: '', rel_doc_id: '', reason: '', file_url: '', price: '' }]
@@ -326,6 +332,7 @@ export default Vue.extend({
       })
       if (!formCheck) {
         this.saveLock = true
+        this.deductInfo.deduct_type = this.deduct_type
         this.deductInfo.data.forEach((item) => {
           item.price = item.price.replace(/[^0-9]/gi, '')
         })

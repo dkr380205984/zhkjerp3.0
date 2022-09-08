@@ -579,6 +579,7 @@
     </div>
     <zh-deduct :show="deductFlag"
       @close="deductFlag = false"
+      :deduct_type="1"
       :type="deductInfo.type"
       :id="deductInfo.doc_id"
       :order_id="$route.query.id"
