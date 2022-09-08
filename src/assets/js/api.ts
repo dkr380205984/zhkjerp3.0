@@ -195,6 +195,7 @@ const collection = {
     id?: string
     doc_type: number | string
     client_id: number | string
+    settle_unit: string
     data: Array<{
       order_id: number | string
       doc_code: string

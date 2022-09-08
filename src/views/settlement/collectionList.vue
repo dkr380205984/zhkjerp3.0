@@ -282,14 +282,6 @@
                   </svg>
                   <span class="text">开票单据</span>
                 </div>
-                <div class="btn backHoverBlue"
-                  @click="importExcelData('收款单据')">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">收款单据</span>
-                </div>
                 <div class="btn backHoverRed"
                   @click="importExcelData('对方扣款单据')">
                   <svg class="iconFont"
@@ -297,6 +289,22 @@
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">扣款单据</span>
+                </div>
+                <div class="btn backHoverBlue"
+                  @click="importExcelData('收款单据','元')">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">人民币收款</span>
+                </div>
+                <div class="btn backHoverBlue"
+                  @click="importExcelData('收款单据','美元')">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">美元收款</span>
                 </div>
               </div>
             </div>
@@ -411,6 +419,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      settle_excel_unit: '元',
       clientTypeExcel: '',
       yearExcel: new Date().getFullYear().toString(),
       excelFlag: false,
@@ -491,7 +500,8 @@ export default Vue.extend({
         )
       }
     },
-    importExcelData(type: string) {
+    importExcelData(type: string, settle_unit?: string) {
+      this.settle_excel_unit = settle_unit
       const inputFile = document.createElement('input')
       inputFile.type = 'file'
       inputFile.accept = '.xlsx,.xls'
@@ -611,6 +621,7 @@ export default Vue.extend({
             id: '',
             doc_type: '',
             client_id: '',
+            settle_unit: this.settle_excel_unit,
             data: submitData
           })
           .then((res) => {
@@ -619,7 +630,7 @@ export default Vue.extend({
               this.getList()
             }
           })
-      } else if (type === '我方扣款单据') {
+      } else if (type === '对方扣款单据') {
         deduct
           .create({
             id: '',
