@@ -50,9 +50,9 @@
             </div>
             <div class="trow">
               <div class="tcol bgGray label">联系人</div>
-              <div class="tcol">{{productionPlanInfo.contacts_name}}</div>
+              <div class="tcol">{{showProductClient?productionPlanInfo.contacts_name:'***'}}</div>
               <div class="tcol bgGray label">联系电话</div>
-              <div class="tcol">{{productionPlanInfo.contacts_phone}}</div>
+              <div class="tcol">{{showProductClient?productionPlanInfo.contacts_phone:'***'}}</div>
               <div class="tcol bgGray label">开单日期</div>
               <div class="tcol">{{productionPlanInfo.start_time}}</div>
               <div class="tcol bgGray label">完成日期</div>

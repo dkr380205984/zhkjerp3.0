@@ -97,16 +97,21 @@
                 <el-table-column prop="process_name" label="生产工序" width="110" fixed> </el-table-column>
                 <el-table-column label="工序说明" width="110" fixed>
                   <template slot-scope="scope">
-                    <div v-if="scope.row.process_desc.length <= 10">{{ scope.row.process_desc }}</div>
-                    <el-tooltip
-                      v-else
-                      class="item"
-                      effect="dark"
-                      :content="scope.row.process_desc || '无工序说明'"
-                      placement="top-start"
-                    >
-                      <span class="blue" style="cursor: pointer">查看</span>
-                    </el-tooltip>
+                    <div v-if="scope.row.process_desc">
+                      <div v-if="scope.row.process_desc.length <= 10">{{ scope.row.process_desc }}</div>
+                      <el-tooltip
+                        v-else
+                        class="item"
+                        effect="dark"
+                        :content="scope.row.process_desc || '无工序说明'"
+                        placement="top-start"
+                      >
+                        <span class="blue" style="cursor: pointer">查看</span>
+                      </el-tooltip>
+                    </div>
+                    <div v-else>
+                      无
+                    </div>
                   </template>
                 </el-table-column>
                 <el-table-column prop="staff_name" label="订单号" width="150">
@@ -353,7 +358,7 @@ export default Vue.extend({
       productShow: false,
       list: [],
       limitList: limitArr,
-      productDetail: "",
+      productDetail: '',
       reviewerParams: {
         pid: '',
         check_type: 14,
