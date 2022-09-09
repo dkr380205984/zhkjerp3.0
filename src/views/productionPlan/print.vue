@@ -44,7 +44,7 @@
               <div class="tcol bgGray label">下单客户</div>
               <div class="tcol">{{showClient?productionPlanInfo.order_client:'***'}}</div>
               <div class="tcol bgGray label">生产单位</div>
-              <div class="tcol">{{productionPlanInfo.client_name}}</div>
+              <div class="tcol">{{showProductClient?productionPlanInfo.client_name:'***'}}</div>
               <div class="tcol bgGray label">生产工序</div>
               <div class="tcol">{{productionPlanInfo.process_name}}</div>
             </div>
@@ -220,6 +220,8 @@
         @click="windowMethod(3)">标题备注设置</div>
       <div class="setting_item"
         @click="windowMethod(4)">{{showClient?'不显示':'显示'}}下单客户</div>
+      <div class="setting_item"
+        @click="windowMethod(5)">{{showProductClient?'不显示':'显示'}}生产单位</div>
     </div>
   </div>
 </template>
@@ -237,6 +239,7 @@ export default Vue.extend({
       loading: true,
       showMenu: false,
       showClient: true,
+      showProductClient: true,
       user_name: window.sessionStorage.getItem('user_name'),
       company_name: window.sessionStorage.getItem('company_name'),
       qrCodePCUrl: '',
@@ -329,6 +332,9 @@ export default Vue.extend({
         } else if (type === 4) {
           this.showClient = !this.showClient
           this.$setLocalStorage('productionPlanPrintShow', this.showClient)
+        } else if (type === 5){
+          this.showProductClient = !this.showProductClient
+          this.$setLocalStorage('productionPlanPrintClientShow', this.showProductClient)
         }
       })
     },
@@ -362,6 +368,7 @@ export default Vue.extend({
   },
   mounted() {
     this.showClient = this.$getLocalStorage('productionPlanPrintShow') || true
+    this.showProductClient = this.$getLocalStorage('productionPlanPrintClientShow') || true
     this.title = this.$getLocalStorage('productionPlanPrintTitle') || ''
     this.descArr = this.$getLocalStorage('productionPlanPrintDesc')
       ? JSON.parse(this.$getLocalStorage('productionPlanPrintDesc'))
