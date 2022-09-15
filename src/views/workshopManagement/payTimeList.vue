@@ -204,7 +204,7 @@
                 <el-table-column prop="process_name" label="生产工序" width="110" fixed> </el-table-column>
                 <el-table-column label="工序说明" width="110" fixed>
                   <template slot-scope="scope">
-                    <div v-if="scope.row.process_desc.length <= 10">{{ scope.row.process_desc }}</div>
+                    <div v-if="scope.row.process_desc && scope.row.process_desc.length <= 10">{{ scope.row.process_desc }}</div>
                     <el-tooltip
                       v-else
                       class="item"
@@ -668,6 +668,8 @@ export default Vue.extend({
           this.process +
           '&group_id=' +
           this.group_id +
+          '&type=' +
+          this.activeName +
           '&date=' +
           (this.date || '') +
           '&limit=' +
