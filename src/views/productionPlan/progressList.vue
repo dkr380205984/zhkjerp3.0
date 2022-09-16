@@ -429,8 +429,11 @@
 import Vue from 'vue'
 import { limitArr } from '@/assets/js/dictionary'
 import { client, order, productionProgress } from '@/assets/js/api'
+import { ListSetting } from '@/types/list'
 export default Vue.extend({
   data(): {
+    originalSetting2: ListSetting[]
+    originalSetting: ListSetting[]
     [propName: string]: any
   } {
     return {
@@ -538,7 +541,8 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 7,
-          errVal: '0'
+          errVal: '0',
+          numberToString: true
         },
         {
           key: 'admin_real_number',
@@ -547,7 +551,8 @@ export default Vue.extend({
           ifLock: false,
           index: 8,
           class: 'green',
-          errVal: '0'
+          errVal: '0',
+          numberToString: true
         },
         {
           key: 'total_real_number',
@@ -556,7 +561,8 @@ export default Vue.extend({
           ifLock: false,
           index: 9,
           class: 'green',
-          errVal: '0'
+          errVal: '0',
+          numberToString: true
         },
         {
           key: 'status',
@@ -653,7 +659,8 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 6,
-          errVal: '0'
+          errVal: '0',
+          numberToString: true
         },
         {
           key: 'weave_plan_admin_real_number',
@@ -662,7 +669,8 @@ export default Vue.extend({
           ifLock: false,
           index: 7,
           class: 'green',
-          errVal: '0'
+          errVal: '0',
+          numberToString: true
         },
         {
           key: 'weave_plan_real_number',
@@ -671,7 +679,8 @@ export default Vue.extend({
           ifLock: false,
           index: 8,
           class: 'blue',
-          errVal: '0'
+          errVal: '0',
+          numberToString: true
         },
         {
           key: 'has_weave_plan',

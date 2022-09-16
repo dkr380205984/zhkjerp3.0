@@ -198,7 +198,8 @@ export default Vue.extend({
           name: '下单总数',
           ifShow: true,
           ifLock: false,
-          index: 6
+          index: 6,
+          numberToString: true
         },
         {
           key: 'group_name',

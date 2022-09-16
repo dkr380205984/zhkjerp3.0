@@ -160,23 +160,14 @@ const routes: Array<RouteConfig> = [
       name: '修改报价单',
       component: () => import('../views/quotedPrice/update.vue')
     }, {
-      meta: {
-        permissions_id: '13-3',
-      },
       path: '/client/list',
       name: '客户/单位列表',
       component: () => import('../views/client/list.vue')
     }, {
-      meta: {
-        permissions_id: '13-1',
-      },
       path: '/client/create',
       name: '添加客户/单位',
       component: () => import('../views/client/create.vue')
     }, {
-      meta: {
-        permissions_id: '13-2',
-      },
       path: '/client/update',
       name: '修改客户/单位',
       component: () => import('../views/client/update.vue')
@@ -644,9 +635,6 @@ const routes: Array<RouteConfig> = [
       name: '辅料管理列表',
       component: () => import('../views/accessoriesManage/list.vue')
     }, {
-      meta: {
-        permissions_id: '6-1',
-      },
       path: '/accessoriesManage/detail',
       name: '辅料管理详情',
       component: () => import('../views/accessoriesManage/detail.vue')

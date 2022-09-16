@@ -22,17 +22,27 @@ axios.interceptors.request.use((config) => {
 axios.interceptors.response.use(
   // 请求成功回调
   (res) => {
-    if (res.data.code === 200) {
+    if (res.data.status) {
       // do nothing
-    } else if (res.data.code === 406) {
-      // do nothing 这个编码专门用于登录页面设置公司用
-      Message.Message.error(res.data.msg)
-    } else if (res.data.code === 401) {
-      Message.Message.error(res.data.msg)
-      router.push('/login')
     } else {
-      Message.Message.error(res.data.msg)
+      if (res.data.code === 401) {
+        Message.Message.error(res.data.msg)
+        router.push('/login')
+      } else {
+        Message.Message.error(res.data.msg)
+      }
     }
+    // if (res.data.code === 200) {
+    //   // do nothing
+    // } else if (res.data.code === 406 || res.data.code === 402 || res.data.code === 403 || res.data.code === 404 || res.data.code === 405 || res.data.code === 500) {
+    //   // do nothing 这个编码专门用于登录页面设置公司用
+    //   Message.Message.error(res.data.msg)
+    // } else if (res.data.code === 401) {
+    //   Message.Message.error(res.data.msg)
+    //   router.push('/login')
+    // } else {
+    //   Message.Message.error(res.data.msg)
+    // }
     return res
   },
   // 请求失败回调

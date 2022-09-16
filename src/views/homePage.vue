@@ -904,9 +904,16 @@ export default Vue.extend({
           url: '/store/list?page=1&keyword=&user_id=&store_type=1'
         },
         {
-          opr: '客户与合作商管理',
+          opr: '客户管理',
           isChecked: false,
-          id: '13-3',
+          id: '13-1',
+          icon: 'icon-kehuguanli',
+          url: '/client/list?page=1&type=1&status=1&keyword='
+        },
+        {
+          opr: '合作单位管理',
+          isChecked: false,
+          id: '13-2',
           icon: 'icon-kehuguanli',
           url: '/client/list?page=1&type=1&status=1&keyword='
         },

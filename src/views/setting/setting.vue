@@ -1481,7 +1481,7 @@
             <div class="listCtn">
               <div class="filterCtn clearfix">
                 <div class="btn backHoverBlue fr"
-                  @click="showPopup = true">添加帐号</div>
+                  @click="resetUser();showPopup = true">添加账号</div>
               </div>
               <div class="list">
                 <div class="row title">
@@ -4928,139 +4928,136 @@
         </div>
       </template>
       <template v-if="cName === '系统账户管理'">
-        <div class="main">
+        <div class="main"
+          style="width:1000px">
           <div class="titleCtn">
             <div class="text">{{ userUpdate ? '修改' : '新增' }}用户</div>
             <div class="closeCtn"
-              @click="
-                showPopup = false
-                resetUser()
-              ">
+              @click="showPopup = false;resetUser()">
               <i class="el-icon-close"></i>
             </div>
           </div>
-          <div class="contentCtn">
-            <div class="row">
-              <div class="label">姓名：</div>
-              <div class="info">
-                <el-input placeholder="请输入姓名"
-                  v-model="userInfo.name"></el-input>
-              </div>
+          <div class="contentCtn navCtn">
+            <div class="navFather">
+              <div class="nav"
+                :class="{'active':userNav==='基本信息'}"
+                @click="userNav='基本信息'">基本信息</div>
+              <div class="nav"
+                :class="{'active':userNav==='系统权限'}"
+                @click="userNav='系统权限'">系统权限</div>
+              <div class="nav"
+                :class="{'active':userNav==='其他权限'}"
+                @click="userNav='其他权限'">其他权限</div>
             </div>
-            <!-- <div class="row">
-              <div class="label">用户名：</div>
-              <div class="info">
-                <el-input placeholder="请输入用户名"
-                  v-model="userInfo.user_name"></el-input>
+            <template v-if="userNav==='基本信息'">
+              <div class="editCtn">
+                <div class="row">
+                  <div class="label">姓名：</div>
+                  <div class="info">
+                    <el-input placeholder="请输入姓名"
+                      v-model="userInfo.name"></el-input>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="label">手机号：</div>
+                  <div class="info">
+                    <el-input placeholder="请输入手机号"
+                      v-model="userInfo.phone"
+                      :disabled="userUpdate"> </el-input>
+                  </div>
+                </div>
+                <div class="row"
+                  v-show="!userUpdate">
+                  <div class="label">验证码：</div>
+                  <div class="info">
+                    <el-input placeholder="请输入验证码"
+                      v-model="userInfo.sms_code">
+                      <template slot="append">
+                        <span style="cursor: pointer"
+                          @click="getSmsCode">{{Number(smsIndex) ? Number(smsIndex) + '秒后重新发送' : smsIndex}}</span>
+                      </template>
+                    </el-input>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="label">小组：</div>
+                  <div class="info">
+                    <el-select placeholder="请选择小组"
+                      v-model="userInfo.group_id">
+                      <el-option v-for="item in groupInfoList"
+                        :key="item.id"
+                        :value="item.id"
+                        :label="item.name"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="label">岗位：</div>
+                  <div class="info">
+                    <el-input placeholder="请输入岗位"
+                      v-model="userInfo.station"></el-input>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="label">密码：</div>
-              <div class="info">
-                <el-input placeholder="请输入密码"
-                  v-model="userInfo.password"></el-input>
-              </div>
-            </div> -->
-            <div class="row">
-              <div class="label">手机号：</div>
-              <div class="info">
-                <el-input placeholder="请输入手机号"
-                  v-model="userInfo.phone"
-                  :disabled="userUpdate"> </el-input>
-              </div>
-            </div>
-            <div class="row"
-              v-show="!userUpdate">
-              <div class="label">验证码：</div>
-              <div class="info">
-                <el-input placeholder="请输入验证码"
-                  v-model="userInfo.sms_code">
-                  <template slot="append">
-                    <span style="cursor: pointer"
-                      @click="getSmsCode">{{
-                      Number(smsIndex) ? Number(smsIndex) + '秒后重新发送' : smsIndex
-                    }}</span>
-                  </template>
-                </el-input>
-              </div>
-            </div>
-            <div class="row">
-              <div class="label">小组：</div>
-              <div class="info">
-                <el-select placeholder="请选择小组"
-                  v-model="userInfo.group_id">
-                  <el-option v-for="item in groupInfoList"
-                    :key="item.id"
-                    :value="item.id"
-                    :label="item.name"></el-option>
-                </el-select>
-              </div>
-            </div>
-            <div class="row">
-              <div class="label">岗位：</div>
-              <div class="info">
-                <el-input placeholder="请输入岗位"
-                  v-model="userInfo.station"></el-input>
-              </div>
-            </div>
-            <div class="row">
-              <div class="label">
-                <el-tooltip content="是否只能查看/搜索个人创建的订单、样单、报价单等,不能查看其他人创建的单据。">
-                  <i class="el-icon-question"></i>
-                </el-tooltip>
-                查看权限：
-              </div>
-              <div class="info"
-                style="line-height: 32px">
-                <el-radio v-model="userInfo.only_search_self"
-                  :label="1">仅能查看本人</el-radio>
-                <el-radio v-model="userInfo.only_search_self"
-                  :label="2">查看所有</el-radio>
-              </div>
-            </div>
-            <div class="row">
-              <div class="label">
-                <el-tooltip content="管理员拥有以下权限：所有单据审核、修改、删除权限；所有订单、样单详细信息查看权限。">
-                  <i class="el-icon-question"></i>
-                </el-tooltip>
-                管理权限：
-              </div>
-              <div class="info"
-                style="line-height: 32px">
-                <el-radio v-model="userInfo.has_check"
-                  :label="1">管理员</el-radio>
-                <el-radio v-model="userInfo.has_check"
-                  :label="2">普通用户</el-radio>
-              </div>
-            </div>
-            <div class="row"
-              style="height: auto">
-              <div class="label">系统模块：</div>
-              <div class="info checkBoxCtn">
-                <div class="checkbox"
+            </template>
+            <template v-if="userNav==='系统权限'">
+              <div class="navSon">
+                <div class="nav"
+                  :class="{'active':userNavSon===item.name}"
                   v-for="item in systemModuleArr"
-                  :key="item.id">
-                  <el-checkbox v-model="item.check"
-                    @change="getModuleChild($event, item.id, item.detail)">{{
-                    item.name
-                  }}</el-checkbox>
+                  :key="item.id"
+                  @click="getModuleChild(item.name,item.detail)">{{item.name}}</div>
+              </div>
+              <div class="editCtn">
+                <div class="row"
+                  style="height: auto">
+                  <div class="info checkBoxCtn">
+                    <div class="checkbox"
+                      v-for="item in systemModuleChild"
+                      :key="item.id">
+                      <el-checkbox v-model="item.check"
+                        @change="getModuleChildCheck($event, item.id)">{{item.name}}</el-checkbox>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="row"
-              style="height: auto">
-              <div class="label">模块细分：</div>
-              <div class="info checkBoxCtn">
-                <div class="checkbox"
-                  v-for="item in systemModuleChild"
-                  :key="item.id">
-                  <el-checkbox v-model="item.check"
-                    @change="getModuleChild($event, item.id)">{{
-                    item.name
-                  }}</el-checkbox>
+            </template>
+            <template v-if="userNav==='其他权限'">
+              <div class="editCtn">
+                <div class="row">
+                  <div class="label"
+                    style="width:7em">
+                    <el-tooltip content="是否只能查看/搜索个人创建的订单、样单、报价单等,不能查看其他人创建的单据。">
+                      <i class="el-icon-question"></i>
+                    </el-tooltip>
+                    查看权限：
+                  </div>
+                  <div class="info"
+                    style="line-height: 32px">
+                    <el-radio v-model="userInfo.only_search_self"
+                      :label="1">仅能查看本人</el-radio>
+                    <el-radio v-model="userInfo.only_search_self"
+                      :label="2">查看所有</el-radio>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="label"
+                    style="width:7em">
+                    <el-tooltip content="管理员拥有以下权限：所有单据审核、修改、删除权限；所有订单、样单详细信息查看权限。">
+                      <i class="el-icon-question"></i>
+                    </el-tooltip>
+                    管理权限：
+                  </div>
+                  <div class="info"
+                    style="line-height: 32px">
+                    <el-radio v-model="userInfo.has_check"
+                      :label="1">管理员</el-radio>
+                    <el-radio v-model="userInfo.has_check"
+                      :label="2">普通用户</el-radio>
+                  </div>
                 </div>
               </div>
-            </div>
+            </template>
           </div>
           <div class="oprCtn">
             <div class="btn borderBtn"
@@ -6307,6 +6304,8 @@ export default Vue.extend({
       groupInfoList: [],
       groupTotal: 1,
       groupPage: 1,
+      userNav: '基本信息',
+      userNavSon: '',
       userInfo: {
         name: '',
         user_name: '',
@@ -6525,32 +6524,23 @@ export default Vue.extend({
     }
   },
   methods: {
-    getModuleChild(ev: boolean, id: number, detailInfo: any[]) {
-      if (detailInfo) {
-        this.systemModuleChild = detailInfo.map((item) => {
-          return {
-            id: item.id,
-            name: item.name,
-            check: ev
-          }
-        })
-        if (ev) {
-          this.userInfo.module_info.push(id)
-          this.userInfo.module_info = this.userInfo.module_info.concat(detailInfo.map((item) => item.id))
-          this.userInfo.module_info = Array.from(new Set(this.userInfo.module_info))
-        } else {
-          this.userInfo.module_info.splice(this.userInfo.module_info.indexOf(id), 1)
-          detailInfo.forEach((item) => {
-            if (this.userInfo.module_info.indexOf(item.id) !== -1) {
-              this.userInfo.module_info.splice(this.userInfo.module_info.indexOf(item.id), 1)
-            }
-          })
+    getModuleChild(name: string, detailInfo: any[]) {
+      this.userNavSon = name
+      this.systemModuleChild = detailInfo.map((item) => {
+        return {
+          id: item.id,
+          name: item.name,
+          check: this.userInfo.module_info.indexOf(item.id) !== -1
         }
+      })
+    },
+    getModuleChildCheck(ev: boolean, id: string) {
+      if (ev) {
+        this.userInfo.module_info.push(id)
       } else {
-        if (ev) {
-          this.userInfo.module_info.push(id)
-        } else {
-          this.userInfo.module_info.splice(this.userInfo.module_info.indexOf(id), 1)
+        const index = this.userInfo.module_info.indexOf(id)
+        if (index !== -1) {
+          this.userInfo.module_info.splice(index, 1)
         }
       }
     },
@@ -8905,6 +8895,8 @@ export default Vue.extend({
       }
     },
     resetUser() {
+      this.userNav = '基本信息'
+      this.userNavSon = ''
       this.userInfo = {
         name: '',
         user_name: '',
@@ -8923,16 +8915,18 @@ export default Vue.extend({
       this.showPopup = true
       this.userUpdate = true
       this.userInfo = userInfo
-      this.systemModuleArr.forEach((item: any) => {
-        item.check = false
-        if (
-          this.userInfo.module_info &&
-          (this.userInfo.module_info.indexOf(item.id) !== -1 ||
-            this.userInfo.module_info.indexOf(item.id.toString()) !== -1)
-        ) {
-          item.check = true
-        }
-      })
+      this.userNav = '基本信息'
+      this.userNavSon = ''
+      // this.systemModuleArr.forEach((item: any) => {
+      //   item.check = false
+      //   if (
+      //     this.userInfo.module_info &&
+      //     (this.userInfo.module_info.indexOf(item.id) !== -1 ||
+      //       this.userInfo.module_info.indexOf(item.id.toString()) !== -1)
+      //   ) {
+      //     item.check = true
+      //   }
+      // })
       // 针对初始化为null做一下特殊处理
       if (!this.userInfo.module_info) {
         this.userInfo.module_info = []

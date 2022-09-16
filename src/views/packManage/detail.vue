@@ -91,13 +91,13 @@
                       <el-checkbox v-model="itemChild.check"
                         @change="$forceUpdate()">{{itemChild.size_name}}/{{itemChild.color_name}}</el-checkbox>
                     </div>
-                    <div class="tcol">{{itemChild.number}}</div>
+                    <div class="tcol">{{$toFixed(itemChild.number,0,true)}}</div>
                     <div class="tcol"
-                      :class="{'green':itemChild.transport_number&&itemChild.transport_number>=itemChild.number,'orange':itemChild.transport_number&&itemChild.transport_number<itemChild.number}">{{itemChild.transport_number||0}}
+                      :class="{'green':itemChild.transport_number&&itemChild.transport_number>=itemChild.number,'orange':itemChild.transport_number&&itemChild.transport_number<itemChild.number}">{{$toFixed(itemChild.transport_number||0,0,true)}}
                       <span class="green"
-                        v-if="itemChild.transport_number&&itemChild.transport_number>=itemChild.number">差值+{{itemChild.transport_number-itemChild.number}}</span>
+                        v-if="itemChild.transport_number&&itemChild.transport_number>=itemChild.number">差值+{{$toFixed(itemChild.transport_number-itemChild.number,0,true)}}</span>
                       <span class="red"
-                        v-if="itemChild.transport_number&&itemChild.transport_number<itemChild.number">差值-{{itemChild.number - itemChild.transport_number}}</span>
+                        v-if="itemChild.transport_number&&itemChild.transport_number<itemChild.number">差值-{{$toFixed(itemChild.number - itemChild.transport_number,0,true)}}</span>
                     </div>
                   </div>
                 </div>
@@ -171,7 +171,7 @@
               </div>
               <div class="col">
                 <div class="label">发货数量：</div>
-                <div class="text">{{item.total_delivery_number}}</div>
+                <div class="text">{{$toFixed(item.total_delivery_number,0,true)}}</div>
               </div>
               <div class="col">
                 <div class="label">发货批次：</div>
@@ -252,7 +252,7 @@
                       <div class="trow"
                         v-for="(itemChildPro,indexChildPro) in itemPack.product_info"
                         :key="indexChildPro">
-                        <div class="tcol">{{itemChildPro.pack_number}}</div>
+                        <div class="tcol">{{$toFixed(itemChildPro.pack_number,0,true)}}</div>
                       </div>
                     </div>
                     <div class="tcol">{{itemPack.first_box_number}}</div>
@@ -309,7 +309,7 @@
                     </el-image>
                   </div>
                 </div>
-                <div class="tcol">{{itemPack.number}}</div>
+                <div class="tcol">{{$toFixed(itemPack.number,0,true)}}</div>
                 <div class="tcol">暂无</div>
               </div>
               <div class="trow"
@@ -394,8 +394,8 @@
                 style="max-width:36px">{{index+1}}</div>
               <div class="col">{{item.code}}</div>
               <div class="col">{{item.client_name}}</div>
-              <div class="col">{{item.total_number}}</div>
-              <div class="col">{{item.total_price}}元</div>
+              <div class="col">{{$toFixed(item.total_number,0,true)}}</div>
+              <div class="col">{{$toFixed(item.total_price,3,true)}}元</div>
               <div class="col"
                 :class="item.is_check|filterCheckClass">
                 <el-tooltip class="item"
@@ -537,8 +537,8 @@
                     </div>
                     <div class="tcol">{{itemChild.bulk_price?(itemChild.bulk_price +'元'):'-'}}</div>
                     <div class="tcol">{{itemChild.count_price?(itemChild.count_price +'元'):'-'}}</div>
-                    <div class="tcol">{{itemChild.number}}</div>
-                    <div class="tcol">{{$toFixed(itemChild.number*itemChild.count_price)}}元</div>
+                    <div class="tcol">{{$toFixed(itemChild.number,0,true)}}</div>
+                    <div class="tcol">{{$toFixed(itemChild.number*itemChild.count_price,3,true)}}元</div>
                     <div class="tcol">{{itemChild.desc}}</div>
                   </div>
                 </div>
@@ -547,161 +547,6 @@
           </div>
         </div>
       </div>
-      <!-- 旧的订购单展示方式 -->
-      <!-- <el-tabs type="border-card"
-        v-model="packOrderLogIndex">
-        <el-tab-pane v-for="(item,index) in packOrderLog"
-          :key="index"
-          :name="item.id.toString()">
-          <div slot="label">
-            <div style="display:flex;flex-direction:column">
-              <div style="line-height:20px;font-size:14px">订购单{{(index+1)}}</div>
-              <div style="line-height:20px;font-size:14px">{{item.code}}</div>
-            </div>
-          </div>
-          <div class="titleCtn">
-            <div class="title">订购信息</div>
-          </div>
-          <div class="detailCtn">
-            <div class="checkCtn"
-              @click="checkDetailFlag=true">
-              <el-tooltip class="item"
-                effect="dark"
-                :content="item.is_check>=3?'点击查看异常处理办法':'点击查看审核日志'"
-                placement="bottom">
-                <img :src="item.is_check|checkFilter" />
-              </el-tooltip>
-            </div>
-            <div class="row">
-              <div class="col">
-                <div class="label">单据编号：</div>
-                <div class="text">{{item.code}}</div>
-              </div>
-              <div class="col">
-                <div class="label">创建人：</div>
-                <div class="text">{{item.user_name}}</div>
-              </div>
-              <div class="col">
-                <div class="label">订购单位：</div>
-                <div class="text">{{item.client_name}}</div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col">
-                <div class="label">订购日期：</div>
-                <div class="text">{{item.order_time}}</div>
-              </div>
-              <div class="col">
-                <div class="label">交货日期：</div>
-                <div class="text">{{item.delivery_time}}</div>
-              </div>
-              <div class="col">
-                <div class="label">更新时间：</div>
-                <div class="text">{{item.created_at}}</div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col">
-                <div class="label">订购总数：</div>
-                <div class="text">{{item.total_number}}</div>
-              </div>
-              <div class="col">
-                <div class="label">订购总额：</div>
-                <div class="text">{{item.total_price}}元</div>
-              </div>
-              <div class="col">
-                <div class="label">结算状态：</div>
-                <div class="text"
-                  :class="{'green':item.has_invoice===1||item.has_pay===1,'gray':item.has_invoice!==1&&item.has_pay!==1}">{{item.has_invoice===1||item.has_pay===1?'已结算':'待结算'}}</div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col">
-                <div class="label">备注信息</div>
-                <div class="text">{{item.desc}}</div>
-              </div>
-            </div>
-          </div>
-          <div class="tableCtn">
-            <div class="thead">
-              <div class="trow">
-                <div class="tcol">包装名称</div>
-                <div class="tcol">包装规格</div>
-                <div class="tcol">面积单价</div>
-                <div class="tcol">数量单价</div>
-                <div class="tcol">订购数量</div>
-                <div class="tcol">订购总价</div>
-                <div class="tcol">备注信息</div>
-              </div>
-            </div>
-            <div class="tbody">
-              <div class="trow"
-                v-for="(itemChild,indexChild) in item.info_data"
-                :key="indexChild">
-                <div class="tcol">{{itemChild.pack_material_name}}</div>
-                <div class="tcol">
-                  <template v-if="Number(itemChild.price_type)===1">
-                    {{itemChild.length}}*{{itemChild.width}}*{{itemChild.height}}cm
-                  </template>
-                  <template v-else-if="Number(itemChild.price_type)===2">
-                    {{itemChild.length}}*{{itemChild.width}}cm + {{itemChild.height}}cm
-                  </template>
-                  <template v-else-if="Number(itemChild.price_type)===3">
-                    {{itemChild.length}}
-                  </template>
-                </div>
-                <div class="tcol">{{itemChild.bulk_price?(itemChild.bulk_price +'元'):'-'}}</div>
-                <div class="tcol">{{itemChild.count_price?(itemChild.count_price +'元'):'-'}}</div>
-                <div class="tcol">{{itemChild.number}}</div>
-                <div class="tcol">{{$toFixed(itemChild.number*itemChild.count_price)}}元</div>
-                <div class="tcol">{{itemChild.desc}}</div>
-              </div>
-            </div>
-          </div>
-          <div class="buttonList">
-            <div class="btn backHoverBlue">
-              <i class="el-icon-s-grid"></i>
-              <span class="text">订购单操作</span>
-            </div>
-            <div class="otherInfoCtn">
-              <div class="otherInfo">
-                <div class="btn backHoverOrange"
-                  @click="Number($getsessionStorage('has_check'))!==1&&(item.has_invoice===1||item.has_pay===1)?$message.error('单据已结算，无法修改，可联系管理员操作'):goUpdatePlanOrder(item)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">修改订购</span>
-                </div>
-                <div class="btn backHoverRed"
-                  @click="deleteOrderPack(item.id)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-shanchudingdan"></use>
-                  </svg>
-                  <span class="text">删除订购</span>
-                </div>
-                <div class="btn backHoverBlue"
-                  @click="$openUrl('/packManage/printOrder?id=' + item.id)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">打印订购</span>
-                </div>
-                <div class="btn backHoverOrange"
-                  @click="checkFlag=true">
-                  <svg class="iconFont"
-                    aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">审核单据</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </el-tab-pane>
-      </el-tabs> -->
     </div>
     <div class="bottomFixBar">
       <div class="main">
@@ -1837,6 +1682,9 @@ export default Vue.extend({
       ]
     },
     goOrderPack(type: 'plan' | 'direct') {
+      if (!this.$permissionsFlag('11-1')) {
+        return
+      }
       if (type === 'plan') {
         const finded = this.packPlanLog.find((item) => item.id === Number(this.packPlanLogIndex))
         const checkArr = finded!.gather_info.filter((item) => item.check)
@@ -1880,7 +1728,6 @@ export default Vue.extend({
             })
           }
         ]
-        console.log(this.packOrderInfo)
         this.packOrderFlag = true
       } else {
         this.resetOrderPack()
@@ -1888,6 +1735,9 @@ export default Vue.extend({
       }
     },
     goUpdatePlanOrder(info: PackOrderInfo) {
+      if (!this.$permissionsFlag('11-2')) {
+        return
+      }
       const updateInfo = this.$clone(info)
       updateInfo.tree_data = JSON.parse(updateInfo.tree_data as string)
       updateInfo.info_data.forEach((item) => {
@@ -1898,6 +1748,9 @@ export default Vue.extend({
       this.packOrderUpdateFlag = true
     },
     deleteOrderPack(id: number) {
+      if (!this.$permissionsFlag('11-4')) {
+        return
+      }
       this.$confirm('是否删除该订购单?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -2009,6 +1862,9 @@ export default Vue.extend({
     },
     // 1合并装箱 2单独装箱
     goPlanPack(type: 1 | 2) {
+      if (!this.$permissionsFlag('11-1')) {
+        return
+      }
       const checkArr = (this.orderInfo.time_data as OrderTime[])[0].batch_data.filter((item) => {
         return item.product_data.some((itemPro) => {
           return itemPro.product_info.some((itemChild) => {
@@ -2328,6 +2184,9 @@ export default Vue.extend({
       }
     },
     goUpdatePlanPack(info: PackPlanInfo) {
+      if (!this.$permissionsFlag('11-2')) {
+        return
+      }
       this.packPlanInfo = info
       info.data.forEach((item) => {
         item.product_info.forEach((itemPro) => {
@@ -2339,6 +2198,9 @@ export default Vue.extend({
       this.packPlanFlag = true
     },
     deletePlanPack(id: number) {
+      if (!this.$permissionsFlag('11-4')) {
+        return
+      }
       this.$confirm('是否删除该装箱计划?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

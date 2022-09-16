@@ -47,7 +47,7 @@
             <template v-else-if="itemKey.numberToString">
               <span :class="itemKey.class"
                 class="text">
-                {{$toFixed(item[itemKey.key],3,true)}}{{itemKey.unitKey?item[itemKey.unitKey]:itemKey.unit}}</span>
+                {{$toFixed(item[itemKey.key],3,true) ||$toFixed(item[itemKey.otherkey],3,true) || (itemKey.errVal||'未填写')}}{{itemKey.unitKey?item[itemKey.unitKey]:itemKey.unit}}</span>
             </template>
             <template v-else>
               <!-- 草稿标记 -->
@@ -392,7 +392,7 @@
               <template v-else-if="itemKey.numberToString">
                 <span :class="itemKey.class"
                   class="text">
-                  {{$toFixed(item[itemKey.key],3,true)}}{{itemKey.unitKey?item[itemKey.unitKey]:itemKey.unit}}</span>
+                  {{$toFixed(item[itemKey.key],3,true) ||$toFixed(item[itemKey.otherkey],3,true) || (itemKey.errVal||'未填写')}}{{itemKey.unitKey?item[itemKey.unitKey]:itemKey.unit}}</span>
               </template>
               <template v-else>
                 <!-- 草稿标记 -->

@@ -75,7 +75,7 @@
                   <div class="tcol"
                     v-if="materialPlanType===1">{{item.size_name}}/{{item.color_name}}</div>
                   <div class="tcol">{{item.part_name}}</div>
-                  <div class="tcol">{{item.number}}</div>
+                  <div class="tcol">{{$toFixed(item.number,3,true)}}</div>
                 </div>
               </div>
             </div>
@@ -93,7 +93,7 @@
                   <div class="tcol bgGray label">合计值</div>
                   <div class="tcol"
                     style="flex:2">
-                    {{ item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.final_number),0)}}{{item.childrenMergeInfo[0].unit}}
+                    {{ $toFixed(item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.final_number),0),3,true)}}{{item.childrenMergeInfo[0].unit}}
                   </div>
                 </div>
                 <div class="trow bgGray">
@@ -126,7 +126,7 @@
                         :style="tableLineHeight"
                         style="flex:0.3">
                         <template v-if="!editFlag">
-                          {{ itemChild.final_number }}{{ itemChild.unit }}
+                          {{  $toFixed(itemChild.final_number,3,true) }}{{ itemChild.unit }}
                         </template>
                         <template v-else>
                           <div class="elCtn">
@@ -252,7 +252,7 @@
                   <div class="tcol"
                     v-if="materialPlanType===1">{{item.size_name}}/{{item.color_name}}</div>
                   <div class="tcol">{{item.part_name}}</div>
-                  <div class="tcol">{{item.number}}</div>
+                  <div class="tcol">{{ $toFixed(item.number,3,true)}}</div>
                 </div>
               </div>
             </div>
@@ -268,7 +268,7 @@
                   <div class="tcol bgGray label">合计值</div>
                   <div class="tcol"
                     style="flex:2">
-                    {{ item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.final_number),0)}}{{item.childrenMergeInfo[0].unit}}
+                    {{ $toFixed(item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.final_number),0),3,true)}}{{item.childrenMergeInfo[0].unit}}
                   </div>
                 </div>
                 <div class="trow bgGray">
@@ -301,7 +301,7 @@
                         :style="tableLineHeight"
                         style="flex:0.3">
                         <template v-if="!editFlag">
-                          {{ itemChild.final_number }}{{ itemChild.unit }}
+                          {{ $toFixed(itemChild.final_number,3,true) }}{{ itemChild.unit }}
                         </template>
                         <template v-else>
                           <div class="elCtn">

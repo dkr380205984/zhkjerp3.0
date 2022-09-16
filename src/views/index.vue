@@ -221,25 +221,25 @@ export default Vue.extend({
       navData: [
         {
           name: '报价管理',
-          id: 1,
+          id: '1-3',
           icon: 'icon-baojiaguanli1',
           url: '/quotedPrice/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
           name: '样单管理',
-          id: 2,
+          id: '2-3',
           icon: 'icon-yangdanguanli1',
           url: '/sampleOrder/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
           name: '订单管理',
-          id: 3,
+          id: '3-3',
           icon: 'icon-dingdanguanli1',
           url: '/order/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
           name: '数据报表',
-          id: 4,
+          id: '4-3',
           icon: 'icon-shujubaobiao',
           url: '/dataReport/orderStatistics'
         },
@@ -251,7 +251,7 @@ export default Vue.extend({
         },
         {
           name: '财务结算',
-          id: 22,
+          id: '22-3',
           icon: 'icon-shujubaobiao',
           url: '/settlement/collectionList?page=1&status='
         },
@@ -507,9 +507,6 @@ export default Vue.extend({
     breadUrl() {
       return this.$store.state.breadUrl
     },
-    // haveSet(): boolean {
-    //   return !this.moduleArr || JSON.parse(this.moduleArr) !== -1
-    // },
     navCmp(): navInfo[] {
       if (this.moduleArr) {
         return JSON.parse(this.moduleArr).length > 0

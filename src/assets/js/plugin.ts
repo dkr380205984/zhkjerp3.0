@@ -347,7 +347,6 @@ const plugin = {
         })
       }
     })
-    console.log(info)
     if (callback) {
       callback()
     }
@@ -545,7 +544,25 @@ const toFixedAuto = (num: number, precision: number = 2, changeToPrice?: false):
     return NaN
   }
   if (precision === 0) {
-    return Math.round(num)
+    if (changeToPrice) {
+      const realNumStr = Math.round(num).toString().replace(/[^0-9|.]/gi, '')
+      const numArr = realNumStr.split('.')
+      const numStrArr = numArr[0].split('')
+      const length = Number(numStrArr.length)
+      for (let i = length, j = 0; i > 0; i--) {
+        j++
+        if (j % 3 === 0 && i !== 1) {
+          numStrArr.splice(i - 1, 0, ',')
+        }
+      }
+      if (numArr.length === 2) {
+        return numStrArr.join('') + '.' + numArr[1]
+      } else {
+        return numStrArr.join('')
+      }
+    } else {
+      return Math.round(num)
+    }
   } else if (precision) {
     if (changeToPrice) {
       const realNumStr = (Math.round(num * Math.pow(10, precision)) / Math.pow(10, precision)).toString().replace(/[^0-9|.]/gi, '')
@@ -840,6 +857,16 @@ function focusByKeydown(ev: any, key: string, indexArr: number[], father: any, k
     }
   }
 }
+
+// 判断部分权限使用
+function permissionsFlag(type: string, errMsg?: string): boolean {
+  const permission = JSON.parse(window.sessionStorage.getItem('module_id') as string)
+  if (permission && permission.length && permission.indexOf(type) === -1) {
+    Message.Message.warning(errMsg || '抱歉，您没有相应的权限')
+    return false
+  }
+  return true
+}
 export default {
   install: (Vue: any) => {
     Vue.prototype.$getHash = plugin.getHash
@@ -884,5 +911,6 @@ export default {
     Vue.prototype.$rTime = rTime
     Vue.prototype.$copyTextInfo = copyTextInfo
     Vue.prototype.$focusByKeydown = focusByKeydown
+    Vue.prototype.$permissionsFlag = permissionsFlag
   }
 }

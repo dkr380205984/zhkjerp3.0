@@ -571,7 +571,7 @@
       <div class="main">
         <div class="btnCtn">
           <div class="btn backHoverBlue"
-            @click="cprkFlag=true">成品入库</div>
+            @click="goCprk()">成品入库</div>
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
         </div>
@@ -957,7 +957,16 @@ export default Vue.extend({
         })
       }
     },
+    goCprk() {
+      if (!this.$permissionsFlag('9-1')) {
+        return
+      }
+      this.cprkFlag = true
+    },
     goInspection(type: 1 | 2) {
+      if (!this.$permissionsFlag('9-1')) {
+        return
+      }
       const checkList = this.$clone(this.checkList())
       if (checkList.length === 0) {
         this.$message.error('请选择产品信息进行检验操作')
@@ -1176,6 +1185,9 @@ export default Vue.extend({
       })
     },
     deleteInspection(info: InspectionInfo) {
+      if (!this.$permissionsFlag('9-4')) {
+        return
+      }
       const errMsg = info.deduct_price
         ? '删除检验入库单据，不会同步删除相应的扣款单。您需要手动去扣款记录弹窗内，删除扣款单,是否删除该日志'
         : '是否删除该检验日志?'

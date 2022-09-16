@@ -60,9 +60,9 @@
               </div>
               <div class="trow">
                 <div class="tcol bgGray headTitle">订购总数</div>
-                <div class="tcol">{{materialOrderInfo.total_number}}</div>
+                <div class="tcol">{{$toFixed(materialOrderInfo.total_number,3,true)}}</div>
                 <div class="tcol bgGray headTitle">订购总额</div>
-                <div class="tcol">{{materialOrderInfo.total_price}}元</div>
+                <div class="tcol">{{$toFixed(materialOrderInfo.total_price,3,true)}}元</div>
                 <div class="tcol bgGray headTitle">备注信息</div>
                 <div class="tcol"
                   style="min-width: 347px;">{{materialOrderInfo.desc}}</div>
@@ -83,12 +83,12 @@
                 <div class="tcol bgGray label">合计数量</div>
                 <div class="tcol"
                   style="flex:2">
-                  {{ $toFixed(item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.number),0))}}{{item.childrenMergeInfo[0].unit}}
+                  {{ $toFixed(item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.number),0),3,true)}}{{item.childrenMergeInfo[0].unit}}
                 </div>
                 <div class="tcol bgGray label">合计价格</div>
                 <div class="tcol"
                   style="flex:2">
-                  {{ $toFixed(item.childrenMergeInfo.reduce((total,cur)=>total+(Number(cur.number)*Number(cur.price)),0))}}元
+                  {{ $toFixed(item.childrenMergeInfo.reduce((total,cur)=>total+(Number(cur.number)*Number(cur.price)),0),3,true)}}元
                 </div>
               </div>
               <div class="trow bgGray">
@@ -250,9 +250,9 @@
               </div>
               <div class="trow">
                 <div class="tcol bgGray headTitle">订购总数</div>
-                <div class="tcol">{{materialOrderInfo.total_number}}</div>
+                <div class="tcol">{{$toFixed(materialOrderInfo.total_number,3,true)}}</div>
                 <div class="tcol bgGray headTitle">订购总额</div>
-                <div class="tcol">{{materialOrderInfo.total_price}}元</div>
+                <div class="tcol">{{$toFixed(materialOrderInfo.total_price,3,true)}}元</div>
                 <div class="tcol bgGray headTitle">备注信息</div>
                 <div class="tcol"
                   style="min-width: 347px;">{{materialOrderInfo.desc}}</div>
@@ -271,12 +271,12 @@
                 <div class="tcol bgGray label">合计数量</div>
                 <div class="tcol"
                   style="flex:2">
-                  {{ $toFixed(item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.number),0))}}{{item.childrenMergeInfo[0].unit}}
+                  {{ $toFixed(item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.number),0),3,true)}}{{item.childrenMergeInfo[0].unit}}
                 </div>
                 <div class="tcol bgGray label">合计价格</div>
                 <div class="tcol"
                   style="flex:2">
-                  {{ $toFixed(item.childrenMergeInfo.reduce((total,cur)=>total+(Number(cur.number)*Number(cur.price)),0))}}元
+                  {{ $toFixed(item.childrenMergeInfo.reduce((total,cur)=>total+(Number(cur.number)*Number(cur.price)),0),3,true)}}元
                 </div>
               </div>
               <div class="trow bgGray">

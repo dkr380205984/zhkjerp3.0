@@ -176,7 +176,7 @@
             </div>
             <div class="col">{{item.product_code}}</div>
             <div class="col">{{item.size_name}}/{{item.color_name}}</div>
-            <div class="col">{{item.number}}</div>
+            <div class="col">{{$toFixed(item.number,0,true)}}</div>
             <div class="col">{{item.update_time}}</div>
             <div class="col">{{item.desc}}</div>
             <div class="col">{{item.user_name}}</div>
@@ -211,7 +211,7 @@
             </div>
             <div class="col">{{item.product_code}}</div>
             <div class="col">{{item.size_name}}/{{item.color_name}}</div>
-            <div class="col">{{item.number}}</div>
+            <div class="col">{{$toFixed(item.number,0,true)}}</div>
             <div class="col">{{item.update_time}}</div>
             <div class="col">{{item.desc}}</div>
             <div class="col">{{item.user_name}}</div>
