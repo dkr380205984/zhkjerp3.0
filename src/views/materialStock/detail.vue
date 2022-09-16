@@ -1284,6 +1284,9 @@ export default Vue.extend({
       }
     },
     goStock(type: number) {
+      if (!this.$permissionsFlag('7-1')) {
+        return
+      }
       if (type === 1 || type === 4) {
         this.getOrderInfo(type)
       } else if (type === 2) {
@@ -2007,6 +2010,9 @@ export default Vue.extend({
       this.materialStockFlag = false
     },
     deleteMaterialStockList(id: number) {
+      if (!this.$permissionsFlag('6-4')) {
+        return
+      }
       this.$confirm('是否删除该出入库单据?', '提示', {
         confirmButtonText: '确认删除',
         cancelButtonText: '取消',

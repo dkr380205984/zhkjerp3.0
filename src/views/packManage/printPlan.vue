@@ -49,7 +49,7 @@
                 <div class="tcol bgGray headTitle">发货时间</div>
                 <div class="tcol">{{packPlanInfo.delivery_time}}</div>
                 <div class="tcol bgGray headTitle">发货数量</div>
-                <div class="tcol">{{packPlanInfo.total_delivery_number}}</div>
+                <div class="tcol">{{$toFixed(packPlanInfo.total_delivery_number,0,true)}}</div>
                 <div class="tcol bgGray headTitle"></div>
                 <div class="tcol"></div>
               </div>

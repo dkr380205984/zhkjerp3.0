@@ -151,6 +151,7 @@ declare module 'vue/types/vue' {
     $copyTextInfo(val: string): void
     $focusByKeydown(ev: any, key: string, indexArr: number[], father: any, keyArr: any[]): void
     $toFixed(num: number, precision?: number, changeToPrice?: boolean): number
+    $permissionsFlag(type: string, errMsg?: string): boolean
   }
 }
 new Vue({

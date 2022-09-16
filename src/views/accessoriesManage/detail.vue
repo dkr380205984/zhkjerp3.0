@@ -32,8 +32,8 @@
                 style="max-width:36px">{{index+1}}</div>
               <div class="col">{{item.code}}</div>
               <div class="col">{{item.client_name}}</div>
-              <div class="col">{{item.total_number}}</div>
-              <div class="col">{{item.total_price}}元</div>
+              <div class="col">{{$toFixed(item.total_number,3,true)}}</div>
+              <div class="col">{{$toFixed(item.total_price,3,true)}}元</div>
               <div class="col"
                 :class="item.is_check|filterCheckClass">
                 <el-tooltip class="item"
@@ -178,9 +178,9 @@
                     :key="indexChild">
                     <div class="tcol">{{itemChild.material_name}}</div>
                     <div class="tcol">{{itemChild.attribute}}</div>
-                    <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
+                    <div class="tcol">{{$toFixed(itemChild.number,3,true)}}{{itemChild.unit}}</div>
                     <div class="tcol">{{itemChild.price}}元</div>
-                    <div class="tcol">{{$toFixed(itemChild.price*itemChild.number,3)}}元</div>
+                    <div class="tcol">{{$toFixed(itemChild.price*itemChild.number,3,true)}}元</div>
                   </div>
                 </div>
               </div>
@@ -1204,7 +1204,7 @@
           <div class="btn backHoverOrange"
             @click="goStock()">客供入库</div>
           <div class="btn backHoverBlue"
-            @click="materialOrderFlag = true;step=1">订购辅料</div>
+            @click="goOrder()">订购辅料</div>
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
         </div>
@@ -1618,8 +1618,17 @@ export default Vue.extend({
         this.mustFlag = true
       }
     },
+    goOrder() {
+      if (!this.$permissionsFlag('6-1')) {
+        return
+      }
+      this.materialOrderFlag = true
+      this.step = 1
+    },
     goStock(materialOrderList?: MaterialOrderInfo[]) {
-      console.log(materialOrderList)
+      if (!this.$permissionsFlag('6-1')) {
+        return
+      }
       if (materialOrderList) {
         materialOrderList.forEach((item) => {
           this.materialStockInfo.rel_doc_code = item.code
@@ -1710,6 +1719,9 @@ export default Vue.extend({
       }
     },
     deleteMaterialOrder(id: number) {
+      if (!this.$permissionsFlag('6-4')) {
+        return
+      }
       this.$confirm('是否删除该订购单?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -1734,6 +1746,9 @@ export default Vue.extend({
         })
     },
     updataMaterialOrder() {
+      if (!this.$permissionsFlag('6-2')) {
+        return
+      }
       const formCheck = this.$formCheck(this.materialOrderUpdataInfo, [
         {
           key: 'delivery_time',
@@ -1768,6 +1783,9 @@ export default Vue.extend({
       }
     },
     deleteMaterialStockList(id: string) {
+      if (!this.$permissionsFlag('6-4')) {
+        return
+      }
       this.$confirm('是否删除该出入库单据?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

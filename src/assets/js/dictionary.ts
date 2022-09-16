@@ -102,9 +102,6 @@ const systemModule = [{
     id: '7-1',
     name: '添加单据',
   }, {
-    id: '7-2',
-    name: '修改单据',
-  }, {
     id: '7-3',
     name: '单据列表',
   }, {
@@ -133,9 +130,6 @@ const systemModule = [{
   detail: [{
     id: '9-1',
     name: '添加单据',
-  }, {
-    id: '9-2',
-    name: '修改单据',
   }, {
     id: '9-3',
     name: '单据列表',
@@ -196,16 +190,10 @@ const systemModule = [{
   name: '客户与合作商管理',
   detail: [{
     id: '13-1',
-    name: '添加单据',
+    name: '客户管理',
   }, {
     id: '13-2',
-    name: '修改单据',
-  }, {
-    id: '13-3',
-    name: '单据列表',
-  }, {
-    id: '13-4',
-    name: '删除单据',
+    name: '合作单位管理',
   }]
 }, {
   id: 14,

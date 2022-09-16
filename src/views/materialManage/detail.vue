@@ -24,15 +24,15 @@
         <div class="row">
           <div class="col">
             <div class="label">总计划数：</div>
-            <div class="text">{{materialPlanInfo.total_plan_number||materialSupplementInfo.total_plan_number}}</div>
+            <div class="text">{{$toFixed(materialPlanInfo.total_plan_number||materialSupplementInfo.total_plan_number,3,true)}}</div>
           </div>
           <div class="col">
             <div class="label">总订购数：</div>
-            <div class="text">{{materialPlanInfo.total_order_number||materialSupplementInfo.total_order_number}}</div>
+            <div class="text">{{$toFixed(materialPlanInfo.total_order_number||materialSupplementInfo.total_order_number,3,true)}}</div>
           </div>
           <div class="col">
             <div class="label">总加工数：</div>
-            <div class="text">{{materialPlanInfo.total_process_number||materialSupplementInfo.total_process_number}}</div>
+            <div class="text">{{$toFixed(materialPlanInfo.total_process_number||materialSupplementInfo.total_process_number || 0,3,true)}}</div>
           </div>
         </div>
         <div class="row"
@@ -71,15 +71,15 @@
             </div>
             <div class="tcol">{{item.material_name}}</div>
             <div class="tcol">{{item.material_color}}</div>
-            <div class="tcol">{{item.final_number}}{{item.unit}}</div>
-            <div class="tcol">{{item.total_order_number}}{{item.unit}}</div>
-            <div class="tcol">{{item.total_transfer_number}}{{item.unit}}</div>
+            <div class="tcol">{{$toFixed(item.final_number,3,true)}}{{item.unit}}</div>
+            <div class="tcol">{{$toFixed(item.total_order_number,3,true)}}{{item.unit}}</div>
+            <div class="tcol">{{$toFixed(item.total_transfer_number,3,true)}}{{item.unit}}</div>
             <div class="tcol"
               :class="{
               'red':item.total_order_number+item.total_transfer_number>item.final_number,
               'green':item.total_order_number+item.total_transfer_number===item.final_number,
               'orange':item.total_order_number+item.total_transfer_number<item.final_number
-              }">{{(item.total_order_number+item.total_transfer_number>item.final_number?'+':'')+($toFixed(item.total_order_number+item.total_transfer_number - item.final_number))}}{{item.unit}}</div>
+              }">{{(item.total_order_number+item.total_transfer_number>item.final_number?'+':'')+($toFixed(item.total_order_number+item.total_transfer_number - item.final_number,3,true))}}{{item.unit}}</div>
           </div>
         </div>
       </div>
@@ -159,11 +159,11 @@
             <div class="row">
               <div class="col">
                 <div class="label">订购总数：</div>
-                <div class="text">{{item.total_number}}</div>
+                <div class="text">{{$toFixed(item.total_number,3,true)}}</div>
               </div>
               <div class="col">
                 <div class="label">订购总额：</div>
-                <div class="text">{{item.total_price}}元</div>
+                <div class="text">{{$toFixed(item.total_price,3,true)}}元</div>
               </div>
               <div class="col">
                 <div class="label">交货日期：</div>
@@ -228,9 +228,9 @@
                 <div class="tcol">{{itemChild.material_color}}</div>
                 <div class="tcol">{{$route.query.supFlag?itemChild.sup_color:itemChild.plan_color}}</div>
                 <div class="tcol">{{itemChild.attribute}}</div>
-                <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
+                <div class="tcol">{{$toFixed(itemChild.number,3,true)}}{{itemChild.unit}}</div>
                 <div class="tcol">{{itemChild.price}}元</div>
-                <div class="tcol">{{$toFixed(itemChild.price*itemChild.number)}}元</div>
+                <div class="tcol">{{$toFixed(itemChild.price*itemChild.number,3,true)}}元</div>
               </div>
             </div>
           </div>
@@ -385,11 +385,11 @@
                         </template>
                       </div>
                       <div class="tcol"
-                        style="flex:0.5">{{itemMat.number}}{{itemMat.unit}}</div>
+                        style="flex:0.5">{{$toFixed(itemMat.number,3,true)}}{{itemMat.unit}}</div>
                       <div class="tcol"
                         style="flex:0.5">{{itemMat.price}}元</div>
                       <div class="tcol"
-                        style="flex:0.5">{{$toFixed(itemMat.price*itemMat.number)}}元</div>
+                        style="flex:0.5">{{$toFixed(itemMat.price*itemMat.number,3,true)}}元</div>
                     </div>
                   </div>
                   <div class="tcol"
@@ -472,7 +472,7 @@
               <div class="col">
                 <div class="col">
                   <div class="label">调取总数：</div>
-                  <div class="text">{{item.info_data.reduce((total,cur)=>total+Number(cur.number),0)}}</div>
+                  <div class="text">{{$toFixed(item.info_data.reduce((total,cur)=>total+Number(cur.number),0),3,true)}}</div>
                 </div>
               </div>
             </div>
@@ -487,7 +487,7 @@
               </div>
               <div class="col">
                 <div class="label">调取总价：</div>
-                <div class="text">{{item.info_data.reduce((total,cur)=>total+Number(cur.number)*Number(cur.price),0)}}元</div>
+                <div class="text">{{$toFixed(item.info_data.reduce((total,cur)=>total+Number(cur.number)*Number(cur.price),0),3,true)}}元</div>
               </div>
             </div>
           </div>
@@ -521,9 +521,9 @@
                 <div class="tcol">{{itemChild.material_color}}</div>
                 <div class="tcol">{{itemChild.attribute}}</div>
                 <div class="tcol">{{itemChild.batch_code}}/{{itemChild.vat_code}}/{{itemChild.color_code}}</div>
-                <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
+                <div class="tcol">{{$toFixed(itemChild.number,3,true)}}{{itemChild.unit}}</div>
                 <div class="tcol">{{itemChild.price||0}}元</div>
-                <div class="tcol">{{$toFixed(itemChild.price*itemChild.number)}}元</div>
+                <div class="tcol">{{$toFixed(itemChild.price*itemChild.number,3,true)}}元</div>
               </div>
             </div>
           </div>
@@ -637,11 +637,11 @@
                         </template>
                       </div>
                       <div class="tcol"
-                        style="flex:0.5">{{itemMat.number}}{{itemMat.unit}}</div>
+                        style="flex:0.5">{{$toFixed(itemMat.number,3,true)}}{{itemMat.unit}}</div>
                       <div class="tcol"
                         style="flex:0.5">{{itemMat.price}}元</div>
                       <div class="tcol"
-                        style="flex:0.5">{{$toFixed(itemMat.price*itemMat.number)}}元</div>
+                        style="flex:0.5">{{$toFixed(itemMat.price*itemMat.number,3,true)}}元</div>
                     </div>
                   </div>
                   <div class="tcol"
@@ -2723,6 +2723,9 @@ export default Vue.extend({
       }
     },
     goOrderMaterial(type: '白胚' | '色纱') {
+      if (!this.$permissionsFlag('5-1')) {
+        return
+      }
       if (this.checkMaterialOrderList().length > 0) {
         if (Array.from(new Set(this.checkMaterialOrderList().map((item: any) => item.yarn_type))).length > 1) {
           this.$message.error('只能同时订购一种类型的原料')
@@ -2955,6 +2958,9 @@ export default Vue.extend({
       })
     },
     deleteMaterialOrder(id: number) {
+      if (!this.$permissionsFlag('5-4')) {
+        return
+      }
       this.$confirm('是否删除该订购单?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -2979,6 +2985,9 @@ export default Vue.extend({
         })
     },
     updateMaterialOrder() {
+      if (!this.$permissionsFlag('5-2')) {
+        return
+      }
       const formCheck = this.$formCheck(this.materialOrderUpdataInfo, [
         {
           key: 'delivery_time',
@@ -3011,6 +3020,9 @@ export default Vue.extend({
       }
     },
     goStockMaterial() {
+      if (!this.$permissionsFlag('5-1')) {
+        return
+      }
       if (this.checkMaterialOrderList().length > 0) {
         this.materialStockInfo.info_data = this.checkMaterialOrderList().map((item) => {
           return {
@@ -3237,6 +3249,9 @@ export default Vue.extend({
       })
     },
     deleteMaterialStock(id: number) {
+      if (!this.$permissionsFlag('5-4')) {
+        return
+      }
       this.$confirm('是否删除该调取单?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -3272,6 +3287,9 @@ export default Vue.extend({
       }
     },
     goProcessMaterial(type: '订购加工' | '调取加工') {
+      if (!this.$permissionsFlag('5-1')) {
+        return
+      }
       if (type === '订购加工') {
         if (this.checkMaterialProcessList.length > 0) {
           this.materialProcessFlag = type
@@ -3439,6 +3457,9 @@ export default Vue.extend({
       }
     },
     goUpdateMaterialProcess(itemProcess: MaterialProcessInfo) {
+      if (!this.$permissionsFlag('5-2')) {
+        return
+      }
       this.materialProcessUpdataInfo = this.$clone(itemProcess)
       this.prcessClientList.forEach((item) => {
         item.children!.forEach((itemChild) => {
@@ -3476,6 +3497,9 @@ export default Vue.extend({
       }
     },
     deleteMaterialProcess(id: number) {
+      if (!this.$permissionsFlag('5-4')) {
+        return
+      }
       this.$confirm('是否删除该加工单?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

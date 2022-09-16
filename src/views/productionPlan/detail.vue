@@ -90,8 +90,8 @@
                   </div>
                   <div class="tcol">{{itemPro.part_name}}</div>
                   <div class="tcol">{{itemPro.size_name}}/{{itemPro.color_name}}</div>
-                  <div class="tcol">{{itemPro.order_number}}</div>
-                  <div class="tcol">{{itemPro.number}}</div>
+                  <div class="tcol">{{$toFixed(itemPro.order_number,0,true)}}</div>
+                  <div class="tcol">{{$toFixed(itemPro.number,0,true)}}</div>
                 </div>
               </div>
             </div>
@@ -122,8 +122,8 @@
                       @change="$forceUpdate()"> {{itemPro.name||itemPro.product_code||itemPro.system_code}}</el-checkbox>
                   </div>
                   <div class="tcol">{{itemPro.part_name}}</div>
-                  <div class="tcol">{{itemPro.order_number}}</div>
-                  <div class="tcol">{{itemPro.number}}</div>
+                  <div class="tcol">{{$toFixed(itemPro.order_number,0,true)}}</div>
+                  <div class="tcol">{{$toFixed(itemPro.number,0,true)}}</div>
                 </div>
               </div>
             </div>
@@ -340,16 +340,16 @@
                 </div>
                 <div class="tbody">
                   <div class="trow">
-                    <div class="tcol green">{{$toFixed(item.total_price - item.others_fee)}}元</div>
-                    <div class="tcol green">{{item.real_fee}}元</div>
+                    <div class="tcol green">{{$toFixed(item.total_price - item.others_fee,3,true)}}元</div>
+                    <div class="tcol green">{{$toFixed(item.real_fee,3,true)}}元</div>
                     <div class="tcol"
-                      :class="{'green':item.others_fee>0,'gray':item.others_fee===0}">{{item.others_fee}}元</div>
+                      :class="{'green':item.others_fee>0,'gray':item.others_fee===0}">{{$toFixed(item.others_fee,3,true)}}元</div>
                     <div class="tcol"
-                      :class="{'red':item.deduct_fee>0,'gray':item.deduct_fee===0}">{{item.deduct_fee}}元</div>
+                      :class="{'red':item.deduct_fee>0,'gray':item.deduct_fee===0}">{{$toFixed(item.deduct_fee,3,true)}}元</div>
                     <div class="tcol"
                       :class="{'red':item.sup_fee>0,'gray':item.sup_fee===0}">{{item.sup_fee}}元</div>
-                    <div class="tcol green">{{$toFixed(item.total_price - item.deduct_fee - item.sup_fee)}}元</div>
-                    <div class="tcol green">{{$toFixed(item.real_fee + item.others_fee - item.deduct_fee - item.sup_fee)}}元</div>
+                    <div class="tcol green">{{$toFixed(item.total_price - item.deduct_fee - item.sup_fee,3,true)}}元</div>
+                    <div class="tcol green">{{$toFixed(item.real_fee + item.others_fee - item.deduct_fee - item.sup_fee,3,true)}}元</div>
                   </div>
                   <div class="trow">
                     <div class="tcol gray">详情见下表</div>
@@ -403,11 +403,11 @@
                       {{itemPro.part_name}}
                     </div>
                     <div class="tcol">{{itemPro.size_name?itemPro.size_name + '/' + itemPro.color_name:'未选择尺码颜色'}}</div>
-                    <div class="tcol">{{itemPro.number}}</div>
-                    <div class="tcol">{{itemPro.inspection_number}}</div>
+                    <div class="tcol">{{$toFixed(itemPro.number,0,true)}}</div>
+                    <div class="tcol">{{$toFixed(itemPro.inspection_number,0,true)}}</div>
                     <div class="tcol">{{itemPro.price}}元</div>
-                    <div class="tcol">{{$toFixed(itemPro.price*itemPro.number)}}元</div>
-                    <div class="tcol">{{$toFixed(itemPro.price*itemPro.inspection_number)}}元</div>
+                    <div class="tcol">{{$toFixed(itemPro.price*itemPro.number,3,true)}}元</div>
+                    <div class="tcol">{{$toFixed(itemPro.price*itemPro.inspection_number,3,true)}}元</div>
                   </div>
                 </div>
               </div>
@@ -437,7 +437,7 @@
                     </div>
                     <div class="tcol">{{itemMat.material_name}}</div>
                     <div class="tcol">{{itemMat.material_color}}</div>
-                    <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
+                    <div class="tcol">{{$toFixed(itemMat.number,3,true)}}{{itemMat.unit}}</div>
                   </div>
                 </div>
               </div>
@@ -491,7 +491,7 @@
                         :key="itemMat.id">
                         <div class="tcol">{{itemMat.material_name}}</div>
                         <div class="tcol">{{itemMat.material_color}}</div>
-                        <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
+                        <div class="tcol">{{$toFixed(itemMat.number,3,true)}}{{itemMat.unit}}</div>
                       </div>
                     </div>
                     <div class="tcol">{{itemChild.desc}}</div>
@@ -573,7 +573,7 @@
                   <span>{{itemChild.category}}/{{itemChild.secondary_category}}</span>
                 </div>
                 <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                <div class="tcol">{{itemChild.number}}</div>
+                <div class="tcol">{{$toFixed(itemChild.number,0,true)}}</div>
               </div>
             </div>
           </div>
@@ -906,7 +906,6 @@
                     <el-input v-model="totalPlanNumberList[index]"
                       placeholder="自动计算"
                       disabled>
-                      <template slot="append">kg</template>
                     </el-input>
                   </div>
                 </div>
@@ -999,7 +998,7 @@
                       :key="indexMat">
                       <div class="tcol">{{itemMat.material_name}}</div>
                       <div class="tcol">{{itemMat.material_color}}</div>
-                      <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
+                      <div class="tcol">{{$toFixed(itemMat.number,3,true)}}{{itemMat.unit}}</div>
                     </div>
                   </div>
                 </div>
@@ -1456,7 +1455,7 @@
                       :key="indexMat">
                       <div class="tcol">{{itemMat.material_name}}</div>
                       <div class="tcol">{{itemMat.material_color}}</div>
-                      <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
+                      <div class="tcol">{{$toFixed(itemMat.number,3,true)}}{{itemMat.unit}}</div>
                     </div>
                   </div>
                 </div>
@@ -1848,7 +1847,7 @@
                         v-for="(itemChild,indexChild) in item.info_data"
                         :key="indexChild">
                         <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                        <div class="tcol">{{itemChild.number}}</div>
+                        <div class="tcol">{{$toFixed(itemChild.number,0,true)}}</div>
                         <div class="tcol">
                           <el-checkbox v-model="itemChild.check"
                             @change="checkProductStock($event,item,itemChild)"></el-checkbox>
@@ -2095,7 +2094,7 @@
                 :key="index">
                 <div class="tcol">{{item.product_code}}({{item.category_name}}/{{item.secondary_category_name}})</div>
                 <div class="tcol">{{item.size_name}}/{{item.color_name}}</div>
-                <div class="tcol">{{item.plan_number}}</div>
+                <div class="tcol">{{$toFixed(item.plan_number,0,true)}}</div>
                 <div class="tcol">
                   <template v-if="printType===1">
                     <div class="elCtn">
@@ -2936,6 +2935,9 @@ export default Vue.extend({
     },
     // 调取库存
     goStock() {
+      if (!this.$permissionsFlag('8-1')) {
+        return
+      }
       const checkLength = this.checkList().length
       if (checkLength === 0) {
         this.$message.error('请选择产品信息进行调取操作')
@@ -3031,6 +3033,9 @@ export default Vue.extend({
       info.plan_id = this.materialPlanIndex
     },
     getProductionPlan() {
+      if (!this.$permissionsFlag('8-1')) {
+        return
+      }
       const checkLength = this.checkList().length
       if (checkLength === 0) {
         this.$message.error('请选择产品信息进行加工操作')
@@ -3281,6 +3286,9 @@ export default Vue.extend({
         })
     },
     goUpdate(info: ProductionPlanInfo) {
+      if (!this.$permissionsFlag('8-2')) {
+        return
+      }
       this.productionPlanUpdateInfo = this.$clone(info)
       // 获取单位名称————展示用
       this.processClientList.forEach((item1) => {
@@ -3309,6 +3317,9 @@ export default Vue.extend({
       })
     },
     deleteProductionPlan(id: number) {
+      if (!this.$permissionsFlag('8-4')) {
+        return
+      }
       this.$confirm('是否删除该加工单据?', '提示', {
         confirmButtonText: '确认删除',
         cancelButtonText: '取消',
@@ -3445,6 +3456,9 @@ export default Vue.extend({
     },
     // 拆单子
     divideProductionPlan(info: ProductionPlanInfo) {
+      if (!this.$permissionsFlag('8-2')) {
+        return
+      }
       this.productionDivideInfo = [this.$clone(info)]
       this.addDivideClient()
       this.dividePlanFlag = true

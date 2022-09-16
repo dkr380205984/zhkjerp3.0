@@ -820,15 +820,8 @@ export default Vue.extend({
           name: '单据编号',
           ifShow: true,
           ifLock: true,
-          index: 0,
+          index: 1,
           errVal: '无编号'
-        },
-        {
-          key: 'client_name',
-          name: '下单公司',
-          ifShow: true,
-          ifLock: false,
-          index: 1
         },
         {
           key: 'total_price',
@@ -1186,8 +1179,7 @@ export default Vue.extend({
             this.orderList.forEach((item: any) => {
               item.collect_status = item.has_collect.status
               item.collect_count =
-                this.$toFixed(item.has_collect.count, 3, true) +
-                '元' +
+                (item.has_collect.count ? this.$toFixed(item.has_collect.count, 3, true) + '元' : '') +
                 (item.has_collect.count_usd ? '/' + this.$toFixed(item.has_collect.count_usd, 3, true) + '美元' : '')
               item.invoice_status = item.has_invoice.status
               item.invoice_count = item.has_invoice.count

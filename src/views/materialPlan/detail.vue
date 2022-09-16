@@ -108,8 +108,8 @@
                     v-for="(itemChild,indexChild) in item.product_data"
                     :key="indexChild">
                     <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                    <div class="tcol">{{itemChild.order_number}}</div>
-                    <div class="tcol">{{itemChild.info_data.reduce((total,cur)=>{return total+cur.number},0)}}</div>
+                    <div class="tcol">{{$toFixed(itemChild.order_number,3,true)}}</div>
+                    <div class="tcol">{{$toFixed(itemChild.info_data.reduce((total,cur)=>{return total+cur.number},0),3,true)}}</div>
                     <div class="tcol">{{itemChild.add_percent}}%</div>
                     <div class="tcol noPad"
                       style="flex:2">
@@ -117,7 +117,7 @@
                         v-for="(itemPart,indexPart) in itemChild.info_data"
                         :key="indexPart">
                         <div class="tcol">{{itemPart.part_name}}</div>
-                        <div class="tcol">{{itemPart.number}}</div>
+                        <div class="tcol">{{$toFixed(itemPart.number,3,true)}}</div>
                       </div>
                     </div>
                   </div>
@@ -162,7 +162,7 @@
                   </div>
                   <div class="tcol">{{item.size_name}}/{{item.color_name}}</div>
                   <div class="tcol">{{item.part_name}}</div>
-                  <div class="tcol">{{item.number}}</div>
+                  <div class="tcol">{{$toFixed(item.number,3,true)}}</div>
                   <div class="tcol noPad"
                     style="flex:6">
                     <div class="trow"
@@ -177,8 +177,8 @@
                       <div class="tcol">{{itemChild.material_name}}</div>
                       <div class="tcol">{{itemChild.material_color}}</div>
                       <div class="tcol">{{itemChild.loss}}%</div>
-                      <div class="tcol">{{itemChild.final_number}}{{itemChild.unit}}</div>
-                      <div class="tcol">{{itemChild.unit==='kg'?$toFixed(itemChild.final_number/item.number*1000)+'g':$toFixed(itemChild.final_number/item.number)+itemChild.unit}}</div>
+                      <div class="tcol">{{$toFixed(itemChild.final_number,3,true)}}{{itemChild.unit}}</div>
+                      <div class="tcol">{{itemChild.unit==='kg'?$toFixed(itemChild.final_number/item.number*1000,3,true)+'g':$toFixed(itemChild.final_number/item.number,3,true)+itemChild.unit}}</div>
                     </div>
                   </div>
                 </div>
@@ -227,8 +227,8 @@
                       <div class="tcol">{{itemChild.material_name}}</div>
                       <div class="tcol">{{itemChild.material_color}}</div>
                       <div class="tcol">{{itemChild.loss}}%</div>
-                      <div class="tcol">{{itemChild.final_number}}kg</div>
-                      <div class="tcol">{{$toFixed(itemChild.final_number/item.number*1000)}}g</div>
+                      <div class="tcol">{{$toFixed(itemChild.final_number,3,true)}}kg</div>
+                      <div class="tcol">{{$toFixed(itemChild.final_number/item.number*1000,3,true)}}g</div>
                     </div>
                   </div>
                 </div>
@@ -261,9 +261,9 @@
                 <div class="tcol">{{index+1}}</div>
                 <div class="tcol">{{item.material_name}}</div>
                 <div class="tcol">{{item.material_color}}</div>
-                <div class="tcol">{{item.need_number}}{{item.unit}}</div>
+                <div class="tcol">{{$toFixed(item.need_number,3,true)}}{{item.unit}}</div>
                 <div class="tcol">{{item.loss}}%</div>
-                <div class="tcol">{{item.final_number}}{{item.unit}}</div>
+                <div class="tcol">{{$toFixed(item.final_number,3,true)}}{{item.unit}}</div>
               </div>
             </div>
           </div>
@@ -554,6 +554,9 @@ export default Vue.extend({
         })
     },
     deleteMaterialPlan() {
+      if (!this.$permissionsFlag('4-4')) {
+        return
+      }
       this.$confirm('是否删除改物料计划单?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

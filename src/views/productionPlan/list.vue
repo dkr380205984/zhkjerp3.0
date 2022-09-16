@@ -163,8 +163,10 @@ import Vue from 'vue'
 import { order, listSetting } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
 import { limitArr } from '@/assets/js/dictionary'
+import { ListSetting } from '@/types/list'
 export default Vue.extend({
   data(): {
+    originalSetting: ListSetting[]
     list: OrderInfo[]
     [porpName: string]: any
   } {
@@ -235,7 +237,8 @@ export default Vue.extend({
           ifShow: true,
           ifLock: false,
           index: 5,
-          errVal: '0'
+          errVal: '0',
+          numberToString: true
         },
         {
           key: 'has_weave_plan',
@@ -326,10 +329,10 @@ export default Vue.extend({
       this.page = Number(query.page)
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.keyword = query.keyword || ''
-      this.status = query.status === 'null' ? null : query.status
+      this.status = query.status === 'null' ? null : query.status || null
       this.user_id = query.user_id || ''
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
-      this.order_type = Number(query.order_type) || null
+      this.order_type = query.order_type === 'null' ? null : Number(query.order_type) || null
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = query.limit ? Number(query.limit) : 10
     },

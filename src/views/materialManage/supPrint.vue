@@ -52,7 +52,7 @@
               <div class="tcol bgGray headTitle">承担单位</div>
               <div class="tcol">{{item.bear_client_name}}</div>
               <div class="tcol bgGray headTitle">承担金额</div>
-              <div class="tcol">{{item.bear_price}}元</div>
+              <div class="tcol">{{$toFixed(item.bear_price,3,true)}}元</div>
               <div class="tcol bgGray headTitle">联系电话</div>
               <div class="tcol">{{materialSupplementInfo.contacts_phone}}</div>
             </div>
@@ -72,7 +72,7 @@
               <div class="tcol bgGray label">合计值</div>
               <div class="tcol"
                 style="flex:2">
-                {{$toFixed(item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.number),0))}}{{item.childrenMergeInfo[0].unit}}
+                {{$toFixed(item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.number),0),3,true)}}{{item.childrenMergeInfo[0].unit}}
               </div>
             </div>
             <div class="trow bgGray">

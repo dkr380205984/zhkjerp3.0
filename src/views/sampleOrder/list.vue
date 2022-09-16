@@ -582,6 +582,9 @@ export default Vue.extend({
           name: '删除',
           class: 'hoverRed',
           fn: (item: any) => {
+            if (!this.$permissionsFlag('2-4')) {
+              return
+            }
             this.$confirm('是否删除样单?', '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',

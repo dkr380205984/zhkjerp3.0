@@ -91,7 +91,7 @@
                   <span>上传文件</span>
                 </div>
                 <div slot="tip"
-                  class="el-upload__tip">可上传文档/图片信息，文件大小不能超过10M</div>
+                  class="el-upload__tip">可上传文档/图片信息，文件大小不能超过10M(请勿上传带特殊字符的文件)</div>
               </el-upload>
             </div>
           </div>

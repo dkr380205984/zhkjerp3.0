@@ -2095,6 +2095,9 @@ export default Vue.extend({
       }
     },
     deleteSampleOrder() {
+      if (!this.$permissionsFlag('2-4')) {
+        return
+      }
       this.$confirm(
         this.sampleOrderInfo.status === 1
           ? '是否删除该订单？'

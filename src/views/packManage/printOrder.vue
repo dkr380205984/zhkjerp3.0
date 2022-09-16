@@ -44,7 +44,7 @@
                 <div class="tcol bgGray headTitle">关联订单号</div>
                 <div class="tcol">{{packOrderInfo.order_code}}</div>
                 <div class="tcol bgGray headTitle">订购总额</div>
-                <div class="tcol">{{packOrderInfo.total_price}}元</div>
+                <div class="tcol">{{$toFixed(packOrderInfo.total_price,3,true)}}元</div>
                 <div class="tcol bgGray headTitle">订购日期</div>
                 <div class="tcol">{{packOrderInfo.order_time}}</div>
               </div>
@@ -52,7 +52,7 @@
                 <div class="tcol bgGray headTitle">订购单位</div>
                 <div class="tcol">{{packOrderInfo.client_name}}/{{packOrderInfo.contacts_phone}}</div>
                 <div class="tcol bgGray headTitle">订购总数</div>
-                <div class="tcol">{{packOrderInfo.total_number}}</div>
+                <div class="tcol">{{$toFixed(packOrderInfo.total_number,0,true)}}</div>
                 <div class="tcol bgGray headTitle">交货日期</div>
                 <div class="tcol">{{packOrderInfo.delivery_time}}</div>
               </div>
@@ -106,9 +106,9 @@
                     {{itemChild.length}}
                   </template>
                 </div>
-                <div class="tcol">{{itemChild.bulk_price?(itemChild.bulk_price +'元'):'-'}}</div>
-                <div class="tcol">{{itemChild.count_price?(itemChild.count_price +'元'):'-'}}</div>
-                <div class="tcol">{{itemChild.number}}</div>
+                <div class="tcol">{{itemChild.bulk_price?($toFixed(itemChild.bulk_price,3,true) +'元'):'-'}}</div>
+                <div class="tcol">{{itemChild.count_price?($toFixed(itemChild.count_price,3,true) +'元'):'-'}}</div>
+                <div class="tcol">{{$toFixed(itemChild.number,0,true)}}</div>
                 <div class="tcol">{{itemChild.desc}}</div>
               </div>
             </div>

@@ -90,7 +90,7 @@
                 v-for="(itemChild,indexChild) in item.product_data"
                 :key="indexChild">
                 <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                <div class="tcol">{{itemChild.order_number}}</div>
+                <div class="tcol">{{$toFixed(itemChild.order_number,3,true)}}</div>
                 <div class="tcol">{{getHasPlanNumber(item.product_id,itemChild.color_name,itemChild.size_name)}}</div>
                 <div class="tcol">
                   <div class="elCtn">
@@ -196,8 +196,8 @@
                   </div>
                   <div class="tcol">{{item.size_name}}/{{item.color_name}}</div>
                   <div class="tcol">{{item.part_name}}</div>
-                  <div class="tcol">{{item.order_number}}</div>
-                  <div class="tcol">{{item.number}}</div>
+                  <div class="tcol">{{$toFixed(item.order_number,3,true)}}</div>
+                  <div class="tcol">{{$toFixed(item.number,3,true)}}</div>
                   <div class="tcol oprCtn"
                     style="flex:1.6">
                     <span class="opr blue"
@@ -1184,7 +1184,7 @@ export default Vue.extend({
           // @ts-ignore 向下取整
           return parseInt(number)
         } else {
-          return this.$toFixed(number)
+          return this.$toFixed(number, 3, true)
         }
       } else if (isNaN(num as number)) {
         return ''
@@ -1771,7 +1771,7 @@ export default Vue.extend({
             }, 0)
           )
         }, 0)
-        return num
+        return this.$toFixed(num, 0, true)
       }
     },
     getMaterialPlan() {

@@ -3,7 +3,7 @@
     class="bodyContainer">
     <div class="topTagCtn">
       <div class="tag"
-        :class="{'active':type===1}"
+        :class="{'active':$route.query.type==='1'}"
         @click="type=1;clientType='';changeRouter()">
         <div class="iconCtn">
           <svg class="iconFont"
@@ -14,7 +14,7 @@
         <span class="text">客户管理</span>
       </div>
       <div class="tag"
-        :class="{'active':type===2}"
+        :class="{'active':$route.query.type==='2'}"
         @click="type=2;clientType='';changeRouter()">
         <div class="iconCtn">
           <svg class="iconFont"
@@ -60,7 +60,7 @@
           <div class="btn borderBtn"
             @click="reset">重置</div>
           <div class="btn backHoverBlue fr"
-            @click="$router.push('/client/create?type='+$route.query.type)">{{type===1?'添加客户':'添加合作商'}}</div>
+            @click="$router.push('/client/create?type='+$route.query.type)">{{$route.query.type==='1'?'添加客户':'添加合作商'}}</div>
           <div class="fr">
             <i style="font-size:20px;line-height:32px;cursor:pointer;font-weight:bold"
               class="el-icon-chat-dot-square"
@@ -481,6 +481,24 @@ export default Vue.extend({
         }
       })
     })
+  },
+  beforeRouteUpdate(to, from, next) {
+    const moduleInfo = window.sessionStorage.getItem('module_id') as string
+    const moduleArr = JSON.parse(moduleInfo)
+    if (to.query.type === '1') {
+      if (moduleArr.indexOf('13-1') !== -1) {
+        next()
+      } else {
+        this.$message.error('暂无权限')
+      }
+    } else if (to.query.type === '2') {
+      if (moduleArr.indexOf('13-2') !== -1) {
+        next()
+      } else {
+        this.$message.error('暂无权限')
+      }
+    }
+    console.log(moduleArr)
   }
 })
 </script>

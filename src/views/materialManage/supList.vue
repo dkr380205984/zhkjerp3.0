@@ -97,9 +97,9 @@
             <div class="col">{{item.order_code}}</div>
             <div class="col">{{item.group_name}}</div>
             <div class="col">{{item.client_name}}</div>
-            <div class="col">{{item.total_plan_number}}</div>
-            <div class="col">{{item.total_order_number || 0}}</div>
-            <div class="col">{{item.total_production_number || 0}}</div>
+            <div class="col">{{$toFixed(item.total_plan_number,3,true)}}</div>
+            <div class="col">{{$toFixed(item.total_order_number || 0,3,true)}}</div>
+            <div class="col">{{$toFixed(item.total_production_number || 0,3,true)}}</div>
             <div class="col"
               :class="item.material_order_progress>=100?'green':'orange'">{{item.material_order_progress}}%</div>
             <div class="col"
@@ -116,9 +116,9 @@
             <div class="col"></div>
             <div class="col"></div>
             <div class="col"></div>
-            <div class="col green">{{additional.total_number}}</div>
-            <div class="col green">{{additional.total_order_number}}</div>
-            <div class="col green">{{additional.total_process_number}}</div>
+            <div class="col green">{{$toFixed(additional.total_number,3,true)}}</div>
+            <div class="col green">{{$toFixed(additional.total_order_number,3,true)}}</div>
+            <div class="col green">{{$toFixed(additional.total_process_number,3,true)}}</div>
             <div class="col"></div>
             <div class="col"></div>
             <div class="col"></div>

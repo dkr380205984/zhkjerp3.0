@@ -73,7 +73,7 @@
               </div>
               <div class="col flex3">
                 <div class="label">{{orderInfo.order_type===1?'下单':'打样'}}总数：</div>
-                <div class="text">{{orderInfo.time_data[sampleOrderIndex].total_number}}</div>
+                <div class="text">{{$toFixed(orderInfo.time_data[sampleOrderIndex].total_number,3,true)}}</div>
               </div>
             </div>
             <div class="row"
@@ -302,8 +302,8 @@
                           v-for="(itemChild,indexChild) in itemPro.product_info"
                           :key="indexChild">
                           <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                          <div class="tcol">{{itemChild.number}}</div>
-                          <div class="tcol">{{itemChild.transport_number||0}}</div>
+                          <div class="tcol">{{$toFixed(itemChild.number,0,true)}}</div>
+                          <div class="tcol">{{$toFixed(itemChild.transport_number||0,0,true)}}</div>
                         </div>
                       </div>
                       <div class="tcol"
@@ -368,8 +368,8 @@
                         :key="indexChild">
                         <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
                         <div class="tcol">{{itemChild.price}}{{orderInfo.settle_unit||'元'}}</div>
-                        <div class="tcol">{{itemChild.number}}</div>
-                        <div class="tcol">{{itemChild.sample_number||0}}/{{itemChild.keep_number||0}}</div>
+                        <div class="tcol">{{$toFixed(itemChild.number,0,true)}}</div>
+                        <div class="tcol">{{$toFixed(itemChild.sample_number||0,0,true)}}/{{$toFixed(itemChild.keep_number||0,0,true)}}</div>
                       </div>
                     </div>
                     <div class="tcol"

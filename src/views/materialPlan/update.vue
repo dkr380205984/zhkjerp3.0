@@ -57,7 +57,7 @@
                 v-for="(itemChild,indexChild) in item.product_data"
                 :key="indexChild">
                 <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                <div class="tcol">{{itemChild.order_number}}</div>
+                <div class="tcol">{{$toFixed(itemChild.order_number,3,true)}}</div>
                 <div class="tcol">
                   <div class="elCtn">
                     <el-input placeholder="百分比"
@@ -134,8 +134,8 @@
                 </div>
                 <div class="tcol">{{item.size_name}}/{{item.color_name}}</div>
                 <div class="tcol">{{item.part_name}}</div>
-                <div class="tcol">{{item.order_number}}</div>
-                <div class="tcol">{{item.number}}</div>
+                <div class="tcol">{{$toFixed(item.order_number,3,true)}}</div>
+                <div class="tcol">{{$toFixed(item.number,3,true)}}</div>
                 <div class="tcol oprCtn"
                   style="flex:1.6">
                   <span class="opr blue"
@@ -419,8 +419,8 @@
                   <span>{{item.category}}/{{item.secondary_category}}</span>
                 </div>
                 <div class="tcol">{{item.part_name}}</div>
-                <div class="tcol">{{item.order_number}}</div>
-                <div class="tcol">{{item.number}}</div>
+                <div class="tcol">{{$toFixed(item.order_number,3,true)}}</div>
+                <div class="tcol">{{$toFixed(item.number,3,true)}}</div>
                 <div class="tcol oprCtn">
                   <span class="opr blue"
                     @click="$addItem(item.info_data,{
@@ -602,7 +602,7 @@
             <div class="tcol">{{index+1}}</div>
             <div class="tcol">{{item.material_name}}</div>
             <div class="tcol">{{item.material_color}}</div>
-            <div class="tcol">{{item.need_number}}kg</div>
+            <div class="tcol">{{$toFixed(item.need_number,3,true)}}{{item.unit==='g'?'kg':item.unit}}</div>
             <div class="tcol">
               <div class="elCtn">
                 <el-input v-model="item.loss"

@@ -139,6 +139,65 @@
   }
 
   .popup {
+    .navCtn {
+      display: flex;
+      flex-direction: row;
+      padding: 0;
+
+      .navSon {
+        width: 150px;
+        border-right: 1px solid @borderColor;
+        font-size: @fontMiddle;
+        max-height: 600px;
+        overflow: auto;
+      }
+
+      .navFather {
+        width: 200px;
+        border-right: 1px solid @borderColor;
+        font-size: @fontBig;
+        min-height: 400px;
+      }
+
+      .nav {
+        width: 75%;
+        padding-left: 15px;
+        line-height: 40px;
+        border: 1px solid #E9E9E9;
+        border-left: 0;
+        border-top-right-radius: 2px;
+        border-bottom-right-radius: 2px;
+        color: @font65;
+        margin: 8px 0;
+        box-shadow: 2px 2px 4px 1px rgba(0, 0, 0, 0.15);
+        background: #eeeeee;
+        transition: 0.1s linear;
+        box-sizing: border-box;
+        cursor: pointer;
+
+        &:hover {
+          width: 88%;
+          background: #fafafa;
+          color: @blue;
+        }
+
+        &.active {
+          width: 88%;
+          background: #fafafa;
+          color: @blue;
+        }
+      }
+
+      .editCtn {
+        flex: 1;
+        padding: 0 20px;
+
+        .label {
+          width: 4em;
+        }
+      }
+    }
+
     .tagCtn {
       display: flex;
       flex-wrap: wrap;

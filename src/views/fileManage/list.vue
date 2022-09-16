@@ -211,7 +211,7 @@
                   <span>上传文件</span>
                 </div>
                 <div slot="tip"
-                  class="el-upload__tip">可以上传word、excel、pdf等格式的文件，且不超过20M</div>
+                  class="el-upload__tip">可以上传word、excel、pdf等格式的文件，且不超过20M(请勿上传带特殊字符的文件)</div>
               </el-upload>
             </div>
           </div>

@@ -1940,12 +1940,18 @@ export default Vue.extend({
         })
     },
     deleteQuotedPrice() {
+      if (!this.$permissionsFlag('1-4')) {
+        return
+      }
       this.$confirm('是否删除报价单?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
+          if (!this.$permissionsFlag('1-4')) {
+            return
+          }
           quotedPrice
             .delete({
               id: this.quotedList[this.quotedIndex]

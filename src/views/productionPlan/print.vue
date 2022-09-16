@@ -114,7 +114,7 @@
                 <span>{{itemPro.weight||0}}g</span>
               </div>
               <div class="tcol">{{itemPro.price}}元</div>
-              <div class="tcol">{{itemPro.number}}</div>
+              <div class="tcol">{{$toFixed(itemPro.number,0,true)}}</div>
             </div>
           </div>
         </div>
@@ -132,7 +132,7 @@
               :key="itemMat.id">
               <div class="tcol">{{itemMat.material_name}}</div>
               <div class="tcol">{{itemMat.material_color}}</div>
-              <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
+              <div class="tcol">{{$toFixed(itemMat.number,3,true)}}{{itemMat.unit}}</div>
             </div>
             <div class="gray trow"
               v-if="productionPlanInfo.material_info_data.length===0">
@@ -299,13 +299,19 @@ export default Vue.extend({
       return this.$toFixed(
         this.productionPlanInfo.product_info_data.reduce((total, item) => {
           return total + Number(this.$toFixed(Number(item.price) * Number(item.number)))
-        }, 0)
+        }, 0),
+        3,
+        true
       )
     },
     totalNumber(): number {
-      return this.productionPlanInfo.product_info_data.reduce((total, item) => {
-        return total + Number(item.number)
-      }, 0)
+      return this.$toFixed(
+        this.productionPlanInfo.product_info_data.reduce((total, item) => {
+          return total + Number(item.number)
+        }, 0),
+        0,
+        true
+      )
     }
   },
   methods: {
@@ -332,7 +338,7 @@ export default Vue.extend({
         } else if (type === 4) {
           this.showClient = !this.showClient
           this.$setLocalStorage('productionPlanPrintShow', this.showClient)
-        } else if (type === 5){
+        } else if (type === 5) {
           this.showProductClient = !this.showProductClient
           this.$setLocalStorage('productionPlanPrintClientShow', this.showProductClient)
         }
