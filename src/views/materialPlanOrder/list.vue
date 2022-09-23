@@ -81,7 +81,7 @@
         </div>
         <div class="pageCtn">
           <el-pagination background
-            :page-size="5"
+            :page-size="10"
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
@@ -272,7 +272,7 @@ export default Vue.extend({
           keyword: this.keyword,
           client_id: this.search_client_id.length > 0 ? this.search_client_id[2] : '',
           page: this.page,
-          limit: 5,
+          limit: 10,
           material_name: this.material_name,
           year: this.year
         })
