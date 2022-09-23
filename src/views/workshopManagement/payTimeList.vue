@@ -256,7 +256,7 @@
           </el-tabs>
         </div>
 
-        <div style="width: 50%; display: flex; justify-content: space-between; margin-left: 20px; line-height: 2">
+        <div style="width: 55%; display: flex; justify-content: space-between; margin-left: 20px; line-height: 2">
           <span>
             合计完成数量：
             <span class="green" style="font-weight: bold">
@@ -744,6 +744,7 @@ export default Vue.extend({
               type: this.activeName,
               page: this.page,
               limit: this.limit,
+              process_name: this.process[1],
               month: +this.date.split('-')[1],
               year: this.date.split('-')[0]
             })

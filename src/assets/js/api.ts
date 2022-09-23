@@ -1159,6 +1159,7 @@ const workshop = {
     group_id?: string | number
     start_time?: string
     end_time?: string
+    process_name?: string
     process?: string
     limit?: number
     page?: number

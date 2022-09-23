@@ -8,7 +8,7 @@
         <el-table :data="settlementLogList" tooltip-effect="dark" style="width: 100%">
           <el-table-column prop="id" label="序号" width="70" fixed></el-table-column>
           <el-table-column prop="created_at" label="添加时间" width="110" fixed> </el-table-column>
-          <el-table-column prop="staff_name" label="人员" width="120" fixed>
+          <el-table-column prop="staff_name" label="员工姓名" width="120" fixed>
             <template slot-scope="scope">
               <div>{{ scope.row.staff_code.substring(scope.row.staff_code.length - 4) }}</div>
               <div>{{ scope.row.staff_name }}</div>
@@ -85,7 +85,7 @@
           <el-table-column label="次品原因" width="120">
             <template slot-scope="scope">
               <el-select
-                style="height: 32px!important"
+                style="height: 32px !important"
                 v-model="scope.row.shoddy_reason"
                 multiple
                 filterable
@@ -105,7 +105,13 @@
             </template>
           </el-table-column>
           <el-table-column prop="price" label="结算单价(元/件)" fixed="right" width="150"> </el-table-column>
-          <el-table-column prop="total_price" label="结算总价(元)" fixed="right" width="120"> </el-table-column>
+          <el-table-column label="结算总价(元)" fixed="right" width="120">
+            <template slot-scope="scope">
+              <div>
+                {{ (scope.row.price || 0) * (scope.row.number || 0) }}
+              </div>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
       <div class="tableCtn" v-if="$route.query.type == 2">
@@ -159,24 +165,24 @@
               ></zh-input>
             </template>
           </el-table-column>
-          <el-table-column label="审核状态" width="120">
+          <el-table-column label="审核状态">
             <template slot-scope="scope">
               <div v-if="scope.row.is_check === 0" class="orange">审核中</div>
               <div v-if="scope.row.is_check === 1" class="blue">通过</div>
               <div v-if="scope.row.is_check === 2" class="red">不通过</div>
             </template>
           </el-table-column>
-          <el-table-column prop="total_price" label="结算总价(元)" width="120">
+          <el-table-column prop="total_price" label="结算总价(元)">
             <template slot-scope="scope">
-              <div>{{(scope.row.price || 0) * (scope.row.time_count || 0)}} 元</div>
+              <div>{{ (scope.row.price || 0) * (scope.row.time_count || 0) }} 元</div>
             </template>
           </el-table-column>
-          <el-table-column prop="desc" label="备注" width="120">
+          <el-table-column prop="desc" label="备注">
             <template slot-scope="scope">
               <zh-input v-model="scope.row.desc" placeholder="请输入备注" :keyBoard="keyBoard"></zh-input>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="160" fixed="right">
+          <!-- <el-table-column label="操作" width="160" fixed="right">
             <template slot-scope="scope">
               <div style="display: flex; justify-content: center">
                 <div class="hoverOrange opr">修改</div>
@@ -184,7 +190,7 @@
                 <div class="hoverRed opr" @click="lostDelete(scope.row.id)">删除</div>
               </div>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
       </div>
     </div>
@@ -277,10 +283,15 @@ export default Vue.extend({
       })
     },
     workSave() {
-      if(this.type == 2){
-        this.settlementLogList.forEach((item:any) => {
+      if (this.type == 2) {
+        this.settlementLogList.forEach((item: any) => {
           item.total_price = (item.price || 0) * (item.time_count || 0)
-        });
+        })
+      }
+      if (this.type == 1) {
+        this.settlementLogList.forEach((item: any) => {
+          item.total_price = (item.price || 0) * (item.number || 0)
+        })
       }
       workshop.save({ type: this.type, data: this.settlementLogList }).then((res) => {
         if (res.data.status) {
