@@ -108,7 +108,7 @@
           <el-table-column label="结算总价(元)" fixed="right" width="120">
             <template slot-scope="scope">
               <div>
-                {{ (scope.row.price || 0) * (scope.row.number || 0) }}
+                {{ ((scope.row.price || 0) * (scope.row.number || 0)).toFixed(3) }}
               </div>
             </template>
           </el-table-column>
@@ -174,7 +174,7 @@
           </el-table-column>
           <el-table-column prop="total_price" label="结算总价(元)">
             <template slot-scope="scope">
-              <div>{{ (scope.row.price || 0) * (scope.row.time_count || 0) }} 元</div>
+              <div>{{ ((scope.row.price || 0) * (scope.row.time_count || 0)).toFixed(3) }} 元</div>
             </template>
           </el-table-column>
           <el-table-column prop="desc" label="备注">

@@ -109,9 +109,7 @@
                         <span class="blue" style="cursor: pointer">查看</span>
                       </el-tooltip>
                     </div>
-                    <div v-else>
-                      无
-                    </div>
+                    <div v-else>无</div>
                   </template>
                 </el-table-column>
                 <el-table-column prop="staff_name" label="订单号" width="150">
@@ -204,7 +202,9 @@
                 <el-table-column prop="process_name" label="生产工序" width="110" fixed> </el-table-column>
                 <el-table-column label="工序说明" width="110" fixed>
                   <template slot-scope="scope">
-                    <div v-if="scope.row.process_desc && scope.row.process_desc.length <= 10">{{ scope.row.process_desc }}</div>
+                    <div v-if="scope.row.process_desc && scope.row.process_desc.length <= 10">
+                      {{ scope.row.process_desc }}
+                    </div>
                     <el-tooltip
                       v-else
                       class="item"
@@ -722,6 +722,7 @@ export default Vue.extend({
     },
     getList() {
       this.loading = true
+      this.processList = []
 
       staff
         .departmentList({
