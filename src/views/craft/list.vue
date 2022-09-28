@@ -150,6 +150,14 @@ export default Vue.extend({
           index: 3
         },
         {
+          key: 'rel_image',
+          name: '工艺单图片',
+          ifShow: true,
+          ifLock: false,
+          ifImage: true,
+          index: 3
+        },
+        {
           key: 'material_name',
           name: '纱线信息',
           ifShow: true,
