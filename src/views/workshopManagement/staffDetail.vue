@@ -79,7 +79,7 @@
                         :options="processList"
                         :show-all-levels="false"
                         clearable
-                        @change="getProcessDesc(item, settlementLogIndex)"
+                        @change="getProcessDesc(item, settlementLogIndex, index)"
                       ></el-cascader>
                     </div>
                     <div class="tcol" style="max-width: 101px">
@@ -90,7 +90,10 @@
                         allow-create
                         default-first-option
                         collapse-tags
-                        @change="settlementLog.is_check = true"
+                        @change="
+                          settlementLog.is_check = true
+                          item.is_check = true
+                        "
                         placeholder="请填写工序说明"
                       >
                         <el-option
@@ -108,7 +111,10 @@
                         placeholder="输入结算单价"
                         :keyBoard="keyBoard"
                         type="number"
-                        @change="settlementLog.is_check = true"
+                        @change="
+                          settlementLog.is_check = true
+                          item.is_check = true
+                        "
                       ></zh-input>
                     </div>
                     <div class="tcol noPad" style="max-width: 0">
@@ -201,7 +207,11 @@
                                       :key="colorItem.size_id + ',' + colorItem.color_id + colorIndex"
                                       :label="colorItem.name"
                                       :value="colorItem.value"
-                                      @change="settlementLog.is_check = true"
+                                      @change="
+                                        settlementLog.is_check = true
+                                        item.is_check = true
+                                        itemPro.is_check = true
+                                      "
                                     >
                                     </el-option>
                                   </el-select>
@@ -211,6 +221,8 @@
                                     @click="
                                       addSizeColor(itemDetail)
                                       settlementLog.is_check = true
+                                      item.is_check = true
+                                      itemPro.is_check = true
                                     "
                                   ></i>
                                   <i
@@ -219,6 +231,8 @@
                                     @click="
                                       deleteSizeColor(itemDetail, indexSizeColor)
                                       settlementLog.is_check = true
+                                      item.is_check = true
+                                      itemPro.is_check = true
                                     "
                                   ></i>
                                 </div>
@@ -228,7 +242,11 @@
                                     placeholder="请输入完成数量"
                                     :keyBoard="keyBoard"
                                     type="number"
-                                    @change="settlementLog.is_check = true"
+                                    @change="
+                                      settlementLog.is_check = true
+                                      item.is_check = true
+                                      itemPro.is_check = true
+                                    "
                                   ></zh-input>
                                 </div>
                                 <div class="tcol titleFix">
@@ -237,7 +255,11 @@
                                     placeholder="请输入额外数量"
                                     :keyBoard="keyBoard"
                                     type="number"
-                                    @change="settlementLog.is_check = true"
+                                    @change="
+                                      settlementLog.is_check = true
+                                      item.is_check = true
+                                      itemPro.is_check = true
+                                    "
                                   ></zh-input>
                                 </div>
                                 <div class="tcol titleFix">
@@ -246,7 +268,11 @@
                                     placeholder="请输入次品数量"
                                     :keyBoard="keyBoard"
                                     type="number"
-                                    @change="settlementLog.is_check = true"
+                                    @change="
+                                      settlementLog.is_check = true
+                                      item.is_check = true
+                                      itemPro.is_check = true
+                                    "
                                   ></zh-input>
                                 </div>
                                 <div class="tcol titleFix">
@@ -258,7 +284,11 @@
                                     default-first-option
                                     collapse-tags
                                     placeholder="请选择次品原因"
-                                    @change="settlementLog.is_check = true"
+                                    @change="
+                                      settlementLog.is_check = true
+                                      item.is_check = true
+                                      itemPro.is_check = true
+                                    "
                                   >
                                     <el-option
                                       v-for="item in substandardReason"
@@ -312,7 +342,7 @@
                         :options="processList"
                         :show-all-levels="false"
                         clearable
-                        @change="getProcessDesc(item, settlementLogIndex)"
+                        @change="getProcessDesc(item, settlementLogIndex, index)"
                       ></el-cascader>
                     </div>
                     <div class="tcol noPad" style="width: 0; flex: unset; border-right: unset">
@@ -324,7 +354,10 @@
                         default-first-option
                         collapse-tags
                         placeholder="请填写工序说明"
-                        @change="settlementLog.is_check = true"
+                        @change="
+                          settlementLog.is_check = true
+                          item.is_check = true
+                        "
                       >
                         <el-option
                           v-for="(itemSon, indexSon) in item.processDesc"
@@ -341,7 +374,10 @@
                         placeholder="输入结算单价"
                         :keyBoard="keyBoard"
                         type="number"
-                        @change="settlementLog.is_check = true"
+                        @change="
+                          settlementLog.is_check = true
+                          item.is_check = true
+                        "
                       ></zh-input>
                     </div>
                     <div class="tcol noPad">
@@ -430,6 +466,8 @@
                                     @change="
                                       $forceUpdate()
                                       settlementLog.is_check = true
+                                      item.is_check = true
+                                      itemPro.is_check = true
                                     "
                                   >
                                     <el-option
@@ -446,6 +484,8 @@
                                     @click="
                                       addSizeColor(itemDetail)
                                       settlementLog.is_check = true
+                                      item.is_check = true
+                                      itemPro.is_check = true
                                     "
                                   ></i>
                                   <i
@@ -454,6 +494,8 @@
                                     @click="
                                       deleteSizeColor(itemDetail, indexSizeColor)
                                       settlementLog.is_check = true
+                                      item.is_check = true
+                                      itemPro.is_check = true
                                     "
                                   ></i>
                                 </div>
@@ -463,7 +505,11 @@
                                     placeholder="请输入完成数量"
                                     :keyBoard="keyBoard"
                                     type="number"
-                                    @change="settlementLog.is_check = true"
+                                    @change="
+                                      settlementLog.is_check = true
+                                      item.is_check = true
+                                      itemPro.is_check = true
+                                    "
                                   ></zh-input>
                                 </div>
                                 <div class="tcol titleFix">
@@ -472,7 +518,11 @@
                                     placeholder="请输入额外数量"
                                     :keyBoard="keyBoard"
                                     type="number"
-                                    @change="settlementLog.is_check = true"
+                                    @change="
+                                      settlementLog.is_check = true
+                                      item.is_check = true
+                                      itemPro.is_check = true
+                                    "
                                   ></zh-input>
                                 </div>
                                 <div class="tcol titleFix">
@@ -481,7 +531,11 @@
                                     placeholder="请输入次品数量"
                                     :keyBoard="keyBoard"
                                     type="number"
-                                    @change="settlementLog.is_check = true"
+                                    @change="
+                                      settlementLog.is_check = true
+                                      item.is_check = true
+                                      itemPro.is_check = true
+                                    "
                                   ></zh-input>
                                 </div>
                                 <div class="tcol titleFix">
@@ -493,7 +547,11 @@
                                     default-first-option
                                     collapse-tags
                                     placeholder="请选择次品原因"
-                                    @change="settlementLog.is_check = true"
+                                    @change="
+                                      settlementLog.is_check = true
+                                      item.is_check = true
+                                      itemPro.is_check = true
+                                    "
                                   >
                                     <el-option
                                       v-for="item in substandardReason"
@@ -659,7 +717,7 @@
                       :options="processList"
                       :show-all-levels="false"
                       clearable
-                      @change="getProcessDesc(item, settlementLogIndex)"
+                      @change="getProcessDesc(item, settlementLogIndex, index)"
                     ></el-cascader>
                   </div>
                   <div class="tcol" style="min-width: 101px; max-width: 101px">
@@ -671,7 +729,10 @@
                       default-first-option
                       collapse-tags
                       placeholder="请填写工序说明"
-                      @change="settlementLog.is_check = true"
+                      @change="
+                        settlementLog.is_check = true
+                        item.is_check = true
+                      "
                     >
                       <el-option
                         v-for="(itemSon, indexSon) in item.processDesc"
@@ -688,7 +749,10 @@
                       placeholder="输入结算单价"
                       :keyBoard="keyBoard"
                       type="number"
-                      @change="settlementLog.is_check = true"
+                      @change="
+                        settlementLog.is_check = true
+                        item.is_check = true
+                      "
                     ></zh-input>
                   </div>
                   <div class="tcol noPad">
@@ -813,6 +877,8 @@
                                   @change="
                                     $forceUpdate()
                                     settlementLog.is_check = true
+                                    item.is_check = true
+                                    itemPro.is_check = true
                                   "
                                 >
                                   <el-option
@@ -829,6 +895,8 @@
                                   @click="
                                     addSizeColor(itemDetail)
                                     settlementLog.is_check = true
+                                    item.is_check = true
+                                    itemPro.is_check = true
                                   "
                                 ></i>
                                 <i
@@ -837,6 +905,8 @@
                                   @click="
                                     deleteSizeColor(itemDetail, indexSizeColor)
                                     settlementLog.is_check = true
+                                    item.is_check = true
+                                    itemPro.is_check = true
                                   "
                                 ></i>
                               </div>
@@ -846,7 +916,11 @@
                                   placeholder="请输入完成数量"
                                   :keyBoard="keyBoard"
                                   type="number"
-                                  @change="settlementLog.is_check = true"
+                                  @change="
+                                    settlementLog.is_check = true
+                                    item.is_check = true
+                                    itemPro.is_check = true
+                                  "
                                 ></zh-input>
                               </div>
                               <div class="tcol titleFix">
@@ -855,7 +929,11 @@
                                   placeholder="请输入额外数量"
                                   :keyBoard="keyBoard"
                                   type="number"
-                                  @change="settlementLog.is_check = true"
+                                  @change="
+                                    settlementLog.is_check = true
+                                    item.is_check = true
+                                    itemPro.is_check = true
+                                  "
                                 ></zh-input>
                               </div>
                               <div class="tcol titleFix">
@@ -864,7 +942,11 @@
                                   placeholder="请输入次品数量"
                                   :keyBoard="keyBoard"
                                   type="number"
-                                  @change="settlementLog.is_check = true"
+                                  @change="
+                                    settlementLog.is_check = true
+                                    item.is_check = true
+                                    itemPro.is_check = true
+                                  "
                                 ></zh-input>
                               </div>
                               <div class="tcol titleFix">
@@ -876,7 +958,11 @@
                                   default-first-option
                                   collapse-tags
                                   placeholder="请选择次品原因"
-                                  @change="settlementLog.is_check = true"
+                                  @change="
+                                    settlementLog.is_check = true
+                                    item.is_check = true
+                                    itemPro.is_check = true
+                                  "
                                 >
                                   <el-option
                                     v-for="item in substandardReason"
@@ -1255,13 +1341,13 @@ export default Vue.extend({
 
       process.list({ type: 2 }).then((res) => {
         res.data.data.forEach((item: any) => {
-          this.processList[1].children.push({ label: item.name, value: item.name })
+          this.processList[0].children.push({ label: item.name, value: item.name })
         })
       })
 
       process.list({ type: 3 }).then((res) => {
         res.data.data.forEach((item: any) => {
-          this.processList[2].children.push({ label: item.name, value: item.name })
+          this.processList[1].children.push({ label: item.name, value: item.name })
         })
       })
 
@@ -1324,8 +1410,11 @@ export default Vue.extend({
       // @ts-ignore
       this.handleSelect(...this.paramsArr)
     },
-    getProcessDesc(item: any, settlementLogIndex: number) {
+    getProcessDesc(item: any, settlementLogIndex: number, processIndex: number) {
+      // 员工层级数据检查
       this.settlementLogList[settlementLogIndex].is_check = true
+      // 工序层级数据检查
+      this.settlementLogList[settlementLogIndex].processInfo[processIndex].is_check = true
       process
         .list({
           name: item.process[1]
@@ -1416,61 +1505,75 @@ export default Vue.extend({
       settlementLogIndex: number
     ) {
       if (item.product_info.length > 1) {
-        this.$confirm('是否删除该订单?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-          .then(() => {
-            this.$deleteItem(item.product_info, itemProIndex)
+        if (item.product_info[itemProIndex].is_check) {
+          this.$confirm('该订单下可能有已经填写的数据，是否删除?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
           })
-          .catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消删除'
+            .then(() => {
+              this.$deleteItem(item.product_info, itemProIndex)
             })
-          })
+            .catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消删除'
+              })
+            })
+        } else {
+          this.$deleteItem(item.product_info, itemProIndex)
+        }
       } else {
         this.deleteProcess(settlementLog, index, settlementLogList, settlementLogIndex)
       }
     },
     deleteProcess(settlementLog: any, index: number, settlementLogList: any, settlementLogIndex: number) {
       if (settlementLog.processInfo.length > 1) {
-        this.$confirm('是否删除该工序?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-          .then(() => {
-            this.$deleteItem(settlementLog.processInfo, index)
+        if (settlementLog.is_check) {
+          this.$confirm('该工序下可能有已经填写的数据，是否删除?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
           })
-          .catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消删除'
+            .then(() => {
+              this.$deleteItem(settlementLog.processInfo, index)
             })
-          })
+            .catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消删除'
+              })
+            })
+        } else {
+          this.$deleteItem(settlementLog.processInfo, index)
+        }
       } else {
         this.deleteStaff(settlementLogList, settlementLogIndex)
       }
     },
     deleteStaff(settlementLogList: any, settlementLogIndex: number) {
-      this.$confirm('是否删除该员工?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          settlementLogList.length > 1
-            ? this.detailStaff(settlementLogList, settlementLogIndex)
-            : this.$message.error('至少有一个员工')
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
+      if (settlementLogList.length > 1) {
+        if (settlementLogList[settlementLogIndex].is_check) {
+          this.$confirm('该员工下可能有已经填写的数据，是否删除?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
           })
-        })
+            .then(() => {
+              this.detailStaff(settlementLogList, settlementLogIndex)
+            })
+            .catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消删除'
+              })
+            })
+        } else {
+          this.detailStaff(settlementLogList, settlementLogIndex)
+        }
+      } else {
+        this.$message.error('至少有一个员工')
+      }
     },
     detailStaff(settlementLogList: any, settlementLogIndex: number) {
       let a = this.selectStaffIdList.filter((item: any) => {
@@ -1801,6 +1904,7 @@ export default Vue.extend({
           })
         })
         this.settlementLogList[items.indexStaff].is_check = true
+        this.settlementLogList[items.indexStaff].processInfo[items.indexOrder].is_check = true
         this.settlementLogList[items.indexStaff].processInfo[items.indexOrder].product_info[items.indexPro] = arr[0]
         this.checkAll = false
       })
@@ -2118,7 +2222,14 @@ export default Vue.extend({
     // 粘贴该行
     parseThis(staffIndex: any, index: any, orderIndex: any) {
       let strCopyOption = this.copyOption.toString()
+      // 员工层级数据检查
       this.settlementLogList[staffIndex].is_check = this.settlementLogList[this.copyLine[0]].is_check
+      // 工序层级数据检查
+      this.settlementLogList[staffIndex].processInfo[index].is_check =
+        this.settlementLogList[this.copyLine[0]].processInfo[this.copyLine[1]].is_check
+      // 订单层级数据检查
+      this.settlementLogList[staffIndex].processInfo[index].product_info[orderIndex].is_check =
+        this.settlementLogList[this.copyLine[0]].processInfo[this.copyLine[1]].product_info[this.copyLine[2]].is_check
 
       // 复制工序
       if (strCopyOption.indexOf('process') != -1) {
@@ -2290,11 +2401,6 @@ export default Vue.extend({
     })
 
     let arr: any = [
-      {
-        value: 0,
-        label: '推荐工序',
-        children: []
-      },
       {
         value: 2,
         label: '半成品加工工序',

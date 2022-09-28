@@ -68,13 +68,16 @@
                     :options="processList"
                     :show-all-levels="false"
                     clearable
-                    @change="getProcessDesc(process, staffIndex)"
+                    @change="getProcessDesc(process, staffIndex, processIndex)"
                   ></el-cascader>
                 </div>
                 <div class="tcol">
                   <el-select
                     v-model="process.process_desc"
-                    @change="staff.is_check = true"
+                    @change="
+                      staff.is_check = true
+                      process.is_check = true
+                    "
                     multiple
                     filterable
                     allow-create
@@ -92,7 +95,14 @@
                   </el-select>
                 </div>
                 <div class="tcol">
-                  <el-select v-model="process.time_type" placeholder="请选择" @change="staff.is_check = true">
+                  <el-select
+                    v-model="process.time_type"
+                    placeholder="请选择"
+                    @change="
+                      staff.is_check = true
+                      process.is_check = true
+                    "
+                  >
                     <el-option label="按小时计时" :value="1"> </el-option>
                     <el-option label="按天计时" :value="2"> </el-option>
                   </el-select>
@@ -106,6 +116,8 @@
                     @keydown.native="
                       focusByKeydown($event, 'price', [staffIndex, processIndex], staff, ['processInfo', 'processDesc'])
                       staff.is_check = true
+                      process.is_check = true
+                      getTotalPrice(staffIndex, processIndex)
                     "
                   ></zh-input>
                 </div>
@@ -121,10 +133,28 @@
                         'processDesc'
                       ])
                       staff.is_check = true
+                      process.is_check = true
+                      getTotalPrice(staffIndex, processIndex)
                     "
                   ></zh-input>
                 </div>
-                <div class="tcol">{{ ((process.price || 0) * (process.time_count || 0)).toFixed(3) }} 元</div>
+                <div class="tcol">
+                  <!-- {{ ((process.price || 0) * (process.time_count || 0)).toFixed(3) }} 元 -->
+                  <zh-input
+                    v-model="process.total_price"
+                    :ref="'total_price-' + staffIndex + '-' + processIndex"
+                    placeholder="请输入总价"
+                    :keyBoard="keyBoard"
+                    @keydown.native="
+                      focusByKeydown($event, 'total_price', [staffIndex, processIndex], staff, [
+                        'processInfo',
+                        'processDesc'
+                      ])
+                      staff.is_check = true
+                      process.is_check = true
+                    "
+                  ></zh-input>
+                </div>
                 <div class="tcol">
                   <zh-input
                     v-model="process.desc"
@@ -133,6 +163,7 @@
                     @keydown.native="
                       focusByKeydown($event, 'desc', [staffIndex, processIndex], staff, ['processInfo', 'processDesc'])
                       staff.is_check = true
+                      process.is_check = true
                     "
                   ></zh-input>
                 </div>
@@ -173,7 +204,7 @@
                         process_type: '',
                         process_desc: '',
                         processDesc: [],
-                        time_type: '',
+                        time_type: 1,
                         time_count: '',
                         price: '',
                         total_price: '',
@@ -198,15 +229,27 @@
       </div>
     </div>
     <div class="elCtn">
-      <el-button type="primary" size="small" @click="openDialog">批量添加员工</el-button>
+      <el-button
+        type="primary"
+        size="small"
+        @click="openDialog"
+        style="padding-top: 7px; padding-bottom: 7px; font-size: 16px"
+        >批量添加员工</el-button
+      >
     </div>
     <div class="elCtn" style="margin-left: 20px">
-      <el-button type="primary" size="small" @click="addStaff">添加下一个员工</el-button>
+      <el-button
+        type="primary"
+        size="small"
+        @click="addStaff"
+        style="padding-top: 7px; padding-bottom: 7px; font-size: 16px"
+        >添加下一个员工</el-button
+      >
     </div>
     <div class="elCtn" style="margin-left: 20px">
       <el-checkbox-group v-model="copyOption">
         <el-dropdown :hide-on-click="false" trigger="click">
-          <el-button size="small" type="primary">
+          <el-button size="small" type="primary" style="padding-top: 7px; padding-bottom: 7px; font-size: 16px">
             设置复制项<i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
@@ -298,7 +341,7 @@ export default Vue.extend({
               process_type: '',
               process_desc: '',
               processDesc: [],
-              time_type: '',
+              time_type: 1,
               time_count: '',
               price: '',
               total_price: '',
@@ -319,7 +362,7 @@ export default Vue.extend({
               process_type: '',
               process_desc: '',
               processDesc: [],
-              time_type: '',
+              time_type: 1,
               time_count: '',
               price: '',
               total_price: '',
@@ -329,11 +372,6 @@ export default Vue.extend({
         }
       ],
       processList: [
-        {
-          value: 0,
-          label: '推荐工序',
-          children: []
-        },
         {
           value: 2,
           label: '半成品加工工序',
@@ -373,13 +411,13 @@ export default Vue.extend({
 
       process.list({ type: 2 }).then((res) => {
         res.data.data.forEach((item: any) => {
-          this.processList[1].children.push({ label: item.name, value: item.name })
+          this.processList[0].children.push({ label: item.name, value: item.name })
         })
       })
 
       process.list({ type: 3 }).then((res) => {
         res.data.data.forEach((item: any) => {
-          this.processList[2].children.push({ label: item.name, value: item.name })
+          this.processList[1].children.push({ label: item.name, value: item.name })
         })
       })
 
@@ -486,6 +524,10 @@ export default Vue.extend({
         }
       }
     },
+    getTotalPrice(staffIndex: number, processIndex: number) {
+      let item = this.list[staffIndex].processInfo[processIndex]
+      item.total_price = ((item.price || 0) * (item.time_count || 0)).toFixed(3)
+    },
     // 改变之后把对应的值赋给自身，把选中列表的id更新一下
     getStaffIdList(index: any) {
       const e = this.list[index].staffId
@@ -555,7 +597,7 @@ export default Vue.extend({
                 process_type: '',
                 process_desc: '',
                 processDesc: [],
-                time_type: '',
+                time_type: 1,
                 time_count: '',
                 price: '',
                 total_price: '',
@@ -589,7 +631,7 @@ export default Vue.extend({
                 process_type: '',
                 process_desc: '',
                 processDesc: [],
-                time_type: '',
+                time_type: 1,
                 time_count: '',
                 price: '',
                 total_price: '',
@@ -651,7 +693,7 @@ export default Vue.extend({
             process_type: '',
             process_desc: '',
             processDesc: [],
-            time_type: '',
+            time_type: 1,
             time_count: '',
             price: '',
             total_price: '',
@@ -710,7 +752,7 @@ export default Vue.extend({
                 process_type: '',
                 process_desc: '',
                 processDesc: [],
-                time_type: '',
+                time_type: 1,
                 time_count: '',
                 price: '',
                 total_price: '',
@@ -754,11 +796,11 @@ export default Vue.extend({
         data: []
       }
 
-      let emptyStaff = this.list.find((item:any) => {
+      let emptyStaff = this.list.find((item: any) => {
         return item.staffId === ''
       })
 
-      if(emptyStaff) {
+      if (emptyStaff) {
         this.$message.error('请填写完整员工姓名')
         this.loading = false
         return
@@ -798,16 +840,44 @@ export default Vue.extend({
       this.isCopy = true
     },
     checkDelete(staff: any, process: any, staffIndex: number, processIndex: number) {
-      if (staff.processInfo.length > 1) {
-        this.$deleteItem(staff.processInfo, processIndex)
-      } else {
-        let newArrays = this.list.filter(function (item: any) {
-          return item.show
+      if (process.is_check) {
+        this.$confirm('该工序里面可能有数据，是否删除?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
         })
-        if (newArrays.length > 1) {
-          this.list[staffIndex].show = false
+          .then(() => {
+            if (staff.processInfo.length > 1) {
+              this.$deleteItem(staff.processInfo, processIndex)
+            } else {
+              let newArrays = this.list.filter(function (item: any) {
+                return item.show
+              })
+              if (newArrays.length > 1) {
+                this.list[staffIndex].show = false
+              } else {
+                this.$message.error('至少有一个员工')
+              }
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            })
+          })
+      } else {
+        if (staff.processInfo.length > 1) {
+          this.$deleteItem(staff.processInfo, processIndex)
         } else {
-          this.$message.error('至少有一个员工')
+          let newArrays = this.list.filter(function (item: any) {
+            return item.show
+          })
+          if (newArrays.length > 1) {
+            this.list[staffIndex].show = false
+          } else {
+            this.$message.error('至少有一个员工')
+          }
         }
       }
     },
@@ -854,8 +924,9 @@ export default Vue.extend({
 
       this.isCopy = false
     },
-    getProcessDesc(item: any, staffIndex: number) {
+    getProcessDesc(item: any, staffIndex: number, processIndex: number) {
       this.list[staffIndex].is_check = true
+      this.list[staffIndex].processInfo[processIndex].is_check = true
       process
         .list({
           name: item.process_name[1]
