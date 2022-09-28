@@ -521,7 +521,11 @@ export default Vue.extend({
         boxManage.create(this.boxInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
-            this.$router.push('/boxManage/boxDetail?id=' + res.data.data)
+            if (ifCaogao) {
+              this.$router.push('/order/detail?id=' + this.$route.query.id)
+            } else {
+              this.$router.push('/boxManage/boxDetail?id=' + res.data.data)
+            }
           }
           this.saveLock = false
         })

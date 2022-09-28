@@ -947,7 +947,7 @@
                       @change="getStoreOut($event,item)">
                       <el-option v-for="(item,index) in item.stockInList"
                         :key="index"
-                        :value="item.material_id + '分隔符' + item.material_color + '分隔符' + item.attribute+ '分隔符' + item.batch_code+ '分隔符' + item.vat_code+ '分隔符' + item.color_code"
+                        :value="item.material_id + '分隔符' + item.material_color + '分隔符' + item.attribute+ '分隔符' + item.batch_code+ '分隔符' + item.vat_code+ '分隔符' + item.color_code + '分隔符' + item.yarn_type"
                         :label="item.material_name + '/' + item.material_color + '/' + item.attribute + '/' + (item.batch_code||'无批号')+ '/' + (item.vat_code||'无缸号')+ '/' + (item.color_code||'无色号')"></el-option>
                     </el-select>
                   </div>
@@ -1625,9 +1625,7 @@ export default Vue.extend({
       this.materialStockInfo.selectList.forEach((item) => {
         const inList = this.storeInList.filter(
           (itemFind: any) =>
-            itemFind.material_id === item.material_id &&
-            itemFind.material_color === item.material_color &&
-            itemFind.attribute === '筒纱'
+            itemFind.material_id === item.material_id && itemFind.material_color === item.material_color
         )
         if (inList.length === 0) {
           this.materialStockInfo.info_data.push({

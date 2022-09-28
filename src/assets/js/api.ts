@@ -655,6 +655,7 @@ const order = {
   detail: (params: DetailParams) => http.get(`${baseUrl}/order/detail`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/order/delete`, params, 'application/json'),
   cancel: (params: DeleteParams) => http.post(`${baseUrl}/order/time/cancel`, params, 'application/json'),
+  reset: (params: { order_id: number }) => http.post(`${baseUrl}/order/time/revoke/cancel`, params, 'application/json'),
   oprLog: (params: DetailParams) => http.get(`${baseUrl}/order/activity/logs`, params), // 操作记录
   deliveryList: (params?: ListParams) => http.get(`${baseUrl}/order/dispatch/lists`, params), // 大屏发货列表
   deliveryListNoLog: (params?: ListParams) => http.get('/ever/order/dispatch/lists', params), // 大屏发货列表

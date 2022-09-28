@@ -80,12 +80,12 @@ Vue.filter('productStockTypeClassFilter', (val: 1 | 2 | 3 | 4 | 5 | 6) => {
 
 // 订单状态
 Vue.filter('orderStatusFilter', (val: 0 | 1 | 2 | 3 | 4 | 5) => {
-  const statusArr = ['', '已创建', '进行中', '已完成', '已结算', '已取消', '已逾期']
+  const statusArr = ['', '已创建', '进行中', '已完成', '已结算', '已逾期', '已取消']
   return statusArr[val]
 })
 // 订单状态 class
 Vue.filter('orderStatusClassFilter', (val: 0 | 1 | 2 | 3 | 4 | 5) => {
-  const statusArr = ['', 'orange', 'blue', 'green', 'green', 'gray', 'red']
+  const statusArr = ['', 'orange', 'blue', 'green', 'green', 'red', 'gray']
   return statusArr[val]
 })
 

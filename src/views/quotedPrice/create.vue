@@ -136,16 +136,17 @@
               <span class="text">币种汇率
                 <el-tooltip class="item"
                   effect="dark"
-                  content="点击查看实时币种汇率"
+                  content="点击查看实时币种汇率,例：100人民币=600美元”改为“必填，6.8汇率则填680"
                   placement="top-start">
                   <em class="el-icon-question"
                     @click="$openUrl('http://forex.hexun.com/rmbhl/#zkRate')"></em>
                 </el-tooltip>
               </span>
-              <span class="explanation">(必填,例：100人民币=600美元,填入"600"。)</span>
+              <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入币种汇率"
+              <el-input type="number"
+                placeholder="请输入币种汇率"
                 v-model="quotedPriceInfo.exchange_rate"
                 :disabled="!!$route.query.again"></el-input>
             </div>
@@ -373,8 +374,7 @@
               v-for="(itemYarn,indexYarn) in item.material_data"
               :key="'Yarn' + indexYarn">
               <div class="col">
-                <div class="label"
-                  v-if="indexYarn===0">
+                <div class="label">
                   <span class="text">产品原料</span>
                   <el-tooltip class="item"
                     effect="dark"
@@ -397,15 +397,37 @@
                       style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
                       @click="$openUrl('/setting/?pName=物料设置&cName=纱线原料')"></i>
                   </el-tooltip>
-                  <div class="fr "
-                    style="font-size:12px;">
-                    <el-tooltip class="item"
-                      effect="dark"
-                      :content="(itemYarn.price_info&&itemYarn.price_info.length>0)?itemYarn.price_info.map((item)=>item.client_name+':'+item.price+'元').join(';'):'无报价信息'"
-                      placement="top">
-                      <span class="hoverBlue">查看报价</span>
-                    </el-tooltip>
-                  </div>
+                  <el-popover placement="bottom"
+                    title="报价详情"
+                    width="600"
+                    trigger="manual"
+                    v-model="itemYarn.look">
+                    <div class="tableCtn"
+                      style="padding: 0">
+                      <div class="thead">
+                        <div class="trow">
+                          <div class="tcol">单位名称</div>
+                          <div class="tcol">报价</div>
+                          <div class="tcol">备注</div>
+                        </div>
+                      </div>
+                      <div class="tbody">
+                        <div class="trow"
+                          v-for="(itemChild, indexChild) in itemYarn.price_info"
+                          :key="indexChild">
+                          <div class="tcol">{{ itemChild.client_name }}</div>
+                          <div class="tcol">{{ itemChild.price }}元/kg</div>
+                          <div class="tcol">{{ itemChild.desc || '无' }}</div>
+                        </div>
+                      </div>
+                    </div>
+                    <span slot="reference"
+                      @click="itemYarn.look = !itemYarn.look"
+                      class="fr">
+                      <span class="hoverBlue"
+                        style="font-size:12px">{{itemYarn.look? '关闭报价' : '查看报价'}}</span>
+                    </span>
+                  </el-popover>
                 </div>
                 <div class="info elCtn">
                   <div class="info elCtn">
@@ -419,8 +441,7 @@
                 </div>
               </div>
               <div class="col">
-                <div class="label spaceBetween"
-                  v-if="indexYarn===0">
+                <div class="label spaceBetween">
                   <div class="once">预计数量</div>
                   <div class="once">预计损耗</div>
                 </div>
@@ -462,8 +483,7 @@
                 </div>
               </div>
               <div class="col">
-                <div class="label spaceBetween"
-                  v-if="indexYarn===0">
+                <div class="label spaceBetween">
                   <div class="once">单价</div>
                   <div class="once">小计</div>
                 </div>
@@ -516,10 +536,10 @@
                     <i class="el-icon-refresh hoverGreen fr"
                       style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
                       @click="$checkCommonInfo([{
-                          checkWhich: 'api/decorateMaterial',
-                          getInfoMethed: 'dispatch',
-                          getInfoApi: 'getDecorateMaterialAsync',
-                          forceUpdate:true
+                        checkWhich: 'api/decorateMaterial',
+                        getInfoMethed: 'dispatch',
+                        getInfoApi: 'getDecorateMaterialAsync',
+                        forceUpdate:true
                       }])"></i>
                   </el-tooltip>
                   <el-tooltip class="item"
@@ -1521,6 +1541,7 @@ export default Vue.extend({
           .then((res) => {
             if (res.data.status) {
               info.price_info = res.data.data.rel_price
+              info.price = Math.min(info.price_info.map((item: any) => item.price))
             }
             this.$forceUpdate()
           })
@@ -1640,7 +1661,7 @@ export default Vue.extend({
       const fileNameLength = file.name.length // 取到文件名长度
       const fileFormat = file.name.substring(fileName + 1, fileNameLength) // 截
       this.postData.token = this.token
-      this.postData.key = file.name.split('.')[0] + Date.parse(new Date() + '') + '.' + fileFormat
+      this.postData.key = Date.parse(new Date() + '') + '.' + fileFormat
       const isJPG = file.type === 'image/jpeg'
       const isPNG = file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 10

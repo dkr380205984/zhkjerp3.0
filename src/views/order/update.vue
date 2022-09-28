@@ -1009,15 +1009,14 @@ export default Vue.extend({
       const fileName = file.name.lastIndexOf('.') // 取到文件名开始到最后一个点的长度
       const fileNameLength = file.name.length // 取到文件名长度
       const fileFormat = file.name.substring(fileName + 1, fileNameLength) // 截
-      this.postData.token = this.token
-      this.postData.key = file.name.split('.')[0] + Date.parse(new Date() + '') + '.' + fileFormat
-      const isJPG = file.type === 'image/jpeg'
-      const isPNG = file.type === 'image/png'
-      const isLt2M = file.size / 1024 / 1024 < 10
-      if (!isJPG && !isPNG) {
-        this.$message.error('图片只能是 JPG/PNG 格式!')
+      const haveSpecial = /[`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？；‘']/im
+      if (haveSpecial.test(file.name.split('.')[0])) {
+        this.$message.error('文件名称要以中文或字母的方式命名，不能带特殊字符，请重命名文件上传!')
         return false
       }
+      this.postData.token = this.token
+      this.postData.key = file.name.split('.')[0] + Date.parse(new Date() + '') + '.' + fileFormat
+      const isLt2M = file.size / 1024 / 1024 < 10
       if (!isLt2M) {
         this.$message.error('图片大小不能超过 10MB!')
         return false
