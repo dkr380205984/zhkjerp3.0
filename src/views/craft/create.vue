@@ -2459,6 +2459,7 @@ export default Vue.extend({
         .then(() => {
           this.tableData[type].number = 1
           this.tableData[type].data = [[1], [null], [null], [null], [null], [null], [null]]
+          this.tableHot[type].getPlugin('MergeCells').mergedCellsCollection.mergedCells = []
           this.tableHot[type].loadData(this.tableData[type].data)
           this.$message({
             type: 'success',

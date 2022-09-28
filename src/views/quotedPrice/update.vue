@@ -261,8 +261,7 @@
               v-for="(itemYarn,indexYarn) in item.material_data"
               :key="'Yarn' + indexYarn">
               <div class="col">
-                <div class="label"
-                  v-if="indexYarn===0">
+                <div class="label">
                   <span class="text">产品原料</span>
                   <el-tooltip class="item"
                     effect="dark"
@@ -285,6 +284,37 @@
                       style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
                       @click="$openUrl('/setting/?pName=物料设置&cName=纱线原料')"></i>
                   </el-tooltip>
+                  <el-popover placement="bottom"
+                    title="报价详情"
+                    width="600"
+                    trigger="manual"
+                    v-model="itemYarn.look">
+                    <div class="tableCtn"
+                      style="padding: 0">
+                      <div class="thead">
+                        <div class="trow">
+                          <div class="tcol">单位名称</div>
+                          <div class="tcol">报价</div>
+                          <div class="tcol">备注</div>
+                        </div>
+                      </div>
+                      <div class="tbody">
+                        <div class="trow"
+                          v-for="(itemChild, indexChild) in itemYarn.price_info"
+                          :key="indexChild">
+                          <div class="tcol">{{ itemChild.client_name }}</div>
+                          <div class="tcol">{{ itemChild.price }}元/kg</div>
+                          <div class="tcol">{{ itemChild.desc || '无' }}</div>
+                        </div>
+                      </div>
+                    </div>
+                    <span slot="reference"
+                      @click="getYarnPrice(itemYarn.tree_data,itemYarn);itemYarn.look = !itemYarn.look;$forceUpdate()"
+                      class="fr">
+                      <span class="hoverBlue"
+                        style="font-size:12px">{{itemYarn.look? '关闭报价' : '查看报价'}}</span>
+                    </span>
+                  </el-popover>
                 </div>
                 <div class="info elCtn">
                   <div class="info elCtn">
@@ -293,13 +323,12 @@
                       :options="yarnTypeList"
                       clearable
                       filterable
-                      @change="(ev)=>{ev[0]==='2'?itemYarn.unit='m':''}"></el-cascader>
+                      @change="getYarnPrice($event,itemYarn)"></el-cascader>
                   </div>
                 </div>
               </div>
               <div class="col">
-                <div class="label spaceBetween"
-                  v-if="indexYarn===0">
+                <div class="label spaceBetween">
                   <div class="once">预计数量</div>
                   <div class="once">预计损耗</div>
                 </div>
@@ -343,8 +372,7 @@
                 </div>
               </div>
               <div class="col">
-                <div class="label spaceBetween"
-                  v-if="indexYarn===0">
+                <div class="label spaceBetween">
                   <div class="once">单价</div>
                   <div class="once">小计</div>
                 </div>
@@ -1073,7 +1101,7 @@
 import { QuotedPriceInfo } from '@/types/quotedPrice'
 import { PackMaterialInfo, DecorateMaterialInfo } from '@/types/materialSetting'
 import { moneyArr } from '@/assets/js/dictionary'
-import { client, quotedPrice } from '@/assets/js/api'
+import { client, quotedPrice, yarn } from '@/assets/js/api'
 import Vue from 'vue'
 export default Vue.extend({
   data(): {
@@ -1296,6 +1324,24 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 获取纱线报价
+    getYarnPrice(ev: number[], info: any) {
+      if (ev && ev.length > 0) {
+        if (ev[0] === 2) {
+          info.unit = 'm'
+        }
+        yarn
+          .detail({
+            id: ev[2]
+          })
+          .then((res) => {
+            if (res.data.status) {
+              info.price_info = res.data.data.rel_price
+            }
+            this.$forceUpdate()
+          })
+      }
+    },
     // 报价单专用的上下键处理
     focusByKeydown(ev: any, key: string, lastKey: string, nextKey: string, indexPro: number, indexChild: number) {
       if (ev.keyCode === 38) {
@@ -1450,7 +1496,7 @@ export default Vue.extend({
       const fileNameLength = file.name.length // 取到文件名长度
       const fileFormat = file.name.substring(fileName + 1, fileNameLength) // 截
       this.postData.token = this.token
-      this.postData.key = file.name.split('.')[0] + Date.parse(new Date() + '') + '.' + fileFormat
+      this.postData.key = Date.parse(new Date() + '') + '.' + fileFormat
       const isJPG = file.type === 'image/jpeg'
       const isPNG = file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 10

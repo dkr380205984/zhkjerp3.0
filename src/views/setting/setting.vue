@@ -964,7 +964,8 @@
             </div>
           </template>
           <template v-if="cName === '纱线原料'">
-            <div class="listCtn">
+            <div class="listCtn"
+              v-loading="yarnLoading">
               <div class="filterCtn clearfix">
                 <div class="elCtn">
                   <el-input v-model="yarnKeyword1"
@@ -991,8 +992,8 @@
                     style="flex:2">操作</div>
                 </div>
                 <div class="row"
-                  v-for="(item, index) in yarnList1"
-                  :key="index">
+                  v-for="(item) in yarnList1"
+                  :key="item.id">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">{{ item.rel_type.join('/') }}</div>
                   <div class="col">{{ item.rel_price | filterPrice }}</div>
@@ -1050,7 +1051,8 @@
             </div>
           </template>
           <template v-if="cName === '面料原料'">
-            <div class="listCtn">
+            <div class="listCtn"
+              v-loading="yarnLoading">
               <div class="filterCtn clearfix">
                 <div class="elCtn">
                   <el-input v-model="yarnKeyword2"
@@ -1058,7 +1060,7 @@
                     @keydown.native.enter="getYarn(2)"></el-input>
                 </div>
                 <div class="btn backHoverBlue fr"
-                  @click="showPopup = true;;yarnInfo2.id=''">添加面料</div>
+                  @click="showPopup = true;yarnInfo2.id=''">添加面料</div>
                 <div class="btn backHoverOrange fr"
                   @click="showYarn = true">批量导入</div>
                 <div class="btn backHoverGreen fr"
@@ -1077,8 +1079,8 @@
                     style="flex:2">操作</div>
                 </div>
                 <div class="row"
-                  v-for="(item, index) in yarnList2"
-                  :key="index">
+                  v-for="(item) in yarnList2"
+                  :key="item.id">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">{{ item.rel_type.join('/') }}</div>
                   <div class="col">{{ item.rel_price | filterPrice }}</div>
@@ -1285,7 +1287,7 @@
                     @keydown.native.enter="getYarnPrice"></el-input>
                 </div>
                 <div class="btn backHoverBlue fr"
-                  @click="showPopup = true">添加报价</div>
+                  @click="resetYarnPrice();showPopup = true">添加报价</div>
                 <div class="btn backHoverBlue fr"
                   @click="getYarnPrice">搜索</div>
               </div>
@@ -1357,7 +1359,7 @@
                     @keydown.native.enter="getMianliaoPrice"></el-input>
                 </div>
                 <div class="btn backHoverBlue fr"
-                  @click="showPopup = true">添加报价</div>
+                  @click="resetYarnPrice();showPopup = true">添加报价</div>
                 <div class="btn backHoverBlue fr"
                   @click="getMianliaoPrice">搜索</div>
               </div>
@@ -4597,6 +4599,7 @@
                   placeholder="请选择报价单位"
                   v-model="yarnPrice.client_id_arr"
                   :options="yarnClientList"
+                  filterable
                   @change="
                     (ev) => {
                       yarnPrice.client_id = ev[2]
@@ -4779,6 +4782,7 @@
                   placeholder="请选择报价单位"
                   v-model="mianliaoPrice.client_id_arr"
                   :options="mianliaoClientList"
+                  filterable
                   @change="
                     (ev) => {
                       mianliaoPrice.client_id = ev[2]
@@ -5662,6 +5666,7 @@ export default Vue.extend({
       yarnAttributeArr: yarnAttributeArr,
       qrCodeUrl: '',
       postData: { token: '' },
+      yarnLoading: false,
       yarnKeyword1: '',
       yarnKeyword2: '',
       decorateMaterialKeyword: '',
@@ -8575,12 +8580,14 @@ export default Vue.extend({
         })
     },
     getYarn(type: 1 | 2 | 3, ifAll?: boolean) {
+      this.yarnLoading = true
       const limit = ifAll ? 999 : 5
       yarn
         .list({ type: type, limit: limit, page: this['yarnPage' + type], keyword: this['yarnKeyword' + type] })
         .then((res) => {
           this['yarnList' + type] = res.data.data.items
           this['yarnTotal' + type] = res.data.data.total
+          this.yarnLoading = false
         })
     },
     saveYarn(type: 1 | 2 | 3) {

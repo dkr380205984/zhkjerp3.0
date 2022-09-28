@@ -221,37 +221,57 @@ export default Vue.extend({
       navData: [
         {
           name: '报价管理',
-          id: '1-3',
+          id: ['1-3'],
           icon: 'icon-baojiaguanli1',
           url: '/quotedPrice/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
           name: '样单管理',
-          id: '2-3',
+          id: ['2-3'],
           icon: 'icon-yangdanguanli1',
           url: '/sampleOrder/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
           name: '订单管理',
-          id: '3-3',
+          id: ['3-3'],
           icon: 'icon-dingdanguanli1',
           url: '/order/list?page=1&keyword=&client_id=&user_id=&status=null&date='
         },
         {
           name: '数据报表',
-          id: '4-3',
+          id: ['4-3'],
           icon: 'icon-shujubaobiao',
           url: '/dataReport/orderStatistics'
         },
         {
           name: '单据管理',
-          id: '20-1',
+          id: [
+            '21-1',
+            '21-2',
+            '21-3',
+            '21-4',
+            '21-5',
+            '21-6',
+            '21-7',
+            '21-8',
+            '21-9',
+            '21-10',
+            '21-11',
+            '21-12',
+            '21-13',
+            '21-14',
+            '21-15',
+            '21-16',
+            '21-17',
+            '21-18',
+            '21-19'
+          ],
           icon: 'icon-danjuguanli',
           url: '/billingManagement/rawMaterialPlan?page=1'
         },
         {
           name: '财务结算',
-          id: '22-3',
+          id: ['22-3'],
           icon: 'icon-shujubaobiao',
           url: '/settlement/collectionList?page=1&status='
         },
@@ -510,8 +530,12 @@ export default Vue.extend({
     navCmp(): navInfo[] {
       if (this.moduleArr) {
         return JSON.parse(this.moduleArr).length > 0
-          ? this.navData.filter((item: navInfo) => {
-              return item.id ? JSON.parse(this.moduleArr).indexOf(item.id) !== -1 : true
+          ? this.navData.filter((item: any) => {
+              return item.id
+                ? item.id.some((itemChild: any) => {
+                    return JSON.parse(this.moduleArr).indexOf(itemChild) !== -1
+                  })
+                : true
             })
           : this.navData
       } else {

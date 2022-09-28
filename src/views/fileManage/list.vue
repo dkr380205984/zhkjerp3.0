@@ -468,6 +468,11 @@ export default Vue.extend({
       const fileName = file.name.lastIndexOf('.') // 取到文件名开始到最后一个点的长度
       const fileNameLength = file.name.length // 取到文件名长度
       const fileFormat = file.name.substring(fileName + 1, fileNameLength) // 截
+      const haveSpecial = /[`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？；‘']/im
+      if (haveSpecial.test(file.name.split('.')[0])) {
+        this.$message.error('文件名称要以中文或字母的方式命名，不能带特殊字符，请重命名文件上传!')
+        return false
+      }
       this.postData.token = this.token
       // 保留文件自带的名称
       this.postData.key = file.name.split('.')[0] + Date.parse(new Date() + '') + '.' + fileFormat

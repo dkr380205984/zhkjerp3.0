@@ -1678,7 +1678,7 @@
                     aria-hidden="true">
                     <use xlink:href="#icon-shanchudingdan"></use>
                   </svg>
-                  <span class="text">取消订单</span>
+                  <span class="text">{{orderInfo.status===6?'恢复订单':'取消订单'}}</span>
                 </div>
               </div>
             </div>
@@ -2788,28 +2788,50 @@ export default Vue.extend({
     },
     cancelOrder() {
       this.$confirm(
-        '确认提交后，订单状态将切换为“已取消”，且状态不能撤回。该订单将从列表中过滤，如需查询，请通过订单状态筛选，进行查询。是否继续？?',
+        this.orderInfo.status === 6
+          ? '是否恢复订单'
+          : '确认提交后，订单状态将切换为“已取消”。如需查询，请通过订单状态筛选，进行查询。是否继续？?',
         '提示',
         {
-          confirmButtonText: '确认取消',
+          confirmButtonText: '确认',
           cancelButtonText: '取消',
           type: 'warning'
         }
       )
         .then(() => {
-          order
-            .cancel({
-              id: Number(this.orderInfo.time_data[0].id)
-            })
-            .then((res) => {
-              if (res.data.status) {
-                this.$message({
-                  type: 'success',
-                  message: '取消成功!'
-                })
-                window.location.reload()
-              }
-            })
+          if (this.orderInfo.status === 6) {
+            order
+              .reset({
+                order_id: Number(this.orderInfo.time_data[0].id)
+              })
+              .then((res) => {
+                if (res.data.status) {
+                  this.$message({
+                    type: 'success',
+                    message: '恢复成功!'
+                  })
+                  setTimeout(() => {
+                    window.location.reload()
+                  }, 500)
+                }
+              })
+          } else {
+            order
+              .cancel({
+                id: Number(this.orderInfo.time_data[0].id)
+              })
+              .then((res) => {
+                if (res.data.status) {
+                  this.$message({
+                    type: 'success',
+                    message: '取消成功!'
+                  })
+                  setTimeout(() => {
+                    window.location.reload()
+                  }, 500)
+                }
+              })
+          }
         })
         .catch(() => {
           this.$message({

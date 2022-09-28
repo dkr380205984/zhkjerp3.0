@@ -161,8 +161,6 @@
                           </div>
                           <div class="rectContent">
                             <div class="text title">工艺单</div>
-                            <!-- <div class="text">创建人没给</div>
-                            <div class="text">创建时间没给</div> -->
                           </div>
                         </div>
                         <div class="menu">
@@ -175,7 +173,7 @@
                       <div class="rect">
                         <div class="rectMain">
                           <div class="icon"
-                            :class="productInfo.quote_rel_product_id?'yellow':'gray'">
+                            :class="productInfo.rel_quote_info.quote_id?'yellow':'gray'">
                             <img :src="require('@/assets/image/common/price_icon.png')" />
                           </div>
                           <div class="rectContent">
@@ -183,11 +181,11 @@
                           </div>
                         </div>
                         <div class="menu">
-                          <template v-if="productInfo.quote_rel_product_id">
+                          <template v-if="productInfo.rel_quote_info.quote_id">
                             <span class="opration"
-                              @click="$openUrl('/quotedPrice/print?id='+productInfo.quote_rel_product_id)">打印</span>
+                              @click="$openUrl('/quotedPrice/print?id='+productInfo.rel_quote_info.quote_id)">打印</span>
                             <span class="opration"
-                              @click="$openUrl('/quotedPrice/detail?id='+productInfo.quote_rel_product_id)">详情</span>
+                              @click="$openUrl('/quotedPrice/detail?id='+productInfo.rel_quote_info.quote_id)">详情</span>
                           </template>
                           <template v-else>
                             <span class="opration">无操作</span>
@@ -197,7 +195,7 @@
                       <div class="rect">
                         <div class="rectMain">
                           <div class="icon"
-                            :class="productInfo.quote_rel_product_id?'yellow':'gray'">
+                            :class="productInfo.order_id?'yellow':'gray'">
                             <img :src="require('@/assets/image/common/plan_icon.png')" />
                           </div>
                           <div class="rectContent">
