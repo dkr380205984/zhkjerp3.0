@@ -68,12 +68,13 @@
                     :options="processList"
                     :show-all-levels="false"
                     clearable
-                    @change="getProcessDesc(process)"
+                    @change="getProcessDesc(process, staffIndex)"
                   ></el-cascader>
                 </div>
                 <div class="tcol">
                   <el-select
                     v-model="process.process_desc"
+                    @change="list[staffIndex].is_check = true"
                     multiple
                     filterable
                     allow-create
@@ -91,7 +92,11 @@
                   </el-select>
                 </div>
                 <div class="tcol">
-                  <el-select v-model="process.time_type" placeholder="请选择">
+                  <el-select
+                    v-model="process.time_type"
+                    placeholder="请选择"
+                    @change="list[staffIndex].is_check = true"
+                  >
                     <el-option label="按小时计时" :value="1"> </el-option>
                     <el-option label="按天计时" :value="2"> </el-option>
                   </el-select>
@@ -104,6 +109,7 @@
                     :keyBoard="keyBoard"
                     @keydown.native="
                       focusByKeydown($event, 'price', [staffIndex, processIndex], staff, ['processInfo', 'processDesc'])
+                      list[staffIndex].is_check = true
                     "
                   ></zh-input>
                 </div>
@@ -118,6 +124,7 @@
                         'processInfo',
                         'processDesc'
                       ])
+                      list[staffIndex].is_check = true
                     "
                   ></zh-input>
                 </div>
@@ -129,6 +136,7 @@
                     placeholder="请输入备注"
                     @keydown.native="
                       focusByKeydown($event, 'desc', [staffIndex, processIndex], staff, ['processInfo', 'processDesc'])
+                      list[staffIndex].is_check = true
                     "
                   ></zh-input>
                 </div>
@@ -525,36 +533,72 @@ export default Vue.extend({
     // 提交数据到列表
     confirmData() {
       this.selectStaffIdList = this.$clone(this.staffIdList)
-      this.staffIdList.forEach((staffId: number) => {
-        let check = this.list.find((item: any) => {
-          return item.staffId[1] === staffId
+      if (this.staffIdList.length > 0) {
+        // 增加判断
+        this.staffIdList.forEach((staffId: number) => {
+          // 如果重复则跳过
+          let check = this.list.find((item: any) => {
+            return item.staffId[1] === staffId
+          })
+
+          if (check) {
+            return
+          }
+
+          let staffInfo = this.staffList.find((staff: any) => {
+            return staff.id === staffId
+          })
+          this.list.push({
+            staffName: staffInfo.name,
+            staffId: ['', staffId],
+            staffCode: staffInfo.code,
+            show: true,
+            processInfo: [
+              {
+                process_name: '',
+                process_type: '',
+                process_desc: '',
+                processDesc: [],
+                time_type: '',
+                time_count: '',
+                price: '',
+                total_price: '',
+                desc: ''
+              }
+            ]
+          })
         })
 
-        if (check) return
+        this.list.forEach((item: any, index: number) => {
+          let a = this.selectStaffIdList.find((staff: any) => {
+            return staff === item.staffId[1]
+          })
 
-        let staffInfo = this.staffList.find((staff: any) => {
-          return staff.id === staffId
+          if (!a) {
+            this.list.splice(index, 1)
+          }
         })
-        this.list.push({
-          staffName: staffInfo.name,
-          staffId: ['', staffId],
-          staffCode: staffInfo.code,
-          show: true,
-          processInfo: [
-            {
-              process_name: '',
-              process_type: '',
-              process_desc: '',
-              processDesc: [],
-              time_type: '',
-              time_count: '',
-              price: '',
-              total_price: '',
-              desc: ''
-            }
-          ]
-        })
-      })
+      } else {
+        this.list = [{
+            staffName: '',
+            staffId: '',
+            staffCode: '',
+            show: true,
+            processInfo: [
+              {
+                process_name: '',
+                process_type: '',
+                process_desc: '',
+                processDesc: [],
+                time_type: '',
+                time_count: '',
+                price: '',
+                total_price: '',
+                desc: ''
+              }
+            ]
+          }]
+      }
 
       this.oldList = this.$clone(this.list)
       this.closeDialog()
@@ -570,8 +614,12 @@ export default Vue.extend({
         return item === id
       })
 
+      let staffInfo = this.list.find((staff: any) => {
+        return staff.staffId[1] === id
+      })
+
       // 在列表中且处于取消状态时
-      if (check && !checkType) {
+      if (check && !checkType && staffInfo.is_check) {
         this.$confirm('该员工存在数据，取消选择后，会清空数据，是否取消？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -585,6 +633,7 @@ export default Vue.extend({
     },
     openDialog() {
       this.staffIdList = this.$clone(this.selectStaffIdList)
+      this.oldList = this.$clone(this.list)
       this.showDialog = true
     },
     closeDialog() {
@@ -804,7 +853,8 @@ export default Vue.extend({
 
       this.isCopy = false
     },
-    getProcessDesc(item: any) {
+    getProcessDesc(item: any, staffIndex: number) {
+      this.list[staffIndex].is_check = true
       process
         .list({
           name: item.process_name[1]
