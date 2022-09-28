@@ -867,6 +867,49 @@ function permissionsFlag(type: string, errMsg?: string): boolean {
   }
   return true
 }
+
+/**
+ *根据员工的工序返回二级数组
+ *@method getProcessStaff
+ *@staffList {arr} 员工列表
+ *@return {arr} 返回二级员工数组
+*/
+function getProcessStaff(staffList: Array<any>) {
+  let processList: Array<any> = []
+  staffList.forEach(item => {
+    item.label = item.code.slice(item.code.length-4) +'-'+ item.name
+    item.value = item.id
+    if (!item.process) return
+    item.process.split('/').forEach((itemProcess: string) => {
+      if (!processList.find((process) => {
+        return itemProcess === process.label
+      })) {
+        processList.push({
+          label: itemProcess,
+          value: itemProcess,
+          children: []
+        })
+      }
+    })
+  })
+
+  processList.forEach(item => {
+    staffList.forEach(staff => {
+      if (!staff.process) return
+      if (staff.process.indexOf(item.label) > -1) {
+        item.children.push(staff)
+      }
+    })
+  });
+
+  processList.unshift({
+    label: '全部工序',
+    value: '',
+    children: staffList
+  })
+
+  return processList;
+}
 export default {
   install: (Vue: any) => {
     Vue.prototype.$getHash = plugin.getHash
@@ -912,5 +955,6 @@ export default {
     Vue.prototype.$copyTextInfo = copyTextInfo
     Vue.prototype.$focusByKeydown = focusByKeydown
     Vue.prototype.$permissionsFlag = permissionsFlag
+    Vue.prototype.$getProcessStaff = getProcessStaff
   }
 }
