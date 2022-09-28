@@ -74,7 +74,7 @@
                 <div class="tcol">
                   <el-select
                     v-model="process.process_desc"
-                    @change="list[staffIndex].is_check = true"
+                    @change="staff.is_check = true"
                     multiple
                     filterable
                     allow-create
@@ -92,11 +92,7 @@
                   </el-select>
                 </div>
                 <div class="tcol">
-                  <el-select
-                    v-model="process.time_type"
-                    placeholder="请选择"
-                    @change="list[staffIndex].is_check = true"
-                  >
+                  <el-select v-model="process.time_type" placeholder="请选择" @change="staff.is_check = true">
                     <el-option label="按小时计时" :value="1"> </el-option>
                     <el-option label="按天计时" :value="2"> </el-option>
                   </el-select>
@@ -109,7 +105,7 @@
                     :keyBoard="keyBoard"
                     @keydown.native="
                       focusByKeydown($event, 'price', [staffIndex, processIndex], staff, ['processInfo', 'processDesc'])
-                      list[staffIndex].is_check = true
+                      staff.is_check = true
                     "
                   ></zh-input>
                 </div>
@@ -124,7 +120,7 @@
                         'processInfo',
                         'processDesc'
                       ])
-                      list[staffIndex].is_check = true
+                      staff.is_check = true
                     "
                   ></zh-input>
                 </div>
@@ -136,7 +132,7 @@
                     placeholder="请输入备注"
                     @keydown.native="
                       focusByKeydown($event, 'desc', [staffIndex, processIndex], staff, ['processInfo', 'processDesc'])
-                      list[staffIndex].is_check = true
+                      staff.is_check = true
                     "
                   ></zh-input>
                 </div>
@@ -288,7 +284,7 @@ export default Vue.extend({
       month: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
       additional: {},
       copyOption: ['process', 'proces_desc', 'time_type', 'price', 'time_count', 'desc'],
-      processStaffList: [],
+      processStaffList: [{ children: [] }],
       lostAddStaffChooseProcess: 0,
       list: [
         {
@@ -570,6 +566,8 @@ export default Vue.extend({
         })
 
         this.list.forEach((item: any, index: number) => {
+          if (item.staffId === '') return
+
           let a = this.selectStaffIdList.find((staff: any) => {
             return staff === item.staffId[1]
           })
@@ -579,7 +577,8 @@ export default Vue.extend({
           }
         })
       } else {
-        this.list = [{
+        this.list = [
+          {
             staffName: '',
             staffId: '',
             staffCode: '',
@@ -597,7 +596,8 @@ export default Vue.extend({
                 desc: ''
               }
             ]
-          }]
+          }
+        ]
       }
 
       this.oldList = this.$clone(this.list)
@@ -678,15 +678,6 @@ export default Vue.extend({
               department: res.data.data.name
             })
             .then((res) => {
-              //   let arr = this.$clone(this.staffList)
-              //   res.data.data.forEach((item: any) => {
-              //     this.staffList.forEach((staff: any, index: number) => {
-              //       if (item.id === staff.id) {
-              //         this.$deleteItem(arr, index)
-              //       }
-              //     })
-              //   })
-              //   this.staffList = res.data.data.concat(arr)
               this.staffList = res.data.data
               this.processStaffList = this.$getProcessStaff(this.staffList)
             })
@@ -763,12 +754,21 @@ export default Vue.extend({
         data: []
       }
 
+      let emptyStaff = this.list.find((item:any) => {
+        return item.staffId === ''
+      })
+
+      if(emptyStaff) {
+        this.$message.error('请填写完整员工姓名')
+        this.loading = false
+        return
+      }
+
       this.list.forEach((staff: any) => {
         // console.log(staff, 'staff')
         if (!staff.show) return
         staff.processInfo.forEach((process: any) => {
           // console.log(process, 'process')
-          console.log(staff)
           params.data.push({
             id: null,
             staff_id: staff.staffId[1],
@@ -814,6 +814,7 @@ export default Vue.extend({
     // 粘贴该行
     parseThis(staffIndex: any, processIndex: any) {
       let strCopyOption = this.copyOption.toString()
+      this.list[staffIndex].is_check = this.list[this.copyLine[0]].is_check
 
       // 复制工序
       if (strCopyOption.indexOf('process') != -1) {

@@ -19,6 +19,13 @@
           </el-select>
         </div>
         <div class="elCtn">
+          <el-select v-model="order_type" placeholder="订单类型">
+            <el-option value="" label="订单/样单"></el-option>
+            <el-option :value="1" label="仅订单"></el-option>
+            <el-option :value="2" label="仅样单"></el-option>
+          </el-select>
+        </div>
+        <div class="elCtn" style="margin-left: 20px">
           <el-cascader placeholder="筛选下单公司" v-model="client_id" :options="clientList" filterable clearable>
           </el-cascader>
         </div>
@@ -54,25 +61,14 @@
                 v-if="settlementLog.show"
               >
                 <div class="tcol" style="font-size: 14px; max-width: 101px">
-                  {{
-                    settlementLog.staffName
-                      ? settlementLog.staffCode.substr(
-                          settlementLog.staffCode.length - 4,
-                          settlementLog.staffCode.length
-                        ) +
-                        ' ' +
-                        settlementLog.staffName
-                      : '在下方选择员工'
-                  }}
-                  <!-- <el-select v-model="settlementLog.staff_id" filterable placeholder="请选择员工" @change="selectStaff">
-                    <el-option
-                      v-for="(staff, StaffIndex) in staffList"
-                      :key="StaffIndex + 'StaffIndex'"
-                      :label="staff.code.substr(staff.code.length - 4, staff.code.length) + ' ' + staff.name"
-                      :value="staff.id"
-                    >
-                    </el-option>
-                  </el-select> -->
+                  <el-cascader
+                    placeholder="员工姓名搜索"
+                    v-model="settlementLog.staffId"
+                    :options="processStaffList"
+                    filterable
+                    :show-all-levels="false"
+                    @change="getStaffIdList(settlementLogIndex)"
+                  ></el-cascader>
                 </div>
                 <div class="tcol noPad" style="overflow: unset">
                   <div class="trow" v-for="(item, index) in settlementLog.processInfo" :key="'process' + index">
@@ -83,7 +79,7 @@
                         :options="processList"
                         :show-all-levels="false"
                         clearable
-                        @change="getProcessDesc(item)"
+                        @change="getProcessDesc(item, settlementLogIndex)"
                       ></el-cascader>
                     </div>
                     <div class="tcol" style="max-width: 101px">
@@ -94,6 +90,7 @@
                         allow-create
                         default-first-option
                         collapse-tags
+                        @change="settlementLog.is_check = true"
                         placeholder="请填写工序说明"
                       >
                         <el-option
@@ -111,6 +108,7 @@
                         placeholder="输入结算单价"
                         :keyBoard="keyBoard"
                         type="number"
+                        @change="settlementLog.is_check = true"
                       ></zh-input>
                     </div>
                     <div class="tcol noPad" style="max-width: 0">
@@ -203,18 +201,25 @@
                                       :key="colorItem.size_id + ',' + colorItem.color_id + colorIndex"
                                       :label="colorItem.name"
                                       :value="colorItem.value"
+                                      @change="settlementLog.is_check = true"
                                     >
                                     </el-option>
                                   </el-select>
                                   <i
                                     class="el-icon-circle-plus-outline"
                                     style="cursor: pointer; position: absolute; right: 15%; top: 30%"
-                                    @click="addSizeColor(itemDetail)"
+                                    @click="
+                                      addSizeColor(itemDetail)
+                                      settlementLog.is_check = true
+                                    "
                                   ></i>
                                   <i
                                     class="el-icon-remove-outline"
                                     style="cursor: pointer; position: absolute; right: 5%; top: 30%"
-                                    @click="deleteSizeColor(itemDetail, indexSizeColor)"
+                                    @click="
+                                      deleteSizeColor(itemDetail, indexSizeColor)
+                                      settlementLog.is_check = true
+                                    "
                                   ></i>
                                 </div>
                                 <div class="tcol titleFix">
@@ -223,6 +228,7 @@
                                     placeholder="请输入完成数量"
                                     :keyBoard="keyBoard"
                                     type="number"
+                                    @change="settlementLog.is_check = true"
                                   ></zh-input>
                                 </div>
                                 <div class="tcol titleFix">
@@ -231,6 +237,7 @@
                                     placeholder="请输入额外数量"
                                     :keyBoard="keyBoard"
                                     type="number"
+                                    @change="settlementLog.is_check = true"
                                   ></zh-input>
                                 </div>
                                 <div class="tcol titleFix">
@@ -239,6 +246,7 @@
                                     placeholder="请输入次品数量"
                                     :keyBoard="keyBoard"
                                     type="number"
+                                    @change="settlementLog.is_check = true"
                                   ></zh-input>
                                 </div>
                                 <div class="tcol titleFix">
@@ -250,6 +258,7 @@
                                     default-first-option
                                     collapse-tags
                                     placeholder="请选择次品原因"
+                                    @change="settlementLog.is_check = true"
                                   >
                                     <el-option
                                       v-for="item in substandardReason"
@@ -303,7 +312,7 @@
                         :options="processList"
                         :show-all-levels="false"
                         clearable
-                        @change="getProcessDesc(item)"
+                        @change="getProcessDesc(item, settlementLogIndex)"
                       ></el-cascader>
                     </div>
                     <div class="tcol noPad" style="width: 0; flex: unset; border-right: unset">
@@ -315,6 +324,7 @@
                         default-first-option
                         collapse-tags
                         placeholder="请填写工序说明"
+                        @change="settlementLog.is_check = true"
                       >
                         <el-option
                           v-for="(itemSon, indexSon) in item.processDesc"
@@ -331,6 +341,7 @@
                         placeholder="输入结算单价"
                         :keyBoard="keyBoard"
                         type="number"
+                        @change="settlementLog.is_check = true"
                       ></zh-input>
                     </div>
                     <div class="tcol noPad">
@@ -416,7 +427,10 @@
                                   <el-select
                                     v-model="itemSizeColor.chooseId"
                                     placeholder="请选择尺码颜色"
-                                    @change="$forceUpdate()"
+                                    @change="
+                                      $forceUpdate()
+                                      settlementLog.is_check = true
+                                    "
                                   >
                                     <el-option
                                       v-for="(colorItem, colorIndex) in itemSizeColor.colorList"
@@ -429,12 +443,18 @@
                                   <i
                                     class="el-icon-circle-plus-outline"
                                     style="cursor: pointer; position: absolute; right: 15%; top: 30%"
-                                    @click="addSizeColor(itemDetail)"
+                                    @click="
+                                      addSizeColor(itemDetail)
+                                      settlementLog.is_check = true
+                                    "
                                   ></i>
                                   <i
                                     class="el-icon-remove-outline"
                                     style="cursor: pointer; position: absolute; right: 5%; top: 30%"
-                                    @click="deleteSizeColor(itemDetail, indexSizeColor)"
+                                    @click="
+                                      deleteSizeColor(itemDetail, indexSizeColor)
+                                      settlementLog.is_check = true
+                                    "
                                   ></i>
                                 </div>
                                 <div class="tcol titleFix">
@@ -443,6 +463,7 @@
                                     placeholder="请输入完成数量"
                                     :keyBoard="keyBoard"
                                     type="number"
+                                    @change="settlementLog.is_check = true"
                                   ></zh-input>
                                 </div>
                                 <div class="tcol titleFix">
@@ -451,6 +472,7 @@
                                     placeholder="请输入额外数量"
                                     :keyBoard="keyBoard"
                                     type="number"
+                                    @change="settlementLog.is_check = true"
                                   ></zh-input>
                                 </div>
                                 <div class="tcol titleFix">
@@ -459,6 +481,7 @@
                                     placeholder="请输入次品数量"
                                     :keyBoard="keyBoard"
                                     type="number"
+                                    @change="settlementLog.is_check = true"
                                   ></zh-input>
                                 </div>
                                 <div class="tcol titleFix">
@@ -470,6 +493,7 @@
                                     default-first-option
                                     collapse-tags
                                     placeholder="请选择次品原因"
+                                    @change="settlementLog.is_check = true"
                                   >
                                     <el-option
                                       v-for="item in substandardReason"
@@ -635,7 +659,7 @@
                       :options="processList"
                       :show-all-levels="false"
                       clearable
-                      @change="getProcessDesc(item)"
+                      @change="getProcessDesc(item, settlementLogIndex)"
                     ></el-cascader>
                   </div>
                   <div class="tcol" style="min-width: 101px; max-width: 101px">
@@ -647,6 +671,7 @@
                       default-first-option
                       collapse-tags
                       placeholder="请填写工序说明"
+                      @change="settlementLog.is_check = true"
                     >
                       <el-option
                         v-for="(itemSon, indexSon) in item.processDesc"
@@ -663,6 +688,7 @@
                       placeholder="输入结算单价"
                       :keyBoard="keyBoard"
                       type="number"
+                      @change="settlementLog.is_check = true"
                     ></zh-input>
                   </div>
                   <div class="tcol noPad">
@@ -784,7 +810,10 @@
                                 <el-select
                                   v-model="itemSizeColor.chooseId"
                                   placeholder="请选择尺码颜色"
-                                  @change="$forceUpdate()"
+                                  @change="
+                                    $forceUpdate()
+                                    settlementLog.is_check = true
+                                  "
                                 >
                                   <el-option
                                     v-for="(colorItem, colorIndex) in itemSizeColor.colorList"
@@ -797,12 +826,18 @@
                                 <i
                                   class="el-icon-circle-plus-outline"
                                   style="cursor: pointer; position: absolute; right: 15%; top: 30%"
-                                  @click="addSizeColor(itemDetail)"
+                                  @click="
+                                    addSizeColor(itemDetail)
+                                    settlementLog.is_check = true
+                                  "
                                 ></i>
                                 <i
                                   class="el-icon-remove-outline"
                                   style="cursor: pointer; position: absolute; right: 5%; top: 30%"
-                                  @click="deleteSizeColor(itemDetail, indexSizeColor)"
+                                  @click="
+                                    deleteSizeColor(itemDetail, indexSizeColor)
+                                    settlementLog.is_check = true
+                                  "
                                 ></i>
                               </div>
                               <div class="tcol titleFix">
@@ -811,6 +846,7 @@
                                   placeholder="请输入完成数量"
                                   :keyBoard="keyBoard"
                                   type="number"
+                                  @change="settlementLog.is_check = true"
                                 ></zh-input>
                               </div>
                               <div class="tcol titleFix">
@@ -819,6 +855,7 @@
                                   placeholder="请输入额外数量"
                                   :keyBoard="keyBoard"
                                   type="number"
+                                  @change="settlementLog.is_check = true"
                                 ></zh-input>
                               </div>
                               <div class="tcol titleFix">
@@ -827,6 +864,7 @@
                                   placeholder="请输入次品数量"
                                   :keyBoard="keyBoard"
                                   type="number"
+                                  @change="settlementLog.is_check = true"
                                 ></zh-input>
                               </div>
                               <div class="tcol titleFix">
@@ -838,6 +876,7 @@
                                   default-first-option
                                   collapse-tags
                                   placeholder="请选择次品原因"
+                                  @change="settlementLog.is_check = true"
                                 >
                                   <el-option
                                     v-for="item in substandardReason"
@@ -939,379 +978,26 @@
         </div>
       </div>
     </div>
-    <!-- <div v-for="(settlementLog, settlementLogIndex) in settlementLogList"
-      :key="'process' + settlementLogIndex">
-      <div class="module">
-        <div class="detailCtn"
-          style="margin-bottom: 0; padding-bottom: 0">
-          <div class="row">
-            <div class="col">
-              <div class="label"
-                style="width: unset; margin-right: 10px">{{ settlementLogIndex + 1 }}</div>
-              <div class="label">员工姓名：</div>
-              <div class="text">
-                <el-select v-model="settlementLog.staffId"
-                  filterable
-                  placeholder="请选择员工"
-                  @change="selectStaff">
-                  <el-option v-for="(staff, StaffIndex) in staffList"
-                    :key="StaffIndex + 'StaffIndex'"
-                    :label="staff.code.substr(staff.code.length - 4, staff.code.length) + ' ' + staff.name"
-                    :value="staff.id">
-                  </el-option>
-                </el-select>
-              </div>
-              <div class="btn backHoverRed"
-                style="margin-left: 20px; display: flex; align-items: center"
-                @click="deleteStaff(settlementLogList, settlementLogIndex)">
-                删除员工
-              </div>
-              <div class="btn backHoverBlue"
-                style="margin-left: 20px; display: flex; align-items: center"
-                @click="
-                  $addItem(settlementLog.processInfo, {
-                    process: '',
-                    product_info: [
-                      {
-                        order_code: '',
-                        product_detail_info: [
-                          {
-                            code: '',
-                            sizeColorInfo: [
-                              {
-                                size_name: '',
-                                color_name: '',
-                                number: '',
-                                extra_number: '',
-                                shoddy_number: '',
-                                shoddy_reason: []
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  })
-                ">
-                添加下个工序
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="tableCtn"
-          v-for="(item, index) in settlementLog.processInfo"
-          :key="'process' + index">
-          <div class="tbody"
-            style="border-top: 1px solid #e9e9e9">
-            <div class="trow">
-              <div class="tcol bgGray">负责工序</div>
-              <div class="tcol">
-                <el-cascader v-model="item.process"
-                  filterable
-                  :options="processList"
-                  :show-all-levels="false"
-                  clearable
-                  @change="getProcessDesc(item)"></el-cascader>
-              </div>
-              <div class="tcol bgGray">工序说明</div>
-              <div class="tcol">
-                <el-select v-model="item.process_desc"
-                  multiple
-                  filterable
-                  allow-create
-                  default-first-option
-                  collapse-tags
-                  placeholder="请选择填写工序说明">
-                  <el-option v-for="(itemSon, indexSon) in item.processDesc"
-                    :key="itemSon.value + indexSon"
-                    :label="itemSon.label"
-                    :value="itemSon.value">
-                  </el-option>
-                </el-select>
-              </div>
-              <div class="tcol bgGray">结算单价</div>
-              <div class="tcol">
-                <zh-input v-model="item.price"
-                  placeholder="请输入结算单价"
-                  :keyBoard="keyBoard"
-                  type="number"></zh-input>
-              </div>
-              <div class="tcol"
-                style="flex: 0.1">
-                <div class="closeCtn backHoverRed">
-                  <span class="el-icon-close"
-                    style="cursor: pointer"
-                    @click="deleteProcess(settlementLog, index)"></span>
-                </div>
-              </div>
-            </div>
-            <div class="trow">
-              <div class="tcol bgGray"
-                style="flex: 0.3; text-align: center">序号</div>
-              <div class="tcol bgGray">
-                <div>订单号</div>
-              </div>
-              <div class="tcol noPad"
-                style="flex: 8.7">
-                <div class="trow">
-                  <div class="tcol bgGray">产品编号</div>
-                  <div class="tcol bgGray">尺码颜色</div>
-                  <div class="tcol bgGray">完成数量</div>
-                  <div class="tcol bgGray">额外数量</div>
-                  <div class="tcol bgGray">次品数量</div>
-                  <div class="tcol bgGray">次品原因</div>
-                </div>
-              </div>
-              <div class="tcol bgGray">操作</div>
-            </div>
-            <div class="trow"
-              v-for="(itemPro, itemProIndex) in item.product_info"
-              :key="itemProIndex + 'itemProIndex'">
-              <div class="tcol"
-                style="flex: 0.3; text-align: center">
-                {{ itemProIndex + 1 }}
-              </div>
-              <div class="tcol">
-                <el-select v-model="itemPro.order_code"
-                  filterable
-                  remote
-                  placeholder="请输入订单编号"
-                  :loading="searchLoading"
-                  :remote-method="
-                    (ev) => {
-                      return $debounce(ev, timer, querySearchAsync)
-                    }
-                  "
-                  @change="handleSelect(item, settlementLogIndex, index, itemProIndex, index, settlementLogIndex)">
-                  <div style="display: flex; padding: 0 10px; width: 500px">
-                    <div style="flex: 1">订单号</div>
-                    <div style="flex: 1">下单公司</div>
-                    <div style="flex: 1">下单时间</div>
-                  </div>
-                  <el-option v-for="(item, index) in orderList"
-                    :key="item.value + index + 'order'"
-                    :label="item.label"
-                    :value="item.value">
-                    <div style="display: flex">
-                      <span style="flex: 1">{{ item.value }}</span>
-                      <span style="flex: 1"> {{ item.client_name }} </span>
-                      <span style="flex: 1">{{ item.created_at }}</span>
-                    </div>
-                  </el-option>
-                </el-select>
-              </div>
-              <div class="tcol noPad"
-                style="flex: 8.7">
-                <div class="trow"
-                  v-for="(itemDetail, indexDetail) in itemPro.product_detail_info"
-                  :key="indexDetail + 'indexDetail'">
-                  <div class="tcol">
-                    <el-select v-model="itemDetail.code"
-                      filterable
-                      remote
-                      placeholder="请输入产品编号"
-                      :loading="searchLoading"
-                      :remote-method="
-                        (ev) => {
-                          return $debounce(ev, timer, querySearchAsync1)
-                        }
-                      "
-                      :ref="'input' + settlementLogIndex + index + itemProIndex + indexDetail"
-                      @keyup.enter.native="
-                        getChooseOrderList(item, settlementLogIndex, index, itemProIndex, indexDetail)
-                      "
-                      @change="handleSelect(item, settlementLogIndex, index, itemProIndex, index, settlementLogIndex)">
-                      <div style="display: flex; padding: 0 10px; width: 800px">
-                        <div style="flex: 1">产品编号</div>
-                        <div style="flex: 1">所属订单号</div>
-                        <div style="flex: 1">包含色组</div>
-                        <div style="flex: 1">下单公司</div>
-                        <div style="flex: 1">下单时间</div>
-                      </div>
-                      <el-option v-for="(item, i) in orderList"
-                        :key="item.value + settlementLogIndex + indexDetail + index + i + 'orderList'"
-                        :label="item.label"
-                        :value="item.value">
-                        <div style="display: flex; white-space: normal">
-                          <span style="flex: 1">{{ item.product_name }}</span>
-                          <span style="flex: 1">{{ item.value }}</span>
-                          <span style="width: 150px; overflow: hidden; margin-right: 10px">{{ item.colorGroup }}</span>
-                          <span style="flex: 1"> {{ item.client_name }} </span>
-                          <span style="flex: 1">{{ item.created_at }}</span>
-                        </div>
-                      </el-option>
-                    </el-select>
-                  </div>
-                  <div class="tcol noPad"
-                    style="flex: 5.7">
-                    <div class="trow"
-                      v-for="(itemSizeColor, indexSizeColor) in itemDetail.sizeColorInfo"
-                      :key="indexSizeColor + 'indexSizeColor'">
-                      <div class="tcol"
-                        style="display: block; position: relative">
-                        <el-select v-model="itemSizeColor.chooseId"
-                          placeholder="请选择尺码颜色"
-                          @change="$forceUpdate()">
-                          <el-option v-for="(colorItem, colorIndex) in itemSizeColor.colorList"
-                            :key="colorItem.size_id + ',' + colorItem.color_id + colorIndex"
-                            :label="colorItem.name"
-                            :value="colorItem.value">
-                          </el-option>
-                        </el-select>
-                        <i class="el-icon-circle-plus-outline"
-                          style="cursor: pointer; position: absolute; right: 15%; top: 30%"
-                          @click="
-                            $addItem(itemDetail.sizeColorInfo, {
-                              size_name: '',
-                              color_name: '',
-                              number: '',
-                              colorList: itemDetail.sizeColorInfo[0].colorList,
-                              extra_number: '',
-                              shoddy_number: '',
-                              shoddy_reason: []
-                            })
-                          "></i>
-                        <i class="el-icon-remove-outline"
-                          style="cursor: pointer; position: absolute; right: 5%; top: 30%"
-                          @click="
-                            itemDetail.sizeColorInfo.length > 1
-                              ? $deleteItem(itemDetail.sizeColorInfo, indexSizeColor)
-                              : $message.error('至少有一个产品颜色')
-                          "></i>
-                      </div>
-                      <div class="tcol">
-                        <zh-input v-model="itemSizeColor.number"
-                          placeholder="请输入完成数量"
-                          :keyBoard="keyBoard"
-                          type="number"></zh-input>
-                      </div>
-                      <div class="tcol">
-                        <zh-input v-model="itemSizeColor.extra_number"
-                          placeholder="请输入额外数量"
-                          :keyBoard="keyBoard"
-                          type="number"></zh-input>
-                      </div>
-                      <div class="tcol">
-                        <zh-input v-model="itemSizeColor.shoddy_number"
-                          placeholder="请输入结算单价"
-                          :keyBoard="keyBoard"
-                          type="number"></zh-input>
-                      </div>
-                      <div class="tcol cpyy"
-                        style="overflow-y: scroll">
-                        <el-select v-model="itemSizeColor.shoddy_reason"
-                          multiple
-                          filterable
-                          allow-create
-                          default-first-option
-                          collapse-tags
-                          placeholder="请选择次品原因">
-                          <el-option v-for="item in substandardReason"
-                            :key="item.value + 'ciPinReason'"
-                            :label="item.label"
-                            :value="item.value">
-                          </el-option>
-                        </el-select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="tcol">
-                <div>
-                  <span class="hoverBlue"
-                    style="cursor: pointer"
-                    @click="
-                      $addItem(item.product_info, {
-                        order_code: '',
-                        product_detail_info: [
-                          {
-                            code: '',
-                            sizeColorInfo: [
-                              {
-                                size_name: '',
-                                color_name: '',
-                                number: '',
-                                extra_number: '',
-                                shoddy_number: '',
-                                shoddy_reason: []
-                              }
-                            ]
-                          }
-                        ]
-                      })
-                    ">
-                    添加
-                  </span>
-                  <span class="hoverRed"
-                    style="cursor: pointer; margin-left: 20px"
-                    @click="checkDelete(item, itemProIndex)">
-                    删除
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
     <div style="overflow: hidden; margin-top: 20px">
-      <!-- <div
-        class="btn backHoverBlue fr"
-        @click="
-          $addItem(settlementLogList, {
-            staffName: '',
-            staffCode: '',
-            staffId: '',
-            show: true,
-            processInfo: [
-              {
-                process: '',
-                product_info: [
-                  {
-                    order_code: '',
-                    product_detail_info: [
-                      {
-                        code: '',
-                        sizeColorInfo: [
-                          {
-                            size_name: '',
-                            color_name: '',
-                            number: '',
-                            extra_number: '',
-                            shoddy_number: '',
-                            shoddy_reason: []
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          })
-        "
-      >
-        添加下个员工
-      </div> -->
-      添加员工：
       <div class="elCtn">
-        <el-select
-          v-model="selectStaffIdList"
-          multiple
-          filterable
-          collapse-tags
-          @change="selectListStaffMore"
-          placeholder="添加员工"
+        <el-button
+          size="small"
+          type="primary"
+          @click="openDialog"
+          style="padding-top: 7px; padding-bottom: 7px; font-size: 16px"
         >
-          <el-option
-            v-for="item in staffList"
-            :key="item.code + item.id"
-            :label="item.code.slice(4, 10) + ' ' + item.name"
-            :value="item.id"
-          >
-          </el-option>
-        </el-select>
+          批量添加员工
+        </el-button>
+      </div>
+      <div class="elCtn" style="margin-left: 20px">
+        <el-button
+          size="small"
+          type="primary"
+          @click="addStaff"
+          style="padding-top: 7px; padding-bottom: 7px; font-size: 16px"
+        >
+          添加下个员工
+        </el-button>
       </div>
       <div class="elCtn" style="margin-left: 20px">
         <el-checkbox-group v-model="copyOption">
@@ -1333,16 +1019,6 @@
           </el-dropdown>
         </el-checkbox-group>
       </div>
-      <!-- <div class="elCtn" style="margin-left: 20px">
-        <el-select id="copyClick" v-model="copyOption" multiple collapse-tags placeholder="设置复制项">
-          <el-option label="生产工序" value="process"> </el-option>
-          <el-option label="工序说明" value="proces_desc"> </el-option>
-          <el-option label="结算单价" value="price"> </el-option>
-          <el-option label="订单编号" value="order_code"> </el-option>
-          <el-option label="尺码颜色" value="size_color"> </el-option>
-        </el-select>
-      </div> -->
-      <!-- <div style="margin-right: 10px" class="btn backHoverBlue fr" @click="copyUp">复制上一组</div> -->
     </div>
     <!-- 生产进度 -->
     <div class="popup" v-show="addOrder" v-loading="showPopupLoading" element-loading-target>
@@ -1443,6 +1119,28 @@
         </div>
       </div>
     </div>
+    <el-dialog title="批量添加员工" width="50%" :visible.sync="showDialog" :before-close="closeDialog">
+      <div class="elCtn">
+        <el-select v-model="lostAddStaffChooseProcess" placeholder="请选择">
+          <el-option v-for="(item, index) in processStaffList" :key="item.value" :label="item.label" :value="index">
+          </el-option>
+        </el-select>
+      </div>
+      <el-checkbox-group v-model="staffIdList">
+        <el-checkbox
+          style="width: calc(100% / 8); margin-top: 10px"
+          v-for="item in processStaffList[lostAddStaffChooseProcess].children"
+          @change="changeMostStaff(item.id)"
+          :key="item.id + '添加员工'"
+          :label="item.id"
+          >{{ item.code.slice(item.code.length - 4) + '-' + item.name }}</el-checkbox
+        >
+      </el-checkbox-group>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeDialog">取 消</el-button>
+        <el-button type="primary" @click="confirmData">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -1460,14 +1158,16 @@ export default Vue.extend({
       loading: true,
       keyBoard: localStorage.showWorkShopKeyBoard === 'true',
       showPopupLoading: false,
-      openWindowKey: false,
-      autoAssignSizeColor: false,
+      showDialog: false,
       reqTime: '',
       page: 1,
       limit: 10,
       total: 0,
-      product_arr: [],
+      lostAddStaffChooseProcess: 0,
+      order_type: '',
       selectStaffIdList: [],
+      staffIdList: [],
+      oldList: [],
       copyLine: [],
       copyOption: ['process', 'proces_desc', 'price', 'order_code', 'product_code', 'size_color'],
       client_id: '',
@@ -1478,10 +1178,6 @@ export default Vue.extend({
       searchLoading: false,
       idDone: false,
       checkAll: false,
-      tabChoose: '',
-      // 颜色尺码是否全选
-      isCheckAllSizeColor: false,
-      isCheckAllProcess: false,
       staffInfo: {},
       substandardReason: [
         {
@@ -1525,18 +1221,6 @@ export default Vue.extend({
           label: '其它原因'
         }
       ],
-      allWorkList: [
-        {
-          value: 3,
-          label: '工序负责人员',
-          children: []
-        },
-        {
-          value: '',
-          label: '所有人员',
-          children: []
-        }
-      ],
       productionScheduleUpdate: [
         {
           productNameId: '',
@@ -1556,71 +1240,9 @@ export default Vue.extend({
       ],
       paramsArr: [],
       settlementLogList: [],
-      chooseSettlementLogList: [],
       processList: [],
-      processDescList: [],
-      workList: [],
-      orderInfo: {
-        id: null,
-        client_id: '',
-        group_id: '',
-        contacts_id: '',
-        public_files: [],
-        private_files: [],
-        settle_tax: '',
-        settle_unit: '',
-        order_type: 1,
-        code: '',
-        desc: '',
-        time_data: [
-          {
-            id: '',
-            order_time: this.$getDate(new Date()),
-            order_type_id: '',
-            complete_time: '',
-            is_draft: 2,
-            total_style: '',
-            total_number: '',
-            total_price: '',
-            is_urgent: 2,
-            is_before_confirm: 2,
-            is_send: 2,
-            batch_data: [
-              {
-                id: '',
-                batch_number: 1,
-                batch_title: '',
-                batch_type_id: '',
-                delivery_time: '',
-                is_urgent: 2,
-                is_draft: 2,
-                total_style: '',
-                total_number: '',
-                total_price: '',
-                desc: '',
-                product_data: [
-                  {
-                    product_id: '',
-                    size_color_list: [],
-                    image_data: [],
-                    product_info: [
-                      {
-                        size_color: '',
-                        size_id: '',
-                        color_id: '',
-                        number: '',
-                        price: ''
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
+      processStaffList: [{ children: [] }],
       addOrder: false,
-      showPrice: false,
       staffArr: [],
       departmentList: [],
       department: Number(this.$getLocalStorage('department')) || '',
@@ -1679,6 +1301,7 @@ export default Vue.extend({
                 })
               })
               this.staffList = res.data.data.concat(arr)
+              this.processStaffList = this.$getProcessStaff(this.staffList)
             })
         })
     },
@@ -1701,7 +1324,8 @@ export default Vue.extend({
       // @ts-ignore
       this.handleSelect(...this.paramsArr)
     },
-    getProcessDesc(item: any) {
+    getProcessDesc(item: any, settlementLogIndex: number) {
+      this.settlementLogList[settlementLogIndex].is_check = true
       process
         .list({
           name: item.process[1]
@@ -1879,9 +1503,14 @@ export default Vue.extend({
 
       let params = {}
       if (type === 1) {
-        params = { keyword: item.product_info[index].order_code, page: 1, limit: 10 }
+        params = { keyword: item.product_info[index].order_code, page: 1, limit: 10, order_type: this.order_type }
       } else if (type === 2) {
-        params = { product_code: product_code.split(',')[0], page: this.page, limit: this.limit }
+        params = {
+          product_code: product_code.split(',')[0],
+          page: this.page,
+          limit: this.limit,
+          order_type: this.order_type
+        }
       }
 
       order.simpleList(params).then((res) => {
@@ -2032,6 +1661,7 @@ export default Vue.extend({
       order
         .simpleList({
           order_code: str,
+          order_type: this.order_type,
           client_id: this.client_id[2] || ''
         })
         .then((res) => {
@@ -2059,6 +1689,7 @@ export default Vue.extend({
       order
         .simpleList({
           product_code: str,
+          order_type: this.order_type,
           client_id: this.client_id[2] || ''
         })
         .then((res) => {
@@ -2169,6 +1800,7 @@ export default Vue.extend({
             ].sizeColorInfo.push(color)
           })
         })
+        this.settlementLogList[items.indexStaff].is_check = true
         this.settlementLogList[items.indexStaff].processInfo[items.indexOrder].product_info[items.indexPro] = arr[0]
         this.checkAll = false
       })
@@ -2176,6 +1808,225 @@ export default Vue.extend({
       this.addOrder = false
       this.orderList = []
       this.$forceUpdate()
+    },
+    addStaff() {
+      this.settlementLogList.push({
+        staffName: '',
+        staffCode: '',
+        staffId: '',
+        staff_id: '',
+        show: true,
+        processInfo: [
+          {
+            process: '',
+            product_info: [
+              {
+                order_code: '',
+                product_detail_info: [
+                  {
+                    code: '',
+                    sizeColorInfo: [
+                      {
+                        size_name: '',
+                        color_name: '',
+                        number: '',
+                        extra_number: '',
+                        shoddy_number: '',
+                        shoddy_reason: []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      })
+      this.oldList = this.$clone(this.settlementLogList)
+    },
+    // 改变之后把对应的值赋给自身，把选中列表的id更新一下
+    getStaffIdList(index: any) {
+      const e = this.settlementLogList[index].staffId
+      this.settlementLogList[index].staff_id = e[1]
+
+      // 先判断是否重复
+      if (
+        this.selectStaffIdList.findIndex((item: any) => {
+          return item === e[1]
+        }) >= 0
+      ) {
+        // 有重复先置空
+        this.settlementLogList[index].staffId = []
+        this.settlementLogList[index].staff_id = ''
+        this.$forceUpdate()
+        let _this = this
+        // 这里不写延时函数会导致页面不刷新的bug
+        setTimeout(() => {
+          // 然后通过旧数据还原
+          _this.settlementLogList = _this.$clone(_this.oldList)
+          _this.$message.error('请勿选择相同员工')
+        }, 200)
+
+        return
+      }
+
+      // 拿到对应的员工信息
+      let staffInfo = this.staffList.find((staff: any) => {
+        return staff.id === e[1]
+      })
+
+      // 更新选中列表 以及赋值
+      this.selectStaffIdList = []
+      this.settlementLogList.forEach((item: any) => {
+        if (item.staffId[1] === staffInfo.id) {
+          item.staffName = staffInfo.name
+          item.staffCode = staffInfo.code
+        }
+        this.selectStaffIdList.push(item.staffId[1])
+      })
+      this.oldList = this.$clone(this.settlementLogList)
+    },
+    // 批量添加员工
+    openDialog() {
+      this.staffIdList = this.$clone(this.selectStaffIdList)
+      this.oldList = this.$clone(this.settlementLogList)
+      this.showDialog = true
+    },
+    closeDialog() {
+      this.showDialog = false
+    },
+    // 提交数据到列表
+    confirmData() {
+      this.selectStaffIdList = this.$clone(this.staffIdList)
+      if (this.staffIdList.length > 0) {
+        // 增加判断
+        this.staffIdList.forEach((staffId: number) => {
+          // 如果重复则跳过
+          let check = this.settlementLogList.find((item: any) => {
+            return item.staffId[1] === staffId
+          })
+
+          if (check) {
+            return
+          }
+
+          let staffInfo = this.staffList.find((staff: any) => {
+            return staff.id === staffId
+          })
+
+          this.settlementLogList.push({
+            staffName: staffInfo.name,
+            staffCode: staffInfo.code,
+            staffId: ['', staffId],
+            staff_id: staffId,
+            show: true,
+            processInfo: [
+              {
+                process: '',
+                product_info: [
+                  {
+                    order_code: '',
+                    product_detail_info: [
+                      {
+                        code: '',
+                        sizeColorInfo: [
+                          {
+                            size_name: '',
+                            color_name: '',
+                            number: '',
+                            extra_number: '',
+                            shoddy_number: '',
+                            shoddy_reason: []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          })
+        })
+
+        this.settlementLogList.forEach((item: any, index: number) => {
+          if (item.staffId === '') return
+
+          let a = this.selectStaffIdList.find((staff: any) => {
+            return staff === item.staffId[1]
+          })
+
+          if (!a) {
+            this.settlementLogList.splice(index, 1)
+          }
+        })
+      } else {
+        this.settlementLogList = [
+          {
+            staffName: '',
+            staffCode: '',
+            staffId: '',
+            staff_id: '',
+            show: true,
+            processInfo: [
+              {
+                process: '',
+                product_info: [
+                  {
+                    order_code: '',
+                    product_detail_info: [
+                      {
+                        code: '',
+                        sizeColorInfo: [
+                          {
+                            size_name: '',
+                            color_name: '',
+                            number: '',
+                            extra_number: '',
+                            shoddy_number: '',
+                            shoddy_reason: []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+
+      this.oldList = this.$clone(this.settlementLogList)
+      this.closeDialog()
+    },
+    // 更改员工时点击
+    changeMostStaff(id: number) {
+      // 判断是否在已选中列表里面
+      let check = !!this.selectStaffIdList.find((item: any) => {
+        return item === id
+      })
+
+      // 判断现在是处于什么状态
+      let checkType = !!this.staffIdList.find((item: any) => {
+        return item === id
+      })
+
+      let staffInfo = this.settlementLogList.find((staff: any) => {
+        return staff.staffId[1] === id
+      })
+
+      // 在列表中且处于取消状态时
+      if (check && !checkType && staffInfo.is_check) {
+        this.$confirm('该员工存在数据，取消选择后，会清空数据，是否取消？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {})
+          .catch(() => {
+            this.staffIdList.push(id)
+          })
+      }
     },
     workSave() {
       this.loading = true
@@ -2201,6 +2052,16 @@ export default Vue.extend({
         }>
       } = {
         data: []
+      }
+
+      let emptyStaff = this.settlementLogList.find((item: any) => {
+        return item.staffId === ''
+      })
+
+      if (emptyStaff) {
+        this.$message.error('请填写完整员工姓名')
+        this.loading = false
+        return
       }
 
       this.settlementLogList.forEach((settlementLog: any) => {
@@ -2257,6 +2118,7 @@ export default Vue.extend({
     // 粘贴该行
     parseThis(staffIndex: any, index: any, orderIndex: any) {
       let strCopyOption = this.copyOption.toString()
+      this.settlementLogList[staffIndex].is_check = this.settlementLogList[this.copyLine[0]].is_check
 
       // 复制工序
       if (strCopyOption.indexOf('process') != -1) {
@@ -2410,7 +2272,7 @@ export default Vue.extend({
           })
           .then((res) => {
             this.staffList = res.data.data
-            // this.loading = false
+            this.processStaffList = this.$getProcessStaff(this.staffList)
           })
       })
 
