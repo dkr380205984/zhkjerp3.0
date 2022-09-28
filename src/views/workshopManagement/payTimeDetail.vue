@@ -283,7 +283,7 @@
         </div>
       </div>
     </div>
-    <el-dialog title="批量添加员工" width="50%" :visible.sync="showDialog" :before-close="closeDialog">
+    <el-dialog title="批量添加员工" width="70%" :visible.sync="showDialog" :before-close="closeDialog">
       <div class="elCtn">
         <el-select v-model="lostAddStaffChooseProcess" placeholder="请选择">
           <el-option v-for="(item, index) in processStaffList" :key="item.value" :label="item.label" :value="index">
