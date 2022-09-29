@@ -136,15 +136,15 @@
                     >
                   </template>
                 </el-table-column>
+                <el-table-column label="尺码颜色" width="120">
+                  <template slot-scope="scope">{{
+                    (scope.row.size_name || '无尺码数据') + '/' + (scope.row.color_name || '无颜色数据')
+                  }}</template>
+                </el-table-column>
                 <el-table-column prop="price" label="结算单价" width="110">
                   <template slot-scope="scope">
                     <div>{{ scope.row.price }} 元</div>
                   </template>
-                </el-table-column>
-                <el-table-column label="颜色尺码" width="120">
-                  <template slot-scope="scope">{{
-                    (scope.row.size_name || '无尺码数据') + '/' + (scope.row.color_name || '无颜色数据')
-                  }}</template>
                 </el-table-column>
                 <el-table-column prop="number" label="完成数量" width="120"> </el-table-column>
                 <el-table-column prop="extra_number" label="额外数量" width="120"> </el-table-column>
@@ -169,7 +169,8 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="total_price" label="结算总价(元)" width="120"> </el-table-column>
-                <el-table-column prop="user_name" label="操作人" width="110"> </el-table-column>
+                <el-table-column prop="complete_time" label="创建时间" width="110"> </el-table-column>
+                <el-table-column prop="user_name" label="创建人" width="110"> </el-table-column>
                 <el-table-column label="操作" width="160" fixed="right">
                   <template slot-scope="scope">
                     <div style="display: flex; justify-content: center">
@@ -242,6 +243,8 @@
                 </el-table-column>
                 <el-table-column prop="total_price" label="结算总价(元)" width="120"> </el-table-column>
                 <el-table-column prop="desc" label="备注" width="120"> </el-table-column>
+                <el-table-column prop="created_at" label="创建时间" width="120"> </el-table-column>
+                <el-table-column prop="user_name" label="创建人" width="120"> </el-table-column>
                 <el-table-column label="操作" width="160" fixed="right">
                   <template slot-scope="scope">
                     <div style="display: flex; justify-content: center">
