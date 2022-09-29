@@ -57,135 +57,58 @@
                 style="justify-content: start; border-bottom: 1px solid #e9e9e9"
                 v-if="settlementLog.show"
               >
-                <div class="tcol noPad" style="overflow: unset">
-                  <div class="trow" v-for="(item, index) in settlementLog.processInfo" :key="'process' + index">
+                <div class="tcol noPad" style="width: 0; flex: unset; border-right: unset">
+                  <div
+                    class="trow"
+                    v-for="(itemDetail, indexDetail) in settlementLog.product_info"
+                    :key="indexDetail + 'indexDetail'"
+                  >
                     <div class="tcol noPad">
                       <div
                         class="trow"
-                        v-for="(itemPro, itemProIndex) in item.product_info"
-                        :key="itemProIndex + 'itemProIndex'"
+                        v-for="(itemSizeColor, indexSizeColor) in itemDetail.sizeColorInfo"
+                        :key="indexSizeColor + 'indexSizeColor'"
                       >
-                        <div class="tcol noPad" style="width: 0; flex: unset; border-right: unset">
-                          <div
-                            class="trow"
-                            v-for="(itemDetail, indexDetail) in itemPro.product_detail_info"
-                            :key="indexDetail + 'indexDetail'"
-                          >
-                            <div class="tcol noPad">
-                              <div
-                                class="trow"
-                                v-for="(itemSizeColor, indexSizeColor) in itemDetail.sizeColorInfo"
-                                :key="indexSizeColor + 'indexSizeColor'"
-                              >
-                                <div class="tcol" style="display: block; position: relative; width: 150px"></div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div
-                          class="tcol"
-                          style="flex-direction: row; width: 200px; align-items: center; justify-content: space-between"
-                        >
-                          <div
-                            class="hoverBlue"
-                            v-if="!isCopy"
-                            style="cursor: pointer"
-                            @click="copyThis(settlementLogIndex, index, itemProIndex)"
-                          >
-                            复制<br />该行
-                          </div>
-                          <div
-                            class="hoverBlue"
-                            v-if="isCopy && copyLine[1] === index && copyLine[0] === settlementLogIndex"
-                            style="cursor: pointer"
-                            @click="isCopy = false"
-                          >
-                            取消<br />复制
-                          </div>
-                          <div
-                            class="hoverGreen"
-                            v-if="isCopy && (copyLine[1] !== index || copyLine[0] !== settlementLogIndex)"
-                            style="cursor: pointer"
-                            @click="parseThis(settlementLogIndex, index, itemProIndex)"
-                          >
-                            粘贴<br />该行
-                          </div>
-                          <div
-                            class="hoverBlue"
-                            style="cursor: pointer"
-                            @click="
-                              $addItem(item.product_info, {
-                                order_code: '',
-                                product_detail_info: [
-                                  {
-                                    code: '',
-                                    sizeColorInfo: [
-                                      {
-                                        size_name: '',
-                                        color_name: '',
-                                        number: '',
-                                        extra_number: '',
-                                        shoddy_number: '',
-                                        shoddy_reason: []
-                                      }
-                                    ]
-                                  }
-                                ]
-                              })
-                            "
-                          >
-                            添加<br />订单
-                          </div>
-                          <div
-                            class="hoverBlue"
-                            style="cursor: pointer"
-                            @click="
-                              $addItem(settlementLog.processInfo, {
-                                process: '',
-                                product_info: [
-                                  {
-                                    order_code: '',
-                                    product_detail_info: [
-                                      {
-                                        code: '',
-                                        sizeColorInfo: [
-                                          {
-                                            size_name: '',
-                                            color_name: '',
-                                            number: '',
-                                            extra_number: '',
-                                            shoddy_number: '',
-                                            shoddy_reason: []
-                                          }
-                                        ]
-                                      }
-                                    ]
-                                  }
-                                ]
-                              })
-                            "
-                          >
-                            添加<br />工序
-                          </div>
-                          <div
-                            style="cursor: pointer"
-                            class="hoverRed"
-                            @click="
-                              checkDelete(
-                                item,
-                                itemProIndex,
-                                settlementLog,
-                                index,
-                                settlementLogList,
-                                settlementLogIndex
-                              )
-                            "
-                          >
-                            删除<br />该行
-                          </div>
-                        </div>
+                        <div class="tcol" style="display: block; position: relative; width: 150px"></div>
                       </div>
                     </div>
+                  </div>
+                </div>
+                <div
+                  class="tcol"
+                  style="flex-direction: row; width: 200px; align-items: center; justify-content: space-between"
+                >
+                  <div class="hoverBlue" v-if="!isCopy" style="cursor: pointer" @click="copyThis(settlementLogIndex)">
+                    复制<br />该行
+                  </div>
+                  <div
+                    class="hoverBlue"
+                    v-if="isCopy && copyLine[0] === settlementLogIndex"
+                    style="cursor: pointer"
+                    @click="isCopy = false"
+                  >
+                    取消<br />复制
+                  </div>
+                  <div
+                    class="hoverGreen"
+                    v-if="isCopy && copyLine[0] !== settlementLogIndex"
+                    style="cursor: pointer"
+                    @click="parseThis(settlementLogIndex)"
+                  >
+                    粘贴<br />该行
+                  </div>
+                  <div class="hoverBlue" style="cursor: pointer" @click="addSettlementLog(settlementLogIndex, 'order')">
+                    添加<br />订单
+                  </div>
+                  <div
+                    class="hoverBlue"
+                    style="cursor: pointer"
+                    @click="addSettlementLog(settlementLogIndex, 'process')"
+                  >
+                    添加<br />工序
+                  </div>
+                  <div style="cursor: pointer" class="hoverRed" @click="checkDelete(settlementLogIndex)">
+                    删除<br />该行
                   </div>
                 </div>
               </div>
@@ -214,44 +137,41 @@
               v-if="settlementLog.show"
             >
               <div class="tcol" style="min-width: 101px; max-width: 101px">
-                <el-select v-model="settlementLog.staff_id" filterable placeholder="请选择员工" @change="selectStaff">
-                  <el-option
-                    v-for="(staff, StaffIndex) in staffList"
-                    :key="StaffIndex + 'StaffIndex'"
-                    :label="staff.code.substr(staff.code.length - 4, staff.code.length) + ' ' + staff.name"
-                    :value="staff.id"
-                  >
-                  </el-option>
-                </el-select>
+                <el-cascader
+                  placeholder="员工姓名搜索"
+                  v-model="settlementLog.staffId"
+                  :options="processStaffList"
+                  filterable
+                  :show-all-levels="false"
+                  @change="getStaffIdList(settlementLogIndex)"
+                ></el-cascader>
               </div>
               <div class="tcol noPad" style="overflow: unset">
-                <div class="trow" v-for="(item, index) in settlementLog.processInfo" :key="'process' + index">
+                <div class="trow">
                   <div class="tcol" style="min-width: 101px; max-width: 101px">
                     <el-cascader
-                      v-model="item.process"
+                      v-model="settlementLog.process"
                       filterable
                       :options="processList"
                       :show-all-levels="false"
                       clearable
-                      @change="getProcessDesc(item, settlementLogIndex, index)"
+                      placeholder="请选择工序"
+                      @change="getProcessDesc(settlementLog, settlementLogIndex)"
                     ></el-cascader>
                   </div>
                   <div class="tcol" style="min-width: 101px; max-width: 101px">
                     <el-select
-                      v-model="item.process_desc"
+                      v-model="settlementLog.process_desc"
                       multiple
                       filterable
                       allow-create
                       default-first-option
                       collapse-tags
                       placeholder="请填写工序说明"
-                      @change="
-                        settlementLog.is_check = true
-                        item.is_check = true
-                      "
+                      @change="settlementLog.is_check = true"
                     >
                       <el-option
-                        v-for="(itemSon, indexSon) in item.processDesc"
+                        v-for="(itemSon, indexSon) in settlementLog.processDesc"
                         :key="itemSon.value + indexSon"
                         :label="itemSon.label"
                         :value="itemSon.value"
@@ -261,25 +181,18 @@
                   </div>
                   <div class="tcol" style="min-width: 101px; max-width: 101px">
                     <zh-input
-                      v-model="item.price"
+                      v-model="settlementLog.price"
                       placeholder="输入结算单价"
                       :keyBoard="keyBoard"
                       type="number"
-                      @change="
-                        settlementLog.is_check = true
-                        item.is_check = true
-                      "
+                      @change="settlementLog.is_check = true"
                     ></zh-input>
                   </div>
                   <div class="tcol noPad">
-                    <div
-                      class="trow"
-                      v-for="(itemPro, itemProIndex) in item.product_info"
-                      :key="itemProIndex + 'itemProIndex'"
-                    >
+                    <div class="trow">
                       <div class="tcol titleFix">
                         <el-select
-                          v-model="itemPro.order_code"
+                          v-model="settlementLog.order_code"
                           filterable
                           remote
                           placeholder="请输入订单编号"
@@ -289,16 +202,7 @@
                               return $debounce(ev, timer, querySearchAsync)
                             }
                           "
-                          @change="
-                            handleSelect(
-                              item,
-                              settlementLogIndex /* 员工层级 */,
-                              index /* 工序层级 */,
-                              itemProIndex /* 订单层级 */,
-                              index,
-                              settlementLogIndex
-                            )
-                          "
+                          @change="handleSelect(settlementLog, settlementLogIndex)"
                         >
                           <div style="display: flex; padding: 0 10px; width: 500px">
                             <div style="flex: 1">订单号</div>
@@ -322,7 +226,7 @@
                       <div class="tcol noPad">
                         <div
                           class="trow"
-                          v-for="(itemDetail, indexDetail) in itemPro.product_detail_info"
+                          v-for="(itemDetail, indexDetail) in settlementLog.product_info"
                           :key="indexDetail + 'indexDetail'"
                         >
                           <div class="tcol titleFix">
@@ -337,23 +241,9 @@
                                   return $debounce(ev, timer, querySearchAsync1)
                                 }
                               "
-                              :ref="'input' + settlementLogIndex + index + itemProIndex + indexDetail"
-                              @change="
-                                handleSelect(
-                                  item,
-                                  settlementLogIndex,
-                                  index,
-                                  itemProIndex,
-                                  index,
-                                  settlementLogIndex,
-                                  2,
-                                  itemDetail.code
-                                )
-                              "
+                              :ref="'input' + settlementLogIndex + indexDetail"
+                              @change="handleSelect(settlementLog, settlementLogIndex, 2, itemDetail.code)"
                             >
-                              <!-- @keyup.enter.native="
-                                getChooseOrderList(item, settlementLogIndex, index, itemProIndex, indexDetail)
-                              " -->
                               <div style="display: flex; padding: 0 10px; width: 800px">
                                 <div style="flex: 1">产品编号</div>
                                 <div style="flex: 1">所属订单号</div>
@@ -363,7 +253,7 @@
                               </div>
                               <el-option
                                 v-for="(itemSon, i) in orderList"
-                                :key="itemSon.value + settlementLogIndex + indexDetail + index + i + 'orderList'"
+                                :key="itemSon.value + settlementLogIndex + indexDetail + i + 'orderList'"
                                 :label="itemSon.product_name"
                                 :value="itemSon.product_name + ',' + itemSon.value"
                               >
@@ -393,8 +283,6 @@
                                   @change="
                                     $forceUpdate()
                                     settlementLog.is_check = true
-                                    item.is_check = true
-                                    itemPro.is_check = true
                                   "
                                 >
                                   <el-option
@@ -411,8 +299,6 @@
                                   @click="
                                     addSizeColor(itemDetail)
                                     settlementLog.is_check = true
-                                    item.is_check = true
-                                    itemPro.is_check = true
                                   "
                                 ></i>
                                 <i
@@ -421,8 +307,6 @@
                                   @click="
                                     deleteSizeColor(itemDetail, indexSizeColor)
                                     settlementLog.is_check = true
-                                    item.is_check = true
-                                    itemPro.is_check = true
                                   "
                                 ></i>
                               </div>
@@ -432,11 +316,7 @@
                                   placeholder="请输入完成数量"
                                   :keyBoard="keyBoard"
                                   type="number"
-                                  @change="
-                                    settlementLog.is_check = true
-                                    item.is_check = true
-                                    itemPro.is_check = true
-                                  "
+                                  @change="settlementLog.is_check = true"
                                 ></zh-input>
                               </div>
                               <div class="tcol titleFix">
@@ -445,11 +325,7 @@
                                   placeholder="请输入额外数量"
                                   :keyBoard="keyBoard"
                                   type="number"
-                                  @change="
-                                    settlementLog.is_check = true
-                                    item.is_check = true
-                                    itemPro.is_check = true
-                                  "
+                                  @change="settlementLog.is_check = true"
                                 ></zh-input>
                               </div>
                               <div class="tcol titleFix">
@@ -458,11 +334,7 @@
                                   placeholder="请输入次品数量"
                                   :keyBoard="keyBoard"
                                   type="number"
-                                  @change="
-                                    settlementLog.is_check = true
-                                    item.is_check = true
-                                    itemPro.is_check = true
-                                  "
+                                  @change="settlementLog.is_check = true"
                                 ></zh-input>
                               </div>
                               <div class="tcol titleFix">
@@ -474,11 +346,7 @@
                                   default-first-option
                                   collapse-tags
                                   placeholder="请选择次品原因"
-                                  @change="
-                                    settlementLog.is_check = true
-                                    item.is_check = true
-                                    itemPro.is_check = true
-                                  "
+                                  @change="settlementLog.is_check = true"
                                 >
                                   <el-option
                                     v-for="item in substandardReason"
@@ -502,7 +370,7 @@
         </div>
       </div>
     </div>
-    <div style="overflow: hidden; margin-top: 20px">
+    <div style="overflow: hidden; margin-top: 20px; margin-bottom: 20px">
       <div class="elCtn">
         <el-button
           size="small"
@@ -802,6 +670,36 @@ export default Vue.extend({
       this.staffIdList = this.staffIdList.concat(arr)
       this.staffIdList = Array.from(new Set(this.staffIdList))
     },
+    addSettlementLog(index: number, type: string) {
+      let isOrder = type === 'order'
+      let staffInfo = this.settlementLogList[index]
+      this.settlementLogList.splice(index + 1, 0, {
+        staffName: staffInfo.name,
+        staffCode: staffInfo.code,
+        staffId: staffInfo.staffId,
+        staff_id: staffInfo.staffId,
+        show: true,
+        process: isOrder ? staffInfo.process : '',
+        processDesc: isOrder ? staffInfo.processDesc : [],
+        process_desc: isOrder ? staffInfo.process_desc : [],
+        order_code: '',
+        product_info: [
+          {
+            code: '',
+            sizeColorInfo: [
+              {
+                size_name: '',
+                color_name: '',
+                number: '',
+                extra_number: '',
+                shoddy_number: '',
+                shoddy_reason: []
+              }
+            ]
+          }
+        ]
+      })
+    },
     contentHtml(content: string) {
       if (content === null) return ''
       // 富文本编辑器的内容如何只获得文字去掉标签
@@ -840,38 +738,22 @@ export default Vue.extend({
             })
         })
     },
-    getChooseOrderList(
-      item: any,
-      settlementLogIndex: number,
-      index: number,
-      itemProIndex: number,
-      indexDetail: number
-    ) {
-      let myDOM: any = eval('this.$refs.input' + settlementLogIndex + index + itemProIndex + indexDetail)[0]
-      let value = myDOM.$el.querySelector('input').value
-      if (value === '') return
 
-      this.handleSelect(item, settlementLogIndex, index, indexDetail, index, settlementLogIndex, 2, value, indexDetail)
-      this.paramsArr = [item, settlementLogIndex, index, indexDetail, index, settlementLogIndex, 2, value, indexDetail]
-      myDOM.popperElm.style.display = 'none'
-    },
     changeParams(e: any) {
       // @ts-ignore
       this.handleSelect(...this.paramsArr)
     },
-    getProcessDesc(item: any, settlementLogIndex: number, processIndex: number) {
+    getProcessDesc(settlementLog: any, settlementLogIndex: number) {
       // 员工层级数据检查
       this.settlementLogList[settlementLogIndex].is_check = true
-      // 工序层级数据检查
-      this.settlementLogList[settlementLogIndex].processInfo[processIndex].is_check = true
       process
         .list({
-          name: item.process[1]
+          name: settlementLog.process[1]
         })
         .then((res) => {
           if (res.data.status) {
-            let str = item.process[1]
-            item.processDesc = []
+            let str = settlementLog.process[1]
+            settlementLog.processDesc = []
             if (!res.data.data.length) return
 
             let detailData = res.data.data.find((item: any) => {
@@ -880,11 +762,11 @@ export default Vue.extend({
 
             if (detailData.process_desc) {
               detailData.process_desc.split(',').forEach((process_desc: any) => {
-                item.processDesc.push({ label: process_desc, value: process_desc })
+                settlementLog.processDesc.push({ label: process_desc, value: process_desc })
               })
             }
           } else {
-            item.processDesc = []
+            settlementLog.processDesc = []
           }
           this.$forceUpdate()
         })
@@ -945,83 +827,25 @@ export default Vue.extend({
       this.copyLine = [staffIndex, index, orderIndex]
       this.isCopy = true
     },
-    checkDelete(
-      item: any,
-      itemProIndex: number,
-      settlementLog: any,
-      index: number,
-      settlementLogList: any,
-      settlementLogIndex: number
-    ) {
-      if (item.product_info.length > 1) {
-        if (item.product_info[itemProIndex].is_check) {
-          this.$confirm('该订单下可能有已经填写的数据，是否删除?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
+    checkDelete(settlementLogIndex: number) {
+      let staff = this.settlementLogList[settlementLogIndex]
+      if (staff.is_check) {
+        this.$confirm('该订单下可能有已经填写的数据，是否删除?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            this.$deleteItem(this.settlementLogList, settlementLogIndex)
           })
-            .then(() => {
-              this.$deleteItem(item.product_info, itemProIndex)
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
             })
-            .catch(() => {
-              this.$message({
-                type: 'info',
-                message: '已取消删除'
-              })
-            })
-        } else {
-          this.$deleteItem(item.product_info, itemProIndex)
-        }
-      } else {
-        this.deleteProcess(settlementLog, index, settlementLogList, settlementLogIndex)
-      }
-    },
-    deleteProcess(settlementLog: any, index: number, settlementLogList: any, settlementLogIndex: number) {
-      if (settlementLog.processInfo.length > 1) {
-        if (settlementLog.is_check) {
-          this.$confirm('该工序下可能有已经填写的数据，是否删除?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
           })
-            .then(() => {
-              this.$deleteItem(settlementLog.processInfo, index)
-            })
-            .catch(() => {
-              this.$message({
-                type: 'info',
-                message: '已取消删除'
-              })
-            })
-        } else {
-          this.$deleteItem(settlementLog.processInfo, index)
-        }
       } else {
-        this.deleteStaff(settlementLogList, settlementLogIndex)
-      }
-    },
-    deleteStaff(settlementLogList: any, settlementLogIndex: number) {
-      if (settlementLogList.length > 1) {
-        if (settlementLogList[settlementLogIndex].is_check) {
-          this.$confirm('该员工下可能有已经填写的数据，是否删除?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          })
-            .then(() => {
-              this.detailStaff(settlementLogList, settlementLogIndex)
-            })
-            .catch(() => {
-              this.$message({
-                type: 'info',
-                message: '已取消删除'
-              })
-            })
-        } else {
-          this.detailStaff(settlementLogList, settlementLogIndex)
-        }
-      } else {
-        this.$message.error('至少有一个员工')
+        this.$deleteItem(this.settlementLogList, settlementLogIndex)
       }
     },
     detailStaff(settlementLogList: any, settlementLogIndex: number) {
@@ -1031,31 +855,18 @@ export default Vue.extend({
       this.selectStaffIdList = a
       this.$deleteItem(settlementLogList, settlementLogIndex)
     },
-    handleSelect(
-      item: any,
-      settlementLogIndex: number,
-      itemIndex: number,
-      index: number,
-      orderIndex: number,
-      staffIndex: number,
-      type = 1,
-      product_code = '',
-      types: number
-    ) {
-      console.log(item)
+    handleSelect(settlementLog: any, settlementLogIndex: number, type = 1, product_code = '') {
       this.loading = true
       if (this.isDone) return
 
       this.idDone = true
       this.lastOneChoose = {
-        settlementLogIndex,
-        itemIndex,
-        itemProIndex: index
+        settlementLogIndex
       }
 
       let params = {}
       if (type === 1) {
-        params = { keyword: item.product_info[index].order_code, page: 1, limit: 10, order_type: this.order_type }
+        params = { keyword: settlementLog.order_code, page: 1, limit: 10, order_type: this.order_type }
       } else if (type === 2) {
         params = {
           product_code: product_code.split(',')[0],
@@ -1073,9 +884,7 @@ export default Vue.extend({
               {
                 id: data.id,
                 code: data.code,
-                indexPro: index,
-                indexOrder: orderIndex,
-                indexStaff: staffIndex,
+                indexStaff: settlementLogIndex,
                 system_code: data.system_code,
                 product_info: []
               }
@@ -1101,9 +910,7 @@ export default Vue.extend({
             this.productionScheduleUpdate.push({
               id: items.id,
               code: items.code,
-              indexPro: index,
-              indexOrder: orderIndex,
-              indexStaff: staffIndex,
+              indexStaff: settlementLogIndex,
               order_type: items.order_type,
               system_code: items.system_code,
               product_info: []
@@ -1353,8 +1160,9 @@ export default Vue.extend({
           })
         })
         this.settlementLogList[items.indexStaff].is_check = true
-        this.settlementLogList[items.indexStaff].processInfo[items.indexOrder].is_check = true
-        this.settlementLogList[items.indexStaff].processInfo[items.indexOrder].product_info[items.indexPro] = arr[0]
+        this.settlementLogList[items.indexStaff].order_id = arr[0].order_id
+        this.settlementLogList[items.indexStaff].order_code = arr[0].order_code
+        this.settlementLogList[items.indexStaff].product_info = arr[0].product_detail_info
         this.checkAll = false
       })
 
@@ -1369,27 +1177,19 @@ export default Vue.extend({
         staffId: '',
         staff_id: '',
         show: true,
-        processInfo: [
+        process: '',
+        order_code: '',
+        product_info: [
           {
-            process: '',
-            product_info: [
+            code: '',
+            sizeColorInfo: [
               {
-                order_code: '',
-                product_detail_info: [
-                  {
-                    code: '',
-                    sizeColorInfo: [
-                      {
-                        size_name: '',
-                        color_name: '',
-                        number: '',
-                        extra_number: '',
-                        shoddy_number: '',
-                        shoddy_reason: []
-                      }
-                    ]
-                  }
-                ]
+                size_name: '',
+                color_name: '',
+                number: '',
+                extra_number: '',
+                shoddy_number: '',
+                shoddy_reason: []
               }
             ]
           }
@@ -1401,27 +1201,6 @@ export default Vue.extend({
     getStaffIdList(index: any) {
       const e = this.settlementLogList[index].staffId
       this.settlementLogList[index].staff_id = e[1]
-
-      // 先判断是否重复
-      if (
-        this.selectStaffIdList.findIndex((item: any) => {
-          return item === e[1]
-        }) >= 0
-      ) {
-        // 有重复先置空
-        this.settlementLogList[index].staffId = []
-        this.settlementLogList[index].staff_id = ''
-        this.$forceUpdate()
-        let _this = this
-        // 这里不写延时函数会导致页面不刷新的bug
-        setTimeout(() => {
-          // 然后通过旧数据还原
-          _this.settlementLogList = _this.$clone(_this.oldList)
-          _this.$message.error('请勿选择相同员工')
-        }, 200)
-
-        return
-      }
 
       // 拿到对应的员工信息
       let staffInfo = this.staffList.find((staff: any) => {
@@ -1473,27 +1252,19 @@ export default Vue.extend({
             staffId: ['', staffId],
             staff_id: staffId,
             show: true,
-            processInfo: [
+            process: '',
+            order_code: '',
+            product_info: [
               {
-                process: '',
-                product_info: [
+                code: '',
+                sizeColorInfo: [
                   {
-                    order_code: '',
-                    product_detail_info: [
-                      {
-                        code: '',
-                        sizeColorInfo: [
-                          {
-                            size_name: '',
-                            color_name: '',
-                            number: '',
-                            extra_number: '',
-                            shoddy_number: '',
-                            shoddy_reason: []
-                          }
-                        ]
-                      }
-                    ]
+                    size_name: '',
+                    color_name: '',
+                    number: '',
+                    extra_number: '',
+                    shoddy_number: '',
+                    shoddy_reason: []
                   }
                 ]
               }
@@ -1520,27 +1291,19 @@ export default Vue.extend({
             staffId: '',
             staff_id: '',
             show: true,
-            processInfo: [
+            process: '',
+            order_code: '',
+            product_info: [
               {
-                process: '',
-                product_info: [
+                code: '',
+                sizeColorInfo: [
                   {
-                    order_code: '',
-                    product_detail_info: [
-                      {
-                        code: '',
-                        sizeColorInfo: [
-                          {
-                            size_name: '',
-                            color_name: '',
-                            number: '',
-                            extra_number: '',
-                            shoddy_number: '',
-                            shoddy_reason: []
-                          }
-                        ]
-                      }
-                    ]
+                    size_name: '',
+                    color_name: '',
+                    number: '',
+                    extra_number: '',
+                    shoddy_number: '',
+                    shoddy_reason: []
                   }
                 ]
               }
@@ -1619,40 +1382,32 @@ export default Vue.extend({
 
       this.settlementLogList.forEach((settlementLog: any) => {
         // console.log(settlementLog, 'settlementLog')
-        if (!settlementLog.show) return
-        settlementLog.processInfo.forEach((staffInfo: any) => {
-          // console.log(staffInfo, 'staffInfo')
-          staffInfo.product_info.forEach((product_info: any) => {
-            if (product_info.order_code === '') return
-
-            product_info.product_detail_info.forEach((product_detail_info: any) => {
-              // console.log(product_detail_info, 'product_detail_info')
-              product_detail_info.sizeColorInfo.forEach((sizeColorInfo: any) => {
-                // console.log(sizeColorInfo, 'sizeColorInfo')
-                params.data.push({
-                  id: null,
-                  order_id: product_info.order_id,
-                  staff_id: settlementLog.staffId,
-                  process_name: staffInfo.process[1],
-                  process_type: staffInfo.process[0],
-                  process_desc: staffInfo.process_desc.toString(),
-                  extra_number: sizeColorInfo.extra_number || 0,
-                  size_id: sizeColorInfo.size_id || 0,
-                  color_id: sizeColorInfo.color_id || 0,
-                  number: sizeColorInfo.number || 0,
-                  shoddy_number: sizeColorInfo.shoddy_number || 0,
-                  shoddy_reason: sizeColorInfo.shoddy_reason ? sizeColorInfo.shoddy_reason.toString() : '',
-                  product_id: product_detail_info.product_id,
-                  price: staffInfo.price || 0,
-                  total_price: this.outCiPin
-                    ? ((sizeColorInfo.number || 0) +
-                        (sizeColorInfo.extra_number || 0) -
-                        (sizeColorInfo.shoddy_number || 0)) *
-                      (staffInfo.price || 0)
-                    : ((sizeColorInfo.number || 0) + (sizeColorInfo.extra_number || 0)) * (staffInfo.price || 0),
-                  complete_time: this.$GetDateStr(0)
-                })
-              })
+        settlementLog.product_info.forEach((product_info: any) => {
+          // console.log(product_info, 'product_info')
+          product_info.sizeColorInfo.forEach((sizeColorInfo: any) => {
+            // console.log(sizeColorInfo, 'sizeColorInfo')
+            params.data.push({
+              id: null,
+              order_id: settlementLog.order_id,
+              staff_id: settlementLog.staff_id,
+              process_name: settlementLog.process[1],
+              process_type: settlementLog.process[0],
+              process_desc: settlementLog.process_desc.toString(),
+              extra_number: sizeColorInfo.extra_number || 0,
+              size_id: sizeColorInfo.size_id || 0,
+              color_id: sizeColorInfo.color_id || 0,
+              number: sizeColorInfo.number || 0,
+              shoddy_number: sizeColorInfo.shoddy_number || 0,
+              shoddy_reason: sizeColorInfo.shoddy_reason ? sizeColorInfo.shoddy_reason.toString() : '',
+              product_id: product_info.product_id,
+              price: settlementLog.price || 0,
+              total_price: this.outCiPin
+                ? ((sizeColorInfo.number || 0) +
+                    (sizeColorInfo.extra_number || 0) -
+                    (sizeColorInfo.shoddy_number || 0)) *
+                  (settlementLog.price || 0)
+                : ((sizeColorInfo.number || 0) + (sizeColorInfo.extra_number || 0)) * (settlementLog.price || 0),
+              complete_time: this.$GetDateStr(0)
             })
           })
         })
@@ -1669,61 +1424,36 @@ export default Vue.extend({
       this.loading = false
     },
     // 粘贴该行
-    parseThis(staffIndex: any, index: any, orderIndex: any) {
+    parseThis(staffIndex: number) {
       let strCopyOption = this.copyOption.toString()
       // 员工层级数据检查
       this.settlementLogList[staffIndex].is_check = this.settlementLogList[this.copyLine[0]].is_check
-      // 工序层级数据检查
-      this.settlementLogList[staffIndex].processInfo[index].is_check =
-        this.settlementLogList[this.copyLine[0]].processInfo[this.copyLine[1]].is_check
-      // 订单层级数据检查
-      this.settlementLogList[staffIndex].processInfo[index].product_info[orderIndex].is_check =
-        this.settlementLogList[this.copyLine[0]].processInfo[this.copyLine[1]].product_info[this.copyLine[2]].is_check
 
       // 复制工序
       if (strCopyOption.indexOf('process') != -1) {
-        this.settlementLogList[staffIndex].processInfo[index].process =
-          this.settlementLogList[this.copyLine[0]].processInfo[this.copyLine[1]].process
+        this.settlementLogList[staffIndex].process = this.settlementLogList[this.copyLine[0]].process
       }
 
       // 复制工序说明
       if (strCopyOption.indexOf('proces_desc') != -1) {
-        this.settlementLogList[staffIndex].processInfo[index].process_desc =
-          this.settlementLogList[this.copyLine[0]].processInfo[this.copyLine[1]].process_desc
+        this.settlementLogList[staffIndex].process_desc = this.settlementLogList[this.copyLine[0]].process_desc
       }
 
       // 复制结算单价
       if (strCopyOption.indexOf('price') != -1) {
-        this.settlementLogList[staffIndex].processInfo[index].price =
-          this.settlementLogList[this.copyLine[0]].processInfo[this.copyLine[1]].price
+        this.settlementLogList[staffIndex].price = this.settlementLogList[this.copyLine[0]].price
       }
 
       // 复制订单
       if (strCopyOption.indexOf('order_code') != -1) {
-        let parseObj = JSON.parse(
-          JSON.stringify(
-            this.settlementLogList[this.copyLine[0]].processInfo[this.copyLine[1]].product_info[this.copyLine[2]]
+        this.settlementLogList[staffIndex].order_code = this.settlementLogList[this.copyLine[0]].order_code
+        this.settlementLogList[staffIndex].order_id = this.settlementLogList[this.copyLine[0]].order_id
+
+        if (strCopyOption.indexOf('size_color') != -1) {
+          this.settlementLogList[staffIndex].product_info = this.$clone(
+            this.settlementLogList[this.copyLine[0]].product_info
           )
-        )
-
-        // 看看是否有尺码颜色，如果没有尺码颜色就给他清空
-        if (!(strCopyOption.indexOf('size_color') != -1)) {
-          parseObj.product_detail_info.forEach((product: any) => {
-            product.sizeColorInfo = [
-              {
-                color_name: '',
-                extra_number: '',
-                number: '',
-                shoddy_number: '',
-                shoddy_reason: [],
-                size_name: '',
-                colorList: product.sizeColorInfo[0].colorList
-              }
-            ]
-          })
         }
-
-        this.settlementLogList[staffIndex].processInfo[index].product_info[orderIndex] = parseObj
       }
 
       this.isCopy = false
@@ -1749,27 +1479,19 @@ export default Vue.extend({
             staffId: id,
             staff_id: id,
             show: true,
-            processInfo: [
+            process: '',
+            order_code: '',
+            product_info: [
               {
-                process: '',
-                product_info: [
+                code: '',
+                sizeColorInfo: [
                   {
-                    order_code: '',
-                    product_detail_info: [
-                      {
-                        code: '',
-                        sizeColorInfo: [
-                          {
-                            size_name: '',
-                            color_name: '',
-                            number: '',
-                            extra_number: '',
-                            shoddy_number: '',
-                            shoddy_reason: []
-                          }
-                        ]
-                      }
-                    ]
+                    size_name: '',
+                    color_name: '',
+                    number: '',
+                    extra_number: '',
+                    shoddy_number: '',
+                    shoddy_reason: []
                   }
                 ]
               }
@@ -1870,27 +1592,19 @@ export default Vue.extend({
         staffId: '',
         staff_id: '',
         show: true,
-        processInfo: [
+        process: [0, ''],
+        order_code: '',
+        product_info: [
           {
-            process: [0, ''],
-            product_info: [
+            code: '',
+            sizeColorInfo: [
               {
-                order_code: '',
-                product_detail_info: [
-                  {
-                    code: '',
-                    sizeColorInfo: [
-                      {
-                        size_name: '',
-                        color_name: '',
-                        number: '',
-                        extra_number: '',
-                        shoddy_number: '',
-                        shoddy_reason: []
-                      }
-                    ]
-                  }
-                ]
+                size_name: '',
+                color_name: '',
+                number: '',
+                extra_number: '',
+                shoddy_number: '',
+                shoddy_reason: []
               }
             ]
           }
@@ -1908,27 +1622,19 @@ export default Vue.extend({
             staffId: +staff.id,
             staff_id: +staff.id,
             show: true,
-            processInfo: [
+            process: [0, processArr[0]],
+            order_code: '',
+            product_info: [
               {
-                process: [0, processArr[0]],
-                product_info: [
+                code: '',
+                sizeColorInfo: [
                   {
-                    order_code: '',
-                    product_detail_info: [
-                      {
-                        code: '',
-                        sizeColorInfo: [
-                          {
-                            size_name: '',
-                            color_name: '',
-                            number: '',
-                            extra_number: '',
-                            shoddy_number: '',
-                            shoddy_reason: []
-                          }
-                        ]
-                      }
-                    ]
+                    size_name: '',
+                    color_name: '',
+                    number: '',
+                    extra_number: '',
+                    shoddy_number: '',
+                    shoddy_reason: []
                   }
                 ]
               }
@@ -1941,27 +1647,19 @@ export default Vue.extend({
             staffId: +staff.id,
             staff_id: +staff.id,
             show: true,
-            processInfo: [
+            process: [0, ''],
+            order_code: '',
+            product_info: [
               {
-                process: [0, ''],
-                product_info: [
+                code: '',
+                sizeColorInfo: [
                   {
-                    order_code: '',
-                    product_detail_info: [
-                      {
-                        code: '',
-                        sizeColorInfo: [
-                          {
-                            size_name: '',
-                            color_name: '',
-                            number: '',
-                            extra_number: '',
-                            shoddy_number: '',
-                            shoddy_reason: []
-                          }
-                        ]
-                      }
-                    ]
+                    size_name: '',
+                    color_name: '',
+                    number: '',
+                    extra_number: '',
+                    shoddy_number: '',
+                    shoddy_reason: []
                   }
                 ]
               }
@@ -1975,27 +1673,19 @@ export default Vue.extend({
           staffId: +staff.id,
           staff_id: +staff.id,
           show: true,
-          processInfo: [
+          process: [0, ''],
+          order_code: '',
+          product_info: [
             {
-              process: [0, ''],
-              product_info: [
+              code: '',
+              sizeColorInfo: [
                 {
-                  order_code: '',
-                  product_detail_info: [
-                    {
-                      code: '',
-                      sizeColorInfo: [
-                        {
-                          size_name: '',
-                          color_name: '',
-                          number: '',
-                          extra_number: '',
-                          shoddy_number: '',
-                          shoddy_reason: []
-                        }
-                      ]
-                    }
-                  ]
+                  size_name: '',
+                  color_name: '',
+                  number: '',
+                  extra_number: '',
+                  shoddy_number: '',
+                  shoddy_reason: []
                 }
               ]
             }
