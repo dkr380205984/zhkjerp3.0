@@ -123,72 +123,12 @@
                         v-for="(itemPro, itemProIndex) in item.product_info"
                         :key="itemProIndex + 'itemProIndex'"
                       >
-                        <div class="tcol">
-                          <el-select
-                            v-model="itemPro.order_code"
-                            filterable
-                            remote
-                            placeholder="按订单号搜索"
-                            :loading="searchLoading"
-                          >
-                            <div style="display: flex; padding: 0 10px; width: 500px">
-                              <div style="flex: 1">订单号</div>
-                              <div style="flex: 1">下单公司</div>
-                              <div style="flex: 1">下单时间</div>
-                            </div>
-                            <el-option
-                              v-for="(item, index) in orderList"
-                              :key="item.value + index + 'order'"
-                              :label="item.label"
-                              :value="item.value"
-                            >
-                              <div style="display: flex">
-                                <span style="flex: 1">{{ item.value }}</span>
-                                <span style="flex: 1"> {{ item.client_name }} </span>
-                                <span style="flex: 1">{{ item.created_at }}</span>
-                              </div>
-                            </el-option>
-                          </el-select>
-                        </div>
                         <div class="tcol noPad">
                           <div
                             class="trow"
                             v-for="(itemDetail, indexDetail) in itemPro.product_detail_info"
                             :key="indexDetail + 'indexDetail'"
                           >
-                            <div class="tcol titleFix">
-                              <el-select
-                                v-model="itemDetail.code"
-                                filterable
-                                remote
-                                placeholder="按产品编号搜索"
-                                :loading="searchLoading"
-                              >
-                                <div style="display: flex; padding: 0 10px; width: 800px">
-                                  <div style="flex: 1">产品编号</div>
-                                  <div style="flex: 1">所属订单号</div>
-                                  <div style="flex: 1">包含色组</div>
-                                  <div style="flex: 1">下单公司</div>
-                                  <div style="flex: 1">下单时间</div>
-                                </div>
-                                <el-option
-                                  v-for="(item, i) in orderList"
-                                  :key="item.value + settlementLogIndex + indexDetail + index + i + 'orderList'"
-                                  :label="item.label"
-                                  :value="item.value"
-                                >
-                                  <div style="display: flex; white-space: normal">
-                                    <span style="flex: 1">{{ item.product_name }}</span>
-                                    <span style="flex: 1">{{ item.value }}</span>
-                                    <span style="width: 150px; overflow: hidden; margin-right: 10px">{{
-                                      item.colorGroup
-                                    }}</span>
-                                    <span style="flex: 1"> {{ item.client_name }} </span>
-                                    <span style="flex: 1">{{ item.created_at }}</span>
-                                  </div>
-                                </el-option>
-                              </el-select>
-                            </div>
                             <div class="tcol noPad">
                               <div
                                 class="trow"
@@ -196,26 +136,7 @@
                                 v-for="(itemSizeColor, indexSizeColor) in itemDetail.sizeColorInfo"
                                 :key="indexSizeColor + 'indexSizeColor'"
                               >
-                                <div class="tcol" style="display: block; position: relative; width: 150px">
-                                  <el-select
-                                    v-model="itemSizeColor.chooseId"
-                                    placeholder="请选择尺码颜色"
-                                    @change="$forceUpdate()"
-                                  >
-                                    <el-option
-                                      v-for="(colorItem, colorIndex) in itemSizeColor.colorList"
-                                      :key="colorItem.size_id + ',' + colorItem.color_id + colorIndex"
-                                      :label="colorItem.name"
-                                      :value="colorItem.value"
-                                      @change="
-                                        settlementLog.is_check = true
-                                        item.is_check = true
-                                        itemPro.is_check = true
-                                      "
-                                    >
-                                    </el-option>
-                                  </el-select>
-                                </div>
+                                <div class="tcol" style="display: block; position: relative; width: 150px"></div>
                               </div>
                             </div>
                           </div>
@@ -248,98 +169,18 @@
                         :key="itemProIndex + 'itemProIndex'"
                       >
                         <div class="tcol noPad" style="width: 0; flex: unset; border-right: unset">
-                          <el-select
-                            v-model="itemPro.order_code"
-                            filterable
-                            remote
-                            placeholder="请输入订单编号"
-                            :loading="searchLoading"
-                          >
-                            <div style="display: flex; padding: 0 10px; width: 500px">
-                              <div style="flex: 1">订单号</div>
-                              <div style="flex: 1">下单公司</div>
-                              <div style="flex: 1">下单时间</div>
-                            </div>
-                            <el-option
-                              v-for="(item, index) in orderList"
-                              :key="item.value + index + 'order'"
-                              :label="item.label"
-                              :value="item.value"
-                            >
-                              <div style="display: flex">
-                                <span style="flex: 1">{{ item.value }}</span>
-                                <span style="flex: 1"> {{ item.client_name }} </span>
-                                <span style="flex: 1">{{ item.created_at }}</span>
-                              </div>
-                            </el-option>
-                          </el-select>
-                        </div>
-                        <div class="tcol noPad" style="width: 0; flex: unset; border-right: unset">
                           <div
                             class="trow"
                             v-for="(itemDetail, indexDetail) in itemPro.product_detail_info"
                             :key="indexDetail + 'indexDetail'"
                           >
-                            <div class="tcol titleFix">
-                              <el-select
-                                v-model="itemDetail.code"
-                                filterable
-                                remote
-                                placeholder="请输入产品编号"
-                                :loading="searchLoading"
-                              >
-                                <div style="display: flex; padding: 0 10px; width: 800px">
-                                  <div style="flex: 1">产品编号</div>
-                                  <div style="flex: 1">所属订单号</div>
-                                  <div style="flex: 1">包含色组</div>
-                                  <div style="flex: 1">下单公司</div>
-                                  <div style="flex: 1">下单时间</div>
-                                </div>
-                                <el-option
-                                  v-for="(item, i) in orderList"
-                                  :key="item.value + settlementLogIndex + indexDetail + index + i + 'orderList'"
-                                  :label="item.label"
-                                  :value="item.value"
-                                >
-                                  <div style="display: flex; white-space: normal">
-                                    <span style="flex: 1">{{ item.product_name }}</span>
-                                    <span style="flex: 1">{{ item.value }}</span>
-                                    <span style="width: 150px; overflow: hidden; margin-right: 10px">{{
-                                      item.colorGroup
-                                    }}</span>
-                                    <span style="flex: 1"> {{ item.client_name }} </span>
-                                    <span style="flex: 1">{{ item.created_at }}</span>
-                                  </div>
-                                </el-option>
-                              </el-select>
-                            </div>
                             <div class="tcol noPad">
                               <div
                                 class="trow"
-                                style="justify-content: start"
                                 v-for="(itemSizeColor, indexSizeColor) in itemDetail.sizeColorInfo"
                                 :key="indexSizeColor + 'indexSizeColor'"
                               >
-                                <div class="tcol" style="display: block; position: relative; width: 150px">
-                                  <el-select
-                                    v-model="itemSizeColor.chooseId"
-                                    placeholder="请选择尺码颜色"
-                                    @change="
-                                      $forceUpdate()
-                                      settlementLog.is_check = true
-                                      item.is_check = true
-                                      itemPro.is_check = true
-                                    "
-                                  >
-                                    <el-option
-                                      v-for="(colorItem, colorIndex) in itemSizeColor.colorList"
-                                      :key="colorItem.size_id + ',' + colorItem.color_id + colorIndex"
-                                      :label="colorItem.name"
-                                      :value="colorItem.value"
-                                    >
-                                    </el-option>
-                                  </el-select>
-                                </div>
+                                <div class="tcol" style="display: block; position: relative; width: 150px"></div>
                               </div>
                             </div>
                           </div>
@@ -860,6 +701,9 @@
           </el-option>
         </el-select>
       </div>
+      <div class="elCtn" style="margin-left: 20px">
+        <el-button type="primary" size="small" @click="checkAllStaff">全部选中</el-button>
+      </div>
       <el-checkbox-group v-model="staffIdList">
         <el-checkbox
           style="width: calc(100% / 8); margin-top: 10px"
@@ -1000,6 +844,14 @@ export default Vue.extend({
       })
 
       this.loading = false
+    },
+    checkAllStaff(e: any) {
+      let arr = this.processStaffList[this.lostAddStaffChooseProcess].children.map((item: any) => {
+        return item.id
+      })
+
+      this.staffIdList = this.staffIdList.concat(arr)
+      this.staffIdList = Array.from(new Set(this.staffIdList))
     },
     contentHtml(content: string) {
       if (content === null) return ''
