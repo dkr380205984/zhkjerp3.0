@@ -215,89 +215,6 @@
                                     >
                                     </el-option>
                                   </el-select>
-                                  <i
-                                    class="el-icon-circle-plus-outline"
-                                    style="cursor: pointer; position: absolute; right: 15%; top: 30%"
-                                    @click="
-                                      addSizeColor(itemDetail)
-                                      settlementLog.is_check = true
-                                      item.is_check = true
-                                      itemPro.is_check = true
-                                    "
-                                  ></i>
-                                  <i
-                                    class="el-icon-remove-outline"
-                                    style="cursor: pointer; position: absolute; right: 5%; top: 30%"
-                                    @click="
-                                      deleteSizeColor(itemDetail, indexSizeColor)
-                                      settlementLog.is_check = true
-                                      item.is_check = true
-                                      itemPro.is_check = true
-                                    "
-                                  ></i>
-                                </div>
-                                <div class="tcol titleFix">
-                                  <zh-input
-                                    v-model="itemSizeColor.number"
-                                    placeholder="请输入完成数量"
-                                    :keyBoard="keyBoard"
-                                    type="number"
-                                    @change="
-                                      settlementLog.is_check = true
-                                      item.is_check = true
-                                      itemPro.is_check = true
-                                    "
-                                  ></zh-input>
-                                </div>
-                                <div class="tcol titleFix">
-                                  <zh-input
-                                    v-model="itemSizeColor.extra_number"
-                                    placeholder="请输入额外数量"
-                                    :keyBoard="keyBoard"
-                                    type="number"
-                                    @change="
-                                      settlementLog.is_check = true
-                                      item.is_check = true
-                                      itemPro.is_check = true
-                                    "
-                                  ></zh-input>
-                                </div>
-                                <div class="tcol titleFix">
-                                  <zh-input
-                                    v-model="itemSizeColor.shoddy_number"
-                                    placeholder="请输入次品数量"
-                                    :keyBoard="keyBoard"
-                                    type="number"
-                                    @change="
-                                      settlementLog.is_check = true
-                                      item.is_check = true
-                                      itemPro.is_check = true
-                                    "
-                                  ></zh-input>
-                                </div>
-                                <div class="tcol titleFix">
-                                  <el-select
-                                    v-model="itemSizeColor.shoddy_reason"
-                                    multiple
-                                    filterable
-                                    allow-create
-                                    default-first-option
-                                    collapse-tags
-                                    placeholder="请选择次品原因"
-                                    @change="
-                                      settlementLog.is_check = true
-                                      item.is_check = true
-                                      itemPro.is_check = true
-                                    "
-                                  >
-                                    <el-option
-                                      v-for="item in substandardReason"
-                                      :key="item.value + 'ciPinReason'"
-                                      :label="item.label"
-                                      :value="item.value"
-                                    >
-                                    </el-option>
-                                  </el-select>
                                 </div>
                               </div>
                             </div>
@@ -322,64 +239,8 @@
                 style="justify-content: start; border-bottom: 1px solid #e9e9e9"
                 v-if="settlementLog.show"
               >
-                <div class="tcol noPad" style="width: 0px; border-right: unset">
-                  <el-select v-model="settlementLog.staff_id" filterable placeholder="请选择员工" @change="selectStaff">
-                    <el-option
-                      v-for="(staff, StaffIndex) in staffList"
-                      :key="StaffIndex + 'StaffIndex'"
-                      :label="staff.code.substr(staff.code.length - 4, staff.code.length) + ' ' + staff.name"
-                      :value="staff.id"
-                    >
-                    </el-option>
-                  </el-select>
-                </div>
                 <div class="tcol noPad" style="overflow: unset">
                   <div class="trow" v-for="(item, index) in settlementLog.processInfo" :key="'process' + index">
-                    <div class="tcol noPad" style="width: 0; flex: unset; border-right: unset">
-                      <el-cascader
-                        v-model="item.process"
-                        filterable
-                        :options="processList"
-                        :show-all-levels="false"
-                        clearable
-                        @change="getProcessDesc(item, settlementLogIndex, index)"
-                      ></el-cascader>
-                    </div>
-                    <div class="tcol noPad" style="width: 0; flex: unset; border-right: unset">
-                      <el-select
-                        v-model="item.process_desc"
-                        multiple
-                        filterable
-                        allow-create
-                        default-first-option
-                        collapse-tags
-                        placeholder="请填写工序说明"
-                        @change="
-                          settlementLog.is_check = true
-                          item.is_check = true
-                        "
-                      >
-                        <el-option
-                          v-for="(itemSon, indexSon) in item.processDesc"
-                          :key="itemSon.value + indexSon"
-                          :label="itemSon.label"
-                          :value="itemSon.value"
-                        >
-                        </el-option>
-                      </el-select>
-                    </div>
-                    <div class="tcol noPad" style="width: 0; flex: unset; border-right: unset">
-                      <zh-input
-                        v-model="item.price"
-                        placeholder="输入结算单价"
-                        :keyBoard="keyBoard"
-                        type="number"
-                        @change="
-                          settlementLog.is_check = true
-                          item.is_check = true
-                        "
-                      ></zh-input>
-                    </div>
                     <div class="tcol noPad">
                       <div
                         class="trow"
@@ -475,89 +336,6 @@
                                       :key="colorItem.size_id + ',' + colorItem.color_id + colorIndex"
                                       :label="colorItem.name"
                                       :value="colorItem.value"
-                                    >
-                                    </el-option>
-                                  </el-select>
-                                  <i
-                                    class="el-icon-circle-plus-outline"
-                                    style="cursor: pointer; position: absolute; right: 15%; top: 30%"
-                                    @click="
-                                      addSizeColor(itemDetail)
-                                      settlementLog.is_check = true
-                                      item.is_check = true
-                                      itemPro.is_check = true
-                                    "
-                                  ></i>
-                                  <i
-                                    class="el-icon-remove-outline"
-                                    style="cursor: pointer; position: absolute; right: 5%; top: 30%"
-                                    @click="
-                                      deleteSizeColor(itemDetail, indexSizeColor)
-                                      settlementLog.is_check = true
-                                      item.is_check = true
-                                      itemPro.is_check = true
-                                    "
-                                  ></i>
-                                </div>
-                                <div class="tcol titleFix">
-                                  <zh-input
-                                    v-model="itemSizeColor.number"
-                                    placeholder="请输入完成数量"
-                                    :keyBoard="keyBoard"
-                                    type="number"
-                                    @change="
-                                      settlementLog.is_check = true
-                                      item.is_check = true
-                                      itemPro.is_check = true
-                                    "
-                                  ></zh-input>
-                                </div>
-                                <div class="tcol titleFix">
-                                  <zh-input
-                                    v-model="itemSizeColor.extra_number"
-                                    placeholder="请输入额外数量"
-                                    :keyBoard="keyBoard"
-                                    type="number"
-                                    @change="
-                                      settlementLog.is_check = true
-                                      item.is_check = true
-                                      itemPro.is_check = true
-                                    "
-                                  ></zh-input>
-                                </div>
-                                <div class="tcol titleFix">
-                                  <zh-input
-                                    v-model="itemSizeColor.shoddy_number"
-                                    placeholder="请输入次品数量"
-                                    :keyBoard="keyBoard"
-                                    type="number"
-                                    @change="
-                                      settlementLog.is_check = true
-                                      item.is_check = true
-                                      itemPro.is_check = true
-                                    "
-                                  ></zh-input>
-                                </div>
-                                <div class="tcol titleFix">
-                                  <el-select
-                                    v-model="itemSizeColor.shoddy_reason"
-                                    multiple
-                                    filterable
-                                    allow-create
-                                    default-first-option
-                                    collapse-tags
-                                    placeholder="请选择次品原因"
-                                    @change="
-                                      settlementLog.is_check = true
-                                      item.is_check = true
-                                      itemPro.is_check = true
-                                    "
-                                  >
-                                    <el-option
-                                      v-for="item in substandardReason"
-                                      :key="item.value + 'ciPinReason'"
-                                      :label="item.label"
-                                      :value="item.value"
                                     >
                                     </el-option>
                                   </el-select>
@@ -697,64 +475,12 @@
               style="justify-content: start; border-bottom: 1px solid #e9e9e9"
               v-if="settlementLog.show"
             >
-              <div class="tcol" style="min-width: 101px; max-width: 101px">
-                <el-select v-model="settlementLog.staff_id" filterable placeholder="请选择员工" @change="selectStaff">
-                  <el-option
-                    v-for="(staff, StaffIndex) in staffList"
-                    :key="StaffIndex + 'StaffIndex'"
-                    :label="staff.code.substr(staff.code.length - 4, staff.code.length) + ' ' + staff.name"
-                    :value="staff.id"
-                  >
-                  </el-option>
-                </el-select>
-              </div>
+              <div class="tcol" style="min-width: 101px; max-width: 101px"></div>
               <div class="tcol noPad" style="overflow: unset">
                 <div class="trow" v-for="(item, index) in settlementLog.processInfo" :key="'process' + index">
-                  <div class="tcol" style="min-width: 101px; max-width: 101px">
-                    <el-cascader
-                      v-model="item.process"
-                      filterable
-                      :options="processList"
-                      :show-all-levels="false"
-                      clearable
-                      @change="getProcessDesc(item, settlementLogIndex, index)"
-                    ></el-cascader>
-                  </div>
-                  <div class="tcol" style="min-width: 101px; max-width: 101px">
-                    <el-select
-                      v-model="item.process_desc"
-                      multiple
-                      filterable
-                      allow-create
-                      default-first-option
-                      collapse-tags
-                      placeholder="请填写工序说明"
-                      @change="
-                        settlementLog.is_check = true
-                        item.is_check = true
-                      "
-                    >
-                      <el-option
-                        v-for="(itemSon, indexSon) in item.processDesc"
-                        :key="itemSon.value + indexSon"
-                        :label="itemSon.label"
-                        :value="itemSon.value"
-                      >
-                      </el-option>
-                    </el-select>
-                  </div>
-                  <div class="tcol" style="min-width: 101px; max-width: 101px">
-                    <zh-input
-                      v-model="item.price"
-                      placeholder="输入结算单价"
-                      :keyBoard="keyBoard"
-                      type="number"
-                      @change="
-                        settlementLog.is_check = true
-                        item.is_check = true
-                      "
-                    ></zh-input>
-                  </div>
+                  <div class="tcol" style="min-width: 101px; max-width: 101px"></div>
+                  <div class="tcol" style="min-width: 101px; max-width: 101px"></div>
+                  <div class="tcol" style="min-width: 101px; max-width: 101px"></div>
                   <div class="tcol noPad">
                     <div
                       class="trow"
@@ -977,84 +703,6 @@
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                  <div
-                    class="tcol"
-                    style="
-                      flex-direction: row;
-                      width: 200px;
-                      flex: unset;
-                      justify-content: space-between;
-                      align-items: center;
-                    "
-                  >
-                    <div class="hoverBlue" style="cursor: pointer">复制<br />该行</div>
-                    <div
-                      class="hoverBlue"
-                      style="cursor: pointer"
-                      @click="
-                        $addItem(item.product_info, {
-                          order_code: '',
-                          product_detail_info: [
-                            {
-                              code: '',
-                              sizeColorInfo: [
-                                {
-                                  size_name: '',
-                                  color_name: '',
-                                  number: '',
-                                  extra_number: '',
-                                  shoddy_number: '',
-                                  shoddy_reason: []
-                                }
-                              ]
-                            }
-                          ]
-                        })
-                      "
-                    >
-                      添加<br />订单
-                    </div>
-                    <div
-                      class="hoverBlue"
-                      style="cursor: pointer"
-                      @click="
-                        $addItem(settlementLog.processInfo, {
-                          process: '',
-                          product_info: [
-                            {
-                              order_code: '',
-                              product_detail_info: [
-                                {
-                                  code: '',
-                                  sizeColorInfo: [
-                                    {
-                                      size_name: '',
-                                      color_name: '',
-                                      number: '',
-                                      extra_number: '',
-                                      shoddy_number: '',
-                                      shoddy_reason: []
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        })
-                      "
-                    >
-                      添加<br />工序
-                    </div>
-                    <div
-                      style="cursor: pointer"
-                      class="hoverRed"
-                      @click="
-                        checkDelete(item, itemProIndex, settlementLog, index, settlementLogList, settlementLogIndex)
-                      "
-                    >
-                      删除<br />该行
                     </div>
                   </div>
                 </div>
