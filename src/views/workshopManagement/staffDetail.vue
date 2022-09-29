@@ -47,109 +47,6 @@
     <div class="module">
       <div class="tableCtn fixedTableCtn">
         <div class="cover" style="position: relative; z-index: 99">
-          <div class="fixedLeft tbody">
-            <div class="trow" style="justify-content: start">
-              <div class="tcol bgGray" style="width: 101px">员工姓名</div>
-              <div class="tcol bgGray" style="width: 101px">生产工序</div>
-              <div class="tcol bgGray" style="width: 101px">工序说明</div>
-              <div class="tcol bgGray" style="width: 101px">结算单价</div>
-            </div>
-            <div v-for="(settlementLog, settlementLogIndex) in settlementLogList" :key="'process' + settlementLogIndex">
-              <div
-                class="trow"
-                style="justify-content: start; border-bottom: 1px solid #e9e9e9"
-                v-if="settlementLog.show"
-              >
-                <div class="tcol" style="font-size: 14px; max-width: 101px">
-                  <el-cascader
-                    placeholder="员工姓名搜索"
-                    v-model="settlementLog.staffId"
-                    :options="processStaffList"
-                    filterable
-                    :show-all-levels="false"
-                    @change="getStaffIdList(settlementLogIndex)"
-                  ></el-cascader>
-                </div>
-                <div class="tcol noPad" style="overflow: unset">
-                  <div class="trow" v-for="(item, index) in settlementLog.processInfo" :key="'process' + index">
-                    <div class="tcol" style="max-width: 101px">
-                      <el-cascader
-                        v-model="item.process"
-                        filterable
-                        :options="processList"
-                        :show-all-levels="false"
-                        clearable
-                        @change="getProcessDesc(item, settlementLogIndex, index)"
-                      ></el-cascader>
-                    </div>
-                    <div class="tcol" style="max-width: 101px">
-                      <el-select
-                        v-model="item.process_desc"
-                        multiple
-                        filterable
-                        allow-create
-                        default-first-option
-                        collapse-tags
-                        @change="
-                          settlementLog.is_check = true
-                          item.is_check = true
-                        "
-                        placeholder="请填写工序说明"
-                      >
-                        <el-option
-                          v-for="(itemSon, indexSon) in item.processDesc"
-                          :key="itemSon.value + indexSon"
-                          :label="itemSon.label"
-                          :value="itemSon.value"
-                        >
-                        </el-option>
-                      </el-select>
-                    </div>
-                    <div class="tcol noPad" style="border-right: unset; width: 101px">
-                      <zh-input
-                        v-model="item.price"
-                        placeholder="输入结算单价"
-                        :keyBoard="keyBoard"
-                        type="number"
-                        @change="
-                          settlementLog.is_check = true
-                          item.is_check = true
-                        "
-                      ></zh-input>
-                    </div>
-                    <div class="tcol noPad" style="max-width: 0">
-                      <div
-                        class="trow"
-                        v-for="(itemPro, itemProIndex) in item.product_info"
-                        :key="itemProIndex + 'itemProIndex'"
-                      >
-                        <div class="tcol noPad">
-                          <div
-                            class="trow"
-                            v-for="(itemDetail, indexDetail) in itemPro.product_detail_info"
-                            :key="indexDetail + 'indexDetail'"
-                          >
-                            <div class="tcol noPad">
-                              <div
-                                class="trow"
-                                style="justify-content: start"
-                                v-for="(itemSizeColor, indexSizeColor) in itemDetail.sizeColorInfo"
-                                :key="indexSizeColor + 'indexSizeColor'"
-                              >
-                                <div class="tcol" style="display: block; position: relative; width: 150px"></div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="cover" style="position: relative; z-index: 99">
           <div class="fixedRight tbody">
             <div class="trow" style="justify-content: start">
               <div class="tcol bgGray" style="min-width: 200px">操作</div>
@@ -316,12 +213,64 @@
               style="justify-content: start; border-bottom: 1px solid #e9e9e9"
               v-if="settlementLog.show"
             >
-              <div class="tcol" style="min-width: 101px; max-width: 101px"></div>
+              <div class="tcol" style="min-width: 101px; max-width: 101px">
+                <el-select v-model="settlementLog.staff_id" filterable placeholder="请选择员工" @change="selectStaff">
+                  <el-option
+                    v-for="(staff, StaffIndex) in staffList"
+                    :key="StaffIndex + 'StaffIndex'"
+                    :label="staff.code.substr(staff.code.length - 4, staff.code.length) + ' ' + staff.name"
+                    :value="staff.id"
+                  >
+                  </el-option>
+                </el-select>
+              </div>
               <div class="tcol noPad" style="overflow: unset">
                 <div class="trow" v-for="(item, index) in settlementLog.processInfo" :key="'process' + index">
-                  <div class="tcol" style="min-width: 101px; max-width: 101px"></div>
-                  <div class="tcol" style="min-width: 101px; max-width: 101px"></div>
-                  <div class="tcol" style="min-width: 101px; max-width: 101px"></div>
+                  <div class="tcol" style="min-width: 101px; max-width: 101px">
+                    <el-cascader
+                      v-model="item.process"
+                      filterable
+                      :options="processList"
+                      :show-all-levels="false"
+                      clearable
+                      @change="getProcessDesc(item, settlementLogIndex, index)"
+                    ></el-cascader>
+                  </div>
+                  <div class="tcol" style="min-width: 101px; max-width: 101px">
+                    <el-select
+                      v-model="item.process_desc"
+                      multiple
+                      filterable
+                      allow-create
+                      default-first-option
+                      collapse-tags
+                      placeholder="请填写工序说明"
+                      @change="
+                        settlementLog.is_check = true
+                        item.is_check = true
+                      "
+                    >
+                      <el-option
+                        v-for="(itemSon, indexSon) in item.processDesc"
+                        :key="itemSon.value + indexSon"
+                        :label="itemSon.label"
+                        :value="itemSon.value"
+                      >
+                      </el-option>
+                    </el-select>
+                  </div>
+                  <div class="tcol" style="min-width: 101px; max-width: 101px">
+                    <zh-input
+                      v-model="item.price"
+                      placeholder="输入结算单价"
+                      :keyBoard="keyBoard"
+                      type="number"
+                      @change="
+                        settlementLog.is_check = true
+                        item.is_check = true
+                      "
+                    ></zh-input>
+                  </div>
                   <div class="tcol noPad">
                     <div
                       class="trow"
