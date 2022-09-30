@@ -179,13 +179,18 @@
                     </el-select>
                   </div>
                   <div class="tcol" style="min-width: 101px; max-width: 101px">
-                    <zh-input
-                      v-model="settlementLog.price"
-                      placeholder="输入结算单价"
-                      :keyBoard="keyBoard"
-                      type="number"
-                      @change="settlementLog.is_check = true"
-                    ></zh-input>
+                    <div style="display: flex; align-items: top">
+                      <div style="width: 82px; line-height: 38px">
+                        <zh-input
+                          v-model="settlementLog.price"
+                          placeholder="结算单价"
+                          :keyBoard="keyBoard"
+                          type="number"
+                          @change="settlementLog.is_check = true"
+                        ></zh-input>
+                      </div>
+                      <div style="width: 3em; font-size: 14px; line-height: 38px">元/件</div>
+                    </div>
                   </div>
                   <div class="tcol noPad">
                     <div class="trow">
@@ -290,7 +295,7 @@
                               </el-option>
                             </el-select>
                           </div>
-                          <div class="tcol" style="display: block; position: relative; width: 150px">
+                          <div class="tcol" style="display: block; position: relative; min-width: 150px">
                             <el-select
                               v-model="itemDetail.chooseId"
                               placeholder="请选择尺码颜色"
@@ -319,31 +324,40 @@
                             ></i>
                           </div>
                           <div class="tcol titleFix">
-                            <zh-input
-                              v-model="itemDetail.number"
-                              placeholder="请输入完成数量"
-                              :keyBoard="keyBoard"
-                              type="number"
-                              @change="settlementLog.is_check = true"
-                            ></zh-input>
+                            <div style="display: flex; align-items: center">
+                              <zh-input
+                                v-model="itemDetail.number"
+                                placeholder="请输入完成数量"
+                                :keyBoard="keyBoard"
+                                type="number"
+                                @change="settlementLog.is_check = true"
+                              ></zh-input>
+                              <div style="line-height: 38px">件</div>
+                            </div>
                           </div>
                           <div class="tcol titleFix">
-                            <zh-input
-                              v-model="itemDetail.extra_number"
-                              placeholder="请输入额外数量"
-                              :keyBoard="keyBoard"
-                              type="number"
-                              @change="settlementLog.is_check = true"
-                            ></zh-input>
+                            <div style="display: flex; align-items: center">
+                              <zh-input
+                                v-model="itemDetail.extra_number"
+                                placeholder="请输入额外数量"
+                                :keyBoard="keyBoard"
+                                type="number"
+                                @change="settlementLog.is_check = true"
+                              ></zh-input>
+                              <div style="line-height: 38px">件</div>
+                            </div>
                           </div>
                           <div class="tcol titleFix">
-                            <zh-input
-                              v-model="itemDetail.shoddy_number"
-                              placeholder="请输入次品数量"
-                              :keyBoard="keyBoard"
-                              type="number"
-                              @change="settlementLog.is_check = true"
-                            ></zh-input>
+                            <div style="display: flex; align-items: center">
+                              <zh-input
+                                v-model="itemDetail.shoddy_number"
+                                placeholder="请输入次品数量"
+                                :keyBoard="keyBoard"
+                                type="number"
+                                @change="settlementLog.is_check = true"
+                              ></zh-input>
+                              <div style="line-height: 38px">件</div>
+                            </div>
                           </div>
                           <div class="tcol titleFix">
                             <el-select
@@ -1399,8 +1413,16 @@ export default Vue.extend({
         return
       }
 
+      let error = false
+
       this.settlementLogList.forEach((settlementLog: any) => {
         // console.log(settlementLog, 'settlementLog')
+        if (settlementLog.process[1] === '') {
+          this.$message.error('请选择工序')
+          error = true
+          this.loading = false
+          throw new Error('未选择工序')
+        }
         settlementLog.product_info.forEach((product_info: any) => {
           // console.log(product_info, 'product_info')
           params.data.push({
@@ -1426,6 +1448,8 @@ export default Vue.extend({
           })
         })
       })
+
+      if (error) return
 
       workshop.save(params).then((res) => {
         if (res.data.status) {
