@@ -63,20 +63,19 @@
                     v-for="(itemDetail, indexDetail) in settlementLog.product_info"
                     :key="indexDetail + 'indexDetail'"
                   >
-                    <div class="tcol noPad">
-                      <div
-                        class="trow"
-                        v-for="(itemSizeColor, indexSizeColor) in itemDetail.sizeColorInfo"
-                        :key="indexSizeColor + 'indexSizeColor'"
-                      >
-                        <div class="tcol" style="display: block; position: relative; width: 150px"></div>
-                      </div>
-                    </div>
+                    <div class="tcol"></div>
                   </div>
                 </div>
                 <div
                   class="tcol"
-                  style="flex-direction: row; width: 200px; align-items: center; justify-content: space-between"
+                  style="
+                    flex-direction: row;
+                    width: 200px;
+                    align-items: center;
+                    justify-content: space-between;
+                    height: 46px;
+                    align-self: center;
+                  "
                 >
                   <div class="hoverBlue" v-if="!isCopy" style="cursor: pointer" @click="copyThis(settlementLogIndex)">
                     复制<br />该行
@@ -196,6 +195,7 @@
                           filterable
                           remote
                           placeholder="请输入订单编号"
+                          loading-text=" 搜索中(输入更多关键字可提高搜索速度) "
                           :loading="searchLoading"
                           :remote-method="
                             (ev) => {
@@ -203,6 +203,7 @@
                             }
                           "
                           @change="handleSelect(settlementLog, settlementLogIndex)"
+                          @focus="querySearchAsync(settlementLog.order_code)"
                         >
                           <div style="display: flex; padding: 0 10px; width: 500px">
                             <div style="flex: 1">订单号</div>
@@ -213,7 +214,7 @@
                             v-for="(item, index) in orderList"
                             :key="item.value + index + 'order'"
                             :label="item.label"
-                            :value="item.value"
+                            :value="item.value + ',' + item.id"
                           >
                             <div style="display: flex">
                               <span style="flex: 1">{{ item.value }}</span>
@@ -231,10 +232,12 @@
                         >
                           <div class="tcol titleFix">
                             <el-select
+                              v-if="!settlementLog.order_code"
                               v-model="itemDetail.code"
                               filterable
                               remote
                               placeholder="请输入产品编号"
+                              loading-text="搜索中(输入更多关键字可提高搜索速度)"
                               :loading="searchLoading"
                               :remote-method="
                                 (ev) => {
@@ -242,7 +245,8 @@
                                 }
                               "
                               :ref="'input' + settlementLogIndex + indexDetail"
-                              @change="handleSelect(settlementLog, settlementLogIndex, 2, itemDetail.code)"
+                              @change="handleSelect(settlementLog, settlementLogIndex, 2, itemDetail.code, itemSon)"
+                              @focus="querySearchAsync1(itemDetail.code)"
                             >
                               <div style="display: flex; padding: 0 10px; width: 800px">
                                 <div style="flex: 1">产品编号</div>
@@ -268,96 +272,98 @@
                                 </div>
                               </el-option>
                             </el-select>
-                          </div>
-                          <div class="tcol noPad">
-                            <div
-                              class="trow"
-                              style="justify-content: start"
-                              v-for="(itemSizeColor, indexSizeColor) in itemDetail.sizeColorInfo"
-                              :key="indexSizeColor + 'indexSizeColor'"
+                            <!-- 有订单编号情况 -->
+                            <el-select
+                              v-if="settlementLog.order_code"
+                              v-model="itemDetail.product_id"
+                              filterable
+                              remote
+                              placeholder="请选择产品编号"
+                              @change="changPro(settlementLog, itemDetail.product_id, indexDetail)"
                             >
-                              <div class="tcol" style="display: block; position: relative; width: 150px">
-                                <el-select
-                                  v-model="itemSizeColor.chooseId"
-                                  placeholder="请选择尺码颜色"
-                                  @change="
-                                    $forceUpdate()
-                                    settlementLog.is_check = true
-                                  "
-                                >
-                                  <el-option
-                                    v-for="(colorItem, colorIndex) in itemSizeColor.colorList"
-                                    :key="colorItem.size_id + ',' + colorItem.color_id + colorIndex"
-                                    :label="colorItem.name"
-                                    :value="colorItem.value"
-                                  >
-                                  </el-option>
-                                </el-select>
-                                <i
-                                  class="el-icon-circle-plus-outline"
-                                  style="cursor: pointer; position: absolute; right: 15%; top: 30%"
-                                  @click="
-                                    addSizeColor(itemDetail)
-                                    settlementLog.is_check = true
-                                  "
-                                ></i>
-                                <i
-                                  class="el-icon-remove-outline"
-                                  style="cursor: pointer; position: absolute; right: 5%; top: 30%"
-                                  @click="
-                                    deleteSizeColor(itemDetail, indexSizeColor)
-                                    settlementLog.is_check = true
-                                  "
-                                ></i>
-                              </div>
-                              <div class="tcol titleFix">
-                                <zh-input
-                                  v-model="itemSizeColor.number"
-                                  placeholder="请输入完成数量"
-                                  :keyBoard="keyBoard"
-                                  type="number"
-                                  @change="settlementLog.is_check = true"
-                                ></zh-input>
-                              </div>
-                              <div class="tcol titleFix">
-                                <zh-input
-                                  v-model="itemSizeColor.extra_number"
-                                  placeholder="请输入额外数量"
-                                  :keyBoard="keyBoard"
-                                  type="number"
-                                  @change="settlementLog.is_check = true"
-                                ></zh-input>
-                              </div>
-                              <div class="tcol titleFix">
-                                <zh-input
-                                  v-model="itemSizeColor.shoddy_number"
-                                  placeholder="请输入次品数量"
-                                  :keyBoard="keyBoard"
-                                  type="number"
-                                  @change="settlementLog.is_check = true"
-                                ></zh-input>
-                              </div>
-                              <div class="tcol titleFix">
-                                <el-select
-                                  v-model="itemSizeColor.shoddy_reason"
-                                  multiple
-                                  filterable
-                                  allow-create
-                                  default-first-option
-                                  collapse-tags
-                                  placeholder="请选择次品原因"
-                                  @change="settlementLog.is_check = true"
-                                >
-                                  <el-option
-                                    v-for="item in substandardReason"
-                                    :key="item.value + 'ciPinReason'"
-                                    :label="item.label"
-                                    :value="item.value"
-                                  >
-                                  </el-option>
-                                </el-select>
-                              </div>
-                            </div>
+                              <el-option
+                                v-for="(itemSon, i) in settlementLog.product_detail_info"
+                                :key="itemSon.value + settlementLogIndex + indexDetail + i + 'orderList'"
+                                :label="itemSon.product_code"
+                                :value="itemSon.product_id"
+                              >
+                              </el-option>
+                            </el-select>
+                          </div>
+                          <div class="tcol" style="display: block; position: relative; width: 150px">
+                            <el-select
+                              v-model="itemDetail.chooseId"
+                              placeholder="请选择尺码颜色"
+                              @change="
+                                $forceUpdate()
+                                settlementLog.is_check = true
+                              "
+                            >
+                              <el-option
+                                v-for="(colorItem, colorIndex) in itemDetail.colorList"
+                                :key="colorItem.size_id + ',' + colorItem.color_id + colorIndex"
+                                :label="colorItem.name"
+                                :value="colorItem.value"
+                              >
+                              </el-option>
+                            </el-select>
+                            <i
+                              class="el-icon-circle-plus-outline"
+                              style="cursor: pointer; position: absolute; right: 15%; top: 30%"
+                              @click="addSizeColor(settlementLog, itemDetail, indexDetail)"
+                            ></i>
+                            <i
+                              class="el-icon-remove-outline"
+                              style="cursor: pointer; position: absolute; right: 5%; top: 30%"
+                              @click="deleteSizeColor(settlementLog, indexDetail)"
+                            ></i>
+                          </div>
+                          <div class="tcol titleFix">
+                            <zh-input
+                              v-model="itemDetail.number"
+                              placeholder="请输入完成数量"
+                              :keyBoard="keyBoard"
+                              type="number"
+                              @change="settlementLog.is_check = true"
+                            ></zh-input>
+                          </div>
+                          <div class="tcol titleFix">
+                            <zh-input
+                              v-model="itemDetail.extra_number"
+                              placeholder="请输入额外数量"
+                              :keyBoard="keyBoard"
+                              type="number"
+                              @change="settlementLog.is_check = true"
+                            ></zh-input>
+                          </div>
+                          <div class="tcol titleFix">
+                            <zh-input
+                              v-model="itemDetail.shoddy_number"
+                              placeholder="请输入次品数量"
+                              :keyBoard="keyBoard"
+                              type="number"
+                              @change="settlementLog.is_check = true"
+                            ></zh-input>
+                          </div>
+                          <div class="tcol titleFix">
+                            <el-select
+                              v-model="itemDetail.shoddy_reason"
+                              multiple
+                              filterable
+                              allow-create
+                              default-first-option
+                              collapse-tags
+                              placeholder="请选择次品原因"
+                              @change="settlementLog.is_check = true"
+                            >
+                              <el-option
+                                v-for="item in substandardReason"
+                                :key="item.value + 'ciPinReason'"
+                                :label="item.label"
+                                :value="item.value"
+                              >
+                              </el-option>
+                            </el-select>
                           </div>
                         </div>
                       </div>
@@ -805,18 +811,20 @@ export default Vue.extend({
       }
       this.$forceUpdate()
     },
-    deleteSizeColor(itemDetail: any, indexSizeColor: any) {
-      itemDetail.sizeColorInfo.length > 1
-        ? this.$deleteItem(itemDetail.sizeColorInfo, indexSizeColor)
-        : this.$message.error('至少有一个产品颜色')
+    deleteSizeColor(settlementLog: any, indexDetail: number) {
+      settlementLog.product_info.length > 1
+        ? this.$deleteItem(settlementLog.product_info, indexDetail)
+        : this.$message.error('至少有一个产品')
       this.$forceUpdate()
     },
-    addSizeColor(itemDetail: any) {
-      this.$addItem(itemDetail.sizeColorInfo, {
+    addSizeColor(settlementLog: any, itemDetail: any, indexDetail: number) {
+      this.$addItem(settlementLog.product_info, {
+        product_id: itemDetail.product_id,
+        product_code: itemDetail.product_code,
         size_name: '',
         color_name: '',
         number: '',
-        colorList: itemDetail.sizeColorInfo[0].colorList,
+        colorList: settlementLog.product_info[indexDetail].colorList || [],
         extra_number: '',
         shoddy_number: '',
         shoddy_reason: []
@@ -866,6 +874,7 @@ export default Vue.extend({
 
       let params = {}
       if (type === 1) {
+        settlementLog.order_code = settlementLog.order_code.split(',')[0]
         params = { keyword: settlementLog.order_code, page: 1, limit: 10, order_type: this.order_type }
       } else if (type === 2) {
         params = {
@@ -903,10 +912,16 @@ export default Vue.extend({
           })
         } else if (type === 2) {
           let data = res.data.data.items
+          let info = [
+            data.find((item: any) => {
+              return item.code === product_code.split(',')[1]
+            })
+          ]
+
           this.productionScheduleUpdate = []
           this.total = res.data.data.total
 
-          data.forEach((items: any, index: number) => {
+          info.forEach((items: any, index: number) => {
             this.productionScheduleUpdate.push({
               id: items.id,
               code: items.code,
@@ -1012,23 +1027,25 @@ export default Vue.extend({
         })
     },
     querySearchAsync(str: string) {
-      this.searchLoading = true
+      this.orderList = []
       if (str === '' || str === undefined) {
-        this.orderList = []
         return
       }
+      this.searchLoading = true
       order
         .simpleList({
           order_code: str,
           order_type: this.order_type,
-          client_id: this.client_id[2] || ''
+          client_id: this.client_id[2] || '',
+          page: 1,
+          limit: 10
         })
         .then((res) => {
           if (res.data.status) {
             if (new Date(res.headers.date) > new Date(this.reqTime) || this.reqTime === '') {
               this.reqTime = res.headers.date
               let arr: any = []
-              res.data.data.forEach((item: any) => {
+              res.data.data.items.forEach((item: any) => {
                 arr.push({ value: item.code, id: item.id, created_at: item.created_at, client_name: item.client_name })
               })
               this.orderList = arr
@@ -1040,23 +1057,25 @@ export default Vue.extend({
         })
     },
     querySearchAsync1(str: string) {
-      this.searchLoading = true
+      this.orderList = []
       if (str === '' || str === undefined) {
-        this.orderList = []
         return
       }
+      this.searchLoading = true
       order
         .simpleList({
           product_code: str,
           order_type: this.order_type,
-          client_id: this.client_id[2] || ''
+          client_id: this.client_id[2] || '',
+          page: 1,
+          limit: 10
         })
         .then((res) => {
           if (res.data.status) {
             if (new Date(res.headers.date) > new Date(this.reqTime) || this.reqTime === '') {
               this.reqTime = res.headers.date
               let arr: any = []
-              res.data.data.forEach((item: any) => {
+              res.data.data.items.forEach((item: any) => {
                 item.product_data.forEach((itemPro: any) => {
                   if (itemPro.product_code.indexOf(str) != -1) {
                     let colorGroup = ''
@@ -1138,31 +1157,28 @@ export default Vue.extend({
         items.product_info.forEach((product_info: any) => {
           let colorList: any = []
 
-          if (!product_info.check) return
-          arr[arr.length - 1].product_detail_info.push({
-            code: product_info.product_code,
-            product_id: product_info.product_id,
-            sizeColorInfo: []
-          })
-
           product_info.colorSizeInfo.forEach((color: any) => {
             colorList.push({
               name: (color.size_name || '无数据') + '/' + (color.color_name || '无数据'),
               value: color.size_id + ',' + color.color_id
             })
             color.colorList = colorList
+
             if (!color.check) return
             color.number = ''
             color.chooseId = color.size_id + ',' + color.color_id
-            arr[arr.length - 1].product_detail_info[
-              arr[arr.length - 1].product_detail_info.length - 1
-            ].sizeColorInfo.push(color)
+            arr[arr.length - 1].product_detail_info.push({
+              code: product_info.product_code,
+              product_id: product_info.product_id,
+              ...color
+            })
           })
         })
         this.settlementLogList[items.indexStaff].is_check = true
         this.settlementLogList[items.indexStaff].order_id = arr[0].order_id
         this.settlementLogList[items.indexStaff].order_code = arr[0].order_code
         this.settlementLogList[items.indexStaff].product_info = arr[0].product_detail_info
+        this.settlementLogList[items.indexStaff].product_detail_info = items.product_info
         this.checkAll = false
       })
 
@@ -1182,16 +1198,12 @@ export default Vue.extend({
         product_info: [
           {
             code: '',
-            sizeColorInfo: [
-              {
-                size_name: '',
-                color_name: '',
-                number: '',
-                extra_number: '',
-                shoddy_number: '',
-                shoddy_reason: []
-              }
-            ]
+            size_name: '',
+            color_name: '',
+            number: '',
+            extra_number: '',
+            shoddy_number: '',
+            shoddy_reason: []
           }
         ]
       })
@@ -1227,6 +1239,21 @@ export default Vue.extend({
     closeDialog() {
       this.showDialog = false
     },
+    changPro(settlementLog: any, id: number, indexDetail: number) {
+      let proInfo = settlementLog.product_detail_info.find((item: any) => {
+        return item.product_id == id
+      })
+
+      let colorList: any = []
+
+      proInfo.colorSizeInfo.forEach((item: any) => {
+        colorList.push({ name: item.size_name + '/' + item.color_name, value: item.size_id + ',' + item.color_id })
+      })
+
+      settlementLog.product_info[indexDetail].product_code = proInfo.product_code
+      settlementLog.product_info[indexDetail].chooseId = colorList[0].value
+      settlementLog.product_info[indexDetail].colorList = colorList
+    },
     // 提交数据到列表
     confirmData() {
       this.selectStaffIdList = this.$clone(this.staffIdList)
@@ -1257,16 +1284,12 @@ export default Vue.extend({
             product_info: [
               {
                 code: '',
-                sizeColorInfo: [
-                  {
-                    size_name: '',
-                    color_name: '',
-                    number: '',
-                    extra_number: '',
-                    shoddy_number: '',
-                    shoddy_reason: []
-                  }
-                ]
+                size_name: '',
+                color_name: '',
+                number: '',
+                extra_number: '',
+                shoddy_number: '',
+                shoddy_reason: []
               }
             ]
           })
@@ -1296,16 +1319,12 @@ export default Vue.extend({
             product_info: [
               {
                 code: '',
-                sizeColorInfo: [
-                  {
-                    size_name: '',
-                    color_name: '',
-                    number: '',
-                    extra_number: '',
-                    shoddy_number: '',
-                    shoddy_reason: []
-                  }
-                ]
+                size_name: '',
+                color_name: '',
+                number: '',
+                extra_number: '',
+                shoddy_number: '',
+                shoddy_reason: []
               }
             ]
           }
@@ -1384,31 +1403,26 @@ export default Vue.extend({
         // console.log(settlementLog, 'settlementLog')
         settlementLog.product_info.forEach((product_info: any) => {
           // console.log(product_info, 'product_info')
-          product_info.sizeColorInfo.forEach((sizeColorInfo: any) => {
-            // console.log(sizeColorInfo, 'sizeColorInfo')
-            params.data.push({
-              id: null,
-              order_id: settlementLog.order_id,
-              staff_id: settlementLog.staff_id,
-              process_name: settlementLog.process[1],
-              process_type: settlementLog.process[0],
-              process_desc: settlementLog.process_desc.toString(),
-              extra_number: sizeColorInfo.extra_number || 0,
-              size_id: sizeColorInfo.size_id || 0,
-              color_id: sizeColorInfo.color_id || 0,
-              number: sizeColorInfo.number || 0,
-              shoddy_number: sizeColorInfo.shoddy_number || 0,
-              shoddy_reason: sizeColorInfo.shoddy_reason ? sizeColorInfo.shoddy_reason.toString() : '',
-              product_id: product_info.product_id,
-              price: settlementLog.price || 0,
-              total_price: this.outCiPin
-                ? ((sizeColorInfo.number || 0) +
-                    (sizeColorInfo.extra_number || 0) -
-                    (sizeColorInfo.shoddy_number || 0)) *
-                  (settlementLog.price || 0)
-                : ((sizeColorInfo.number || 0) + (sizeColorInfo.extra_number || 0)) * (settlementLog.price || 0),
-              complete_time: this.$GetDateStr(0)
-            })
+          params.data.push({
+            id: null,
+            order_id: settlementLog.order_id,
+            staff_id: settlementLog.staff_id,
+            process_name: settlementLog.process[1],
+            process_type: settlementLog.process[0],
+            process_desc: settlementLog.process_desc.toString(),
+            extra_number: product_info.extra_number || 0,
+            size_id: product_info.size_id || 0,
+            color_id: product_info.color_id || 0,
+            number: product_info.number || 0,
+            shoddy_number: product_info.shoddy_number || 0,
+            shoddy_reason: product_info.shoddy_reason ? product_info.shoddy_reason.toString() : '',
+            product_id: product_info.product_id,
+            price: settlementLog.price || 0,
+            total_price: this.outCiPin
+              ? ((product_info.number || 0) + (product_info.extra_number || 0) - (product_info.shoddy_number || 0)) *
+                (settlementLog.price || 0)
+              : ((product_info.number || 0) + (product_info.extra_number || 0)) * (settlementLog.price || 0),
+            complete_time: this.$GetDateStr(0)
           })
         })
       })
@@ -1453,6 +1467,10 @@ export default Vue.extend({
           this.settlementLogList[staffIndex].product_info = this.$clone(
             this.settlementLogList[this.copyLine[0]].product_info
           )
+
+          this.settlementLogList[staffIndex].product_detail_info = this.$clone(
+            this.settlementLogList[this.copyLine[0]].product_detail_info
+          )
         }
       }
 
@@ -1484,16 +1502,12 @@ export default Vue.extend({
             product_info: [
               {
                 code: '',
-                sizeColorInfo: [
-                  {
-                    size_name: '',
-                    color_name: '',
-                    number: '',
-                    extra_number: '',
-                    shoddy_number: '',
-                    shoddy_reason: []
-                  }
-                ]
+                size_name: '',
+                color_name: '',
+                number: '',
+                extra_number: '',
+                shoddy_number: '',
+                shoddy_reason: []
               }
             ]
           })
@@ -1597,16 +1611,12 @@ export default Vue.extend({
         product_info: [
           {
             code: '',
-            sizeColorInfo: [
-              {
-                size_name: '',
-                color_name: '',
-                number: '',
-                extra_number: '',
-                shoddy_number: '',
-                shoddy_reason: []
-              }
-            ]
+            size_name: '',
+            color_name: '',
+            number: '',
+            extra_number: '',
+            shoddy_number: '',
+            shoddy_reason: []
           }
         ]
       })
@@ -1627,16 +1637,12 @@ export default Vue.extend({
             product_info: [
               {
                 code: '',
-                sizeColorInfo: [
-                  {
-                    size_name: '',
-                    color_name: '',
-                    number: '',
-                    extra_number: '',
-                    shoddy_number: '',
-                    shoddy_reason: []
-                  }
-                ]
+                size_name: '',
+                color_name: '',
+                number: '',
+                extra_number: '',
+                shoddy_number: '',
+                shoddy_reason: []
               }
             ]
           })
@@ -1652,16 +1658,12 @@ export default Vue.extend({
             product_info: [
               {
                 code: '',
-                sizeColorInfo: [
-                  {
-                    size_name: '',
-                    color_name: '',
-                    number: '',
-                    extra_number: '',
-                    shoddy_number: '',
-                    shoddy_reason: []
-                  }
-                ]
+                size_name: '',
+                color_name: '',
+                number: '',
+                extra_number: '',
+                shoddy_number: '',
+                shoddy_reason: []
               }
             ]
           })
@@ -1678,16 +1680,12 @@ export default Vue.extend({
           product_info: [
             {
               code: '',
-              sizeColorInfo: [
-                {
-                  size_name: '',
-                  color_name: '',
-                  number: '',
-                  extra_number: '',
-                  shoddy_number: '',
-                  shoddy_reason: []
-                }
-              ]
+              size_name: '',
+              color_name: '',
+              number: '',
+              extra_number: '',
+              shoddy_number: '',
+              shoddy_reason: []
             }
           ]
         })
@@ -1804,6 +1802,11 @@ export default Vue.extend({
   .el-select__input {
     margin-left: 0;
   }
+}
+
+.el-select-dropdown__empty {
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .el-select-dropdown__item {
