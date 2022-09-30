@@ -1417,12 +1417,20 @@ export default Vue.extend({
 
       this.settlementLogList.forEach((settlementLog: any) => {
         // console.log(settlementLog, 'settlementLog')
-        if (settlementLog.process[1] === '') {
+        if (settlementLog.process[1] === '' || settlementLog.process.length === 0) {
           this.$message.error('请选择工序')
           error = true
           this.loading = false
           throw new Error('未选择工序')
         }
+
+        if (settlementLog.order_code === '') {
+          this.$message.error('请选择订单')
+          error = true
+          this.loading = false
+          throw new Error('未选择订单')
+        }
+
         settlementLog.product_info.forEach((product_info: any) => {
           // console.log(product_info, 'product_info')
           params.data.push({
