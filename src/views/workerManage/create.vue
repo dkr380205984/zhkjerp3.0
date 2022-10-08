@@ -173,8 +173,20 @@
           <div class="col">
             <div class="label">学历</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工学历"
-                v-model="staffInfo.education"></el-input>
+              <el-select placeholder="请选择员工学历"
+                v-model="staffInfo.education"
+                clearable>
+                <el-option value="小学"
+                  label="小学"></el-option>
+                <el-option value="初中"
+                  label="初中"></el-option>
+                <el-option value="高中/职高"
+                  label="高中/职高"></el-option>
+                <el-option value="大学/大专"
+                  label="大学/大专"></el-option>
+                <el-option value="研究生"
+                  label="研究生"></el-option>
+              </el-select>
             </div>
           </div>
           <div class="col">

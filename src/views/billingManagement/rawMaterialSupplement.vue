@@ -152,7 +152,7 @@
               </div>
               <div class="col hoverBlue"
                 style="flex: 1.2;cursor:pointer"
-                @click="$router.push('/materialManage/detail?id='+item.id)">{{ item.code }}</div>
+                @click="$router.push('/materialManage/detail?supFlag=1&id='+item.id)">{{ item.code }}</div>
               <div class="col hoverBlue"
                 style="cursor: pointer;
                   white-space: nowrap;

@@ -298,7 +298,11 @@ export default Vue.extend({
           this.$message.success('提交成功')
           this.numberUpdate = false
           // this.$router.push('/workshopManagement/staffInputDetail?isAll=true')
-          this.$router.push('/workshopManagement/payTimeList?page=1&type=' + this.type)
+          if (this.$route.query.staffId) {
+            this.$router.push('/workerManage/detail?id=' + this.$route.query.staffId)
+          } else {
+            this.$router.push('/workshopManagement/payTimeList?page=1&type=' + this.type)
+          }
         }
       })
     },
