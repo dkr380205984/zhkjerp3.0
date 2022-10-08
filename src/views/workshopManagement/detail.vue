@@ -286,7 +286,23 @@
             <span class="el-icon-close" @click="numberUpdate = false"></span>
           </div>
         </div>
-        <div class="contentCtn" style="padding-top: 15px">
+        <div class="contentCtn" style="padding-top: 15px; padding-bottom: 15px; max-height: 800px">
+          <div class="elCtn" style="position: relative">
+            <el-select
+              style="width: 95%"
+              @change="changeDepartment()"
+              v-model="department"
+              placeholder="部门筛选"
+              clearable
+            >
+              <el-option
+                v-for="(item, index) in departmentList"
+                :key="index"
+                :value="item.id"
+                :label="item.name"
+              ></el-option>
+            </el-select>
+          </div>
           <el-checkbox v-model="outCiPin"
             >结算工资去除次品数量
             <el-tooltip class="item" effect="dark" placement="top">
@@ -298,7 +314,289 @@
             </el-tooltip>
           </el-checkbox>
           <el-checkbox v-model="keyBoard" @change="changeKeyBoard">打开页面键盘</el-checkbox>
-          <div class="editCtn packOrder" v-for="(item, index) in productionScheduleUpdate" :key="index">
+          <div class="tableCtn fixedTableCtn" style="padding-left: 0; padding-right: 0">
+            <div class="cover" style="position: relative; z-index: 99">
+              <div class="fixedRight tbody">
+                <div class="trow" style="justify-content: start">
+                  <div class="tcol bgGray" style="min-width: 200px">操作</div>
+                </div>
+                <div
+                  v-for="(settlementLog, settlementLogIndex) in productionScheduleUpdate"
+                  :key="'process' + settlementLogIndex"
+                >
+                  <div
+                    class="trow"
+                    style="justify-content: start; border-bottom: 1px solid #e9e9e9"
+                    v-if="settlementLog.show"
+                  >
+                    <div class="tcol noPad">
+                      <div
+                        class="trow"
+                        v-for="(itemDetail, indexDetail) in settlementLog.product_info"
+                        :key="indexDetail + 'indexDetail'"
+                      >
+                        <div class="tcol" style="width: 0; flex: unset; padding: 0; border-right: unset"></div>
+                        <div class="tcol" style="width: 0; flex: unset; padding: 0; border-right: unset"></div>
+                        <div class="tcol" style="width: 0; flex: unset; padding: 0; border-right: unset"></div>
+                        <div class="tcol" style="width: 0; flex: unset; padding: 0; border-right: unset"></div>
+                        <div class="tcol" style="width: 0; flex: unset; padding: 0; border-right: unset"></div>
+                        <div class="tcol" style="width: 0; flex: unset; padding: 0; border-right: unset"></div>
+                        <div
+                          class="tcol"
+                          style="
+                            flex-direction: row;
+                            width: 200px;
+                            align-items: center;
+                            justify-content: space-between;
+                            height: 46px;
+                            border-bottom: unset;
+                            align-self: center;
+                          "
+                        >
+                          <div
+                            class="hoverBlue"
+                            v-if="!isCopy"
+                            style="cursor: pointer"
+                            @click="copyThis(settlementLogIndex, indexDetail)"
+                          >
+                            复制<br />该行
+                          </div>
+                          <div
+                            class="hoverBlue"
+                            v-if="isCopy && copyLine[0] === settlementLogIndex && copyLine[1] === indexDetail"
+                            style="cursor: pointer"
+                            @click="isCopy = false"
+                          >
+                            取消<br />复制
+                          </div>
+                          <div
+                            class="hoverGreen"
+                            v-if="isCopy && (copyLine[0] !== settlementLogIndex || copyLine[1] !== indexDetail)"
+                            style="cursor: pointer"
+                            @click="parseThis(settlementLogIndex, indexDetail)"
+                          >
+                            粘贴<br />该行
+                          </div>
+                          <div
+                            class="hoverBlue"
+                            style="cursor: pointer"
+                            @click="addSettlementLog(settlementLogIndex, 'product', indexDetail)"
+                          >
+                            添加<br />产品
+                          </div>
+                          <div
+                            class="hoverBlue"
+                            style="cursor: pointer"
+                            @click="addSettlementLog(settlementLogIndex, 'process')"
+                          >
+                            添加<br />工序
+                          </div>
+                          <div style="cursor: pointer" class="hoverRed" @click="checkDelete(settlementLogIndex)">
+                            删除<br />该行
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tbody" style="overflow: auto" @mousewheel.prevent="listenWheel" ref="listId">
+              <div class="trow" style="justify-content: start">
+                <div class="tcol bgGray" style="min-width: 101px">员工姓名</div>
+                <div class="tcol bgGray" style="min-width: 101px">生产工序</div>
+                <div class="tcol bgGray" style="min-width: 101px">工序说明</div>
+                <div class="tcol bgGray" style="min-width: 101px">结算单价</div>
+                <div class="tcol bgGray titleFix">产品编号</div>
+                <div class="tcol bgGray" style="min-width: 150px">尺码颜色</div>
+                <div class="tcol bgGray titleFix">完成数量</div>
+                <div class="tcol bgGray titleFix">额外数量</div>
+                <div class="tcol bgGray titleFix">次品数</div>
+                <div class="tcol bgGray titleFix">次品原因</div>
+                <div class="tcol bgGray" style="min-width: 200px">操作</div>
+              </div>
+              <div
+                v-for="(settlementLog, settlementLogIndex) in productionScheduleUpdate"
+                :key="'process' + settlementLogIndex"
+              >
+                <div
+                  class="trow"
+                  style="justify-content: start; border-bottom: 1px solid #e9e9e9"
+                  v-if="settlementLog.show"
+                >
+                  <div class="tcol" style="min-width: 101px; max-width: 101px">
+                    <el-cascader
+                      placeholder="员工姓名搜索"
+                      v-model="settlementLog.staffId"
+                      :options="processStaffList"
+                      filterable
+                      :show-all-levels="false"
+                      @change="getStaffIdList(settlementLogIndex)"
+                    ></el-cascader>
+                  </div>
+                  <div class="tcol noPad" style="overflow: unset">
+                    <div class="trow">
+                      <div class="tcol" style="min-width: 101px; max-width: 101px">
+                        <el-cascader
+                          v-model="settlementLog.process"
+                          filterable
+                          :options="processList"
+                          :show-all-levels="false"
+                          clearable
+                          placeholder="请选择工序"
+                          @change="getProcessDesc(settlementLog, settlementLogIndex)"
+                        ></el-cascader>
+                      </div>
+                      <div class="tcol" style="min-width: 101px; max-width: 101px">
+                        <el-select
+                          v-model="settlementLog.process_desc"
+                          multiple
+                          filterable
+                          allow-create
+                          default-first-option
+                          collapse-tags
+                          placeholder="请填写工序说明"
+                          @change="settlementLog.is_check = true"
+                        >
+                          <el-option
+                            v-for="(itemSon, indexSon) in settlementLog.processDesc"
+                            :key="itemSon.value + indexSon"
+                            :label="itemSon.label"
+                            :value="itemSon.value"
+                          >
+                          </el-option>
+                        </el-select>
+                      </div>
+                      <div class="tcol" style="min-width: 101px; max-width: 101px">
+                        <div style="display: flex; align-items: top">
+                          <div style="width: 82px; line-height: 38px">
+                            <zh-input
+                              v-model="settlementLog.price"
+                              placeholder="结算单价"
+                              :keyBoard="keyBoard"
+                              type="number"
+                              @change="settlementLog.is_check = true"
+                            ></zh-input>
+                          </div>
+                          <div style="width: 3em; font-size: 14px; line-height: 38px">元/件</div>
+                        </div>
+                      </div>
+                      <div class="tcol noPad">
+                        <div
+                          class="trow"
+                          v-for="(itemDetail, indexDetail) in settlementLog.product_info"
+                          :key="indexDetail + 'indexDetail'"
+                        >
+                          <div class="tcol titleFix">
+                            <el-select
+                              v-model="itemDetail.product_id"
+                              filterable
+                              remote
+                              placeholder="请选择产品编号"
+                              @change="changPro(settlementLog, itemDetail.product_id, indexDetail)"
+                            >
+                              <el-option
+                                v-for="(itemSon, i) in product_arr"
+                                :key="i + '产品orderList'"
+                                :label="itemSon.product_code"
+                                :value="itemSon.product_id"
+                              >
+                              </el-option>
+                            </el-select>
+                          </div>
+                          <div class="tcol" style="display: block; position: relative; min-width: 150px">
+                            <el-select
+                              v-model="itemDetail.chooseId"
+                              placeholder="请选择尺码颜色"
+                              @change="
+                                $forceUpdate()
+                                settlementLog.is_check = true
+                              "
+                            >
+                              <el-option
+                                v-for="(colorItem, colorIndex) in itemDetail.colorList"
+                                :key="colorItem.size_id + ',' + colorItem.color_id + colorIndex"
+                                :label="colorItem.name"
+                                :value="colorItem.value"
+                              >
+                              </el-option>
+                            </el-select>
+                            <i
+                              class="el-icon-circle-plus-outline"
+                              style="cursor: pointer; position: absolute; right: 15%; top: 30%"
+                              @click="addSizeColor(settlementLog, itemDetail, indexDetail)"
+                            ></i>
+                            <i
+                              class="el-icon-remove-outline"
+                              style="cursor: pointer; position: absolute; right: 5%; top: 30%"
+                              @click="deleteSizeColor(settlementLog, indexDetail)"
+                            ></i>
+                          </div>
+                          <div class="tcol titleFix">
+                            <div style="display: flex; align-items: center">
+                              <zh-input
+                                v-model="itemDetail.number"
+                                placeholder="请输入完成数量"
+                                :keyBoard="keyBoard"
+                                type="number"
+                                @change="settlementLog.is_check = true"
+                              ></zh-input>
+                              <div style="line-height: 38px">件</div>
+                            </div>
+                          </div>
+                          <div class="tcol titleFix">
+                            <div style="display: flex; align-items: center">
+                              <zh-input
+                                v-model="itemDetail.extra_number"
+                                placeholder="请输入额外数量"
+                                :keyBoard="keyBoard"
+                                type="number"
+                                @change="settlementLog.is_check = true"
+                              ></zh-input>
+                              <div style="line-height: 38px">件</div>
+                            </div>
+                          </div>
+                          <div class="tcol titleFix">
+                            <div style="display: flex; align-items: center">
+                              <zh-input
+                                v-model="itemDetail.shoddy_number"
+                                placeholder="请输入次品数量"
+                                :keyBoard="keyBoard"
+                                type="number"
+                                @change="settlementLog.is_check = true"
+                              ></zh-input>
+                              <div style="line-height: 38px">件</div>
+                            </div>
+                          </div>
+                          <div class="tcol titleFix">
+                            <el-select
+                              v-model="itemDetail.shoddy_reason"
+                              multiple
+                              filterable
+                              allow-create
+                              default-first-option
+                              collapse-tags
+                              placeholder="请选择次品原因"
+                              @change="settlementLog.is_check = true"
+                            >
+                              <el-option
+                                v-for="item in substandardReason"
+                                :key="item.value + 'ciPinReason'"
+                                :label="item.label"
+                                :value="item.value"
+                              >
+                              </el-option>
+                            </el-select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="editCtn packOrder" v-for="(item, index) in productionScheduleUpdate" :key="index">
             <div
               class="deleteIcon"
               @click="
@@ -358,12 +656,6 @@
                       >
                       </el-option>
                     </el-select>
-                    <!-- <el-autocomplete
-                      class="inline-input"
-                      v-model="item.process_desc"
-                      :fetch-suggestions="querySearch"
-                      placeholder="请选择工序"
-                    ></el-autocomplete> -->
                   </div>
                   <div class="tcol bgGray">结算单价</div>
                   <div class="tcol" style="flex: 0.5">
@@ -389,10 +681,6 @@
                 </div>
                 <div class="trow" v-for="(itemSizeColor, indexColorSize) in item.infoData" :key="indexColorSize">
                   <div class="tcol">
-                    <!-- <el-select v-model="itemSizeColor.worker" filterable placeholder="请选择员工">
-                      <el-option v-for="item in workList" :key="item.id" :label="item.name" :value="item.id">
-                      </el-option>
-                    </el-select> -->
                     <el-cascader
                       :options="allWorkList"
                       v-model="itemSizeColor.worker"
@@ -518,29 +806,49 @@
                 </div>
               </div>
             </div>
+          </div> -->
+          <div class="elCtn">
+            <div
+              class="btn backHoverBlue"
+              @click="
+                $addItem(productionScheduleUpdate, {
+                  staffName: '',
+                  staffCode: '',
+                  staffId: '',
+                  staff_id: '',
+                  show: true,
+                  process: '',
+                  product_info: [
+                    {
+                      code: '',
+                      size_name: '',
+                      color_name: '',
+                      number: '',
+                      extra_number: '',
+                      shoddy_number: '',
+                      shoddy_reason: []
+                    }
+                  ]
+                })
+              "
+            >
+              添加下个员工
+            </div>
           </div>
-          <div
-            class="btn backHoverBlue"
-            style="margin-bottom: 16px"
-            @click="
-              $addItem(productionScheduleUpdate, {
-                productNameId: '',
-                productId: '',
-                process: '',
-                process_desc: '',
-                unitPrice: 0,
-                infoData: [
-                  {
-                    date: '',
-                    worker: '',
-                    sizeColorList: [{}],
-                    substandardReason: []
-                  }
-                ]
-              })
-            "
-          >
-            添加下一组
+          <div class="elCtn" style="margin-left: 20px">
+            <el-checkbox-group v-model="copyOption">
+              <el-dropdown :hide-on-click="false" trigger="click">
+                <el-button size="small" type="primary" style="font-size: 16px; padding: 0 24px; line-height: 30px">
+                  设置复制项<i class="el-icon-arrow-down el-icon--right"></i>
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item> <el-checkbox label="process">生产工序</el-checkbox></el-dropdown-item>
+                  <el-dropdown-item> <el-checkbox label="proces_desc">工序说明</el-checkbox></el-dropdown-item>
+                  <el-dropdown-item> <el-checkbox label="price">结算单价</el-checkbox></el-dropdown-item>
+                  <el-dropdown-item> <el-checkbox label="size_color">尺码颜色</el-checkbox></el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </el-checkbox-group>
           </div>
         </div>
         <div class="oprCtn">
@@ -624,6 +932,12 @@ export default Vue.extend({
       showPopupLoading: false,
       orderIndex: '0',
       product_arr: [],
+      departmentName: '',
+      department: '',
+      departmentList: [],
+      processStaffList: [{ children: [] }],
+      copyOption: ['process', 'proces_desc', 'price', 'size_color'],
+      isCopy: false,
       outCiPin: false,
       tabChoose: '',
       // 颜色尺码是否全选
@@ -685,17 +999,21 @@ export default Vue.extend({
       ],
       productionScheduleUpdate: [
         {
-          productNameId: '',
-          productId: '',
+          staffName: '',
+          staffCode: '',
+          staffId: '',
+          staff_id: '',
+          show: true,
           process: '',
-          process_desc: '',
-          unitPrice: 0,
-          infoData: [
+          product_info: [
             {
-              date: '',
-              worker: '',
-              sizeColorList: [{}],
-              substandardReason: []
+              code: '',
+              size_name: '',
+              color_name: '',
+              number: '',
+              extra_number: '',
+              shoddy_number: '',
+              shoddy_reason: []
             }
           ]
         }
@@ -872,6 +1190,31 @@ export default Vue.extend({
       this.loading = true
       this.processList = []
       this.order_id = this.$route.query.id
+      staff
+        .departmentList({
+          keyword: '',
+          limit: ''
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.departmentList = res.data.data
+            this.departmentName = res.data.data.find((res: any) => {
+              return res.id == this.department
+            })
+            this.departmentName = this.departmentName?.name || ''
+          }
+
+          staff
+            .list({
+              status: 1,
+              department: res.data.data.name
+            })
+            .then((res) => {
+              let arr: any = []
+              this.staffList = res.data.data.concat(arr)
+              this.processStaffList = this.$getProcessStaff(this.staffList)
+            })
+        })
       workshop.detail({ order_id: this.order_id }).then((res) => {
         res.data.data.forEach((items: any) => {
           items.allProcessDesc = []
@@ -947,16 +1290,109 @@ export default Vue.extend({
                 value: item
               })
             })
-            this.processList.unshift({
-              label: '推荐工序',
-              value: 0,
-              children: arr
-            })
           }
         })
 
       this.getWorkList('')
       this.loading = false
+    },
+    // 添加产品工序
+    addSettlementLog(index: number, type: string, proIndex: number) {
+      let isPro = type === 'product'
+      let staffInfo = this.productionScheduleUpdate[index]
+      if (isPro) {
+        this.productionScheduleUpdate[index].product_info.splice(proIndex + 1, 0, {
+          code: '',
+          size_name: '',
+          color_name: '',
+          number: '',
+          extra_number: '',
+          shoddy_number: '',
+          shoddy_reason: []
+        })
+      } else {
+        this.productionScheduleUpdate.splice(index + 1, 0, {
+          staffName: staffInfo.name,
+          staffCode: staffInfo.code,
+          staffId: staffInfo.staffId,
+          staff_id: staffInfo.staffId,
+          show: true,
+          process: '',
+          processDesc: [],
+          process_desc: [],
+          order_code: '',
+          product_info: [
+            {
+              code: '',
+              size_name: '',
+              color_name: '',
+              number: '',
+              extra_number: '',
+              shoddy_number: '',
+              shoddy_reason: []
+            }
+          ]
+        })
+      }
+    },
+    // 更改部门
+    changeDepartment() {
+      if (this.department === '') {
+        this.$setLocalStorage('department', '')
+        return
+      }
+      staff
+        .departmentDetail({
+          id: this.department
+        })
+        .then((res) => {
+          this.departmentName = res.data.data.name
+          staff
+            .list({
+              status: 1,
+              department: res.data.data.name
+            })
+            .then((res) => {
+              let arr = this.$clone(this.staffArr)
+              res.data.data.forEach((item: any) => {
+                this.staffArr.forEach((staff: any, index: number) => {
+                  if (item.id === staff.id) {
+                    this.$deleteItem(arr, index)
+                  }
+                })
+              })
+              this.staffList = res.data.data.concat(arr)
+              this.processStaffList = this.$getProcessStaff(this.staffList)
+            })
+        })
+    },
+    getProcessDesc(settlementLog: any, settlementLogIndex: number) {
+      // 员工层级数据检查
+      this.productionScheduleUpdate[settlementLogIndex].is_check = true
+      process
+        .list({
+          name: settlementLog.process[1]
+        })
+        .then((res) => {
+          if (res.data.status) {
+            let str = settlementLog.process[1]
+            settlementLog.processDesc = []
+            if (!res.data.data.length) return
+
+            let detailData = res.data.data.find((item: any) => {
+              return item.name === str
+            })
+
+            if (detailData.process_desc) {
+              detailData.process_desc.split(',').forEach((process_desc: any) => {
+                settlementLog.processDesc.push({ label: process_desc, value: process_desc })
+              })
+            }
+          } else {
+            settlementLog.processDesc = []
+          }
+          this.$forceUpdate()
+        })
     },
     // querySearch(queryString: string, cb: any) {
     //   if (this.processDescList === undefined || this.processDescList.length === 0) {
@@ -1132,7 +1568,9 @@ export default Vue.extend({
         this.numberUpdate = true
         return
       }
+
       let arr: any = []
+      this.productionScheduleUpdate[0].product_info = []
 
       this.product_arr.forEach((item: any, index: any) => {
         if (item.checkSizeColor === undefined || item.checkSizeColor.length === 0) {
@@ -1140,29 +1578,27 @@ export default Vue.extend({
         }
 
         let obj: any = {}
-        obj.infoData = []
-        obj.productIndex = index
-        obj.productNameId = item.id
-        obj.productId = item.product_id
 
-        item.product_info.forEach((itemColor: any, itemIndex: any) => {
-          if (itemIndex === 0) {
-            obj.infoData.push({
-              sizeColorList: []
-            })
-          }
+        item.product_info.forEach((itemColor: any) => {
+          itemColor.product_id = item.product_id
 
           if (itemColor.checkSizeColor) {
             itemColor.chooseId = itemColor.size_id + ',' + itemColor.color_id
-            itemColor.complete_time = this.getNowFormatDate()
-            obj.infoData[0].sizeColorList.push(itemColor)
+            itemColor.number = ''
+            obj = itemColor
+            obj.colorList = item.product_info.map((items: any) => {
+              return {
+                value: items.size_id + ',' + items.color_id,
+                name: items.size_name + '/' + items.color_name
+              }
+            })
           }
         })
 
         arr.push(obj)
       })
 
-      this.productionScheduleUpdate = arr
+      this.productionScheduleUpdate[0].product_info = arr
       this.numberUpdate = true
     },
     secondDataChance() {
@@ -1386,19 +1822,60 @@ export default Vue.extend({
       }
       this.$forceUpdate()
     },
+    // 复制该行
+    copyThis(staffIndex: any, proIndex: any) {
+      this.copyLine = [staffIndex, proIndex]
+      this.isCopy = true
+    },
+    // 粘贴该行
+    parseThis(staffIndex: number, proIndex: number) {
+      let strCopyOption = this.copyOption.toString()
+      // 员工层级数据检查
+      this.productionScheduleUpdate[staffIndex].is_check = this.productionScheduleUpdate[this.copyLine[0]].is_check
+
+      // 复制工序
+      if (strCopyOption.indexOf('process') != -1) {
+        this.productionScheduleUpdate[staffIndex].process = this.productionScheduleUpdate[this.copyLine[0]].process
+      }
+
+      // 复制工序说明
+      if (strCopyOption.indexOf('proces_desc') != -1) {
+        this.productionScheduleUpdate[staffIndex].process_desc =
+          this.productionScheduleUpdate[this.copyLine[0]].process_desc
+      }
+
+      // 复制结算单价
+      if (strCopyOption.indexOf('price') != -1) {
+        this.productionScheduleUpdate[staffIndex].price = this.productionScheduleUpdate[this.copyLine[0]].price
+      }
+
+      // 复制订单
+      if (strCopyOption.indexOf('size_color') != -1) {
+        this.productionScheduleUpdate[staffIndex].product_info[proIndex] = this.$clone(
+          this.productionScheduleUpdate[this.copyLine[0]].product_info[this.copyLine[1]]
+        )
+      }
+
+      this.isCopy = false
+    },
     resetProductionScheduleUpdate() {
       this.productionScheduleUpdate = [
         {
-          productName: '',
+          staffName: '',
+          staffCode: '',
+          staffId: '',
+          staff_id: '',
+          show: true,
           process: '',
-          unitPrice: 0,
-          process_desc: '',
-          infoData: [
+          product_info: [
             {
-              date: '',
-              worker: '',
-              sizeColorList: [{}],
-              substandardReason: []
+              code: '',
+              size_name: '',
+              color_name: '',
+              number: '',
+              extra_number: '',
+              shoddy_number: '',
+              shoddy_reason: []
             }
           ]
         }
@@ -1454,6 +1931,23 @@ export default Vue.extend({
     },
     changeKeyBoard(val: boolean) {
       localStorage.showWorkShopKeyBoard = val + ''
+    },
+    // 监听一下鼠标滚轮
+    listenWheel(ev: any) {
+      const detail = ev.wheelDelta || ev.detail
+      // 定义滚动方向，其实也可以在赋值的时候写
+      const moveForwardStep = 1
+      const moveBackStep = -1
+      // 定义滚动距离
+      let step = 0
+      // 判断滚动方向,这里的100可以改，代表滚动幅度，也就是说滚动幅度是自定义的
+      if (detail < 0) {
+        step = moveForwardStep * 50
+      } else {
+        step = moveBackStep * 50
+      }
+      // @ts-ignore 对需要滚动的元素进行滚动操作
+      this.$refs['listId'].scrollLeft += step
     }
   },
   mounted() {
@@ -1533,12 +2027,15 @@ export default Vue.extend({
   .el-tabs__content {
     padding: 0;
   }
-  .el-input input {
-    padding: 3px 0;
-    border: none;
-  }
-  .el-input__suffix {
-    display: none;
+  .tbody {
+    .el-input input {
+      padding: 3px 0;
+      border: none;
+    }
+
+    .el-input__suffix {
+      display: none;
+    }
   }
   .zhInputCtn {
     border: none;

@@ -706,16 +706,12 @@ export default Vue.extend({
         product_info: [
           {
             code: '',
-            sizeColorInfo: [
-              {
-                size_name: '',
-                color_name: '',
-                number: '',
-                extra_number: '',
-                shoddy_number: '',
-                shoddy_reason: []
-              }
-            ]
+            size_name: '',
+            color_name: '',
+            number: '',
+            extra_number: '',
+            shoddy_number: '',
+            shoddy_reason: []
           }
         ]
       })
@@ -793,9 +789,7 @@ export default Vue.extend({
     },
     closeAddOrder() {
       this.addOrder = false
-      this.settlementLogList[this.lastOneChoose.settlementLogIndex].processInfo[
-        this.lastOneChoose.itemIndex
-      ].product_info[this.lastOneChoose.itemProIndex].order_code = ''
+      this.settlementLogList[this.lastOneChoose.settlementLogIndex].order_code = ''
     },
     copyWorkerInfo(item: any, itemSizeColor: any) {
       if (item.productId === '') {
