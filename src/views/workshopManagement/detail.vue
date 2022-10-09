@@ -211,13 +211,15 @@
       </div>
       <div class="tableCtn">
         <el-table
-          ref="chooseSettlementLogList"
           @selection-change="handleSelectionChange"
+          ref="multipleTable"
+          :row-key="rowKey"
           :data="settlementLogList"
           tooltip-effect="dark"
           style="width: 100%"
+          v-loading="loadingSet"
         >
-          <el-table-column type="selection" width="55" fixed> </el-table-column>
+          <el-table-column type="selection" width="55" :reserve-selection="true" fixed> </el-table-column>
           <el-table-column prop="id" label="序号" width="70" fixed></el-table-column>
           <el-table-column prop="created_at" label="添加时间" width="110" fixed> </el-table-column>
           <el-table-column prop="user_name" label="操作人" width="110" fixed> </el-table-column>
@@ -271,6 +273,17 @@
           <el-table-column prop="price" label="结算单价(元/件)" width="150"> </el-table-column>
           <el-table-column prop="total_price" label="结算总价(元)" fixed="right" width="120"> </el-table-column>
         </el-table>
+        <div class="pageCtn fr" style="overflew: hidden; margin-top: 20px">
+          <el-pagination
+            background
+            :page-size="10"
+            layout="prev, pager, next"
+            :total="total"
+            :current-page.sync="page"
+            @current-change="getSettlementList"
+          >
+          </el-pagination>
+        </div>
         <div class="buttonList" style="margin-bottom: 20px">
           <div style="margin-top: 20px; margin-left: 32px" class="btn backHoverBlue" @click="lostAgree">批量通过</div>
           <div style="margin-top: 20px; margin-left: 32px" class="btn backHoverRed" @click="lostDelete">批量删除</div>
@@ -963,10 +976,13 @@ export default Vue.extend({
       keyBoard: localStorage.showWorkShopKeyBoard === 'true',
       showPopupLoading: false,
       showDialog: false,
+      loadingSet: false,
       selectStaffIdList: [],
       staffIdList: [],
       oldList: [],
       lostAddStaffChooseProcess: 0,
+      page: 1,
+      total: 0,
       orderIndex: '0',
       product_arr: [],
       departmentName: '',
@@ -1281,14 +1297,16 @@ export default Vue.extend({
         this.tabChoose = res.data.data[0]?.process_name
       })
 
-      workshop.list({ order_id: this.order_id }).then((res) => {
-        this.settlementLogList = res.data.data
-      })
-
+      this.getSettlementList()
+      let allArr: any = []
       process.list({ type: 2 }).then((res) => {
         let arr: any = []
         res.data.data.forEach((item: any) => {
           arr.push({
+            label: item.code + '-' + item.name,
+            value: item.name
+          })
+          allArr.push({
             label: item.code + '-' + item.name,
             value: item.name
           })
@@ -1305,11 +1323,20 @@ export default Vue.extend({
               label: item.code + '-' + item.name,
               value: item.name
             })
+            allArr.push({
+              label: item.code + '-' + item.name,
+              value: item.name
+            })
           })
           this.processList.push({
             label: '成品加工工序',
             value: 3,
             children: arr
+          })
+          this.processList.unshift({
+            label: '所有工序',
+            value: '',
+            children: allArr
           })
         })
       })
@@ -1332,6 +1359,18 @@ export default Vue.extend({
 
       this.getWorkList('')
       this.loading = false
+    },
+    rowKey(row: { id: any }) {
+      return row.id
+    },
+    getSettlementList() {
+      this.loadingSet = true
+      workshop.list({ order_id: this.order_id, page: this.page, limit: 10 }).then((res) => {
+        this.settlementLogList = res.data.data.items
+        this.additional = res.data.data.additional
+        this.total = res.data.data.total
+        this.loadingSet = false
+      })
     },
     // 添加产品工序
     addSettlementLog(index: number, type: string, proIndex: number) {
@@ -1698,10 +1737,10 @@ export default Vue.extend({
             staff_id: settlementLog.staffId[1],
             process_name: settlementLog.process[1],
             process_type: settlementLog.process[0],
-            process_desc: settlementLog.process_desc.toString(),
+            process_desc: settlementLog.process_desc ? settlementLog.process_desc.toString() : '',
             extra_number: product_info.extra_number || 0,
-            size_id: product_info.size_id || 0,
-            color_id: product_info.color_id || 0,
+            size_id: product_info.size_id || product_info.chooseId.split(',')[0] || 0,
+            color_id: product_info.color_id || product_info.chooseId.split(',')[1] || 0,
             number: product_info.number || 0,
             shoddy_number: product_info.shoddy_number || 0,
             shoddy_reason: product_info.shoddy_reason ? product_info.shoddy_reason.toString() : '',
@@ -1722,7 +1761,9 @@ export default Vue.extend({
         if (res.data.status) {
           this.$message.success('提交成功')
           this.numberUpdate = false
+          this.processWorkerListCheck = false
           this.init()
+          this.resetProductionScheduleUpdate()
         }
       })
       this.loading = false
@@ -1761,7 +1802,6 @@ export default Vue.extend({
           processWorkerItem.info.forEach((staffNameItem: any) => {
             staffNameItem.info.forEach((productCodeItem: any) => {
               productCodeItem.info.forEach((process_desc: any) => {
-                console.log(process_desc.process_desc)
                 process_desc.process_desc = (process_desc.process_desc + '').split(',')
                 process_desc.info.forEach((item: any) => {
                   item.info.forEach((itemPrice: any) => {
@@ -1889,8 +1929,8 @@ export default Vue.extend({
     },
     dataChange() {
       // 如果没选，那么给他一个默认的
+      this.resetProductionScheduleUpdate()
       if (!this.product_arr.some((res: any) => res.checkSizeColor !== undefined && res.checkSizeColor.length !== 0)) {
-        this.resetProductionScheduleUpdate()
         this.numberUpdate = true
         return
       }
@@ -1925,14 +1965,10 @@ export default Vue.extend({
       this.productionScheduleUpdate[0].product_info = arr
       this.numberUpdate = true
     },
+    // 第二个数据格式转换
     secondDataChance() {
       this.showPopupLoading = true
-      if (
-        !this.processWorkerList.some(
-          (res: any) => res.checked !== undefined && res.checked.length !== 0 //||
-          //(res.checkProcess !== undefined && res.checkProcess.length !== 0)
-        )
-      ) {
+      if (!this.processWorkerList.some((res: any) => res.checked !== undefined && res.checked.length !== 0)) {
         this.resetProductionScheduleUpdate()
         this.numberUpdate = true
         this.showPopupLoading = false
@@ -1943,88 +1979,74 @@ export default Vue.extend({
 
       this.processWorkerList.forEach((processWorker: any) => {
         if (processWorker.process_name === this.tabChoose) {
-          process
-            .list({
-              name: processWorker.process_name
-            })
-            .then((ress) => {
-              let oldObj: any = {}
-              processWorker.info.forEach((staffNameItem: any, staffIndex: number) => {
-                staffNameItem.info.forEach((productCodeItem: any) => {
-                  productCodeItem.info.forEach((process_desc: any) => {
-                    process_desc.info.forEach((itemPrice: any, priceIndex: any) => {
-                      itemPrice.info.forEach((itemSize: any) => {
-                        let obj: any = {}
-                        obj.infoData = [{ worker: '', sizeColorList: [] }]
-                        itemSize.info.forEach((itemColor: any, colorIndex: number) => {
-                          // console.log(itemColor)
-                          if (itemColor.checked === undefined || itemColor.checked === false) return
-
-                          if (staffIndex > 0) {
-                            if (colorIndex === 0) {
-                              oldObj.infoData.push({ worker: '', sizeColorList: [] })
-                              oldObj.infoData[oldObj.infoData.length - 1].worker = ['', itemColor.info.staff_id]
-                            }
-                            itemColor.chooseId = itemColor.info.size_id + ',' + itemColor.info.color_id
-                            itemColor.complete_time = this.getNowFormatDate()
-                            itemColor.size_name = itemSize.size_name
-                            itemColor.size_id = itemColor.info.size_id
-                            itemColor.color_id = itemColor.info.color_id
-                            oldObj.infoData[oldObj.infoData.length - 1].sizeColorList.push(itemColor)
-                          } else {
-                            obj.productNameId = itemColor.info.order_product_id
-                            obj.process = [+itemColor.info.process_type, processWorker.process_name]
-                            obj.process_desc = process_desc.process_desc
-                            obj.productId = itemColor.info.product_id
-                            obj.unitPrice = process_desc.info[priceIndex].price
-                            itemColor.chooseId = itemColor.info.size_id + ',' + itemColor.info.color_id
-                            itemColor.complete_time = this.getNowFormatDate()
-                            itemColor.size_name = itemSize.size_name
-                            itemColor.size_id = itemColor.info.size_id
-                            itemColor.color_id = itemColor.info.color_id
-                            obj.infoData[obj.infoData.length - 1].sizeColorList.push(itemColor)
-                            obj.infoData[obj.infoData.length - 1].worker = ['', itemColor.info.staff_id]
-                            oldObj = obj
-                          }
-
-                          // console.log(sizeColorItem)
-                          // item.product_info.forEach((itemColor: any, itemIndex: any) => {
-                          //   if (itemIndex === 0) {
-                          //     obj.infoData.push({
-                          //       sizeColorList: []
-                          //     })
-                          //   }
-                          //   console.log(itemColor)
-                          //   if (itemColor.checkSizeColor) {
-                          //     itemColor.chooseId = itemColor.size_id + ',' + itemColor.color_id
-                          //     obj.infoData[0].sizeColorList.push(itemColor)
-                          //   }
-                          // })
+          processWorker.info.forEach((staffNameItem: any) => {
+            let obj: any = {
+              staffName: staffNameItem.staff_name,
+              staffCode: staffNameItem.staff_code,
+              process: ['', processWorker.process_name],
+              show: true,
+              product_info: []
+            }
+            staffNameItem.info.forEach((productCodeItem: any) => {
+              productCodeItem.info.forEach((process_desc: any) => {
+                process_desc.info.forEach((itemPrice: any) => {
+                  obj.price = Number(itemPrice.price)
+                  itemPrice.info.forEach((itemSize: any) => {
+                    itemSize.info.forEach((itemColor: any) => {
+                      if (itemColor.checked === undefined || itemColor.checked === false) return
+                      this.selectStaffIdList.push(itemColor.info.staff_id)
+                      obj.staffId = ['', itemColor.info.staff_id]
+                      itemColor.info.number = ''
+                      itemColor.info.shoddy_number = ''
+                      itemColor.info.extra_number = ''
+                      itemColor.info.chooseId = itemColor.info.size_id + ',' + itemColor.info.color_id
+                      itemColor.info.colorList = this.product_arr
+                        .find((item: any) => {
+                          return item.product_id == itemColor.info.product_id
                         })
-                        if (
-                          itemPrice.checked === undefined ||
-                          itemPrice.checked.length === 0 ||
-                          !obj.productId ||
-                          staffIndex > 0
-                        ) {
-                          return
-                        }
-                        arr.push(obj)
-                      })
-                      // arr.forEach((price:any) => {
-                      //   console.log(price.unitPrice)
-                      // });
+                        .product_info.map((item: any) => {
+                          return {
+                            name: item.size_name + '/' + item.color_name,
+                            value: item.size_id + ',' + item.color_id
+                          }
+                        })
+
+                      obj.product_info.push(itemColor.info)
                     })
+                    if (
+                      itemPrice.checked === undefined ||
+                      itemPrice.checked.length === 0 ||
+                      obj.product_info.length < 1
+                    ) {
+                      return
+                    }
+                    arr.push(obj)
                   })
                 })
               })
-              this.showPopupLoading = false
             })
+          })
+          this.showPopupLoading = false
         }
       })
 
+      this.staffIdList = [...new Set(this.selectStaffIdList)]
       this.productionScheduleUpdate = arr
       this.numberUpdate = true
+    },
+    changPro(settlementLog: any, id: number, indexDetail: number) {
+      let proInfo = this.product_arr.find((item: any) => {
+        return item.product_id == id
+      })
+
+      let colorList: any = []
+      proInfo.product_info.forEach((item: any) => {
+        colorList.push({ name: item.size_name + '/' + item.color_name, value: item.size_id + ',' + item.color_id })
+      })
+
+      settlementLog.product_info[indexDetail].product_code = proInfo.product_code
+      settlementLog.product_info[indexDetail].chooseId = colorList[0].value
+      settlementLog.product_info[indexDetail].colorList = colorList
     },
     chooseProcess(item: any, check: any, itemProIndex: any) {
       if (item.checkProcess === undefined) {
@@ -2077,7 +2099,6 @@ export default Vue.extend({
           }
           this.$forceUpdate()
         })
-      // console.log(res[1])
       staff.list({ keyword: res === '' ? res : res.process[1], status: 1 }).then((ress: any) => {
         let arr: any = []
         ress.data.data.forEach((worker: any) => {
@@ -2204,6 +2225,7 @@ export default Vue.extend({
           ]
         }
       ]
+      // this.select
     },
     lostDelete() {
       if (this.chooseSettlementLogList.length === 0) {
@@ -2247,6 +2269,8 @@ export default Vue.extend({
           if (res.data.status === true) {
             this.$message.success('审核成功')
             this.init()
+            let a: any = this.$refs
+            a.multipleTable.clearSelection()
           }
         })
     },
