@@ -350,14 +350,14 @@ export default Vue.extend({
               if (item.product_info) {
                 item.product_code = item.product_info.product_code || item.product_info.system_code
                 item.image_data = item.product_info.image_data
-                if (item.rel_image.length > 0) {
-                  item.rel_image = item.rel_image.map((item: any) => {
-                    return item.file_url
-                  })
-                }
               } else {
                 item.product_code = '未绑定产品'
                 item.image_data = []
+              }
+              if (item.rel_image.length > 0) {
+                item.rel_image = item.rel_image.map((item: any) => {
+                  return item.file_url
+                })
               }
             })
             this.total = res.data.data.total

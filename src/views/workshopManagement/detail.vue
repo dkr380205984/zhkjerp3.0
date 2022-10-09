@@ -391,7 +391,11 @@
                           >
                             添加<br />工序
                           </div>
-                          <div style="cursor: pointer" class="hoverRed" @click="checkDelete(settlementLogIndex)">
+                          <div
+                            style="cursor: pointer"
+                            class="hoverRed"
+                            @click="checkDelete(settlementLogIndex, indexDetail)"
+                          >
                             删除<br />该行
                           </div>
                         </div>
@@ -808,6 +812,9 @@
             </div>
           </div> -->
           <div class="elCtn">
+            <div class="btn backHoverBlue" @click="openDialog">批量添加员工</div>
+          </div>
+          <div class="elCtn" style="margin-left: 20px">
             <div
               class="btn backHoverBlue"
               @click="
@@ -853,10 +860,35 @@
         </div>
         <div class="oprCtn">
           <span class="btn borderBtn" @click="numberUpdate = false">取消</span>
-          <span class="btn backHoverBlue" @click="confirmSubmit">确认提交</span>
+          <span class="btn backHoverBlue" @click="workSave">确认提交</span>
         </div>
       </div>
     </div>
+    <el-dialog title="批量添加员工" width="70%" :visible.sync="showDialog" :before-close="closeDialog">
+      <div class="elCtn">
+        <el-select v-model="lostAddStaffChooseProcess" placeholder="请选择">
+          <el-option v-for="(item, index) in processStaffList" :key="item.value" :label="item.label" :value="index">
+          </el-option>
+        </el-select>
+      </div>
+      <div class="elCtn" style="margin-left: 20px">
+        <el-button type="primary" size="small" @click="checkAllStaff">全部选中</el-button>
+      </div>
+      <el-checkbox-group v-model="staffIdList">
+        <el-checkbox
+          style="width: calc(100% / 8); margin-top: 10px"
+          v-for="item in processStaffList[lostAddStaffChooseProcess].children"
+          @change="changeMostStaff(item.id)"
+          :key="item.id + '添加员工'"
+          :label="item.id"
+          >{{ item.code.slice(item.code.length - 4) + '-' + item.name }}</el-checkbox
+        >
+      </el-checkbox-group>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeDialog">取 消</el-button>
+        <el-button type="primary" @click="confirmData">确 定</el-button>
+      </span>
+    </el-dialog>
     <div class="bottomFixBar">
       <div class="main">
         <!-- 报价单表格 -->
@@ -930,6 +962,11 @@ export default Vue.extend({
       loading: true,
       keyBoard: localStorage.showWorkShopKeyBoard === 'true',
       showPopupLoading: false,
+      showDialog: false,
+      selectStaffIdList: [],
+      staffIdList: [],
+      oldList: [],
+      lostAddStaffChooseProcess: 0,
       orderIndex: '0',
       product_arr: [],
       departmentName: '',
@@ -1252,7 +1289,7 @@ export default Vue.extend({
         let arr: any = []
         res.data.data.forEach((item: any) => {
           arr.push({
-            label: item.name,
+            label: item.code + '-' + item.name,
             value: item.name
           })
         })
@@ -1265,7 +1302,7 @@ export default Vue.extend({
           let arr: any = []
           res.data.data.forEach((item: any) => {
             arr.push({
-              label: item.name,
+              label: item.code + '-' + item.name,
               value: item.name
             })
           })
@@ -1366,6 +1403,7 @@ export default Vue.extend({
             })
         })
     },
+    // 拿到工序说明
     getProcessDesc(settlementLog: any, settlementLogIndex: number) {
       // 员工层级数据检查
       this.productionScheduleUpdate[settlementLogIndex].is_check = true
@@ -1402,6 +1440,293 @@ export default Vue.extend({
 
     //   cb(this.processDescList)
     // },
+
+    // 删除尺码颜色
+    deleteSizeColor(settlementLog: any, indexDetail: number) {
+      settlementLog.product_info.length > 1
+        ? this.$deleteItem(settlementLog.product_info, indexDetail)
+        : this.$message.error('至少有一个产品')
+      this.$forceUpdate()
+    },
+    // 增加尺码颜色
+    addSizeColor(settlementLog: any, itemDetail: any, indexDetail: number) {
+      this.$addItem(settlementLog.product_info, {
+        product_id: itemDetail.product_id,
+        product_code: itemDetail.product_code,
+        size_name: '',
+        color_name: '',
+        number: '',
+        colorList: settlementLog.product_info[indexDetail].colorList || [],
+        extra_number: '',
+        shoddy_number: '',
+        shoddy_reason: []
+      })
+      this.$forceUpdate()
+    },
+    // 删除该行
+    checkDelete(settlementLogIndex: number, indexPro: number) {
+      let staff = this.productionScheduleUpdate[settlementLogIndex]
+      if (staff.product_info.length > 1) {
+        if (staff.is_check) {
+          this.$confirm('该员工下可能有已经填写的数据，是否删除?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          })
+            .then(() => {
+              this.$deleteItem(staff.product_info, indexPro)
+            })
+            .catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消删除'
+              })
+            })
+        } else {
+          this.$deleteItem(staff.product_info, indexPro)
+        }
+      } else {
+        this.staffDelete(settlementLogIndex)
+      }
+    },
+    // 删除员工
+    staffDelete(settlementLogIndex: number) {
+      let staff = this.productionScheduleUpdate[settlementLogIndex]
+      if (this.productionScheduleUpdate.length > 1) {
+        if (staff.is_check) {
+          this.$confirm('该员工下可能有已经填写的数据，是否删除?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          })
+            .then(() => {
+              this.$deleteItem(this.productionScheduleUpdate, settlementLogIndex)
+            })
+            .catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消删除'
+              })
+            })
+        } else {
+          this.$deleteItem(this.productionScheduleUpdate, settlementLogIndex)
+        }
+      } else {
+        this.$message.error('至少有一个员工')
+        return
+      }
+    },
+    // 批量添加员工
+    openDialog() {
+      this.staffIdList = this.$clone(this.selectStaffIdList)
+      this.oldList = this.$clone(this.productionScheduleUpdate)
+      this.showDialog = true
+    },
+    // 关闭批量选择员工弹窗
+    closeDialog() {
+      this.showDialog = false
+    },
+    // 选择员工，改变之后把对应的值赋给自身，把选中列表的id更新一下
+    getStaffIdList(index: any) {
+      const e = this.productionScheduleUpdate[index].staffId
+      this.productionScheduleUpdate[index].staff_id = e[1]
+
+      // 拿到对应的员工信息
+      let staffInfo = this.staffList.find((staff: any) => {
+        return staff.id === e[1]
+      })
+
+      // 更新选中列表 以及赋值
+      this.selectStaffIdList = []
+      this.productionScheduleUpdate.forEach((item: any) => {
+        if (item.staffId[1] === staffInfo.id) {
+          item.staffName = staffInfo.name
+          item.staffCode = staffInfo.code
+        }
+        this.selectStaffIdList.push(item.staffId[1])
+      })
+      this.oldList = this.$clone(this.productionScheduleUpdate)
+    },
+    // 全选员工
+    checkAllStaff(e: any) {
+      let arr = this.processStaffList[this.lostAddStaffChooseProcess].children.map((item: any) => {
+        return item.id
+      })
+
+      this.staffIdList = this.staffIdList.concat(arr)
+      this.staffIdList = Array.from(new Set(this.staffIdList))
+    },
+    // 提交数据到列表
+    confirmData() {
+      this.selectStaffIdList = this.$clone(this.staffIdList)
+      if (this.staffIdList.length > 0) {
+        // 增加判断
+        this.staffIdList.forEach((staffId: number) => {
+          // 如果重复则跳过
+          let check = this.productionScheduleUpdate.find((item: any) => {
+            return item.staffId[1] === staffId
+          })
+
+          if (check) {
+            return
+          }
+
+          let staffInfo = this.staffList.find((staff: any) => {
+            return staff.id === staffId
+          })
+
+          this.productionScheduleUpdate.push({
+            staffName: staffInfo.name,
+            staffCode: staffInfo.code,
+            staffId: ['', staffId],
+            staff_id: staffId,
+            show: true,
+            process: '',
+            order_code: '',
+            product_info: [
+              {
+                code: '',
+                size_name: '',
+                color_name: '',
+                number: '',
+                extra_number: '',
+                shoddy_number: '',
+                shoddy_reason: []
+              }
+            ]
+          })
+        })
+
+        this.productionScheduleUpdate.forEach((item: any, index: number) => {
+          if (item.staffId === '') return
+
+          let a = this.selectStaffIdList.find((staff: any) => {
+            return staff === item.staffId[1]
+          })
+
+          if (!a) {
+            this.productionScheduleUpdate.splice(index, 1)
+          }
+        })
+      } else {
+        this.productionScheduleUpdate = [
+          {
+            staffName: '',
+            staffCode: '',
+            staffId: '',
+            staff_id: '',
+            show: true,
+            process: '',
+            order_code: '',
+            product_info: [
+              {
+                code: '',
+                size_name: '',
+                color_name: '',
+                number: '',
+                extra_number: '',
+                shoddy_number: '',
+                shoddy_reason: []
+              }
+            ]
+          }
+        ]
+      }
+
+      this.oldList = this.$clone(this.productionScheduleUpdate)
+      this.closeDialog()
+    },
+    // 保存
+    workSave() {
+      this.loading = true
+
+      let params: {
+        data: Array<{
+          id: number | string | null
+          staff_id: number | string
+          order_id: number | string
+          process_name: number | string
+          process_type: number | string
+          process_desc: string
+          extra_number: number | string
+          product_id: number | string
+          size_id: number | string
+          color_id: number | string
+          number: number | string
+          price: number | string
+          total_price: number | string
+          shoddy_number: number | string
+          shoddy_reason: string
+          complete_time: string
+        }>
+      } = {
+        data: []
+      }
+
+      let emptyStaff = this.productionScheduleUpdate.find((item: any) => {
+        return item.staffId === '' || item.staffId.length === 0
+      })
+
+      if (emptyStaff) {
+        this.$message.error('请填写完整员工姓名')
+        this.loading = false
+        return
+      }
+
+      let error = false
+
+      this.productionScheduleUpdate.forEach((settlementLog: any) => {
+        // console.log(settlementLog, 'settlementLog')
+        if (settlementLog.process[1] === '' || settlementLog.process.length === 0) {
+          this.$message.error('请选择工序')
+          error = true
+          this.loading = false
+          throw new Error('未选择工序')
+        }
+
+        if (settlementLog.order_code === '') {
+          this.$message.error('请选择订单')
+          error = true
+          this.loading = false
+          throw new Error('未选择订单')
+        }
+
+        settlementLog.product_info.forEach((product_info: any) => {
+          params.data.push({
+            id: null,
+            order_id: this.$route.query.id + '',
+            staff_id: settlementLog.staffId[1],
+            process_name: settlementLog.process[1],
+            process_type: settlementLog.process[0],
+            process_desc: settlementLog.process_desc.toString(),
+            extra_number: product_info.extra_number || 0,
+            size_id: product_info.size_id || 0,
+            color_id: product_info.color_id || 0,
+            number: product_info.number || 0,
+            shoddy_number: product_info.shoddy_number || 0,
+            shoddy_reason: product_info.shoddy_reason ? product_info.shoddy_reason.toString() : '',
+            product_id: product_info.product_id,
+            price: settlementLog.price || 0,
+            total_price: this.outCiPin
+              ? ((product_info.number || 0) + (product_info.extra_number || 0) - (product_info.shoddy_number || 0)) *
+                (settlementLog.price || 0)
+              : ((product_info.number || 0) + (product_info.extra_number || 0)) * (settlementLog.price || 0),
+            complete_time: this.$GetDateStr(0)
+          })
+        })
+      })
+
+      if (error) return
+
+      workshop.save(params).then((res) => {
+        if (res.data.status) {
+          this.$message.success('提交成功')
+          this.numberUpdate = false
+          this.init()
+        }
+      })
+      this.loading = false
+    },
     copyWorkerInfo(item: any, itemSizeColor: any) {
       if (item.productId === '') {
         this.$message.error('请先选择产品')
@@ -1436,7 +1761,8 @@ export default Vue.extend({
           processWorkerItem.info.forEach((staffNameItem: any) => {
             staffNameItem.info.forEach((productCodeItem: any) => {
               productCodeItem.info.forEach((process_desc: any) => {
-                process_desc.process_desc = process_desc.process_desc.split(',')
+                console.log(process_desc.process_desc)
+                process_desc.process_desc = (process_desc.process_desc + '').split(',')
                 process_desc.info.forEach((item: any) => {
                   item.info.forEach((itemPrice: any) => {
                     itemPrice.info.forEach((itemSize: any) => {
@@ -1577,25 +1903,23 @@ export default Vue.extend({
           return
         }
 
-        let obj: any = {}
-
         item.product_info.forEach((itemColor: any) => {
+          let obj: any = {}
           itemColor.product_id = item.product_id
 
           if (itemColor.checkSizeColor) {
-            itemColor.chooseId = itemColor.size_id + ',' + itemColor.color_id
-            itemColor.number = ''
-            obj = itemColor
+            obj = this.$clone(itemColor)
+            obj.chooseId = obj.size_id + ',' + obj.color_id
+            obj.number = ''
             obj.colorList = item.product_info.map((items: any) => {
               return {
                 value: items.size_id + ',' + items.color_id,
                 name: items.size_name + '/' + items.color_name
               }
             })
+            arr.push(obj)
           }
         })
-
-        arr.push(obj)
       })
 
       this.productionScheduleUpdate[0].product_info = arr

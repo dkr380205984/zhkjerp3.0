@@ -670,13 +670,13 @@ export default Vue.extend({
 
       process.list({ type: 2 }).then((res) => {
         res.data.data.forEach((item: any) => {
-          this.processList[0].children.push({ label: item.name, value: item.name })
+          this.processList[0].children.push({ label: item.code + '-' + item.name, value: item.name })
         })
       })
 
       process.list({ type: 3 }).then((res) => {
         res.data.data.forEach((item: any) => {
-          this.processList[1].children.push({ label: item.name, value: item.name })
+          this.processList[1].children.push({ label: item.code + '-' + item.name, value: item.name })
         })
       })
 
