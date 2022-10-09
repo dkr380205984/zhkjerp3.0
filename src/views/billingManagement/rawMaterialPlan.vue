@@ -150,6 +150,7 @@
             <div class="col">审核状态</div>
             <div class="col">创建人</div>
             <div class="col">创建时间</div>
+            <div class="col">备注</div>
             <div class="col"
               style="flex: 1.4">操作</div>
           </div>
@@ -213,6 +214,7 @@
               </div>
               <div class="col">{{ item.user_name }}</div>
               <div class="col">{{ item.created_at }}</div>
+              <div class="col">{{ item.desc || '无' }}</div>
               <div class="col"
                 style="flex: 1.4">
                 <span class="opr hoverBlue"

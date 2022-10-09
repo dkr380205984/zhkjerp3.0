@@ -271,12 +271,6 @@
                 style="padding-top: 0">
                 <div class="row">
                   <div class="col">
-                    <div class="label">额外费用：</div>
-                    <div class="text">
-                      <others-fee-data :data="item.others_fee_data"></others-fee-data>
-                    </div>
-                  </div>
-                  <div class="col">
                     <div class="label">关联计划单：</div>
                     <div :class="item.detail.plan_code ? 'hoverBlue text' : 'text'"
                       :style="item.detail.plan_code ? { cursor: 'pointer' } : {}"
@@ -284,6 +278,18 @@
                         item.detail.plan_code ? $router.push('/materialManage/detail?id=' + item.detail.plan_id) : ''
                       ">
                       {{ item.detail.plan_code || '无' }}
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="label">额外费用：</div>
+                    <div class="text">
+                      <others-fee-data :data="item.others_fee_data"></others-fee-data>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="label">备注信息：</div>
+                    <div>
+                      {{ item.detail.desc || '无' }}
                     </div>
                   </div>
                 </div>

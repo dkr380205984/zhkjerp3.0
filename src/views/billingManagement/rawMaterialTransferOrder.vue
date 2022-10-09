@@ -254,7 +254,7 @@
                       {{ itemChild.batch_code }}/{{ itemChild.vat_code }}/{{ itemChild.color_code }}
                     </div>
                     <div class="tcol">{{ $toFixed(itemChild.number,3,true) }}{{ itemChild.unit }}</div>
-                    <div class="tcol">{{ i$toFixed(temChild.final_push_number,3,true) }}</div>
+                    <div class="tcol">{{ $toFixed(itemChild.final_push_number,3,true) }}</div>
                     <div class="tcol">{{ itemChild.price || 0 }}元</div>
                   </div>
                 </div>

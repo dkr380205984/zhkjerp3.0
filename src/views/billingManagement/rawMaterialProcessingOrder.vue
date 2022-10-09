@@ -240,9 +240,32 @@
               style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
               <div class="tableCtn"
                 v-if="item.detail.info_data.length > 0">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">关联单据：</div>
+                    <div :class="item.detail.plan_code ? 'hoverBlue text' : 'text'"
+                      :style="item.detail.plan_code ? { cursor: 'pointer' } : {}"
+                      @click="
+                        item.detail.plan_code ? $router.push('/materialManage/detail?id=' + item.plan_id) : ''
+                      ">
+                      {{item.detail.plan_code || '无'}}
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="label">额外费用：</div>
+                    <div class="text">
+                      <others-fee-data :data="item.others_fee_data"></others-fee-data>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="label">备注信息：</div>
+                    <div>
+                      {{ item.detail.desc || '无' }}
+                    </div>
+                  </div>
+                </div>
                 <div class="thead">
                   <div class="trow">
-                    <div class="tcol">加工单号</div>
                     <div class="tcol">加工单位</div>
                     <div class="tcol"
                       style="flex: 0.5">工序</div>
@@ -260,25 +283,11 @@
                     </div>
                     <div class="tcol"
                       style="flex: 0.8">截止日期</div>
-                    <div class="tcol">备注信息</div>
-                    <div class="tcol">额外费用</div>
                   </div>
                 </div>
                 <div class="tbody"
                   style="font-size: 14px">
                   <div class="trow">
-                    <div class="tcol">
-                      <span class="overText">{{ item.detail.code }}
-                        <el-tooltip class="item"
-                          effect="dark"
-                          :content="
-                            '创建日期：' + item.detail.created_at.slice(0, 10) + ';创建人：' + item.detail.user_name
-                          "
-                          placement="top">
-                          <i class="el-icon-timer hoverBlue"></i>
-                        </el-tooltip>
-                      </span>
-                    </div>
                     <div class="tcol">{{ item.detail.client_name }}</div>
                     <div class="tcol"
                       style="flex: 0.5">{{ item.detail.process }}</div>
@@ -320,10 +329,6 @@
                     </div>
                     <div class="tcol"
                       style="flex: 0.8">{{ item.detail.delivery_time }}</div>
-                    <div class="tcol">{{ item.detail.desc || '无备注' }}</div>
-                    <div class="tcol">
-                      <others-fee-data :data="item.others_fee_data"></others-fee-data>
-                    </div>
                   </div>
                 </div>
               </div>
