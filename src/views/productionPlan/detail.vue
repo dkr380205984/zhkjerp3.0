@@ -212,7 +212,7 @@
                 :class="{'green':item.has_invoice===1||item.has_pay===1,'gray':item.has_invoice!==1&&item.has_pay!==1}">{{item.has_invoice===1||item.has_pay===1?'已结算':'待结算'}}</div>
               <div class="col">{{item.start_time}}</div>
               <div class="col"
-                :class="$diffByDate(item.end_time)>0?'green':'red'">{{item.end_time}}({{$diffByDate(item.end_time)>0?'还剩'+$diffByDate(item.end_time)+'天':'逾期'+Math.abs($diffByDate(item.end_time))+'天'}})</div>
+                :class="$diffByDate(item.end_time)>0?'green':'red'">{{item.end_time}}{{$diffByDate(item.end_time)>0?'(还剩'+$diffByDate(item.end_time)+'天)':''}}</div>
               <div class="col">{{item.user_name}}</div>
               <div class="col">
                 <div class="opr hoverBlue">{{item.show?'收回':'展开'}}</div>
@@ -455,7 +455,7 @@
                       style="flex:2">
                       <div class="trow">
                         <div class="tcol">承担单位</div>
-                        <div class="tcol">承担金额</div>
+                        <div class="tcol">承担金额(扣款)</div>
                       </div>
                     </div>
                     <div class="tcol noPad"
@@ -1029,6 +1029,7 @@
           </div>
         </div>
         <div class="contentCtn">
+          <div class="explainCtn">输入承担金额后，会自动生成一张扣款单。该扣款单的扣款金额与承担金额相同。删除补纱单后，需要同时删除扣款单。</div>
           <div class="editCtn">
             <div class="row">
               <div class="col">
@@ -1073,7 +1074,7 @@
                 <div class="label"
                   v-if="index===0">
                   <span class="text">承担金额</span>
-                  <span class="explanation">(不填默认为0)</span>
+                  <span class="explanation">(扣款,不填默认为0)</span>
                 </div>
                 <div class="info elCtn">
                   <el-input :ref="'bear_price'+ '-'+index"
@@ -2562,7 +2563,7 @@ export default Vue.extend({
             ? Number(item.number)
               ? Math.ceil(item.plan_number / item.number)
               : 0
-            : item.total_pack)
+            : Number(item.total_pack))
         )
       }, 0)
     },

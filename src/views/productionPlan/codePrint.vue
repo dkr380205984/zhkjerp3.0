@@ -28,13 +28,13 @@
           </div>
           <div class="info"
             v-if="item.number">
-            <span class="label">每包装袋件数：</span>
+            <span class="label">装袋件数：</span>
             <span class="text">{{item.number}}件</span>
           </div>
           <div class="info"
             v-if="item.number">
-            <span class="label">每袋回厂克重：</span>
-            <span class="text">{{item.total_weight}}克(+-5%)</span>
+            <span class="label">本袋回厂克重：</span>
+            <span class="text">{{item.weight}}克(±5%)</span>
           </div>
           <div class="bottom"
             v-if="!item.number">

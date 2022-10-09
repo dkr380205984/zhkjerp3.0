@@ -915,7 +915,7 @@ export default Vue.extend({
           isChecked: false,
           id: '13-2',
           icon: 'icon-kehuguanli',
-          url: '/client/list?page=1&type=1&status=1&keyword='
+          url: '/client/list?page=1&type=2&status=1&keyword='
         },
         {
           opr: '原料预订购',

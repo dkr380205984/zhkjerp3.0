@@ -435,11 +435,18 @@
                   <div class="tcol noPad"
                     style="flex:4">
                     <div class="trow"
-                      v-for="(item,index) in orderLogInfo.inspection.push"
-                      :key="index">
-                      <div class="tcol">{{item.code}}</div>
-                      <div class="tcol">{{item.user_name}}</div>
-                      <div class="tcol">{{item.created_at}}</div>
+                      v-if="orderLogInfo.inspection.push.length>0">
+                      <div class="tcol">共{{orderLogInfo.inspection.push.length}}条日志</div>
+                      <div class="tcol"
+                        style="display: block;">
+                        <span v-for="(item,index) in Array.from(new Set(orderLogInfo.inspection.push.map((itemChild)=>itemChild.user_name)))"
+                          :key="index">{{item}};</span>
+                      </div>
+                      <div class="tcol"
+                        style="display: block;">
+                        <span v-for="(item,index) in Array.from(new Set(orderLogInfo.inspection.push.map((itemChild)=>itemChild.created_at)))"
+                          :key="index">{{item}};</span>
+                      </div>
                     </div>
                     <div class="trow"
                       v-if="orderLogInfo.inspection.push.length===0">
@@ -464,11 +471,18 @@
                   <div class="tcol noPad"
                     style="flex:4">
                     <div class="trow"
-                      v-for="(item,index) in orderLogInfo.inspection.pop"
-                      :key="index">
-                      <div class="tcol">{{item.code}}</div>
-                      <div class="tcol">{{item.user_name}}</div>
-                      <div class="tcol">{{item.created_at}}</div>
+                      v-if="orderLogInfo.inspection.pop.length>0">
+                      <div class="tcol">共{{orderLogInfo.inspection.pop.length}}条日志</div>
+                      <div class="tcol"
+                        style="display: block;">
+                        <span v-for="(item,index) in Array.from(new Set(orderLogInfo.inspection.pop.map((itemChild)=>itemChild.user_name)))"
+                          :key="index">{{item}};</span>
+                      </div>
+                      <div class="tcol"
+                        style="display: block;">
+                        <span v-for="(item,index) in Array.from(new Set(orderLogInfo.inspection.pop.map((itemChild)=>itemChild.created_at)))"
+                          :key="index">{{item}};</span>
+                      </div>
                     </div>
                     <div class="trow"
                       v-if="orderLogInfo.inspection.pop.length===0">
@@ -500,11 +514,18 @@
                   <div class="tcol noPad"
                     style="flex:4">
                     <div class="trow"
-                      v-for="(item,index) in orderLogInfo.production_inspection"
-                      :key="index">
-                      <div class="tcol">{{item.code || '无'}}</div>
-                      <div class="tcol">{{item.user_name}}</div>
-                      <div class="tcol">{{item.created_at}}</div>
+                      v-if="orderLogInfo.production_inspection.length>0">
+                      <div class="tcol">共{{orderLogInfo.production_inspection.length}}条日志</div>
+                      <div class="tcol"
+                        style="display: block;">
+                        <span v-for="(item,index) in Array.from(new Set(orderLogInfo.production_inspection.map((itemChild)=>itemChild.user_name)))"
+                          :key="index">{{item}};</span>
+                      </div>
+                      <div class="tcol"
+                        style="display: block;">
+                        <span v-for="(item,index) in Array.from(new Set(orderLogInfo.production_inspection.map((itemChild)=>itemChild.created_at)))"
+                          :key="index">{{item}};</span>
+                      </div>
                     </div>
                     <div class="trow"
                       v-if="orderLogInfo.production_inspection.length===0">

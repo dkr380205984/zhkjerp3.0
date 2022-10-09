@@ -173,7 +173,7 @@
                       <div class="rect">
                         <div class="rectMain">
                           <div class="icon"
-                            :class="productInfo.rel_quote_info.quote_id?'yellow':'gray'">
+                            :class="productInfo.rel_quote_info && productInfo.rel_quote_info.quote_id?'yellow':'gray'">
                             <img :src="require('@/assets/image/common/price_icon.png')" />
                           </div>
                           <div class="rectContent">
@@ -181,7 +181,7 @@
                           </div>
                         </div>
                         <div class="menu">
-                          <template v-if="productInfo.rel_quote_info.quote_id">
+                          <template v-if="productInfo.rel_quote_info && productInfo.rel_quote_info.quote_id">
                             <span class="opration"
                               @click="$openUrl('/quotedPrice/print?id='+productInfo.rel_quote_info.quote_id)">打印</span>
                             <span class="opration"

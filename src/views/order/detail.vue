@@ -796,8 +796,8 @@
               <div class="trow">
                 <div class="tcol">{{item.product_code}}</div>
                 <div class="tcol">{{$toFixed(item.total_number,3,true)}}</div>
-                <div class="tcol">{{item.pre_price}}{{orderInfo.settle_unit}}</div>
-                <div class="tcol">{{$toFixed(item.total_price,3,true)}}{{orderInfo.settle_unit}}</div>
+                <div class="tcol">{{item.pre_price}}元</div>
+                <div class="tcol">{{$toFixed(item.total_price,3,true)}}元</div>
                 <div class="tcol oprCtn">
                   <div class="opr hoverBlue"
                     @click="item.showDetail=!item.showDetail;$forceUpdate()">{{item.showDetail?'收起详情':'展开详情'}}</div>
@@ -820,8 +820,8 @@
                     :key="indexChild">
                     <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
                     <div class="tcol">{{$toFixed(itemChild.number,3,true)}}</div>
-                    <div class="tcol">{{itemChild.price}}{{orderInfo.settle_unit}}</div>
-                    <div class="tcol">{{$toFixed(itemChild.total_price,3,true)}}{{orderInfo.settle_unit}}</div>
+                    <div class="tcol">{{itemChild.price}}元</div>
+                    <div class="tcol">{{$toFixed(itemChild.total_price,3,true)}}元</div>
                     <div class="tcol"></div>
                   </div>
                 </div>
@@ -832,8 +832,8 @@
                 <div class="trow">
                   <div class="tcol">报价费用</div>
                   <div class="tcol">-</div>
-                  <div class="tcol blue">{{item.quote_info.price}}{{orderInfo.settle_unit}}</div>
-                  <div class="tcol blue">{{$toFixed(item.quote_info.total_price,3,true)}}{{orderInfo.settle_unit}}</div>
+                  <div class="tcol blue">{{item.quote_info.price}}元</div>
+                  <div class="tcol blue">{{$toFixed(item.quote_info.total_price,3,true)}}元</div>
                   <div class="tcol"
                     :class="{'red':item.quote_info.change.indexOf('上浮')!==-1,'green':item.quote_info.change.indexOf('下降')!==-1}">{{item.quote_info.change}}</div>
                 </div>

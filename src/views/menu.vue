@@ -133,7 +133,7 @@ export default Vue.extend({
             name: '合作单位管理',
             id: '13-2',
             icon: 'icon-kehuguanli',
-            url: '/client/list?page=1&type=1&status=1&keyword='
+            url: '/client/list?page=1&type=2&status=1&keyword='
           },
           {
             name: '原料预订购',

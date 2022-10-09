@@ -57,16 +57,13 @@
                 :label="item.name"></el-option>
             </el-select>
           </div>
-          <div class="btn borderBtn"
-            @click="reset">重置</div>
           <div class="btn backHoverBlue fr"
             @click="$router.push('/client/create?type='+$route.query.type)">{{$route.query.type==='1'?'添加客户':'添加合作商'}}</div>
-          <div class="fr">
-            <i style="font-size:20px;line-height:32px;cursor:pointer;font-weight:bold"
-              class="el-icon-chat-dot-square"
-              :class="{'hoverRed':clientBindList.length>0}"
-              @click="bindFlag = true"></i>
-          </div>
+          <div class="btn"
+            :class="{'borderBtn':clientBindList.length===0,'backHoverBlue':clientBindList.length>0}"
+            @click="bindFlag = true">小程序绑定</div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
         </div>
         <div class="filterCtn">
           <div class="elCtn">
