@@ -349,7 +349,7 @@
               placement="top">
               <div slot="content">
                 第一步：下载导入模板。<br />
-                第二步：填写模板信息。注意：单位名称必须与系统添加的名称保持一致；金额字段必须为数字；日期字段的格式必须为yyyy-mm-dd（2022-01-01）；订单号必须为系统订单编号；关联单据编号必须为系统关联编号；否则会出现无法导入或者导入错误的情况。<br />
+                第二步：填写模板信息。注意：请填写客户或单位简称，且填写的简称必须与系统添加的简称保持一致；金额字段必须为数字；日期字段的格式必须为yyyy-mm-dd（2022-01-01）；订单号必须为系统订单编号；关联单据编号必须为系统关联编号；否则会出现无法导入或者导入错误的情况。<br />
                 第三步：导入模板，完成导入
               </div>
               <span>导入教程</span>
@@ -467,7 +467,7 @@ export default Vue.extend({
         this.$downloadExcel(
           [],
           [
-            { title: '开票单位(必填)', key: 'client_zh' },
+            { title: '开票单位(必填，简称)', key: 'client_zh' },
             { title: '关联单号(选填)', key: 'doc_code' },
             { title: '开票号码(必填)', key: 'invoice_code' },
             { title: '开票金额(必填)', key: 'price' },
@@ -479,7 +479,7 @@ export default Vue.extend({
         this.$downloadExcel(
           [],
           [
-            { title: '扣款单位(必填)', key: 'client_zh' },
+            { title: '扣款单位(必填，简称)', key: 'client_zh' },
             { title: '关联单号(选填)', key: 'doc_code' },
             { title: '扣款金额(必填)', key: 'price' },
             { title: '扣款原因(选填)', key: 'reason' }
@@ -490,7 +490,7 @@ export default Vue.extend({
         this.$downloadExcel(
           [],
           [
-            { title: '收款单位(必填)', key: 'client_zh' },
+            { title: '收款单位(必填，简称)', key: 'client_zh' },
             { title: '关联单号(选填)', key: 'doc_code' },
             { title: '收款金额(必填)', key: 'price' },
             { title: '备注信息(选填)', key: 'desc' },

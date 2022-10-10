@@ -698,6 +698,7 @@ const materialPlan = {
     page?: number
     start_time?: string
     end_time?: string
+    material_name?: string
     keyword?: string
     code?: string
     user_id?: string | number
