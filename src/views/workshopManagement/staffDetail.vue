@@ -1267,7 +1267,7 @@ export default Vue.extend({
       this.selectStaffIdList = this.$clone(this.staffIdList)
       if (this.staffIdList.length > 0) {
         // 增加判断
-        this.staffIdList.forEach((staffId: number) => {
+        this.staffIdList.forEach((staffId: number,staffIndex:number) => {
           // 如果重复则跳过
           let check = this.settlementLogList.find((item: any) => {
             return item.staffId[1] === staffId
@@ -1280,6 +1280,16 @@ export default Vue.extend({
           let staffInfo = this.staffList.find((staff: any) => {
             return staff.id === staffId
           })
+
+          // 第一行自动覆盖
+          if(staffIndex === 0){
+            this.settlementLogList[0].staffName = staffInfo.name
+            this.settlementLogList[0].staffCode = staffInfo.code
+            this.settlementLogList[0].staffId = ['', staffId]
+            this.settlementLogList[0].staff_id = staffId
+            this.settlementLogList[0].show = true
+            return
+          }
 
           this.settlementLogList.push({
             staffName: staffInfo.name,
