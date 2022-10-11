@@ -2008,11 +2008,15 @@ export default Vue.extend({
         this.productionScheduleUpdate[staffIndex].price = this.productionScheduleUpdate[this.copyLine[0]].price
       }
 
-      // 复制订单
+      // 复制尺码颜色
       if (strCopyOption.indexOf('size_color') != -1) {
         this.productionScheduleUpdate[staffIndex].product_info[proIndex] = this.$clone(
           this.productionScheduleUpdate[this.copyLine[0]].product_info[this.copyLine[1]]
         )
+        this.productionScheduleUpdate[staffIndex].product_info[proIndex].number = ''
+        this.productionScheduleUpdate[staffIndex].product_info[proIndex].extra_number = ''
+        this.productionScheduleUpdate[staffIndex].product_info[proIndex].shoddy_number = ''
+        this.productionScheduleUpdate[staffIndex].product_info[proIndex].shoddy_reason = []
       }
 
       this.isCopy = false
