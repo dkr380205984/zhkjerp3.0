@@ -810,6 +810,8 @@ const materialStock = {
   }) => http.get(`${baseUrl}/store/log/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/store/log/delete`, params, 'application/json'),
   detail: (params: DetailParams) => http.get(`${baseUrl}/store/log/detail`, params),
+  // 出库的时候判断库存是否足够
+  check: (params: { data: MaterialStockInfo[] }) => http.post(`${baseUrl}/store/log/reduce/check`, params, 'application/json'),
   merge: (params: {
     store_id: string | number
     secondary_store_id: string | number

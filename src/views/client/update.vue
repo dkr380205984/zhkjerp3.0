@@ -14,7 +14,9 @@
             </div>
             <div class="info elCtn">
               <el-input placeholder="请输入公司编号"
-                v-model="clientInfo.code"></el-input>
+                v-model="clientInfo.code"
+                type="number"
+                @input="(e) => (clientInfo.code = integerFn(e))"></el-input>
             </div>
           </div>
           <div class="col">
@@ -203,6 +205,29 @@ export default Vue.extend({
     }
   },
   methods: {
+    /**
+     * 只能输入大于0的正整数（不能以0开头）
+     * @param {string} value
+     * @returns {string | number} 返回空字符或数字
+     */
+    integerFn(value: string) {
+      console.log(value)
+      let reg = /[1-9]{1}[0-9]*$/
+      let strArray = value.split('')
+      let newStrs: string | number = ''
+      for (let i = 0; i < strArray.length; i++) {
+        if (reg.test(strArray[i])) {
+          newStrs += strArray[i]
+        } else if (i > 0 && strArray[i] === '0') {
+          newStrs += strArray[i]
+        }
+      }
+      if (Number(newStrs) - 0 > 0) {
+        return Number(newStrs) - 0
+      } else {
+        return ''
+      }
+    },
     getClientTag(ev: number) {
       this.clientTagList = this.clientTypeList.find((item: { value: number }) => item.value === ev).children
     },
