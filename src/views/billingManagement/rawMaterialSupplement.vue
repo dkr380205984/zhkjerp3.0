@@ -182,6 +182,23 @@
             </div>
             <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
               <div class="tableCtn">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">关联扣款单：</div>
+                    <div v-if="item.detail.deduct_log.length === 0" class="gray">无关联扣款单</div>
+                    <div v-else>
+                      <span
+                        style="cursor: pointer"
+                        class="hoverBlue"
+                        v-for="(itemDeduct, indexDeduct) in item.detail.deduct_log"
+                        :key="'补纱扣款' + indexDeduct"
+                        @click="$router.push('/settlement/collectionDetail?id=' + itemDeduct.client_id)"
+                      >
+                        <span v-if="indexDeduct !== 0">，</span>{{ itemDeduct.code }}</span
+                      >
+                    </div>
+                  </div>
+                </div>
                 <div class="thead">
                   <div class="trow">
                     <div class="tcol">补纱单编号</div>
@@ -1053,7 +1070,9 @@ export default Vue.extend({
         .then((res) => {
           if (res.data.status) {
             res.data.data.items.forEach((item: any) => {
-              item.detail = {}
+              item.detail = {
+                deduct_log: []
+              }
             })
             this.list = res.data.data.items
             this.total = res.data.data.total

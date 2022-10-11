@@ -740,13 +740,34 @@ export default Vue.extend({
   },
   computed: {
     yarnClientAllList() {
-      return this.$store.state.api.clientType.arr.filter(
+      let arr = this.$store.state.api.clientType.arr.filter(
         (item: { label: string }) =>
-          item.label === '纱线原料单位' ||
+          item.label === '面料原料单位' ||
           item.label === '原料加工单位' ||
           item.label === '生产织造单位' ||
           item.label === '生产加工单位'
       )
+
+      let clients:any = []
+      arr.forEach((clientList: any) => {
+        // 防止第一遍进入循环
+        if (clients.length > 0) return
+        clientList.children.forEach((clientChild: any) => {
+          // 防止第二遍进入循环
+          if (clients.length > 0) return
+          clientChild.children.forEach((client: any) => {
+            if (client.value == this.$route.query.single_client_id) {
+              clients = [clientList.value, clientChild.value, client.value]
+            }
+          })
+        })
+      })
+
+      this.client_id = clients
+      if(this.$route.query.single_client_id){
+        this.date = [new Date().getFullYear() + '-01-01',this.$formatDate(new Date())]
+      }
+      return arr
     },
     clientList() {
       return this.$store.state.api.clientType.arr.filter((item: { type: any }) => Number(item.type) === 1)

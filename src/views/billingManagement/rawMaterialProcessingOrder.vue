@@ -269,7 +269,7 @@
                         <div class="tcol" style="flex: 0.5">
                           {{ $toFixed(itemMat.number, 3, true) }}{{ itemMat.unit }}
                         </div>
-                        <div class="tcol">{{ $toFixed(item.total_push_number, 3, true) }}</div>
+                        <div class="tcol">{{ $toFixed(itemMat.push_number, 3, true) }}</div>
                         <div class="tcol" style="flex: 0.5">{{ itemMat.price }}元</div>
                       </div>
                     </div>
