@@ -595,11 +595,15 @@ export default Vue.extend({
     })
     // @ts-ignore
     window.Echo.channel(`knit_server_` + this.$getsessionStorage('user_id')).listen('.knit_server_event', (e: any) => {
+      const ev = e.content
       vue.$notify({
-        title: e.content,
+        title: ev.content,
         dangerouslyUseHTMLString: true,
         duration: 0,
-        message: vue.changeContentToHtml(e.content)
+        message: vue.changeContentToHtml(ev.content),
+        onClick: () => {
+          this.todoUrl(ev)
+        }
       })
     })
   },
