@@ -468,7 +468,6 @@ export default Vue.extend({
             total_price: '',
             is_urgent: 2,
             is_send: 2,
-
             batch_data: [
               {
                 id: '',

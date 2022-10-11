@@ -3414,7 +3414,7 @@ export default Vue.extend({
       }
     },
     deleteMaterialSupplement(id: number) {
-      this.$confirm('是否删除该补纱单据，删除该单据后需要在扣款单据列表手动删除与本条对应的扣款日志?', '提示', {
+      this.$confirm('是否同时删除补纱单和关联扣款单？', '提示', {
         confirmButtonText: '确认删除',
         cancelButtonText: '取消',
         type: 'warning'

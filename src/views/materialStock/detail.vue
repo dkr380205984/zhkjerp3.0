@@ -737,10 +737,10 @@
       </div>
     </div>
     <div class="popup"
-      v-show="materialStockFlag">
+      v-if="materialStockFlag">
       <div class="main">
         <div class="titleCtn">
-          <span class="text">{{stockTypeList[materialStockInfo.action_type - 1].name}}</span>
+          <span class="text">{{stockTypeList.find((item)=>item.value===materialStockInfo.action_type).name}}</span>
           <div class="closeCtn"
             @click="closeStock">
             <span class="el-icon-close"></span>
@@ -1580,7 +1580,6 @@ export default Vue.extend({
         this.$message.error('只能选择一张加工单进行出库操作')
         return
       }
-      console.log(this.productionPlanList)
       this.materialStockInfo.action_type = 5
       this.materialStockInfo.selectList = []
       this.productionPlanList.forEach((item) => {
@@ -1980,6 +1979,35 @@ export default Vue.extend({
                     message: '已取消提交'
                   })
                 })
+            }
+          })
+        } else if (this.materialStockInfo.action_type === 5) {
+          // 生产出库判断下有没有超额
+          this.getCmpData()
+          materialStock.check({ data: [this.materialStockInfo] }).then((res) => {
+            if (res.data.status) {
+              if (res.data.data.length === 0) {
+                this.saveMaterialStockFn()
+              } else {
+                this.$confirm(
+                  '检测到' + res.data.data.join(';') + '库存数量不足, 继续出库会导致库存数量变成负数，是否继续?',
+                  '提示',
+                  {
+                    confirmButtonText: '继续出库',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                  }
+                )
+                  .then(() => {
+                    this.saveMaterialStockFn()
+                  })
+                  .catch(() => {
+                    this.$message({
+                      type: 'info',
+                      message: '已取消'
+                    })
+                  })
+              }
             }
           })
         } else {

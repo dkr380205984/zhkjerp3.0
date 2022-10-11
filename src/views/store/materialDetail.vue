@@ -1267,15 +1267,52 @@ export default Vue.extend({
         })
       if (!formCheck) {
         this.getCmpData()
-        this.saveLock = true
-        materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
-          if (res.data.status) {
-            this.$message.success('添加成功')
-            this.materialStockFlag = false
-            this.init()
-          }
-          this.saveLock = false
-        })
+        if (this.materialStockInfo.action_type === 7 || this.materialStockInfo.action_type === 10) {
+          materialStock.check({ data: [this.materialStockInfo] }).then((res) => {
+            if (res.data.status) {
+              if (res.data.data.length === 0) {
+                this.saveMaterialStockFn()
+              } else {
+                this.$confirm(
+                  '检测到' + res.data.data.join(';') + '库存数量不足, 继续出库会导致库存数量变成负数，是否继续?',
+                  '提示',
+                  {
+                    confirmButtonText: '继续出库',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                  }
+                )
+                  .then(() => {
+                    this.saveLock = true
+                    materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
+                      if (res.data.status) {
+                        this.$message.success('出库成功')
+                        this.materialStockFlag = false
+                        this.init()
+                      }
+                      this.saveLock = false
+                    })
+                  })
+                  .catch(() => {
+                    this.$message({
+                      type: 'info',
+                      message: '已取消'
+                    })
+                  })
+              }
+            }
+          })
+        } else {
+          this.saveLock = true
+          materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
+            if (res.data.status) {
+              this.$message.success('添加成功')
+              this.materialStockFlag = false
+              this.init()
+            }
+            this.saveLock = false
+          })
+        }
       }
     },
     deleteStoreLog(id: number) {
