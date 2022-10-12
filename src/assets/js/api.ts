@@ -1424,6 +1424,10 @@ const statistics = {
     start_time: string
     end_time: string
   }) => http.get(`${baseUrl}/statistics/store/total`, params),
+  materialClient: (params?: {
+    client_id: number | string
+  }) => http.get(`${baseUrl}/statistics/material/client`, params),
+  
 }
 export {
   documentInfo,
