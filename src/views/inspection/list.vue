@@ -12,7 +12,8 @@
               placeholder="筛选报价/产品/样品编号"
               @keydown.enter.native="changeRouter"></el-input>
           </div>
-          <div class="elCtn">
+          <div class="elCtn"
+            style="width:200px">
             <el-cascader @change="changeRouter"
               placeholder="筛选下单公司"
               v-model="client_id"
@@ -20,7 +21,8 @@
               clearable>
             </el-cascader>
           </div>
-          <div class="elCtn">
+          <div class="elCtn"
+            style="width:200px">
             <el-select @change="changeRouter"
               v-model="user_id"
               placeholder="筛选创建人"
@@ -31,7 +33,20 @@
                 :value="item.value"></el-option>
             </el-select>
           </div>
-          <div class="elCtn">
+          <div class="elCtn"
+            style="width:200px">
+            <el-select @change="changeRouter"
+              v-model="group_id"
+              placeholder="筛选负责小组"
+              clearable>
+              <el-option v-for="item in groupList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn"
+            style="width:200px">
             <el-select v-model="order_type"
               @change="changeRouter">
               <el-option label="所有单据"
@@ -46,17 +61,7 @@
             @click="reset">重置</div>
         </div>
         <div class="filterCtn">
-          <div class="elCtn">
-            <el-select @change="changeRouter"
-              v-model="group_id"
-              placeholder="筛选负责小组"
-              clearable>
-              <el-option v-for="item in groupList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"></el-option>
-            </el-select>
-          </div>
+
           <div class="elCtn">
             <el-date-picker v-model="date"
               type="daterange"
@@ -92,6 +97,20 @@
                 value="0"></el-option>
               <el-option label="已添加计划"
                 value="1"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn"
+            style="width:200px">
+            <el-select v-model="progress"
+              @change="changeRouter"
+              clearable
+              placeholder="筛选检验进度">
+              <el-option label="等于100%"
+                value="equal"></el-option>
+              <el-option label="大于100%"
+                value="greater"></el-option>
+              <el-option label="小于100%"
+                value="less"></el-option>
             </el-select>
           </div>
           <div class="btn backHoverOrange fr"
@@ -152,6 +171,7 @@ export default Vue.extend({
       showSetting: false,
       listSettingId: null,
       listKey: [],
+      progress: '',
       originalSetting: [
         {
           key: 'time_code',
@@ -222,7 +242,6 @@ export default Vue.extend({
           index: 7,
           unit: '%',
           errVal: '0',
-          class: 'green',
           isProgress: true
         },
         {
@@ -300,6 +319,7 @@ export default Vue.extend({
       this.order_type = Number(query.order_type) || null
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
+      this.progress = query.progress || ''
     },
     changeRouter(ev?: any) {
       if (ev !== this.page) {
@@ -323,7 +343,9 @@ export default Vue.extend({
           '&date=' +
           this.date +
           '&limit=' +
-          this.limit
+          this.limit +
+          '&progress=' +
+          this.progress
       )
     },
     reset() {
@@ -339,6 +361,7 @@ export default Vue.extend({
           this.group_id = ''
           this.date = []
           this.status = '1'
+          this.process = ''
           this.order_type = null
           this.limit = 10
           this.changeRouter()
@@ -364,7 +387,8 @@ export default Vue.extend({
           start_time: this.date.length > 0 ? this.date[0] : '',
           end_time: this.date.length > 0 ? this.date[1] : '',
           user_id: this.user_id,
-          group_id: this.group_id
+          group_id: this.group_id,
+          filter_inspection_way: this.progress
         })
         .then((res) => {
           if (res.data.status) {

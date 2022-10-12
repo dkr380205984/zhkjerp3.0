@@ -39,7 +39,7 @@
             </template>
             <!-- 订单进度专用 -->
             <template v-else-if="itemKey.isProgress">
-              <span :class="itemKey.class"
+              <span :class="itemKey.class||(item[itemKey.key].progress<100?'orange':'green')"
                 class="text">
                 {{item[itemKey.key].progress || itemKey.errVal}}%</span>
             </template>
@@ -384,7 +384,7 @@
               </template>
               <!-- 订单进度专用 -->
               <template v-else-if="itemKey.isProgress">
-                <span :class="itemKey.class"
+                <span :class="itemKey.class||(item[itemKey.key].progress<100?'orange':'green')"
                   class="text">
                   {{item[itemKey.key].progress || itemKey.errVal}}%</span>
               </template>
