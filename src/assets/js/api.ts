@@ -1426,6 +1426,7 @@ const statistics = {
   }) => http.get(`${baseUrl}/statistics/store/total`, params),
   materialClient: (params?: {
     client_id: number | string
+    year: number | string
   }) => http.get(`${baseUrl}/statistics/material/client`, params),
   
 }
