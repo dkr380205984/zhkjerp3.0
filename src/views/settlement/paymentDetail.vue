@@ -919,6 +919,7 @@
                     <div class="tableCtn" style="padding-top: 0">
                       <template v-if="item.detail.info_data.length > 0">
                         <div
+                          v-if="$route.query.type !== '面料原料单位' && $route.query.type !== '纱线原料单位'"
                           class="btn backBlue"
                           style="margin: 12px 24px 12px 0"
                           @click="
@@ -3699,6 +3700,7 @@ export default Vue.extend({
     getSupList() {
       this.listLoading = true
       this.checkSubAll = false
+      this.subShowAllFlag = true
       let subParams = this.subParams
 
       if (subParams.date.length === 0) {
@@ -4027,6 +4029,7 @@ export default Vue.extend({
     getBill(init?: 'init') {
       this.listLoading = true
       this.checkAll = false
+      this.showAllFlag = true
       if (this.clientType === 2) {
         // 物料订购单
         materialOrder
