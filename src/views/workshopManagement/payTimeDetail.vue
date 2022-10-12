@@ -290,6 +290,9 @@
           </el-option>
         </el-select>
       </div>
+      <div class="elCtn" style="margin-left: 20px">
+        <el-button type="primary" size="small" @click="checkAllStaff">全部选中</el-button>
+      </div>
       <el-checkbox-group v-model="staffIdList">
         <el-checkbox
           style="width: calc(100% / 8); margin-top: 10px"
@@ -568,12 +571,21 @@ export default Vue.extend({
       })
       this.oldList = this.$clone(this.list)
     },
+    // 全选员工
+    checkAllStaff(e: any) {
+      let arr = this.processStaffList[this.lostAddStaffChooseProcess].children.map((item: any) => {
+        return item.id
+      })
+
+      this.staffIdList = this.staffIdList.concat(arr)
+      this.staffIdList = Array.from(new Set(this.staffIdList))
+    },
     // 提交数据到列表
     confirmData() {
       this.selectStaffIdList = this.$clone(this.staffIdList)
       if (this.staffIdList.length > 0) {
         // 增加判断
-        this.staffIdList.forEach((staffId: number) => {
+        this.staffIdList.forEach((staffId: number,staffIndex:number) => {
           // 如果重复则跳过
           let check = this.list.find((item: any) => {
             return item.staffId[1] === staffId
@@ -586,6 +598,16 @@ export default Vue.extend({
           let staffInfo = this.staffList.find((staff: any) => {
             return staff.id === staffId
           })
+
+          // 第一行自动覆盖
+          if(staffIndex === 0){
+            this.list[0].staffName = staffInfo.name
+            this.list[0].staffCode = staffInfo.code
+            this.list[0].staffId = ['', staffId]
+            this.list[0].show = true
+            return
+          }
+
           this.list.push({
             staffName: staffInfo.name,
             staffId: ['', staffId],

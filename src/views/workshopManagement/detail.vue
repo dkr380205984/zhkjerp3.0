@@ -296,7 +296,13 @@
         <div class="titleCtn">
           <span class="text">生产进度更新</span>
           <div class="closeCtn">
-            <span class="el-icon-close" @click="numberUpdate = false"></span>
+            <span
+              class="el-icon-close"
+              @click="
+                numberUpdate = false
+                this.selectStaffIdList = []
+              "
+            ></span>
           </div>
         </div>
         <div class="contentCtn" style="padding-top: 15px; padding-bottom: 15px; max-height: 800px">
@@ -613,217 +619,6 @@
               </div>
             </div>
           </div>
-          <!-- <div class="editCtn packOrder" v-for="(item, index) in productionScheduleUpdate" :key="index">
-            <div
-              class="deleteIcon"
-              @click="
-                productionScheduleUpdate.length > 1
-                  ? $deleteItem(productionScheduleUpdate, index)
-                  : $message.error('至少有一个产品')
-              "
-            >
-              <i class="el-icon-close"></i>
-            </div>
-            <div class="tableCtn">
-              <div class="tbody hasTop">
-                <div class="trow">
-                  <div class="tcol bgGray">加工产品</div>
-                  <div class="tcol">
-                    <el-select
-                      v-model="item.productNameId"
-                      @change="getColorList(item)"
-                      filterable
-                      placeholder="请选择加工产品"
-                    >
-                      <el-option
-                        v-for="item in product_arr"
-                        :key="item.id"
-                        :label="item.product_code + ' ' + item.category + '/' + item.secondary_category"
-                        :value="item.id"
-                      >
-                      </el-option>
-                    </el-select>
-                  </div>
-                  <div class="tcol bgGray">加工工序</div>
-                  <div class="tcol" style="flex: 0.6">
-                    <el-cascader
-                      v-model="item.process"
-                      :options="processList"
-                      @change="getWorkList(item)"
-                      :show-all-levels="false"
-                      placeholder="加工工序"
-                    ></el-cascader>
-                  </div>
-                  <div class="tcol bgGray">工序说明</div>
-                  <div class="tcol" style="flex: 1.9; overflow: scroll; padding-top: 10px">
-                    <el-select
-                      v-model="item.process_desc"
-                      multiple
-                      filterable
-                      allow-create
-                      default-first-option
-                      collapse-tags
-                      placeholder="请选择工序"
-                    >
-                      <el-option
-                        v-for="item in processDescList"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      >
-                      </el-option>
-                    </el-select>
-                  </div>
-                  <div class="tcol bgGray">结算单价</div>
-                  <div class="tcol" style="flex: 0.5">
-                    <zh-input
-                      class="inputs"
-                      :keyBoard="keyBoard"
-                      v-model="item.unitPrice"
-                      placeholder="请输入结算单价"
-                      type="number"
-                    >
-                    </zh-input>
-                  </div>
-                </div>
-                <div class="trow">
-                  <div class="tcol bgGray">员工</div>
-                  <div class="tcol bgGray">尺码颜色</div>
-                  <div class="tcol bgGray">完成数量</div>
-                  <div class="tcol bgGray">额外数量</div>
-                  <div class="tcol bgGray">次品数量</div>
-                  <div class="tcol bgGray">次品原因</div>
-                  <div class="tcol bgGray">日期</div>
-                  <div class="tcol bgGray">操作</div>
-                </div>
-                <div class="trow" v-for="(itemSizeColor, indexColorSize) in item.infoData" :key="indexColorSize">
-                  <div class="tcol">
-                    <el-cascader
-                      :options="allWorkList"
-                      v-model="itemSizeColor.worker"
-                      placeholder="请选择员工"
-                      filterable
-                      :show-all-levels="false"
-                    ></el-cascader>
-                  </div>
-                  <div class="tcol noPad" :style="{ flex: productionScheduleUpdate.length === 1 ? 7 : 7.03 }">
-                    <div class="trow" v-for="(el, i) in itemSizeColor.sizeColorList" :key="i">
-                      <div class="tcol">
-                        <el-select
-                          v-model="el.chooseId"
-                          allow-create
-                          default-first-option
-                          placeholder="请选择尺码颜色"
-                          @change="$forceUpdate()"
-                        >
-                          <el-option
-                            v-for="(sizeColor, sizeColorIndex) in itemSizeColor.sizeColorList"
-                            :key="sizeColorIndex + 'cmys'"
-                            :label="
-                              (sizeColor.size_name || '无尺码数据') + '/' + (sizeColor.color_name || '无颜色数据')
-                            "
-                            :value="sizeColor.size_id + ',' + sizeColor.color_id"
-                          >
-                          </el-option>
-                        </el-select>
-                      </div>
-                      <div class="tcol">
-                        <zh-input
-                          :ref="'complete_number-' + index + '-' + indexColorSize"
-                          class="inputs"
-                          :keyBoard="keyBoard"
-                          v-model="el.complete_number"
-                          placeholder="请输入完成数量"
-                          @keydown.native="
-                            focusByKeydown($event, 'complete_number', [index, indexColorSize], '', [
-                              'productionScheduleUpdate',
-                              'infoData'
-                            ])
-                          "
-                        >
-                        </zh-input>
-                      </div>
-                      <div class="tcol">
-                        <zh-input
-                          :ref="'extra_number-' + index + '-' + indexColorSize"
-                          class="inputs"
-                          :keyBoard="keyBoard"
-                          v-model="el.extra_number"
-                          placeholder="请输入额外数量"
-                          @keydown.native="
-                            focusByKeydown($event, 'extra_number', [index, indexColorSize], '', [
-                              'productionScheduleUpdate',
-                              'infoData'
-                            ])
-                          "
-                        >
-                        </zh-input>
-                      </div>
-                      <div class="tcol">
-                        <zh-input
-                          class="inputs"
-                          :ref="'shoddy_number-' + index + '-' + indexColorSize"
-                          :keyBoard="keyBoard"
-                          v-model="el.shoddy_number"
-                          placeholder="请输入次品数量"
-                          @keydown.native="
-                            focusByKeydown($event, 'shoddy_number', [index, indexColorSize], '', [
-                              'productionScheduleUpdate',
-                              'infoData'
-                            ])
-                          "
-                        >
-                        </zh-input>
-                      </div>
-                      <div class="tcol" style="overflow-y: scroll">
-                        <el-select
-                          v-model="el.shoddy_reason"
-                          multiple
-                          filterable
-                          allow-create
-                          default-first-option
-                          collapse-tags
-                          placeholder="请选择次品原因"
-                        >
-                          <el-option
-                            v-for="item in substandardReason"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          >
-                          </el-option>
-                        </el-select>
-                      </div>
-                      <div class="tcol">
-                        <el-date-picker
-                          v-model="el.complete_time"
-                          style="padding-left: 28px"
-                          clearable
-                          type="date"
-                          placeholder="选择日期"
-                        >
-                        </el-date-picker>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="tcol">
-                    <div>
-                      <span class="opr hoverBlue" @click="copyWorkerInfo(item, itemSizeColor)">复制</span>
-                      <span
-                        class="opr hoverRed"
-                        @click="
-                          item.infoData.length > 1
-                            ? $deleteItem(item.infoData, indexColorSize)
-                            : $message.error('至少有一个员工')
-                        "
-                        >删除</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div> -->
           <div class="elCtn">
             <div class="btn backHoverBlue" @click="openDialog">批量添加员工</div>
           </div>
@@ -872,7 +667,14 @@
           </div>
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn" @click="numberUpdate = false">取消</span>
+          <span
+            class="btn borderBtn"
+            @click="
+              numberUpdate = false
+              selectStaffIdList = []
+            "
+            >取消</span
+          >
           <span class="btn backHoverBlue" @click="workSave">确认提交</span>
         </div>
       </div>
@@ -1600,7 +1402,7 @@ export default Vue.extend({
       this.selectStaffIdList = this.$clone(this.staffIdList)
       if (this.staffIdList.length > 0) {
         // 增加判断
-        this.staffIdList.forEach((staffId: number) => {
+        this.staffIdList.forEach((staffId: number,staffIndex:number) => {
           // 如果重复则跳过
           let check = this.productionScheduleUpdate.find((item: any) => {
             return item.staffId[1] === staffId
@@ -1613,6 +1415,16 @@ export default Vue.extend({
           let staffInfo = this.staffList.find((staff: any) => {
             return staff.id === staffId
           })
+
+          // 第一行自动覆盖
+          if(staffIndex === 0){
+            this.productionScheduleUpdate[0].staffName = staffInfo.name
+            this.productionScheduleUpdate[0].staffCode = staffInfo.code
+            this.productionScheduleUpdate[0].staffId = ['', staffId]
+            this.productionScheduleUpdate[0].staff_id = staffId
+            this.productionScheduleUpdate[0].show = true
+            return
+          }
 
           this.productionScheduleUpdate.push({
             staffName: staffInfo.name,
@@ -1761,6 +1573,7 @@ export default Vue.extend({
         if (res.data.status) {
           this.$message.success('提交成功')
           this.numberUpdate = false
+          this.selectStaffIdList = []
           this.processWorkerListCheck = false
           this.init()
           this.resetProductionScheduleUpdate()
@@ -1923,6 +1736,7 @@ export default Vue.extend({
         if (res.data.status) {
           this.$message.success('提交成功')
           this.numberUpdate = false
+          this.selectStaffIdList = []
           location.reload()
         }
       })
@@ -2194,11 +2008,15 @@ export default Vue.extend({
         this.productionScheduleUpdate[staffIndex].price = this.productionScheduleUpdate[this.copyLine[0]].price
       }
 
-      // 复制订单
+      // 复制尺码颜色
       if (strCopyOption.indexOf('size_color') != -1) {
         this.productionScheduleUpdate[staffIndex].product_info[proIndex] = this.$clone(
           this.productionScheduleUpdate[this.copyLine[0]].product_info[this.copyLine[1]]
         )
+        this.productionScheduleUpdate[staffIndex].product_info[proIndex].number = ''
+        this.productionScheduleUpdate[staffIndex].product_info[proIndex].extra_number = ''
+        this.productionScheduleUpdate[staffIndex].product_info[proIndex].shoddy_number = ''
+        this.productionScheduleUpdate[staffIndex].product_info[proIndex].shoddy_reason = []
       }
 
       this.isCopy = false
