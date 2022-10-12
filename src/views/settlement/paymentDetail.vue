@@ -3700,6 +3700,7 @@ export default Vue.extend({
     getSupList() {
       this.listLoading = true
       this.checkSubAll = false
+      this.subShowAllFlag = true
       let subParams = this.subParams
 
       if (subParams.date.length === 0) {
@@ -4028,6 +4029,7 @@ export default Vue.extend({
     getBill(init?: 'init') {
       this.listLoading = true
       this.checkAll = false
+      this.showAllFlag = true
       if (this.clientType === 2) {
         // 物料订购单
         materialOrder
