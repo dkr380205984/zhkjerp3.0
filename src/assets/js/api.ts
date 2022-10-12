@@ -1424,11 +1424,37 @@ const statistics = {
     start_time: string
     end_time: string
   }) => http.get(`${baseUrl}/statistics/store/total`, params),
+  // 以下是财务管理里面的图表和汇总表
   materialClient: (params?: {
     client_id: number | string
     year: number | string
   }) => http.get(`${baseUrl}/statistics/material/client`, params),
-  
+  materialClientDate: (params?: {
+    client_id: number | string
+    yarn_type: 1 | 2 //1、纱线 2、面料
+    start_time: string
+    end_time: string
+    keyword: string
+  }) => http.get(`${baseUrl}/statistics/material/client/date`, params),
+  decorateClientDate: (params?: {
+    client_id: number | string
+    start_time: string
+    end_time: string
+    keyword: string
+  }) => http.get(`${baseUrl}/statistics/decorate/client/date`, params),
+  processClientDate: (params?: {
+    client_id: number | string
+    start_time: string
+    end_time: string
+    keyword: string
+    process: string
+  }) => http.get(`${baseUrl}/statistics/process/client/date`, params),
+  packClientDate: (params?: {
+    client_id: number | string
+    start_time: string
+    end_time: string
+    keyword: string
+  }) => http.get(`${baseUrl}/statistics/pack/client/date`, params),
 }
 export {
   documentInfo,
