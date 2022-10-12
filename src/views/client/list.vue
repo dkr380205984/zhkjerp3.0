@@ -30,7 +30,7 @@
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input placeholder="搜索公司名称"
+            <el-input placeholder="搜索单位名称"
               v-model="keyword"
               @change="changeRouter"></el-input>
           </div>
@@ -67,7 +67,7 @@
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input placeholder="搜索公司编号"
+            <el-input placeholder="搜索单位编号"
               v-model="code"
               @change="changeRouter"></el-input>
           </div>
@@ -100,9 +100,9 @@
         </div>
         <div class="list">
           <div class="row title">
-            <div class="col">公司编号</div>
-            <div class="col">公司简称</div>
-            <div class="col">公司全称</div>
+            <div class="col">单位编号</div>
+            <div class="col">单位简称</div>
+            <div class="col">单位全称</div>
             <div class="col">客户类型</div>
             <div class="col">客户标签</div>
             <div class="col">客户状态</div>

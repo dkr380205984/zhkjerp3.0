@@ -12,7 +12,8 @@
               placeholder="筛选报价/产品/样品编号"
               @keydown.enter.native="changeRouter"></el-input>
           </div>
-          <div class="elCtn">
+          <div class="elCtn"
+            style="width:200px">
             <el-cascader @change="changeRouter"
               placeholder="筛选下单公司"
               v-model="client_id"
@@ -21,7 +22,8 @@
               clearable>
             </el-cascader>
           </div>
-          <div class="elCtn">
+          <div class="elCtn"
+            style="width:200px">
             <el-select @change="$setLocalStorage('create_user',user_id,true);changeRouter()"
               v-model="user_id"
               placeholder="筛选创建人"
@@ -32,7 +34,20 @@
                 :value="item.value"></el-option>
             </el-select>
           </div>
-          <div class="elCtn">
+          <div class="elCtn"
+            style="width:200px">
+            <el-select @change="$setLocalStorage('group_id',group_id,true);changeRouter()"
+              v-model="group_id"
+              placeholder="筛选负责小组"
+              clearable>
+              <el-option v-for="item in groupList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn"
+            style="width:200px">
             <el-select v-model="order_type"
               @change="changeRouter">
               <el-option label="所有单据"
@@ -52,15 +67,29 @@
               v-model="plan_code"
               @keydown.enter.native="changeRouter"></el-input>
           </div>
-          <div class="elCtn">
-            <el-select @change="$setLocalStorage('group_id',group_id,true);changeRouter()"
-              v-model="group_id"
-              placeholder="筛选负责小组"
-              clearable>
-              <el-option v-for="item in groupList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"></el-option>
+          <div class="elCtn"
+            style="width:200px">
+            <el-select v-model="progress"
+              @change="changeRouter"
+              clearable
+              placeholder="筛选入库进度">
+              <el-option label="等于100%"
+                value="equal"></el-option>
+              <el-option label="大于100%"
+                value="greater"></el-option>
+              <el-option label="小于100%"
+                value="less"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn"
+            style="width:200px">
+            <el-select v-model="limit"
+              placeholder="每页展示条数"
+              @change="changeRouter">
+              <el-option v-for="item in limitList"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
@@ -76,17 +105,7 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
-          <div class="elCtn"
-            style="width:120px">
-            <el-select v-model="limit"
-              placeholder="每页展示条数"
-              @change="changeRouter">
-              <el-option v-for="item in limitList"
-                :key="item.value"
-                :label="item.name"
-                :value="item.value"></el-option>
-            </el-select>
-          </div>
+
           <div class="btn backHoverOrange fr"
             @click="showSetting=true">列表设置</div>
           <div class="btn backHoverGreen fr"
@@ -146,6 +165,7 @@ export default Vue.extend({
       showSetting: false,
       listSettingId: null,
       listKey: [],
+      progress: '',
       originalSetting: [
         {
           key: 'code',
@@ -204,7 +224,6 @@ export default Vue.extend({
           index: 6,
           unit: '%',
           errVal: '0',
-          class: 'green',
           isProgress: true
         },
         {
@@ -215,7 +234,6 @@ export default Vue.extend({
           index: 7,
           unit: '%',
           errVal: '0',
-          class: 'orange',
           isProgress: true
         },
         {
@@ -288,6 +306,7 @@ export default Vue.extend({
       this.date = query.date ? (query.date as string).split(',') : []
       this.plan_code = query.plan_code || ''
       this.limit = query.limit ? Number(query.limit) : 10
+      this.progress = query.progress || ''
     },
     changeRouter(ev?: any) {
       if (ev !== this.page) {
@@ -311,7 +330,9 @@ export default Vue.extend({
           '&date=' +
           this.date +
           '&plan_code=' +
-          this.plan_code
+          this.plan_code +
+          '&progress=' +
+          this.progress
       )
     },
     reset() {
@@ -330,6 +351,7 @@ export default Vue.extend({
           this.plan_code = ''
           this.order_type = null
           this.limit = 10
+          this.progress = ''
           this.changeRouter()
         })
         .catch(() => {
@@ -354,7 +376,8 @@ export default Vue.extend({
           start_time: this.date.length > 0 ? this.date[0] : '',
           end_time: this.date.length > 0 ? this.date[1] : '',
           user_id: this.user_id,
-          group_id: this.group_id
+          group_id: this.group_id,
+          filter_material_push_way: this.progress
         })
         .then((res) => {
           if (res.data.status) {
