@@ -213,8 +213,9 @@
                   :file-list="item.file_list"
                   :on-remove="function(file){return removeFile(file, index)}"
                   :on-success="function(response){return successFile(response, index)}"
+                  :on-preview="handlePictureCardPreview"
                   ref="uploada"
-                  list-type="picture">
+                  list-type="picture-card">
                   <div class="uploadBtn">
                     <i class="el-icon-upload"></i>
                     <span>上传图片</span>
@@ -222,6 +223,9 @@
                   <div slot="tip"
                     class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M(请勿上传带特殊字符的图片)</div>
                 </el-upload>
+                <el-dialog :visible.sync="dialogVisible">
+                  <img width="100%" :src="dialogImageUrl" alt="">
+                </el-dialog>
               </div>
             </div>
           </div>
@@ -1229,6 +1233,8 @@ export default Vue.extend({
           }
         ]
       },
+      dialogImageUrl : '',
+      dialogVisible :false,
       contactsList: [],
       weaveList: [{ value: '针织织造' }, { value: '梭织织造' }, { value: '制版费' }]
     }
@@ -1508,6 +1514,10 @@ export default Vue.extend({
         this.$message.error('图片大小不能超过 10MB!')
         return false
       }
+    },
+    handlePictureCardPreview(file:any) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
     },
     successFile(response: { hash: string; key: string }, index: number) {
       this.quotedPriceInfo.product_data[index].image_data!.push('https://file.zwyknit.com/' + response.key)

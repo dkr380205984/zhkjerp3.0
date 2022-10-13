@@ -305,8 +305,9 @@
                   :file-list="item.file_list"
                   :on-remove="function(file){return removeFile(file, index)}"
                   :on-success="function(response){return successFile(response, index)}"
+                  :on-preview="handlePictureCardPreview"
                   ref="uploada"
-                  list-type="picture">
+                  list-type="picture-card">
                   <div class="uploadBtn">
                     <i class="el-icon-upload"></i>
                     <span>上传图片</span>
@@ -314,6 +315,9 @@
                   <div slot="tip"
                     class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M(请勿上传带特殊字符的图片)</div>
                 </el-upload>
+                <el-dialog :visible.sync="dialogVisible">
+                  <img width="100%" :src="dialogImageUrl" alt="">
+                </el-dialog>
               </div>
             </div>
           </div>
@@ -1244,6 +1248,8 @@ export default Vue.extend({
         key: '',
         token: ''
       },
+      dialogImageUrl : '',
+      dialogVisible :false,
       productIndex: '0', // 目前选中的产品
       quotedPriceInfo: {
         id: null,
@@ -1780,6 +1786,10 @@ export default Vue.extend({
             return totalChild + Number(currentChild.total_price)
           }, 0)
       })
+    },
+    handlePictureCardPreview(file:any) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
     },
     saveQuotedPrice(ifCaogao: boolean) {
       if (this.saveLock) {

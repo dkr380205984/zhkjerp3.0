@@ -282,8 +282,9 @@
                       :file-list="productInfo.file_list"
                       :on-remove="removeFile"
                       :on-success="successFile"
+                      :on-preview="handlePictureCardPreview"
                       ref="uploada"
-                      list-type="picture">
+                      list-type="picture-card">
                       <div class="uploadBtn">
                         <i class="el-icon-upload"></i>
                         <span>上传图片</span>
@@ -291,6 +292,9 @@
                       <div slot="tip"
                         class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M(请勿上传带特殊字符的图片)</div>
                     </el-upload>
+                    <el-dialog :visible.sync="dialogVisible" append-to-body>
+                      <img width="100%" :src="dialogImageUrl" alt="">
+                    </el-dialog>
                   </div>
                 </div>
               </div>
@@ -761,6 +765,8 @@ export default Vue.extend({
         key: '',
         token: ''
       },
+      dialogImageUrl : '',
+      dialogVisible :false,
       productInfo: {
         id: null,
         product_type: 1,
@@ -956,6 +962,10 @@ export default Vue.extend({
       let results = str ? unitArr.filter(this.createFilter(str)) : unitArr.slice(0, 10)
       // 调用 callback 返回建议列表的数据
       cb(results)
+    },
+    handlePictureCardPreview(file:any) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
     },
     searchUnit(str: string, cb: any) {
       const unitArr = [
