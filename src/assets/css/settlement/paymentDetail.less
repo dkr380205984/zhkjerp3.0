@@ -52,6 +52,49 @@
     font-size: 14px;
   }
 
+  .sortCol {
+    flex-wrap: nowrap;
+
+    .sortCtn {
+      min-width: 7px;
+    }
+  }
+
+  .sortCtn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    color: @font45;
+    text-align: center;
+    font-size: 20px;
+
+    .active {
+      color: @blue
+    }
+
+    .el-icon-caret-top {
+      position: relative;
+      top: 5px;
+      cursor: pointer;
+
+      &:hover {
+        color: @blue;
+      }
+    }
+
+    .el-icon-caret-bottom {
+      position: relative;
+      bottom: 3px;
+      cursor: pointer;
+
+      &:hover {
+        color: @blue;
+      }
+    }
+  }
+
   .numberWidth {
     min-width: 80px;
     max-width: 80px;

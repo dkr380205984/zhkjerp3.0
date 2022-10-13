@@ -653,7 +653,10 @@
             </div>
           </template>
         </el-tab-pane>
-        <el-tab-pane label="统计图表" v-if="$route.query.type === '纱线原料单位' || $route.query.type === '面料原料单位'">
+        <el-tab-pane
+          label="统计图表"
+          v-if="$route.query.type === '纱线原料单位' || $route.query.type === '面料原料单位'"
+        >
           <div class="titleCtn" style="padding: 0 15px">
             <div class="title">统计报表</div>
           </div>
@@ -2571,10 +2574,8 @@
             <div class="list">
               <div class="row title">
                 <div class="col" style="flex: 0.05">
-                  <div class="col" style="flex: 0.1">
-                    <el-checkbox v-model="checkSubAll" @change="(ev) => checkAllInfo(ev, subList, checkAllSubList)">
-                    </el-checkbox>
-                  </div>
+                  <el-checkbox v-model="checkSubAll" @change="(ev) => checkAllInfo(ev, subList, checkAllSubList)">
+                  </el-checkbox>
                 </div>
                 <div class="col" style="flex: 1.2">补充单号</div>
                 <div class="col">关联订单号</div>
@@ -2747,6 +2748,848 @@
                 @current-change="getSupList"
               >
               </el-pagination>
+            </div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane v-if="$route.query.type === '纱线原料单位'" label="纱线汇总表">
+          <div class="titleCtn" style="padding: 0 15px">
+            <div class="title">单据列表</div>
+          </div>
+          <div class="listCtn" v-loading="listLoading" style="padding-left: 10px; padding-right: 10px">
+            <div class="filterCtn">
+              <div class="elCtn">
+                <el-input
+                  v-model="clientDateParams.keyword"
+                  placeholder="筛选纱线名称"
+                  @keydown.enter.native="getClientDate('纱线原料单位')"
+                  @clear="getClientDate('纱线原料单位')"
+                  clearable
+                ></el-input>
+              </div>
+              <div class="elCtn">
+                <el-date-picker
+                  v-model="clientDateParams.date"
+                  type="daterange"
+                  align="right"
+                  unlink-panels
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  :picker-options="pickerOptions"
+                  @change="getClientDate('纱线原料单位')"
+                  value-format="yyyy-MM-dd"
+                >
+                </el-date-picker>
+              </div>
+              <div class="btn borderBtn" @click="reset">重置</div>
+              <div
+                class="btn backHoverOrange"
+                @click="
+                  updatePriceFlag = true
+                  getMatStsList(updatePriceInfo.date)
+                "
+              >
+                <svg class="iconFont" aria-hidden="true">
+                  <use xlink:href="#icon-xiugaidingdan"></use>
+                </svg>
+                <span class="text">更新结算单价</span>
+              </div>
+            </div>
+            <div class="list">
+              <div class="row title">
+                <div class="col">纱线名称</div>
+                <div class="col">订购颜色</div>
+                <div class="col">订购属性</div>
+                <div class="col">
+                  计划订购数量
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'number' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'number'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'number' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'number'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+
+                <div class="col">
+                  实际入库数量
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'push_number' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'push_number'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'push_number' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'push_number'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div class="col">订购单价</div>
+                <div class="col">结算单价</div>
+                <div class="col">
+                  计划订购总价
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'total_price' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'total_price'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'total_price' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'total_price'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div class="col">
+                  实际入库总价
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'total_push_price' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'total_push_price'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'total_push_price' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'total_push_price'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              <div v-for="(item, index) in clientDateList" :key="index">
+                <div class="row">
+                  <div class="col">
+                    {{ item.material_name }}
+                  </div>
+                  <div class="col">
+                    {{ item.material_color }}
+                  </div>
+                  <div :class="item.attribute ? 'col' : 'col gray'">
+                    {{ item.attribute || '无' }}
+                  </div>
+                  <div class="col">
+                    {{ item.number }}
+                  </div>
+                  <div class="col">
+                    {{ item.push_number }}
+                  </div>
+                  <div class="col">
+                    {{ item.avg_price }}
+                  </div>
+                  <div class="col">
+                    {{ item.avg_settle_price }}
+                  </div>
+                  <div class="col">
+                    {{ item.total_price }}
+                  </div>
+                  <div class="col">
+                    {{ item.total_push_price }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane v-if="$route.query.type === '面料原料单位'" label="面料汇总表">
+          <div class="titleCtn" style="padding: 0 15px">
+            <div class="title">单据列表</div>
+          </div>
+          <div class="listCtn" v-loading="listLoading" style="padding-left: 10px; padding-right: 10px">
+            <div class="filterCtn">
+              <div class="elCtn">
+                <el-input
+                  v-model="clientDateParams.keyword"
+                  placeholder="筛选面料名称"
+                  @keydown.enter.native="getClientDate('面料原料单位')"
+                  @clear="getClientDate('面料原料单位')"
+                  clearable
+                ></el-input>
+              </div>
+              <div class="elCtn">
+                <el-date-picker
+                  v-model="clientDateParams.date"
+                  type="daterange"
+                  align="right"
+                  unlink-panels
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  :picker-options="pickerOptions"
+                  @change="getClientDate('面料原料单位')"
+                  value-format="yyyy-MM-dd"
+                >
+                </el-date-picker>
+              </div>
+              <div class="btn borderBtn" @click="reset">重置</div>
+              <div
+                class="btn backHoverOrange"
+                @click="
+                  updatePriceFlag = true
+                  getMatStsList(updatePriceInfo.date)
+                "
+              >
+                <svg class="iconFont" aria-hidden="true">
+                  <use xlink:href="#icon-xiugaidingdan"></use>
+                </svg>
+                <span class="text">更新结算单价</span>
+              </div>
+            </div>
+            <div class="list">
+              <div class="row title">
+                <div class="col">面料名称</div>
+                <div class="col">订购颜色</div>
+                <div class="col">订购属性</div>
+                <div class="col">
+                  计划订购数量
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'number' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'number'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'number' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'number'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+
+                <div class="col">
+                  实际入库数量
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'push_number' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'push_number'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'push_number' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'push_number'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div class="col">订购单价</div>
+                <div class="col">结算单价</div>
+                <div class="col">
+                  计划订购总价
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'total_price' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'total_price'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'total_price' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'total_price'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div class="col">
+                  实际入库总价
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'total_push_price' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'total_push_price'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'total_push_price' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'total_push_price'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              <div v-for="(item, index) in clientDateList" :key="index">
+                <div class="row">
+                  <div class="col">
+                    {{ item.material_name }}
+                  </div>
+                  <div class="col">
+                    {{ item.material_color }}
+                  </div>
+                  <div :class="item.attribute ? 'col' : 'col gray'">
+                    {{ item.attribute || '无' }}
+                  </div>
+                  <div class="col">
+                    {{ item.number }}
+                  </div>
+                  <div class="col">
+                    {{ item.push_number }}
+                  </div>
+                  <div class="col">
+                    {{ item.avg_price }}
+                  </div>
+                  <div class="col">
+                    {{ item.avg_settle_price }}
+                  </div>
+                  <div class="col">
+                    {{ item.total_price }}
+                  </div>
+                  <div class="col">
+                    {{ item.total_push_price }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane v-if="$route.query.type === '装饰辅料单位'" label="辅料汇总表">
+          <div class="titleCtn" style="padding: 0 15px">
+            <div class="title">单据列表</div>
+          </div>
+          <div class="listCtn" v-loading="listLoading" style="padding-left: 10px; padding-right: 10px">
+            <div class="filterCtn">
+              <div class="elCtn">
+                <el-input
+                  v-model="clientDateParams.keyword"
+                  placeholder="筛选辅料名称"
+                  @keydown.enter.native="getClientDate('装饰辅料单位')"
+                  @clear="getClientDate('装饰辅料单位')"
+                  clearable
+                ></el-input>
+              </div>
+              <div class="elCtn">
+                <el-date-picker
+                  v-model="clientDateParams.date"
+                  type="daterange"
+                  align="right"
+                  unlink-panels
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  :picker-options="pickerOptions"
+                  @change="getClientDate('装饰辅料单位')"
+                  value-format="yyyy-MM-dd"
+                >
+                </el-date-picker>
+              </div>
+              <div class="btn borderBtn" @click="reset">重置</div>
+              <div
+                class="btn backHoverOrange"
+                @click="
+                  updatePriceFlag = true
+                  getMatStsList(updatePriceInfo.date)
+                "
+              >
+                <svg class="iconFont" aria-hidden="true">
+                  <use xlink:href="#icon-xiugaidingdan"></use>
+                </svg>
+                <span class="text">更新结算单价</span>
+              </div>
+            </div>
+            <div class="list">
+              <div class="row title">
+                <div class="col">辅料名称</div>
+                <div class="col">订购属性</div>
+                <div class="col">
+                  计划订购数量
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'number' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'number'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'number' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'number'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+
+                <div class="col">
+                  实际入库数量
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'push_number' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'push_number'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'push_number' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'push_number'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div class="col">订购单价</div>
+                <div class="col">结算单价</div>
+                <div class="col">
+                  计划订购总价
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'total_price' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'total_price'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'total_price' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'total_price'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div class="col">
+                  实际入库总价
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'total_push_price' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'total_push_price'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'total_push_price' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'total_push_price'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              <div v-for="(item, index) in clientDateList" :key="index">
+                <div class="row">
+                  <div class="col">
+                    {{ item.material_name }}
+                  </div>
+                  <div :class="item.attribute ? 'col' : 'col gray'">
+                    {{ item.attribute || '无' }}
+                  </div>
+                  <div class="col">
+                    {{ item.number }}
+                  </div>
+                  <div class="col">
+                    {{ item.push_number }}
+                  </div>
+                  <div class="col">
+                    {{ item.avg_price }}
+                  </div>
+                  <div class="col">
+                    {{ item.avg_settle_price }}
+                  </div>
+                  <div class="col">
+                    {{ item.total_price }}
+                  </div>
+                  <div class="col">
+                    {{ item.total_push_price }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane v-if="$route.query.type === '包装辅料单位'" label="包装汇总表">
+          <div class="titleCtn" style="padding: 0 15px">
+            <div class="title">单据列表</div>
+          </div>
+          <div class="listCtn" v-loading="listLoading" style="padding-left: 10px; padding-right: 10px">
+            <div class="filterCtn">
+              <div class="elCtn">
+                <el-input
+                  v-model="clientDateParams.keyword"
+                  placeholder="筛选包装名称"
+                  @keydown.enter.native="getClientDate('包装辅料单位')"
+                  @clear="getClientDate('包装辅料单位')"
+                  clearable
+                ></el-input>
+              </div>
+              <div class="elCtn">
+                <el-date-picker
+                  v-model="clientDateParams.date"
+                  type="daterange"
+                  align="right"
+                  unlink-panels
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  :picker-options="pickerOptions"
+                  @change="getClientDate('包装辅料单位')"
+                  value-format="yyyy-MM-dd"
+                >
+                </el-date-picker>
+              </div>
+              <div class="btn borderBtn" @click="reset">重置</div>
+              <div
+                class="btn backHoverOrange"
+                @click="
+                  updatePriceFlag = true
+                  getMatStsList(updatePriceInfo.date)
+                "
+              >
+                <svg class="iconFont" aria-hidden="true">
+                  <use xlink:href="#icon-xiugaidingdan"></use>
+                </svg>
+                <span class="text">更新结算单价</span>
+              </div>
+            </div>
+            <div class="list">
+              <div class="row title">
+                <div class="col">包装名称</div>
+                <div class="col">包装规格</div>
+                <div class="col">属性说明</div>
+                <div class="col">
+                  订购数量
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'number' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'number'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'number' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'number'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div class="col">订购单价</div>
+                <div class="col">
+                  计划订购总价
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'total_price' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'total_price'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'total_price' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'total_price'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              <div v-for="(item, index) in clientDateList" :key="index">
+                <div class="row">
+                  <div class="col">
+                    {{ item.material_name }}
+                  </div>
+                  <div class="col">
+                    <template v-if="Number(item.price_type) === 1">
+                      {{ item.length }}*{{ item.width }}*{{ item.height }}cm
+                    </template>
+                    <template v-else-if="Number(item.price_type) === 2">
+                      {{ item.length }}*{{ item.width }}cm
+                    </template>
+                    <template v-else-if="Number(item.price_type) === 3">
+                      {{ item.length }}
+                    </template>
+                  </div>
+                  <div :class="item.desc ? 'col' : 'col gray'">
+                    {{ item.desc || '无' }}
+                  </div>
+                  <div class="col">
+                    {{ item.number }}
+                  </div>
+                  <div class="col">
+                    {{ item.avg_price }}
+                  </div>
+                  <div class="col">
+                    {{ item.total_price }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane v-if="$route.query.type === '原料加工单位'" label="加工汇总表">
+          <div class="titleCtn" style="padding: 0 15px">
+            <div class="title">单据列表</div>
+          </div>
+          <div class="listCtn" v-loading="listLoading" style="padding-left: 10px; padding-right: 10px">
+            <div class="filterCtn">
+              <div class="elCtn">
+                <el-input
+                  v-model="clientDateParams.keyword"
+                  placeholder="筛选原料名称"
+                  @keydown.enter.native="getClientDate('原料加工单位')"
+                  @clear="getClientDate('原料加工单位')"
+                  clearable
+                ></el-input>
+              </div>
+              <div class="elCtn">
+                <el-cascader
+                  filterable
+                  :options="processList"
+                  v-model="clientDateParams.processList"
+                  :show-all-levels="false"
+                  @change="getClientDate('原料加工单位')"
+                ></el-cascader>
+              </div>
+              <div class="elCtn">
+                <el-date-picker
+                  v-model="clientDateParams.date"
+                  type="daterange"
+                  align="right"
+                  unlink-panels
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  :picker-options="pickerOptions"
+                  @change="getClientDate('原料加工单位')"
+                  value-format="yyyy-MM-dd"
+                >
+                </el-date-picker>
+              </div>
+              <div class="btn borderBtn" @click="reset">重置</div>
+              <div
+                class="btn backHoverOrange"
+                @click="
+                  updatePriceFlag = true
+                  getMatStsList(updatePriceInfo.date)
+                "
+              >
+                <svg class="iconFont" aria-hidden="true">
+                  <use xlink:href="#icon-xiugaidingdan"></use>
+                </svg>
+                <span class="text">更新结算单价</span>
+              </div>
+            </div>
+            <div class="list">
+              <div class="row title">
+                <div class="col">物料名称</div>
+                <div class="col">加工工序</div>
+                <div class="col">
+                  计划加工数量
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'number' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'number'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'number' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'number'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div class="col">
+                  实际加工数量
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'push_number' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'push_number'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'push_number' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'push_number'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div class="col">加工单价</div>
+                <div class="col">
+                  计划加工总价
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'total_price' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'total_price'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'total_price' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'total_price'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div class="col">
+                  实际加工总价
+                  <div class="sortCtn">
+                    <div
+                      class="el-icon-caret-top"
+                      :class="{ active: sortCol === 'total_push_price' && sort === 'asc' }"
+                      @click="
+                        sortCol = 'total_push_price'
+                        sort = 'asc'
+                        sortClientDate()
+                      "
+                    ></div>
+                    <div
+                      class="el-icon-caret-bottom"
+                      :class="{ active: sortCol === 'total_push_price' && sort === 'desc' }"
+                      @click="
+                        sortCol = 'total_push_price'
+                        sort = 'desc'
+                        sortClientDate()
+                      "
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              <div v-for="(item, index) in clientDateList" :key="index">
+                <div class="row">
+                  <div :class="item.material_name?'col':'col gray'">
+                    {{ item.material_name || '无'}}
+                  </div>
+                  <div class="col">
+                    {{ item.process }}
+                  </div>
+                  <div class="col">
+                    {{ item.number }}
+                  </div>
+                  <div class="col">
+                    {{ item.push_number }}
+                  </div>
+                  <div class="col">
+                    {{ item.avg_price }}
+                  </div>
+                  <div class="col">
+                    {{ (+item.total_price).toFixed(3) }}
+                  </div>
+                  <div class="col">
+                    {{ (item.total_push_price).toFixed(3) }}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </el-tab-pane>
@@ -3270,6 +4113,7 @@ import {
   materialSupplement,
   packManage,
   boxManage,
+  process,
   yarn,
   updateSettlePrice,
   statistics
@@ -3423,6 +4267,7 @@ export default Vue.extend({
         total_other_fee: 0
       },
       materialProcessList: [],
+      processList: [],
       materialProcessCheckList: [],
       productionPlanFilter: {
         date: [],
@@ -3537,7 +4382,7 @@ export default Vue.extend({
       showAssociatedPage: false,
       // 数据报表相关
       staticYear: new Date().getFullYear().toString(),
-      sortWay:1,
+      sortWay: 1,
       optionStatic: {
         color: ['#229CFB', '#8E44AD', '#1FB48C', '#F39C25', '#D3541A'],
         tooltip: {
@@ -3712,7 +4557,19 @@ export default Vue.extend({
             data: []
           }
         ]
-      }
+      },
+      // 汇总表相关
+      clientDateParams: {
+        client_id: this.$route.query.id,
+        date: [new Date().getFullYear() + '-01-01', new Date().getFullYear() + '-12-31'],
+        keyword: '',
+        process: '',
+        processList: '',
+        yarn_type: this.$route.query.type === '纱线原料单位' ? 1 : this.$route.query.type === '面料原料单位' ? 2 : ''
+      },
+      sortCol: 'number',
+      sort: 'desc',
+      clientDateList: []
     }
   },
   computed: {
@@ -4691,6 +5548,13 @@ export default Vue.extend({
         })
     },
     reset() {
+      this.clientDateParams = {
+        client_id: this.$route.query.id,
+        date: [new Date().getFullYear() + '-01-01', new Date().getFullYear() + '-12-31'],
+        keyword: '',
+        process: '',
+        yarn_type: this.$route.query.type === '纱线原料单位' ? 1 : this.$route.query.type === '面料原料单位' ? 2 : ''
+      }
       this.subParams = {
         bear_client_id: this.$route.query.id,
         group_id: '',
@@ -4758,9 +5622,10 @@ export default Vue.extend({
       ) {
         this.getSupList()
       }
+      this.getClientDate(this.$route.query.type)
     },
     // 重置数据图表
-    resetStatic(){
+    resetStatic() {
       this.optionStatic = {
         color: ['#229CFB', '#8E44AD', '#1FB48C', '#F39C25', '#D3541A'],
         tooltip: {
@@ -5018,12 +5883,130 @@ export default Vue.extend({
       if (this.$route.query.type === '纱线原料单位' || this.$route.query.type === '面料原料单位') {
         this.getStaticData()
       }
+      this.getClientDate(this.$route.query.type)
       this.getFinancialDetail()
       this.getBill('init')
       this.getSupList()
       this.getPaymentLogList()
       this.getInvoiceLogList()
       this.getDeductLogList()
+    },
+    // 汇总表
+    getClientDate(type: any) {
+      this.listLoading = true
+      this.clientDateParams.start_time = this.clientDateParams.date[0]
+      this.clientDateParams.end_time = this.clientDateParams.date[1]
+
+      // 根据不同类型删除对应属性
+      if (type !== '原料加工单位') {
+        delete this.clientDateParams.process
+      }
+      if (type !== '纱线原料单位' && type !== '面料原料单位') {
+        delete this.clientDateParams.yarn_type
+      }
+
+      // 请求接口
+      if (type === '纱线原料单位' || type === '面料原料单位') {
+        statistics.materialClientDate(this.clientDateParams).then((res) => {
+          // 加个判断，让下面异步执行的函数变成同步执行的函数
+          if (res.data.status) {
+            let arr: any = []
+            res.data.data.forEach((item: any) => {
+              item.info.forEach((itemColor: any) => {
+                itemColor.info.forEach((itemDetail: any) => {
+                  let obj = itemDetail
+                  obj.material_name = item.material_name
+                  obj.material_color = itemColor.material_color
+                  arr.push(obj)
+                })
+              })
+            })
+            this.clientDateList = arr
+            this.sortFun()
+          }
+        })
+      } else if (type === '装饰辅料单位') {
+        statistics.decorateClientDate(this.clientDateParams).then((res) => {
+          // 加个判断，让下面异步执行的函数变成同步执行的函数
+          if (res.data.status) {
+            let arr: any = []
+            res.data.data.forEach((item: any) => {
+              item.info.forEach((itemDetail: any) => {
+                let obj = itemDetail
+                obj.material_name = item.material_name
+                arr.push(obj)
+              })
+            })
+            this.clientDateList = arr
+            this.sortFun()
+          }
+        })
+      } else if (type === '包装辅料单位') {
+        statistics.packClientDate(this.clientDateParams).then((res) => {
+          // 加个判断，让下面异步执行的函数变成同步执行的函数
+          console.log(res.data.data)
+          if (res.data.status) {
+            let arr: any = []
+            res.data.data.forEach((item: any) => {
+              item.info.forEach((itemPrice: any) => {
+                itemPrice.info.forEach((itemLength: any) => {
+                  itemLength.info.forEach((itemWidth: any) => {
+                    itemWidth.info.forEach((itemHeight: any) => {
+                      itemHeight.info.forEach((itemDetail: any) => {
+                        let obj = itemDetail
+                        obj.material_name = item.material_name
+                        obj['length'] = itemLength['length']
+                        obj.width = itemWidth.width
+                        obj.price_type = itemPrice.price_type
+                        obj.height = itemHeight.height
+                        arr.push(obj)
+                      })
+                    })
+                  })
+                })
+              })
+            })
+            this.clientDateList = arr
+            this.sortFun()
+          }
+        })
+      } else if(type === '原料加工单位') {
+        this.clientDateParams.process = this.clientDateParams.processList[1]
+        statistics.processClientDate(this.clientDateParams).then(res => {
+          // 加个判断，让下面异步执行的函数变成同步执行的函数
+          if (res.data.status) {
+            let arr: any = []
+            res.data.data.forEach((item: any) => {
+              item.info.forEach((itemDetail: any) => {
+                let obj = itemDetail
+                obj.material_name = item.material_name
+                arr.push(obj)
+              })
+            })
+            console.log(arr)
+            this.clientDateList = arr
+            this.sortFun()
+          }
+        })
+      }
+    },
+    // 中转站，不用每次都写一遍重复的代码
+    sortFun() {
+      this.sortClientDate()
+      this.listLoading = false
+    },
+    // 汇总表排序
+    sortClientDate() {
+      let sortCol = this.sortCol
+      let sort = this.sort
+      this.clientDateList.sort(function (a: any, b: any) {
+        if (sort === 'asc') {
+          return a[sortCol] - b[sortCol]
+        }
+        if (sort === 'desc') {
+          return b[sortCol] - a[sortCol]
+        }
+      })
     },
     // 原料名称搜索
     searchMaterial(str: string, cb: any) {
@@ -5058,6 +6041,35 @@ export default Vue.extend({
           }
         })
       }
+    })
+    process.list({ type: 2 }).then((res) => {
+      let arr: any = []
+      res.data.data.forEach((item: any) => {
+        arr.push({
+          label: item.name,
+          value: item.name
+        })
+      })
+      this.processList.push({
+        label: '半成品加工工序',
+        value: 2,
+        children: arr
+      })
+      process.list({ type: 3 }).then((res) => {
+        let arr: any = []
+        res.data.data.forEach((item: any) => {
+          arr.push({
+            label: item.name,
+            value: item.name
+          })
+        })
+        this.processList.push({
+          label: '成品加工工序',
+          value: 3,
+          children: arr
+        })
+      })
+      this.processList.push()
     })
     this.$checkCommonInfo([
       {
