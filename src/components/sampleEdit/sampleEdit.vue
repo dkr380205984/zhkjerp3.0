@@ -1,41 +1,34 @@
 <template>
-  <div class="sampleEdit sidePopup"
-    v-if="show">
-    <div :class="inDetail?'inDetailMain main':'main'"
-      v-loading="loading">
+  <div class="sampleEdit sidePopup" v-if="show">
+    <div :class="inDetail ? 'inDetailMain main' : 'main'" v-loading="loading">
       <div class="titleCtn">
-        <span class="text">{{edit?"修改样品":"添加新样品"}}
-          <el-checkbox v-if="!edit"
-            v-model="repeatAdd">{{repeatAdd?'关闭连续添加':'开启连续添加'}}
-          </el-checkbox>
+        <span class="text"
+          >{{ edit ? '修改样品' : '添加新样品' }}
+          <el-checkbox v-if="!edit" v-model="repeatAdd">{{ repeatAdd ? '关闭连续添加' : '开启连续添加' }} </el-checkbox>
         </span>
-        <div class="closeCtn"
-          @click="close">
+        <div class="closeCtn" @click="close">
           <span class="el-icon-close"></span>
         </div>
       </div>
       <div class="contentCtn">
         <div class="module">
           <div class="titleCtn">
-            <div class="title"
-              style="display: flex;align-items: center;">导入已有样品
-              <el-switch style="margin-left:8px"
-                v-model="need_import">
-              </el-switch>
+            <div class="title" style="display: flex; align-items: center">
+              导入已有样品
+              <el-switch style="margin-left: 8px" v-model="need_import"> </el-switch>
             </div>
           </div>
-          <div class="editCtn"
-            v-show="need_import">
+          <div class="editCtn" v-show="need_import">
             <div class="row">
               <div class="col">
                 <div class="label">搜索样品号查询</div>
                 <div class="info elCtn">
-                  <el-input placeholder="输入样品号查询"
+                  <el-input
+                    placeholder="输入样品号查询"
                     v-model="searchSampleCode"
-                    @keydown.enter.native="searchSample">
-                    <el-button slot="append"
-                      icon="el-icon-search"
-                      @click="searchSample"></el-button>
+                    @keydown.enter.native="searchSample"
+                  >
+                    <el-button slot="append" icon="el-icon-search" @click="searchSample"></el-button>
                   </el-input>
                 </div>
               </div>
@@ -44,12 +37,12 @@
               <div class="col">
                 <div class="label">搜索样单号查询</div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入样单号查询"
+                  <el-input
+                    placeholder="请输入样单号查询"
                     v-model="searchSampleOrderCode"
-                    @keydown.enter.native="searchSample">
-                    <el-button slot="append"
-                      icon="el-icon-search"
-                      @click="searchSample"></el-button>
+                    @keydown.enter.native="searchSample"
+                  >
+                    <el-button slot="append" icon="el-icon-search" @click="searchSample"></el-button>
                   </el-input>
                 </div>
               </div>
@@ -57,15 +50,13 @@
             <div class="row">
               <div class="col">
                 <div class="label">查询结果</div>
-                <div class="noData"
-                  v-if="searchList.length===0">暂无查询结果</div>
+                <div class="noData" v-if="searchList.length === 0">暂无查询结果</div>
                 <div class="searchCtn">
                   <div class="once">
-                    <el-radio-group v-model="sampleId"
-                      @change="getImport">
-                      <el-radio v-for="item in searchList"
-                        :key="item.id"
-                        :label="item.id">{{item.product_code || item.system_code}}</el-radio>
+                    <el-radio-group v-model="sampleId" @change="getImport">
+                      <el-radio v-for="item in searchList" :key="item.id" :label="item.id">{{
+                        item.product_code || item.system_code
+                      }}</el-radio>
                     </el-radio-group>
                   </div>
                 </div>
@@ -85,8 +76,7 @@
                   <span class="explanation">(不填由系统生成)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入样品编号"
-                    v-model="sampleInfo.product_code"></el-input>
+                  <el-input placeholder="请输入样品编号" v-model="sampleInfo.product_code"></el-input>
                 </div>
               </div>
               <div class="col">
@@ -94,8 +84,7 @@
                   <span class="text">客户款号</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入客户款号"
-                    v-model="sampleInfo.style_code"></el-input>
+                  <el-input placeholder="请输入客户款号" v-model="sampleInfo.style_code"></el-input>
                 </div>
               </div>
             </div>
@@ -105,42 +94,44 @@
                   <span class="text">样品名称</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入样品名称"
-                    v-model="sampleInfo.name"></el-input>
+                  <el-input placeholder="请输入样品名称" v-model="sampleInfo.name"></el-input>
                 </div>
               </div>
               <div class="col">
                 <div class="label">
                   <span class="text">样品品类</span>
                   <span class="explanation">(必选)</span>
-                  <el-tooltip class="item"
-                    effect="dark"
-                    content="设置成功后请点击此按钮刷新数据"
-                    placement="top">
-                    <i class="el-icon-refresh hoverGreen fr"
-                      style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
-                      @click="$checkCommonInfo([{
-                        checkWhich: 'api/productType',
-                        getInfoMethed: 'dispatch',
-                        getInfoApi: 'getProductTypeAsync',
-                        forceUpdate:true
-                      }])"></i>
+                  <el-tooltip class="item" effect="dark" content="设置成功后请点击此按钮刷新数据" placement="top">
+                    <i
+                      class="el-icon-refresh hoverGreen fr"
+                      style="line-height: 38px; font-size: 18px; margin-left: 8px; cursor: pointer"
+                      @click="
+                        $checkCommonInfo([
+                          {
+                            checkWhich: 'api/productType',
+                            getInfoMethed: 'dispatch',
+                            getInfoApi: 'getProductTypeAsync',
+                            forceUpdate: true
+                          }
+                        ])
+                      "
+                    ></i>
                   </el-tooltip>
-                  <el-tooltip class="item"
-                    effect="dark"
-                    content="添加新品类"
-                    placement="top">
-                    <i class="el-icon-upload hoverOrange fr"
-                      style="line-height:38px;font-size:18px;cursor:pointer;"
-                      @click="$openUrl('/setting?pName=产品设置&cName=品类')"></i>
+                  <el-tooltip class="item" effect="dark" content="添加新品类" placement="top">
+                    <i
+                      class="el-icon-upload hoverOrange fr"
+                      style="line-height: 38px; font-size: 18px; cursor: pointer"
+                      @click="$openUrl('/setting?pName=产品设置&cName=品类')"
+                    ></i>
                   </el-tooltip>
                 </div>
-                <div class="info elCtn"
-                  :class="{'error':mustFlag&&!sampleInfo.type}">
-                  <el-cascader placeholder="请选择品类"
+                <div class="info elCtn" :class="{ error: mustFlag && !sampleInfo.type }">
+                  <el-cascader
+                    placeholder="请选择品类"
                     v-model="sampleInfo.type"
                     :options="productTypeList"
-                    @change="getUnit"></el-cascader>
+                    @change="getUnit"
+                  ></el-cascader>
                 </div>
               </div>
             </div>
@@ -151,121 +142,128 @@
                   <span class="explanation">(系统默认)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="选择品类后生成"
-                    v-model="sampleInfo.unit"
-                    disabled>
-                  </el-input>
+                  <el-input placeholder="选择品类后生成" v-model="sampleInfo.unit" disabled> </el-input>
                 </div>
               </div>
               <div class="col">
                 <div class="label">
                   <span class="text">样品款式</span>
                   <span class="explanation">(必选)</span>
-                  <el-tooltip class="item"
-                    effect="dark"
-                    content="设置成功后请点击此按钮刷新数据"
-                    placement="top">
-                    <i class="el-icon-refresh hoverGreen fr"
-                      style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
-                      @click="$checkCommonInfo([{
-                        checkWhich: 'api/productStyle',
-                        getInfoMethed: 'dispatch',
-                        getInfoApi: 'getProductStyleAsync',
-                        forceUpdate:true
-                      }])"></i>
+                  <el-tooltip class="item" effect="dark" content="设置成功后请点击此按钮刷新数据" placement="top">
+                    <i
+                      class="el-icon-refresh hoverGreen fr"
+                      style="line-height: 38px; font-size: 18px; margin-left: 8px; cursor: pointer"
+                      @click="
+                        $checkCommonInfo([
+                          {
+                            checkWhich: 'api/productStyle',
+                            getInfoMethed: 'dispatch',
+                            getInfoApi: 'getProductStyleAsync',
+                            forceUpdate: true
+                          }
+                        ])
+                      "
+                    ></i>
                   </el-tooltip>
-                  <el-tooltip class="item"
-                    effect="dark"
-                    content="添加新款式"
-                    placement="top">
-                    <i class="el-icon-upload hoverOrange fr"
-                      style="line-height:38px;font-size:18px;cursor:pointer;"
-                      @click="$openUrl('/setting?pName=产品设置&cName=款式')"></i>
+                  <el-tooltip class="item" effect="dark" content="添加新款式" placement="top">
+                    <i
+                      class="el-icon-upload hoverOrange fr"
+                      style="line-height: 38px; font-size: 18px; cursor: pointer"
+                      @click="$openUrl('/setting?pName=产品设置&cName=款式')"
+                    ></i>
                   </el-tooltip>
                 </div>
                 <div class="info elCtn">
-                  <el-select :class="{'error':mustFlag&&sampleInfo.style_data.length===0}"
+                  <el-select
+                    :class="{ error: mustFlag && sampleInfo.style_data.length === 0 }"
                     placeholder="请选择样品款式"
                     v-model="sampleInfo.style_data"
-                    multiple>
-                    <el-option v-for="item in productStyleList"
+                    multiple
+                  >
+                    <el-option
+                      v-for="item in productStyleList"
                       :key="item.id"
                       :value="item.id"
-                      :label="item.name"></el-option>
+                      :label="item.name"
+                    ></el-option>
                   </el-select>
                 </div>
               </div>
             </div>
-            <div class="row"
-              v-for="(item,index) in sampleInfo.color_data"
-              :key="index">
+            <div class="row" v-for="(item, index) in sampleInfo.color_data" :key="index">
               <div class="col">
-                <div class="label"
-                  v-if="index===0">
+                <div class="label" v-if="index === 0">
                   <span class="text">样品配色组</span>
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-autocomplete :class="{'error':mustFlag&&!item.name}"
+                  <el-autocomplete
+                    :class="{ error: mustFlag && !item.name }"
                     class="inline-input"
                     v-model="item.name"
                     :fetch-suggestions="searchColour"
-                    placeholder="请输入样品配色"></el-autocomplete>
+                    placeholder="请输入样品配色"
+                  ></el-autocomplete>
                 </div>
               </div>
-              <div class="opr hoverBlue"
-                v-if="index===0"
-                @click="$addItem(sampleInfo.color_data,{
-                  id:'',
-                  name:''
-                })">添加</div>
-              <div class="opr hoverRed"
-                v-if="index>0&&(!item.id)"
-                @click="$deleteItem(sampleInfo.color_data,index)">删除</div>
+              <div
+                class="opr hoverBlue"
+                v-if="index === 0"
+                @click="
+                  $addItem(sampleInfo.color_data, {
+                    id: '',
+                    name: ''
+                  })
+                "
+              >
+                添加
+              </div>
+              <div class="opr hoverRed" v-if="index > 0 && !item.id" @click="$deleteItem(sampleInfo.color_data, index)">
+                删除
+              </div>
             </div>
             <div class="row">
               <div class="col">
                 <div class="label">
-                  <span class="text">样品
-                    <el-checkbox v-model="sampleInfo.cvFlag"
-                      @change="changeCVOpration">{{sampleInfo.cvFlag?'关闭复制粘贴图片上传功能':'开启复制粘贴图片上传功能'}}
+                  <span class="text"
+                    >样品
+                    <el-checkbox v-model="sampleInfo.cvFlag" @change="changeCVOpration"
+                      >{{ sampleInfo.cvFlag ? '关闭复制粘贴图片上传功能' : '开启复制粘贴图片上传功能' }}
                     </el-checkbox>
                   </span>
                 </div>
-                <div class="cvImageCtn"
-                  v-show="sampleInfo.cvFlag || sampleInfo.cv_list.length>0">
-                  <div class="cvImage"
-                    v-for="indexImage of sampleInfo.cvImageLength"
-                    :key="indexImage">
-                    <template v-if="sampleInfo.cv_list[indexImage-1]!==null">
-                      <img :id="'cvImg'+indexImage"
-                        :src="require('@/assets/image/common/cv.png')">
-                      <i class="icon el-icon-close"
-                        @click="deleteCvImage(indexImage-1)"></i>
+                <div class="cvImageCtn" v-show="sampleInfo.cvFlag || sampleInfo.cv_list.length > 0">
+                  <div class="cvImage" v-for="indexImage of sampleInfo.cvImageLength" :key="indexImage">
+                    <template v-if="sampleInfo.cv_list[indexImage - 1] !== null">
+                      <img :id="'cvImg' + indexImage" :src="require('@/assets/image/common/cv.png')" />
+                      <i class="icon el-icon-close" @click="deleteCvImage(indexImage - 1)"></i>
                     </template>
                   </div>
                 </div>
                 <div class="info imgInfo">
-                  <el-upload class="upload"
+                  <el-upload
+                    class="upload"
                     action="https://upload.qiniup.com/"
                     accept="image/jpeg,image/gif,image/png,image/bmp"
                     :before-upload="beforeAvatarUpload"
                     :data="postData"
                     :file-list="sampleInfo.file_list"
-                    :on-remove="removeFile"
+                    :before-remove="beforeRemove"
                     :on-success="successFile"
                     :on-preview="handlePictureCardPreview"
                     ref="uploada"
-                    list-type="picture-card">
+                    list-type="picture-card"
+                  >
                     <div class="uploadBtn">
                       <i class="el-icon-upload"></i>
                       <span>上传图片</span>
                     </div>
-                    <div slot="tip"
-                      class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M(请勿上传带特殊字符的图片)</div>
+                    <div slot="tip" class="el-upload__tip">
+                      只能上传jpg/png图片文件，且不超过10M(请勿上传带特殊字符的图片)
+                    </div>
                   </el-upload>
                   <el-dialog :visible.sync="dialogVisible" append-to-body>
-                    <img width="100%" :src="dialogImageUrl" alt="">
+                    <img width="100%" :src="dialogImageUrl" alt="" />
                   </el-dialog>
                 </div>
               </div>
@@ -275,20 +273,16 @@
                 <div class="label">
                   <span class="text">样品其它描述或备注</span>
                 </div>
-                <div id='editor'
-                  style="z-index: 0;position: relative;">
-                </div>
+                <div id="editor" style="z-index: 0; position: relative"></div>
               </div>
             </div>
-            <div class="row"
-              v-if="ifIdea">
+            <div class="row" v-if="ifIdea">
               <div class="col">
                 <div class="label">
                   <span class="text">修改意见</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input v-model="sampleInfo.client_edit_idea"
-                    placeholder="请输入修改意见"></el-input>
+                  <el-input v-model="sampleInfo.client_edit_idea" placeholder="请输入修改意见"></el-input>
                 </div>
               </div>
             </div>
@@ -299,89 +293,88 @@
             <div class="title">大身信息</div>
           </div>
           <div class="editCtn">
-            <div class="row"
-              v-for="(item,index) in sampleInfo.component_data"
-              :key="'Component' + index">
+            <div class="row" v-for="(item, index) in sampleInfo.component_data" :key="'Component' + index">
               <div class="col">
-                <div class="label"
-                  v-if="index===0">
+                <div class="label" v-if="index === 0">
                   <span class="text">大身成分</span>
-                  <el-tooltip class="item"
-                    effect="dark"
-                    content="设置成功后请点击此按钮刷新数据"
-                    placement="top">
-                    <i class="el-icon-refresh hoverGreen fr"
-                      style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
-                      @click="$checkCommonInfo([{
-                        checkWhich: 'api/ingredient',
-                        getInfoMethed: 'dispatch',
-                        getInfoApi: 'getIngredientAsync',
-                        forceUpdate:true
-                      }])"></i>
+                  <el-tooltip class="item" effect="dark" content="设置成功后请点击此按钮刷新数据" placement="top">
+                    <i
+                      class="el-icon-refresh hoverGreen fr"
+                      style="line-height: 38px; font-size: 18px; margin-left: 8px; cursor: pointer"
+                      @click="
+                        $checkCommonInfo([
+                          {
+                            checkWhich: 'api/ingredient',
+                            getInfoMethed: 'dispatch',
+                            getInfoApi: 'getIngredientAsync',
+                            forceUpdate: true
+                          }
+                        ])
+                      "
+                    ></i>
                   </el-tooltip>
-                  <el-tooltip class="item"
-                    effect="dark"
-                    content="添加新成分"
-                    placement="top">
-                    <i class="el-icon-upload hoverOrange fr"
-                      style="line-height:38px;font-size:18px;cursor:pointer;"
-                      @click="$openUrl('/setting?pName=产品设置&cName=成分')"></i>
+                  <el-tooltip class="item" effect="dark" content="添加新成分" placement="top">
+                    <i
+                      class="el-icon-upload hoverOrange fr"
+                      style="line-height: 38px; font-size: 18px; cursor: pointer"
+                      @click="$openUrl('/setting?pName=产品设置&cName=成分')"
+                    ></i>
                   </el-tooltip>
                 </div>
                 <div class="info elCtn">
-                  <el-autocomplete class="inline-input"
+                  <el-autocomplete
+                    class="inline-input"
                     v-model="item.component_name"
                     :fetch-suggestions="searchIngredient"
-                    placeholder="请输入成分"></el-autocomplete>
+                    placeholder="请输入成分"
+                  ></el-autocomplete>
                 </div>
               </div>
               <div class="col">
-                <div class="label"
-                  v-if="index===0">
+                <div class="label" v-if="index === 0">
                   <span class="text">成分比例</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入成分比例"
-                    v-model="item.number">
+                  <el-input placeholder="请输入成分比例" v-model="item.number">
                     <template slot="append">%</template>
                   </el-input>
                 </div>
               </div>
-              <div class="opr hoverBlue"
-                v-if="index===0"
-                @click="$addItem(sampleInfo.component_data,{component_name:'',number:''})">添加</div>
-              <div class="opr hoverRed"
-                v-if="index>0"
-                @click="$deleteItem(sampleInfo.component_data,index)">删除</div>
+              <div
+                class="opr hoverBlue"
+                v-if="index === 0"
+                @click="$addItem(sampleInfo.component_data, { component_name: '', number: '' })"
+              >
+                添加
+              </div>
+              <div class="opr hoverRed" v-if="index > 0" @click="$deleteItem(sampleInfo.component_data, index)">
+                删除
+              </div>
             </div>
-            <div class="row"
-              v-for="(item,index) in sampleInfo.size_data"
-              :key="'Size' + index">
+            <div class="row" v-for="(item, index) in sampleInfo.size_data" :key="'Size' + index">
               <div class="col">
                 <div class="spaceBetween">
                   <div class="once">
-                    <div class="label"
-                      v-if="index===0">
+                    <div class="label" v-if="index === 0">
                       <span class="text">大身尺码</span>
                       <span class="explanation">(必选)</span>
                     </div>
                     <div class="info elCtn">
-                      <el-autocomplete :class="{'error':mustFlag&&!item.size_name}"
+                      <el-autocomplete
+                        :class="{ error: mustFlag && !item.size_name }"
                         class="inline-input"
                         v-model="item.size_name"
                         :fetch-suggestions="searchSize"
-                        placeholder="请选择大身尺码"></el-autocomplete>
+                        placeholder="请选择大身尺码"
+                      ></el-autocomplete>
                     </div>
                   </div>
                   <div class="once">
-                    <div class="label"
-                      v-if="index===0">
+                    <div class="label" v-if="index === 0">
                       <span class="text">大身克重</span>
                     </div>
                     <div class="info elCtn">
-                      <el-input placeholder="大身克重"
-                        v-model="item.weight">
-                      </el-input>
+                      <el-input placeholder="大身克重" v-model="item.weight"> </el-input>
                     </div>
                   </div>
                 </div>
@@ -389,59 +382,53 @@
               <div class="col">
                 <div class="spaceBetween">
                   <div class="once">
-                    <div class="label"
-                      v-if="index===0">
+                    <div class="label" v-if="index === 0">
                       <span class="text">大身尺寸</span>
                     </div>
                     <div class="info elCtn">
-                      <el-autocomplete class="inline-input"
+                      <el-autocomplete
+                        class="inline-input"
                         v-model="item.size_info"
                         :fetch-suggestions="searchSizeInfo"
-                        placeholder="大身尺寸"></el-autocomplete>
+                        placeholder="大身尺寸"
+                      ></el-autocomplete>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="opr hoverBlue"
-                v-if="index===0"
-                @click="addSize">添加</div>
-              <div class="opr hoverRed"
-                v-if="index>0&&(!item.id)"
-                @click="deleteSize(index)">删除</div>
+              <div class="opr hoverBlue" v-if="index === 0" @click="addSize">添加</div>
+              <div class="opr hoverRed" v-if="index > 0 && !item.id" @click="deleteSize(index)">删除</div>
             </div>
           </div>
         </div>
         <div class="module">
           <div class="titleCtn flexBetween">
-            <div class="title"
-              style="display: flex;align-items: center;">配件信息
-              <el-switch style="margin-left:8px"
-                v-model="have_part">
-              </el-switch>
+            <div class="title" style="display: flex; align-items: center">
+              配件信息
+              <el-switch style="margin-left: 8px" v-model="have_part"> </el-switch>
             </div>
-            <div class="btn borderBtn blue"
-              @click="addPart"
-              v-show="have_part">新增配件</div>
+            <div class="btn borderBtn blue" @click="addPart" v-show="have_part">新增配件</div>
           </div>
-          <div class="editCtn"
-            v-show="have_part">
-            <div class="partCtn"
-              v-for="(item,index) in sampleInfo.part_data"
-              :key="index">
+          <div class="editCtn" v-show="have_part">
+            <div class="partCtn" v-for="(item, index) in sampleInfo.part_data" :key="index">
               <div class="row">
                 <div class="col">
                   <div class="label">
-                    <span class="text"><span class="mark"
-                        v-if="sampleInfo.part_data.length>1">{{index+1}}</span>配件名称</span>
+                    <span class="text"
+                      ><span class="mark" v-if="sampleInfo.part_data.length > 1">{{ index + 1 }}</span
+                      >配件名称</span
+                    >
                     <span class="explanation">(必填)</span>
-                    <span class="fr hoverRed"
-                      @click="$deleteItem(sampleInfo.part_data,index)"
-                      v-if="!item.id">删除此配件</span>
+                    <span class="fr hoverRed" @click="$deleteItem(sampleInfo.part_data, index)" v-if="!item.id"
+                      >删除此配件</span
+                    >
                   </div>
                   <div class="info elCtn">
-                    <el-input :class="{'error':mustFlag&&!item.name}"
+                    <el-input
+                      :class="{ error: mustFlag && !item.name }"
                       placeholder="请输入配件名称"
-                      v-model="item.name"></el-input>
+                      v-model="item.name"
+                    ></el-input>
                   </div>
                 </div>
                 <div class="col">
@@ -449,75 +436,82 @@
                     <span class="text">配件单位</span>
                   </div>
                   <div class="info elCtn">
-                    <el-autocomplete class="inline-input"
+                    <el-autocomplete
+                      class="inline-input"
                       v-model="item.unit"
                       :fetch-suggestions="searchUnit"
-                      placeholder="单位"></el-autocomplete>
+                      placeholder="单位"
+                    ></el-autocomplete>
                   </div>
                 </div>
               </div>
-              <div class="row"
-                v-for="(itemComponent,indexComponent) in item.part_component_data"
-                :key="'Component' + indexComponent">
+              <div
+                class="row"
+                v-for="(itemComponent, indexComponent) in item.part_component_data"
+                :key="'Component' + indexComponent"
+              >
                 <div class="col">
-                  <div class="label"
-                    v-if="indexComponent===0">
+                  <div class="label" v-if="indexComponent === 0">
                     <span class="text">配件成分</span>
                   </div>
                   <div class="info elCtn">
-                    <el-autocomplete class="inline-input"
+                    <el-autocomplete
+                      class="inline-input"
                       v-model="itemComponent.component_name"
                       :fetch-suggestions="searchIngredient"
-                      placeholder="请输入成分"></el-autocomplete>
+                      placeholder="请输入成分"
+                    ></el-autocomplete>
                   </div>
                 </div>
                 <div class="col">
-                  <div class="label"
-                    v-if="indexComponent===0">
+                  <div class="label" v-if="indexComponent === 0">
                     <span class="text">成分比例</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input placeholder="请输入成分比例"
-                      v-model="itemComponent.number">
+                    <el-input placeholder="请输入成分比例" v-model="itemComponent.number">
                       <template slot="append">%</template>
                     </el-input>
                   </div>
                 </div>
-                <div class="opr hoverBlue"
-                  v-if="indexComponent===0"
-                  @click="$addItem(item.part_component_data,{component_name:'',number:''})">添加</div>
-                <div class="opr hoverRed"
-                  v-if="indexComponent>0"
-                  @click="$deleteItem(item.part_component_data,index)">删除</div>
+                <div
+                  class="opr hoverBlue"
+                  v-if="indexComponent === 0"
+                  @click="$addItem(item.part_component_data, { component_name: '', number: '' })"
+                >
+                  添加
+                </div>
+                <div
+                  class="opr hoverRed"
+                  v-if="indexComponent > 0"
+                  @click="$deleteItem(item.part_component_data, index)"
+                >
+                  删除
+                </div>
               </div>
-              <div class="row"
-                v-for="index in sampleInfo.size_data.length"
-                :key="'Size' + index">
+              <div class="row" v-for="index in sampleInfo.size_data.length" :key="'Size' + index">
                 <div class="col">
                   <div class="spaceBetween">
                     <div class="once">
-                      <div class="label"
-                        v-if="index===1">
+                      <div class="label" v-if="index === 1">
                         <span class="text">配件尺码</span>
                         <span class="explanation">(必选)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-autocomplete class="inline-input"
-                          v-model="sampleInfo.size_data[index-1].size_name"
+                        <el-autocomplete
+                          class="inline-input"
+                          v-model="sampleInfo.size_data[index - 1].size_name"
                           :fetch-suggestions="searchSize"
                           placeholder="同大身尺码"
-                          disabled></el-autocomplete>
+                          disabled
+                        ></el-autocomplete>
                       </div>
                     </div>
                     <div class="once">
-                      <div class="label"
-                        v-if="index===1">
+                      <div class="label" v-if="index === 1">
                         <span class="text">配件克重</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input placeholder="配件克重"
-                          v-model="item.part_size_data[index-1].weight">
-                        </el-input>
+                        <el-input placeholder="配件克重" v-model="item.part_size_data[index - 1].weight"> </el-input>
                       </div>
                     </div>
                   </div>
@@ -525,14 +519,11 @@
                 <div class="col">
                   <div class="spaceBetween">
                     <div class="once">
-                      <div class="label"
-                        v-if="index===1">
+                      <div class="label" v-if="index === 1">
                         <span class="text">配件尺寸</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input placeholder="配件尺寸"
-                          v-model="item.part_size_data[index-1].size_info">
-                        </el-input>
+                        <el-input placeholder="配件尺寸" v-model="item.part_size_data[index - 1].size_info"> </el-input>
                       </div>
                     </div>
                   </div>
@@ -543,11 +534,10 @@
         </div>
       </div>
       <div class="oprCtn">
-        <span class="btn borderBtn"
-          @click="close">取消</span>
-        <span class="btn"
-          :class="{'backHoverBlue':!id&&!data,'backHoverOrange':id||data}"
-          @click="saveSample">{{!id&&!data?'确认添加':'确认修改'}}</span>
+        <span class="btn borderBtn" @click="close">取消</span>
+        <span class="btn" :class="{ backHoverBlue: !id && !data, backHoverOrange: id || data }" @click="saveSample">{{
+          !id && !data ? '确认添加' : '确认修改'
+        }}</span>
       </div>
     </div>
   </div>
@@ -625,8 +615,8 @@ export default Vue.extend({
       mustFlag: false,
       need_import: false,
       repeatAdd: false,
-      dialogVisible :false,
-      dialogImageUrl : '',
+      dialogVisible: false,
+      dialogImageUrl: '',
       notify: '',
       searchSampleOrderCode: '', // 搜样单编号导入
       searchSampleCode: '', // 搜样品编号导入
@@ -805,9 +795,9 @@ export default Vue.extend({
       // 调用 callback 返回建议列表的数据
       cb(results)
     },
-    handlePictureCardPreview(file:any) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
+    handlePictureCardPreview(file: any) {
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
     },
     searchUnit(str: string, cb: any) {
       const unitArr = [
@@ -923,7 +913,7 @@ export default Vue.extend({
         ]
       })
     },
-    beforeAvatarUpload(file: any) {
+    beforeAvatarUpload(file: any, fileList: any) {
       const fileName = file.name.lastIndexOf('.') // 取到文件名开始到最后一个点的长度
       const fileNameLength = file.name.length // 取到文件名长度
       const fileFormat = file.name.substring(fileName + 1, fileNameLength) // 截
@@ -943,6 +933,45 @@ export default Vue.extend({
     },
     successFile(response: { hash: string; key: string }) {
       this.sampleInfo.image_data.push('https://file.zwyknit.com/' + response.key)
+    },
+    beforeRemove(file: any, fileList: any) {
+      // 上传超过10M自动删除
+      if(file.size && !(file.size / 1024 / 1024 < 10)){
+        return
+      }
+
+      this.$confirm('即将删除图片, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+        }).then(() => {
+          //执行删除操作,找到相同的删除
+          let fileIndex = fileList.findIndex((item: any) => {
+            if (item.id === 0 || item.id) {
+              console.log(item)
+              return item.id === file.id
+            } else if (item.response) {
+              return item.response.key === file.response.key
+            } else {
+              return item.uid === file.uid
+            }
+          })
+
+          this.$deleteItem(fileList, fileIndex)
+
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+
+          this.removeFile(file)
+        }).catch(() => {
+          this.$message({
+              type: 'info',
+              message: '已取消删除'
+          });          
+        });
+        return false;
     },
     removeFile(file: { response: { hash: string; key: string }; url: string }) {
       if (this.sampleInfo.file_list!.find((item) => item.url === file.url)) {

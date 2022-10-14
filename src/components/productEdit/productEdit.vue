@@ -280,7 +280,7 @@
                       :before-upload="beforeAvatarUpload"
                       :data="postData"
                       :file-list="productInfo.file_list"
-                      :on-remove="removeFile"
+                      :before-remove="beforeRemove"
                       :on-success="successFile"
                       :on-preview="handlePictureCardPreview"
                       ref="uploada"
@@ -1100,8 +1100,46 @@ export default Vue.extend({
       }
     },
     successFile(response: { hash: string; key: string }) {
-      console.log(response)
       this.productInfo.image_data.push('https://file.zwyknit.com/' + response.key)
+    },
+    beforeRemove(file:any, fileList:any){
+      // 上传超过10M自动删除
+      if(file.size && !(file.size / 1024 / 1024 < 10)){
+        return
+      }
+
+      this.$confirm('即将删除图片, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+        }).then(() => {
+          //执行删除操作,找到相同的删除
+          let fileIndex = fileList.findIndex((item: any) => {
+            if (item.id === 0 || item.id) {
+              console.log(item)
+              return item.id === file.id
+            } else if (item.response) {
+              return item.response.key === file.response.key
+            } else {
+              return item.uid === file.uid
+            }
+          })
+
+          this.$deleteItem(fileList, fileIndex)
+
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+
+          this.removeFile(file)
+        }).catch(() => {
+          this.$message({
+              type: 'info',
+              message: '已取消删除'
+          });          
+        });
+        return false;
     },
     removeFile(file: { response: { hash: string; key: string }; url: string }) {
       if (this.productInfo.file_list!.find((item) => item.url === file.url)) {

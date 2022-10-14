@@ -2847,8 +2847,8 @@
                     ></div>
                   </div>
                 </div>
-                <div class="col">订购单价</div>
-                <div class="col">结算单价</div>
+                <div class="col">平均订购单价</div>
+                <div class="col">平均结算单价</div>
                 <div class="col">
                   计划订购总价
                   <div class="sortCtn">
@@ -2908,22 +2908,22 @@
                     {{ item.attribute || '无' }}
                   </div>
                   <div class="col">
-                    {{ item.number }}
+                    {{ $toFixed(item.number,2,true) }} kg
                   </div>
                   <div class="col">
-                    {{ item.push_number }}
+                    {{ $toFixed(item.push_number,2,true) }} kg
                   </div>
                   <div class="col">
-                    {{ item.avg_price }}
+                    {{ $toFixed(item.avg_price,3,true) }} kg/元
+                  </div>
+                  <div :class="item.avg_settle_price == 0?'col gray': 'col'">
+                    {{ item.avg_settle_price == 0?'未填写':($toFixed(item.avg_settle_price,3,true) + 'kg/元') }}
                   </div>
                   <div class="col">
-                    {{ item.avg_settle_price }}
+                    {{ $toFixed(item.total_price,3,true) }} 元
                   </div>
                   <div class="col">
-                    {{ item.total_price }}
-                  </div>
-                  <div class="col">
-                    {{ item.total_push_price }}
+                    {{ $toFixed(item.total_push_price,3,true) }} 元
                   </div>
                 </div>
               </div>
@@ -3026,8 +3026,8 @@
                     ></div>
                   </div>
                 </div>
-                <div class="col">订购单价</div>
-                <div class="col">结算单价</div>
+                <div class="col">平均订购单价</div>
+                <div class="col">平均结算单价</div>
                 <div class="col">
                   计划订购总价
                   <div class="sortCtn">
@@ -3087,22 +3087,22 @@
                     {{ item.attribute || '无' }}
                   </div>
                   <div class="col">
-                    {{ item.number }}
+                    {{ $toFixed(item.number,2,true) }} 米
                   </div>
                   <div class="col">
-                    {{ item.push_number }}
+                    {{ $toFixed(item.push_number,2,true) }} 米
                   </div>
                   <div class="col">
-                    {{ item.avg_price }}
+                    {{ $toFixed(item.avg_price,3,true) }} 米/元
+                  </div>
+                  <div :class="item.avg_settle_price == 0?'col gray': 'col'">
+                    {{ item.avg_settle_price == 0?'未填写':($toFixed(item.avg_settle_price,3,true) + '米/元') }}
                   </div>
                   <div class="col">
-                    {{ item.avg_settle_price }}
+                    {{ $toFixed(item.total_price,3,true) }} 元
                   </div>
                   <div class="col">
-                    {{ item.total_price }}
-                  </div>
-                  <div class="col">
-                    {{ item.total_push_price }}
+                    {{ $toFixed(item.total_push_price,3,true) }} 元
                   </div>
                 </div>
               </div>
@@ -3204,8 +3204,8 @@
                     ></div>
                   </div>
                 </div>
-                <div class="col">订购单价</div>
-                <div class="col">结算单价</div>
+                <div class="col">平均订购单价</div>
+                <div class="col">平均结算单价</div>
                 <div class="col">
                   计划订购总价
                   <div class="sortCtn">
@@ -3262,22 +3262,22 @@
                     {{ item.attribute || '无' }}
                   </div>
                   <div class="col">
-                    {{ item.number }}
+                    {{ $toFixed(item.number,2,true) }} {{item.unit}}
                   </div>
                   <div class="col">
-                    {{ item.push_number }}
+                    {{ $toFixed(item.push_number,2,true) }} {{item.unit}}
                   </div>
                   <div class="col">
-                    {{ item.avg_price }}
+                    {{ $toFixed(item.avg_price,3,true) }} {{item.unit+'/元'}}
+                  </div>
+                  <div :class="item.avg_settle_price == 0?'col gray': 'col'">
+                    {{ item.avg_settle_price == 0?'未填写':($toFixed(item.avg_settle_price,3,true) + item.unit+'/元') }}
                   </div>
                   <div class="col">
-                    {{ item.avg_settle_price }}
+                    {{ $toFixed(item.total_price,3,true) }} 元
                   </div>
                   <div class="col">
-                    {{ item.total_price }}
-                  </div>
-                  <div class="col">
-                    {{ item.total_push_price }}
+                    {{ $toFixed(item.total_push_price,3,true) }} 元
                   </div>
                 </div>
               </div>
@@ -3356,7 +3356,7 @@
                     ></div>
                   </div>
                 </div>
-                <div class="col">订购单价</div>
+                <div class="col">平均订购单价</div>
                 <div class="col">
                   计划订购总价
                   <div class="sortCtn">
@@ -3401,13 +3401,13 @@
                     {{ item.desc || '无' }}
                   </div>
                   <div class="col">
-                    {{ item.number }}
+                    {{ $toFixed(item.number,2,true) }}
                   </div>
                   <div class="col">
-                    {{ item.avg_price }}
+                    {{ $toFixed(item.avg_price,3,true) }}
                   </div>
                   <div class="col">
-                    {{ item.total_price }}
+                    {{ $toFixed(item.total_price,3,true) }}
                   </div>
                 </div>
               </div>
@@ -3430,13 +3430,17 @@
                 ></el-input>
               </div>
               <div class="elCtn">
-                <el-cascader
-                  filterable
-                  :options="processList"
-                  v-model="clientDateParams.processList"
-                  :show-all-levels="false"
-                  @change="getClientDate('原料加工单位')"
-                ></el-cascader>
+                <el-select
+                  v-model="clientDateParams.process"
+                  placeholder="选择加工工序"
+                  clearable
+                  @clear="getClientDate('原料加工单位')"
+                  @change="getClientDate('原料加工单位')">
+                  <el-option v-for="item in processList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"></el-option>
+                </el-select>
               </div>
               <div class="elCtn">
                 <el-date-picker
@@ -3454,18 +3458,6 @@
                 </el-date-picker>
               </div>
               <div class="btn borderBtn" @click="reset">重置</div>
-              <div
-                class="btn backHoverOrange"
-                @click="
-                  updatePriceFlag = true
-                  getMatStsList(updatePriceInfo.date)
-                "
-              >
-                <svg class="iconFont" aria-hidden="true">
-                  <use xlink:href="#icon-xiugaidingdan"></use>
-                </svg>
-                <span class="text">更新结算单价</span>
-              </div>
             </div>
             <div class="list">
               <div class="row title">
@@ -3574,19 +3566,19 @@
                     {{ item.process }}
                   </div>
                   <div class="col">
-                    {{ item.number }}
+                    {{ $toFixed(item.number,2,true) }}
                   </div>
                   <div class="col">
-                    {{ item.push_number }}
+                    {{ $toFixed(item.push_number,2,true) }}
                   </div>
                   <div class="col">
-                    {{ item.avg_price }}
+                    {{ $toFixed(item.avg_price,3,true) }}
                   </div>
                   <div class="col">
-                    {{ (+item.total_price).toFixed(3) }}
+                    {{ $toFixed(item.total_price,3,true) }}
                   </div>
                   <div class="col">
-                    {{ (item.total_push_price).toFixed(3) }}
+                    {{ $toFixed(item.total_push_price,3,true) }}
                   </div>
                 </div>
               </div>
@@ -4118,7 +4110,7 @@ import {
   updateSettlePrice,
   statistics
 } from '@/assets/js/api'
-import { yarnAttributeArr } from '@/assets/js/dictionary'
+import { yarnAttributeArr,yarnProcessArr } from '@/assets/js/dictionary'
 import Vue from 'vue'
 export default Vue.extend({
   data(): {
@@ -4267,7 +4259,7 @@ export default Vue.extend({
         total_other_fee: 0
       },
       materialProcessList: [],
-      processList: [],
+      processList: yarnProcessArr,
       materialProcessCheckList: [],
       productionPlanFilter: {
         date: [],
@@ -4564,7 +4556,6 @@ export default Vue.extend({
         date: [new Date().getFullYear() + '-01-01', new Date().getFullYear() + '-12-31'],
         keyword: '',
         process: '',
-        processList: '',
         yarn_type: this.$route.query.type === '纱线原料单位' ? 1 : this.$route.query.type === '面料原料单位' ? 2 : ''
       },
       sortCol: 'number',
@@ -5385,7 +5376,6 @@ export default Vue.extend({
       this.$forceUpdate()
     },
     checkAllInfo(ev: boolean, list: any[], checkList: any[]) {
-      console.log(list)
       list.forEach((item) => {
         item.checked = ev
         this.getCheckInfo(ev, item, checkList)
@@ -5467,7 +5457,6 @@ export default Vue.extend({
         })
     },
     goInvoice(data: any[], update?: boolean) {
-      console.log(data)
       this.invoiceUpdate = update
       this.invoiceData = data
       this.invoiceFlag = true
@@ -5519,7 +5508,6 @@ export default Vue.extend({
     goDeduct(data: any[], update?: boolean, type?: string) {
       this.deductUpdate = update
       this.deductData = data
-      console.log(type)
       if (type === 'sub') {
         this.subDeductFlag = true
       } else {
@@ -5944,7 +5932,6 @@ export default Vue.extend({
       } else if (type === '包装辅料单位') {
         statistics.packClientDate(this.clientDateParams).then((res) => {
           // 加个判断，让下面异步执行的函数变成同步执行的函数
-          console.log(res.data.data)
           if (res.data.status) {
             let arr: any = []
             res.data.data.forEach((item: any) => {
@@ -5971,7 +5958,6 @@ export default Vue.extend({
           }
         })
       } else if(type === '原料加工单位') {
-        this.clientDateParams.process = this.clientDateParams.processList[1]
         statistics.processClientDate(this.clientDateParams).then(res => {
           // 加个判断，让下面异步执行的函数变成同步执行的函数
           if (res.data.status) {
@@ -5983,7 +5969,6 @@ export default Vue.extend({
                 arr.push(obj)
               })
             })
-            console.log(arr)
             this.clientDateList = arr
             this.sortFun()
           }
@@ -6041,35 +6026,6 @@ export default Vue.extend({
           }
         })
       }
-    })
-    process.list({ type: 2 }).then((res) => {
-      let arr: any = []
-      res.data.data.forEach((item: any) => {
-        arr.push({
-          label: item.name,
-          value: item.name
-        })
-      })
-      this.processList.push({
-        label: '半成品加工工序',
-        value: 2,
-        children: arr
-      })
-      process.list({ type: 3 }).then((res) => {
-        let arr: any = []
-        res.data.data.forEach((item: any) => {
-          arr.push({
-            label: item.name,
-            value: item.name
-          })
-        })
-        this.processList.push({
-          label: '成品加工工序',
-          value: 3,
-          children: arr
-        })
-      })
-      this.processList.push()
     })
     this.$checkCommonInfo([
       {
