@@ -12,12 +12,9 @@
           style="position:relative">
           <div class="elCtn">
             <el-input v-model="keyword"
+              clearable
+              @clear="changeRouter"
               placeholder="筛选报价/产品/样品编号"
-              @keydown.enter.native="changeRouter"></el-input>
-          </div>
-          <div class="elCtn">
-            <el-input v-model="title"
-              placeholder="筛选报价标题"
               @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
@@ -28,6 +25,19 @@
               filterable
               clearable>
             </el-cascader>
+          </div>
+          <div class="elCtn">
+            <el-select placeholder="请选择公司联系人"
+              v-model="contacts_id"
+              no-data-text="请先选择下单公司"
+              filterable
+              clearable
+              @change="changeRouter">
+              <el-option v-for="item in contactsList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
           </div>
           <div class="elCtn"
             style="width:130px">
@@ -46,19 +56,6 @@
             @click="reset">重置</div>
         </div>
         <div class="filterCtn">
-          <div class="elCtn">
-            <el-select placeholder="请选择公司联系人"
-              v-model="contacts_id"
-              no-data-text="请先选择下单公司"
-              filterable
-              clearable
-              @change="changeRouter">
-              <el-option v-for="item in contactsList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"></el-option>
-            </el-select>
-          </div>
           <div class="elCtn hasIcon">
             <el-select @change="(ev)=>getLocalStorage(ev,'create_user')"
               v-model="user_id"
@@ -95,6 +92,19 @@
                 @click="$setLocalStorage('group_id',group_id)"></i>
             </el-tooltip>
           </div>
+          <div class="elCtn">
+            <el-date-picker v-model="date"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+              @change="changeRouter"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </div>
           <div class="elCtn"
             style="width:130px">
             <el-select v-model="limit"
@@ -125,17 +135,12 @@
         <div class="filterCtn"
           style="height:33px">
           <div class="elCtn">
-            <el-date-picker v-model="date"
-              type="daterange"
-              align="right"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :picker-options="pickerOptions"
-              @change="changeRouter"
-              value-format="yyyy-MM-dd">
-            </el-date-picker>
+            <el-input v-model="title"
+              placeholder="筛选报价标题"
+              @keydown.enter.native="changeRouter"
+              clearable
+              @clear="changeRouter"
+            ></el-input>
           </div>
           <div class="btn backHoverBlue fr"
             @click="$router.push('/quotedPrice/create')">添加报价单</div>
