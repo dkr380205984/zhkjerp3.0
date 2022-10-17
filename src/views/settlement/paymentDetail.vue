@@ -2896,7 +2896,7 @@
                   </div>
                 </div>
               </div>
-              <div v-for="(item, index) in clientDateList" :key="index">
+              <div v-for="(item, index) in selectClientDateList" :key="index">
                 <div class="row">
                   <div class="col">
                     {{ item.material_name }}
@@ -2928,6 +2928,17 @@
                 </div>
               </div>
             </div>
+          </div>
+          <div class="pageCtn fr">
+            <el-pagination
+              background
+              :page-size="10"
+              layout="prev, pager, next"
+              :total="clientDateList.length"
+              :current-page.sync="clientDatePage"
+              @current-change="changeSelectClient"
+            >
+            </el-pagination>
           </div>
         </el-tab-pane>
         <el-tab-pane v-if="$route.query.type === '面料原料单位'" label="面料汇总表">
@@ -3075,7 +3086,7 @@
                   </div>
                 </div>
               </div>
-              <div v-for="(item, index) in clientDateList" :key="index">
+              <div v-for="(item, index) in selectClientDateList" :key="index">
                 <div class="row">
                   <div class="col">
                     {{ item.material_name }}
@@ -3107,6 +3118,17 @@
                 </div>
               </div>
             </div>
+          </div>
+          <div class="pageCtn fr">
+            <el-pagination
+              background
+              :page-size="10"
+              layout="prev, pager, next"
+              :total="clientDateList.length"
+              :current-page.sync="clientDatePage"
+              @current-change="changeSelectClient"
+            >
+            </el-pagination>
           </div>
         </el-tab-pane>
         <el-tab-pane v-if="$route.query.type === '装饰辅料单位'" label="辅料汇总表">
@@ -3253,7 +3275,7 @@
                   </div>
                 </div>
               </div>
-              <div v-for="(item, index) in clientDateList" :key="index">
+              <div v-for="(item, index) in selectClientDateList" :key="index">
                 <div class="row">
                   <div class="col">
                     {{ item.material_name }}
@@ -3282,6 +3304,17 @@
                 </div>
               </div>
             </div>
+          </div>
+          <div class="pageCtn fr">
+            <el-pagination
+              background
+              :page-size="10"
+              layout="prev, pager, next"
+              :total="clientDateList.length"
+              :current-page.sync="clientDatePage"
+              @current-change="changeSelectClient"
+            >
+            </el-pagination>
           </div>
         </el-tab-pane>
         <el-tab-pane v-if="$route.query.type === '包装辅料单位'" label="包装汇总表">
@@ -3381,7 +3414,7 @@
                   </div>
                 </div>
               </div>
-              <div v-for="(item, index) in clientDateList" :key="index">
+              <div v-for="(item, index) in selectClientDateList" :key="index">
                 <div class="row">
                   <div class="col">
                     {{ item.material_name }}
@@ -3412,6 +3445,17 @@
                 </div>
               </div>
             </div>
+          </div>
+          <div class="pageCtn fr">
+            <el-pagination
+              background
+              :page-size="10"
+              layout="prev, pager, next"
+              :total="clientDateList.length"
+              :current-page.sync="clientDatePage"
+              @current-change="changeSelectClient"
+            >
+            </el-pagination>
           </div>
         </el-tab-pane>
         <el-tab-pane v-if="$route.query.type === '原料加工单位'" label="加工汇总表">
@@ -3557,7 +3601,7 @@
                   </div>
                 </div>
               </div>
-              <div v-for="(item, index) in clientDateList" :key="index">
+              <div v-for="(item, index) in selectClientDateList" :key="index">
                 <div class="row">
                   <div :class="item.material_name?'col':'col gray'">
                     {{ item.material_name || '无'}}
@@ -3583,6 +3627,17 @@
                 </div>
               </div>
             </div>
+          </div>
+          <div class="pageCtn fr">
+            <el-pagination
+              background
+              :page-size="10"
+              layout="prev, pager, next"
+              :total="clientDateList.length"
+              :current-page.sync="clientDatePage"
+              @current-change="changeSelectClient"
+            >
+            </el-pagination>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -4560,7 +4615,11 @@ export default Vue.extend({
       },
       sortCol: 'number',
       sort: 'desc',
-      clientDateList: []
+      clientDateList: [],
+      selectClientDateList: [],
+      clientDateTotal:1,
+      clientDatePage: 1,
+      clientDateLimit: 0,
     }
   },
   computed: {
@@ -5980,6 +6039,9 @@ export default Vue.extend({
       this.sortClientDate()
       this.listLoading = false
     },
+    changeSelectClient(page:any){
+      this.selectClientDateList = this.clientDateList.slice((page - 1) * 10,page * 10)
+    },
     // 汇总表排序
     sortClientDate() {
       let sortCol = this.sortCol
@@ -5992,6 +6054,7 @@ export default Vue.extend({
           return b[sortCol] - a[sortCol]
         }
       })
+      this.selectClientDateList = this.clientDateList.slice(0,10)
     },
     // 原料名称搜索
     searchMaterial(str: string, cb: any) {
