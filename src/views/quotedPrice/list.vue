@@ -16,6 +16,11 @@
               @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
+            <el-input v-model="title"
+              placeholder="筛选报价标题"
+              @keydown.enter.native="changeRouter"></el-input>
+          </div>
+          <div class="elCtn">
             <el-cascader @change="changeRouter"
               placeholder="筛选询价客户"
               v-model="client_id"
@@ -23,19 +28,6 @@
               filterable
               clearable>
             </el-cascader>
-          </div>
-          <div class="elCtn">
-            <el-select placeholder="请选择公司联系人"
-              v-model="contacts_id"
-              no-data-text="请先选择下单公司"
-              filterable
-              clearable
-              @change="changeRouter">
-              <el-option v-for="item in contactsList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"></el-option>
-            </el-select>
           </div>
           <div class="elCtn"
             style="width:130px">
@@ -54,6 +46,19 @@
             @click="reset">重置</div>
         </div>
         <div class="filterCtn">
+          <div class="elCtn">
+            <el-select placeholder="请选择公司联系人"
+              v-model="contacts_id"
+              no-data-text="请先选择下单公司"
+              filterable
+              clearable
+              @change="changeRouter">
+              <el-option v-for="item in contactsList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
+          </div>
           <div class="elCtn hasIcon">
             <el-select @change="(ev)=>getLocalStorage(ev,'create_user')"
               v-model="user_id"
@@ -90,19 +95,6 @@
                 @click="$setLocalStorage('group_id',group_id)"></i>
             </el-tooltip>
           </div>
-          <div class="elCtn">
-            <el-date-picker v-model="date"
-              type="daterange"
-              align="right"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :picker-options="pickerOptions"
-              @change="changeRouter"
-              value-format="yyyy-MM-dd">
-            </el-date-picker>
-          </div>
           <div class="elCtn"
             style="width:130px">
             <el-select v-model="limit"
@@ -132,8 +124,24 @@
         </div>
         <div class="filterCtn"
           style="height:33px">
+          <div class="elCtn">
+            <el-date-picker v-model="date"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+              @change="changeRouter"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </div>
           <div class="btn backHoverBlue fr"
             @click="$router.push('/quotedPrice/create')">添加报价单</div>
+        </div>
+        <div class="filterCtn"
+          style="height:33px">
           <div class="btn backHoverOrange fl"
             @click="showSetting=true"
             style="margin-left:0">列表设置</div>
@@ -214,6 +222,7 @@ export default Vue.extend({
       total: 1,
       limit: 10,
       keyword: '',
+      title: '',
       client_id: [],
       user_id: '',
       group_id: '',
@@ -472,6 +481,8 @@ export default Vue.extend({
           this.page +
           '&keyword=' +
           this.keyword +
+          '&title=' +
+          this.title +
           '&client_id=' +
           this.client_id +
           '&user_id=' +
@@ -502,6 +513,7 @@ export default Vue.extend({
         this.getContacts(this.client_id)
       }
       this.keyword = query.keyword || ''
+      this.title = query.title || ''
       this.status = query.status === 'null' ? null : query.status
       this.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
@@ -518,6 +530,7 @@ export default Vue.extend({
       })
         .then(() => {
           this.client_id = []
+          this.title = ''
           this.keyword = ''
           this.user_id = ''
           this.group_id = ''
@@ -541,6 +554,7 @@ export default Vue.extend({
       quotedPrice
         .list({
           keyword: this.keyword,
+          title: this.title,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           page: this.page,
           limit: this.limit,
