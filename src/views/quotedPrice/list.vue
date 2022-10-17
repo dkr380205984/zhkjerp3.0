@@ -1,99 +1,82 @@
 <template>
-  <div id="quotedPriceList"
-    class="bodyContainer">
-    <div class="module"
-      v-loading="mainLoading"
-      element-loading-text="正在导出文件中....请耐心等待">
+  <div id="quotedPriceList" class="bodyContainer">
+    <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">报价单列表</div>
       </div>
       <div class="listCtn">
-        <div class="filterCtn"
-          style="position:relative">
+        <div class="filterCtn" style="position: relative">
           <div class="elCtn">
-            <el-input v-model="keyword"
+            <el-input
+              v-model="keyword"
               clearable
               @clear="changeRouter"
               placeholder="筛选报价/产品/样品编号"
-              @keydown.enter.native="changeRouter"></el-input>
+              @keydown.enter.native="changeRouter"
+            ></el-input>
           </div>
           <div class="elCtn">
-            <el-cascader @change="changeRouter"
+            <el-cascader
+              @change="changeRouter"
               placeholder="筛选询价客户"
               v-model="client_id"
               :options="clientList"
               filterable
-              clearable>
+              clearable
+            >
             </el-cascader>
           </div>
           <div class="elCtn">
-            <el-select placeholder="请选择公司联系人"
+            <el-select
+              placeholder="请选择公司联系人"
               v-model="contacts_id"
               no-data-text="请先选择下单公司"
               filterable
               clearable
-              @change="changeRouter">
-              <el-option v-for="item in contactsList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"></el-option>
+              @change="changeRouter"
+            >
+              <el-option v-for="item in contactsList" :key="item.id" :value="item.id" :label="item.name"></el-option>
             </el-select>
           </div>
-          <div class="elCtn"
-            style="width:130px">
-            <el-input v-model="start_price"
-              placeholder="价格区间"
-              @keydown.enter.native="changeRouter"></el-input>
+          <div class="elCtn" style="width: 130px">
+            <el-input v-model="start_price" placeholder="价格区间" @keydown.enter.native="changeRouter"></el-input>
           </div>
-          <span style="position:absolute;transform: translate(-14px, 5px);">~</span>
-          <div class="elCtn"
-            style="width:130px">
-            <el-input v-model="end_price"
-              placeholder="价格区间"
-              @keydown.enter.native="changeRouter"></el-input>
+          <span style="position: absolute; transform: translate(-14px, 5px)">~</span>
+          <div class="elCtn" style="width: 130px">
+            <el-input v-model="end_price" placeholder="价格区间" @keydown.enter.native="changeRouter"></el-input>
           </div>
-          <div class="btn borderBtn"
-            @click="reset">重置</div>
+          <div class="btn borderBtn" @click="reset">重置</div>
         </div>
         <div class="filterCtn">
           <div class="elCtn hasIcon">
-            <el-select @change="(ev)=>getLocalStorage(ev,'create_user')"
+            <el-select
+              @change="(ev) => getLocalStorage(ev, 'create_user')"
               v-model="user_id"
               placeholder="筛选创建人"
-              clearable>
-              <el-option v-for="item in userList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"></el-option>
+              clearable
+            >
+              <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
-            <el-tooltip class="item"
-              effect="dark"
-              content="保存创建人筛选"
-              placement="top">
-              <i class="el-icon-upload hoverOrange"
-                @click="$setLocalStorage('create_user',user_id)"></i>
+            <el-tooltip class="item" effect="dark" content="保存创建人筛选" placement="top">
+              <i class="el-icon-upload hoverOrange" @click="$setLocalStorage('create_user', user_id)"></i>
             </el-tooltip>
           </div>
           <div class="elCtn hasIcon">
-            <el-select @change="(ev)=>getLocalStorage(ev,'group_id')"
+            <el-select
+              @change="(ev) => getLocalStorage(ev, 'group_id')"
               v-model="group_id"
               placeholder="筛选负责小组"
-              clearable>
-              <el-option v-for="item in groupList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"></el-option>
+              clearable
+            >
+              <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
             </el-select>
-            <el-tooltip class="item"
-              effect="dark"
-              content="保存小组筛选"
-              placement="top">
-              <i class="el-icon-upload hoverOrange"
-                @click="$setLocalStorage('group_id',group_id)"></i>
+            <el-tooltip class="item" effect="dark" content="保存小组筛选" placement="top">
+              <i class="el-icon-upload hoverOrange" @click="$setLocalStorage('group_id', group_id)"></i>
             </el-tooltip>
           </div>
           <div class="elCtn">
-            <el-date-picker v-model="date"
+            <el-date-picker
+              v-model="date"
               type="daterange"
               align="right"
               unlink-panels
@@ -102,99 +85,95 @@
               end-placeholder="结束日期"
               :picker-options="pickerOptions"
               @change="changeRouter"
-              value-format="yyyy-MM-dd">
+              value-format="yyyy-MM-dd"
+            >
             </el-date-picker>
           </div>
-          <div class="elCtn"
-            style="width:130px">
-            <el-select v-model="limit"
-              placeholder="每页展示条数"
-              @change="changeRouter">
-              <el-option v-for="item in limitList"
-                :key="item.value"
-                :label="item.name"
-                :value="item.value"></el-option>
+          <div class="elCtn" style="width: 130px">
+            <el-select v-model="limit" placeholder="每页展示条数" @change="changeRouter">
+              <el-option v-for="item in limitList" :key="item.value" :label="item.name" :value="item.value"></el-option>
             </el-select>
           </div>
-          <div class="elCtn"
-            style="width:130px">
-            <el-select @change="changeRouter"
-              v-model="status"
-              placeholder="筛选报价单状态">
-              <el-option :value="null"
-                label="全部"></el-option>
-              <el-option value="0"
-                label="待审核"></el-option>
-              <el-option value="1"
-                label="已审核"></el-option>
-              <el-option value="2"
-                label="已驳回"></el-option>
+          <div class="elCtn" style="width: 130px">
+            <el-select @change="changeRouter" v-model="status" placeholder="筛选报价单状态">
+              <el-option :value="null" label="全部"></el-option>
+              <el-option value="0" label="待审核"></el-option>
+              <el-option value="1" label="已审核"></el-option>
+              <el-option value="2" label="已驳回"></el-option>
             </el-select>
           </div>
         </div>
-        <div class="filterCtn"
-          style="height:33px">
+        <div class="filterCtn" style="height: 33px">
           <div class="elCtn">
-            <el-input v-model="title"
+            <el-input
+              v-model="title"
               placeholder="筛选报价标题"
               @keydown.enter.native="changeRouter"
               clearable
               @clear="changeRouter"
             ></el-input>
           </div>
-          <div class="btn backHoverBlue fr"
-            @click="$router.push('/quotedPrice/create')">添加报价单</div>
+          <div class="btn backHoverBlue fr" @click="$router.push('/quotedPrice/create')">添加报价单</div>
         </div>
-        <div class="filterCtn"
-          style="height:33px">
-          <div class="btn backHoverOrange fl"
-            @click="showSetting=true"
-            style="margin-left:0">列表设置</div>
-          <div class="btn backHoverGreen fl"
-            @click="getFilters();getList()">刷新列表</div>
-          <div :class="orderCheckList.length>0?'btn backHoverBlue fl':'btn backHoverBlue fl noCheck'"
-            @click="exportExcel()">导出Excel</div>
+        <div class="filterCtn" style="height: 33px">
+          <div class="btn backHoverOrange fl" @click="showSetting = true" style="margin-left: 0">列表设置</div>
+          <div
+            class="btn backHoverGreen fl"
+            @click="
+              getFilters()
+              getList()
+            "
+          >
+            刷新列表
+          </div>
+          <div
+            :class="orderCheckList.length > 0 ? 'btn backHoverBlue fl' : 'btn backHoverBlue fl noCheck'"
+            @click="exportExcel()"
+          >
+            导出Excel
+          </div>
         </div>
         <div class="filterCtn clearfix checkCtn">
           <div class="label">已勾选单据：</div>
-          <div class="elCtn check"
-            v-for="(item,index) in orderCheckList"
-            :key="item.id">
-            <el-input v-model="item.code"
-              disabled>
+          <div class="elCtn check" v-for="(item, index) in orderCheckList" :key="item.id">
+            <el-input v-model="item.code" disabled>
               <template slot="append">
-                <i class="el-icon-close hoverRed"
-                  style="cursor:pointer"
-                  @click="orderCheckList.splice(index,1)"></i>
+                <i class="el-icon-close hoverRed" style="cursor: pointer" @click="orderCheckList.splice(index, 1)"></i>
               </template>
             </el-input>
           </div>
         </div>
-        <zh-list :list="list"
+        <zh-list
+          :list="list"
           :listKey="listKey"
           :loading="loading"
           :check="true"
           :checkedCount="orderCheckList"
-          :oprList="oprList"></zh-list>
+          :oprList="oprList"
+        ></zh-list>
         <div class="pageCtn">
-          <el-pagination background
+          <el-pagination
+            background
             :page-size="limit"
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
-            @current-change="changeRouter">
+            @current-change="changeRouter"
+          >
           </el-pagination>
         </div>
       </div>
     </div>
     <!-- 列表设置 -->
-    <zh-list-setting @close="showSetting=false"
+    <zh-list-setting
+      @close="showSetting = false"
       @afterSave="getListSetting"
       :show="showSetting"
       :id="listSettingId"
       :type="1"
       :data.sync="listKey"
-      :originalData="originalSetting"></zh-list-setting>
+      :originalData="originalSetting"
+    ></zh-list-setting>
   </div>
 </template>
 
