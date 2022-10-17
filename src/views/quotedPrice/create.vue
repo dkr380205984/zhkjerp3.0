@@ -283,6 +283,7 @@
                   @change="(ev)=>{return changeCVOpration(ev,index,item.cvImageLength)}">{{item.cvFlag?'关闭复制粘贴图片上传功能':'开启复制粘贴图片上传功能'}}
                 </el-checkbox>
               </div>
+              <!-- 
               <div class="cvImageCtn"
                 v-show="item.cvFlag || item.cv_list.length>0">
                 <div class="cvImage"
@@ -295,7 +296,7 @@
                       @click="deleteCvImage(index,indexImage-1)"></i>
                   </template>
                 </div>
-              </div>
+              </div> -->
               <div class="info">
                 <el-upload class="upload"
                   action="https://upload.qiniup.com/"
@@ -1682,6 +1683,8 @@ export default Vue.extend({
     },
     successFile(response: { hash: string; key: string }, index: number) {
       this.quotedPriceInfo.product_data[index].image_data.push('https://file.zwyknit.com/' + response.key)
+      // @ts-ignore
+      this.quotedPriceInfo.product_data[index].file_list.push({name: response.key, url: 'https://file.zwyknit.com/' + response.key})
     },
     beforeRemove(file:any, index:any, fileList:any){
       // 上传超过10M自动删除
@@ -2113,9 +2116,9 @@ export default Vue.extend({
             const base64 = evt.target.result
             const arr = _this.imgId.split('cvImg')
             // @ts-ignore
-            document
-              .getElementById(arr[0] + 'cvImg' + _this.quotedPriceInfo.product_data[arr[0]].cvImageLength)
-              .setAttribute('src', base64)
+            // document
+            //   .getElementById(arr[0] + 'cvImg' + _this.quotedPriceInfo.product_data[arr[0]].cvImageLength)
+            //   .setAttribute('src', base64)
             var url = 'https://upload.qiniup.com/'
             var xhr = new XMLHttpRequest()
             let formData = new FormData()
@@ -2131,15 +2134,24 @@ export default Vue.extend({
               _this.loading = false
               if (xhr.readyState === 4) {
                 // @ts-ignore
-                document
-                  .getElementById(arr[0] + 'cvImg' + _this.quotedPriceInfo.product_data[arr[0]].cvImageLength)
-                  .setAttribute('src', 'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key)
+                // document
+                //   .getElementById(arr[0] + 'cvImg' + _this.quotedPriceInfo.product_data[arr[0]].cvImageLength)
+                //   .setAttribute('src', 'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key)
                 _this.$message.success('上传成功')
                 // @ts-ignore
-                _this.quotedPriceInfo.product_data[arr[0]].cv_list.push(
-                  // @ts-ignore
-                  'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key
-                )
+                // _this.quotedPriceInfo.product_data[arr[0]].cv_list.push(
+                //   // @ts-ignore
+                //   'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key
+                // )
+                // // @ts-ignore
+                // _this.quotedPriceInfo.product_data[arr[0]].cv_list.push(
+                //   // @ts-ignore
+                //   'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key
+                // )
+                // console.log(_this.quotedPriceInfo.product_data[arr[0]])
+                // @ts-ignore
+                _this.quotedPriceInfo.product_data[arr[0]].file_list.push({name: JSON.parse(xhr.responseText).key, url: 'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key})
+                _this.quotedPriceInfo.product_data[arr[0]].image_data.push('https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key)
                 _this.quotedPriceInfo.product_data[arr[0]].cvImageLength =
                   Number(_this.quotedPriceInfo.product_data[arr[0]].cvImageLength) + 1
               }

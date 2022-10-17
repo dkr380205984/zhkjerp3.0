@@ -232,14 +232,14 @@
                     </el-checkbox>
                   </span>
                 </div>
-                <div class="cvImageCtn" v-show="sampleInfo.cvFlag || sampleInfo.cv_list.length > 0">
+                <!-- <div class="cvImageCtn" v-show="sampleInfo.cvFlag || sampleInfo.cv_list.length > 0">
                   <div class="cvImage" v-for="indexImage of sampleInfo.cvImageLength" :key="indexImage">
                     <template v-if="sampleInfo.cv_list[indexImage - 1] !== null">
                       <img :id="'cvImg' + indexImage" :src="require('@/assets/image/common/cv.png')" />
                       <i class="icon el-icon-close" @click="deleteCvImage(indexImage - 1)"></i>
                     </template>
                   </div>
-                </div>
+                </div> -->
                 <div class="info imgInfo">
                   <el-upload
                     class="upload"
@@ -933,6 +933,8 @@ export default Vue.extend({
     },
     successFile(response: { hash: string; key: string }) {
       this.sampleInfo.image_data.push('https://file.zwyknit.com/' + response.key)
+      // @ts-ignore
+      this.sampleInfo.file_list.push({name: response.key, url: 'https://file.zwyknit.com/' + response.key})
     },
     beforeRemove(file: any, fileList: any) {
       // 上传超过10M自动删除
@@ -946,9 +948,8 @@ export default Vue.extend({
         type: 'warning'
         }).then(() => {
           //执行删除操作,找到相同的删除
-          let fileIndex = fileList.findIndex((item: any) => {
-            if (item.id === 0 || item.id) {
-              console.log(item)
+          let fileIndex = fileList.findIndex((item: any,index:number) => {
+            if (item.id) {
               return item.id === file.id
             } else if (item.response) {
               return item.response.key === file.response.key
@@ -1310,7 +1311,7 @@ export default Vue.extend({
             //输出base64编码
             const base64 = evt.target.result
             // @ts-ignore
-            document.getElementById('cvImg' + _this.sampleInfo.cvImageLength).setAttribute('src', base64)
+            // document.getElementById('cvImg' + _this.sampleInfo.cvImageLength).setAttribute('src', base64)
             var url = 'https://upload.qiniup.com/'
             var xhr = new XMLHttpRequest()
             let formData = new FormData()
@@ -1327,10 +1328,13 @@ export default Vue.extend({
               if (xhr.readyState === 4) {
                 _this.$message.success('上传成功')
                 // @ts-ignore
-                _this.sampleInfo.cv_list.push(
-                  // @ts-ignore
-                  'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key
-                )
+                // _this.sampleInfo.cv_list.push(
+                //   // @ts-ignore
+                //   'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key
+                // )
+                // @ts-ignore
+                _this.sampleInfo.file_list.push({name: JSON.parse(xhr.responseText).key, url: 'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key})
+                _this.sampleInfo.image_data.push('https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key)
                 _this.sampleInfo.cvImageLength = Number(_this.sampleInfo.cvImageLength) + 1
               }
             }

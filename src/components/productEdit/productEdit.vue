@@ -260,7 +260,7 @@
                       </el-checkbox>
                     </span>
                   </div>
-                  <div class="cvImageCtn"
+                  <!-- <div class="cvImageCtn"
                     v-show="productInfo.cvFlag || productInfo.cv_list.length>0">
                     <div class="cvImage"
                       v-for="indexImage of productInfo.cvImageLength"
@@ -272,7 +272,7 @@
                           @click="deleteCvImage(indexImage-1)"></i>
                       </template>
                     </div>
-                  </div>
+                  </div> -->
                   <div class="fileCtn">
                     <el-upload class="upload"
                       action="https://upload.qiniup.com/"
@@ -1101,6 +1101,8 @@ export default Vue.extend({
     },
     successFile(response: { hash: string; key: string }) {
       this.productInfo.image_data.push('https://file.zwyknit.com/' + response.key)
+      // @ts-ignore
+      this.productInfo.file_list.push({name: response.key, url: 'https://file.zwyknit.com/' + response.key})
     },
     beforeRemove(file:any, fileList:any){
       // 上传超过10M自动删除
@@ -1115,8 +1117,7 @@ export default Vue.extend({
         }).then(() => {
           //执行删除操作,找到相同的删除
           let fileIndex = fileList.findIndex((item: any) => {
-            if (item.id === 0 || item.id) {
-              console.log(item)
+            if (item.id) {
               return item.id === file.id
             } else if (item.response) {
               return item.response.key === file.response.key
@@ -1599,7 +1600,7 @@ export default Vue.extend({
             //输出base64编码
             const base64 = evt.target.result
             // @ts-ignore
-            document.getElementById('cvImg' + _this.productInfo.cvImageLength).setAttribute('src', base64)
+            // document.getElementById('cvImg' + _this.productInfo.cvImageLength).setAttribute('src', base64)
             var url = 'https://upload.qiniup.com/'
             var xhr = new XMLHttpRequest()
             let formData = new FormData()
@@ -1616,10 +1617,13 @@ export default Vue.extend({
               if (xhr.readyState === 4) {
                 _this.$message.success('上传成功')
                 // @ts-ignore
-                _this.productInfo.cv_list.push(
-                  // @ts-ignore
-                  'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key
-                )
+                // _this.productInfo.cv_list.push(
+                //   // @ts-ignore
+                //   'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key
+                // )
+                // @ts-ignore
+                _this.productInfo.file_list.push({name: JSON.parse(xhr.responseText).key, url: 'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key})
+                _this.productInfo.image_data.push('https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key)
                 _this.productInfo.cvImageLength = Number(_this.productInfo.cvImageLength) + 1
               }
             }
