@@ -980,6 +980,10 @@ export default Vue.extend({
           this.sampleInfo.file_list!,
           this.sampleInfo.file_list!.map((item) => item.url).indexOf(file.url)
         )
+        this.$deleteItem(
+          this.sampleInfo.image_data,
+          this.sampleInfo.image_data.indexOf(file.url)
+        )
       } else {
         this.$deleteItem(
           this.sampleInfo.image_data,

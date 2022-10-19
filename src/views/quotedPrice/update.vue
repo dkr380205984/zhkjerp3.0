@@ -1536,7 +1536,6 @@ export default Vue.extend({
           //执行删除操作,找到相同的删除
           let fileIndex = fileList.findIndex((item: any) => {
             if (item.id === 0 || item.id) {
-              console.log(item)
               return item.id === file.id
             } else if (item.response) {
               return item.response.key === file.response.key
@@ -1566,6 +1565,10 @@ export default Vue.extend({
         this.$deleteItem(
           this.quotedPriceInfo.product_data[index].file_list!,
           this.quotedPriceInfo.product_data[index].file_list!.map((item) => item.url).indexOf(file.url)
+        )
+        this.$deleteItem(
+          this.quotedPriceInfo.product_data[index].image_data,
+          this.quotedPriceInfo.product_data[index].image_data.indexOf(file.url)
         )
       } else {
         this.$deleteItem(
@@ -1630,11 +1633,12 @@ export default Vue.extend({
         this.quotedPriceInfo.tree_data && (this.quotedPriceInfo.tree_data as number[]).join(',') // 保存公司原始数据包含一级二级分类
       this.quotedPriceInfo.product_data.forEach((item) => {
         item.editor = ''
-        item.image_data = item.image_data.concat(item.file_list!.map((item) => item.url)) // 新旧图拼接
+        // 不需要进行拼接，因为初始化的时候image_data没有清空
+        // item.image_data = item.image_data.concat(item.file_list!.map((item) => item.url)) // 新旧图拼接
         item.category_id = item.type && item.type[0]
         item.secondary_category_id = item.type && item.type[1]
         item.material_data.forEach((itemChild) => {
-          console.log(itemChild.tree_data)
+          // console.log(itemChild.tree_data)
           itemChild.material_id =
             itemChild.tree_data!.length > 0 ? itemChild.tree_data && (itemChild.tree_data as number[])[2] : ''
           itemChild.tree_data = itemChild.tree_data && (itemChild.tree_data as number[]).join(',')
@@ -1870,7 +1874,8 @@ export default Vue.extend({
             url: itemImage
           }
         })
-        item.image_data = [] // 清空image_data数据，用于存储新的url字符串，提交的时候拼接file_list剩下的就行
+        // 不清空，因为后面的操作都需要在image_data里面进行
+        // item.image_data = [] // 清空image_data数据，用于存储新的url字符串，提交的时候拼接file_list剩下的就行
         item.type = item.category_id ? [item.category_id as number, item.secondary_category_id as number] : []
         item.material_data.forEach((itemMat) => {
           itemMat.tree_data = itemMat.tree_data

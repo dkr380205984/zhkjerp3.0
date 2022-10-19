@@ -1700,7 +1700,7 @@ export default Vue.extend({
           //执行删除操作,找到相同的删除
           let fileIndex = fileList.findIndex((item: any) => {
             if (item.id === 0 || item.id) {
-              console.log(item)
+              // console.log(item)
               return item.id === file.id
             } else if (item.response) {
               return item.response.key === file.response.key
@@ -1730,6 +1730,10 @@ export default Vue.extend({
         this.$deleteItem(
           this.quotedPriceInfo.product_data[index].file_list!,
           this.quotedPriceInfo.product_data[index].file_list!.map((item) => item.url).indexOf(file.url)
+        )
+        this.$deleteItem(
+          this.quotedPriceInfo.product_data[index].image_data,
+          this.quotedPriceInfo.product_data[index].image_data.indexOf(file.url)
         )
       } else {
         this.$deleteItem(
