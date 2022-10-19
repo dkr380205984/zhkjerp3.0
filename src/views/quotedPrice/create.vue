@@ -1794,10 +1794,11 @@ export default Vue.extend({
         this.quotedPriceInfo.tree_data && (this.quotedPriceInfo.tree_data as number[]).join(',') // 保存公司原始数据包含一级二级分类
       this.quotedPriceInfo.product_data.forEach((item) => {
         item.editor = '' // 把editor清空，这里有个死循环，我都不知道死循环代码是怎么执行的，反正这个死循环提交了绝对有问题
-        item.image_data = item.file_list
-          ? item.image_data.concat(item.file_list!.map((item) => item.url))
-          : item.image_data // 新旧图拼接
-        item.image_data = item.cv_list ? item.cv_list.filter((item) => !!item).concat(item.image_data) : item.image_data // cv图拼接
+        // 这里是创建页面，不需要在进行新旧图拼接这个操作,复制粘贴的图片也给到了image_data里面
+        // item.image_data = item.file_list
+        //   ? item.image_data.concat(item.file_list!.map((item) => item.url))
+        //   : item.image_data // 新旧图拼接
+        // item.image_data = item.cv_list ? item.cv_list.filter((item) => !!item).concat(item.image_data) : item.image_data // cv图拼接
         item.category_id = item.type && item.type[0]
         item.secondary_category_id = item.type && item.type[1]
         item.material_data.forEach((itemChild) => {

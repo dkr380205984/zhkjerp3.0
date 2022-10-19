@@ -754,7 +754,7 @@ export default Vue.extend({
             }
           }
         }
-        this.sampleInfo.image_data = []
+        // this.sampleInfo.image_data = []
         this.sampleInfo.cv_list = []
       } else {
         if (this.notify) {
@@ -996,10 +996,13 @@ export default Vue.extend({
       }
       this.sampleInfo.category_id = this.sampleInfo.type![0]
       this.sampleInfo.secondary_category_id = this.sampleInfo.type![1]
-      this.sampleInfo.image_data = this.sampleInfo.image_data.concat(this.sampleInfo.file_list!.map((item) => item.url)) // 新旧图拼接
-      this.sampleInfo.image_data = this.sampleInfo.cv_list
-        ? this.sampleInfo.cv_list.filter((item) => !!item).concat(this.sampleInfo.image_data)
-        : this.sampleInfo.image_data // cv图拼接
+      console.log(this.sampleInfo)
+      // 在初始化的时候image_data不进行清空，所以就不需要进行新旧图拼接
+      // this.sampleInfo.image_data = this.sampleInfo.image_data.concat(this.sampleInfo.file_list!.map((item) => item.url)) // 新旧图拼接
+      // 上传图片组件更改，cv图在上传时已经赋值给image_data过了
+      // this.sampleInfo.image_data = this.sampleInfo.cv_list
+      //   ? this.sampleInfo.cv_list.filter((item) => !!item).concat(this.sampleInfo.image_data)
+      //   : this.sampleInfo.image_data // cv图拼接
       if (this.have_part) {
         this.sampleInfo.part_data.forEach((item) => {
           item.part_size_data.forEach((itemChild, indexChild) => {
@@ -1193,7 +1196,7 @@ export default Vue.extend({
         category_id: data.category_id,
         secondary_category_id: data.secondary_category_id,
         type: [data.category_id as number, data.secondary_category_id as number],
-        image_data: [],
+        image_data: data.image_data,
         file_list: data.image_data.map((item: any, index: number) => {
           return {
             id: index,

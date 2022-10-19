@@ -923,7 +923,8 @@ export default Vue.extend({
           }
         }
         this.productInfo.cv_list = []
-        this.productInfo.image_data = []
+        // 不进行清空image_data
+        // this.productInfo.image_data = []
       } else {
         if (this.notify) {
           this.notify.close()
@@ -1163,12 +1164,14 @@ export default Vue.extend({
       }
       this.productInfo.category_id = this.productInfo.type![0]
       this.productInfo.secondary_category_id = this.productInfo.type![1]
-      this.productInfo.image_data = this.productInfo.image_data.concat(
-        this.productInfo.file_list!.map((item) => item.url)
-      ) // 新旧图拼接
-      this.productInfo.image_data = this.productInfo.cv_list
-        ? this.productInfo.cv_list.filter((item) => !!item).concat(this.productInfo.image_data)
-        : this.productInfo.image_data // cv图拼接
+      // 在初始化的时候image_data不进行清空，所以就不需要进行新旧图拼接
+      // this.productInfo.image_data = this.productInfo.image_data.concat(
+      //   this.productInfo.file_list!.map((item) => item.url)
+      // ) // 新旧图拼接
+      // 上传图片组件更改，cv图在上传时已经赋值给image_data过了
+      // this.productInfo.image_data = this.productInfo.cv_list
+      //   ? this.productInfo.cv_list.filter((item) => !!item).concat(this.productInfo.image_data)
+      //   : this.productInfo.image_data // cv图拼接
       if (this.have_part) {
         this.productInfo.part_data.forEach((item) => {
           item.part_size_data!.forEach((itemChild, indexChild) => {
@@ -1370,7 +1373,7 @@ export default Vue.extend({
         category_id: data.category_id,
         secondary_category_id: data.secondary_category_id,
         type: [data.category_id, data.secondary_category_id],
-        image_data: [],
+        image_data: data.image_data,
         file_list: data.image_data.map((item: any, index: number) => {
           return {
             id: index,
