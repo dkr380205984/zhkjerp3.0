@@ -2060,7 +2060,7 @@ export default Vue.extend({
           }
         })
         item.cv_list = []
-        item.image_data = [] // 清空image_data数据，用于存储新的url字符串，提交的时候拼接file_list剩下的就行
+        // item.image_data = [] // 清空image_data数据，用于存储新的url字符串，提交的时候拼接file_list剩下的就行
         item.type = item.category_id ? [item.category_id as number, item.secondary_category_id as number] : []
         item.material_data.forEach((itemMat) => {
           itemMat.tree_data = itemMat.tree_data
