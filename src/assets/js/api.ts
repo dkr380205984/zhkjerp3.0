@@ -406,6 +406,7 @@ const craft = {
     color_id: number
     file_url: string
   }) => http.post(`${baseUrl}/craft/image/save`, params, 'application/json'),
+  deleteImg: (params: DeleteParams) => http.post(`${baseUrl}/craft/image/delete`, params, 'application/json'),
   czfCreate: (params: { pattern_loop: DraftMethods | string, name: string }) => http.post(`${baseUrl}/craft/pattern/save`, params, 'application/json'),
   czfDetail: (params: DeleteParams) => http.get(`${baseUrl}/craft/pattern/detail`, params),
   czfList: (params?: ListParams) => http.get(`${baseUrl}/craft/pattern/lists`, params),

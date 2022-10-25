@@ -651,12 +651,17 @@
           <div class="col">
             <div class="label">上传图像：</div>
             <div class="imageCtn">
-              <el-image style="width:150px;height:150px;margin-right:16px"
+              <div style="position:relative;display:inline-block"
                 v-for="(item,index) in craftInfo.image_data"
-                :key="index"
-                :src="item.file_url || ''"
-                :preview-src-list="[item.file_url]">
-              </el-image>
+                :key="index">
+                <i class="el-icon-delete hoverRed"
+                  style="position:absolute;right:20px;top:5px;z-index:1"
+                  @click="deleteImg(item.id)"></i>
+                <el-image style="width:150px;height:150px;margin-right:16px"
+                  :src="item.file_url || ''"
+                  :preview-src-list="[item.file_url]">
+                </el-image>
+              </div>
             </div>
           </div>
         </div>
@@ -1868,6 +1873,32 @@ export default Vue.extend({
         })
         return arr
       }
+    },
+    // 删除图片
+    deleteImg(id: number) {
+      this.$confirm('是否删除该图像?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          craft.deleteImg({ id }).then((res) => {
+            if (res.data.status) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+              // @ts-ignore
+              this.craftInfo.image_data!.splice(this.craftInfo.image_data.map((item) => item.id).indexOf(id), 1)
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     // 上传图片
     uploadImg() {
