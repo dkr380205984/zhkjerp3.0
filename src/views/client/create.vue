@@ -9,10 +9,19 @@
         <div class="row">
           <div class="col">
             <div class="label">
-              <span class="text">公司编号</span>
+              <span class="text">{{$route.query.type == 2?'单位':'公司'}}编号</span>
+              <span class="explanation">(选填，只能填数字)</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入公司编号"
+              <el-input 
+                v-if="$route.query.type == 1"
+                placeholder="请输入公司编号"
+                v-model="clientInfo.code"
+                type="number"
+                @input="(e) => (clientInfo.code = integerFn(e))"></el-input>
+              <el-input 
+                v-if="$route.query.type == 2"
+                placeholder="请输入单位编号"
                 v-model="clientInfo.code"
                 type="number"
                 @input="(e) => (clientInfo.code = integerFn(e))"></el-input>
@@ -20,20 +29,28 @@
           </div>
           <div class="col">
             <div class="label">
-              <span class="text">公司简称</span>
+              <span class="text">{{$route.query.type == 2?'单位':'公司'}}简称</span>
               <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
               <el-input placeholder="请输入公司简称"
+                v-if="$route.query.type == 1"
+                v-model="clientInfo.name"></el-input>
+              <el-input placeholder="请输入单位简称"
+                v-if="$route.query.type == 2"
                 v-model="clientInfo.name"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">
-              <span class="text">公司全称</span>
+              <span class="text">{{$route.query.type == 2?'单位':'公司'}}全称</span>
             </div>
             <div class="info elCtn">
               <el-input placeholder="请输入公司全称"
+              v-if="$route.query.type == 1"
+                v-model="clientInfo.alias"></el-input>
+              <el-input placeholder="请输入单位全称"
+                v-if="$route.query.type == 2"
                 v-model="clientInfo.alias"></el-input>
             </div>
           </div>
@@ -41,11 +58,21 @@
         <div class="row">
           <div class="col flex3">
             <div class="label">
-              <span class="text">公司类型</span>
+              <span class="text">{{$route.query.type == 2?'单位':'公司'}}类型</span>
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
               <el-select placeholder="请选择公司分类"
+                v-if="$route.query.type == 1"
+                v-model="clientInfo.client_type_id"
+                @change="getClientTag">
+                <el-option v-for="item in clientTypeList"
+                  :key="item.value"
+                  :value="item.value"
+                  :label="item.label"></el-option>
+              </el-select>
+              <el-select placeholder="请选择单位分类"
+                v-if="$route.query.type == 2"
                 v-model="clientInfo.client_type_id"
                 @change="getClientTag">
                 <el-option v-for="item in clientTypeList"
@@ -57,10 +84,14 @@
           </div>
           <div class="col">
             <div class="label">
-              <span class="text">公司地址</span>
+              <span class="text">{{$route.query.type == 2?'单位':'公司'}}地址</span>
             </div>
             <div class="info elCtn">
               <el-input placeholder="请输入公司地址"
+                v-if="$route.query.type == 1"
+                v-model="clientInfo.address"></el-input>
+              <el-input placeholder="请输入单位地址"
+                v-if="$route.query.type == 2"
                 v-model="clientInfo.address"></el-input>
             </div>
           </div>
@@ -69,7 +100,7 @@
           <div class="col">
             <div class="label">客户类型标签</div>
             <div class="info gray"
-              v-if="clientTagList.length===0">请先选择公司类型</div>
+              v-if="clientTagList.length===0">请先选择{{$route.query.type == 2?'单位':'公司'}}类型</div>
             <div class="info tagCtn"
               v-if="clientTagList.length>0">
               <span class="yarnNameTag"
@@ -307,11 +338,13 @@ export default Vue.extend({
       const formCheck = this.$formCheck(this.clientInfo, [
         {
           key: 'name',
-          errMsg: '请填写公司名称'
+          // @ts-ignore
+          errMsg: '请填写'+ (this.$route.query.type == 2?'单位':'公司') +'名称'
         },
         {
           key: 'client_type_id',
-          errMsg: '请选择公司类型'
+          // @ts-ignore
+          errMsg: '请选择'+ (this.$route.query.type == 2?'单位':'公司') +'类型'
         }
       ])
       //  ||

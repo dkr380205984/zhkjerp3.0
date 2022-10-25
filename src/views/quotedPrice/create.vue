@@ -242,6 +242,8 @@
               </div>
               <div class="info elCtn">
                 <el-cascader :class="{'error':mustFlag&&item.type.length===0}"
+                  filterable
+                  clearable
                   :disabled="$route.query.again==='true'"
                   placeholder="请选择品类"
                   v-model="item.type"

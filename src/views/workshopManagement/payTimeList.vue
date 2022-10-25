@@ -161,11 +161,13 @@
                     <el-tooltip
                       class="item"
                       effect="dark"
-                      :content="scope.row.shoddy_reason || '无次品原因'"
+                      v-if="scope.row.shoddy_reason"
+                      :content="scope.row.shoddy_reason"
                       placement="top-start"
                     >
                       <span class="blue" style="cursor: pointer">查看</span>
                     </el-tooltip>
+                    <div v-else style="color:rgba(0, 0, 0, 0.25)">无</div>
                   </template>
                 </el-table-column>
                 <el-table-column prop="total_price" label="结算总价(元)" width="120"> </el-table-column>

@@ -4127,7 +4127,7 @@
             <div class="row">
               <div class="label">工序编号：</div>
               <div class="info">
-                <el-input placeholder="请输入工序编号" v-model="halfProcessInfo.code"></el-input>
+                <el-input placeholder="请输入工序编号（仅限数字）" v-model="halfProcessInfo.code"></el-input>
               </div>
             </div>
             <div class="row">
@@ -4171,7 +4171,7 @@
             <div class="row">
               <div class="label">成品加工编号：</div>
               <div class="info">
-                <el-input placeholder="请输入成品加工工序编号" v-model="staffProcessInfo.code"></el-input>
+                <el-input placeholder="请输入成品加工工序编号（仅限数字）" type="number" v-model="staffProcessInfo.code"></el-input>
               </div>
             </div>
             <div class="row">
@@ -4970,7 +4970,7 @@
           <div class="contentCtn navCtn">
             <div class="navFather">
               <div class="nav" :class="{ active: userNav === '基本信息' }" @click="userNav = '基本信息'">基本信息</div>
-              <div class="nav" :class="{ active: userNav === '系统权限' }" @click="userNav = '系统权限'">系统权限</div>
+              <div class="nav" :class="{ active: userNav === '细分权限' }" @click="userNav = '细分权限'">细分权限</div>
               <div class="nav" :class="{ active: userNav === '其他权限' }" @click="userNav = '其他权限'">其他权限</div>
             </div>
             <template v-if="userNav === '基本信息'">
@@ -5018,22 +5018,39 @@
                     <el-input placeholder="请输入岗位" v-model="userInfo.station"></el-input>
                   </div>
                 </div>
+                <div class="row">
+                  <div class="label">权限：</div>
+                  <div class="info checkBoxCtn">
+                    <div class="checkbox" v-for="item in systemModuleArr" :key="item.id">
+                      <el-checkbox v-model="item.check" @change="getModuleChild2($event, item.id, item.detail)">{{
+                        item.name
+                      }}</el-checkbox>
+                    </div>
+                  </div>
+                </div>
               </div>
             </template>
-            <template v-if="userNav === '系统权限'">
+            <template v-if="userNav === '细分权限'">
               <div class="navSon">
                 <div
-                  class="nav"
-                  :class="{ active: userNavSon === item.name }"
                   v-for="item in systemModuleArr"
                   :key="item.id"
-                  @click="getModuleChild(item.name, item.detail)"
-                >
-                  {{ item.name }}
+                  @click="getModuleChild(item.name, item.detail)">
+                  <div
+                    class="nav"
+                    v-if="item.check"
+                    :class="{ active: userNavSon === item.name }"
+                  >
+                    {{ item.name }}
+                  </div>
                 </div>
               </div>
               <div class="editCtn">
-                <div class="row" style="height: auto">
+                <div class="row">
+                  <div>{{ userNavSon }}</div>
+                  <div class="btnC"><div class="btn backHoverBlue" style="margin-left: 20px" v-if="userNavSon" @click="getModuleChildCheckAll(userNavSon)">勾选全部选项</div></div>
+                </div>
+                <div class="row" style="height: auto;margin-top:0">
                   <div class="info checkBoxCtn">
                     <div class="checkbox" v-for="item in systemModuleChild" :key="item.id">
                       <el-checkbox v-model="item.check" @change="getModuleChildCheck($event, item.id)">{{
@@ -6562,6 +6579,30 @@ export default Vue.extend({
         }
       })
     },
+    getModuleChild2(ev: boolean, id: number, detailInfo: any[]) {
+      if (detailInfo.length>0) {
+        if (ev) {
+          this.userInfo.module_info.push(id)
+          this.userInfo.module_info = this.userInfo.module_info.concat(detailInfo.map((item) => item.id))
+          this.userInfo.module_info = Array.from(new Set(this.userInfo.module_info))
+        } else {
+          this.userInfo.module_info.splice(this.userInfo.module_info.indexOf(id), 1)
+          detailInfo.forEach((item) => {
+            if (this.userInfo.module_info.indexOf(item.id) !== -1) {
+              this.userInfo.module_info.splice(this.userInfo.module_info.indexOf(item.id), 1)
+            }
+          })
+        }
+      } else {
+        if (ev) {
+          this.userInfo.module_info.push(id)
+        } else {
+          this.userInfo.module_info.splice(this.userInfo.module_info.indexOf(id), 1)
+        }
+      }
+
+      this.$forceUpdate()
+    },
     getModuleChildCheck(ev: boolean, id: string) {
       if (ev) {
         this.userInfo.module_info.push(id)
@@ -6571,6 +6612,22 @@ export default Vue.extend({
           this.userInfo.module_info.splice(index, 1)
         }
       }
+    },
+    // 全选
+    getModuleChildCheckAll(name:string) {
+      let detailInfo = this.systemModuleArr.find((item:any) => {
+        return item.name === name
+      }).detail
+
+      this.systemModuleChild = detailInfo.map((item:any) => {
+        this.userInfo.module_info.push(item.id)
+        item.check = true
+        return {
+          id: item.id,
+          name: item.name,
+          check: this.userInfo.module_info.indexOf(item.id) !== -1
+        }
+      })
     },
     // 用户注册获取验证码
     getSmsCode() {
@@ -8923,6 +8980,8 @@ export default Vue.extend({
       }
 
       if (!formCheck) {
+        this.getUpdateUser(this.userInfo)
+        console.log(this.userInfo)
         user.update(this.userInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('修改成功')
@@ -8956,16 +9015,16 @@ export default Vue.extend({
       this.userInfo = userInfo
       this.userNav = '基本信息'
       this.userNavSon = ''
-      // this.systemModuleArr.forEach((item: any) => {
-      //   item.check = false
-      //   if (
-      //     this.userInfo.module_info &&
-      //     (this.userInfo.module_info.indexOf(item.id) !== -1 ||
-      //       this.userInfo.module_info.indexOf(item.id.toString()) !== -1)
-      //   ) {
-      //     item.check = true
-      //   }
-      // })
+      this.systemModuleArr.forEach((item: any) => {
+        item.check = false
+        if (
+          this.userInfo.module_info &&
+          (this.userInfo.module_info.indexOf(item.id) !== -1 ||
+            this.userInfo.module_info.indexOf(item.id.toString()) !== -1)
+        ) {
+          item.check = true
+        }
+      })
       // 针对初始化为null做一下特殊处理
       if (!this.userInfo.module_info) {
         this.userInfo.module_info = []

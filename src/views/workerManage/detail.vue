@@ -368,7 +368,7 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="borderBtn" @click="$router.go(-1)">返回</div>
+          <div class="borderBtn" @click="$router.push('/workerManage/list?page=1&keyword=&department=&status=&type=&limit=10')">返回</div>
           <div class="btn backHoverRed" @click="deleteWorker">
             <svg class="iconFont" aria-hidden="true">
               <use xlink:href="#icon-shanchudingdan"></use>

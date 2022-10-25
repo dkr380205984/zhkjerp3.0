@@ -127,6 +127,7 @@
                 </div>
                 <div class="info elCtn" :class="{ error: mustFlag && !sampleInfo.type }">
                   <el-cascader
+                    filterable
                     placeholder="请选择品类"
                     v-model="sampleInfo.type"
                     :options="productTypeList"

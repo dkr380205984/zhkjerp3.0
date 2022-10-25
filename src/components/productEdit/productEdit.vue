@@ -165,6 +165,7 @@
                   </div>
                   <div class="info elCtn">
                     <el-cascader :class="{'error':mustFlag&&!productInfo.type}"
+                      filterable
                       placeholder="请选择品类"
                       v-model="productInfo.type"
                       :options="productTypeList"

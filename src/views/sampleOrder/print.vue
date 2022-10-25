@@ -11,7 +11,7 @@
             <div class="pcol wa">
               <div class="label">系统{{orderType===1?'订单':'样单'}}编号：</div>
               <div class="info"
-                style="white-space: nowrap;">{{sampleOrderInfo.client_name}}</div>
+                style="white-space: nowrap;">{{sampleOrderInfo.code || '无'}}</div>
             </div>
           </div>
           <div class="prow">
