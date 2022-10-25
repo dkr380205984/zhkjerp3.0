@@ -13,6 +13,7 @@
               <span class="explanation">(选填，只能填数字)</span>
             </div>
             <div class="info elCtn">
+
               <el-input 
                 v-if="$route.query.type == 1"
                 placeholder="请输入公司编号"
@@ -29,6 +30,7 @@
           </div>
           <div class="col">
             <div class="label">
+
               <span class="text">{{$route.query.type == 2?'单位':'公司'}}简称</span>
               <span class="explanation">(必填)</span>
             </div>
@@ -43,6 +45,7 @@
           </div>
           <div class="col">
             <div class="label">
+
               <span class="text">{{$route.query.type == 2?'单位':'公司'}}全称</span>
             </div>
             <div class="info elCtn">
@@ -58,6 +61,7 @@
         <div class="row">
           <div class="col flex3">
             <div class="label">
+
               <span class="text">{{$route.query.type == 2?'单位':'公司'}}类型</span>
               <span class="explanation">(必选)</span>
             </div>
@@ -84,6 +88,7 @@
           </div>
           <div class="col">
             <div class="label">
+
               <span class="text">{{$route.query.type == 2?'单位':'公司'}}地址</span>
             </div>
             <div class="info elCtn">
@@ -100,6 +105,7 @@
           <div class="col">
             <div class="label">客户类型标签</div>
             <div class="info gray"
+
               v-if="clientTagList.length===0">请先选择{{$route.query.type == 2?'单位':'公司'}}类型</div>
             <div class="info tagCtn"
               v-if="clientTagList.length>0">
@@ -338,11 +344,13 @@ export default Vue.extend({
       const formCheck = this.$formCheck(this.clientInfo, [
         {
           key: 'name',
+
           // @ts-ignore
           errMsg: '请填写'+ (this.$route.query.type == 2?'单位':'公司') +'名称'
         },
         {
           key: 'client_type_id',
+
           // @ts-ignore
           errMsg: '请选择'+ (this.$route.query.type == 2?'单位':'公司') +'类型'
         }
