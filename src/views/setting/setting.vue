@@ -4127,7 +4127,7 @@
             <div class="row">
               <div class="label">工序编号：</div>
               <div class="info">
-                <el-input placeholder="请输入工序编号（仅限数字）" v-model="halfProcessInfo.code"></el-input>
+                <el-input placeholder="请输入工序编号（仅限数字）" type="number" v-model="halfProcessInfo.code"></el-input>
               </div>
             </div>
             <div class="row">
@@ -4169,19 +4169,19 @@
           </div>
           <div class="contentCtn">
             <div class="row">
-              <div class="label">成品加工编号：</div>
+              <div class="label" style="width: 8em;">成品加工编号：</div>
               <div class="info">
                 <el-input placeholder="请输入成品加工工序编号（仅限数字）" type="number" v-model="staffProcessInfo.code"></el-input>
               </div>
             </div>
             <div class="row">
-              <div class="label isMust">成品加工工序：</div>
+              <div class="label isMust" style="width: 8em;">成品加工工序：</div>
               <div class="info">
                 <el-input placeholder="请输入成品加工工序" v-model="staffProcessInfo.name"></el-input>
               </div>
             </div>
             <div class="row" v-for="(item, index) in processStaffDescList" :key="'processStaffDescList' + index">
-              <div class="label">工序说明{{ index + 1 }}：</div>
+              <div class="label" style="width: 8em;">工序说明{{ index + 1 }}：</div>
               <div class="info">
                 <el-input
                   placeholder="请输入工序说明"
@@ -4189,7 +4189,7 @@
                   :style="{ width: index === processStaffDescList.length - 1 ? '70%' : '100%' }"
                 ></el-input>
                 <el-button
-                  style="margin-left: 20px"
+                  style="margin-left: 17px"
                   v-if="index === processStaffDescList.length - 1"
                   @click="$addItem(processStaffDescList, '')"
                   >添加</el-button
@@ -9005,6 +9005,7 @@ export default Vue.extend({
         has_check: 2,
         group_id: '',
         sms_code: '',
+        only_search_self: 2,
         station: '' // 岗位
       }
       this.userUpdate = false
