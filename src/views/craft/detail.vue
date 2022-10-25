@@ -2052,6 +2052,7 @@ export default Vue.extend({
         id: Number(this.$route.query.id)
       })
       .then((res) => {
+        console.log(JSON.stringify(res.data.data))
         if (res.data.status) {
           this.craftInfo = res.data.data
           if (this.craftInfo.is_draft === 1) {

@@ -10,6 +10,7 @@
           <div class="col">
             <div class="label">
               <span class="text">公司编号</span>
+              <span class="explanation">(选填，只能填数字)</span>
             </div>
             <div class="info elCtn">
               <el-input placeholder="请输入公司编号"
