@@ -1,19 +1,14 @@
 <template>
-  <div id="workshopManagementStaffList"
-    v-loading="loading"
-    class="bodyContainer">
+  <div id="workshopManagementStaffList" v-loading="loading" class="bodyContainer">
     <div class="topTagCtn">
-      <div class="tag"
-        @click="$router.push('/workshopManagement/list')">
-        <svg class="iconFont"
-          aria-hidden="true">
+      <div class="tag" @click="$router.push('/workshopManagement/list')">
+        <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-andingdanluru"></use>
         </svg>
         <span class="text">按订单录入</span>
       </div>
       <div class="tag active">
-        <svg class="iconFont"
-          aria-hidden="true">
+        <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-anyuangongluru"></use>
         </svg>
         <span class="text">按员工录入</span>
@@ -26,37 +21,36 @@
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input v-model="keyword"
-              placeholder="编号、姓名搜索"
-              @keydown.enter.native="changeRouter"></el-input>
+            <el-input v-model="keyword" placeholder="编号、姓名搜索" @keydown.enter.native="changeRouter"></el-input>
           </div>
-          <div class="elCtn"
-            style="position: relative">
-            <el-select style="width: 95%"
+          <div class="elCtn" style="position: relative">
+            <el-select
+              style="width: 95%"
               @change="changeDepartment()"
               v-model="department"
               placeholder="部门筛选"
-              clearable>
-              <el-option v-for="(item, index) in departmentList"
+              clearable
+            >
+              <el-option
+                v-for="(item, index) in departmentList"
                 :key="index"
                 :value="item.id"
-                :label="item.name"></el-option>
+                :label="item.name"
+              ></el-option>
             </el-select>
-            <el-tooltip class="item"
-              effect="dark"
-              content="保存部门筛选"
-              placement="top">
-              <i class="el-icon-upload hoverOrange"
-                @click="$setLocalStorage('department', department)"></i>
+            <el-tooltip class="item" effect="dark" content="保存部门筛选" placement="top">
+              <i class="el-icon-upload hoverOrange" @click="$setLocalStorage('department', department)"></i>
             </el-tooltip>
           </div>
           <div class="elCtn">
-            <el-cascader v-model="process"
+            <el-cascader
+              v-model="process"
               :options="processList"
               @change="changeRouter"
               :show-all-levels="false"
               placeholder="工序筛选"
-              clearable></el-cascader>
+              clearable
+            ></el-cascader>
           </div>
           <div class="elCtn">
             <!-- <el-date-picker
@@ -72,32 +66,35 @@
               value-format="yyyy-MM-dd"
             >
             </el-date-picker> -->
-            <el-date-picker v-model="date"
+            <el-date-picker
+              v-model="date"
               type="month"
               @change="changeRouter"
               value-format="yyyy-MM"
-              placeholder="选择月份">
+              placeholder="选择月份"
+            >
             </el-date-picker>
           </div>
-          <div class="btn borderBtn"
-            @click="reset">重置</div>
+          <div class="btn borderBtn" @click="reset">重置</div>
         </div>
-        <div class="btn backHoverBlue"
-          style="margin-bottom: 20px"
-          @click="updateNumber">更新数量</div>
-        <div class="btn backHoverBlue"
+        <div class="btn backHoverBlue" style="margin-bottom: 20px" @click="updateNumber">更新数量</div>
+        <div
+          class="btn backHoverBlue"
           style="margin-bottom: 20px; margin-left: 20px"
-          @click="$router.push('/workshopManagement/staffInputDetail?isAll=true')">结算详情</div>
+          @click="$router.push('/workshopManagement/staffInputDetail?isAll=true')"
+        >
+          结算详情
+        </div>
         <div class="list">
-          <el-table ref="multipleTable"
+          <el-table
+            ref="multipleTable"
             :data="list"
             tooltip-effect="dark"
             :row-key="rowKey"
             style="width: 100%"
-            @selection-change="handleSelectionChange">
-            <el-table-column type="selection"
-              width="55"
-              :reserve-selection="true"></el-table-column>
+            @selection-change="handleSelectionChange"
+          >
+            <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
             <el-table-column label="员工编号">
               <template slot-scope="scope">
                 <div>{{ scope.row.code }}</div>
@@ -108,25 +105,20 @@
                 <div>{{ scope.row.name }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="department"
-              label="所属部门"></el-table-column>
-            <el-table-column prop="process"
-              label="负责工序"></el-table-column>
-            <el-table-column prop="total_number"
-              label="本月完成数量"></el-table-column>
-            <el-table-column prop="total_extra_number"
-              label="本月额外数量"></el-table-column>
-            <el-table-column prop="total_price"
-              label="本月完成金额"></el-table-column>
+            <el-table-column prop="department" label="所属部门"></el-table-column>
+            <el-table-column prop="process" label="负责工序"></el-table-column>
+            <el-table-column prop="total_number" label="本月完成数量"></el-table-column>
+            <el-table-column prop="total_extra_number" label="本月额外数量"></el-table-column>
+            <el-table-column prop="total_price" label="本月完成金额"></el-table-column>
             <el-table-column label="平均单价">
               <template slot-scope="scope">
                 <span>{{ (scope.row.total_price / (scope.row.total_number || 1)).toFixed(2) }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="操作"
-              width="140">
+            <el-table-column label="操作" width="140">
               <template slot-scope="scope">
-                <span class="opr hoverBlue"
+                <span
+                  class="opr hoverBlue"
                   @click="
                     $router.push(
                       '/workshopManagement/staffDetail?staffInfo=' +
@@ -134,61 +126,63 @@
                           { id: scope.row.id, name: scope.row.name, code: scope.row.code, process: scope.row.process }
                         ])
                     )
-                  ">继续添加</span>
-                <span class="opr hoverBlue"
-                  @click="$router.push('/workshopManagement/staffInputDetail?id=' + scope.row.id)">详情</span>
+                  "
+                  >继续添加</span
+                >
+                <span
+                  class="opr hoverBlue"
+                  @click="$router.push('/workshopManagement/staffInputDetail?id=' + scope.row.id)"
+                  >详情</span
+                >
               </template>
             </el-table-column>
           </el-table>
         </div>
-        <div class="btn backHoverBlue fl"
-          style="margin-right: 40px"
-          @click="exportExcel(1)">导出月度报表</div>
-        <div class="btn backHoverBlue fl"
-          style="margin-right: 40px"
-          @click="exportExcel(2)">导出月度明细</div>
+        <div class="btn backHoverBlue fl" style="margin-right: 40px" @click="exportExcel(1)">导出月度报表</div>
+        <div class="btn backHoverBlue fl" style="margin-right: 40px" @click="exportExcel(2)">导出月度明细</div>
         <div style="width: 50%; display: flex; justify-content: space-between; margin-left: 20px; line-height: 2">
           <span>
             完成数量：
-            <span class="green"
-              style="font-weight: bold">
+            <span class="green" style="font-weight: bold">
               {{ (additional.total_number / 10000).toFixed(2) }} 万件
             </span>
           </span>
           <span>
             完成金额：
-            <span class="green"
-              style="font-weight: bold">
+            <span class="green" style="font-weight: bold">
               {{ (additional.total_price / 10000).toFixed(2) }} 万元
             </span>
           </span>
           <span>
             额外数量：
-            <span class="green"
-              style="font-weight: bold">
+            <span class="green" style="font-weight: bold">
               {{ (additional.total_extra_number / 10000).toFixed(2) }} 万件
             </span>
           </span>
         </div>
         <div class="pageCtn">
-          <el-pagination background
+          <el-pagination
+            background
             :page-size="limit"
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
-            @current-change="changeRouter">
+            @current-change="changeRouter"
+          >
           </el-pagination>
         </div>
       </div>
     </div>
     <!-- 列表设置 -->
-    <zh-list-setting @close="showSetting = false"
+    <zh-list-setting
+      @close="showSetting = false"
       @afterSave="getListSetting"
       :show="showSetting"
       :id="listSettingId"
       :type="9"
       :data.sync="listKey"
-      :originalData="originalSetting"></zh-list-setting>
+      :originalData="originalSetting"
+    ></zh-list-setting>
   </div>
 </template>
 

@@ -9,47 +9,85 @@
         <div class="icon">
           <i class="el-icon-user"></i>
         </div>
-        <el-input class="input_item"
-          v-model="loginInfo.user_name"
-          placeholder="请输入帐号"></el-input>
+        <el-input class="input_item" v-model="loginInfo.user_name" placeholder="请输入帐号"></el-input>
       </div>
       <div class="input_container password">
         <div class="icon">
           <i class="el-icon-lock"></i>
         </div>
-        <el-input type='password'
+        <el-input
+          :type="showPwd ? 'text' : 'password'"
           class="input_item"
           v-model="loginInfo.password"
-          placeholder="请输入密码"></el-input>
+          placeholder="请输入密码"
+        ></el-input>
+        <i
+          :class="showPwd ? 'blue' : 'gray'"
+          class="el-icon-view"
+          style="position: relative; right: 20px; cursor: pointer; font-weight: bold"
+          @click="showPwd = !showPwd"
+        ></i>
       </div>
       <div class="rememberOrForgetCtn">
         <div class="remember_psd">
           <el-checkbox v-model="remPsd">记住密码</el-checkbox>
         </div>
-        <div class="forget_psd"
-          @click="showForgetPassword=true">忘记密码？</div>
+        <div class="forget_psd" @click="showForgetPassword = true">忘记密码？</div>
       </div>
-      <div class="login"
-        @click="goLogin">登录</div>
+      <div class="login" @click="goLogin">登录</div>
       <!-- <div class="buy_account">没有账号？<span class="buy_link">去购买</span></div> -->
       <div class="bottomInfo">
-        <div class="line">©zwyknit.com版权所有 数据应用服务：浙ICP备 <a target="_blank"
-            href="http://www.miit.gov.cn/">19041626号</a></div>
+        <div class="line">
+          ©zwyknit.com版权所有 数据应用服务：浙ICP备 <a target="_blank" href="http://www.miit.gov.cn/">19041626号</a>
+        </div>
       </div>
     </div>
     <div class="rightCtn">
-      <img :src="require('@/assets/image/login/login_1.jpg')"
-        style="width:100%"
-        alt="">
+      <img :src="require('@/assets/image/login/login_1.jpg')" style="width: 100%" alt="" />
     </div>
-    <!-- 忘记密码弹窗 -->
-    <div class="popup"
-      v-show="showForgetPassword">
+    <!-- 新设备弹窗 -->
+    <div class="popup" v-show="showNewClient">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">新设备验证</span>
+          <div class="closeCtn" @click="showNewClient = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="row">
+            <span>由于检测到您使用新浏览器登陆，为了保护您的数据安全。我们发送了一条短信验证码到您的手机上，请输入短信验证码，验证通过后方可登陆。</span>
+          </div>
+          <div class="row">
+            <span class="label">手机号：</span>
+            <span class="info" style="line-height: 32px">
+              {{ loginInfo.user_name.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') }}
+            </span>
+          </div>
+          <div class="row">
+            <span class="label">手机验证码：</span>
+            <span class="info">
+              <el-input placeholder="请输入手机验证码" v-model="newClient.sms_code">
+                <template slot="append">
+                  <span style="cursor: pointer" @click="sendPhoneCode">{{
+                    codeTime === 60 ? '获取验证码' : codeTime === 0 ? '重新发送' : codeTime + '秒后重新发送'
+                  }}</span>
+                </template>
+              </el-input>
+            </span>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn" @click="showNewClient = false">取消</span>
+          <span class="btn backHoverBlue" @click="checkSmsCode">确认</span>
+        </div>
+      </div>
+    </div>
+    <div class="popup" v-show="showForgetPassword">
       <div class="main">
         <div class="titleCtn">
           <span class="text">忘记密码</span>
-          <div class="closeCtn"
-            @click="showForgetPassword = false">
+          <div class="closeCtn" @click="showForgetPassword = false">
             <span class="el-icon-close"></span>
           </div>
         </div>
@@ -57,19 +95,17 @@
           <div class="row">
             <span class="label">手机号：</span>
             <span class="info">
-              <el-input placeholder='请输入手机号'
-                v-model="forgetPasswordInfo.telephone">
-              </el-input>
+              <el-input placeholder="请输入手机号" v-model="forgetPasswordInfo.telephone"> </el-input>
             </span>
           </div>
           <div class="row">
             <span class="label">手机验证码：</span>
             <span class="info">
-              <el-input placeholder='请输入手机验证码'
-                v-model="forgetPasswordInfo.sms_code">
+              <el-input placeholder="请输入手机验证码" v-model="forgetPasswordInfo.sms_code">
                 <template slot="append">
-                  <span style="cursor:pointer"
-                    @click="changeCodeTime">{{codeTime===60?'获取验证码':codeTime===0?'重新发送':codeTime+'后重新发送'}}</span>
+                  <span style="cursor: pointer" @click="changeCodeTime">{{
+                    codeTime === 60 ? '获取验证码' : codeTime === 0 ? '重新发送' : codeTime + '秒后重新发送'
+                  }}</span>
                 </template>
               </el-input>
             </span>
@@ -77,9 +113,7 @@
           <div class="row">
             <span class="label">新密码：</span>
             <span class="info">
-              <el-input placeholder='请输入新密码'
-                type="password"
-                v-model="forgetPasswordInfo.new_pass"></el-input>
+              <el-input placeholder="请输入新密码" type="password" v-model="forgetPasswordInfo.new_pass"></el-input>
             </span>
           </div>
           <!-- <div class="row">
@@ -101,30 +135,29 @@
           </div> -->
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn"
-            @click="showForgetPassword = false">取消</span>
-          <span class="btn backHoverBlue"
-            @click="goChangePassword">确认修改</span>
+          <span class="btn borderBtn" @click="showForgetPassword = false">取消</span>
+          <span class="btn backHoverBlue" @click="goChangePassword">确认修改</span>
         </div>
       </div>
     </div>
-    <div class="popup"
-      v-show="bindClient">
+    <div class="popup" v-show="bindClient">
       <div class="main">
         <div class="titleCtn">
           <span class="text">绑定公司</span>
         </div>
         <div class="contentCtn">
           <div class="explainCtn">检测到你在多家公司拥有帐号,请绑定其中一家公司后登录.</div>
-          <el-radio v-for="item in companyInfo"
+          <el-radio
+            v-for="item in companyInfo"
             :key="item.company_id"
-            style="display:block;padding:12px"
+            style="display: block; padding: 12px"
             v-model="bindClientId"
-            :label="item.company_id">{{item.company_name}}</el-radio>
+            :label="item.company_id"
+            >{{ item.company_name }}</el-radio
+          >
         </div>
         <div class="oprCtn">
-          <span class="btn backHoverBlue"
-            @click="goBindClient">确认绑定</span>
+          <span class="btn backHoverBlue" @click="goBindClient">确认绑定</span>
         </div>
       </div>
     </div>
@@ -181,7 +214,12 @@ export default Vue.extend({
   } {
     return {
       showForgetPassword: false,
+      showNewClient: false,
       remPsd: true,
+      showPwd: false,
+      newClient: {
+        sms_code: ''
+      },
       verificationCode: {
         canvas: ''
       },
@@ -248,47 +286,80 @@ export default Vue.extend({
       if (formCheck) {
         return
       }
+      if(this.newClient.sms_code){
+        this.loginInfo.sms_code = this.newClient.sms_code
+      }
       login(this.loginInfo).then((res) => {
         if (res.data.code === 200) {
-          // window.sessionStorage.setItem('token', res.data.data.access_token)
-          // window.sessionStorage.setItem('token_type', res.data.data.token_type)
-          getAuthorization().then((res) => {
-            // 用户信息里的公司信息先保存了，方便后续切换的时候使用
-            // window.sessionStorage.setItem('user_company', JSON.stringify(res.data.data.company_info))
-            // if (res.data.data.bind_company_id) {
-            //   this.checkLogin(
-            //     res,
-            //     res.data.data.company_info.find((item: any) => {
-            //       return item.company_id === res.data.data.bind_company_id
-            //     })
-            //   )
-            // } else {
-            //   if (res.data.data.company_info.length > 1) {
-            //     // 多家公司
-            //     this.authInfo = res
-            //     this.companyInfo = res.data.data.company_info
-            //     this.bindClient = true
-            //   } else {
-            //     // 给用户自动绑定唯一一家公司的id
-            //     userCompanySetting({
-            //       company_id: res.data.data.company_info[0].company_id
-            //     }).then((res2) => {
-            //       if (res2.data.status) {
-            //         this.checkLogin(res, res.data.data.company_info[0])
-            //       }
-            //     })
-            //   }
-            // }
-            this.checkLogin(res, {
-              module_info: res.data.data.module_info || [],
-              company_name: res.data.data.alias,
-              logo: res.data.data.logo
+          let lastActive = window.localStorage.getItem('lastActive')
+          // @ts-ignore 当他的活跃日期为空的时候以及他的活跃日期大于60天，进行验证码发送
+          if (this.loginInfo.sms_code || (this.$getDataType(lastActive) !== 'Null' && this.$diffByDate(lastActive) < 60)) {
+            // window.sessionStorage.setItem('token', res.data.data.access_token)
+            // window.sessionStorage.setItem('token_type', res.data.data.token_type)
+            getAuthorization().then((res) => {
+              // 用户信息里的公司信息先保存了，方便后续切换的时候使用
+              // window.sessionStorage.setItem('user_company', JSON.stringify(res.data.data.company_info))
+              // if (res.data.data.bind_company_id) {
+              //   this.checkLogin(
+              //     res,
+              //     res.data.data.company_info.find((item: any) => {
+              //       return item.company_id === res.data.data.bind_company_id
+              //     })
+              //   )
+              // } else {
+              //   if (res.data.data.company_info.length > 1) {
+              //     // 多家公司
+              //     this.authInfo = res
+              //     this.companyInfo = res.data.data.company_info
+              //     this.bindClient = true
+              //   } else {
+              //     // 给用户自动绑定唯一一家公司的id
+              //     userCompanySetting({
+              //       company_id: res.data.data.company_info[0].company_id
+              //     }).then((res2) => {
+              //       if (res2.data.status) {
+              //         this.checkLogin(res, res.data.data.company_info[0])
+              //       }
+              //     })
+              //   }
+              // }
+              this.checkLogin(res, {
+                module_info: res.data.data.module_info || [],
+                company_name: res.data.data.alias,
+                logo: res.data.data.logo
+              })
             })
-          })
+          } else {
+            this.showNewClient = true
+          }
         } else {
-          this.loginInfo.password = ''
+          if(this.loginInfo.sms_code){
+            this.loginInfo.sms_code = ''
+          } else {
+            this.loginInfo.password = ''
+          }            
         }
       })
+    },
+    sendPhoneCode() {
+      let phone = this.loginInfo.user_name
+      getCoder.newClient({ phone: phone }).then((res) => {
+        if(res.data.status){
+          this.timer()
+        }
+      })
+    },
+    checkSmsCode(){
+      const formCheck = this.$formCheck(this.newClient, [
+        {
+          key: 'sms_code',
+          errMsg: '请填写验证码',
+        }
+      ])
+      if (formCheck) {
+        return
+      }
+      this.goLogin()
     },
     checkLogin(res: any, companyInfo: any) {
       console.log(res)

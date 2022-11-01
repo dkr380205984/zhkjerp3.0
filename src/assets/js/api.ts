@@ -28,7 +28,10 @@ const userCompanySetting = (params: { company_id: number }) => http.post(`${base
 const getCoder = {
   forgetPassword: (params: {
     telephone: string
-  }) => http.post(`${baseUrl}/user/password/forget/send/code`, params, 'application/json')
+  }) => http.post(`${baseUrl}/user/password/forget/send/code`, params, 'application/json'),
+  newClient: (params: {
+    phone: string
+  }) => http.post(`${baseUrl}/new/client/send/sms`, params, 'application/json')
 }
 
 // 忘记密码

@@ -692,7 +692,7 @@ export default Vue.extend({
           item.label === '生产加工单位'
       )
 
-      let clients:any = []
+      let clients: any = []
       arr.forEach((clientList: any) => {
         // 防止第一遍进入循环
         if (clients.length > 0) return
@@ -708,8 +708,8 @@ export default Vue.extend({
       })
 
       this.client_id = clients
-      if(this.$route.query.single_client_id){
-        this.date = [new Date().getFullYear() + '-01-01',this.$formatDate(new Date())]
+      if (this.$route.query.single_client_id) {
+        this.date = [new Date().getFullYear() + '-01-01', this.$formatDate(new Date())]
       }
       return arr
     },

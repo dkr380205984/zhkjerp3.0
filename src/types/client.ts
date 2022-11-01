@@ -23,6 +23,14 @@ export interface ClientInfo {
     email: string
     station: string
   }>
+  financial_data?:Array<{
+    account: string
+    tax_number: string
+    phone: string
+    bank: string
+    bank_number: string
+    desc: string
+  }>
   address: string
   client_type_id: number | string
   rel_tag_data: number[] // 二级标签
