@@ -1,7 +1,5 @@
 <template>
-  <div class="bodyContainer"
-    id="clientCreate"
-    v-loading="loading">
+  <div class="bodyContainer" id="clientCreate" v-loading="loading">
     <div class="module">
       <div class="titleCtn">
         <div class="title">基本信息</div>
@@ -14,10 +12,12 @@
               <span class="explanation">(选填，只能填数字)</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入公司编号"
+              <el-input
+                placeholder="请输入公司编号"
                 v-model="clientInfo.code"
                 type="number"
-                @input="(e) => (clientInfo.code = integerFn(e))"></el-input>
+                @input="(e) => (clientInfo.code = integerFn(e))"
+              ></el-input>
             </div>
           </div>
           <div class="col">
@@ -26,8 +26,7 @@
               <span class="explanation">(必填)</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入公司简称"
-                v-model="clientInfo.name"></el-input>
+              <el-input placeholder="请输入公司简称" v-model="clientInfo.name"></el-input>
             </div>
           </div>
           <div class="col">
@@ -35,8 +34,7 @@
               <span class="text">公司全称</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入公司全称"
-                v-model="clientInfo.alias"></el-input>
+              <el-input placeholder="请输入公司全称" v-model="clientInfo.alias"></el-input>
             </div>
           </div>
         </div>
@@ -47,51 +45,52 @@
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-select placeholder="请选择公司分类"
-                v-model="clientInfo.client_type_id"
-                @change="getClientTag">
-                <el-option v-for="item in clientTypeList"
+              <el-select placeholder="请选择公司分类" v-model="clientInfo.client_type_id" @change="getClientTag">
+                <el-option
+                  v-for="item in clientTypeList"
                   :key="item.value"
                   :value="item.value"
-                  :label="item.label"></el-option>
+                  :label="item.label"
+                ></el-option>
               </el-select>
             </div>
           </div>
-          <div class="col ">
+          <div class="col">
             <div class="label">
               <span class="text">公司地址</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入公司地址"
-                v-model="clientInfo.address"></el-input>
+              <el-input placeholder="请输入公司地址" v-model="clientInfo.address"></el-input>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col">
             <div class="label">客户类型标签</div>
-            <div class="info gray"
-              v-if="clientTagList.length===0">请先选择公司类型</div>
-            <div class="info tagCtn"
-              v-if="clientTagList.length>0">
-              <span class="yarnNameTag"
-                :class="{'active':item.check,'unactive':!item.check}"
-                v-for="(item,index) in clientTagList"
-                :key="item.value + (item.check?item.check:'aaa')"
-                @click="item.check=!item.check;$forceUpdate()">
-                <span class="name">{{item.label}}</span>
-                <span class="el-icon-close icon"
-                  @click.stop="deleteClientTag(item.value,index,item.type)"></span>
+            <div class="info gray" v-if="clientTagList.length === 0">请先选择公司类型</div>
+            <div class="info tagCtn" v-if="clientTagList.length > 0">
+              <span
+                class="yarnNameTag"
+                :class="{ active: item.check, unactive: !item.check }"
+                v-for="(item, index) in clientTagList"
+                :key="item.value + (item.check ? item.check : 'aaa')"
+                @click="
+                  item.check = !item.check
+                  $forceUpdate()
+                "
+              >
+                <span class="name">{{ item.label }}</span>
+                <span class="el-icon-close icon" @click.stop="deleteClientTag(item.value, index, item.type)"></span>
               </span>
-              <span class="elCtn"
-                v-show="clientTagFlag">
-                <el-input placeholder="输入新增类型"
-                  v-model="clientTagInfo.name"></el-input>
+              <span class="elCtn" v-show="clientTagFlag">
+                <el-input placeholder="输入新增类型" v-model="clientTagInfo.name"></el-input>
               </span>
-              <span class="yarnNameTag"
-                :class="clientTagFlag?'active':'addBtn'"
-                @click="clientTagFlag?saveClientTag():clientTagFlag=true">{{clientTagFlag?'保存类型':'新增类型'}}
-                <i :class="clientTagFlag?'el-icon-document-checked':'el-icon-plus'"></i>
+              <span
+                class="yarnNameTag"
+                :class="clientTagFlag ? 'active' : 'addBtn'"
+                @click="clientTagFlag ? saveClientTag() : (clientTagFlag = true)"
+                >{{ clientTagFlag ? '保存类型' : '新增类型' }}
+                <i :class="clientTagFlag ? 'el-icon-document-checked' : 'el-icon-plus'"></i>
               </span>
             </div>
           </div>
@@ -111,41 +110,108 @@
             <div class="col">常用邮箱</div>
             <div class="col">操作</div>
           </div>
-          <div class="row"
-            v-for="(item,index) in clientInfo.contacts_data"
-            :key="index">
+          <div class="row" v-for="(item, index) in clientInfo.contacts_data" :key="index">
             <div class="col">
               <div class="elCtn">
-                <el-input v-model="item.name"
-                  placeholder="请输入姓名"></el-input>
+                <el-input v-model="item.name" placeholder="请输入姓名"></el-input>
               </div>
             </div>
             <div class="col">
               <div class="elCtn">
-                <el-input v-model="item.station"
-                  placeholder="请输入职务"></el-input>
+                <el-input v-model="item.station" placeholder="请输入职务"></el-input>
               </div>
             </div>
             <div class="col">
               <div class="elCtn">
-                <el-input v-model="item.phone"
-                  placeholder="请输入联系电话"></el-input>
+                <el-input v-model="item.phone" placeholder="请输入联系电话"></el-input>
               </div>
             </div>
             <div class="col">
               <div class="elCtn">
-                <el-input v-model="item.email"
-                  placeholder="请输入常用邮箱"></el-input>
+                <el-input v-model="item.email" placeholder="请输入常用邮箱"></el-input>
               </div>
             </div>
             <div class="col">
-              <div class="opr hoverRed"
-                @click="$deleteItem(clientInfo.contacts_data,index)">删除</div>
+              <div class="opr hoverRed" @click="$deleteItem(clientInfo.contacts_data, index)">删除</div>
             </div>
           </div>
           <div class="oprRow">
-            <div class="once"
-              @click="$addItem(clientInfo.contacts_data,{id:'', name: '',phone: '',email: '',station: '' })">新增联系人
+            <div
+              class="once"
+              @click="$addItem(clientInfo.contacts_data, { id: '', name: '', phone: '', email: '', station: '' })"
+            >
+              新增联系人
+              <i class="el-icon-plus"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">财务资料</div>
+      </div>
+      <div class="listCtn">
+        <div class="list">
+          <div class="row title">
+            <div class="col">户名</div>
+            <div class="col">纳税识别号</div>
+            <div class="col">电话</div>
+            <div class="col">开户行</div>
+            <div class="col">账号</div>
+            <div class="col">备注</div>
+            <div class="col">操作</div>
+          </div>
+          <div class="row" v-for="(item, index) in clientInfo.financial_data" :key="index">
+            <div class="col">
+              <div class="elCtn">
+                <el-input v-model="item.account" placeholder="请输入户名"></el-input>
+              </div>
+            </div>
+            <div class="col">
+              <div class="elCtn">
+                <el-input v-model="item.tax_number" placeholder="请输入纳税识别号"></el-input>
+              </div>
+            </div>
+            <div class="col">
+              <div class="elCtn">
+                <el-input v-model="item.phone" placeholder="请输入电话"></el-input>
+              </div>
+            </div>
+            <div class="col">
+              <div class="elCtn">
+                <el-input v-model="item.bank" placeholder="请输入开户行"></el-input>
+              </div>
+            </div>
+            <div class="col">
+              <div class="elCtn">
+                <el-input v-model="item.bank_number" placeholder="请输入账号"></el-input>
+              </div>
+            </div>
+            <div class="col">
+              <div class="elCtn">
+                <el-input v-model="item.desc" placeholder="请输入备注"></el-input>
+              </div>
+            </div>
+            <div class="col">
+              <div class="opr hoverRed" @click="$deleteItem(clientInfo.financial_data, index)">删除</div>
+            </div>
+          </div>
+          <div class="oprRow">
+            <div
+              class="once"
+              @click="
+                $addItem(clientInfo.financial_data, {
+                  account: '',
+                  tax_number: '',
+                  phone: '',
+                  bank: '',
+                  bank_number: '',
+                  desc: ''
+                })
+              "
+            >
+              新增财务资料
               <i class="el-icon-plus"></i>
             </div>
           </div>
@@ -155,10 +221,8 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="borderBtn"
-            @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverOrange"
-            @click="saveClient">修改</div>
+          <div class="borderBtn" @click="$router.go(-1)">返回</div>
+          <div class="btn backHoverOrange" @click="saveClient">修改</div>
         </div>
       </div>
     </div>
@@ -199,6 +263,16 @@ export default Vue.extend({
             station: ''
           }
         ],
+        financial_data: [
+          {
+            account: '',
+            tax_number: '',
+            phone: '',
+            bank: '',
+            bank_number: '',
+            desc: ''
+          }
+        ],
         address: '',
         client_type_id: '',
         rel_tag_data: []
@@ -212,7 +286,7 @@ export default Vue.extend({
      * @returns {string | number} 返回空字符或数字
      */
     integerFn(value: string) {
-      console.log(value)
+      // console.log(value)
       let reg = /[1-9]{1}[0-9]*$/
       let strArray = value.split('')
       let newStrs: string | number = ''
@@ -355,12 +429,22 @@ export default Vue.extend({
       this.loading = false
       if (res.data.status) {
         this.clientInfo = res.data.data
+        if (res.data.data.financial_data.length === 0) {
+          res.data.data.financial_data.push({
+            account: '',
+            tax_number: '',
+            phone: '',
+            bank: '',
+            bank_number: '',
+            desc: ''
+          })
+        }
         setTimeout(() => {
           this.getClientTag(this.clientInfo.client_type_id as number)
-          console.log(this.clientTagList)
+          // console.log(this.clientTagList)
           this.clientTagList.forEach((item: any) => {
             const finded = this.clientInfo.rel_tag_data.find((itemFind: any) => itemFind.id === item.value)
-            console.log(finded)
+            // console.log(finded)
             if (finded) {
               item.check = true
             }

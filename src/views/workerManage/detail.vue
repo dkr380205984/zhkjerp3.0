@@ -274,6 +274,7 @@
           <el-table-column label="次品原因" width="120">
             <template slot-scope="scope">
               <el-tooltip
+                v-if="scope.row.shoddy_reason"
                 class="item"
                 effect="dark"
                 :content="scope.row.shoddy_reason || '无次品原因'"
@@ -281,6 +282,7 @@
               >
                 <span class="blue" style="cursor: pointer">查看</span>
               </el-tooltip>
+              <div v-else>无</div>
             </template>
           </el-table-column>
           <el-table-column prop="total_price" label="结算总价(元)" width="120"> </el-table-column>
@@ -368,7 +370,12 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="borderBtn" @click="$router.push('/workerManage/list?page=1&keyword=&department=&status=&type=&limit=10')">返回</div>
+          <div
+            class="borderBtn"
+            @click="$router.push('/workerManage/list?page=1&keyword=&department=&status=&type=&limit=10')"
+          >
+            返回
+          </div>
           <div class="btn backHoverRed" @click="deleteWorker">
             <svg class="iconFont" aria-hidden="true">
               <use xlink:href="#icon-shanchudingdan"></use>

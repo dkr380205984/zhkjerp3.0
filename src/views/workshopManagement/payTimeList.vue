@@ -34,6 +34,7 @@
               :options="processList"
               @change="changeRouter"
               :show-all-levels="false"
+              filterable
               placeholder="工序筛选"
               clearable
             ></el-cascader>
@@ -63,7 +64,14 @@
           </div>
           <div class="btn borderBtn" @click="reset">重置</div>
         </div>
-        <div style="overflow: hidden">
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-select v-model="limit" placeholder="每页展示条数" @change="changeRouter">
+              <el-option label="每页10条" :value="10"> </el-option>
+              <el-option label="每页15条" :value="15"> </el-option>
+              <el-option label="每页20条" :value="20"> </el-option>
+            </el-select>
+          </div>
           <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(1)">计件更新（按订单）</div>
           <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(2)">计件更新（按员工）</div>
           <div
@@ -167,7 +175,7 @@
                     >
                       <span class="blue" style="cursor: pointer">查看</span>
                     </el-tooltip>
-                    <div v-else style="color:rgba(0, 0, 0, 0.25)">无</div>
+                    <div v-else style="color: rgba(0, 0, 0, 0.25)">无</div>
                   </template>
                 </el-table-column>
                 <el-table-column prop="total_price" label="结算总价(元)" width="120"> </el-table-column>

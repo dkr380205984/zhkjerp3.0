@@ -1,4 +1,5 @@
 export interface LoginInfo {
+  sms_code?: string
   user_name: string
   password: string
 }
