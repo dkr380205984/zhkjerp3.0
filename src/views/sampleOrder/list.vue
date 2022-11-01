@@ -442,7 +442,7 @@ export default Vue.extend({
           is_urgent: true
         },
         {
-          key: 'code',
+          key: 'time_code',
           name: '样单号',
           ifShow: true,
           ifLock: true,
@@ -568,14 +568,14 @@ export default Vue.extend({
           name: '详情',
           class: 'hoverBlue',
           fn: (item: any) => {
-            this.$router.push('/sampleOrder/detail?id=' + item.id)
+            this.$router.push('/sampleOrder/detail?id=' + item.order_id)
           }
         },
         {
           name: '修改',
           class: 'hoverOrange',
           fn: (item: any) => {
-            this.$router.push('/sampleOrder/update?id=' + item.id)
+            this.$router.push('/sampleOrder/update?id=' + item.order_id)
           }
         },
         {
@@ -769,7 +769,7 @@ export default Vue.extend({
     getList() {
       this.loading = true
       sampleOrder
-        .list({
+        .timeList({
           keyword: this.keyword,
           client_id: this.client_id.length > 0 ? this.client_id[2] : '',
           page: this.page,
