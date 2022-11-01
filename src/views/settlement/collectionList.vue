@@ -467,10 +467,13 @@ export default Vue.extend({
         this.$downloadExcel(
           [],
           [
-            { title: '开票单位(必填，简称)', key: 'client_zh' },
+            { title: '客户/单位名称(必填，系统简称)', key: 'client_zh' },
             { title: '关联单号(选填)', key: 'doc_code' },
-            { title: '开票号码(必填)', key: 'invoice_code' },
-            { title: '开票金额(必填)', key: 'price' },
+            { title: '发票代码(选填)', key: 'invoice_number' },
+            { title: '发票号码(选填)', key: 'invoice_code' },
+            { title: '发票类型(默认专票)', key: 'type' },
+            { title: '税率(必填)', key: 'tax_rate' },
+            { title: '开票金额(税价合计，必填)', key: 'price' },
             { title: '备注信息(选填)', key: 'desc' }
           ],
           type
@@ -547,10 +550,13 @@ export default Vue.extend({
       if (type === '开票单据') {
         typeObj = {
           doc_code: ['关联单号(选填)', ''],
-          client_zh: ['开票单位(必填)'],
-          price: ['开票金额(必填)'],
+          client_zh: ['客户/单位名称(必填，系统简称)'],
+          invoice_number: ['发票代码(选填)',''],
+          invoice_code: ['发票号码(选填)',''],
+          type: ['发票类型(默认专票)','专票'],
+          tax_rate: ['税率(必填)'],
+          price: ['开票金额(税价合计，必填)'],
           desc: ['备注信息(选填)', ''],
-          invoice_code: ['开票号码(必填)']
         }
       } else if (type === '收款单据') {
         typeObj = {

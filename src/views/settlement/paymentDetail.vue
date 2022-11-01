@@ -29,31 +29,152 @@
             <div class="text">{{ clientFinancial.client_type_name }}</div>
           </div>
         </div>
-        <div class="row" v-for="(item, index) in clientFinancial.contacts_data" :key="item.id">
-          <div class="col specialInfo">
-            <div class="label" v-if="index === 0">联系人信息</div>
-            <div class="info">
-              <div class="row" style="margin: 0">
-                <div class="col flex3">
-                  <div class="label">姓名：</div>
-                  <div class="text">{{ item.name }}</div>
-                </div>
-                <div class="col flex3">
-                  <div class="label">电话：</div>
-                  <div class="text">{{ item.phone }}</div>
-                </div>
-                <div class="col">
-                  <div class="label">职务：</div>
-                  <div class="text">{{ item.station }}</div>
-                </div>
-                <div class="col">
-                  <div class="label">邮箱：</div>
-                  <div class="text">{{ item.email }}</div>
+        <div v-for="(item,index) in clientFinancial.contacts_data"
+            :key="item.id">
+          <div class="row" v-if="index<=1">
+            <div class="col specialInfo">
+              <div class="label"
+                v-if="index===0">联系人信息</div>
+              <div class="info">
+                <div class="row"
+                  style="margin:0">
+                  <div class="col flex3">
+                    <div class="label">姓名：</div>
+                    <div class="text">{{item.name}}</div>
+                  </div>
+                  <div class="col flex3">
+                    <div class="label">电话：</div>
+                    <div class="text">{{item.phone}}</div>
+                  </div>
+                  <div class="col">
+                    <div class="label">职务：</div>
+                    <div class="text">{{item.station}}</div>
+                  </div>
+                  <div class="col">
+                    <div class="label">邮箱：</div>
+                    <div class="text">{{item.email}}</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <zh-drop-down :buttonStyle="'padding:20px'"
+          v-if="clientFinancial.contacts_data.length > 2"
+          position="bottom"
+          :show="showContacts"
+          hideTitle="展开">
+          <div v-for="(item,index) in clientFinancial.contacts_data"
+            :key="item.id">
+            <div class="row" v-if="index>1" :style="index === 2?'margin-top:0':''">
+              <div class="col specialInfo">
+                <div class="info">
+                  <div class="row"
+                    v-if="index > 1"
+                    style="margin:0">
+                    <div class="col flex3">
+                      <div class="label">姓名：</div>
+                      <div class="text">{{item.name}}</div>
+                    </div>
+                    <div class="col flex3">
+                      <div class="label">电话：</div>
+                      <div class="text">{{item.phone}}</div>
+                    </div>
+                    <div class="col">
+                      <div class="label">职务：</div>
+                      <div class="text">{{item.station}}</div>
+                    </div>
+                    <div class="col">
+                      <div class="label">邮箱：</div>
+                      <div class="text">{{item.email}}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </zh-drop-down>
+        <div v-for="(item,index) in clientFinancial.financial_data"
+            :key="item.id">
+          <div class="row" v-if="index<=1">
+            <div class="col specialInfo">
+              <div class="label"
+                v-if="index===0">财务信息</div>
+              <div class="info">
+                <div class="row"
+                  style="margin:0">
+                  <div class="col flex3">
+                    <div class="label">户名：</div>
+                    <div class="text">{{item.account}}</div>
+                  </div>
+                  <div class="col flex3">
+                    <div class="label">纳税识别号：</div>
+                    <div class="text">{{item.tax_number}}</div>
+                  </div>
+                  <div class="col flex3">
+                    <div class="label">电话：</div>
+                    <div class="text">{{item.phone}}</div>
+                  </div>
+                  <div class="col">
+                    <div class="label">开户行：</div>
+                    <div class="text">{{item.bank}}</div>
+                  </div>
+                  <div class="col">
+                    <div class="label">账号：</div>
+                    <div class="text">{{item.bank_number}}</div>
+                  </div>
+                  <div class="col">
+                    <div class="label">备注：</div>
+                    <div class="text">{{item.desc}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <zh-drop-down :buttonStyle="'padding:20px'"
+          v-if="clientFinancial.financial_data.length > 2"
+          position="bottom"
+          :show="showContacts"
+          hideTitle="展开">
+          <div v-for="(item,index) in clientFinancial.financial_data"
+            :key="item.id">
+            <div class="row" v-if="index>1" :style="index === 2?'margin-top:0':''">
+              <div class="col specialInfo">
+                <div class="info">
+                  <div class="row"
+                    v-if="index > 1"
+                    style="margin:0">
+                    <div class="col flex3">
+                      <div class="label">户名：</div>
+                      <div class="text">{{item.account}}</div>
+                    </div>
+                    <div class="col flex3">
+                      <div class="label">纳税识别号：</div>
+                      <div class="text">{{item.tax_number}}</div>
+                    </div>
+                    <div class="col flex3">
+                      <div class="label">电话：</div>
+                      <div class="text">{{item.phone}}</div>
+                    </div>
+                    <div class="col">
+                      <div class="label">开户行：</div>
+                      <div class="text">{{item.bank}}</div>
+                    </div>
+                    <div class="col">
+                      <div class="label">账号：</div>
+                      <div class="text">{{item.bank_number}}</div>
+                    </div>
+                    <div class="col">
+                      <div class="label">备注：</div>
+                      <div class="text">{{item.desc}}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </zh-drop-down>
       </div>
     </div>
     <div class="module" id="统计报表">
@@ -3957,6 +4078,10 @@
           <div class="btn backHoverGreen" @click="getAssociatedPage">查看其他关联单据</div>
         </div>
         <div class="btnCtn">
+          <span class="btn backHoverBlue"
+            @click="$router.push('/client/update?id='+$route.query.id+'&type=2')">修改单位信息</span>
+        </div>
+        <div class="btnCtn">
           <div class="borderBtn" @click="$router.go(-1)">返回</div>
           <div class="btn backHoverGreen" @click="goUrl">导出数据表报</div>
         </div>
@@ -4226,6 +4351,7 @@ export default Vue.extend({
         client_type_name: '',
         alias: '',
         contacts_data: [],
+        financial_data: [],
         sup: {
           number: 0,
           price: 0
@@ -4272,6 +4398,7 @@ export default Vue.extend({
         ]
       },
       checkAll: false,
+      showContacts: false,
       year: new Date().getFullYear().toString(),
       listPage: 1,
       listTotal: 1,
