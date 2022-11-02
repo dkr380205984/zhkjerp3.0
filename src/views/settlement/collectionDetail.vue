@@ -548,12 +548,12 @@
             </div>
           </div>
           <div class="row">
-            <div class="col">合计：</div>
-            <div class="col"></div>
-            <div class="col green bold">{{invoiceTotalPrice}}万元</div>
-            <div class="col"></div>
-            <div class="col"></div>
-            <div class="col"></div>
+            <div class="col">合计开票金额：</div>
+            <div class="col green bold">{{ invoiceTotalPrice }}万元</div>
+            <div class="col">不含税金额合计：</div>
+            <div class="col green bold">{{ invoiceTotalNoTaxPrice }}万元</div>
+            <div class="col">税额合计：</div>
+            <div class="col green bold">{{ invoiceTotalTaxPrice }}万元</div>
             <div class="col"></div>
             <div class="col"></div>
           </div>
@@ -888,6 +888,8 @@ export default Vue.extend({
       invoiceFlag: false,
       invoiceData: [],
       invoiceTotalPrice: 0,
+      invoiceTotalNoTaxPrice:0,
+      invoiceTotalTaxPrice:0,
       invoiceLog: [],
       invoiceTotal: 1,
       invoicePage: 1,
@@ -1390,6 +1392,8 @@ export default Vue.extend({
             this.invoiceLog = res.data.data.items
             this.invoiceTotal = res.data.data.total
             this.invoiceTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000, 3, true)
+            this.invoiceTotalNoTaxPrice = this.$toFixed(res.data.data.additional.total_price_no_tax / 10000, 3, true)
+            this.invoiceTotalTaxPrice = this.$toFixed(res.data.data.additional.total_price_tax / 10000, 3, true)
           }
           this.invoiceLoading = false
         })

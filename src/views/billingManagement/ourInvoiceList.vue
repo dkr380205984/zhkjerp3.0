@@ -262,6 +262,18 @@
               {{ $toFixed(additional.total_price / 10000, 3, true) }} 万元
             </span>
           </span>
+          <span style="line-height: 35px; margin-left: 40px"
+            >不含税金额合计：
+            <span style="font-weight: bold" class="green">
+              {{ $toFixed(additional.total_price_no_tax / 10000, 3, true) }} 万元
+            </span>
+          </span>
+          <span style="line-height: 35px; margin-left: 40px"
+            >税额合计：
+            <span style="font-weight: bold" class="green">
+              {{ $toFixed(additional.total_price_tax / 10000, 3, true) }} 万元
+            </span>
+          </span>
         </div>
         <div class="pageCtn">
           <el-pagination

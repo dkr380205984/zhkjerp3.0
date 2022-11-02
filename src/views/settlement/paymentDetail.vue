@@ -4049,12 +4049,12 @@
             </div>
           </div>
           <div class="row">
-            <div class="col">合计：</div>
-            <div class="col"></div>
+            <div class="col">合计开票金额：</div>
             <div class="col green bold">{{ invoiceTotalPrice }}万元</div>
-            <div class="col"></div>
-            <div class="col"></div>
-            <div class="col"></div>
+            <div class="col">不含税金额合计：</div>
+            <div class="col green bold">{{ invoiceTotalNoTaxPrice }}万元</div>
+            <div class="col">税额合计：</div>
+            <div class="col green bold">{{ invoiceTotalTaxPrice }}万元</div>
             <div class="col"></div>
             <div class="col"></div>
           </div>
@@ -4149,7 +4149,7 @@
     ></product-detail>
     <!-- 批量修改结算单价功能 -->
     <div class="popup" id="updatePrice" v-show="updatePriceFlag">
-      <div class="main">
+      <div class="main" style="width:1200px">
         <div class="titleCtn">
           <span class="text">批量修改结算单价</span>
           <div class="closeCtn" @click="updatePriceFlag = false">
@@ -4225,6 +4225,7 @@
                       <div class="tcol">订购总数</div>
                       <div class="tcol">已结算单价</div>
                       <div class="tcol">修改结算单价</div>
+                      <div class="tcol" v-if="$route.query.type === '纱线原料单位' || $route.query.type === '面料原料单位'">操作</div>
                     </div>
                   </div>
                 </div>
@@ -4249,6 +4250,10 @@
                         <div class="elCtn">
                           <el-input placeholder="单价" v-model="itemChild.new_settle_price"></el-input>
                         </div>
+                      </div>
+                      <div class="tcol" v-if="$route.query.type === '纱线原料单位' || $route.query.type === '面料原料单位'">
+                        <span class="btn backHoverBlue" style="padding: 0 8px;" @click="updatePriceFlag = false
+                        searchAboutList(item.created_at,itemChild.material_name)">查询关联单据</span>
                       </div>
                     </div>
                   </div>
@@ -4317,6 +4322,8 @@ export default Vue.extend({
       invoiceFlag: false,
       invoiceData: [],
       invoiceTotalPrice: 0,
+      invoiceTotalNoTaxPrice:0,
+      invoiceTotalTaxPrice:0,
       invoiceLog: [],
       invoiceTotal: 1,
       invoicePage: 1,
@@ -5271,6 +5278,11 @@ export default Vue.extend({
           }
         })
     },
+    searchAboutList(time:string,name:string){
+      this.materialOrderFilter.material_name = name
+      this.materialOrderFilter.date = [time,time]
+      this.getBill()
+    },
     // 获取不同的单据
     getBill(init?: 'init') {
       this.listLoading = true
@@ -5638,6 +5650,8 @@ export default Vue.extend({
             this.invoiceLog = res.data.data.items
             this.invoiceTotal = res.data.data.total
             this.invoiceTotalPrice = this.$toFixed(res.data.data.additional.total_price / 10000, 3, true)
+            this.invoiceTotalNoTaxPrice = this.$toFixed(res.data.data.additional.total_price_no_tax / 10000, 3, true)
+            this.invoiceTotalTaxPrice = this.$toFixed(res.data.data.additional.total_price_tax / 10000, 3, true)
           }
           this.invoiceLoading = false
         })
