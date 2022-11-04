@@ -98,7 +98,6 @@
           style="font-size:14px">
           <div class="row title">
             <div class="col">公司简称</div>
-            <div class="col">公司全称</div>
             <div class="col">客户类型</div>
             <div class="col">计划总额
               <div class="sortCtn">
@@ -170,13 +169,13 @@
                   @click="sortCol='total_deduct_price';sort='desc';getList()"></div>
               </div>
             </div>
+            <div class="col">待付款金额</div>
             <div class="col">操作</div>
           </div>
           <div class="row"
             v-for="item in list"
             :key="item.id">
             <div class="col">{{item.name}}</div>
-            <div class="col">{{item.alias}}</div>
             <div class="col">{{item.client_type_name}}</div>
             <div class="col">{{$toFixed(item.total_plan_price,3,true)}}万元</div>
             <div class="col">
@@ -217,6 +216,7 @@
             <div class="col">{{$toFixed(item.total_invoice_price,3,true)}}万元</div>
             <div class="col">{{$toFixed(item.total_pay_price,3,true)}}万元</div>
             <div class="col">{{$toFixed(item.total_deduct_price,3,true)}}万元</div>
+            <div class="col">{{$toFixed((item.total_real_price - item.total_pay_price - item.total_deduct_price),3,true)}}万元</div>
             <div class="col oprCtn">
               <span class="opr hoverBlue"
                 @click="$router.push('/settlement/paymentDetail?id='+item.id + '&type=' + item.client_type_name)">详情</span>
@@ -224,7 +224,6 @@
           </div>
           <div class="row">
             <div class="col green">合计：</div>
-            <div class="col"></div>
             <div class="col"></div>
             <div class="col green bold">{{$toFixed(totalData.total_plan_price/10000,3,true)}}万元</div>
             <div class="col green bold">
@@ -267,6 +266,7 @@
             <div class="col green bold">{{$toFixed(totalData.total_invoice_price,3,true)}}万元</div>
             <div class="col green bold">{{$toFixed(totalData.total_pay_price,3,true)}}万元</div>
             <div class="col green bold">{{$toFixed(totalData.total_deduct_price,3,true)}}万元</div>
+            <div class="col green bold">{{$toFixed(((totalData.total_real_price/10000) - totalData.total_pay_price - totalData.total_deduct_price),3,true)}}万元</div>
             <div class="col"></div>
           </div>
         </div>
