@@ -1066,7 +1066,7 @@ export default Vue.extend({
             // @ts-ignore
             this.processList.find((item) => {
               return item.children.find((itemFind: any) => {
-                return itemFind.value === itemChild.process_name
+                return itemFind.value === itemChild.process_name || itemFind.label===itemChild.process_name
               })
             }).value,
             // @ts-ignore
