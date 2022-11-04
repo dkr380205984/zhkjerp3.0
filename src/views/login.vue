@@ -289,11 +289,12 @@ export default Vue.extend({
       if(this.newClient.sms_code){
         this.loginInfo.sms_code = this.newClient.sms_code
       }
+      let lastActive:any = window.localStorage.getItem('lastActive')
+      console.log(lastActive)
       login(this.loginInfo).then((res) => {
         if (res.data.code === 200) {
-          let lastActive = window.localStorage.getItem('lastActive')
-          // @ts-ignore 当他的活跃日期为空的时候以及他的活跃日期大于60天，进行验证码发送
-          if (this.loginInfo.sms_code || (this.$getDataType(lastActive) !== 'Null' && this.$diffByDate(lastActive) < 60)) {
+          // 当他的活跃日期为空的时候以及他的活跃日期大于60天，进行验证码发送
+          if (this.loginInfo.sms_code || (this.$getDataType(lastActive) !== 'Null' && lastActive !== '' && this.$diffByDate(lastActive) > -60)) {
             // window.sessionStorage.setItem('token', res.data.data.access_token)
             // window.sessionStorage.setItem('token_type', res.data.data.token_type)
             getAuthorization().then((res) => {
@@ -330,6 +331,7 @@ export default Vue.extend({
               })
             })
           } else {
+            window.localStorage.setItem('lastActive','')
             this.showNewClient = true
           }
         } else {

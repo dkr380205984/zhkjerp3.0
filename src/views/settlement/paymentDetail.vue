@@ -29,12 +29,11 @@
             <div class="text">{{ clientFinancial.client_type_name }}</div>
           </div>
         </div>
+        <div class="label">联系人信息</div>
         <div v-for="(item,index) in clientFinancial.contacts_data"
             :key="item.id">
           <div class="row" v-if="index<=1">
             <div class="col specialInfo">
-              <div class="label"
-                v-if="index===0">联系人信息</div>
               <div class="info">
                 <div class="row"
                   style="margin:0">
@@ -94,12 +93,11 @@
             </div>
           </div>
         </zh-drop-down>
+        <div class="label">财务信息</div>
         <div v-for="(item,index) in clientFinancial.financial_data"
             :key="item.id">
           <div class="row" v-if="index<=1">
             <div class="col specialInfo">
-              <div class="label"
-                v-if="index===0">财务信息</div>
               <div class="info">
                 <div class="row"
                   style="margin:0">
@@ -4009,21 +4007,25 @@
             <div class="col">票据编号</div>
             <div class="col">关联单号</div>
             <div class="col">开票金额</div>
+            <div class="col">不含税金额</div>
+            <div class="col">税额</div>
             <div class="col">开票号码</div>
             <div class="col">备注信息</div>
             <div class="col">开票人</div>
             <div class="col">开票日期</div>
-            <div class="col">操作</div>
+            <div class="col" style="flex:1.1">操作</div>
           </div>
           <div class="row" v-for="item in invoiceLog" :key="item.id">
             <div class="col">{{ item.code }}</div>
             <div class="col">{{ item.rel_doc_code || '未关联' }}</div>
             <div class="col">{{ $toFixed(item.price, 3, true) }}元</div>
+            <div class="col">{{ $toFixed(item.price_no_tax, 3, true) }}元</div>
+            <div class="col">{{ $toFixed(item.price_tax, 3, true) }}元</div>
             <div class="col">{{ item.invoice_code }}</div>
             <div class="col">{{ item.desc }}</div>
             <div class="col">{{ item.user_name }}</div>
             <div class="col">{{ item.created_at }}</div>
-            <div class="col oprCtn">
+            <div class="col oprCtn" style="flex:1.1">
               <span
                 class="opr blue"
                 @click="
@@ -4049,14 +4051,16 @@
             </div>
           </div>
           <div class="row">
-            <div class="col">合计开票金额：</div>
+            <div class="col">合计：</div>
+            <div class="col"></div>
             <div class="col green bold">{{ invoiceTotalPrice }}万元</div>
-            <div class="col">不含税金额合计：</div>
             <div class="col green bold">{{ invoiceTotalNoTaxPrice }}万元</div>
-            <div class="col">税额合计：</div>
             <div class="col green bold">{{ invoiceTotalTaxPrice }}万元</div>
             <div class="col"></div>
             <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col" style="flex:1.1"></div>
           </div>
         </div>
         <div class="pageCtn">

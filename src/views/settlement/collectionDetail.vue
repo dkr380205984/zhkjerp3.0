@@ -31,12 +31,11 @@
             <div class="text">{{clientFinancial.client_type_name}}</div>
           </div>
         </div>
+        <div class="label">联系人信息</div>
         <div v-for="(item,index) in clientFinancial.contacts_data"
             :key="item.id">
           <div class="row" v-if="index<=1">
             <div class="col specialInfo">
-              <div class="label"
-                v-if="index===0">联系人信息</div>
               <div class="info">
                 <div class="row"
                   style="margin:0">
@@ -96,12 +95,11 @@
             </div>
           </div>
         </zh-drop-down>
+        <div class="label">财务信息</div>
         <div v-for="(item,index) in clientFinancial.financial_data"
             :key="item.id">
           <div class="row" v-if="index<=1">
             <div class="col specialInfo">
-              <div class="label"
-                v-if="index===0">财务信息</div>
               <div class="info">
                 <div class="row"
                   style="margin:0">

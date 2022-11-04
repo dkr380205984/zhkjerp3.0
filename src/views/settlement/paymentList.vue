@@ -216,7 +216,7 @@
             <div class="col">{{$toFixed(item.total_invoice_price,3,true)}}万元</div>
             <div class="col">{{$toFixed(item.total_pay_price,3,true)}}万元</div>
             <div class="col">{{$toFixed(item.total_deduct_price,3,true)}}万元</div>
-            <div class="col">{{$toFixed((item.total_real_price - item.total_pay_price - item.total_deduct_price),3,true)}}万元</div>
+            <div class="col">{{$toFixed((item.total_real_price - item.total_pay_price - item.total_deduct_price),3)}}万元</div>
             <div class="col oprCtn">
               <span class="opr hoverBlue"
                 @click="$router.push('/settlement/paymentDetail?id='+item.id + '&type=' + item.client_type_name)">详情</span>

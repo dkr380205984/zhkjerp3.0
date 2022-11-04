@@ -91,6 +91,8 @@
             <div class="col">关联订单号</div>
             <div class="col">关联单位</div>
             <div class="col">开票金额</div>
+            <div class="col">不含税金额</div>
+            <div class="col">税额</div>
             <div class="col">发票号码</div>
             <div class="col">备注信息</div>
             <div class="col">操作人</div>
@@ -129,6 +131,8 @@
               </div>
               <div class="col">{{ item.client.name }}</div>
               <div class="col">{{ $toFixed(item.price, 3, true) }}</div>
+              <div class="col">{{ $toFixed(item.price_no_tax, 3, true) }}元</div>
+              <div class="col">{{ $toFixed(item.price_tax, 3, true) }}元</div>
               <div class="col">{{ item.invoice_code }}</div>
               <div
                 class="col"
