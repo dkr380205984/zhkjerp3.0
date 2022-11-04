@@ -517,6 +517,8 @@
             <div class="col">票据编号</div>
             <div class="col">关联单号</div>
             <div class="col">开票金额</div>
+            <div class="col">不含税金额</div>
+            <div class="col">税额</div>
             <div class="col">开票号码</div>
             <div class="col">备注信息</div>
             <div class="col">开票人</div>
@@ -532,6 +534,8 @@
               :class="{'blue':item.order_id||item.rel_doc_id,'gray':!item.order_id&&!item.rel_doc_id}"
               @click="goOrderUrl(item)">{{item.order_id||item.rel_doc_id?(item.order_code||item.rel_doc_code||'无编号'):'未关联单据'}}</div>
             <div class="col">{{$toFixed(item.price,3,true)}}元</div>
+            <div class="col">{{ $toFixed(item.price_no_tax, 3, true) }}元</div>
+            <div class="col">{{ $toFixed(item.price_tax, 3, true) }}元</div>
             <div class="col">{{item.invoice_code}}</div>
             <div class="col">{{item.desc}}</div>
             <div class="col">{{item.user_name}}</div>
@@ -546,14 +550,16 @@
             </div>
           </div>
           <div class="row">
-            <div class="col">合计开票金额：</div>
+            <div class="col">合计：</div>
+            <div class="col"></div>
             <div class="col green bold">{{ invoiceTotalPrice }}万元</div>
-            <div class="col">不含税金额合计：</div>
             <div class="col green bold">{{ invoiceTotalNoTaxPrice }}万元</div>
-            <div class="col">税额合计：</div>
             <div class="col green bold">{{ invoiceTotalTaxPrice }}万元</div>
             <div class="col"></div>
             <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col" style="flex:1.1"></div>
           </div>
         </div>
         <div class="pageCtn">
