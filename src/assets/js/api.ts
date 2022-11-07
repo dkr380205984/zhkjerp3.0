@@ -617,6 +617,7 @@ const sampleOrder = {
   create: (params: SampleOrderInfo) => http.post(`${baseUrl}/order/save`, params, 'application/json'),
   list: (params?: ListParams) => http.get(`${baseUrl}/order/lists`, params),
   timeList: (params?: ListParams) => http.get(`${baseUrl}/order/time/lists`, params), // 根据time_data查询的列表
+  timeDelete: (params: DeleteParams) => http.post(`${baseUrl}/order/time/delete`, params, 'application/json'),
   detail: (params: DetailParams) => http.get(`${baseUrl}/order/detail`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/order/delete`, params, 'application/json'),
   confirm: (params: { id: string | number, status: 1 | 2 | 3 | 4 | 5 | 6 }) => http.post(`${baseUrl}/order/product/confirm`, params, 'application/json'),
