@@ -290,11 +290,10 @@ export default Vue.extend({
         this.loginInfo.sms_code = this.newClient.sms_code
       }
       let lastActive:any = window.localStorage.getItem('lastActive')
-      console.log(lastActive)
       login(this.loginInfo).then((res) => {
         if (res.data.code === 200) {
           // 当他的活跃日期为空的时候以及他的活跃日期大于60天，进行验证码发送
-          if (this.loginInfo.sms_code || true || (this.$getDataType(lastActive) !== 'Null' && lastActive !== '' && this.$diffByDate(lastActive) > -60)) {
+          if (this.loginInfo.sms_code || (this.$getDataType(lastActive) !== 'Null' && lastActive !== '' && this.$diffByDate(lastActive) > -60)) {
             // window.sessionStorage.setItem('token', res.data.data.access_token)
             // window.sessionStorage.setItem('token_type', res.data.data.token_type)
             getAuthorization().then((res) => {
