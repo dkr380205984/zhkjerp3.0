@@ -582,31 +582,31 @@ export default Vue.extend({
     // @ts-ignore
     window.Pusher = Pusher
     // @ts-ignore
-    window.Echo = new Echo({
-      client: new Pusher('9df11d97766e328a79c4', {
-        wsHost: window.location.hostname,
-        wsPort: 6002,
-        wssPort: 6002,
-        forceTLS: document.location.protocol === 'https:' ? true : false,
-        disableStats: true,
-        enabledTransports: ['ws', 'wss']
-      }),
-      broadcaster: 'pusher'
-    })
-    // @ts-ignore
-    window.Echo.channel(`knit_server_` + this.$getsessionStorage('user_id')).listen('.knit_server_event', (e: any) => {
-      const ev = e.content
-      // console.log(e)
-      vue.$notify({
-        title: ev.content,
-        dangerouslyUseHTMLString: true,
-        duration: 0,
-        message: vue.changeContentToHtml(ev.content),
-        onClick: () => {
-          this.todoUrl(ev)
-        }
-      })
-    })
+    // window.Echo = new Echo({
+    //   client: new Pusher('9df11d97766e328a79c4', {
+    //     wsHost: window.location.hostname,
+    //     wsPort: 6002,
+    //     wssPort: 6002,
+    //     forceTLS: document.location.protocol === 'https:' ? true : false,
+    //     disableStats: true,
+    //     enabledTransports: ['ws', 'wss']
+    //   }),
+    //   broadcaster: 'pusher'
+    // })
+    // // @ts-ignore
+    // window.Echo.channel(`knit_server_` + this.$getsessionStorage('user_id')).listen('.knit_server_event', (e: any) => {
+    //   const ev = e.content
+    //   // console.log(e)
+    //   vue.$notify({
+    //     title: ev.content,
+    //     dangerouslyUseHTMLString: true,
+    //     duration: 0,
+    //     message: vue.changeContentToHtml(ev.content),
+    //     onClick: () => {
+    //       this.todoUrl(ev)
+    //     }
+    //   })
+    // })
   },
   beforeDestroy() {
     window.removeEventListener('keydown', this.smqListener, false)

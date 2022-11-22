@@ -665,6 +665,107 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="module">
+      <div class="titleCtn">
+        <div class="title">图像仿真</div>
+      </div>
+      <div class="detailCtn">
+        <div class="row">
+          <div class="col">
+            <div class="label">仿真类型：</div>
+            <div>
+              <el-switch v-model="craftFlag"
+                active-text="纱线模拟仿真(试用版)"
+                inactive-text="像素格仿真(普通版)">
+              </el-switch>
+              <el-tooltip class="item"
+                effect="dark"
+                :content="'利用模拟纱线数据进行仿真，仿真效果更真实。模拟时间一般在2-5分钟，请耐心等待，请不要中途关闭浏览器。'"
+                placement="top">
+                <i class="el-icon-question"
+                  style="margin-left:12px"></i>
+              </el-tooltip>
+            </div>
+          </div>
+        </div>
+        <div class="row"
+          v-if="craftFlag">
+          <div class="col">
+            <div class="label">纱线选择：
+              <span style="float:left">
+                <el-tooltip class="item"
+                  effect="dark"
+                  content="设置成功后请点击此按钮刷新数据"
+                  placement="top">
+                  <i class="el-icon-refresh hoverGreen fr"
+                    style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                    @click="getCraftList"></i>
+                </el-tooltip>
+                <el-tooltip class="item"
+                  effect="dark"
+                  content="新增纱线模拟"
+                  placement="top">
+                  <i class="el-icon-upload hoverOrange fr"
+                    style="line-height:38px;font-size:18px;cursor:pointer;"
+                    @click="$openUrl('/setting/?pName=工艺单设置&cName=纱线模拟')"></i>
+                </el-tooltip>
+              </span>
+            </div>
+            <div class="lineCtn">
+              <div class="line">
+                <span style="margin-right:12px">经向纱线模拟</span>
+                <span class="gray"
+                  v-if="!craftYarnWarp.id">默认参数：纱线直径4格(约1.2mm)；不需要捻；只需要毛羽，密度20%</span>
+                <span class="orange"
+                  v-if="craftYarnWarp.id">已选{{craftYarnWarp.name}}纱线：纱线直径{{craftYarnWarp.diameter}}格(约：{{$toFixed(craftYarnWarp.diameter*0.3)}}mm)；{{craftYarnWarp.twist_flag===0?'不需要捻':
+                    (craftYarnWarp.twist_thickness===2?'捻较细':craftYarnWarp.twist_thickness===4?'捻中等':'捻较粗') + '，' + 
+                    (craftYarnWarp.twist_number===10?'比较稀疏':craftYarnWarp.twist_number===16?'中等密集':'非常密集') + '，' +
+                    ['','角度1','角度2','角度3','角度4'] [craftYarnWarp.twist_angle]}}； {{['不需要','只需要边','只需要毛羽','只需要圈圈','需要圈圈和毛羽'][craftYarnWarp.hairiness_flag] + '，密度：' + craftYarnWarp.hairiness_density + '%'}}</span>
+                <span class="blue"
+                  style="margin-left:12px;cursor:pointer"
+                  @click="craftYarnFlag = 'Warp'">(点击选择纱线)</span>
+              </div>
+              <div class="line">
+                <span style="margin-right:12px">纬向纱线模拟</span>
+                <span class="gray"
+                  v-if="!craftYarnWeft.id">默认参数：纱线直径4格(约1.2mm)；不需要捻；只需要毛羽，密度20%</span>
+                <span class="orange"
+                  v-if="craftYarnWeft.id">已选{{craftYarnWeft.name}}纱线：纱线直径{{craftYarnWeft.diameter}}格(约：{{$toFixed(craftYarnWeft.diameter*0.3)}}mm)；{{craftYarnWeft.twist_flag===0?'不需要捻':
+                    (craftYarnWeft.twist_thickness===2?'捻较细':craftYarnWeft.twist_thickness===4?'捻中等':'捻较粗') + '，' + 
+                    (craftYarnWeft.twist_number===10?'比较稀疏':craftYarnWeft.twist_number===16?'中等密集':'非常密集') + '，' +
+                    ['','角度1','角度2','角度3','角度4'] [craftYarnWeft.twist_angle]}}； {{['不需要','只需要边','只需要毛羽','只需要圈圈','需要圈圈和毛羽'][craftYarnWeft.hairiness_flag] + '，密度：' + craftYarnWeft.hairiness_density + '%'}}</span>
+                <span class="blue"
+                  style="margin-left:12px;cursor:pointer"
+                  @click="craftYarnFlag = 'Weft'">(点击选择纱线)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row"
+          v-if="craftFlag">
+          <div class="col">
+            <div class="label">毛羽朝向：</div>
+            <div class="btnList">
+              <div class="button"
+                @click="hairiness_direction=0"
+                :class="{'active':hairiness_direction===0}">默认</div>
+              <div class="button"
+                @click="hairiness_direction=1"
+                :class="{'active':hairiness_direction===1}">朝上</div>
+              <div class="button"
+                @click="hairiness_direction=2"
+                :class="{'active':hairiness_direction===2}">朝下</div>
+              <div class="button"
+                @click="hairiness_direction=3"
+                :class="{'active':hairiness_direction===3}">朝左</div>
+              <div class="button"
+                @click="hairiness_direction=4"
+                :class="{'active':hairiness_direction===4}">朝右</div>
+            </div>
+          </div>
+        </div>
         <div class="row">
           <div class="col">
             <div class="label">仿真图像：</div>
@@ -699,14 +800,14 @@
               </div>
               <canvas ref="myCanvas"
                 style="display:none"
-                width="2400"
+                :width="canvasWidth"
                 :height="canvasHeight"></canvas>
               <img ref="img"
                 @mousedown.prevent="showMagnifier=true"
                 @mousemove="enlargeImg($event)"
                 @mouseup="showMagnifier=false"
                 @mouseleave="showMagnifier=false"
-                :style="{'height':canvasHeight/4 + 'px'}"
+                :height="canvasHeight/canvasWidth*600"
                 :class="{'cursorMagnifier':showMagnifier}"
                 src="" />
               <canvas class="floatRightTop"
@@ -727,10 +828,9 @@
               </div>
               <canvas ref="myCanvasBack"
                 style="display:none"
-                width="2400"
+                :width="canvasWidth"
                 :height="canvasHeight"></canvas>
               <img ref="imgBack"
-                :style="{'height':canvasHeight/4 + 'px'}"
                 :class="{'cursorMagnifier':showMagnifier}"
                 src="" />
               <canvas class="floatRightTop"
@@ -827,6 +927,66 @@
       <img class="loadingImg"
         :src="require('@/assets/image/common/craft_loading2.gif')">
     </div>
+    <!-- 绑定仿真纱线 -->
+    <div class="popup"
+      v-show="craftYarnFlag">
+      <div class="main"
+        style="width:1000px">
+        <div class="titleCtn">
+          <span class="text">绑定仿真纱线</span>
+          <div class="closeCtn"
+            @click="craftYarnFlag=false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="listCtn">
+          <div class="filterCtn clearfix">
+          </div>
+          <div class="list">
+            <div class="row title">
+              <div class="col">模拟名称</div>
+              <div class="col">纱线直径</div>
+              <div class="col">纱线捻信息</div>
+              <div class="col">纱线边信息</div>
+              <div class="col">模拟参考图</div>
+              <div class="col">操作</div>
+            </div>
+            <div class="row"
+              v-for="item in craftList"
+              :key="item.id">
+              <div class="col">{{item.name}}</div>
+              <div class="col">{{item.diameter}}格</div>
+              <div class="col">{{item.twist_flag===0?'不需要':
+                    (item.twist_thickness===2?'较细':item.twist_thickness===4?'中等粗细':'较粗') + ',' + 
+                    (item.twist_number===10?'比较稀疏':item.twist_number===16?'中等密集':'非常密集') + ',' +
+                    ['','角度1','角度2','角度3','角度4'] [item.twist_angle]
+                  }}</div>
+              <div class="col">
+                {{['不需要','只需要边','只需要毛羽','只需要圈圈','需要圈圈和毛羽'][item.hairiness_flag] + ',密度：' + item.hairiness_density + '%'}}
+              </div>
+              <div class="col">
+                <el-image :style="{'height':item.diameter*10 + 'px'}"
+                  :src="item.image_url"
+                  fit="cover"></el-image>
+              </div>
+              <div class="col">
+                <span class="opr hoverBlue"
+                  @click="bindCraftYarn(item)">绑定</span>
+              </div>
+            </div>
+          </div>
+          <div class="pageCtn">
+            <el-pagination background
+              :page-size="5"
+              layout="prev, pager, next"
+              :total="craftTotal"
+              :current-page.sync="craftPage"
+              @current-change="getCraftList()">
+            </el-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script src="https://cdn.jsdelivr.net/npm/handsontable@7.3.0/dist/handsontable.full.min.js"></script>
@@ -839,9 +999,35 @@ interface WeftCanvas {
   color: number
   GL: string
 }
+interface LineData {
+  number: number
+  r: number
+  g: number
+  b: number
+  width?: number
+  height?: number
+}
+interface PointData {
+  width: number
+  height: number
+  rr: number
+  rg: number
+  rb: number
+  cr: number
+  cg: number
+  cb: number
+  type: string | number
+}
+
+interface DrawData {
+  r: number
+  g: number
+  b: number
+  type: 0 | 1 | 2 | 3 | 4 | 5
+}
 import Vue from 'vue'
 import { craft } from '@/assets/js/api'
-import { CraftInfo, GLReapeat, GLInfo } from '@/types/craft'
+import { CraftInfo, GLReapeat, GLInfo, CraftParameter } from '@/types/craft'
 import { ProductInfo } from '@/types/product'
 import { languages } from '@/assets/js/dictionary'
 import { HotTable } from '@handsontable/vue'
@@ -854,6 +1040,8 @@ export default Vue.extend({
     HotTable
   },
   data(): {
+    craftYarnWarp: CraftParameter
+    craftYarnWeft: CraftParameter
     completeGL: GLInfo[][][]
     craftInfo: CraftInfo
     productInfo: ProductInfo
@@ -866,6 +1054,43 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      craftFlag: true,
+      craftYarnIndex: 0,
+      craftYarnFlag: false,
+      craftYarnWarp: {
+        id: '',
+        image_url: '',
+        name: '',
+        diameter: 4,
+        twist_flag: 0,
+        twist_thickness: 4, // 捻粗细：下拉框选择密不密
+        twist_number: 10, // 捻数量：下拉框选择密不密
+        twist_angle: 1, // 捻角度：下拉框选择
+        hairiness_flag: 2, // 是否需要毛羽:0不需要，1.毛边 2.毛羽 3.圈圈
+        hairiness_length: 2, // 毛羽长度，下拉框
+        circle_number: 2,
+        hairiness_density: 20 // 毛羽密度，百分比
+      },
+      hairiness_direction: 0, // 毛羽朝向
+      craftYarnWeft: {
+        id: '',
+        image_url: '',
+        name: '',
+        diameter: 4,
+        twist_flag: 0,
+        twist_thickness: 4, // 捻粗细：下拉框选择密不密
+        twist_number: 10, // 捻数量：下拉框选择密不密
+        twist_angle: 1, // 捻角度：下拉框选择
+        hairiness_flag: 2, // 是否需要毛羽:0不需要，1.毛边 2.毛羽 3.圈圈
+        hairiness_length: 2, // 毛羽长度，下拉框
+        circle_number: 2,
+        hairiness_density: 20 // 毛羽密度，百分比
+      },
+      hairinessLengthArr: [],
+      circleNumberArr: [],
+      craftTotal: 1,
+      craftPage: 1,
+      craftList: [],
       tableData: { warp: {}, warpBack: {}, weft: {}, weftBack: {} },
       romanNum: ['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ', 'Ⅷ', 'Ⅸ', 'Ⅹ', 'Ⅺ', 'Ⅻ'],
       alphabet: [
@@ -1113,6 +1338,7 @@ export default Vue.extend({
           }
         ]
       },
+      canvasWidth: 0,
       canvasHeight: 0,
       GLRepeatXuhao: [],
       GLXuhao: [], // 纹版图循环重算序号
@@ -1125,10 +1351,43 @@ export default Vue.extend({
       showImageLoading: false,
       showGLFlag: false,
       GLYulan: [],
-      selectColour: -1 // 选择配色
+      selectColour: -1, // 选择配色
+      warpTable: [],
+      weftTable: [],
+      warpTableBack: [],
+      weftTableBack: [],
+      warpDistance: 1, // 经向缝隙
+      weftDistance: 1, // 纬向缝隙
+      draftMethodMatrix: [], // 新版结合穿宗法纹版图的01矩阵
+      rgbSide1: 0.96,
+      rgbSide2: 0.92,
+      rgbShadow: 0.85,
+      ctx: null,
+      dom: null,
+      ctxBack: null,
+      domBack: null
     }
   },
   methods: {
+    getCraftList() {
+      craft
+        .parameterList({
+          page: this.craftPage,
+          limit: 5
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.craftList = res.data.data.items
+            this.craftTotal = res.data.data.total
+          }
+        })
+    },
+    // 绑定纱线和仿真参数
+    bindCraftYarn(info: CraftParameter) {
+      this['craftYarn' + this.craftYarnFlag] = info
+      this.craftYarnFlag = false
+      this.$message.success('模拟纱线已绑定成功')
+    },
     deleteCraft() {
       this.$confirm('是否删除工艺单?', '提示', {
         confirmButtonText: '确定',
@@ -1477,27 +1736,19 @@ export default Vue.extend({
           }
         })
       })
-      // 高度计算
-      this.canvasHeight =
-        (Number(this.craftInfo.weft_data.neichang) /
-          (Number(this.craftInfo.calc_weight_way) === 1
-            ? Number(this.craftInfo.warp_data.reed_width)
-            : Number(this.craftInfo.weft_data.peifu))) *
-        600 *
-        4
 
       // 展开表格
-      const warpTable = this.getFlatTable(this.craftInfo.warp_data.warp_rank, 'warp')
-      const warpTableBack = this.getFlatTable(this.craftInfo.warp_data.warp_rank_back, 'warpBack')
-      const weftTable = this.getFlatTable(this.craftInfo.weft_data.weft_rank, 'weft')
-      const weftTableBack = this.getFlatTable(this.craftInfo.weft_data.weft_rank_back, 'weftBack')
+      this.warpTable = this.getFlatTable(this.craftInfo.warp_data.warp_rank, 'warp')
+      this.warpTableBack = this.getFlatTable(this.craftInfo.warp_data.warp_rank_back, 'warpBack')
+      this.weftTable = this.getFlatTable(this.craftInfo.weft_data.weft_rank, 'weft')
+      this.weftTableBack = this.getFlatTable(this.craftInfo.weft_data.weft_rank_back, 'weftBack')
 
       // 将展开的合并信息结合穿综和纹版信息
       let warpGetPMNum: any = []
       let weftGetGLNum: any = []
       let warpGetPMNumBack: any = []
       let weftGetGLNumBack: any = []
-      warpTable.forEach((item) => {
+      this.warpTable.forEach((item: any) => {
         let len = warpGetPMNum.length
         if (len > 0) {
           if (warpGetPMNum[len - 1].PM === item.GLorPM) {
@@ -1515,7 +1766,7 @@ export default Vue.extend({
           })
         }
       })
-      weftTable.forEach((item) => {
+      this.weftTable.forEach((item: any) => {
         let len = weftGetGLNum.length
         if (len > 0) {
           if (weftGetGLNum[len - 1].GL === item.GLorPM) {
@@ -1534,7 +1785,7 @@ export default Vue.extend({
         }
       })
 
-      warpTableBack.forEach((item) => {
+      this.warpTableBack.forEach((item: any) => {
         let len = warpGetPMNumBack.length
         if (len > 0) {
           if (warpGetPMNumBack[len - 1].PM === item.GLorPM) {
@@ -1552,7 +1803,7 @@ export default Vue.extend({
           })
         }
       })
-      weftTableBack.forEach((item) => {
+      this.weftTableBack.forEach((item: any) => {
         let len = weftGetGLNumBack.length
         if (len > 0) {
           if (weftGetGLNumBack[len - 1].GL === item.GLorPM) {
@@ -1674,7 +1925,7 @@ export default Vue.extend({
       let weftCanvas: WeftCanvas[] = []
       let warpCanvasBack: WarpCanvas[] = []
       let weftCanvasBack: WeftCanvas[] = []
-      warpTable.forEach((item) => {
+      this.warpTable.forEach((item: any) => {
         for (let i = 0; i < item.number; i++) {
           warpCanvas.push({
             color: item.jia,
@@ -1682,7 +1933,7 @@ export default Vue.extend({
           })
         }
       })
-      weftTable.forEach((item) => {
+      this.weftTable.forEach((item: any) => {
         for (let i = 0; i < item.number; i++) {
           weftCanvas.push({
             color: item.jia,
@@ -1690,7 +1941,7 @@ export default Vue.extend({
           })
         }
       })
-      warpTableBack.forEach((item) => {
+      this.warpTableBack.forEach((item: any) => {
         for (let i = 0; i < item.number; i++) {
           warpCanvasBack.push({
             color: item.jia,
@@ -1698,7 +1949,7 @@ export default Vue.extend({
           })
         }
       })
-      weftTableBack.forEach((item) => {
+      this.weftTableBack.forEach((item: any) => {
         for (let i = 0; i < item.number; i++) {
           weftCanvasBack.push({
             color: item.jia,
@@ -1716,90 +1967,115 @@ export default Vue.extend({
     getCanvas(colorId: number, index: number) {
       this.showImageLoading = true
       this.selectColour = colorId ? colorId : index
-      setTimeout(() => {
-        const warpColor = this.craftInfo.warp_data.color_data.find((item) => item.color_id === colorId)!.color_scheme
-        const weftColor = this.craftInfo.weft_data.color_data.find((item) => item.color_id === colorId)!.color_scheme
-        let canvasMatrix: { x: number; y: number; width: number; height: number; color: string }[] = []
-        let canvasMatrixBack: { x: number; y: number; width: number; height: number; color: string }[] = []
-        let warpCK: number[] = [] // 穿筘信息补全
-        this.craftInfo.warp_data.material_data.forEach((item) => {
-          if (item.material_id) {
-            item.apply.forEach((itemApply: any) => {
-              const finded = this.craftInfo.yarn_coefficient.find((itemFind) => itemFind.name === item.material_name)
-              warpCK[Number(itemApply)] =
-                finded && finded!.chuankou ? Number(finded!.chuankou) : Number(this.craftInfo.warp_data.reed_method)
-            })
-          }
-        })
-        // 经向平均长度
-        const warpWidthPJ =
-          (600 * 4) /
-          this.warpCanvas.reduce((total, cur) => {
-            return total + Number(warpCK[cur.color])
+      this.dom = this.$refs.myCanvas
+      this.ctx = this.dom.getContext('2d')
+      this.domBack = this.$refs.myCanvasBack
+      this.ctxBack = this.domBack.getContext('2d')
+      // 初始化新版本所需要的数据，因为需要用到rgb，因此在选择完色组之后才能初始化
+      if (this.craftFlag) {
+        this.initComplexCanvas(colorId)
+      } else {
+        // 宽度定死
+        this.canvasWidth = 2400
+        // 高度计算
+        this.canvasHeight =
+          (Number(this.craftInfo.weft_data.neichang) /
+            (Number(this.craftInfo.calc_weight_way) === 1
+              ? Number(this.craftInfo.warp_data.reed_width)
+              : Number(this.craftInfo.weft_data.peifu))) *
+          600 *
+          4
+        setTimeout(() => {
+          const warpColor = colorId
+            ? this.craftInfo.warp_data.color_data.find((item) => item.color_id === colorId)!.color_scheme
+            : this.craftInfo.warp_data.color_data.find((item, index) => index === this.selectColour)!.color_scheme
+          const weftColor = colorId
+            ? this.craftInfo.weft_data.color_data.find((item) => item.color_id === colorId)!.color_scheme
+            : this.craftInfo.weft_data.color_data.find((item, index) => index === this.selectColour)!.color_scheme
+          let canvasMatrix: { x: number; y: number; width: number; height: number; color: string }[] = []
+          let canvasMatrixBack: { x: number; y: number; width: number; height: number; color: string }[] = []
+          let warpCK: number[] = [] // 穿筘信息补全
+          this.craftInfo.warp_data.material_data.forEach((item) => {
+            if (item.material_id) {
+              item.apply.forEach((itemApply: any) => {
+                const finded = this.craftInfo.yarn_coefficient.find((itemFind) => itemFind.name === item.material_name)
+                warpCK[Number(itemApply)] =
+                  finded && finded!.chuankou ? Number(finded!.chuankou) : Number(this.craftInfo.warp_data.reed_method)
+              })
+            }
+          })
+          // 经向平均长度
+          const warpWidthPJ =
+            (600 * 4) /
+            this.warpCanvas.reduce((total, cur) => {
+              return total + Number(warpCK[cur.color])
+            }, 0)
+          // 纬向平均长度
+          const weftWidth = this.canvasHeight / this.weftCanvas.length
+          this.warpCanvas.reduce((totalWarp, itemWarp) => {
+            let warpWidth = warpWidthPJ * warpCK[itemWarp.color] // 重新计算经向，用穿筘法
+            let reverseWeft = [...this.weftCanvas].reverse() // 纬向要反着画,我也不知道为啥,注意reverse会改变原数组,所以修改下指向
+            reverseWeft.reduce((totalWeft, itemWeft) => {
+              canvasMatrix.push({
+                x: totalWarp,
+                y: totalWeft,
+                width: warpWidth,
+                height: weftWidth,
+                color: itemWeft.GL.replace(/，/g, ',')
+                  .split(',')
+                  .find((item) => item === itemWarp.PM)
+                  ? warpColor[itemWarp.color].color
+                  : weftColor[itemWeft.color].color
+              })
+              return totalWeft + weftWidth
+            }, 0)
+            return totalWarp + warpWidth
           }, 0)
-        // 纬向平均长度
-        const weftWidth = this.canvasHeight / this.weftCanvas.length
-        this.warpCanvas.reduce((totalWarp, itemWarp) => {
-          let warpWidth = warpWidthPJ * warpCK[itemWarp.color] // 重新计算经向，用穿筘法
-          let reverseWeft = [...this.weftCanvas].reverse() // 纬向要反着画,我也不知道为啥,注意reverse会改变原数组,所以修改下指向
-          reverseWeft.reduce((totalWeft, itemWeft) => {
-            canvasMatrix.push({
-              x: totalWarp,
-              y: totalWeft,
-              width: warpWidth,
-              height: weftWidth,
-              color: itemWeft.GL.replace(/，/g, ',')
-                .split(',')
-                .find((item) => item === itemWarp.PM)
-                ? warpColor[itemWarp.color].color
-                : weftColor[itemWeft.color].color
-            })
-            return totalWeft + weftWidth
+          this.warpCanvasBack.reduce((totalWarp, itemWarp) => {
+            let warpWidth = warpWidthPJ * warpCK[itemWarp.color] // 重新计算经向，用穿筘法
+            let reverseWeft = [...this.weftCanvasBack].reverse() // 纬向要反着画,我也不知道为啥,注意reverse会改变原数组,所以修改下指向
+            reverseWeft.reduce((totalWeft, itemWeft) => {
+              canvasMatrixBack.push({
+                x: totalWarp,
+                y: totalWeft,
+                width: warpWidth,
+                height: weftWidth,
+                color: itemWeft.GL.replace(/，/g, ',')
+                  .split(',')
+                  .find((item) => item === itemWarp.PM)
+                  ? warpColor[itemWarp.color].color
+                  : weftColor[itemWeft.color].color
+              })
+              return totalWeft + weftWidth
+            }, 0)
+            return totalWarp + warpWidth
           }, 0)
-          return totalWarp + warpWidth
-        }, 0)
-        this.warpCanvasBack.reduce((totalWarp, itemWarp) => {
-          let warpWidth = warpWidthPJ * warpCK[itemWarp.color] // 重新计算经向，用穿筘法
-          let reverseWeft = [...this.weftCanvasBack].reverse() // 纬向要反着画,我也不知道为啥,注意reverse会改变原数组,所以修改下指向
-          reverseWeft.reduce((totalWeft, itemWeft) => {
-            canvasMatrixBack.push({
-              x: totalWarp,
-              y: totalWeft,
-              width: warpWidth,
-              height: weftWidth,
-              color: itemWeft.GL.replace(/，/g, ',')
-                .split(',')
-                .find((item) => item === itemWarp.PM)
-                ? warpColor[itemWarp.color].color
-                : weftColor[itemWeft.color].color
-            })
-            return totalWeft + weftWidth
-          }, 0)
-          return totalWarp + warpWidth
-        }, 0)
-        let dom: any = this.$refs.myCanvas
-        let ctx = dom.getContext('2d')
-        ctx.beginPath()
-        ctx.clearRect(0, 0, 2400, this.canvasHeight)
-        canvasMatrix.forEach((item) => {
-          ctx.fillStyle = item.color
-          ctx.fillRect(item.x, item.y, item.width, item.height)
-        })
-        let domBack: any = this.$refs.myCanvasBack
-        let ctxBack = domBack.getContext('2d')
-        ctxBack.beginPath()
-        ctxBack.clearRect(0, 0, 2400, this.canvasHeight)
-        canvasMatrixBack.forEach((item) => {
-          ctxBack.fillStyle = item.color
-          ctxBack.fillRect(item.x, item.y, item.width, item.height)
-        })
-        let img: any = this.$refs.img
-        img.src = dom.toDataURL() // canvas转图片
-        let imgBack: any = this.$refs.imgBack
-        imgBack.src = domBack.toDataURL()
-        this.showImageLoading = false
-        window.scrollTo(0, 9999)
-      }, 100)
+          let dom: any = this.$refs.myCanvas
+          let ctx = dom.getContext('2d')
+          ctx.beginPath()
+          ctx.clearRect(0, 0, 2400, this.canvasHeight)
+          canvasMatrix.forEach((item) => {
+            ctx.fillStyle = item.color
+            ctx.fillRect(item.x, item.y, item.width, item.height)
+          })
+          this.ctxBack.beginPath()
+          this.ctxBack.clearRect(0, 0, 2400, this.canvasHeight)
+          canvasMatrixBack.forEach((item) => {
+            this.ctxBack.fillStyle = item.color
+            this.ctxBack.fillRect(item.x, item.y, item.width, item.height)
+          })
+          this.changeCanvasToImage()
+        }, 100)
+      }
+    },
+    // 把canvas放到image里
+    changeCanvasToImage() {
+      let img: any = this.$refs.img
+      img.src = this.dom.toDataURL() // canvas转图片
+      let imgBack: any = this.$refs.imgBack
+      imgBack.src = this.domBack.toDataURL()
+      this.showImageLoading = false
+      window.scrollTo(0, 9999)
     },
     // 放大镜效果实现
     enlargeImg(point: { offsetX: number; offsetY: number }, ifBack: string) {
@@ -1814,8 +2090,8 @@ export default Vue.extend({
         ctx.beginPath()
         ctx.drawImage(
           img,
-          point.offsetX * 4 - drawWidth / 2,
-          point.offsetY * 4 - drawHeight / 2,
+          point.offsetX * (this.canvasWidth / 600) - drawWidth / 2,
+          point.offsetY * (this.canvasWidth / 600) - drawHeight / 2,
           drawWidth,
           drawHeight,
           0,
@@ -1834,8 +2110,8 @@ export default Vue.extend({
         ctx.beginPath()
         ctx.drawImage(
           img,
-          point.offsetX * 4 - drawWidth / 2,
-          point.offsetY * 4 - drawHeight / 2,
+          point.offsetX * (this.canvasWidth / 600) - drawWidth / 2,
+          point.offsetY * (this.canvasWidth / 600) - drawHeight / 2,
           drawWidth,
           drawHeight,
           0,
@@ -1873,6 +2149,1230 @@ export default Vue.extend({
         })
         return arr
       }
+    },
+    // 新版工艺单初始化
+    initComplexCanvas(colourIndex: number) {
+      this.draftMethodMatrix = []
+      let reverseWeft = [...this.weftCanvas].reverse() // 纬向要反着画,我也不知道为啥,注意reverse会改变原数组,所以修改下指向
+      // 根据穿宗法纹版图把01矩阵搞出来
+      reverseWeft.forEach((itemWeft, indexWeft) => {
+        this.draftMethodMatrix.push([])
+        this.warpCanvas.forEach((itemWarp) => {
+          this.draftMethodMatrix[indexWeft].push(
+            itemWeft.GL.replace(/，/g, ',')
+              .split(',')
+              .find((item) => item === itemWarp.PM)
+              ? 1
+              : 0
+          )
+        })
+      })
+      // 把经纬向的01矩阵搞出来
+      let warpRealData: LineData[] = []
+      let weftRealData: LineData[] = []
+      let warpBackRealData: LineData[] = []
+      let weftBackRealData: LineData[] = []
+      const matchColors = /rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/
+      const warpColourArr = colourIndex
+        ? this.craftInfo.warp_data.color_data
+            .find((item) => item.color_id === colourIndex)!
+            .color_scheme.map((item) => {
+              return this.hexToRGB(item.color)
+            })
+        : this.craftInfo.warp_data.color_data
+            .find((item, index) => index === this.selectColour)!
+            .color_scheme.map((item) => {
+              return this.hexToRGB(item.color)
+            })
+
+      const weftColourArr = colourIndex
+        ? this.craftInfo.weft_data.color_data
+            .find((item) => item.color_id === colourIndex)!
+            .color_scheme.map((item) => {
+              return this.hexToRGB(item.color)
+            })
+        : this.craftInfo.weft_data.color_data
+            .find((item, index) => index === this.selectColour)!
+            .color_scheme.map((item) => {
+              return this.hexToRGB(item.color)
+            })
+
+      // warpTable,weftTable转成新版本所需要的数据
+      warpRealData = this.warpTable.map((item: any) => {
+        const color: any = matchColors.exec(warpColourArr[item.jia])
+        return {
+          number: Number(item.number),
+          r: color[1],
+          g: color[2],
+          b: color[3],
+          width: this.craftYarnWarp.diameter
+        }
+      })
+      weftRealData = this.weftTable.map((item: any) => {
+        const color: any = matchColors.exec(weftColourArr[item.jia])
+        return {
+          number: Number(item.number),
+          r: color[1],
+          g: color[2],
+          b: color[3],
+          height: this.craftYarnWeft.diameter
+        }
+      })
+      warpBackRealData = this.warpTableBack.map((item: any) => {
+        const color: any = matchColors.exec(warpColourArr[item.jia])
+        return {
+          number: Number(item.number),
+          r: color[1],
+          g: color[2],
+          b: color[3],
+          width: this.craftYarnWarp.diameter
+        }
+      })
+      weftBackRealData = this.weftTableBack.map((item: any) => {
+        const color: any = matchColors.exec(weftColourArr[item.jia])
+        return {
+          number: Number(item.number),
+          r: color[1],
+          g: color[2],
+          b: color[3],
+          height: this.craftYarnWeft.diameter
+        }
+      })
+
+      // 计算经纬向的缝隙大小，约定1px≈0.3mm
+      const warpDistance =
+        (Number(this.craftInfo.warp_data.reed_width) * 10 -
+          warpRealData.reduce((total, cur: any) => {
+            return total + cur.number * cur.width * 0.3
+          }, 0)) /
+        (Number(this.craftInfo.warp_data.weft) - 1) /
+        0.3
+      const weftDistance =
+        (Number(this.craftInfo.weft_data.neichang) * 10 -
+          weftRealData.reduce((total, cur: any) => {
+            return total + cur.number * cur.height * 0.3
+          }, 0)) /
+        (Number(this.craftInfo.weft_data.total) - 1) /
+        0.3
+      this.warpDistance = Math.round(warpDistance) < 1 ? 1 : Math.round(warpDistance)
+      this.weftDistance = Math.round(weftDistance) < 1 ? 1 : Math.round(weftDistance)
+
+      // 根据计算出来缝隙大小确定最终canvas的实际宽高像素,注意这个像素大概率和原来围巾的比例不一样，20是留白
+      this.canvasHeight =
+        20 +
+        weftRealData.reduce((total, cur: any) => {
+          return total + cur.number * cur.height
+        }, 0) +
+        this.warpDistance * (Number(this.craftInfo.weft_data.total) - 1)
+
+      this.canvasWidth =
+        20 +
+        warpRealData.reduce((total, cur: any) => {
+          return total + cur.number * cur.width
+        }, 0) +
+        this.weftDistance * (Number(this.craftInfo.warp_data.weft) - 1)
+      // 得到初始矩阵，只包含type01
+      const matrixData = this.changeLineToMatrix(weftRealData, warpRealData)
+      const matrixBackData = this.changeLineToMatrix(weftBackRealData, warpBackRealData)
+      // 初始矩阵转换成更复杂的矩阵，包含type012345,该矩阵是最细节的点阵，理论上后续所有的图像部分都可以由这个数据绘制，实际上做了一层优化，把主体部分进行合并减少渲染的循环
+      const matrixWidth = matrixData[0].reduce((total, item) => total + item.height, 0) + matrixData[0].length - 1
+      const matrixHeight = matrixData.reduce((total, item) => total + item[0].width, 0) + matrixData.length - 1
+      const weftCanvasData = this.initLineFn(matrixData, 'weft', matrixWidth)
+      const warpCanvasData = this.initLineFn(this.transposeArr(matrixData), 'warp', matrixHeight)
+      // 复杂矩阵主体部分优化后的数据,合并同类型的方块
+      const weftCanvasMainData = this.initMainMatrix(weftCanvasData, this.warpDistance)
+      const warpCanvasMainData = this.initMainMatrix(warpCanvasData, this.weftDistance)
+      this.drawMainReal(weftCanvasMainData, 'weft')
+      this.drawMainReal(warpCanvasMainData, 'warp')
+      this.drawTwistShadow(weftCanvasData, 'weft', this.craftYarnWeft.twist_flag)
+      this.drawTwistShadow(warpCanvasData, 'warp', this.craftYarnWarp.twist_flag)
+      this.drawLine(
+        weftCanvasData,
+        'weft',
+        this.craftYarnWeft.hairiness_density,
+        this.craftYarnWeft.hairiness_flag === 2 || this.craftYarnWeft.hairiness_flag === 4,
+        this.craftYarnWeft.hairiness_flag === 3 || this.craftYarnWeft.hairiness_flag === 4
+      )
+      this.drawLine(
+        warpCanvasData,
+        'warp',
+        this.craftYarnWarp.hairiness_density,
+        this.craftYarnWarp.hairiness_flag === 2 || this.craftYarnWarp.hairiness_flag === 4,
+        this.craftYarnWarp.hairiness_flag === 3 || this.craftYarnWarp.hairiness_flag === 4
+      )
+      window.setTimeout(() => {
+        this.changeCanvasToImage()
+      })
+    },
+    // 把经纬向线数据转化成点阵
+    changeLineToMatrix(weftData: LineData[], warpData: LineData[]): PointData[][] {
+      const weftLength = weftData.reduce((total, cur) => cur.number + total, 0)
+      const warpLength = warpData.reduce((total, cur) => cur.number + total, 0)
+      const returnData: PointData[][] = new Array(weftLength).fill(0).map(() => {
+        return new Array(warpLength).fill(0).map(() => {
+          return {
+            width: 0,
+            height: 0,
+            rr: 0,
+            rg: 0,
+            rb: 0,
+            cr: 0,
+            cg: 0,
+            cb: 0,
+            type: ''
+          }
+        })
+      })
+      this.lineToMatrix(weftData, 'weft', warpLength, returnData)
+      this.lineToMatrix(warpData, 'warp', weftLength, returnData)
+      return returnData
+    },
+    lineToMatrix(info: LineData[], type: 'warp' | 'weft', length: number, returnData: PointData[][]) {
+      let j = 0
+      info.forEach((item) => {
+        for (let i = j; i < item.number + j; i++) {
+          for (let k = 0; k < length; k++) {
+            if (type === 'weft') {
+              returnData[i][k].height = item.height as number
+              if (this.draftMethodMatrix[i][k] === 0) {
+                returnData[i][k].type = 0
+              }
+              returnData[i][k].rr = item.r
+              returnData[i][k].rg = item.g
+              returnData[i][k].rb = item.b
+            } else {
+              returnData[k][i].width = item.width as number
+              if (this.draftMethodMatrix[k][i] === 1) {
+                returnData[k][i].type = 1
+              }
+              returnData[k][i].cr = item.r
+              returnData[k][i].cg = item.g
+              returnData[k][i].cb = item.b
+            }
+          }
+        }
+        j += item.number
+      })
+    },
+    // 矩阵翻转90°函数
+    transposeArr<T>(A: T[][]): T[][] {
+      const rows = A.length
+      const cols = A[0].length
+      const result = new Array(cols).fill(new Array(rows).fill(''))
+      for (let i = 0; i < cols; i++) {
+        result[i] = []
+        for (let j = 0; j < rows; j++) {
+          result[i][j] = A[j][i]
+        }
+      }
+      return result
+    },
+    initLineFn(data: PointData[][], type: 'warp' | 'weft', length: number) {
+      let realMatrix: Array<Array<2 | DrawData[]>> = []
+      if (type === 'warp') {
+        data.forEach((item) => {
+          const yHeight = item[0].height as number // 确认线的高度，一次就够，一根线是一样粗的，不用每次都获取
+          realMatrix = realMatrix.concat(
+            this.initLine(
+              item,
+              type,
+              length,
+              yHeight,
+              this.craftYarnWarp.twist_angle,
+              this.craftYarnWarp.twist_thickness
+            )
+          )
+        })
+      } else {
+        data.forEach((item) => {
+          const xWidth = item[0].width as number // 确认线的高度，一次就够，一根线是一样粗的，不用每次都获取
+          realMatrix = realMatrix.concat(
+            this.initLine(
+              item,
+              type,
+              length,
+              xWidth,
+              this.craftYarnWeft.twist_angle,
+              this.craftYarnWeft.twist_thickness
+            )
+          )
+        })
+      }
+      realMatrix.pop()
+      return realMatrix
+    },
+    /* 
+      将已有的行列矩阵数据二次处理，一行一行一列一列的再仔细处理成新版本带各种纱线细节的矩阵
+      细节包括捻，阴影，隔行
+      矩阵中包含三种元素
+      0:经向(纵向)实线像素，rgb为原色，大小为1像素
+      1:阴影像素，原件(r，g，b);阴影(rs，gs，bs)：rs = r * 0.25，gs = g * 0.25，bs = b * 0.25(这是一个非常深的阴影)，目前取的0.75，大小为1像素
+      2:留白像素，大小>1px，其中1px用于给画边预留，剩余部分通过公式计算得到空白缝隙
+      3:实线透明像素，大小为1像素，透明度0
+      4.留白实线像素，同4，和0大小不同的像素块 （所有的留白缝隙都需要绘制实线颜色，以模拟另外一层纱线从底部穿过的效果）
+      5.留白阴影像素，同4，和1大小不同的像素块
+    */
+    initLine(
+      data: PointData[],
+      type: 'warp' | 'weft',
+      long: number,
+      short: number,
+      angle = 1,
+      thickness = 6
+    ): Array<Array<2 | DrawData[]>> {
+      /*
+      解释下角度 和 粗细 
+      现在有一个矩阵如下
+      0,0,0,0,0,0,0,0,0,0,0,0,0
+      0,0,0,0,0,0,0,0,0,0,0,0,0
+      0,0,0,0,0,0,0,0,0,0,0,0,0
+      0,0,0,0,0,0,0,0,0,0,0,0,0
+      0,0,0,0,0,0,0,0,0,0,0,0,0
+      
+      假设angle = 1 , thickness = 5 
+      我们可以这样画斜线
+      1,0,0,0,0,0,0,0,0,1,0,0,0
+      0,1,0,0,0,0,0,0,0,0,1,0,0
+      0,0,1,0,0,0,0,0,0,0,0,1,0
+      0,0,0,1,0,0,0,0,0,0,0,0,1
+      0,0,0,0,1,0,0,0,0,0,0,0,0
+      矩阵只标记了斜线主体部分的角度，以1为起始点，根据thickness参数随机加粗为1-5的粗细即可
+      假设angle = 2
+      我们可以这样画斜线
+      1,0,0,0,0,0,0,0,0,0,0,0,0
+      0,0,1,0,0,0,0,0,0,0,0,0,0
+      0,0,0,0,1,0,0,0,0,0,0,0,0
+      0,0,0,0,0,0,1,0,0,0,0,0,0
+      0,0,0,0,0,0,0,0,1,0,0,0,0
+    */
+      // 初始化一个宽高矩阵
+      const initRectArr = this.initRect(long, short)
+      // 根据捻是否密集参数确认捻的数量
+      let distanceAvg =
+        this['craftYarnW' + type.slice(1)].twist_number + this['craftYarnW' + type.slice(1)].twist_thickness - 3 // 根据参数确定捻的距离 10 16 22
+      let twistNumAvg = Math.round(long / distanceAvg) // 根据实际情况确定捻的实际数量平均值
+      const twistNum = this.myRandom(twistNumAvg - 10, twistNumAvg + 10) // 捻的平均值再取一个随机数
+      const distance = Math.floor(long / twistNum) // 距离向下取整，余数留给最后一捻
+      const twistInitArr = this.randomArray(this.initTwistDistance(twistNum, distance)) // 捻距随机数组
+      for (let i = 0; i < short; i++) {
+        twistInitArr.reduce((total, item) => {
+          // const randomDis = this.myRandom(0, 1)
+          for (let j = 0; j < thickness; j++) {
+            // const y = total + j + randomDis
+            const y = total + j
+            initRectArr[i][y] = 1
+          }
+          return total + item
+        }, i * angle)
+      }
+      // 优化掉结尾
+      initRectArr.forEach((item) => {
+        item.length = long
+      })
+      // 先把实线+透明+阴影的矩阵算出来
+      if (type === 'weft') {
+        // 把条件写在外面是减少循环内的条件判断
+        data.reduce((total: number, item: PointData, index: number) => {
+          // type=1显示经纱颜色,纬向透明
+          if (item.type === 1) {
+            for (let i = total; i < total + item.height; i++) {
+              for (let j = 0; j < short; j++) {
+                initRectArr[j][i] = 3
+              }
+            }
+            // 最后一次循环加阴影去掉
+            if (index === data.length - 1) {
+              return 0
+            }
+            // 为了减少判断再加一层循环，把最后一层留白元素：4，补上
+            for (let j = 0; j < short; j++) {
+              const type = initRectArr[j][total + item.height]
+              initRectArr[j][total + item.height] = {
+                type: type === 0 ? 4 : 5,
+                r: Math.max(
+                  j === 0 || j === short - 1 ? item.rr - 20 : j === 1 || j === short - 2 ? item.rr - 10 : item.rr,
+                  0
+                ),
+                g: Math.max(
+                  j === 0 || j === short - 1 ? item.rg - 20 : j === 1 || j === short - 2 ? item.rg - 10 : item.rg,
+                  0
+                ),
+                b: Math.max(
+                  j === 0 || j === short - 1 ? item.rb - 20 : j === 1 || j === short - 2 ? item.rb - 10 : item.rb,
+                  0
+                )
+              }
+            }
+          } else {
+            // 把需要绘制的rgb记录一下方便后续绘制
+            for (let i = total; i < total + item.height; i++) {
+              for (let j = 0; j < short; j++) {
+                const type = initRectArr[j][i]
+                initRectArr[j][i] = {
+                  type: type,
+                  r: Math.max(
+                    j === 0 || j === short - 1 ? item.rr - 20 : j === 1 || j === short - 2 ? item.rr - 10 : item.rr,
+                    0
+                  ),
+                  g: Math.max(
+                    j === 0 || j === short - 1 ? item.rg - 20 : j === 1 || j === short - 2 ? item.rg - 10 : item.rg,
+                    0
+                  ),
+                  b: Math.max(
+                    j === 0 || j === short - 1 ? item.rb - 20 : j === 1 || j === short - 2 ? item.rb - 10 : item.rb,
+                    0
+                  )
+                }
+              }
+            }
+            // 最后一次循环加阴影去掉
+            if (index === data.length - 1) {
+              return 0
+            }
+            // 为了减少判断再加一层循环，把最后一层留白实线/阴影元素：4/5，补上
+            for (let j = 0; j < short; j++) {
+              const type = initRectArr[j][total + item.height]
+              initRectArr[j][total + item.height] = {
+                type: type === 0 ? 4 : 5,
+                r: Math.max(
+                  j === 0 || j === short - 1 ? item.rr - 20 : j === 1 || j === short - 2 ? item.rr - 10 : item.rr,
+                  0
+                ),
+                g: Math.max(
+                  j === 0 || j === short - 1 ? item.rg - 20 : j === 1 || j === short - 2 ? item.rg - 10 : item.rg,
+                  0
+                ),
+                b: Math.max(
+                  j === 0 || j === short - 1 ? item.rb - 20 : j === 1 || j === short - 2 ? item.rb - 10 : item.rb,
+                  0
+                )
+              }
+            }
+          }
+          return total + item.height + 1 // 这个加1加的就是缝隙
+        }, 0)
+      } else {
+        data.reduce((total: number, item: PointData, index: number) => {
+          // type=1显示经纱颜色,纬向透明
+          if (item.type === 0) {
+            for (let i = total; i < total + item.width; i++) {
+              for (let j = 0; j < short; j++) {
+                initRectArr[j][i] = 3
+              }
+            }
+            // 最后一次循环加阴影去掉
+            if (index === data.length - 1) {
+              return 0
+            }
+            // 为了减少判断再加一层循环，把最后一层留白元素：4，补上
+            for (let j = 0; j < short; j++) {
+              const type = initRectArr[j][total + item.width]
+              initRectArr[j][total + item.width] = {
+                type: type === 0 ? 4 : 5,
+                r: Math.max(
+                  j === 0 || j === short - 1 ? item.cr - 20 : j === 1 || j === short - 2 ? item.cr - 10 : item.cr,
+                  0
+                ),
+                g: Math.max(
+                  j === 0 || j === short - 1 ? item.cg - 20 : j === 1 || j === short - 2 ? item.cg - 10 : item.cg,
+                  0
+                ),
+                b: Math.max(
+                  j === 0 || j === short - 1 ? item.cb - 20 : j === 1 || j === short - 2 ? item.cb - 10 : item.cb,
+                  0
+                )
+              }
+            }
+          } else {
+            // 把需要绘制的rgb记录一下方便后续绘制
+            for (let i = total; i < total + item.width; i++) {
+              for (let j = 0; j < short; j++) {
+                const type = initRectArr[j][i]
+                initRectArr[j][i] = {
+                  type: type,
+                  r: Math.max(
+                    j === 0 || j === short - 1 ? item.cr - 20 : j === 1 || j === short - 2 ? item.cr - 10 : item.cr,
+                    0
+                  ),
+                  g: Math.max(
+                    j === 0 || j === short - 1 ? item.cg - 20 : j === 1 || j === short - 2 ? item.cg - 10 : item.cg,
+                    0
+                  ),
+                  b: Math.max(
+                    j === 0 || j === short - 1 ? item.cb - 20 : j === 1 || j === short - 2 ? item.cb - 10 : item.cb,
+                    0
+                  )
+                }
+              }
+            }
+            // 最后一次循环加阴影去掉
+            if (index === data.length - 1) {
+              return 0
+            }
+            // 为了减少判断再加一层循环，把最后一层留白实线/阴影元素：4/5，补上
+            for (let j = 0; j < short; j++) {
+              const type = initRectArr[j][total + item.width]
+              initRectArr[j][total + item.width] = {
+                type: type === 0 ? 4 : 5,
+                r: Math.max(
+                  j === 0 || j === short - 1 ? item.cr - 20 : j === 1 || j === short - 2 ? item.cr - 10 : item.cr,
+                  0
+                ),
+                g: Math.max(
+                  j === 0 || j === short - 1 ? item.cg - 20 : j === 1 || j === short - 2 ? item.cg - 10 : item.cg,
+                  0
+                ),
+                b: Math.max(
+                  j === 0 || j === short - 1 ? item.cb - 20 : j === 1 || j === short - 2 ? item.cb - 10 : item.cb,
+                  0
+                )
+              }
+            }
+          }
+          return total + item.width + 1 // 这个加1加的就是缝隙
+        }, 0)
+      }
+      // 给每根线push一个全为2的数组作为留白(缝隙)
+      initRectArr.push(new Array(long).fill(2))
+      return initRectArr
+    },
+    // 把1*1小方块矩阵相同色块合并，转成1*N大长方形矩阵，优化绘制方块的个数，优化主体部分的绘制，节约渲染循环次数
+    initMainMatrix(data: any, realWidth: number) {
+      let mainMatrix: any[] = []
+      data.forEach((item: any) => {
+        if (item[0] !== 2) {
+          const pushArr: any[] = []
+          let j = 0
+          item.forEach((itemChild: any) => {
+            // 首次初始化
+            if (!pushArr[j]) {
+              if (itemChild === 3) {
+                pushArr.push({ type: 3, rectLength: 0, r: '', g: '', b: '' })
+              } else {
+                pushArr.push({ type: 0, rectLength: 0, r: itemChild.r, g: itemChild.g, b: itemChild.b })
+              }
+            }
+            if (itemChild === 3 && pushArr[j].type === 3) {
+              pushArr[j].rectLength++
+            } else if (
+              (itemChild.type === 0 || itemChild.type === 1 || itemChild.type === 4 || itemChild.type === 5) &&
+              pushArr[j].type === 0
+            ) {
+              if (itemChild.type === 0 || itemChild.type === 1) {
+                pushArr[j].rectLength++
+              } else {
+                pushArr[j].rectLength += realWidth
+              }
+            } else {
+              if (itemChild === 3) {
+                pushArr.push({ type: 3, rectLength: 1, r: '', g: '', b: '' })
+              } else {
+                pushArr.push({
+                  type: 0,
+                  rectLength: itemChild.type === 0 || itemChild.type === 1 ? 1 : realWidth,
+                  r: itemChild.r,
+                  g: itemChild.g,
+                  b: itemChild.b
+                })
+              }
+              j++
+            }
+          })
+          mainMatrix.push(pushArr)
+        } else {
+          mainMatrix.push([2])
+        }
+      })
+      return mainMatrix
+    },
+    // 绘制主体优化过的部分
+    drawMainReal(data: any[][], type: 'warp' | 'weft') {
+      if (type === 'weft') {
+        let initY = 10
+        data.forEach((item) => {
+          let initX = 10
+          const timeOut = window.setTimeout(() => {
+            // 空行用于画边,理论上画边的代码可以放在这里，但是因为画完一个方向，另一个方向的实线会覆盖边，因此我们把边的代码单拎出去重新画
+            if (item[0] === 2) {
+              initY += this.weftDistance
+            } else {
+              item.forEach((itemChild) => {
+                if (itemChild.type === 3) {
+                  initX += itemChild.rectLength
+                } else {
+                  this.ctx.fillStyle = this.randomRGB(itemChild.r, itemChild.g, itemChild.b, 1, -5, 5)
+                  this.ctx.fillRect(initX, initY, itemChild.rectLength, 1)
+                  initX += itemChild.rectLength
+                }
+              })
+              initY++
+            }
+          })
+        })
+      } else {
+        let initX = 10
+        data.forEach((item) => {
+          let initY = 10
+          const timeOut = window.setTimeout(() => {
+            // 优先处理空行，一层
+            if (item[0] === 2) {
+              initX += this.warpDistance
+            } else {
+              item.forEach((itemChild) => {
+                if (itemChild.type === 3) {
+                  initY += itemChild.rectLength
+                } else {
+                  this.ctx.fillStyle = this.randomRGB(itemChild.r, itemChild.g, itemChild.b, 1)
+                  this.ctx.fillRect(initX, initY, 1, itemChild.rectLength)
+                  initY += itemChild.rectLength
+                }
+              })
+              initX++
+            }
+          })
+        })
+      }
+    },
+    // 绘制捻和阴影
+    drawTwistShadow(data: any[][], type: 'warp' | 'weft', flag: 0 | 1) {
+      if (flag === 0) {
+        return
+      }
+      if (type === 'weft') {
+        let initY = 10
+        data.forEach((item, index) => {
+          let initX = 10
+          const timeOut = window.setTimeout(() => {
+            // 空行用于画边,理论上画边的代码可以放在这里，但是因为画完一个方向，另一个方向的实线会覆盖边，因此我们把边的代码单拎出去重新画
+            if (item[0] === 2) {
+              initY += this.weftDistance
+            } else {
+              item.forEach((itemChild, indexChild) => {
+                if (itemChild === 3) {
+                  initX++
+                } else {
+                  if (itemChild.type === 0) {
+                    // ctx.fillStyle = randomRGB(itemChild.r, itemChild.g, itemChild.b, 1, -5, 5)
+                    // ctx.fillRect(initX, initY, 1, 1)
+                    initX++
+                  } else if (itemChild.type === 1) {
+                    this.ctx.fillStyle = this.randomRGB(
+                      Math.round(itemChild.r * 0.75),
+                      Math.round(itemChild.g * 0.75),
+                      Math.round(itemChild.b * 0.75),
+                      1,
+                      -5,
+                      5
+                    )
+                    this.ctx.fillRect(initX, initY, 1, 1)
+                    initX++
+                  } else if (itemChild.type === 4) {
+                    if (
+                      (data[index][indexChild - 1] && data[index][indexChild - 1] === 3) ||
+                      (data[index][indexChild + 1] && data[index][indexChild + 1] === 3)
+                    ) {
+                      this.ctx.fillStyle = this.randomRGB(itemChild.r + 5, itemChild.g + 5, itemChild.b + 5, 1)
+                    } else {
+                      this.ctx.fillStyle = this.randomRGB(itemChild.r, itemChild.g, itemChild.b, 1)
+                    }
+                    this.ctx.fillRect(initX, initY, this.warpDistance, 1)
+                    initX += this.warpDistance
+                  } else if (itemChild.type === 5) {
+                    if (
+                      (data[index][indexChild - 1] && data[index][indexChild - 1] === 3) ||
+                      (data[index][indexChild + 1] && data[index][indexChild + 1] === 3)
+                    ) {
+                      this.ctx.fillStyle = this.randomRGB(
+                        Math.round(itemChild.r * 0.75) + 5,
+                        Math.round(itemChild.g * 0.75) + 5,
+                        Math.round(itemChild.b * 0.75) + 5,
+                        1
+                      )
+                    } else {
+                      this.ctx.fillStyle = this.randomRGB(
+                        Math.round(itemChild.r * 0.75),
+                        Math.round(itemChild.g * 0.75),
+                        Math.round(itemChild.b * 0.75),
+                        1
+                      )
+                    }
+                    this.ctx.fillRect(initX, initY, this.warpDistance, 1)
+                    initX += this.warpDistance
+                  }
+                }
+              })
+              initY++
+            }
+          })
+        })
+      } else {
+        let initX = 10
+        data.forEach((item, index) => {
+          let initY = 10
+          const timeOut = window.setTimeout(() => {
+            // 优先处理空行，一层
+            if (item[0] === 2) {
+              initX += this.warpDistance
+            } else {
+              item.forEach((itemChild, indexChild) => {
+                if (itemChild === 3) {
+                  initY++
+                } else {
+                  if (itemChild.type === 0) {
+                    this.ctx.fillStyle = this.randomRGB(itemChild.r, itemChild.g, itemChild.b, 1, -5, 5)
+                    this.ctx.fillRect(initX, initY, 1, 1)
+                    initY++
+                  } else if (itemChild.type === 1) {
+                    this.ctx.fillStyle = this.randomRGB(
+                      Math.round(itemChild.r * 0.75),
+                      Math.round(itemChild.g * 0.75),
+                      Math.round(itemChild.b * 0.75),
+                      1,
+                      -5,
+                      5
+                    )
+                    this.ctx.fillRect(initX, initY, 1, 1)
+                    initY++
+                  } else if (itemChild.type === 4) {
+                    if (
+                      (data[index][indexChild - 1] && data[index][indexChild - 1] === 3) ||
+                      (data[index][indexChild + 1] && data[index][indexChild + 1] === 3)
+                    ) {
+                      this.ctx.fillStyle = this.randomRGB(itemChild.r + 5, itemChild.g + 5, itemChild.b + 5, 1)
+                    } else {
+                      this.ctx.fillStyle = this.randomRGB(itemChild.r, itemChild.g, itemChild.b, 1)
+                    }
+                    this.ctx.fillRect(initX, initY, 1, this.weftDistance)
+                    initY += this.weftDistance
+                  } else if (itemChild.type === 5) {
+                    if (
+                      (data[index][indexChild - 1] && data[index][indexChild - 1] === 3) ||
+                      (data[index][indexChild + 1] && data[index][indexChild + 1] === 3)
+                    ) {
+                      this.ctx.fillStyle = this.randomRGB(
+                        Math.round(itemChild.r * 0.75) + 5,
+                        Math.round(itemChild.g * 0.75) + 5,
+                        Math.round(itemChild.b * 0.75) + 5,
+                        1
+                      )
+                    } else {
+                      this.ctx.fillStyle = this.randomRGB(
+                        Math.round(itemChild.r * 0.75),
+                        Math.round(itemChild.g * 0.75),
+                        Math.round(itemChild.b * 0.75),
+                        1
+                      )
+                    }
+                    this.ctx.fillRect(initX, initY, 1, this.weftDistance)
+                    initY += this.weftDistance
+                  }
+                }
+              })
+              initX++
+            }
+          })
+        })
+      }
+    },
+    // 绘制边
+    drawLine(data: any, type: 'warp' | 'weft', rate: number, sideFlag = true, circleFlag = false) {
+      if (type === 'weft') {
+        let initY = 10
+        // 绘制边的时候在最外层保存一下绘制毛羽的长度/圈圈的大小数据,该逻辑只要处理一次后面绘制每条边的时候均可以通用
+        this.hairinessLengthArr = [[], [0, 3, 5, 9, 13], [0, 2, 4, 7, 10], [0, 1, 2, 4, 6]][
+          this.craftYarnWeft.hairiness_length
+        ]
+        this.circleNumberArr = [[], [1, 5], [2, 7], [3, 10]][this.craftYarnWeft.circle_number]
+        data.forEach((item: any[], index: number) => {
+          const timeOut = window.setTimeout(() => {
+            let initX = 10
+            // 绘制边
+            if (item[0] === 2) {
+              // 随机2个画边的数组出来
+              let lineArr1 = this.randomArray(
+                new Array(Math.round(item.length * (rate / 100)))
+                  .fill(1)
+                  .concat(new Array(Math.round(item.length * ((100 - rate) / 100))).fill(0))
+              )
+              let lineArr2 = this.randomArray(
+                new Array(Math.round(item.length * (rate / 100)))
+                  .fill(1)
+                  .concat(new Array(Math.round(item.length * ((100 - rate) / 100))).fill(0))
+              )
+              // 这里都用四舍五入会有误差，因此最后的随机数组截取一下长度就ok了
+              lineArr1.length = item.length
+              lineArr2.length = item.length
+              const lastBro = data[index - 1]
+              const nextBro = data[index + 1]
+              // 现在来判断他是不是真的能画出来，根据他的邻居是3，还是0145来判断这个点能否显示
+              // 注意不管是1*1还是1*N，在绘制的时候，均为1*1的像素点，只是坐标在加的时候有区别
+              lineArr1 = lineArr1.map((itemChild, indexChild) => {
+                if (itemChild === 0) {
+                  if (lastBro[indexChild] === 3 || lastBro[indexChild].type === 0 || lastBro[indexChild].type === 1) {
+                    return 0 // 1*1的空白点
+                  } else if (lastBro[indexChild].type === 4 || lastBro[indexChild].type === 5) {
+                    return 2 // 1*N的空白点
+                  }
+                } else {
+                  if (lastBro[indexChild] === 3) {
+                    return 0 // 1*1的空白点
+                  } else if (lastBro[indexChild].type === 0) {
+                    return 1 // 1*1的显示点
+                  } else if (lastBro[indexChild].type === 1) {
+                    return 4 // 1*1的显示点（阴影色）
+                  } else if (lastBro[indexChild].type === 4) {
+                    return 3 // 1*N的显示点
+                  } else if (lastBro[indexChild].type === 5) {
+                    return 5 // 1*N的显示点（阴影色）
+                  }
+                }
+              })
+              lineArr2 = lineArr2.map((itemChild, indexChild) => {
+                if (itemChild === 0) {
+                  if (nextBro[indexChild] === 3 || nextBro[indexChild].type === 0 || nextBro[indexChild].type === 1) {
+                    return 0 // 1*1的空白点
+                  } else if (nextBro[indexChild].type === 4 || nextBro[indexChild].type === 5) {
+                    return 2 // 1*N的空白点
+                  }
+                } else {
+                  if (nextBro[indexChild] === 3) {
+                    return 0 // 1*1的空白点
+                  } else if (nextBro[indexChild].type === 0) {
+                    return 1 // 1*1的显示点
+                  } else if (nextBro[indexChild].type === 1) {
+                    return 4 // 1*1的显示点（阴影色）
+                  } else if (nextBro[indexChild].type === 4) {
+                    return 3 // 1*N的显示点
+                  } else if (nextBro[indexChild].type === 5) {
+                    return 5 // 1*N的显示点（阴影色）
+                  }
+                }
+              })
+
+              const children = lastBro.find((itemChild: { type: any }) => itemChild.type)
+              let xWidth = initX
+              lineArr1.forEach((itemChild) => {
+                if (itemChild === 0) {
+                  xWidth++
+                } else if (itemChild === 1) {
+                  this.ctx.fillStyle = this.randomRGB(children.r, children.g, children.b, 1)
+                  this.ctx.fillRect(xWidth, initY, 1, 1)
+                  this.drawSide(sideFlag, xWidth, initY, children, 'rowBottom')
+                  this.drawCircle(circleFlag, xWidth, initY, children)
+                  xWidth++
+                } else if (itemChild === 2) {
+                  xWidth += this.warpDistance
+                } else if (itemChild === 3) {
+                  this.ctx.fillStyle = this.randomRGB(children.r, children.g, children.b, 1)
+                  this.ctx.fillRect(xWidth, initY, 1, 1)
+                  this.drawSide(sideFlag, xWidth, initY, children, 'rowBottom')
+                  this.drawCircle(circleFlag, xWidth, initY, children)
+                  xWidth += this.warpDistance
+                } else if (itemChild === 4) {
+                  this.ctx.fillStyle = this.randomRGB(children.r * 0.75, children.g * 0.75, children.b * 0.75, 1)
+                  this.ctx.fillRect(xWidth, initY, 1, 1)
+                  this.drawSide(sideFlag, xWidth, initY, children, 'rowBottom', 0.75)
+                  this.drawCircle(circleFlag, xWidth, initY, children, 0.75)
+                  xWidth++
+                } else if (itemChild === 5) {
+                  this.ctx.fillStyle = this.randomRGB(children.r * 0.75, children.g * 0.75, children.b * 0.75, 1)
+                  this.ctx.fillRect(xWidth, initY, 1, 1)
+                  this.drawSide(sideFlag, xWidth, initY, children, 'rowBottom', 0.75)
+                  this.drawCircle(circleFlag, xWidth, initY, children, 0.75)
+                  xWidth += this.warpDistance
+                }
+              })
+              const children2 = nextBro.find((itemChild: { type: any }) => itemChild.type)
+              let xWidth2 = initX
+              lineArr2.forEach((itemChild, indexChild) => {
+                if (itemChild === 0) {
+                  xWidth2++
+                } else if (itemChild === 1) {
+                  this.ctx.fillStyle = this.randomRGB(children2.r, children2.g, children2.b, 1)
+                  this.ctx.fillRect(xWidth2, initY + this.weftDistance - 1, 1, 1)
+                  this.drawSide(sideFlag, xWidth2, initY + this.weftDistance - 1, children2, 'rowTop')
+                  this.drawCircle(circleFlag, xWidth2, initY + this.weftDistance - 1, children2)
+                  xWidth2++
+                } else if (itemChild === 2) {
+                  xWidth2 += this.warpDistance
+                } else if (itemChild === 3) {
+                  this.ctx.fillStyle = this.randomRGB(children2.r, children2.g, children2.b, 1)
+                  this.ctx.fillRect(xWidth2, initY + this.weftDistance - 1, 1, 1)
+                  this.drawSide(sideFlag, xWidth2, initY + this.weftDistance - 1, children2, 'rowTop', 0.75)
+                  this.drawCircle(circleFlag, xWidth2, initY + this.weftDistance - 1, children2, 0.75)
+                  xWidth2 += this.warpDistance
+                } else if (itemChild === 4) {
+                  this.ctx.fillStyle = this.randomRGB(children2.r * 0.75, children2.g * 0.75, children2.b * 0.75, 1)
+                  this.ctx.fillRect(xWidth2, initY + this.weftDistance - 1, 1, 1)
+                  this.drawSide(sideFlag, xWidth2, initY + this.weftDistance - 1, children2, 'rowTop')
+                  this.drawCircle(circleFlag, xWidth2, initY + this.weftDistance - 1, children2)
+                  xWidth2++
+                } else if (itemChild === 5) {
+                  this.ctx.fillStyle = this.randomRGB(children2.r * 0.75, children2.g * 0.75, children2.b * 0.75, 1)
+                  this.ctx.fillRect(xWidth2, initY + this.weftDistance - 1, 1, 1)
+                  this.drawSide(sideFlag, xWidth2, initY + this.weftDistance - 1, children2, 'rowTop', 0.75)
+                  this.drawCircle(circleFlag, xWidth2, initY + this.weftDistance - 1, children2, 0.75)
+                  xWidth2 += this.warpDistance
+                }
+              })
+              initY += this.weftDistance
+            } else {
+              item.forEach((itemChild) => {
+                if (itemChild === 3) {
+                  initX++
+                } else {
+                  if (itemChild.type === 0) {
+                    initX++
+                  } else if (itemChild.type === 1) {
+                    initX++
+                  } else if (itemChild.type === 4) {
+                    initX += this.warpDistance
+                  } else if (itemChild.type === 5) {
+                    initX += this.warpDistance
+                  }
+                }
+              })
+              initY++
+            }
+          })
+        })
+      } else {
+        // 经向一部分画圈圈得代码被注释掉，因为有个很诡异得bug会导致经向得最后一个元素全部都画了圈圈，就导致围巾得最后一行有一行很密集得圈圈，暂时不知道原因，注释掉了部分画圈圈的代码后解决了这个bug
+        let initX = 10
+        this.hairinessLengthArr = [[], [0, 3, 5, 9, 13], [0, 2, 4, 7, 10], [0, 1, 2, 4, 6]][
+          this.craftYarnWarp.hairiness_length
+        ]
+        this.circleNumberArr = [[], [1, 5], [2, 7], [3, 10]][this.craftYarnWarp.circle_number]
+        data.forEach((item: any[], index: number) => {
+          let initY = 10
+          const timeOut = window.setTimeout(() => {
+            // 处理空行
+            if (item[0] === 2) {
+              // 随机2个画边的数组出来
+              let lineArr1 = this.randomArray(
+                new Array(Math.round(item.length * (rate / 100)))
+                  .fill(1)
+                  .concat(new Array(Math.round(item.length * ((100 - rate) / 100))).fill(0))
+              )
+              let lineArr2 = this.randomArray(
+                new Array(Math.round(item.length * (rate / 100)))
+                  .fill(1)
+                  .concat(new Array(Math.round(item.length * ((100 - rate) / 100))).fill(0))
+              )
+              // 这里都用四舍五入会有误差，因此最后的随机数组截取一下长度就ok了
+              lineArr1.length = item.length
+              lineArr2.length = item.length
+              const lastBro = data[index - 1]
+              const nextBro = data[index + 1]
+              // 现在来判断他是不是真的能画出来，根据他的邻居是3，还是0145来判断这个点能否显示
+              // 注意不管是1*1还是1*N，在绘制的时候，均为1*1的像素点，只是坐标在加的时候有区别
+              lineArr1 = lineArr1.map((itemChild, indexChild) => {
+                if (itemChild === 0) {
+                  if (
+                    lastBro[indexChild] === 3 ||
+                    lastBro[indexChild].type === 0 ||
+                    lastBro[indexChild].type === 1 ||
+                    indexChild === item.length - 1
+                  ) {
+                    return 0 // 1*1的空白点
+                  } else if (lastBro[indexChild].type === 4 || lastBro[indexChild].type === 5) {
+                    return 2 // 1*N的空白点
+                  }
+                } else {
+                  if (lastBro[indexChild] === 3) {
+                    return 0 // 1*1的空白点
+                  } else if (lastBro[indexChild].type === 0) {
+                    return 1 // 1*1的显示点
+                  } else if (lastBro[indexChild].type === 4) {
+                    return 3 // 1*N的显示点
+                  } else if (lastBro[indexChild].type === 1) {
+                    return 4 // 1*1的显示点（阴影色）
+                  } else if (lastBro[indexChild].type === 5) {
+                    return 5 // 1*N的显示点（阴影色）
+                  }
+                }
+              })
+              lineArr2 = lineArr2.map((itemChild, indexChild) => {
+                if (itemChild === 0) {
+                  if (nextBro[indexChild] === 3 || nextBro[indexChild].type === 0 || nextBro[indexChild].type === 1) {
+                    return 0 // 1*1的空白点
+                  } else if (nextBro[indexChild].type === 4 || nextBro[indexChild].type === 5) {
+                    return 2 // 1*N的空白点
+                  }
+                } else {
+                  if (nextBro[indexChild] === 3) {
+                    return 0 // 1*1的空白点
+                  } else if (nextBro[indexChild].type === 0) {
+                    return 1 // 1*1的显示点
+                  } else if (nextBro[indexChild].type === 4) {
+                    return 3 // 1*N的显示点
+                  } else if (nextBro[indexChild].type === 1) {
+                    return 4 // 1*1的显示点（阴影色）
+                  } else if (nextBro[indexChild].type === 5) {
+                    return 5 // 1*N的显示点（阴影色）
+                  }
+                }
+              })
+              const children = lastBro.find((itemChild: { type: any }) => itemChild.type)
+              let xWidth = initY
+              lineArr1.forEach((itemChild) => {
+                if (itemChild === 0) {
+                  xWidth++
+                } else if (itemChild === 1) {
+                  this.ctx.fillStyle = this.randomRGB(children.r, children.g, children.b, 1)
+                  this.ctx.fillRect(initX, xWidth, 1, 1)
+                  this.drawSide(sideFlag, initX, xWidth, children, 'colRight')
+                  this.drawCircle(circleFlag, initX, xWidth, children, 1)
+                  xWidth++
+                } else if (itemChild === 2) {
+                  xWidth += this.weftDistance
+                } else if (itemChild === 3) {
+                  this.ctx.fillStyle = this.randomRGB(children.r, children.g, children.b, 1)
+                  this.ctx.fillRect(initX, xWidth, 1, 1)
+                  this.drawSide(sideFlag, initX, xWidth, children, 'colRight')
+                  this.drawCircle(circleFlag, initX, xWidth, children, 1)
+                  xWidth += this.weftDistance
+                } else if (itemChild === 4) {
+                  this.ctx.fillStyle = this.randomRGB(children.r * 0.75, children.g * 0.75, children.b * 0.75, 1)
+                  this.ctx.fillRect(initX, xWidth, 1, 1)
+                  this.drawSide(sideFlag, initX, xWidth, children, 'colRight', 0.75)
+                  this.drawCircle(circleFlag, initX, xWidth, children, 0.75)
+                  xWidth++
+                } else if (itemChild === 5) {
+                  this.ctx.fillStyle = this.randomRGB(children.r * 0.75, children.g * 0.75, children.b * 0.75, 1)
+                  this.ctx.fillRect(initX, xWidth, 1, 1)
+                  this.drawSide(sideFlag, initX, xWidth, children, 'colRight', 0.75)
+                  this.drawCircle(circleFlag, initX, xWidth, children, 0.75)
+                  xWidth += this.weftDistance
+                }
+              })
+              const children2 = nextBro.find((itemChild: { type: any }) => itemChild.type)
+              let xWidth2 = initY
+              lineArr2.forEach((itemChild) => {
+                if (itemChild === 0) {
+                  xWidth2++
+                } else if (itemChild === 1) {
+                  this.ctx.fillStyle = this.randomRGB(children2.r, children2.g, children2.b, 1)
+                  this.ctx.fillRect(initX + this.warpDistance - 1, xWidth2, 1, 1)
+                  this.drawSide(sideFlag, initX + this.warpDistance - 1, xWidth2, children2, 'colLeft')
+                  // this.drawCircle(circleFlag, initX + this.warpDistance - 1, xWidth, children2, 1)
+                  xWidth2++
+                } else if (itemChild === 2) {
+                  xWidth2 += this.weftDistance
+                } else if (itemChild === 3) {
+                  this.ctx.fillStyle = this.randomRGB(children2.r, children2.g, children2.b, 1)
+                  this.ctx.fillRect(initX + this.warpDistance - 1, xWidth2, 1, 1)
+                  this.drawSide(sideFlag, initX + this.warpDistance - 1, xWidth2, children2, 'colLeft')
+                  // this.drawCircle(circleFlag, initX + this.warpDistance - 1, xWidth, children2, 1)
+                  xWidth2 += this.weftDistance
+                } else if (itemChild === 4) {
+                  this.ctx.fillStyle = this.randomRGB(children2.r * 0.75, children2.g * 0.75, children2.b * 0.75, 1)
+                  this.ctx.fillRect(initX + this.warpDistance - 1, xWidth2, 1, 1)
+                  this.drawSide(sideFlag, initX + this.warpDistance - 1, xWidth2, children2, 'colLeft', 0.75)
+                  // this.drawCircle(circleFlag, initX + this.warpDistance - 1, xWidth, children2, 0.75)
+                  xWidth2++
+                } else if (itemChild === 5) {
+                  this.ctx.fillStyle = this.randomRGB(children2.r * 0.75, children2.g * 0.75, children2.b * 0.75, 1)
+                  this.ctx.fillRect(initX + this.warpDistance - 1, xWidth2, 1, 1)
+                  this.drawSide(sideFlag, initX + this.warpDistance - 1, xWidth2, children2, 'colLeft', 0.75)
+                  // this.drawCircle(circleFlag, initX + this.warpDistance - 1, xWidth, children2, 0.75)
+                  xWidth2 += this.weftDistance
+                }
+              })
+              initX += this.warpDistance
+            } else {
+              item.forEach((itemChild) => {
+                if (itemChild === 3) {
+                  initY++
+                } else {
+                  if (itemChild.type === 0) {
+                    initY++
+                  } else if (itemChild.type === 1) {
+                    initY++
+                  } else if (itemChild.type === 4) {
+                    initY += this.weftDistance
+                  } else if (itemChild.type === 5) {
+                    initY += this.weftDistance
+                  }
+                }
+              })
+              initX++
+            }
+          })
+        })
+      }
+    },
+    // 绘制毛边
+    drawSide(flag: boolean, initX: number, initY: number, children: DrawData, type: string, number = 1) {
+      if (!flag) {
+        return
+      }
+      const r1 = this.myRandom(this.hairinessLengthArr[0], this.hairinessLengthArr[1])
+      const r2 = this.myRandom(this.hairinessLengthArr[1], this.hairinessLengthArr[2])
+      const r3 = this.myRandom(this.hairinessLengthArr[2], this.hairinessLengthArr[3])
+      const r4 = this.myRandom(this.hairinessLengthArr[3], this.hairinessLengthArr[4])
+      const xw = 4
+      let y1 = 0
+      let x1 = 0
+      let y2 = 0
+      let x2 = 0
+      let y3 = 0
+      let x3 = 0
+      if (this.hairiness_direction === 0) {
+        if (type === 'rowBottom') {
+          y1 = initY + this.myRandom(r1, r2)
+          y2 = initY + this.myRandom(r2, r3)
+          y3 = initY + this.myRandom(r3, r4)
+          x1 = initX + this.myRandom(-xw, xw)
+          x2 = initX + this.myRandom(-xw, xw)
+          x3 = initX + this.myRandom(-xw, xw)
+        } else if (type === 'rowTop') {
+          y1 = initY - this.myRandom(r1, r2)
+          y2 = initY - this.myRandom(r2, r3)
+          y3 = initY - this.myRandom(r3, r4)
+          x1 = initX + this.myRandom(-xw, xw)
+          x2 = initX + this.myRandom(-xw, xw)
+          x3 = initX + this.myRandom(-xw, xw)
+        } else if (type === 'colRight') {
+          y1 = initY + this.myRandom(-xw, xw)
+          y2 = initY + this.myRandom(-xw, xw)
+          y3 = initY + this.myRandom(-xw, xw)
+          x1 = initX + this.myRandom(r1, r2)
+          x2 = initX + this.myRandom(r2, r3)
+          x3 = initX + this.myRandom(r3, r4)
+        } else if (type === 'colLeft') {
+          y1 = initY + this.myRandom(-xw, xw)
+          y2 = initY + this.myRandom(-xw, xw)
+          y3 = initY + this.myRandom(-xw, xw)
+          x1 = initX - this.myRandom(r1, r2)
+          x2 = initX - this.myRandom(r2, r3)
+          x3 = initX - this.myRandom(r3, r4)
+        }
+      } else if (this.hairiness_direction === 1) {
+        y1 = initY - this.myRandom(r1, r2)
+        y2 = initY - this.myRandom(r2, r3)
+        y3 = initY - this.myRandom(r3, r4)
+        x1 = initX + this.myRandom(-xw, xw)
+        x2 = initX + this.myRandom(-xw, xw)
+        x3 = initX + this.myRandom(-xw, xw)
+      } else if (this.hairiness_direction === 2) {
+        y1 = initY + this.myRandom(r1, r2)
+        y2 = initY + this.myRandom(r2, r3)
+        y3 = initY + this.myRandom(r3, r4)
+        x1 = initX + this.myRandom(-xw, xw)
+        x2 = initX + this.myRandom(-xw, xw)
+        x3 = initX + this.myRandom(-xw, xw)
+      } else if (this.hairiness_direction === 3) {
+        y1 = initY + this.myRandom(-xw, xw)
+        y2 = initY + this.myRandom(-xw, xw)
+        y3 = initY + this.myRandom(-xw, xw)
+        x1 = initX - this.myRandom(r1, r2)
+        x2 = initX - this.myRandom(r2, r3)
+        x3 = initX - this.myRandom(r3, r4)
+      } else if (this.hairiness_direction === 4) {
+        y1 = initY + this.myRandom(-xw, xw)
+        y2 = initY + this.myRandom(-xw, xw)
+        y3 = initY + this.myRandom(-xw, xw)
+        x1 = initX + this.myRandom(r1, r2)
+        x2 = initX + this.myRandom(r2, r3)
+        x3 = initX + this.myRandom(r3, r4)
+      }
+
+      this.ctx.beginPath()
+      this.ctx.strokeStyle = this.randomRGB(children.r * number, children.g * number, children.b * number, 1)
+      this.ctx.lineWidth = 0.5
+      this.ctx.moveTo(initX, initY)
+      this.ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3)
+      this.ctx.stroke()
+    },
+    // 绘制圈圈纱
+    drawCircle(flag: boolean, initX: number, initY: number, children: DrawData, number = 1) {
+      if (!flag) {
+        return
+      }
+      this.ctx.beginPath()
+      this.ctx.strokeStyle = this.randomRGB(children.r * number, children.g * number, children.b * number, 0.5)
+      this.ctx.lineWidth = 0.5
+      const arc = Math.PI * 2
+      // 画1-3次圆
+      for (let i = 0; i < this.myRandom(1, 5); i++) {
+        const r = this.myRandom(this.circleNumberArr[0], this.circleNumberArr[1])
+        const x = initX + this.myRandom(0, 4)
+        const y = initY + this.myRandom(0, 4)
+        this.ctx.arc(x, y, r, 0, arc)
+        this.ctx.stroke()
+      }
+    },
+    // 初始化矩阵
+    initRect(width: number, height: number) {
+      return new Array(height).fill([]).map(() => new Array(width).fill(0))
+    },
+    // 随机函数
+    myRandom(min: number, max: number): number {
+      return Math.round(Math.random() * (max - min) + min)
+    },
+    // 颜色随机函数
+    randomRGB(r: number, g: number, b: number, a: number, limitL: number = 0, limitR: number = 0): string {
+      // 保证R,G,B加减的颜色是一样的，防止白色变成其他颜色情况
+      const randomNum = this.myRandom(limitL, limitR)
+      if ((limitL || limitL === 0) && limitR) {
+        let realR = r + randomNum
+        realR = realR > 255 ? 255 : realR
+        realR = realR < 0 ? 0 : realR
+        let realG = g + randomNum
+        realR = realG > 255 ? 255 : realR
+        realR = realG < 0 ? 0 : realR
+        let realB = b + randomNum
+        realR = realB > 255 ? 255 : realR
+        realR = realB < 0 ? 0 : realR
+        return 'rgb(' + realR + ',' + realG + ',' + realB + ',' + a + ')'
+      } else {
+        return 'rgb(' + r + ',' + g + ',' + b + ',' + a + ')'
+      }
+    },
+    // 随机交换数组的值打乱数组
+    randomArray(arr: any[]): any[] {
+      for (let i = 0, len = arr.length; i < len; i++) {
+        let index = Math.floor(Math.random() * (len - 1))
+        let tempValue = arr[i]
+        arr[i] = arr[index]
+        arr[index] = tempValue
+      }
+      return arr
+    },
+    // 初始化一个随机的捻坐标
+    initTwistDistance(twistNum: number, distance: number) {
+      const distanceRandom = []
+      for (let i = 0; i < twistNum / 2; i++) {
+        const randomNum = this.myRandom(0, 3)
+        distanceRandom.push(distance - randomNum)
+        distanceRandom.push(distance + randomNum)
+      }
+      // 处理下奇数
+      if (twistNum % 2 !== 0) {
+        distanceRandom.push(distance)
+      }
+      return distanceRandom
+    },
+    // hex颜色转rgb
+    hexToRGB(hex: string): string {
+      let alpha = false
+      let h: string | number = hex.slice(hex.startsWith('#') ? 1 : 0)
+      if (h.length === 3) h = [...h].map((x) => x + x).join('')
+      else if (h.length === 8) alpha = true
+      h = parseInt(h, 16)
+      return (
+        'rgb' +
+        (alpha ? 'a' : '') +
+        '(' +
+        (h >>> (alpha ? 24 : 16)) +
+        ', ' +
+        ((h & (alpha ? 0x00ff0000 : 0x00ff00)) >>> (alpha ? 16 : 8)) +
+        ', ' +
+        ((h & (alpha ? 0x0000ff00 : 0x0000ff)) >>> (alpha ? 8 : 0)) +
+        (alpha ? `, ${h & 0x000000ff}` : '') +
+        ')'
+      )
     },
     // 删除图片
     deleteImg(id: number) {
@@ -2078,19 +3578,20 @@ export default Vue.extend({
         getInfoApi: 'getTokenAsync'
       }
     ])
+    this.getCraftList()
     craft
       .detail({
         id: Number(this.$route.query.id)
       })
       .then((res) => {
-        console.log(JSON.stringify(res.data.data))
         if (res.data.status) {
           this.craftInfo = res.data.data
           if (this.craftInfo.is_draft === 1) {
             this.$message('请完善草稿信息')
             this.$router.push('/craft/update?id=' + this.$route.query.id)
           }
-          this.productInfo = res.data.data.product_info
+          // @ts-ignore
+          this.productInfo = this.craftInfo.product_info
           this.tableData.warp.data = this.craftInfo.warp_data.warp_rank.map((item: any, index) => {
             return index !== 1
               ? item

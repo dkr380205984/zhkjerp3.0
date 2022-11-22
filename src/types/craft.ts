@@ -1,3 +1,4 @@
+
 interface PMInfo {
   value?: string
   repeat?: string | number
@@ -147,4 +148,19 @@ export interface CraftInfo {
     color_id: number | string
     info_data: CraftMaterialInfo[]
   }>
+}
+
+export interface CraftParameter {
+  id: string | number
+  name: string
+  image_url: string
+  diameter: number // 直径3px-6px，均为整数
+  twist_flag: 0 | 1 // 是否需要捻 1.需要 0.不需要
+  twist_thickness: number // 捻粗细
+  twist_number: number // 捻数量：下拉框选择密不密
+  twist_angle: number // 捻角度：下拉框选择
+  hairiness_flag: number // 是否需要毛羽:1.毛边 2.毛羽 3.圈圈
+  hairiness_length: number // 毛羽长度，下拉框
+  hairiness_density: number // 毛羽密度，百分比
+  circle_number: number // 圈圈大小
 }

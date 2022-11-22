@@ -190,7 +190,8 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="row"
+            style="z-index: 0;">
             <div class="col">
               <div class="label">产品描述
                 <span class="explanation">(请输入产品描述，如产品的尺寸、克重、成分、工艺、配料等信息)</span>
@@ -224,7 +225,9 @@
                     class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M(请勿上传带特殊字符的图片)</div>
                 </el-upload>
                 <el-dialog :visible.sync="dialogVisible">
-                  <img width="100%" :src="dialogImageUrl" alt="">
+                  <img width="100%"
+                    :src="dialogImageUrl"
+                    alt="">
                 </el-dialog>
               </div>
             </div>
@@ -1233,8 +1236,8 @@ export default Vue.extend({
           }
         ]
       },
-      dialogImageUrl : '',
-      dialogVisible :false,
+      dialogImageUrl: '',
+      dialogVisible: false,
       contactsList: [],
       weaveList: [{ value: '针织织造' }, { value: '梭织织造' }, { value: '制版费' }]
     }
@@ -1515,16 +1518,16 @@ export default Vue.extend({
         return false
       }
     },
-    handlePictureCardPreview(file:any) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
+    handlePictureCardPreview(file: any) {
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
     },
     successFile(response: { hash: string; key: string }, index: number) {
       this.quotedPriceInfo.product_data[index].image_data!.push('https://file.zwyknit.com/' + response.key)
     },
-    beforeRemove(file:any, index:any, fileList:any){
+    beforeRemove(file: any, index: any, fileList: any) {
       // 上传超过10M自动删除
-      if(file.size && !(file.size / 1024 / 1024 < 10)){
+      if (file.size && !(file.size / 1024 / 1024 < 10)) {
         return
       }
 
@@ -1532,7 +1535,8 @@ export default Vue.extend({
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-        }).then(() => {
+      })
+        .then(() => {
           //执行删除操作,找到相同的删除
           let fileIndex = fileList.findIndex((item: any) => {
             if (item.id === 0 || item.id) {
@@ -1551,14 +1555,15 @@ export default Vue.extend({
             message: '删除成功'
           })
 
-          this.removeFile(file,index)
-        }).catch(() => {
+          this.removeFile(file, index)
+        })
+        .catch(() => {
           this.$message({
-              type: 'info',
-              message: '已取消删除'
-          });          
-        });
-        return false;
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      return false
     },
     removeFile(file: { response: { hash: string; key: string }; url: string }, index: number) {
       if (this.quotedPriceInfo.product_data[index].file_list?.find((item) => item.url === file.url)) {
