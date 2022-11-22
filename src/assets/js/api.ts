@@ -397,7 +397,7 @@ const yarnColor = {
 const pantongList = (params: { keyword?: string }) => http.get(`${baseUrl}/pan/color/list`, params)
 
 // 工艺单
-import { CraftInfo, DraftMethods } from '@/types/craft'
+import { CraftInfo, CraftParameter, DraftMethods } from '@/types/craft'
 const craft = {
   create: (params: CraftInfo) => http.post(`${baseUrl}/craft/save`, params, 'application/json'),
   detail: (params: DeleteParams) => http.get(`${baseUrl}/craft/detail`, params),
@@ -415,6 +415,9 @@ const craft = {
   czfList: (params?: ListParams) => http.get(`${baseUrl}/craft/pattern/lists`, params),
   czfDelete: (params: DeleteParams) => http.post(`${baseUrl}/craft/pattern/delete`, params, 'application/json'),
   getOldCraft: (params: { export_key: string }) => http.get(`${baseUrl}/get/old/craft`, params),
+  parameterCreate: (params: CraftParameter) => http.post(`${baseUrl}/yarn/imitate/save`, params, 'application/json'),
+  parameterList: (params?: ListParams) => http.get(`${baseUrl}/yarn/imitate/lists`, params),
+  parameterDelete: (params: DeleteParams) => http.post(`${baseUrl}/yarn/imitate/delete`, params, 'application/json'),
 }
 
 // 单证设置
