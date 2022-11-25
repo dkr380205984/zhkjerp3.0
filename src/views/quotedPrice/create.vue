@@ -713,15 +713,12 @@
                   </el-tooltip>
                 </div>
                 <div class="info elCtn">
-                  <el-select v-model="itemHalfProcess.name"
-                    placeholder="请选择加工工序"
+                  <el-cascader placeholder="请选择加工工序"
+                    v-model="itemHalfProcess.process_name_arr"
+                    :options="halfProcessTypeList"
                     clearable
-                    filterable>
-                    <el-option v-for="item in halfProcessList"
-                      :key="item.name"
-                      :value="item.name"
-                      :label="item.name"></el-option>
-                  </el-select>
+                    filterable
+                    @change="(ev)=>{itemHalfProcess.name=ev[1]}"></el-cascader>
                 </div>
               </div>
               <div class="col">
@@ -793,15 +790,12 @@
                   </el-tooltip>
                 </div>
                 <div class="info elCtn">
-                  <el-select v-model="itemFinishedProcess.name"
-                    placeholder="请选择加工工序"
+                  <el-cascader placeholder="请选择加工工序"
+                    v-model="itemFinishedProcess.process_name_arr"
+                    :options="staffProcessTypeList"
                     clearable
-                    filterable>
-                    <el-option v-for="item in finishedList"
-                      :key="item.name"
-                      :label="item.name"
-                      :value="item.name"></el-option>
-                  </el-select>
+                    filterable
+                    @change="(ev)=>{itemFinishedProcess.name=ev[1]}"></el-cascader>
                 </div>
               </div>
               <div class="col">
@@ -1403,11 +1397,33 @@ export default Vue.extend({
     decorateMaterialList(): DecorateMaterialInfo[] {
       return this.$store.state.api.decorateMaterial.arr
     },
-    halfProcessList() {
-      return this.$store.state.api.halfProcess.arr
+    halfProcessTypeList() {
+      return this.$store.state.api.halfProcessType.arr.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.name,
+          children: item.children.map((itemChild: any) => {
+            return {
+              label: itemChild.name,
+              value: itemChild.name
+            }
+          })
+        }
+      })
     },
-    finishedList() {
-      return this.$store.state.api.staffProcess.arr
+    staffProcessTypeList() {
+      return this.$store.state.api.staffProcessType.arr.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.name,
+          children: item.children.map((itemChild: any) => {
+            return {
+              label: itemChild.name,
+              value: itemChild.name
+            }
+          })
+        }
+      })
     },
     groupList() {
       return this.$store.state.api.group.arr
@@ -1625,6 +1641,7 @@ export default Vue.extend({
           {
             id: '',
             name: '',
+            process_name_arr: [],
             desc: '',
             total_price: ''
           }
@@ -1634,7 +1651,8 @@ export default Vue.extend({
             id: '',
             name: '',
             desc: '',
-            total_price: ''
+            total_price: '',
+            process_name_arr: []
           }
         ],
         pack_material_data: [
@@ -1810,10 +1828,10 @@ export default Vue.extend({
       this.quotedPriceInfo.product_data.forEach((item) => {
         item.editor = '' // 把editor清空，这里有个死循环，我都不知道死循环代码是怎么执行的，反正这个死循环提交了绝对有问题
         // 这里是创建页面，不需要在进行新旧图拼接这个操作,复制粘贴的图片也给到了image_data里面
-        // item.image_data = item.file_list
-        //   ? item.image_data.concat(item.file_list!.map((item) => item.url))
-        //   : item.image_data // 新旧图拼接
-        // item.image_data = item.cv_list ? item.cv_list.filter((item) => !!item).concat(item.image_data) : item.image_data // cv图拼接
+        item.image_data = item.file_list
+          ? item.image_data.concat(item.file_list!.map((item) => item.url))
+          : item.image_data // 新旧图拼接
+        item.image_data = item.cv_list ? item.cv_list.filter((item) => !!item).concat(item.image_data) : item.image_data // cv图拼接
         item.category_id = item.type && item.type[0]
         item.secondary_category_id = item.type && item.type[1]
         item.material_data.forEach((itemChild) => {
@@ -2231,14 +2249,14 @@ export default Vue.extend({
         getInfoApi: 'getPackMaterialAsync'
       },
       {
-        checkWhich: 'api/staffProcess',
+        checkWhich: 'api/staffProcessType',
         getInfoMethed: 'dispatch',
-        getInfoApi: 'getStaffProcessAsync'
+        getInfoApi: 'getStaffProcessTypeAsync'
       },
       {
-        checkWhich: 'api/halfProcess',
+        checkWhich: 'api/halfProcessType',
         getInfoMethed: 'dispatch',
-        getInfoApi: 'getHalfProcessAsync'
+        getInfoApi: 'getHalfProcessTypeAsync'
       },
       {
         checkWhich: 'api/group',
@@ -2366,7 +2384,8 @@ export default Vue.extend({
                       id: '',
                       name: '',
                       desc: '',
-                      total_price: ''
+                      total_price: '',
+                      process_name_arr: []
                     }
                   ],
                   production_data: [
@@ -2374,7 +2393,8 @@ export default Vue.extend({
                       id: '',
                       name: '',
                       desc: '',
-                      total_price: ''
+                      total_price: '',
+                      process_name_arr: []
                     }
                   ],
                   pack_material_data: [
@@ -2511,7 +2531,8 @@ export default Vue.extend({
                           id: '',
                           name: '',
                           desc: '',
-                          total_price: ''
+                          total_price: '',
+                          process_name_arr: []
                         }
                       ],
                       production_data: [
@@ -2519,7 +2540,8 @@ export default Vue.extend({
                           id: '',
                           name: '',
                           desc: '',
-                          total_price: ''
+                          total_price: '',
+                          process_name_arr: []
                         }
                       ],
                       pack_material_data: [

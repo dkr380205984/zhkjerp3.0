@@ -350,7 +350,7 @@
                             :show-all-levels="false"
                             v-model="itemChild.process_name_arr"
                             :options="processList"
-                            @change="(ev)=>{itemChild.process_type=ev[0];itemChild.process_name=ev[1]}"
+                            @change="(ev)=>{itemChild.process_type=ev[0];itemChild.process_name=ev[2]||ev[1]}"
                             filterable
                             clearable>
                           </el-cascader>
@@ -655,7 +655,7 @@
                             :show-all-levels="false"
                             v-model="itemChild.process_name_arr"
                             :options="processList"
-                            @change="(ev)=>{itemChild.process_type=ev[0];itemChild.process_name=ev[1]}"
+                            @change="(ev)=>{itemChild.process_type=ev[0];itemChild.process_name=ev[2]||ev[1]}"
                             filterable
                             clearable>
                           </el-cascader>
@@ -1039,20 +1039,34 @@ export default Vue.extend({
         {
           label: '成品加工工序',
           value: '成品加工工序',
-          children: this.$store.state.api.staffProcess.arr.map((item: any) => {
+          children: this.$store.state.api.staffProcessType.arr.map((item: any) => {
             return {
-              label: item.code ? item.code + '-' + item.name : item.name,
-              value: item.name
+              value: item.name,
+              label: item.name,
+              children: item.children.map((itemChild: any) => {
+                return {
+                  label: itemChild.code ? itemChild.code + '-' + itemChild.name : itemChild.name,
+                  value: itemChild.name,
+                  process_desc: itemChild.process_desc
+                }
+              })
             }
           })
         },
         {
           label: '半成品加工工序',
           value: '半成品加工工序',
-          children: this.$store.state.api.halfProcess.arr.map((item: any) => {
+          children: this.$store.state.api.halfProcessType.arr.map((item: any) => {
             return {
-              label: item.code ? item.code + '-' + item.name : item.name,
-              value: item.name
+              value: item.name,
+              label: item.name,
+              children: item.children.map((itemChild: any) => {
+                return {
+                  label: itemChild.code ? itemChild.code + '-' + itemChild.name : itemChild.name,
+                  value: itemChild.name,
+                  process_desc: itemChild.process_desc
+                }
+              })
             }
           })
         }
@@ -1795,14 +1809,14 @@ export default Vue.extend({
         getInfoApi: 'getTokenAsync'
       },
       {
-        checkWhich: 'api/halfProcess',
+        checkWhich: 'api/staffProcessType',
         getInfoMethed: 'dispatch',
-        getInfoApi: 'getHalfProcessAsync'
+        getInfoApi: 'getStaffProcessTypeAsync'
       },
       {
-        checkWhich: 'api/staffProcess',
+        checkWhich: 'api/halfProcessType',
         getInfoMethed: 'dispatch',
-        getInfoApi: 'getStaffProcessAsync'
+        getInfoApi: 'getHalfProcessTypeAsync'
       },
       {
         checkWhich: 'api/yarnType',

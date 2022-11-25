@@ -685,7 +685,7 @@
                           :show-all-levels="false"
                           v-model="item.process_name_arr"
                           :options="processList"
-                          @change="(ev)=>{item.process_type=ev[0];item.process_name=ev[1];getProcessDesc(ev,item)}"
+                          @change="(ev)=>{item.process_type=ev[0];item.process_name=ev[2]||ev[1];getProcessDesc(ev,item)}"
                           filterable
                           clearable>
                         </el-cascader>
@@ -2836,22 +2836,34 @@ export default Vue.extend({
         {
           label: '成品加工工序',
           value: '成品加工工序',
-          children: this.$store.state.api.staffProcess.arr.map((item: any) => {
+          children: this.$store.state.api.staffProcessType.arr.map((item: any) => {
             return {
-              label: item.code ? item.code + '-' + item.name : item.name,
               value: item.name,
-              process_desc: item.process_desc
+              label: item.name,
+              children: item.children.map((itemChild: any) => {
+                return {
+                  label: itemChild.code ? itemChild.code + '-' + itemChild.name : itemChild.name,
+                  value: itemChild.name,
+                  process_desc: itemChild.process_desc
+                }
+              })
             }
           })
         },
         {
           label: '半成品加工工序',
           value: '半成品加工工序',
-          children: this.$store.state.api.halfProcess.arr.map((item: any) => {
+          children: this.$store.state.api.halfProcessType.arr.map((item: any) => {
             return {
-              label: item.code ? item.code + '-' + item.name : item.name,
               value: item.name,
-              process_desc: item.process_desc
+              label: item.name,
+              children: item.children.map((itemChild: any) => {
+                return {
+                  label: itemChild.code ? itemChild.code + '-' + itemChild.name : itemChild.name,
+                  value: itemChild.name,
+                  process_desc: itemChild.process_desc
+                }
+              })
             }
           })
         }
@@ -3352,7 +3364,6 @@ export default Vue.extend({
     },
     // 根据加工单选的信息计算物料信息
     getMaterialInfo(ifShow: boolean = false) {
-      console.log(this.productionPlanInfo)
       // 填写方式
       const edit_type = this.materialPlanList.find((item) => Number(item.id) === Number(this.materialPlanIndex))?.type
       this.productionPlanInfo.forEach((item) => {
@@ -3921,14 +3932,19 @@ export default Vue.extend({
     },
     // 优化工序说明
     getProcessDesc(ev: any[], info: any) {
-      info.process_desc =
-        this.processList
-          .find((item) => {
-            return item.value === ev[0]
-          })
-          .children.find((itemChild: any) => {
-            return itemChild.value === ev[1]
-          }).process_desc || ''
+      if (ev.length === 3) {
+        info.process_desc =
+          this.processList
+            .find((item) => {
+              return item.value === ev[0]
+            })
+            .children.find((itemChild: any) => {
+              return itemChild.value === ev[1]
+            })
+            .children.find((itemChild: any) => {
+              return itemChild.value === ev[2]
+            }).process_desc || ''
+      }
     },
     getMaterialPlanDetail(id: string) {
       this.loading = true
@@ -4080,14 +4096,14 @@ export default Vue.extend({
         getInfoApi: 'getClientTypeAsync'
       },
       {
-        checkWhich: 'api/staffProcess',
+        checkWhich: 'api/staffProcessType',
         getInfoMethed: 'dispatch',
-        getInfoApi: 'getStaffProcessAsync'
+        getInfoApi: 'getStaffProcessTypeAsync'
       },
       {
-        checkWhich: 'api/halfProcess',
+        checkWhich: 'api/halfProcessType',
         getInfoMethed: 'dispatch',
-        getInfoApi: 'getHalfProcessAsync'
+        getInfoApi: 'getHalfProcessTypeAsync'
       },
       {
         checkWhich: 'api/yarnColor',

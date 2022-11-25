@@ -116,7 +116,7 @@
                             v-if="!item.craft_list_id">暂无(
                             <span class="hoverBlue"
                               style="cursor:pointer"
-                              @click="$openUrl('/craft/create?id='+productInfo.id+'&part_id='+item.id)">添加</span>)
+                              @click="$openUrl('/craft/create?id='+sampleInfo.id+'&part_id='+item.id)">添加</span>)
                           </div>
                           <div class="text"
                             v-else>

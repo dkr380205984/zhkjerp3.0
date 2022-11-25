@@ -321,6 +321,7 @@
                 <div class="row title">
                   <div class="col">工序编号</div>
                   <div class="col">加工工序</div>
+                  <div class="col">工序标签</div>
                   <div class="col">工序说明</div>
                   <div class="col">操作</div>
                 </div>
@@ -329,6 +330,7 @@
                   :key="index">
                   <div class="col">{{ item.code }}</div>
                   <div class="col">{{ item.name }}</div>
+                  <div class="col">{{item.rel_tag.map((item)=>item.name).join(',')}}</div>
                   <div class="col">
                     {{ item.process_desc || '暂无工序说明' }}
                   </div>
@@ -364,6 +366,7 @@
                 <div class="row title">
                   <div class="col">成品加工工序编号</div>
                   <div class="col">成品加工工序</div>
+                  <div class="col">工序标签</div>
                   <div class="col">工序说明</div>
                   <div class="col">操作</div>
                 </div>
@@ -372,6 +375,7 @@
                   :key="index">
                   <div class="col">{{ item.code }}</div>
                   <div class="col">{{ item.name }}</div>
+                  <div class="col">{{item.rel_tag.map((item)=>item.name).join(',')}}</div>
                   <div class="col">
                     {{ item.process_desc || '暂无工序说明' }}
                   </div>
@@ -1303,6 +1307,7 @@
                     <span class="opr hoverOrange"
                       @click="
                         decorateMaterialInfo = item
+                        decorateMaterialInfo.price_info = item.rel_price.length > 0? item.rel_price: [{desc: '',price: '',client_id: '',client_id_arr: []}]
                         showPopup = true
                       ">修改</span>
                     <span class="opr hoverRed"
@@ -1351,7 +1356,7 @@
                   <div class="col">{{ item.name }}</div>
                   <div class="col">{{ item.unit }}</div>
                   <div class="col">{{ item.calc_type | packCalcFilter }}</div>
-                  <div class="col">参考报价</div>
+                  <div class="col">{{ item.rel_price | filterPrice }}</div>
                   <div class="col">{{ item.user_name }}</div>
                   <div class="col">{{ item.created_at }}</div>
                   <div class="col">
@@ -4232,7 +4237,8 @@
         </div>
       </template>
       <template v-if="cName === '半成品加工'">
-        <div class="main">
+        <div class="main"
+          style="width:920px">
           <div class="titleCtn">
             <div class="text">{{ isHalfUpdate ? '修改加工工序' : '新增加工工序' }}</div>
             <div class="closeCtn"
@@ -4269,6 +4275,30 @@
                   @click="$addItem(processHalfDescList, '')">添加</el-button>
               </div>
             </div>
+            <div class="row">
+              <div class="label">工序标签：</div>
+              <div class="info tagCtn">
+                <span class="yarnNameTag"
+                  :class="{ active: item.check, unactive: !item.check }"
+                  v-for="(item, index) in halfProcessTypeList"
+                  :key="item.id"
+                  @click="item.check = !item.check;$forceUpdate()">
+                  <span class="name">{{ item.name }}</span>
+                  <span class="el-icon-close icon"
+                    @click.stop="deleteHalfProcessType(item.id, index, 1)"></span>
+                </span>
+                <span class="elCtn"
+                  v-show="halfProcessTypeFlag">
+                  <el-input placeholder="输入新增类型"
+                    v-model="halfProcessTypeInfo.name"></el-input>
+                </span>
+                <span class="yarnNameTag"
+                  :class="halfProcessTypeFlag ? 'active' : 'addBtn'"
+                  @click="halfProcessTypeFlag ? saveHalfProcessType() : (halfProcessTypeFlag = true)">{{ halfProcessTypeFlag ? '保存类型' : '新增类型' }}
+                  <i :class="halfProcessTypeFlag ? 'el-icon-document-checked' : 'el-icon-plus'"></i>
+                </span>
+              </div>
+            </div>
           </div>
           <div class="oprCtn">
             <div class="btn borderBtn"
@@ -4279,7 +4309,8 @@
         </div>
       </template>
       <template v-if="cName === '成品加工工序'">
-        <div class="main">
+        <div class="main"
+          style="width:920px">
           <div class="titleCtn">
             <div class="text">{{ isStaffProcessUpdate ? '修改成品加工工序' : '新增成品加工工序' }}</div>
             <div class="closeCtn"
@@ -4317,6 +4348,30 @@
                 <el-button style="margin-left: 17px"
                   v-if="index === processStaffDescList.length - 1"
                   @click="$addItem(processStaffDescList, '')">添加</el-button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">工序标签：</div>
+              <div class="info tagCtn">
+                <span class="yarnNameTag"
+                  :class="{ active: item.check, unactive: !item.check }"
+                  v-for="(item, index) in  staffProcessTypeList"
+                  :key="item.id"
+                  @click="item.check = !item.check;$forceUpdate()">
+                  <span class="name">{{ item.name }}</span>
+                  <span class="el-icon-close icon"
+                    @click.stop="deleteStaffProcessType(item.id, index, 1)"></span>
+                </span>
+                <span class="elCtn"
+                  v-show=" staffProcessTypeFlag">
+                  <el-input placeholder="输入新增类型"
+                    v-model="staffProcessTypeInfo.name"></el-input>
+                </span>
+                <span class="yarnNameTag"
+                  :class=" staffProcessTypeFlag ? 'active' : 'addBtn'"
+                  @click=" staffProcessTypeFlag ? saveStaffProcessType() : ( staffProcessTypeFlag = true)">{{  staffProcessTypeFlag ? '保存类型' : '新增类型' }}
+                  <i :class=" staffProcessTypeFlag ? 'el-icon-document-checked' : 'el-icon-plus'"></i>
+                </span>
               </div>
             </div>
           </div>
@@ -4691,6 +4746,42 @@
                 </span>
               </div>
             </div>
+            <div class="row"
+              v-for="(item,index) in yarnInfo1.price_info"
+              :key="index">
+              <div class="label">报价信息{{index+1}}：</div>
+              <div class="info">
+                <el-cascader v-if="!item.client_name"
+                  style="width:220px;margin-right:12px"
+                  placeholder="请选择报价单位"
+                  v-model="item.client_id_arr"
+                  :options="yarnClientList"
+                  filterable
+                  @change="
+                    (ev) => {
+                      item.client_id = ev[2]
+                    }
+                  "></el-cascader>
+                <div class="blue"
+                  v-if="item.client_name"
+                  style="width:220px;margin-right:12px;display:inline-block">{{item.client_name}}</div>
+                <el-input placeholder="输入报价金额"
+                  v-model="item.price"
+                  style="width:220px;margin-right:12px">
+                  <template slot="append">元/kg</template>
+                </el-input>
+                <el-input style="width:250px"
+                  placeholder="备注信息"
+                  v-model="item.desc">
+                </el-input>
+                <div v-if="index===0"
+                  class="info_btn hoverBlue"
+                  @click="$addItem(yarnInfo1.price_info,{price:'',client_id:'',client_id_arr:[],desc:''})">添加</div>
+                <div v-else
+                  class="info_btn hoverRed"
+                  @click="$deleteItem(yarnInfo1.price_info,index)">删除</div>
+              </div>
+            </div>
           </div>
           <div class="oprCtn">
             <div class="btn borderBtn"
@@ -4743,6 +4834,42 @@
                   @click="yarnTypeFlag2 ? saveYarnType(2) : (yarnTypeFlag2 = true)">{{ yarnTypeFlag2 ? '保存类型' : '新增类型' }}
                   <i :class="yarnTypeFlag2 ? 'el-icon-document-checked' : 'el-icon-plus'"></i>
                 </span>
+              </div>
+            </div>
+            <div class="row"
+              v-for="(item,index) in yarnInfo2.price_info"
+              :key="index">
+              <div class="label">报价信息{{index+1}}：</div>
+              <div class="info">
+                <el-cascader v-if="!item.client_name"
+                  style="width:220px;margin-right:12px"
+                  placeholder="请选择报价单位"
+                  v-model="item.client_id_arr"
+                  :options="mianliaoClientList"
+                  filterable
+                  @change="
+                    (ev) => {
+                      item.client_id = ev[2]
+                    }
+                  "></el-cascader>
+                <div class="blue"
+                  v-if="item.client_name"
+                  style="width:220px;margin-right:12px;display:inline-block">{{item.client_name}}</div>
+                <el-input placeholder="输入报价金额"
+                  v-model="item.price"
+                  style="width:220px;margin-right:12px">
+                  <template slot="append">元/kg</template>
+                </el-input>
+                <el-input style="width:250px"
+                  placeholder="备注信息"
+                  v-model="item.desc">
+                </el-input>
+                <div v-if="index===0"
+                  class="info_btn hoverBlue"
+                  @click="$addItem(yarnInfo1.price_info,{price:'',client_id:'',client_id_arr:[],desc:''})">添加</div>
+                <div v-else
+                  class="info_btn hoverRed"
+                  @click="$deleteItem(yarnInfo1.price_info,index)">删除</div>
               </div>
             </div>
           </div>
@@ -4809,7 +4936,8 @@
         </div>
       </template>
       <template v-if="cName === '装饰辅料'">
-        <div class="main">
+        <div class="main"
+          style="width:920px">
           <div class="titleCtn">
             <div class="text">新增辅料</div>
             <div class="closeCtn"
@@ -4832,6 +4960,42 @@
                   v-model="decorateMaterialInfo.unit"></el-input>
               </div>
             </div>
+            <div class="row"
+              v-for="(item,index) in decorateMaterialInfo.price_info"
+              :key="index">
+              <div class="label">报价信息{{index+1}}：</div>
+              <div class="info">
+                <el-cascader v-if="!item.client_name"
+                  style="width:220px;margin-right:12px"
+                  placeholder="请选择报价单位"
+                  v-model="item.client_id_arr"
+                  :options="decorateMaterialClientList"
+                  filterable
+                  @change="
+                    (ev) => {
+                      item.client_id = ev[2]
+                    }
+                  "></el-cascader>
+                <div class="blue"
+                  v-if="item.client_name"
+                  style="width:220px;margin-right:12px;display:inline-block">{{item.client_name}}</div>
+                <el-input placeholder="输入报价金额"
+                  v-model="item.price"
+                  style="width:220px;margin-right:12px">
+                  <template slot="append">元/kg</template>
+                </el-input>
+                <el-input style="width:250px"
+                  placeholder="备注信息"
+                  v-model="item.desc">
+                </el-input>
+                <div v-if="index===0"
+                  class="info_btn hoverBlue"
+                  @click="$addItem(decorateMaterialInfo.price_info,{price:'',client_id:'',client_id_arr:[],desc:''})">添加</div>
+                <div v-else
+                  class="info_btn hoverRed"
+                  @click="$deleteItem(decorateMaterialInfo.price_info,index)">删除</div>
+              </div>
+            </div>
           </div>
           <div class="oprCtn">
             <div class="btn borderBtn"
@@ -4842,7 +5006,8 @@
         </div>
       </template>
       <template v-if="cName === '包装辅料'">
-        <div class="main">
+        <div class="main"
+          style="width:920px">
           <div class="titleCtn">
             <div class="text">新增辅料</div>
             <div class="closeCtn"
@@ -4874,6 +5039,42 @@
                   <el-radio label="2">胶袋:面积</el-radio>
                   <el-radio label="3">其他</el-radio>
                 </el-radio-group>
+              </div>
+            </div>
+            <div class="row"
+              v-for="(item,index) in packMaterialInfo.price_info"
+              :key="index">
+              <div class="label">报价信息{{index+1}}：</div>
+              <div class="info">
+                <el-cascader v-if="!item.client_name"
+                  style="width:220px;margin-right:12px"
+                  placeholder="请选择报价单位"
+                  v-model="item.client_id_arr"
+                  :options="packMaterialClientList"
+                  filterable
+                  @change="
+                    (ev) => {
+                      item.client_id = ev[2]
+                    }
+                  "></el-cascader>
+                <div class="blue"
+                  v-if="item.client_name"
+                  style="width:220px;margin-right:12px;display:inline-block">{{item.client_name}}</div>
+                <el-input placeholder="输入报价金额"
+                  v-model="item.price"
+                  style="width:220px;margin-right:12px">
+                  <template slot="append">元/kg</template>
+                </el-input>
+                <el-input style="width:250px"
+                  placeholder="备注信息"
+                  v-model="item.desc">
+                </el-input>
+                <div v-if="index===0"
+                  class="info_btn hoverBlue"
+                  @click="$addItem(packMaterialInfo.price_info,{price:'',client_id:'',client_id_arr:[],desc:''})">添加</div>
+                <div v-else
+                  class="info_btn hoverRed"
+                  @click="$deleteItem(packMaterialInfo.price_info,index)">删除</div>
               </div>
             </div>
           </div>
@@ -5954,7 +6155,8 @@ import {
   companyInfo,
   yarnPrice,
   checkConfig,
-  craft
+  craft,
+  processType
 } from '@/assets/js/api'
 export default Vue.extend({
   data(): {
@@ -6488,11 +6690,19 @@ export default Vue.extend({
         type: 2,
         name: '',
         process_desc: '',
+        rel_tag: [],
         id: null
       },
       halfProcessTotal: 1,
       halfProcessPage: 1,
       isHalfUpdate: false,
+      halfProcessTypeList: [],
+      halfProcessTypeFlag: false,
+      halfProcessTypeInfo: {
+        name: '',
+        id: '',
+        type: 2
+      },
       staffProcessList: [],
       processHalfDescList: [''],
       staffProcessInfo: {
@@ -6500,10 +6710,18 @@ export default Vue.extend({
         type: 3,
         name: '',
         process_desc: '',
-        id: null
+        id: null,
+        rel_tag: []
       },
       staffProcessTotal: 1,
       staffProcessPage: 1,
+      staffProcessTypeList: [],
+      staffProcessTypeFlag: false,
+      staffProcessTypeInfo: {
+        name: '',
+        id: '',
+        type: 3
+      },
       isStaffProcessUpdate: false,
       processStaffDescList: [''],
       sideList: [],
@@ -6597,7 +6815,15 @@ export default Vue.extend({
         id: null,
         name: '',
         type: 1,
-        yarn_rel_type: []
+        yarn_rel_type: [],
+        price_info: [
+          {
+            price: '',
+            client_id: '',
+            client_id_arr: [],
+            desc: ''
+          }
+        ]
       },
       yarnTotal1: 1,
       yarnPage1: 1,
@@ -6628,7 +6854,15 @@ export default Vue.extend({
         id: null,
         name: '',
         type: 2,
-        yarn_rel_type: []
+        yarn_rel_type: [],
+        price_info: [
+          {
+            price: '',
+            client_id: '',
+            client_id_arr: [],
+            desc: ''
+          }
+        ]
       },
       yarnTotal2: 1,
       yarnPage2: 1,
@@ -6644,7 +6878,15 @@ export default Vue.extend({
         id: null,
         name: '',
         type: 3,
-        yarn_rel_type: []
+        yarn_rel_type: [],
+        price_info: [
+          {
+            price: '',
+            client_id: '',
+            client_id_arr: [],
+            desc: ''
+          }
+        ]
       },
       yarnTotal3: 1,
       yarnPage3: 1,
@@ -6658,7 +6900,15 @@ export default Vue.extend({
       decorateMaterialInfo: {
         id: null,
         name: '',
-        unit: ''
+        unit: '',
+        price_info: [
+          {
+            price: '',
+            client_id: '',
+            client_id_arr: [],
+            desc: ''
+          }
+        ]
       },
       decorateMaterialList: [],
       decorateMaterialTotal: 1,
@@ -6667,7 +6917,15 @@ export default Vue.extend({
         id: null,
         name: '',
         calc_type: '1',
-        unit: ''
+        unit: '',
+        price_info: [
+          {
+            price: '',
+            client_id: '',
+            client_id_arr: [],
+            desc: ''
+          }
+        ]
       },
       packMaterialList: [],
       packMaterialTotal: 1,
@@ -7410,12 +7668,33 @@ export default Vue.extend({
         ])
         this.getCraftList()
       } else if (this.cName === '纱线原料') {
+        this.$checkCommonInfo([
+          {
+            checkWhich: 'api/clientType',
+            getInfoMethed: 'dispatch',
+            getInfoApi: 'getClientTypeAsync'
+          }
+        ])
         this.getYarnType(1)
         this.getYarn(1)
       } else if (this.cName === '面料原料') {
+        this.$checkCommonInfo([
+          {
+            checkWhich: 'api/clientType',
+            getInfoMethed: 'dispatch',
+            getInfoApi: 'getClientTypeAsync'
+          }
+        ])
         this.getYarnType(2)
         this.getYarn(2)
       } else if (this.cName === '毛料原料') {
+        this.$checkCommonInfo([
+          {
+            checkWhich: 'api/clientType',
+            getInfoMethed: 'dispatch',
+            getInfoApi: 'getClientTypeAsync'
+          }
+        ])
         this.getYarnType(3)
         this.getYarn(3)
       } else if (this.cName === '纱线报价') {
@@ -8445,6 +8724,10 @@ export default Vue.extend({
           this.halfProcessList = res.data.data
           this.halfProcessTotal = this.halfProcessList.length
         })
+
+      processType.list({ type: 2 }).then((res) => {
+        this.halfProcessTypeList = res.data.data
+      })
     },
     saveHalfProcess() {
       const formCheck = this.$formCheck(this.halfProcessInfo, [
@@ -8453,7 +8736,9 @@ export default Vue.extend({
           errMsg: '请输入加工工序'
         }
       ])
-
+      this.halfProcessInfo.rel_tag = this.halfProcessTypeList
+        .filter((item: any) => item.check)
+        .map((item: any) => item.id)
       this.halfProcessInfo.process_desc = this.processHalfDescList.toString()
       this.halfProcessInfo.process_desc =
         this.halfProcessInfo.process_desc.substring(this.halfProcessInfo.process_desc.length - 1) == ','
@@ -8473,6 +8758,7 @@ export default Vue.extend({
                 type: 2,
                 process_desc: '',
                 name: '',
+                rel_tag: [],
                 id: null
               }
               this.processHalfDescList = ['']
@@ -8491,7 +8777,8 @@ export default Vue.extend({
         type: 2,
         process_desc: '',
         name: '',
-        id: null
+        id: null,
+        rel_tag: []
       }
       this.processHalfDescList = ['']
     },
@@ -8523,6 +8810,56 @@ export default Vue.extend({
           })
         })
     },
+    saveHalfProcessType() {
+      const formCheck = this.$formCheck(this.halfProcessTypeInfo, [
+        {
+          key: 'name',
+          errMsg: '请输入工序标签'
+        }
+      ])
+      if (!formCheck) {
+        processType.create(this.halfProcessTypeInfo).then((res) => {
+          if (res.data.status) {
+            this.halfProcessTypeList.push({
+              check: true,
+              id: res.data.data.id,
+              name: res.data.data.name
+            })
+            this.halfProcessTypeInfo.name = ''
+            this.halfProcessTypeFlag = false
+            this.$message.success('添加成功')
+          }
+        })
+      }
+    },
+    deleteHalfProcessType(id: number, index: number) {
+      this.$confirm('是否删除该工序标签?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          processType
+            .delete({
+              id: id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.halfProcessTypeList.splice(index, 1)
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
     getStaffProcess() {
       process
         .list({
@@ -8532,6 +8869,9 @@ export default Vue.extend({
           this.staffProcessList = res.data.data
           this.staffProcessTotal = this.staffProcessList.length
         })
+      processType.list({ type: 3 }).then((res) => {
+        this.staffProcessTypeList = res.data.data
+      })
     },
     saveStaffProcess() {
       const formCheck = this.$formCheck(this.staffProcessInfo, [
@@ -8540,7 +8880,9 @@ export default Vue.extend({
           errMsg: '请输入加工工序'
         }
       ])
-
+      this.staffProcessInfo.rel_tag = this.staffProcessTypeList
+        .filter((item: any) => item.check)
+        .map((item: any) => item.id)
       this.staffProcessInfo.process_desc = this.processStaffDescList.toString()
       this.staffProcessInfo.process_desc =
         this.staffProcessInfo.process_desc.substring(this.staffProcessInfo.process_desc.length - 1) == ','
@@ -8560,7 +8902,8 @@ export default Vue.extend({
                 type: 3,
                 process_desc: '',
                 name: '',
-                id: null
+                id: null,
+                rel_tag: []
               }
               this.processStaffDescList = ['']
               this.showPopup = false
@@ -8578,7 +8921,8 @@ export default Vue.extend({
         type: 3,
         process_desc: '',
         name: '',
-        id: null
+        id: null,
+        rel_tag: []
       }
       this.processStaffDescList = ['']
     },
@@ -8610,12 +8954,65 @@ export default Vue.extend({
           })
         })
     },
+    saveStaffProcessType() {
+      const formCheck = this.$formCheck(this.staffProcessTypeInfo, [
+        {
+          key: 'name',
+          errMsg: '请输入工序标签'
+        }
+      ])
+      if (!formCheck) {
+        processType.create(this.staffProcessTypeInfo).then((res) => {
+          if (res.data.status) {
+            this.staffProcessTypeList.push({
+              check: true,
+              id: res.data.data.id,
+              name: res.data.data.name
+            })
+            this.staffProcessTypeInfo.name = ''
+            this.staffProcessTypeFlag = false
+            this.$message.success('添加成功')
+          }
+        })
+      }
+    },
+    deleteStaffProcessType(id: number, index: number) {
+      this.$confirm('是否删除该工序标签?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          processType
+            .delete({
+              id: id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.staffProcessTypeList.splice(index, 1)
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
     updateHalfProcess(item: any) {
       this.isHalfUpdate = true
       this.showPopup = true
       this.halfProcessInfo.code = item.code || ''
       this.halfProcessInfo.name = item.name
       this.halfProcessInfo.id = item.id
+      this.halfProcessTypeList.forEach((itemType: any) => {
+        itemType.check = !!item.rel_tag.find((itemFind: any) => itemFind.id === itemType.id)
+      })
       if (item.process_desc !== null) {
         this.processHalfDescList = item.process_desc.split(',')
       }
@@ -8626,6 +9023,9 @@ export default Vue.extend({
       this.staffProcessInfo.code = item.code
       this.staffProcessInfo.name = item.name
       this.staffProcessInfo.id = item.id
+      this.staffProcessTypeList.forEach((itemType: any) => {
+        itemType.check = !!item.rel_tag.find((itemFind: any) => itemFind.id === itemType.id)
+      })
       if (item.process_desc !== null) {
         this.processStaffDescList = item.process_desc.split(',')
       }
@@ -9325,7 +9725,8 @@ export default Vue.extend({
           id: this['yarnInfo' + type].id,
           name: this['yarnInfo' + type].name || this.layoutData.yarnNameList,
           type: type,
-          yarn_rel_type: realType as number[]
+          yarn_rel_type: realType as number[],
+          price_info: this['yarnInfo' + type].price_info
         })
         .then((res) => {
           if (res.data.status) {
@@ -9342,6 +9743,17 @@ export default Vue.extend({
         }
       })
       this['yarnInfo' + type] = info
+      this['yarnInfo' + type].price_info =
+        info.rel_price.length > 0
+          ? info.rel_price
+          : [
+              {
+                desc: '',
+                price: '',
+                client_id: '',
+                client_id_arr: []
+              }
+            ]
       this.showPopup = true
     },
     deleteYarn(id: number, type: 1 | 2 | 3) {
@@ -9463,8 +9875,9 @@ export default Vue.extend({
         })
       }
     },
-    updatePackMaterial(info: PackMaterialInfo) {
+    updatePackMaterial(info: any) {
       this.packMaterialInfo = info
+       this.packMaterialInfo.price_info = info.rel_price.length > 0? info.rel_price: [{desc: '',price: '',client_id: '',client_id_arr: []}]
       this.showPopup = true
     },
     deletePackMaterial(id: number) {
@@ -10221,6 +10634,13 @@ export default Vue.extend({
     // 纱线原料单位——纱线报价用
     mianliaoClientList() {
       return this.$store.state.api.clientType.arr.filter((item: { label: string }) => item.label === '面料原料单位')
+    },
+    // 装饰辅料单位
+    decorateMaterialClientList() {
+      return this.$store.state.api.clientType.arr.filter((item: { label: string }) => item.label === '装饰辅料单位')
+    },
+    packMaterialClientList() {
+      return this.$store.state.api.clientType.arr.filter((item: { label: string }) => item.label === '包装辅料单位')
     },
     // 包装辅料——报价单里用
     packMaterialStore(): PackMaterialInfo[] {

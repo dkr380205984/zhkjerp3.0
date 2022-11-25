@@ -362,7 +362,7 @@ const orderType = {
   delete: (params: DeleteParams) => http.post(`${baseUrl}/order/type/delete `, params, 'application/json')
 }
 
-import { ProcessInfo } from '@/types/processSetting'
+import { ProcessInfo, ProcessTypeInfo } from '@/types/processSetting'
 // 工序
 const process = {
   create: (params: { data: ProcessInfo[] }) => http.post(`${baseUrl}/process/save`, params, 'application/json'),
@@ -371,6 +371,13 @@ const process = {
     type?: 1 | 2 | 3
     name?: String
   }) => http.get(`${baseUrl}/process/lists`, params)
+}
+
+// 工序标签
+const processType = {
+  create: (params: { data: ProcessTypeInfo[] }) => http.post(`${baseUrl}/process/tag/save`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/process/tag/delete`, params, 'application/json'),
+  list: (params: { type: 2 | 3 }) => http.get(`${baseUrl}/process/tag/lists`, params)
 }
 
 // 工艺单设置
@@ -1537,5 +1544,6 @@ export {
   productionProgress,
   invoice,
   updateSettlePrice,
-  chartsApi
+  chartsApi,
+  processType
 }

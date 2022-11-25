@@ -96,13 +96,15 @@ export interface QuotedPriceProduct {
   }>
   semi_product_data: Array<{
     id?: string | number
-    name: string | number
+    name: string
+    process_name_arr?: string[] // 前端用
     desc: string
     total_price: number | string
   }>
   production_data: Array<{
     id?: number | string
-    name: number | string
+    name: string
+    process_name_arr?: string[] // 前端用
     desc: string
     total_price: number | string
   }>

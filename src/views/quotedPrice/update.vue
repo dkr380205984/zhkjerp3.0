@@ -601,15 +601,12 @@
                   </el-tooltip>
                 </div>
                 <div class="info elCtn">
-                  <el-select v-model="itemHalfProcess.name"
-                    placeholder="请选择加工工序"
+                  <el-cascader placeholder="请选择加工工序"
+                    v-model="itemHalfProcess.process_name_arr"
+                    :options="halfProcessTypeList"
                     clearable
-                    filterable>
-                    <el-option v-for="item in halfProcessList"
-                      :key="item.name"
-                      :value="item.name"
-                      :label="item.name"></el-option>
-                  </el-select>
+                    filterable
+                    @change="(ev)=>{itemHalfProcess.name=ev[1]}"></el-cascader>
                 </div>
               </div>
               <div class="col">
@@ -682,15 +679,12 @@
                   </el-tooltip>
                 </div>
                 <div class="info elCtn">
-                  <el-select v-model="itemFinishedProcess.name"
-                    placeholder="请选择加工工序"
+                  <el-cascader placeholder="请选择加工工序"
+                    v-model="itemFinishedProcess.process_name_arr"
+                    :options="staffProcessTypeList"
                     clearable
-                    filterable>
-                    <el-option v-for="item in finishedList"
-                      :key="item.name"
-                      :label="item.name"
-                      :value="item.name"></el-option>
-                  </el-select>
+                    filterable
+                    @change="(ev)=>{itemFinishedProcess.name=ev[1]}"></el-cascader>
                 </div>
               </div>
               <div class="col">
@@ -1200,14 +1194,16 @@ export default Vue.extend({
               {
                 name: '',
                 desc: '',
-                total_price: ''
+                total_price: '',
+                process_name_arr: []
               }
             ],
             production_data: [
               {
                 name: '',
                 desc: '',
-                total_price: ''
+                total_price: '',
+                process_name_arr: []
               }
             ],
             pack_material_data: [
@@ -1319,17 +1315,39 @@ export default Vue.extend({
     decorateMaterialList(): DecorateMaterialInfo[] {
       return this.$store.state.api.decorateMaterial.arr
     },
-    halfProcessList() {
-      return this.$store.state.api.halfProcess.arr
+    halfProcessTypeList() {
+      return this.$store.state.api.halfProcessType.arr.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.name,
+          children: item.children.map((itemChild: any) => {
+            return {
+              label: itemChild.name,
+              value: itemChild.name
+            }
+          })
+        }
+      })
+    },
+    staffProcessTypeList() {
+      return this.$store.state.api.staffProcessType.arr.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.name,
+          children: item.children.map((itemChild: any) => {
+            return {
+              label: itemChild.name,
+              value: itemChild.name
+            }
+          })
+        }
+      })
     },
     groupList() {
       return this.$store.state.api.group.arr
     },
     clientList() {
       return this.$store.state.api.clientType.arr.filter((item: { type: any }) => Number(item.type) === 1)
-    },
-    finishedList() {
-      return this.$store.state.api.staffProcess.arr
     }
   },
   methods: {
@@ -1869,6 +1887,7 @@ export default Vue.extend({
       }
 
       this.quotedPriceInfo.product_data.forEach((item, index) => {
+        console.log(item)
         this.$nextTick(() => {
           this.$initEditor(item, index)
         })
@@ -1886,6 +1905,12 @@ export default Vue.extend({
           itemMat.tree_data = itemMat.tree_data
             ? (itemMat.tree_data as string).split(',').map((item) => Number(item))
             : []
+        })
+        item.semi_product_data.forEach((itemChild) => {
+          itemChild.process_name_arr = itemChild.name ? ['全部', itemChild.name] : []
+        })
+        item.production_data.forEach((itemChild) => {
+          itemChild.process_name_arr = itemChild.name ? ['全部', itemChild.name] : []
         })
       })
     },
@@ -1945,14 +1970,14 @@ export default Vue.extend({
         getInfoApi: 'getPackMaterialAsync'
       },
       {
-        checkWhich: 'api/halfProcess',
+        checkWhich: 'api/staffProcessType',
         getInfoMethed: 'dispatch',
-        getInfoApi: 'getHalfProcessAsync'
+        getInfoApi: 'getStaffProcessTypeAsync'
       },
       {
-        checkWhich: 'api/staffProcess',
+        checkWhich: 'api/halfProcessType',
         getInfoMethed: 'dispatch',
-        getInfoApi: 'getStaffProcessAsync'
+        getInfoApi: 'getHalfProcessTypeAsync'
       },
       {
         checkWhich: 'api/group',
