@@ -1,42 +1,91 @@
 @import '../common.less';
 @import '../card.less';
 @import '../list.less';
+@import '../flattenTable.less';
 
 #orderStatistics {
-    .contentGrid {
-        display: grid;
-        grid-template-columns: 33.33% 33.33% 33.33%;
-        align-items: center;
-        grid-template-rows: 50px;
-    }
+  .flattenTableCtn {
+    padding: 0;
 
-    .screen{
-        height:63px;
-    }
+    .trow {
+      height: 60px;
 
-    .item2 {
-        grid-column-start: 2;
-        grid-column-end: 4;
-    }
+      &:nth-child(1) {
+        font-weight: bold;
+      }
 
-    h3,
-    h2 {
-        display: inline-block;
-        margin: 10px 0;
-    }
+      &:nth-child(2n) {
+        background: #F8F8F8;
+      }
 
-    .tag {
-        border-radius: 18px;
-    }
-
-    .unit {
-        margin-left: 10px;
-        color: #A3A3A3;
-        font-weight: normal;
-    }
-
-    .content {
-        width: 100%;
+      .tcol {
+        min-height: 60px;
         display: flex;
+        flex-direction: column;
+
+
+        .gray {
+          font-size: 12px;
+        }
+
+        .em {
+          color: @font25;
+          font-size: 14px;
+          margin-left: 4px;
+        }
+
+        &.fontNormal {
+          font-weight: normal;
+          color: @font25;
+        }
+
+        &:nth-child(1) {
+          flex: 0.5;
+          font-weight: bold;
+        }
+
+        &:nth-child(2) {
+          flex: 0.5;
+          font-weight: bold;
+        }
+      }
     }
+  }
+
+  .contentGrid {
+    display: grid;
+    grid-template-columns: 33.33% 33.33% 33.33%;
+    align-items: center;
+    grid-template-rows: 50px;
+  }
+
+  .screen {
+    height: 63px;
+  }
+
+  .item2 {
+    grid-column-start: 2;
+    grid-column-end: 4;
+  }
+
+  h3,
+  h2 {
+    display: inline-block;
+    margin: 10px 0;
+  }
+
+  .tag {
+    border-radius: 18px;
+  }
+
+  .unit {
+    margin-left: 10px;
+    color: #A3A3A3;
+    font-weight: normal;
+  }
+
+  .content {
+    width: 100%;
+    display: flex;
+  }
 }

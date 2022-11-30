@@ -1407,8 +1407,26 @@ export default Vue.extend({
         .then(() => {
           const finded = this.searchQuotedPriceList.find((item: any) => item.id === ev)
           this.quotedPriceInfo.product_data[this.productIndex].weave_data = JSON.parse(finded.weave_data)
-          this.quotedPriceInfo.product_data[this.productIndex].semi_product_data = JSON.parse(finded.semi_product_data)
-          this.quotedPriceInfo.product_data[this.productIndex].production_data = JSON.parse(finded.production_data)
+          this.quotedPriceInfo.product_data[this.productIndex].semi_product_data = JSON.parse(
+            finded.semi_product_data
+          ).map((item: any) => {
+            return {
+              name: item.name,
+              total_price: item.total_price,
+              desc: item.desc,
+              process_name_arr: ['全部', item.name]
+            }
+          })
+          this.quotedPriceInfo.product_data[this.productIndex].production_data = JSON.parse(finded.production_data).map(
+            (item: any) => {
+              return {
+                name: item.name,
+                total_price: item.total_price,
+                desc: item.desc,
+                process_name_arr: ['全部', item.name]
+              }
+            }
+          )
           this.quotedPriceInfo.product_data[this.productIndex].pack_material_data = JSON.parse(
             finded.pack_material_data
           )

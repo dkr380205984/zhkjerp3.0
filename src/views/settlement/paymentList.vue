@@ -169,7 +169,16 @@
                   @click="sortCol='total_deduct_price';sort='desc';getList()"></div>
               </div>
             </div>
-            <div class="col">待付款金额</div>
+            <div class="col">待付款金额
+              <div class="sortCtn">
+                <div class="el-icon-caret-top"
+                  :class="{'active':sortCol==='total_deduct_price'&&sort==='asc'}"
+                  @click="sortCol='wait_pay_price';sort='asc';getList()"></div>
+                <div class="el-icon-caret-bottom"
+                  :class="{'active':sortCol==='total_deduct_price'&&sort==='desc'}"
+                  @click="sortCol='wait_pay_price';sort='desc';getList()"></div>
+              </div>
+            </div>
             <div class="col">操作</div>
           </div>
           <div class="row"
@@ -216,7 +225,7 @@
             <div class="col">{{$toFixed(item.total_invoice_price,3,true)}}万元</div>
             <div class="col">{{$toFixed(item.total_pay_price,3,true)}}万元</div>
             <div class="col">{{$toFixed(item.total_deduct_price,3,true)}}万元</div>
-            <div class="col">{{$toFixed((item.total_real_price - item.total_pay_price - item.total_deduct_price),3)}}万元</div>
+            <div class="col">{{$toFixed(item.wait_pay_price,3,true)}}万元</div>
             <div class="col oprCtn">
               <span class="opr hoverBlue"
                 @click="$router.push('/settlement/paymentDetail?id='+item.id + '&type=' + item.client_type_name)">详情</span>
@@ -566,12 +575,12 @@ export default Vue.extend({
         typeObj = {
           doc_code: ['关联单号(选填)', ''],
           client_zh: ['客户/单位名称(必填，系统简称)'],
-          invoice_number: ['发票代码(选填)',''],
-          invoice_code: ['发票号码(选填)',''],
-          type: ['发票类型(默认专票)','专票'],
+          invoice_number: ['发票代码(选填)', ''],
+          invoice_code: ['发票号码(选填)', ''],
+          type: ['发票类型(默认专票)', '专票'],
           tax_rate: ['税率(必填)'],
           price: ['开票金额(税价合计，必填)'],
-          desc: ['备注信息(选填)', ''],
+          desc: ['备注信息(选填)', '']
         }
       } else if (type === '付款单据') {
         typeObj = {
@@ -701,8 +710,6 @@ export default Vue.extend({
       this.loading = true
       client
         .financialList({
-          sort_col: this.sortCol,
-          sort: this.sort,
           limit: this.limit,
           page: this.page,
           name: this.keyword,
@@ -717,7 +724,19 @@ export default Vue.extend({
           if (res.data.status) {
             this.total = res.data.data.items.length
             this.totalList = res.data.data.items
-            this.list = res.data.data.items.slice((this.page - 1) * this.limit, this.page * this.limit)
+            this.totalList.forEach((item: any) => {
+              item.wait_pay_price = item.total_real_price - item.total_pay_price - item.total_deduct_price
+            })
+            this.list = res.data.data.items
+              .sort((a: any, b: any) => {
+                if (this.sort === 'desc') {
+                  return b[this.sortCol] - a[this.sortCol]
+                } else {
+                  return a[this.sortCol] - b[this.sortCol]
+                }
+              })
+              .slice((this.page - 1) * this.limit, this.page * this.limit)
+
             this.totalData = res.data.data.additional
           }
           this.loading = false

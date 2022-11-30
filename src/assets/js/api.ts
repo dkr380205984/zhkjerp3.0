@@ -368,6 +368,7 @@ const process = {
   create: (params: { data: ProcessInfo[] }) => http.post(`${baseUrl}/process/save`, params, 'application/json'),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/process/delete`, params, 'application/json'),
   list: (params?: {
+    only_delete?: 0 | 1
     type?: 1 | 2 | 3
     name?: String
   }) => http.get(`${baseUrl}/process/lists`, params)
@@ -1471,6 +1472,14 @@ const statistics = {
     end_time: string
     keyword: string
   }) => http.get(`${baseUrl}/statistics/pack/client/date`, params),
+  profitAnalysis: (params?: {
+    start_time: string
+    end_time: string
+    client_id: number | string
+    user_id: number | string
+    group_id: number | string
+    settle_unit: number | string
+  }) => http.get(`${baseUrl}/profit/index`, params),
 }
 export {
   documentInfo,

@@ -1,38 +1,51 @@
 <template>
-  <div id="orderStatistics" class="bodyContainer" v-loading="loading">
+  <div id="orderStatistics"
+    class="bodyContainer"
+    v-loading="loading">
     <div class="topTagCtn">
       <div class="tag active">
-        <svg class="iconFont" aria-hidden="true">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-dingdanshujutubiao"></use>
         </svg>
         <span class="text">订单数据图表</span>
       </div>
-      <div class="tag" @click="$router.push('/dataReport/sampleOrderStatistics')">
-        <svg class="iconFont" aria-hidden="true">
+      <div class="tag"
+        @click="$router.push('/dataReport/sampleOrderStatistics')">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-yangdanshujutubiao"></use>
         </svg>
         <span class="text">样单数据图表</span>
       </div>
-      <div class="tag" @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">
-        <svg class="iconFont" aria-hidden="true">
+      <div class="tag"
+        @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-yuanliaoshiyongtubiao"></use>
         </svg>
         <span class="text">原料使用图表</span>
       </div>
-      <div class="tag" @click="$router.push('/dataReport/accessoriesDecorationOrderStatistics')">
-        <svg class="iconFont" aria-hidden="true">
+      <div class="tag"
+        @click="$router.push('/dataReport/accessoriesDecorationOrderStatistics')">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-fuliaoshiyongtubiao"></use>
         </svg>
         <span class="text">辅料使用图表</span>
       </div>
-      <div class="tag" @click="$router.push('/dataReport/productionPlanChartStatistics')">
-        <svg class="iconFont" aria-hidden="true">
+      <div class="tag"
+        @click="$router.push('/dataReport/productionPlanChartStatistics')">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-shengchanshujutubiao"></use>
         </svg>
         <span class="text">生产数据图表</span>
       </div>
-      <div class="tag" @click="$router.push('/dataReport/transportationOutboundStatistics')">
-        <svg class="iconFont" aria-hidden="true">
+      <div class="tag"
+        @click="$router.push('/dataReport/transportationOutboundStatistics')">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-qitafeiyongtubiao"></use>
         </svg>
         <span class="text">其它费用图表</span>
@@ -40,20 +53,19 @@
     </div>
     <div class="module noBackColor">
       <div class="cardCtn">
-        <div class="card noBackColor noPad" style="width: 106%">
+        <div class="card noBackColor noPad"
+          style="width: 106%">
           <div class="screenCtn">
-            <div class="screen" style="width: 66%">
-              <el-date-picker
-                v-model="filterData.start_time"
+            <div class="screen"
+              style="width: 66%">
+              <el-date-picker v-model="filterData.start_time"
                 type="year"
                 @change="changeDate"
-                placeholder="筛选下单年份"
-              >
+                placeholder="筛选下单年份">
               </el-date-picker>
             </div>
             <div class="screen">
-              <el-cascader
-                @change="
+              <el-cascader @change="
                   getContacts($event)
                   changeRouter()
                 "
@@ -62,39 +74,44 @@
                 :show-all-levels="false"
                 filterable
                 :options="clientList"
-                clearable
-              >
+                clearable>
               </el-cascader>
             </div>
-            <div class="screen" style="margin-bottom: 0">
-              <el-select
-                @change="(ev) => getLocalStorage(ev, 'group_id')"
+            <div class="screen"
+              style="margin-bottom: 0">
+              <el-select @change="(ev) => getLocalStorage(ev, 'group_id')"
                 v-model="filterData.group_id"
                 placeholder="筛选负责小组"
-                clearable
-              >
-                <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+                clearable>
+                <el-option v-for="item in groupList"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.name"></el-option>
               </el-select>
             </div>
-            <div class="screen" style="margin-bottom: 0">
-              <el-select @change="changePeople" v-model="filterData.user_id" placeholder="筛选创建人" clearable>
-                <el-option
-                  v-for="item in userList"
+            <div class="screen"
+              style="margin-bottom: 0">
+              <el-select @change="changePeople"
+                v-model="filterData.user_id"
+                placeholder="筛选创建人"
+                clearable>
+                <el-option v-for="item in userList"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value"
-                ></el-option>
+                  :value="item.value"></el-option>
               </el-select>
             </div>
-            <div class="screen" style="margin-bottom: 0">
-              <el-select placeholder="筛选币种" clearable v-model="filterData.settle_unit" @change="changeRouter">
-                <el-option
-                  v-for="item in filterCondition.currency"
+            <div class="screen"
+              style="margin-bottom: 0">
+              <el-select placeholder="筛选币种"
+                clearable
+                v-model="filterData.settle_unit"
+                @change="changeRouter">
+                <el-option v-for="item in filterCondition.currency"
                   :key="item.name"
                   :label="item.name"
                   :value="item.name"
-                  class="between"
-                >
+                  class="between">
                   <span>{{ item.name }}</span>
                   <span class="gray">({{ item.short }})</span>
                 </el-option>
@@ -102,13 +119,12 @@
             </div>
           </div>
         </div>
-        <div class="card" style="margin-left: 4px">
+        <div class="card"
+          style="margin-left: 4px">
           <div class="contentGrid">
             <h3>当前统计默认值</h3>
             <div class="item2">
-              订单下单时间：<span class="blue"
-                >{{ formatDate2(filterData.start_time) }}-{{ formatDate2(filterData.end_time) }}</span
-              >
+              订单下单时间：<span class="blue">{{ formatDate2(filterData.start_time) }}-{{ formatDate2(filterData.end_time) }}</span>
             </div>
           </div>
           <div class="contentGrid">
@@ -119,7 +135,10 @@
               下单公司：<span class="blue">{{ alias || '所有' }}</span>
             </div>
             <div>
-              <el-tooltip class="item" effect="dark" content="已默认将美元按汇率转为人民币" placement="top">
+              <el-tooltip class="item"
+                effect="dark"
+                content="已默认将美元按汇率转为人民币"
+                placement="top">
                 <i class="el-icon-info"></i>
               </el-tooltip>
               币种：<span class="blue">{{ filterData.settle_unit || '所有' }}</span>
@@ -170,9 +189,12 @@
       </div>
       <div class="cardCtn">
         <div class="card">
-          <el-tabs v-model="activeName" @tab-click="getList">
-            <el-tab-pane label="下单数据" name="first">
-              <zh-charts v-if="activeName === 'first'" :option="option1"></zh-charts>
+          <el-tabs v-model="activeName"
+            @tab-click="getList">
+            <el-tab-pane label="下单数据"
+              name="first">
+              <zh-charts v-if="activeName === 'first'"
+                :option="option1"></zh-charts>
               <div class="cardCtn">
                 <div class="card">
                   <zh-charts :option="groupOption"></zh-charts>
@@ -182,9 +204,552 @@
                 </div>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="出库数据" name="second"
-              ><zh-charts v-if="activeName === 'second'" :option="option1"></zh-charts
-            ></el-tab-pane>
+            <el-tab-pane label="出库数据"
+              name="second">
+              <zh-charts v-if="activeName === 'second'"
+                :option="option1"></zh-charts>
+            </el-tab-pane>
+            <el-tab-pane label="利润分析表"
+              name="third">
+              <div class="flattenTableCtn">
+
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol"></div>
+                  <div class="tcol">金额（¥）</div>
+                  <div class="tcol">数量</div>
+                  <div class="tcol">平均类目单价</div>
+                  <div class="tcol">平均每件产品单价</div>
+                </div>
+                <div class="trow">
+                  <div class="tcol">下单总额</div>
+                  <div class="tcol">订单下单</div>
+                  <div class="tcol">
+                    <span class="green">¥{{$toFixed(profitAnalysisData.order.order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.order.order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="green">{{$toFixed(profitAnalysisData.order.order.total_number,2,true)}}<span class="em">件</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.order.order.total_number,2))}}件</span>
+                  </div>
+                  <div class="tcol"></div>
+                  <div class="tcol"><span class="green">{{$toFixed(profitAnalysisData.order.order.avg)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol">付费样单</div>
+                  <div class="tcol">
+                    <span class="green">¥{{$toFixed(profitAnalysisData.order.sample_order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.order.sample_order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="green">{{$toFixed(profitAnalysisData.order.sample_order.total_number,2,true)}}<span class="em">件</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.order.sample_order.total_number,2))}}件</span>
+                  </div>
+                  <div class="tcol"></div>
+                  <div class="tcol"><span class="green">{{$toFixed(profitAnalysisData.order.sample_order.avg)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol fontNormal">小计</div>
+                  <div class="tcol">
+                    <span class="green">¥{{$toFixed(profitAnalysisData.order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="green">{{$toFixed(profitAnalysisData.order.total_number,2,true)}}<span class="em">件</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.order.total_number,2))}}件</span>
+                  </div>
+                  <div class="tcol"></div>
+                  <div class="tcol"><span class="green">{{$toFixed(profitAnalysisData.order.avg)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol">原料纱线成本</div>
+                  <div class="tcol">订单采购成本</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.yarn.order.order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.order.order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.yarn.order.order.total_number,2,true)}}<span class="em">kg</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.order.order.total_number,2))}}千克</span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.yarn.order.order.avg)}}<span class="em">元/kg</span></span></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.yarn.order.order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol">样单采购成本</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.yarn.order.sample_order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.order.sample_order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.yarn.order.sample_order.total_number,2,true)}}<span class="em">kg</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.order.sample_order.total_number,2))}}千克</span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.yarn.order.sample_order.avg)}}<span class="em">元/kg</span></span></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.yarn.order.sample_order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol fontNormal">小计</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.yarn.order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.yarn.order.total_number,2,true)}}<span class="em">kg</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.order.total_number,2))}}千克</span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.yarn.order.avg)}}<span class="em">元/kg</span></span></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.yarn.order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol">订单调取成本</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.yarn.transfer.order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.transfer.order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.yarn.transfer.order.total_number,2,true)}}<span class="em">kg</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.transfer.order.total_number,2))}}千克</span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.yarn.transfer.order.avg)}}<span class="em">元/kg</span></span></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.yarn.transfer.order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol">样单调取成本</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.yarn.transfer.sample_order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.transfer.sample_order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.yarn.transfer.sample_order.total_number,2,true)}}<span class="em">kg</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.transfer.sample_order.total_number,2))}}千克</span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.yarn.transfer.sample_order.avg)}}<span class="em">元/kg</span></span></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.yarn.transfer.sample_order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol fontNormal">小计</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.yarn.transfer.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.transfer.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.yarn.transfer.total_number,2,true)}}<span class="em">kg</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.transfer.total_number,2))}}千克</span>
+                  </div>
+                  <div class="tcol">
+                    <!-- <span class="red">{{$toFixed(profitAnalysisData.yarn.transfer.avg)}}<span class="em">元/kg</span></span> -->
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.yarn.transfer.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol">订单加工成本</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.yarn.process.order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.process.order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.yarn.process.order.total_number,2,true)}}<span class="em">kg</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.process.order.total_number,2))}}千克</span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.yarn.process.order.avg)}}<span class="em">元/kg</span></span></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.yarn.process.order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol">样单加工成本</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.yarn.process.sample_order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.process.sample_order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.yarn.process.sample_order.total_number,2,true)}}<span class="em">kg</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.process.sample_order.total_number,2))}}千克</span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.yarn.process.sample_order.avg)}}<span class="em">元/kg</span></span></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.yarn.process.sample_order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol fontNormal">小计</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.yarn.process.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.process.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.yarn.process.total_number,2,true)}}<span class="em">kg</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.process.total_number,2))}}千克</span>
+                  </div>
+                  <div class="tcol">
+                    <!-- <span class="red">{{$toFixed(profitAnalysisData.yarn.process.avg)}}<span class="em">元/kg</span></span> -->
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.yarn.process.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol">纱线成本合计</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.yarn.process.total_price+profitAnalysisData.yarn.transfer.total_price+profitAnalysisData.yarn.order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.process.total_price+profitAnalysisData.yarn.transfer.total_price+profitAnalysisData.yarn.order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.yarn.process.total_number+profitAnalysisData.yarn.transfer.total_number+profitAnalysisData.yarn.order.total_number,2,true)}}<span class="em">kg</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.yarn.process.total_number+profitAnalysisData.yarn.transfer.total_number+profitAnalysisData.yarn.order.total_number,2))}}千克</span>
+                  </div>
+                  <div class="tcol"></div>
+                  <div class="tcol"></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol">原料面料成本</div>
+                  <div class="tcol">订单采购成本</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.fabric.order.order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.order.order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.fabric.order.order.total_number,2,true)}}<span class="em">m</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.order.order.total_number,2))}}米</span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.fabric.order.order.avg)}}<span class="em">元/m</span></span></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.fabric.order.order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol">样单采购成本</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.fabric.order.sample_order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.order.sample_order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.fabric.order.sample_order.total_number,2,true)}}<span class="em">m</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.order.sample_order.total_number,2))}}米</span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.fabric.order.sample_order.avg)}}<span class="em">元/m</span></span></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.fabric.order.sample_order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol fontNormal">小计</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.fabric.order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.fabric.order.total_number,2,true)}}<span class="em">m</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.order.total_number,2))}}米</span>
+                  </div>
+                  <div class="tcol">
+                    <!-- <span class="red">{{$toFixed(profitAnalysisData.fabric.order.avg)}}<span class="em">元/m</span></span> -->
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.fabric.order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol">订单调取成本</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.fabric.transfer.order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.transfer.order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.fabric.transfer.order.total_number,2,true)}}<span class="em">m</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.transfer.order.total_number,2))}}米</span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.fabric.transfer.order.avg)}}<span class="em">元/m</span></span></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.fabric.transfer.order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol">样单调取成本</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.fabric.transfer.sample_order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.transfer.sample_order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.fabric.transfer.sample_order.total_number,2,true)}}<span class="em">m</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.transfer.sample_order.total_number,2))}}米</span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.fabric.transfer.sample_order.avg)}}<span class="em">元/m</span></span></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.fabric.transfer.sample_order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol fontNormal">小计</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.fabric.transfer.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.transfer.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.fabric.transfer.total_number,2,true)}}<span class="em">m</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.transfer.total_number,2))}}米</span>
+                  </div>
+                  <div class="tcol">
+                    <!-- <span class="red">{{$toFixed(profitAnalysisData.fabric.transfer.avg)}}<span class="em">元/m</span></span> -->
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.fabric.transfer.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol">订单加工成本</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.fabric.process.order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.process.order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.fabric.process.order.total_number,2,true)}}<span class="em">m</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.process.order.total_number,2))}}米</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.fabric.process.order.avg)}}<span class="em">元/m</span></span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.fabric.process.order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol">样单加工成本</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.fabric.process.sample_order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.process.sample_order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.fabric.process.sample_order.total_number,2,true)}}<span class="em">m</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.process.sample_order.total_number,2))}}米</span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.fabric.process.sample_order.avg)}}<span class="em">元/m</span></span></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.fabric.process.sample_order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol fontNormal">小计</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.fabric.process.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.process.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.fabric.process.total_number,2,true)}}<span class="em">m</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.process.total_number,2))}}米</span>
+                  </div>
+                  <div class="tcol">
+                    <!-- <span class="red">{{$toFixed(profitAnalysisData.fabric.process.avg)}}<span class="em">元/m</span></span> -->
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.fabric.process.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol">面料成本合计</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.fabric.process.total_price+profitAnalysisData.fabric.transfer.total_price+profitAnalysisData.fabric.order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.process.total_price+profitAnalysisData.fabric.transfer.total_price+profitAnalysisData.fabric.order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.fabric.process.total_number+profitAnalysisData.fabric.transfer.total_number+profitAnalysisData.fabric.order.total_number,2,true)}}<span class="em">m</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.fabric.process.total_number+profitAnalysisData.fabric.transfer.total_number+profitAnalysisData.fabric.order.total_number,2))}}米</span>
+                  </div>
+                  <div class="tcol"></div>
+                  <div class="tcol"></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol">生产加工成本</div>
+                  <div class="tcol">订单织造成本</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.production.weave.order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.production.weave.order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.production.weave.order.total_number,2,true)}}<span class="em">件</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.production.weave.order.total_number,2))}}件</span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.production.weave.order.avg)}}<span class="em">元/件</span></span></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.production.weave.order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol">样单织造成本</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.production.weave.sample_order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.production.weave.sample_order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.production.weave.sample_order.total_number,2,true)}}<span class="em">件</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.production.weave.sample_order.total_number,2))}}件</span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.production.weave.sample_order.avg)}}<span class="em">元/件</span></span></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.production.weave.sample_order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol fontNormal">小计</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.production.weave.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.production.weave.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.production.weave.total_number,2,true)}}<span class="em">件</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.production.weave.total_number,2))}}件</span>
+                  </div>
+                  <div class="tcol">
+                    <!-- <span class="red">{{$toFixed(profitAnalysisData.production.weave.avg)}}<span class="em">元/件</span></span> -->
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.production.weave.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol">订单加工成本</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.production.production.order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.production.production.order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.production.production.order.total_number,2,true)}}<span class="em">件</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.production.production.order.total_number,2))}}件</span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.production.production.order.avg)}}<span class="em">元/件</span></span></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.production.production.order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol">样单加工成本</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.production.production.sample_order.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.production.production.sample_order.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.production.production.sample_order.total_number,2,true)}}<span class="em">件</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.production.production.sample_order.total_number,2))}}件</span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.production.production.sample_order.avg)}}<span class="em">元/件</span></span></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.production.production.sample_order.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol fontNormal">小计</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.production.production.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.production.production.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.production.production.total_number,2,true)}}<span class="em">件</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.production.production.total_number,2))}}件</span>
+                  </div>
+                  <div class="tcol">
+                    <!-- <span class="red">{{$toFixed(profitAnalysisData.production.production.avg)}}<span class="em">元/件</span></span> -->
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.production.production.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol">人工工资成本</div>
+                  <div class="tcol">计件工资</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.wage.wage_item.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.wage.wage_item.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.wage.wage_item.total_number,2,true)}}<span class="em">件</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.wage.wage_item.total_number,2))}}件</span>
+                  </div>
+                  <div class="tcol">
+                    <!-- <span class="red">{{$toFixed(profitAnalysisData.wage.wage_item.avg)}}<span class="em">元/件</span></span> -->
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.wage.wage_item.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol">计时工资</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.wage.wage_time.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.wage.wage_time.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.wage.wage_time.total_number,2,true)}}<span class="em">件</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.wage.wage_time.total_number,2))}}件</span>
+                  </div>
+                  <div class="tcol">
+                    <!-- <span class="red">{{$toFixed(profitAnalysisData.wage.wage_time.avg)}}<span class="em">元/件</span></span> -->
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.wage.wage_time.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol"></div>
+                  <div class="tcol fontNormal">小计</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.wage.wage_time.total_price + profitAnalysisData.wage.wage_item.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.wage.wage_time.total_price + profitAnalysisData.wage.wage_item.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.wage.wage_time.total_number + profitAnalysisData.wage.wage_item.total_number,2,true)}}<span class="em">件</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.wage.wage_time.total_number + profitAnalysisData.wage.wage_item.total_number,2))}}件</span>
+                  </div>
+                  <div class="tcol"></div>
+                  <div class="tcol"></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol">发货运输成本</div>
+                  <div class="tcol">发货运输成本</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.dispatch.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.dispatch.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol">
+                    <span class="red">{{$toFixed(profitAnalysisData.dispatch.total_number,2,true)}}<span class="em">件</span></span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.dispatch.total_number,2))}}<span class="em">件</span></span>
+                  </div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.dispatch.avg)}}<span class="em">元/件</span></span></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.dispatch.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol">报销费用</div>
+                  <div class="tcol">报销费用</div>
+                  <div class="tcol">
+                    <span class="red">¥{{$toFixed(profitAnalysisData.receipt.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.receipt.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol"></div>
+                  <div class="tcol"></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.receipt.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol">单位扣款费用</div>
+                  <div class="tcol">单位扣款费用</div>
+                  <div class="tcol">
+                    <span class="green">¥{{$toFixed(profitAnalysisData.deduct.total_price,2,true)}}</span>
+                    <span class="gray">{{$changeNumToHan($toFixed(profitAnalysisData.deduct.total_price,2))}}元整</span>
+                  </div>
+                  <div class="tcol"></div>
+                  <div class="tcol"></div>
+                  <div class="tcol"><span class="red">{{$toFixed(profitAnalysisData.deduct.avg_product)}}<span class="em">元/件</span></span></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol">其他成本</div>
+                  <div class="tcol">其他成本</div>
+                  <div class="tcol">
+                    <el-input v-model="other_fee.total_price"
+                      placeholder="请输入其他费用"
+                      type="number"></el-input>
+                  </div>
+                  <div class="tcol"></div>
+                  <div class="tcol"></div>
+                  <div class="tcol"></div>
+                </div>
+                <div class="trow">
+                  <div class="tcol">预计利润</div>
+                  <div class="tcol"></div>
+                  <div class="tcol">
+                    <span class="green">¥{{realProfit}}</span>
+                    <span class="gray">{{$changeNumToHan(realProfit)}}元整</span>
+                  </div>
+                  <div class="tcol"></div>
+                  <div class="tcol"></div>
+                  <div class="tcol"></div>
+                </div>
+              </div>
+            </el-tab-pane>
           </el-tabs>
         </div>
       </div>
@@ -362,7 +927,89 @@ export default Vue.extend({
         contactsList: [],
         currency: moneyArr
       },
-      activeName: 'first'
+      activeName: 'third',
+      other_fee: {
+        total_price: ''
+      },
+      profitAnalysisData: {
+        order: {
+          order: { total_price: 0, total_number: 0, avg: 0 },
+          sample_order: { total_price: 0, total_number: 0, avg: 0 },
+          total_number: 0,
+          total_price: 0,
+          avg: 0
+        },
+        yarn: {
+          order: {
+            order: { total_price: 0, total_number: 0, avg: 0, avg_product: 0 },
+            sample_order: { total_price: 0, total_number: 0, avg: 0, avg_product: 0 },
+            total_number: 0,
+            total_price: 0,
+            avg: 0,
+            avg_product: 0
+          },
+          transfer: {
+            order: { total_price: 0, total_number: 0, avg: 0, avg_product: 0 },
+            sample_order: { total_price: 0, total_number: 0, avg: 0, avg_product: 0 },
+            total_number: 0,
+            total_price: 0,
+            avg_product: 0
+          },
+          process: {
+            order: { total_price: 0, total_number: 0, avg: 0, avg_product: 0 },
+            sample_order: { total_price: 0, total_number: 0, avg: 0, avg_product: 0 },
+            total_number: 0,
+            total_price: 0,
+            avg_product: 0
+          }
+        },
+        fabric: {
+          order: {
+            order: { total_price: 0, total_number: 0, avg: 0, avg_product: 0 },
+            sample_order: { total_price: 0, total_number: 0, avg: 0, avg_product: 0 },
+            total_number: 0,
+            total_price: 0,
+            avg_product: 0
+          },
+          transfer: {
+            order: { total_price: 0, total_number: 0, avg: 0, avg_product: 0 },
+            sample_order: { total_price: 0, total_number: 0, avg: 0, avg_product: 0 },
+            total_number: 0,
+            total_price: 0,
+            avg_product: 0
+          },
+          process: {
+            order: { total_price: 0, total_number: 0, avg: 0, avg_product: 0 },
+            sample_order: { total_price: 0, total_number: 0, avg: 0, avg_product: 0 },
+            total_number: 0,
+            total_price: 0,
+            avg_product: 0
+          }
+        },
+        production: {
+          weave: {
+            order: { total_price: 0, total_number: 0, avg: 0, avg_product: 0 },
+            sample_order: { total_price: 0, total_number: 0, avg: 0, avg_product: 0 },
+            total_number: 0,
+            total_price: 0,
+            avg_product: 0
+          },
+          production: {
+            order: { total_price: 0, total_number: 0, avg: 0, avg_product: 0 },
+            sample_order: { total_price: 0, total_number: 0, avg: 0, avg_product: 0 },
+            total_number: 0,
+            total_price: 0,
+            avg_product: 0
+          }
+        },
+        wage: {
+          wage_item: { total_number: 0, total_extra_number: 0, total_price: 0, avg_product: 0 },
+          wage_time: { total_number: 0, total_extra_number: 0, total_price: 0, avg_product: 0 }
+        },
+        dispatch: { total_price: 0, total_number: 0, avg: 0, avg_product: 0 },
+        receipt: { total_price: 0, avg_product: 0 },
+        deduct: { total_price: 0, avg_product: 0 }
+      }
     }
   },
   methods: {
@@ -527,6 +1174,22 @@ export default Vue.extend({
     },
     getList() {
       this.loading = true
+      if (this.activeName === 'third') {
+        statistics
+          .profitAnalysis({
+            start_time: this.filterData.start_time,
+            client_id: this.filterData.client_id.length > 0 ? this.filterData.client_id[2] : '',
+            user_id: this.filterData.user_id,
+            group_id: this.filterData.group_id,
+            settle_unit: this.filterData.settle_unit,
+            end_time: this.filterData.end_time
+          })
+          .then((res) => {
+            if (res.data.status) {
+              this.profitAnalysisData = res.data.data
+            }
+          })
+      }
       statistics
         .order({
           start_time: this.filterData.start_time,
@@ -713,6 +1376,28 @@ export default Vue.extend({
     },
     userList() {
       return this.$store.state.api.user.arr
+    },
+    realProfit(): any {
+      const data = this.profitAnalysisData
+      return this.$toFixed(
+        data.order.order.total_price +
+          data.order.sample_order.total_price +
+          data.deduct.total_price -
+          (data.dispatch.total_price +
+            data.fabric.order.total_price +
+            data.fabric.process.total_price +
+            data.fabric.transfer.total_price +
+            data.production.production.total_price +
+            data.production.weave.total_price +
+            data.receipt.total_price +
+            data.wage.wage_item.total_price +
+            data.wage.wage_time.total_price +
+            data.yarn.order.total_price +
+            data.yarn.process.total_price +
+            data.yarn.transfer.total_price +
+            Number(this.other_fee.total_price)),
+        2
+      )
     }
   },
   created() {

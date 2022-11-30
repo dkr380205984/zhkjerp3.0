@@ -1721,7 +1721,7 @@ export default Vue.extend({
           children: item.children.map((itemChild: any) => {
             return {
               label: itemChild.code ? itemChild.code + '-' + itemChild.name : itemChild.name,
-              value: itemChild.name,
+              value: itemChild.id,
               process_desc: itemChild.process_desc
             }
           })
@@ -2400,6 +2400,7 @@ export default Vue.extend({
     // 提交时获取特殊值 表格值，合并项等
     getCmpData() {
       // this.craftInfo.product_id = Number(this.$route.query.id)
+      this.craftInfo.process_data = this.process_data.map((item: any) => item[1])
       this.craftInfo.id = Number(this.$route.query.id)
       this.craftInfo.warp_data.material_data[0].apply = this.warpJiaList
         .filter((item) => {
@@ -3363,7 +3364,7 @@ export default Vue.extend({
             })
           })
           // @ts-ignore
-          this.process_data = this.craftInfo.process_data.map((item) => item.process_id)
+          this.process_data = this.craftInfo.process_data.map((item) => ['全部', item.process_id])
         }
       })
   },

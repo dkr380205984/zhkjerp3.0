@@ -490,7 +490,8 @@ const initEditor = (item: any, index?: number | string) => {
     'justify', // 对齐方式
     'quote', // 引用
     'undo', // 撤销
-    'redo' // 重复
+    'redo', // 重复
+    'table'
   ]
   item.editor.config.onchange = (html: any) => {
     item.desc = html // 绑定当前逐渐地值

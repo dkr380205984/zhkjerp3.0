@@ -1961,7 +1961,7 @@ export default Vue.extend({
           children: item.children.map((itemChild: any) => {
             return {
               label: itemChild.code ? itemChild.code + '-' + itemChild.name : itemChild.name,
-              value: itemChild.name,
+              value: itemChild.id,
               process_desc: itemChild.process_desc
             }
           })
@@ -2924,6 +2924,7 @@ export default Vue.extend({
     },
     // 提交时获取特殊值 表格值，合并项等
     getCmpData() {
+      this.craftInfo.process_data = this.process_data.map((item: any) => item[1])
       this.craftInfo.part_id = Number(this.$route.query.part_id) || ''
       this.craftInfo.product_id = Number(this.$route.query.id) || Number(this.productInfo.id)
       this.craftInfo.warp_data.material_data[0].apply = this.warpJiaList

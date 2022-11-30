@@ -2165,9 +2165,9 @@
       :data="orderInfo.time_data[0].send_info"
       :show="sendFlag"
       @close="sendFlag=false"></zh-order-send>
-    <!-- 产前确认 -->
-    <zh-order-check :show="proCheckFlag"
-      @close="proCheckFlag=false"></zh-order-check>
+    <!-- 产前确认 没做完的功能，暂时注释掉-->
+    <!-- <zh-order-check :show="proCheckFlag"
+      @close="proCheckFlag=false"></zh-order-check> -->
     <!-- 关联单据 -->
     <zh-order-log :order_id="$route.query.id"
       :order_time_id="orderInfo.time_data[0].id"
