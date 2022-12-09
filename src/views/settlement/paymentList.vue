@@ -77,6 +77,16 @@
             </el-select>
           </div>
           <div class="elCtn">
+            <el-select placeholder="待付款金额计算方式"
+              v-model="methods"
+              @change="changeRouter">
+              <el-option label="计划总额 - 付款总额 - 扣款总额"
+                value="1"></el-option>
+              <el-option label="实际总额 - 付款总额 - 扣款总额"
+                value="2"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
             <el-select v-model="limit"
               placeholder="每页展示条数"
               @change="changeRouter">
@@ -459,6 +469,7 @@ export default Vue.extend({
       only_delete: 0,
       settle_unit: '',
       unitArr: moneyArr,
+      methods: '1',
       year: new Date().getFullYear().toString(),
       totalData: {
         total_pay_price: 0,
@@ -725,7 +736,11 @@ export default Vue.extend({
             this.total = res.data.data.items.length
             this.totalList = res.data.data.items
             this.totalList.forEach((item: any) => {
-              item.wait_pay_price = item.total_real_price - item.total_pay_price - item.total_deduct_price
+              if (this.methods === '1') {
+                item.wait_pay_price = item.total_plan_price - item.total_pay_price - item.total_deduct_price
+              } else {
+                item.wait_pay_price = item.total_real_price - item.total_pay_price - item.total_deduct_price
+              }
             })
             this.list = res.data.data.items
               .sort((a: any, b: any) => {
@@ -784,7 +799,9 @@ export default Vue.extend({
           '&settle_unit=' +
           this.settle_unit +
           '&justChangePage=' +
-          (justChangePage || '')
+          (justChangePage || '') +
+          '&methods=' +
+          this.methods
       )
     },
     reset() {
@@ -799,6 +816,7 @@ export default Vue.extend({
           this.tag_id = ''
           this.only_delete = 0
           this.keyword = ''
+          this.methods = '1'
           this.changeRouter()
         })
         .catch(() => {

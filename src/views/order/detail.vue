@@ -1626,14 +1626,15 @@
                   </svg>
                   <span class="text">删除订单</span>
                 </div>
-                <!-- <div class="btn backHoverBlue">
+                <div class="btn backHoverBlue"
+                  @click="$openUrl('/order/print?id=' + $route.query.id)">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-dayindingdan"></use>
                   </svg>
                   <span class="text">打印订单</span>
                 </div>
-                <div class="btn backHoverBlue">
+                <!-- <div class="btn backHoverBlue">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-youjianfenxiang"></use>

@@ -26,6 +26,9 @@ const userCompanySetting = (params: { company_id: number }) => http.post(`${base
 
 // 获取验证码
 const getCoder = {
+  changePassword: (params: {
+    telephone: string
+  }) => http.post(`${baseUrl}/user/change/password/send/sms`, params, 'application/json'),
   forgetPassword: (params: {
     telephone: string
   }) => http.post(`${baseUrl}/user/password/forget/send/code`, params, 'application/json'),
@@ -121,7 +124,7 @@ interface YarnPrice {
 }
 const yarnPrice = {
   create: (params: YarnPrice) => http.post(`${baseUrl}/yarn/price/save`, params, 'application/json'),
-  list: (params?: { material_type: 1 | 2, keyword: string }) => http.get(`${baseUrl}/yarn/price/lists`, params),
+  list: (params?: { material_type: 1 | 2, keyword: string, page?: string | number, limit?: number }) => http.get(`${baseUrl}/yarn/price/lists`, params),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/yarn/price/delete`, params, 'application/json'),
 }
 // 单据审核

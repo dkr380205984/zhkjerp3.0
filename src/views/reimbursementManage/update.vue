@@ -36,7 +36,7 @@
                 <el-option v-for="item in groupList"
                   :key="item.name"
                   :label="item.name"
-                  :value="item.name">
+                  :value="item.id">
                 </el-option>
               </el-select>
             </div>

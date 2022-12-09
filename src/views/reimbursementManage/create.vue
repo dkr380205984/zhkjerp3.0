@@ -36,7 +36,7 @@
                 <el-option v-for="item in groupList"
                   :key="item.name"
                   :label="item.name"
-                  :value="item.name">
+                  :value="item.id">
                 </el-option>
               </el-select>
             </div>
@@ -112,7 +112,7 @@
                   </template>
                 </div>
               </div>
-              <div class="fileCtn">
+              <!-- <div class="fileCtn">
                 <el-upload class="upload"
                   action="https://upload.qiniup.com/"
                   accept="image/jpeg,image/gif,image/png,image/bmp"
@@ -130,6 +130,32 @@
                   <div slot="tip"
                     class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M(请勿上传带特殊字符的图片)</div>
                 </el-upload>
+              </div> -->
+              <div class="fileCtn">
+                <el-upload class="upload"
+                  action="https://upload.qiniup.com/"
+                  accept="image/jpeg,image/gif,image/png,image/bmp"
+                  :before-upload="beforeAvatarUpload"
+                  :data="postData"
+                  :file-list="file_list"
+                  :on-remove="removeFile"
+                  :on-success="successFile"
+                  :on-preview="handlePictureCardPreview"
+                  ref="uploada"
+                  list-type="picture-card">
+                  <div class="uploadBtn">
+                    <i class="el-icon-upload"></i>
+                    <span>上传图片</span>
+                  </div>
+                  <div slot="tip"
+                    class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M(请勿上传带特殊字符的图片)</div>
+                </el-upload>
+                <el-dialog :visible.sync="dialogVisible"
+                  append-to-body>
+                  <img width="100%"
+                    :src="dialogImageUrl"
+                    alt="">
+                </el-dialog>
               </div>
             </div>
           </div>
@@ -170,6 +196,8 @@ export default Vue.extend({
     return {
       loading: false,
       saveLock: false,
+      dialogImageUrl: '',
+      dialogVisible: false,
       cvFlag: false,
       cvImageLength: 1,
       cv_list: [],
@@ -340,7 +368,10 @@ export default Vue.extend({
     removeFile(file: { response: { hash: string; key: string } }, index: number) {
       this.$deleteItem(this.file_list, this.file_list.indexOf('https://file.zwyknit.com/' + file.response.key))
     },
-
+    handlePictureCardPreview(file: any) {
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
+    },
     dataURLtoFile(dataurl: string, filename: string) {
       var arr = dataurl.split(',')
       // @ts-ignore

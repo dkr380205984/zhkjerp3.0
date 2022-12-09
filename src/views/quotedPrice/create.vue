@@ -1724,12 +1724,13 @@ export default Vue.extend({
     },
     successFile(response: { hash: string; key: string }, index: number) {
       this.quotedPriceInfo.product_data[index].image_data.push('https://file.zwyknit.com/' + response.key)
+      console.log(this.quotedPriceInfo.product_data[index])
       // @ts-ignore
-      this.quotedPriceInfo.product_data[index].file_list.push({
-        // @ts-ignore
-        name: response.key,
-        url: 'https://file.zwyknit.com/' + response.key
-      })
+      // this.quotedPriceInfo.product_data[index].file_list.push({
+      //   // @ts-ignore
+      //   name: response.key,
+      //   url: 'https://file.zwyknit.com/' + response.key
+      // })
     },
     beforeRemove(file: any, index: any, fileList: any) {
       // 上传超过10M自动删除

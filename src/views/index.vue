@@ -407,8 +407,8 @@ export default Vue.extend({
       const outTime = (new Date().getTime() - this.lastTime) / 1000
       if (!this.lastTime || outTime > this.sendIntervalTime) {
         getCoder
-          .forgetPassword({
-            telephone: this.telephoneComp
+          .changePassword({
+            telephone: window.sessionStorage.getItem('telephone') as string
           })
           .then((res) => {
             if (res.data.status !== false) {

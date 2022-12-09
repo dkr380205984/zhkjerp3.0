@@ -5182,7 +5182,7 @@ export default Vue.extend({
           if (this.$route.query.type === '装饰辅料单位') {
             material_name = this.materialOrderFilter.material_name || ''
           } else {
-            this.materialOrderFilter.material_name = this.materialOrderFilter.material_name.length
+            material_name = this.materialOrderFilter.material_name.length
               ? this.materialOrderFilter.material_name[2]
               : ''
           }
@@ -5411,9 +5411,7 @@ export default Vue.extend({
         if (this.$route.query.type === '装饰辅料单位') {
           material_name = this.materialOrderFilter.material_name || ''
         } else {
-          this.materialOrderFilter.material_name = this.materialOrderFilter.material_name.length
-            ? this.materialOrderFilter.material_name[2]
-            : ''
+          material_name = this.materialOrderFilter.material_name.length ? this.materialOrderFilter.material_name[2] : ''
         }
         // 物料订购单
         materialOrder

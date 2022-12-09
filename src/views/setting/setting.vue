@@ -1032,7 +1032,10 @@
                       fit="cover"></el-image>
                   </div>
                   <div class="col">
-                    <span class="opr hoverRed">删除</span>
+                    <span class="opr hoverOrange"
+                      @click="updateCraft(item)">修改</span>
+                    <span class="opr hoverRed"
+                      @click="deleteCraft(item.id)">删除</span>
                   </div>
                 </div>
               </div>
@@ -1423,7 +1426,7 @@
                   </div>
                   <div class="tbody">
                     <div class="trow"
-                      v-for="item in yarnPriceArr"
+                      v-for="item in yarnPriceList"
                       :key="item.id">
                       <div class="tcol">{{ item.client_name }}</div>
                       <div class="tcol noPad"
@@ -1457,7 +1460,8 @@
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="yarnPriceTotal"
-                  :current-page.sync="yarnPricePage">
+                  :current-page.sync="yarnPricePage"
+                  @current-change="getYarnPrice">
                 </el-pagination>
               </div>
             </div>
@@ -1499,7 +1503,7 @@
                   </div>
                   <div class="tbody">
                     <div class="trow"
-                      v-for="item in mianliaoPriceArr"
+                      v-for="item in mianliaoPriceList"
                       :key="item.id">
                       <div class="tcol">{{ item.client_name }}</div>
                       <div class="tcol noPad"
@@ -1532,7 +1536,8 @@
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="mianliaoPriceTotal"
-                  :current-page.sync="mianliaoPricePage">
+                  :current-page.sync="mianliaoPricePage"
+                  @current-change="getMianliaoPrice">
                 </el-pagination>
               </div>
             </div>
@@ -4503,13 +4508,16 @@
         <div class="main"
           style="width: 920px">
           <div class="titleCtn">
-            <div class="text">新增纱线模拟</div>
+            <div class="text">{{craftInfo.id?'修改':'新增'}}纱线模拟</div>
             <div class="closeCtn"
-              @click="showPopup = false">
+              @click="showPopup = false;resetCraft()">
               <i class="el-icon-close"></i>
             </div>
           </div>
           <div class="contentCtn">
+            <div class="explanation red"
+              style="margin:20px"
+              v-if="craftInfo.id">注意！修改纱线请重新模拟图片上传！</div>
             <div class="row">
               <div class="label isMust">模拟名称：</div>
               <div class="info">
@@ -4628,7 +4636,7 @@
           </div>
           <div class="oprCtn">
             <div class="btn borderBtn"
-              @click="showPopup = false">取消</div>
+              @click="showPopup = false;resetCraft()">取消</div>
             <div class="btn backHoverOrange"
               @click="initCraftCanvas">模拟纱线</div>
             <div class="btn backHoverBlue"
@@ -7215,6 +7223,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.$message.success('保存成功')
             this.showPopup = false
+            this.resetCraft()
           }
           this.getCraftList()
         })
@@ -7454,6 +7463,51 @@ export default Vue.extend({
             this.craftTotal = res.data.data.total
           }
         })
+    },
+    updateCraft(info: CraftParameter) {
+      this.craftInfo = info
+      this.showPopup = true
+    },
+    deleteCraft(id: number) {
+      this.$confirm('是否删除该纱线模拟?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          craft
+            .parameterDelete({
+              id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message.success('删除成功')
+                this.getCraftList()
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    resetCraft() {
+      this.craftInfo = {
+        id: '',
+        name: '',
+        image_url: '',
+        diameter: 4,
+        twist_flag: 0,
+        twist_thickness: 4, // 捻粗细：下拉框选择密不密
+        twist_number: 10, // 捻数量：下拉框选择密不密
+        twist_angle: 1, // 捻角度：下拉框选择
+        hairiness_flag: 1, // 是否需要毛羽:0不需要，1.毛边 2.毛羽 3.圈圈
+        hairiness_length: 2, // 毛羽长度，下拉框
+        circle_number: 2,
+        hairiness_density: 30 // 毛羽密度，百分比
+      }
     },
     getModuleChild(name: string, detailInfo: any[]) {
       this.userNavSon = name
@@ -8813,7 +8867,7 @@ export default Vue.extend({
             })
             .then((res) => {
               if (res.data.status) {
-                 this.$message({
+                this.$message({
                   type: 'success',
                   message: (this.onlyDeleteProcess ? '恢复' : '删除') + '成功!'
                 })
@@ -10370,13 +10424,15 @@ export default Vue.extend({
       ])
       yarnPrice
         .list({
+          limit: 5,
+          page: this.yarnPricePage,
           keyword: this.yarnPriceKeyword1,
           material_type: 1
         })
         .then((res) => {
           if (res.data.status) {
-            this.yarnPriceList = res.data.data
-            this.yarnPriceTotal = this.yarnPriceList.length
+            this.yarnPriceList = res.data.data.items
+            this.yarnPriceTotal = res.data.data.total
           }
         })
     },
@@ -10413,10 +10469,6 @@ export default Vue.extend({
               errMsg: '请选择纱线名称'
             },
             {
-              key: 'attribute',
-              errMsg: '请选择纱线属性'
-            },
-            {
               key: 'material_color',
               errMsg: '请输入纱线颜色'
             },
@@ -10429,7 +10481,7 @@ export default Vue.extend({
       if (!formCheck) {
         yarnPrice.create(this.yarnPrice).then((res) => {
           if (res.data.status) {
-            this.$message.success('添加成功')
+            this.$message.success('保存成功')
             this.getYarnPrice()
             this.showPopup = false
             this.yarnPriceUpdate = false
@@ -10476,13 +10528,15 @@ export default Vue.extend({
       ])
       yarnPrice
         .list({
+          limit: 5,
+          page: this.mianliaoPricePage,
           keyword: this.yarnPriceKeyword2,
           material_type: 2
         })
         .then((res) => {
           if (res.data.status) {
-            this.mianliaoPriceList = res.data.data
-            this.mianliaoPriceTotal = this.mianliaoPriceList.length
+            this.mianliaoPriceList = res.data.data.items
+            this.mianliaoPriceTotal = res.data.data.total
           }
         })
     },
@@ -10756,12 +10810,6 @@ export default Vue.extend({
     },
     quotedPriceProductArr(): QuotedPriceProduct[] {
       return this.quotedPriceProductList.slice((this.quotedPriceProductPage - 1) * 5, this.quotedPriceProductPage * 5)
-    },
-    yarnPriceArr(): YarnPrice[] {
-      return this.yarnPriceList.slice((this.yarnPricePage - 1) * 5, this.yarnPricePage * 5)
-    },
-    mianliaoPriceArr(): YarnPrice[] {
-      return this.mianliaoPriceList.slice((this.mianliaoPricePage - 1) * 5, this.mianliaoPricePage * 5)
     }
   },
   watch: {

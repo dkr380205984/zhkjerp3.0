@@ -675,7 +675,7 @@
         <div class="row">
           <div class="col">
             <div class="label">仿真类型：</div>
-            <div>
+            <div style="line-height:36px">
               <el-switch v-model="craftFlag"
                 active-text="纱线模拟仿真(试用版)"
                 inactive-text="像素格仿真(普通版)">
@@ -717,9 +717,9 @@
               <div class="line">
                 <span style="margin-right:12px">经向纱线模拟</span>
                 <span class="gray"
-                  v-if="!craftYarnWarp.id">默认参数：纱线直径4格(约1.2mm)；不需要捻；只需要毛羽，密度20%</span>
+                  v-if="!craftYarnWarp.id">默认参数：纱线直径4格(约{{4*(craftCuxiFlag?0.3:0.2)}}mm)；不需要捻；只需要毛羽，密度20%</span>
                 <span class="orange"
-                  v-if="craftYarnWarp.id">已选{{craftYarnWarp.name}}纱线：纱线直径{{craftYarnWarp.diameter}}格(约：{{$toFixed(craftYarnWarp.diameter*0.3)}}mm)；{{craftYarnWarp.twist_flag===0?'不需要捻':
+                  v-if="craftYarnWarp.id">已选{{craftYarnWarp.name}}纱线：纱线直径{{craftYarnWarp.diameter}}格(约：{{$toFixed(craftYarnWarp.diameter*(craftCuxiFlag?0.3:0.2))}}mm)；{{craftYarnWarp.twist_flag===0?'不需要捻':
                     (craftYarnWarp.twist_thickness===2?'捻较细':craftYarnWarp.twist_thickness===4?'捻中等':'捻较粗') + '，' + 
                     (craftYarnWarp.twist_number===10?'比较稀疏':craftYarnWarp.twist_number===16?'中等密集':'非常密集') + '，' +
                     ['','角度1','角度2','角度3','角度4'] [craftYarnWarp.twist_angle]}}； {{['不需要','只需要边','只需要毛羽','只需要圈圈','需要圈圈和毛羽'][craftYarnWarp.hairiness_flag] + '，密度：' + craftYarnWarp.hairiness_density + '%'}}</span>
@@ -730,9 +730,9 @@
               <div class="line">
                 <span style="margin-right:12px">纬向纱线模拟</span>
                 <span class="gray"
-                  v-if="!craftYarnWeft.id">默认参数：纱线直径4格(约1.2mm)；不需要捻；只需要毛羽，密度20%</span>
+                  v-if="!craftYarnWeft.id">默认参数：纱线直径4格(约{{4*(craftCuxiFlag?0.3:0.2)}}mm)；不需要捻；只需要毛羽，密度20%</span>
                 <span class="orange"
-                  v-if="craftYarnWeft.id">已选{{craftYarnWeft.name}}纱线：纱线直径{{craftYarnWeft.diameter}}格(约：{{$toFixed(craftYarnWeft.diameter*0.3)}}mm)；{{craftYarnWeft.twist_flag===0?'不需要捻':
+                  v-if="craftYarnWeft.id">已选{{craftYarnWeft.name}}纱线：纱线直径{{craftYarnWeft.diameter}}格(约：{{$toFixed(craftYarnWeft.diameter*(craftCuxiFlag?0.3:0.2))}}mm)；{{craftYarnWeft.twist_flag===0?'不需要捻':
                     (craftYarnWeft.twist_thickness===2?'捻较细':craftYarnWeft.twist_thickness===4?'捻中等':'捻较粗') + '，' + 
                     (craftYarnWeft.twist_number===10?'比较稀疏':craftYarnWeft.twist_number===16?'中等密集':'非常密集') + '，' +
                     ['','角度1','角度2','角度3','角度4'] [craftYarnWeft.twist_angle]}}； {{['不需要','只需要边','只需要毛羽','只需要圈圈','需要圈圈和毛羽'][craftYarnWeft.hairiness_flag] + '，密度：' + craftYarnWeft.hairiness_density + '%'}}</span>
@@ -766,6 +766,44 @@
             </div>
           </div>
         </div>
+        <div class="row"
+          v-if="craftFlag">
+          <div class="col">
+            <div class="label">图像比例：</div>
+            <div style="line-height:36px">
+              <el-switch v-model="craftDistanceFlag"
+                active-text="比例可能失真，图像清晰版"
+                inactive-text="比例更加真实，图像模糊版">
+              </el-switch>
+              <el-tooltip class="item"
+                effect="dark"
+                :content="'该选项可在图像比例失真的情况下开启，注意该选项不会影响图像渲染的速度，图像模糊只影响视觉效果，不影响图像质量'"
+                placement="top">
+                <i class="el-icon-question"
+                  style="margin-left:12px"></i>
+              </el-tooltip>
+            </div>
+          </div>
+        </div>
+        <div class="row"
+          v-if="craftFlag">
+          <div class="col">
+            <div class="label">线条比例：</div>
+            <div style="line-height:36px">
+              <el-switch v-model="craftCuxiFlag"
+                active-text="每格约0.3mm"
+                inactive-text="每格约0.2mm">
+              </el-switch>
+              <el-tooltip class="item"
+                effect="dark"
+                :content="'需要更细的线条时，可以选择0.2mm比例'"
+                placement="top">
+                <i class="el-icon-question"
+                  style="margin-left:12px"></i>
+              </el-tooltip>
+            </div>
+          </div>
+        </div>
         <div class="row">
           <div class="col">
             <div class="label">仿真图像：</div>
@@ -784,13 +822,21 @@
           <span class="hoverBlue"
             style="position: absolute;
               left: 0px;
-              top: -1em;
-              color: rgb(26, 149, 255);
+              top: -3em;
               cursor: pointer;
               right: 0;
               margin: auto;
               text-align: center;"
-            @click="uploadImg">上传当前配色图片</span>
+            @click="uploadImg"
+            v-if="!craftFlag">上传当前配色图片</span>
+          <span class="green"
+            style="position: absolute;
+              left: 0px;
+              top: -1em;
+              right: 0;
+              margin: auto;
+              text-align: center;"
+            v-if="craftFlag">提示：效果图模拟完毕。请右键点击图片进行保存，右键保存图片的过程中由于图片过大可能导致电脑卡顿。请耐心等待。</span>
           <div class="col"
             style="margin:0">
             <div class="canvasCtn">
@@ -811,6 +857,8 @@
                 :class="{'cursorMagnifier':showMagnifier}"
                 src="" />
               <canvas class="floatRightTop"
+                v-show="showMagnifier"
+                :style="{'left':canvasLeft,'top':canvasTop}"
                 ref="magnifier"
                 width="200"
                 height="200" />
@@ -831,10 +879,17 @@
                 :width="canvasWidth"
                 :height="canvasHeight"></canvas>
               <img ref="imgBack"
-                :class="{'cursorMagnifier':showMagnifier}"
+                @mousedown.prevent="showMagnifierBack=true"
+                @mousemove="enlargeImg($event,'back')"
+                @mouseup="showMagnifierBack=false"
+                @mouseleave="showMagnifierBack=false"
+                :height="canvasHeight/canvasWidth*600"
+                :class="{'cursorMagnifier':showMagnifierBack}"
                 src="" />
               <canvas class="floatRightTop"
                 ref="magnifierBack"
+                v-show="showMagnifierBack"
+                :style="{'left':canvasLeft,'top':canvasTop}"
                 width="200"
                 height="200" />
             </div>
@@ -1055,8 +1110,10 @@ export default Vue.extend({
     return {
       loading: true,
       craftFlag: true,
+      craftDistanceFlag: true,
       craftYarnIndex: 0,
       craftYarnFlag: false,
+      craftCuxiFlag: true,
       craftYarnWarp: {
         id: '',
         image_url: '',
@@ -1340,6 +1397,8 @@ export default Vue.extend({
       },
       canvasWidth: 0,
       canvasHeight: 0,
+      canvasLeft: 0,
+      canvasTop: 0,
       GLRepeatXuhao: [],
       GLXuhao: [], // 纹版图循环重算序号
       completeGL: [], // 纹版图根据纹版图循环补充完整
@@ -1348,6 +1407,7 @@ export default Vue.extend({
       weftCanvas: [],
       weftCanvasBack: [],
       showMagnifier: false, // 放大镜
+      showMagnifierBack: false,
       showImageLoading: false,
       showGLFlag: false,
       GLYulan: [],
@@ -1965,6 +2025,9 @@ export default Vue.extend({
     },
     // 渲染图像
     getCanvas(colorId: number, index: number) {
+      this.$message.warning(
+        '效果图正在仿真模拟，模拟时间一般需要1-5分钟，请耐心等待，中途不要关闭浏览器。如出现崩溃，请重复刷新浏览器页面再次模拟'
+      )
       this.showImageLoading = true
       this.selectColour = colorId ? colorId : index
       this.dom = this.$refs.myCanvas
@@ -2078,8 +2141,10 @@ export default Vue.extend({
       window.scrollTo(0, 9999)
     },
     // 放大镜效果实现
-    enlargeImg(point: { offsetX: number; offsetY: number }, ifBack: string) {
+    enlargeImg(point: any, ifBack: string) {
       // 放大镜效果实现
+      this.canvasLeft = point.clientX + 10 + 'px'
+      this.canvasTop = point.clientY - 200 + 'px'
       if (this.showMagnifier && !ifBack) {
         const drawWidth = 50
         const drawHeight = 50
@@ -2153,7 +2218,7 @@ export default Vue.extend({
     // 新版工艺单初始化
     initComplexCanvas(colourIndex: number) {
       this.draftMethodMatrix = []
-      let reverseWeft = [...this.weftCanvas].reverse() // 纬向要反着画,我也不知道为啥,注意reverse会改变原数组,所以修改下指向
+      let reverseWeft = [...this.weftCanvas].reverse() // 纬向反着画
       // 根据穿宗法纹版图把01矩阵搞出来
       reverseWeft.forEach((itemWeft, indexWeft) => {
         this.draftMethodMatrix.push([])
@@ -2218,6 +2283,7 @@ export default Vue.extend({
           height: this.craftYarnWeft.diameter
         }
       })
+      weftRealData.reverse() // 纬向反着画
       warpBackRealData = this.warpTableBack.map((item: any) => {
         const color: any = matchColors.exec(warpColourArr[item.jia])
         return {
@@ -2238,24 +2304,38 @@ export default Vue.extend({
           height: this.craftYarnWeft.diameter
         }
       })
-
+      weftBackRealData.reverse()
       // 计算经纬向的缝隙大小，约定1px≈0.3mm
       const warpDistance =
         (Number(this.craftInfo.warp_data.reed_width) * 10 -
           warpRealData.reduce((total, cur: any) => {
-            return total + cur.number * cur.width * 0.3
+            return total + cur.number * cur.width * (this.craftCuxiFlag ? 0.3 : 0.2)
           }, 0)) /
         (Number(this.craftInfo.warp_data.weft) - 1) /
-        0.3
+        (this.craftCuxiFlag ? 0.3 : 0.2)
       const weftDistance =
         (Number(this.craftInfo.weft_data.neichang) * 10 -
           weftRealData.reduce((total, cur: any) => {
-            return total + cur.number * cur.height * 0.3
+            return total + cur.number * cur.height * (this.craftCuxiFlag ? 0.3 : 0.2)
           }, 0)) /
         (Number(this.craftInfo.weft_data.total) - 1) /
-        0.3
-      this.warpDistance = Math.round(warpDistance) < 1 ? 1 : Math.round(warpDistance)
-      this.weftDistance = Math.round(weftDistance) < 1 ? 1 : Math.round(weftDistance)
+        (this.craftCuxiFlag ? 0.3 : 0.2)
+      if (warpDistance < 0) {
+        this.$message.warning('经过初步计算检测到经向缝隙小于0，建议选择更细的纱线')
+      }
+      if (weftDistance < 0) {
+        this.$message.warning('经过初步计算检测到纬向缝隙小于0，建议选择更细的纱线')
+      }
+      if (this.craftDistanceFlag) {
+        this.warpDistance = Math.round(warpDistance) < 1 ? 1 : Math.round(warpDistance)
+        this.weftDistance = Math.round(weftDistance) < 1 ? 1 : Math.round(weftDistance)
+      } else {
+        this.warpDistance = warpDistance < 0 ? 0 : warpDistance
+        this.weftDistance = weftDistance < 0 ? 0 : weftDistance
+      }
+
+      this.warpDistance = warpDistance
+      this.weftDistance = weftDistance
 
       // 根据计算出来缝隙大小确定最终canvas的实际宽高像素,注意这个像素大概率和原来围巾的比例不一样，20是留白
       this.canvasHeight =
@@ -2263,30 +2343,37 @@ export default Vue.extend({
         weftRealData.reduce((total, cur: any) => {
           return total + cur.number * cur.height
         }, 0) +
-        this.warpDistance * (Number(this.craftInfo.weft_data.total) - 1)
+        this.weftDistance * (weftRealData.reduce((total, cur) => total + cur.number, 0) - 1)
 
       this.canvasWidth =
         20 +
         warpRealData.reduce((total, cur: any) => {
           return total + cur.number * cur.width
         }, 0) +
-        this.weftDistance * (Number(this.craftInfo.warp_data.weft) - 1)
+        this.warpDistance * (warpRealData.reduce((total, cur) => total + cur.number, 0) - 1)
       // 得到初始矩阵，只包含type01
       const matrixData = this.changeLineToMatrix(weftRealData, warpRealData)
-      const matrixBackData = this.changeLineToMatrix(weftBackRealData, warpBackRealData)
-      // 初始矩阵转换成更复杂的矩阵，包含type012345,该矩阵是最细节的点阵，理论上后续所有的图像部分都可以由这个数据绘制，实际上做了一层优化，把主体部分进行合并减少渲染的循环
+      // const matrixBackData = this.changeLineToMatrix(weftBackRealData, warpBackRealData)
+      // 宽高像素个数（数组个数）
       const matrixWidth = matrixData[0].reduce((total, item) => total + item.height, 0) + matrixData[0].length - 1
       const matrixHeight = matrixData.reduce((total, item) => total + item[0].width, 0) + matrixData.length - 1
+
+      // 初始矩阵转换成更复杂的矩阵，包含type012345,该矩阵是最细节的点阵，理论上后续所有的图像部分都可以由这个数据绘制，实际上做了一层优化，把主体部分进行合并减少渲染的循环
       const weftCanvasData = this.initLineFn(matrixData, 'weft', matrixWidth)
       const warpCanvasData = this.initLineFn(this.transposeArr(matrixData), 'warp', matrixHeight)
+      // const weftBackCanvasData = this.initLineFn(matrixBackData, 'weft', matrixWidth)
+      // const warpBackCanvasData = this.initLineFn(this.transposeArr(matrixBackData), 'warp', matrixHeight)
       // 复杂矩阵主体部分优化后的数据,合并同类型的方块
       const weftCanvasMainData = this.initMainMatrix(weftCanvasData, this.warpDistance)
       const warpCanvasMainData = this.initMainMatrix(warpCanvasData, this.weftDistance)
-      this.drawMainReal(weftCanvasMainData, 'weft')
-      this.drawMainReal(warpCanvasMainData, 'warp')
-      this.drawTwistShadow(weftCanvasData, 'weft', this.craftYarnWeft.twist_flag)
-      this.drawTwistShadow(warpCanvasData, 'warp', this.craftYarnWarp.twist_flag)
+      // const weftCanvasBackMainData = this.initMainMatrix(weftBackCanvasData, this.warpDistance)
+      // const warpCanvasBackMainData = this.initMainMatrix(warpBackCanvasData, this.weftDistance)
+      this.drawMainReal(this.ctx, weftCanvasMainData, 'weft')
+      this.drawMainReal(this.ctx, warpCanvasMainData, 'warp')
+      this.drawTwistShadow(this.ctx, weftCanvasData, 'weft', this.craftYarnWeft.twist_flag)
+      this.drawTwistShadow(this.ctx, warpCanvasData, 'warp', this.craftYarnWarp.twist_flag)
       this.drawLine(
+        this.ctx,
         weftCanvasData,
         'weft',
         this.craftYarnWeft.hairiness_density,
@@ -2294,12 +2381,40 @@ export default Vue.extend({
         this.craftYarnWeft.hairiness_flag === 3 || this.craftYarnWeft.hairiness_flag === 4
       )
       this.drawLine(
+        this.ctx,
         warpCanvasData,
         'warp',
         this.craftYarnWarp.hairiness_density,
         this.craftYarnWarp.hairiness_flag === 2 || this.craftYarnWarp.hairiness_flag === 4,
         this.craftYarnWarp.hairiness_flag === 3 || this.craftYarnWarp.hairiness_flag === 4
       )
+      if (this.craftInfo.warp_data.back_status === 1 || this.craftInfo.weft_data.back_status === 1) {
+        const matrixBackData = this.changeLineToMatrix(weftBackRealData, warpBackRealData)
+        const weftBackCanvasData = this.initLineFn(matrixBackData, 'weft', matrixWidth)
+        const warpBackCanvasData = this.initLineFn(this.transposeArr(matrixBackData), 'warp', matrixHeight)
+        const weftCanvasBackMainData = this.initMainMatrix(weftBackCanvasData, this.warpDistance)
+        const warpCanvasBackMainData = this.initMainMatrix(warpBackCanvasData, this.weftDistance)
+        this.drawMainReal(this.ctxBack, weftCanvasBackMainData, 'weft')
+        this.drawMainReal(this.ctxBack, warpCanvasBackMainData, 'warp')
+        this.drawTwistShadow(this.ctxBack, weftBackCanvasData, 'weft', this.craftYarnWeft.twist_flag)
+        this.drawTwistShadow(this.ctxBack, warpBackCanvasData, 'warp', this.craftYarnWarp.twist_flag)
+        this.drawLine(
+          this.ctxBack,
+          weftBackCanvasData,
+          'weft',
+          this.craftYarnWeft.hairiness_density,
+          this.craftYarnWeft.hairiness_flag === 2 || this.craftYarnWeft.hairiness_flag === 4,
+          this.craftYarnWeft.hairiness_flag === 3 || this.craftYarnWeft.hairiness_flag === 4
+        )
+        this.drawLine(
+          this.ctxBack,
+          warpBackCanvasData,
+          'warp',
+          this.craftYarnWarp.hairiness_density,
+          this.craftYarnWarp.hairiness_flag === 2 || this.craftYarnWarp.hairiness_flag === 4,
+          this.craftYarnWarp.hairiness_flag === 3 || this.craftYarnWarp.hairiness_flag === 4
+        )
+      }
       window.setTimeout(() => {
         this.changeCanvasToImage()
       })
@@ -2686,7 +2801,7 @@ export default Vue.extend({
       return mainMatrix
     },
     // 绘制主体优化过的部分
-    drawMainReal(data: any[][], type: 'warp' | 'weft') {
+    drawMainReal(ctx: any, data: any[][], type: 'warp' | 'weft') {
       if (type === 'weft') {
         let initY = 10
         data.forEach((item) => {
@@ -2700,8 +2815,8 @@ export default Vue.extend({
                 if (itemChild.type === 3) {
                   initX += itemChild.rectLength
                 } else {
-                  this.ctx.fillStyle = this.randomRGB(itemChild.r, itemChild.g, itemChild.b, 1, -5, 5)
-                  this.ctx.fillRect(initX, initY, itemChild.rectLength, 1)
+                  ctx.fillStyle = this.randomRGB(itemChild.r, itemChild.g, itemChild.b, 1, -5, 5)
+                  ctx.fillRect(initX, initY, itemChild.rectLength, 1)
                   initX += itemChild.rectLength
                 }
               })
@@ -2722,8 +2837,8 @@ export default Vue.extend({
                 if (itemChild.type === 3) {
                   initY += itemChild.rectLength
                 } else {
-                  this.ctx.fillStyle = this.randomRGB(itemChild.r, itemChild.g, itemChild.b, 1)
-                  this.ctx.fillRect(initX, initY, 1, itemChild.rectLength)
+                  ctx.fillStyle = this.randomRGB(itemChild.r, itemChild.g, itemChild.b, 1)
+                  ctx.fillRect(initX, initY, 1, itemChild.rectLength)
                   initY += itemChild.rectLength
                 }
               })
@@ -2734,7 +2849,7 @@ export default Vue.extend({
       }
     },
     // 绘制捻和阴影
-    drawTwistShadow(data: any[][], type: 'warp' | 'weft', flag: 0 | 1) {
+    drawTwistShadow(ctx: any, data: any[][], type: 'warp' | 'weft', flag: 0 | 1) {
       if (flag === 0) {
         return
       }
@@ -2756,7 +2871,7 @@ export default Vue.extend({
                     // ctx.fillRect(initX, initY, 1, 1)
                     initX++
                   } else if (itemChild.type === 1) {
-                    this.ctx.fillStyle = this.randomRGB(
+                    ctx.fillStyle = this.randomRGB(
                       Math.round(itemChild.r * 0.75),
                       Math.round(itemChild.g * 0.75),
                       Math.round(itemChild.b * 0.75),
@@ -2764,39 +2879,39 @@ export default Vue.extend({
                       -5,
                       5
                     )
-                    this.ctx.fillRect(initX, initY, 1, 1)
+                    ctx.fillRect(initX, initY, 1, 1)
                     initX++
                   } else if (itemChild.type === 4) {
                     if (
                       (data[index][indexChild - 1] && data[index][indexChild - 1] === 3) ||
                       (data[index][indexChild + 1] && data[index][indexChild + 1] === 3)
                     ) {
-                      this.ctx.fillStyle = this.randomRGB(itemChild.r + 5, itemChild.g + 5, itemChild.b + 5, 1)
+                      ctx.fillStyle = this.randomRGB(itemChild.r + 5, itemChild.g + 5, itemChild.b + 5, 1)
                     } else {
-                      this.ctx.fillStyle = this.randomRGB(itemChild.r, itemChild.g, itemChild.b, 1)
+                      ctx.fillStyle = this.randomRGB(itemChild.r, itemChild.g, itemChild.b, 1)
                     }
-                    this.ctx.fillRect(initX, initY, this.warpDistance, 1)
+                    ctx.fillRect(initX, initY, this.warpDistance, 1)
                     initX += this.warpDistance
                   } else if (itemChild.type === 5) {
                     if (
                       (data[index][indexChild - 1] && data[index][indexChild - 1] === 3) ||
                       (data[index][indexChild + 1] && data[index][indexChild + 1] === 3)
                     ) {
-                      this.ctx.fillStyle = this.randomRGB(
+                      ctx.fillStyle = this.randomRGB(
                         Math.round(itemChild.r * 0.75) + 5,
                         Math.round(itemChild.g * 0.75) + 5,
                         Math.round(itemChild.b * 0.75) + 5,
                         1
                       )
                     } else {
-                      this.ctx.fillStyle = this.randomRGB(
+                      ctx.fillStyle = this.randomRGB(
                         Math.round(itemChild.r * 0.75),
                         Math.round(itemChild.g * 0.75),
                         Math.round(itemChild.b * 0.75),
                         1
                       )
                     }
-                    this.ctx.fillRect(initX, initY, this.warpDistance, 1)
+                    ctx.fillRect(initX, initY, this.warpDistance, 1)
                     initX += this.warpDistance
                   }
                 }
@@ -2819,11 +2934,11 @@ export default Vue.extend({
                   initY++
                 } else {
                   if (itemChild.type === 0) {
-                    this.ctx.fillStyle = this.randomRGB(itemChild.r, itemChild.g, itemChild.b, 1, -5, 5)
-                    this.ctx.fillRect(initX, initY, 1, 1)
+                    ctx.fillStyle = this.randomRGB(itemChild.r, itemChild.g, itemChild.b, 1, -5, 5)
+                    ctx.fillRect(initX, initY, 1, 1)
                     initY++
                   } else if (itemChild.type === 1) {
-                    this.ctx.fillStyle = this.randomRGB(
+                    ctx.fillStyle = this.randomRGB(
                       Math.round(itemChild.r * 0.75),
                       Math.round(itemChild.g * 0.75),
                       Math.round(itemChild.b * 0.75),
@@ -2831,39 +2946,39 @@ export default Vue.extend({
                       -5,
                       5
                     )
-                    this.ctx.fillRect(initX, initY, 1, 1)
+                    ctx.fillRect(initX, initY, 1, 1)
                     initY++
                   } else if (itemChild.type === 4) {
                     if (
                       (data[index][indexChild - 1] && data[index][indexChild - 1] === 3) ||
                       (data[index][indexChild + 1] && data[index][indexChild + 1] === 3)
                     ) {
-                      this.ctx.fillStyle = this.randomRGB(itemChild.r + 5, itemChild.g + 5, itemChild.b + 5, 1)
+                      ctx.fillStyle = this.randomRGB(itemChild.r + 5, itemChild.g + 5, itemChild.b + 5, 1)
                     } else {
-                      this.ctx.fillStyle = this.randomRGB(itemChild.r, itemChild.g, itemChild.b, 1)
+                      ctx.fillStyle = this.randomRGB(itemChild.r, itemChild.g, itemChild.b, 1)
                     }
-                    this.ctx.fillRect(initX, initY, 1, this.weftDistance)
+                    ctx.fillRect(initX, initY, 1, this.weftDistance)
                     initY += this.weftDistance
                   } else if (itemChild.type === 5) {
                     if (
                       (data[index][indexChild - 1] && data[index][indexChild - 1] === 3) ||
                       (data[index][indexChild + 1] && data[index][indexChild + 1] === 3)
                     ) {
-                      this.ctx.fillStyle = this.randomRGB(
+                      ctx.fillStyle = this.randomRGB(
                         Math.round(itemChild.r * 0.75) + 5,
                         Math.round(itemChild.g * 0.75) + 5,
                         Math.round(itemChild.b * 0.75) + 5,
                         1
                       )
                     } else {
-                      this.ctx.fillStyle = this.randomRGB(
+                      ctx.fillStyle = this.randomRGB(
                         Math.round(itemChild.r * 0.75),
                         Math.round(itemChild.g * 0.75),
                         Math.round(itemChild.b * 0.75),
                         1
                       )
                     }
-                    this.ctx.fillRect(initX, initY, 1, this.weftDistance)
+                    ctx.fillRect(initX, initY, 1, this.weftDistance)
                     initY += this.weftDistance
                   }
                 }
@@ -2875,7 +2990,7 @@ export default Vue.extend({
       }
     },
     // 绘制边
-    drawLine(data: any, type: 'warp' | 'weft', rate: number, sideFlag = true, circleFlag = false) {
+    drawLine(ctx: any, data: any, type: 'warp' | 'weft', rate: number, sideFlag = true, circleFlag = false) {
       if (type === 'weft') {
         let initY = 10
         // 绘制边的时候在最外层保存一下绘制毛羽的长度/圈圈的大小数据,该逻辑只要处理一次后面绘制每条边的时候均可以通用
@@ -2955,30 +3070,30 @@ export default Vue.extend({
                 if (itemChild === 0) {
                   xWidth++
                 } else if (itemChild === 1) {
-                  this.ctx.fillStyle = this.randomRGB(children.r, children.g, children.b, 1)
-                  this.ctx.fillRect(xWidth, initY, 1, 1)
-                  this.drawSide(sideFlag, xWidth, initY, children, 'rowBottom')
-                  this.drawCircle(circleFlag, xWidth, initY, children)
+                  ctx.fillStyle = this.randomRGB(children.r, children.g, children.b, 1)
+                  ctx.fillRect(xWidth, initY, 1, 1)
+                  this.drawSide(ctx, sideFlag, xWidth, initY, children, 'rowBottom')
+                  this.drawCircle(ctx, circleFlag, xWidth, initY, children)
                   xWidth++
                 } else if (itemChild === 2) {
                   xWidth += this.warpDistance
                 } else if (itemChild === 3) {
-                  this.ctx.fillStyle = this.randomRGB(children.r, children.g, children.b, 1)
-                  this.ctx.fillRect(xWidth, initY, 1, 1)
-                  this.drawSide(sideFlag, xWidth, initY, children, 'rowBottom')
-                  this.drawCircle(circleFlag, xWidth, initY, children)
+                  ctx.fillStyle = this.randomRGB(children.r, children.g, children.b, 1)
+                  ctx.fillRect(xWidth, initY, 1, 1)
+                  this.drawSide(ctx, sideFlag, xWidth, initY, children, 'rowBottom')
+                  this.drawCircle(ctx, circleFlag, xWidth, initY, children)
                   xWidth += this.warpDistance
                 } else if (itemChild === 4) {
-                  this.ctx.fillStyle = this.randomRGB(children.r * 0.75, children.g * 0.75, children.b * 0.75, 1)
-                  this.ctx.fillRect(xWidth, initY, 1, 1)
-                  this.drawSide(sideFlag, xWidth, initY, children, 'rowBottom', 0.75)
-                  this.drawCircle(circleFlag, xWidth, initY, children, 0.75)
+                  ctx.fillStyle = this.randomRGB(children.r * 0.75, children.g * 0.75, children.b * 0.75, 1)
+                  ctx.fillRect(xWidth, initY, 1, 1)
+                  this.drawSide(ctx, sideFlag, xWidth, initY, children, 'rowBottom', 0.75)
+                  this.drawCircle(ctx, circleFlag, xWidth, initY, children, 0.75)
                   xWidth++
                 } else if (itemChild === 5) {
-                  this.ctx.fillStyle = this.randomRGB(children.r * 0.75, children.g * 0.75, children.b * 0.75, 1)
-                  this.ctx.fillRect(xWidth, initY, 1, 1)
-                  this.drawSide(sideFlag, xWidth, initY, children, 'rowBottom', 0.75)
-                  this.drawCircle(circleFlag, xWidth, initY, children, 0.75)
+                  ctx.fillStyle = this.randomRGB(children.r * 0.75, children.g * 0.75, children.b * 0.75, 1)
+                  ctx.fillRect(xWidth, initY, 1, 1)
+                  this.drawSide(ctx, sideFlag, xWidth, initY, children, 'rowBottom', 0.75)
+                  this.drawCircle(ctx, circleFlag, xWidth, initY, children, 0.75)
                   xWidth += this.warpDistance
                 }
               })
@@ -2988,30 +3103,30 @@ export default Vue.extend({
                 if (itemChild === 0) {
                   xWidth2++
                 } else if (itemChild === 1) {
-                  this.ctx.fillStyle = this.randomRGB(children2.r, children2.g, children2.b, 1)
-                  this.ctx.fillRect(xWidth2, initY + this.weftDistance - 1, 1, 1)
-                  this.drawSide(sideFlag, xWidth2, initY + this.weftDistance - 1, children2, 'rowTop')
-                  this.drawCircle(circleFlag, xWidth2, initY + this.weftDistance - 1, children2)
+                  ctx.fillStyle = this.randomRGB(children2.r, children2.g, children2.b, 1)
+                  ctx.fillRect(xWidth2, initY + this.weftDistance - 1, 1, 1)
+                  this.drawSide(ctx, sideFlag, xWidth2, initY + this.weftDistance - 1, children2, 'rowTop')
+                  this.drawCircle(ctx, circleFlag, xWidth2, initY + this.weftDistance - 1, children2)
                   xWidth2++
                 } else if (itemChild === 2) {
                   xWidth2 += this.warpDistance
                 } else if (itemChild === 3) {
-                  this.ctx.fillStyle = this.randomRGB(children2.r, children2.g, children2.b, 1)
-                  this.ctx.fillRect(xWidth2, initY + this.weftDistance - 1, 1, 1)
-                  this.drawSide(sideFlag, xWidth2, initY + this.weftDistance - 1, children2, 'rowTop', 0.75)
-                  this.drawCircle(circleFlag, xWidth2, initY + this.weftDistance - 1, children2, 0.75)
+                  ctx.fillStyle = this.randomRGB(children2.r, children2.g, children2.b, 1)
+                  ctx.fillRect(xWidth2, initY + this.weftDistance - 1, 1, 1)
+                  this.drawSide(ctx, sideFlag, xWidth2, initY + this.weftDistance - 1, children2, 'rowTop', 0.75)
+                  this.drawCircle(ctx, circleFlag, xWidth2, initY + this.weftDistance - 1, children2, 0.75)
                   xWidth2 += this.warpDistance
                 } else if (itemChild === 4) {
-                  this.ctx.fillStyle = this.randomRGB(children2.r * 0.75, children2.g * 0.75, children2.b * 0.75, 1)
-                  this.ctx.fillRect(xWidth2, initY + this.weftDistance - 1, 1, 1)
-                  this.drawSide(sideFlag, xWidth2, initY + this.weftDistance - 1, children2, 'rowTop')
-                  this.drawCircle(circleFlag, xWidth2, initY + this.weftDistance - 1, children2)
+                  ctx.fillStyle = this.randomRGB(children2.r * 0.75, children2.g * 0.75, children2.b * 0.75, 1)
+                  ctx.fillRect(xWidth2, initY + this.weftDistance - 1, 1, 1)
+                  this.drawSide(ctx, sideFlag, xWidth2, initY + this.weftDistance - 1, children2, 'rowTop')
+                  this.drawCircle(ctx, circleFlag, xWidth2, initY + this.weftDistance - 1, children2)
                   xWidth2++
                 } else if (itemChild === 5) {
-                  this.ctx.fillStyle = this.randomRGB(children2.r * 0.75, children2.g * 0.75, children2.b * 0.75, 1)
-                  this.ctx.fillRect(xWidth2, initY + this.weftDistance - 1, 1, 1)
-                  this.drawSide(sideFlag, xWidth2, initY + this.weftDistance - 1, children2, 'rowTop', 0.75)
-                  this.drawCircle(circleFlag, xWidth2, initY + this.weftDistance - 1, children2, 0.75)
+                  ctx.fillStyle = this.randomRGB(children2.r * 0.75, children2.g * 0.75, children2.b * 0.75, 1)
+                  ctx.fillRect(xWidth2, initY + this.weftDistance - 1, 1, 1)
+                  this.drawSide(ctx, sideFlag, xWidth2, initY + this.weftDistance - 1, children2, 'rowTop', 0.75)
+                  this.drawCircle(ctx, circleFlag, xWidth2, initY + this.weftDistance - 1, children2, 0.75)
                   xWidth2 += this.warpDistance
                 }
               })
@@ -3119,30 +3234,30 @@ export default Vue.extend({
                 if (itemChild === 0) {
                   xWidth++
                 } else if (itemChild === 1) {
-                  this.ctx.fillStyle = this.randomRGB(children.r, children.g, children.b, 1)
-                  this.ctx.fillRect(initX, xWidth, 1, 1)
-                  this.drawSide(sideFlag, initX, xWidth, children, 'colRight')
-                  this.drawCircle(circleFlag, initX, xWidth, children, 1)
+                  ctx.fillStyle = this.randomRGB(children.r, children.g, children.b, 1)
+                  ctx.fillRect(initX, xWidth, 1, 1)
+                  this.drawSide(ctx, sideFlag, initX, xWidth, children, 'colRight')
+                  this.drawCircle(ctx, circleFlag, initX, xWidth, children, 1)
                   xWidth++
                 } else if (itemChild === 2) {
                   xWidth += this.weftDistance
                 } else if (itemChild === 3) {
-                  this.ctx.fillStyle = this.randomRGB(children.r, children.g, children.b, 1)
-                  this.ctx.fillRect(initX, xWidth, 1, 1)
-                  this.drawSide(sideFlag, initX, xWidth, children, 'colRight')
-                  this.drawCircle(circleFlag, initX, xWidth, children, 1)
+                  ctx.fillStyle = this.randomRGB(children.r, children.g, children.b, 1)
+                  ctx.fillRect(initX, xWidth, 1, 1)
+                  this.drawSide(ctx, sideFlag, initX, xWidth, children, 'colRight')
+                  this.drawCircle(ctx, circleFlag, initX, xWidth, children, 1)
                   xWidth += this.weftDistance
                 } else if (itemChild === 4) {
-                  this.ctx.fillStyle = this.randomRGB(children.r * 0.75, children.g * 0.75, children.b * 0.75, 1)
-                  this.ctx.fillRect(initX, xWidth, 1, 1)
-                  this.drawSide(sideFlag, initX, xWidth, children, 'colRight', 0.75)
-                  this.drawCircle(circleFlag, initX, xWidth, children, 0.75)
+                  ctx.fillStyle = this.randomRGB(children.r * 0.75, children.g * 0.75, children.b * 0.75, 1)
+                  ctx.fillRect(initX, xWidth, 1, 1)
+                  this.drawSide(ctx, sideFlag, initX, xWidth, children, 'colRight', 0.75)
+                  this.drawCircle(ctx, circleFlag, initX, xWidth, children, 0.75)
                   xWidth++
                 } else if (itemChild === 5) {
-                  this.ctx.fillStyle = this.randomRGB(children.r * 0.75, children.g * 0.75, children.b * 0.75, 1)
-                  this.ctx.fillRect(initX, xWidth, 1, 1)
-                  this.drawSide(sideFlag, initX, xWidth, children, 'colRight', 0.75)
-                  this.drawCircle(circleFlag, initX, xWidth, children, 0.75)
+                  ctx.fillStyle = this.randomRGB(children.r * 0.75, children.g * 0.75, children.b * 0.75, 1)
+                  ctx.fillRect(initX, xWidth, 1, 1)
+                  this.drawSide(ctx, sideFlag, initX, xWidth, children, 'colRight', 0.75)
+                  this.drawCircle(ctx, circleFlag, initX, xWidth, children, 0.75)
                   xWidth += this.weftDistance
                 }
               })
@@ -3152,30 +3267,30 @@ export default Vue.extend({
                 if (itemChild === 0) {
                   xWidth2++
                 } else if (itemChild === 1) {
-                  this.ctx.fillStyle = this.randomRGB(children2.r, children2.g, children2.b, 1)
-                  this.ctx.fillRect(initX + this.warpDistance - 1, xWidth2, 1, 1)
-                  this.drawSide(sideFlag, initX + this.warpDistance - 1, xWidth2, children2, 'colLeft')
-                  // this.drawCircle(circleFlag, initX + this.warpDistance - 1, xWidth, children2, 1)
+                  ctx.fillStyle = this.randomRGB(children2.r, children2.g, children2.b, 1)
+                  ctx.fillRect(initX + this.warpDistance - 1, xWidth2, 1, 1)
+                  this.drawSide(ctx, sideFlag, initX + this.warpDistance - 1, xWidth2, children2, 'colLeft')
+                  // this.drawCircle(ctx,circleFlag, initX + this.warpDistance - 1, xWidth, children2, 1)
                   xWidth2++
                 } else if (itemChild === 2) {
                   xWidth2 += this.weftDistance
                 } else if (itemChild === 3) {
-                  this.ctx.fillStyle = this.randomRGB(children2.r, children2.g, children2.b, 1)
-                  this.ctx.fillRect(initX + this.warpDistance - 1, xWidth2, 1, 1)
-                  this.drawSide(sideFlag, initX + this.warpDistance - 1, xWidth2, children2, 'colLeft')
-                  // this.drawCircle(circleFlag, initX + this.warpDistance - 1, xWidth, children2, 1)
+                  ctx.fillStyle = this.randomRGB(children2.r, children2.g, children2.b, 1)
+                  ctx.fillRect(initX + this.warpDistance - 1, xWidth2, 1, 1)
+                  this.drawSide(ctx, sideFlag, initX + this.warpDistance - 1, xWidth2, children2, 'colLeft')
+                  // this.drawCircle(ctx,circleFlag, initX + this.warpDistance - 1, xWidth, children2, 1)
                   xWidth2 += this.weftDistance
                 } else if (itemChild === 4) {
-                  this.ctx.fillStyle = this.randomRGB(children2.r * 0.75, children2.g * 0.75, children2.b * 0.75, 1)
-                  this.ctx.fillRect(initX + this.warpDistance - 1, xWidth2, 1, 1)
-                  this.drawSide(sideFlag, initX + this.warpDistance - 1, xWidth2, children2, 'colLeft', 0.75)
-                  // this.drawCircle(circleFlag, initX + this.warpDistance - 1, xWidth, children2, 0.75)
+                  ctx.fillStyle = this.randomRGB(children2.r * 0.75, children2.g * 0.75, children2.b * 0.75, 1)
+                  ctx.fillRect(initX + this.warpDistance - 1, xWidth2, 1, 1)
+                  this.drawSide(ctx, sideFlag, initX + this.warpDistance - 1, xWidth2, children2, 'colLeft', 0.75)
+                  // this.drawCircle(ctx,circleFlag, initX + this.warpDistance - 1, xWidth, children2, 0.75)
                   xWidth2++
                 } else if (itemChild === 5) {
-                  this.ctx.fillStyle = this.randomRGB(children2.r * 0.75, children2.g * 0.75, children2.b * 0.75, 1)
-                  this.ctx.fillRect(initX + this.warpDistance - 1, xWidth2, 1, 1)
-                  this.drawSide(sideFlag, initX + this.warpDistance - 1, xWidth2, children2, 'colLeft', 0.75)
-                  // this.drawCircle(circleFlag, initX + this.warpDistance - 1, xWidth, children2, 0.75)
+                  ctx.fillStyle = this.randomRGB(children2.r * 0.75, children2.g * 0.75, children2.b * 0.75, 1)
+                  ctx.fillRect(initX + this.warpDistance - 1, xWidth2, 1, 1)
+                  this.drawSide(ctx, sideFlag, initX + this.warpDistance - 1, xWidth2, children2, 'colLeft', 0.75)
+                  // this.drawCircle(ctx,circleFlag, initX + this.warpDistance - 1, xWidth, children2, 0.75)
                   xWidth2 += this.weftDistance
                 }
               })
@@ -3203,7 +3318,7 @@ export default Vue.extend({
       }
     },
     // 绘制毛边
-    drawSide(flag: boolean, initX: number, initY: number, children: DrawData, type: string, number = 1) {
+    drawSide(ctx: any, flag: boolean, initX: number, initY: number, children: DrawData, type: string, number = 1) {
       if (!flag) {
         return
       }
@@ -3278,29 +3393,29 @@ export default Vue.extend({
         x3 = initX + this.myRandom(r3, r4)
       }
 
-      this.ctx.beginPath()
-      this.ctx.strokeStyle = this.randomRGB(children.r * number, children.g * number, children.b * number, 1)
-      this.ctx.lineWidth = 0.5
-      this.ctx.moveTo(initX, initY)
-      this.ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3)
-      this.ctx.stroke()
+      ctx.beginPath()
+      ctx.strokeStyle = this.randomRGB(children.r * number, children.g * number, children.b * number, 1)
+      ctx.lineWidth = 0.5
+      ctx.moveTo(initX, initY)
+      ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3)
+      ctx.stroke()
     },
     // 绘制圈圈纱
-    drawCircle(flag: boolean, initX: number, initY: number, children: DrawData, number = 1) {
+    drawCircle(ctx: any, flag: boolean, initX: number, initY: number, children: DrawData, number = 1) {
       if (!flag) {
         return
       }
-      this.ctx.beginPath()
-      this.ctx.strokeStyle = this.randomRGB(children.r * number, children.g * number, children.b * number, 0.5)
-      this.ctx.lineWidth = 0.5
+      ctx.beginPath()
+      ctx.strokeStyle = this.randomRGB(children.r * number, children.g * number, children.b * number, 0.5)
+      ctx.lineWidth = 0.5
       const arc = Math.PI * 2
       // 画1-3次圆
       for (let i = 0; i < this.myRandom(1, 5); i++) {
         const r = this.myRandom(this.circleNumberArr[0], this.circleNumberArr[1])
         const x = initX + this.myRandom(0, 4)
         const y = initY + this.myRandom(0, 4)
-        this.ctx.arc(x, y, r, 0, arc)
-        this.ctx.stroke()
+        ctx.arc(x, y, r, 0, arc)
+        ctx.stroke()
       }
     },
     // 初始化矩阵

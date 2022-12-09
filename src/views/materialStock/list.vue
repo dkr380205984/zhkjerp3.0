@@ -332,7 +332,9 @@ export default Vue.extend({
           '&plan_code=' +
           this.plan_code +
           '&progress=' +
-          this.progress
+          this.progress +
+          '&limit=' +
+          this.limit
       )
     },
     reset() {

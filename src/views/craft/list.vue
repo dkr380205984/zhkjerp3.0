@@ -1,5 +1,6 @@
 <template>
-  <div id="craftList" class="bodyContainer">
+  <div id="craftList"
+    class="bodyContainer">
     <div class="module">
       <div class="titleCtn">
         <div class="title">工艺单列表</div>
@@ -7,38 +8,47 @@
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input v-model="keyword" placeholder="筛选工艺单编号" @keydown.enter.native="changeRouter"></el-input>
+            <el-input v-model="keyword"
+              placeholder="筛选工艺单编号"
+              @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
-            <el-input
-              v-model="product_code"
+            <el-input v-model="product_code"
               placeholder="筛选产品/样品编号"
-              @keydown.enter.native="changeRouter"
-            ></el-input>
+              @keydown.enter.native="changeRouter"></el-input>
           </div>
           <div class="elCtn">
-            <el-input v-model="yarn_name" placeholder="筛选纱线名称" @keydown.enter.native="changeRouter"></el-input>
+            <el-input v-model="yarn_name"
+              placeholder="筛选纱线名称"
+              @keydown.enter.native="changeRouter"></el-input>
           </div>
-          <div class="btn fr borderBtn" @click="reset">重置</div>
-          <div class="btn backHoverBlue fr" @click="$router.push('/craft/create')">添加工艺单</div>
+          <div class="btn fr borderBtn"
+            @click="reset">重置</div>
+          <div class="btn backHoverBlue fr"
+            @click="$router.push('/craft/create')">添加工艺单</div>
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select
-              @change="
+            <el-input v-model="name"
+              placeholder="筛选工艺单名称"
+              @keydown.enter.native="changeRouter"></el-input>
+          </div>
+          <div class="elCtn">
+            <el-select @change="
                 $setLocalStorage('create_user', user_id, true)
                 changeRouter()
               "
               v-model="user_id"
               placeholder="筛选创建人"
-              clearable
-            >
-              <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              clearable>
+              <el-option v-for="item in userList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-date-picker
-              v-model="date"
+            <el-date-picker v-model="date"
               type="daterange"
               align="right"
               unlink-panels
@@ -47,40 +57,43 @@
               end-placeholder="结束日期"
               :picker-options="pickerOptions"
               @change="changeRouter"
-              value-format="yyyy-MM-dd"
-            >
+              value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
           <div class="elCtn">
-            <el-select v-model="limit" placeholder="每页展示条数" @change="changeRouter">
-              <el-option v-for="item in limitList" :key="item.value" :label="item.name" :value="item.value"></el-option>
+            <el-select v-model="limit"
+              placeholder="每页展示条数"
+              @change="changeRouter">
+              <el-option v-for="item in limitList"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value"></el-option>
             </el-select>
           </div>
         </div>
-        <zh-list :list="list" :listKey="listKey" :loading="loading" :oprList="oprList"></zh-list>
+        <zh-list :list="list"
+          :listKey="listKey"
+          :loading="loading"
+          :oprList="oprList"></zh-list>
         <div class="pageCtn">
-          <el-pagination
-            background
+          <el-pagination background
             :page-size="limit"
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
-            @current-change="changeRouter"
-          >
+            @current-change="changeRouter">
           </el-pagination>
         </div>
       </div>
     </div>
     <!-- 列表设置 -->
-    <zh-list-setting
-      @close="showSetting = false"
+    <zh-list-setting @close="showSetting = false"
       @afterSave="getListSetting"
       :show="showSetting"
       :id="listSettingId"
       :type="10"
       :data.sync="listKey"
-      :originalData="originalSetting"
-    ></zh-list-setting>
+      :originalData="originalSetting"></zh-list-setting>
   </div>
 </template>
 
@@ -102,6 +115,7 @@ export default Vue.extend({
       product_code: '',
       yarn_name: '',
       client_id: [],
+      name: '',
       group_id: '',
       user_id: '',
       status: '0',
@@ -284,6 +298,7 @@ export default Vue.extend({
       this.user_id = query.user_id || ''
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
+      this.name = query.name || ''
     },
     changeRouter(ev?: any) {
       if (ev !== this.page) {
@@ -303,7 +318,9 @@ export default Vue.extend({
           '&date=' +
           this.date +
           '&limit=' +
-          this.limit
+          this.limit +
+          '&name=' +
+          this.name
       )
     },
     reset() {
@@ -318,6 +335,7 @@ export default Vue.extend({
           this.user_id = ''
           this.product_code = ''
           this.yarn_name = ''
+          this.name = ''
           this.date = []
           this.status = 'null'
           this.limit = 5
@@ -341,7 +359,8 @@ export default Vue.extend({
           user_id: this.user_id,
           product_code: this.product_code,
           yarn_name: this.yarn_name,
-          limit: this.limit
+          limit: this.limit,
+          title: this.name
         })
         .then((res) => {
           if (res.data.status) {
