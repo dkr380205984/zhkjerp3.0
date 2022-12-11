@@ -5028,7 +5028,8 @@ export default Vue.extend({
               settle_price: itemChild.new_settle_price,
               attribute: itemChild.attribute,
               price: itemChild.price,
-              date: item.created_at,
+              start_time: this.updatePriceInfo.date[0],
+              end_time: this.updatePriceInfo.date[1],
               client_id: this.$route.query.id
             })
           }
