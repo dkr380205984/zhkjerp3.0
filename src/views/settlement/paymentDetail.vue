@@ -5047,7 +5047,7 @@ export default Vue.extend({
             attribute: '',
             start_time: '',
             end_time: '',
-            date: [],
+            date: [new Date().getFullYear() + '-01-01', this.$formatDate(new Date())],
             client_id: null
           }
           this.updatePriceOriginList = []
