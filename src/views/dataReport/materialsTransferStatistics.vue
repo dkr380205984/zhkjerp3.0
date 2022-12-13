@@ -1,38 +1,51 @@
 <template>
-  <div id="materialsTransferStatistics" class="bodyContainer" v-loading="loading">
+  <div id="materialsTransferStatistics"
+    class="bodyContainer"
+    v-loading="loading">
     <div class="topTagCtn">
-      <div class="tag" @click="$router.push('/dataReport/orderStatistics')">
-        <svg class="iconFont" aria-hidden="true">
+      <div class="tag"
+        @click="$router.push('/dataReport/orderStatistics')">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-dingdanshujutubiao"></use>
         </svg>
         <span class="text">订单数据图表</span>
       </div>
-      <div class="tag" @click="$router.push('/dataReport/sampleOrderStatistics')">
-        <svg class="iconFont" aria-hidden="true">
+      <div class="tag"
+        @click="$router.push('/dataReport/sampleOrderStatistics')">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-yangdanshujutubiao"></use>
         </svg>
         <span class="text">样单数据图表</span>
       </div>
       <div class="tag active">
-        <svg class="iconFont" aria-hidden="true">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-yuanliaoshiyongtubiao"></use>
         </svg>
         <span class="text">原料使用图表</span>
       </div>
-      <div class="tag" @click="$router.push('/dataReport/accessoriesDecorationOrderStatistics')">
-        <svg class="iconFont" aria-hidden="true">
+      <div class="tag"
+        @click="$router.push('/dataReport/accessoriesDecorationOrderStatistics')">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-fuliaoshiyongtubiao"></use>
         </svg>
         <span class="text">辅料使用图表</span>
       </div>
-      <div class="tag" @click="$router.push('/dataReport/productionPlanChartStatistics')">
-        <svg class="iconFont" aria-hidden="true">
+      <div class="tag"
+        @click="$router.push('/dataReport/productionPlanChartStatistics')">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-shengchanshujutubiao"></use>
         </svg>
         <span class="text">生产数据图表</span>
       </div>
-      <div class="tag" @click="$router.push('/dataReport/transportationOutboundStatistics')">
-        <svg class="iconFont" aria-hidden="true">
+      <div class="tag"
+        @click="$router.push('/dataReport/transportationOutboundStatistics')">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-qitafeiyongtubiao"></use>
         </svg>
         <span class="text">其它费用图表</span>
@@ -40,64 +53,82 @@
     </div>
     <div class="module noBackColor">
       <div style="display: flex; width: 49%; justify-content: space-between">
-        <div class="tab" @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">计划数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsOrderingStatistics')">订购数据统计</div>
+        <div class="tab"
+          @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">计划数据统计</div>
+        <div class="tab"
+          @click="$router.push('/dataReport/materialsOrderingStatistics')">订购数据统计</div>
         <div class="tab active">调取数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">库存数据统计</div>
+        <div class="tab"
+          @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
+        <div class="tab"
+          @click="$router.push('/dataReport/materialsStockStatistics')">库存数据统计</div>
       </div>
       <div class="cardCtn">
-        <div class="card noBackColor noPad" style="width: 106%">
+        <div class="card noBackColor noPad"
+          style="width: 106%">
           <div class="screenCtn">
-            <div class="screen" style="width: 100%">
-              <el-select
-                @change="changeRouter"
+            <div class="screen"
+              style="width: 100%">
+              <el-select @change="changeRouter"
                 filterable
                 v-model="filterData.order_type"
                 placeholder="筛选原料"
-                clearable
-              >
-                <el-option label="订单/样单" :value="''"></el-option>
-                <el-option label="订单" :value="1"></el-option>
-                <el-option label="样单" :value="2"></el-option>
+                clearable>
+                <el-option label="订单/样单"
+                  :value="''"></el-option>
+                <el-option label="订单"
+                  :value="1"></el-option>
+                <el-option label="样单"
+                  :value="2"></el-option>
               </el-select>
             </div>
-            <div class="screen" style="margin-bottom: 0; width: 31%">
-              <el-select @change="changePeople" v-model="filterData.user_id" placeholder="筛选创建人" clearable>
-                <el-option
-                  v-for="item in userList"
+            <div class="screen"
+              style="margin-bottom: 0; width: 31%">
+              <el-select @change="changePeople"
+                v-model="filterData.user_id"
+                placeholder="筛选创建人"
+                clearable>
+                <el-option v-for="item in userList"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value"
-                ></el-option>
+                  :value="item.value"></el-option>
               </el-select>
             </div>
-            <div class="screen" style="margin-bottom: 0; width: 31%">
-              <el-select @change="changeRouter" filterable v-model="filterData.type" placeholder="筛选原料" clearable>
-                <el-option label="纱线/面料" :value="''"></el-option>
-                <el-option label="纱线" :value="1"></el-option>
-                <el-option label="面料" :value="2"></el-option>
+            <div class="screen"
+              style="margin-bottom: 0; width: 31%">
+              <el-select @change="changeRouter"
+                filterable
+                v-model="filterData.type"
+                placeholder="筛选原料"
+                clearable>
+                <el-option label="纱线/面料"
+                  :value="''"></el-option>
+                <el-option label="纱线"
+                  :value="1"></el-option>
+                <el-option label="面料"
+                  :value="2"></el-option>
               </el-select>
             </div>
-            <div class="screen" style="margin-bottom: 0; width: 31%">
-              <el-select
-                @change="(ev) => getLocalStorage(ev, 'group_id')"
+            <div class="screen"
+              style="margin-bottom: 0; width: 31%">
+              <el-select @change="(ev) => getLocalStorage(ev, 'group_id')"
                 v-model="filterData.group_id"
                 placeholder="筛选负责小组"
-                clearable
-              >
-                <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+                clearable>
+                <el-option v-for="item in groupList"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.name"></el-option>
               </el-select>
             </div>
           </div>
         </div>
-        <div class="card" style="margin-left: 4px">
+        <div class="card"
+          style="margin-left: 4px">
           <div class="contentGrid">
             <h3>当前统计默认值</h3>
             <div class="item2">
-              订单下单时间：<span class="blue"
-                >{{ formatDate2(filterData.start_time) }}-{{ formatDate2(filterData.end_time) }}</span
-              >
+              订单下单时间：<span class="blue">{{ formatDate2(filterData.start_time) }}-{{ formatDate2(filterData.end_time) }}</span>
             </div>
           </div>
           <div class="contentGrid">
@@ -127,47 +158,50 @@
         </div>
       </div>
       <div class="cardCtn">
-        <div class="card noPad" style="overflow: hidden">
+        <div class="card noPad"
+          style="overflow: hidden">
           <div class="screen">
-            <el-select
-              @change="
+            <el-select @change="
                 getStoreDetail($event)
                 changeRouter()
               "
               v-model="filterData.store_id"
               placeholder="筛选调取仓库"
-              clearable
-            >
-              <el-option v-for="item in storeList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+              clearable>
+              <el-option v-for="item in storeList"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"></el-option>
             </el-select>
           </div>
         </div>
-        <div class="card noPad" style="overflow: hidden">
+        <div class="card noPad"
+          style="overflow: hidden">
           <div class="screen">
-            <el-input
+            <el-cascader placeholder="筛选原料名称"
               v-model="filterData.name"
-              placeholder="输入原料名称查询"
+              :options="yarnTypeList"
               clearable
-              @keydown.enter.native="changeRouter"
-              @blur="changeRouter"
-              @clear="changeRouter"
-            ></el-input>
+              filterable
+              @change="changeRouter"></el-cascader>
           </div>
         </div>
-        <div class="cardCtn" style="width: 206%; margin-top: 0">
-          <div class="card noPad" style="overflow: hidden">
+        <div class="cardCtn"
+          style="width: 206%; margin-top: 0">
+          <div class="card noPad"
+            style="overflow: hidden">
             <div class="screen">
-              <el-date-picker
-                v-model="filterData.start_time"
+              <el-date-picker v-model="filterData.start_time"
                 type="year"
                 @change="changeDate"
-                placeholder="筛选下单年份"
-              >
+                placeholder="筛选下单年份">
               </el-date-picker>
             </div>
           </div>
-          <div class="card noPad" style="overflow: hidden">
-            <el-button style="width: 100%; height: 63px" @click="reset">重置</el-button>
+          <div class="card noPad"
+            style="overflow: hidden">
+            <el-button style="width: 100%; height: 63px"
+              @click="reset">重置</el-button>
           </div>
         </div>
       </div>
@@ -211,18 +245,24 @@
       </div>
       <div class="cardCtn">
         <div class="card">
-          <el-tabs v-model="activeName" @tab-click="getList">
+          <el-tabs v-model="activeName"
+            @tab-click="getList">
             <!-- <el-tab-pane label="计划调取" name="first"> -->
-            <el-tab-pane label="" name="first">
+            <el-tab-pane label=""
+              name="first">
               <div style="display: flex; justify-content: end; padding-right: 50px">
                 <div style="width: 150px">
-                  <el-select v-model="sortWay" @change="changeRouter">
-                    <el-option label="按数量排序" :value="1"> </el-option>
-                    <el-option label="按金额排序" :value="2"> </el-option>
+                  <el-select v-model="sortWay"
+                    @change="changeRouter">
+                    <el-option label="按数量排序"
+                      :value="1"> </el-option>
+                    <el-option label="按金额排序"
+                      :value="2"> </el-option>
                   </el-select>
                 </div>
               </div>
-              <zh-charts v-if="activeName === 'first'" :option="option1"></zh-charts>
+              <zh-charts v-if="activeName === 'first'"
+                :option="option1"></zh-charts>
             </el-tab-pane>
             <!-- <el-tab-pane label="实际调取" name="second">
               <div style="display: flex; justify-content: end; padding-right: 50px">
@@ -242,7 +282,8 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue" @click="$openUrl('/billingManagement/rawMaterialTransferOrder')">
+          <div class="btn backHoverBlue"
+            @click="$openUrl('/billingManagement/rawMaterialTransferOrder')">
             查看原料调取单
           </div>
         </div>
@@ -385,7 +426,7 @@ export default Vue.extend({
         group_id: '',
         order_type: '',
         type: '',
-        name: ''
+        name: []
       },
       reportData: {
         plan: {
@@ -457,7 +498,7 @@ export default Vue.extend({
         this.filterData.start_time = query.start_time
         this.filterData.end_time = query.end_time
       }
-      this.filterData.name = query.name ? query.name : ''
+      this.filterData.name = query.name ? (query.name as string).split(',') : []
       this.filterData.client_id = query.client_id
         ? (query.client_id as string).split(',').map((item) => Number(item))
         : []
@@ -477,7 +518,7 @@ export default Vue.extend({
         store_id: '',
         order_type: '',
         type: '',
-        name: ''
+        name: []
       }
       localStorage.create_user_name = ''
       this.filterData.start_time = new Date().getFullYear() + '-01-01'
@@ -524,7 +565,7 @@ export default Vue.extend({
           '&group_id=' +
           (this.filterData.group_id || '') +
           '&name=' +
-          (this.filterData.name || '') +
+          encodeURIComponent(this.filterData.name || '') +
           '&store_id=' +
           (this.filterData.store_id || '') +
           '&order_type=' +
@@ -567,7 +608,7 @@ export default Vue.extend({
           user_id: this.filterData.user_id,
           group_id: this.filterData.group_id,
           store_id: this.filterData.store_id,
-          name: this.filterData.name,
+          name: this.filterData.name.length ? this.filterData.name[2] : '',
           order_type: this.filterData.order_type,
           type: this.filterData.type,
           end_time: this.filterData.end_time
@@ -685,6 +726,23 @@ export default Vue.extend({
     },
     userList() {
       return this.$store.state.api.user.arr
+    },
+    yarnTypeList() {
+      return this.$store.state.api.yarnType.arr.map((item: any) => {
+        return {
+          label: item.label,
+          value: item.label,
+          children: item.children.map((itemChild: any) => {
+            return {
+              label: itemChild.label,
+              value: itemChild.label,
+              children: itemChild.children.map((itemSon: any) => {
+                return { label: itemSon.label, value: itemSon.label }
+              })
+            }
+          })
+        }
+      })
     }
   },
   created() {
@@ -708,6 +766,11 @@ export default Vue.extend({
         checkWhich: 'api/user',
         getInfoMethed: 'dispatch',
         getInfoApi: 'getUserAsync'
+      },
+      {
+        checkWhich: 'api/yarnType',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getYarnTypeAsync'
       }
     ])
   },

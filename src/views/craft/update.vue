@@ -1254,14 +1254,15 @@
               <span class="text">后道工序</span>
             </div>
             <div class="info elCtn">
-              <el-select v-model="craftInfo.process_data"
-                placeholder="请选择后道工序"
-                multiple>
-                <el-option v-for="item in processList"
-                  :key="item.id"
-                  :value="item.id"
-                  :label="item.name"></el-option>
-              </el-select>
+              <el-cascader placeholder="选择工序"
+                :show-all-levels="false"
+                v-model="process_data"
+                :options="processList"
+                filterable
+                clearable
+                :props="{ multiple: true }"
+                @change="getProcessData">
+              </el-cascader>
             </div>
           </div>
         </div>
@@ -1390,6 +1391,7 @@ export default Vue.extend({
     return {
       loading: false,
       saveSuccess: false,
+      process_data: [],
       draftMethodList: [],
       draftMethod: '',
       productInfo: {
@@ -1712,7 +1714,19 @@ export default Vue.extend({
   },
   computed: {
     processList() {
-      return this.$store.state.api.halfProcess.arr
+      return this.$store.state.api.halfProcessType.arr.map((item: any) => {
+        return {
+          value: item.name,
+          label: item.name,
+          children: item.children.map((itemChild: any) => {
+            return {
+              label: itemChild.code ? itemChild.code + '-' + itemChild.name : itemChild.name,
+              value: itemChild.name,
+              process_desc: itemChild.process_desc
+            }
+          })
+        }
+      })
     },
     materialList() {
       return this.$store.state.api.material.arr
@@ -1752,6 +1766,9 @@ export default Vue.extend({
     }
   },
   methods: {
+    getProcessData(ev: any) {
+      this.craftInfo.process_data = ev.map((item: any) => item[1])
+    },
     searchOrganization(str: string, cb: any) {
       let results = str ? this.methodsList.filter(this.createFilter(str)) : this.methodsList.slice(0, 10)
       // 调用 callback 返回建议列表的数据
@@ -3237,9 +3254,9 @@ export default Vue.extend({
         getInfoApi: 'getYarnColorAsync'
       },
       {
-        checkWhich: 'api/halfProcess',
+        checkWhich: 'api/halfProcessType',
         getInfoMethed: 'dispatch',
-        getInfoApi: 'getHalfProcessAsync'
+        getInfoApi: 'getHalfProcessTypeAsync'
       }
     ])
     Promise.all([
@@ -3346,7 +3363,7 @@ export default Vue.extend({
             })
           })
           // @ts-ignore
-          this.craftInfo.process_data = this.craftInfo.process_data.map((item) => item.process_id)
+          this.process_data = this.craftInfo.process_data.map((item) => item.process_id)
         }
       })
   },

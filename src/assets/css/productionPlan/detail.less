@@ -8,6 +8,86 @@
 @import '../buttonList.less';
 
 #productionPlanDetail {
+  .scrollCtn {
+    overflow: auto;
+    width: 100%;
+    height: auto;
+
+    .tableCtn {
+      width: 2100px;
+
+      .tcol {
+        min-width: 100px;
+        flex: none;
+        flex-grow: 0;
+        flex-shrink: 0;
+
+        .changeCtn {
+          flex-direction: row;
+
+          .el-icon-s-unfold {
+            margin: 0 4px;
+          }
+        }
+
+        .text {
+          max-width: 100px;
+          min-width: 100px;
+        }
+
+        &.flex2 {
+          flex: 2
+        }
+
+        &.flex3 {
+          flex: 3
+        }
+
+        &.flex4 {
+          flex: 4
+        }
+      }
+    }
+  }
+
+  .processCtn {
+    padding: 20px 32px;
+
+    .process {
+      width: 100%;
+      height: 28px;
+      background: rgba(0, 0, 0, .45);
+      line-height: 28px;
+      border-radius: 14px;
+      font-size: @fontMiddle;
+      position: relative;
+      margin-bottom: 20px;
+
+      .active {
+        background: #61CAAC;
+        width: 15%;
+        height: 28px;
+        border-radius: 14px;
+      }
+
+      .left {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        color: #fff;
+        left: 12px;
+      }
+
+      .right {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 12px;
+        color: #fff;
+      }
+    }
+  }
+
   .backGray {
     background: @font25;
     cursor: not-allowed;
@@ -29,6 +109,10 @@
   .popup {
     .main {
       width: 1200px;
+
+      .contentCtn {
+        max-height: 600px;
+      }
 
       .copyIcon {
         position: absolute;

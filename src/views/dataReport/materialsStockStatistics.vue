@@ -1,38 +1,51 @@
 <template>
-  <div id="materialsStockStatistics" class="bodyContainer" v-loading="loading">
+  <div id="materialsStockStatistics"
+    class="bodyContainer"
+    v-loading="loading">
     <div class="topTagCtn">
-      <div class="tag" @click="$router.push('/dataReport/orderStatistics')">
-        <svg class="iconFont" aria-hidden="true">
+      <div class="tag"
+        @click="$router.push('/dataReport/orderStatistics')">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-dingdanshujutubiao"></use>
         </svg>
         <span class="text">订单数据图表</span>
       </div>
-      <div class="tag" @click="$router.push('/dataReport/sampleOrderStatistics')">
-        <svg class="iconFont" aria-hidden="true">
+      <div class="tag"
+        @click="$router.push('/dataReport/sampleOrderStatistics')">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-yangdanshujutubiao"></use>
         </svg>
         <span class="text">样单数据图表</span>
       </div>
       <div class="tag active">
-        <svg class="iconFont" aria-hidden="true">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-yuanliaoshiyongtubiao"></use>
         </svg>
         <span class="text">原料使用图表</span>
       </div>
-      <div class="tag" @click="$router.push('/dataReport/accessoriesDecorationOrderStatistics')">
-        <svg class="iconFont" aria-hidden="true">
+      <div class="tag"
+        @click="$router.push('/dataReport/accessoriesDecorationOrderStatistics')">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-fuliaoshiyongtubiao"></use>
         </svg>
         <span class="text">辅料使用图表</span>
       </div>
-      <div class="tag" @click="$router.push('/dataReport/productionPlanChartStatistics')">
-        <svg class="iconFont" aria-hidden="true">
+      <div class="tag"
+        @click="$router.push('/dataReport/productionPlanChartStatistics')">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-shengchanshujutubiao"></use>
         </svg>
         <span class="text">生产数据图表</span>
       </div>
-      <div class="tag" @click="$router.push('/dataReport/transportationOutboundStatistics')">
-        <svg class="iconFont" aria-hidden="true">
+      <div class="tag"
+        @click="$router.push('/dataReport/transportationOutboundStatistics')">
+        <svg class="iconFont"
+          aria-hidden="true">
           <use xlink:href="#icon-qitafeiyongtubiao"></use>
         </svg>
         <span class="text">其它费用图表</span>
@@ -40,55 +53,71 @@
     </div>
     <div class="module noBackColor">
       <div style="display: flex; width: 49%; justify-content: space-between">
-        <div class="tab" @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">计划数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsOrderingStatistics')">订购数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
-        <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
+        <div class="tab"
+          @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">计划数据统计</div>
+        <div class="tab"
+          @click="$router.push('/dataReport/materialsOrderingStatistics')">订购数据统计</div>
+        <div class="tab"
+          @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
+        <div class="tab"
+          @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
         <div class="tab active">库存数据统计</div>
       </div>
       <div class="cardCtn">
-        <div class="card noBackColor noPad" style="width: 106%">
+        <div class="card noBackColor noPad"
+          style="width: 106%">
           <div class="screenCtn">
-            <div class="screen" style="width: 48.5%">
-              <el-select
-                @change="
+            <div class="screen"
+              style="width: 48.5%">
+              <el-select @change="
                   getStoreDetail($event)
                   changeRouter()
                 "
                 v-model="filterData.store_id"
                 placeholder="筛选调取仓库"
-                clearable
-              >
-                <el-option v-for="item in storeList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+                clearable>
+                <el-option v-for="item in storeList"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.name"></el-option>
               </el-select>
             </div>
-            <div class="screen" style="width: 48.5%">
-              <el-select @change="changeRouter" v-model="filterData.type" placeholder="筛选调取仓库" clearable>
-                <el-option label="纱线/面料" :value="''"></el-option>
-                <el-option label="纱线" :value="1"></el-option>
-                <el-option label="面料" :value="2"></el-option>
+            <div class="screen"
+              style="width: 48.5%">
+              <el-select @change="changeRouter"
+                v-model="filterData.type"
+                placeholder="筛选调取仓库"
+                clearable>
+                <el-option label="纱线/面料"
+                  :value="''"></el-option>
+                <el-option label="纱线"
+                  :value="1"></el-option>
+                <el-option label="面料"
+                  :value="2"></el-option>
               </el-select>
             </div>
-            <div class="screen" style="margin-bottom: 0; width: 65.5%">
-              <el-input
+            <div class="screen"
+              style="margin-bottom: 0; width: 65.5%">
+              <el-cascader placeholder="筛选原料名称"
                 v-model="filterData.name"
-                @change="changeRouter"
-                placeholder="输入原料名称查询"
+                :options="yarnTypeList"
                 clearable
-              ></el-input>
+                filterable
+                @change="changeRouter"></el-cascader>
             </div>
-            <div class="screen" style="margin-bottom: 0">
-              <el-button style="width: 100%; height: 52px" @click="reset">重置</el-button>
+            <div class="screen"
+              style="margin-bottom: 0">
+              <el-button style="width: 100%; height: 52px"
+                @click="reset">重置</el-button>
             </div>
           </div>
         </div>
-        <div class="card" style="margin-left: 4px">
+        <div class="card"
+          style="margin-left: 4px">
           <div class="contentGrid">
             <h3>当前统计默认值</h3>
             <div class="item2">
-              订单下单时间：<span class="blue"
-                >{{ formatDate2(filterData.start_time) }}-{{ formatDate2(filterData.end_time) }}</span
-              >
+              订单下单时间：<span class="blue">{{ formatDate2(filterData.start_time) }}-{{ formatDate2(filterData.end_time) }}</span>
             </div>
           </div>
           <div class="contentGrid">
@@ -127,7 +156,8 @@
         </div>
       </div>
       <div class="cardCtn">
-        <div class="card" style="padding-top: 60px">
+        <div class="card"
+          style="padding-top: 60px">
           <zh-charts :option="option1"></zh-charts>
         </div>
       </div>
@@ -135,7 +165,8 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue" @click="$router.push('/store/list?page=1&keyword=&user_id=&store_type=1')">
+          <div class="btn backHoverBlue"
+            @click="$router.push('/store/list?page=1&keyword=&user_id=&store_type=1')">
             查看库存数量
           </div>
         </div>
@@ -253,10 +284,10 @@ export default Vue.extend({
         client_id: '',
         contacts_id: '',
         group_id: '',
-        type:'',
+        type: '',
         orderOrSimpleOrder: '',
         store_id: '',
-        name: ''
+        name: []
       },
       reportData: {
         balance_number: 0,
@@ -342,7 +373,7 @@ export default Vue.extend({
         ? (query.client_id as string).split(',').map((item) => Number(item))
         : []
       this.filterData.store_id = Number(query.store_id) || ''
-      this.filterData.name = query.name ? query.name : ''
+      this.filterData.name = query.name ? (query.name as string).split(',') : []
       this.filterData.order_type = query.order_type ? +query.order_type : ''
       this.filterData.type = query.type ? +query.type : ''
       this.filterData.contacts_id = query.contacts_id || this.$getLocalStorage('create_user') || ''
@@ -360,7 +391,7 @@ export default Vue.extend({
         group_id: '',
         order_type: '',
         type: '',
-        name: ''
+        name: []
       }
       localStorage.create_user_name = ''
       this.filterData.start_time = new Date().getFullYear() + '-01-01'
@@ -403,7 +434,7 @@ export default Vue.extend({
           '&client_id=' +
           (this.filterData.client_id || '') +
           '&name=' +
-          (this.filterData.name || '') +
+          encodeURIComponent(this.filterData.name || '') +
           '&store_id=' +
           (this.filterData.store_id || '') +
           '&type=' +
@@ -424,7 +455,7 @@ export default Vue.extend({
           start_time: this.filterData.start_time,
           store_id: this.filterData.store_id,
           type: this.filterData.type,
-          name: this.filterData.name,
+          name: this.filterData.name.length ? this.filterData.name[2] : '',
           end_time: this.filterData.end_time
         })
         .then((res) => {
@@ -629,6 +660,23 @@ export default Vue.extend({
     },
     userList() {
       return this.$store.state.api.user.arr
+    },
+    yarnTypeList() {
+      return this.$store.state.api.yarnType.arr.map((item: any) => {
+        return {
+          label: item.label,
+          value: item.label,
+          children: item.children.map((itemChild: any) => {
+            return {
+              label: itemChild.label,
+              value: itemChild.label,
+              children: itemChild.children.map((itemSon: any) => {
+                return { label: itemSon.label, value: itemSon.label }
+              })
+            }
+          })
+        }
+      })
     }
   },
   created() {
@@ -652,6 +700,11 @@ export default Vue.extend({
         checkWhich: 'api/user',
         getInfoMethed: 'dispatch',
         getInfoApi: 'getUserAsync'
+      },
+      {
+        checkWhich: 'api/yarnType',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getYarnTypeAsync'
       }
     ])
   },

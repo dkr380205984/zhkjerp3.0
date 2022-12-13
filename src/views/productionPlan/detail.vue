@@ -685,7 +685,7 @@
                           :show-all-levels="false"
                           v-model="item.process_name_arr"
                           :options="processList"
-                          @change="(ev)=>{item.process_type=ev[0];item.process_name=ev[1];getProcessDesc(ev,item)}"
+                          @change="(ev)=>{item.process_type=ev[0];item.process_name=ev[2]||ev[1];getProcessDesc(ev,item)}"
                           filterable
                           clearable>
                         </el-cascader>
@@ -2052,9 +2052,245 @@
             <span class="text">关联页面</span>
           </div>
         </div>
+        <div class="btnCtn"
+          style="float:left">
+          <div class="btn backHoverOrange"
+            @click="showMaterialFlag=true">
+            <span class="text">物料汇总信息</span>
+          </div>
+        </div>
         <div class="btnCtn">
           <div class="borderBtn"
             @click="$router.go(-1)">返回</div>
+        </div>
+      </div>
+    </div>
+    <!-- 物料汇总信息，订单详情复制粘贴 -->
+    <div class="popup"
+      v-show="showMaterialFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">物料汇总信息</span>
+          <div class="closeCtn"
+            @click="showMaterialFlag = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn"
+          style="padding:20px;">
+          <div class="processCtn">
+            <div class="process">
+              <div class="active"
+                :style="{'width':(materialProgress.material_push>100?100:materialProgress.material_push)+'%'}"></div>
+              <span class="left">原料入库进度</span>
+              <span class="right">{{materialProgress.material_push}}%</span>
+            </div>
+            <div class="process">
+              <div class="active"
+                :style="{'width':(materialProgress.material_pop>100?100:materialProgress.material_pop)+'%'}"></div>
+              <span class="left">原料出库进度</span>
+              <span class="right">{{materialProgress.material_pop}}%</span>
+            </div>
+          </div>
+          <zh-drop-down :buttonStyle="'padding:20px'"
+            :show="show_material"
+            :showAsync="!show_material"
+            hideTitle="点击查看图表"
+            @beforeShow="getMaterialDetail">
+            <!-- 新接口，老接口代码已删除 -->
+            <div class="scrollCtn"
+              @mousewheel.prevent="listenWheel"
+              ref="materialRef">
+              <div class="tableCtn samallFont">
+                <div class="thead"
+                  style="height:auto">
+                  <div class="trow">
+                    <div class="tcol">单据编号</div>
+                    <div class="tcol">原料名称</div>
+                    <div class="tcol noPad flex2">
+                      <div class="trow">
+                        <div class="tcol">颜色</div>
+                        <div class="tcol">数量</div>
+                      </div>
+                    </div>
+                    <div class="tcol noPad flex3">
+                      <div class="trow">
+                        <div class="tcol center">
+                          <span>调取信息</span>
+                          <span>更新日期:{{materialUpdateTime.transfer?materialUpdateTime.transfer:'暂无'}}</span>
+                        </div>
+                      </div>
+                      <div class="trow">
+                        <div class="tcol">调取仓库</div>
+                        <div class="tcol">调取数量</div>
+                        <div class="tcol">调取颜色</div>
+                      </div>
+                    </div>
+                    <div class="tcol noPad flex3">
+                      <div class="trow">
+                        <div class="tcol center">
+                          <span>采购信息</span>
+                          <span>更新日期:{{materialUpdateTime.order?materialUpdateTime.order:'暂无'}}</span>
+                        </div>
+                      </div>
+                      <div class="trow">
+                        <div class="tcol">采购单位</div>
+                        <div class="tcol">采购数量</div>
+                        <div class="tcol">采购颜色</div>
+                      </div>
+                    </div>
+                    <div class="tcol noPad flex4">
+                      <div class="trow">
+                        <div class="tcol center">
+                          <span>加工信息</span>
+                          <span>更新日期:{{materialUpdateTime.process?materialUpdateTime.process:'暂无'}}</span>
+                        </div>
+                      </div>
+                      <div class="trow">
+                        <div class="tcol">加工单位</div>
+                        <div class="tcol">加工工序</div>
+                        <div class="tcol">加工数量</div>
+                        <div class="tcol">加工工序</div>
+                      </div>
+                    </div>
+                    <div class="tcol noPad flex2">
+                      <div class="trow">
+                        <div class="tcol center">
+                          <span>入库信息</span>
+                          <span>更新日期:{{materialUpdateTime.push?materialUpdateTime.push:'暂无'}}</span>
+                        </div>
+                      </div>
+                      <div class="trow">
+                        <div class="tcol">入库仓库</div>
+                        <div class="tcol">入库数量</div>
+                      </div>
+                    </div>
+                    <div class="tcol noPad flex2">
+                      <div class="trow">
+                        <div class="tcol center">
+                          <span>出库信息</span>
+                          <span>更新日期:{{materialUpdateTime.pop?materialUpdateTime.pop:'暂无'}}</span>
+                        </div>
+                      </div>
+                      <div class="trow">
+                        <div class="tcol">出库单位</div>
+                        <div class="tcol">出库数量</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tbody">
+                  <template v-for="(itemFather,indexFather) in materialDetail">
+                    <div class="trow"
+                      v-for="(item,index) in itemFather.data"
+                      :key=" 'plan'+index + '-' + indexFather">
+                      <div class="tcol"><span class="text">{{itemFather.plan_code}}</span></div>
+                      <div class="tcol"><span class="text">{{item.material_name}}</span></div>
+                      <div class="tcol noPad flex2">
+                        <div class="trow">
+                          <div class="tcol"><span class="text">{{item.material_color}}</span></div>
+                          <div class="tcol"><span class="text">{{$toFixed(item.number,3,true)}}{{item.unit}}</span></div>
+                        </div>
+                      </div>
+                      <div class="tcol noPad flex3">
+                        <div class="trow"
+                          v-if="item.material_transfer.length===0">
+                          <div class="tcol gray">无调取信息</div>
+                        </div>
+                        <div class="trow"
+                          v-for="(itemTransfer,indexTransfer) in item.material_transfer"
+                          :key="indexTransfer">
+                          <div class="tcol"><span class="text">{{itemTransfer.store}}</span></div>
+                          <div class="tcol"><span class="text">{{itemTransfer.number}}</span></div>
+                          <div class="tcol"><span class="text">{{itemTransfer.material_color}}</span></div>
+                        </div>
+                      </div>
+                      <div class="tcol noPad flex3">
+                        <div class="trow"
+                          v-if="item.material_order.length===0">
+                          <div class="tcol gray">无订购信息</div>
+                        </div>
+                        <div class="trow"
+                          v-for="(itemOrder,indexOrder) in item.material_order"
+                          :key="indexOrder">
+                          <div class="tcol"><span class="text">{{itemOrder.client_name}}</span></div>
+                          <div class="tcol"><span class="text">{{$toFixed(itemOrder.number,3,true)}}{{itemOrder.unit}}</span></div>
+                          <div class="tcol"><span class="text">{{itemOrder.material_color}}</span></div>
+                        </div>
+                      </div>
+                      <div class="tcol noPad flex4">
+                        <div class="trow"
+                          v-if="item.material_process.length===0">
+                          <div class="tcol gray">无加工信息</div>
+                        </div>
+                        <div class="trow"
+                          v-for="(itemProcess,indexProcess) in item.material_process"
+                          :key="indexProcess">
+                          <div class="tcol"><span class="text">{{itemProcess.client_name}}</span></div>
+                          <div class="tcol"><span class="text">{{itemProcess.process}}</span></div>
+                          <div class="tcol"><span class="text">{{$toFixed(itemProcess.number,3,true)}}{{itemProcess.unit}}</span></div>
+                          <div class="tcol">
+                            <template v-if="itemProcess.process==='染色'">
+                              <div class="changeCtn text">
+                                <span>白胚</span>
+                                <span class="el-icon-s-unfold blue"></span>
+                                <span>{{itemProcess.after_color}}</span>
+                              </div>
+                            </template>
+                            <template v-if="itemProcess.process==='倒纱'">
+                              <div class="changeCtn text">
+                                <span>{{itemProcess.before_attribute}}</span>
+                                <span class="el-icon-s-unfold blue"></span>
+                                <span>{{itemProcess.after_attribute}}</span>
+                              </div>
+                            </template>
+                            <template v-if="itemProcess.process==='并线'">
+                              <span class="text">{{itemProcess.bingxian_desc}}</span>
+                            </template>
+                            <template v-if="itemProcess.process==='膨纱'">
+                              <span class="text">{{itemProcess.pengsha_desc}}</span>
+                            </template>
+                            <template v-if="itemProcess.process==='切割'">
+                              <span class="text">{{itemProcess.qiege_desc}}</span>
+                            </template>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="tcol noPad flex2">
+                        <div class="trow"
+                          v-if="item.final_push.length===0">
+                          <div class="tcol gray">无入库信息</div>
+                        </div>
+                        <div class="trow"
+                          v-for="(itemPush,indexPush) in  item.final_push"
+                          :key="indexPush">
+                          <div class="tcol"><span class="text">{{itemPush.store}}</span></div>
+                          <div class="tcol"><span class="text">{{$toFixed(itemPush.number,3,true)}}{{itemPush.unit}}</span></div>
+                        </div>
+                      </div>
+                      <div class="tcol noPad flex2">
+                        <div class="trow"
+                          v-if="item.final_pop.length===0">
+                          <div class="tcol gray">无出库信息</div>
+                        </div>
+                        <div class="trow"
+                          v-for="(itemPop,indexPop) in item.final_pop"
+                          :key="indexPop">
+                          <div class="tcol"><span class="text">{{itemPop.client_name}}</span></div>
+                          <div class="tcol"><span class="text">{{$toFixed(itemPop.number,3,true)}}{{itemPop.unit}}</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                  <div class="trow"
+                    v-if="materialDetail.length===0">
+                    <div class="tcol gray"
+                      style="text-align:center">暂无物料信息</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </zh-drop-down>
         </div>
       </div>
     </div>
@@ -2244,6 +2480,20 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      showMaterialFlag: false,
+      materialProgress: {
+        material_pop: 0,
+        material_push: 0
+      },
+      show_material: false,
+      materialDetail: [],
+      materialUpdateTime: {
+        order: '',
+        pop: '',
+        process: '',
+        push: '',
+        transfer: ''
+      },
       printFlag: false,
       printType: 1,
       saveLock: false,
@@ -2586,22 +2836,34 @@ export default Vue.extend({
         {
           label: '成品加工工序',
           value: '成品加工工序',
-          children: this.$store.state.api.staffProcess.arr.map((item: any) => {
+          children: this.$store.state.api.staffProcessType.arr.map((item: any) => {
             return {
-              label: item.code ? item.code + '-' + item.name : item.name,
               value: item.name,
-              process_desc: item.process_desc
+              label: item.name,
+              children: item.children.map((itemChild: any) => {
+                return {
+                  label: itemChild.code ? itemChild.code + '-' + itemChild.name : itemChild.name,
+                  value: itemChild.name,
+                  process_desc: itemChild.process_desc
+                }
+              })
             }
           })
         },
         {
           label: '半成品加工工序',
           value: '半成品加工工序',
-          children: this.$store.state.api.halfProcess.arr.map((item: any) => {
+          children: this.$store.state.api.halfProcessType.arr.map((item: any) => {
             return {
-              label: item.code ? item.code + '-' + item.name : item.name,
               value: item.name,
-              process_desc: item.process_desc
+              label: item.name,
+              children: item.children.map((itemChild: any) => {
+                return {
+                  label: itemChild.code ? itemChild.code + '-' + itemChild.name : itemChild.name,
+                  value: itemChild.name,
+                  process_desc: itemChild.process_desc
+                }
+              })
             }
           })
         }
@@ -2726,6 +2988,48 @@ export default Vue.extend({
           this.productStockIndex = this.productStockLog[0].id?.toString()
         }
       })
+    },
+    // 监听一下鼠标滚轮
+    listenWheel(ev: any) {
+      const detail = ev.wheelDelta || ev.detail
+      // 定义滚动方向，其实也可以在赋值的时候写
+      const moveForwardStep = 1
+      const moveBackStep = -1
+      // 定义滚动距离
+      let step = 0
+      // 判断滚动方向,这里的100可以改，代表滚动幅度，也就是说滚动幅度是自定义的
+      if (detail < 0) {
+        step = moveForwardStep * 50
+      } else {
+        step = moveBackStep * 50
+      }
+      // @ts-ignore 对需要滚动的元素进行滚动操作
+      this.$refs.materialRef.scrollLeft += step
+    },
+    getMaterialDetail(init?: boolean) {
+      if (this.materialDetail.length === 0) {
+        order
+          .materialDetail({
+            order_id: Number(this.$route.query.sampleOrderIndex)
+          })
+          .then((res) => {
+            this.loading = false
+            if (res.data.status) {
+              this.materialDetail = res.data.data.data
+              this.materialProgress = res.data.data.progress
+              this.materialUpdateTime = res.data.data.update_time
+              this.$nextTick(() => {
+                if (!init) {
+                  this.show_material = true
+                }
+              })
+            }
+          })
+      } else {
+        this.$nextTick(() => {
+          this.show_material = true
+        })
+      }
     },
     goPrint() {
       this.productionPrintInfo = []
@@ -3060,7 +3364,6 @@ export default Vue.extend({
     },
     // 根据加工单选的信息计算物料信息
     getMaterialInfo(ifShow: boolean = false) {
-      console.log(this.productionPlanInfo)
       // 填写方式
       const edit_type = this.materialPlanList.find((item) => Number(item.id) === Number(this.materialPlanIndex))?.type
       this.productionPlanInfo.forEach((item) => {
@@ -3629,14 +3932,19 @@ export default Vue.extend({
     },
     // 优化工序说明
     getProcessDesc(ev: any[], info: any) {
-      info.process_desc =
-        this.processList
-          .find((item) => {
-            return item.value === ev[0]
-          })
-          .children.find((itemChild: any) => {
-            return itemChild.value === ev[1]
-          }).process_desc || ''
+      if (ev.length === 3) {
+        info.process_desc =
+          this.processList
+            .find((item) => {
+              return item.value === ev[0]
+            })
+            .children.find((itemChild: any) => {
+              return itemChild.value === ev[1]
+            })
+            .children.find((itemChild: any) => {
+              return itemChild.value === ev[2]
+            }).process_desc || ''
+      }
     },
     getMaterialPlanDetail(id: string) {
       this.loading = true
@@ -3778,6 +4086,9 @@ export default Vue.extend({
           })
         }
       })
+
+    // 获取物料汇总信息
+    this.getMaterialDetail(true)
     this.$checkCommonInfo([
       {
         checkWhich: 'api/clientType',
@@ -3785,14 +4096,14 @@ export default Vue.extend({
         getInfoApi: 'getClientTypeAsync'
       },
       {
-        checkWhich: 'api/staffProcess',
+        checkWhich: 'api/staffProcessType',
         getInfoMethed: 'dispatch',
-        getInfoApi: 'getStaffProcessAsync'
+        getInfoApi: 'getStaffProcessTypeAsync'
       },
       {
-        checkWhich: 'api/halfProcess',
+        checkWhich: 'api/halfProcessType',
         getInfoMethed: 'dispatch',
-        getInfoApi: 'getHalfProcessAsync'
+        getInfoApi: 'getHalfProcessTypeAsync'
       },
       {
         checkWhich: 'api/yarnColor',

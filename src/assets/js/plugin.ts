@@ -877,7 +877,7 @@ function permissionsFlag(type: string, errMsg?: string): boolean {
 function getProcessStaff(staffList: Array<any>) {
   let processList: Array<any> = []
   staffList.forEach(item => {
-    item.label = item.code.slice(item.code.length-4) +'-'+ item.name
+    item.label = item.code.slice(item.code.length - 4) + '-' + item.name
     item.value = item.id
     if (!item.process) return
     item.process.split('/').forEach((itemProcess: string) => {

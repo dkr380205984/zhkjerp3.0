@@ -267,7 +267,8 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="row"
+            style="z-index: 0;">
             <div class="col">
               <div class="label">产品描述
                 <span class="explanation">(请输入产品描述，如产品的尺寸、克重、成分、工艺、配料等信息)</span>
@@ -319,7 +320,9 @@
                     class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M(请勿上传带特殊字符的图片)</div>
                 </el-upload>
                 <el-dialog :visible.sync="dialogVisible">
-                  <img width="100%" :src="dialogImageUrl" alt="">
+                  <img width="100%"
+                    :src="dialogImageUrl"
+                    alt="">
                 </el-dialog>
               </div>
             </div>
@@ -710,15 +713,12 @@
                   </el-tooltip>
                 </div>
                 <div class="info elCtn">
-                  <el-select v-model="itemHalfProcess.name"
-                    placeholder="请选择加工工序"
+                  <el-cascader placeholder="请选择加工工序"
+                    v-model="itemHalfProcess.process_name_arr"
+                    :options="halfProcessTypeList"
                     clearable
-                    filterable>
-                    <el-option v-for="item in halfProcessList"
-                      :key="item.name"
-                      :value="item.name"
-                      :label="item.name"></el-option>
-                  </el-select>
+                    filterable
+                    @change="(ev)=>{itemHalfProcess.name=ev[1]}"></el-cascader>
                 </div>
               </div>
               <div class="col">
@@ -790,15 +790,12 @@
                   </el-tooltip>
                 </div>
                 <div class="info elCtn">
-                  <el-select v-model="itemFinishedProcess.name"
-                    placeholder="请选择加工工序"
+                  <el-cascader placeholder="请选择加工工序"
+                    v-model="itemFinishedProcess.process_name_arr"
+                    :options="staffProcessTypeList"
                     clearable
-                    filterable>
-                    <el-option v-for="item in finishedList"
-                      :key="item.name"
-                      :label="item.name"
-                      :value="item.name"></el-option>
-                  </el-select>
+                    filterable
+                    @change="(ev)=>{itemFinishedProcess.name=ev[1]}"></el-cascader>
                 </div>
               </div>
               <div class="col">
@@ -1251,8 +1248,8 @@ export default Vue.extend({
         key: '',
         token: ''
       },
-      dialogImageUrl : '',
-      dialogVisible :false,
+      dialogImageUrl: '',
+      dialogVisible: false,
       productIndex: '0', // 目前选中的产品
       quotedPriceInfo: {
         id: null,
@@ -1400,11 +1397,33 @@ export default Vue.extend({
     decorateMaterialList(): DecorateMaterialInfo[] {
       return this.$store.state.api.decorateMaterial.arr
     },
-    halfProcessList() {
-      return this.$store.state.api.halfProcess.arr
+    halfProcessTypeList() {
+      return this.$store.state.api.halfProcessType.arr.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.name,
+          children: item.children.map((itemChild: any) => {
+            return {
+              label: itemChild.name,
+              value: itemChild.name
+            }
+          })
+        }
+      })
     },
-    finishedList() {
-      return this.$store.state.api.staffProcess.arr
+    staffProcessTypeList() {
+      return this.$store.state.api.staffProcessType.arr.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.name,
+          children: item.children.map((itemChild: any) => {
+            return {
+              label: itemChild.name,
+              value: itemChild.name
+            }
+          })
+        }
+      })
     },
     groupList() {
       return this.$store.state.api.group.arr
@@ -1622,6 +1641,7 @@ export default Vue.extend({
           {
             id: '',
             name: '',
+            process_name_arr: [],
             desc: '',
             total_price: ''
           }
@@ -1631,7 +1651,8 @@ export default Vue.extend({
             id: '',
             name: '',
             desc: '',
-            total_price: ''
+            total_price: '',
+            process_name_arr: []
           }
         ],
         pack_material_data: [
@@ -1686,11 +1707,15 @@ export default Vue.extend({
     successFile(response: { hash: string; key: string }, index: number) {
       this.quotedPriceInfo.product_data[index].image_data.push('https://file.zwyknit.com/' + response.key)
       // @ts-ignore
-      this.quotedPriceInfo.product_data[index].file_list.push({name: response.key, url: 'https://file.zwyknit.com/' + response.key})
+      this.quotedPriceInfo.product_data[index].file_list.push({
+        // @ts-ignore
+        name: response.key,
+        url: 'https://file.zwyknit.com/' + response.key
+      })
     },
-    beforeRemove(file:any, index:any, fileList:any){
+    beforeRemove(file: any, index: any, fileList: any) {
       // 上传超过10M自动删除
-      if(file.size && !(file.size / 1024 / 1024 < 10)){
+      if (file.size && !(file.size / 1024 / 1024 < 10)) {
         return
       }
 
@@ -1698,7 +1723,8 @@ export default Vue.extend({
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-        }).then(() => {
+      })
+        .then(() => {
           //执行删除操作,找到相同的删除
           let fileIndex = fileList.findIndex((item: any) => {
             if (item.id === 0 || item.id) {
@@ -1718,14 +1744,15 @@ export default Vue.extend({
             message: '删除成功'
           })
 
-          this.removeFile(file,index)
-        }).catch(() => {
+          this.removeFile(file, index)
+        })
+        .catch(() => {
           this.$message({
-              type: 'info',
-              message: '已取消删除'
-          });          
-        });
-        return false;
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      return false
     },
     removeFile(file: { response: { hash: string; key: string }; url: string }, index: number) {
       if (this.quotedPriceInfo.product_data[index].file_list!.find((item) => item.url === file.url)) {
@@ -1801,10 +1828,10 @@ export default Vue.extend({
       this.quotedPriceInfo.product_data.forEach((item) => {
         item.editor = '' // 把editor清空，这里有个死循环，我都不知道死循环代码是怎么执行的，反正这个死循环提交了绝对有问题
         // 这里是创建页面，不需要在进行新旧图拼接这个操作,复制粘贴的图片也给到了image_data里面
-        // item.image_data = item.file_list
-        //   ? item.image_data.concat(item.file_list!.map((item) => item.url))
-        //   : item.image_data // 新旧图拼接
-        // item.image_data = item.cv_list ? item.cv_list.filter((item) => !!item).concat(item.image_data) : item.image_data // cv图拼接
+        item.image_data = item.file_list
+          ? item.image_data.concat(item.file_list!.map((item) => item.url))
+          : item.image_data // 新旧图拼接
+        item.image_data = item.cv_list ? item.cv_list.filter((item) => !!item).concat(item.image_data) : item.image_data // cv图拼接
         item.category_id = item.type && item.type[0]
         item.secondary_category_id = item.type && item.type[1]
         item.material_data.forEach((itemChild) => {
@@ -1836,9 +1863,9 @@ export default Vue.extend({
           }, 0)
       })
     },
-    handlePictureCardPreview(file:any) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
+    handlePictureCardPreview(file: any) {
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
     },
     saveQuotedPrice(ifCaogao: boolean) {
       if (this.saveLock) {
@@ -2157,8 +2184,14 @@ export default Vue.extend({
                 // )
                 // console.log(_this.quotedPriceInfo.product_data[arr[0]])
                 // @ts-ignore
-                _this.quotedPriceInfo.product_data[arr[0]].file_list.push({name: JSON.parse(xhr.responseText).key, url: 'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key})
-                _this.quotedPriceInfo.product_data[arr[0]].image_data.push('https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key)
+                _this.quotedPriceInfo.product_data[arr[0]].file_list.push({
+                  // @ts-ignore
+                  name: JSON.parse(xhr.responseText).key,
+                  url: 'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key
+                })
+                _this.quotedPriceInfo.product_data[arr[0]].image_data.push(
+                  'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key
+                )
                 _this.quotedPriceInfo.product_data[arr[0]].cvImageLength =
                   Number(_this.quotedPriceInfo.product_data[arr[0]].cvImageLength) + 1
               }
@@ -2216,14 +2249,14 @@ export default Vue.extend({
         getInfoApi: 'getPackMaterialAsync'
       },
       {
-        checkWhich: 'api/staffProcess',
+        checkWhich: 'api/staffProcessType',
         getInfoMethed: 'dispatch',
-        getInfoApi: 'getStaffProcessAsync'
+        getInfoApi: 'getStaffProcessTypeAsync'
       },
       {
-        checkWhich: 'api/halfProcess',
+        checkWhich: 'api/halfProcessType',
         getInfoMethed: 'dispatch',
-        getInfoApi: 'getHalfProcessAsync'
+        getInfoApi: 'getHalfProcessTypeAsync'
       },
       {
         checkWhich: 'api/group',
@@ -2351,7 +2384,8 @@ export default Vue.extend({
                       id: '',
                       name: '',
                       desc: '',
-                      total_price: ''
+                      total_price: '',
+                      process_name_arr: []
                     }
                   ],
                   production_data: [
@@ -2359,7 +2393,8 @@ export default Vue.extend({
                       id: '',
                       name: '',
                       desc: '',
-                      total_price: ''
+                      total_price: '',
+                      process_name_arr: []
                     }
                   ],
                   pack_material_data: [
@@ -2496,7 +2531,8 @@ export default Vue.extend({
                           id: '',
                           name: '',
                           desc: '',
-                          total_price: ''
+                          total_price: '',
+                          process_name_arr: []
                         }
                       ],
                       production_data: [
@@ -2504,7 +2540,8 @@ export default Vue.extend({
                           id: '',
                           name: '',
                           desc: '',
-                          total_price: ''
+                          total_price: '',
+                          process_name_arr: []
                         }
                       ],
                       pack_material_data: [

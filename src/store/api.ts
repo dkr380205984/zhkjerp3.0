@@ -7,7 +7,7 @@ import { ProcessInfo } from '@/types/processSetting'
 import { ClientTypeInfo } from '@/types/client'
 import { GroupInfo } from '@/types/factoryInfoSetting'
 import { StyleInfo, IngredientInfo, ColourInfo } from '@/types/productSetting'
-import { category, yarnType, clientType, decorateMaterial, packMaterial, process, group, style, colour, ingredient, orderType, yarnColor, yarn, user } from '@/assets/js/api'
+import { category, yarnType, clientType, decorateMaterial, packMaterial, process, group, style, colour, ingredient, orderType, yarnColor, yarn, user, processType } from '@/assets/js/api'
 import { OrderType } from '@/types/orderSetting'
 
 const apiState: ApiState = {
@@ -75,8 +75,18 @@ const apiState: ApiState = {
     status: false,
     arr: []
   },
+  // 半成品加工标签
+  halfProcessType: {
+    status: false,
+    arr: []
+  },
   // 成品加工类型
   staffProcess: {
+    status: false,
+    arr: []
+  },
+  // 成品加工标签
+  staffProcessType: {
     status: false,
     arr: []
   },
@@ -145,9 +155,17 @@ const apiMutations = {
     state.halfProcess.status = true
     state.halfProcess.arr = halfProcessSelf
   },
+  getHalfProcessType(state: ApiState, halfProcessTypeSelf: CascaderInfo[]) {
+    state.halfProcessType.status = true
+    state.halfProcessType.arr = halfProcessTypeSelf
+  },
   getStaffProcess(state: ApiState, staffProcessSelf: ProcessInfo[]) {
     state.staffProcess.status = true
     state.staffProcess.arr = staffProcessSelf
+  },
+  getStaffProcessType(state: ApiState, halfProcessTypeSelf: CascaderInfo[]) {
+    state.staffProcessType.status = true
+    state.staffProcessType.arr = halfProcessTypeSelf
   },
   getGroup(state: ApiState, groupSelf: GroupInfo[]) {
     state.group.status = true
@@ -343,6 +361,28 @@ const apiActions = {
       }
     })
   },
+  getHalfProcessTypeAsync(content: ActionContext<ApiState, any>) {
+    processType.list({
+      type: 2
+    }).then((res) => {
+      if (res.data.status) {
+        content.commit('getHalfProcessType', res.data.data.map((item: any) => {
+          return {
+            id: item.id,
+            name: item.name,
+            children: item.rel_process.map((itemChild: any) => {
+              return {
+                id: itemChild.id,
+                name: itemChild.name,
+                code: itemChild.code,
+                process_desc: itemChild.process_desc
+              }
+            })
+          }
+        }))
+      }
+    })
+  },
   getStaffProcessAsync(content: ActionContext<ApiState, any>) {
     process.list({
       type: 3
@@ -353,6 +393,28 @@ const apiActions = {
             id: item.id,
             name: item.name,
             code: item.code
+          }
+        }))
+      }
+    })
+  },
+  getStaffProcessTypeAsync(content: ActionContext<ApiState, any>) {
+    processType.list({
+      type: 3
+    }).then((res) => {
+      if (res.data.status) {
+        content.commit('getStaffProcessType', res.data.data.map((item: any) => {
+          return {
+            id: item.id,
+            name: item.name,
+            children: item.rel_process.map((itemChild: any) => {
+              return {
+                id: itemChild.id,
+                name: itemChild.name,
+                code: itemChild.code,
+                process_desc: itemChild.process_desc
+              }
+            })
           }
         }))
       }

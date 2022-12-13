@@ -79,6 +79,8 @@
                 placeholder="请选择打样公司"
                 v-model="sampleOrderInfo.tree_data"
                 :options="clientList"
+                clearable
+                filterable
                 @change="getContacts">
               </el-cascader>
             </div>
@@ -442,7 +444,8 @@
             </div>
           </div>
         </div>
-        <div class="row">
+        <div class="row"
+          style="z-index: 0;">
           <div class="col">
             <div class="label">
               <span class="text">备注信息</span>

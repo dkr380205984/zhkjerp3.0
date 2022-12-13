@@ -293,13 +293,17 @@
                       <div slot="tip"
                         class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M(请勿上传带特殊字符的图片)</div>
                     </el-upload>
-                    <el-dialog :visible.sync="dialogVisible" append-to-body>
-                      <img width="100%" :src="dialogImageUrl" alt="">
+                    <el-dialog :visible.sync="dialogVisible"
+                      append-to-body>
+                      <img width="100%"
+                        :src="dialogImageUrl"
+                        alt="">
                     </el-dialog>
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row"
+                style="z-index:0">
                 <div class="col">
                   <div class="label">
                     <span class="text">产品其它描述或备注</span>
@@ -766,8 +770,8 @@ export default Vue.extend({
         key: '',
         token: ''
       },
-      dialogImageUrl : '',
-      dialogVisible :false,
+      dialogImageUrl: '',
+      dialogVisible: false,
       productInfo: {
         id: null,
         product_type: 1,
@@ -965,9 +969,9 @@ export default Vue.extend({
       // 调用 callback 返回建议列表的数据
       cb(results)
     },
-    handlePictureCardPreview(file:any) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
+    handlePictureCardPreview(file: any) {
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
     },
     searchUnit(str: string, cb: any) {
       const unitArr = [
@@ -1104,11 +1108,11 @@ export default Vue.extend({
     successFile(response: { hash: string; key: string }) {
       this.productInfo.image_data.push('https://file.zwyknit.com/' + response.key)
       // @ts-ignore
-      this.productInfo.file_list.push({name: response.key, url: 'https://file.zwyknit.com/' + response.key})
+      this.productInfo.file_list.push({ name: response.key, url: 'https://file.zwyknit.com/' + response.key })
     },
-    beforeRemove(file:any, fileList:any){
+    beforeRemove(file: any, fileList: any) {
       // 上传超过10M自动删除
-      if(file.size && !(file.size / 1024 / 1024 < 10)){
+      if (file.size && !(file.size / 1024 / 1024 < 10)) {
         return
       }
 
@@ -1116,7 +1120,8 @@ export default Vue.extend({
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-        }).then(() => {
+      })
+        .then(() => {
           //执行删除操作,找到相同的删除
           let fileIndex = fileList.findIndex((item: any) => {
             if (item.id) {
@@ -1136,13 +1141,14 @@ export default Vue.extend({
           })
 
           this.removeFile(file)
-        }).catch(() => {
+        })
+        .catch(() => {
           this.$message({
-              type: 'info',
-              message: '已取消删除'
-          });          
-        });
-        return false;
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      return false
     },
     removeFile(file: { response: { hash: string; key: string }; url: string }) {
       if (this.productInfo.file_list!.find((item) => item.url === file.url)) {
@@ -1150,10 +1156,7 @@ export default Vue.extend({
           this.productInfo.file_list!,
           this.productInfo.file_list!.map((item) => item.url).indexOf(file.url)
         )
-        this.$deleteItem(
-          this.productInfo.image_data,
-          this.productInfo.image_data.indexOf(file.url)
-        )
+        this.$deleteItem(this.productInfo.image_data, this.productInfo.image_data.indexOf(file.url))
       } else {
         this.$deleteItem(
           this.productInfo.image_data,
@@ -1625,12 +1628,11 @@ export default Vue.extend({
               if (xhr.readyState === 4) {
                 _this.$message.success('上传成功')
                 // @ts-ignore
-                // _this.productInfo.cv_list.push(
-                //   // @ts-ignore
-                //   'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key
-                // )
-                // @ts-ignore
-                _this.productInfo.file_list.push({name: JSON.parse(xhr.responseText).key, url: 'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key})
+                _this.productInfo.file_list.push({
+                  // @ts-ignore
+                  name: JSON.parse(xhr.responseText).key,
+                  url: 'https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key
+                })
                 _this.productInfo.image_data.push('https://file.zwyknit.com/' + JSON.parse(xhr.responseText).key)
                 _this.productInfo.cvImageLength = Number(_this.productInfo.cvImageLength) + 1
               }

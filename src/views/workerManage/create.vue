@@ -1,5 +1,7 @@
 <template>
-  <div id="workerManageCreate" class="bodyContainer" v-loading="loading">
+  <div id="workerManageCreate"
+    class="bodyContainer"
+    v-loading="loading">
     <div class="module">
       <div class="titleCtn">
         <div class="title">添加员工</div>
@@ -12,7 +14,8 @@
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工姓名" v-model="staffInfo.name"></el-input>
+              <el-input placeholder="请输入员工姓名"
+                v-model="staffInfo.name"></el-input>
             </div>
           </div>
           <div class="col">
@@ -20,23 +23,25 @@
               <span class="text">手机号</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工手机号" v-model="staffInfo.phone"></el-input>
+              <el-input placeholder="请输入员工手机号"
+                v-model="staffInfo.phone"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">
               <span class="text">所属部门</span>
               <span class="explanation">(必选)</span>
-              <span class="explanation fr" style="color: #1a95ff" @click="showAddDepartment()">+ 添加新部门</span>
+              <span class="explanation fr"
+                style="color: #1a95ff"
+                @click="showAddDepartment()">+ 添加新部门</span>
             </div>
             <div class="info elCtn">
-              <el-select v-model="staffInfo.department" clearable>
-                <el-option
-                  v-for="item in departmentList"
+              <el-select v-model="staffInfo.department"
+                clearable>
+                <el-option v-for="item in departmentList"
                   :key="item.id"
                   :value="item.name"
-                  :label="item.name"
-                ></el-option>
+                  :label="item.name"></el-option>
               </el-select>
             </div>
           </div>
@@ -48,9 +53,13 @@
               <span class="explanation">(必选)</span>
             </div>
             <div class="info elCtn">
-              <el-select placeholder="请选择员工工种" v-model="staffInfo.type" clearable>
-                <el-option :value="1" label="临时工"></el-option>
-                <el-option :value="2" label="合同工"></el-option>
+              <el-select placeholder="请选择员工工种"
+                v-model="staffInfo.type"
+                clearable>
+                <el-option :value="1"
+                  label="临时工"></el-option>
+                <el-option :value="2"
+                  label="合同工"></el-option>
               </el-select>
             </div>
           </div>
@@ -59,13 +68,18 @@
               <span class="text">入职时间</span>
             </div>
             <div class="info elCtn">
-              <el-date-picker v-model="staffInfo.entry_time" type="date" placeholder="选择日期"> </el-date-picker>
+              <el-date-picker v-model="staffInfo.entry_time"
+                type="date"
+                placeholder="选择日期"> </el-date-picker>
             </div>
           </div>
           <div class="col">
             <div class="label">
-              <span class="text" style="margin-right: 10px">离职时间</span>
-              <el-tooltip class="item" effect="dark" placement="top">
+              <span class="text"
+                style="margin-right: 10px">离职时间</span>
+              <el-tooltip class="item"
+                effect="dark"
+                placement="top">
                 <div slot="content">
                   合同工不填写离职时间默认为长期员工，<br />
                   临时工不填写离职时间默认一个月后离职
@@ -74,7 +88,9 @@
               </el-tooltip>
             </div>
             <div class="info elCtn">
-              <el-date-picker v-model="staffInfo.resign_time" type="date" placeholder="选择日期"> </el-date-picker>
+              <el-date-picker v-model="staffInfo.resign_time"
+                type="date"
+                placeholder="选择日期"> </el-date-picker>
             </div>
           </div>
         </div>
@@ -85,13 +101,10 @@
             </div>
             <div class="info elCtn checkbox">
               <el-checkbox-group v-model="staffInfo.process">
-                <el-checkbox-button
-                  style="margin-left: 10px; margin-top: 10px"
+                <el-checkbox-button style="margin-left: 10px; margin-top: 10px"
                   v-for="item in workProcedure"
                   :label="item.name"
-                  :key="item.name"
-                  >{{ item.name }}</el-checkbox-button
-                >
+                  :key="item.name">{{ item.name }}</el-checkbox-button>
               </el-checkbox-group>
             </div>
           </div>
@@ -100,7 +113,8 @@
           <div class="col">
             <div class="info elCtn">
               <div class="row newProcess">
-                <div class="col el-btn" style="flex: 1">
+                <div class="col el-btn"
+                  style="flex: 1">
                   <el-button @click="$openUrl('/setting/?pName=工序设置&cName=成品加工工序')">+ 添加新工序</el-button>
                 </div>
               </div>
@@ -112,7 +126,8 @@
       </div>
     </div>
     <div class="module">
-      <div class="titleCtn" style="border-bottom: 0">
+      <div class="titleCtn"
+        style="border-bottom: 0">
         <div class="title">其它信息（全部为选填）</div>
       </div>
       <div class="editCtn">
@@ -122,22 +137,28 @@
               <span class="text">年龄</span>
             </div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工年龄" v-model="staffInfo.age"></el-input>
+              <el-input placeholder="请输入员工年龄"
+                v-model="staffInfo.age"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">性别</div>
             <div class="info elCtn">
-              <el-select placeholder="请选择员工性别" v-model="staffInfo.sex" clearable>
-                <el-option :value="1" label="女"></el-option>
-                <el-option :value="2" label="男"></el-option>
+              <el-select placeholder="请选择员工性别"
+                v-model="staffInfo.sex"
+                clearable>
+                <el-option :value="1"
+                  label="女"></el-option>
+                <el-option :value="2"
+                  label="男"></el-option>
               </el-select>
             </div>
           </div>
           <div class="col">
             <div class="label">身份证号码</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工身份证号码" v-model="staffInfo.id_number"></el-input>
+              <el-input placeholder="请输入员工身份证号码"
+                v-model="staffInfo.id_number"></el-input>
             </div>
           </div>
         </div>
@@ -145,25 +166,34 @@
           <div class="col">
             <div class="label">民族</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工民族" v-model="staffInfo.nation"></el-input>
+              <el-input placeholder="请输入员工民族"
+                v-model="staffInfo.nation"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">学历</div>
             <div class="info elCtn">
-              <el-select placeholder="请选择员工学历" v-model="staffInfo.education" clearable>
-                <el-option value="小学" label="小学"></el-option>
-                <el-option value="初中" label="初中"></el-option>
-                <el-option value="高中/职高" label="高中/职高"></el-option>
-                <el-option value="大学/大专" label="大学/大专"></el-option>
-                <el-option value="研究生" label="研究生"></el-option>
+              <el-select placeholder="请选择员工学历"
+                v-model="staffInfo.education"
+                clearable>
+                <el-option value="小学"
+                  label="小学"></el-option>
+                <el-option value="初中"
+                  label="初中"></el-option>
+                <el-option value="高中/职高"
+                  label="高中/职高"></el-option>
+                <el-option value="大学/大专"
+                  label="大学/大专"></el-option>
+                <el-option value="研究生"
+                  label="研究生"></el-option>
               </el-select>
             </div>
           </div>
           <div class="col">
             <div class="label">健康状况</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入员工健康状况" v-model="staffInfo.health"></el-input>
+              <el-input placeholder="请输入员工健康状况"
+                v-model="staffInfo.health"></el-input>
             </div>
           </div>
         </div>
@@ -171,21 +201,27 @@
           <div class="col">
             <div class="label">工资卡银行</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入卡银行" v-model="staffInfo.bank"></el-input>
+              <el-input placeholder="请输入卡银行"
+                v-model="staffInfo.bank"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">银行卡号</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入银行卡号" v-model="staffInfo.card_number"></el-input>
+              <el-input placeholder="请输入银行卡号"
+                v-model="staffInfo.card_number"></el-input>
             </div>
           </div>
           <div class="col">
             <div class="label">是否缴纳社保</div>
             <div class="info elCtn">
-              <el-select placeholder="请选择是否缴纳社保" v-model="staffInfo.social_security" clearable>
-                <el-option :value="1" label="否"></el-option>
-                <el-option :value="2" label="是"></el-option>
+              <el-select placeholder="请选择是否缴纳社保"
+                v-model="staffInfo.social_security"
+                clearable>
+                <el-option :value="1"
+                  label="否"></el-option>
+                <el-option :value="2"
+                  label="是"></el-option>
               </el-select>
             </div>
           </div>
@@ -194,7 +230,8 @@
           <div class="col">
             <div class="label">备注</div>
             <div class="info elCtn">
-              <el-input placeholder="请输入其它备注" v-model="staffInfo.desc"></el-input>
+              <el-input placeholder="请输入其它备注"
+                v-model="staffInfo.desc"></el-input>
             </div>
           </div>
         </div>
@@ -203,25 +240,35 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="borderBtn" @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverBlue" @click="addStaff()">提交</div>
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
+          <div class="btn backHoverBlue"
+            @click="addStaff()">提交</div>
         </div>
       </div>
     </div>
-    <div class="popup" v-show="isAddDepartment">
-      <div class="main" style="width: 1000px">
+    <div class="popup"
+      v-show="isAddDepartment">
+      <div class="main"
+        style="width: 1000px">
         <div class="titleCtn">
           <span class="text">添加新部门</span>
-          <div class="closeCtn" @click="isAddDepartment = false">
+          <div class="closeCtn"
+            @click="isAddDepartment = false">
             <span class="el-icon-close"></span>
           </div>
         </div>
-        <div class="contentCtn" style="min-height: 70px; display: flex; justify-content: center">
-          <el-input v-model="newDepartName" style="height: 32px" placeholder="请输入新部门名字"></el-input>
+        <div class="contentCtn"
+          style="min-height: 70px; display: flex; justify-content: center">
+          <el-input v-model="newDepartName"
+            style="height: 32px"
+            placeholder="请输入新部门名字"></el-input>
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn" @click="isAddDepartment = false">取消</span>
-          <span class="btn backHoverBlue" @click="addDepartment()">确认</span>
+          <span class="btn borderBtn"
+            @click="isAddDepartment = false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="addDepartment()">确认</span>
         </div>
       </div>
     </div>
@@ -452,7 +499,8 @@ export default Vue.extend({
               type: 3,
               name: this.newProcessName,
               process_desc: '',
-              id: ''
+              id: '',
+              rel_tag: []
             }
           ]
         })
