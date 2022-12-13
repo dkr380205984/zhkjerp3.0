@@ -117,7 +117,6 @@
                       focusByKeydown($event, 'price', [staffIndex, processIndex], staff, ['processInfo', 'processDesc'])
                       staff.is_check = true
                       process.is_check = true
-                      getTotalPrice(staffIndex, processIndex)
                     "
                   ></zh-input>
                 </div>
@@ -134,7 +133,6 @@
                       ])
                       staff.is_check = true
                       process.is_check = true
-                      getTotalPrice(staffIndex, processIndex)
                     "
                   ></zh-input>
                 </div>
@@ -269,6 +267,9 @@
               <el-checkbox label="time_count">时长</el-checkbox>
             </el-dropdown-item>
             <el-dropdown-item>
+              <el-checkbox label="total_price">总价</el-checkbox>
+            </el-dropdown-item>
+            <el-dropdown-item>
               <el-checkbox label="desc">备注</el-checkbox>
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -315,6 +316,7 @@
 import Vue from 'vue'
 import { workshop, staff, process } from '@/assets/js/api'
 import zhInput from '@/components/zhInput/zhInput.vue'
+import { set } from 'vue/types/umd'
 export default Vue.extend({
   components: { zhInput },
   data(): {
@@ -329,7 +331,7 @@ export default Vue.extend({
       page: 1,
       month: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
       additional: {},
-      copyOption: ['process', 'proces_desc', 'time_type', 'price', 'time_count', 'desc'],
+      copyOption: ['process', 'proces_desc', 'time_type', 'price', 'time_count', 'total_price', 'desc'],
       processStaffList: [{ children: [] }],
       lostAddStaffChooseProcess: 0,
       list: [
@@ -526,10 +528,14 @@ export default Vue.extend({
           }
         }
       }
+
+      this.getTotalPrice(indexArr[0],indexArr[1])
     },
     getTotalPrice(staffIndex: number, processIndex: number) {
       let item = this.list[staffIndex].processInfo[processIndex]
-      item.total_price = ((item.price || 0) * (item.time_count || 0)).toFixed(3)
+      setTimeout(() => {
+        item.total_price = ((item.price || 0) * (item.time_count || 0)).toFixed(3)
+      },0)
     },
     // 改变之后把对应的值赋给自身，把选中列表的id更新一下
     getStaffIdList(index: any) {
@@ -936,6 +942,12 @@ export default Vue.extend({
       if (strCopyOption.indexOf('time_count') != -1) {
         this.list[staffIndex].processInfo[processIndex].time_count =
           this.list[this.copyLine[0]].processInfo[this.copyLine[1]].time_count
+      }
+      
+      // 复制总价
+      if (strCopyOption.indexOf('total_price') != -1) {
+        this.list[staffIndex].processInfo[processIndex].total_price =
+          this.list[this.copyLine[0]].processInfo[this.copyLine[1]].total_price
       }
 
       // 复制备注
