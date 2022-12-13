@@ -696,12 +696,15 @@
                     placement="top">
                     <i class="el-icon-refresh hoverGreen fr"
                       style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
-                      @click="$checkCommonInfo([{
-                        checkWhich: 'api/halfProcess',
-                        getInfoMethed: 'dispatch',
-                        getInfoApi: 'getHalfProcessAsync',
-                        forceUpdate:true
-                      }])"></i>
+                      @click="      
+                      $checkCommonInfo([
+                        {
+                          checkWhich: 'api/halfProcessType',
+                          getInfoMethed: 'dispatch',
+                          getInfoApi: 'getHalfProcessTypeAsync',
+                          forceUpdate: true
+                        }
+                      ])"></i>
                   </el-tooltip>
                   <el-tooltip class="item"
                     effect="dark"
@@ -774,9 +777,9 @@
                     <i class="el-icon-refresh hoverGreen fr"
                       style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
                       @click="$checkCommonInfo([{
-                        checkWhich: 'api/staffProcess',
+                        checkWhich: 'api/staffProcessType',
                         getInfoMethed: 'dispatch',
-                        getInfoApi: 'getStaffProcessAsync',
+                        getInfoApi: 'getStaffProcessTypeAsync',
                         forceUpdate:true
                       }])"></i>
                   </el-tooltip>

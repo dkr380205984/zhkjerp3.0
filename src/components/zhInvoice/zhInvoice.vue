@@ -1,114 +1,135 @@
 <template>
-  <div class="zhInvoice popup" v-show="show">
+  <div class="zhInvoice popup"
+    v-show="show">
     <div class="main">
       <div class="titleCtn">
         <div class="text">{{ type | filterType }}开票{{ update ? '修改' : '' }}</div>
-        <div class="closeCtn" @click="close">
+        <div class="closeCtn"
+          @click="close">
           <i class="el-icon-close"></i>
         </div>
       </div>
       <div class="contentCtn">
         <div class="row">
           <div class="info">
-            <el-input disabled placeholder="开票单位" v-model="client_name">
+            <el-input disabled
+              placeholder="开票单位"
+              v-model="client_name">
               <template slot="prepend">开票单位</template>
             </el-input>
           </div>
         </div>
-        <div v-for="(item, index) in invoiceInfo.data" :key="index">
-          <div class="blue" style="margin-left: 6px">
+        <div v-for="(item, index) in invoiceInfo.data"
+          :key="index">
+          <div class="blue"
+            style="margin-left: 6px">
             开票单据{{ index + 1 }}
-            <i
-              class="el-icon-close hoverRed fr"
+            <i class="el-icon-close hoverRed fr"
               style="font-size: 20px; cursor: pointer"
               @click="
                 invoiceInfo.data.length === 1 ? $message.error('至少有一项') : $deleteItem(invoiceInfo.data, index)
-              "
-            ></i>
+              "></i>
           </div>
+          <!-- <div class="row">
+            <div class="info">
+              <el-select>
+                <el-option label="订单开票"
+                  value="1"></el-option>
+                <el-option label="其他发票"
+                  value="2"></el-option>
+              </el-select>
+            </div>
+          </div> -->
           <div class="row">
             <div class="info">
-              <el-input disabled placeholder="无单据开票" v-model="item.doc_code"> </el-input>
+              <el-input disabled
+                placeholder="无单据开票"
+                v-model="item.doc_code"> </el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input placeholder="发票代码" v-model="item.invoice_number" @input="changeType($event, index)">
+              <el-input placeholder="发票代码"
+                v-model="item.invoice_number"
+                @input="changeType($event, index)">
               </el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input placeholder="发票号码" v-model="item.invoice_code"> </el-input>
+              <el-input placeholder="发票号码"
+                v-model="item.invoice_code"> </el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-select v-model="item.type" placeholder="发票类型">
-                <el-option label="专票" value="专票"> </el-option>
-                <el-option label="普票" value="普票"> </el-option>
+              <el-select v-model="item.type"
+                placeholder="发票类型">
+                <el-option label="专票"
+                  value="专票"> </el-option>
+                <el-option label="普票"
+                  value="普票"> </el-option>
               </el-select>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-autocomplete
-                class="inline-input"
+              <el-autocomplete class="inline-input"
                 v-model="item.tax_rate"
                 :fetch-suggestions="querySearch"
                 placeholder="税率（必填）"
-                @input="getAboutTaxPrice(index)"
-              >
+                @input="getAboutTaxPrice(index)">
                 <template slot="append">%</template>
               </el-autocomplete>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input
-                placeholder="开票金额（税价合计，必填）"
+              <el-input placeholder="开票金额（税价合计，必填）"
                 v-model="item.price"
                 @input="
                   changeNumToPrice($event, index)
                   getAboutTaxPrice(index)
-                "
-              >
+                ">
                 <template slot="append">元</template>
               </el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input placeholder="数字金额(默认)" v-model="item.hanPrice" disabled>
+              <el-input placeholder="数字金额(默认)"
+                v-model="item.hanPrice"
+                disabled>
                 <template slot="append">元</template>
               </el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input placeholder="税额" v-model="item.price_tax" disabled
-                ><template slot="append">元</template></el-input
-              >
+              <el-input placeholder="税额"
+                v-model="item.price_tax"
+                disabled><template slot="append">元</template></el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input placeholder="不含税金额" v-model="item.price_no_tax" disabled
-                ><template slot="append">元</template></el-input
-              >
+              <el-input placeholder="不含税金额"
+                v-model="item.price_no_tax"
+                disabled><template slot="append">元</template></el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input placeholder="备注信息" v-model="item.desc"> </el-input>
+              <el-input placeholder="备注信息"
+                v-model="item.desc"> </el-input>
             </div>
           </div>
         </div>
       </div>
       <div class="oprCtn">
-        <span class="btn borderBtn" @click="close">取消</span>
-        <span
-          class="btn backHoverOrange"
+        <span class="btn borderBtn"
+          @click="close">取消</span>
+        <span class="btn backHoverOrange"
           v-if="!update"
           @click="
             $addItem(invoiceInfo.data, {
@@ -119,10 +140,10 @@
               file_url: '',
               price: ''
             })
-          "
-          >添加</span
-        >
-        <span class="btn" :class="{ backHoverBlue: !update, backHoverOrange: update }" @click="saveInvoice">{{
+          ">添加</span>
+        <span class="btn"
+          :class="{ backHoverBlue: !update, backHoverOrange: update }"
+          @click="saveInvoice">{{
           update ? '修改' : '确认'
         }}</span>
       </div>

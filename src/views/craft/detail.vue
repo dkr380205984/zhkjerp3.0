@@ -1110,7 +1110,7 @@ export default Vue.extend({
     return {
       loading: true,
       craftFlag: true,
-      craftDistanceFlag: true,
+      craftDistanceFlag: false,
       craftYarnIndex: 0,
       craftYarnFlag: false,
       craftCuxiFlag: true,

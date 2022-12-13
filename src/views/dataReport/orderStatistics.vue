@@ -853,7 +853,7 @@
                   <div class="tcol"></div>
                   <div class="tcol">
                     <span class="red">{{$toFixed(profitAnalysisData.receipt.avg_product)}}<span class="em">元/件</span></span>
-                    <span class="gray">({{$toFixed(profitAnalysisData.receipt.total_price/profitAnalysisData.order.total_price*100)}}%)</span>
+                    <span class="gray">{{$toFixed(profitAnalysisData.receipt.total_price/profitAnalysisData.order.total_price*100)}}%</span>
                   </div>
                 </div>
                 <div class="trow">

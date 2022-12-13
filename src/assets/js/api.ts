@@ -1217,7 +1217,7 @@ const receipt = {
   save: (params: {
     name: string
     staff_id: number | string
-    group: string
+    group_id: string
     certificate: string
     id: number | string
     amount: number | string
@@ -1230,7 +1230,7 @@ const receipt = {
     limit: number | string
     page: number | string
     keyword: string
-    group: string
+    group_id: string
     start_time: string
     end_time: string
     status: string | number
@@ -1255,7 +1255,7 @@ const receipt = {
     limit: number | string
     page: number | string
     keyword: string
-    group: string
+    group_id: string
     start_time: string
     end_time: string
     status: string | number

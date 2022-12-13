@@ -151,7 +151,7 @@
             </el-select>
           </div>
           <div class="btn borderBtn backHoverBlue"
-            style="color: white"
+            style="color: white;padding: 1px 8px"
             @click="oneShowAll">全部展开</div>
         </div>
         <div class="list">

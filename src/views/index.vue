@@ -75,6 +75,7 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="myModule">我的权限</el-dropdown-item>
                 <el-dropdown-item command="changePas">修改密码</el-dropdown-item>
+                <el-dropdown-item command="myEquipment">我的设备</el-dropdown-item>
                 <el-dropdown-item command="logout"
                   divided>退出登录</el-dropdown-item>
               </el-dropdown-menu>
@@ -188,6 +189,43 @@
         </div>
       </div>
     </div>
+    <div class="popup"
+      v-if="myEquipmentFlag">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">个人登录设备列表</span>
+          <span class="el-icon-close"
+            @click="myEquipmentFlag=false"></span>
+        </div>
+        <div class="contentCtn">
+          <div class="flattenTableCtn"
+            style="padding-left:0;padding-right:0">
+            <div class="thead">
+              <div class="trow">
+                <div class="tcol"
+                  style="border-right:1px solid #e9e9e9">登录设备</div>
+                <div class="tcol">操作</div>
+              </div>
+            </div>
+            <div class="tbody">
+              <div style="border-bottom:1px solid #e9e9e9"
+                class="trow">
+                <div class="tcol"
+                  style="border-right:1px solid #e9e9e9">登录设备</div>
+                <div class="tcol">
+                  <span class="opr hoverRed"
+                    @click="deleteEquipment('')">删除记录</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <div class="btn backHoverBlue"
+            @click="myEquipmentFlag=false">确认</div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -284,7 +322,9 @@ export default Vue.extend({
       ],
       moduleFlag: false,
       selfModule: [],
-      msgLoading: false
+      msgLoading: false,
+      myEquipmentFlag: false,
+      myEquipmentList: []
     }
   },
   watch: {
@@ -397,6 +437,8 @@ export default Vue.extend({
             }
           })
         }
+      } else if (ev === 'myEquipment') {
+        this.myEquipmentFlag = true
       }
     },
     closePopup() {
@@ -453,6 +495,21 @@ export default Vue.extend({
           }
         })
       }
+    },
+    // 删除登录记录
+    deleteEquipment(id: number) {
+      this.$confirm('是否删除该登录设备的记录，删除后再次登录该设备需要接收短信验证码', '提示', {
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {})
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     // 扫码枪监听事件
     smqListener(e: any) {
@@ -582,31 +639,31 @@ export default Vue.extend({
     // @ts-ignore
     window.Pusher = Pusher
     // @ts-ignore
-    // window.Echo = new Echo({
-    //   client: new Pusher('9df11d97766e328a79c4', {
-    //     wsHost: window.location.hostname,
-    //     wsPort: 6002,
-    //     wssPort: 6002,
-    //     forceTLS: document.location.protocol === 'https:' ? true : false,
-    //     disableStats: true,
-    //     enabledTransports: ['ws', 'wss']
-    //   }),
-    //   broadcaster: 'pusher'
-    // })
-    // // @ts-ignore
-    // window.Echo.channel(`knit_server_` + this.$getsessionStorage('user_id')).listen('.knit_server_event', (e: any) => {
-    //   const ev = e.content
-    //   // console.log(e)
-    //   vue.$notify({
-    //     title: ev.content,
-    //     dangerouslyUseHTMLString: true,
-    //     duration: 0,
-    //     message: vue.changeContentToHtml(ev.content),
-    //     onClick: () => {
-    //       this.todoUrl(ev)
-    //     }
-    //   })
-    // })
+    window.Echo = new Echo({
+      client: new Pusher('9df11d97766e328a79c4', {
+        wsHost: window.location.hostname,
+        wsPort: 6002,
+        wssPort: 6002,
+        forceTLS: document.location.protocol === 'https:' ? true : false,
+        disableStats: true,
+        enabledTransports: ['ws', 'wss']
+      }),
+      broadcaster: 'pusher'
+    })
+    // @ts-ignore
+    window.Echo.channel(`knit_server_` + this.$getsessionStorage('user_id')).listen('.knit_server_event', (e: any) => {
+      const ev = e.content
+      // console.log(e)
+      vue.$notify({
+        title: ev.content,
+        dangerouslyUseHTMLString: true,
+        duration: 0,
+        message: vue.changeContentToHtml(ev.content),
+        onClick: () => {
+          this.todoUrl(ev)
+        }
+      })
+    })
   },
   beforeDestroy() {
     window.removeEventListener('keydown', this.smqListener, false)

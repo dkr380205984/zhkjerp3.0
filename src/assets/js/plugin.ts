@@ -293,7 +293,6 @@ const plugin = {
           }
         }
       }
-
     })
   },
   checkPhone(phoneNumber: string) {

@@ -4886,10 +4886,10 @@
                 </el-input>
                 <div v-if="index===0"
                   class="info_btn hoverBlue"
-                  @click="$addItem(yarnInfo1.price_info,{price:'',client_id:'',client_id_arr:[],desc:''});$forceUpdate()">添加</div>
+                  @click="$addItem(yarnInfo2.price_info,{price:'',client_id:'',client_id_arr:[],desc:''});$forceUpdate()">添加</div>
                 <div v-else
                   class="info_btn hoverRed"
-                  @click="$deleteItem(yarnInfo1.price_info,index);$forceUpdate()">删除</div>
+                  @click="$deleteItem(yarnInfo2.price_info,index);$forceUpdate()">删除</div>
               </div>
             </div>
           </div>

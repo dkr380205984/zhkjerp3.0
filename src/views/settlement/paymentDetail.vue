@@ -970,10 +970,7 @@
                   <span class="text">批量扣款</span>
                 </div>
                 <div class="btn backHoverOrange"
-                  @click="
-                    updatePriceFlag = true
-                    getMatStsList(updatePriceInfo.date)
-                  ">
+                  @click="getMatStsList(updatePriceInfo.date)">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
@@ -1036,7 +1033,12 @@
                     </div>
                     <div class="col blue"
                       style="cursor: pointer"
-                      @click="openMaterialOrder(item)">{{ item.code }}</div>
+                      @click="openMaterialOrder(item)"><span>{{ item.code }}
+                        <span v-if="item.plan_id">(计划单)</span>
+                        <span v-else-if="item.sup_id">(补纱单)</span>
+                        <span v-else-if="item.reserve_id">(预订购)</span>
+                        <span v-else>(辅料)</span></span>
+                    </div>
                     <div class="col blue"
                       style="cursor: pointer"
                       @click="$openUrl('/order/detail?id=' + item.top_order_id)">
@@ -4995,6 +4997,7 @@ export default Vue.extend({
               })
             })
             this.updatePriceOriginList = mergeList
+            this.updatePriceFlag = true
             this.getMatShowList()
           }
         })
@@ -5084,11 +5087,11 @@ export default Vue.extend({
     // 物料订购单跳转
     openMaterialOrder(info: any) {
       if (info.plan_id) {
-        this.$router.push('/materialManage/detail?id=' + info.plan_id)
+        this.$openUrl('/materialManage/detail?id=' + info.plan_id)
       } else if (info.sup_id) {
-        this.$router.push('/materialManage/detail?id=' + info.sup_id + '&supFlag=1')
+        this.$openUrl('/materialManage/detail?id=' + info.sup_id + '&supFlag=1')
       } else if (info.reserve_id) {
-        this.$router.push('/materialPlanOrder/detail?id=' + info.client_id)
+        this.$openUrl('/materialPlanOrder/detail?id=' + info.client_id)
       } else {
         // 都没有说明是辅料单子，不需要计划
         this.$router.push('/accessoriesManage/detail?id=' + info.top_order_id + '&sampleOrderIndex=' + info.order_id)
@@ -6331,19 +6334,18 @@ export default Vue.extend({
       cb(results)
     },
     searchMaterialNew(str: string, cb: any) {
-      let results = str
-        ? this.updatePriceYarnList.filter(this.createFilter(str))
-        : this.updatePriceYarnList.slice(0, 10)
+      console.log(this.updatePriceYarnList)
+      let results = str ? this.updatePriceYarnList.filter(this.createFilter(str)) : this.updatePriceYarnList
       cb(results)
     },
     // 原料属性搜索
     searchAttribute(str: string, cb: any) {
-      let results = str ? this.yarnAttributeList.filter(this.createFilter(str)) : this.yarnAttributeList.slice(0, 10)
+      let results = str ? this.yarnAttributeList.filter(this.createFilter(str)) : this.yarnAttributeList
       cb(results)
     },
     createFilter(queryString: string) {
       return (restaurant: any) => {
-        return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+        return restaurant.value && restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
       }
     }
   },

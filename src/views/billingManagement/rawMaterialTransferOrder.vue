@@ -150,7 +150,7 @@
             </el-select>
           </div>
           <div class="btn borderBtn backHoverBlue"
-            style="color: white"
+            style="color: white;padding: 1px 8px"
             @click="oneShowAll">全部展开</div>
         </div>
         <div class="list">
@@ -315,7 +315,14 @@
     </div>
     <div class="bottomFixBar">
       <div class="main">
-        <div class="fl blue green"
+        <div class="fl"
+          style="line-height: 56px; margin-left: 24px">
+          <div class="btn backHoverOrange"
+            @click="getMatStsList">
+            <span class="text">修改调取单价</span>
+          </div>
+        </div>
+        <div class="fl"
           style="line-height: 56px; margin-left: 24px">
           <div class="btn backHoverBlue"
             @click="lostCheck">
@@ -452,6 +459,142 @@
         </div>
       </div>
     </div>
+    <!-- 批量修改调取单价功能 -->
+    <div class="popup"
+      id="updatePrice"
+      v-show="updatePriceFlag">
+      <div class="main"
+        style="width:1200px">
+        <div class="titleCtn">
+          <span class="text">批量修改调取单价</span>
+          <div class="closeCtn"
+            @click="updatePriceFlag = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="explainCtn">
+            <p>1.必须筛选日期跨度尽量不要超过一年</p>
+            <p>2.点击提交后只会更新重新填写的调取单价</p>
+          </div>
+          <div class="listCtn">
+            <div class="filterCtn">
+              <div class="elCtn">
+                <el-autocomplete v-model="updatePriceInfo.material_name"
+                  :fetch-suggestions="searchMaterialNew"
+                  placeholder="物料名称搜索"
+                  @keydown.native.enter="getMatShowList"
+                  @select="getMatShowList"
+                  @clear="getMatShowList"
+                  clearable></el-autocomplete>
+              </div>
+              <div class="elCtn">
+                <el-autocomplete :fetch-suggestions="searchAttribute"
+                  v-model="updatePriceInfo.attribute"
+                  placeholder="物料属性"
+                  @keydown.native.enter="getMatShowList"
+                  @change="getMatShowList"
+                  clearable></el-autocomplete>
+              </div>
+              <div class="elCtn">
+                <el-select v-model="updatePriceInfo.material_color"
+                  placeholder="请选择种类"
+                  clearable
+                  @keydown.native.enter="getMatShowList"
+                  @change="getMatShowList">
+                  <el-option label="色纱"
+                    value="色纱"></el-option>
+                  <el-option label="白胚"
+                    value="白胚"></el-option>
+                </el-select>
+              </div>
+              <div class="elCtn"
+                style="width: 250px">
+                <el-date-picker v-model="updatePriceInfo.date"
+                  type="daterange"
+                  align="right"
+                  unlink-panels
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  :picker-options="pickerOptions"
+                  value-format="yyyy-MM-dd"
+                  @change="getMatStsList">
+                </el-date-picker>
+              </div>
+            </div>
+            <div class="tableCtn">
+              <div class="thead">
+                <div class="trow">
+                  <div class="tcol">日期</div>
+                  <div class="tcol noPad"
+                    style="flex: 9">
+                    <div class="trow">
+                      <div class="tcol">原料名称</div>
+                      <div class="tcol">颜色</div>
+                      <div class="tcol">属性</div>
+                      <div class="tcol">调取单价</div>
+                      <div class="tcol">调取总数</div>
+                      <div class="tcol">已结算单价</div>
+                      <div class="tcol">修改结算单价</div>
+                      <div class="tcol"
+                        v-if="$route.query.type === '纱线原料单位' || $route.query.type === '面料原料单位'">操作</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="tbody">
+                <div class="trow"
+                  v-if="this.updatePriceOriginList.length === 0">
+                  <div class="tcol red"
+                    style="text-align: center">请筛选日期后搜索纱线数据</div>
+                </div>
+                <div class="trow"
+                  v-for="(item, index) in updatePriceShowList"
+                  :key="index">
+                  <div class="tcol">{{ item.created_at }}</div>
+                  <div class="tcol noPad"
+                    style="flex: 9">
+                    <div class="trow"
+                      v-for="(itemChild, indexChild) in item.realChildren"
+                      :key="indexChild">
+                      <div class="tcol">{{ itemChild.material_name }}</div>
+                      <div class="tcol">{{ itemChild.material_color }}</div>
+                      <div class="tcol">{{ itemChild.attribute }}</div>
+                      <div class="tcol blue">{{ itemChild.price }}元/kg</div>
+                      <div class="tcol">{{ itemChild.number }}kg</div>
+                      <div class="tcol"
+                        :class="{ blue: itemChild.settle_price, gray: !itemChild.settle_price }">
+                        {{ itemChild.settle_price === 0 ? '未填写' : itemChild.settle_price + '元' }}
+                      </div>
+                      <div class="tcol">
+                        <div class="elCtn">
+                          <el-input placeholder="单价"
+                            v-model="itemChild.new_settle_price"></el-input>
+                        </div>
+                      </div>
+                      <div class="tcol"
+                        v-if="$route.query.type === '纱线原料单位' || $route.query.type === '面料原料单位'">
+                        <span class="btn backHoverBlue"
+                          style="padding: 0 8px;"
+                          @click="updatePriceFlag = false
+                        searchAboutList(item.created_at,itemChild.material_name)">查询关联单据</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> -->
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="updatePriceFlag = false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="saveUpdatePrice">提交更新</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -492,6 +635,18 @@ export default Vue.extend({
         is_check: 1, // 1通过 2没通过
         desc: ''
       },
+      updatePriceFlag: false,
+      updatePriceInfo: {
+        material_name: '',
+        material_color: '',
+        settle_price: '',
+        attribute: '',
+        start_time: '',
+        end_time: '',
+        date: [],
+        client_id: null
+      },
+      updatePriceShowList: [],
       list: [],
       limitList: limitArr,
       showExport: false,
@@ -830,6 +985,42 @@ export default Vue.extend({
     }
   },
   methods: {
+    searchMaterialNew(str: string, cb: any) {
+      let results = str ? this.updatePriceYarnList.filter(this.createFilter(str)) : this.updatePriceYarnList
+      cb(results)
+    },
+    // 原料属性搜索
+    searchAttribute(str: string, cb: any) {
+      let results = str ? this.yarnAttributeList.filter(this.createFilter(str)) : this.yarnAttributeList
+      cb(results)
+    },
+    createFilter(queryString: string) {
+      return (restaurant: any) => {
+        return restaurant.value && restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+      }
+    },
+    getMatStsList() {
+      this.updatePriceFlag = true
+    },
+    saveUpdatePrice() {},
+    // 前端做筛选
+    getMatShowList() {
+      this.updatePriceShowList = this.$clone(this.updatePriceOriginList).filter((item: any) => {
+        item.realChildren = item.realChildren.filter((itemChild: any) => {
+          let nameFlag = this.updatePriceInfo.material_name
+            ? itemChild.material_name.toLowerCase().indexOf(this.updatePriceInfo.material_name.toLowerCase()) === 0
+            : true
+          let attrFlag = this.updatePriceInfo.attribute
+            ? itemChild.attribute.toLowerCase().indexOf(this.updatePriceInfo.attribute.toLowerCase()) === 0
+            : true
+          let colorFlag = this.updatePriceInfo.material_color
+            ? itemChild.material_color.toLowerCase().indexOf(this.updatePriceInfo.material_color.toLowerCase()) === 0
+            : true
+          return nameFlag && attrFlag && colorFlag
+        })
+        return item.realChildren.length > 0
+      })
+    },
     getContacts(ev: number[]) {
       if (ev && ev.length) {
         client

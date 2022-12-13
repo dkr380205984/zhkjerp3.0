@@ -280,7 +280,7 @@ export default Vue.extend({
         .save({
           name: this.receiptInfo.staff.name,
           staff_id: this.receiptInfo.staff.id,
-          group: this.receiptInfo.group,
+          group_id: this.receiptInfo.group,
           certificate: string,
           staff_departments: this.receiptInfo.staff_departments,
           id: this.receiptInfo.id,
