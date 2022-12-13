@@ -17,6 +17,7 @@ export interface OrderBatch {
   batch_title: string
   batch_type_id?: string | number
   batch_type?: string | number
+  batch_type_name?: string
   delivery_time: string // 发货时间
   is_urgent: 1 | 2 // 1.紧急 2.不紧急
   is_draft: 1 | 2  // 1.草稿 2.非草稿
@@ -39,6 +40,8 @@ export interface OrderBatch {
     secondary_category?: string
     quote_product_id?: string | number
     quote_rel_product_info?: QuotedPriceProduct
+    desc?: string
+    component_data?: any[]
     size_color_list: Array<{
       label: string
       value: string
@@ -61,6 +64,8 @@ export interface OrderBatch {
       price: string | number
       plan_number?: string | number
       real_number?: string | number
+      weight?: string
+      size_info?: string
     }>
   }>
 }
@@ -91,6 +96,9 @@ export interface OrderInfo {
   order_type: 1
   code: string
   desc: string
+  created_at?: string
+  user_phone?: string
+  user_name?: string
   is_draft?: 1 | 2  // 1.草稿 2.非草稿
   client_id: number | string
   tree_data?: string | number[]

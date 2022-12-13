@@ -64,12 +64,12 @@
               clearable></el-input>
           </div>
           <div class="elCtn">
-            <el-cascader placeholder="筛选原料名称"
+            <el-autocomplete class="inline-input"
               v-model="material_name"
-              :options="yarnTypeList"
-              clearable
-              filterable
-              @change="changeRouter"></el-cascader>
+              :fetch-suggestions="searchMaterial"
+              placeholder="搜索原料"
+              @select="changeRouter"
+              @keydown.native.enter="changeRouter"></el-autocomplete>
           </div>
           <div class="elCtn">
             <el-select @change="(ev) => getLocalStorage(ev, 'create_user')"
@@ -499,7 +499,7 @@ export default Vue.extend({
       mainLoading1: false,
       productShow: false,
       productDetailId: '',
-      material_name: [],
+      material_name: '',
       additional: {},
       loading: true,
       showCharts: false,
@@ -674,7 +674,7 @@ export default Vue.extend({
       if (this.client_id && this.client_id.length) {
         this.getContacts(this.client_id)
       }
-      this.material_name = query.material_name ? (query.material_name as string).split(',') : []
+      this.material_name = query.material_name ? query.material_name : ''
       this.keyword = query.keyword || ''
       this.order_type = query.order_type || ''
       this.status = query.status || 'null'
@@ -754,7 +754,7 @@ export default Vue.extend({
         .then(() => {
           this.client_id = []
           this.keyword = ''
-          this.material_name = []
+          this.material_name = ''
           this.user_id = ''
           this.group_id = ''
           this.order_type = ''
@@ -781,7 +781,7 @@ export default Vue.extend({
           user_id: this.user_id,
           group_id: this.group_id,
           start_time: this.date[0],
-          material_name: this.material_name.length ? this.material_name[2] : '',
+          material_name: this.material_name,
           end_time: this.date[1],
           order_type: this.order_type,
           limit: this.limit,
@@ -798,6 +798,17 @@ export default Vue.extend({
           }
           this.loading = false
         })
+    },
+    searchMaterial(str: any, cb: any) {
+      if (str) {
+        cb(
+          this.yarnList.filter((item: any) => {
+            return item.value.toLowerCase().indexOf(str.toLowerCase()) === 0
+          })
+        )
+      } else {
+        cb(this.yarnList)
+      }
     }
   },
   watch: {
@@ -823,20 +834,11 @@ export default Vue.extend({
     groupList() {
       return this.$store.state.api.group.arr
     },
-    yarnTypeList() {
-      return this.$store.state.api.yarnType.arr.map((item: any) => {
+    yarnList() {
+      return this.$store.state.api.material.arr.map((item: any) => {
         return {
-          label: item.label,
-          value: item.label,
-          children: item.children.map((itemChild: any) => {
-            return {
-              label: itemChild.label,
-              value: itemChild.label,
-              children: itemChild.children.map((itemSon: any) => {
-                return { label: itemSon.label, value: itemSon.label }
-              })
-            }
-          })
+          label: item.name,
+          value: item.name
         }
       })
     }
@@ -861,9 +863,9 @@ export default Vue.extend({
         getInfoApi: 'getUserAsync'
       },
       {
-        checkWhich: 'api/yarnType',
+        checkWhich: 'api/material',
         getInfoMethed: 'dispatch',
-        getInfoApi: 'getYarnTypeAsync'
+        getInfoApi: 'getMaterialAsync'
       }
     ])
   }

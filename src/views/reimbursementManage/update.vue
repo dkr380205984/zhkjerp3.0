@@ -36,7 +36,7 @@
                 <el-option v-for="item in groupList"
                   :key="item.name"
                   :label="item.name"
-                  :value="item.name">
+                  :value="item.id">
                 </el-option>
               </el-select>
             </div>
@@ -280,7 +280,7 @@ export default Vue.extend({
         .save({
           name: this.receiptInfo.staff.name,
           staff_id: this.receiptInfo.staff.id,
-          group: this.receiptInfo.group,
+          group_id: this.receiptInfo.group,
           certificate: string,
           staff_departments: this.receiptInfo.staff_departments,
           id: this.receiptInfo.id,

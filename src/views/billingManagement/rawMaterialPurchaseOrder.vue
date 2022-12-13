@@ -205,19 +205,19 @@
               <div v-if="item.plan_id"
                 class="col hoverBlue"
                 style="flex: 1.2; cursor: pointer"
-                @click="$router.push('/materialManage/detail?id=' + item.plan_id)">
+                @click="$openUrl('/materialManage/detail?id=' + item.plan_id + '&orderDocId=' + item.id)">
                 {{ item.code }}
               </div>
               <div v-if="item.reserve_id"
                 class="col hoverBlue"
                 style="flex: 1.2; cursor: pointer"
-                @click="$router.push('/materialPlanOrder/detail?id=' + item.reserve_id)">
+                @click="$openUrl('/materialPlanOrder/detail?id=' + item.reserve_id)">
                 {{ item.code }}
               </div>
               <div v-if="item.sup_id"
                 class="col hoverBlue"
                 style="flex: 1.2; cursor: pointer"
-                @click="$router.push('/materialManage/detail?id=' + item.sup_id)">
+                @click="$openUrl('/materialManage/detail?id=' + item.sup_id + '&supFlag=true')">
                 {{ item.code }}
               </div>
               <div class="col hoverBlue"
@@ -396,7 +396,7 @@
           <div class="buttonList"
             style="margin-left: 12px">
             <div class="btn backHoverBlue"
-              @click="showExportPopup = true">
+              @click="exportExcelInit">
               <span class="text"
                 style="margin-left: 0">导出报表</span>
             </div>
@@ -998,6 +998,12 @@ export default Vue.extend({
         this.monthList = []
       }
     },
+    exportExcelInit() {
+      this.exportClient = this.$route.query.single_client_id
+        ? this.findClientId(Number(this.$route.query.single_client_id))
+        : ''
+      this.showExportPopup = true
+    },
     exportExcel() {
       this.mainLoading = true
 
@@ -1177,6 +1183,21 @@ export default Vue.extend({
           this.listKey = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting)
           this.exportKey = this.$clone(this.originalExport)
         })
+    },
+    findClientId(id: number): number[] {
+      let arr: number[] = []
+      if (id) {
+        this.clientList.forEach((item: any) => {
+          item.children.forEach((itemChild: any) => {
+            itemChild.children.forEach((itemFind: any) => {
+              if (itemFind.value === id && arr.length === 0) {
+                arr = [item.value, itemChild.value, itemFind.value]
+              }
+            })
+          })
+        })
+      }
+      return arr
     }
   },
   watch: {
@@ -1222,7 +1243,7 @@ export default Vue.extend({
       })
     }
   },
-  created() {
+  mounted() {
     this.getFilters()
     this.getList()
     this.getListSetting()

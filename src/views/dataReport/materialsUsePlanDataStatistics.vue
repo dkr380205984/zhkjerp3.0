@@ -157,12 +157,12 @@
         <div class="card noPad"
           style="overflow: hidden">
           <div class="screen">
-            <el-cascader placeholder="筛选原料名称"
+            <el-autocomplete class="inline-input"
               v-model="filterData.name"
-              :options="yarnTypeList"
-              clearable
-              filterable
-              @change="changeRouter"></el-cascader>
+              :fetch-suggestions="searchMaterial"
+              placeholder="搜索原料"
+              @select="changeRouter"
+              @keydown.native.enter="changeRouter"></el-autocomplete>
           </div>
         </div>
         <div class="cardCtn"
@@ -471,7 +471,7 @@ export default Vue.extend({
         this.filterData.start_time = query.start_time
         this.filterData.end_time = query.end_time
       }
-      this.filterData.name = query.name ? (query.name as string).split(',') : []
+      this.filterData.name = query.name ? query.name : ''
       this.filterData.type = query.type ? Number(query.type) : ''
       this.filterData.client_id = query.client_id
         ? (query.client_id as string).split(',').map((item) => Number(item))
@@ -573,7 +573,7 @@ export default Vue.extend({
           end_time: this.filterData.end_time,
           user_id: this.filterData.user_id,
           group_id: this.filterData.group_id,
-          name: this.filterData.name.length ? this.filterData.name[2] : '',
+          name: this.filterData.name,
           type: this.filterData.type,
           order_type: this.filterData.order_type,
           contacts_id: ''
@@ -708,6 +708,17 @@ export default Vue.extend({
           }
           this.loading = false
         })
+    },
+    searchMaterial(str: any, cb: any) {
+      if (str) {
+        cb(
+          this.yarnList.filter((item: any) => {
+            return item.value.toLowerCase().indexOf(str.toLowerCase()) === 0
+          })
+        )
+      } else {
+        cb(this.yarnList)
+      }
     }
   },
   watch: {
@@ -732,23 +743,31 @@ export default Vue.extend({
     userList() {
       return this.$store.state.api.user.arr
     },
-    yarnTypeList() {
-      return this.$store.state.api.yarnType.arr.map((item: any) => {
+    yarnList() {
+      return this.$store.state.api.material.arr.map((item: any) => {
         return {
-          label: item.label,
-          value: item.label,
-          children: item.children.map((itemChild: any) => {
-            return {
-              label: itemChild.label,
-              value: itemChild.label,
-              children: itemChild.children.map((itemSon: any) => {
-                return { label: itemSon.label, value: itemSon.label }
-              })
-            }
-          })
+          label: item.name,
+          value: item.name
         }
       })
     }
+    // yarnTypeList() {
+    //   return this.$store.state.api.yarnType.arr.map((item: any) => {
+    //     return {
+    //       label: item.label,
+    //       value: item.label,
+    //       children: item.children.map((itemChild: any) => {
+    //         return {
+    //           label: itemChild.label,
+    //           value: itemChild.label,
+    //           children: itemChild.children.map((itemSon: any) => {
+    //             return { label: itemSon.label, value: itemSon.label }
+    //           })
+    //         }
+    //       })
+    //     }
+    //   })
+    // }
   },
   created() {
     this.getFilters()
@@ -770,9 +789,9 @@ export default Vue.extend({
         getInfoApi: 'getUserAsync'
       },
       {
-        checkWhich: 'api/yarnType',
+        checkWhich: 'api/material',
         getInfoMethed: 'dispatch',
-        getInfoApi: 'getYarnTypeAsync'
+        getInfoApi: 'getMaterialAsync'
       }
     ])
   },

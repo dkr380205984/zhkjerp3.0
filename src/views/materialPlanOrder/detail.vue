@@ -134,12 +134,12 @@
                   <div class="tcol">入库颜色</div>
                   <div class="tcol">入库属性</div>
                   <div class="tcol">批号/缸号/色号</div>
-                  <div class="tcol">入库数量</div>
+                  <div class="tcol">入库数量/件数</div>
                   <div class="tcol">入库单价</div>
                 </div>
               </div>
               <div class="tcol">创建人</div>
-              <div class="tcol">创建日期</div>
+              <div class="tcol">入库日期</div>
               <div class="tcol">操作</div>
             </div>
           </div>
@@ -158,7 +158,7 @@
                   <div class="tcol">{{itemChild.material_color}}</div>
                   <div class="tcol">{{itemChild.attribute}}</div>
                   <div class="tcol">{{itemChild.batch_code}}/{{itemChild.vat_code}}/{{itemChild.color_code}}</div>
-                  <div class="tcol">{{itemChild.number}}kg</div>
+                  <div class="tcol">{{itemChild.number}}kg/{{itemChild.item||0}}件</div>
                   <div class="tcol">{{itemChild.price||0}}元</div>
                 </div>
               </div>
@@ -261,7 +261,7 @@
       v-show="materialPlanOrderFlag">
       <div class="main">
         <div class="titleCtn">
-          <span class="text">订购物料</span>
+          <span class="text">{{step===1?'订购':'入库'}}物料</span>
           <div class="closeCtn"
             @click="closeAll">
             <span class="el-icon-close"></span>
@@ -661,6 +661,7 @@ export default Vue.extend({
   } {
     return {
       loading: true,
+      stockLock: false,
       step: 1,
       yarnAttributeList: yarnAttributeArr,
       storeList: [],
@@ -977,6 +978,9 @@ export default Vue.extend({
       info.attribute = finded!.attribute as string
     },
     saveMaterialStock() {
+      if (this.stockLock) {
+        return
+      }
       const formCheck =
         this.$formCheck(this.materialStockInfo, [
           {
@@ -998,6 +1002,8 @@ export default Vue.extend({
           ])
         })
       if (!formCheck) {
+        this.loading = true
+        this.stockLock = true
         materialStock.create({ data: [this.materialStockInfo] }).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
@@ -1006,6 +1012,7 @@ export default Vue.extend({
             this.materialPlanOrderFlag = false
             this.init()
           }
+          this.stockLock = false
         })
       }
     },
@@ -1122,18 +1129,20 @@ export default Vue.extend({
       })
     store.list().then((res) => {
       if (res.data.status) {
-        this.storeList = res.data.data.map((item: any) => {
-          return {
-            label: item.name,
-            value: item.id,
-            children: item.secondary_store.map((itemChild: any) => {
-              return {
-                label: itemChild.name,
-                value: itemChild.id
-              }
-            })
-          }
-        })
+        this.storeList = res.data.data
+          .filter((item: any) => item.store_type === this.materialPlanOrderDetail.material_type)
+          .map((item: any) => {
+            return {
+              label: item.name,
+              value: item.id,
+              children: item.secondary_store.map((itemChild: any) => {
+                return {
+                  label: itemChild.name,
+                  value: itemChild.id
+                }
+              })
+            }
+          })
       }
     })
     this.init()

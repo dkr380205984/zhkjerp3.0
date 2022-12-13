@@ -766,7 +766,7 @@
                           placement="top">
                           <svg class="iconFont copyIcon hoverBlue"
                             aria-hidden="true"
-                            @click="$copyInfo(item.product_info_data,['price'])">
+                            @click="$copyInfo(item.product_info_data,['price']);item.product_info_data.forEach((itemChild)=>itemChild.total_price=$toFixed(Number(itemChild.price)*Number(itemChild.number)))">
                             <use xlink:href='#icon-tongbushuju1'></use>
                           </svg>
                         </el-tooltip>

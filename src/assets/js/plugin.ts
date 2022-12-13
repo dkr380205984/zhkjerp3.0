@@ -293,7 +293,6 @@ const plugin = {
           }
         }
       }
-
     })
   },
   checkPhone(phoneNumber: string) {
@@ -490,7 +489,8 @@ const initEditor = (item: any, index?: number | string) => {
     'justify', // 对齐方式
     'quote', // 引用
     'undo', // 撤销
-    'redo' // 重复
+    'redo', // 重复
+    'table'
   ]
   item.editor.config.onchange = (html: any) => {
     item.desc = html // 绑定当前逐渐地值
@@ -556,8 +556,14 @@ const toFixedAuto = (num: number, precision: number = 2, changeToPrice?: false):
         }
       }
       if (numArr.length === 2) {
+        if (num < 0) {
+          return '-' + numStrArr.join('') + '.' + numArr[1]
+        }
         return numStrArr.join('') + '.' + numArr[1]
       } else {
+        if (num < 0) {
+          return '-' + numStrArr.join('')
+        }
         return numStrArr.join('')
       }
     } else {
@@ -576,8 +582,14 @@ const toFixedAuto = (num: number, precision: number = 2, changeToPrice?: false):
         }
       }
       if (numArr.length === 2) {
+        if (num < 0) {
+          return '-' + numStrArr.join('') + '.' + numArr[1]
+        }
         return numStrArr.join('') + '.' + numArr[1]
       } else {
+        if (num < 0) {
+          return '-' + numStrArr.join('')
+        }
         return numStrArr.join('')
       }
     } else {
@@ -696,6 +708,7 @@ function changeNumToHan(num: number): string {
   var fengexiaoshu = num.toString().split('.')
   var english = fengexiaoshu[0]
   var result = ''
+  english = num < 0 ? english.slice(1) : english
   for (var i = 0; i < english.length; i++) {
     var des_i = english.length - 1 - i // 倒序排列设值
     result = arr2[i] + result
@@ -717,6 +730,9 @@ function changeNumToHan(num: number): string {
     fengexiaoshu[1].split('').forEach((item: number) => {
       result += arr1[item]
     })
+  }
+  if (num < 0) {
+    return '负' + result
   }
   return result
 }

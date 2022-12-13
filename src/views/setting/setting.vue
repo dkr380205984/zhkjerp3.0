@@ -310,6 +310,8 @@
           <template v-if="cName === '半成品加工'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
+                <el-checkbox v-model="onlyDeleteProcess"
+                  @change="getHalfProcess()">查询已删除</el-checkbox>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true">添加加工工序</div>
                 <div class="btn backHoverOrange fr"
@@ -337,8 +339,9 @@
                   <div class="col">
                     <span class="opr hoverOrange"
                       @click="updateHalfProcess(item)">修改</span>
-                    <span class="opr hoverRed"
-                      @click="deleteHalfProcess(item.id)">删除</span>
+                    <span class="opr"
+                      :class="{'hoverRed':!onlyDeleteProcess,'hoverOrange':onlyDeleteProcess}"
+                      @click="deleteHalfProcess(item.id)">{{onlyDeleteProcess?'恢复':'删除'}}</span>
                   </div>
                 </div>
               </div>
@@ -355,6 +358,8 @@
           <template v-if="cName === '成品加工工序'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
+                <el-checkbox v-model="onlyDeleteProcess2"
+                  @change="getStaffProcess()">查询已删除</el-checkbox>
                 <div class="btn backHoverBlue fr"
                   @click="showPopup = true">添加成品加工工序</div>
                 <div class="btn backHoverOrange fr"
@@ -382,8 +387,9 @@
                   <div class="col">
                     <span class="opr hoverOrange"
                       @click="updateStaffProcess(item)">修改</span>
-                    <span class="opr hoverRed"
-                      @click="deleteStaffProcess(item.id)">删除</span>
+                    <span class="opr"
+                      :class="{'hoverRed':!onlyDeleteProcess2,'hoverOrange':onlyDeleteProcess2}"
+                      @click="deleteStaffProcess(item.id)">{{onlyDeleteProcess2?'恢复':'删除'}}</span>
                   </div>
                 </div>
               </div>
@@ -1026,7 +1032,10 @@
                       fit="cover"></el-image>
                   </div>
                   <div class="col">
-                    <span class="opr hoverRed">删除</span>
+                    <span class="opr hoverOrange"
+                      @click="updateCraft(item)">修改</span>
+                    <span class="opr hoverRed"
+                      @click="deleteCraft(item.id)">删除</span>
                   </div>
                 </div>
               </div>
@@ -1124,7 +1133,7 @@
               </div>
               <div class="pageCtn">
                 <el-pagination background
-                  :page-size="5"
+                  :page-size="10"
                   layout="prev, pager, next"
                   :total="yarnTotal1"
                   :current-page.sync="yarnPage1"
@@ -1216,7 +1225,7 @@
               </div>
               <div class="pageCtn">
                 <el-pagination background
-                  :page-size="5"
+                  :page-size="10"
                   layout="prev, pager, next"
                   :total="yarnTotal2"
                   :current-page.sync="yarnPage2"
@@ -1319,7 +1328,7 @@
               </div>
               <div class="pageCtn">
                 <el-pagination background
-                  :page-size="5"
+                  :page-size="10"
                   layout="prev, pager, next"
                   :total="decorateMaterialTotal"
                   :current-page.sync="decorateMaterialPage">
@@ -1371,7 +1380,7 @@
               </div>
               <div class="pageCtn">
                 <el-pagination background
-                  :page-size="5"
+                  :page-size="10"
                   layout="prev, pager, next"
                   :total="packMaterialTotal"
                   :current-page.sync="packMaterialPage">
@@ -1417,7 +1426,7 @@
                   </div>
                   <div class="tbody">
                     <div class="trow"
-                      v-for="item in yarnPriceArr"
+                      v-for="item in yarnPriceList"
                       :key="item.id">
                       <div class="tcol">{{ item.client_name }}</div>
                       <div class="tcol noPad"
@@ -1451,7 +1460,8 @@
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="yarnPriceTotal"
-                  :current-page.sync="yarnPricePage">
+                  :current-page.sync="yarnPricePage"
+                  @current-change="getYarnPrice">
                 </el-pagination>
               </div>
             </div>
@@ -1493,7 +1503,7 @@
                   </div>
                   <div class="tbody">
                     <div class="trow"
-                      v-for="item in mianliaoPriceArr"
+                      v-for="item in mianliaoPriceList"
                       :key="item.id">
                       <div class="tcol">{{ item.client_name }}</div>
                       <div class="tcol noPad"
@@ -1526,7 +1536,8 @@
                   :page-size="5"
                   layout="prev, pager, next"
                   :total="mianliaoPriceTotal"
-                  :current-page.sync="mianliaoPricePage">
+                  :current-page.sync="mianliaoPricePage"
+                  @current-change="getMianliaoPrice">
                 </el-pagination>
               </div>
             </div>
@@ -4497,13 +4508,16 @@
         <div class="main"
           style="width: 920px">
           <div class="titleCtn">
-            <div class="text">新增纱线模拟</div>
+            <div class="text">{{craftInfo.id?'修改':'新增'}}纱线模拟</div>
             <div class="closeCtn"
-              @click="showPopup = false">
+              @click="showPopup = false;resetCraft()">
               <i class="el-icon-close"></i>
             </div>
           </div>
           <div class="contentCtn">
+            <div class="explanation red"
+              style="margin:20px"
+              v-if="craftInfo.id">注意！修改纱线请重新模拟图片上传！</div>
             <div class="row">
               <div class="label isMust">模拟名称：</div>
               <div class="info">
@@ -4622,7 +4636,7 @@
           </div>
           <div class="oprCtn">
             <div class="btn borderBtn"
-              @click="showPopup = false">取消</div>
+              @click="showPopup = false;resetCraft()">取消</div>
             <div class="btn backHoverOrange"
               @click="initCraftCanvas">模拟纱线</div>
             <div class="btn backHoverBlue"
@@ -4757,29 +4771,32 @@
                   v-model="item.client_id_arr"
                   :options="yarnClientList"
                   filterable
-                  @change="
-                    (ev) => {
-                      item.client_id = ev[2]
-                    }
-                  "></el-cascader>
+                  :show-all-levels="false"
+                  @change="(ev) => {item.client_id = ev[2]}"></el-cascader>
                 <div class="blue"
                   v-if="item.client_name"
-                  style="width:220px;margin-right:12px;display:inline-block">{{item.client_name}}</div>
+                  style="width:220px;margin-right:12px;display:inline-block">{{item.client_name}}
+                  <sapn class="hoverOrange"
+                    style="cursor:pointer"
+                    @click="item.client_name=''">重选</sapn>
+                </div>
                 <el-input placeholder="输入报价金额"
                   v-model="item.price"
-                  style="width:220px;margin-right:12px">
+                  style="width:220px;margin-right:12px"
+                  @input="$forceUpdate()">
                   <template slot="append">元/kg</template>
                 </el-input>
                 <el-input style="width:250px"
                   placeholder="备注信息"
-                  v-model="item.desc">
+                  v-model="item.desc"
+                  @input="$forceUpdate()">
                 </el-input>
                 <div v-if="index===0"
                   class="info_btn hoverBlue"
-                  @click="$addItem(yarnInfo1.price_info,{price:'',client_id:'',client_id_arr:[],desc:''})">添加</div>
+                  @click="$addItem(yarnInfo1.price_info,{price:'',client_id:'',client_id_arr:[],desc:''});$forceUpdate()">添加</div>
                 <div v-else
                   class="info_btn hoverRed"
-                  @click="$deleteItem(yarnInfo1.price_info,index)">删除</div>
+                  @click="$deleteItem(yarnInfo1.price_info,index);$forceUpdate()">删除</div>
               </div>
             </div>
           </div>
@@ -4847,29 +4864,32 @@
                   v-model="item.client_id_arr"
                   :options="mianliaoClientList"
                   filterable
-                  @change="
-                    (ev) => {
-                      item.client_id = ev[2]
-                    }
-                  "></el-cascader>
+                  @change="(ev) => {item.client_id = ev[2]}"
+                  :show-all-levels="false"></el-cascader>
                 <div class="blue"
                   v-if="item.client_name"
-                  style="width:220px;margin-right:12px;display:inline-block">{{item.client_name}}</div>
+                  style="width:220px;margin-right:12px;display:inline-block">{{item.client_name}}
+                  <sapn class="hoverOrange"
+                    style="cursor:pointer"
+                    @click="item.client_name=''">重选</sapn>
+                </div>
                 <el-input placeholder="输入报价金额"
                   v-model="item.price"
-                  style="width:220px;margin-right:12px">
+                  style="width:220px;margin-right:12px"
+                  @input="$forceUpdate()">
                   <template slot="append">元/kg</template>
                 </el-input>
                 <el-input style="width:250px"
                   placeholder="备注信息"
-                  v-model="item.desc">
+                  v-model="item.desc"
+                  @input="$forceUpdate()">
                 </el-input>
                 <div v-if="index===0"
                   class="info_btn hoverBlue"
-                  @click="$addItem(yarnInfo1.price_info,{price:'',client_id:'',client_id_arr:[],desc:''})">添加</div>
+                  @click="$addItem(yarnInfo2.price_info,{price:'',client_id:'',client_id_arr:[],desc:''});$forceUpdate()">添加</div>
                 <div v-else
                   class="info_btn hoverRed"
-                  @click="$deleteItem(yarnInfo1.price_info,index)">删除</div>
+                  @click="$deleteItem(yarnInfo2.price_info,index);$forceUpdate()">删除</div>
               </div>
             </div>
           </div>
@@ -4971,29 +4991,32 @@
                   v-model="item.client_id_arr"
                   :options="decorateMaterialClientList"
                   filterable
-                  @change="
-                    (ev) => {
-                      item.client_id = ev[2]
-                    }
-                  "></el-cascader>
+                  @change="(ev) => {item.client_id = ev[2]}"
+                  :show-all-levels="false"></el-cascader>
                 <div class="blue"
                   v-if="item.client_name"
-                  style="width:220px;margin-right:12px;display:inline-block">{{item.client_name}}</div>
+                  style="width:220px;margin-right:12px;display:inline-block">{{item.client_name}}
+                  <sapn class="hoverOrange"
+                    style="cursor:pointer"
+                    @click="item.client_name=''">重选</sapn>
+                </div>
                 <el-input placeholder="输入报价金额"
                   v-model="item.price"
-                  style="width:220px;margin-right:12px">
+                  style="width:220px;margin-right:12px"
+                  @input="$forceUpdate()">
                   <template slot="append">元/kg</template>
                 </el-input>
                 <el-input style="width:250px"
                   placeholder="备注信息"
-                  v-model="item.desc">
+                  v-model="item.desc"
+                  @input="$forceUpdate()">
                 </el-input>
                 <div v-if="index===0"
                   class="info_btn hoverBlue"
-                  @click="$addItem(decorateMaterialInfo.price_info,{price:'',client_id:'',client_id_arr:[],desc:''})">添加</div>
+                  @click="$addItem(decorateMaterialInfo.price_info,{price:'',client_id:'',client_id_arr:[],desc:''});$forceUpdate()">添加</div>
                 <div v-else
                   class="info_btn hoverRed"
-                  @click="$deleteItem(decorateMaterialInfo.price_info,index)">删除</div>
+                  @click="$deleteItem(decorateMaterialInfo.price_info,index);$forceUpdate()">删除</div>
               </div>
             </div>
           </div>
@@ -5052,29 +5075,32 @@
                   v-model="item.client_id_arr"
                   :options="packMaterialClientList"
                   filterable
-                  @change="
-                    (ev) => {
-                      item.client_id = ev[2]
-                    }
-                  "></el-cascader>
+                  :show-all-levels="false"
+                  @change="(ev) => {item.client_id = ev[2]}"></el-cascader>
                 <div class="blue"
                   v-if="item.client_name"
-                  style="width:220px;margin-right:12px;display:inline-block">{{item.client_name}}</div>
+                  style="width:220px;margin-right:12px;display:inline-block">{{item.client_name}}
+                  <sapn class="hoverOrange"
+                    style="cursor:pointer"
+                    @click="item.client_name=''">重选</sapn>
+                </div>
                 <el-input placeholder="输入报价金额"
                   v-model="item.price"
-                  style="width:220px;margin-right:12px">
+                  style="width:220px;margin-right:12px"
+                  @input="$forceUpdate()">
                   <template slot="append">元/kg</template>
                 </el-input>
                 <el-input style="width:250px"
                   placeholder="备注信息"
-                  v-model="item.desc">
+                  v-model="item.desc"
+                  @input="$forceUpdate()">
                 </el-input>
                 <div v-if="index===0"
                   class="info_btn hoverBlue"
-                  @click="$addItem(packMaterialInfo.price_info,{price:'',client_id:'',client_id_arr:[],desc:''})">添加</div>
+                  @click="$addItem(packMaterialInfo.price_info,{price:'',client_id:'',client_id_arr:[],desc:''});$forceUpdate()">添加</div>
                 <div v-else
                   class="info_btn hoverRed"
-                  @click="$deleteItem(packMaterialInfo.price_info,index)">删除</div>
+                  @click="$deleteItem(packMaterialInfo.price_info,index);$forceUpdate()">删除</div>
               </div>
             </div>
           </div>
@@ -5723,14 +5749,13 @@
                     <span class="text">半成品加工</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select v-model="itemHalfProcess.name"
+                    <el-cascader v-model="itemHalfProcess.name"
                       placeholder="请选择加工工序"
-                      clearable>
-                      <el-option v-for="item in halfProcessStore"
-                        :key="item.name"
-                        :value="item.name"
-                        :label="item.name"></el-option>
-                    </el-select>
+                      :show-all-levels="false"
+                      :props="{emitPath:false}"
+                      clearable
+                      :options="halfProcessStore">
+                    </el-cascader>
                   </div>
                 </div>
                 <div class="col">
@@ -5772,14 +5797,13 @@
                     <span class="text">成品加工</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select v-model="itemFinishedProcess.name"
+                    <el-cascader v-model="itemFinishedProcess.name"
                       placeholder="请选择加工工序"
-                      clearable>
-                      <el-option v-for="item in finishedList"
-                        :key="item.value"
-                        :label="item.value"
-                        :value="item.value"></el-option>
-                    </el-select>
+                      :show-all-levels="false"
+                      :props="{emitPath:false}"
+                      clearable
+                      :options="finishedList">
+                    </el-cascader>
                   </div>
                 </div>
                 <div class="col">
@@ -6238,6 +6262,8 @@ export default Vue.extend({
       qrCodeUrl: '',
       postData: { token: '' },
       onlyDelete: false,
+      onlyDeleteProcess: false,
+      onlyDeleteProcess2: false,
       yarnLoading: false,
       yarnKeyword1: '',
       yarnKeyword2: '',
@@ -7040,7 +7066,6 @@ export default Vue.extend({
       quotedPriceProductPage: 1,
       quotedPriceProductUpdate: false,
       weaveList: [{ value: '针织织造' }, { value: '梭织织造' }, { value: '制版费' }],
-      finishedList: [{ value: '车标' }, { value: '包装' }, { value: '人工' }, { value: '检验' }, { value: '水洗' }],
       companyInfo: {
         alias: '',
         logo: '',
@@ -7198,6 +7223,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.$message.success('保存成功')
             this.showPopup = false
+            this.resetCraft()
           }
           this.getCraftList()
         })
@@ -7437,6 +7463,51 @@ export default Vue.extend({
             this.craftTotal = res.data.data.total
           }
         })
+    },
+    updateCraft(info: CraftParameter) {
+      this.craftInfo = info
+      this.showPopup = true
+    },
+    deleteCraft(id: number) {
+      this.$confirm('是否删除该纱线模拟?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          craft
+            .parameterDelete({
+              id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message.success('删除成功')
+                this.getCraftList()
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    resetCraft() {
+      this.craftInfo = {
+        id: '',
+        name: '',
+        image_url: '',
+        diameter: 4,
+        twist_flag: 0,
+        twist_thickness: 4, // 捻粗细：下拉框选择密不密
+        twist_number: 10, // 捻数量：下拉框选择密不密
+        twist_angle: 1, // 捻角度：下拉框选择
+        hairiness_flag: 1, // 是否需要毛羽:0不需要，1.毛边 2.毛羽 3.圈圈
+        hairiness_length: 2, // 毛羽长度，下拉框
+        circle_number: 2,
+        hairiness_density: 30 // 毛羽密度，百分比
+      }
     },
     getModuleChild(name: string, detailInfo: any[]) {
       this.userNavSon = name
@@ -8718,6 +8789,7 @@ export default Vue.extend({
     getHalfProcess() {
       process
         .list({
+          only_delete: this.onlyDeleteProcess ? 1 : 0,
           type: 2
         })
         .then((res) => {
@@ -8726,7 +8798,7 @@ export default Vue.extend({
         })
 
       processType.list({ type: 2 }).then((res) => {
-        this.halfProcessTypeList = res.data.data
+        this.halfProcessTypeList = res.data.data.filter((item: any) => item.id !== -1)
       })
     },
     saveHalfProcess() {
@@ -8783,7 +8855,7 @@ export default Vue.extend({
       this.processHalfDescList = ['']
     },
     deleteHalfProcess(id: number) {
-      this.$confirm('是否删除该工序?', '提示', {
+      this.$confirm('是否' + (this.onlyDeleteProcess ? '恢复' : '删除') + '该工序?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -8797,7 +8869,7 @@ export default Vue.extend({
               if (res.data.status) {
                 this.$message({
                   type: 'success',
-                  message: '删除成功!'
+                  message: (this.onlyDeleteProcess ? '恢复' : '删除') + '成功!'
                 })
                 this.getHalfProcess()
               }
@@ -8863,6 +8935,7 @@ export default Vue.extend({
     getStaffProcess() {
       process
         .list({
+          only_delete: this.onlyDeleteProcess2 ? 1 : 0,
           type: 3
         })
         .then((res) => {
@@ -8870,7 +8943,7 @@ export default Vue.extend({
           this.staffProcessTotal = this.staffProcessList.length
         })
       processType.list({ type: 3 }).then((res) => {
-        this.staffProcessTypeList = res.data.data
+        this.staffProcessTypeList = res.data.data.filter((item: any) => item.id !== -1)
       })
     },
     saveStaffProcess() {
@@ -8927,7 +9000,7 @@ export default Vue.extend({
       this.processStaffDescList = ['']
     },
     deleteStaffProcess(id: number) {
-      this.$confirm('是否删除该工序?', '提示', {
+      this.$confirm('是否' + (this.onlyDeleteProcess2 ? '恢复' : '删除') + '该工序?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -8941,7 +9014,7 @@ export default Vue.extend({
               if (res.data.status) {
                 this.$message({
                   type: 'success',
-                  message: '删除成功!'
+                  message: (this.onlyDeleteProcess2 ? '恢复' : '删除') + '成功!'
                 })
                 this.getStaffProcess()
               }
@@ -9689,7 +9762,7 @@ export default Vue.extend({
     },
     getYarn(type: 1 | 2 | 3, ifAll?: boolean) {
       this.yarnLoading = true
-      const limit = ifAll ? 999 : 5
+      const limit = ifAll ? 999 : 10
       yarn
         .list({
           type: type,
@@ -9877,7 +9950,8 @@ export default Vue.extend({
     },
     updatePackMaterial(info: any) {
       this.packMaterialInfo = info
-       this.packMaterialInfo.price_info = info.rel_price.length > 0? info.rel_price: [{desc: '',price: '',client_id: '',client_id_arr: []}]
+      this.packMaterialInfo.price_info =
+        info.rel_price.length > 0 ? info.rel_price : [{ desc: '', price: '', client_id: '', client_id_arr: [] }]
       this.showPopup = true
     },
     deletePackMaterial(id: number) {
@@ -10135,9 +10209,14 @@ export default Vue.extend({
           getInfoApi: 'getPackMaterialAsync'
         },
         {
-          checkWhich: 'api/halfProcess',
+          checkWhich: 'api/halfProcessType',
           getInfoMethed: 'dispatch',
-          getInfoApi: 'getHalfProcessAsync'
+          getInfoApi: 'getHalfProcessTypeAsync'
+        },
+        {
+          checkWhich: 'api/staffProcessType',
+          getInfoMethed: 'dispatch',
+          getInfoApi: 'getStaffProcessTypeAsync'
         }
       ])
       quotedPrice.settingList().then((res) => {
@@ -10345,13 +10424,15 @@ export default Vue.extend({
       ])
       yarnPrice
         .list({
+          limit: 5,
+          page: this.yarnPricePage,
           keyword: this.yarnPriceKeyword1,
           material_type: 1
         })
         .then((res) => {
           if (res.data.status) {
-            this.yarnPriceList = res.data.data
-            this.yarnPriceTotal = this.yarnPriceList.length
+            this.yarnPriceList = res.data.data.items
+            this.yarnPriceTotal = res.data.data.total
           }
         })
     },
@@ -10388,10 +10469,6 @@ export default Vue.extend({
               errMsg: '请选择纱线名称'
             },
             {
-              key: 'attribute',
-              errMsg: '请选择纱线属性'
-            },
-            {
               key: 'material_color',
               errMsg: '请输入纱线颜色'
             },
@@ -10404,7 +10481,7 @@ export default Vue.extend({
       if (!formCheck) {
         yarnPrice.create(this.yarnPrice).then((res) => {
           if (res.data.status) {
-            this.$message.success('添加成功')
+            this.$message.success('保存成功')
             this.getYarnPrice()
             this.showPopup = false
             this.yarnPriceUpdate = false
@@ -10451,13 +10528,15 @@ export default Vue.extend({
       ])
       yarnPrice
         .list({
+          limit: 5,
+          page: this.mianliaoPricePage,
           keyword: this.yarnPriceKeyword2,
           material_type: 2
         })
         .then((res) => {
           if (res.data.status) {
-            this.mianliaoPriceList = res.data.data
-            this.mianliaoPriceTotal = this.mianliaoPriceList.length
+            this.mianliaoPriceList = res.data.data.items
+            this.mianliaoPriceTotal = res.data.data.total
           }
         })
     },
@@ -10504,19 +10583,19 @@ export default Vue.extend({
         type: 'warning'
       })
         .then(() => {
-          // yarnPrice
-          //   .delete({
-          //     id: id
-          //   })
-          //   .then((res) => {
-          //     if (res.data.status) {
-          //       this.$message({
-          //         type: 'success',
-          //         message: '删除成功!'
-          //       })
-          //       this.getMianliaoPrice()
-          //     }
-          //   })
+          yarnPrice
+            .delete({
+              id: id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.getMianliaoPrice()
+              }
+            })
         })
         .catch(() => {
           this.$message({
@@ -10648,7 +10727,32 @@ export default Vue.extend({
     },
     // 半成品加工工序——报价单设置用
     halfProcessStore() {
-      return this.$store.state.api.halfProcess.arr
+      return this.$store.state.api.halfProcessType.arr.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.name,
+          children: item.children.map((itemChild: any) => {
+            return {
+              label: itemChild.name,
+              value: itemChild.name
+            }
+          })
+        }
+      })
+    },
+    finishedList() {
+      return this.$store.state.api.staffProcessType.arr.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.name,
+          children: item.children.map((itemChild: any) => {
+            return {
+              label: itemChild.name,
+              value: itemChild.name
+            }
+          })
+        }
+      })
     },
     styleArr(): StyleInfo[] {
       return this.styleList.slice((this.stylePage - 1) * 5, this.stylePage * 5)
@@ -10693,10 +10797,10 @@ export default Vue.extend({
       return this.yarnColorList.slice((this.yarnColorPage - 1) * 5, this.yarnColorPage * 5)
     },
     decorateMaterialArr(): DecorateMaterialInfo[] {
-      return this.decorateMaterialList.slice((this.decorateMaterialPage - 1) * 5, this.decorateMaterialPage * 5)
+      return this.decorateMaterialList.slice((this.decorateMaterialPage - 1) * 10, this.decorateMaterialPage * 10)
     },
     packMaterialArr(): PackMaterialInfo[] {
-      return this.packMaterialList.slice((this.packMaterialPage - 1) * 5, this.packMaterialPage * 5)
+      return this.packMaterialList.slice((this.packMaterialPage - 1) * 10, this.packMaterialPage * 10)
     },
     groupArr(): GroupInfo[] {
       return this.groupInfoList.slice((this.groupPage - 1) * 5, this.groupPage * 5)
@@ -10706,12 +10810,6 @@ export default Vue.extend({
     },
     quotedPriceProductArr(): QuotedPriceProduct[] {
       return this.quotedPriceProductList.slice((this.quotedPriceProductPage - 1) * 5, this.quotedPriceProductPage * 5)
-    },
-    yarnPriceArr(): YarnPrice[] {
-      return this.yarnPriceList.slice((this.yarnPricePage - 1) * 5, this.yarnPricePage * 5)
-    },
-    mianliaoPriceArr(): YarnPrice[] {
-      return this.mianliaoPriceList.slice((this.mianliaoPricePage - 1) * 5, this.mianliaoPricePage * 5)
     }
   },
   watch: {

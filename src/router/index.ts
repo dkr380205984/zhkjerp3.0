@@ -104,6 +104,10 @@ const routes: Array<RouteConfig> = [
     name: '大屏发货列表',
     component: () => import('../views/deliveryVisualization.vue')
   }, {
+    path: '/order/print',
+    name: '生产布置单打印',
+    component: () => import('../views/order/print.vue')
+  }, {
     path: '/index',
     name: 'index',
     component: () => import('../views/index.vue'),

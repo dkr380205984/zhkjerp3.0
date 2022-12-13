@@ -551,12 +551,12 @@ export default Vue.extend({
         typeObj = {
           doc_code: ['关联单号(选填)', ''],
           client_zh: ['客户/单位名称(必填，系统简称)'],
-          invoice_number: ['发票代码(选填)',''],
-          invoice_code: ['发票号码(选填)',''],
-          type: ['发票类型(默认专票)','专票'],
+          invoice_number: ['发票代码(选填)', ''],
+          invoice_code: ['发票号码(选填)', ''],
+          type: ['发票类型(默认专票)', '专票'],
           tax_rate: ['税率(必填)'],
           price: ['开票金额(税价合计，必填)'],
-          desc: ['备注信息(选填)', ''],
+          desc: ['备注信息(选填)', '']
         }
       } else if (type === '收款单据') {
         typeObj = {
@@ -687,8 +687,6 @@ export default Vue.extend({
       this.loading = true
       client
         .financialList({
-          sort_col: this.sortCol,
-          sort: this.sort,
           limit: this.limit,
           page: this.page,
           name: this.keyword,
@@ -703,7 +701,15 @@ export default Vue.extend({
           if (res.data.status) {
             this.total = res.data.data.items.length
             this.totalList = res.data.data.items
-            this.list = res.data.data.items.slice((this.page - 1) * this.limit, this.page * this.limit)
+            this.list = res.data.data.items
+              .sort((a: any, b: any) => {
+                if (this.sort === 'desc') {
+                  return b[this.sortCol] - a[this.sortCol]
+                } else {
+                  return a[this.sortCol] - b[this.sortCol]
+                }
+              })
+              .slice((this.page - 1) * this.limit, this.page * this.limit)
             this.totalData = res.data.data.additional
           }
           this.loading = false

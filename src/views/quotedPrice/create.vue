@@ -696,12 +696,15 @@
                     placement="top">
                     <i class="el-icon-refresh hoverGreen fr"
                       style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
-                      @click="$checkCommonInfo([{
-                        checkWhich: 'api/halfProcess',
-                        getInfoMethed: 'dispatch',
-                        getInfoApi: 'getHalfProcessAsync',
-                        forceUpdate:true
-                      }])"></i>
+                      @click="      
+                      $checkCommonInfo([
+                        {
+                          checkWhich: 'api/halfProcessType',
+                          getInfoMethed: 'dispatch',
+                          getInfoApi: 'getHalfProcessTypeAsync',
+                          forceUpdate: true
+                        }
+                      ])"></i>
                   </el-tooltip>
                   <el-tooltip class="item"
                     effect="dark"
@@ -774,9 +777,9 @@
                     <i class="el-icon-refresh hoverGreen fr"
                       style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
                       @click="$checkCommonInfo([{
-                        checkWhich: 'api/staffProcess',
+                        checkWhich: 'api/staffProcessType',
                         getInfoMethed: 'dispatch',
-                        getInfoApi: 'getStaffProcessAsync',
+                        getInfoApi: 'getStaffProcessTypeAsync',
                         forceUpdate:true
                       }])"></i>
                   </el-tooltip>
@@ -1579,8 +1582,26 @@ export default Vue.extend({
     getModules(ev: number) {
       const finded = this.searchQuotedPriceList.find((item: any) => item.id === ev)
       this.quotedPriceInfo.product_data[this.productIndex].weave_data = JSON.parse(finded.weave_data)
-      this.quotedPriceInfo.product_data[this.productIndex].semi_product_data = JSON.parse(finded.semi_product_data)
-      this.quotedPriceInfo.product_data[this.productIndex].production_data = JSON.parse(finded.production_data)
+      this.quotedPriceInfo.product_data[this.productIndex].semi_product_data = JSON.parse(finded.semi_product_data).map(
+        (item: any) => {
+          return {
+            name: item.name,
+            total_price: item.total_price,
+            desc: item.desc,
+            process_name_arr: ['全部', item.name]
+          }
+        }
+      )
+      this.quotedPriceInfo.product_data[this.productIndex].production_data = JSON.parse(finded.production_data).map(
+        (item: any) => {
+          return {
+            name: item.name,
+            total_price: item.total_price,
+            desc: item.desc,
+            process_name_arr: ['全部', item.name]
+          }
+        }
+      )
       this.quotedPriceInfo.product_data[this.productIndex].pack_material_data = JSON.parse(finded.pack_material_data)
       // this.quotedPriceInfo.product_data[this.productIndex].other_fee_data = JSON.parse(finded.other_fee_data)
     },
@@ -1706,12 +1727,13 @@ export default Vue.extend({
     },
     successFile(response: { hash: string; key: string }, index: number) {
       this.quotedPriceInfo.product_data[index].image_data.push('https://file.zwyknit.com/' + response.key)
+      console.log(this.quotedPriceInfo.product_data[index])
       // @ts-ignore
-      this.quotedPriceInfo.product_data[index].file_list.push({
-        // @ts-ignore
-        name: response.key,
-        url: 'https://file.zwyknit.com/' + response.key
-      })
+      // this.quotedPriceInfo.product_data[index].file_list.push({
+      //   // @ts-ignore
+      //   name: response.key,
+      //   url: 'https://file.zwyknit.com/' + response.key
+      // })
     },
     beforeRemove(file: any, index: any, fileList: any) {
       // 上传超过10M自动删除
@@ -2069,6 +2091,12 @@ export default Vue.extend({
         item.material_data.forEach((item) => {
           // @ts-ignore
           this.getYarnPrice(item.tree_data.split(','), item)
+        })
+        item.semi_product_data.forEach((item) => {
+          item.process_name_arr = ['全部', item.name]
+        })
+        item.production_data.forEach((item) => {
+          item.process_name_arr = ['全部', item.name]
         })
       })
       this.quotedPriceInfo.tree_data = this.quotedPriceInfo.tree_data

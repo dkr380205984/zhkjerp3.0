@@ -129,7 +129,7 @@
             <div class="col">操作</div>
           </div>
           <div class="row fontSmall"
-            v-for="item in inspectionList.filter((item)=>item.type===1)"
+            v-for="item in inspectionList1"
             :key="item.id">
             <div class="col"
               :class="{'blue':item.type===1,'orange':item.type===2,'green':item.type===3}">{{item.type===1?'检验入库':item.type===2?'生产出库':'成品入库'}}</div>
@@ -171,6 +171,14 @@
               </div>
             </div>
           </div>
+          <div class="pageCtn">
+            <el-pagination background
+              :page-size="10"
+              layout="prev, pager, next"
+              :total="inspectionList.filter((item)=>item.type===1).length"
+              :current-page.sync="page1">
+            </el-pagination>
+          </div>
         </div>
       </div>
       <div class="listCtn"
@@ -191,7 +199,7 @@
             <div class="col">操作</div>
           </div>
           <div class="row fontSmall"
-            v-for="item in inspectionList.filter((item)=>item.type===2)"
+            v-for="item in inspectionList2"
             :key="item.id">
             <div class="col"
               :class="{'blue':item.type===1,'orange':item.type===2}">{{item.type===1?'检验入库':'生产出库'}}</div>
@@ -215,6 +223,14 @@
                   @click="deleteInspection(item)">删除</span>
               </div>
             </div>
+          </div>
+          <div class="pageCtn">
+            <el-pagination background
+              :page-size="10"
+              layout="prev, pager, next"
+              :total="inspectionList.filter((item)=>item.type===2).length"
+              :current-page.sync="page2">
+            </el-pagination>
           </div>
         </div>
       </div>
@@ -256,6 +272,14 @@
                   @click="deleteInspection(item)">删除</span>
               </div>
             </div>
+          </div>
+          <div class="pageCtn">
+            <el-pagination background
+              :page-size="10"
+              layout="prev, pager, next"
+              :total="inspectionList.filter((item)=>item.type===3).length"
+              :current-page.sync="page3">
+            </el-pagination>
           </div>
         </div>
       </div>
@@ -744,7 +768,10 @@ export default Vue.extend({
       ],
       cprkFlag: false,
       cprkProList: [],
-      checkListLength: 0
+      checkListLength: 0,
+      page1: 1,
+      page2: 1,
+      page3: 1
     }
   },
   methods: {
@@ -1214,6 +1241,17 @@ export default Vue.extend({
             message: '已取消删除'
           })
         })
+    }
+  },
+  computed: {
+    inspectionList1(): any[] {
+      return this.inspectionList.filter((item) => item.type === 1).slice((this.page1 - 1) * 10, this.page1 * 10)
+    },
+    inspectionList2(): any[] {
+      return this.inspectionList.filter((item) => item.type === 2).slice((this.page2 - 1) * 10, this.page2 * 10)
+    },
+    inspectionList3(): any[] {
+      return this.inspectionList.filter((item) => item.type === 3).slice((this.page3 - 1) * 10, this.page3 * 10)
     }
   },
   mounted() {
