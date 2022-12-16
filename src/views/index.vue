@@ -75,7 +75,7 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="myModule">我的权限</el-dropdown-item>
                 <el-dropdown-item command="changePas">修改密码</el-dropdown-item>
-                <el-dropdown-item command="myEquipment">我的设备</el-dropdown-item>
+                <!-- <el-dropdown-item command="myEquipment">我的设备</el-dropdown-item> -->
                 <el-dropdown-item command="logout"
                   divided>退出登录</el-dropdown-item>
               </el-dropdown-menu>

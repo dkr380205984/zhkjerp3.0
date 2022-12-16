@@ -2094,6 +2094,11 @@ export default Vue.extend({
             }, 0)
             return totalWarp + warpWidth
           }, 0)
+          // 有反面的时候要注意可能经纬向有数据不存在的情况,这时候数据就等于正面的
+          if (this.craftInfo.warp_data.back_status === 1 || this.craftInfo.weft_data.back_status === 1) {
+            this.warpCanvasBack = this.warpCanvasBack.length > 0 ? this.warpCanvasBack : this.warpCanvas
+            this.weftCanvasBack = this.weftCanvasBack.length > 0 ? this.weftCanvasBack : this.weftCanvas
+          }
           this.warpCanvasBack.reduce((totalWarp, itemWarp) => {
             let warpWidth = warpWidthPJ * warpCK[itemWarp.color] // 重新计算经向，用穿筘法
             let reverseWeft = [...this.weftCanvasBack].reverse() // 纬向要反着画,我也不知道为啥,注意reverse会改变原数组,所以修改下指向
@@ -2368,56 +2373,99 @@ export default Vue.extend({
       const warpCanvasMainData = this.initMainMatrix(warpCanvasData, this.weftDistance)
       // const weftCanvasBackMainData = this.initMainMatrix(weftBackCanvasData, this.warpDistance)
       // const warpCanvasBackMainData = this.initMainMatrix(warpBackCanvasData, this.weftDistance)
-      this.drawMainReal(this.ctx, weftCanvasMainData, 'weft')
-      this.drawMainReal(this.ctx, warpCanvasMainData, 'warp')
-      this.drawTwistShadow(this.ctx, weftCanvasData, 'weft', this.craftYarnWeft.twist_flag)
-      this.drawTwistShadow(this.ctx, warpCanvasData, 'warp', this.craftYarnWarp.twist_flag)
-      this.drawLine(
-        this.ctx,
-        weftCanvasData,
-        'weft',
-        this.craftYarnWeft.hairiness_density,
-        this.craftYarnWeft.hairiness_flag === 2 || this.craftYarnWeft.hairiness_flag === 4,
-        this.craftYarnWeft.hairiness_flag === 3 || this.craftYarnWeft.hairiness_flag === 4
-      )
-      this.drawLine(
-        this.ctx,
-        warpCanvasData,
-        'warp',
-        this.craftYarnWarp.hairiness_density,
-        this.craftYarnWarp.hairiness_flag === 2 || this.craftYarnWarp.hairiness_flag === 4,
-        this.craftYarnWarp.hairiness_flag === 3 || this.craftYarnWarp.hairiness_flag === 4
-      )
-      if (this.craftInfo.warp_data.back_status === 1 || this.craftInfo.weft_data.back_status === 1) {
-        const matrixBackData = this.changeLineToMatrix(weftBackRealData, warpBackRealData)
-        const weftBackCanvasData = this.initLineFn(matrixBackData, 'weft', matrixWidth)
-        const warpBackCanvasData = this.initLineFn(this.transposeArr(matrixBackData), 'warp', matrixHeight)
-        const weftCanvasBackMainData = this.initMainMatrix(weftBackCanvasData, this.warpDistance)
-        const warpCanvasBackMainData = this.initMainMatrix(warpBackCanvasData, this.weftDistance)
-        this.drawMainReal(this.ctxBack, weftCanvasBackMainData, 'weft')
-        this.drawMainReal(this.ctxBack, warpCanvasBackMainData, 'warp')
-        this.drawTwistShadow(this.ctxBack, weftBackCanvasData, 'weft', this.craftYarnWeft.twist_flag)
-        this.drawTwistShadow(this.ctxBack, warpBackCanvasData, 'warp', this.craftYarnWarp.twist_flag)
-        this.drawLine(
-          this.ctxBack,
-          weftBackCanvasData,
-          'weft',
-          this.craftYarnWeft.hairiness_density,
-          this.craftYarnWeft.hairiness_flag === 2 || this.craftYarnWeft.hairiness_flag === 4,
-          this.craftYarnWeft.hairiness_flag === 3 || this.craftYarnWeft.hairiness_flag === 4
-        )
-        this.drawLine(
-          this.ctxBack,
-          warpBackCanvasData,
-          'warp',
-          this.craftYarnWarp.hairiness_density,
-          this.craftYarnWarp.hairiness_flag === 2 || this.craftYarnWarp.hairiness_flag === 4,
-          this.craftYarnWarp.hairiness_flag === 3 || this.craftYarnWarp.hairiness_flag === 4
-        )
-      }
+
+      // console.log(weftRealData, warpRealData)
+      // return
+      // this.drawMainReal(this.ctx, weftCanvasMainData, 'weft')
+      // this.drawMainReal(this.ctx, warpCanvasMainData, 'warp')
+      // this.drawTwistShadow(this.ctx, weftCanvasData, 'weft', this.craftYarnWeft.twist_flag)
+      // this.drawTwistShadow(this.ctx, warpCanvasData, 'warp', this.craftYarnWarp.twist_flag)
+      // this.drawLine(
+      //   this.ctx,
+      //   weftCanvasData,
+      //   'weft',
+      //   this.craftYarnWeft.hairiness_density,
+      //   this.craftYarnWeft.hairiness_flag === 2 || this.craftYarnWeft.hairiness_flag === 4,
+      //   this.craftYarnWeft.hairiness_flag === 3 || this.craftYarnWeft.hairiness_flag === 4
+      // )
+      // this.drawLine(
+      //   this.ctx,
+      //   warpCanvasData,
+      //   'warp',
+      //   this.craftYarnWarp.hairiness_density,
+      //   this.craftYarnWarp.hairiness_flag === 2 || this.craftYarnWarp.hairiness_flag === 4,
+      //   this.craftYarnWarp.hairiness_flag === 3 || this.craftYarnWarp.hairiness_flag === 4
+      // )
+      // if (this.craftInfo.warp_data.back_status === 1 || this.craftInfo.weft_data.back_status === 1) {
+      //   // 画反面的时候经向或者纬向没数据就用正面的
+      //   if (weftBackRealData.length === 0) {
+      //     weftBackRealData = weftRealData
+      //   }
+      //   if (warpBackRealData.length === 0) {
+      //     warpBackRealData = warpRealData
+      //   }
+      //   const matrixBackData = this.changeLineToMatrix(weftBackRealData, warpBackRealData)
+      //   const weftBackCanvasData = this.initLineFn(matrixBackData, 'weft', matrixWidth)
+      //   const warpBackCanvasData = this.initLineFn(this.transposeArr(matrixBackData), 'warp', matrixHeight)
+      //   const weftCanvasBackMainData = this.initMainMatrix(weftBackCanvasData, this.warpDistance)
+      //   const warpCanvasBackMainData = this.initMainMatrix(warpBackCanvasData, this.weftDistance)
+      //   this.drawMainReal(this.ctxBack, weftCanvasBackMainData, 'weft')
+      //   this.drawMainReal(this.ctxBack, warpCanvasBackMainData, 'warp')
+      //   this.drawTwistShadow(this.ctxBack, weftBackCanvasData, 'weft', this.craftYarnWeft.twist_flag)
+      //   this.drawTwistShadow(this.ctxBack, warpBackCanvasData, 'warp', this.craftYarnWarp.twist_flag)
+      //   this.drawLine(
+      //     this.ctxBack,
+      //     weftBackCanvasData,
+      //     'weft',
+      //     this.craftYarnWeft.hairiness_density,
+      //     this.craftYarnWeft.hairiness_flag === 2 || this.craftYarnWeft.hairiness_flag === 4,
+      //     this.craftYarnWeft.hairiness_flag === 3 || this.craftYarnWeft.hairiness_flag === 4
+      //   )
+      //   this.drawLine(
+      //     this.ctxBack,
+      //     warpBackCanvasData,
+      //     'warp',
+      //     this.craftYarnWarp.hairiness_density,
+      //     this.craftYarnWarp.hairiness_flag === 2 || this.craftYarnWarp.hairiness_flag === 4,
+      //     this.craftYarnWarp.hairiness_flag === 3 || this.craftYarnWarp.hairiness_flag === 4
+      //   )
+      // }
+
+      // 绘制完围巾本部了，开始绘制须头
+      // 第一步：确认须头长度
+      const tasselsWarpWidth = Number(this.craftInfo.weft_data.rangwei) / 2 / (this.craftCuxiFlag ? 0.3 : 0.2)
+      const tasselsWeftWidthLeft =
+        Number(this.craftInfo.warp_data.reed_width_explain[0]) / (this.craftCuxiFlag ? 0.3 : 0.2)
+      const tasselsWeftWidthRight =
+        Number(this.craftInfo.warp_data.reed_width_explain[2]) / (this.craftCuxiFlag ? 0.3 : 0.2)
+      // 第二步：获取经纬向须头数据,用realData+缝隙生成新的数据
+      const tasselsWarp = this.changeLineToTassels(warpRealData)
+      const tasselsWeft = this.changeLineToTassels(weftRealData)
+      console.log(tasselsWarp)
+      // 第三步：根据用户输入的捻参数确认须头坐标点阵
+      const tasselsWarpForNum = tasselsWarpWidth / Math.SQRT2
+      const tasselsWarpMatrix = this.getTasselsMatrix(tasselsWarp, [10, this.canvasHeight - 10], this.warpDistance)
       window.setTimeout(() => {
         this.changeCanvasToImage()
       })
+    },
+    // 把经纬向线数据转化成须头所需要的线数据，其实就是展开
+    changeLineToTassels(data: LineData[]): Array<{ width: number; color: string }> {
+      const returnData: { width: number; color: string }[] = []
+      data.forEach((item) => {
+        for (let i = 0; i < item.number; i++) {
+          returnData.push({
+            color: 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')',
+            width: (item.width || item.height) as number
+          })
+        }
+      })
+      return returnData
+    },
+    // 把须头坐标矩阵确定下来:coordinate初始坐标，distance缝隙距离
+    getTasselsMatrix(data: Array<{ width: number; color: string }>, coordinate: number[], distance: number) {
+      const returnData = []
+      // 先把data根据捻在一起的数据划分成均匀的矩阵
     },
     // 把经纬向线数据转化成点阵
     changeLineToMatrix(weftData: LineData[], warpData: LineData[]): PointData[][] {
@@ -3700,7 +3748,557 @@ export default Vue.extend({
       })
       .then((res) => {
         if (res.data.status) {
-          this.craftInfo = res.data.data
+          this.craftInfo = {
+            id: '1062',
+            size: '36X180+2X15',
+            user_name: '\u674e\u5143\u6e05',
+            user_phone: 13750877341,
+            craft_code: 'KRGY-2200873',
+            weight: '220',
+            title: '\u8d5b\u529b3.7\u652f\u5708\u5708\u6c99\u683c\u5b50\u957f\u5dfe',
+            desc: null,
+            reserve_column: null,
+            other_info: null,
+            is_default: 1,
+            is_share: 0,
+            edit_idea: null,
+            is_draft: 2,
+            product_id: 3951,
+            part_id: null,
+            order_id: 2977,
+            order_time_id: 3036,
+            product_info: {
+              product_code: 'KRCP-2201751-01Y',
+              system_code: 'KRCP-2201751-01Y',
+              desc: null,
+              product_id: 3951,
+              style_code: 'SLKR-2554',
+              category_name: '\u56f4\u5dfe',
+              secondary_category_name: '\u68ad\u7ec7',
+              style_data: [{ id: 102, name: '\u683c\u5b50' }],
+              color_data: [{ id: 6898, name: '\u9ed1\u7c73' }],
+              size_data: [{ id: 4324, name: '\u5747\u7801', size_info: '36*180+16', weight: '200' }],
+              component_data: [{ id: null, name: null, number: 100 }],
+              image_data: ['https://file.zwyknit.com/1670916948000.jpg']
+            },
+            warp_data: {
+              id: 4027,
+              craft_id: 1062,
+              assist_material: [{ material_id: null, apply: [null], number: null }],
+              warp_rank: [
+                [1, 2, 3, 4, 5, 6, 7],
+                [0, 1, 0, 2, 0, 3, 0],
+                ['21', '11', '11', '24', '9', '6', '21'],
+                ['2', null, null, null, null, null, null],
+                [null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null]
+              ],
+              merge_data_back: [],
+              merge_data: [{ row: 3, col: 0, rowspan: 1, colspan: 6, removed: false }],
+              warp_rank_back: [[], [], [], [], [], [], []],
+              weft: 185,
+              side: '\u5149\u8fb9',
+              width: null,
+              machine: '\u5251\u6746\u673a',
+              reed: 9,
+              reed_method: 2,
+              reed_width_explain: [null, '52', null],
+              reed_width: '52',
+              back_status: 2,
+              sum_up: null,
+              weight_calculate_formula: 1,
+              drafting_method: null,
+              created_at: '2022-12-13T07:50:56.000000Z',
+              updated_at: '2022-12-13T07:50:56.000000Z',
+              rel_material: [
+                {
+                  id: 16332,
+                  craft_id: 1062,
+                  material_id: 250,
+                  apply: [0, 1, 2, 3],
+                  type: 1,
+                  type_material: 1,
+                  created_at: '2022-12-13T07:50:56.000000Z',
+                  updated_at: '2022-12-13T07:50:56.000000Z'
+                },
+                {
+                  id: 16333,
+                  craft_id: 1062,
+                  material_id: null,
+                  apply: [null],
+                  type: 1,
+                  type_material: 1,
+                  created_at: '2022-12-13T07:50:56.000000Z',
+                  updated_at: '2022-12-13T07:50:56.000000Z'
+                }
+              ],
+              rel_color: [
+                {
+                  id: 11202,
+                  craft_id: 1062,
+                  color_id: 6898,
+                  color_scheme: [
+                    {
+                      color: '#F5F4E8',
+                      name: '\u5976\u767d',
+                      number: 103,
+                      material_weight: [
+                        {
+                          material_type: 1,
+                          material_id: 250,
+                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                          weight: 0.06546165
+                        }
+                      ]
+                    },
+                    {
+                      color: '#A97F27',
+                      name: '\u9a7c\u8272',
+                      number: 22,
+                      material_weight: [
+                        {
+                          material_type: 1,
+                          material_id: 250,
+                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                          weight: 0.0139821
+                        }
+                      ]
+                    },
+                    {
+                      color: '#000000',
+                      name: '\u9ed1\u8272',
+                      number: 48,
+                      material_weight: [
+                        {
+                          material_type: 1,
+                          material_id: 250,
+                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                          weight: 0.030506400000000003
+                        }
+                      ]
+                    },
+                    {
+                      color: '#B79A7E',
+                      name: '\u5361\u5176\u7070',
+                      number: 12,
+                      material_weight: [
+                        {
+                          material_type: 1,
+                          material_id: 250,
+                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                          weight: 0.007626600000000001
+                        }
+                      ]
+                    }
+                  ],
+                  weave_number: '10',
+                  type: 1,
+                  created_at: '2022-12-13T07:50:56.000000Z',
+                  updated_at: '2022-12-13T07:50:56.000000Z'
+                }
+              ],
+              material_data: [
+                {
+                  material_id: 250,
+                  material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                  apply: [0, 1, 2, 3],
+                  type_material: 1
+                },
+                { material_id: null, material_name: null, apply: [null], type_material: 1 }
+              ],
+              color_data: [
+                {
+                  color_id: 6898,
+                  color_name: '\u9ed1\u7c73',
+                  color_scheme: [
+                    {
+                      color: '#F5F4E8',
+                      name: '\u5976\u767d',
+                      number: 103,
+                      material_weight: [
+                        {
+                          material_type: 1,
+                          material_id: 250,
+                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                          weight: 0.06546165
+                        }
+                      ]
+                    },
+                    {
+                      color: '#A97F27',
+                      name: '\u9a7c\u8272',
+                      number: 22,
+                      material_weight: [
+                        {
+                          material_type: 1,
+                          material_id: 250,
+                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                          weight: 0.0139821
+                        }
+                      ]
+                    },
+                    {
+                      color: '#000000',
+                      name: '\u9ed1\u8272',
+                      number: 48,
+                      material_weight: [
+                        {
+                          material_type: 1,
+                          material_id: 250,
+                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                          weight: 0.030506400000000003
+                        }
+                      ]
+                    },
+                    {
+                      color: '#B79A7E',
+                      name: '\u5361\u5176\u7070',
+                      number: 12,
+                      material_weight: [
+                        {
+                          material_type: 1,
+                          material_id: 250,
+                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                          weight: 0.007626600000000001
+                        }
+                      ]
+                    }
+                  ],
+                  weave_number: '10'
+                }
+              ]
+            },
+            weft_data: {
+              id: 4023,
+              craft_id: 1062,
+              weft_rank: [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+                [0, 2, 0, 3, 0, 2, 0, 3, 0, 2, 0, 3, 0, 2, 0, 3, 0, 2, 0],
+                [
+                  '44',
+                  '12',
+                  '71',
+                  '4',
+                  '26',
+                  '18',
+                  '68',
+                  '4',
+                  '26',
+                  '26',
+                  '68',
+                  '4',
+                  '18',
+                  '26',
+                  '71',
+                  '4',
+                  '21',
+                  '21',
+                  '44'
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              ],
+              weft_rank_back: [[], [], [], [], [], [], []],
+              merge_data: [],
+              back_status: 2,
+              merge_data_back: [],
+              assist_material: [{ material_id: null, apply: [null], number: null }],
+              organization: null,
+              peifu_explain: null,
+              peifu: '48.00',
+              weimi: '3.200',
+              shangchiya: null,
+              xiachiya: null,
+              neichang: 180,
+              rangwei: '43.00',
+              total: 576,
+              created_at: '2022-12-13T07:50:56.000000Z',
+              updated_at: '2022-12-13T07:50:56.000000Z',
+              rel_material: [
+                {
+                  id: 16334,
+                  craft_id: 1062,
+                  material_id: 250,
+                  apply: [0, 1, 2, 3],
+                  type: 2,
+                  type_material: 1,
+                  created_at: '2022-12-13T07:50:56.000000Z',
+                  updated_at: '2022-12-13T07:50:56.000000Z'
+                },
+                {
+                  id: 16335,
+                  craft_id: 1062,
+                  material_id: null,
+                  apply: [null],
+                  type: 2,
+                  type_material: 1,
+                  created_at: '2022-12-13T07:50:56.000000Z',
+                  updated_at: '2022-12-13T07:50:56.000000Z'
+                }
+              ],
+              rel_color: [
+                {
+                  id: 11203,
+                  craft_id: 1062,
+                  color_id: 6898,
+                  color_scheme: [
+                    {
+                      color: '#F5F4E8',
+                      name: '\u5976\u767d',
+                      number: 457,
+                      material_weight: [
+                        {
+                          material_type: 1,
+                          material_id: 250,
+                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                          weight: 0.06772739999999998
+                        }
+                      ]
+                    },
+                    {
+                      color: '#A97F27',
+                      name: '\u9a7c\u8272',
+                      material_weight: [
+                        {
+                          material_type: 1,
+                          material_id: 250,
+                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                          weight: 0
+                        }
+                      ],
+                      number: 0
+                    },
+                    {
+                      color: '#000000',
+                      name: '\u9ed1\u8272',
+                      number: 103,
+                      material_weight: [
+                        {
+                          material_type: 1,
+                          material_id: 250,
+                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                          weight: 0.015264599999999996
+                        }
+                      ]
+                    },
+                    {
+                      color: '#B79A7E',
+                      name: '\u5361\u5176\u7070',
+                      number: 16,
+                      material_weight: [
+                        {
+                          material_type: 1,
+                          material_id: 250,
+                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                          weight: 0.0023711999999999995
+                        }
+                      ]
+                    }
+                  ],
+                  weave_number: '10',
+                  type: 2,
+                  created_at: '2022-12-13T07:50:56.000000Z',
+                  updated_at: '2022-12-13T07:50:56.000000Z'
+                }
+              ],
+              material_data: [
+                {
+                  material_id: 250,
+                  material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                  apply: [0, 1, 2, 3],
+                  type_material: 1
+                },
+                { material_id: null, material_name: null, apply: [null], type_material: 1 }
+              ],
+              color_data: [
+                {
+                  color_id: 6898,
+                  color_name: '\u9ed1\u7c73',
+                  color_scheme: [
+                    {
+                      color: '#F5F4E8',
+                      name: '\u5976\u767d',
+                      number: 457,
+                      material_weight: [
+                        {
+                          material_type: 1,
+                          material_id: 250,
+                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                          weight: 0.06772739999999998
+                        }
+                      ]
+                    },
+                    {
+                      color: '#A97F27',
+                      name: '\u9a7c\u8272',
+                      material_weight: [
+                        {
+                          material_type: 1,
+                          material_id: 250,
+                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                          weight: 0
+                        }
+                      ],
+                      number: 0
+                    },
+                    {
+                      color: '#000000',
+                      name: '\u9ed1\u8272',
+                      number: 103,
+                      material_weight: [
+                        {
+                          material_type: 1,
+                          material_id: 250,
+                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                          weight: 0.015264599999999996
+                        }
+                      ]
+                    },
+                    {
+                      color: '#B79A7E',
+                      name: '\u5361\u5176\u7070',
+                      number: 16,
+                      material_weight: [
+                        {
+                          material_type: 1,
+                          material_id: 250,
+                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                          weight: 0.0023711999999999995
+                        }
+                      ]
+                    }
+                  ],
+                  weave_number: '10'
+                }
+              ]
+            },
+            image_data: [],
+            draft_method: {
+              PM: [
+                {
+                  value: '3,4,5,6',
+                  repeat: 1,
+                  number: '185',
+                  total: 0,
+                  children: [{ number: null, children: [{ value: null, repeat: null }] }]
+                }
+              ],
+              PMFlag: 'normal',
+              GL: [
+                [
+                  [
+                    { value: '1,3,5', mark: null },
+                    { value: '2,4,6', mark: null },
+                    { value: null, mark: null }
+                  ]
+                ]
+              ],
+              GLFlag: 'normal',
+              GLRepeat: [[{ start: null, end: null, repeat: null }]],
+              PMDesc: null,
+              GLDesc: null
+            },
+            yarn_color_weight: null,
+            peise_yarn_weight: null,
+            yarn_coefficient: [
+              {
+                id: 250,
+                name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
+                value: '0.285',
+                chuankou: '2'
+              }
+            ],
+            product_time: '2022-12-20',
+            calc_weight_way: 1,
+            process_data: [
+              { process_id: 287, process_name: '\u62c9\u6bdb' },
+              { process_id: 291, process_name: '\u6413\u987b' }
+            ],
+            create_time: '2022-12-13T07:43:11.000000Z'
+          } as any
           if (this.craftInfo.is_draft === 1) {
             this.$message('请完善草稿信息')
             this.$router.push('/craft/update?id=' + this.$route.query.id)

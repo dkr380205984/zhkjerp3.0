@@ -318,7 +318,7 @@
         <div class="fl"
           style="line-height: 56px; margin-left: 24px">
           <div class="btn backHoverOrange"
-            @click="getMatStsList">
+            @click="getMatStsList(updatePriceInfo.date)">
             <span class="text">修改调取单价</span>
           </div>
         </div>
@@ -535,15 +535,12 @@
                       <div class="tcol">属性</div>
                       <div class="tcol">调取单价</div>
                       <div class="tcol">调取总数</div>
-                      <div class="tcol">已结算单价</div>
-                      <div class="tcol">修改结算单价</div>
-                      <div class="tcol"
-                        v-if="$route.query.type === '纱线原料单位' || $route.query.type === '面料原料单位'">操作</div>
+                      <div class="tcol">修改调取单价</div>
                     </div>
                   </div>
                 </div>
               </div>
-              <!-- <div class="tbody">
+              <div class="tbody">
                 <div class="trow"
                   v-if="this.updatePriceOriginList.length === 0">
                   <div class="tcol red"
@@ -561,29 +558,18 @@
                       <div class="tcol">{{ itemChild.material_name }}</div>
                       <div class="tcol">{{ itemChild.material_color }}</div>
                       <div class="tcol">{{ itemChild.attribute }}</div>
-                      <div class="tcol blue">{{ itemChild.price }}元/kg</div>
+                      <div class="tcol blue">{{ itemChild.price || 0 }}元/kg</div>
                       <div class="tcol">{{ itemChild.number }}kg</div>
-                      <div class="tcol"
-                        :class="{ blue: itemChild.settle_price, gray: !itemChild.settle_price }">
-                        {{ itemChild.settle_price === 0 ? '未填写' : itemChild.settle_price + '元' }}
-                      </div>
                       <div class="tcol">
                         <div class="elCtn">
                           <el-input placeholder="单价"
                             v-model="itemChild.new_settle_price"></el-input>
                         </div>
                       </div>
-                      <div class="tcol"
-                        v-if="$route.query.type === '纱线原料单位' || $route.query.type === '面料原料单位'">
-                        <span class="btn backHoverBlue"
-                          style="padding: 0 8px;"
-                          @click="updatePriceFlag = false
-                        searchAboutList(item.created_at,itemChild.material_name)">查询关联单据</span>
-                      </div>
                     </div>
                   </div>
                 </div>
-              </div> -->
+              </div>
             </div>
           </div>
         </div>
@@ -600,7 +586,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { order, listSetting, client, check, store, materialStock } from '@/assets/js/api'
+import { order, listSetting, client, check, store, materialStock, updateStorePirce } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
 import { ListSetting } from '@/types/list'
 import { limitArr } from '@/assets/js/dictionary'
@@ -646,7 +632,9 @@ export default Vue.extend({
         date: [],
         client_id: null
       },
+      updatePriceYarnList: [],
       updatePriceShowList: [],
+      updatePriceOriginList: [],
       list: [],
       limitList: limitArr,
       showExport: false,
@@ -999,22 +987,137 @@ export default Vue.extend({
         return restaurant.value && restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
       }
     },
-    getMatStsList() {
-      this.updatePriceFlag = true
+    getMatStsList(date: string[]) {
+      materialStock
+        .stsList({
+          start_time: date[0],
+          end_time: date[1]
+        })
+        .then((res) => {
+          this.loading = true
+          if (res.data.status) {
+            this.updatePriceYarnList = Array.from(new Set(res.data.data.map((item: any) => item.material_name))).map(
+              (item) => {
+                return {
+                  value: item
+                }
+              }
+            )
+            const mergeList = this.$mergeData(
+              res.data.data.map((item: any) => {
+                const date = item.created_at.split('-')
+                item.created_at = date[0] + '年' + date[1] + '月'
+                return item
+              }),
+              {
+                mainRule: 'created_at',
+                childrenRule: {
+                  mainRule: ['material_name', 'attribute', 'price', 'settle_price']
+                }
+              }
+            )
+            mergeList.forEach((item: any) => {
+              item.childrenMergeInfo.forEach((itemChild: any) => {
+                itemChild.baipeiNum = itemChild.childrenMergeInfo
+                  .filter((itemMin: any) => itemMin.material_color === '白胚')
+                  .reduce((total: number, cur: any) => {
+                    return total + Number(cur.number)
+                  }, 0)
+                itemChild.seshaNum = itemChild.childrenMergeInfo
+                  .filter((itemMin: any) => itemMin.material_color !== '白胚')
+                  .reduce((total: number, cur: any) => {
+                    return total + Number(cur.number)
+                  }, 0)
+              })
+              item.realChildren = []
+              item.childrenMergeInfo.forEach((itemChild: any) => {
+                if (itemChild.baipeiNum > 0) {
+                  item.realChildren.push({
+                    new_settle_price: '',
+                    settle_price: itemChild.settle_price,
+                    material_name: itemChild.material_name,
+                    price: itemChild.price,
+                    attribute: itemChild.attribute,
+                    number: itemChild.baipeiNum,
+                    material_color: '白胚'
+                  })
+                }
+                if (itemChild.seshaNum > 0) {
+                  item.realChildren.push({
+                    new_settle_price: '',
+                    settle_price: itemChild.settle_price,
+                    material_name: itemChild.material_name,
+                    price: itemChild.price,
+                    attribute: itemChild.attribute,
+                    number: itemChild.seshaNum,
+                    material_color: '色纱'
+                  })
+                }
+              })
+            })
+            this.updatePriceOriginList = mergeList
+            this.updatePriceFlag = true
+            this.loading = false
+
+            this.getMatShowList()
+          }
+        })
     },
-    saveUpdatePrice() {},
+    saveUpdatePrice() {
+      const formData: any[] = []
+      this.updatePriceShowList.forEach((item: any) => {
+        item.realChildren.forEach((itemChild: any) => {
+          if (itemChild.new_settle_price) {
+            formData.push({
+              material_name: itemChild.material_name,
+              material_color: itemChild.material_color,
+              settle_price: itemChild.new_settle_price,
+              attribute: itemChild.attribute,
+              price: itemChild.price,
+              start_time: this.updatePriceInfo.date[0],
+              end_time: this.updatePriceInfo.date[1]
+            })
+          }
+        })
+      })
+      if (formData.length > 0) {
+        updateStorePirce({ data: formData }).then((res) => {
+          if (res.data.status) {
+            this.$message.success('修改成功')
+          }
+          this.updatePriceInfo = {
+            material_name: '',
+            material_color: '',
+            settle_price: '',
+            attribute: '',
+            start_time: '',
+            end_time: '',
+            date: [new Date().getFullYear() + '-01-01', this.$formatDate(new Date())],
+            client_id: null
+          }
+          this.updatePriceOriginList = []
+          this.updatePriceShowList = []
+          this.updatePriceFlag = false
+        })
+      } else {
+        this.$message.error('请填写修改单价')
+      }
+    },
     // 前端做筛选
     getMatShowList() {
       this.updatePriceShowList = this.$clone(this.updatePriceOriginList).filter((item: any) => {
         item.realChildren = item.realChildren.filter((itemChild: any) => {
           let nameFlag = this.updatePriceInfo.material_name
-            ? itemChild.material_name.toLowerCase().indexOf(this.updatePriceInfo.material_name.toLowerCase()) === 0
+            ? itemChild.material_name &&
+              itemChild.material_name.toLowerCase().indexOf(this.updatePriceInfo.material_name.toLowerCase()) === 0
             : true
           let attrFlag = this.updatePriceInfo.attribute
-            ? itemChild.attribute.toLowerCase().indexOf(this.updatePriceInfo.attribute.toLowerCase()) === 0
+            ? itemChild.attribute &&
+              itemChild.attribute.toLowerCase().indexOf(this.updatePriceInfo.attribute.toLowerCase()) === 0
             : true
           let colorFlag = this.updatePriceInfo.material_color
-            ? itemChild.material_color.toLowerCase().indexOf(this.updatePriceInfo.material_color.toLowerCase()) === 0
+            ? itemChild.material_color &&
+              itemChild.material_color.toLowerCase().indexOf(this.updatePriceInfo.material_color.toLowerCase()) === 0
             : true
           return nameFlag && attrFlag && colorFlag
         })
@@ -1323,6 +1426,7 @@ export default Vue.extend({
     }
   },
   created() {
+    this.updatePriceInfo.date = [new Date().getFullYear() + '-01-01', this.$formatDate(new Date())]
     store.list().then((res) => {
       this.storeList = res.data.data
     })

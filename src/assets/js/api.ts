@@ -58,6 +58,10 @@ const systemMessage = (params?: { start_time: string, end_time: string }) => htt
 
 // 修改结算单价
 const updateSettlePrice = (params: any) => http.post(`${baseUrl}/update/settle/price`, params, 'application/json')
+
+// 修改调取单价
+const updateStorePirce = (params: any) => http.post(`${baseUrl}/store/log/update/price`, params, 'application/json')
+
 //工厂信息
 const companyInfo = {
   detail: () => http.get(`${baseUrl}/company/info`, {}),
@@ -807,6 +811,10 @@ const materialProcess = {
 // 物料出入库
 import { MaterialStockInfo } from '@/types/materialStock'
 const materialStock = {
+  stsList: (params: {
+    start_time: string
+    end_time: string
+  }) => http.get(`${baseUrl}/store/log/info/lists`, params),
   create: (params: { data: MaterialStockInfo[] }) => http.post(`${baseUrl}/store/log/save`, params, 'application/json'),
   list: (params: {
     action_type?: number | Array<number> // 搜调取单的时候用，一般是出库单10
@@ -1556,6 +1564,7 @@ export {
   productionProgress,
   invoice,
   updateSettlePrice,
+  updateStorePirce,
   chartsApi,
   processType
 }

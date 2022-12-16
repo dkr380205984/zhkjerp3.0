@@ -117,7 +117,7 @@
                 <div class="trow">
                   <div class="tcol"
                     :style="tableLineHeight"
-                    style="flex:0.3">{{ itemChild.material_color }}</div>
+                    style="flex:0.3">{{ itemChild.attribute }}</div>
                   <div class="tcol"
                     :style="tableLineHeight"
                     style="flex:0.3">

@@ -5454,7 +5454,6 @@ export default Vue.extend({
             this.listLoading = false
           })
       } else if (this.clientType === 3) {
-        console.log(this.materialProcessFilter.material_name[2])
         // 物料加工单
         materialProcess
           .list({
