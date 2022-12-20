@@ -174,7 +174,7 @@
           <div class="pageCtn">
             <el-pagination background
               :page-size="10"
-              layout="prev, pager, next"
+              layout="prev, pager, next, jumper"
               :total="inspectionList.filter((item)=>item.type===1).length"
               :current-page.sync="page1">
             </el-pagination>
@@ -227,7 +227,7 @@
           <div class="pageCtn">
             <el-pagination background
               :page-size="10"
-              layout="prev, pager, next"
+              layout="prev, pager, next, jumper"
               :total="inspectionList.filter((item)=>item.type===2).length"
               :current-page.sync="page2">
             </el-pagination>
@@ -276,7 +276,7 @@
           <div class="pageCtn">
             <el-pagination background
               :page-size="10"
-              layout="prev, pager, next"
+              layout="prev, pager, next, jumper"
               :total="inspectionList.filter((item)=>item.type===3).length"
               :current-page.sync="page3">
             </el-pagination>

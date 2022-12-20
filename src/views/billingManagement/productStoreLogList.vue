@@ -12,13 +12,14 @@
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialProcessingOrder')">原料加工单</div>
         <div class="tab" @click="$router.push('/billingManagement/productionPlan')">生产计划单</div>
         <div class="tab" @click="$router.push('/billingManagement/inspectionReceiptDocument')">检验入库单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/workshopSettlementLog')">车间结算日志</div>
+        <div class="tab" @click="$router.push('/billingManagement/workshopSettlementLog')">结算日志-计件</div>
+        <div class="tab" @click="$router.push('/billingManagement/workshopPayTimeLog')">结算日志-计时</div>
         <div class="tab" @click="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">辅料订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/transportationDeliveryOrder')">运输出库单</div>
-        <div class="tab" @click="$router.push('/billingManagement/deductionForm')">我方扣款单据</div>
       </div>
       <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
+        <div class="tab" @click="$router.push('/billingManagement/deductionForm')">我方扣款单据</div>
         <div class="tab" @click="$router.push('/billingManagement/ourInvoiceList')">我方发票单据</div>
         <div class="tab" @click="$router.push('/billingManagement/oppositeInvoicing')">对方发票单据</div>
         <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
@@ -28,7 +29,6 @@
         <div class="tab" @click="$router.push('/billingManagement/fabricWarehousing')">面料出入库单据</div>
         <div class="tab" @click="$router.push('/billingManagement/auxiliaryInOutList')">辅料出入库单据</div>
         <div class="tab active">产品出入库单据</div>
-        <div style="width: 100px"></div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
       </div>
@@ -136,7 +136,7 @@
                 <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
               </div>
               <div class="col" style="flex: 1.3">{{ item.code }}</div>
-              <div class="col">{{ stockTypeList[item.action_type - 1].name }}</div>
+              <div class="col">{{item.action_type_name || '无出入库类型'}}</div>
               <div class="col">
                 <template v-if="item.action_type === 1">
                   <div class="changeCtn">
@@ -269,7 +269,7 @@
           <el-pagination
             background
             :page-size="limit"
-            layout="prev, pager, next"
+            layout="prev, pager, next, jumper"
             :total="total"
             :current-page.sync="page"
             @current-change="changeRouter"
@@ -369,6 +369,9 @@ export default Vue.extend({
       loading: true,
       showCharts: false,
       list: [],
+      storeList: [],
+      action_type: '',
+      store_id: '',
       checkFlag: false,
       checkAllPlan: false,
       reviewerParams: {
@@ -652,6 +655,9 @@ export default Vue.extend({
             this.total = res.data.data.total
             res.data.data.items.forEach((item: any) => {
               item.detail = {}
+              item.action_type_name = this.stockTypeList.find((itemFind:any) => {
+                return itemFind.value === item.action_type
+              })?.name
             })
             this.list = res.data.data.items
             this.additional = res.data.data.additional
@@ -695,7 +701,9 @@ export default Vue.extend({
   },
   created() {
     store.list().then((res) => {
-      this.storeList = res.data.data
+      this.storeList = res.data.data.filter((item:any) => {
+        return item.store_type === 5
+      })
     })
     this.getFilters()
     this.getList()

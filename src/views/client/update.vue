@@ -412,9 +412,9 @@ export default Vue.extend({
   },
   computed: {
     clientTypeList() {
-      return this.$store.state.api.clientType.arr.filter(
+      return this.$clone(this.$store.state.api.clientType.arr.filter(
         (item: { type: string }) => Number(item.type) === Number(this.$route.query.type)
-      )
+      ))
     }
   },
   mounted() {

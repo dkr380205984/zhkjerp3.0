@@ -1047,7 +1047,7 @@
                     <div class="col numberWidth">{{ $toFixed(item.total_number, 3, true) }}</div>
                     <div class="col numberWidth">{{ $toFixed(item.total_price, 3, true) }}</div>
                     <div class="col numberWidth"
-                      :class="{ red: item.total_push_number > item.total_number }">
+                      :class="{ red: Number(item.total_push_number) > Number(item.total_number), orange: Number(item.total_push_number) < Number(item.total_number) }">
                       {{ $toFixed(item.total_push_number, 3, true) }}
                     </div>
                     <div class="col numberWidth">{{ $toFixed(item.total_push_price, 3, true) }}</div>
@@ -1466,7 +1466,7 @@
                     <div class="col numberWidth">{{ $toFixed(item.total_number, 3, true) }}</div>
                     <div class="col numberWidth">{{ $toFixed(item.total_price, 3, true) }}</div>
                     <div class="col numberWidth"
-                      :class="{ red: Number(item.total_push_number) < Number(item.total_number) }">
+                      :class="{ red: Number(item.total_push_number) > Number(item.total_number), orange: Number(item.total_push_number) < Number(item.total_number) }">
                       {{ $toFixed(item.total_push_number, 3, true) }}
                     </div>
                     <div class="col numberWidth">{{ $toFixed(item.total_push_price, 3, true) }}</div>
@@ -2707,7 +2707,7 @@
             <div class="pageCtn">
               <el-pagination background
                 :page-size="10"
-                layout="prev, pager, next"
+                layout="prev, pager, next, jumper"
                 :total="listTotal"
                 :current-page.sync="listPage"
                 @current-change="getBill">
@@ -3006,7 +3006,7 @@
             <div class="pageCtn">
               <el-pagination background
                 :page-size="10"
-                layout="prev, pager, next"
+                layout="prev, pager, next, jumper"
                 :total="subTotal"
                 :current-page.sync="subPage"
                 @current-change="getSupList">
@@ -3180,7 +3180,7 @@
           <div class="pageCtn fr">
             <el-pagination background
               :page-size="10"
-              layout="prev, pager, next"
+              layout="prev, pager, next, jumper"
               :total="clientDateList.length"
               :current-page.sync="clientDatePage"
               @current-change="changeSelectClient">
@@ -3353,7 +3353,7 @@
           <div class="pageCtn fr">
             <el-pagination background
               :page-size="10"
-              layout="prev, pager, next"
+              layout="prev, pager, next, jumper"
               :total="clientDateList.length"
               :current-page.sync="clientDatePage"
               @current-change="changeSelectClient">
@@ -3522,7 +3522,7 @@
           <div class="pageCtn fr">
             <el-pagination background
               :page-size="10"
-              layout="prev, pager, next"
+              layout="prev, pager, next, jumper"
               :total="clientDateList.length"
               :current-page.sync="clientDatePage"
               @current-change="changeSelectClient">
@@ -3654,7 +3654,7 @@
           <div class="pageCtn fr">
             <el-pagination background
               :page-size="10"
-              layout="prev, pager, next"
+              layout="prev, pager, next, jumper"
               :total="clientDateList.length"
               :current-page.sync="clientDatePage"
               @current-change="changeSelectClient">
@@ -3819,7 +3819,7 @@
           <div class="pageCtn fr">
             <el-pagination background
               :page-size="10"
-              layout="prev, pager, next"
+              layout="prev, pager, next, jumper"
               :total="clientDateList.length"
               :current-page.sync="clientDatePage"
               @current-change="changeSelectClient">
@@ -3926,7 +3926,7 @@
         <div class="pageCtn">
           <el-pagination background
             :page-size="5"
-            layout="prev, pager, next"
+            layout="prev, pager, next, jumper"
             :total="deductTotal"
             :current-page.sync="deductPage"
             @current-change="getDeductLogList">
@@ -4018,7 +4018,7 @@
         <div class="pageCtn">
           <el-pagination background
             :page-size="5"
-            layout="prev, pager, next"
+            layout="prev, pager, next, jumper"
             :total="paymentTotal"
             :current-page.sync="paymentPage"
             @current-change="getPaymentLogList">
@@ -4098,7 +4098,7 @@
             <div class="col">{{ item.rel_doc_code || '未关联' }}</div>
             <div class="col">{{ $toFixed(item.price, 3, true) }}元</div>
             <div class="col">{{ $toFixed(item.price_no_tax, 3, true) }}元</div>
-            <div class="col">{{ $toFixed(item.price_tax, 3, true) }}元</div>
+            <div class="col">{{ $toFixed(item.price_tax, 2, true) }}元</div>
             <div class="col">{{ item.invoice_code }}</div>
             <div class="col">{{ item.desc }}</div>
             <div class="col">{{ item.user_name }}</div>
@@ -4145,7 +4145,7 @@
         <div class="pageCtn">
           <el-pagination background
             :page-size="5"
-            layout="prev, pager, next"
+            layout="prev, pager, next, jumper"
             :total="invoiceTotal"
             :current-page.sync="invoicePage"
             @current-change="getInvoiceLogList">

@@ -1,5 +1,5 @@
 <template>
-  <div id="rawMaterialTransferOrder" v-loading="loading" class="bodyContainer">
+  <div id="workshopPayTimeLog" v-loading="loading" class="bodyContainer">
     <div class="module" v-loading="mainLoading" element-loading-text="正在导出文件中....请耐心等待">
       <div class="titleCtn">
         <div class="title">系统单据管理</div>
@@ -8,11 +8,12 @@
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialPlan')">原料计划单</div>
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialSupplement')">原料补充单</div>
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialPurchaseOrder')">原料订购单</div>
-        <div class="tab active">原料调取单</div>
+        <div class="tab" @click="$router.push('/billingManagement/rawMaterialTransferOrder')">原料调取单</div>
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialProcessingOrder')">原料加工单</div>
         <div class="tab" @click="$router.push('/billingManagement/productionPlan')">生产计划单</div>
         <div class="tab" @click="$router.push('/billingManagement/inspectionReceiptDocument')">检验入库单据</div>
         <div class="tab" @click="$router.push('/billingManagement/workshopSettlementLog')">结算日志-计件</div>
+        <div class="tab active">结算日志-计时</div>
         <div class="tab" @click="$router.push('/billingManagement/workshopPayTimeLog')">结算日志-计时</div>
         <div class="tab" @click="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">辅料订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
@@ -35,70 +36,27 @@
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input
-              v-model="keyword"
-              placeholder="筛选调取单号/订单号"
-              @keydown.enter.native="changeRouter"
-              @clear="changeRouter"
-              clearable
-            ></el-input>
+            <el-select @change="changeRouter()" placeholder="筛选员工" v-model="staff_id" filterable clearable>
+              <el-option v-for="item in staffList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
           </div>
           <div class="elCtn">
             <el-cascader
-              placeholder="筛选原料名称"
-              v-model="material_name"
-              :options="yarnTypeList"
-              clearable
+              v-model="process"
+              :options="processList"
+              @change="changeRouter"
+              :show-all-levels="false"
               filterable
-              @change="changeRouter"
-            ></el-cascader>
-          </div>
-          <div class="elCtn">
-            <el-select @change="changeRouter" v-model="store_id" placeholder="筛选仓库" clearable>
-              <el-option v-for="item in storeList" :key="item.id" :label="item.name" :value="item.id"></el-option>
-            </el-select>
-          </div>
-          <div class="elCtn">
-            <el-date-picker
-              v-model="date"
-              type="daterange"
-              align="right"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :picker-options="pickerOptions"
-              @change="changeRouter"
-              value-format="yyyy-MM-dd"
-            >
-            </el-date-picker>
-          </div>
-          <div class="btn borderBtn" @click="reset">重置</div>
-        </div>
-        <div class="filterCtn">
-          <div class="elCtn">
-            <el-select
-              @change="(ev) => getLocalStorage(ev, 'create_user')"
-              v-model="user_id"
-              placeholder="筛选创建人"
+              placeholder="工序筛选"
               clearable
-            >
-              <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value"></el-option>
-            </el-select>
+            ></el-cascader>
           </div>
           <div class="elCtn">
             <el-select @change="changeRouter" v-model="status" placeholder="筛选审核状态">
               <el-option value="null" label="全部"></el-option>
+              <el-option value="0" label="待审核"></el-option>
               <el-option value="1" label="已审核"></el-option>
-              <el-option value="2" label="待审核"></el-option>
-              <el-option value="3" label="状态异常"></el-option>
-            </el-select>
-          </div>
-          <div class="elCtn">
-            <el-select @change="changeRouter" v-model="order_type" placeholder="筛选单据类型" clearable>
-              <el-option label="全部" value=""></el-option>
-              <el-option label="订单" value="1"></el-option>
-              <el-option label="样单" value="2"></el-option>
+              <el-option value="2" label="已驳回"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
@@ -106,136 +64,133 @@
               <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
             </el-select>
           </div>
-          <div class="btn borderBtn backHoverBlue" style="color: white; padding: 1px 8px" @click="oneShowAll">
-            全部展开
+          <div class="btn borderBtn" @click="reset">重置</div>
+        </div>
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-select @change="changeRouter" v-model="time_type" placeholder="计时方式">
+              <el-option value="" label="全部"></el-option>
+              <el-option value="1" label="小时"></el-option>
+              <el-option value="2" label="天"></el-option>
+            </el-select>
           </div>
+          <!-- <div class="btn borderBtn backHoverBlue" style="color: white" @click="oneShowAll">全部展开</div> -->
         </div>
         <div class="list">
           <div class="row title">
             <div class="col" style="flex: 0.05">
               <el-checkbox v-model="checkAllPlan" @change="checkAll"></el-checkbox>
             </div>
-            <div class="col" style="flex: 1.2">调取单号</div>
-            <div class="col">关联订单号</div>
-            <div class="col">调取仓库</div>
-            <div class="col">合计调取数量</div>
-            <div class="col">合计调取金额</div>
-            <div class="col">合计入库数量</div>
-            <div class="col">合计入库金额</div>
+            <div class="col">序号</div>
+            <div class="col">员工姓名</div>
+            <div class="col">生产工序</div>
+            <div class="col">工序说明</div>
+            <div class="col">计时方式</div>
+            <div class="col">结算单价</div>
+            <div class="col">时长</div>
             <div class="col">审核状态</div>
-            <div class="col">创建人</div>
+            <div class="col">结算总价</div>
+            <div class="col">负责小组</div>
+            <div class="col">备注</div>
             <div class="col">创建时间</div>
-            <div class="col" style="flex: 0.94">操作</div>
+            <div class="col">创建人</div>
+            <div class="col">操作</div>
           </div>
           <div v-for="(item, index) in list" :key="index">
             <div class="row">
               <div class="col" style="flex: 0.05">
                 <el-checkbox v-model="item.checked" @change="$forceUpdate()"></el-checkbox>
               </div>
-              <div
-                class="col hoverBlue"
-                style="flex: 1.2; cursor: pointer"
-                @click="$router.push('/materialManage/detail?id=' + item.rel_doc_id)"
-              >
-                {{ item.code }}
-              </div>
-              <div
-                class="col hoverBlue"
-                style="
-                  cursor: pointer;
-                  white-space: nowrap;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  width:100px
-                  flex:unset;
-                  display:block;
-                "
-                :title="item.order_code || '无编号，点击查看详情'"
-                @click="
-                  $router.push(
-                    (item.order_type === 1 || item.order_type === null || item.order_type === undefined
-                      ? '/order/detail?id='
-                      : '/sampleOrder/detail?id=') + item.top_order_id
-                  )
-                "
-              >
-                <span v-if="item.order_type === 1" class="circle backOrange">订</span>
-                <span v-if="item.order_type === 2" class="circle backBlue">样</span>
-                {{ item.order_code || '无编号，点击查看详情' }}
-              </div>
-              <div class="col">{{ item.store }}</div>
-              <div class="col">{{ $toFixed(item.total_number, 3, true) }}</div>
-              <div class="col">{{ $toFixed(item.total_price, 3, true) }}</div>
-              <div class="col" :style="item.total_push_number > item.total_number ? 'color:red' : ''">
-                {{ $toFixed(item.total_push_number, 3, true) }}
-              </div>
-              <div class="col">{{ $toFixed(item.total_push_price, 3, true) }}</div>
               <div class="col">
-                <div v-if="item.is_check === 0" class="orange">未审核</div>
-                <div v-else-if="item.is_check === 1" class="blue">已通过</div>
-                <div v-else-if="item.is_check === 2" class="red">已驳回</div>
-                <div v-else class="red">状态异常</div>
+                {{ item.id }}
               </div>
-              <div class="col">{{ item.user_name }}</div>
+              <div class="col">{{ item.staff_name }}</div>
+              <div class="col">{{ item.process_name }}</div>
+              <div class="col">{{ item.process_desc || '无' }}</div>
+              <div class="col">
+                <div v-if="item.time_type == 1">天</div>
+                <div v-if="item.time_type == 2">小时</div>
+              </div>
+              <div class="col">{{ item.price }}元</div>
+              <div class="col" v-if="item.time_type == 1">{{ item.time_count }}天</div>
+              <div class="col" v-if="item.time_type == 2">{{ item.time_count }}小时</div>
+              <div v-if="item.is_check === 0" class="col orange">审核中</div>
+              <div v-if="item.is_check === 1" class="col blue">通过</div>
+              <div v-if="item.is_check === 2" class="col red">不通过</div>
+              <div class="col">{{ (item.time_count * item.price).toFixed(3) || "0.000" }}</div>
+              <div class="col">{{ item.group_name || '无' }}</div>
+              <div class="col">{{ item.desc || '无' }}</div>
               <div class="col">{{ item.created_at }}</div>
-              <div class="col" style="flex: 0.94">
-                <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
+              <div class="col">{{ item.user_name }}</div>
+              <div class="col">
+                <!-- <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span> -->
                 <span class="opr hoverBlue" @click="changeStatus(item)">审核</span>
               </div>
             </div>
-            <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
+            <!-- <div v-show="item.isShow" style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
               <div class="tableCtn">
-                <div class="thead">
-                  <div class="trow">
-                    <div class="tcol">原料名称</div>
-                    <div class="tcol">调取颜色</div>
-                    <div class="tcol">调取属性</div>
-                    <div class="tcol">批号/缸号/色号</div>
-                    <div class="tcol">调取数量</div>
-                    <div class="tcol">入库数量</div>
-                    <div class="tcol">调取单价</div>
-                  </div>
-                </div>
-                <div class="tbody">
-                  <div class="trow" v-for="(itemChild, indexChild) in item.detail.info_data" :key="indexChild">
-                    <div class="tcol">{{ itemChild.material_name }}</div>
-                    <div class="tcol">{{ itemChild.material_color }}</div>
-                    <div class="tcol">{{ itemChild.attribute }}</div>
-                    <div class="tcol">
-                      {{ itemChild.batch_code }}/{{ itemChild.vat_code }}/{{ itemChild.color_code }}
-                    </div>
-                    <div class="tcol">{{ $toFixed(itemChild.number, 3, true) }}{{ itemChild.unit }}</div>
-                    <div class="tcol">{{ $toFixed(itemChild.final_push_number, 3, true) }}</div>
-                    <div class="tcol">{{ itemChild.price || 0 }}元</div>
-                  </div>
-                </div>
+                <el-table ref="chooseSettlementLogList" :data="[item]" tooltip-effect="dark" style="width: 100%">
+                  <el-table-column prop="created_at" label="添加时间" width="110" fixed> </el-table-column>
+                  <el-table-column prop="user_name" label="操作人" width="110" fixed> </el-table-column>
+                  <el-table-column label="审核状态" width="120">
+                    <template slot-scope="scope">
+                      <div v-if="scope.row.is_check === 0" class="orange">审核中</div>
+                      <div v-if="scope.row.is_check === 1" class="blue">通过</div>
+                      <div v-if="scope.row.is_check === 2" class="red">不通过</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="process_name" label="工序"> </el-table-column>
+                  <el-table-column label="工序说明" width="120">
+                    <template slot-scope="scope">
+                      <el-tooltip
+                        class="item"
+                        effect="dark"
+                        :content="scope.row.process_desc || '无工序说明'"
+                        placement="top-start"
+                      >
+                        <span class="blue" style="cursor: pointer">查看</span>
+                      </el-tooltip>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="staff_name" label="人员" width="120">
+                    <template slot-scope="scope">
+                      <div>{{ scope.row.staff_code.substring(scope.row.staff_code.length - 4) }}</div>
+                      <div>{{ scope.row.staff_name }}</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="product_code" label="产品编号" width="120"> </el-table-column>
+                  <el-table-column label="颜色尺码" width="120">
+                    <template slot-scope="scope">{{
+                      (scope.row.size_name || '无尺码数据') + '/' + (scope.row.color_name || '无颜色数据')
+                    }}</template>
+                  </el-table-column>
+                  <el-table-column prop="number" label="完成数量" width="120"> </el-table-column>
+                  <el-table-column prop="extra_number" label="额外数量" width="120"> </el-table-column>
+                  <el-table-column prop="shoddy_number" label="次品数量" width="120"> </el-table-column>
+                  <el-table-column label="次品原因" width="120">
+                    <template slot-scope="scope">
+                      <el-tooltip
+                        class="item"
+                        effect="dark"
+                        :content="scope.row.shoddy_reason || '无次品原因'"
+                        placement="top-start"
+                      >
+                        <span class="blue" style="cursor: pointer">查看</span>
+                      </el-tooltip>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="price" label="结算单价(元/件)" width="150"> </el-table-column>
+                  <el-table-column prop="total_price" label="结算总价(元)" fixed="right" width="120"> </el-table-column>
+                </el-table>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
         <div style="margin-top: 20px">
           <span style="line-height: 35px; margin-left: 40px">
-            合计调取数量：
-            <span class="green" style="font-weight: bold">
-              {{ $toFixed(additional.total_number / 1000, 3, true) }} 吨或千米
-            </span>
-          </span>
-          <span style="line-height: 35px; margin-left: 40px">
-            合计调取金额：
+            合计结算总价：
             <span class="green" style="font-weight: bold">
               {{ $toFixed(additional.total_price / 10000, 3, true) }} 万元
-            </span>
-          </span>
-          <span style="line-height: 35px; margin-left: 40px">
-            合计入库数量：
-            <span class="green" style="font-weight: bold">
-              {{ $toFixed(additional.total_push_number / 1000, 3, true) }} 吨或千米
-            </span>
-          </span>
-          <span style="line-height: 35px; margin-left: 40px">
-            合计入库金额：
-            <span class="green" style="font-weight: bold">
-              {{ $toFixed(additional.total_push_price / 10000, 3, true) }} 万元
             </span>
           </span>
         </div>
@@ -254,12 +209,7 @@
     </div>
     <div class="bottomFixBar">
       <div class="main">
-        <div class="fl" style="line-height: 56px; margin-left: 24px">
-          <div class="btn backHoverOrange" @click="getMatStsList(updatePriceInfo.date)">
-            <span class="text">修改调取单价</span>
-          </div>
-        </div>
-        <div class="fl" style="line-height: 56px; margin-left: 24px">
+        <div class="fl blue green" style="line-height: 56px; margin-left: 24px">
           <div class="btn backHoverBlue" @click="lostCheck">
             <span class="text">批量审核</span>
           </div>
@@ -277,7 +227,7 @@
     <div class="popup" v-show="checkFlag">
       <div class="main">
         <div class="titleCtn">
-          <span class="text">原料调取单审核</span>
+          <span class="text">车间结算日志审核</span>
           <div class="closeCtn" @click="checkFlag = false">
             <span class="el-icon-close"></span>
           </div>
@@ -361,124 +311,12 @@
         </div>
       </div>
     </div>
-    <!-- 批量修改调取单价功能 -->
-    <div class="popup" id="updatePrice" v-show="updatePriceFlag">
-      <div class="main" style="width: 1200px">
-        <div class="titleCtn">
-          <span class="text">批量修改调取单价</span>
-          <div class="closeCtn" @click="updatePriceFlag = false">
-            <span class="el-icon-close"></span>
-          </div>
-        </div>
-        <div class="contentCtn">
-          <div class="explainCtn">
-            <p>1.必须筛选日期跨度尽量不要超过一年</p>
-            <p>2.点击提交后只会更新重新填写的调取单价</p>
-          </div>
-          <div class="listCtn">
-            <div class="filterCtn">
-              <div class="elCtn">
-                <el-autocomplete
-                  v-model="updatePriceInfo.material_name"
-                  :fetch-suggestions="searchMaterialNew"
-                  placeholder="物料名称搜索"
-                  @keydown.native.enter="getMatShowList"
-                  @select="getMatShowList"
-                  @clear="getMatShowList"
-                  clearable
-                ></el-autocomplete>
-              </div>
-              <div class="elCtn">
-                <el-autocomplete
-                  :fetch-suggestions="searchAttribute"
-                  v-model="updatePriceInfo.attribute"
-                  placeholder="物料属性"
-                  @keydown.native.enter="getMatShowList"
-                  @change="getMatShowList"
-                  clearable
-                ></el-autocomplete>
-              </div>
-              <div class="elCtn">
-                <el-select
-                  v-model="updatePriceInfo.material_color"
-                  placeholder="请选择种类"
-                  clearable
-                  @keydown.native.enter="getMatShowList"
-                  @change="getMatShowList"
-                >
-                  <el-option label="色纱" value="色纱"></el-option>
-                  <el-option label="白胚" value="白胚"></el-option>
-                </el-select>
-              </div>
-              <div class="elCtn" style="width: 250px">
-                <el-date-picker
-                  v-model="updatePriceInfo.date"
-                  type="daterange"
-                  align="right"
-                  unlink-panels
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  :picker-options="pickerOptions"
-                  value-format="yyyy-MM-dd"
-                  @change="getMatStsList"
-                >
-                </el-date-picker>
-              </div>
-            </div>
-            <div class="tableCtn">
-              <div class="thead">
-                <div class="trow">
-                  <div class="tcol">日期</div>
-                  <div class="tcol noPad" style="flex: 9">
-                    <div class="trow">
-                      <div class="tcol">原料名称</div>
-                      <div class="tcol">颜色</div>
-                      <div class="tcol">属性</div>
-                      <div class="tcol">调取单价</div>
-                      <div class="tcol">调取总数</div>
-                      <div class="tcol">修改调取单价</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="tbody">
-                <div class="trow" v-if="this.updatePriceOriginList.length === 0">
-                  <div class="tcol red" style="text-align: center">请筛选日期后搜索纱线数据</div>
-                </div>
-                <div class="trow" v-for="(item, index) in updatePriceShowList" :key="index">
-                  <div class="tcol">{{ item.created_at }}</div>
-                  <div class="tcol noPad" style="flex: 9">
-                    <div class="trow" v-for="(itemChild, indexChild) in item.realChildren" :key="indexChild">
-                      <div class="tcol">{{ itemChild.material_name }}</div>
-                      <div class="tcol">{{ itemChild.material_color }}</div>
-                      <div class="tcol">{{ itemChild.attribute }}</div>
-                      <div class="tcol blue">{{ itemChild.price || 0 }}元/kg</div>
-                      <div class="tcol">{{ itemChild.number }}kg</div>
-                      <div class="tcol">
-                        <div class="elCtn">
-                          <el-input placeholder="单价" v-model="itemChild.new_settle_price"></el-input>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="oprCtn">
-          <span class="btn borderBtn" @click="updatePriceFlag = false">取消</span>
-          <span class="btn backHoverBlue" @click="saveUpdatePrice">提交更新</span>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { order, listSetting, client, check, store, materialStock, updateStorePirce } from '@/assets/js/api'
+import { order, listSetting, staff, workshop, check, process } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
 import { ListSetting } from '@/types/list'
 import { limitArr } from '@/assets/js/dictionary'
@@ -503,30 +341,15 @@ export default Vue.extend({
       exportYear: new Date(),
       exportJiDu: '',
       exportMonth: '',
-      material_name: [],
       monthList: [],
       additional: {},
       reviewerParams: {
         pid: '',
-        check_type: 6,
+        check_type: 14,
         check_desc: '',
         is_check: 1, // 1通过 2没通过
         desc: ''
       },
-      updatePriceFlag: false,
-      updatePriceInfo: {
-        material_name: '',
-        material_color: '',
-        settle_price: '',
-        attribute: '',
-        start_time: '',
-        end_time: '',
-        date: [],
-        client_id: null
-      },
-      updatePriceYarnList: [],
-      updatePriceShowList: [],
-      updatePriceOriginList: [],
       list: [],
       limitList: limitArr,
       showExport: false,
@@ -535,13 +358,12 @@ export default Vue.extend({
       keyword: '',
       contacts_id: '',
       contactsList: [],
-      client_id: [],
-      storeList: [],
-      store_id: '',
+      staff_id: '',
       checked: false,
       group_id: '',
+      process: '',
+      processList: [],
       user_id: '',
-      order_type: '',
       type: 'null',
       status: 'null',
       date: [],
@@ -551,6 +373,7 @@ export default Vue.extend({
       showSetting: false,
       listSettingId: null,
       listKey: [],
+      staffList: [],
       originalExport: [
         {
           key: 'code',
@@ -865,180 +688,11 @@ export default Vue.extend({
     }
   },
   methods: {
-    searchMaterialNew(str: string, cb: any) {
-      let results = str ? this.updatePriceYarnList.filter(this.createFilter(str)) : this.updatePriceYarnList
-      cb(results)
-    },
-    // 原料属性搜索
-    searchAttribute(str: string, cb: any) {
-      let results = str ? this.yarnAttributeList.filter(this.createFilter(str)) : this.yarnAttributeList
-      cb(results)
-    },
-    createFilter(queryString: string) {
-      return (restaurant: any) => {
-        return restaurant.value && restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
-      }
-    },
-    getMatStsList(date: string[]) {
-      materialStock
-        .stsList({
-          start_time: date[0],
-          end_time: date[1]
-        })
-        .then((res) => {
-          this.loading = true
-          if (res.data.status) {
-            this.updatePriceYarnList = Array.from(new Set(res.data.data.map((item: any) => item.material_name))).map(
-              (item) => {
-                return {
-                  value: item
-                }
-              }
-            )
-            const mergeList = this.$mergeData(
-              res.data.data.map((item: any) => {
-                const date = item.created_at.split('-')
-                item.created_at = date[0] + '年' + date[1] + '月'
-                return item
-              }),
-              {
-                mainRule: 'created_at',
-                childrenRule: {
-                  mainRule: ['material_name', 'attribute', 'price', 'settle_price']
-                }
-              }
-            )
-            mergeList.forEach((item: any) => {
-              item.childrenMergeInfo.forEach((itemChild: any) => {
-                itemChild.baipeiNum = itemChild.childrenMergeInfo
-                  .filter((itemMin: any) => itemMin.material_color === '白胚')
-                  .reduce((total: number, cur: any) => {
-                    return total + Number(cur.number)
-                  }, 0)
-                itemChild.seshaNum = itemChild.childrenMergeInfo
-                  .filter((itemMin: any) => itemMin.material_color !== '白胚')
-                  .reduce((total: number, cur: any) => {
-                    return total + Number(cur.number)
-                  }, 0)
-              })
-              item.realChildren = []
-              item.childrenMergeInfo.forEach((itemChild: any) => {
-                if (itemChild.baipeiNum > 0) {
-                  item.realChildren.push({
-                    new_settle_price: '',
-                    settle_price: itemChild.settle_price,
-                    material_name: itemChild.material_name,
-                    price: itemChild.price,
-                    attribute: itemChild.attribute,
-                    number: itemChild.baipeiNum,
-                    material_color: '白胚'
-                  })
-                }
-                if (itemChild.seshaNum > 0) {
-                  item.realChildren.push({
-                    new_settle_price: '',
-                    settle_price: itemChild.settle_price,
-                    material_name: itemChild.material_name,
-                    price: itemChild.price,
-                    attribute: itemChild.attribute,
-                    number: itemChild.seshaNum,
-                    material_color: '色纱'
-                  })
-                }
-              })
-            })
-            this.updatePriceOriginList = mergeList
-            this.updatePriceFlag = true
-            this.loading = false
-
-            this.getMatShowList()
-          }
-        })
-    },
-    saveUpdatePrice() {
-      const formData: any[] = []
-      this.updatePriceShowList.forEach((item: any) => {
-        item.realChildren.forEach((itemChild: any) => {
-          if (itemChild.new_settle_price) {
-            formData.push({
-              material_name: itemChild.material_name,
-              material_color: itemChild.material_color,
-              settle_price: itemChild.new_settle_price,
-              attribute: itemChild.attribute,
-              price: itemChild.price,
-              start_time: this.updatePriceInfo.date[0],
-              end_time: this.updatePriceInfo.date[1]
-            })
-          }
-        })
-      })
-      if (formData.length > 0) {
-        updateStorePirce({ data: formData }).then((res) => {
-          if (res.data.status) {
-            this.$message.success('修改成功')
-          }
-          this.updatePriceInfo = {
-            material_name: '',
-            material_color: '',
-            settle_price: '',
-            attribute: '',
-            start_time: '',
-            end_time: '',
-            date: [new Date().getFullYear() + '-01-01', this.$formatDate(new Date())],
-            client_id: null
-          }
-          this.updatePriceOriginList = []
-          this.updatePriceShowList = []
-          this.updatePriceFlag = false
-        })
-      } else {
-        this.$message.error('请填写修改单价')
-      }
-    },
-    // 前端做筛选
-    getMatShowList() {
-      this.updatePriceShowList = this.$clone(this.updatePriceOriginList).filter((item: any) => {
-        item.realChildren = item.realChildren.filter((itemChild: any) => {
-          let nameFlag = this.updatePriceInfo.material_name
-            ? itemChild.material_name &&
-              itemChild.material_name.toLowerCase().indexOf(this.updatePriceInfo.material_name.toLowerCase()) === 0
-            : true
-          let attrFlag = this.updatePriceInfo.attribute
-            ? itemChild.attribute &&
-              itemChild.attribute.toLowerCase().indexOf(this.updatePriceInfo.attribute.toLowerCase()) === 0
-            : true
-          let colorFlag = this.updatePriceInfo.material_color
-            ? itemChild.material_color &&
-              itemChild.material_color.toLowerCase().indexOf(this.updatePriceInfo.material_color.toLowerCase()) === 0
-            : true
-          return nameFlag && attrFlag && colorFlag
-        })
-        return item.realChildren.length > 0
-      })
-    },
-    getContacts(ev: number[]) {
-      if (ev && ev.length) {
-        client
-          .detail({
-            id: ev[2]
-          })
-          .then((res) => {
-            if (res.data.status) {
-              this.contactsList = res.data.data.contacts_data
-            }
-          })
-      } else {
-        this.contacts_id = ''
-      }
-    },
     getLocalStorage(ev: any, type: string) {
       if (!ev) {
         this.$setLocalStorage(type, '')
       }
       this.changeRouter()
-    },
-    openPrint(items: any) {
-      this.$openUrl('/materialManage/orderPrint?id=' + items.id)
     },
     checkAll(res: Boolean) {
       this.list.forEach((item: any) => {
@@ -1082,20 +736,45 @@ export default Vue.extend({
     getFilters() {
       const query = this.$route.query
       this.page = Number(query.page)
-      this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
-      this.contacts_id = Number(query.contacts_id) || ''
-      if (this.client_id && this.client_id.length) {
-        this.getContacts(this.client_id)
-      }
-      this.material_name = query.material_name ? (query.material_name as string).split(',') : []
+      this.staff_id = Number(query.staff_id) || ''
       this.keyword = query.keyword || ''
-      this.order_type = query.order_type || ''
+      this.time_type = query.time_type || ''
       this.status = query.status || 'null'
       this.type = Number(query.type) || 'null'
+      this.process = query.process || ''
       this.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
+
+      process.list({ type: 2 }).then((res) => {
+        let arr: any = []
+        res.data.data.forEach((item: any) => {
+          arr.push({
+            label: item.name,
+            value: item.name
+          })
+        })
+        this.processList.push({
+          label: '半成品加工工序',
+          value: 2,
+          children: arr
+        })
+        process.list({ type: 3 }).then((res) => {
+          let arr: any = []
+          res.data.data.forEach((item: any) => {
+            arr.push({
+              label: item.name,
+              value: item.name
+            })
+          })
+          this.processList.push({
+            label: '成品加工工序',
+            value: 3,
+            children: arr
+          })
+        })
+      })
     },
     changeJiDu(e: any) {
       this.exportMonth = ''
@@ -1132,12 +811,17 @@ export default Vue.extend({
         end_time = this.exportYear.getFullYear() + '-12-31'
       }
 
-      materialStock
+      workshop
         .list({
+          export_excel: 1,
           start_time: start_time,
           end_time: end_time,
-          export_excel: 1,
-          action_type: [10, 12]
+          is_check: this.status,
+          group_id: this.group_id,
+          staff_id: this.staff_id,
+          time_type: this.time_type,
+          process_name: this.process,
+          type: 2,
         })
         .then((res) => {
           window.location.href = res.data.data
@@ -1150,26 +834,26 @@ export default Vue.extend({
         this.page = 1
       }
       this.$router.push(
-        '/billingManagement/rawMaterialTransferOrder?page=' +
+        '/billingManagement/workshopPayTimeLog?page=' +
           this.page +
           '&keyword=' +
           this.keyword +
-          '&store_id=' +
-          this.store_id +
+          '&staff_id=' +
+          this.staff_id +
           '&user_id=' +
           this.user_id +
           '&group_id=' +
           this.group_id +
-          '&order_type=' +
-          this.order_type +
+          '&process=' +
+          (this.process[1] || '') +
           '&status=' +
           this.status +
+          '&time_type=' +
+          this.time_type +
           '&type=' +
           this.type +
           '&date=' +
           this.date +
-          '&material_name=' +
-          encodeURIComponent(this.material_name) +
           '&limit=' +
           this.limit +
           '&contacts_id=' +
@@ -1183,16 +867,15 @@ export default Vue.extend({
         type: 'warning'
       })
         .then(() => {
-          this.client_id = []
+          this.staff_id = ''
           this.keyword = ''
           this.user_id = ''
           this.group_id = ''
-          this.order_type = ''
-          this.material_name = []
+          this.process = ''
+          this.time_type = ''
           this.date = []
           this.type = 'null'
           this.status = 'null'
-          this.contacts_id = ''
           this.limit = 10
           this.changeRouter()
         })
@@ -1204,20 +887,14 @@ export default Vue.extend({
         })
     },
     getList() {
-      this.loading = true
-
-      materialStock
+      workshop
         .list({
           is_check: this.status,
-          code: this.keyword,
-          store_id: this.store_id,
-          user_id: this.user_id,
           group_id: this.group_id,
-          order_type: this.order_type,
-          material_name: this.material_name.length ? this.material_name[2] : '',
-          start_time: this.date[0],
-          end_time: this.date[1],
-          action_type: [10, 12],
+          staff_id: this.staff_id,
+          time_type: this.time_type,
+          process_name: this.process,
+          type: 2,
           limit: this.limit,
           page: this.page
         })
@@ -1225,10 +902,11 @@ export default Vue.extend({
           if (res.data.status) {
             res.data.data.items.forEach((item: any) => {
               item.detail = {
-                process_info: []
+                product_info_data: [],
+                material_info_data: [],
+                sup_data: []
               }
             })
-
             this.list = res.data.data.items
             this.total = res.data.data.total
             this.additional = res.data.data.additional
@@ -1237,24 +915,7 @@ export default Vue.extend({
         })
     },
     changeShow(item: any) {
-      this.loading = true
-      if (!item.detail.code) {
-        materialStock
-          .detail({
-            id: item.id
-          })
-          .then((ress) => {
-            if (ress.status) {
-              item.detail = ress.data.data
-              item.isShow = true
-            }
-            this.loading = false
-          })
-      } else {
-        item.isShow = !item.isShow
-        this.loading = false
-      }
-
+      item.isShow = !item.isShow
       this.$forceUpdate()
     },
     oneShowAll() {
@@ -1290,37 +951,16 @@ export default Vue.extend({
     }
   },
   computed: {
-    clientList() {
-      return this.$store.state.api.clientType.arr.filter((item: { type: any }) => Number(item.type) === 1)
-    },
     userList() {
       return this.$store.state.api.user.arr
     },
     groupList() {
       return this.$store.state.api.group.arr
-    },
-    yarnTypeList() {
-      return this.$store.state.api.yarnType.arr.map((item: any) => {
-        return {
-          label: item.label,
-          value: item.label,
-          children: item.children.map((itemChild: any) => {
-            return {
-              label: itemChild.label,
-              value: itemChild.label,
-              children: itemChild.children.map((itemSon: any) => {
-                return { label: itemSon.label, value: itemSon.label }
-              })
-            }
-          })
-        }
-      })
     }
   },
   created() {
-    this.updatePriceInfo.date = [new Date().getFullYear() + '-01-01', this.$formatDate(new Date())]
-    store.list().then((res) => {
-      this.storeList = res.data.data
+    staff.list({}).then((res) => {
+      this.staffList = res.data.data
     })
     this.getFilters()
     this.getList()
@@ -1340,11 +980,6 @@ export default Vue.extend({
         checkWhich: 'api/user',
         getInfoMethed: 'dispatch',
         getInfoApi: 'getUserAsync'
-      },
-      {
-        checkWhich: 'api/yarnType',
-        getInfoMethed: 'dispatch',
-        getInfoApi: 'getYarnTypeAsync'
       }
     ])
   }
@@ -1352,5 +987,5 @@ export default Vue.extend({
 </script>
 
 <style lang="less">
-@import '~@/assets/css/billingManagement/rawMaterialTransferOrder.less';
+@import '~@/assets/css/billingManagement/workshopPayTimeLog.less';
 </style>    

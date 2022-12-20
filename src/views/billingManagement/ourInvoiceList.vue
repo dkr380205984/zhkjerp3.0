@@ -12,13 +12,14 @@
         <div class="tab" @click="$router.push('/billingManagement/rawMaterialProcessingOrder')">原料加工单</div>
         <div class="tab" @click="$router.push('/billingManagement/productionPlan')">生产计划单</div>
         <div class="tab" @click="$router.push('/billingManagement/inspectionReceiptDocument')">检验入库单据</div>
-        <div class="tab" @click="$router.push('/billingManagement/workshopSettlementLog')">车间结算日志</div>
+        <div class="tab" @click="$router.push('/billingManagement/workshopSettlementLog')">结算日志-计件</div>
+        <div class="tab" @click="$router.push('/billingManagement/workshopPayTimeLog')">结算日志-计时</div>
         <div class="tab" @click="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">辅料订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/transportationDeliveryOrder')">运输出库单</div>
-        <div class="tab" @click="$router.push('/billingManagement/deductionForm')">我方扣款单据</div>
       </div>
       <div style="display: flex; justify-content: space-between; padding: 15px 35px 0">
+        <div class="tab" @click="$router.push('/billingManagement/deductionForm')">我方扣款单据</div>
         <div class="tab active">我方发票单据</div>
         <div class="tab" @click="$router.push('/billingManagement/oppositeInvoicing')">对方发票单据</div>
         <div class="tab" @click="$router.push('/billingManagement/collectionList')">收款单据</div>
@@ -28,7 +29,6 @@
         <div class="tab" @click="$router.push('/billingManagement/fabricWarehousing')">面料出入库单据</div>
         <div class="tab" @click="$router.push('/billingManagement/auxiliaryInOutList')">辅料出入库单据</div>
         <div class="tab" @click="$router.push('/billingManagement/productStoreLogList')">产品出入库单据</div>
-        <div style="width: 100px"></div>
         <div style="width: 100px"></div>
         <div style="width: 100px"></div>
       </div>
@@ -83,12 +83,21 @@
           </div>
           <div class="btn borderBtn" @click="reset">重置</div>
         </div>
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-select v-model="order_or_other" placeholder="开票类型" @change="getList" clearable>
+              <el-option label="订单开票" :value="1"> </el-option>
+              <el-option label="其它开票" :value="2"> </el-option>
+            </el-select>
+          </div>
+        </div>
         <div class="list">
           <div class="row title">
             <div class="col" style="flex: 0.05">
               <el-checkbox v-model="checkAllPlan" @change="checkAll"></el-checkbox>
             </div>
             <div class="col" style="flex: 1.2">票据编号</div>
+            <div class="col">发票类型</div>
             <div class="col">关联订单号</div>
             <div class="col">关联单位</div>
             <div class="col">开票金额</div>
@@ -112,6 +121,7 @@
               >
                 {{ item.code || '无' }}
               </div>
+              <div class="col">{{ item.order_or_other === 1 ? '订单开票' : item.order_or_other === 2 ? '其它开票' : '未知开票类型' }}</div>
               <div
                 class="col hoverBlue"
                 style="
@@ -283,7 +293,7 @@
           <el-pagination
             background
             :page-size="limit"
-            layout="prev, pager, next"
+            layout="prev, pager, next, jumper"
             :total="total"
             :current-page.sync="page"
             @current-change="changeRouter"
@@ -450,6 +460,7 @@ export default Vue.extend({
       invoiceFlag: false,
       invoiceUpdate: false,
       productDetailId: '',
+      order_or_other: '',
       additional: {},
       invoiceData: [],
       loading: true,
@@ -779,6 +790,7 @@ export default Vue.extend({
           end_time: this.date[1],
           user_id: '',
           invoice_code: '',
+          order_or_other: this.order_or_other || null,
           invoice_type: 1,
           limit: this.limit,
           page: this.page

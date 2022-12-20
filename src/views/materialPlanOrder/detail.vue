@@ -110,7 +110,7 @@
         <div class="pageCtn">
           <el-pagination background
             :page-size="10"
-            layout="prev, pager, next"
+            layout="prev, pager, next, jumper"
             :total="orderTotal"
             :current-page.sync="orderPage">
           </el-pagination>
@@ -194,7 +194,7 @@
         <div class="pageCtn">
           <el-pagination background
             :page-size="10"
-            layout="prev, pager, next"
+            layout="prev, pager, next, jumper"
             :total="storeTotal"
             :current-page.sync="storePage">
           </el-pagination>

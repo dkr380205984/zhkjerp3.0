@@ -1033,7 +1033,7 @@
           <div class="pageCtn">
             <el-pagination background
               :page-size="5"
-              layout="prev, pager, next"
+              layout="prev, pager, next, jumper"
               :total="craftTotal"
               :current-page.sync="craftPage"
               @current-change="getCraftList()">

@@ -160,7 +160,7 @@
         <div class="pageCtn">
           <el-pagination background
             :page-size="10"
-            layout="prev, pager, next"
+            layout="prev, pager, next, jumper"
             :total="total"
             :current-page.sync="page"
             @current-change="changeRouter">
@@ -211,7 +211,7 @@
           <div class="pageCtn">
             <el-pagination background
               :page-size="5"
-              layout="prev, pager, next"
+              layout="prev, pager, next, jumper"
               :total="storeTotal"
               :current-page.sync="storePage"
               @current-change="getStoreList">
@@ -739,7 +739,7 @@
             <div class="pageCtn">
               <el-pagination background
                 :page-size="10"
-                layout="prev, pager, next"
+                layout="prev, pager, next, jumper"
                 :total="mergeTotal"
                 :current-page.sync="mergePage"
                 @current-change="getMergeSearchList">

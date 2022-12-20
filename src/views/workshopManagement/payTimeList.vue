@@ -72,6 +72,20 @@
               <el-option label="每页20条" :value="20"> </el-option>
             </el-select>
           </div>
+          <div class="elCtn">
+            <el-select @change="changeRouter" v-model="group_id" placeholder="筛选负责小组" clearable>
+              <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-select @change="changeRouter" v-model="is_check" placeholder="审核状态" clearable>
+              <el-option :value="0" label="审核中"></el-option>
+              <el-option :value="1" label="通过"></el-option>
+              <el-option :value="2" label="不通过"></el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="filterCtn">
           <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(1)">计件更新（按订单）</div>
           <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(2)">计件更新（按员工）</div>
           <div
@@ -179,6 +193,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="total_price" label="结算总价(元)" width="120"> </el-table-column>
+                <el-table-column prop="group_name" label="负责小组" width="120"> </el-table-column>
                 <el-table-column prop="complete_time" label="创建时间" width="110"> </el-table-column>
                 <el-table-column prop="user_name" label="创建人" width="110"> </el-table-column>
                 <el-table-column label="操作" width="160" fixed="right">
@@ -213,18 +228,19 @@
                 <el-table-column prop="process_name" label="生产工序" width="110" fixed> </el-table-column>
                 <el-table-column label="工序说明" width="110" fixed>
                   <template slot-scope="scope">
-                    <div v-if="scope.row.process_desc && scope.row.process_desc.length <= 10">
-                      {{ scope.row.process_desc }}
+                    <div v-if="scope.row.process_desc">
+                      <div v-if="scope.row.process_desc.length <= 10">{{ scope.row.process_desc }}</div>
+                      <el-tooltip
+                        v-else
+                        class="item"
+                        effect="dark"
+                        :content="scope.row.process_desc || '无工序说明'"
+                        placement="top-start"
+                      >
+                        <span class="blue" style="cursor: pointer">查看</span>
+                      </el-tooltip>
                     </div>
-                    <el-tooltip
-                      v-else
-                      class="item"
-                      effect="dark"
-                      :content="scope.row.process_desc || '无工序说明'"
-                      placement="top-start"
-                    >
-                      <span class="blue" style="cursor: pointer">查看</span>
-                    </el-tooltip>
+                    <div v-else>无</div>
                   </template>
                 </el-table-column>
                 <el-table-column prop="price" label="计时方式" width="110">
@@ -252,6 +268,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="total_price" label="结算总价(元)" width="120"> </el-table-column>
+                <el-table-column prop="group_name" label="负责小组" width="120"> </el-table-column>
                 <el-table-column prop="desc" label="备注" width="120"> </el-table-column>
                 <el-table-column prop="created_at" label="创建时间" width="120"> </el-table-column>
                 <el-table-column prop="user_name" label="创建人" width="120"> </el-table-column>
@@ -293,7 +310,7 @@
           <el-pagination
             background
             :page-size="limit"
-            layout="prev, pager, next"
+            layout="prev, pager, next, jumper"
             :total="total"
             :current-page.sync="page"
             @current-change="changeRouter"
@@ -381,6 +398,7 @@ export default Vue.extend({
       },
       limit: 10,
       keyword: '',
+      is_check: '',
       additional: {},
       client_id: [],
       department: '',
@@ -525,6 +543,7 @@ export default Vue.extend({
       this.departmentName = query.departmentName || ''
       this.status = query.status || '0'
       this.user_id = query.user_id || ''
+      this.is_check = query.is_check ? Number(query.is_check) : ''
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.date =
         query.date ||
@@ -681,6 +700,8 @@ export default Vue.extend({
           this.process +
           '&group_id=' +
           this.group_id +
+          '&is_check=' +
+          this.is_check +
           '&type=' +
           this.activeName +
           '&date=' +
@@ -721,6 +742,8 @@ export default Vue.extend({
           type: this.activeName,
           keyword: this.keyword,
           department: this.departmentName,
+          group_id: this.group_id,
+          is_check: this.is_check,
           process: this.process[1],
           year: this.date.split('-')[0],
           month: this.date.split('-')[1],
@@ -758,6 +781,8 @@ export default Vue.extend({
               type: this.activeName,
               page: this.page,
               limit: this.limit,
+              group_id: this.group_id,
+              is_check: this.is_check,
               process_name: this.process[1],
               month: +this.date.split('-')[1],
               year: this.date.split('-')[0]

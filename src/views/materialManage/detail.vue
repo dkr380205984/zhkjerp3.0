@@ -58,10 +58,10 @@
         <div class="thead">
           <div class="trow">
             <div class="tcol" style="flex: 0.3">
-              <el-checkbox v-model="checkAllPlanFlag">全选</el-checkbox>
+              <el-checkbox v-model="checkAllShaXianFlag">全选</el-checkbox>
             </div>
-            <div class="tcol">原料名称</div>
-            <div class="tcol">原料颜色</div>
+            <div class="tcol">纱线名称</div>
+            <div class="tcol">纱线颜色</div>
             <div class="tcol">计划数量</div>
             <div class="tcol">采购数量</div>
             <div class="tcol">调取数量</div>
@@ -69,7 +69,47 @@
           </div>
         </div>
         <div class="tbody">
-          <div class="trow" v-for="(item, index) in planMaterialList" :key="index">
+          <div class="trow" v-for="(item, index) in planShaXianList" :key="index">
+            <div class="tcol" style="flex: 0.3">
+              <el-checkbox v-model="item.check" @change="$forceUpdate()"></el-checkbox>
+            </div>
+            <div class="tcol">{{ item.material_name }}</div>
+            <div class="tcol">{{ item.material_color }}</div>
+            <div class="tcol">{{ $toFixed(item.final_number, 3, true) }}{{ item.unit }}</div>
+            <div class="tcol">{{ $toFixed(item.total_order_number, 3, true) }}{{ item.unit }}</div>
+            <div class="tcol">{{ $toFixed(item.total_transfer_number, 3, true) }}{{ item.unit }}</div>
+            <div
+              class="tcol"
+              :class="{
+                red: item.total_order_number + item.total_transfer_number > item.final_number,
+                green: item.total_order_number + item.total_transfer_number === item.final_number,
+                orange: item.total_order_number + item.total_transfer_number < item.final_number
+              }"
+            >
+              {{
+                (item.total_order_number + item.total_transfer_number > item.final_number ? '+' : '') +
+                $toFixed(item.total_order_number + item.total_transfer_number - item.final_number, 3, true)
+              }}{{ item.unit }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tableCtn" style="padding-top: 0" v-if="planMianLiaoList.length !== 0">
+        <div class="thead">
+          <div class="trow">
+            <div class="tcol" style="flex: 0.3">
+              <el-checkbox v-model="checkAllMianLiaoFlag">全选</el-checkbox>
+            </div>
+            <div class="tcol">面料名称</div>
+            <div class="tcol">面料颜色</div>
+            <div class="tcol">计划数量</div>
+            <div class="tcol">采购数量</div>
+            <div class="tcol">调取数量</div>
+            <div class="tcol">数量差值</div>
+          </div>
+        </div>
+        <div class="tbody">
+          <div class="trow" v-for="(item, index) in planMianLiaoList" :key="index">
             <div class="tcol" style="flex: 0.3">
               <el-checkbox v-model="item.check" @change="$forceUpdate()"></el-checkbox>
             </div>
@@ -1155,7 +1195,7 @@
                   <el-pagination
                     background
                     :page-size="5"
-                    layout="prev, pager, next"
+                    layout="prev, pager, next, jumper"
                     :total="searchTotal"
                     :current-page.sync="searchPage"
                     @current-change="searchMaterial"
@@ -2472,7 +2512,8 @@ export default Vue.extend({
       materialStockFlag: false,
       step: 1,
       materialProcessFlag: false,
-      checkAllPlanFlag: false,
+      checkAllShaXianFlag: false,
+      checkAllMianLiaoFlag: false,
       checkAllOrderFlag: false,
       checkAllStockFlag: false,
       materialOrderUpdataFlag: false,
@@ -2710,7 +2751,9 @@ export default Vue.extend({
   methods: {
     // 选取物料本来应该在computed里面，因为不触发更新拿到methods里每次获取强致重新计算
     checkMaterialOrderList(): MaterialPlanGatherData[] {
-      return this.planMaterialList.filter((item) => item.check)
+      return this.planMaterialList.filter((item) => {
+        return item.check
+      })
     },
     // 同理监听不到放在methods里
     selectMaterialOrderList(): any[] {
@@ -3632,6 +3675,7 @@ export default Vue.extend({
                 type: 'success',
                 message: '删除成功!'
               })
+              this.$router.push('/materialManage/detail?id=' + this.$route.query.id + '&orderDocId=' + this.materialOrderIndex)
               this.init()
             }
           })
@@ -3661,8 +3705,11 @@ export default Vue.extend({
     }
   },
   watch: {
-    checkAllPlanFlag(val: boolean) {
-      this.planMaterialList.forEach((item) => (item.check = val))
+    checkAllShaXianFlag(val: boolean) {
+      this.planShaXianList.forEach((item:any) => (item.check = val))
+    },
+    checkAllMianLiaoFlag(val: boolean) {
+      this.planMianLiaoList.forEach((item) => (item.check = val))
     },
     checkAllOrderFlag(val: boolean) {
       const nowOrder = this.materialOrderList.find((item) => item.id!.toString() === this.materialOrderIndex)
@@ -3727,7 +3774,57 @@ export default Vue.extend({
               material_type: 1
             }
           })
-        : this.materialPlanInfo.material_plan_gather_data.filter((item) => item.material_type === 1)
+        : this.materialPlanInfo.material_plan_gather_data.filter((item) => {
+          return item.material_type === 1
+        })
+    },
+    planShaXianList(): MaterialPlanGatherData[] {
+      return this.$route.query.supFlag
+        ? this.materialSupplementInfo.info_data.filter((item) => {
+          return item.yarn_type === 1
+        }).map((item) => {
+            return {
+              id: Number(item.id),
+              check: false,
+              need_number: item.number,
+              material_color: item.material_color,
+              material_name: item.material_name,
+              material_id: item.material_id,
+              unit: item.unit,
+              loss: 0,
+              final_number: item.number,
+              total_order_number: item.total_order_number,
+              total_transfer_number: item.total_transfer_number,
+              material_type: 1,
+            }
+          })
+        : this.materialPlanInfo.material_plan_gather_data.filter((item) => {
+          return item.yarn_type === 1
+        })
+    },
+    planMianLiaoList(): MaterialPlanGatherData[] {
+      return this.$route.query.supFlag
+        ? this.materialSupplementInfo.info_data.filter((item) => {
+          return item.yarn_type === 2
+        }).map((item) => {
+            return {
+              id: Number(item.id),
+              check: false,
+              need_number: item.number,
+              material_color: item.material_color,
+              material_name: item.material_name,
+              material_id: item.material_id,
+              unit: item.unit,
+              loss: 0,
+              final_number: item.number,
+              total_order_number: item.total_order_number,
+              total_transfer_number: item.total_transfer_number,
+              material_type: 1,
+            }
+          })
+        : this.materialPlanInfo.material_plan_gather_data.filter((item) => {
+          return item.yarn_type === 2
+        })
     },
     checkMaterialProcessList(): MaterialListInfo[] {
       console.log(this.checkAllOrderFlag)

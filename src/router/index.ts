@@ -427,8 +427,15 @@ const routes: Array<RouteConfig> = [
         permissions_id: '21-7',
       },
       path: '/billingManagement/workshopSettlementLog',
-      name: '单据管理-车间结算日志',
+      name: '单据管理-结算日志-计件',
       component: () => import('../views/billingManagement/workshopSettlementLog.vue')
+    },{
+      meta: {
+        permissions_id: '21-22',
+      },
+      path: '/billingManagement/workshopPayTimeLog',
+      name: '单据管理-结算日志-计时',
+      component: () => import('../views/billingManagement/workshopPayTimeLog.vue')
     }, {
       meta: {
         permissions_id: '21-8',

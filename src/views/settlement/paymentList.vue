@@ -292,7 +292,7 @@
         <div class="pageCtn">
           <el-pagination background
             :page-size="limit"
-            layout="prev, pager, next"
+            layout="prev, pager, next, jumper"
             :total="total"
             :current-page.sync="page"
             @current-change="changeRouter($event,true)">
@@ -508,6 +508,7 @@ export default Vue.extend({
             { title: '发票代码(选填)', key: 'invoice_number' },
             { title: '发票号码(选填)', key: 'invoice_code' },
             { title: '发票类型(默认专票)', key: 'type' },
+            { title: '发票类型(订单开票、其它开票)', key: 'doc_type' },
             { title: '税率(必填)', key: 'tax_rate' },
             { title: '开票金额(税价合计，必填)', key: 'price' },
             { title: '备注信息(选填)', key: 'desc' }
@@ -589,6 +590,7 @@ export default Vue.extend({
           invoice_number: ['发票代码(选填)', ''],
           invoice_code: ['发票号码(选填)', ''],
           type: ['发票类型(默认专票)', '专票'],
+          doc_type: ['发票类型(订单开票、其它开票)', '订单开票'],
           tax_rate: ['税率(必填)'],
           price: ['开票金额(税价合计，必填)'],
           desc: ['备注信息(选填)', '']

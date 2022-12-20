@@ -510,7 +510,7 @@
           <el-pagination
             background
             :page-size="limit"
-            layout="prev, pager, next"
+            layout="prev, pager, next, jumper"
             :total="total"
             :current-page.sync="page"
             @current-change="changeParams"
@@ -900,6 +900,7 @@ export default Vue.extend({
             this.productionScheduleUpdate = [
               {
                 id: data.id,
+                group_id: data.group_id,
                 code: data.code,
                 indexStaff: settlementLogIndex,
                 system_code: data.system_code,
@@ -933,6 +934,7 @@ export default Vue.extend({
             this.productionScheduleUpdate.push({
               id: items.id,
               code: items.code,
+              group_id: data.group_id,
               indexStaff: settlementLogIndex,
               order_type: items.order_type,
               system_code: items.system_code,
@@ -1160,6 +1162,7 @@ export default Vue.extend({
         arr.push({
           order_code: items.code,
           order_id: items.id,
+          group_id: items.group_id,
           product_detail_info: []
         })
         items.product_info.forEach((product_info: any) => {
@@ -1184,6 +1187,7 @@ export default Vue.extend({
         })
         this.settlementLogList[items.indexStaff].is_check = true
         this.settlementLogList[items.indexStaff].order_id = arr[0].order_id
+        this.settlementLogList[items.indexStaff].group_id = arr[0].group_id
         this.settlementLogList[items.indexStaff].order_code = arr[0].order_code
         this.settlementLogList[items.indexStaff].product_info = arr[0].product_detail_info
         this.settlementLogList[items.indexStaff].product_detail_info = items.product_info
@@ -1389,6 +1393,7 @@ export default Vue.extend({
           id: number | string | null
           staff_id: number | string
           order_id: number | string
+          group_id: number | string
           process_name: number | string
           process_type: number | string
           process_desc: string
@@ -1440,6 +1445,7 @@ export default Vue.extend({
           params.data.push({
             id: null,
             order_id: settlementLog.order_id,
+            group_id: settlementLog.group_id,
             staff_id: settlementLog.staff_id,
             process_name: settlementLog.process[1],
             process_type: settlementLog.process[0],

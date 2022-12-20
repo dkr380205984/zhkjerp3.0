@@ -37,14 +37,19 @@
         <div class="tbody" style="overflow: auto" @mousewheel.prevent="listenWheel" ref="listId">
           <div class="trow" style="justify-content: start">
             <div class="tcol bgGray titleFix">员工姓名</div>
-            <div class="tcol bgGray titleFix">生产工序</div>
-            <div class="tcol bgGray titleFix">工序说明</div>
-            <div class="tcol bgGray titleFix">计时方式</div>
-            <div class="tcol bgGray titleFix">单价</div>
-            <div class="tcol bgGray titleFix">时长</div>
-            <div class="tcol bgGray titleFix">总价(元)</div>
-            <div class="tcol bgGray titleFix">备注</div>
-            <div class="tcol bgGray titleFix">操作</div>
+            <div class="tcol noPad" style="flex: 9">
+              <div class="trow">
+                <div class="tcol bgGray titleFix">生产工序</div>
+                <div class="tcol bgGray titleFix">工序说明</div>
+                <div class="tcol bgGray titleFix">计时方式</div>
+                <div class="tcol bgGray titleFix">单价</div>
+                <div class="tcol bgGray titleFix">时长</div>
+                <div class="tcol bgGray titleFix">总价(元)</div>
+                <div class="tcol bgGray titleFix">所属小组</div>
+                <div class="tcol bgGray titleFix">备注</div>
+                <div class="tcol bgGray titleFix">操作</div>
+              </div>
+            </div>
           </div>
         </div>
         <div v-for="(staff, staffIndex) in list" :key="'staff' + staffIndex" style="font-size: 14px; color: #888888">
@@ -59,7 +64,7 @@
                 @change="getStaffIdList(staffIndex)"
               ></el-cascader>
             </div>
-            <div class="tcol noPad" style="flex: 9.25">
+            <div class="tcol noPad" style="flex: 9">
               <div class="trow" v-for="(process, processIndex) in staff.processInfo" :key="'process' + processIndex">
                 <div class="tcol">
                   <el-cascader
@@ -154,6 +159,19 @@
                   ></zh-input>
                 </div>
                 <div class="tcol">
+                  <el-select
+                    @change="
+                      staff.is_check = true
+                      process.is_check = true
+                    "
+                    v-model="process.group_id"
+                    placeholder="所属小组"
+                    clearable
+                  >
+                    <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+                  </el-select>
+                </div>
+                <div class="tcol">
                   <zh-input
                     v-model="process.desc"
                     :ref="'desc-' + staffIndex + '-' + processIndex"
@@ -204,6 +222,7 @@
                         processDesc: [],
                         time_type: 1,
                         time_count: '',
+                        group_id: '',
                         price: '',
                         total_price: '',
                         desc: ''
@@ -256,6 +275,9 @@
             </el-dropdown-item>
             <el-dropdown-item>
               <el-checkbox label="proces_desc">工序说明</el-checkbox>
+            </el-dropdown-item>
+            <el-dropdown-item>
+              <el-checkbox label="group_id">所属小组</el-checkbox>
             </el-dropdown-item>
             <el-dropdown-item>
               <el-checkbox label="time_type">计时方式</el-checkbox>
@@ -316,7 +338,6 @@
 import Vue from 'vue'
 import { workshop, staff, process } from '@/assets/js/api'
 import zhInput from '@/components/zhInput/zhInput.vue'
-import { set } from 'vue/types/umd'
 export default Vue.extend({
   components: { zhInput },
   data(): {
@@ -331,7 +352,7 @@ export default Vue.extend({
       page: 1,
       month: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
       additional: {},
-      copyOption: ['process', 'proces_desc', 'time_type', 'price', 'time_count', 'total_price', 'desc'],
+      copyOption: ['process', 'proces_desc', 'time_type', 'price', 'time_count', 'total_price', 'desc', 'group_id'],
       processStaffList: [{ children: [] }],
       lostAddStaffChooseProcess: 0,
       list: [
@@ -345,6 +366,7 @@ export default Vue.extend({
               process_name: '',
               process_type: '',
               process_desc: '',
+              group_id: '',
               processDesc: [],
               time_type: 1,
               time_count: '',
@@ -364,6 +386,7 @@ export default Vue.extend({
           processInfo: [
             {
               process_name: '',
+              group_id: '',
               process_type: '',
               process_desc: '',
               processDesc: [],
@@ -529,13 +552,13 @@ export default Vue.extend({
         }
       }
 
-      this.getTotalPrice(indexArr[0],indexArr[1])
+      this.getTotalPrice(indexArr[0], indexArr[1])
     },
     getTotalPrice(staffIndex: number, processIndex: number) {
       let item = this.list[staffIndex].processInfo[processIndex]
       setTimeout(() => {
         item.total_price = ((item.price || 0) * (item.time_count || 0)).toFixed(3)
-      },0)
+      }, 0)
     },
     // 改变之后把对应的值赋给自身，把选中列表的id更新一下
     getStaffIdList(index: any) {
@@ -623,6 +646,7 @@ export default Vue.extend({
               {
                 process_name: '',
                 process_type: '',
+                group_id: '',
                 process_desc: '',
                 processDesc: [],
                 time_type: 1,
@@ -658,6 +682,7 @@ export default Vue.extend({
                 process_name: '',
                 process_type: '',
                 process_desc: '',
+                group_id: '',
                 processDesc: [],
                 time_type: 1,
                 time_count: '',
@@ -720,6 +745,7 @@ export default Vue.extend({
             process_name: '',
             process_type: '',
             process_desc: '',
+            group_id: '',
             processDesc: [],
             time_type: 1,
             time_count: '',
@@ -779,6 +805,7 @@ export default Vue.extend({
                 process_name: '',
                 process_type: '',
                 process_desc: '',
+                group_id: '',
                 processDesc: [],
                 time_type: 1,
                 time_count: '',
@@ -810,6 +837,7 @@ export default Vue.extend({
         data: Array<{
           id: number | string | null
           staff_id: number | string
+          group_id: number | string
           process_name: number | string
           process_type: number | string
           process_desc: string
@@ -844,6 +872,7 @@ export default Vue.extend({
             staff_id: staff.staffId[1],
             process_name: process.process_name[1],
             process_type: process.process_name[0],
+            group_id: process.group_id + '',
             process_desc: process.process_desc.toString(),
             price: process.price || 0,
             total_price: (process.price || 0) * (process.time_count || 0),
@@ -919,6 +948,12 @@ export default Vue.extend({
         this.list[staffIndex].processInfo[processIndex].process_name =
           this.list[this.copyLine[0]].processInfo[this.copyLine[1]].process_name
       }
+      
+      // 复制所属员工
+      if (strCopyOption.indexOf('group_id') != -1) {
+        this.list[staffIndex].processInfo[processIndex].group_id =
+          this.list[this.copyLine[0]].processInfo[this.copyLine[1]].group_id
+      }
 
       // 复制工序说明
       if (strCopyOption.indexOf('proces_desc') != -1) {
@@ -943,7 +978,7 @@ export default Vue.extend({
         this.list[staffIndex].processInfo[processIndex].time_count =
           this.list[this.copyLine[0]].processInfo[this.copyLine[1]].time_count
       }
-      
+
       // 复制总价
       if (strCopyOption.indexOf('total_price') != -1) {
         this.list[staffIndex].processInfo[processIndex].total_price =
@@ -1056,7 +1091,19 @@ export default Vue.extend({
       this.init()
     }
   },
+  computed: {
+    groupList(): any {
+      return this.$store.state.api.group.arr
+    }
+  },
   mounted() {
+    this.$checkCommonInfo([
+      {
+        checkWhich: 'api/group',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getGroupAsync'
+      }
+    ])
     staff
       .departmentList({
         keyword: '',

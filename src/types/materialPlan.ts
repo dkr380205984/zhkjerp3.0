@@ -53,6 +53,7 @@ export interface MaterialPlanGatherData {
   material_name?: string
   material_id: string | number
   material_type: string | number
+  yarn_type?: string | number
   material_color: string
   total_order_number?: string | number
   total_transfer_number?: string | number

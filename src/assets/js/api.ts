@@ -259,6 +259,7 @@ const invoice = {
     client_id?: string
     order_code?: string
     code?: string
+    order_or_other?: string | number
     start_time?: string
     invoice_code?: string
     end_time?: string
@@ -1198,6 +1199,7 @@ const workshop = {
     user_id?: string | number
     group_id?: string | number
     start_time?: string
+    time_type?: string | number
     end_time?: string
     process_name?: string
     process?: string

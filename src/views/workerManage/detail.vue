@@ -303,7 +303,7 @@
             <el-pagination
               background
               :page-size="10"
-              layout="prev, pager, next"
+              layout="prev, pager, next, jumper"
               :total="total"
               :current-page.sync="page"
               @current-change="changeRouter"

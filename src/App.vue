@@ -35,6 +35,11 @@ body {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
+.el-pagination span:not([class*=suffix]){
+  line-height: 32px!important;
+  height: 32px!important;
+}
+
 // 统一placeholder
 ::-webkit-input-placeholder {
   /* Chrome/Opera/Safari */

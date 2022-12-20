@@ -62,7 +62,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="categoryTotal"
                   :current-page.sync="categoryPage">
                 </el-pagination>
@@ -97,7 +97,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="styleTotal"
                   :current-page.sync="stylePage">
                 </el-pagination>
@@ -132,7 +132,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="ingredientTotal"
                   :current-page.sync="ingredientPage">
                 </el-pagination>
@@ -167,7 +167,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="colourTotal"
                   :current-page.sync="colourPage">
                 </el-pagination>
@@ -203,7 +203,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="sizeTotal"
                   :current-page.sync="sizePage">
                 </el-pagination>
@@ -234,7 +234,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="orderTypeTotal"
                   :current-page.sync="orderTypePage">
                 </el-pagination>
@@ -265,7 +265,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="sampleOrderTypeTotal"
                   :current-page.sync="sampleOrderTypePage">
                 </el-pagination>
@@ -300,7 +300,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="materialProcessTotal"
                   :current-page.sync="materialProcessPage">
                 </el-pagination>
@@ -348,7 +348,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="halfProcessTotal"
                   :current-page.sync="halfProcessPage">
                 </el-pagination>
@@ -396,7 +396,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="staffProcessTotal"
                   :current-page.sync="staffProcessPage">
                 </el-pagination>
@@ -431,7 +431,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="sideTotal"
                   :current-page.sync="sidePage">
                 </el-pagination>
@@ -466,7 +466,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="machineTotal"
                   :current-page.sync="machinePage">
                 </el-pagination>
@@ -501,7 +501,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="methodsTotal"
                   :current-page.sync="methodsPage">
                 </el-pagination>
@@ -546,7 +546,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="yarnColorTotal"
                   :current-page.sync="yarnColorPage">
                 </el-pagination>
@@ -792,7 +792,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="HSCodeTotal"
                   :current-page.sync="HSCodePage"
                   @current-change="getHSCode">
@@ -841,7 +841,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="normalClientTotal"
                   :current-page.sync="normalClientPage"
                   @current-change="getNormalClientList">
@@ -890,7 +890,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="normalCityTotal"
                   :current-page.sync="normalCityPage"
                   @current-change="getNormalCityList">
@@ -941,7 +941,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="normalCategoryTotal"
                   :current-page.sync="normalCategoryPage"
                   @current-change="getNormalCategoryList">
@@ -990,7 +990,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="normalPayTotal"
                   :current-page.sync="normalPayPage"
                   @current-change="getNormalPayList">
@@ -1042,7 +1042,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="craftTotal"
                   :current-page.sync="craftPage"
                   @current-change="getCraftList()">
@@ -1134,7 +1134,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="10"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="yarnTotal1"
                   :current-page.sync="yarnPage1"
                   @current-change="getYarn(1)">
@@ -1226,7 +1226,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="10"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="yarnTotal2"
                   :current-page.sync="yarnPage2"
                   @current-change="getYarn(2)">
@@ -1265,7 +1265,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="yarnTotal3"
                   :current-page.sync="yarnPage3"
                   @current-change="getYarn(1)">
@@ -1329,7 +1329,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="10"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="decorateMaterialTotal"
                   :current-page.sync="decorateMaterialPage">
                 </el-pagination>
@@ -1381,7 +1381,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="10"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="packMaterialTotal"
                   :current-page.sync="packMaterialPage">
                 </el-pagination>
@@ -1458,7 +1458,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="yarnPriceTotal"
                   :current-page.sync="yarnPricePage"
                   @current-change="getYarnPrice">
@@ -1534,7 +1534,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="mianliaoPriceTotal"
                   :current-page.sync="mianliaoPricePage"
                   @current-change="getMianliaoPrice">
@@ -1563,7 +1563,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="sideTotal"
                   :current-page.sync="sidePage">
                 </el-pagination>
@@ -1594,7 +1594,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="groupTotal"
                   :current-page.sync="groupPage">
                 </el-pagination>
@@ -1649,7 +1649,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="userTotal"
                   :current-page.sync="userPage">
                 </el-pagination>
@@ -1684,7 +1684,7 @@
               <div class="pageCtn">
                 <el-pagination background
                   :page-size="5"
-                  layout="prev, pager, next"
+                  layout="prev, pager, next, jumper"
                   :total="quotedPriceProductTotal"
                   :current-page.sync="quotedPriceProductPage">
                 </el-pagination>
@@ -5660,6 +5660,7 @@
               @click="
                 showPopup = false
                 quotedPriceProductUpdate = false
+                resetQuotedPriceProduct()
               ">
               <i class="el-icon-close"></i>
             </div>
@@ -5935,6 +5936,7 @@
               @click="
                 showPopup = false
                 quotedPriceProductUpdate = false
+                resetQuotedPriceProduct()
               ">
               取消
             </div>
@@ -8340,6 +8342,84 @@ export default Vue.extend({
         })
       }
     },
+    resetQuotedPriceProduct(){
+      this.quotedPriceProduct = {
+        category_id: '',
+        image_data: [],
+        desc: '',
+        transport_fee_desc: '',
+        transport_fee: '',
+        material_data: [
+          {
+            tree_data: [],
+            material_id: '',
+            material_name: '',
+            weight: '',
+            loss: '',
+            price: '',
+            total_price: '',
+            unit: 'kg',
+            desc: ''
+          }
+        ],
+        assist_material_data: [
+          {
+            material_id: '',
+            material_name: '',
+            number: '',
+            loss: '',
+            price: '',
+            total_price: '',
+            unit: '',
+            desc: ''
+          }
+        ],
+        weave_data: [
+          {
+            name: '',
+            desc: '',
+            total_price: ''
+          }
+        ],
+        semi_product_data: [
+          {
+            name: '',
+            desc: '',
+            total_price: ''
+          }
+        ],
+        production_data: [
+          {
+            name: '',
+            desc: '',
+            total_price: ''
+          }
+        ],
+        pack_material_data: [
+          {
+            material_name: '',
+            material_id: '',
+            desc: '',
+            total_price: ''
+          }
+        ],
+        other_fee_data: [
+          {
+            name: '',
+            desc: '',
+            total_price: ''
+          }
+        ],
+        no_production_fee_data: [
+          {
+            id: '',
+            name: '',
+            desc: '',
+            total_price: ''
+          }
+        ]
+      }
+    },
     updateCategory(info: any) {
       this.categoryInfo = info
       this.showPopup = true
@@ -10355,7 +10435,11 @@ export default Vue.extend({
       formData.pack_material_data = JSON.parse(formData.pack_material_data)
       // formData.others_data = JSON.parse(formData.others_data)
       formData.production_data = JSON.parse(formData.production_data)
-      formData.other_fee_data = formData.other_fee_data ? JSON.parse(formData.other_fee_data) : []
+      formData.other_fee_data = formData.other_fee_data ? JSON.parse(formData.other_fee_data) : [{
+            name: '',
+            desc: '',
+            total_price: ''
+          }]
       // formData.material_data = JSON.parse(formData.material_data)
       // formData.assist_material_data = JSON.parse(formData.assist_material_data)
       this.quotedPriceProduct = formData

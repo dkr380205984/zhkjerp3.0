@@ -277,7 +277,7 @@
           <el-pagination
             background
             :page-size="10"
-            layout="prev, pager, next"
+            layout="prev, pager, next, jumper"
             :total="total"
             :current-page.sync="page"
             @current-change="getSettlementList"
@@ -1496,6 +1496,7 @@ export default Vue.extend({
           id: number | string | null
           staff_id: number | string
           order_id: number | string
+          group_id: number | string
           process_name: number | string
           process_type: number | string
           process_desc: string
@@ -1546,6 +1547,7 @@ export default Vue.extend({
           params.data.push({
             id: null,
             order_id: this.$route.query.id + '',
+            group_id: this.orderInfo.group_id + '',
             staff_id: settlementLog.staffId[1],
             process_name: settlementLog.process[1],
             process_type: settlementLog.process[0],

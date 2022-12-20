@@ -30,16 +30,6 @@
                 invoiceInfo.data.length === 1 ? $message.error('至少有一项') : $deleteItem(invoiceInfo.data, index)
               "></i>
           </div>
-          <!-- <div class="row">
-            <div class="info">
-              <el-select>
-                <el-option label="订单开票"
-                  value="1"></el-option>
-                <el-option label="其他发票"
-                  value="2"></el-option>
-              </el-select>
-            </div>
-          </div> -->
           <div class="row">
             <div class="info">
               <el-input disabled
@@ -63,17 +53,17 @@
           </div>
           <div class="row">
             <div class="info">
-              <el-select v-model="item.type"
-                placeholder="发票类型">
-                <el-option label="专票"
-                  value="专票"> </el-option>
-                <el-option label="普票"
-                  value="普票"> </el-option>
+              <el-select v-model="item.order_or_other"
+                placeholder="开票类型">
+                <el-option label="订单开票"
+                  :value="1"> </el-option>
+                <el-option label="其它开票"
+                  :value="2"> </el-option>
               </el-select>
             </div>
           </div>
-          <div class="row">
-            <div class="info">
+          <div class="row" style="justify-content: space-around;">
+            <div class="info" style="flex:0.49">
               <el-autocomplete class="inline-input"
                 v-model="item.tax_rate"
                 :fetch-suggestions="querySearch"
@@ -81,6 +71,15 @@
                 @input="getAboutTaxPrice(index)">
                 <template slot="append">%</template>
               </el-autocomplete>
+            </div>
+            <div class="info" style="flex:0.49">
+              <el-select v-model="item.type"
+                placeholder="发票类型">
+                <el-option label="专票"
+                  value="专票"> </el-option>
+                <el-option label="普票"
+                  value="普票"> </el-option>
+              </el-select>
             </div>
           </div>
           <div class="row">
@@ -168,6 +167,7 @@ interface invoiceInfo {
     invoice_number: string
     tax_rate: number | string
     type: string
+    order_or_other: string | number
     price_tax: number | string
     price_no_tax: number | string
     price: string
@@ -240,6 +240,7 @@ export default Vue.extend({
             invoice_number: '',
             tax_rate: '',
             type: '专票',
+            order_or_other: 1,
             price_tax: '',
             price_no_tax: ''
           }
@@ -293,6 +294,7 @@ export default Vue.extend({
               invoice_number: this.update ? item.invoice_number : '',
               tax_rate: this.update ? item.tax_rate : '',
               type: this.update ? item.type : 1,
+              order_or_other: this.update ? item.order_or_other : 1,
               price_tax: this.update ? item.price_tax : '',
               price_no_tax: this.update ? item.price_no_tax : ''
             }
@@ -309,6 +311,7 @@ export default Vue.extend({
               invoice_number: '',
               tax_rate: '',
               type: '专票',
+              order_or_other: 1,
               price_tax: '',
               price_no_tax: ''
             }
@@ -377,6 +380,7 @@ export default Vue.extend({
             invoice_number: '',
             tax_rate: '',
             type: '专票',
+            order_or_other: 1,
             price_tax: '',
             price_no_tax: ''
           }
