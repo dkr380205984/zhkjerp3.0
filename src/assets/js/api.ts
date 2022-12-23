@@ -319,7 +319,7 @@ const category = {
   create: (params: CategoryInfo) => http.post(`${baseUrl}/product/category/save`, params, 'application/json'),
   delete: (params: DeleteParams) => http.post(`${baseUrl}/product/category/delete`, params, 'application/json'),
   deleteSecond: (params: DeleteParams) => http.post(`${baseUrl}/product/secondary/category/delete`, params, 'application/json'), // 删除二级品类
-  list: (params?: ListParams) => http.get(`${baseUrl}/product/category/lists`, params)
+  list: (params?: any) => http.get(`${baseUrl}/product/category/lists`, params)
 }
 // 产品款式
 import { StyleInfo } from '@/types/productSetting'

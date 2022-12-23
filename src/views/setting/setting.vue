@@ -29,12 +29,13 @@
             <div class="listCtn">
               <div class="filterCtn clearfix">
                 <div class="btn backHoverBlue fr"
-                  @click="
+                @click="
                     showPopup = true
                     categoryInfo.id = ''
-                  ">
+                    ">
                   添加新品类
                 </div>
+                <el-checkbox class="fr" style="line-height:32px" v-model="checkCategoryDelete" @change="getCategory">查询已删除</el-checkbox>
               </div>
               <div class="list">
                 <div class="row title">
@@ -54,8 +55,8 @@
                   <div class="col">
                     <span class="opr hoverOrange"
                       @click="updateCategory(item)">修改</span>
-                    <span class="opr hoverRed"
-                      @click="deleteCategory(item.id)">删除</span>
+                    <span class="opr" :class={hoverRed:!checkCategoryDelete,hoverGreen:checkCategoryDelete}
+                      @click="deleteCategory(item.id)">{{checkCategoryDelete?'恢复':'删除'}}</span>
                   </div>
                 </div>
               </div>
@@ -1699,13 +1700,21 @@
                   <div class="col">操作</div>
                 </div>
                 <div class="row"
-                  v-for="(item, index) in categoryList"
+                  v-for="(item, index) in categoryArr"
                   :key="index">
                   <div class="col">{{ item.name }}</div>
                   <div class="col">
                     <span class="opr hoverBlue"
                       @click="lookQuotedPriceDescDetail(item)">查看</span>
                   </div>
+                </div>
+                <div class="pageCtn">
+                  <el-pagination background
+                    :page-size="5"
+                    layout="prev, pager, next, jumper"
+                    :total="categoryTotal"
+                    :current-page.sync="categoryPage">
+                  </el-pagination>
                 </div>
               </div>
             </div>
@@ -6654,6 +6663,7 @@ export default Vue.extend({
       categoryList: [],
       categoryTotal: 1,
       categoryPage: 1,
+      checkCategoryDelete: false,
       styleInfo: {
         id: null,
         name: ''
@@ -7788,9 +7798,11 @@ export default Vue.extend({
         this.getUser()
         this.getGroup()
       } else if (this.cName === '报价模板') {
+        this.checkCategoryDelete = false
         this.getQuotedPriceProduct()
         this.getCategory()
       } else if (this.cName === '报价说明') {
+        this.checkCategoryDelete = false
         this.$checkCommonInfo([
           {
             checkWhich: 'status/token',
@@ -8292,7 +8304,9 @@ export default Vue.extend({
       }
     },
     getCategory() {
-      category.list().then((res) => {
+      category.list({
+        only_delete: this.checkCategoryDelete?1:null
+      }).then((res) => {
         if (res.data.status) {
           this.categoryList = res.data.data
           this.categoryTotal = this.categoryList.length
@@ -8425,7 +8439,7 @@ export default Vue.extend({
       this.showPopup = true
     },
     deleteCategory(id: number) {
-      this.$confirm('是否删除该品类?', '提示', {
+      this.$confirm('是否' + (this.checkCategoryDelete?'恢复':'删除') + '该品类?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -8435,7 +8449,7 @@ export default Vue.extend({
             if (res.data.status) {
               this.$message({
                 type: 'success',
-                message: '删除成功!'
+                message: (this.checkCategoryDelete?'恢复':'删除') + '成功!'
               })
               this.getCategory()
             }
