@@ -576,6 +576,16 @@ const listSetting = {
   detail: (params: { type: number }) => http.get(`${baseUrl}/list/setting`, params)
 }
 
+const lostEdit = {
+  processList: (params: any) => http.get(`${baseUrl}/material/process/info/lists`, params),
+  weaveList: (params: any) => http.get(`${baseUrl}/weave/plan/info/lists`, params),
+  packList: (params: any) => http.get(`${baseUrl}/pack/order/info/lists`, params),
+  orderList: (params: any) => http.get(`${baseUrl}/material/order/info/lists`, params),
+  processUpdate: (params: any) => http.post(`${baseUrl}/update/material/process/price`, params, 'application/json'),
+  weaveUpdate: (params: any) => http.post(`${baseUrl}/update/weave/plan/price`, params, 'application/json'),
+  packUpdate: (params: any) => http.post(`${baseUrl}/update/pack/order/price`, params, 'application/json'),
+}
+
 // 仓库
 import { StoreInfo } from '@/types/store'
 const store = {
@@ -1567,6 +1577,7 @@ export {
   invoice,
   updateSettlePrice,
   updateStorePirce,
+  lostEdit,
   chartsApi,
   processType
 }

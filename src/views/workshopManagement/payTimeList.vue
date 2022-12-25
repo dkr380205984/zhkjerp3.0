@@ -85,7 +85,7 @@
             </el-select>
           </div>
         </div>
-        <div class="filterCtn">
+        <div class="filterCtn clearfix">
           <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(1)">计件更新（按订单）</div>
           <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(2)">计件更新（按员工）</div>
           <div

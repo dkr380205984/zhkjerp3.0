@@ -1,8 +1,6 @@
 <template>
-  <div id="paymentDetail"
-    class="bodyContainer">
-    <div class="module"
-      id="基本信息">
+  <div id="paymentDetail" class="bodyContainer">
+    <div class="module" id="基本信息">
       <div class="titleCtn">
         <div class="title">基本信息</div>
       </div>
@@ -32,65 +30,54 @@
           </div>
         </div>
         <div class="label">联系人信息</div>
-        <div v-for="(item,index) in clientFinancial.contacts_data"
-          :key="item.id">
-          <div class="row"
-            v-if="index<=1">
+        <div v-for="(item, index) in clientFinancial.contacts_data" :key="item.id">
+          <div class="row" v-if="index <= 1">
             <div class="col specialInfo">
               <div class="info">
-                <div class="row"
-                  style="margin:0">
+                <div class="row" style="margin:0">
                   <div class="col flex3">
                     <div class="label">姓名：</div>
-                    <div class="text">{{item.name}}</div>
+                    <div class="text">{{ item.name }}</div>
                   </div>
                   <div class="col flex3">
                     <div class="label">电话：</div>
-                    <div class="text">{{item.phone}}</div>
+                    <div class="text">{{ item.phone }}</div>
                   </div>
                   <div class="col">
                     <div class="label">职务：</div>
-                    <div class="text">{{item.station}}</div>
+                    <div class="text">{{ item.station }}</div>
                   </div>
                   <div class="col">
                     <div class="label">邮箱：</div>
-                    <div class="text">{{item.email}}</div>
+                    <div class="text">{{ item.email }}</div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <zh-drop-down :buttonStyle="'padding:20px'"
-          v-if="clientFinancial.contacts_data.length > 2"
-          position="bottom"
-          :show="showContacts"
-          hideTitle="展开">
-          <div v-for="(item,index) in clientFinancial.contacts_data"
-            :key="item.id">
-            <div class="row"
-              v-if="index>1"
-              :style="index === 2?'margin-top:0':''">
+        <zh-drop-down :buttonStyle="'padding:20px'" v-if="clientFinancial.contacts_data.length > 2" position="bottom"
+          :show="showContacts" hideTitle="展开">
+          <div v-for="(item, index) in clientFinancial.contacts_data" :key="item.id">
+            <div class="row" v-if="index > 1" :style="index === 2 ? 'margin-top:0' : ''">
               <div class="col specialInfo">
                 <div class="info">
-                  <div class="row"
-                    v-if="index > 1"
-                    style="margin:0">
+                  <div class="row" v-if="index > 1" style="margin:0">
                     <div class="col flex3">
                       <div class="label">姓名：</div>
-                      <div class="text">{{item.name}}</div>
+                      <div class="text">{{ item.name }}</div>
                     </div>
                     <div class="col flex3">
                       <div class="label">电话：</div>
-                      <div class="text">{{item.phone}}</div>
+                      <div class="text">{{ item.phone }}</div>
                     </div>
                     <div class="col">
                       <div class="label">职务：</div>
-                      <div class="text">{{item.station}}</div>
+                      <div class="text">{{ item.station }}</div>
                     </div>
                     <div class="col">
                       <div class="label">邮箱：</div>
-                      <div class="text">{{item.email}}</div>
+                      <div class="text">{{ item.email }}</div>
                     </div>
                   </div>
                 </div>
@@ -99,81 +86,70 @@
           </div>
         </zh-drop-down>
         <div class="label">财务信息</div>
-        <div v-for="(item,index) in clientFinancial.financial_data"
-          :key="item.id">
-          <div class="row"
-            v-if="index<=1">
+        <div v-for="(item, index) in clientFinancial.financial_data" :key="item.id">
+          <div class="row" v-if="index <= 1">
             <div class="col specialInfo">
               <div class="info">
-                <div class="row"
-                  style="margin:0">
+                <div class="row" style="margin:0">
                   <div class="col flex3">
                     <div class="label">户名：</div>
-                    <div class="text">{{item.account}}</div>
+                    <div class="text">{{ item.account }}</div>
                   </div>
                   <div class="col flex3">
                     <div class="label">纳税识别号：</div>
-                    <div class="text">{{item.tax_number}}</div>
+                    <div class="text">{{ item.tax_number }}</div>
                   </div>
                   <div class="col flex3">
                     <div class="label">电话：</div>
-                    <div class="text">{{item.phone}}</div>
+                    <div class="text">{{ item.phone }}</div>
                   </div>
                   <div class="col">
                     <div class="label">开户行：</div>
-                    <div class="text">{{item.bank}}</div>
+                    <div class="text">{{ item.bank }}</div>
                   </div>
                   <div class="col">
                     <div class="label">账号：</div>
-                    <div class="text">{{item.bank_number}}</div>
+                    <div class="text">{{ item.bank_number }}</div>
                   </div>
                   <div class="col">
                     <div class="label">备注：</div>
-                    <div class="text">{{item.desc}}</div>
+                    <div class="text">{{ item.desc }}</div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <zh-drop-down :buttonStyle="'padding:20px'"
-          v-if="clientFinancial.financial_data.length > 2"
-          position="bottom"
-          :show="showContacts"
-          hideTitle="展开">
-          <div v-for="(item,index) in clientFinancial.financial_data"
-            :key="item.id">
-            <div class="row"
-              v-if="index>1"
-              :style="index === 2?'margin-top:0':''">
+        <zh-drop-down :buttonStyle="'padding:20px'" v-if="clientFinancial.financial_data.length > 2" position="bottom"
+          :show="showContacts" hideTitle="展开">
+          <div v-for="(item, index) in clientFinancial.financial_data" :key="item.id">
+            <div class="row" v-if="index > 1" :style="index === 2 ? 'margin-top:0' : ''">
               <div class="col specialInfo">
                 <div class="info">
-                  <div class="row"
-                    v-if="index > 1"
-                    style="margin:0">
+                  <div class="row" v-if="index > 1" style="margin:0">
                     <div class="col flex3">
                       <div class="label">户名：</div>
-                      <div class="text">{{item.account}}</div>
+                      <div class="text">{{ item.account }}</div>
                     </div>
                     <div class="col flex3">
                       <div class="label">纳税识别号：</div>
-                      <div class="text">{{item.tax_number}}</div>
+                      <div class="text">{{ item.tax_number }}</div>
                     </div>
                     <div class="col flex3">
                       <div class="label">电话：</div>
-                      <div class="text">{{item.phone}}</div>
+                      <div class="text">{{ item.phone }}</div>
                     </div>
                     <div class="col">
                       <div class="label">开户行：</div>
-                      <div class="text">{{item.bank}}</div>
+                      <div class="text">{{ item.bank }}</div>
                     </div>
                     <div class="col">
                       <div class="label">账号：</div>
-                      <div class="text">{{item.bank_number}}</div>
+                      <div class="text">{{ item.bank_number }}</div>
                     </div>
                     <div class="col">
                       <div class="label">备注：</div>
-                      <div class="text">{{item.desc}}</div>
+                      <div class="text">{{ item.desc }}</div>
                     </div>
                   </div>
                 </div>
@@ -183,31 +159,23 @@
         </zh-drop-down>
       </div>
     </div>
-    <div class="module"
-      id="统计报表">
+    <div class="module" id="统计报表">
       <el-tabs type="border-card">
         <el-tab-pane label="统计数据">
-          <div class="titleCtn"
-            style="padding: 0 15px">
+          <div class="titleCtn" style="padding: 0 15px">
             <div class="title">统计报表</div>
           </div>
-          <div class="listCtn"
-            style="padding-bottom: 0; padding-left: 15px; padding-right: 15px">
-            <div class="filterCtn"
-              style="margin-bottom: 0">
+          <div class="listCtn" style="padding-bottom: 0; padding-left: 15px; padding-right: 15px">
+            <div class="filterCtn" style="margin-bottom: 0">
               <div class="elCtn">
-                <el-date-picker v-model="year"
-                  @change="getFinancialDetail"
-                  value-format="yyyy"
-                  type="year"
+                <el-date-picker v-model="year" @change="getFinancialDetail" value-format="yyyy" type="year"
                   placeholder="选择年">
                 </el-date-picker>
               </div>
             </div>
           </div>
           <template v-if="clientType === 2">
-            <div class="specialCtn"
-              style="padding: 20px 15px">
+            <div class="specialCtn" style="padding: 20px 15px">
               <div class="row">
                 <div class="col">
                   <div class="row">
@@ -218,13 +186,13 @@
                             $route.query.type === '装饰辅料单位'
                               ? $toFixed(clientFinancial.total_plan_number / 10000, 3, true)
                               : $toFixed(clientFinancial.total_plan_number / 1000, 3, true)
-                          }}
+                        }}
                           <span class="unit">{{
-                            $route.query.type === '纱线原料单位'
-                              ? '吨'
-                              : $route.query.type === '面料原料单位'
-                              ? '千米'
-                              : '万'
+                              $route.query.type === '纱线原料单位'
+                                ? '吨'
+                                : $route.query.type === '面料原料单位'
+                                  ? '千米'
+                                  : '万'
                           }}</span>
                         </span>
                       </div>
@@ -249,13 +217,13 @@
                             $route.query.type === '装饰辅料单位'
                               ? $toFixed(clientFinancial.total_real_number / 10000, 3, true)
                               : $toFixed(clientFinancial.total_real_number / 1000, 3, true)
-                          }}
+                        }}
                           <span class="unit">{{
-                            $route.query.type === '纱线原料单位'
-                              ? '吨'
-                              : $route.query.type === '面料原料单位'
-                              ? '千米'
-                              : '万'
+                              $route.query.type === '纱线原料单位'
+                                ? '吨'
+                                : $route.query.type === '面料原料单位'
+                                  ? '千米'
+                                  : '万'
                           }}</span>
                         </span>
                       </div>
@@ -316,8 +284,7 @@
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="infoCtn"
-                    style="padding: 0">
+                  <div class="infoCtn" style="padding: 0">
                     <p style="margin: 8px 12px">
                       <span style="font-weight: bold">1.补原料统计：</span>
                       <span>共涉及补原料</span>
@@ -340,8 +307,7 @@
             </div>
           </template>
           <template v-else-if="clientType === 3">
-            <div class="specialCtn"
-              style="padding: 20px 15px">
+            <div class="specialCtn" style="padding: 20px 15px">
               <div class="row">
                 <div class="col">
                   <div class="row">
@@ -430,8 +396,7 @@
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="infoCtn"
-                    style="padding: 0">
+                  <div class="infoCtn" style="padding: 0">
                     <p style="margin: 8px 12px">
                       <span style="font-weight: bold">1.补原料统计：</span>
                       <span>共涉及补原料</span>
@@ -454,8 +419,7 @@
             </div>
           </template>
           <template v-else-if="clientType === 4">
-            <div class="specialCtn"
-              style="padding: 20px 15px">
+            <div class="specialCtn" style="padding: 20px 15px">
               <div class="row">
                 <div class="col">
                   <div class="row">
@@ -544,8 +508,7 @@
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="infoCtn"
-                    style="padding: 0">
+                  <div class="infoCtn" style="padding: 0">
                     <p style="margin: 8px 12px">
                       <span style="font-weight: bold">1.补原料统计：</span>
                       <span>共涉及补原料</span>
@@ -578,8 +541,7 @@
             </div>
           </template>
           <template v-else-if="clientType === 11">
-            <div class="specialCtn"
-              style="padding: 20px 15px">
+            <div class="specialCtn" style="padding: 20px 15px">
               <div class="row">
                 <div class="col">
                   <div class="row">
@@ -669,8 +631,7 @@
             </div>
           </template>
           <template v-else-if="clientType === 13">
-            <div class="specialCtn"
-              style="padding: 20px 15px">
+            <div class="specialCtn" style="padding: 20px 15px">
               <div class="row">
                 <div class="col">
                   <div class="row">
@@ -760,21 +721,14 @@
             </div>
           </template>
         </el-tab-pane>
-        <el-tab-pane label="统计图表"
-          v-if="$route.query.type === '纱线原料单位' || $route.query.type === '面料原料单位'">
-          <div class="titleCtn"
-            style="padding: 0 15px">
+        <el-tab-pane label="统计图表" v-if="$route.query.type === '纱线原料单位' || $route.query.type === '面料原料单位'">
+          <div class="titleCtn" style="padding: 0 15px">
             <div class="title">统计报表</div>
           </div>
-          <div class="listCtn"
-            style="padding-bottom: 0; padding-left: 15px; padding-right: 15px">
-            <div class="filterCtn"
-              style="margin-bottom: 0">
+          <div class="listCtn" style="padding-bottom: 0; padding-left: 15px; padding-right: 15px">
+            <div class="filterCtn" style="margin-bottom: 0">
               <div class="elCtn">
-                <el-date-picker v-model="staticYear"
-                  @change="getStaticData"
-                  value-format="yyyy"
-                  type="year"
+                <el-date-picker v-model="staticYear" @change="getStaticData" value-format="yyyy" type="year"
                   placeholder="选择年">
                 </el-date-picker>
               </div>
@@ -782,205 +736,125 @@
           </div>
           <div style="display: flex; justify-content: end; padding-right: 50px">
             <div style="width: 150px">
-              <el-select v-model="sortWay"
-                @change="getStaticData">
-                <el-option label="订购数量排序"
-                  :value="1"> </el-option>
-                <el-option label="入库数量排序"
-                  :value="2"> </el-option>
-                <el-option label="平均单价排序"
-                  :value="3"> </el-option>
+              <el-select v-model="sortWay" @change="getStaticData">
+                <el-option label="订购数量排序" :value="1"> </el-option>
+                <el-option label="入库数量排序" :value="2"> </el-option>
+                <el-option label="平均单价排序" :value="3"> </el-option>
               </el-select>
             </div>
           </div>
-          <zh-charts :option="optionStatic"
-            style="width: 1334px"></zh-charts>
+          <zh-charts :option="optionStatic" style="width: 1334px"></zh-charts>
         </el-tab-pane>
       </el-tabs>
     </div>
-    <div class="module"
-      id="单据列表">
+    <div class="module" id="单据列表">
       <el-tabs type="border-card">
         <el-tab-pane label="订购单据">
-          <div class="titleCtn"
-            style="padding: 0 15px">
+          <div class="titleCtn" style="padding: 0 15px">
             <div class="title">单据列表</div>
           </div>
-          <div class="listCtn"
-            v-loading="listLoading"
-            style="padding-left: 10px; padding-right: 10px">
+          <div class="listCtn" v-loading="listLoading" style="padding-left: 10px; padding-right: 10px">
             <!-- 物料订购 -->
             <template v-if="clientType === 2">
               <div class="filterCtn">
                 <div class="elCtn">
-                  <el-input v-model="materialOrderFilter.keyword"
-                    placeholder="筛选订购单号/订单号"
+                  <el-input v-model="materialOrderFilter.keyword" placeholder="筛选订购单号/订单号"
                     @keydown.enter.native="getBill"></el-input>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="materialOrderFilter.user_id"
-                    placeholder="筛选创建人"
-                    clearable>
-                    <el-option v-for="item in userList"
-                      :key="item.value"
-                      :label="item.label"
+                  <el-select @change="getBill" v-model="materialOrderFilter.user_id" placeholder="筛选创建人" clearable>
+                    <el-option v-for="item in userList" :key="item.value" :label="item.label"
                       :value="item.value"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-date-picker v-model="materialOrderFilter.date"
-                    type="daterange"
-                    align="right"
-                    unlink-panels
-                    range-separator="至"
-                    start-placeholder="订购日期"
-                    end-placeholder="订购日期"
-                    :picker-options="pickerOptions"
-                    @change="getBill"
-                    value-format="yyyy-MM-dd">
+                  <el-date-picker v-model="materialOrderFilter.date" type="daterange" align="right" unlink-panels
+                    range-separator="至" start-placeholder="订购日期" end-placeholder="订购日期" :picker-options="pickerOptions"
+                    @change="getBill" value-format="yyyy-MM-dd">
                   </el-date-picker>
                 </div>
                 <div class="elCtn">
-                  <el-date-picker v-model="materialOrderFilter.pushDate"
-                    type="daterange"
-                    align="right"
-                    unlink-panels
-                    range-separator="至"
-                    start-placeholder="入库日期"
-                    end-placeholder="入库日期"
-                    :picker-options="pickerOptions"
-                    @change="getBill"
-                    value-format="yyyy-MM-dd">
+                  <el-date-picker v-model="materialOrderFilter.pushDate" type="daterange" align="right" unlink-panels
+                    range-separator="至" start-placeholder="入库日期" end-placeholder="入库日期" :picker-options="pickerOptions"
+                    @change="getBill" value-format="yyyy-MM-dd">
                   </el-date-picker>
                 </div>
-                <div class="btn borderBtn"
-                  @click="reset">重置</div>
+                <div class="btn borderBtn" @click="reset">重置</div>
               </div>
               <div class="filterCtn">
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="materialOrderFilter.group_id"
-                    placeholder="筛选负责小组"
-                    clearable>
-                    <el-option v-for="item in groupList"
-                      :key="item.id"
-                      :value="item.id"
-                      :label="item.name"></el-option>
+                  <el-select @change="getBill" v-model="materialOrderFilter.group_id" placeholder="筛选负责小组" clearable>
+                    <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="materialOrderFilter.has_invoice"
-                    placeholder="筛选开票状态"
-                    clearable>
-                    <el-option label="全部"
-                      value="null"></el-option>
-                    <el-option label="已开票"
-                      value="1"></el-option>
-                    <el-option label="待开票"
-                      value="2"></el-option>
+                  <el-select @change="getBill" v-model="materialOrderFilter.has_invoice" placeholder="筛选开票状态" clearable>
+                    <el-option label="全部" value="null"></el-option>
+                    <el-option label="已开票" value="1"></el-option>
+                    <el-option label="待开票" value="2"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="materialOrderFilter.has_pay"
-                    placeholder="筛选付款状态"
-                    clearable>
-                    <el-option label="全部"
-                      value="null"></el-option>
-                    <el-option label="已付款"
-                      value="1"></el-option>
-                    <el-option label="待付款"
-                      value="2"></el-option>
+                  <el-select @change="getBill" v-model="materialOrderFilter.has_pay" placeholder="筛选付款状态" clearable>
+                    <el-option label="全部" value="null"></el-option>
+                    <el-option label="已付款" value="1"></el-option>
+                    <el-option label="待付款" value="2"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="materialOrderFilter.has_deduct"
-                    placeholder="筛选扣款状态"
-                    clearable>
-                    <el-option label="全部"
-                      value="null"></el-option>
-                    <el-option label="已扣款"
-                      value="1"></el-option>
-                    <el-option label="待扣款"
-                      value="2"></el-option>
+                  <el-select @change="getBill" v-model="materialOrderFilter.has_deduct" placeholder="筛选扣款状态" clearable>
+                    <el-option label="全部" value="null"></el-option>
+                    <el-option label="已扣款" value="1"></el-option>
+                    <el-option label="待扣款" value="2"></el-option>
                   </el-select>
                 </div>
               </div>
               <div class="filterCtn">
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="materialOrderFilter.is_check"
-                    placeholder="筛选审核状态">
-                    <el-option value="null"
-                      label="全部"></el-option>
-                    <el-option value="1"
-                      label="已审核"></el-option>
-                    <el-option value="2"
-                      label="待审核"></el-option>
+                  <el-select @change="getBill" v-model="materialOrderFilter.is_check" placeholder="筛选审核状态">
+                    <el-option value="null" label="全部"></el-option>
+                    <el-option value="1" label="已审核"></el-option>
+                    <el-option value="2" label="待审核"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-cascader v-if="$route.query.type!=='装饰辅料单位'"
-                    placeholder="筛选原料名称"
-                    v-model="materialOrderFilter.material_name"
-                    :options="yarnTypeList"
-                    clearable
-                    filterable
+                  <el-cascader v-if="$route.query.type !== '装饰辅料单位'" placeholder="筛选原料名称"
+                    v-model="materialOrderFilter.material_name" :options="yarnTypeList" clearable filterable
                     @change="getBill"></el-cascader>
-                  <el-select v-if="$route.query.type==='装饰辅料单位'"
-                    v-model="materialOrderFilter.material_name"
-                    placeholder="筛选辅料名称"
-                    clearable
-                    filterable
-                    @change="getBill">
-                    <el-option v-for="item in decorateMaterialList"
-                      :key="item.name"
-                      :label="item.name"
+                  <el-select v-if="$route.query.type === '装饰辅料单位'" v-model="materialOrderFilter.material_name"
+                    placeholder="筛选辅料名称" clearable filterable @change="getBill">
+                    <el-option v-for="item in decorateMaterialList" :key="item.name" :label="item.name"
                       :value="item.name"></el-option>
                   </el-select>
                 </div>
               </div>
-              <div class="filterCtn"
-                style="overflow: hidden">
-                <div class="btn backHoverBlue"
-                  @click="goPayment(materialOrderCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+              <div class="filterCtn" style="overflow: hidden">
+                <div class="btn backHoverBlue" @click="goPayment(materialOrderCheckList)">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">批量付款</span>
                 </div>
-                <div class="btn backHoverOrange"
-                  @click="goInvoice(materialOrderCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverOrange" @click="goInvoice(materialOrderCheckList)">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">批量开票</span>
                 </div>
-                <div class="btn backHoverRed"
-                  @click="goDeduct(materialOrderCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverRed" @click="goDeduct(materialOrderCheckList)">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">批量扣款</span>
                 </div>
-                <div class="btn backHoverOrange"
-                  @click="getMatStsList(updatePriceInfo.date)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverOrange" @click="getMatStsList(updatePriceInfo.date)">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">更新结算单价</span>
                 </div>
-                <div class="btn backHoverBlue"
-                  @click="changeShowAll(materialOrderList, '', 'showAllFlag')">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverBlue" @click="changeShowAll(materialOrderList, '', 'showAllFlag')">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">{{ showAllFlag ? '全部展开' : '全部收起' }}</span>
@@ -988,14 +862,10 @@
               </div>
               <div class="filterCtn clearfix">
                 <div class="label">已勾选单据：</div>
-                <div class="elCtn check"
-                  v-for="(item, index) in materialOrderCheckList"
-                  :key="item.id">
-                  <el-input v-model="item.code"
-                    disabled>
+                <div class="elCtn check" v-for="(item, index) in materialOrderCheckList" :key="item.id">
+                  <el-input v-model="item.code" disabled>
                     <template slot="append">
-                      <i class="el-icon-close hoverRed"
-                        style="cursor: pointer"
+                      <i class="el-icon-close hoverRed" style="cursor: pointer"
                         @click="materialOrderCheckList.splice(index, 1)"></i>
                     </template>
                   </el-input>
@@ -1003,8 +873,7 @@
               </div>
               <div class="list">
                 <div class="row title">
-                  <div class="col"
-                    style="flex: 0.1">
+                  <div class="col" style="flex: 0.1">
                     <el-checkbox v-model="checkAll"
                       @change="(ev) => checkAllInfo(ev, materialOrderList, materialOrderCheckList)">
                     </el-checkbox>
@@ -1022,25 +891,20 @@
                   <div class="col">入库时间</div>
                   <div class="col oprWidth">操作</div>
                 </div>
-                <div v-for="(item, index) in materialOrderList"
-                  :key="index">
+                <div v-for="(item, index) in materialOrderList" :key="index">
                   <div class="row">
-                    <div class="col"
-                      style="flex: 0.1">
+                    <div class="col" style="flex: 0.1">
                       <el-checkbox v-model="item.checked"
                         @change="(ev) => getCheckInfo(ev, item, materialOrderCheckList)">
                       </el-checkbox>
                     </div>
-                    <div class="col blue"
-                      style="cursor: pointer"
-                      @click="openMaterialOrder(item)"><span>{{ item.code }}
+                    <div class="col blue" style="cursor: pointer" @click="openMaterialOrder(item)"><span>{{ item.code }}
                         <span v-if="item.plan_id">(计划单)</span>
                         <span v-else-if="item.sup_id">(补纱单)</span>
                         <span v-else-if="item.reserve_id">(预订购)</span>
                         <span v-else>(辅料)</span></span>
                     </div>
-                    <div class="col blue"
-                      style="cursor: pointer"
+                    <div class="col blue" style="cursor: pointer"
                       @click="$openUrl('/order/detail?id=' + item.top_order_id)">
                       {{ item.order_code }}
                     </div>
@@ -1052,69 +916,46 @@
                     </div>
                     <div class="col numberWidth">{{ $toFixed(item.total_push_price, 3, true) }}</div>
                     <div class="col">
-                      <div v-if="item.is_check === 0"
-                        class="orange">未审核</div>
-                      <div v-if="item.is_check === 1"
-                        class="blue">已通过</div>
-                      <div v-if="item.is_check === 2"
-                        class="red">已驳回</div>
-                      <div v-if="item.is_check > 2"
-                        class="red">异常</div>
+                      <div v-if="item.is_check === 0" class="orange">未审核</div>
+                      <div v-if="item.is_check === 1" class="blue">已通过</div>
+                      <div v-if="item.is_check === 2" class="red">已驳回</div>
+                      <div v-if="item.is_check > 2" class="red">异常</div>
                     </div>
                     <div class="col circleCtn">
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'开票金额:' + item.has_invoice + '元'"
+                      <el-tooltip class="item" effect="dark" :content="'开票金额:' + item.has_invoice + '元'"
                         placement="top">
-                        <div class="circle"
-                          :class="{ blue: Number(item.has_invoice) > 0 }">票</div>
+                        <div class="circle" :class="{ blue: Number(item.has_invoice) > 0 }">票</div>
                       </el-tooltip>
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'付款金额:' + item.has_pay + '元'"
-                        placement="top">
-                        <div class="circle"
-                          :class="{ green: Number(item.has_pay) > 0 }">付</div>
+                      <el-tooltip class="item" effect="dark" :content="'付款金额:' + item.has_pay + '元'" placement="top">
+                        <div class="circle" :class="{ green: Number(item.has_pay) > 0 }">付</div>
                       </el-tooltip>
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'扣款金额:' + item.has_deduct + '元'"
-                        placement="top">
-                        <div class="circle"
-                          :class="{ red: Number(item.has_deduct) > 0 }">扣</div>
+                      <el-tooltip class="item" effect="dark" :content="'扣款金额:' + item.has_deduct + '元'" placement="top">
+                        <div class="circle" :class="{ red: Number(item.has_deduct) > 0 }">扣</div>
                       </el-tooltip>
                     </div>
                     <div class="col">{{ item.user_name }}</div>
                     <div class="col">{{ item.created_at }}</div>
                     <div class="col">{{ item.push_time }}</div>
                     <div class="col oprWidth">
-                      <span class="opr hoverBlue"
-                        @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
+                      <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
                     </div>
                   </div>
                   <div v-if="item.isShow"
                     style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
-                    <div class="tableCtn"
-                      style="padding-top: 0">
+                    <div class="tableCtn" style="padding-top: 0">
                       <template v-if="item.detail.info_data.length > 0">
                         <div v-if="$route.query.type !== '面料原料单位' && $route.query.type !== '纱线原料单位'"
-                          class="btn backBlue"
-                          style="margin: 12px 24px 12px 0"
-                          @click="
-                            item.showStock = false
+                          class="btn backBlue" style="margin: 12px 24px 12px 0" @click="
+  item.showStock = false
                             $forceUpdate()
-                          "
-                          :class="{ backGray: !item.showStock }">
+                          " :class="{ backGray: !item.showStock }">
                           查看订购信息
                         </div>
                         <div v-if="$route.query.type !== '面料原料单位' && $route.query.type !== '纱线原料单位'"
-                          class="btn backBlue"
-                          style="margin: 12px 24px 12px 0"
-                          @click="
-                            item.showStock = true
+                          class="btn backBlue" style="margin: 12px 24px 12px 0" @click="
+  item.showStock = true
                             $forceUpdate()
-                          "
-                          :class="{ backGray: item.showStock }">
+                          " :class="{ backGray: item.showStock }">
                           查看出入库信息
                         </div>
                       </template>
@@ -1123,8 +964,7 @@
                           <div class="col">
                             <div class="label">关联计划单：</div>
                             <div :class="item.detail.plan_code ? 'hoverBlue text' : 'text'"
-                              :style="item.detail.plan_code ? { cursor: 'pointer' } : {}"
-                              @click="
+                              :style="item.detail.plan_code ? { cursor: 'pointer' } : {}" @click="
                                 item.detail.plan_code
                                   ? $router.push('/materialManage/detail?id=' + item.detail.plan_id)
                                   : ''
@@ -1132,8 +972,7 @@
                               {{ item.detail.plan_code || '无' }}
                             </div>
                           </div>
-                          <div class="col"
-                            v-if="$route.query.type === '面料原料单位' || $route.query.type === '纱线原料单位'">
+                          <div class="col" v-if="$route.query.type === '面料原料单位' || $route.query.type === '纱线原料单位'">
                             <div class="label">额外费用：</div>
                             <div class="text">
                               <others-fee-data :data="item.others_fee_data"></others-fee-data>
@@ -1153,8 +992,7 @@
                             <div class="tcol">计划颜色</div>
                             <div class="tcol">订购属性</div>
                             <div class="tcol">订购数量</div>
-                            <div class="tcol"
-                              v-if="$route.query.type === '面料原料单位' || $route.query.type === '纱线原料单位'">
+                            <div class="tcol" v-if="$route.query.type === '面料原料单位' || $route.query.type === '纱线原料单位'">
                               入库数量
                             </div>
                             <div class="tcol">订购单价</div>
@@ -1162,16 +1000,13 @@
                           </div>
                         </div>
                         <div class="tbody">
-                          <div class="trow"
-                            v-for="(itemChild, indexChild) in item.detail.info_data"
-                            :key="indexChild">
+                          <div class="trow" v-for="(itemChild, indexChild) in item.detail.info_data" :key="indexChild">
                             <div class="tcol">{{ itemChild.material_name }}</div>
                             <div class="tcol">{{ itemChild.material_color }}</div>
                             <div class="tcol">{{ itemChild.plan_color || itemChild.sup_color }}</div>
                             <div class="tcol">{{ itemChild.attribute }}</div>
                             <div class="tcol">{{ $toFixed(itemChild.number, 3, true) }}{{ itemChild.unit }}</div>
-                            <div class="tcol"
-                              v-if="$route.query.type === '面料原料单位' || $route.query.type === '纱线原料单位'">
+                            <div class="tcol" v-if="$route.query.type === '面料原料单位' || $route.query.type === '纱线原料单位'">
                               {{ $toFixed(itemChild.final_push_number, 3, true) }}
                             </div>
                             <div class="tcol">{{ itemChild.price }}元</div>
@@ -1191,12 +1026,8 @@
                             <div class="tcol">入库数量</div>
                           </div>
                         </div>
-                        <div class="tbody"
-                          v-for="itemChild in item.detail.final_push_log"
-                          :key="itemChild.id">
-                          <div class="trow"
-                            v-for="itemMat in itemChild.info_data"
-                            :key="itemMat.id">
+                        <div class="tbody" v-for="itemChild in item.detail.final_push_log" :key="itemChild.id">
+                          <div class="trow" v-for="itemMat in itemChild.info_data" :key="itemMat.id">
                             <div class="tcol">{{ itemChild.store }}/{{ itemChild.secondary_store }}</div>
                             <div class="tcol">{{ itemMat.material_name }}</div>
                             <div class="tcol">{{ itemMat.material_color }}</div>
@@ -1211,58 +1042,53 @@
                 <div style="margin-top: 20px">
                   <span style="line-height: 35px; margin-left: 40px">
                     合计订购数量：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{
-                        $route.query.type === '装饰辅料单位'
-                          ? $toFixed(materialOrderSts.total_order_number / 10000, 3, true)
-                          : $toFixed(materialOrderSts.total_order_number / 1000, 3, true)
+                          $route.query.type === '装饰辅料单位'
+                            ? $toFixed(materialOrderSts.total_order_number / 10000, 3, true)
+                            : $toFixed(materialOrderSts.total_order_number / 1000, 3, true)
                       }}
                       <span class="unit">{{
-                        $route.query.type === '纱线原料单位'
-                          ? '吨'
-                          : $route.query.type === '面料原料单位'
-                          ? '千米'
-                          : '万'
+                          $route.query.type === '纱线原料单位'
+                            ? '吨'
+                            : $route.query.type === '面料原料单位'
+                              ? '千米'
+                              : '万'
                       }}</span>
                     </span>
                   </span>
                   <span style="line-height: 35px; margin-left: 40px">
                     合计订购金额：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{ $toFixed(materialOrderSts.total_order_price / 10000, 3, true) }} 万元
                     </span>
                   </span>
                   <span style="line-height: 35px; margin-left: 40px">
                     合计入库数量：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{
-                        $route.query.type === '装饰辅料单位'
-                          ? $toFixed(materialOrderSts.total_push_number / 10000, 3, true)
-                          : $toFixed(materialOrderSts.total_push_number / 1000, 3, true)
+                          $route.query.type === '装饰辅料单位'
+                            ? $toFixed(materialOrderSts.total_push_number / 10000, 3, true)
+                            : $toFixed(materialOrderSts.total_push_number / 1000, 3, true)
                       }}
                       <span class="unit">{{
-                        $route.query.type === '纱线原料单位'
-                          ? '吨'
-                          : $route.query.type === '面料原料单位'
-                          ? '千米'
-                          : '万'
+                          $route.query.type === '纱线原料单位'
+                            ? '吨'
+                            : $route.query.type === '面料原料单位'
+                              ? '千米'
+                              : '万'
                       }}</span>
                     </span>
                   </span>
                   <span style="line-height: 35px; margin-left: 40px">
                     合计入库金额：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{ $toFixed(materialOrderSts.total_push_price / 10000, 3, true) }} 万元
                     </span>
                   </span>
                   <span style="line-height: 35px; margin-left: 40px">
                     合计额外费用：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{ $toFixed(materialOrderSts.total_others_fee / 10000, 3, true) }} 万元
                     </span>
                   </span>
@@ -1273,153 +1099,105 @@
             <template v-else-if="clientType === 3">
               <div class="filterCtn">
                 <div class="elCtn">
-                  <el-input v-model="materialProcessFilter.keyword"
-                    placeholder="筛选订购单号/订单号"
+                  <el-input v-model="materialProcessFilter.keyword" placeholder="筛选订购单号/订单号"
                     @keydown.enter.native="getBill"></el-input>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="materialProcessFilter.user_id"
-                    placeholder="筛选创建人"
-                    clearable>
-                    <el-option v-for="item in userList"
-                      :key="item.value"
-                      :label="item.label"
+                  <el-select @change="getBill" v-model="materialProcessFilter.user_id" placeholder="筛选创建人" clearable>
+                    <el-option v-for="item in userList" :key="item.value" :label="item.label"
                       :value="item.value"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-date-picker v-model="materialProcessFilter.date"
-                    type="daterange"
-                    align="right"
-                    unlink-panels
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    :picker-options="pickerOptions"
-                    @change="getBill"
-                    value-format="yyyy-MM-dd">
+                  <el-date-picker v-model="materialProcessFilter.date" type="daterange" align="right" unlink-panels
+                    range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
+                    @change="getBill" value-format="yyyy-MM-dd">
                   </el-date-picker>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="materialProcessFilter.is_check"
-                    placeholder="筛选审核状态">
-                    <el-option value="null"
-                      label="全部"></el-option>
-                    <el-option value="1"
-                      label="已审核"></el-option>
-                    <el-option value="2"
-                      label="待审核"></el-option>
+                  <el-select @change="getBill" v-model="materialProcessFilter.is_check" placeholder="筛选审核状态">
+                    <el-option value="null" label="全部"></el-option>
+                    <el-option value="1" label="已审核"></el-option>
+                    <el-option value="2" label="待审核"></el-option>
                   </el-select>
                 </div>
-                <div class="btn borderBtn"
-                  @click="reset">重置</div>
+                <div class="btn borderBtn" @click="reset">重置</div>
               </div>
               <div class="filterCtn">
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="materialProcessFilter.group_id"
-                    placeholder="筛选负责小组"
-                    clearable>
-                    <el-option v-for="item in groupList"
-                      :key="item.id"
-                      :value="item.id"
-                      :label="item.name"></el-option>
+                  <el-select @change="getBill" v-model="materialProcessFilter.group_id" placeholder="筛选负责小组" clearable>
+                    <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="materialProcessFilter.has_invoice"
-                    placeholder="筛选开票状态"
+                  <el-select @change="getBill" v-model="materialProcessFilter.has_invoice" placeholder="筛选开票状态"
                     clearable>
-                    <el-option label="全部"
-                      value="null"></el-option>
-                    <el-option label="已开票"
-                      value="1"></el-option>
-                    <el-option label="待开票"
-                      value="2"></el-option>
+                    <el-option label="全部" value="null"></el-option>
+                    <el-option label="已开票" value="1"></el-option>
+                    <el-option label="待开票" value="2"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="materialProcessFilter.has_pay"
-                    placeholder="筛选付款状态"
-                    clearable>
-                    <el-option label="全部"
-                      value="null"></el-option>
-                    <el-option label="已付款"
-                      value="1"></el-option>
-                    <el-option label="待付款"
-                      value="2"></el-option>
+                  <el-select @change="getBill" v-model="materialProcessFilter.has_pay" placeholder="筛选付款状态" clearable>
+                    <el-option label="全部" value="null"></el-option>
+                    <el-option label="已付款" value="1"></el-option>
+                    <el-option label="待付款" value="2"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="materialProcessFilter.has_deduct"
-                    placeholder="筛选扣款状态"
+                  <el-select @change="getBill" v-model="materialProcessFilter.has_deduct" placeholder="筛选扣款状态"
                     clearable>
-                    <el-option label="全部"
-                      value="null"></el-option>
-                    <el-option label="已扣款"
-                      value="1"></el-option>
-                    <el-option label="待扣款"
-                      value="2"></el-option>
+                    <el-option label="全部" value="null"></el-option>
+                    <el-option label="已扣款" value="1"></el-option>
+                    <el-option label="待扣款" value="2"></el-option>
                   </el-select>
                 </div>
               </div>
               <div class="filterCtn">
                 <div class="elCtn">
-                  <el-cascader placeholder="筛选原料名称"
-                    v-model="materialProcessFilter.material_name"
-                    :options="yarnTypeList"
-                    clearable
-                    filterable
-                    @change="getBill"></el-cascader>
+                  <el-cascader placeholder="筛选原料名称" v-model="materialProcessFilter.material_name"
+                    :options="yarnTypeList" clearable filterable @change="getBill"></el-cascader>
                 </div>
-                <div class="btn backHoverBlue"
-                  @click="goPayment(materialProcessCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverBlue" @click="goPayment(materialProcessCheckList)">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">批量付款</span>
                 </div>
-                <div class="btn backHoverOrange"
-                  @click="goInvoice(materialProcessCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverOrange" @click="goInvoice(materialProcessCheckList)">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">批量开票</span>
                 </div>
-                <div class="btn backHoverRed"
-                  @click="goDeduct(materialProcessCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverRed" @click="goDeduct(materialProcessCheckList)">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">批量扣款</span>
                 </div>
-                <div class="btn backHoverBlue"
-                  @click="changeShowAll(materialProcessList, '', 'showAllFlag')">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverBlue" @click="changeShowAll(materialProcessList, '', 'showAllFlag')">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">{{ showAllFlag ? '全部展开' : '全部收起' }}</span>
                 </div>
+                <div class="btn backHoverOrange" @click="
+  showProcessPrice = true
+                getProcessList(updateProcessPriceInfo.date)
+                ">
+                  <svg class="iconFont" aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">更新结算单价</span>
+                </div>
               </div>
               <div class="filterCtn clearfix">
                 <div class="label">已勾选单据：</div>
-                <div class="elCtn check"
-                  v-for="(item, index) in materialProcessCheckList"
-                  :key="item.id">
-                  <el-input v-model="item.code"
-                    disabled>
+                <div class="elCtn check" v-for="(item, index) in materialProcessCheckList" :key="item.id">
+                  <el-input v-model="item.code" disabled>
                     <template slot="append">
-                      <i class="el-icon-close hoverRed"
-                        style="cursor: pointer"
+                      <i class="el-icon-close hoverRed" style="cursor: pointer"
                         @click="materialProcessCheckList.splice(index, 1)"></i>
                     </template>
                   </el-input>
@@ -1427,8 +1205,7 @@
               </div>
               <div class="list">
                 <div class="row title">
-                  <div class="col"
-                    style="flex: 0.1">
+                  <div class="col" style="flex: 0.1">
                     <el-checkbox v-model="checkAll"
                       @change="(ev) => checkAllInfo(ev, materialProcessList, materialProcessCheckList)">
                     </el-checkbox>
@@ -1445,21 +1222,17 @@
                   <div class="col">创建时间</div>
                   <div class="col oprWidth">操作</div>
                 </div>
-                <div v-for="(item, index) in materialProcessList"
-                  :key="index">
+                <div v-for="(item, index) in materialProcessList" :key="index">
                   <div class="row">
-                    <div class="col"
-                      style="flex: 0.1">
+                    <div class="col" style="flex: 0.1">
                       <el-checkbox v-model="item.checked"
                         @change="(ev) => getCheckInfo(ev, item, materialProcessCheckList)"></el-checkbox>
                     </div>
-                    <div class="col blue"
-                      style="cursor: pointer"
+                    <div class="col blue" style="cursor: pointer"
                       @click="$openUrl('/materialManage/detail?id=' + item.plan_id)">
                       {{ item.code }}
                     </div>
-                    <div class="col blue"
-                      style="cursor: pointer"
+                    <div class="col blue" style="cursor: pointer"
                       @click="$openUrl('/order/detail?id=' + item.top_order_id)">
                       {{ item.order_code || '无编号' }}
                     </div>
@@ -1471,55 +1244,37 @@
                     </div>
                     <div class="col numberWidth">{{ $toFixed(item.total_push_price, 3, true) }}</div>
                     <div class="col">
-                      <div v-if="item.is_check === 0"
-                        class="orange">未审核</div>
-                      <div v-if="item.is_check === 1"
-                        class="blue">已通过</div>
-                      <div v-if="item.is_check === 2"
-                        class="red">已驳回</div>
-                      <div v-if="item.is_check > 2"
-                        class="red">异常</div>
+                      <div v-if="item.is_check === 0" class="orange">未审核</div>
+                      <div v-if="item.is_check === 1" class="blue">已通过</div>
+                      <div v-if="item.is_check === 2" class="red">已驳回</div>
+                      <div v-if="item.is_check > 2" class="red">异常</div>
                     </div>
                     <div class="col circleCtn">
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'开票金额:' + item.has_invoice + '元'"
+                      <el-tooltip class="item" effect="dark" :content="'开票金额:' + item.has_invoice + '元'"
                         placement="top">
-                        <div class="circle"
-                          :class="{ blue: Number(item.has_invoice) > 0 }">票</div>
+                        <div class="circle" :class="{ blue: Number(item.has_invoice) > 0 }">票</div>
                       </el-tooltip>
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'付款金额:' + item.has_pay + '元'"
-                        placement="top">
-                        <div class="circle"
-                          :class="{ green: Number(item.has_pay) > 0 }">付</div>
+                      <el-tooltip class="item" effect="dark" :content="'付款金额:' + item.has_pay + '元'" placement="top">
+                        <div class="circle" :class="{ green: Number(item.has_pay) > 0 }">付</div>
                       </el-tooltip>
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'扣款金额:' + item.has_deduct + '元'"
-                        placement="top">
-                        <div class="circle"
-                          :class="{ red: Number(item.has_deduct) > 0 }">扣</div>
+                      <el-tooltip class="item" effect="dark" :content="'扣款金额:' + item.has_deduct + '元'" placement="top">
+                        <div class="circle" :class="{ red: Number(item.has_deduct) > 0 }">扣</div>
                       </el-tooltip>
                     </div>
                     <div class="col">{{ item.user_name }}</div>
                     <div class="col">{{ item.created_at }}</div>
                     <div class="col oprWidth">
-                      <span class="opr hoverBlue"
-                        @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
+                      <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
                     </div>
                   </div>
                   <div v-if="item.isShow"
                     style="border: 1px solid #e8e8e8; transform: translateY(-1px); background: #eee">
-                    <div class="tableCtn"
-                      v-if="item.detail.info_data.length > 0">
+                    <div class="tableCtn" v-if="item.detail.info_data.length > 0">
                       <div class="row">
                         <div class="col">
                           <div class="label">关联单据：</div>
                           <div :class="item.detail.plan_code ? 'hoverBlue text' : 'text'"
-                            :style="item.detail.plan_code ? { cursor: 'pointer' } : {}"
-                            @click="
+                            :style="item.detail.plan_code ? { cursor: 'pointer' } : {}" @click="
                               item.detail.plan_code
                                 ? $router.push('/materialManage/detail?id=' + item.detail.plan_id)
                                 : ''
@@ -1543,36 +1298,25 @@
                       <div class="thead">
                         <div class="trow">
                           <div class="tcol">加工单位</div>
-                          <div class="tcol"
-                            style="flex: 0.5">工序</div>
-                          <div class="tcol noPad"
-                            style="flex: 3">
+                          <div class="tcol" style="flex: 0.5">工序</div>
+                          <div class="tcol noPad" style="flex: 3">
                             <div class="trow">
                               <div class="tcol">纱线名称</div>
                               <div class="tcol">加工详情</div>
-                              <div class="tcol"
-                                style="flex: 0.5">数量</div>
-                              <div class="tcol"
-                                style="flex: 0.5">完成数量</div>
-                              <div class="tcol"
-                                style="flex: 0.5">单价</div>
+                              <div class="tcol" style="flex: 0.5">数量</div>
+                              <div class="tcol" style="flex: 0.5">完成数量</div>
+                              <div class="tcol" style="flex: 0.5">单价</div>
                             </div>
                           </div>
-                          <div class="tcol"
-                            style="flex: 0.8">截止日期</div>
+                          <div class="tcol" style="flex: 0.8">截止日期</div>
                         </div>
                       </div>
-                      <div class="tbody"
-                        style="font-size: 14px">
+                      <div class="tbody" style="font-size: 14px">
                         <div class="trow">
                           <div class="tcol">{{ item.detail.client_name }}</div>
-                          <div class="tcol"
-                            style="flex: 0.5">{{ item.detail.process }}</div>
-                          <div class="tcol noPad"
-                            style="flex: 3">
-                            <div class="trow"
-                              v-for="(itemMat, indexMat) in item.detail.info_data"
-                              :key="indexMat">
+                          <div class="tcol" style="flex: 0.5">{{ item.detail.process }}</div>
+                          <div class="tcol noPad" style="flex: 3">
+                            <div class="trow" v-for="(itemMat, indexMat) in item.detail.info_data" :key="indexMat">
                               <div class="tcol">
                                 {{ itemMat.material_order_name || itemMat.material_transfer_name }}
                               </div>
@@ -1601,20 +1345,16 @@
                                   <span>{{ itemMat.qiege_desc }}</span>
                                 </template>
                               </div>
-                              <div class="tcol"
-                                style="flex: 0.5">
+                              <div class="tcol" style="flex: 0.5">
                                 {{ $toFixed(itemMat.number, 3, true) }}{{ itemMat.unit }}
                               </div>
-                              <div class="tcol"
-                                style="flex: 0.5">
+                              <div class="tcol" style="flex: 0.5">
                                 {{ $toFixed(itemMat.push_number, 3, true) }}
                               </div>
-                              <div class="tcol"
-                                style="flex: 0.5">{{ itemMat.price }}元</div>
+                              <div class="tcol" style="flex: 0.5">{{ itemMat.price }}元</div>
                             </div>
                           </div>
-                          <div class="tcol"
-                            style="flex: 0.8">{{ item.detail.delivery_time }}</div>
+                          <div class="tcol" style="flex: 0.8">{{ item.detail.delivery_time }}</div>
                         </div>
                       </div>
                     </div>
@@ -1623,36 +1363,31 @@
                 <div style="margin-top: 20px">
                   <span style="line-height: 35px; margin-left: 40px">
                     合计加工数量：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{ $toFixed(materialProcessSts.total_number / 1000, 3, true) }} 吨或千米
                     </span>
                   </span>
                   <span style="line-height: 35px; margin-left: 40px">
                     合计加工金额：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{ $toFixed(materialProcessSts.total_price / 10000, 3, true) }} 万元
                     </span>
                   </span>
                   <span style="line-height: 35px; margin-left: 40px">
                     合计完成数量：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{ $toFixed(materialProcessSts.total_push_number / 1000, 3, true) }} 吨或千米
                     </span>
                   </span>
                   <span style="line-height: 35px; margin-left: 40px">
                     合计完成金额：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{ $toFixed(materialProcessSts.total_push_price / 10000, 3, true) }} 万元
                     </span>
                   </span>
                   <span style="line-height: 35px; margin-left: 40px">
                     合计额外费用：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{ $toFixed(materialProcessSts.total_others_fee / 10000, 3, true) }} 万元
                     </span>
                   </span>
@@ -1663,145 +1398,97 @@
             <template v-else-if="clientType === 4">
               <div class="filterCtn">
                 <div class="elCtn">
-                  <el-input v-model="productionPlanFilter.keyword"
-                    placeholder="筛选订购单号/订单号"
+                  <el-input v-model="productionPlanFilter.keyword" placeholder="筛选订购单号/订单号"
                     @keydown.enter.native="getBill"></el-input>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="productionPlanFilter.user_id"
-                    placeholder="筛选创建人"
-                    clearable>
-                    <el-option v-for="item in userList"
-                      :key="item.value"
-                      :label="item.label"
+                  <el-select @change="getBill" v-model="productionPlanFilter.user_id" placeholder="筛选创建人" clearable>
+                    <el-option v-for="item in userList" :key="item.value" :label="item.label"
                       :value="item.value"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-date-picker v-model="productionPlanFilter.date"
-                    type="daterange"
-                    align="right"
-                    unlink-panels
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    :picker-options="pickerOptions"
-                    @change="getBill"
-                    value-format="yyyy-MM-dd">
+                  <el-date-picker v-model="productionPlanFilter.date" type="daterange" align="right" unlink-panels
+                    range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
+                    @change="getBill" value-format="yyyy-MM-dd">
                   </el-date-picker>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="productionPlanFilter.is_check"
-                    placeholder="筛选审核状态">
-                    <el-option value="null"
-                      label="全部"></el-option>
-                    <el-option value="1"
-                      label="已审核"></el-option>
-                    <el-option value="2"
-                      label="待审核"></el-option>
+                  <el-select @change="getBill" v-model="productionPlanFilter.is_check" placeholder="筛选审核状态">
+                    <el-option value="null" label="全部"></el-option>
+                    <el-option value="1" label="已审核"></el-option>
+                    <el-option value="2" label="待审核"></el-option>
                   </el-select>
                 </div>
-                <div class="btn borderBtn"
-                  @click="reset">重置</div>
+                <div class="btn borderBtn" @click="reset">重置</div>
               </div>
               <div class="filterCtn">
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="productionPlanFilter.group_id"
-                    placeholder="筛选负责小组"
-                    clearable>
-                    <el-option v-for="item in groupList"
-                      :key="item.id"
-                      :value="item.id"
-                      :label="item.name"></el-option>
+                  <el-select @change="getBill" v-model="productionPlanFilter.group_id" placeholder="筛选负责小组" clearable>
+                    <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="productionPlanFilter.has_invoice"
-                    placeholder="筛选开票状态"
+                  <el-select @change="getBill" v-model="productionPlanFilter.has_invoice" placeholder="筛选开票状态"
                     clearable>
-                    <el-option label="全部"
-                      value="null"></el-option>
-                    <el-option label="已开票"
-                      value="1"></el-option>
-                    <el-option label="待开票"
-                      value="2"></el-option>
+                    <el-option label="全部" value="null"></el-option>
+                    <el-option label="已开票" value="1"></el-option>
+                    <el-option label="待开票" value="2"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="productionPlanFilter.has_pay"
-                    placeholder="筛选付款状态"
-                    clearable>
-                    <el-option label="全部"
-                      value="null"></el-option>
-                    <el-option label="已付款"
-                      value="1"></el-option>
-                    <el-option label="待付款"
-                      value="2"></el-option>
+                  <el-select @change="getBill" v-model="productionPlanFilter.has_pay" placeholder="筛选付款状态" clearable>
+                    <el-option label="全部" value="null"></el-option>
+                    <el-option label="已付款" value="1"></el-option>
+                    <el-option label="待付款" value="2"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="productionPlanFilter.has_deduct"
-                    placeholder="筛选扣款状态"
-                    clearable>
-                    <el-option label="全部"
-                      value="null"></el-option>
-                    <el-option label="已扣款"
-                      value="1"></el-option>
-                    <el-option label="待扣款"
-                      value="2"></el-option>
+                  <el-select @change="getBill" v-model="productionPlanFilter.has_deduct" placeholder="筛选扣款状态" clearable>
+                    <el-option label="全部" value="null"></el-option>
+                    <el-option label="已扣款" value="1"></el-option>
+                    <el-option label="待扣款" value="2"></el-option>
                   </el-select>
                 </div>
               </div>
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue"
-                  @click="goPayment(productionPlanCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverBlue" @click="goPayment(productionPlanCheckList)">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">批量付款</span>
                 </div>
-                <div class="btn backHoverOrange"
-                  @click="goInvoice(productionPlanCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverOrange" @click="goInvoice(productionPlanCheckList)">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">批量开票</span>
                 </div>
-                <div class="btn backHoverRed"
-                  @click="goDeduct(productionPlanCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverRed" @click="goDeduct(productionPlanCheckList)">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">批量扣款</span>
                 </div>
-                <div class="btn backHoverBlue"
-                  @click="changeShowAll(productionPlanList, '', 'showAllFlag')">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverBlue" @click="changeShowAll(productionPlanList, '', 'showAllFlag')">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">{{ showAllFlag ? '全部展开' : '全部收起' }}</span>
                 </div>
+                <div class="btn backHoverOrange" @click="getMatWeaveStsList(updateWeavePriceInfo.date)">
+                  <svg class="iconFont" aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">更新结算单价</span>
+                </div>
               </div>
               <div class="filterCtn clearfix">
                 <div class="label">已勾选单据：</div>
-                <div class="elCtn check"
-                  v-for="(item, index) in productionPlanCheckList"
-                  :key="item.id">
-                  <el-input v-model="item.code"
-                    disabled>
+                <div class="elCtn check" v-for="(item, index) in productionPlanCheckList" :key="item.id">
+                  <el-input v-model="item.code" disabled>
                     <template slot="append">
-                      <i class="el-icon-close hoverRed"
-                        style="cursor: pointer"
+                      <i class="el-icon-close hoverRed" style="cursor: pointer"
                         @click="productionPlanCheckList.splice(index, 1)"></i>
                     </template>
                   </el-input>
@@ -1809,8 +1496,7 @@
               </div>
               <div class="list">
                 <div class="row title">
-                  <div class="col"
-                    style="flex: 0.1">
+                  <div class="col" style="flex: 0.1">
                     <el-checkbox v-model="checkAll"
                       @change="(ev) => checkAllInfo(ev, productionPlanList, productionPlanCheckList)">
                     </el-checkbox>
@@ -1827,25 +1513,20 @@
                   <div class="col">创建时间</div>
                   <div class="col oprWidth">操作</div>
                 </div>
-                <div v-for="(item, index) in productionPlanList"
-                  :key="index">
+                <div v-for="(item, index) in productionPlanList" :key="index">
                   <div class="row">
-                    <div class="col"
-                      style="flex: 0.1">
+                    <div class="col" style="flex: 0.1">
                       <el-checkbox v-model="item.checked"
                         @change="(ev) => getCheckInfo(ev, item, productionPlanCheckList)"></el-checkbox>
                     </div>
-                    <div class="col blue"
-                      style="cursor: pointer"
-                      @click="
-                        $openUrl(
-                          '/productionPlan/detail?id=' + item.top_order_id + '&sampleOrderIndex=' + item.order_id
-                        )
-                      ">
+                    <div class="col blue" style="cursor: pointer" @click="
+                      $openUrl(
+                        '/productionPlan/detail?id=' + item.top_order_id + '&sampleOrderIndex=' + item.order_id
+                      )
+                    ">
                       {{ item.code }}
                     </div>
-                    <div class="col blue"
-                      style="cursor: pointer"
+                    <div class="col blue" style="cursor: pointer"
                       @click="$openUrl('/order/detail?id=' + item.top_order_id)">
                       {{ item.order_code }}
                     </div>
@@ -1854,55 +1535,39 @@
                     <div class="col numberWidth"
                       :class="{ red: Number(item.total_real_number) < Number(item.total_number) }">
                       {{ $toFixed(item.total_real_number, 3, true) }} ({{
-                        Number(item.total_real_number) > Number(item.total_number) ? '+' : ''
+                          Number(item.total_real_number) > Number(item.total_number) ? '+' : ''
                       }}{{
-                        parseInt(
-                          ((Number(item.total_real_number) - Number(item.total_number)) / Number(item.total_number)) *
-                            100
-                        ) + '%'
-                      }})
+    parseInt(
+      ((Number(item.total_real_number) - Number(item.total_number)) / Number(item.total_number)) *
+      100
+    ) + '%'
+}})
                     </div>
                     <div class="col numberWidth">
                       {{ item.total_part_shoddy_number }}/{{ item.total_shoddy_number }}
                     </div>
                     <div class="col">
-                      <div v-if="item.is_check === 0"
-                        class="orange">未审核</div>
-                      <div v-if="item.is_check === 1"
-                        class="blue">已通过</div>
-                      <div v-if="item.is_check === 2"
-                        class="red">已驳回</div>
-                      <div v-if="item.is_check > 2"
-                        class="red">异常</div>
+                      <div v-if="item.is_check === 0" class="orange">未审核</div>
+                      <div v-if="item.is_check === 1" class="blue">已通过</div>
+                      <div v-if="item.is_check === 2" class="red">已驳回</div>
+                      <div v-if="item.is_check > 2" class="red">异常</div>
                     </div>
                     <div class="col circleCtn">
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'开票金额:' + item.has_invoice + '元'"
+                      <el-tooltip class="item" effect="dark" :content="'开票金额:' + item.has_invoice + '元'"
                         placement="top">
-                        <div class="circle"
-                          :class="{ blue: Number(item.has_invoice) > 0 }">票</div>
+                        <div class="circle" :class="{ blue: Number(item.has_invoice) > 0 }">票</div>
                       </el-tooltip>
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'付款金额:' + item.has_pay + '元'"
-                        placement="top">
-                        <div class="circle"
-                          :class="{ green: Number(item.has_pay) > 0 }">付</div>
+                      <el-tooltip class="item" effect="dark" :content="'付款金额:' + item.has_pay + '元'" placement="top">
+                        <div class="circle" :class="{ green: Number(item.has_pay) > 0 }">付</div>
                       </el-tooltip>
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'扣款金额:' + item.has_deduct + '元'"
-                        placement="top">
-                        <div class="circle"
-                          :class="{ red: Number(item.has_deduct) > 0 }">扣</div>
+                      <el-tooltip class="item" effect="dark" :content="'扣款金额:' + item.has_deduct + '元'" placement="top">
+                        <div class="circle" :class="{ red: Number(item.has_deduct) > 0 }">扣</div>
                       </el-tooltip>
                     </div>
                     <div class="col">{{ item.user_name }}</div>
                     <div class="col">{{ item.created_at }}</div>
                     <div class="col oprWidth">
-                      <span class="opr hoverBlue"
-                        @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
+                      <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
                     </div>
                   </div>
                   <div v-if="item.isShow"
@@ -1910,8 +1575,7 @@
                     <div class="titleCtn">
                       <div class="title">基本信息</div>
                     </div>
-                    <div class="detailCtn"
-                      style="padding-bottom: 0">
+                    <div class="detailCtn" style="padding-bottom: 0">
                       <div class="row">
                         <div class="col">
                           <div class="label">加工工序：</div>
@@ -1939,16 +1603,13 @@
                         <div class="trow">
                           <div class="tcol green">{{ $toFixed(item.total_price - item.others_fee, 3, true) }}元</div>
                           <div class="tcol green">{{ $toFixed(item.real_fee, 3, true) }}元</div>
-                          <div class="tcol"
-                            :class="{ green: item.others_fee > 0, gray: item.others_fee === 0 }">
+                          <div class="tcol" :class="{ green: item.others_fee > 0, gray: item.others_fee === 0 }">
                             {{ $toFixed(item.others_fee, 3, true) }}元
                           </div>
-                          <div class="tcol"
-                            :class="{ red: item.deduct_fee > 0, gray: item.deduct_fee === 0 }">
+                          <div class="tcol" :class="{ red: item.deduct_fee > 0, gray: item.deduct_fee === 0 }">
                             {{ $toFixed(item.deduct_fee, 3, true) }}元
                           </div>
-                          <div class="tcol"
-                            :class="{ red: item.sup_fee > 0, gray: item.sup_fee === 0 }">
+                          <div class="tcol" :class="{ red: item.sup_fee > 0, gray: item.sup_fee === 0 }">
                             {{ $toFixed(item.sup_fee, 3, true) }}元
                           </div>
                           <div class="tcol green">
@@ -1987,12 +1648,8 @@
                         </div>
                       </div>
                       <div class="tbody">
-                        <div class="trow"
-                          v-for="(itemPro, indexPro) in item.detail.product_info_data"
-                          :key="indexPro">
-                          <div class="tcol hoverBlue"
-                            style="cursor: pointer"
-                            @click="showProduct(itemPro)">
+                        <div class="trow" v-for="(itemPro, indexPro) in item.detail.product_info_data" :key="indexPro">
+                          <div class="tcol hoverBlue" style="cursor: pointer" @click="showProduct(itemPro)">
                             <span>{{ itemPro.product_code || itemPro.system_code }}</span>
                             <span>{{ itemPro.category_name }}/{{ itemPro.secondary_category_name }}</span>
                           </div>
@@ -2010,25 +1667,20 @@
                         </div>
                       </div>
                     </div>
-                    <div class="titleCtn"
-                      style="margin-top: 40px"
-                      v-if="item.detail.sup_data.length > 0">
+                    <div class="titleCtn" style="margin-top: 40px" v-if="item.detail.sup_data.length > 0">
                       <div class="title">加工物料补充</div>
                     </div>
-                    <div class="tableCtn"
-                      v-if="item.detail.sup_data.length > 0">
+                    <div class="tableCtn" v-if="item.detail.sup_data.length > 0">
                       <div class="thead">
                         <div class="trow">
                           <div class="tcol">补纱单编号</div>
-                          <div class="tcol noPad"
-                            style="flex: 2">
+                          <div class="tcol noPad" style="flex: 2">
                             <div class="trow">
                               <div class="tcol">承担单位</div>
                               <div class="tcol">承担金额</div>
                             </div>
                           </div>
-                          <div class="tcol noPad"
-                            style="flex: 3">
+                          <div class="tcol noPad" style="flex: 3">
                             <div class="trow">
                               <div class="tcol">物料名称</div>
                               <div class="tcol">物料颜色</div>
@@ -2039,24 +1691,17 @@
                         </div>
                       </div>
                       <div class="tbody">
-                        <div class="trow"
-                          v-for="itemChild in item.detail.sup_data"
-                          :key="itemChild.id">
+                        <div class="trow" v-for="itemChild in item.detail.sup_data" :key="itemChild.id">
                           <div class="tcol">{{ itemChild.code }}</div>
-                          <div class="tcol noPad"
-                            style="flex: 2">
-                            <div class="trow"
-                              v-for="(itemClient, indexClient) in itemChild.client_data"
+                          <div class="tcol noPad" style="flex: 2">
+                            <div class="trow" v-for="(itemClient, indexClient) in itemChild.client_data"
                               :key="indexClient">
                               <div class="tcol">{{ itemClient.bear_client_name }}</div>
                               <div class="tcol">{{ itemClient.bear_price }}元</div>
                             </div>
                           </div>
-                          <div class="tcol noPad"
-                            style="flex: 3">
-                            <div class="trow"
-                              v-for="itemMat in itemChild.info_data"
-                              :key="itemMat.id">
+                          <div class="tcol noPad" style="flex: 3">
+                            <div class="trow" v-for="itemMat in itemChild.info_data" :key="itemMat.id">
                               <div class="tcol">{{ itemMat.material_name }}</div>
                               <div class="tcol">{{ itemMat.material_color }}</div>
                               <div class="tcol">{{ itemMat.number }}{{ itemMat.unit }}</div>
@@ -2071,36 +1716,31 @@
                 <div style="margin-top: 20px">
                   <span style="line-height: 35px; margin-left: 40px">
                     合计计划数量：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{ $toFixed(productionPlanSts.total_number / 10000, 3, true) }} 万件
                     </span>
                   </span>
                   <span style="line-height: 35px; margin-left: 40px">
                     合计计划金额：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{ $toFixed(productionPlanSts.total_price / 10000, 3, true) }} 万元
                     </span>
                   </span>
                   <span style="line-height: 35px; margin-left: 40px">
                     合计完成数量：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{ $toFixed(productionPlanSts.total_real_number / 10000, 3, true) }} 万件
                     </span>
                   </span>
                   <span style="line-height: 35px; margin-left: 40px">
                     合计完成金额：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{ $toFixed(productionPlanSts.total_real_price / 10000, 3, true) }} 万元
                     </span>
                   </span>
                   <span style="line-height: 35px; margin-left: 40px">
                     合计额外费用：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{ $toFixed(productionPlanSts.total_others_fee / 10000, 3, true) }} 万元
                     </span>
                   </span>
@@ -2111,130 +1751,79 @@
             <template v-else-if="clientType === 11">
               <div class="filterCtn">
                 <div class="elCtn">
-                  <el-input v-model="packOrderFilter.keyword"
-                    placeholder="筛选订购单号/订单号"
+                  <el-input v-model="packOrderFilter.keyword" placeholder="筛选订购单号/订单号"
                     @keydown.enter.native="getBill"></el-input>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="packOrderFilter.user_id"
-                    placeholder="筛选创建人"
-                    clearable>
-                    <el-option v-for="item in userList"
-                      :key="item.value"
-                      :label="item.label"
+                  <el-select @change="getBill" v-model="packOrderFilter.user_id" placeholder="筛选创建人" clearable>
+                    <el-option v-for="item in userList" :key="item.value" :label="item.label"
                       :value="item.value"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-date-picker v-model="packOrderFilter.date"
-                    type="daterange"
-                    align="right"
-                    unlink-panels
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    :picker-options="pickerOptions"
-                    @change="getBill"
-                    value-format="yyyy-MM-dd">
+                  <el-date-picker v-model="packOrderFilter.date" type="daterange" align="right" unlink-panels
+                    range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
+                    @change="getBill" value-format="yyyy-MM-dd">
                   </el-date-picker>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="packOrderFilter.is_check"
-                    placeholder="筛选审核状态">
-                    <el-option value="null"
-                      label="全部"></el-option>
-                    <el-option value="1"
-                      label="已审核"></el-option>
-                    <el-option value="2"
-                      label="待审核"></el-option>
+                  <el-select @change="getBill" v-model="packOrderFilter.is_check" placeholder="筛选审核状态">
+                    <el-option value="null" label="全部"></el-option>
+                    <el-option value="1" label="已审核"></el-option>
+                    <el-option value="2" label="待审核"></el-option>
                   </el-select>
                 </div>
-                <div class="btn borderBtn"
-                  @click="reset">重置</div>
+                <div class="btn borderBtn" @click="reset">重置</div>
               </div>
               <div class="filterCtn">
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="packOrderFilter.group_id"
-                    placeholder="筛选负责小组"
-                    clearable>
-                    <el-option v-for="item in groupList"
-                      :key="item.id"
-                      :value="item.id"
-                      :label="item.name"></el-option>
+                  <el-select @change="getBill" v-model="packOrderFilter.group_id" placeholder="筛选负责小组" clearable>
+                    <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="packOrderFilter.has_invoice"
-                    placeholder="筛选开票状态"
-                    clearable>
-                    <el-option label="全部"
-                      value="null"></el-option>
-                    <el-option label="已开票"
-                      value="1"></el-option>
-                    <el-option label="待开票"
-                      value="2"></el-option>
+                  <el-select @change="getBill" v-model="packOrderFilter.has_invoice" placeholder="筛选开票状态" clearable>
+                    <el-option label="全部" value="null"></el-option>
+                    <el-option label="已开票" value="1"></el-option>
+                    <el-option label="待开票" value="2"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="packOrderFilter.has_pay"
-                    placeholder="筛选付款状态"
-                    clearable>
-                    <el-option label="全部"
-                      value="null"></el-option>
-                    <el-option label="已付款"
-                      value="1"></el-option>
-                    <el-option label="待付款"
-                      value="2"></el-option>
+                  <el-select @change="getBill" v-model="packOrderFilter.has_pay" placeholder="筛选付款状态" clearable>
+                    <el-option label="全部" value="null"></el-option>
+                    <el-option label="已付款" value="1"></el-option>
+                    <el-option label="待付款" value="2"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="packOrderFilter.has_deduct"
-                    placeholder="筛选扣款状态"
-                    clearable>
-                    <el-option label="全部"
-                      value="null"></el-option>
-                    <el-option label="已扣款"
-                      value="1"></el-option>
-                    <el-option label="待扣款"
-                      value="2"></el-option>
+                  <el-select @change="getBill" v-model="packOrderFilter.has_deduct" placeholder="筛选扣款状态" clearable>
+                    <el-option label="全部" value="null"></el-option>
+                    <el-option label="已扣款" value="1"></el-option>
+                    <el-option label="待扣款" value="2"></el-option>
                   </el-select>
                 </div>
               </div>
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue"
-                  @click="goPayment(packOrderCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverBlue" @click="goPayment(packOrderCheckList)">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">批量付款</span>
                 </div>
-                <div class="btn backHoverOrange"
-                  @click="goInvoice(packOrderCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverOrange" @click="goInvoice(packOrderCheckList)">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">批量开票</span>
                 </div>
-                <div class="btn backHoverRed"
-                  @click="goDeduct(packOrderCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverRed" @click="goDeduct(packOrderCheckList)">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">批量扣款</span>
                 </div>
-                <div class="btn backHoverBlue"
-                  @click="changeShowAll(packOrderList, '', 'showAllFlag')">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverBlue" @click="changeShowAll(packOrderList, '', 'showAllFlag')">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">{{ showAllFlag ? '全部展开' : '全部收起' }}</span>
@@ -2242,14 +1831,10 @@
               </div>
               <div class="filterCtn clearfix">
                 <div class="label">已勾选单据：</div>
-                <div class="elCtn check"
-                  v-for="(item, index) in packOrderCheckList"
-                  :key="item.id">
-                  <el-input v-model="item.code"
-                    disabled>
+                <div class="elCtn check" v-for="(item, index) in packOrderCheckList" :key="item.id">
+                  <el-input v-model="item.code" disabled>
                     <template slot="append">
-                      <i class="el-icon-close hoverRed"
-                        style="cursor: pointer"
+                      <i class="el-icon-close hoverRed" style="cursor: pointer"
                         @click="packOrderCheckList.splice(index, 1)"></i>
                     </template>
                   </el-input>
@@ -2257,8 +1842,7 @@
               </div>
               <div class="list">
                 <div class="row title">
-                  <div class="col"
-                    style="flex: 0.1">
+                  <div class="col" style="flex: 0.1">
                     <el-checkbox v-model="checkAll"
                       @change="(ev) => checkAllInfo(ev, packOrderList, packOrderCheckList)">
                     </el-checkbox>
@@ -2273,68 +1857,47 @@
                   <div class="col">创建时间</div>
                   <div class="col oprWidth">操作</div>
                 </div>
-                <div v-for="(item, index) in packOrderList"
-                  :key="index">
+                <div v-for="(item, index) in packOrderList" :key="index">
                   <div class="row">
-                    <div class="col"
-                      style="flex: 0.1">
+                    <div class="col" style="flex: 0.1">
                       <el-checkbox v-model="item.checked"
                         @change="(ev) => getCheckInfo(ev, item, packOrderCheckList)"></el-checkbox>
                     </div>
-                    <div class="col blue"
-                      style="cursor: pointer"
+                    <div class="col blue" style="cursor: pointer"
                       @click="$openUrl('/packManage/detail?id=' + item.top_order_id)">
                       {{ item.code }}
                     </div>
-                    <div class="col blue"
-                      style="cursor: pointer"
-                      @click="
-                        $openUrl(
-                          '/productionPlan/detail?id=' + item.top_order_id + '&sampleOrderIndex=' + item.order_id
-                        )
-                      ">
+                    <div class="col blue" style="cursor: pointer" @click="
+                      $openUrl(
+                        '/productionPlan/detail?id=' + item.top_order_id + '&sampleOrderIndex=' + item.order_id
+                      )
+                    ">
                       {{ item.order_code }}
                     </div>
                     <div class="col numberWidth">{{ $toFixed(item.total_number, 3, true) }}</div>
                     <div class="col numberWidth">{{ $toFixed(item.total_price, 3, true) }}</div>
                     <div class="col">
-                      <div v-if="item.is_check === 0"
-                        class="orange">未审核</div>
-                      <div v-if="item.is_check === 1"
-                        class="blue">已通过</div>
-                      <div v-if="item.is_check === 2"
-                        class="red">已驳回</div>
-                      <div v-if="item.is_check > 2"
-                        class="red">异常</div>
+                      <div v-if="item.is_check === 0" class="orange">未审核</div>
+                      <div v-if="item.is_check === 1" class="blue">已通过</div>
+                      <div v-if="item.is_check === 2" class="red">已驳回</div>
+                      <div v-if="item.is_check > 2" class="red">异常</div>
                     </div>
                     <div class="col circleCtn">
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'开票金额:' + item.has_invoice + '元'"
+                      <el-tooltip class="item" effect="dark" :content="'开票金额:' + item.has_invoice + '元'"
                         placement="top">
-                        <div class="circle"
-                          :class="{ blue: Number(item.has_invoice) > 0 }">票</div>
+                        <div class="circle" :class="{ blue: Number(item.has_invoice) > 0 }">票</div>
                       </el-tooltip>
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'付款金额:' + item.has_pay + '元'"
-                        placement="top">
-                        <div class="circle"
-                          :class="{ green: Number(item.has_pay) > 0 }">付</div>
+                      <el-tooltip class="item" effect="dark" :content="'付款金额:' + item.has_pay + '元'" placement="top">
+                        <div class="circle" :class="{ green: Number(item.has_pay) > 0 }">付</div>
                       </el-tooltip>
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'扣款金额:' + item.has_deduct + '元'"
-                        placement="top">
-                        <div class="circle"
-                          :class="{ red: Number(item.has_deduct) > 0 }">扣</div>
+                      <el-tooltip class="item" effect="dark" :content="'扣款金额:' + item.has_deduct + '元'" placement="top">
+                        <div class="circle" :class="{ red: Number(item.has_deduct) > 0 }">扣</div>
                       </el-tooltip>
                     </div>
                     <div class="col">{{ item.user_name }}</div>
                     <div class="col">{{ item.created_at }}</div>
                     <div class="col oprWidth">
-                      <span class="opr hoverBlue"
-                        @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
+                      <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
                     </div>
                   </div>
                   <div v-if="item.isShow"
@@ -2352,9 +1915,7 @@
                         </div>
                       </div>
                       <div class="tbody">
-                        <div class="trow"
-                          v-for="(itemChild, indexChild) in item.detail.info_data"
-                          :key="indexChild">
+                        <div class="trow" v-for="(itemChild, indexChild) in item.detail.info_data" :key="indexChild">
                           <div class="tcol">{{ itemChild.pack_material_name }}</div>
                           <div class="tcol">
                             <template v-if="Number(itemChild.price_type) === 1">
@@ -2380,22 +1941,19 @@
                 <div style="margin-top: 20px">
                   <span style="line-height: 35px; margin-left: 40px">
                     合计订购数量：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{ $toFixed(packOrderSts.total_number / 10000, 3, true) }} 万个
                     </span>
                   </span>
                   <span style="line-height: 35px; margin-left: 40px">
                     合计订购金额：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{ $toFixed(packOrderSts.total_price / 10000, 3, true) }} 万元
                     </span>
                   </span>
                   <span style="line-height: 35px; margin-left: 40px">
                     合计额外费用：
-                    <span class="green"
-                      style="font-weight: bold">
+                    <span class="green" style="font-weight: bold">
                       {{ $toFixed(packOrderSts.total_others_fee / 10000, 3, true) }} 万元
                     </span>
                   </span>
@@ -2406,130 +1964,79 @@
             <template v-else-if="clientType === 13">
               <div class="filterCtn">
                 <div class="elCtn">
-                  <el-input v-model="boxManageFilter.keyword"
-                    placeholder="筛选订购单号/订单号"
+                  <el-input v-model="boxManageFilter.keyword" placeholder="筛选订购单号/订单号"
                     @keydown.enter.native="getBill"></el-input>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="boxManageFilter.user_id"
-                    placeholder="筛选创建人"
-                    clearable>
-                    <el-option v-for="item in userList"
-                      :key="item.value"
-                      :label="item.label"
+                  <el-select @change="getBill" v-model="boxManageFilter.user_id" placeholder="筛选创建人" clearable>
+                    <el-option v-for="item in userList" :key="item.value" :label="item.label"
                       :value="item.value"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-date-picker v-model="boxManageFilter.date"
-                    type="daterange"
-                    align="right"
-                    unlink-panels
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    :picker-options="pickerOptions"
-                    @change="getBill"
-                    value-format="yyyy-MM-dd">
+                  <el-date-picker v-model="boxManageFilter.date" type="daterange" align="right" unlink-panels
+                    range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
+                    @change="getBill" value-format="yyyy-MM-dd">
                   </el-date-picker>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="boxManageFilter.is_check"
-                    placeholder="筛选审核状态">
-                    <el-option value="null"
-                      label="全部"></el-option>
-                    <el-option value="1"
-                      label="已审核"></el-option>
-                    <el-option value="2"
-                      label="待审核"></el-option>
+                  <el-select @change="getBill" v-model="boxManageFilter.is_check" placeholder="筛选审核状态">
+                    <el-option value="null" label="全部"></el-option>
+                    <el-option value="1" label="已审核"></el-option>
+                    <el-option value="2" label="待审核"></el-option>
                   </el-select>
                 </div>
-                <div class="btn borderBtn"
-                  @click="reset">重置</div>
+                <div class="btn borderBtn" @click="reset">重置</div>
               </div>
               <div class="filterCtn">
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="boxManageFilter.group_id"
-                    placeholder="筛选负责小组"
-                    clearable>
-                    <el-option v-for="item in groupList"
-                      :key="item.id"
-                      :value="item.id"
-                      :label="item.name"></el-option>
+                  <el-select @change="getBill" v-model="boxManageFilter.group_id" placeholder="筛选负责小组" clearable>
+                    <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="boxManageFilter.has_invoice"
-                    placeholder="筛选开票状态"
-                    clearable>
-                    <el-option label="全部"
-                      value="null"></el-option>
-                    <el-option label="已开票"
-                      value="1"></el-option>
-                    <el-option label="待开票"
-                      value="2"></el-option>
+                  <el-select @change="getBill" v-model="boxManageFilter.has_invoice" placeholder="筛选开票状态" clearable>
+                    <el-option label="全部" value="null"></el-option>
+                    <el-option label="已开票" value="1"></el-option>
+                    <el-option label="待开票" value="2"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="boxManageFilter.has_pay"
-                    placeholder="筛选付款状态"
-                    clearable>
-                    <el-option label="全部"
-                      value="null"></el-option>
-                    <el-option label="已付款"
-                      value="1"></el-option>
-                    <el-option label="待付款"
-                      value="2"></el-option>
+                  <el-select @change="getBill" v-model="boxManageFilter.has_pay" placeholder="筛选付款状态" clearable>
+                    <el-option label="全部" value="null"></el-option>
+                    <el-option label="已付款" value="1"></el-option>
+                    <el-option label="待付款" value="2"></el-option>
                   </el-select>
                 </div>
                 <div class="elCtn">
-                  <el-select @change="getBill"
-                    v-model="boxManageFilter.has_deduct"
-                    placeholder="筛选扣款状态"
-                    clearable>
-                    <el-option label="全部"
-                      value="null"></el-option>
-                    <el-option label="已扣款"
-                      value="1"></el-option>
-                    <el-option label="待扣款"
-                      value="2"></el-option>
+                  <el-select @change="getBill" v-model="boxManageFilter.has_deduct" placeholder="筛选扣款状态" clearable>
+                    <el-option label="全部" value="null"></el-option>
+                    <el-option label="已扣款" value="1"></el-option>
+                    <el-option label="待扣款" value="2"></el-option>
                   </el-select>
                 </div>
               </div>
               <div class="filterCtn clearfix">
-                <div class="btn backHoverBlue"
-                  @click="goPayment(packOrderCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverBlue" @click="goPayment(packOrderCheckList)">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">批量付款</span>
                 </div>
-                <div class="btn backHoverOrange"
-                  @click="goInvoice(packOrderCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverOrange" @click="goInvoice(packOrderCheckList)">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">批量开票</span>
                 </div>
-                <div class="btn backHoverRed"
-                  @click="goDeduct(packOrderCheckList)">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverRed" @click="goDeduct(packOrderCheckList)">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">批量扣款</span>
                 </div>
-                <div class="btn backHoverBlue"
-                  @click="changeShowAll(boxManageList, '', 'showAllFlag')">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverBlue" @click="changeShowAll(boxManageList, '', 'showAllFlag')">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">{{ showAllFlag ? '全部展开' : '全部收起' }}</span>
@@ -2537,14 +2044,10 @@
               </div>
               <div class="filterCtn clearfix">
                 <div class="label">已勾选单据：</div>
-                <div class="elCtn check"
-                  v-for="(item, index) in packOrderCheckList"
-                  :key="item.id">
-                  <el-input v-model="item.code"
-                    disabled>
+                <div class="elCtn check" v-for="(item, index) in packOrderCheckList" :key="item.id">
+                  <el-input v-model="item.code" disabled>
                     <template slot="append">
-                      <i class="el-icon-close hoverRed"
-                        style="cursor: pointer"
+                      <i class="el-icon-close hoverRed" style="cursor: pointer"
                         @click="packOrderCheckList.splice(index, 1)"></i>
                     </template>
                   </el-input>
@@ -2552,8 +2055,7 @@
               </div>
               <div class="list">
                 <div class="row title">
-                  <div class="col"
-                    style="flex: 0.1">
+                  <div class="col" style="flex: 0.1">
                     <el-checkbox v-model="checkAll"
                       @change="(ev) => checkAllInfo(ev, packOrderList, boxManageCheckList)">
                     </el-checkbox>
@@ -2567,57 +2069,39 @@
                   <div class="col">创建时间</div>
                   <div class="col oprWidth">操作</div>
                 </div>
-                <div v-for="(item, index) in boxManageList"
-                  :key="index">
+                <div v-for="(item, index) in boxManageList" :key="index">
                   <div class="row">
-                    <div class="col"
-                      style="flex: 0.1">
+                    <div class="col" style="flex: 0.1">
                       <el-checkbox v-model="item.checked"
                         @change="(ev) => getCheckInfo(ev, item, boxManageCheckList)"></el-checkbox>
                     </div>
-                    <div class="col blue"
-                      style="cursor: pointer"
+                    <div class="col blue" style="cursor: pointer"
                       @click="$openUrl('/boxManage/boxDetail?id=' + item.id)">
                       {{ item.code }}
                     </div>
                     <div class="col numberWidth">{{ $toFixed(item.total_bulk, 3, true) }}</div>
                     <div class="col numberWidth">{{ $toFixed(item.total_price, 3, true) }}</div>
                     <div class="col">
-                      <div v-if="item.is_check === 0"
-                        class="orange">未审核</div>
-                      <div v-if="item.is_check === 1"
-                        class="blue">已通过</div>
-                      <div v-if="item.is_check === 2"
-                        class="red">已驳回</div>
+                      <div v-if="item.is_check === 0" class="orange">未审核</div>
+                      <div v-if="item.is_check === 1" class="blue">已通过</div>
+                      <div v-if="item.is_check === 2" class="red">已驳回</div>
                     </div>
                     <div class="col circleCtn">
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'开票金额:' + item.has_invoice + '元'"
+                      <el-tooltip class="item" effect="dark" :content="'开票金额:' + item.has_invoice + '元'"
                         placement="top">
-                        <div class="circle"
-                          :class="{ blue: Number(item.has_invoice) > 0 }">票</div>
+                        <div class="circle" :class="{ blue: Number(item.has_invoice) > 0 }">票</div>
                       </el-tooltip>
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'付款金额:' + item.has_pay + '元'"
-                        placement="top">
-                        <div class="circle"
-                          :class="{ green: Number(item.has_pay) > 0 }">付</div>
+                      <el-tooltip class="item" effect="dark" :content="'付款金额:' + item.has_pay + '元'" placement="top">
+                        <div class="circle" :class="{ green: Number(item.has_pay) > 0 }">付</div>
                       </el-tooltip>
-                      <el-tooltip class="item"
-                        effect="dark"
-                        :content="'扣款金额:' + item.has_deduct + '元'"
-                        placement="top">
-                        <div class="circle"
-                          :class="{ red: Number(item.has_deduct) > 0 }">扣</div>
+                      <el-tooltip class="item" effect="dark" :content="'扣款金额:' + item.has_deduct + '元'" placement="top">
+                        <div class="circle" :class="{ red: Number(item.has_deduct) > 0 }">扣</div>
                       </el-tooltip>
                     </div>
                     <div class="col">{{ item.user_name }}</div>
                     <div class="col">{{ item.created_at }}</div>
                     <div class="col oprWidth">
-                      <span class="opr hoverBlue"
-                        @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
+                      <span class="opr hoverBlue" @click="changeShow(item)">{{ item.isShow ? '收起' : '展开' }}</span>
                     </div>
                   </div>
                   <div v-if="item.isShow"
@@ -2683,122 +2167,80 @@
               <div style="margin-top: 20px">
                 <span style="line-height: 35px; margin-left: 40px">
                   合计运输立方：
-                  <span class="green"
-                    style="font-weight: bold">
+                  <span class="green" style="font-weight: bold">
                     {{ $toFixed(boxManageSts.total_number / 10000, 3, true) }} 立方
                   </span>
                 </span>
                 <span style="line-height: 35px; margin-left: 40px">
                   合计运输金额：
-                  <span class="green"
-                    style="font-weight: bold">
+                  <span class="green" style="font-weight: bold">
                     {{ $toFixed(boxManageSts.total_price / 10000, 3, true) }} 万元
                   </span>
                 </span>
                 <span style="line-height: 35px; margin-left: 40px">
                   合计额外费用：
-                  <span class="green"
-                    style="font-weight: bold">
+                  <span class="green" style="font-weight: bold">
                     {{ $toFixed(boxManageSts.total_others_fee / 10000, 3, true) }} 万元
                   </span>
                 </span>
               </div>
             </template>
             <div class="pageCtn">
-              <el-pagination background
-                :page-size="10"
-                layout="prev, pager, next, jumper"
-                :total="listTotal"
-                :current-page.sync="listPage"
-                @current-change="getBill">
+              <el-pagination background :page-size="10" layout="prev, pager, next, jumper" :total="listTotal"
+                :current-page.sync="listPage" @current-change="getBill">
               </el-pagination>
             </div>
           </div>
         </el-tab-pane>
         <el-tab-pane label="补纱单据"
           v-if="(clientType === 2 && $route.query.type !== '装饰辅料单位') || clientType === 3 || clientType === 4">
-          <div class="titleCtn"
-            style="padding: 0 15px">
+          <div class="titleCtn" style="padding: 0 15px">
             <div class="title">单据列表</div>
           </div>
-          <div class="listCtn"
-            v-loading="listLoading"
-            style="padding-left: 10px; padding-right: 10px">
+          <div class="listCtn" v-loading="listLoading" style="padding-left: 10px; padding-right: 10px">
             <div class="filterCtn">
               <div class="elCtn">
-                <el-input v-model="subParams.code"
-                  placeholder="筛选补充单号/订单号"
-                  @keydown.enter.native="getSupList"
-                  @clear="getSupList"
-                  clearable></el-input>
+                <el-input v-model="subParams.code" placeholder="筛选补充单号/订单号" @keydown.enter.native="getSupList"
+                  @clear="getSupList" clearable></el-input>
               </div>
               <div class="elCtn">
-                <el-select @change="(ev) => getLocalStorage(ev, 'create_user')"
-                  v-model="subParams.user_id"
-                  placeholder="筛选创建人"
-                  clearable>
-                  <el-option v-for="item in userList"
-                    :key="item.value"
-                    :label="item.label"
+                <el-select @change="(ev) => getLocalStorage(ev, 'create_user')" v-model="subParams.user_id"
+                  placeholder="筛选创建人" clearable>
+                  <el-option v-for="item in userList" :key="item.value" :label="item.label"
                     :value="item.value"></el-option>
                 </el-select>
               </div>
               <div class="elCtn">
-                <el-date-picker v-model="subParams.date"
-                  type="daterange"
-                  align="right"
-                  unlink-panels
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  :picker-options="pickerOptions"
-                  @change="getSupList"
-                  value-format="yyyy-MM-dd">
+                <el-date-picker v-model="subParams.date" type="daterange" align="right" unlink-panels
+                  range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
+                  @change="getSupList" value-format="yyyy-MM-dd">
                 </el-date-picker>
               </div>
               <div class="elCtn">
-                <el-select @change="getSupList"
-                  v-model="subParams.is_check"
-                  placeholder="筛选审核状态">
-                  <el-option value="null"
-                    label="全部"></el-option>
-                  <el-option value="0"
-                    label="待审核"></el-option>
-                  <el-option value="1"
-                    label="已审核"></el-option>
-                  <el-option value="2"
-                    label="待驳回"></el-option>
-                  <el-option value="3"
-                    label="状态异常"></el-option>
+                <el-select @change="getSupList" v-model="subParams.is_check" placeholder="筛选审核状态">
+                  <el-option value="null" label="全部"></el-option>
+                  <el-option value="0" label="待审核"></el-option>
+                  <el-option value="1" label="已审核"></el-option>
+                  <el-option value="2" label="待驳回"></el-option>
+                  <el-option value="3" label="状态异常"></el-option>
                 </el-select>
               </div>
-              <div class="btn borderBtn"
-                @click="reset">重置</div>
+              <div class="btn borderBtn" @click="reset">重置</div>
             </div>
             <div class="filterCtn">
               <div class="elCtn">
-                <el-select @change="getSupList"
-                  v-model="subParams.group_id"
-                  placeholder="筛选负责小组"
-                  clearable>
-                  <el-option v-for="item in groupList"
-                    :key="item.id"
-                    :value="item.id"
-                    :label="item.name"></el-option>
+                <el-select @change="getSupList" v-model="subParams.group_id" placeholder="筛选负责小组" clearable>
+                  <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
                 </el-select>
               </div>
-              <div class="btn backHoverBlue"
-                @click="changeShowAll(subList, 'sub', 'subShowAllFlag')">
-                <svg class="iconFont"
-                  aria-hidden="true">
+              <div class="btn backHoverBlue" @click="changeShowAll(subList, 'sub', 'subShowAllFlag')">
+                <svg class="iconFont" aria-hidden="true">
                   <use xlink:href="#icon-xiugaidingdan"></use>
                 </svg>
                 <span class="text">{{ subShowAllFlag ? '全部展开' : '全部收起' }}</span>
               </div>
-              <div class="btn backHoverRed"
-                @click="goDeduct(checkAllSubList, false, 'sub')">
-                <svg class="iconFont"
-                  aria-hidden="true">
+              <div class="btn backHoverRed" @click="goDeduct(checkAllSubList, false, 'sub')">
+                <svg class="iconFont" aria-hidden="true">
                   <use xlink:href="#icon-xiugaidingdan"></use>
                 </svg>
                 <span class="text">批量扣款</span>
@@ -2806,14 +2248,10 @@
             </div>
             <div class="filterCtn clearfix">
               <div class="label">已勾选单据：</div>
-              <div class="elCtn check"
-                v-for="(item, index) in checkAllSubList"
-                :key="item.id">
-                <el-input v-model="item.code"
-                  disabled>
+              <div class="elCtn check" v-for="(item, index) in checkAllSubList" :key="item.id">
+                <el-input v-model="item.code" disabled>
                   <template slot="append">
-                    <i class="el-icon-close hoverRed"
-                      style="cursor: pointer"
+                    <i class="el-icon-close hoverRed" style="cursor: pointer"
                       @click="checkAllSubList.splice(index, 1)"></i>
                   </template>
                 </el-input>
@@ -2821,14 +2259,11 @@
             </div>
             <div class="list">
               <div class="row title">
-                <div class="col"
-                  style="flex: 0.05">
-                  <el-checkbox v-model="checkSubAll"
-                    @change="(ev) => checkAllInfo(ev, subList, checkAllSubList)">
+                <div class="col" style="flex: 0.05">
+                  <el-checkbox v-model="checkSubAll" @change="(ev) => checkAllInfo(ev, subList, checkAllSubList)">
                   </el-checkbox>
                 </div>
-                <div class="col"
-                  style="flex: 1.2">补充单号</div>
+                <div class="col" style="flex: 1.2">补充单号</div>
                 <div class="col">关联订单号</div>
                 <div class="col">补原料单位</div>
                 <div class="col">补原料数量</div>
@@ -2837,81 +2272,60 @@
                 <div class="col">审核状态</div>
                 <div class="col">创建人</div>
                 <div class="col">创建时间</div>
-                <div class="col"
-                  style="flex: 1.4">操作</div>
+                <div class="col" style="flex: 1.4">操作</div>
               </div>
-              <div v-for="(item, index) in subList"
-                :key="index">
+              <div v-for="(item, index) in subList" :key="index">
                 <div class="row">
-                  <div class="col"
-                    style="flex: 0.05">
+                  <div class="col" style="flex: 0.05">
                     <el-checkbox v-model="item.checked"
                       @change="(ev) => getCheckInfo(ev, item, checkAllSubList)"></el-checkbox>
                   </div>
-                  <div class="col hoverBlue"
-                    style="flex: 1.2; cursor: pointer"
+                  <div class="col hoverBlue" style="flex: 1.2; cursor: pointer"
                     @click="$router.push('/materialManage/detail?supFlag=1&id=' + item.id)">
                     {{ item.code }}
                   </div>
-                  <div class="col hoverBlue"
-                    style="cursor: pointer;
+                  <div class="col hoverBlue" style="cursor: pointer;
                       white-space: nowrap;
                       overflow: hidden;
                       text-overflow: ellipsis;
                       width:100px
                       flex:unset;
-                      display:block;"
-                    :title="item.order_code || '无编号，点击查看详情'"
-                    @click="
-                      $router.push(
-                        (item.order_type === 1 || item.order_type === null || item.order_type === undefined
-                          ? '/order/detail?id='
-                          : '/sampleOrder/detail?id=') + item.top_order_id
-                      )
-                    ">
-                    <span v-if="item.order_type === 1"
-                      class="circleItem backOrange">订</span>
-                    <span v-if="item.order_type === 2"
-                      class="circleItem backBlue">样</span>
+                      display:block;" :title="item.order_code || '无编号，点击查看详情'" @click="
+                        $router.push(
+                          (item.order_type === 1 || item.order_type === null || item.order_type === undefined
+                            ? '/order/detail?id='
+                            : '/sampleOrder/detail?id=') + item.top_order_id
+                        )
+                      ">
+                    <span v-if="item.order_type === 1" class="circleItem backOrange">订</span>
+                    <span v-if="item.order_type === 2" class="circleItem backBlue">样</span>
                     {{ item.order_code || '无编号，点击查看详情' }}
                   </div>
                   <div class="col">{{ item.client_name }}</div>
                   <div class="col">{{ $toFixed(item.total_plan_number, 3, true) }}</div>
                   <div class="col">
-                    <el-tooltip class="item"
-                      effect="dark"
-                      :content="item.desc || '无'"
-                      placement="top">
+                    <el-tooltip class="item" effect="dark" :content="item.desc || '无'" placement="top">
                       <span style="border-bottom: 1px solid #606266">查看</span>
                     </el-tooltip>
                   </div>
                   <div class="col">
-                    <div class="green"
-                      v-if="item.material_order_progress > 0 && item.material_order_progress < 100">
+                    <div class="green" v-if="item.material_order_progress > 0 && item.material_order_progress < 100">
                       采购中
                     </div>
-                    <div class="orange"
-                      v-if="item.material_order_progress === 0">未进行</div>
-                    <div class="blue"
-                      v-if="item.material_order_progress >= 100">已完成</div>
+                    <div class="orange" v-if="item.material_order_progress === 0">未进行</div>
+                    <div class="blue" v-if="item.material_order_progress >= 100">已完成</div>
                   </div>
                   <div class="col">
-                    <div v-if="item.is_check === 0"
-                      class="orange">待审核</div>
-                    <div v-else-if="item.is_check === 1"
-                      class="blue">已审核</div>
-                    <div v-else-if="item.is_check === 2"
-                      class="red">已驳回</div>
-                    <div v-else
-                      class="red">状态异常</div>
+                    <div v-if="item.is_check === 0" class="orange">待审核</div>
+                    <div v-else-if="item.is_check === 1" class="blue">已审核</div>
+                    <div v-else-if="item.is_check === 2" class="red">已驳回</div>
+                    <div v-else class="red">状态异常</div>
                   </div>
                   <div class="col">{{ item.user_name }}</div>
                   <div class="col">{{ item.created_at }}</div>
-                  <div class="col"
-                    style="flex: 1.4">
-                    <span class="opr hoverBlue"
-                      @click="changeShow(item, 'sub')">{{
-                      item.isShow ? '收起' : '展开'
+                  <div class="col" style="flex: 1.4">
+                    <span class="opr hoverBlue" @click="changeShow(item, 'sub')">{{
+                        item.isShow ? '收起' : '展开'
                     }}</span>
                   </div>
                 </div>
@@ -2921,27 +2335,24 @@
                     <div class="row">
                       <div class="col">
                         <div class="label">关联扣款单：</div>
-                        <div v-if="item.detail.deduct_log.length === 0"
-                          class="gray">无关联扣款单</div>
+                        <div v-if="item.detail.deduct_log.length === 0" class="gray">无关联扣款单</div>
                         <div v-else>
-                          <span class="blue"
-                            v-for="(itemDeduct, indexDeduct) in item.detail.deduct_log"
-                            :key="'补纱扣款' + indexDeduct"><span v-if="indexDeduct !== 0">，</span>{{ itemDeduct.code }}</span>
+                          <span class="blue" v-for="(itemDeduct, indexDeduct) in item.detail.deduct_log"
+                            :key="'补纱扣款' + indexDeduct"><span v-if="indexDeduct !== 0">，</span>{{ itemDeduct.code
+                            }}</span>
                         </div>
                       </div>
                     </div>
                     <div class="thead">
                       <div class="trow">
                         <div class="tcol">补纱单编号</div>
-                        <div class="tcol noPad"
-                          style="flex: 2">
+                        <div class="tcol noPad" style="flex: 2">
                           <div class="trow">
                             <div class="tcol">承担单位</div>
                             <div class="tcol">承担金额</div>
                           </div>
                         </div>
-                        <div class="tcol noPad"
-                          style="flex: 3">
+                        <div class="tcol noPad" style="flex: 3">
                           <div class="trow">
                             <div class="tcol">物料名称</div>
                             <div class="tcol">物料颜色</div>
@@ -2954,20 +2365,15 @@
                     <div class="tbody">
                       <div class="trow">
                         <div class="tcol">{{ item.detail.code }}</div>
-                        <div class="tcol noPad"
-                          style="flex: 2">
-                          <div class="trow"
-                            v-for="(itemClient, indexClient) in item.detail.client_data"
+                        <div class="tcol noPad" style="flex: 2">
+                          <div class="trow" v-for="(itemClient, indexClient) in item.detail.client_data"
                             :key="indexClient">
                             <div class="tcol">{{ itemClient.bear_client_name }}</div>
                             <div class="tcol">{{ $toFixed(itemClient.bear_price, 3, true) }}元</div>
                           </div>
                         </div>
-                        <div class="tcol noPad"
-                          style="flex: 3">
-                          <div class="trow"
-                            v-for="itemMat in item.detail.info_data"
-                            :key="itemMat.id">
+                        <div class="tcol noPad" style="flex: 3">
+                          <div class="trow" v-for="itemMat in item.detail.info_data" :key="itemMat.id">
                             <div class="tcol">{{ itemMat.material_name }}</div>
                             <div class="tcol">{{ itemMat.material_color }}</div>
                             <div class="tcol">{{ $toFixed(itemMat.number, 3, true) }}{{ itemMat.unit }}</div>
@@ -2983,76 +2389,52 @@
             <div style="margin-top: 20px">
               <span style="line-height: 35px; margin-left: 40px">
                 合计补原料数量：
-                <span class="green"
-                  style="font-weight: bold">
+                <span class="green" style="font-weight: bold">
                   {{ $toFixed(subAdditional.total_number / 1000, 3, true) }} 吨或千米
                 </span>
               </span>
               <span style="line-height: 35px; margin-left: 40px">
                 合计本厂承担金额：
-                <span class="green"
-                  style="font-weight: bold">
+                <span class="green" style="font-weight: bold">
                   -{{ $toFixed(subAdditional.self_client_price / 10000, 3, true) }} 万元
                 </span>
               </span>
               <span style="line-height: 35px; margin-left: 40px">
                 合计外协承担金额：
-                <span class="green"
-                  style="font-weight: bold">
+                <span class="green" style="font-weight: bold">
                   {{ $toFixed(subAdditional.client_price / 10000, 3, true) }} 万元
                 </span>
               </span>
             </div>
             <div class="pageCtn">
-              <el-pagination background
-                :page-size="10"
-                layout="prev, pager, next, jumper"
-                :total="subTotal"
-                :current-page.sync="subPage"
-                @current-change="getSupList">
+              <el-pagination background :page-size="10" layout="prev, pager, next, jumper" :total="subTotal"
+                :current-page.sync="subPage" @current-change="getSupList">
               </el-pagination>
             </div>
           </div>
         </el-tab-pane>
-        <el-tab-pane v-if="$route.query.type === '纱线原料单位'"
-          label="纱线汇总表">
-          <div class="titleCtn"
-            style="padding: 0 15px">
+        <el-tab-pane v-if="$route.query.type === '纱线原料单位'" label="纱线汇总表">
+          <div class="titleCtn" style="padding: 0 15px">
             <div class="title">单据列表</div>
           </div>
-          <div class="listCtn"
-            v-loading="listLoading"
-            style="padding-left: 10px; padding-right: 10px">
+          <div class="listCtn" v-loading="listLoading" style="padding-left: 10px; padding-right: 10px">
             <div class="filterCtn">
               <div class="elCtn">
-                <el-input v-model="clientDateParams.keyword"
-                  placeholder="筛选纱线名称"
-                  @keydown.enter.native="getClientDate('纱线原料单位')"
-                  @clear="getClientDate('纱线原料单位')"
-                  clearable></el-input>
+                <el-input v-model="clientDateParams.keyword" placeholder="筛选纱线名称"
+                  @keydown.enter.native="getClientDate('纱线原料单位')" @clear="getClientDate('纱线原料单位')" clearable></el-input>
               </div>
               <div class="elCtn">
-                <el-date-picker v-model="clientDateParams.date"
-                  type="daterange"
-                  align="right"
-                  unlink-panels
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  :picker-options="pickerOptions"
-                  @change="getClientDate('纱线原料单位')"
-                  value-format="yyyy-MM-dd">
+                <el-date-picker v-model="clientDateParams.date" type="daterange" align="right" unlink-panels
+                  range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
+                  @change="getClientDate('纱线原料单位')" value-format="yyyy-MM-dd">
                 </el-date-picker>
               </div>
-              <div class="btn borderBtn"
-                @click="reset">重置</div>
-              <div class="btn backHoverOrange"
-                @click="
-                  updatePriceFlag = true
-                  getMatStsList(updatePriceInfo.date)
-                ">
-                <svg class="iconFont"
-                  aria-hidden="true">
+              <div class="btn borderBtn" @click="reset">重置</div>
+              <div class="btn backHoverOrange" @click="
+  updatePriceFlag = true
+                getMatStsList(updatePriceInfo.date)
+              ">
+                <svg class="iconFont" aria-hidden="true">
                   <use xlink:href="#icon-xiugaidingdan"></use>
                 </svg>
                 <span class="text">更新结算单价</span>
@@ -3066,19 +2448,16 @@
                 <div class="col">
                   计划订购数量
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'number' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'number' && sort === 'asc' }" @click="
+  sortCol = 'number'
+                      sort = 'asc'
+sortClientDate()
+                    "></div>
+                    <div class="el-icon-caret-bottom" :class="{ active: sortCol === 'number' && sort === 'desc' }"
                       @click="
-                        sortCol = 'number'
-                        sort = 'asc'
-                        sortClientDate()
-                      "></div>
-                    <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'number' && sort === 'desc' }"
-                      @click="
-                        sortCol = 'number'
+  sortCol = 'number'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
@@ -3086,19 +2465,17 @@
                 <div class="col">
                   实际入库数量
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'push_number' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'push_number' && sort === 'asc' }"
                       @click="
-                        sortCol = 'push_number'
+  sortCol = 'push_number'
                         sort = 'asc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
-                    <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'push_number' && sort === 'desc' }"
+                    <div class="el-icon-caret-bottom" :class="{ active: sortCol === 'push_number' && sort === 'desc' }"
                       @click="
-                        sortCol = 'push_number'
+  sortCol = 'push_number'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
@@ -3107,44 +2484,39 @@
                 <div class="col">
                   计划订购总价
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'total_price' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'total_price' && sort === 'asc' }"
                       @click="
-                        sortCol = 'total_price'
+  sortCol = 'total_price'
                         sort = 'asc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
-                    <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'total_price' && sort === 'desc' }"
+                    <div class="el-icon-caret-bottom" :class="{ active: sortCol === 'total_price' && sort === 'desc' }"
                       @click="
-                        sortCol = 'total_price'
+  sortCol = 'total_price'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
                 <div class="col">
                   实际入库总价
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'total_push_price' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'total_push_price' && sort === 'asc' }"
                       @click="
-                        sortCol = 'total_push_price'
+  sortCol = 'total_push_price'
                         sort = 'asc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                     <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'total_push_price' && sort === 'desc' }"
-                      @click="
-                        sortCol = 'total_push_price'
+                      :class="{ active: sortCol === 'total_push_price' && sort === 'desc' }" @click="
+  sortCol = 'total_push_price'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
               </div>
-              <div v-for="(item, index) in selectClientDateList"
-                :key="index">
+              <div v-for="(item, index) in selectClientDateList" :key="index">
                 <div class="row">
                   <div class="col">
                     {{ item.material_name }}
@@ -3156,76 +2528,55 @@
                     {{ item.attribute || '无' }}
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.number,2,true) }} kg
+                    {{ $toFixed(item.number, 2, true) }} kg
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.push_number,2,true) }} kg
+                    {{ $toFixed(item.push_number, 2, true) }} kg
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.avg_price,3,true) }} kg/元
+                    {{ $toFixed(item.avg_price, 3, true) }} kg/元
                   </div>
-                  <div :class="item.avg_settle_price == 0?'col gray': 'col'">
-                    {{ item.avg_settle_price == 0?'未填写':($toFixed(item.avg_settle_price,3,true) + 'kg/元') }}
-                  </div>
-                  <div class="col">
-                    {{ $toFixed(item.total_price,3,true) }} 元
+                  <div :class="item.avg_settle_price == 0 ? 'col gray' : 'col'">
+                    {{ item.avg_settle_price == 0 ? '未填写' : ($toFixed(item.avg_settle_price, 3, true) + 'kg/元') }}
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.total_push_price,3,true) }} 元
+                    {{ $toFixed(item.total_price, 3, true) }} 元
+                  </div>
+                  <div class="col">
+                    {{ $toFixed(item.total_push_price, 3, true) }} 元
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="pageCtn fr">
-            <el-pagination background
-              :page-size="10"
-              layout="prev, pager, next, jumper"
-              :total="clientDateList.length"
-              :current-page.sync="clientDatePage"
-              @current-change="changeSelectClient">
+            <el-pagination background :page-size="10" layout="prev, pager, next, jumper" :total="clientDateList.length"
+              :current-page.sync="clientDatePage" @current-change="changeSelectClient">
             </el-pagination>
           </div>
         </el-tab-pane>
-        <el-tab-pane v-if="$route.query.type === '面料原料单位'"
-          label="面料汇总表">
-          <div class="titleCtn"
-            style="padding: 0 15px">
+        <el-tab-pane v-if="$route.query.type === '面料原料单位'" label="面料汇总表">
+          <div class="titleCtn" style="padding: 0 15px">
             <div class="title">单据列表</div>
           </div>
-          <div class="listCtn"
-            v-loading="listLoading"
-            style="padding-left: 10px; padding-right: 10px">
+          <div class="listCtn" v-loading="listLoading" style="padding-left: 10px; padding-right: 10px">
             <div class="filterCtn">
               <div class="elCtn">
-                <el-input v-model="clientDateParams.keyword"
-                  placeholder="筛选面料名称"
-                  @keydown.enter.native="getClientDate('面料原料单位')"
-                  @clear="getClientDate('面料原料单位')"
-                  clearable></el-input>
+                <el-input v-model="clientDateParams.keyword" placeholder="筛选面料名称"
+                  @keydown.enter.native="getClientDate('面料原料单位')" @clear="getClientDate('面料原料单位')" clearable></el-input>
               </div>
               <div class="elCtn">
-                <el-date-picker v-model="clientDateParams.date"
-                  type="daterange"
-                  align="right"
-                  unlink-panels
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  :picker-options="pickerOptions"
-                  @change="getClientDate('面料原料单位')"
-                  value-format="yyyy-MM-dd">
+                <el-date-picker v-model="clientDateParams.date" type="daterange" align="right" unlink-panels
+                  range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
+                  @change="getClientDate('面料原料单位')" value-format="yyyy-MM-dd">
                 </el-date-picker>
               </div>
-              <div class="btn borderBtn"
-                @click="reset">重置</div>
-              <div class="btn backHoverOrange"
-                @click="
-                  updatePriceFlag = true
-                  getMatStsList(updatePriceInfo.date)
-                ">
-                <svg class="iconFont"
-                  aria-hidden="true">
+              <div class="btn borderBtn" @click="reset">重置</div>
+              <div class="btn backHoverOrange" @click="
+  updatePriceFlag = true
+                getMatStsList(updatePriceInfo.date)
+              ">
+                <svg class="iconFont" aria-hidden="true">
                   <use xlink:href="#icon-xiugaidingdan"></use>
                 </svg>
                 <span class="text">更新结算单价</span>
@@ -3239,19 +2590,16 @@
                 <div class="col">
                   计划订购数量
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'number' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'number' && sort === 'asc' }" @click="
+  sortCol = 'number'
+                      sort = 'asc'
+sortClientDate()
+                    "></div>
+                    <div class="el-icon-caret-bottom" :class="{ active: sortCol === 'number' && sort === 'desc' }"
                       @click="
-                        sortCol = 'number'
-                        sort = 'asc'
-                        sortClientDate()
-                      "></div>
-                    <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'number' && sort === 'desc' }"
-                      @click="
-                        sortCol = 'number'
+  sortCol = 'number'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
@@ -3259,19 +2607,17 @@
                 <div class="col">
                   实际入库数量
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'push_number' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'push_number' && sort === 'asc' }"
                       @click="
-                        sortCol = 'push_number'
+  sortCol = 'push_number'
                         sort = 'asc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
-                    <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'push_number' && sort === 'desc' }"
+                    <div class="el-icon-caret-bottom" :class="{ active: sortCol === 'push_number' && sort === 'desc' }"
                       @click="
-                        sortCol = 'push_number'
+  sortCol = 'push_number'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
@@ -3280,44 +2626,39 @@
                 <div class="col">
                   计划订购总价
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'total_price' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'total_price' && sort === 'asc' }"
                       @click="
-                        sortCol = 'total_price'
+  sortCol = 'total_price'
                         sort = 'asc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
-                    <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'total_price' && sort === 'desc' }"
+                    <div class="el-icon-caret-bottom" :class="{ active: sortCol === 'total_price' && sort === 'desc' }"
                       @click="
-                        sortCol = 'total_price'
+  sortCol = 'total_price'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
                 <div class="col">
                   实际入库总价
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'total_push_price' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'total_push_price' && sort === 'asc' }"
                       @click="
-                        sortCol = 'total_push_price'
+  sortCol = 'total_push_price'
                         sort = 'asc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                     <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'total_push_price' && sort === 'desc' }"
-                      @click="
-                        sortCol = 'total_push_price'
+                      :class="{ active: sortCol === 'total_push_price' && sort === 'desc' }" @click="
+  sortCol = 'total_push_price'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
               </div>
-              <div v-for="(item, index) in selectClientDateList"
-                :key="index">
+              <div v-for="(item, index) in selectClientDateList" :key="index">
                 <div class="row">
                   <div class="col">
                     {{ item.material_name }}
@@ -3329,76 +2670,55 @@
                     {{ item.attribute || '无' }}
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.number,2,true) }} 米
+                    {{ $toFixed(item.number, 2, true) }} 米
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.push_number,2,true) }} 米
+                    {{ $toFixed(item.push_number, 2, true) }} 米
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.avg_price,3,true) }} 米/元
+                    {{ $toFixed(item.avg_price, 3, true) }} 米/元
                   </div>
-                  <div :class="item.avg_settle_price == 0?'col gray': 'col'">
-                    {{ item.avg_settle_price == 0?'未填写':($toFixed(item.avg_settle_price,3,true) + '米/元') }}
-                  </div>
-                  <div class="col">
-                    {{ $toFixed(item.total_price,3,true) }} 元
+                  <div :class="item.avg_settle_price == 0 ? 'col gray' : 'col'">
+                    {{ item.avg_settle_price == 0 ? '未填写' : ($toFixed(item.avg_settle_price, 3, true) + '米/元') }}
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.total_push_price,3,true) }} 元
+                    {{ $toFixed(item.total_price, 3, true) }} 元
+                  </div>
+                  <div class="col">
+                    {{ $toFixed(item.total_push_price, 3, true) }} 元
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="pageCtn fr">
-            <el-pagination background
-              :page-size="10"
-              layout="prev, pager, next, jumper"
-              :total="clientDateList.length"
-              :current-page.sync="clientDatePage"
-              @current-change="changeSelectClient">
+            <el-pagination background :page-size="10" layout="prev, pager, next, jumper" :total="clientDateList.length"
+              :current-page.sync="clientDatePage" @current-change="changeSelectClient">
             </el-pagination>
           </div>
         </el-tab-pane>
-        <el-tab-pane v-if="$route.query.type === '装饰辅料单位'"
-          label="辅料汇总表">
-          <div class="titleCtn"
-            style="padding: 0 15px">
+        <el-tab-pane v-if="$route.query.type === '装饰辅料单位'" label="辅料汇总表">
+          <div class="titleCtn" style="padding: 0 15px">
             <div class="title">单据列表</div>
           </div>
-          <div class="listCtn"
-            v-loading="listLoading"
-            style="padding-left: 10px; padding-right: 10px">
+          <div class="listCtn" v-loading="listLoading" style="padding-left: 10px; padding-right: 10px">
             <div class="filterCtn">
               <div class="elCtn">
-                <el-input v-model="clientDateParams.keyword"
-                  placeholder="筛选辅料名称"
-                  @keydown.enter.native="getClientDate('装饰辅料单位')"
-                  @clear="getClientDate('装饰辅料单位')"
-                  clearable></el-input>
+                <el-input v-model="clientDateParams.keyword" placeholder="筛选辅料名称"
+                  @keydown.enter.native="getClientDate('装饰辅料单位')" @clear="getClientDate('装饰辅料单位')" clearable></el-input>
               </div>
               <div class="elCtn">
-                <el-date-picker v-model="clientDateParams.date"
-                  type="daterange"
-                  align="right"
-                  unlink-panels
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  :picker-options="pickerOptions"
-                  @change="getClientDate('装饰辅料单位')"
-                  value-format="yyyy-MM-dd">
+                <el-date-picker v-model="clientDateParams.date" type="daterange" align="right" unlink-panels
+                  range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
+                  @change="getClientDate('装饰辅料单位')" value-format="yyyy-MM-dd">
                 </el-date-picker>
               </div>
-              <div class="btn borderBtn"
-                @click="reset">重置</div>
-              <div class="btn backHoverOrange"
-                @click="
-                  updatePriceFlag = true
-                  getMatStsList(updatePriceInfo.date)
-                ">
-                <svg class="iconFont"
-                  aria-hidden="true">
+              <div class="btn borderBtn" @click="reset">重置</div>
+              <div class="btn backHoverOrange" @click="
+  updatePriceFlag = true
+                getMatStsList(updatePriceInfo.date)
+              ">
+                <svg class="iconFont" aria-hidden="true">
                   <use xlink:href="#icon-xiugaidingdan"></use>
                 </svg>
                 <span class="text">更新结算单价</span>
@@ -3411,19 +2731,16 @@
                 <div class="col">
                   计划订购数量
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'number' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'number' && sort === 'asc' }" @click="
+  sortCol = 'number'
+                      sort = 'asc'
+sortClientDate()
+                    "></div>
+                    <div class="el-icon-caret-bottom" :class="{ active: sortCol === 'number' && sort === 'desc' }"
                       @click="
-                        sortCol = 'number'
-                        sort = 'asc'
-                        sortClientDate()
-                      "></div>
-                    <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'number' && sort === 'desc' }"
-                      @click="
-                        sortCol = 'number'
+  sortCol = 'number'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
@@ -3431,19 +2748,17 @@
                 <div class="col">
                   实际入库数量
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'push_number' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'push_number' && sort === 'asc' }"
                       @click="
-                        sortCol = 'push_number'
+  sortCol = 'push_number'
                         sort = 'asc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
-                    <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'push_number' && sort === 'desc' }"
+                    <div class="el-icon-caret-bottom" :class="{ active: sortCol === 'push_number' && sort === 'desc' }"
                       @click="
-                        sortCol = 'push_number'
+  sortCol = 'push_number'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
@@ -3452,44 +2767,39 @@
                 <div class="col">
                   计划订购总价
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'total_price' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'total_price' && sort === 'asc' }"
                       @click="
-                        sortCol = 'total_price'
+  sortCol = 'total_price'
                         sort = 'asc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
-                    <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'total_price' && sort === 'desc' }"
+                    <div class="el-icon-caret-bottom" :class="{ active: sortCol === 'total_price' && sort === 'desc' }"
                       @click="
-                        sortCol = 'total_price'
+  sortCol = 'total_price'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
                 <div class="col">
                   实际入库总价
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'total_push_price' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'total_push_price' && sort === 'asc' }"
                       @click="
-                        sortCol = 'total_push_price'
+  sortCol = 'total_push_price'
                         sort = 'asc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                     <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'total_push_price' && sort === 'desc' }"
-                      @click="
-                        sortCol = 'total_push_price'
+                      :class="{ active: sortCol === 'total_push_price' && sort === 'desc' }" @click="
+  sortCol = 'total_push_price'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
               </div>
-              <div v-for="(item, index) in selectClientDateList"
-                :key="index">
+              <div v-for="(item, index) in selectClientDateList" :key="index">
                 <div class="row">
                   <div class="col">
                     {{ item.material_name }}
@@ -3498,76 +2808,57 @@
                     {{ item.attribute || '无' }}
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.number,2,true) }} {{item.unit}}
+                    {{ $toFixed(item.number, 2, true) }} {{ item.unit }}
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.push_number,2,true) }} {{item.unit}}
+                    {{ $toFixed(item.push_number, 2, true) }} {{ item.unit }}
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.avg_price,3,true) }} {{item.unit+'/元'}}
+                    {{ $toFixed(item.avg_price, 3, true) }} {{ item.unit + '/元' }}
                   </div>
-                  <div :class="item.avg_settle_price == 0?'col gray': 'col'">
-                    {{ item.avg_settle_price == 0?'未填写':($toFixed(item.avg_settle_price,3,true) + item.unit+'/元') }}
+                  <div :class="item.avg_settle_price == 0 ? 'col gray' : 'col'">
+                    {{ item.avg_settle_price == 0 ? '未填写' : ($toFixed(item.avg_settle_price, 3, true) + item.unit +
+                        '/元')
+                    }}
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.total_price,3,true) }} 元
+                    {{ $toFixed(item.total_price, 3, true) }} 元
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.total_push_price,3,true) }} 元
+                    {{ $toFixed(item.total_push_price, 3, true) }} 元
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="pageCtn fr">
-            <el-pagination background
-              :page-size="10"
-              layout="prev, pager, next, jumper"
-              :total="clientDateList.length"
-              :current-page.sync="clientDatePage"
-              @current-change="changeSelectClient">
+            <el-pagination background :page-size="10" layout="prev, pager, next, jumper" :total="clientDateList.length"
+              :current-page.sync="clientDatePage" @current-change="changeSelectClient">
             </el-pagination>
           </div>
         </el-tab-pane>
-        <el-tab-pane v-if="$route.query.type === '包装辅料单位'"
-          label="包装汇总表">
-          <div class="titleCtn"
-            style="padding: 0 15px">
+        <el-tab-pane v-if="$route.query.type === '包装辅料单位'" label="包装汇总表">
+          <div class="titleCtn" style="padding: 0 15px">
             <div class="title">单据列表</div>
           </div>
-          <div class="listCtn"
-            v-loading="listLoading"
-            style="padding-left: 10px; padding-right: 10px">
+          <div class="listCtn" v-loading="listLoading" style="padding-left: 10px; padding-right: 10px">
             <div class="filterCtn">
               <div class="elCtn">
-                <el-input v-model="clientDateParams.keyword"
-                  placeholder="筛选包装名称"
-                  @keydown.enter.native="getClientDate('包装辅料单位')"
-                  @clear="getClientDate('包装辅料单位')"
-                  clearable></el-input>
+                <el-input v-model="clientDateParams.keyword" placeholder="筛选包装名称"
+                  @keydown.enter.native="getClientDate('包装辅料单位')" @clear="getClientDate('包装辅料单位')" clearable></el-input>
               </div>
               <div class="elCtn">
-                <el-date-picker v-model="clientDateParams.date"
-                  type="daterange"
-                  align="right"
-                  unlink-panels
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  :picker-options="pickerOptions"
-                  @change="getClientDate('包装辅料单位')"
-                  value-format="yyyy-MM-dd">
+                <el-date-picker v-model="clientDateParams.date" type="daterange" align="right" unlink-panels
+                  range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
+                  @change="getClientDate('包装辅料单位')" value-format="yyyy-MM-dd">
                 </el-date-picker>
               </div>
-              <div class="btn borderBtn"
-                @click="reset">重置</div>
-              <div class="btn backHoverOrange"
-                @click="
-                  updatePriceFlag = true
-                  getMatStsList(updatePriceInfo.date)
-                ">
-                <svg class="iconFont"
-                  aria-hidden="true">
+              <div class="btn borderBtn" @click="reset">重置</div>
+              <div class="btn backHoverOrange" @click="
+  updatePriceFlag = true
+                getMatStsList(updatePriceInfo.date)
+              ">
+                <svg class="iconFont" aria-hidden="true">
                   <use xlink:href="#icon-xiugaidingdan"></use>
                 </svg>
                 <span class="text">更新结算单价</span>
@@ -3581,19 +2872,16 @@
                 <div class="col">
                   订购数量
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'number' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'number' && sort === 'asc' }" @click="
+  sortCol = 'number'
+                      sort = 'asc'
+sortClientDate()
+                    "></div>
+                    <div class="el-icon-caret-bottom" :class="{ active: sortCol === 'number' && sort === 'desc' }"
                       @click="
-                        sortCol = 'number'
-                        sort = 'asc'
-                        sortClientDate()
-                      "></div>
-                    <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'number' && sort === 'desc' }"
-                      @click="
-                        sortCol = 'number'
+  sortCol = 'number'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
@@ -3601,25 +2889,22 @@
                 <div class="col">
                   计划订购总价
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'total_price' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'total_price' && sort === 'asc' }"
                       @click="
-                        sortCol = 'total_price'
+  sortCol = 'total_price'
                         sort = 'asc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
-                    <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'total_price' && sort === 'desc' }"
+                    <div class="el-icon-caret-bottom" :class="{ active: sortCol === 'total_price' && sort === 'desc' }"
                       @click="
-                        sortCol = 'total_price'
+  sortCol = 'total_price'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
               </div>
-              <div v-for="(item, index) in selectClientDateList"
-                :key="index">
+              <div v-for="(item, index) in selectClientDateList" :key="index">
                 <div class="row">
                   <div class="col">
                     {{ item.material_name }}
@@ -3639,72 +2924,48 @@
                     {{ item.desc || '无' }}
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.number,2,true) }}
+                    {{ $toFixed(item.number, 2, true) }}
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.avg_price,3,true) }}
+                    {{ $toFixed(item.avg_price, 3, true) }}
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.total_price,3,true) }}
+                    {{ $toFixed(item.total_price, 3, true) }}
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="pageCtn fr">
-            <el-pagination background
-              :page-size="10"
-              layout="prev, pager, next, jumper"
-              :total="clientDateList.length"
-              :current-page.sync="clientDatePage"
-              @current-change="changeSelectClient">
+            <el-pagination background :page-size="10" layout="prev, pager, next, jumper" :total="clientDateList.length"
+              :current-page.sync="clientDatePage" @current-change="changeSelectClient">
             </el-pagination>
           </div>
         </el-tab-pane>
-        <el-tab-pane v-if="$route.query.type === '原料加工单位'"
-          label="加工汇总表">
-          <div class="titleCtn"
-            style="padding: 0 15px">
+        <el-tab-pane v-if="$route.query.type === '原料加工单位'" label="加工汇总表">
+          <div class="titleCtn" style="padding: 0 15px">
             <div class="title">单据列表</div>
           </div>
-          <div class="listCtn"
-            v-loading="listLoading"
-            style="padding-left: 10px; padding-right: 10px">
+          <div class="listCtn" v-loading="listLoading" style="padding-left: 10px; padding-right: 10px">
             <div class="filterCtn">
               <div class="elCtn">
-                <el-input v-model="clientDateParams.keyword"
-                  placeholder="筛选原料名称"
-                  @keydown.enter.native="getClientDate('原料加工单位')"
-                  @clear="getClientDate('原料加工单位')"
-                  clearable></el-input>
+                <el-input v-model="clientDateParams.keyword" placeholder="筛选原料名称"
+                  @keydown.enter.native="getClientDate('原料加工单位')" @clear="getClientDate('原料加工单位')" clearable></el-input>
               </div>
               <div class="elCtn">
-                <el-select v-model="clientDateParams.process"
-                  placeholder="选择加工工序"
-                  clearable
-                  @clear="getClientDate('原料加工单位')"
-                  @change="getClientDate('原料加工单位')">
-                  <el-option v-for="item in processList"
-                    :key="item.value"
-                    :label="item.label"
+                <el-select v-model="clientDateParams.process" placeholder="选择加工工序" clearable
+                  @clear="getClientDate('原料加工单位')" @change="getClientDate('原料加工单位')">
+                  <el-option v-for="item in processList" :key="item.value" :label="item.label"
                     :value="item.value"></el-option>
                 </el-select>
               </div>
               <div class="elCtn">
-                <el-date-picker v-model="clientDateParams.date"
-                  type="daterange"
-                  align="right"
-                  unlink-panels
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  :picker-options="pickerOptions"
-                  @change="getClientDate('原料加工单位')"
-                  value-format="yyyy-MM-dd">
+                <el-date-picker v-model="clientDateParams.date" type="daterange" align="right" unlink-panels
+                  range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
+                  @change="getClientDate('原料加工单位')" value-format="yyyy-MM-dd">
                 </el-date-picker>
               </div>
-              <div class="btn borderBtn"
-                @click="reset">重置</div>
+              <div class="btn borderBtn" @click="reset">重置</div>
             </div>
             <div class="list">
               <div class="row title">
@@ -3713,38 +2974,33 @@
                 <div class="col">
                   计划加工数量
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'number' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'number' && sort === 'asc' }" @click="
+  sortCol = 'number'
+                      sort = 'asc'
+sortClientDate()
+                    "></div>
+                    <div class="el-icon-caret-bottom" :class="{ active: sortCol === 'number' && sort === 'desc' }"
                       @click="
-                        sortCol = 'number'
-                        sort = 'asc'
-                        sortClientDate()
-                      "></div>
-                    <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'number' && sort === 'desc' }"
-                      @click="
-                        sortCol = 'number'
+  sortCol = 'number'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
                 <div class="col">
                   实际加工数量
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'push_number' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'push_number' && sort === 'asc' }"
                       @click="
-                        sortCol = 'push_number'
+  sortCol = 'push_number'
                         sort = 'asc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
-                    <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'push_number' && sort === 'desc' }"
+                    <div class="el-icon-caret-bottom" :class="{ active: sortCol === 'push_number' && sort === 'desc' }"
                       @click="
-                        sortCol = 'push_number'
+  sortCol = 'push_number'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
@@ -3752,121 +3008,93 @@
                 <div class="col">
                   计划加工总价
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'total_price' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'total_price' && sort === 'asc' }"
                       @click="
-                        sortCol = 'total_price'
+  sortCol = 'total_price'
                         sort = 'asc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
-                    <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'total_price' && sort === 'desc' }"
+                    <div class="el-icon-caret-bottom" :class="{ active: sortCol === 'total_price' && sort === 'desc' }"
                       @click="
-                        sortCol = 'total_price'
+  sortCol = 'total_price'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
                 <div class="col">
                   实际加工总价
                   <div class="sortCtn">
-                    <div class="el-icon-caret-top"
-                      :class="{ active: sortCol === 'total_push_price' && sort === 'asc' }"
+                    <div class="el-icon-caret-top" :class="{ active: sortCol === 'total_push_price' && sort === 'asc' }"
                       @click="
-                        sortCol = 'total_push_price'
+  sortCol = 'total_push_price'
                         sort = 'asc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                     <div class="el-icon-caret-bottom"
-                      :class="{ active: sortCol === 'total_push_price' && sort === 'desc' }"
-                      @click="
-                        sortCol = 'total_push_price'
+                      :class="{ active: sortCol === 'total_push_price' && sort === 'desc' }" @click="
+  sortCol = 'total_push_price'
                         sort = 'desc'
-                        sortClientDate()
+sortClientDate()
                       "></div>
                   </div>
                 </div>
               </div>
-              <div v-for="(item, index) in selectClientDateList"
-                :key="index">
+              <div v-for="(item, index) in selectClientDateList" :key="index">
                 <div class="row">
-                  <div :class="item.material_name?'col':'col gray'">
-                    {{ item.material_name || '无'}}
+                  <div :class="item.material_name ? 'col' : 'col gray'">
+                    {{ item.material_name || '无' }}
                   </div>
                   <div class="col">
                     {{ item.process }}
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.number,2,true) }}
+                    {{ $toFixed(item.number, 2, true) }}
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.push_number,2,true) }}
+                    {{ $toFixed(item.push_number, 2, true) }}
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.avg_price,3,true) }}
+                    {{ $toFixed(item.avg_price, 3, true) }}
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.total_price,3,true) }}
+                    {{ $toFixed(item.total_price, 3, true) }}
                   </div>
                   <div class="col">
-                    {{ $toFixed(item.total_push_price,3,true) }}
+                    {{ $toFixed(item.total_push_price, 3, true) }}
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="pageCtn fr">
-            <el-pagination background
-              :page-size="10"
-              layout="prev, pager, next, jumper"
-              :total="clientDateList.length"
-              :current-page.sync="clientDatePage"
-              @current-change="changeSelectClient">
+            <el-pagination background :page-size="10" layout="prev, pager, next, jumper" :total="clientDateList.length"
+              :current-page.sync="clientDatePage" @current-change="changeSelectClient">
             </el-pagination>
           </div>
         </el-tab-pane>
       </el-tabs>
     </div>
-    <div class="module"
-      id="扣款单据">
+    <div class="module" id="扣款单据">
       <div class="titleCtn">
         <div class="title">扣款单据</div>
       </div>
-      <div class="listCtn"
-        v-loading="deductLoading">
+      <div class="listCtn" v-loading="deductLoading">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input v-model="deductOrderCode"
-              placeholder="搜索订单号"
-              @keydown.enter.native="getDeductLogList"></el-input>
+            <el-input v-model="deductOrderCode" placeholder="搜索订单号" @keydown.enter.native="getDeductLogList"></el-input>
           </div>
           <div class="elCtn">
-            <el-input v-model="deductKeyword"
-              placeholder="搜索票据编号"
-              @keydown.enter.native="getDeductLogList"></el-input>
+            <el-input v-model="deductKeyword" placeholder="搜索票据编号" @keydown.enter.native="getDeductLogList"></el-input>
           </div>
           <div class="elCtn">
-            <el-select @change="getDeductLogList"
-              v-model="deductUser"
-              placeholder="筛选创建人"
-              clearable>
-              <el-option v-for="item in userList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"></el-option>
+            <el-select @change="getDeductLogList" v-model="deductUser" placeholder="筛选创建人" clearable>
+              <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-date-picker v-model="deductDate"
-              type="daterange"
-              align="right"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :picker-options="pickerOptions"
-              @change="getDeductLogList"
+            <el-date-picker v-model="deductDate" type="daterange" align="right" unlink-panels range-separator="至"
+              start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions" @change="getDeductLogList"
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
@@ -3883,22 +3111,17 @@
             <div class="col">开票日期</div>
             <div class="col">操作</div>
           </div>
-          <div class="row"
-            v-for="item in deductLog"
-            :key="item.id">
+          <div class="row" v-for="item in deductLog" :key="item.id">
             <div class="col">{{ item.code }}</div>
             <div class="col">{{ item.rel_doc_code || '未关联' }}</div>
             <div class="col">{{ $toFixed(item.price, 3, true) }}元</div>
             <div class="col">{{ item.reason }}</div>
             <div class="col">
               <div class="imageCtn">
-                <el-image style="width: 100%; height: 100%"
-                  :src="item.file_url ? item.file_url : ''"
+                <el-image style="width: 100%; height: 100%" :src="item.file_url ? item.file_url : ''"
                   :preview-src-list="[item.file_url]">
-                  <div slot="error"
-                    class="image-slot">
-                    <i class="el-icon-picture-outline"
-                      style="font-size: 42px"></i>
+                  <div slot="error" class="image-slot">
+                    <i class="el-icon-picture-outline" style="font-size: 42px"></i>
                   </div>
                 </el-image>
               </div>
@@ -3906,10 +3129,8 @@
             <div class="col">{{ item.user_name }}</div>
             <div class="col">{{ item.create_time }}</div>
             <div class="col oprCtn">
-              <span class="opr orange"
-                @click="goDeduct([item], true)">修改</span>
-              <span class="opr red"
-                @click="deleteDeduct(item.id)">删除</span>
+              <span class="opr orange" @click="goDeduct([item], true)">修改</span>
+              <span class="opr red" @click="deleteDeduct(item.id)">删除</span>
             </div>
           </div>
           <div class="row">
@@ -3924,56 +3145,35 @@
           </div>
         </div>
         <div class="pageCtn">
-          <el-pagination background
-            :page-size="5"
-            layout="prev, pager, next, jumper"
-            :total="deductTotal"
-            :current-page.sync="deductPage"
-            @current-change="getDeductLogList">
+          <el-pagination background :page-size="5" layout="prev, pager, next, jumper" :total="deductTotal"
+            :current-page.sync="deductPage" @current-change="getDeductLogList">
           </el-pagination>
         </div>
       </div>
     </div>
-    <div class="module"
-      id="付款单据">
+    <div class="module" id="付款单据">
       <div class="titleCtn">
         <div class="title">付款单据</div>
       </div>
-      <div class="listCtn"
-        v-loading="paymentLoading">
+      <div class="listCtn" v-loading="paymentLoading">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input v-model="paymentOrderCode"
-              placeholder="搜索订单号"
+            <el-input v-model="paymentOrderCode" placeholder="搜索订单号"
               @keydown.enter.native="getPaymentLogList"></el-input>
           </div>
           <div class="elCtn">
-            <el-input v-model="paymentKeyword"
-              placeholder="搜索票据编号"
+            <el-input v-model="paymentKeyword" placeholder="搜索票据编号"
               @keydown.enter.native="getPaymentLogList"></el-input>
           </div>
           <div class="elCtn">
-            <el-select @change="getPaymentLogList"
-              v-model="paymentUser"
-              placeholder="筛选创建人"
-              clearable>
-              <el-option v-for="item in userList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"></el-option>
+            <el-select @change="getPaymentLogList" v-model="paymentUser" placeholder="筛选创建人" clearable>
+              <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-date-picker v-model="paymentDate"
-              type="daterange"
-              align="right"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :picker-options="pickerOptions"
-              @change="getPaymentLogList"
-              value-format="yyyy-MM-dd">
+            <el-date-picker v-model="paymentDate" type="daterange" align="right" unlink-panels range-separator="至"
+              start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
+              @change="getPaymentLogList" value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
           <div class="backHoverBlue btn">搜索</div>
@@ -3989,9 +3189,7 @@
             <div class="col">付款日期</div>
             <div class="col">操作</div>
           </div>
-          <div class="row"
-            v-for="item in paymentLog"
-            :key="item.id">
+          <div class="row" v-for="item in paymentLog" :key="item.id">
             <div class="col">{{ item.code }}</div>
             <div class="col">{{ item.rel_doc_code || '未关联' }}</div>
             <div class="col">{{ $toFixed(item.price, 3, true) }}元</div>
@@ -3999,10 +3197,8 @@
             <div class="col">{{ item.user_name }}</div>
             <div class="col">{{ item.created_at }}</div>
             <div class="col oprCtn">
-              <span class="opr orange"
-                @click="goPayment([item], true)">修改</span>
-              <span class="opr red"
-                @click="deletePayment(item.id)">删除</span>
+              <span class="opr orange" @click="goPayment([item], true)">修改</span>
+              <span class="opr red" @click="deletePayment(item.id)">删除</span>
             </div>
           </div>
           <div class="row">
@@ -4016,65 +3212,42 @@
           </div>
         </div>
         <div class="pageCtn">
-          <el-pagination background
-            :page-size="5"
-            layout="prev, pager, next, jumper"
-            :total="paymentTotal"
-            :current-page.sync="paymentPage"
-            @current-change="getPaymentLogList">
+          <el-pagination background :page-size="5" layout="prev, pager, next, jumper" :total="paymentTotal"
+            :current-page.sync="paymentPage" @current-change="getPaymentLogList">
           </el-pagination>
         </div>
       </div>
     </div>
-    <div class="module"
-      id="开票单据">
+    <div class="module" id="开票单据">
       <div class="titleCtn">
         <div class="title">开票单据</div>
       </div>
-      <div class="listCtn"
-        v-loading="invoiceLoading">
+      <div class="listCtn" v-loading="invoiceLoading">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input v-model="invoiceOrderCode"
-              placeholder="搜索订单号"
+            <el-input v-model="invoiceOrderCode" placeholder="搜索订单号"
               @keydown.enter.native="getInvoiceLogList"></el-input>
           </div>
           <div class="elCtn">
-            <el-input v-model="invoiceKeyword"
-              placeholder="搜索票据编号"
+            <el-input v-model="invoiceKeyword" placeholder="搜索票据编号"
               @keydown.enter.native="getInvoiceLogList"></el-input>
           </div>
           <div class="elCtn">
-            <el-select @change="getInvoiceLogList"
-              v-model="invoiceUser"
-              placeholder="筛选创建人"
-              clearable>
-              <el-option v-for="item in userList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"></el-option>
+            <el-select @change="getInvoiceLogList" v-model="invoiceUser" placeholder="筛选创建人" clearable>
+              <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-date-picker v-model="invoiceDate"
-              type="daterange"
-              align="right"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :picker-options="pickerOptions"
-              @change="getInvoiceLogList"
-              value-format="yyyy-MM-dd">
+            <el-date-picker v-model="invoiceDate" type="daterange" align="right" unlink-panels range-separator="至"
+              start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
+              @change="getInvoiceLogList" value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
           <div class="backHoverBlue btn">搜索</div>
         </div>
         <div class="filterCtn clearfix">
           <div class="elCtn">
-            <el-input v-model="invoiceCode"
-              placeholder="搜索开票号码"
-              @keydown.enter.native="getInvoiceLogList"></el-input>
+            <el-input v-model="invoiceCode" placeholder="搜索开票号码" @keydown.enter.native="getInvoiceLogList"></el-input>
           </div>
         </div>
         <div class="list">
@@ -4088,12 +3261,9 @@
             <div class="col">备注信息</div>
             <div class="col">开票人</div>
             <div class="col">开票日期</div>
-            <div class="col"
-              style="flex:1.1">操作</div>
+            <div class="col" style="flex:1.1">操作</div>
           </div>
-          <div class="row"
-            v-for="item in invoiceLog"
-            :key="item.id">
+          <div class="row" v-for="item in invoiceLog" :key="item.id">
             <div class="col">{{ item.code }}</div>
             <div class="col">{{ item.rel_doc_code || '未关联' }}</div>
             <div class="col">{{ $toFixed(item.price, 3, true) }}元</div>
@@ -4103,29 +3273,25 @@
             <div class="col">{{ item.desc }}</div>
             <div class="col">{{ item.user_name }}</div>
             <div class="col">{{ item.created_at }}</div>
-            <div class="col oprCtn"
-              style="flex:1.1">
-              <span class="opr blue"
-                @click="
-                  goPayment(
-                    [
-                      {
-                        order_id: item.order_id,
-                        doc_code: item.order_code,
-                        rel_doc_id: item.rel_doc_id,
-                        price: item.price,
-                        desc: '',
-                        complete_time: $getDate(new Date())
-                      }
-                    ],
-                    false,
-                    true
-                  )
-                ">付款</span>
-              <span class="opr orange"
-                @click="goInvoice([item], true)">修改</span>
-              <span class="opr red"
-                @click="deleteInvoice(item.id)">删除</span>
+            <div class="col oprCtn" style="flex:1.1">
+              <span class="opr blue" @click="
+                goPayment(
+                  [
+                    {
+                      order_id: item.order_id,
+                      doc_code: item.order_code,
+                      rel_doc_id: item.rel_doc_id,
+                      price: item.price,
+                      desc: '',
+                      complete_time: $getDate(new Date())
+                    }
+                  ],
+                  false,
+                  true
+                )
+              ">付款</span>
+              <span class="opr orange" @click="goInvoice([item], true)">修改</span>
+              <span class="opr red" @click="deleteInvoice(item.id)">删除</span>
             </div>
           </div>
           <div class="row">
@@ -4138,99 +3304,58 @@
             <div class="col"></div>
             <div class="col"></div>
             <div class="col"></div>
-            <div class="col"
-              style="flex:1.1"></div>
+            <div class="col" style="flex:1.1"></div>
           </div>
         </div>
         <div class="pageCtn">
-          <el-pagination background
-            :page-size="5"
-            layout="prev, pager, next, jumper"
-            :total="invoiceTotal"
-            :current-page.sync="invoicePage"
-            @current-change="getInvoiceLogList">
+          <el-pagination background :page-size="5" layout="prev, pager, next, jumper" :total="invoiceTotal"
+            :current-page.sync="invoicePage" @current-change="getInvoiceLogList">
           </el-pagination>
         </div>
       </div>
     </div>
     <div class="bottomFixBar">
       <div class="main">
-        <div class="btnCtn"
-          style="float: left"
-          v-if="clientType === 2 || clientType === 3 || clientType === 4">
-          <div class="btn backHoverGreen"
-            @click="getAssociatedPage">查看其他关联单据</div>
+        <div class="btnCtn" style="float: left" v-if="clientType === 2 || clientType === 3 || clientType === 4">
+          <div class="btn backHoverGreen" @click="getAssociatedPage">查看其他关联单据</div>
         </div>
         <div class="btnCtn">
           <span class="btn backHoverBlue"
-            @click="$router.push('/client/update?id='+$route.query.id+'&type=2')">修改单位信息</span>
+            @click="$router.push('/client/update?id=' + $route.query.id + '&type=2')">修改单位信息</span>
         </div>
         <div class="btnCtn">
-          <div class="borderBtn"
-            @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverGreen"
-            @click="goUrl">导出数据表报</div>
+          <div class="borderBtn" @click="$router.go(-1)">返回</div>
+          <div class="btn backHoverGreen" @click="goUrl">导出数据表报</div>
         </div>
       </div>
     </div>
     <!-- 付款 -->
-    <zh-payment :type="clientType"
-      :invoiceChange="invoiceChange"
-      :update="paymentUpdate"
-      :show="paymentFlag"
-      :data="paymentData"
-      :client_name="clientFinancial.name"
-      :client_id="$route.query.id"
-      @close="paymentFlag = false"
+    <zh-payment :type="clientType" :invoiceChange="invoiceChange" :update="paymentUpdate" :show="paymentFlag"
+      :data="paymentData" :client_name="clientFinancial.name" :client_id="$route.query.id" @close="paymentFlag = false"
       @afterPayment="init()"></zh-payment>
     <!-- 开票 -->
-    <zh-invoice :type="clientType"
-      :invoice_type="2"
-      :update="invoiceUpdate"
-      :show="invoiceFlag"
-      :data="invoiceData"
-      :client_name="clientFinancial.name"
-      :client_id="$route.query.id"
-      @close="invoiceFlag = false"
+    <zh-invoice :type="clientType" :invoice_type="2" :update="invoiceUpdate" :show="invoiceFlag" :data="invoiceData"
+      :client_name="clientFinancial.name" :client_id="$route.query.id" @close="invoiceFlag = false"
       @afterInvoice="init()"></zh-invoice>
     <!-- 扣款 -->
-    <zh-deduct :type="clientType"
-      :deduct_type="1"
-      :update="deductUpdate"
-      :show="deductFlag"
-      :data="deductData"
-      :client_name="clientFinancial.name"
-      :client_id="$route.query.id"
-      @close="deductFlag = false"
+    <zh-deduct :type="clientType" :deduct_type="1" :update="deductUpdate" :show="deductFlag" :data="deductData"
+      :client_name="clientFinancial.name" :client_id="$route.query.id" @close="deductFlag = false"
       @afterDeduct="init()"></zh-deduct>
     <!-- 补纱扣款 -->
-    <zh-deduct :type="10"
-      :deduct_type="1"
-      :update="deductUpdate"
-      :show="subDeductFlag"
-      :data="deductData"
-      :client_name="clientFinancial.name"
-      :client_id="$route.query.id"
-      @close="subDeductFlag = false"
+    <zh-deduct :type="10" :deduct_type="1" :update="deductUpdate" :show="subDeductFlag" :data="deductData"
+      :client_name="clientFinancial.name" :client_id="$route.query.id" @close="subDeductFlag = false"
       @afterDeduct="init()"></zh-deduct>
-    <zh-deduct-detail :show="deductDetailFlag"
-      @close="deductDetailFlag = false"
+    <zh-deduct-detail :show="deductDetailFlag" @close="deductDetailFlag = false"
       :data="deductDetail"></zh-deduct-detail>
     <!-- 产品详情 -->
-    <product-detail :id="productDetailId"
-      :show="productShow"
-      :noOpr="true"
+    <product-detail :id="productDetailId" :show="productShow" :noOpr="true"
       @close="productShow = false"></product-detail>
     <!-- 批量修改结算单价功能 -->
-    <div class="popup"
-      id="updatePrice"
-      v-show="updatePriceFlag">
-      <div class="main"
-        style="width:1200px">
+    <div class="popup" id="updatePrice" v-show="updatePriceFlag">
+      <div class="main" style="width:1200px">
         <div class="titleCtn">
           <span class="text">批量修改结算单价</span>
-          <div class="closeCtn"
-            @click="updatePriceFlag = false">
+          <div class="closeCtn" @click="updatePriceFlag = false">
             <span class="el-icon-close"></span>
           </div>
         </div>
@@ -4242,46 +3367,26 @@
           <div class="listCtn">
             <div class="filterCtn">
               <div class="elCtn">
-                <el-autocomplete v-model="updatePriceInfo.material_name"
-                  :fetch-suggestions="searchMaterialNew"
-                  placeholder="物料名称搜索"
-                  @keydown.native.enter="getMatShowList"
-                  @select="getMatShowList"
-                  @clear="getMatShowList"
+                <el-autocomplete v-model="updatePriceInfo.material_name" :fetch-suggestions="searchMaterialNew"
+                  placeholder="物料名称搜索" @keydown.native.enter="getMatShowList" @select="getMatShowList"
+                  @clear="getMatShowList" clearable></el-autocomplete>
+              </div>
+              <div class="elCtn">
+                <el-autocomplete :fetch-suggestions="searchAttribute" v-model="updatePriceInfo.attribute"
+                  placeholder="物料属性" @keydown.native.enter="getMatShowList" @change="getMatShowList"
                   clearable></el-autocomplete>
               </div>
               <div class="elCtn">
-                <el-autocomplete :fetch-suggestions="searchAttribute"
-                  v-model="updatePriceInfo.attribute"
-                  placeholder="物料属性"
-                  @keydown.native.enter="getMatShowList"
-                  @change="getMatShowList"
-                  clearable></el-autocomplete>
-              </div>
-              <div class="elCtn">
-                <el-select v-model="updatePriceInfo.material_color"
-                  placeholder="请选择种类"
-                  clearable
-                  @keydown.native.enter="getMatShowList"
-                  @change="getMatShowList">
-                  <el-option label="色纱"
-                    value="色纱"></el-option>
-                  <el-option label="白胚"
-                    value="白胚"></el-option>
+                <el-select v-model="updatePriceInfo.material_color" placeholder="请选择种类" clearable
+                  @keydown.native.enter="getMatShowList" @change="getMatShowList">
+                  <el-option label="色纱" value="色纱"></el-option>
+                  <el-option label="白胚" value="白胚"></el-option>
                 </el-select>
               </div>
-              <div class="elCtn"
-                style="width: 250px">
-                <el-date-picker v-model="updatePriceInfo.date"
-                  type="daterange"
-                  align="right"
-                  unlink-panels
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  :picker-options="pickerOptions"
-                  value-format="yyyy-MM-dd"
-                  @change="getMatStsList">
+              <div class="elCtn" style="width: 250px">
+                <el-date-picker v-model="updatePriceInfo.date" type="daterange" align="right" unlink-panels
+                  range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
+                  value-format="yyyy-MM-dd" @change="getMatStsList">
                 </el-date-picker>
               </div>
             </div>
@@ -4289,8 +3394,7 @@
               <div class="thead">
                 <div class="trow">
                   <div class="tcol">日期</div>
-                  <div class="tcol noPad"
-                    style="flex: 9">
+                  <div class="tcol noPad" style="flex: 9">
                     <div class="trow">
                       <div class="tcol">原料名称</div>
                       <div class="tcol">颜色</div>
@@ -4299,48 +3403,35 @@
                       <div class="tcol">订购总数</div>
                       <div class="tcol">已结算单价</div>
                       <div class="tcol">修改结算单价</div>
-                      <div class="tcol"
-                        v-if="$route.query.type === '纱线原料单位' || $route.query.type === '面料原料单位'">操作</div>
+                      <div class="tcol" v-if="$route.query.type === '纱线原料单位' || $route.query.type === '面料原料单位'">操作</div>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="tbody">
-                <div class="trow"
-                  v-if="this.updatePriceOriginList.length === 0">
-                  <div class="tcol red"
-                    style="text-align: center">请筛选日期后搜索纱线数据</div>
+                <div class="trow" v-if="updatePriceOriginList.length === 0">
+                  <div class="tcol red" style="text-align: center">请筛选日期后搜索纱线数据</div>
                 </div>
-                <div class="trow"
-                  v-for="(item, index) in updatePriceShowList"
-                  :key="index">
+                <div class="trow" v-for="(item, index) in updatePriceShowList" :key="index">
                   <div class="tcol">{{ item.created_at }}</div>
-                  <div class="tcol noPad"
-                    style="flex: 9">
-                    <div class="trow"
-                      v-for="(itemChild, indexChild) in item.realChildren"
-                      :key="indexChild">
+                  <div class="tcol noPad" style="flex: 9">
+                    <div class="trow" v-for="(itemChild, indexChild) in item.realChildren" :key="indexChild">
                       <div class="tcol">{{ itemChild.material_name }}</div>
                       <div class="tcol">{{ itemChild.material_color }}</div>
                       <div class="tcol">{{ itemChild.attribute }}</div>
                       <div class="tcol blue">{{ itemChild.price }}元/kg</div>
                       <div class="tcol">{{ itemChild.number }}kg</div>
-                      <div class="tcol"
-                        :class="{ blue: itemChild.settle_price, gray: !itemChild.settle_price }">
+                      <div class="tcol" :class="{ blue: itemChild.settle_price, gray: !itemChild.settle_price }">
                         {{ itemChild.settle_price === 0 ? '未填写' : itemChild.settle_price + '元' }}
                       </div>
                       <div class="tcol">
                         <div class="elCtn">
-                          <el-input placeholder="单价"
-                            v-model="itemChild.new_settle_price"></el-input>
+                          <el-input placeholder="单价" v-model="itemChild.new_settle_price"></el-input>
                         </div>
                       </div>
-                      <div class="tcol"
-                        v-if="$route.query.type === '纱线原料单位' || $route.query.type === '面料原料单位'">
-                        <span class="btn backHoverBlue"
-                          style="padding: 0 8px;"
-                          @click="updatePriceFlag = false
-                        searchAboutList(item.created_at,itemChild.material_name)">查询关联单据</span>
+                      <div class="tcol" v-if="$route.query.type === '纱线原料单位' || $route.query.type === '面料原料单位'">
+                        <span class="btn backHoverBlue" style="padding: 0 8px;" @click="updatePriceFlag = false
+                        searchAboutList(item.created_at, itemChild.material_name)">查询关联单据</span>
                       </div>
                     </div>
                   </div>
@@ -4350,17 +3441,245 @@
           </div>
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn"
-            @click="updatePriceFlag = false">取消</span>
-          <span class="btn backHoverBlue"
-            @click="saveUpdatePrice">提交更新</span>
+          <span class="btn borderBtn" @click="updatePriceFlag = false">取消</span>
+          <span class="btn backHoverBlue" @click="saveUpdatePrice">提交更新</span>
+        </div>
+      </div>
+    </div>
+    <!-- 批量修改加工单价功能 -->
+    <div class="popup" id="updateProcessPrice" v-show="showProcessPrice">
+      <div class="main" style="width:1200px">
+        <div class="titleCtn">
+          <span class="text">批量修改结算单价</span>
+          <div class="closeCtn" @click="showProcessPrice = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="explainCtn">
+            <p>1.必须筛选日期跨度尽量不要超过一年</p>
+            <p>2.点击提交后只会更新重新填写的结算单价</p>
+          </div>
+          <div class="listCtn">
+            <div class="filterCtn">
+              <div class="elCtn">
+                <el-autocomplete v-model="updateProcessPriceInfo.material_order_name" :fetch-suggestions="searchMaterialProcess"
+                  placeholder="物料名称搜索" @keydown.native.enter="getMatProcessShowList" @select="getMatProcessShowList"
+                  @clear="getMatProcessShowList" clearable></el-autocomplete>
+              </div>
+              <div class="elCtn">
+                <el-select v-model="updateProcessPriceInfo.process" placeholder="选择加工工序" clearable
+                  @clear="getMatProcessShowList" @keydown.native.enter="getMatProcessShowList" @change="getMatProcessShowList">
+                  <el-option v-for="item in processList" :key="item.value" :label="item.label"
+                    :value="item.value"></el-option>
+                </el-select>
+              </div>
+              <div class="elCtn" style="width: 250px">
+                <el-date-picker v-model="updateProcessPriceInfo.date" type="daterange" align="right" unlink-panels
+                  range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
+                  value-format="yyyy-MM-dd" @change="getMatProcessShowList">
+                </el-date-picker>
+              </div>
+            </div>
+            <div class="tableCtn">
+              <div class="thead">
+                <div class="trow">
+                  <div class="tcol">日期</div>
+                  <div class="tcol noPad" style="flex: 9">
+                    <div class="trow">
+                      <div class="tcol">原料名称</div>
+                      <div class="tcol">加工工序</div>
+                      <div class="tcol">加工详情</div>
+                      <div class="tcol">加工单价</div>
+                      <div class="tcol">计划加工数量</div>
+                      <div class="tcol">已结算单价</div>
+                      <div class="tcol">修改结算单价</div>
+                      <div class="tcol" style="flex:1.2">操作</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tbody">
+                <div class="trow" v-if="updateProcessPriceOriginList.length === 0">
+                  <div class="tcol red" style="text-align: center">请筛选日期后搜索纱线数据</div>
+                </div>
+                <div class="trow" v-for="(item, index) in updateProcessPriceShowList" :key="index">
+                  <div class="tcol">{{ item.created_at }}</div>
+                  <div class="tcol noPad" style="flex: 9">
+                    <div class="trow" v-for="(itemChild, indexChild) in item.realChildren" :key="indexChild">
+                      <div class="tcol">{{ itemChild.material_order_name }}</div>
+                      <div class="tcol">{{ itemChild.process }}</div>
+                      <div class="tcol noPad" style="flex:2.4">
+                        <div class="trow" v-for="itemMat,indexMat in itemChild.childrenMergeInfo" :key='indexMat+"MAT"'>
+                          <div class="tcol">
+                            <template v-if="itemChild.process === '染色'">
+                              <div class="changeCtn">
+                                <span>白胚</span>
+                                <span class="el-icon-s-unfold blue"></span>
+                                <span>{{ itemMat.after_color }}</span>
+                              </div>
+                            </template>
+                            <template v-if="itemChild.process === '倒纱'">
+                              <div class="changeCtn">
+                                <span>{{ itemMat.before_attribute }}</span>
+                                <span class="el-icon-s-unfold blue"></span>
+                                <span>{{ itemMat.after_attribute }}</span>
+                              </div>
+                            </template>
+                            <template v-if="itemChild.process === '并线'">
+                              <span>{{ itemMat.bingxian_desc }}</span>
+                            </template>
+                            <template v-if="itemChild.process === '膨纱'">
+                              <span>{{ itemMat.pengsha_desc }}</span>
+                            </template>
+                            <template v-if="itemChild.process === '切割'">
+                              <span>{{ itemMat.qiege_desc }}</span>
+                            </template>
+                          </div>
+                          <div class="tcol">{{ itemMat.number }}kg</div>
+                        </div>
+                      </div>
+                      <div class="tcol blue">{{ itemChild.price }}元/kg</div>
+                      <div class="tcol" :class="{ blue: itemChild.settle_price, gray: !itemChild.settle_price }">
+                        {{ itemChild.settle_price === 0 ? '未填写' : itemChild.settle_price + '元' }}
+                      </div>
+                      <div class="tcol">
+                        <div class="elCtn">
+                          <el-input placeholder="单价" v-model="itemChild.new_settle_price">
+                          </el-input>
+                        </div>
+                      </div>
+                      <div class="tcol" style="flex:1.2">
+                        <span class="btn backHoverBlue" style="padding: 0 17px;" @click="showProcessPrice = false
+                        searchAboutProcessList(item.created_at, itemChild.material_order_name)">查询关联单据</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn" @click="showProcessPrice = false">取消</span>
+          <span class="btn backHoverBlue" @click="saveUpdateProcessPrice">提交更新</span>
+        </div>
+      </div>
+    </div>
+    <!-- 生产织造单位批量修改结算单价功能 -->
+    <div class="popup" id="updateWeavePrice" v-show="updateWeavePriceFlag">
+      <div class="main" style="width:1356px">
+        <div class="titleCtn">
+          <span class="text">批量修改结算单价</span>
+          <div class="closeCtn" @click="updateWeavePriceFlag = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="explainCtn">
+            <p>1.必须筛选日期跨度尽量不要超过一年</p>
+            <p>2.点击提交后只会更新重新填写的结算单价</p>
+          </div>
+          <div class="listCtn">
+            <div class="filterCtn">
+              <div class="elCtn">
+                <el-select v-model="updateWeavePriceInfo.order_type" placeholder="订单类型" clearable
+                  @clear="getMatWeaveShowList" @keydown.native.enter="getMatWeaveShowList" @change="getMatWeaveShowList">
+                  <el-option label="全部" value=""></el-option>
+                  <el-option label="仅订单" value="1"></el-option>
+                  <el-option label="仅样单" value="2"></el-option>
+                </el-select>
+              </div>
+              <div class="elCtn">
+                <el-autocomplete v-model="updateWeavePriceInfo.code" :fetch-suggestions="searchMaterialWeave"
+                  placeholder="产品编号" @keydown.native.enter="getMatWeaveShowList" @select="getMatWeaveShowList"
+                  @clear="getMatWeaveShowList" clearable></el-autocomplete>
+              </div>
+              <div class="elCtn">
+                <el-cascader
+                  v-model="updateWeavePriceInfo.process"
+                  :options="productProcessList"
+                  @change="getMatWeaveShowList"
+                  :show-all-levels="false"
+                  filterable
+                  placeholder="生产工序"
+                  clearable
+                ></el-cascader>
+              </div>
+              <div class="elCtn" style="width: 250px">
+                <el-date-picker v-model="updateWeavePriceInfo.date" type="daterange" align="right" unlink-panels
+                  range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
+                  value-format="yyyy-MM-dd" @change="getMatWeaveShowList">
+                </el-date-picker>
+              </div>
+            </div>
+            <div class="tableCtn">
+              <div class="thead">
+                <div class="trow">
+                  <div class="tcol">日期</div>
+                  <div class="tcol noPad" style="flex: 9">
+                    <div class="trow">
+                      <div class="tcol">订单类型</div>
+                      <div class="tcol">产品编号/品类</div>
+                      <div class="tcol">产品名称</div>
+                      <div class="tcol">产品部位</div>
+                      <div class="tcol">尺码颜色</div>
+                      <div class="tcol">生产工序</div>
+                      <!-- <div class="tcol">工序说明</div> -->
+                      <div class="tcol">分配单价</div>
+                      <div class="tcol">分配数量</div>
+                      <div class="tcol">结算单价</div>
+                      <div class="tcol">修改结算单价</div>
+                      <div class="tcol" style="flex:1.6">操作</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tbody">
+                <div class="trow" v-if="updateWeavePriceOriginList.length === 0">
+                  <div class="tcol red" style="text-align: center">请筛选日期后搜索纱线数据</div>
+                </div>
+                <div class="trow" v-for="(item, index) in updateWeavePriceShowList" :key="index">
+                  <div class="tcol">{{ item.created_at }}</div>
+                  <div class="tcol noPad" style="flex: 9">
+                    <div class="trow" v-for="(itemChild, indexChild) in item.realChildren" :key="indexChild">
+                      <div class="tcol">{{itemChild.info.order_type == 1?'订单':itemChild.info.order_type == 2?'样单':'未知类型'}}</div>
+                      <div class="tcol">{{ itemChild.info.product_code }}/{{itemChild.info.category_name}}</div>
+                      <div class="tcol">{{ itemChild.info.product_name }}</div>
+                      <div class="tcol">{{ itemChild.info.part_name }}</div>
+                      <div class="tcol">{{ itemChild.info.size_name }}/{{itemChild.info.color_name}}</div>
+                      <div class="tcol">{{ itemChild.info.process_name }}</div>
+                      <!-- <div class="tcol">{{ itemChild.info.process_desc || '无'}}</div> -->
+                      <div class="tcol blue">{{ itemChild.price }}元/kg</div>
+                      <div class="tcol blue">{{ itemChild.number }}kg</div>
+                      <div class="tcol" :class="{ blue: itemChild.settle_price, gray: !itemChild.settle_price }">
+                        {{ itemChild.settle_price === 0 ? '未填写' : itemChild.settle_price + '元' }}
+                      </div>
+                      <div class="tcol">
+                        <div class="elCtn">
+                          <el-input placeholder="单价" v-model="itemChild.new_settle_price">
+                          </el-input>
+                        </div>
+                      </div>
+                      <div class="tcol" style="flex:1.6">
+                        <span class="btn backHoverBlue" style="padding: 0 17px;" @click="updateWeavePriceFlag = false
+                        searchAboutWeaveList(item.created_at, itemChild.material_order_name)">查询关联单据</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn" @click="updateWeavePriceFlag = false">取消</span>
+          <span class="btn backHoverBlue" @click="saveUpdateWeavePrice">提交更新</span>
         </div>
       </div>
     </div>
     <!-- 关联页面 -->
-    <associated-page :data="associatedPage"
-      :nowPage="false"
-      @close="showAssociatedPage = false"
+    <associated-page :data="associatedPage" :nowPage="false" @close="showAssociatedPage = false"
       :show="showAssociatedPage"></associated-page>
   </div>
 </template>
@@ -4378,6 +3697,7 @@ import {
   packManage,
   boxManage,
   process,
+  lostEdit,
   yarn,
   updateSettlePrice,
   statistics
@@ -4539,6 +3859,15 @@ export default Vue.extend({
       },
       materialProcessList: [],
       processList: yarnProcessArr,
+      productProcessList:[{
+        label: '织造工序',
+        value: '织造工序',
+        children: [
+          { label: '针织织造', value: '针织织造', process_desc: '' },
+          { label: '梭织织造', value: '梭织织造', process_desc: '' },
+          { label: '制版费', value: '制版费', process_desc: '' }
+        ]
+      }],
       materialProcessCheckList: [],
       productionPlanFilter: {
         date: [],
@@ -4641,6 +3970,29 @@ export default Vue.extend({
         date: [],
         client_id: null
       },
+      updateProcessPriceInfo: {
+        date: [],
+        material_order_name: '',
+        process: '',
+        start_time: '',
+        end_time: ''
+      },
+      showProcessPrice: false,
+      updateProcessPriceOriginList: [],
+      updateProcessPriceShowList: [],
+      updateProcessPriceYarnList: [],
+      updateWeavePriceInfo: {
+        date: [],
+        order_type: '1',
+        code: '',
+        process: '',
+        start_time: '',
+        end_time: ''
+      },
+      updateWeavePriceFlag: false,
+      updateWeavePriceOriginList: [],
+      updateWeavePriceShowList: [],
+      updateWeavePriceYarnList: [],
       updatePriceOriginList: [],
       updatePriceShowList: [],
       updatePriceYarnList: [],
@@ -5002,6 +4354,108 @@ export default Vue.extend({
           }
         })
     },
+    getMatWeaveStsList(date: string[]) {
+      lostEdit
+        .weaveList({
+          client_id: Number(this.$route.query.id),
+          start_time: date[0],
+          end_time: date[1]
+        })
+        .then((res) => {
+          if (res.data.status) {
+            res.data.data.forEach((item: any) => {
+              item.settle_price = Number(item.settle_price)
+              item.number = Number(item.number)
+              item.price = Number(item.price)
+              this.updateWeavePriceYarnList.push(item)
+            })
+            this.updateWeavePriceYarnList = Array.from(
+              new Set(this.updateWeavePriceYarnList.map((item: any) => item.product_code))
+            ).map((item) => {
+              return {
+                value: item
+              }
+            })
+            const mergeList = this.$mergeData(res.data.data, {
+              mainRule: 'created_at',
+            })
+            mergeList.forEach((item: any) => {
+              item.realChildren = []
+              item.childrenMergeInfo.forEach((itemChild: any) => {
+                item.realChildren.push({
+                  new_settle_price: '',
+                  settle_price: itemChild.settle_price,
+                  material_name: itemChild.material_name,
+                  price: itemChild.price,
+                  order_type: itemChild.order_type || '',
+                  product_code: itemChild.product_code,
+                  process: itemChild.process_name,
+                  attribute: itemChild.attribute,
+                  number: itemChild.number,
+                  info: itemChild
+                })
+              })
+            })
+            this.updateWeavePriceOriginList = mergeList
+            this.updateWeavePriceFlag = true
+            this.getMatWeaveShowList()
+          }
+        })
+    },
+    getProcessList(date: string[]) {
+      lostEdit.processList({
+        client_id: Number(this.$route.query.id),
+        start_time: date[0],
+        end_time: date[1]
+      }).then(res => {
+        if (res.data.status) {
+          res.data.data.forEach((item: any) => {
+            item.settle_price = Number(item.settle_price)
+            item.number = Number(item.number)
+            item.price = Number(item.price)
+            this.updateProcessPriceYarnList.push(item)
+          })
+          this.updateProcessPriceYarnList = Array.from(
+            new Set(this.updateProcessPriceYarnList.map((item: any) => item.material_order_name))
+          ).map((item) => {
+            return {
+              value: item
+            }
+          })
+          const mergeList = this.$mergeData(res.data.data, {
+            mainRule: 'created_at',
+            childrenRule: {
+              mainRule: ['material_order_name', 'material_transfer_name', 'process', 'settle_price', 'price']
+            }
+          })
+          mergeList.forEach((item: any) => {
+
+            item.realChildren = []
+            item.childrenMergeInfo.forEach((itemChild: any) => {
+              // console.log(itemChild)
+              item.realChildren.push({
+                new_settle_price: '',
+                settle_price: itemChild.settle_price,
+                material_order_name: itemChild.material_order_name || itemChild.material_transfer_name,
+                process: itemChild.process,
+                price: itemChild.price,
+                childrenMergeInfo: itemChild.childrenMergeInfo,
+                // number: itemChild.number,
+                // attribute: itemChild.attribute,
+                // color: itemChild.color,
+                // after_attribute: itemChild.after_attribute,
+                // before_attribute: itemChild.before_attribute,
+                // before_color: itemChild.before_color,
+                // after_color: itemChild.after_color,
+              })
+            })
+          })
+          this.updateProcessPriceOriginList = mergeList
+          this.showProcessPrice = true
+          this.getMatProcessShowList()
+        }
+      })
+    },
     // 前端做筛选
     getMatShowList() {
       this.updatePriceShowList = this.$clone(this.updatePriceOriginList).filter((item: any) => {
@@ -5019,6 +4473,120 @@ export default Vue.extend({
         })
         return item.realChildren.length > 0
       })
+    },
+    // 前端做筛选
+    getMatWeaveShowList() {
+      this.updateWeavePriceShowList = this.$clone(this.updateWeavePriceOriginList).filter((item: any) => {
+        item.realChildren = item.realChildren.filter((itemChild: any) => {
+          let typeFlag = this.updateWeavePriceInfo.order_type
+            ? itemChild.order_type == this.updateWeavePriceInfo.order_type
+            : true
+          let codeFlag = this.updateWeavePriceInfo.code && itemChild.product_code
+            ? itemChild.product_code.toLowerCase().indexOf(this.updateWeavePriceInfo.code.toLowerCase()) === 0
+            : true
+          let processFlag = this.updateWeavePriceInfo.process[1]
+            ? itemChild.process.toLowerCase().indexOf(this.updateWeavePriceInfo.process[1].toLowerCase()) === 0
+            : true
+          return typeFlag && codeFlag && processFlag
+        })
+        return item.realChildren.length > 0
+      })
+    },
+    // 前端做筛选
+    getMatProcessShowList() {
+      this.updateProcessPriceShowList = this.$clone(this.updateProcessPriceOriginList).filter((item: any) => {
+        item.realChildren = item.realChildren.filter((itemChild: any) => {
+          let nameFlag = this.updateProcessPriceInfo.material_order_name
+            ? itemChild.material_order_name.toLowerCase().indexOf(this.updateProcessPriceInfo.material_order_name.toLowerCase()) === 0
+            : true
+          let processFlag = this.updateProcessPriceInfo.process
+            ? itemChild.process.toLowerCase().indexOf(this.updateProcessPriceInfo.process.toLowerCase()) === 0
+            : true
+          return nameFlag && processFlag
+        })
+        return item.realChildren.length > 0
+      })
+    },
+    saveUpdateProcessPrice() {
+      const formData: any[] = []
+      this.updateProcessPriceShowList.forEach((item: any) => {
+        item.realChildren.forEach((itemChild: any) => {
+          if (itemChild.new_settle_price) {
+            formData.push({
+              material_name: itemChild.material_order_name,
+              process: itemChild.process,
+              settle_price: itemChild.new_settle_price,
+              price: itemChild.price,
+              start_time: item.created_at,
+              end_time: item.created_at,
+              client_id: this.$route.query.id
+            })
+          }
+        })
+      })
+      if (formData.length > 0) {
+        lostEdit.processUpdate({ data: formData }).then((res) => {
+          if (res.data.status) {
+            this.$message.success('修改成功')
+          }
+          this.updateProcessPriceInfo = {
+            material_order_name: '',
+            settle_price: '',
+            process: '',
+            start_time: '',
+            end_time: '',
+            date: [new Date().getFullYear() + '-01-01', this.$formatDate(new Date())],
+            client_id: null
+          }
+          this.updateProcessPriceOriginList = []
+          this.updateProcessPriceShowList = []
+          this.showProcessPrice = false
+        })
+      } else {
+        this.$message.error('请填写修改单价')
+      }
+    },
+    saveUpdateWeavePrice() {
+      const formData: any[] = []
+      this.updateWeavePriceShowList.forEach((item: any) => {
+        item.realChildren.forEach((itemChild: any) => {
+          // console.log(itemChild)
+          if (itemChild.new_settle_price) {
+            formData.push({
+              size_id: itemChild.info.size_id,
+              color_id: itemChild.info.color_id,
+              part_id: itemChild.info.part_id,
+              product_id: itemChild.info.product_id,
+              process_name: itemChild.process,
+              settle_price: itemChild.new_settle_price,
+              price: itemChild.price,
+              start_time: item.created_at,
+              end_time: item.created_at,
+              client_id: this.$route.query.id
+            })
+          }
+        })
+      })
+      if (formData.length > 0) {
+        lostEdit.weaveUpdate({ data: formData }).then((res) => {
+          if (res.data.status) {
+            this.$message.success('修改成功')
+          }
+          this.updateWeavePriceInfo = {
+            date: [new Date().getFullYear() + '-01-01', this.$formatDate(new Date())],
+            order_type: '1',
+            code: '',
+            process: '',
+            start_time: '',
+            end_time: ''
+          },
+          this.updateWeavePriceOriginList = []
+          this.updateWeavePriceShowList = []
+          this.updateWeavePriceFlag = false
+        })
+      } else {
+        this.$message.error('请填写修改单价')
+      }
     },
     saveUpdatePrice() {
       const formData: any[] = []
@@ -5069,9 +4637,9 @@ export default Vue.extend({
       let subParams = this.subParams
 
       if (subParams.date.length === 0) {
-        ;(subParams.start_time = ''), (subParams.end_time = '')
+        ; (subParams.start_time = ''), (subParams.end_time = '')
       } else {
-        ;(subParams.start_time = subParams.date[0]), (subParams.end_time = subParams.date[1])
+        ; (subParams.start_time = subParams.date[0]), (subParams.end_time = subParams.date[1])
       }
 
       subParams.page = this.subPage
@@ -5102,74 +4670,74 @@ export default Vue.extend({
       if (this.$route.query.type === '面料原料单位') {
         this.$openUrl(
           '/billingManagement/rawMaterialPurchaseOrder?single_client_id=' +
-            this.$route.query.id +
-            '&group_id=' +
-            this.materialOrderFilter.group_id +
-            '&keyword=' +
-            this.materialOrderFilter.keyword
+          this.$route.query.id +
+          '&group_id=' +
+          this.materialOrderFilter.group_id +
+          '&keyword=' +
+          this.materialOrderFilter.keyword
         )
       } else if (this.$route.query.type === '纱线原料单位') {
         this.$openUrl(
           '/billingManagement/rawMaterialPurchaseOrder?single_client_id=' +
-            this.$route.query.id +
-            '&group_id=' +
-            this.materialOrderFilter.group_id +
-            '&keyword=' +
-            this.materialOrderFilter.keyword
+          this.$route.query.id +
+          '&group_id=' +
+          this.materialOrderFilter.group_id +
+          '&keyword=' +
+          this.materialOrderFilter.keyword
         )
       } else if (this.$route.query.type === '装饰辅料单位') {
         this.$openUrl(
           '/billingManagement/auxiliaryMaterialPurchaseOrder?single_client_id=' +
-            this.$route.query.id +
-            '&group_id=' +
-            this.accessoriesFilter.group_id +
-            '&keyword=' +
-            this.accessoriesFilter.keyword
+          this.$route.query.id +
+          '&group_id=' +
+          this.accessoriesFilter.group_id +
+          '&keyword=' +
+          this.accessoriesFilter.keyword
         )
       } else if (this.$route.query.type === '原料加工单位') {
         this.$openUrl(
           '/billingManagement/rawMaterialProcessingOrder?single_client_id=' +
-            this.$route.query.id +
-            '&group_id=' +
-            this.materialProcessFilter.group_id +
-            '&keyword=' +
-            this.materialProcessFilter.keyword
+          this.$route.query.id +
+          '&group_id=' +
+          this.materialProcessFilter.group_id +
+          '&keyword=' +
+          this.materialProcessFilter.keyword
         )
       } else if (this.$route.query.type === '生产织造单位') {
         this.$openUrl(
           '/billingManagement/productionPlan?single_client_id=' +
-            this.$route.query.id +
-            '&group_id=' +
-            this.productionPlanFilter.group_id +
-            '&keyword=' +
-            this.productionPlanFilter.keyword
+          this.$route.query.id +
+          '&group_id=' +
+          this.productionPlanFilter.group_id +
+          '&keyword=' +
+          this.productionPlanFilter.keyword
         )
       } else if (this.$route.query.type === '生产加工单位') {
         this.$openUrl(
           '/billingManagement/productionPlan?single_client_id=' +
-            this.$route.query.id +
-            '&group_id=' +
-            this.productionPlanFilter.group_id +
-            '&keyword=' +
-            this.productionPlanFilter.keyword
+          this.$route.query.id +
+          '&group_id=' +
+          this.productionPlanFilter.group_id +
+          '&keyword=' +
+          this.productionPlanFilter.keyword
         )
       } else if (this.$route.query.type === '包装辅料单位') {
         this.$openUrl(
           '/billingManagement/packingOrder?single_client_id=' +
-            this.$route.query.id +
-            '&group_id=' +
-            this.packOrderFilter.group_id +
-            '&keyword=' +
-            this.packOrderFilter.keyword
+          this.$route.query.id +
+          '&group_id=' +
+          this.packOrderFilter.group_id +
+          '&keyword=' +
+          this.packOrderFilter.keyword
         )
       } else if (this.$route.query.type === '运输单位') {
         this.$openUrl(
           '/billingManagement/transportationDeliveryOrder?single_client_id=' +
-            this.$route.query.id +
-            '&group_id=' +
-            this.boxManageFilter.group_id +
-            '&keyword=' +
-            this.boxManageFilter.keyword
+          this.$route.query.id +
+          '&group_id=' +
+          this.boxManageFilter.group_id +
+          '&keyword=' +
+          this.boxManageFilter.keyword
         )
       }
     },
@@ -5403,6 +4971,19 @@ export default Vue.extend({
     searchAboutList(time: string, name: string) {
       this.materialOrderFilter.material_name = name
       this.materialOrderFilter.date = [time, time]
+      this.getBill()
+    },
+    searchAboutProcessList(time: string, name: string) {
+      this.yarnTypeList.forEach((item:any) => {
+        item.children.forEach((itemSon:any) => {
+          itemSon.children.forEach((itemGrandSon:any) => {
+          if(itemGrandSon.value === name) {
+            this.materialProcessFilter.material_name = [item.value, itemSon.value, name]
+          }
+        })
+        })
+      })
+      this.materialProcessFilter.date = [time, time]
       this.getBill()
     },
     // 获取不同的单据
@@ -6198,6 +5779,8 @@ export default Vue.extend({
     },
     init() {
       this.updatePriceInfo.date = [new Date().getFullYear() + '-01-01', this.$formatDate(new Date())]
+      this.updateProcessPriceInfo.date = [new Date().getFullYear() + '-01-01', this.$formatDate(new Date())]
+      this.updateWeavePriceInfo.date = [new Date().getFullYear() + '-01-01', this.$formatDate(new Date())]
       if (this.$route.query.type === '纱线原料单位' || this.$route.query.type === '面料原料单位') {
         this.getStaticData()
       }
@@ -6337,6 +5920,16 @@ export default Vue.extend({
       let results = str ? this.updatePriceYarnList.filter(this.createFilter(str)) : this.updatePriceYarnList
       cb(results)
     },
+    searchMaterialProcess(str: string, cb: any) {
+      console.log(this.updateProcessPriceYarnList)
+      let results = str ? this.updateProcessPriceYarnList.filter(this.createFilter(str)) : this.updateProcessPriceYarnList
+      cb(results)
+    },
+    searchMaterialWeave(str: string, cb: any) {
+      console.log(this.updateWeavePriceYarnList)
+      let results = str ? this.updateWeavePriceYarnList.filter(this.createFilter(str)) : this.updateWeavePriceYarnList
+      cb(results)
+    },
     // 原料属性搜索
     searchAttribute(str: string, cb: any) {
       let results = str ? this.yarnAttributeList.filter(this.createFilter(str)) : this.yarnAttributeList
@@ -6349,6 +5942,34 @@ export default Vue.extend({
     }
   },
   mounted() {
+    process.list({ type: 2 }).then((res) => {
+      let arr: any = []
+      res.data.data.forEach((item: any) => {
+        arr.push({
+          label: item.name,
+          value: item.name
+        })
+      })
+      this.productProcessList.push({
+        label: '半成品加工工序',
+        value: 2,
+        children: arr
+      })
+      process.list({ type: 3 }).then((res) => {
+        let arr: any = []
+        res.data.data.forEach((item: any) => {
+          arr.push({
+            label: item.name,
+            value: item.name
+          })
+        })
+        this.productProcessList.push({
+          label: '成品加工工序',
+          value: 3,
+          children: arr
+        })
+      })
+    })
     this.init()
     yarn.list().then((res) => {
       if (res.data.status) {
