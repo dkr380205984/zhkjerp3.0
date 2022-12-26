@@ -1182,6 +1182,15 @@
                   </svg>
                   <span class="text">{{ showAllFlag ? '全部展开' : '全部收起' }}</span>
                 </div>
+                <div class="btn backHoverOrange" @click="
+  showProcessPrice = true
+                getProcessList(updateProcessPriceInfo.date)
+                ">
+                  <svg class="iconFont" aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">更新结算单价</span>
+                </div>
               </div>
               <div class="filterCtn clearfix">
                 <div class="label">已勾选单据：</div>
@@ -1818,6 +1827,15 @@
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">{{ showAllFlag ? '全部展开' : '全部收起' }}</span>
+                </div>
+                <div class="btn backHoverOrange" @click="
+  updatePackPriceFlag = true
+                getPackList(updatePackPriceInfo.date)
+                ">
+                  <svg class="iconFont" aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">更新结算单价</span>
                 </div>
               </div>
               <div class="filterCtn clearfix">
@@ -2966,15 +2984,6 @@ sortClientDate()
                 </el-date-picker>
               </div>
               <div class="btn borderBtn" @click="reset">重置</div>
-              <div class="btn backHoverOrange" @click="
-  showProcessPrice = true
-                getProcessList(updateProcessPriceInfo.date)
-                ">
-                  <svg class="iconFont" aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">更新结算单价</span>
-                </div>
             </div>
             <div class="list">
               <div class="row title">
@@ -3560,7 +3569,7 @@ sortClientDate()
                       </div>
                       <div class="tcol" style="flex:1.2">
                         <span class="btn backHoverBlue" style="padding: 0 17px;" @click="showProcessPrice = false
-                        searchAboutProcessList(item.created_at, itemChild.material_order_name,itemChild.process)">查询关联单据</span>
+                        searchAboutProcessList(item.created_at, itemChild.material_order_name)">查询关联单据</span>
                       </div>
                     </div>
                   </div>
@@ -3659,8 +3668,8 @@ sortClientDate()
                       <div class="tcol">{{ itemChild.info.size_name }}/{{itemChild.info.color_name}}</div>
                       <div class="tcol">{{ itemChild.info.process_name }}</div>
                       <!-- <div class="tcol">{{ itemChild.info.process_desc || '无'}}</div> -->
-                      <div class="tcol blue">{{ itemChild.price }}元/kg</div>
-                      <div class="tcol blue">{{ itemChild.number }}kg</div>
+                      <div class="tcol blue">{{ itemChild.price }}元/件</div>
+                      <div class="tcol blue">{{ itemChild.number }}件</div>
                       <div class="tcol" :class="{ blue: itemChild.settle_price, gray: !itemChild.settle_price }">
                         {{ itemChild.settle_price === 0 ? '未填写' : itemChild.settle_price + '元' }}
                       </div>
@@ -3755,9 +3764,9 @@ sortClientDate()
                         </template>
                       </div>
                       <div class="tcol">{{ itemChild.info.desc || '无' }}</div>
-                      <div class="tcol">{{ itemChild.info.bulk_price || 0}}元</div>
-                      <div class="tcol">{{ itemChild.info.count_price || 0}}元</div>
-                      <div class="tcol blue">{{ itemChild.info.number }}kg</div>
+                      <div class="tcol">{{ itemChild.info.bulk_price || 0}}元/个</div>
+                      <div class="tcol">{{ itemChild.info.count_price || 0}}元/个</div>
+                      <div class="tcol blue">{{ itemChild.info.number }}个</div>
                       <div class="tcol" :class="{ blue: itemChild.settle_price, gray: !itemChild.settle_price }">
                         {{ itemChild.settle_price === 0 ? '未填写' : itemChild.settle_price + '元' }}
                       </div>
@@ -5193,11 +5202,18 @@ export default Vue.extend({
       this.materialOrderFilter.date = [time, time]
       this.getBill()
     },
-    searchAboutProcessList(time: string, name: string,process:string) {
-      this.clientDateParams.date = [time, time]
-      this.clientDateParams.keyword = name
-      this.clientDateParams.process = process
-      this.getClientDate(this.$route.query.type)
+    searchAboutProcessList(time: string, name: string) {
+      this.yarnTypeList.forEach((item:any) => {
+        item.children.forEach((itemChild:any) => {
+          itemChild.children.forEach((itemGrand:any) => {
+            if(name === itemGrand.value){  
+              this.materialProcessFilter.material_name = [item.value,itemChild.value,itemGrand.value]
+            }
+          })
+        })
+      })
+      this.materialProcessFilter.date = [time, time]
+      this.getBill()
     },
     searchAboutWeaveList(time: string, name: string) {
       this.productionPlanFilter.date = [time,time]

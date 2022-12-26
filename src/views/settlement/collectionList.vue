@@ -471,7 +471,8 @@ export default Vue.extend({
             { title: '关联单号(选填)', key: 'doc_code' },
             { title: '发票代码(选填)', key: 'invoice_number' },
             { title: '发票号码(选填)', key: 'invoice_code' },
-            { title: '发票类型(默认专票)', key: 'type' },
+            { title: '专票或普票', key: 'type' },
+            { title: '发票类型（订单开票、其它开票）', key: 'order_or_other' },
             { title: '税率(必填)', key: 'tax_rate' },
             { title: '开票金额(税价合计，必填)', key: 'price' },
             { title: '备注信息(选填)', key: 'desc' }
@@ -554,6 +555,7 @@ export default Vue.extend({
           invoice_number: ['发票代码(选填)', ''],
           invoice_code: ['发票号码(选填)', ''],
           type: ['发票类型(默认专票)', '专票'],
+          order_or_other: ['发票类型（订单开票、其它开票）',1],
           tax_rate: ['税率(必填)'],
           price: ['开票金额(税价合计，必填)'],
           desc: ['备注信息(选填)', '']
@@ -598,6 +600,13 @@ export default Vue.extend({
         return
       }
       if (type === '开票单据') {
+        submitData.forEach(item => {
+          if(item.order_or_other === '订单开票'){
+            item.order_or_other = 1
+          } else {
+            item.order_or_other = 2
+          }
+        })
         invoice
           .create({
             id: '',
