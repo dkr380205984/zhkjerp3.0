@@ -349,7 +349,7 @@ export default Vue.extend({
             fillerColor: '#33384b',
             zoomLock: true,
             brushSelect: false,
-            backgroundColor: 'rgba(43,48,67,.8)', //两边未选中的滑动条区域的颜色
+            backgroundColor: 'rgba(43,48,67,.3)', //两边未选中的滑动条区域的颜色
             showDataShadow: false, //是否显示数据阴影 默认auto
             showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
             realtime: true, //是否实时更新
@@ -367,7 +367,27 @@ export default Vue.extend({
               type: 'shadow'
             },
             axisLabel: {
-              interval: 0
+              interval: 0,
+              formatter: (params: any) => {
+                let newParamsName = ''
+                const paramsNameNumber = params.length // 文字总长度
+                const provideNumber = 6 //一行显示几个字
+                const rowNumber = Math.ceil(paramsNameNumber / provideNumber)
+                if (paramsNameNumber > provideNumber) {
+                  for (let p = 0; p < rowNumber; p++) {
+                    const start = p * provideNumber
+                    const end = start + provideNumber
+                    const tempStr =
+                      p === rowNumber - 1
+                        ? params.substring(start, paramsNameNumber)
+                        : params.substring(start, end) + '\n'
+                    newParamsName += tempStr
+                  }
+                } else {
+                  newParamsName = params
+                }
+                return newParamsName
+              }
             }
           }
         ],

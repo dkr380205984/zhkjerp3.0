@@ -185,9 +185,9 @@
           <h3>合计订购数量</h3>
           <div class="content">
             <span class="blue">
-              <h2>{{ (this.reportData.plan.total_number / 1000).toFixed(2) }}</h2>
+              <h2>{{ (this.reportData.plan.total_number / 10000).toFixed(2) }}</h2>
             </span>
-            <h2 class="unit">千个</h2>
+            <h2 class="unit">万个</h2>
           </div>
         </div>
         <div class="card">
@@ -203,9 +203,9 @@
           <h3>最终入库数量</h3>
           <div class="content">
             <span class="green">
-              <h2>{{ (this.reportData.real.total_number / 1000).toFixed(2) }}</h2>
+              <h2>{{ (this.reportData.real.total_number / 10000).toFixed(2) }}</h2>
             </span>
-            <h2 class="unit">千个</h2>
+            <h2 class="unit">万个</h2>
           </div>
         </div>
         <div class="card">
@@ -312,7 +312,7 @@ export default Vue.extend({
                 ';margin-right:10px">' +
                 param.value +
                 '</span>' +
-                (index === 1 ? '千个' : '万元')
+                (index === 1 ? '万个' : '万元')
 
               htmlStr += '</div>'
             })
@@ -336,7 +336,7 @@ export default Vue.extend({
             fillerColor: '#33384b',
             zoomLock: true,
             brushSelect: false,
-            backgroundColor: 'rgba(43,48,67,.8)', //两边未选中的滑动条区域的颜色
+            backgroundColor: 'rgba(43,48,67,.3)', //两边未选中的滑动条区域的颜色
             showDataShadow: false, //是否显示数据阴影 默认auto
             showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
             realtime: true, //是否实时更新
@@ -373,7 +373,7 @@ export default Vue.extend({
             max: 25,
             interval: 5,
             axisLabel: {
-              formatter: '{value} 千个'
+              formatter: '{value} 万个'
             }
           }
         ],
@@ -633,9 +633,9 @@ export default Vue.extend({
 
           if (this.activeName === 'first') {
             //   采购数量 图表更新
-            this.option1.yAxis[1].max = Math.ceil(Math.ceil(planNumberMax / 1000 / 5)) * 5 || 10
-            this.option1.yAxis[1].min = planNumberMin && planNumberMin < 0 ? Math.ceil(planNumberMin / 1000) : 0
-            this.option1.yAxis[1].interval = Math.ceil(planNumberMax / 1000 / 5) || 10
+            this.option1.yAxis[1].max = Math.ceil(Math.ceil(planNumberMax / 10000 / 5)) * 5 || 10
+            this.option1.yAxis[1].min = planNumberMin && planNumberMin < 0 ? Math.ceil(planNumberMin / 10000) : 0
+            this.option1.yAxis[1].interval = Math.ceil(planNumberMax / 10000 / 5) || 10
 
             //   采购金额 图表更新
             this.option1.yAxis[0].max = Math.ceil(Math.ceil(planPriceMax / 10000 / 5)) * 5 || 10
@@ -644,14 +644,14 @@ export default Vue.extend({
 
             data.plan.report.forEach((item: any) => {
               this.option1.xAxis[0].data.push(item.name)
-              this.option1.series[1].data.push((item.total_number / 1000).toFixed(2))
+              this.option1.series[1].data.push((item.total_number / 10000).toFixed(2))
               this.option1.series[0].data.push((item.total_price / 10000).toFixed(2))
             })
           } else if (this.activeName === 'second') {
             //   采购数量 图表更新
-            this.option1.yAxis[0].max = Math.ceil(Math.ceil(realNumberMax / 1000 / 5)) * 5 || 10
-            this.option1.yAxis[0].min = realNumberMin && realNumberMin < 0 ? Math.ceil(realNumberMin / 1000) : 0
-            this.option1.yAxis[0].interval = Math.ceil(realNumberMax / 1000 / 5) || 10
+            this.option1.yAxis[0].max = Math.ceil(Math.ceil(realNumberMax / 10000 / 5)) * 5 || 10
+            this.option1.yAxis[0].min = realNumberMin && realNumberMin < 0 ? Math.ceil(realNumberMin / 10000) : 0
+            this.option1.yAxis[0].interval = Math.ceil(realNumberMax / 10000 / 5) || 10
 
             //   采购金额 图表更新
             this.option1.yAxis[1].max = Math.ceil(Math.ceil(realPriceMax / 10000 / 5)) * 5 || 10
@@ -660,7 +660,7 @@ export default Vue.extend({
 
             data.real.report.forEach((item: any) => {
               this.option1.xAxis[0].data.push(item.name)
-              this.option1.series[0].data.push((item.total_number / 1000).toFixed(2))
+              this.option1.series[0].data.push((item.total_number / 10000).toFixed(2))
               this.option1.series[1].data.push((item.total_price / 10000).toFixed(2))
             })
           }

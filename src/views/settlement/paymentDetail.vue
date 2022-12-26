@@ -1182,15 +1182,6 @@
                   </svg>
                   <span class="text">{{ showAllFlag ? '全部展开' : '全部收起' }}</span>
                 </div>
-                <div class="btn backHoverOrange" @click="
-  showProcessPrice = true
-                getProcessList(updateProcessPriceInfo.date)
-                ">
-                  <svg class="iconFont" aria-hidden="true">
-                    <use xlink:href="#icon-xiugaidingdan"></use>
-                  </svg>
-                  <span class="text">更新结算单价</span>
-                </div>
               </div>
               <div class="filterCtn clearfix">
                 <div class="label">已勾选单据：</div>
@@ -2854,7 +2845,7 @@ sortClientDate()
                 </el-date-picker>
               </div>
               <div class="btn borderBtn" @click="reset">重置</div>
-              <div class="btn backHoverOrange" @click="
+              <!-- <div class="btn backHoverOrange" @click="
   updatePriceFlag = true
                 getMatStsList(updatePriceInfo.date)
               ">
@@ -2862,7 +2853,16 @@ sortClientDate()
                   <use xlink:href="#icon-xiugaidingdan"></use>
                 </svg>
                 <span class="text">更新结算单价</span>
-              </div>
+              </div> -->
+              <div class="btn backHoverOrange" @click="
+  updatePackPriceFlag = true
+                getPackList(updatePackPriceInfo.date)
+                ">
+                  <svg class="iconFont" aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">更新结算单价</span>
+                </div>
             </div>
             <div class="list">
               <div class="row title">
@@ -2966,6 +2966,15 @@ sortClientDate()
                 </el-date-picker>
               </div>
               <div class="btn borderBtn" @click="reset">重置</div>
+              <div class="btn backHoverOrange" @click="
+  showProcessPrice = true
+                getProcessList(updateProcessPriceInfo.date)
+                ">
+                  <svg class="iconFont" aria-hidden="true">
+                    <use xlink:href="#icon-xiugaidingdan"></use>
+                  </svg>
+                  <span class="text">更新结算单价</span>
+                </div>
             </div>
             <div class="list">
               <div class="row title">
@@ -3477,7 +3486,7 @@ sortClientDate()
               <div class="elCtn" style="width: 250px">
                 <el-date-picker v-model="updateProcessPriceInfo.date" type="daterange" align="right" unlink-panels
                   range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
-                  value-format="yyyy-MM-dd" @change="getMatProcessShowList">
+                  value-format="yyyy-MM-dd" @change="getProcessList">
                 </el-date-picker>
               </div>
             </div>
@@ -3551,7 +3560,7 @@ sortClientDate()
                       </div>
                       <div class="tcol" style="flex:1.2">
                         <span class="btn backHoverBlue" style="padding: 0 17px;" @click="showProcessPrice = false
-                        searchAboutProcessList(item.created_at, itemChild.material_order_name)">查询关联单据</span>
+                        searchAboutProcessList(item.created_at, itemChild.material_order_name,itemChild.process)">查询关联单据</span>
                       </div>
                     </div>
                   </div>
@@ -3609,7 +3618,7 @@ sortClientDate()
               <div class="elCtn" style="width: 250px">
                 <el-date-picker v-model="updateWeavePriceInfo.date" type="daterange" align="right" unlink-panels
                   range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
-                  value-format="yyyy-MM-dd" @change="getMatWeaveShowList">
+                  value-format="yyyy-MM-dd" @change="getMatWeaveStsList">
                 </el-date-picker>
               </div>
             </div>
@@ -3663,7 +3672,7 @@ sortClientDate()
                       </div>
                       <div class="tcol" style="flex:1.6">
                         <span class="btn backHoverBlue" style="padding: 0 17px;" @click="updateWeavePriceFlag = false
-                        searchAboutWeaveList(item.created_at, itemChild.material_order_name)">查询关联单据</span>
+                        searchAboutWeaveList(item.created_at, itemChild.info.order_code)">查询关联单据</span>
                       </div>
                     </div>
                   </div>
@@ -3675,6 +3684,103 @@ sortClientDate()
         <div class="oprCtn">
           <span class="btn borderBtn" @click="updateWeavePriceFlag = false">取消</span>
           <span class="btn backHoverBlue" @click="saveUpdateWeavePrice">提交更新</span>
+        </div>
+      </div>
+    </div>
+    <!-- 包装辅料单位批量修改结算单价功能 -->
+    <div class="popup" id="updatePackPrice" v-show="updatePackPriceFlag">
+      <div class="main" style="width:1356px">
+        <div class="titleCtn">
+          <span class="text">批量修改结算单价</span>
+          <div class="closeCtn" @click="updatePackPriceFlag = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="explainCtn">
+            <p>1.必须筛选日期跨度尽量不要超过一年</p>
+            <p>2.点击提交后只会更新重新填写的结算单价</p>
+          </div>
+          <div class="listCtn">
+            <div class="filterCtn">
+              <div class="elCtn">
+                <el-autocomplete v-model="updatePackPriceInfo.pack_material_name" :fetch-suggestions="searchMaterialPack"
+                  placeholder="包装名称" @keydown.native.enter="getMatPackShowList" @select="getMatPackShowList"
+                  @clear="getMatPackShowList" clearable></el-autocomplete>
+              </div>
+              <div class="elCtn" style="width: 250px">
+                <el-date-picker v-model="updatePackPriceInfo.date" type="daterange" align="right" unlink-panels
+                  range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
+                  value-format="yyyy-MM-dd" @change="getPackList">
+                </el-date-picker>
+              </div>
+            </div>
+            <div class="tableCtn">
+              <div class="thead">
+                <div class="trow">
+                  <div class="tcol">日期</div>
+                  <div class="tcol noPad" style="flex: 9">
+                    <div class="trow">
+                      <div class="tcol">包装名称</div>
+                      <div class="tcol">包装尺寸</div>
+                      <div class="tcol">包装属性或说明</div>
+                      <div class="tcol">订购面积单价</div>  
+                      <div class="tcol">订购数量单价</div>
+                      <div class="tcol">订购数量</div>
+                      <div class="tcol">结算数量单价</div>
+                      <div class="tcol">修改结算单价</div>
+                      <div class="tcol" style="flex:1.2">操作</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tbody">
+                <div class="trow" v-if="updatePackPriceOriginList.length === 0">
+                  <div class="tcol red" style="text-align: center">请筛选日期后搜索纱线数据</div>
+                </div>
+                <div class="trow" v-for="(item, index) in updatePackPriceShowList" :key="index">
+                  <div class="tcol">{{ item.created_at }}</div>
+                  <div class="tcol noPad" style="flex: 9">
+                    <div class="trow" v-for="(itemChild, indexChild) in item.realChildren" :key="indexChild">
+                      <div class="tcol">{{itemChild.info.pack_material_name}}</div>
+                      <div class="tcol">
+                        <template v-if="Number(itemChild.info.price_type) === 1">
+                          {{ itemChild.info.length }}*{{ itemChild.info.width }}*{{ itemChild.info.height }}cm
+                        </template>
+                        <template v-else-if="Number(itemChild.info.price_type) === 2">
+                          {{ itemChild.info.length }}*{{ itemChild.info.width }}cm
+                        </template>
+                        <template v-else-if="Number(itemChild.info.price_type) === 3">
+                          {{ itemChild.info.length }}
+                        </template>
+                      </div>
+                      <div class="tcol">{{ itemChild.info.desc || '无' }}</div>
+                      <div class="tcol">{{ itemChild.info.bulk_price || 0}}元</div>
+                      <div class="tcol">{{ itemChild.info.count_price || 0}}元</div>
+                      <div class="tcol blue">{{ itemChild.info.number }}kg</div>
+                      <div class="tcol" :class="{ blue: itemChild.settle_price, gray: !itemChild.settle_price }">
+                        {{ itemChild.settle_price === 0 ? '未填写' : itemChild.settle_price + '元' }}
+                      </div>
+                      <div class="tcol">
+                        <div class="elCtn">
+                          <el-input placeholder="单价" v-model="itemChild.new_settle_price">
+                          </el-input>
+                        </div>
+                      </div>
+                      <div class="tcol" style="flex:1.2">
+                        <span class="btn backHoverBlue" style="padding: 0 17px;" @click="updatePackPriceFlag = false
+                        searchAboutPackList(item.created_at, itemChild.pack_material_name)">查询关联单据</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn" @click="updatePackPriceFlag = false">取消</span>
+          <span class="btn backHoverBlue" @click="saveUpdatePackPrice">提交更新</span>
         </div>
       </div>
     </div>
@@ -3993,6 +4099,16 @@ export default Vue.extend({
       updateWeavePriceOriginList: [],
       updateWeavePriceShowList: [],
       updateWeavePriceYarnList: [],
+      updatePackPriceInfo: {
+        date: [],
+        pack_material_name: '',
+        start_time: '',
+        end_time: ''
+      },
+      updatePackPriceFlag: false,
+      updatePackPriceOriginList: [],
+      updatePackPriceShowList: [],
+      updatePackPriceYarnList: [],
       updatePriceOriginList: [],
       updatePriceShowList: [],
       updatePriceYarnList: [],
@@ -4060,7 +4176,7 @@ export default Vue.extend({
             fillerColor: '#33384b',
             zoomLock: true,
             brushSelect: false,
-            backgroundColor: 'rgba(43,48,67,.8)', //两边未选中的滑动条区域的颜色
+            backgroundColor: 'rgba(43,48,67,.3)', //两边未选中的滑动条区域的颜色
             showDataShadow: false, //是否显示数据阴影 默认auto
             showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
             realtime: true, //是否实时更新
@@ -4402,6 +4518,56 @@ export default Vue.extend({
           }
         })
     },
+    getPackList(date: string[]) {
+      lostEdit.packList({
+        client_id: Number(this.$route.query.id),
+        start_time: date[0],
+        end_time: date[1]
+      }).then(res => {
+        if (res.data.status) {
+          res.data.data.forEach((item: any) => {
+            item.settle_price = Number(item.settle_price)
+            item.number = Number(item.number)
+            item.price = Number(item.price)
+            this.updatePackPriceYarnList.push(item)
+          })
+          this.updatePackPriceYarnList = Array.from(
+            new Set(this.updatePackPriceYarnList.map((item: any) => item.pack_material_name))
+          ).map((item) => {
+            return {
+              value: item
+            }
+          })
+          const mergeList = this.$mergeData(res.data.data, {
+            mainRule: 'created_at',
+          })
+          mergeList.forEach((item: any) => {
+
+            item.realChildren = []
+            item.childrenMergeInfo.forEach((itemChild: any) => {
+              // console.log(itemChild)
+              item.realChildren.push({
+                new_settle_price: '',
+                settle_price: itemChild.settle_price,
+                pack_material_name: itemChild.pack_material_name,
+                price: itemChild.price,
+                info: itemChild,
+                // number: itemChild.number,
+                // attribute: itemChild.attribute,
+                // color: itemChild.color,
+                // after_attribute: itemChild.after_attribute,
+                // before_attribute: itemChild.before_attribute,
+                // before_color: itemChild.before_color,
+                // after_color: itemChild.after_color,
+              })
+            })
+          })
+          this.updatePackPriceOriginList = mergeList
+          this.updatePackPriceFlag = true
+          this.getMatPackShowList()
+        }
+      })
+    },
     getProcessList(date: string[]) {
       lostEdit.processList({
         client_id: Number(this.$route.query.id),
@@ -4493,6 +4659,18 @@ export default Vue.extend({
       })
     },
     // 前端做筛选
+    getMatPackShowList() {
+      this.updatePackPriceShowList = this.$clone(this.updatePackPriceOriginList).filter((item: any) => {
+        item.realChildren = item.realChildren.filter((itemChild: any) => {
+          let nameFlag = this.updatePackPriceInfo.pack_material_name
+            ? itemChild.info.pack_material_name.toLowerCase().indexOf(this.updatePackPriceInfo.pack_material_name.toLowerCase()) === 0
+            : true
+          return nameFlag
+        })
+        return item.realChildren.length > 0
+      })
+    },
+    // 前端做筛选
     getMatProcessShowList() {
       this.updateProcessPriceShowList = this.$clone(this.updateProcessPriceOriginList).filter((item: any) => {
         item.realChildren = item.realChildren.filter((itemChild: any) => {
@@ -4517,8 +4695,8 @@ export default Vue.extend({
               process: itemChild.process,
               settle_price: itemChild.new_settle_price,
               price: itemChild.price,
-              start_time: item.created_at,
-              end_time: item.created_at,
+              start_time: this.updateProcessPriceInfo.date[0],
+              end_time: this.updateProcessPriceInfo.date[1],
               client_id: this.$route.query.id
             })
           }
@@ -4560,8 +4738,8 @@ export default Vue.extend({
               process_name: itemChild.process,
               settle_price: itemChild.new_settle_price,
               price: itemChild.price,
-              start_time: item.created_at,
-              end_time: item.created_at,
+              start_time: this.updateWeavePriceInfo.date[0],
+              end_time: this.updateWeavePriceInfo.date[1],
               client_id: this.$route.query.id
             })
           }
@@ -4583,6 +4761,48 @@ export default Vue.extend({
           this.updateWeavePriceOriginList = []
           this.updateWeavePriceShowList = []
           this.updateWeavePriceFlag = false
+        })
+      } else {
+        this.$message.error('请填写修改单价')
+      }
+    },
+    saveUpdatePackPrice() {
+      const formData: any[] = []
+      this.updatePackPriceShowList.forEach((item: any) => {
+        item.realChildren.forEach((itemChild: any) => {
+          // console.log(itemChild)
+          if (itemChild.new_settle_price) {
+            console.log(itemChild.info)
+            formData.push({
+              settle_price: itemChild.new_settle_price,
+              count_price:itemChild.info.count_price,
+              bulk_price:itemChild.info.bulk_price,
+              pack_material_id:itemChild.info.pack_material_id,
+              length:itemChild.info.length,
+              width:itemChild.info.width,
+              height:itemChild.info.height,
+              price_type:itemChild.info.price_type,
+              start_time: this.updatePackPriceInfo.date[0],
+              end_time: this.updatePackPriceInfo.date[1],
+              client_id: this.$route.query.id
+            })
+          }
+        })
+      })
+      if (formData.length > 0) {
+        lostEdit.packUpdate({ data: formData }).then((res) => {
+          if (res.data.status) {
+            this.$message.success('修改成功')
+          }
+          this.updatePackPriceInfo = {
+            date: [new Date().getFullYear() + '-01-01', this.$formatDate(new Date())],
+            pack_material_name: '',
+            start_time: '',
+            end_time: ''
+          },
+          this.updatePackPriceOriginList = []
+          this.updatePackPriceShowList = []
+          this.updatePackPriceFlag = false
         })
       } else {
         this.$message.error('请填写修改单价')
@@ -4973,18 +5193,21 @@ export default Vue.extend({
       this.materialOrderFilter.date = [time, time]
       this.getBill()
     },
-    searchAboutProcessList(time: string, name: string) {
-      this.yarnTypeList.forEach((item:any) => {
-        item.children.forEach((itemSon:any) => {
-          itemSon.children.forEach((itemGrandSon:any) => {
-          if(itemGrandSon.value === name) {
-            this.materialProcessFilter.material_name = [item.value, itemSon.value, name]
-          }
-        })
-        })
-      })
-      this.materialProcessFilter.date = [time, time]
+    searchAboutProcessList(time: string, name: string,process:string) {
+      this.clientDateParams.date = [time, time]
+      this.clientDateParams.keyword = name
+      this.clientDateParams.process = process
+      this.getClientDate(this.$route.query.type)
+    },
+    searchAboutWeaveList(time: string, name: string) {
+      this.productionPlanFilter.date = [time,time]
+      this.clientDateParams.keyword = name
       this.getBill()
+    },
+    searchAboutPackList(time: string, name: string) {
+      this.clientDateParams.date = [time, time]
+      this.clientDateParams.keyword = name
+      this.getClientDate(this.$route.query.type)
     },
     // 获取不同的单据
     getBill(init?: 'init') {
@@ -5579,7 +5802,7 @@ export default Vue.extend({
             fillerColor: '#33384b',
             zoomLock: true,
             brushSelect: false,
-            backgroundColor: 'rgba(43,48,67,.8)', //两边未选中的滑动条区域的颜色
+            backgroundColor: 'rgba(43,48,67,.3)', //两边未选中的滑动条区域的颜色
             showDataShadow: false, //是否显示数据阴影 默认auto
             showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
             realtime: true, //是否实时更新
@@ -5781,6 +6004,7 @@ export default Vue.extend({
       this.updatePriceInfo.date = [new Date().getFullYear() + '-01-01', this.$formatDate(new Date())]
       this.updateProcessPriceInfo.date = [new Date().getFullYear() + '-01-01', this.$formatDate(new Date())]
       this.updateWeavePriceInfo.date = [new Date().getFullYear() + '-01-01', this.$formatDate(new Date())]
+      this.updatePackPriceInfo.date = [new Date().getFullYear() + '-01-01', this.$formatDate(new Date())]
       if (this.$route.query.type === '纱线原料单位' || this.$route.query.type === '面料原料单位') {
         this.getStaticData()
       }
@@ -5928,6 +6152,11 @@ export default Vue.extend({
     searchMaterialWeave(str: string, cb: any) {
       console.log(this.updateWeavePriceYarnList)
       let results = str ? this.updateWeavePriceYarnList.filter(this.createFilter(str)) : this.updateWeavePriceYarnList
+      cb(results)
+    },
+    searchMaterialPack(str: string, cb: any) {
+      console.log(this.updatePackPriceYarnList)
+      let results = str ? this.updatePackPriceYarnList.filter(this.createFilter(str)) : this.updatePackPriceYarnList
       cb(results)
     },
     // 原料属性搜索
