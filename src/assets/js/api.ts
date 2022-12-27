@@ -79,6 +79,8 @@ const chartsApi = {
 // 查询单据数量是否超额
 import { CheckBeyondInfo } from '@/types/otherInfo'
 const checkBeyond = (params: CheckBeyondInfo) => http.post(`${baseUrl}/doc/beyond/check`, params, 'application/json')
+// 查询单据单价是否超过报价
+const checkBeyondPrice = (params: CheckBeyondInfo) => http.post(`${baseUrl}/doc/beyond/price/check`, params, 'application/json')
 
 // 首页
 const homePage = {
@@ -1503,10 +1505,22 @@ const statistics = {
     group_id: number | string
     settle_unit: number | string
   }) => http.get(`${baseUrl}/profit/index`, params),
+  rawmaterialOrder: (params?: {
+    order_type: number | string
+    type: number | string
+    user_id: number | string
+    group_id: number | string
+    client_id: number | string
+    contacts_id: number | string
+    name: string
+    start_time: string
+    end_time: string
+  }) => http.get(`${baseUrl}/statistics/rawmaterial/order/for/material`, params),
 }
 export {
   documentInfo,
   checkBeyond,
+  checkBeyondPrice,
   fileManage,
   todoInfo,
   checkConfig,

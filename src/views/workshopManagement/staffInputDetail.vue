@@ -165,6 +165,19 @@
               ></zh-input>
             </template>
           </el-table-column>
+          <el-table-column label="所属小组" width="120">
+            <template slot-scope="scope">
+              <div class="elCtn">
+                <el-select
+                  v-model="scope.row.group_id"
+                  placeholder="所属小组"
+                  clearable
+                >
+                  <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+                </el-select>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column label="审核状态">
             <template slot-scope="scope">
               <div v-if="scope.row.is_check === 0" class="orange">审核中</div>
@@ -335,7 +348,19 @@ export default Vue.extend({
       this.init()
     }
   },
+  computed: {
+    groupList(): any {
+      return this.$store.state.api.group.arr
+    }
+  },
   mounted() {
+    this.$checkCommonInfo([
+      {
+        checkWhich: 'api/group',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getGroupAsync'
+      }
+    ])
     this.getFilters()
     this.init()
   }

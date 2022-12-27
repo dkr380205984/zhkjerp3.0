@@ -763,7 +763,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { order, process, quotedPrice, staff, workshop } from '@/assets/js/api'
+import { order, process, quotedPrice, staff, workshop, checkBeyondPrice } from '@/assets/js/api'
 import { OrderInfo } from '@/types/order'
 import { QuotedPriceInfo } from '@/types/quotedPrice'
 import zhInput from '@/components/zhInput/zhInput.vue'
@@ -1571,17 +1571,71 @@ export default Vue.extend({
 
       if (error) return
 
-      workshop.save(params).then((res) => {
-        if (res.data.status) {
-          this.$message.success('提交成功')
-          this.numberUpdate = false
-          this.selectStaffIdList = []
-          this.processWorkerListCheck = false
-          this.init()
-          this.resetProductionScheduleUpdate()
+      console.log(params)
+      checkBeyondPrice({
+        doc_type:14,
+        data: params.data.map(item => {
+          return {
+            process_name: item.process_name,
+            product_id: item.product_id,
+            size_id: item.size_id,
+            color_id: item.color_id,
+            price: item.price,
+          }
+        })
+      }).then(res => {
+        console.log(res.data.data)
+        if (res.data.data.length === 0) {
+          workshop.save(params).then((res) => {
+            if (res.data.status) {
+              this.$message.success('提交成功')
+              this.numberUpdate = false
+              this.selectStaffIdList = []
+              this.processWorkerListCheck = false
+              this.init()
+              this.resetProductionScheduleUpdate()
+            }
+          })
+          this.loading = false
+        } else {
+          const createHtml = this.$createElement
+          this.$msgbox({
+            message: createHtml(
+              'p',
+              undefined,
+              res.data.data.map((item: string) => {
+                return createHtml('p', undefined, item)
+              })
+            ),
+            title: '提示',
+            showCancelButton: true,
+            confirmButtonText: '继续提交',
+            cancelButtonText: '取消提交',
+            type: 'warning'
+          })
+            .then(() => {
+              params.data.forEach((item: any) => (item.is_check = 5))
+              workshop.save(params).then((res) => {
+                if (res.data.status) {
+                  this.$message.success('提交成功')
+                  this.numberUpdate = false
+                  this.selectStaffIdList = []
+                  this.processWorkerListCheck = false
+                  this.init()
+                  this.resetProductionScheduleUpdate()
+                }
+              })
+              this.loading = false
+            })
+            .catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消提交'
+              })
+              this.loading = false
+            })
         }
       })
-      this.loading = false
     },
     copyWorkerInfo(item: any, itemSizeColor: any) {
       if (item.productId === '') {

@@ -134,7 +134,8 @@
                   <div class="tcol">入库颜色</div>
                   <div class="tcol">入库属性</div>
                   <div class="tcol">批号/缸号/色号</div>
-                  <div class="tcol">入库数量/件数</div>
+                  <div class="tcol">入库数量</div>
+                  <div class="tcol">件数</div>
                   <div class="tcol">入库单价</div>
                 </div>
               </div>
@@ -158,7 +159,8 @@
                   <div class="tcol">{{itemChild.material_color}}</div>
                   <div class="tcol">{{itemChild.attribute}}</div>
                   <div class="tcol">{{itemChild.batch_code}}/{{itemChild.vat_code}}/{{itemChild.color_code}}</div>
-                  <div class="tcol">{{itemChild.number}}kg/{{itemChild.item||0}}件</div>
+                  <div class="tcol">{{itemChild.number}}kg</div>
+                  <div class="tcol">{{itemChild.item||0}}件</div>
                   <div class="tcol">{{itemChild.price||0}}元</div>
                 </div>
               </div>
@@ -182,6 +184,7 @@
                   <div class="tcol"></div>
                   <div class="tcol"></div>
                   <div class="tcol green">{{$toFixed(materialStockTotal.totalNum/1000)}}吨</div>
+                  <div class="tcol"></div>
                   <div class="tcol green">{{$toFixed(materialStockTotal.totalPrice/10000)}}万元</div>
                 </div>
               </div>
@@ -223,7 +226,6 @@
               <div class="tcol">物料颜色</div>
               <div class="tcol">物料属性</div>
               <div class="tcol">入库数量</div>
-              <div class="tcol">入库总价</div>
             </div>
           </div>
           <div class="tbody">
@@ -234,7 +236,6 @@
               <div class="tcol">{{item.material_color}}</div>
               <div class="tcol">{{item.attribute}}</div>
               <div class="tcol">{{item.number}}kg</div>
-              <div class="tcol">{{item.total_price}}元</div>
             </div>
             <div class="trow noData"
               v-if="materialStsList.length===0">暂无数据</div>

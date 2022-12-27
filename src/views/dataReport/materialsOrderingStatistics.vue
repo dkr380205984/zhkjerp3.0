@@ -1,51 +1,38 @@
 <template>
-  <div id="materialsOrderingStatistics"
-    class="bodyContainer"
-    v-loading="loading">
+  <div id="materialsOrderingStatistics" class="bodyContainer" v-loading="loading">
     <div class="topTagCtn">
-      <div class="tag"
-        @click="$router.push('/dataReport/orderStatistics')">
-        <svg class="iconFont"
-          aria-hidden="true">
+      <div class="tag" @click="$router.push('/dataReport/orderStatistics')">
+        <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-dingdanshujutubiao"></use>
         </svg>
         <span class="text">订单数据图表</span>
       </div>
-      <div class="tag"
-        @click="$router.push('/dataReport/sampleOrderStatistics')">
-        <svg class="iconFont"
-          aria-hidden="true">
+      <div class="tag" @click="$router.push('/dataReport/sampleOrderStatistics')">
+        <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-yangdanshujutubiao"></use>
         </svg>
         <span class="text">样单数据图表</span>
       </div>
       <div class="tag active">
-        <svg class="iconFont"
-          aria-hidden="true">
+        <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-yuanliaoshiyongtubiao"></use>
         </svg>
         <span class="text">原料使用图表</span>
       </div>
-      <div class="tag"
-        @click="$router.push('/dataReport/accessoriesDecorationOrderStatistics')">
-        <svg class="iconFont"
-          aria-hidden="true">
+      <div class="tag" @click="$router.push('/dataReport/accessoriesDecorationOrderStatistics')">
+        <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-fuliaoshiyongtubiao"></use>
         </svg>
         <span class="text">辅料使用图表</span>
       </div>
-      <div class="tag"
-        @click="$router.push('/dataReport/productionPlanChartStatistics')">
-        <svg class="iconFont"
-          aria-hidden="true">
+      <div class="tag" @click="$router.push('/dataReport/productionPlanChartStatistics')">
+        <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-shengchanshujutubiao"></use>
         </svg>
         <span class="text">生产数据图表</span>
       </div>
-      <div class="tag"
-        @click="$router.push('/dataReport/transportationOutboundStatistics')">
-        <svg class="iconFont"
-          aria-hidden="true">
+      <div class="tag" @click="$router.push('/dataReport/transportationOutboundStatistics')">
+        <svg class="iconFont" aria-hidden="true">
           <use xlink:href="#icon-qitafeiyongtubiao"></use>
         </svg>
         <span class="text">其它费用图表</span>
@@ -53,81 +40,64 @@
     </div>
     <div class="module noBackColor">
       <div style="display: flex; width: 49%; justify-content: space-between">
-        <div class="tab"
-          @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">计划数据统计</div>
+        <div class="tab" @click="$router.push('/dataReport/materialsUsePlanDataStatistics')">计划数据统计</div>
         <div class="tab active">订购数据统计</div>
-        <div class="tab"
-          @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
-        <div class="tab"
-          @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
-        <div class="tab"
-          @click="$router.push('/dataReport/materialsStockStatistics')">库存数据统计</div>
+        <div class="tab" @click="$router.push('/dataReport/materialsTransferStatistics')">调取数据统计</div>
+        <div class="tab" @click="$router.push('/dataReport/materialsMachiningStatistics')">加工数据统计</div>
+        <div class="tab" @click="$router.push('/dataReport/materialsStockStatistics')">库存数据统计</div>
       </div>
       <div class="cardCtn">
-        <div class="card noBackColor noPad"
-          style="width: 106%">
+        <div class="card noBackColor noPad" style="width: 106%">
           <div class="screenCtn">
-            <div class="screen"
-              style="width: 100%">
-              <el-select @change="changeRouter"
+            <div class="screen" style="width: 100%">
+              <el-select
+                @change="changeRouter"
                 filterable
                 v-model="filterData.order_type"
                 placeholder="筛选原料"
-                clearable>
-                <el-option label="订单/样单"
-                  :value="''"></el-option>
-                <el-option label="订单"
-                  :value="1"></el-option>
-                <el-option label="样单"
-                  :value="2"></el-option>
+                clearable
+              >
+                <el-option label="订单/样单" :value="''"></el-option>
+                <el-option label="订单" :value="1"></el-option>
+                <el-option label="样单" :value="2"></el-option>
               </el-select>
             </div>
-            <div class="screen"
-              style="margin-bottom: 0; width: 31%">
-              <el-select @change="changePeople"
-                v-model="filterData.user_id"
-                placeholder="筛选创建人"
-                clearable>
-                <el-option v-for="item in userList"
+            <div class="screen" style="margin-bottom: 0; width: 31%">
+              <el-select @change="changePeople" v-model="filterData.user_id" placeholder="筛选创建人" clearable>
+                <el-option
+                  v-for="item in userList"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value"></el-option>
+                  :value="item.value"
+                ></el-option>
               </el-select>
             </div>
-            <div class="screen"
-              style="margin-bottom: 0; width: 31%">
-              <el-select @change="changePeople"
-                v-model="filterData.type"
-                placeholder="筛选创建人"
-                clearable>
-                <el-option label="纱线/面料"
-                  :value="''"></el-option>
-                <el-option label="纱线"
-                  :value="1"></el-option>
-                <el-option label="面料"
-                  :value="2"></el-option>
+            <div class="screen" style="margin-bottom: 0; width: 31%">
+              <el-select @change="changePeople" v-model="filterData.type" placeholder="筛选创建人" clearable>
+                <el-option label="纱线/面料" :value="''"></el-option>
+                <el-option label="纱线" :value="1"></el-option>
+                <el-option label="面料" :value="2"></el-option>
               </el-select>
             </div>
-            <div class="screen"
-              style="margin-bottom: 0; width: 31%">
-              <el-select @change="(ev) => getLocalStorage(ev, 'group_id')"
+            <div class="screen" style="margin-bottom: 0; width: 31%">
+              <el-select
+                @change="(ev) => getLocalStorage(ev, 'group_id')"
                 v-model="filterData.group_id"
                 placeholder="筛选负责小组"
-                clearable>
-                <el-option v-for="item in groupList"
-                  :key="item.id"
-                  :value="item.id"
-                  :label="item.name"></el-option>
+                clearable
+              >
+                <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
               </el-select>
             </div>
           </div>
         </div>
-        <div class="card"
-          style="margin-left: 4px">
+        <div class="card" style="margin-left: 4px">
           <div class="contentGrid">
             <h3>当前统计默认值</h3>
             <div class="item2">
-              订单下单时间：<span class="blue">{{ formatDate2(filterData.start_time) }}-{{ formatDate2(filterData.end_time) }}</span>
+              订单下单时间：<span class="blue"
+                >{{ formatDate2(filterData.start_time) }}-{{ formatDate2(filterData.end_time) }}</span
+              >
             </div>
           </div>
           <div class="contentGrid">
@@ -157,10 +127,10 @@
         </div>
       </div>
       <div class="cardCtn">
-        <div class="card noPad"
-          style="overflow: hidden">
+        <div class="card noPad" style="overflow: hidden">
           <div class="screen">
-            <el-cascader @change="
+            <el-cascader
+              @change="
                 getContacts($event)
                 changeRouter()
               "
@@ -169,37 +139,37 @@
               :show-all-levels="false"
               filterable
               :options="clientList"
-              clearable>
+              clearable
+            >
             </el-cascader>
           </div>
         </div>
-        <div class="card noPad"
-          style="overflow: hidden">
+        <div class="card noPad" style="overflow: hidden">
           <div class="screen">
-            <el-cascader placeholder="筛选原料名称"
+            <el-cascader
+              placeholder="筛选原料名称"
               v-model="filterData.name"
               :options="yarnTypeList"
               clearable
               filterable
-              @change="changeRouter"></el-cascader>
+              @change="changeRouter"
+            ></el-cascader>
           </div>
         </div>
-        <div class="cardCtn"
-          style="width: 206%; margin-top: 0">
-          <div class="card noPad"
-            style="overflow: hidden">
+        <div class="cardCtn" style="width: 206%; margin-top: 0">
+          <div class="card noPad" style="overflow: hidden">
             <div class="screen">
-              <el-date-picker v-model="filterData.start_time"
+              <el-date-picker
+                v-model="filterData.start_time"
                 type="year"
                 @change="changeDate"
-                placeholder="筛选下单年份">
+                placeholder="筛选下单年份"
+              >
               </el-date-picker>
             </div>
           </div>
-          <div class="card noPad"
-            style="overflow: hidden">
-            <el-button style="width: 100%; height: 63px"
-              @click="reset">重置</el-button>
+          <div class="card noPad" style="overflow: hidden">
+            <el-button style="width: 100%; height: 63px" @click="reset">重置</el-button>
           </div>
         </div>
       </div>
@@ -243,40 +213,40 @@
       </div>
       <div class="cardCtn">
         <div class="card">
-          <el-tabs v-model="activeName"
-            @tab-click="getList">
-            <el-tab-pane label="计划订购"
-              name="first">
+          <el-tabs v-model="activeName" @tab-click="getList">
+            <el-tab-pane label="计划订购" name="first">
               <div style="display: flex; justify-content: end; padding-right: 50px">
                 <div style="width: 150px">
-                  <el-select v-model="sortWay"
-                    @change="changeRouter">
-                    <el-option label="按数量排序"
-                      :value="1"> </el-option>
-                    <el-option label="按金额排序"
-                      :value="2"> </el-option>
+                  <el-select v-model="sortWay" @change="changeRouter">
+                    <el-option label="按数量排序" :value="1"> </el-option>
+                    <el-option label="按金额排序" :value="2"> </el-option>
                   </el-select>
                 </div>
               </div>
-              <zh-charts v-if="activeName === 'first'"
-                :option="option1"></zh-charts>
+              <zh-charts v-if="activeName === 'first'" :option="option1"></zh-charts>
             </el-tab-pane>
-            <el-tab-pane label="最终入库"
-              name="second">
+            <el-tab-pane label="最终入库" name="second">
               <div style="display: flex; justify-content: end; padding-right: 50px">
                 <div style="width: 150px">
-                  <el-select v-model="sortWay"
-                    @change="changeRouter">
-                    <el-option label="按数量排序"
-                      :value="1"> </el-option>
-                    <el-option label="按金额排序"
-                      :value="2"> </el-option>
+                  <el-select v-model="sortWay" @change="changeRouter">
+                    <el-option label="按数量排序" :value="1"> </el-option>
+                    <el-option label="按金额排序" :value="2"> </el-option>
                   </el-select>
                 </div>
               </div>
-              <zh-charts v-if="activeName === 'second'"
-                :option="option1"></zh-charts>
+              <zh-charts v-if="activeName === 'second'" :option="option1"></zh-charts>
             </el-tab-pane>
+            <!-- <el-tab-pane label="按原料名称展示" name="third">
+              <div style="display: flex; justify-content: end; padding-right: 50px">
+                <div style="width: 150px">
+                  <el-select v-model="sortWay" @change="changeRouter">
+                    <el-option label="按数量排序" :value="1"> </el-option>
+                    <el-option label="按金额排序" :value="2"> </el-option>
+                  </el-select>
+                </div>
+              </div>
+              <zh-charts v-if="activeName === 'third'" :option="option2"></zh-charts>
+            </el-tab-pane> -->
           </el-tabs>
         </div>
       </div>
@@ -284,8 +254,7 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverBlue"
-            @click="$openUrl('/billingManagement/rawMaterialPurchaseOrder')">
+          <div class="btn backHoverBlue" @click="$openUrl('/billingManagement/rawMaterialPurchaseOrder')">
             查看原料订购单
           </div>
         </div>
@@ -378,6 +347,29 @@ export default Vue.extend({
             data: [],
             axisPointer: {
               type: 'shadow'
+            },
+            axisLabel: {
+              interval: 0,
+              formatter: (params: any) => {
+                let newParamsName = ''
+                const paramsNameNumber = params.length // 文字总长度
+                const provideNumber = 6 //一行显示几个字
+                const rowNumber = Math.ceil(paramsNameNumber / provideNumber)
+                if (paramsNameNumber > provideNumber) {
+                  for (let p = 0; p < rowNumber; p++) {
+                    const start = p * provideNumber
+                    const end = start + provideNumber
+                    const tempStr =
+                      p === rowNumber - 1
+                        ? params.substring(start, paramsNameNumber)
+                        : params.substring(start, end) + '\n'
+                    newParamsName += tempStr
+                  }
+                } else {
+                  newParamsName = params
+                }
+                return newParamsName
+              }
             }
           }
         ],
@@ -417,6 +409,126 @@ export default Vue.extend({
           }
         ]
       },
+      option2: {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross',
+            crossStyle: {
+              color: '#999'
+            }
+          },
+          formatter: (params: any) => {
+            var htmlStr = '<div>'
+            htmlStr += params[0].name //x轴的名称
+            params.forEach((param: any, index: number) => {
+              console.log(param)
+              var color = param.color //图例颜色
+
+              //添加一个汉字，这里你可以格式你的数字或者自定义文本内容
+              htmlStr +=
+                '<br/><span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:' +
+                color +
+                ';"></span>' +
+                param.seriesName +
+                '：订购数量：' +
+                '<span style="color:' +
+                color +
+                ';margin-right:10px">' +
+                +param.value +
+                '</span>吨或千米；金额：<span style="color:' +
+                color +
+                ';margin-right:10px">' +
+                param.data.total_price +
+                +'</span>万元；'
+            })
+            htmlStr += '</div>'
+
+            return htmlStr
+          }
+        },
+        dataZoom: [
+          {
+            start: 0, //默认为0
+            end: 100 - 1500 / 31, //默认为100
+            type: 'slider',
+            maxValueSpan: 10, //窗口的大小，显示数据的条数的
+            show: true,
+            handleSize: 0, //滑动条的 左右2个滑动条的大小
+            height: '5%', //组件高度
+            left: 65,
+            right: 85,
+            bottom: 20,
+            borderColor: 'rgba(43,48,67,.8)',
+            fillerColor: '#33384b',
+            zoomLock: true,
+            brushSelect: false,
+            backgroundColor: 'rgba(43,48,67,.3)', //两边未选中的滑动条区域的颜色
+            showDataShadow: false, //是否显示数据阴影 默认auto
+            showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
+            realtime: true, //是否实时更新
+            xAxisIndex: [0] //控制的 x轴
+          }
+        ],
+        legend: {
+          data: []
+        },
+        xAxis: [
+          {
+            type: 'category',
+            data: [],
+            axisPointer: {
+              type: 'shadow'
+            },
+            axisLabel: {
+              interval: 0,
+              formatter: (params: any) => {
+                let newParamsName = ''
+                const paramsNameNumber = params.length // 文字总长度
+                const provideNumber = 6 //一行显示几个字
+                const rowNumber = Math.ceil(paramsNameNumber / provideNumber)
+                if (paramsNameNumber > provideNumber) {
+                  for (let p = 0; p < rowNumber; p++) {
+                    const start = p * provideNumber
+                    const end = start + provideNumber
+                    const tempStr =
+                      p === rowNumber - 1
+                        ? params.substring(start, paramsNameNumber)
+                        : params.substring(start, end) + '\n'
+                    newParamsName += tempStr
+                  }
+                } else {
+                  newParamsName = params
+                }
+                return newParamsName
+              }
+            }
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            name: '',
+            min: 0,
+            max: 25,
+            interval: 5,
+            axisLabel: {
+              formatter: '{value} 吨或千米'
+            }
+          },
+          {
+            type: 'value',
+            name: '',
+            min: 0,
+            max: 500,
+            interval: 100,
+            axisLabel: {
+              formatter: '{value} 万元'
+            }
+          }
+        ],
+        series: []
+      },
       groupName: '',
       createPeople: '',
       filterData: {
@@ -446,6 +558,7 @@ export default Vue.extend({
         currency: moneyArr
       },
       activeName: 'first'
+      // activeName: 'third'
     }
   },
   methods: {
@@ -714,6 +827,134 @@ export default Vue.extend({
             })
           }
           this.loading = false
+        })
+
+      statistics
+        .rawmaterialOrder({
+          start_time: this.filterData.start_time,
+          client_id: this.filterData.client_id.length > 0 ? this.filterData.client_id[2] : '',
+          user_id: this.filterData.user_id,
+          group_id: this.filterData.group_id,
+          order_type: this.filterData.order_type,
+          type: this.filterData.type,
+          name: this.filterData.name.length ? this.filterData.name[2] : '',
+          end_time: this.filterData.end_time,
+          contacts_id: ''
+        })
+        .then((res) => {
+          if (!res.data.status) {
+            this.loading = false
+            return
+          }
+
+          if (this.activeName === 'third') {
+            let data = res.data.data
+
+            if (this.sortWay === 1) {
+              data.sort(function (a: any, b: any) {
+                return b.number - a.number
+              })
+              data.sort(function (a: any, b: any) {
+                return b.number - a.number
+              })
+            } else if (this.sortWay === 2) {
+              data.sort(function (a: any, b: any) {
+                return b.price - a.price
+              })
+              data.sort(function (a: any, b: any) {
+                return b.price - a.price
+              })
+            }
+
+            this.option1.series[0].data = []
+            this.option1.series[1].data = []
+            this.option1.xAxis[0].data = []
+            this.option1.legend.data = []
+
+            let realPriceMax: any,
+              realPriceMin: any,
+              realNumberMax: any,
+              realNumberMin: any = 0
+
+            if (data.length !== 0) {
+              realPriceMax = data.reduce((num1: any, num2: any) => {
+                return +num1.price > +num2.price ? num1 : num2
+              }).price
+              realPriceMin = data.reduce((num1: any, num2: any) => {
+                return +num1.price < +num2.price ? num1 : num2
+              }).price
+              realNumberMax = data.reduce((num1: any, num2: any) => {
+                return +num1.number > +num2.number ? num1 : num2
+              }).number
+              realNumberMin = data.reduce((num1: any, num2: any) => {
+                return +num1.number < +num2.number ? num1 : num2
+              }).number
+            }
+            let legendDate: any = []
+            data.forEach((item: any) => {
+              item.client_data.forEach((itemClient: any) => {
+                legendDate.push(itemClient.client_name)
+              })
+            })
+
+            legendDate = [...new Set(legendDate)]
+            this.option2.legend.data = legendDate
+            this.option2.xAxis[0].data = data.map((item: any) => item.material_name)
+            this.option2.yAxis[0].name = '采购数量'
+            this.option2.yAxis[1].name = '采购金额'
+
+            //   采购数量 图表更新
+            this.option2.yAxis[0].max = Math.ceil(Math.ceil(realNumberMax / 1000 / 5)) * 5 || 10
+            this.option2.yAxis[0].min = realNumberMin && realNumberMin < 0 ? Math.ceil(realNumberMin / 1000) : 0
+            this.option2.yAxis[0].interval = Math.ceil(realNumberMax / 1000 / 5) || 10
+
+            //   采购金额 图表更新
+            this.option2.yAxis[1].max = Math.ceil(Math.ceil(realPriceMax / 10000 / 5)) * 5 || 10
+            this.option2.yAxis[1].min = realPriceMin && realPriceMin < 0 ? Math.ceil(realPriceMin / 10000) : 0
+            this.option2.yAxis[1].interval = Math.ceil(realPriceMax / 10000 / 5) || 10
+
+            let series = []
+            legendDate.forEach((item: any) => {
+              let param: any = {
+                type: 'bar',
+                name: item,
+                stack: 'Ad', // 设置这个就会成为堆叠柱状图
+                data: []
+              }
+
+              data.forEach((itemData: any) => {
+                let obj = itemData.client_data?.find((itemClient: any) => {
+                  return item === itemClient.client_name
+                })
+                if (obj) {
+                  param.data.push({
+                    value: (obj.number / 1000).toFixed(2),
+                    total_price: (obj.total_price / 10000).toFixed(3),
+                    pre_price: (obj.pre_price / 10000).toFixed(3)
+                  })
+                } else {
+                  param.data.push({
+                    value: '0.00',
+                    total_price: '0.000',
+                    pre_price: '0.000'
+                  })
+                }
+              })
+              series.push(param)
+            })
+            series.push({
+              type: 'line',
+              name: '采购金额',
+              yAxisIndex: 1,
+              data: data.map((item: any) => (item.price / 10000).toFixed(3))
+            })
+
+            this.option2.series = series
+            console.log(series)
+            this.option2.legend.data.push('采购金额')
+
+            this.loading = false
+          }
         })
     }
   },
