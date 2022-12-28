@@ -4046,24 +4046,24 @@
             <div class="col">票据编号</div>
             <div class="col">关联单号</div>
             <div class="col">开票金额</div>
+            <div class="col">开票类型</div>
             <div class="col">不含税金额</div>
             <div class="col">税额</div>
             <div class="col">开票号码</div>
             <div class="col">备注信息</div>
-            <div class="col">开票人</div>
-            <div class="col">开票日期</div>
+            <div class="col">开票人 / <br />开票日期</div>
             <div class="col" style="flex: 1.1">操作</div>
           </div>
           <div class="row" v-for="item in invoiceLog" :key="item.id">
             <div class="col">{{ item.code }}</div>
             <div class="col">{{ item.rel_doc_code || '未关联' }}</div>
             <div class="col">{{ $toFixed(item.price, 3, true) }}元</div>
+            <div class="col">{{ item.order_or_other === 1?'订单开票':'其它开票' }}</div>
             <div class="col">{{ $toFixed(item.price_no_tax, 3, true) }}元</div>
             <div class="col">{{ $toFixed(item.price_tax, 2, true) }}元</div>
             <div class="col">{{ item.invoice_code }}</div>
             <div class="col">{{ item.desc }}</div>
-            <div class="col">{{ item.user_name }}</div>
-            <div class="col">{{ item.created_at }}</div>
+            <div class="col">{{ item.user_name }} / <br />{{ item.created_at }}</div>
             <div class="col oprCtn" style="flex: 1.1">
               <span
                 class="opr blue"
@@ -4093,9 +4093,9 @@
             <div class="col">合计：</div>
             <div class="col"></div>
             <div class="col green bold">{{ invoiceTotalPrice }}万元</div>
+            <div class="col"></div>
             <div class="col green bold">{{ invoiceTotalNoTaxPrice }}万元</div>
             <div class="col green bold">{{ invoiceTotalTaxPrice }}万元</div>
-            <div class="col"></div>
             <div class="col"></div>
             <div class="col"></div>
             <div class="col"></div>
@@ -4292,8 +4292,8 @@
                       <div class="tcol">{{ itemChild.attribute }}</div>
                       <div class="tcol blue" v-if="$route.query.type === '面料原料单位'">{{ itemChild.price }}元/米</div>
                       <div class="tcol blue" v-else>{{ itemChild.price }}元/kg</div>
-                      <div class="tcol" v-if="$route.query.type === '面料原料单位'">{{ itemChild.number }}kg</div>
-                      <div class="tcol" v-else>{{ itemChild.number }}米</div>
+                      <div class="tcol" v-if="$route.query.type === '面料原料单位'">{{ itemChild.number }}米</div>
+                      <div class="tcol" v-else>{{ itemChild.number }}kg</div>
                       <div class="tcol" :class="{ blue: itemChild.settle_price, gray: !itemChild.settle_price }">
                         {{ itemChild.settle_price === 0 ? '未填写' : itemChild.settle_price + '元' }}
                       </div>

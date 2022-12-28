@@ -64,15 +64,6 @@
           </div>
           <div class="row" style="justify-content: space-around;">
             <div class="info" style="flex:0.49">
-              <el-autocomplete class="inline-input"
-                v-model="item.tax_rate"
-                :fetch-suggestions="querySearch"
-                placeholder="税率（必填）"
-                @input="getAboutTaxPrice(index)">
-                <template slot="append">%</template>
-              </el-autocomplete>
-            </div>
-            <div class="info" style="flex:0.49">
               <el-select v-model="item.type"
                 placeholder="发票类型">
                 <el-option label="专票"
@@ -80,6 +71,15 @@
                 <el-option label="普票"
                   value="普票"> </el-option>
               </el-select>
+            </div>
+            <div class="info" style="flex:0.49">
+              <el-autocomplete class="inline-input"
+                v-model="item.tax_rate"
+                :fetch-suggestions="querySearch"
+                placeholder="税率（必填）"
+                @input="getAboutTaxPrice(index)">
+                <template slot="append">%</template>
+              </el-autocomplete>
             </div>
           </div>
           <div class="row">

@@ -236,7 +236,7 @@
               </div>
               <zh-charts v-if="activeName === 'second'" :option="option1"></zh-charts>
             </el-tab-pane>
-            <!-- <el-tab-pane label="按原料名称展示" name="third">
+            <el-tab-pane label="按原料名称展示" name="third">
               <div style="display: flex; justify-content: end; padding-right: 50px">
                 <div style="width: 150px">
                   <el-select v-model="sortWay" @change="changeRouter">
@@ -246,7 +246,7 @@
                 </div>
               </div>
               <zh-charts v-if="activeName === 'third'" :option="option2"></zh-charts>
-            </el-tab-pane> -->
+            </el-tab-pane>
           </el-tabs>
         </div>
       </div>
@@ -422,25 +422,31 @@ export default Vue.extend({
             var htmlStr = '<div>'
             htmlStr += params[0].name //x轴的名称
             params.forEach((param: any, index: number) => {
-              console.log(param)
               var color = param.color //图例颜色
-
               //添加一个汉字，这里你可以格式你的数字或者自定义文本内容
               htmlStr +=
                 '<br/><span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:' +
                 color +
                 ';"></span>' +
                 param.seriesName +
-                '：订购数量：' +
-                '<span style="color:' +
-                color +
-                ';margin-right:10px">' +
-                +param.value +
-                '</span>吨或千米；金额：<span style="color:' +
-                color +
-                ';margin-right:10px">' +
-                param.data.total_price +
-                +'</span>万元；'
+                (param.seriesName === '均价'
+                  ? '：<span style="color:' + color + ';margin-right:10px">' + param.value + '</span>元；'
+                  : '：订购数量：' +
+                    '<span style="color:' +
+                    color +
+                    ';margin-right:10px">' +
+                    param.value +
+                    '</span>吨或千米；金额：' +
+                    '<span style="color:' +
+                    color +
+                    ';margin-right:10px">' +
+                    param.data.total_price +
+                    '</span>万元；均价：' +
+                    '<span style="color:' +
+                    color +
+                    ';margin-right:10px">' +
+                    param.data.pre_price +
+                    '</span>元；')
             })
             htmlStr += '</div>'
 
@@ -523,7 +529,7 @@ export default Vue.extend({
             max: 500,
             interval: 100,
             axisLabel: {
-              formatter: '{value} 万元'
+              formatter: '{value} 元'
             }
           }
         ],
@@ -557,8 +563,8 @@ export default Vue.extend({
         contactsList: [],
         currency: moneyArr
       },
-      activeName: 'first'
-      // activeName: 'third'
+      // activeName: 'first'
+      activeName: 'third'
     }
   },
   methods: {
@@ -878,11 +884,11 @@ export default Vue.extend({
 
             if (data.length !== 0) {
               realPriceMax = data.reduce((num1: any, num2: any) => {
-                return +num1.price > +num2.price ? num1 : num2
-              }).price
+                return +num1.pre_price > +num2.pre_price ? num1 : num2
+              }).pre_price
               realPriceMin = data.reduce((num1: any, num2: any) => {
-                return +num1.price < +num2.price ? num1 : num2
-              }).price
+                return +num1.pre_price < +num2.pre_price ? num1 : num2
+              }).pre_price
               realNumberMax = data.reduce((num1: any, num2: any) => {
                 return +num1.number > +num2.number ? num1 : num2
               }).number
@@ -899,9 +905,11 @@ export default Vue.extend({
 
             legendDate = [...new Set(legendDate)]
             this.option2.legend.data = legendDate
-            this.option2.xAxis[0].data = data.map((item: any) => item.material_name)
+            this.option2.xAxis[0].data = data
+              .filter((item: any) => item.price > 10000)
+              .map((item: any) => item.material_name)
             this.option2.yAxis[0].name = '采购数量'
-            this.option2.yAxis[1].name = '采购金额'
+            this.option2.yAxis[1].name = '均价'
 
             //   采购数量 图表更新
             this.option2.yAxis[0].max = Math.ceil(Math.ceil(realNumberMax / 1000 / 5)) * 5 || 10
@@ -909,9 +917,9 @@ export default Vue.extend({
             this.option2.yAxis[0].interval = Math.ceil(realNumberMax / 1000 / 5) || 10
 
             //   采购金额 图表更新
-            this.option2.yAxis[1].max = Math.ceil(Math.ceil(realPriceMax / 10000 / 5)) * 5 || 10
-            this.option2.yAxis[1].min = realPriceMin && realPriceMin < 0 ? Math.ceil(realPriceMin / 10000) : 0
-            this.option2.yAxis[1].interval = Math.ceil(realPriceMax / 10000 / 5) || 10
+            this.option2.yAxis[1].max = Math.ceil(Math.ceil(realPriceMax / 5)) * 5 || 10
+            this.option2.yAxis[1].min = realPriceMin && realPriceMin < 0 ? Math.ceil(realPriceMin) : 0
+            this.option2.yAxis[1].interval = Math.ceil(realPriceMax / 5) || 10
 
             let series = []
             legendDate.forEach((item: any) => {
@@ -930,7 +938,7 @@ export default Vue.extend({
                   param.data.push({
                     value: (obj.number / 1000).toFixed(2),
                     total_price: (obj.total_price / 10000).toFixed(3),
-                    pre_price: (obj.pre_price / 10000).toFixed(3)
+                    pre_price: obj.pre_price.toFixed(3)
                   })
                 } else {
                   param.data.push({
@@ -944,14 +952,13 @@ export default Vue.extend({
             })
             series.push({
               type: 'line',
-              name: '采购金额',
+              name: '均价',
               yAxisIndex: 1,
-              data: data.map((item: any) => (item.price / 10000).toFixed(3))
+              data: data.map((item: any) => item.pre_price.toFixed(3))
             })
 
             this.option2.series = series
-            console.log(series)
-            this.option2.legend.data.push('采购金额')
+            this.option2.legend.data.push('均价')
 
             this.loading = false
           }
