@@ -37,6 +37,9 @@ export interface ProductInfo {
     size_id: string | number
     name?: string
     size_info: string
+    child_style_code?: string
+    brcode_number?: string
+    size_arr?: Array<any>
     weight: string
   }> // 尺码组
   color_data: Array<{

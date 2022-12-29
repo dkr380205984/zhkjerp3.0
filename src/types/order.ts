@@ -66,6 +66,10 @@ export interface OrderBatch {
       real_number?: string | number
       weight?: string
       size_info?: string
+      size_arr?: any
+      isTable?: boolean
+      brcode_number?: string
+      child_style_code?: string
     }>
   }>
 }

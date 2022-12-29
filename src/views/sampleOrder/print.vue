@@ -87,28 +87,86 @@
                 >
               </div>
             </div>
-            <div class="trow">
-              <div class="tcol bgGray label">尺码</div>
-              <div class="tcol bgGray label">配色组</div>
-              <div class="tcol bgGray label">克重</div>
-              <div class="tcol bgGray">尺寸描述</div>
-              <div class="tcol bgGray label">打样数量</div>
-              <div class="tcol bgGray label">送样/留底数量</div>
-            </div>
-            <div
-              class="trow"
-              v-for="item in sampleOrderInfo.time_data[$route.query.sampleOrderIndex].batch_data[0].product_data[
-                sampleIndex
-              ].product_info"
-              :key="item.id"
+            <!-- 无JSON格式 -->
+            <template
+              v-if="
+                !sampleOrderInfo.time_data[$route.query.sampleOrderIndex].batch_data[0].product_data[sampleIndex]
+                  .isTable
+              "
             >
-              <div class="tcol label">{{ item.size_name }}</div>
-              <div class="tcol label">{{ item.color_name }}</div>
-              <div class="tcol label">{{ findSize(sampleInfo.size_data, item.size_name, 'weight') }}</div>
-              <div class="tcol">{{ findSize(sampleInfo.size_data, item.size_name, 'size_info') }}</div>
-              <div class="tcol label">{{ item.number }}</div>
-              <div class="tcol label">{{ item.sample_number || 0 }}/{{ item.keep_number || 0 }}</div>
-            </div>
+              <div class="trow">
+                <div class="tcol bgGray label">尺码</div>
+                <div class="tcol bgGray label">配色组</div>
+                <div class="tcol bgGray label">克重</div>
+                <div class="tcol bgGray">尺寸描述</div>
+                <div class="tcol bgGray label">打样数量</div>
+                <div class="tcol bgGray label">送样/留底数量</div>
+              </div>
+              <div
+                class="trow"
+                v-for="item in sampleOrderInfo.time_data[$route.query.sampleOrderIndex].batch_data[0].product_data[
+                  sampleIndex
+                ].product_info"
+                :key="item.id"
+              >
+                <div class="tcol label">{{ item.size_name }}</div>
+                <div class="tcol label">{{ item.color_name }}</div>
+                <div class="tcol label">{{ findSize(sampleInfo.size_data, item.size_name, 'weight') }}</div>
+                <div class="tcol">{{ findSize(sampleInfo.size_data, item.size_name, 'size_info') }}</div>
+                <div class="tcol label">{{ item.number }}</div>
+                <div class="tcol label">{{ item.sample_number || 0 }}/{{ item.keep_number || 0 }}</div>
+              </div>
+            </template>
+            <!-- JSON格式 -->
+            <template v-else>
+              <div class="trow">
+                <div class="tcol bgGray label">尺码</div>
+                <div class="tcol bgGray label">配色组</div>
+                <div class="tcol bgGray label">克重</div>
+                <div class="tcol bgGray">尺寸描述</div>
+                <div class="tcol bgGray label">打样数量</div>
+                <div class="tcol bgGray label">送样/留底数量</div>
+              </div>
+              <div
+                class="trow"
+                v-for="item in sampleOrderInfo.time_data[$route.query.sampleOrderIndex].batch_data[0].product_data[
+                  sampleIndex
+                ].product_info"
+                :key="item.id"
+              >
+                <div class="tcol label">{{ item.size_name }}</div>
+                <div class="tcol label">{{ item.color_name }}</div>
+                <div class="tcol label">{{ findSize(sampleInfo.size_data, item.size_name, 'weight') }}</div>
+                <!-- <div class="tcol">{{ findSize(sampleInfo.size_data, item.size_name, 'size_info') }}</div> -->
+                <div class="tcol">{{item.size_arr[0].name}}：{{item.size_arr[0].value}}</div>
+                <div class="tcol label">{{ item.number }}</div>
+                <div class="tcol label">{{ item.sample_number || 0 }}/{{ item.keep_number || 0 }}</div>
+              </div>
+            </template>
+            <!-- JSON格式 -->
+            <template v-if="sampleOrderInfo.time_data[$route.query.sampleOrderIndex].batch_data[0].product_data[sampleIndex]
+                  .isTable && showSizeTable==='1'">
+              <div class="trow">
+                <div class="tcol bgGray headTitle">尺码</div>
+                <template v-for="itemChild,indexChild in sampleOrderInfo.time_data[$route.query.sampleOrderIndex].batch_data[0].product_data[
+                  sampleIndex
+                ].product_info">
+                  <template v-for="itemChildArr,indexChildArr in itemChild.size_arr">
+                    <div class="tcol bgGray headTitle" :key="'' + indexChild + indexChildArr + '尺码描述'">{{itemChildArr.name}}</div>
+                  </template>
+                </template>
+              </div>
+              <div class="trow"
+                v-for="itemChild,indexChild in sampleOrderInfo.time_data[$route.query.sampleOrderIndex].batch_data[0].product_data[
+                  sampleIndex
+                ].product_info"
+                :key="indexChild">
+                <div class="tcol">{{itemChild.size_name}}</div>
+                <template v-for="itemChildArr,indexChildArr in itemChild.size_arr">
+                  <div class="tcol" :key="'' + indexChild + indexChildArr + '尺码描述2'">{{itemChildArr.value}}</div>
+                </template>
+              </div>
+            </template>
           </div>
         </div>
         <div class="tableCtn" v-for="itemPart in sampleInfo.part_data" :key="itemPart.id">
@@ -194,6 +252,9 @@
     >
       <div class="setting_item" @click="windowMethod(1)">刷新</div>
       <div class="setting_item" @click="windowMethod(2)">打印</div>
+      <div class="setting_item" @click="windowMethod(4)">
+        {{ showSizeTable === '1' ? '隐藏尺码详情' : '显示尺码详情' }}
+      </div>
       <div class="setting_item" @click="windowMethod(3)" v-if="sampleInfoList.length > 1">
         选择打印{{ orderType === 1 ? '产品' : '样品' }}
       </div>
@@ -218,6 +279,7 @@ export default Vue.extend({
       X_position: 0,
       Y_position: 0,
       orderType: Number(this.$route.query.orderType),
+      showSizeTable: this.$getLocalStorage('showSizeTable') || '1',
       showPrintSettingFlag: false,
       sampleOrderInfo: {
         id: null,
@@ -320,6 +382,10 @@ export default Vue.extend({
           window.location.reload()
         } else if (type === 2) {
           window.print()
+        } else if (type === 4) {
+          this.showMenu = false
+          this.showSizeTable = this.showSizeTable === '1' ? '2' : '1'
+          this.$setLocalStorage('showSizeTable', this.showSizeTable)
         } else {
           _this.showPrintSettingFlag = true
         }
@@ -344,6 +410,13 @@ export default Vue.extend({
           this.sampleInfoList = (this.sampleOrderInfo.time_data as SampleOrderTime[])[
             Number(this.$route.query.sampleOrderIndex)
           ].batch_data[0].product_data
+          this.sampleInfoList.forEach((itemSample: any) => {
+            itemSample.product_info.forEach((itemPro: any) => {
+              itemSample.isTable = this.$isJSON(itemPro.size_info)
+              // @ts-ignore
+              itemPro.size_arr = this.$isJSON(itemPro.size_info) ? JSON.parse(itemPro.size_info) : []
+            })
+          })
           this.sampleInfo = this.sampleInfoList[this.sampleIndex] // 默认第一个
           if (this.sampleInfoList.length > 1) {
             this.$message.warning('可通过右键菜单选择其他样品进行打印')

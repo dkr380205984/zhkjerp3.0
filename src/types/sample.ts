@@ -38,6 +38,9 @@ export interface SampleInfo {
     size_id: string | number
     name?: string
     size_info: string
+    brcode_number?: string
+    child_style_code?: string
+    size_arr?: any
     weight: string
   }> // 尺码组
   color_data: Array<{

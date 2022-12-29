@@ -204,7 +204,10 @@
                     v-for="(itemChild,indexChild) in item.product_info"
                     :key="indexChild">
                     <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                    <div class="tcol">
+                    <div class="tcol" v-if="itemChild.isTable">
+                      <span>克重:{{itemChild.weight}}g</span><span>尺寸：{{itemChild.size_arr[0].name}}：{{itemChild.size_arr[0].value}}</span>
+                    </div>
+                    <div class="tcol" v-else>
                       <span>克重:{{itemChild.weight}}g</span><span>尺寸:{{itemChild.size_info}}</span>
                     </div>
                     <div class="tcol">{{itemChild.number}}</div>
@@ -530,6 +533,24 @@ export default Vue.extend({
         this.productList =
           this.orderInfo.time_data[this.orderTime - 1 || this.sampleOrderIndex || 0].batch_data[0].product_data
       }
+
+      this.orderInfo.time_data.forEach(itemTime => {
+        itemTime.batch_data.forEach(itemBatch => {
+          itemBatch.product_data.forEach(itemPro => {
+            itemPro.product_info.forEach(itemProInfo => {
+              if(this.$isJSON(itemProInfo.size_info)){
+                // @ts-ignore
+                itemProInfo.size_arr = JSON.parse(itemProInfo.size_info)
+                itemProInfo.isTable = true
+              } else {
+                // @ts-ignore
+                itemProInfo.size_arr = []
+                itemProInfo.isTable = false
+              }
+            })
+          })
+        })
+      })
     }
   },
   mounted() {

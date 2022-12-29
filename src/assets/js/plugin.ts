@@ -885,6 +885,23 @@ function permissionsFlag(type: string, errMsg?: string): boolean {
 }
 
 /**
+ *判断是否为JSON字符串
+ *@method isJSON
+ *@str {string} 字符串
+ *@return {boolean} 返回布尔值
+*/
+function isJSON(str:string) {
+  if (typeof str == 'string') {
+      try {
+          JSON.parse(str);
+          return true;
+      } catch(e) {
+          return false;
+      }
+  } 
+}
+
+/**
  *根据员工的工序返回二级数组
  *@method getProcessStaff
  *@staffList {arr} 员工列表
@@ -971,6 +988,7 @@ export default {
     Vue.prototype.$copyTextInfo = copyTextInfo
     Vue.prototype.$focusByKeydown = focusByKeydown
     Vue.prototype.$permissionsFlag = permissionsFlag
+    Vue.prototype.$isJSON = isJSON
     Vue.prototype.$getProcessStaff = getProcessStaff
   }
 }

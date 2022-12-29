@@ -2753,7 +2753,11 @@ export default Vue.extend({
     checkMaterialOrderList(): MaterialPlanGatherData[] {
       return this.planMaterialList.filter((item) => {
         return item.check
-      })
+      }).concat(this.planShaXianList.filter((item) => {
+        return item.check
+      })).concat(this.planMianLiaoList.filter((item) => {
+        return item.check
+      }))
     },
     // 同理监听不到放在methods里
     selectMaterialOrderList(): any[] {

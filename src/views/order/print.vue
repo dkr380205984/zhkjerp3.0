@@ -107,24 +107,52 @@
                 style="max-width:101.6px">成分比例</div>
               <div class="tcol">{{itemPro.component_data.map((item)=>item.name+item.number+'%').join(',')}}</div>
             </div>
-            <div class="trow">
-              <div class="tcol bgGray headTitle">尺码/配色</div>
-              <div class="tcol bgGray headTitle">克重</div>
-              <div class="tcol bgGray headTitle">尺寸描述</div>
-              <div class="tcol bgGray headTitle"
-                v-if="showOrderPrice==='1'">下单单价</div>
-              <div class="tcol bgGray headTitle">总下单数量</div>
-            </div>
-            <div class="trow"
-              v-for="itemChild,indexChild in itemPro.childrenMergeInfo"
-              :key="indexChild">
-              <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-              <div class="tcol">{{itemChild.weight}}g</div>
-              <div class="tcol">{{itemChild.size_info}}</div>
-              <div class="tcol"
-                v-if="showOrderPrice==='1'">{{itemChild.price}}元</div>
-              <div class="tcol">{{itemChild.order_number}}</div>
-            </div>
+            <!-- 无JSON格式 -->
+            <template v-if="!itemPro.isTable">
+              <div class="trow">
+                <div class="tcol bgGray headTitle">尺码/配色</div>
+                <div class="tcol bgGray headTitle">克重</div>
+                <div class="tcol bgGray headTitle">尺寸描述</div>
+                <div class="tcol bgGray headTitle"
+                  v-if="showOrderPrice==='1'">下单单价</div>
+                <div class="tcol bgGray headTitle">总下单数量</div>
+              </div>
+              <div class="trow"
+                v-for="itemChild,indexChild in itemPro.childrenMergeInfo"
+                :key="indexChild">
+                <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
+                <div class="tcol">{{itemChild.weight}}g</div>
+                <div class="tcol">{{itemChild.size_info}}</div>
+                <div class="tcol"
+                  v-if="showOrderPrice==='1'">{{itemChild.price}}元</div>
+                <div class="tcol">{{itemChild.order_number}}</div>
+              </div>
+            </template>
+            <!-- JSON格式 -->
+            <template v-if="itemPro.isTable">
+              <div class="trow">
+                <div class="tcol bgGray headTitle">子款号</div>
+                <div class="tcol bgGray headTitle">条码号码</div>
+                <div class="tcol bgGray headTitle">尺码/配色</div>
+                <div class="tcol bgGray headTitle">克重</div>
+                <div class="tcol bgGray headTitle">尺寸描述</div>
+                <div class="tcol bgGray headTitle"
+                  v-if="showOrderPrice==='1'">下单单价</div>
+                <div class="tcol bgGray headTitle">总下单数量</div>
+              </div>
+              <div class="trow"
+                v-for="itemChild,indexChild in itemPro.childrenMergeInfo"
+                :key="indexChild">
+                <div class="tcol">{{itemChild.child_style_code}}</div>
+                <div class="tcol">{{itemChild.brcode_number}}</div>
+                <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
+                <div class="tcol">{{itemChild.weight}}g</div>
+                <div class="tcol">{{itemChild.size_arr[0].name}}：{{itemChild.size_arr[0].value}}</div>
+                <div class="tcol"
+                  v-if="showOrderPrice==='1'">{{itemChild.price}}元</div>
+                <div class="tcol">{{itemChild.order_number}}</div>
+              </div>
+            </template>
             <template v-for="itemPart in itemPro.part_data">
               <div class="trow"
                 :key="itemPart.id"
@@ -160,6 +188,25 @@
               <div class="tcol"
                 v-html="itemPro.desc"></div>
             </div>
+            <!-- JSON格式 -->
+            <template v-if="itemPro.isTable && showSizeTable==='1'">
+              <div class="trow">
+                <div class="tcol bgGray headTitle">尺码</div>
+                <template v-for="itemChild,indexChild in itemPro.childrenMergeInfo">
+                  <template v-for="itemChildArr,indexChildArr in itemChild.size_arr">
+                    <div class="tcol bgGray headTitle" :key="'' + indexChild + indexChildArr + '尺码描述'">{{itemChildArr.name}}</div>
+                  </template>
+                </template>
+              </div>
+              <div class="trow"
+                v-for="itemChild,indexChild in itemPro.childrenMergeInfo"
+                :key="indexChild">
+                <div class="tcol">{{itemChild.size_name}}</div>
+                <template v-for="itemChildArr,indexChildArr in itemChild.size_arr">
+                  <div class="tcol" :key="'' + indexChild + indexChildArr + '尺码描述2'">{{itemChildArr.value}}</div>
+                </template>
+              </div>
+            </template>
           </div>
         </div>
         <div class="tableCtn"
@@ -370,6 +417,8 @@
       <div class="setting_item"
         @click="windowMethod(5)">{{showOrderPeijian==='1'?'隐藏配件信息':'显示配件信息'}}</div>
       <div class="setting_item"
+        @click="windowMethod(7)">{{showSizeTable==='1'?'隐藏尺码详情':'显示尺码详情'}}</div>
+      <div class="setting_item"
         @click="windowMethod(6)">{{showOrderImage==='1'?'图片单独打印':'图片不单独打印'}}</div>
     </div>
   </div>
@@ -391,6 +440,8 @@ interface OrderProductFlattenWithBatch {
   component_data?: any[]
   weight?: string
   size_info?: string
+  brcode_number?: string
+  child_style_code?: string
   style_code?: string
   desc?: string
 }
@@ -412,6 +463,7 @@ export default Vue.extend({
       showOrderPrice: this.$getLocalStorage('showOrderPrice') || '1',
       showOrderBatch: this.$getLocalStorage('showOrderBatch') || '1',
       showOrderPeijian: this.$getLocalStorage('showOrderPeijian') || '1',
+      showSizeTable: this.$getLocalStorage('showSizeTable') || '1',
       showOrderImage: this.$getLocalStorage('showOrderImage') || '1',
       orderInfo: {
         created_at: '',
@@ -517,6 +569,10 @@ export default Vue.extend({
           this.showMenu = false
           this.showOrderImage = this.showOrderImage === '1' ? '2' : '1'
           this.$setLocalStorage('showOrderImage', this.showOrderImage)
+        } else if (type === 7) {
+          this.showMenu = false
+          this.showSizeTable = this.showSizeTable === '1' ? '2' : '1'
+          this.$setLocalStorage('showSizeTable', this.showSizeTable)
         }
       })
     },
@@ -541,7 +597,7 @@ export default Vue.extend({
       const flattenArr: OrderProductFlattenWithBatch[] = [] // 存储return信息
       orderInfo.time_data[this.orderIndex].batch_data.forEach((itemBatch) => {
         itemBatch.product_data.forEach((itemPro) => {
-          itemPro.product_info.forEach((itemChild) =>
+          itemPro.product_info.forEach((itemChild) =>{
             flattenArr.push({
               batch_number: itemBatch.batch_number,
               batch_title: itemBatch.batch_title,
@@ -572,6 +628,11 @@ export default Vue.extend({
               number: itemChild.number,
               weight: itemChild.weight,
               size_info: itemChild.size_info,
+              brcode_number: itemChild.brcode_number,
+              child_style_code: itemChild.child_style_code,
+              isTable: this.$isJSON(itemChild.size_info),
+              // @ts-ignore
+              size_arr: this.$isJSON(itemChild.size_info)?JSON.parse(itemChild.size_info):[],
               image_data: itemPro.image_data,
               part_data: itemPro.part_data,
               desc: itemPro.desc,
@@ -579,7 +640,7 @@ export default Vue.extend({
               imageIndex2: 0,
               imageIndex3: 0
             })
-          )
+          })
         })
       })
       const mergeArr: OrderProductMerge[] = this.$mergeData(flattenArr, {
@@ -590,6 +651,7 @@ export default Vue.extend({
           { name: 'secondary_category' },
           { name: 'category' },
           { name: 'product_code' },
+          { name: 'isTable' },
           { name: 'part_data' },
           { name: 'process_data' },
           { name: 'quote_product_id' },
@@ -612,7 +674,10 @@ export default Vue.extend({
             { name: 'price' },
             { name: 'material_info' },
             { name: 'weight' },
-            { name: 'size_info' }
+            { name: 'size_info' },
+            { name: 'brcode_number' },
+            { name: 'child_style_code' },
+            { name: 'size_arr' }
           ]
         }
       })

@@ -318,6 +318,20 @@
           <div class="module">
             <div class="titleCtn">
               <div class="title">大身信息</div>
+              <el-tooltip class="item"
+                effect="dark"
+                :content="showProTableType?'切换为输入框模式':'切换为表格模式'"
+                placement="top">
+                <svg class="iconFont hoverBlue"
+                  style="cursor:pointer;color:#1A95FF;margin-left:12px;font-size:28px"
+                  aria-hidden="true"
+                  @click="
+                    showProTableType = !showProTableType
+                    $setLocalStorage('showProTableType', showProTableType)
+                  ">
+                  <use xlink:href='#icon-qiehuanshurukuang'></use>
+                </svg>
+              </el-tooltip>
             </div>
             <div class="editCtn">
               <div class="row"
@@ -375,60 +389,149 @@
                   v-if="index>0"
                   @click="$deleteItem(productInfo.component_data,index)">删除</div>
               </div>
-              <div class="row"
-                v-for="(item,index) in productInfo.size_data"
-                :key="'Size' + index">
-                <div class="col">
-                  <div class="spaceBetween">
-                    <div class="once">
-                      <div class="label"
-                        v-if="index===0">
-                        <span class="text">大身尺码</span>
-                        <span class="explanation">(必选)</span>
+              <div v-show="!showProTableType">
+                <div class="row"
+                  v-for="(item,index) in productInfo.size_data"
+                  :key="'Size' + index">
+                  <div class="col">
+                    <div class="spaceBetween">
+                      <div class="once">
+                        <div class="label"
+                          v-if="index===0">
+                          <span class="text">大身尺码</span>
+                          <span class="explanation">(必选)</span>
+                        </div>
+                        <div class="info elCtn">
+                          <el-autocomplete :class="{'error':mustFlag&&!item.size_name}"
+                            class="inline-input"
+                            v-model="item.size_name"
+                            :fetch-suggestions="searchSize"
+                            placeholder="输入大身尺码"></el-autocomplete>
+                        </div>
                       </div>
-                      <div class="info elCtn">
-                        <el-autocomplete :class="{'error':mustFlag&&!item.size_name}"
-                          class="inline-input"
-                          v-model="item.size_name"
-                          :fetch-suggestions="searchSize"
-                          placeholder="输入大身尺码"></el-autocomplete>
+                      <div class="once">
+                        <div class="label"
+                          v-if="index===0">
+                          <span class="text">大身克重</span>
+                        </div>
+                        <div class="info elCtn">
+                          <el-input placeholder="大身克重"
+                            v-model="item.weight">
+                          </el-input>
+                        </div>
                       </div>
                     </div>
-                    <div class="once">
-                      <div class="label"
-                        v-if="index===0">
-                        <span class="text">大身克重</span>
+                  </div>
+                  <div class="col">
+                    <div class="spaceBetween">
+                      <div class="once">
+                        <div class="label"
+                          v-if="index===0">
+                          <span class="text">大身尺寸</span>
+                        </div>
+                        <div class="info elCtn">
+                          <el-autocomplete class="inline-input"
+                            v-model="item.size_info"
+                            :fetch-suggestions="searchSizeInfo"
+                            placeholder="大身尺寸"></el-autocomplete>
+                        </div>
                       </div>
-                      <div class="info elCtn">
-                        <el-input placeholder="大身克重"
-                          v-model="item.weight">
-                        </el-input>
+                    </div>
+                  </div>
+                  <div class="opr hoverBlue"
+                    v-if="index===0"
+                    @click="addSize">添加</div>
+                  <div class="opr hoverRed"
+                    v-if="index>0&&(!item.id)"
+                    @click="deleteSize(index)">删除</div>
+                </div>
+              </div>
+              <div v-show="showProTableType">
+                <div class="row showProTableTypeCtn" style="width:736px;overflow-x:scroll" :ref="0" @mousewheel.prevent="listenWheel">
+                  <div class="listCtn" style="padding: 0;">
+                    <div class="list">
+                      <div class="row title" style="height:102px;">
+                        <div class="col" style="margin:unset;max-width:140px;min-width:140px;">子款号(选填)</div>
+                        <div class="col" style="margin:unset;padding:unset;max-width:140px;min-width:140px;">条码号码(选填)</div>
+                        <div class="col" style="margin:unset;max-width:100px;min-width:100px">尺码(必填)</div>
+                        <div class="col" style="margin:unset;max-width:100px;min-width:100px">克重(必填)</div>
+                        <div class="col" style="min-width: 100px;padding: 0;">
+                          <div class="row title" style="padding:unset;height: 51px;margin:0">
+                            <div class="col" style="min-width: 100px;margin:unset;padding:unset" :style="{'padding-left': (indexSize === 0?'0':'12')+'px'}" v-for="itemSize,indexSize in productInfo.size_data[0].size_arr" :key="indexSize + '表格模板'">
+                              {{indexSize === 0 ? '尺寸':''}}
+                              <i
+                                v-if="indexSize===0"
+                                class="el-icon-circle-plus-outline hoverBlue"
+                                style="cursor: pointer; position: absolute; right: 15%;"
+                                @click="addSizeArr"
+                              ></i>
+                              <i
+                                v-if="indexSize>0&&(!itemSize.id)"
+                                class="el-icon-remove-outline hoverRed"
+                                style="cursor: pointer; position: absolute; right: 5%;"
+                                @click="deleteSizeArr(indexSize)"
+                              ></i>
+                            </div>
+                          </div>
+                          <div class="row title" style="height: 51px;margin:0">
+                            <div class="col" style="min-width: 100px;max-width:100px;margin:unset;padding:unset;" :style="{'padding-left': (indexSize === 0?'0':'12')+'px'}" v-for="itemSize,indexSize in productInfo.size_data[0].size_arr" :key="indexSize + 'indexSize'">
+                              <el-input v-model="itemSize.name" :disabled='indexSize === 0' placeholder="请填写" style="line-height: 32px;height:32px" @input="changeTableName($event,indexSize)"></el-input>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row" v-for="item,index in productInfo.size_data" :key="index + '大身listBody'">
+                        <div class="col" style="margin:unset;max-width:140px;min-width:140px;">
+                          <div class="elCtn">
+                            <el-input v-model="item.child_style_code" placeholder="子款号"></el-input>
+                          </div>
+                        </div>
+                        <div class="col" style="margin:unset;padding:unset;max-width:140px;min-width:140px;">
+                          <div class="elCtn">
+                            <el-input v-model="item.brcode_number" placeholder="条码号码"></el-input>
+                          </div>
+                        </div>
+                        <div class="col" style="margin:unset;max-width:100px;min-width:100px">
+                          <div class="elCtn">
+                            <el-autocomplete :class="{'error':mustFlag&&!item.size_name}"
+                              class="inline-input"
+                              v-model="item.size_name"
+                              :fetch-suggestions="searchSize"
+                              placeholder="大身尺码"></el-autocomplete>
+                          </div>
+                        </div>
+                        <div class="col" style="margin:unset;max-width:100px;min-width:100px">
+                          <div class="elCtn">
+                            <el-input placeholder="大身克重"
+                              v-model="item.weight">
+                            </el-input>
+                          </div>
+                        </div>
+                        <div class="col" style="min-width: 100px;padding: 0;">
+                          <div class="row" style="height: 55px">
+                            <div class="col" style="min-width: 100px;max-width:100px;margin:unset;padding:unset;" :style="{'padding-left': (indexSize === 0?'0':'12')+'px'}" v-for="itemSize,indexSize in item.size_arr" :key="indexSize + 'indexSizeListBody'">
+                              <el-input v-model="itemSize.value" :disabled="!itemSize.name" :placeholder="itemSize.name || '先填写表名'" style="line-height: 32px;height:32px"></el-input>
+                            </div>
+                            <div class="col">
+                              <i
+                                v-if="index===0"
+                                class="el-icon-circle-plus-outline hoverBlue"
+                                style="cursor: pointer; position: absolute; right: 15%;"
+                                @click="addSize"
+                              ></i>
+                              <i
+                                v-if="index>0"
+                                class="el-icon-remove-outline hoverRed"
+                                style="cursor: pointer; position: absolute; right: 5%;"
+                                @click="deleteSize(index)"
+                              ></i>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col">
-                  <div class="spaceBetween">
-                    <div class="once">
-                      <div class="label"
-                        v-if="index===0">
-                        <span class="text">大身尺寸</span>
-                      </div>
-                      <div class="info elCtn">
-                        <el-autocomplete class="inline-input"
-                          v-model="item.size_info"
-                          :fetch-suggestions="searchSizeInfo"
-                          placeholder="大身尺寸"></el-autocomplete>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="opr hoverBlue"
-                  v-if="index===0"
-                  @click="addSize">添加</div>
-                <div class="opr hoverRed"
-                  v-if="index>0&&(!item.id)"
-                  @click="deleteSize(index)">删除</div>
               </div>
             </div>
           </div>
@@ -758,6 +861,8 @@ export default Vue.extend({
       have_part: false,
       need_import: false,
       mustFlag: false,
+      // @ts-ignore
+      showProTableType: localStorage.getItem('showProTableType') === 'true',
       repeatAdd: false, // 连续添加产品
       step: 1,
       notify: '',
@@ -802,6 +907,12 @@ export default Vue.extend({
             size_name: '',
             size_id: '',
             size_info: '',
+            brcode_number:'',
+            child_style_code:'',
+            size_arr: [
+              {name:'整体',value: ''},
+              {name:'',value: ''},
+            ],
             weight: ''
           }
         ], // 尺码组
@@ -1055,7 +1166,13 @@ export default Vue.extend({
     },
     // 尺码的逻辑包含大身+配件尺码的添加&删除
     addSize() {
-      this.$addItem(this.productInfo.size_data, { id: '', size_name: '', size_id: '', weight: '', size_info: '' })
+      // @ts-ignore
+      let param:any = this.$clone(this.productInfo.size_data[0].size_arr)
+      param.map((item:any) => {
+        item.value = ''
+        return item
+      })
+      this.$addItem(this.productInfo.size_data, { id: '', size_name: '', size_id: '', weight: '', size_info: '', size_arr: param })
       this.productInfo.part_data.forEach((item) => {
         this.$addItem(item.part_size_data!, { id: '', size_name: '', size_id: '', weight: '', size_info: '' })
       })
@@ -1064,6 +1181,28 @@ export default Vue.extend({
       this.$deleteItem(this.productInfo.size_data, index)
       this.productInfo.part_data.forEach((item) => {
         this.$deleteItem(item.part_size_data!, index)
+      })
+    },
+    changeTableName(str:string,index:number){
+      this.productInfo.size_data.forEach((item:any) => {
+        item.size_arr[index].name = str
+      })
+    },
+    addSizeArr(){
+      if(this.productInfo.size_data[0].size_arr?.length === 10){
+        this.$message.error('最多只能添加九条数据')
+        return
+      }
+      this.productInfo.size_data.forEach((item:any) => {
+        item.size_arr.push(JSON.parse(JSON.stringify({
+          name:'',
+          value:''
+        })))
+      })
+    },
+    deleteSizeArr(index:number){
+      this.productInfo.size_data.forEach((item:any) => {
+        this.$deleteItem(item.size_arr, index)
       })
     },
     addPart() {
@@ -1196,6 +1335,11 @@ export default Vue.extend({
         this.$message.error('请勿频繁点击')
         return
       }
+      if(this.showProTableType){
+        this.productInfo.size_data.forEach((item:any) => {
+          item.size_info = JSON.stringify(item.size_arr)
+        })
+      }
       this.$emit('beforeSave', this.productInfo)
       const formCheck =
         this.$formCheck(this.productInfo, [
@@ -1326,6 +1470,12 @@ export default Vue.extend({
             size_name: '',
             size_id: '',
             size_info: '',
+            brcode_number:'',
+            child_style_code:'',
+            size_arr: [
+              {name:'整体',value: ''},
+              {name:'',value: ''},
+            ],
             weight: ''
           }
         ], // 尺码组
@@ -1365,6 +1515,7 @@ export default Vue.extend({
     },
     changeDetailToEdit(data: any) {
       // 编辑器防止重复创建报错
+      let _this = this
       if (this.productInfo.editor) {
         this.productInfo.editor.destroy()
         this.productInfo.editor = null
@@ -1408,11 +1559,32 @@ export default Vue.extend({
                 }
               ],
         size_data: data.size_data.map((item: any) => {
-          return {
-            id: this.edit ? item.id : '', // 修改的时候不能删除，导入的时候把id去了，前端就可以判断可以删除了
-            size_name: item.name,
-            size_info: item.size_info,
-            weight: item.weight
+          if(this.$isJSON(item.size_info)){
+            return {
+              id: this.edit ? item.id : '', // 修改的时候不能删除，导入的时候把id去了，前端就可以判断可以删除了
+              size_name: item.name,
+              brcode_number: item.brcode_number,
+              child_style_code: item.child_style_code,
+              size_info: item.size_info,
+              size_arr: JSON.parse(item.size_info),
+              weight: item.weight
+            }
+          } else {
+            return {
+              id: this.edit ? item.id : '', // 修改的时候不能删除，导入的时候把id去了，前端就可以判断可以删除了
+              size_name: item.name,
+              brcode_number: item.brcode_number,
+              child_style_code: item.child_style_code,
+              size_info: item.size_info,
+              size_arr: [{
+                name:'整体',
+                value: ''
+              },{
+                name:'',
+                value: ''
+              }],
+              weight: item.weight
+            }
           }
         }), // 尺码组
         color_data: data.color_data.map((item: any) => {
@@ -1650,6 +1822,23 @@ export default Vue.extend({
     deletePasteImage() {
       document.removeEventListener('paste', this.pasteImage)
     },
+    // 监听一下鼠标滚轮
+    listenWheel(ev: any) {
+      const detail = ev.wheelDelta || ev.detail
+      // 定义滚动方向，其实也可以在赋值的时候写
+      const moveForwardStep = 1
+      const moveBackStep = -1
+      // 定义滚动距离
+      let step = 0
+      // 判断滚动方向,这里的100可以改，代表滚动幅度，也就是说滚动幅度是自定义的
+      if (detail < 0) {
+        step = moveForwardStep * 50
+      } else {
+        step = moveBackStep * 50
+      }
+      // @ts-ignore 对需要滚动的元素进行滚动操作
+      this.$refs[0].scrollLeft += step
+    },
     // 删除复制粘贴的图片
     deleteCvImage(imageIndex: number) {
       if (this.productInfo.cv_list![imageIndex]) {
@@ -1710,6 +1899,19 @@ export default Vue.extend({
 .error {
   .el-input .el-input__inner {
     border-color: red !important;
+  }
+}
+
+.list .row {
+  background: unset !important;
+  &:hover {
+    background: unset !important;
+  }
+}
+.list .row.title {
+  background: #FAFAFA !important;
+  &:hover {
+    background: #FAFAFA !important;
   }
 }
 </style>

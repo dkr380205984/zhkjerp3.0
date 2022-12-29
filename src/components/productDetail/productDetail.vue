@@ -82,14 +82,63 @@
                           </div>
                         </div>
                       </div>
-                      <div class="row"
-                        v-for="(item,index) in productInfo.size_data"
-                        :key="item.id">
-                        <div class="col">
-                          <div class="label">{{index===0?'大身尺码：':''}}</div>
-                          <div class="text">{{index+1}}.&nbsp;{{item.name}}&nbsp;{{item.weight}}g&nbsp;{{item.size_info}}</div>
+                      <template v-if="productInfo.isTable">
+                        <div class="row showProTableTypeCtn" style="width:640px;overflow-x:scroll" :ref="0" @mousewheel.prevent="listenWheel">
+                          <div class="listCtn" style="padding: 0;">
+                            <div class="list">
+                              <div class="row title" style="height:102px;">
+                                <div class="col" style="margin:unset;max-width:165px;min-width:165px">子款号</div>
+                                <div class="col" style="margin:unset;padding:unset;max-width:165px;min-width:165px">条码号码</div>
+                                <div class="col" style="margin:unset;min-width:120px;max-width:120px">尺码</div>
+                                <div class="col" style="margin:unset;min-width:120px;max-width:120px">克重</div>
+                                <div class="col" style="padding: 0;height:unset">
+                                  <div class="row title" style="padding:unset;height: 51px;margin:0">
+                                    <div class="col" style="min-width: 100px;margin:unset;padding:unset" :style="{'padding-left': (indexSize === 0?'0':'12')+'px'}" v-for="itemSize,indexSize in productInfo.size_data[0].size_arr" :key="indexSize + '表格模板'">
+                                      {{indexSize === 0 ? '尺寸':''}}
+                                    </div>
+                                  </div>
+                                  <div class="row title" style="height: 53px;margin:0">
+                                    <div class="col" style="min-width: 101px;margin:unset;padding:unset;" :style="{'padding-left': (indexSize === 0?'0':'12')+'px'}" v-for="itemSize,indexSize in productInfo.size_data[0].size_arr" :key="indexSize + 'indexSize'">
+                                      {{itemSize.name}}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row" v-for="item,index in productInfo.size_data" :key="index + '大身listBody'">
+                                <div class="col" style="margin:unset;max-width:165px;min-width:165px">
+                                  {{item.child_style_code}}
+                                </div>
+                                <div class="col" style="margin:unset;padding:unset;max-width:165px;min-width:165px">
+                                  {{item.brcode_number}}
+                                </div>
+                                <div class="col" style="margin:unset;min-width:120px;max-width:120px">
+                                  {{item.name}}
+                                </div>
+                                <div class="col" style="margin:unset;min-width:120px;max-width:120px">
+                                  {{item.weight}}
+                                </div>
+                                <div class="col" style="min-width: 200px;padding: 0;height:unset">
+                                  <div class="row" style="height: 57px;padding:0">
+                                    <div class="col" style="min-width: 101px;margin:unset;padding:unset;" :style="{'padding-left': (indexSize === 0?'0':'12')+'px'}" v-for="itemSize,indexSize in item.size_arr" :key="indexSize + 'indexSizeListBody'">
+                                      {{itemSize.value}}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      </template>
+                      <template v-else>
+                        <div class="row"
+                          v-for="(item,index) in productInfo.size_data"
+                          :key="item.id">
+                          <div class="col">
+                            <div class="label">{{index===0?'大身尺码：':''}}</div>
+                            <div class="text">{{index+1}}.&nbsp;{{item.name}}&nbsp;{{item.weight}}g&nbsp;{{item.size_info}}</div>
+                          </div>
+                        </div>
+                      </template>
                     </div>
                   </div>
                 </div>
@@ -238,7 +287,7 @@
         :inDetail="true"
         :pid="null"
         :pid_status="null"
-        :id="data?data.id :productInfo.id"
+        :id="data?data.product_id :productInfo.id"
         :data="productInfo"
         :show="addProductFlag"
         @close="addProductFlag = false"
@@ -332,12 +381,12 @@ export default Vue.extend({
     }
   },
   watch: {
-    // 打开样品详情窗口之前需要获取样品详情
+    // 打开产品详情窗口之前需要获取产品详情
     show(val) {
       if (val) {
         this.$emit('beforeGet')
         if (this.data) {
-          this.productInfo = this.data as ProductInfo
+          this.productInfo = this.changeProductInfoData(this.data as ProductInfo)
           this.productInfo.id = this.productInfo.product_id // 订单过来的用product_id，id是订单用的
           this.getDataFlag = true
         } else {
@@ -348,7 +397,7 @@ export default Vue.extend({
             .then((res) => {
               if (res.data.status) {
                 this.$emit('afterGet')
-                this.productInfo = res.data.data
+                this.productInfo = this.changeProductInfoData(res.data.data)
                 this.getDataFlag = true
               }
             })
@@ -363,13 +412,55 @@ export default Vue.extend({
       this.$emit('close')
     },
     getNewProduct(val: any) {
-      this.productInfo = val
+      this.productInfo = this.changeProductInfoData(val)
       this.$emit('afterDetailUpdate', val)
-    }
+    },
+    // 监听一下鼠标滚轮
+    listenWheel(ev: any) {
+      const detail = ev.wheelDelta || ev.detail
+      // 定义滚动方向，其实也可以在赋值的时候写
+      const moveForwardStep = 1
+      const moveBackStep = -1
+      // 定义滚动距离
+      let step = 0
+      // 判断滚动方向,这里的100可以改，代表滚动幅度，也就是说滚动幅度是自定义的
+      if (detail < 0) {
+        step = moveForwardStep * 50
+      } else {
+        step = moveBackStep * 50
+      }
+      // @ts-ignore 对需要滚动的元素进行滚动操作
+      this.$refs[0].scrollLeft += step
+    },
+    changeProductInfoData(param:any){
+      param = this.$clone(param)
+      param.isTable = this.$isJSON(param.size_data[0].size_info) || this.$isJSON(param.size_data[0].size_arr)
+      if(param.isTable){
+        param.size_data.forEach((item:any) => {
+          item.size_arr = JSON.parse(item.size_info)
+        });
+      }
+      return param
+    },
   }
 })
 </script>
 
 <style lang="less" scoped>
 @import './productDetail.less';
+</style>
+
+<style lang="less">
+.list .row {
+  background: unset !important;
+  &:hover {
+    background: unset !important;
+  }
+}
+.list .row.title {
+  background: #FAFAFA !important;
+  &:hover {
+    background: #FAFAFA !important;
+  }
+}
 </style>
