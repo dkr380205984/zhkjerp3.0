@@ -192,10 +192,8 @@
             <template v-if="itemPro.isTable && showSizeTable==='1'">
               <div class="trow">
                 <div class="tcol bgGray headTitle">尺码</div>
-                <template v-for="itemChild,indexChild in itemPro.childrenMergeInfo">
-                  <template v-for="itemChildArr,indexChildArr in itemChild.size_arr">
-                    <div class="tcol bgGray headTitle" :key="'' + indexChild + indexChildArr + '尺码描述'">{{itemChildArr.name}}</div>
-                  </template>
+                <template v-for="itemChildArr,indexChildArr in itemPro.childrenMergeInfo[0].size_arr">
+                  <div class="tcol bgGray headTitle" :key="'' + indexChildArr + '尺码描述'">{{itemChildArr.name}}</div>
                 </template>
               </div>
               <div class="trow"

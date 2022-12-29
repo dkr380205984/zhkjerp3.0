@@ -148,12 +148,10 @@
                   .isTable && showSizeTable==='1'">
               <div class="trow">
                 <div class="tcol bgGray headTitle">尺码</div>
-                <template v-for="itemChild,indexChild in sampleOrderInfo.time_data[$route.query.sampleOrderIndex].batch_data[0].product_data[
-                  sampleIndex
-                ].product_info">
-                  <template v-for="itemChildArr,indexChildArr in itemChild.size_arr">
-                    <div class="tcol bgGray headTitle" :key="'' + indexChild + indexChildArr + '尺码描述'">{{itemChildArr.name}}</div>
-                  </template>
+                <template v-for="itemChildArr,indexChildArr in sampleOrderInfo.time_data[$route.query.sampleOrderIndex].batch_data[0].product_data[
+                    sampleIndex
+                  ].product_info[0].size_arr">
+                  <div class="tcol bgGray headTitle" :key="'' + indexChild + indexChildArr + '尺码描述'">{{itemChildArr.name}}</div>
                 </template>
               </div>
               <div class="trow"

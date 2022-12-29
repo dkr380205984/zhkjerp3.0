@@ -450,9 +450,9 @@
             <div v-show="showProTableType">
               <div class="row showProTableTypeCtn" style="width:736px;overflow-x:scroll" :ref="0" @mousewheel.prevent="listenWheel">
                 <div class="listCtn" style="padding: 0;">
-                  <div class="list">
+                  <div class="list" style="min-height:unset">
                     <div class="row title" style="height:102px;">
-                      <div class="col" style="margin:unset;max-width:140px;min-width:140px;">子款号(选填)</div>
+                      <div class="col" style="margin:unset;max-width:140px;min-width:140px;padding-left: 20px">子款号(选填)</div>
                       <div class="col" style="margin:unset;padding:unset;max-width:140px;min-width:140px;">条码号码(选填)</div>
                       <div class="col" style="margin:unset;max-width:100px;min-width:100px">尺码(必填)</div>
                       <div class="col" style="margin:unset;max-width:100px;min-width:100px">克重(必填)</div>
@@ -482,7 +482,19 @@
                       </div>
                     </div>
                     <div class="row" v-for="item,index in sampleInfo.size_data" :key="index + '大身listBody'">
-                      <div class="col" style="margin:unset;max-width:140px;min-width:140px;">
+                      <div class="col" style="margin:unset;max-width:140px;min-width:140px;position: relative;padding-left: 20px">
+                        <i
+                          v-if="index===0"
+                          class="el-icon-circle-plus-outline hoverBlue"
+                          style="cursor: pointer; position: absolute; left: 0%;"
+                          @click="addSize"
+                        ></i>
+                        <i
+                          v-if="index>0"
+                          class="el-icon-remove-outline hoverRed"
+                          style="cursor: pointer; position: absolute; left: 0;"
+                          @click="deleteSize(index)"
+                        ></i>
                         <div class="elCtn">
                           <el-input v-model="item.child_style_code" placeholder="子款号"></el-input>
                         </div>
@@ -512,20 +524,6 @@
                         <div class="row" style="height: 55px">
                           <div class="col" style="min-width: 100px;max-width:100px;margin:unset;padding:unset;" :style="{'padding-left': (indexSize === 0?'0':'12')+'px'}" v-for="itemSize,indexSize in item.size_arr" :key="indexSize + 'indexSizeListBody'">
                             <el-input v-model="itemSize.value" :disabled="!itemSize.name" :placeholder="itemSize.name || '先填写表名'" style="line-height: 32px;height:32px"></el-input>
-                          </div>
-                          <div class="col">
-                            <i
-                              v-if="index===0"
-                              class="el-icon-circle-plus-outline hoverBlue"
-                              style="cursor: pointer; position: absolute; right: 15%;"
-                              @click="addSize"
-                            ></i>
-                            <i
-                              v-if="index>0"
-                              class="el-icon-remove-outline hoverRed"
-                              style="cursor: pointer; position: absolute; right: 5%;"
-                              @click="deleteSize(index)"
-                            ></i>
                           </div>
                         </div>
                       </div>
@@ -1290,7 +1288,7 @@ export default Vue.extend({
       this.getCmpData()
       if (!formCheck && !partFormCheck) {
         this.loading = true
-        this.sampleInfo.editor.destroy()
+        this.sampleInfo.editor?.destroy()
         this.sampleInfo.editor = ''
         this.saveLock = true
         sample.create(this.sampleInfo).then((res) => {

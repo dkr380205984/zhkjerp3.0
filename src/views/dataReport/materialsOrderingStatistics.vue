@@ -422,6 +422,7 @@ export default Vue.extend({
             var htmlStr = '<div>'
             htmlStr += params[0].name //x轴的名称
             params.forEach((param: any, index: number) => {
+              if(param.data.total_price == 0) return
               var color = param.color //图例颜色
               //添加一个汉字，这里你可以格式你的数字或者自定义文本内容
               htmlStr +=
@@ -904,7 +905,7 @@ export default Vue.extend({
             })
 
             legendDate = [...new Set(legendDate)]
-            this.option2.legend.data = legendDate
+            // this.option2.legend.data = legendDate
             this.option2.xAxis[0].data = data
               .filter((item: any) => item.price > 10000)
               .map((item: any) => item.material_name)
@@ -958,7 +959,7 @@ export default Vue.extend({
             })
 
             this.option2.series = series
-            this.option2.legend.data.push('均价')
+            // this.option2.legend.data.push('均价')
 
             this.loading = false
           }
