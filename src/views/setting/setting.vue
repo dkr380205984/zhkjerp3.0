@@ -5938,6 +5938,62 @@
                   删除
                 </div>
               </div>
+              <div class="row"
+                v-for="(itemNoPro, indexNoPro) in quotedPriceProduct.no_production_fee_data"
+                :key="'NoPro' + indexNoPro">
+                <div class="col">
+                  <div class="label"
+                    v-if="indexNoPro === 0">
+                    <span class="text">非生产型费用</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="itemNoPro.name"
+                      placeholder="非生产型费用"></el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label"
+                    v-if="indexNoPro === 0">
+                    <span class="text">小计</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="itemNoPro.total_price"
+                      placeholder="小计"
+                      :disabled="!itemNoPro.name">
+                      <template slot="append">元</template>
+                    </el-input>
+                  </div>
+                </div>
+                <div class="opr hoverBlue"
+                  v-if="indexNoPro === 0"
+                  @click="
+                    $addItem(quotedPriceProduct.no_production_fee_data, {
+                      desc: '',
+                      name: '',
+                      total_price: ''
+                    })
+                  ">
+                  添加
+                </div>
+                <div class="opr hoverRed"
+                  v-else
+                  @click="$deleteItem(quotedPriceProduct.no_production_fee_data, indexNoPro)">
+                  删除
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">
+                    <span class="text">运输费用</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="quotedPriceProduct.transport_fee"
+                      placeholder="运输费用">
+                      <template slot="append">元</template>
+                    </el-input>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="oprCtn">
@@ -7066,7 +7122,6 @@ export default Vue.extend({
         ],
         no_production_fee_data: [
           {
-            id: '',
             name: '',
             desc: '',
             total_price: ''
@@ -8426,7 +8481,6 @@ export default Vue.extend({
         ],
         no_production_fee_data: [
           {
-            id: '',
             name: '',
             desc: '',
             total_price: ''
@@ -10327,7 +10381,8 @@ export default Vue.extend({
       formData.pack_material_data = JSON.stringify(formData.pack_material_data)
       formData.others_data = JSON.stringify(formData.others_data)
       formData.production_data = JSON.stringify(formData.production_data)
-      formData.other_fee_data = JSON.stringify(formData.other_fee_data)
+      formData.others_fee_data = JSON.stringify(formData.other_fee_data)
+      formData.no_production_fee_data = JSON.stringify(formData.no_production_fee_data)
       formData.material_data = JSON.stringify(formData.material_data)
       formData.assist_material_data = JSON.stringify(formData.assist_material_data)
       quotedPrice.settingCreate(formData).then((res) => {
@@ -10402,7 +10457,6 @@ export default Vue.extend({
             ],
             no_production_fee_data: [
               {
-                id: '',
                 name: '',
                 desc: '',
                 total_price: ''
@@ -10449,11 +10503,16 @@ export default Vue.extend({
       formData.pack_material_data = JSON.parse(formData.pack_material_data)
       // formData.others_data = JSON.parse(formData.others_data)
       formData.production_data = JSON.parse(formData.production_data)
-      formData.other_fee_data = formData.other_fee_data ? JSON.parse(formData.other_fee_data) : [{
-            name: '',
-            desc: '',
-            total_price: ''
-          }]
+      formData.no_production_fee_data = formData.no_production_fee_data ? JSON.parse(formData.no_production_fee_data) : [{
+        name: '',
+        desc: '',
+        total_price: ''
+      }]
+      formData.other_fee_data = formData.others_fee_data ? JSON.parse(formData.others_fee_data) : [{
+        name: '',
+        desc: '',
+        total_price: ''
+      }]
       // formData.material_data = JSON.parse(formData.material_data)
       // formData.assist_material_data = JSON.parse(formData.assist_material_data)
       this.quotedPriceProduct = formData
