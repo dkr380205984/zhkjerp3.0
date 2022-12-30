@@ -1548,8 +1548,21 @@ export default Vue.extend({
       ]).then((res) => {
         // 过滤掉辅料采购单，因为压根没设计辅料采购单出入库
         this.materialOrderList = res[0].data.data.filter((item: any) => item.material_type === 1)
-        this.materialShaXianList = this.materialOrderList.filter((item: any) => item.yarn_type === 1)
-        this.materialMianLiaoList = this.materialOrderList.filter((item: any) => item.yarn_type === 2)
+        this.materialShaXianList = []
+        this.materialMianLiaoList = []
+
+        this.materialOrderList.forEach((item:any) => {
+          item.info_data.forEach((itemChild:any) => {
+            let param = this.$clone(item)
+            param.info_data = [itemChild]
+            if(itemChild.yarn_type === 1) {
+              this.materialShaXianList.push(param)
+            } else if(itemChild.yarn_type === 2){
+              this.materialMianLiaoList.push(param)
+            }
+          })
+        })
+
         this.materialProcessList = []
         res[0].data.data.forEach((item: any) => {
           this.materialProcessList = this.materialProcessList.concat(item.process_info)
@@ -2436,7 +2449,7 @@ export default Vue.extend({
         order_id: Number(this.$route.query.sampleOrderIndex)
       })
       .then((res) => {
-        console.log(res.data.data)
+        // console.log(res.data.data)
         // 处理一下重复的纱线，繁琐
         res.data.data.forEach((itemFather: any) => {
           itemFather.material_plan_data.forEach((item: any) => {

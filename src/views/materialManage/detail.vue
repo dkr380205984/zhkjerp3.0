@@ -2751,11 +2751,9 @@ export default Vue.extend({
   methods: {
     // 选取物料本来应该在computed里面，因为不触发更新拿到methods里每次获取强致重新计算
     checkMaterialOrderList(): MaterialPlanGatherData[] {
-      return this.planMaterialList.filter((item) => {
+      return this.planShaXianList.filter((item) => {
         return item.check
-      }).concat(this.planShaXianList.filter((item) => {
-        return item.check
-      })).concat(this.planMianLiaoList.filter((item) => {
+      }).concat(this.planMianLiaoList.filter((item) => {
         return item.check
       }))
     },
