@@ -355,6 +355,14 @@ const productType = {
   list: (params?: ListParams) => http.get(`${baseUrl}/category/lists`, params)
 }
 
+// 产品尺寸模板
+import { SizeModuleSetting } from '@/types/productSetting'
+const sizeModule = {
+  create: (params: SizeModuleSetting) => http.post(`${baseUrl}/size/template/save`, params, 'application/json'),
+  delete: (params: DeleteParams) => http.post(`${baseUrl}/size/template/delete`, params, 'application/json'),
+  list: (params?: ListParams) => http.get(`${baseUrl}/size/template/lists`, params)
+}
+
 // 产品尺码
 import { SizeInfo } from '@/types/productSetting'
 const size = {
@@ -1547,6 +1555,7 @@ export {
   style,
   ingredient,
   getCoder,
+  sizeModule,
   colour,
   productType,
   size,

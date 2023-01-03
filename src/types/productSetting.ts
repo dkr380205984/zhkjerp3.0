@@ -32,6 +32,13 @@ export interface SizeSetting {
   child_size: SizeInfo[]
 }
 
+// 尺码模板设置
+export interface SizeModuleSetting {
+  id: null | number | string
+  name: string
+  content: string
+}
+
 // 产品品类
 export interface CategoryInfo {
   id: number | string

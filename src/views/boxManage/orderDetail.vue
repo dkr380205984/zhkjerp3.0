@@ -69,6 +69,7 @@
                         <div class="tcol">
                           <div class="elCtn">
                             <el-input v-model="itemChild.real_number"
+                              @input="$forceUpdate()"
                               @focus="$focusInput($event)"
                               placeholder="数量"></el-input>
                           </div>

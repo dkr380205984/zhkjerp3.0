@@ -211,6 +211,39 @@
               </div>
             </div>
           </template>
+          <template v-if="cName === '尺寸模板'">
+            <div class="listCtn">
+              <div class="filterCtn clearfix">
+                <div class="btn backHoverBlue fr"
+                  @click="showPopup = true">添加尺寸模板</div>
+              </div>
+              <div class="list">
+                <div class="row title">
+                  <div class="col">模板名称</div>
+                  <div class="col">操作</div>
+                </div>
+                <div class="row"
+                  v-for="(item, index) in sizeModuleArr"
+                  :key="index">
+                  <div class="col">{{ item.name }}</div>
+                  <div class="col">
+                    <span class="opr hoverBlue"
+                      @click="lookSizeModule(item)">查看详情</span>
+                    <span class="opr hoverRed"
+                      @click="deleteSizeModule(item.id)">删除</span>
+                  </div>
+                </div>
+              </div>
+              <div class="pageCtn">
+                <el-pagination background
+                  :page-size="5"
+                  layout="prev, pager, next, jumper"
+                  :total="sizeModuleTotal"
+                  :current-page.sync="sizeModulePage">
+                </el-pagination>
+              </div>
+            </div>
+          </template>
           <template v-if="cName === '批次类型'">
             <div class="listCtn">
               <div class="filterCtn clearfix">
@@ -4178,6 +4211,94 @@
           </div>
         </div>
       </template>
+      <template v-if="cName === '尺寸模板'">
+        <div class="main">
+          <div class="titleCtn">
+            <div class="text">新增尺寸模板</div>
+            <div class="closeCtn"
+              @click="
+                showPopup = false
+                sizeModuleUpdate = false
+                resetSizeModule()
+              ">
+              <i class="el-icon-close"></i>
+            </div>
+          </div>
+          <div class="contentCtn">
+            <div class="editCtn">
+              <div class="row">
+                <div class="col">
+                  <div class="label">
+                    <span class="text">模板标题</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input placeholder="请输入模板标题"
+                      v-model="updateSizeModule.name"></el-input>
+                  </div>
+                </div>
+              </div>
+              <div class="row"
+                v-for="(itemContent, indexContent) in updateSizeModule.content"
+                :key="'Content' + indexContent">
+                <div class="col">
+                  <div class="label"
+                    v-if="indexContent === 0">
+                    <span class="text">尺寸</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input :disabled='indexContent === 0' v-model="itemContent.name"
+                      placeholder="尺寸名称"></el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label"
+                    v-if="indexContent === 0">
+                    <span class="text">值</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input v-model="itemContent.value"
+                      :placeholder="itemContent.name || '请先填写尺寸名称'"
+                      :disabled="!itemContent.name">
+                    </el-input>
+                  </div>
+                </div>
+                <div class="opr hoverBlue"
+                  v-if="indexContent === 0"
+                  @click="
+                  updateSizeModule.content.length === 10 ? 
+                    $message.error('最多只能添加九条数据') :
+                    $addItem(updateSizeModule.content, {
+                      value: '',
+                      name: '',
+                    })
+                  ">
+                  添加
+                </div>
+                <div class="opr hoverRed"
+                  v-else
+                  @click="$deleteItem(updateSizeModule.content, indexContent)">
+                  删除
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="oprCtn">
+            <div class="btn borderBtn"
+              @click="
+                showPopup = false
+                sizeModuleUpdate = false
+                resetSizeModule()
+              ">
+              取消
+            </div>
+            <div class="btn"
+              :class="sizeModuleUpdate ? 'backHoverOrange' : 'backHoverBlue'"
+              @click="saveSizeModule">
+              {{ sizeModuleUpdate ? '修改' : '确认' }}
+            </div>
+          </div>
+        </div>
+      </template>
       <template v-if="cName === '批次类型'">
         <div class="main">
           <div class="titleCtn">
@@ -6181,7 +6302,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { CraftParameter } from '@/types/craft'
-import { IngredientInfo, ColourInfo, SizeSetting, SizeInfo, StyleInfo, CategoryInfo } from '@/types/productSetting'
+import { IngredientInfo, ColourInfo, SizeSetting, SizeModuleSetting, SizeInfo, StyleInfo, CategoryInfo } from '@/types/productSetting'
 import { OrderType } from '@/types/orderSetting'
 import { ProcessInfo } from '@/types/processSetting'
 import { SideInfo, MachineInfo, MethodsInfo, YarnColorInfo } from '@/types/craftSetting'
@@ -6229,6 +6350,7 @@ import {
   style,
   ingredient,
   colour,
+  sizeModule,
   size,
   orderType,
   process,
@@ -6264,6 +6386,7 @@ export default Vue.extend({
     sizeInfo: SizeInfo
     deleteSizeArr: SizeInfo[]
     sizeList: SizeSetting[]
+    sizeModuleList: SizeModuleSetting[]
     orderTypeInfo: OrderType
     orderTypeList: OrderType[]
     sampleOrderTypeInfo: OrderType
@@ -6339,7 +6462,7 @@ export default Vue.extend({
       yarnPriceKeyword1: '',
       yarnPriceKeyword2: '',
       nav: {
-        产品设置: ['品类', '款式', '成分', '配色组', '尺码'],
+        产品设置: ['品类', '款式', '成分', '配色组', '尺码', ''],
         订单设置: ['批次类型', '样单类型'],
         报价单设置: ['报价模板', '报价说明'],
         工序设置: ['半成品加工', '成品加工工序'],
@@ -6753,6 +6876,23 @@ export default Vue.extend({
       deleteSizeFLag: false, // 删除尺码专用
       deleteSizeArr: [], // 删除尺码专用
       deleteSizeId: '', // 删除尺码专用
+      sizeModuleList: [],
+      sizeModuleTotal: 1,
+      sizeModulePage: 1,
+      sizeModuleUpdate: false,
+      updateSizeModule: {
+        name: '',
+        content: [
+          {
+            name:'整体',
+            value:''
+          },
+          {
+            name:'',
+            value:''
+          }
+        ],
+      },
       orderTypeInfo: {
         order_type: 1,
         id: null,
@@ -7764,6 +7904,8 @@ export default Vue.extend({
         this.getColour()
       } else if (this.cName === '尺码') {
         this.getSize()
+      } else if (this.cName === '尺寸模板') {
+        this.getSizeModule()
       } else if (this.cName === '批次类型') {
         this.getOrderType()
       } else if (this.cName === '样单类型') {
@@ -8711,6 +8853,81 @@ export default Vue.extend({
             message: '已取消删除'
           })
         })
+    },
+    lookSizeModule(info: QuotedPriceProduct) {
+      let formData = this.$clone(info)
+      formData.content = formData.content ? JSON.parse(formData.content) : [
+        {
+          name:'整体',
+          value:''
+        },
+        {
+          name:'',
+          value:''
+        }
+      ],
+      this.updateSizeModule = formData
+      this.sizeModuleUpdate = true
+      this.showPopup = true
+    },
+    getSizeModule() {
+      sizeModule.list().then((res) => {
+        if (res.data.status) {
+          this.sizeModuleList = res.data.data
+          this.sizeModuleTotal = this.sizeModuleList.length
+        }
+      })
+    },
+    deleteSizeModule(id: number) {
+      this.$confirm('是否删除该模板?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          sizeModule.delete({ id }).then((res) => {
+            if (res.data.status) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+              this.getSizeModule()
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    saveSizeModule() {
+      let formData = this.$clone(this.updateSizeModule)
+      formData.content = JSON.stringify(formData.content)
+      sizeModule.create(formData).then((res) => {
+        if (res.data.status) {
+          this.$message.success('添加成功')
+          this.showPopup = false
+          this.resetSizeModule()
+          this.getSizeModule()
+        }
+      })
+    },
+    resetSizeModule(){
+      this.updateSizeModule = {
+        name: '',
+        content: [
+          {
+            name:'整体',
+            value:''
+          },
+          {
+            name:'',
+            value:''
+          }
+        ],
+      }
     },
     getSize() {
       category.list().then((res) => {
@@ -10925,6 +11142,9 @@ export default Vue.extend({
     },
     sizeArr(): SizeSetting[] {
       return this.sizeList.slice((this.sizePage - 1) * 5, this.sizePage * 5)
+    },
+    sizeModuleArr(): SizeModuleSetting[] {
+      return this.sizeModuleList.slice((this.sizeModulePage - 1) * 5, this.sizeModulePage * 5)
     },
     orderTypeArr(): OrderType[] {
       return this.orderTypeList.slice((this.orderTypePage - 1) * 5, this.orderTypePage * 5)

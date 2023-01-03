@@ -447,6 +447,21 @@
                 </div>
               </div>
               <div v-show="showProTableType">
+                <!-- <div class="row">
+                  <div class="col">
+                    <div class="label">请选择模板</div>
+                    <div class="info elCtn">
+                      <el-select v-model="chooseModule" value-key="id" @change="changeModule">
+                        <el-option
+                          v-for="item in sizeModuleList"
+                          :key="item.id + 'sizeModuleList'"
+                          :label="item.name"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                </div> -->
                 <div class="row showProTableTypeCtn" style="width:736px;overflow-x:scroll" :ref="0" @mousewheel.prevent="listenWheel">
                   <div class="listCtn" style="padding: 0;">
                     <div class="list" style="min-height:unset">
@@ -793,7 +808,7 @@ import Vue from 'vue'
 import { ProductStockInfo } from '@/types/productStock'
 import { ProductInfo } from '@/types/product'
 import { CascaderInfo } from '@/types/vuex'
-import { product, productStock, store } from '@/assets/js/api'
+import { product, productStock, store, sizeModule } from '@/assets/js/api'
 export default Vue.extend({
   props: {
     show: {
@@ -870,6 +885,8 @@ export default Vue.extend({
       searchOrderCode: '', // 搜产单编号导入
       searchProductCode: '', // 搜产品编号导入
       searchList: [],
+      sizeModuleList: [],
+      chooseModule:{},
       productId: '',
       sizeList: [],
       postData: {
@@ -1440,6 +1457,7 @@ export default Vue.extend({
         this.productInfo.editor = null
       }
       this.productId = ''
+      this.chooseModule = {}
       this.need_import = false
       this.searchList = []
       this.productInfo = {
@@ -1850,7 +1868,25 @@ export default Vue.extend({
       } else {
         this.$message.error('请先上传图片')
       }
-    }
+    },
+    getSizeModule() {
+      sizeModule.list().then((res) => {
+        if (res.data.status) {
+          this.sizeModuleList = res.data.data
+        }
+      })
+    },
+    changeModule(item:any) {
+      this.productInfo.size_data.forEach((itemSize:any) => {
+        itemSize.size_arr = item.content? JSON.parse(item.content) : [{
+          name:'整体',
+          value:''
+        },{
+          name:'',
+          value:''
+        }]
+      })
+    },
   },
   mounted() {
     if (this.ifStore) {
@@ -1883,6 +1919,7 @@ export default Vue.extend({
         getInfoApi: 'getProductStyleAsync'
       }
     ])
+    this.getSizeModule()
   },
   beforeDestroy() {
     if (this.notify) {
