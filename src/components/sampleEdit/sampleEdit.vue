@@ -448,7 +448,7 @@
               </div>
             </div>
             <div v-show="showProTableType">
-              <!-- <div class="row">
+              <div class="row">
                 <div class="col">
                   <div class="label">请选择模板</div>
                   <div class="info elCtn">
@@ -462,7 +462,7 @@
                     </el-select>
                   </div>
                 </div>
-              </div> -->
+              </div>
               <div class="row showProTableTypeCtn" style="width:736px;overflow-x:scroll" :ref="0" @mousewheel.prevent="listenWheel">
                 <div class="listCtn" style="padding: 0;">
                   <div class="list" style="min-height:unset">
