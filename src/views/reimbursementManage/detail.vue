@@ -27,9 +27,9 @@
             <div class="label">报销人：</div>
             <div class="text">{{ receiptInfo.name }}</div>
           </div>
-          <div class="col">
+          <div class="col"> 
             <div class="label">所属小组：</div>
-            <div class="text">{{ receiptInfo.group }}</div>
+            <div class="text">{{ receiptInfo.group.name }}</div>
           </div>
         </div>
         <div class="row">
