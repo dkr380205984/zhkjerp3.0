@@ -892,13 +892,19 @@ function permissionsFlag(type: string, errMsg?: string): boolean {
 */
 function isJSON(str:string) {
   if (typeof str == 'string') {
-      try {
-          JSON.parse(str);
-          return true;
-      } catch(e) {
-          return false;
-      }
-  } 
+		try {
+				var obj=JSON.parse(str);
+				if(typeof obj == 'object' && obj ){
+						return true;
+				}else{
+						return false;
+				}
+
+		} catch(e) {
+				// console.log('error：'+str+'!!!'+e);
+				return false;
+		}
+	} 
 }
 
 /**
