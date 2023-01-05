@@ -3,7 +3,10 @@
     <order-detail :data="orderInfo"></order-detail>
     <div class="module clearfix">
       <div class="titleCtn">
-        <div class="title">物料采购单入库</div>
+        <div class="title">物料采购单入库<el-checkbox v-model="showLessOrder"
+            @change="init()"
+            style="margin-left:12px;float:right">仅显示待入库原料</el-checkbox>
+        </div>
       </div>
       <div class="tableCtn">
         <div class="thead">
@@ -138,19 +141,9 @@
                     </div>
                   </div>
                 </div>
-                <div class="tcol" style="flex-direction: row; align-items: center; justify-content: start">
-                  {{ itemChild.final_push_number || 0 }}{{ itemChild.unit || 'kg' }}
-                </div>
-                <div class="tcol">
-                  <span
-                    :class="{
-                      green: Number(itemChild.final_push_number) >= Number(itemChild.number),
-                      red: Number(itemChild.final_push_number) < Number(itemChild.number)
-                    }"
-                    >{{ Number(itemChild.final_push_number) > Number(itemChild.number) > 0 ? '+' : ''
-                    }}{{ (Number(itemChild.final_push_number) - Number(itemChild.number)).toFixed(2)
-                    }}{{ itemChild.unit || 'kg' }}</span
-                  >
+                <div class="tcol"
+                  style="flex-direction:row;align-items:center;justify-content:start">{{itemChild.final_push_number||0}}{{itemChild.unit||'kg'}}
+                  (<span :class="{'green':Number(itemChild.final_push_number)>=Number(itemChild.number),'red':Number(itemChild.final_push_number)<Number(itemChild.number)}">{{Number(itemChild.final_push_number)>Number(itemChild.number)?'+':''}}{{Number(itemChild.final_push_number)-Number(itemChild.number)}}{{itemChild.unit||'kg'}}</span>)
                 </div>
               </div>
             </div>
@@ -335,7 +328,10 @@
     </div>
     <div class="module clearfix" v-show="materialJHDQList.length > 0">
       <div class="titleCtn">
-        <div class="title">计划调取单入库</div>
+        <div class="title">计划调取单入库<el-checkbox v-model="showLessJHDQ"
+            @change="init()"
+            style="margin-left:12px;float:right">仅显示待入库原料</el-checkbox>
+        </div>
       </div>
       <div class="tableCtn">
         <div class="thead">
@@ -471,7 +467,10 @@
                     </div>
                   </div>
                 </div>
-                <div class="tcol">{{ itemChild.final_push_number || 0 }}{{ itemChild.unit || 'kg' }}</div>
+                <div class="tcol"
+                  style="flex-direction:row;align-items:center;justify-content:start">{{itemChild.final_push_number||0}}{{itemChild.unit||'kg'}}
+                  (<span :class="{'green':Number(itemChild.final_push_number)>=Number(itemChild.number),'red':Number(itemChild.final_push_number)<Number(itemChild.number)}">{{Number(itemChild.final_push_number)>Number(itemChild.number)?'+':''}}{{Number(itemChild.final_push_number)-Number(itemChild.number)}}{{itemChild.unit||'kg'}}</span>)
+                </div>
               </div>
             </div>
           </div>
@@ -497,7 +496,10 @@
     </div>
     <div class="module clearfix" v-show="materialBSDQList.length > 0">
       <div class="titleCtn">
-        <div class="title">补纱调取单入库</div>
+        <div class="title">补纱调取单入库 <el-checkbox v-model="showLessBSDQ"
+            @change="init()"
+            style="margin-left:12px;float:right">仅显示待入库原料</el-checkbox>
+        </div>
       </div>
       <div class="tableCtn">
         <div class="thead">
@@ -784,9 +786,12 @@
                     </span>
                   </el-checkbox>
                 </div>
-                <div class="tcol">{{ itemMat.material_color }}</div>
-                <div class="tcol">{{ itemMat.number }}{{ itemMat.unit }}</div>
-                <div class="tcol">{{ itemMat.final_pop_number || 0 }}{{ itemMat.unit }}</div>
+                <div class="tcol">{{itemMat.material_color}}</div>
+                <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
+                <div class="tcol"
+                  style="flex-direction:row;align-items:center;justify-content:start">{{itemMat.final_pop_number||0}}{{itemMat.unit||'kg'}}
+                  (<span :class="{'green':Number(itemMat.final_pop_number)>=Number(itemMat.number),'red':Number(itemMat.final_pop_number)<Number(itemMat.number)}">{{Number(itemMat.final_pop_number)>Number(itemMat.number)?'+':''}}{{Number(itemMat.final_pop_number)-Number(itemMat.number)}}{{itemMat.unit||'kg'}}</span>)
+                </div>
                 <div class="tcol">暂无数据</div>
               </div>
               <!-- 补纱单 -->
@@ -878,10 +883,36 @@
       <div class="titleCtn">
         <div class="title">出入库单据</div>
       </div>
-      <div class="tableCtn">
+      <div class="listCtn">
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-select placeholder="筛选出入库类型"
+              v-model="stockTypeFilter"
+              clearable>
+              <el-option v-for="item in stockTypeFilterList"
+                :key="item.value"
+                :value="item.value"
+                :label="item.name"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-select placeholder="筛选出入库物料名称"
+              v-model="stockNameFilter"
+              clearable>
+              <el-option v-for="item in stockNameFilterList"
+                :key="item.value"
+                :value="item.value"
+                :label="item.name"></el-option>
+            </el-select>
+          </div>
+        </div>
+      </div>
+      <div class="tableCtn"
+        style="font-size:14px">
         <div class="thead">
           <div class="trow">
             <div class="tcol">单据编号</div>
+            <div class="tcol">关联单据</div>
             <div class="tcol">出入库类型</div>
             <div class="tcol">库存转移</div>
             <div class="tcol noPad" style="flex: 6">
@@ -898,16 +929,14 @@
           </div>
         </div>
         <div class="tbody">
-          <div
-            class="trow"
-            v-for="item in materialStockList"
+          <div class="trow"
+            v-for="item in materialStockArr"
             :key="item.id"
-            :class="{ backMark: item.id === Number($route.query.stockDocId) }"
-          >
-            <div class="tcol">{{ item.code }}</div>
-            <div class="tcol" :class="item.action_type | materialStockTypeClassFilter">
-              {{ item.action_type | materialStockTypeFilter }}
-            </div>
+            :class="{'backMark':item.id===Number($route.query.stockDocId)}">
+            <div class="tcol">{{item.code}}</div>
+            <div class="tcol">{{item.rel_doc_code}}</div>
+            <div class="tcol"
+              :class="item.action_type|materialStockTypeClassFilter">{{item.action_type|materialStockTypeFilter}}</div>
             <div class="tcol">
               <template v-if="item.action_type === 1">
                 <div class="changeCtn">
@@ -1421,6 +1450,9 @@ export default Vue.extend({
       loading: true,
       saveLock: false,
       mustFlag: false,
+      showLessOrder: false, //仅显示待入库物料
+      showLessJHDQ: false, //仅显示待入库物料
+      showLessBSDQ: false, //仅显示待入库物料
       materialStockCheckId: 0,
       checkFlag: false,
       orderInfo: {
@@ -1529,6 +1561,10 @@ export default Vue.extend({
         order_id: '',
         order_code: ''
       },
+      stockTypeFilterList: [],
+      stockTypeFilter: '',
+      stockNameFilterList: [],
+      stockNameFilter: '',
       materialPlanList: [] // 物料计划单 + 物料补充单需要的物料
     }
   },
@@ -1548,21 +1584,15 @@ export default Vue.extend({
       ]).then((res) => {
         // 过滤掉辅料采购单，因为压根没设计辅料采购单出入库
         this.materialOrderList = res[0].data.data.filter((item: any) => item.material_type === 1)
-        this.materialShaXianList = []
-        this.materialMianLiaoList = []
-
-        this.materialOrderList.forEach((item:any) => {
-          item.info_data.forEach((itemChild:any) => {
-            let param = this.$clone(item)
-            param.info_data = [itemChild]
-            if(itemChild.yarn_type === 1) {
-              this.materialShaXianList.push(param)
-            } else if(itemChild.yarn_type === 2){
-              this.materialMianLiaoList.push(param)
-            }
+        if (this.showLessOrder) {
+          this.materialOrderList = this.materialOrderList.filter((item) => {
+            item.info_data = item.info_data.filter((itemChild) => {
+              // @ts-ignore
+              return Number(itemChild.final_push_number) < Number(itemChild.number)
+            })
+            return item.info_data.length > 0
           })
-        })
-
+        }
         this.materialProcessList = []
         res[0].data.data.forEach((item: any) => {
           this.materialProcessList = this.materialProcessList.concat(item.process_info)
@@ -1572,7 +1602,25 @@ export default Vue.extend({
           (item: any) => item.action_type !== 10 && item.action_type !== 12 && item.material_type !== 2
         )
         this.materialJHDQList = res[1].data.data.filter((item: any) => item.action_type === 10) // 计划调取
+        if (this.showLessJHDQ) {
+          this.materialJHDQList = this.materialJHDQList.filter((item) => {
+            item.info_data = item.info_data.filter((itemChild) => {
+              // @ts-ignore
+              return Number(itemChild.final_push_number) < Number(itemChild.number)
+            })
+            return item.info_data.length > 0
+          })
+        }
         this.materialBSDQList = res[1].data.data.filter((item: any) => item.action_type === 12) // 补纱调取
+        if (this.showLessBSDQ) {
+          this.materialBSDQList = this.materialBSDQList.filter((item) => {
+            item.info_data = item.info_data.filter((itemChild) => {
+              // @ts-ignore
+              return Number(itemChild.final_push_number) < Number(itemChild.number)
+            })
+            return item.info_data.length > 0
+          })
+        }
         // 统计入库日志用于出库
         const flattenStock = this.$flatten(
           this.$flatten(
@@ -1598,6 +1646,30 @@ export default Vue.extend({
           ],
           otherRule: [{ name: 'number', type: 'add' }]
         })
+
+        // 出入库单据条件筛选
+        const flattenStockAll = this.$flatten(
+          this.$flatten(
+            this.materialStockList.map((item) => {
+              item.info_data.forEach((itemChild) => {
+                // @ts-ignore
+                delete itemChild.id
+              })
+              return item
+            })
+          )
+        )
+        this.stockTypeFilterList = this.stockTypeList.filter((item: any) => {
+          return flattenStockAll.map((item) => item.action_type).indexOf(item.value) !== -1
+        })
+        this.stockNameFilterList = Array.from(new Set(flattenStockAll.map((item) => item.material_name))).map(
+          (item) => {
+            return {
+              value: item,
+              name: item
+            }
+          }
+        )
         this.productionPlanList = res[2].data.data
         this.loading = false
       })
@@ -2416,6 +2488,18 @@ export default Vue.extend({
           label: item.name
         }
       })
+    },
+    materialStockArr(): MaterialStockInfo[] {
+      return this.materialStockList
+        .filter((item) => {
+          return !this.stockTypeFilter || item.action_type === this.stockTypeFilter
+        })
+        .map((item) => {
+          item.info_data = item.info_data.filter((itemChild) => {
+            return !this.stockNameFilter || itemChild.material_name === this.stockNameFilter
+          })
+          return item
+        })
     }
   },
   mounted() {

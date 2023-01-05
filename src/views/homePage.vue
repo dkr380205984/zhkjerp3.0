@@ -565,7 +565,7 @@
                     style="max-width:100px">日期</div>
                   <div class="tcol">待办任务</div>
                   <div class="tcol"
-                    style="max-width:70px">操作</div>
+                    style="max-width:120px">操作</div>
                 </div>
               </div>
               <div class="tbody">
@@ -580,10 +580,13 @@
                     <span v-html="item.html"></span>
                   </div>
                   <div class="tcol"
-                    style="max-width:70px">
+                    style="max-width:120px">
                     <span class="blue"
                       style="cursor:pointer"
                       @click="todoUrl(item)">查看</span>
+                    <span class="red"
+                      style="cursor:pointer"
+                      @click="deleteTodo(item.id,index)">删除</span>
                   </div>
                 </div>
               </div>
@@ -1209,6 +1212,31 @@ export default Vue.extend({
       } else {
         this.$message.error('暂无该类型')
       }
+    },
+    deleteTodo(id: number, index: number) {
+      this.$confirm('是否删除该待办事项?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          todoInfo
+            .delete({
+              id
+            })
+            .then((res) => {
+              if (res.data.status) {
+                this.$message.success('待办事项已删除')
+                this.todoList.splice(index, 1)
+              }
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        })
     }
   },
   computed: {

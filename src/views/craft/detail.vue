@@ -804,6 +804,41 @@
             </div>
           </div>
         </div>
+        <div class="row"
+          v-if="craftFlag">
+          <div class="col">
+            <div class="label">经向须头：</div>
+            <div style="line-height:36px">
+              <el-switch v-model="craftXutouWarpFlag"
+                active-text="开启"
+                inactive-text="关闭">
+              </el-switch>
+              <el-tooltip class="item"
+                effect="dark"
+                :content="'此开关可开启须头模拟,注意必须输入偶数为一股'"
+                placement="top">
+                <i class="el-icon-question"
+                  style="margin-left:12px"></i>
+              </el-tooltip>
+            </div>
+            <div class="elCtn"
+              v-if="craftXutouWarpFlag"
+              style="margin-left:12px;line-height:36px">
+              <el-switch v-model="craftXutouWarpType"
+                active-text="捻须"
+                inactive-text="散须">
+              </el-switch>
+            </div>
+            <div class="elCtn"
+              v-if="craftXutouWarpFlag && craftXutouWarpType"
+              style="margin-left:12px;margin-top:4px">
+              <el-input placeholder="请输入每几捻为一股"
+                v-model="tasselsWarpNum">
+                <template slot="append">捻/股</template>
+              </el-input>
+            </div>
+          </div>
+        </div>
         <div class="row">
           <div class="col">
             <div class="label">仿真图像：</div>
@@ -1110,10 +1145,15 @@ export default Vue.extend({
     return {
       loading: true,
       craftFlag: true,
-      craftDistanceFlag: false,
+      craftDistanceFlag: true,
+      craftXutouWarpFlag: false,
+      craftXutouWarpType: true,
+      craftXutouHeight: 0, // 须头模拟拓展高度
+      craftXutouWidth: 0, // 须头模拟拓展宽度
       craftYarnIndex: 0,
       craftYarnFlag: false,
       craftCuxiFlag: true,
+      xutouHeight: 0,
       craftYarnWarp: {
         id: '',
         image_url: '',
@@ -1425,7 +1465,9 @@ export default Vue.extend({
       ctx: null,
       dom: null,
       ctxBack: null,
-      domBack: null
+      domBack: null,
+      tasselsWarpNum: 12, // 默认十二根为一股
+      tasselsWeftNum: 12
     }
   },
   methods: {
@@ -2338,10 +2380,6 @@ export default Vue.extend({
         this.warpDistance = warpDistance < 0 ? 0 : warpDistance
         this.weftDistance = weftDistance < 0 ? 0 : weftDistance
       }
-
-      this.warpDistance = warpDistance
-      this.weftDistance = weftDistance
-
       // 根据计算出来缝隙大小确定最终canvas的实际宽高像素,注意这个像素大概率和原来围巾的比例不一样，20是留白
       this.canvasHeight =
         20 +
@@ -2376,6 +2414,71 @@ export default Vue.extend({
 
       // console.log(weftRealData, warpRealData)
       // return
+
+      // 绘制须头独立代码
+      if (this.craftXutouWarpFlag) {
+        // 第一步：确认须头长度
+        const tasselsWarpWidth = (Number(this.craftInfo.weft_data.rangwei) / 2 / (this.craftCuxiFlag ? 0.3 : 0.2)) * 10 // 厘米转成毫米
+        const tasselsWeftWidthLeft =
+          (Number(this.craftInfo.warp_data.reed_width_explain[0]) / (this.craftCuxiFlag ? 0.3 : 0.2)) * 10
+        const tasselsWeftWidthRight =
+          (Number(this.craftInfo.warp_data.reed_width_explain[2]) / (this.craftCuxiFlag ? 0.3 : 0.2)) * 10
+        // 第二步：获取经纬向须头数据,用realData+缝隙生成新的数据
+        const tasselsWarp = this.changeLineToTassels(warpRealData)
+        const tasselsWeft = this.changeLineToTassels(weftRealData)
+
+        // 第三步：根据用户输入的捻参数确认须头坐标点阵
+        const tasselsWarpForNum = Math.round(
+          (tasselsWarpWidth /
+            (this.tasselsWarpNum *
+              (this.craftYarnWarp.diameter + this.warpDistance) *
+              (this.craftCuxiFlag ? 0.3 : 0.2))) *
+            Math.SQRT2
+        )
+        this.xutouHeight = ((tasselsWarpForNum * this.tasselsWarpNum) / 2) * (1 + this.craftYarnWarp.diameter)
+
+        if (this.craftXutouWarpType) {
+          const tasselsWarpMatrix = this.getTasselsMatrix(
+            tasselsWarp,
+            [10, this.canvasHeight - 10 + this.xutouHeight],
+            this.warpDistance,
+            this.craftYarnWarp.diameter,
+            tasselsWarpForNum,
+            'warp'
+          )
+          this.drawTassels(this.ctx, true, tasselsWarpMatrix, 'warp')
+        } else {
+          this.drawTasselsEasy(this.ctx, tasselsWarp, 'warp', 'top')
+          this.drawTasselsEasy(this.ctx, tasselsWarp, 'warp', 'bottom')
+        }
+        if (this.craftInfo.warp_data.back_status === 1 || this.craftInfo.weft_data.back_status === 1) {
+          // 画反面的时候经向或者纬向没数据就用正面的
+          if (weftBackRealData.length === 0) {
+            weftBackRealData = weftRealData
+          }
+          if (warpBackRealData.length === 0) {
+            warpBackRealData = warpRealData
+          }
+          const tasselsWarpBack = this.changeLineToTassels(warpBackRealData)
+          const tasselsWeftBack = this.changeLineToTassels(weftBackRealData)
+          if (this.craftXutouWarpType) {
+            const tasselsWarpBackMatrix = this.getTasselsMatrix(
+              tasselsWarpBack,
+              [10, this.canvasHeight - 10 + this.xutouHeight],
+              this.warpDistance,
+              this.craftYarnWarp.diameter,
+              tasselsWarpForNum,
+              'warp'
+            )
+            this.drawTassels(this.ctxBack, true, tasselsWarpBackMatrix, 'warp')
+          } else {
+            this.drawTasselsEasy(this.ctxBack, tasselsWarpBack, 'warp', 'top')
+            this.drawTasselsEasy(this.ctxBack, tasselsWarpBack, 'warp', 'bottom')
+          }
+        }
+
+        this.canvasHeight += this.xutouHeight * 2
+      }
       this.drawMainReal(this.ctx, weftCanvasMainData, 'weft')
       this.drawMainReal(this.ctx, warpCanvasMainData, 'warp')
       this.drawTwistShadow(this.ctx, weftCanvasData, 'weft', this.craftYarnWeft.twist_flag)
@@ -2430,42 +2533,215 @@ export default Vue.extend({
           this.craftYarnWarp.hairiness_flag === 3 || this.craftYarnWarp.hairiness_flag === 4
         )
       }
-
-      // 绘制完围巾本部了，开始绘制须头
-      // 第一步：确认须头长度
-      // const tasselsWarpWidth = Number(this.craftInfo.weft_data.rangwei) / 2 / (this.craftCuxiFlag ? 0.3 : 0.2)
-      // const tasselsWeftWidthLeft =
-      //   Number(this.craftInfo.warp_data.reed_width_explain[0]) / (this.craftCuxiFlag ? 0.3 : 0.2)
-      // const tasselsWeftWidthRight =
-      //   Number(this.craftInfo.warp_data.reed_width_explain[2]) / (this.craftCuxiFlag ? 0.3 : 0.2)
-      // // 第二步：获取经纬向须头数据,用realData+缝隙生成新的数据
-      // const tasselsWarp = this.changeLineToTassels(warpRealData)
-      // const tasselsWeft = this.changeLineToTassels(weftRealData)
-      // console.log(tasselsWarp)
-      // // 第三步：根据用户输入的捻参数确认须头坐标点阵
-      // const tasselsWarpForNum = tasselsWarpWidth / Math.SQRT2
-      // const tasselsWarpMatrix = this.getTasselsMatrix(tasselsWarp, [10, this.canvasHeight - 10], this.warpDistance)
       window.setTimeout(() => {
         this.changeCanvasToImage()
       })
     },
     // 把经纬向线数据转化成须头所需要的线数据，其实就是展开
-    changeLineToTassels(data: LineData[]): Array<{ width: number; color: string }> {
-      const returnData: { width: number; color: string }[] = []
+    changeLineToTassels(data: LineData[]): Array<{ width: number; r: number; g: number; b: number }> {
+      const returnData: { width: number; r: number; g: number; b: number }[] = []
       data.forEach((item) => {
         for (let i = 0; i < item.number; i++) {
           returnData.push({
-            color: 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')',
+            r: item.r,
+            g: item.g,
+            b: item.b,
             width: (item.width || item.height) as number
           })
         }
       })
       return returnData
     },
-    // 把须头坐标矩阵确定下来:coordinate初始坐标，distance缝隙距离
-    getTasselsMatrix(data: Array<{ width: number; color: string }>, coordinate: number[], distance: number) {
-      const returnData = []
+    // 把须头坐标矩阵确定下来:coordinate初始坐标，distance缝隙距离：捻须函数！！
+    getTasselsMatrix(
+      data: Array<{ width: number; r: number; g: number; b: number }>,
+      coordinate: number[],
+      distance: number,
+      width: number,
+      forNum: number,
+      type: 'warp' | 'weft'
+    ) {
+      const returnData: {
+        r: number
+        g: number
+        b: number
+        coordinate: { x: number; y: number }[] | { x: number; y: number }[]
+      }[] = []
+
+      // 假设每12根捻在一起（暂定此数字必为偶数，即一股由均匀的左半股和右半股组成）
+      const tasselsNum = type === 'warp' ? this.tasselsWarpNum : this.tasselsWeftNum
+
       // 先把data根据捻在一起的数据划分成均匀的矩阵
+      /*
+        1.先找到每一股捻的中点，以十二根为一股，中点坐标是 初始坐标 + 12*(线(width) + *缝隙(distance)) / 2
+        2.确定中点坐标之后再确定每根线的折线点坐标
+      */
+
+      const realDistance = 1 // 约定1为捻须的绘制缝隙，防止缝隙过大，如果需要完全去掉缝隙，把这个字段设为0
+      const space = tasselsNum * (width + distance) // 设定两个捻之间的距离
+      const realWidth = (tasselsNum * (width + realDistance)) / 2
+
+      let start = coordinate[0] + space * 0.5 - realWidth / 2 // 初始化起始坐标
+      let end = coordinate[0] + space * 0.5 + realWidth / 2 // 初始化终点坐标
+      let initY = coordinate[1]
+
+      // 把data转化成以捻为一组的二维矩阵，注意这里的捻是半股，也就是左半股+右半股+左半股+右半股+...
+      const strandMatrix = []
+      for (let i = 0; i < data.length; i += tasselsNum) {
+        if (i + tasselsNum < data.length) {
+          strandMatrix.push(data.slice(i, i + tasselsNum / 2))
+          strandMatrix.push(data.slice(i + tasselsNum / 2, i + tasselsNum))
+        }
+      }
+
+      // 下面的
+      strandMatrix.forEach((item, index) => {
+        if (index % 2 === 0) {
+          item.forEach((itemChild, indexChild) => {
+            const coordinate = []
+            for (let i = 0; i < forNum; i++) {
+              if (i % 2 === 0) {
+                coordinate.push({
+                  x: start + indexChild * (realDistance + width),
+                  y: initY
+                })
+                coordinate.push({
+                  x: end,
+                  y: initY + realWidth - indexChild * (realDistance + width)
+                })
+              } else {
+                coordinate.push({
+                  x: end - indexChild * (realDistance + width),
+                  y: initY
+                })
+                coordinate.push({
+                  x: start,
+                  y: initY + realWidth - indexChild * (realDistance + width)
+                })
+              }
+              initY += realWidth
+            }
+            returnData.push({
+              r: itemChild.r,
+              g: itemChild.g,
+              b: itemChild.b,
+              coordinate: coordinate
+            })
+            initY = initY - forNum * realWidth
+          })
+        } else {
+          item.forEach((itemChild, indexChild) => {
+            const coordinate = []
+            for (let i = 0; i < forNum; i++) {
+              if (i % 2 === 0) {
+                coordinate.push({
+                  x: end - indexChild * (realDistance + width),
+                  y: initY
+                })
+                coordinate.push({
+                  x: start,
+                  y: initY + realWidth - indexChild * (realDistance + width)
+                })
+              } else {
+                coordinate.push({
+                  x: start + indexChild * (realDistance + width),
+                  y: initY
+                })
+                coordinate.push({
+                  x: end,
+                  y: initY + realWidth - indexChild * (realDistance + width)
+                })
+              }
+              initY += realWidth
+            }
+            returnData.push({
+              r: itemChild.r,
+              g: itemChild.g,
+              b: itemChild.b,
+              coordinate: coordinate
+            })
+            initY = initY - forNum * realWidth
+          })
+          start += space
+          end += space
+        }
+      })
+      // 上面的
+      start = coordinate[0] + space * 0.5 - realWidth / 2 // 初始化起始坐标
+      end = coordinate[0] + space * 0.5 + realWidth / 2 // 初始化终点坐标
+      initY = this.xutouHeight + 10
+      strandMatrix.forEach((item, index) => {
+        if (index % 2 === 0) {
+          item.forEach((itemChild, indexChild) => {
+            const coordinate = []
+            for (let i = 0; i < forNum; i++) {
+              if (i % 2 === 0) {
+                coordinate.push({
+                  x: start + indexChild * (realDistance + width),
+                  y: initY
+                })
+                coordinate.push({
+                  x: end,
+                  y: initY - realWidth + indexChild * (realDistance + width)
+                })
+              } else {
+                coordinate.push({
+                  x: end - indexChild * (realDistance + width),
+                  y: initY
+                })
+                coordinate.push({
+                  x: start,
+                  y: initY - realWidth + indexChild * (realDistance + width)
+                })
+              }
+              initY -= realWidth
+            }
+            returnData.push({
+              r: itemChild.r,
+              g: itemChild.g,
+              b: itemChild.b,
+              coordinate: coordinate
+            })
+            initY = initY + forNum * realWidth
+          })
+        } else {
+          item.forEach((itemChild, indexChild) => {
+            const coordinate = []
+            for (let i = 0; i < forNum; i++) {
+              if (i % 2 === 0) {
+                coordinate.push({
+                  x: end - indexChild * (realDistance + width),
+                  y: initY
+                })
+                coordinate.push({
+                  x: start,
+                  y: initY - realWidth + indexChild * (realDistance + width)
+                })
+              } else {
+                coordinate.push({
+                  x: start + indexChild * (realDistance + width),
+                  y: initY
+                })
+                coordinate.push({
+                  x: end,
+                  y: initY - realWidth + indexChild * (realDistance + width)
+                })
+              }
+              initY -= realWidth
+            }
+            returnData.push({
+              r: itemChild.r,
+              g: itemChild.g,
+              b: itemChild.b,
+              coordinate: coordinate
+            })
+            initY = initY + forNum * realWidth
+          })
+          start += space
+          end += space
+        }
+      })
+      return returnData
     },
     // 把经纬向线数据转化成点阵
     changeLineToMatrix(weftData: LineData[], warpData: LineData[]): PointData[][] {
@@ -2851,7 +3127,7 @@ export default Vue.extend({
     // 绘制主体优化过的部分
     drawMainReal(ctx: any, data: any[][], type: 'warp' | 'weft') {
       if (type === 'weft') {
-        let initY = 10
+        let initY = 10 + this.xutouHeight
         data.forEach((item) => {
           let initX = 10
           const timeOut = window.setTimeout(() => {
@@ -2875,7 +3151,7 @@ export default Vue.extend({
       } else {
         let initX = 10
         data.forEach((item) => {
-          let initY = 10
+          let initY = 10 + this.xutouHeight
           const timeOut = window.setTimeout(() => {
             // 优先处理空行，一层
             if (item[0] === 2) {
@@ -2902,7 +3178,7 @@ export default Vue.extend({
         return
       }
       if (type === 'weft') {
-        let initY = 10
+        let initY = 10 + this.xutouHeight
         data.forEach((item, index) => {
           let initX = 10
           const timeOut = window.setTimeout(() => {
@@ -2971,7 +3247,7 @@ export default Vue.extend({
       } else {
         let initX = 10
         data.forEach((item, index) => {
-          let initY = 10
+          let initY = 10 + this.xutouHeight
           const timeOut = window.setTimeout(() => {
             // 优先处理空行，一层
             if (item[0] === 2) {
@@ -3040,7 +3316,7 @@ export default Vue.extend({
     // 绘制边
     drawLine(ctx: any, data: any, type: 'warp' | 'weft', rate: number, sideFlag = true, circleFlag = false) {
       if (type === 'weft') {
-        let initY = 10
+        let initY = 10 + this.xutouHeight
         // 绘制边的时候在最外层保存一下绘制毛羽的长度/圈圈的大小数据,该逻辑只要处理一次后面绘制每条边的时候均可以通用
         this.hairinessLengthArr = [[], [0, 3, 5, 9, 13], [0, 2, 4, 7, 10], [0, 1, 2, 4, 6]][
           this.craftYarnWeft.hairiness_length
@@ -3207,7 +3483,7 @@ export default Vue.extend({
         ]
         this.circleNumberArr = [[], [1, 5], [2, 7], [3, 10]][this.craftYarnWarp.circle_number]
         data.forEach((item: any[], index: number) => {
-          let initY = 10
+          let initY = 10 + this.xutouHeight
           const timeOut = window.setTimeout(() => {
             // 处理空行
             if (item[0] === 2) {
@@ -3299,13 +3575,13 @@ export default Vue.extend({
                   ctx.fillStyle = this.randomRGB(children.r * 0.75, children.g * 0.75, children.b * 0.75, 1)
                   ctx.fillRect(initX, xWidth, 1, 1)
                   this.drawSide(ctx, sideFlag, initX, xWidth, children, 'colRight', 0.75)
-                  this.drawCircle(ctx, circleFlag, initX, xWidth, children, 0.75)
+                  // this.drawCircle(ctx, circleFlag, initX, xWidth, children, 0.75)
                   xWidth++
                 } else if (itemChild === 5) {
                   ctx.fillStyle = this.randomRGB(children.r * 0.75, children.g * 0.75, children.b * 0.75, 1)
                   ctx.fillRect(initX, xWidth, 1, 1)
                   this.drawSide(ctx, sideFlag, initX, xWidth, children, 'colRight', 0.75)
-                  this.drawCircle(ctx, circleFlag, initX, xWidth, children, 0.75)
+                  // this.drawCircle(ctx, circleFlag, initX, xWidth, children, 0.75)
                   xWidth += this.weftDistance
                 }
               })
@@ -3464,6 +3740,405 @@ export default Vue.extend({
         const y = initY + this.myRandom(0, 4)
         ctx.arc(x, y, r, 0, arc)
         ctx.stroke()
+      }
+    },
+    // 绘制捻须
+    drawTassels(
+      ctx: any,
+      flag: boolean,
+      data: Array<{ coordinate: Array<{ x: number; y: number }>; r: number; g: number; b: number }>,
+      type: 'warp' | 'weft'
+    ) {
+      if (!flag) {
+        return
+      }
+      let forNum = type === 'warp' ? this.craftYarnWarp.diameter : this.craftYarnWeft.diameter // 一根线要画出阴影效果要拆成多个像素
+      data.forEach((item) => {
+        setTimeout(() => {
+          ctx.beginPath()
+          // 绘制单线段方法
+          // ctx.lineWidth = 2
+          // ctx.strokeStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+          // for (let i = 0; i < item.coordinate.length; i++) {
+          //   if (i === 0) {
+          //     ctx.moveTo(item.coordinate[i].x, item.coordinate[i].y)
+          //   } else {
+          //     ctx.lineTo(item.coordinate[i].x, item.coordinate[i].y)
+          //     ctx.stroke()
+          //   }
+          // }
+          // 绘制多线段方法
+          // ctx.lineWidth = 1
+          // for (let j = 0; j < forNum; j++) {
+          //   if (j === 0 || j === forNum - 1) {
+          //     const r = Math.max(0, item.r - 20)
+          //     const b = Math.max(0, item.b - 20)
+          //     const g = Math.max(0, item.g - 20)
+          //     ctx.strokeStyle = 'rgb(' + r + ',' + g + ',' + b + ')'
+          //   } else if (j === 1 || j === forNum - 2) {
+          //     const r = Math.max(0, item.r - 10)
+          //     const b = Math.max(0, item.b - 10)
+          //     const g = Math.max(0, item.g - 10)
+          //     ctx.strokeStyle = 'rgb(' + r + ',' + g + ',' + b + ')'
+          //   } else {
+          //     ctx.strokeStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+          //   }
+          //   for (let i = 0; i < item.coordinate.length; i++) {
+          //     if (i === 0) {
+          //       ctx.moveTo(item.coordinate[i].x + j, item.coordinate[i].y)
+          //     } else
+          //       ctx.lineTo(item.coordinate[i].x + j, item.coordinate[i].y)
+          //       ctx.stroke()
+          //     }
+          //   }
+          // }
+          // 绘制图形（四边形）方法
+          for (let i = 0; i < item.coordinate.length; i++) {
+            if (item.coordinate[i + 1] && item.coordinate[i + 1].x < item.coordinate[i].x) {
+              if (i % 2 === 0) {
+                ctx.fillStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+              } else {
+                ctx.fillStyle =
+                  'rgb(' +
+                  Math.min(item.r + 20, 255) +
+                  ',' +
+                  Math.min(item.g + 20, 255) +
+                  ',' +
+                  Math.min(item.b + 20, 255) +
+                  ')'
+              }
+
+              ctx.moveTo(item.coordinate[i].x, item.coordinate[i].y)
+              ctx.lineTo(item.coordinate[i].x + forNum - 1, item.coordinate[i].y)
+              ctx.lineTo(item.coordinate[i + 1].x + forNum - 1, item.coordinate[i + 1].y)
+              ctx.lineTo(item.coordinate[i + 1].x, item.coordinate[i + 1].y)
+              ctx.lineTo(item.coordinate[i].x, item.coordinate[i].y)
+              ctx.fill()
+            }
+          }
+          // 绘制须头模拟线的效果
+          let randomArr = []
+          for (let i = 10; i < 10 + this.xutouHeight; i += 4) {
+            const randomNum = this.myRandom(0, 3)
+            randomArr.push(i + randomNum)
+          }
+          const r1 = this.myRandom(1, 3)
+          const r2 = this.myRandom(3, 6)
+          const r3 = this.myRandom(6, 10)
+          const r4 = this.myRandom(10, 14)
+          const xw = 4
+          let y1 = 0
+          let x1 = 0
+          let y2 = 0
+          let x2 = 0
+          let y3 = 0
+          let x3 = 0
+
+          randomArr.forEach((itemChild) => {
+            const type = Math.round(this.myRandom(1, 4))
+            if (type === 1) {
+              y1 = itemChild + this.myRandom(r1, r2)
+              y2 = itemChild + this.myRandom(r2, r3)
+              y3 = itemChild + this.myRandom(r3, r4)
+              x1 = item.coordinate[0].x + this.myRandom(-xw, xw)
+              x2 = item.coordinate[0].x + this.myRandom(-xw, xw)
+              x3 = item.coordinate[0].x + this.myRandom(-xw, xw)
+            } else if (type === 2) {
+              y1 = itemChild - this.myRandom(r1, r2)
+              y2 = itemChild - this.myRandom(r2, r3)
+              y3 = itemChild - this.myRandom(r3, r4)
+              x1 = item.coordinate[0].x + this.myRandom(-xw, xw)
+              x2 = item.coordinate[0].x + this.myRandom(-xw, xw)
+              x3 = item.coordinate[0].x + this.myRandom(-xw, xw)
+            } else if (type === 3) {
+              y1 = itemChild + this.myRandom(-xw, xw)
+              y2 = itemChild + this.myRandom(-xw, xw)
+              y3 = itemChild + this.myRandom(-xw, xw)
+              x1 = item.coordinate[0].x + this.myRandom(r1, r2)
+              x2 = item.coordinate[0].x + this.myRandom(r2, r3)
+              x3 = item.coordinate[0].x + this.myRandom(r3, r4)
+            } else if (type === 4) {
+              y1 = itemChild + this.myRandom(-xw, xw)
+              y2 = itemChild + this.myRandom(-xw, xw)
+              y3 = itemChild + this.myRandom(-xw, xw)
+              x1 = item.coordinate[0].x - this.myRandom(r1, r2)
+              x2 = item.coordinate[0].x - this.myRandom(r2, r3)
+              x3 = item.coordinate[0].x - this.myRandom(r3, r4)
+            }
+            ctx.beginPath()
+            ctx.lineWidth = 1
+            ctx.strokeStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+            ctx.moveTo(item.coordinate[0].x, itemChild)
+            ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3)
+            ctx.stroke()
+          })
+        }, 0)
+      })
+
+      data.forEach((item) => {
+        setTimeout(() => {
+          ctx.beginPath()
+          for (let i = 0; i < item.coordinate.length; i++) {
+            if (item.coordinate[i + 1] && item.coordinate[i + 1].x > item.coordinate[i].x) {
+              // const grd = ctx.createLinearGradient(
+              //   item.coordinate[i].x,
+              //   item.coordinate[i].y,
+              //   item.coordinate[i + 1].x + forNum - 1,
+              //   item.coordinate[i].y
+              // )
+              // grd.addColorStop(0, 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')')
+              // grd.addColorStop(
+              //   1,
+              //   'rgb(' +
+              //     Math.min(item.r + 20, 255) +
+              //     ',' +
+              //     Math.min(item.g + 20, 255) +
+              //     ',' +
+              //     Math.min(item.b + 20, 255) +
+              //     ')'
+              // )
+              // ctx.fillStyle = grd
+              // ctx.shadowOffsetX = -1
+              // ctx.shadowOffsetY = -1
+              // ctx.shadowColor =
+              //   'rgb(' +
+              //   Math.min(item.r + 20, 255) +
+              //   ',' +
+              //   Math.min(item.g + 20, 255) +
+              //   ',' +
+              //   Math.min(item.b + 20, 255) +
+              //   ')'
+              // ctx.shadowBlur = 1
+              if (i % 2 === 0) {
+                ctx.fillStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+              } else {
+                ctx.fillStyle =
+                  'rgb(' +
+                  Math.min(item.r + 20, 255) +
+                  ',' +
+                  Math.min(item.g + 20, 255) +
+                  ',' +
+                  Math.min(item.b + 20, 255) +
+                  ')'
+              }
+              ctx.moveTo(item.coordinate[i].x, item.coordinate[i].y)
+              ctx.lineTo(item.coordinate[i].x + forNum - 1, item.coordinate[i].y)
+              ctx.lineTo(item.coordinate[i + 1].x + forNum - 1, item.coordinate[i + 1].y)
+              ctx.lineTo(item.coordinate[i + 1].x, item.coordinate[i + 1].y)
+              ctx.lineTo(item.coordinate[i].x, item.coordinate[i].y)
+              ctx.fill()
+            }
+          }
+          // 绘制须头模拟线的效果
+          let randomArr = []
+          for (let i = item.coordinate[0].y; i < item.coordinate[item.coordinate.length - 1].y; i += 4) {
+            const randomNum = this.myRandom(0, 3)
+            randomArr.push(i + randomNum)
+          }
+          const r1 = this.myRandom(1, 3)
+          const r2 = this.myRandom(3, 6)
+          const r3 = this.myRandom(6, 10)
+          const r4 = this.myRandom(10, 14)
+          const xw = 4
+          let y1 = 0
+          let x1 = 0
+          let y2 = 0
+          let x2 = 0
+          let y3 = 0
+          let x3 = 0
+
+          randomArr.forEach((itemChild) => {
+            const type = Math.round(this.myRandom(1, 4))
+            if (type === 1) {
+              y1 = itemChild + this.myRandom(r1, r2)
+              y2 = itemChild + this.myRandom(r2, r3)
+              y3 = itemChild + this.myRandom(r3, r4)
+              x1 = item.coordinate[0].x + this.myRandom(-xw, xw)
+              x2 = item.coordinate[0].x + this.myRandom(-xw, xw)
+              x3 = item.coordinate[0].x + this.myRandom(-xw, xw)
+            } else if (type === 2) {
+              y1 = itemChild - this.myRandom(r1, r2)
+              y2 = itemChild - this.myRandom(r2, r3)
+              y3 = itemChild - this.myRandom(r3, r4)
+              x1 = item.coordinate[0].x + this.myRandom(-xw, xw)
+              x2 = item.coordinate[0].x + this.myRandom(-xw, xw)
+              x3 = item.coordinate[0].x + this.myRandom(-xw, xw)
+            } else if (type === 3) {
+              y1 = itemChild + this.myRandom(-xw, xw)
+              y2 = itemChild + this.myRandom(-xw, xw)
+              y3 = itemChild + this.myRandom(-xw, xw)
+              x1 = item.coordinate[0].x + this.myRandom(r1, r2)
+              x2 = item.coordinate[0].x + this.myRandom(r2, r3)
+              x3 = item.coordinate[0].x + this.myRandom(r3, r4)
+            } else if (type === 4) {
+              y1 = itemChild + this.myRandom(-xw, xw)
+              y2 = itemChild + this.myRandom(-xw, xw)
+              y3 = itemChild + this.myRandom(-xw, xw)
+              x1 = item.coordinate[0].x - this.myRandom(r1, r2)
+              x2 = item.coordinate[0].x - this.myRandom(r2, r3)
+              x3 = item.coordinate[0].x - this.myRandom(r3, r4)
+            }
+            ctx.beginPath()
+            ctx.lineWidth = 1
+            ctx.strokeStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+            ctx.moveTo(item.coordinate[0].x, itemChild)
+            ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3)
+            ctx.stroke()
+          })
+        }, 0)
+      })
+    },
+    // 绘制散须
+    drawTasselsEasy(
+      ctx: any,
+      data: Array<{ width: number; r: number; g: number; b: number }>,
+      type: 'warp' | 'weft',
+      direction: 'top' | 'bottom'
+    ) {
+      if (direction === 'top') {
+        let initX = 10
+        let initY = 10 + this.xutouHeight
+        data.forEach((item, index) => {
+          setTimeout(() => {
+            if (index % 7 !== 0 && index % 17 !== 0 && index % 29 !== 0) {
+              ctx.beginPath()
+              ctx.lineWidth = item.width
+              ctx.strokeStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+              ctx.moveTo(initX, initY)
+              ctx.lineTo(initX, 10)
+              ctx.stroke()
+            }
+            // 绘制须头模拟线的效果
+            const randomArr = []
+            for (let i = 10; i < initY; i += 4) {
+              const randomNum = this.myRandom(0, 2)
+              randomArr.push(i + randomNum)
+            }
+            const r1 = this.myRandom(1, 2)
+            const r2 = this.myRandom(2, 4)
+            const r3 = this.myRandom(4, 7)
+            const r4 = this.myRandom(7, 10)
+            const xw = 4
+            let y1 = 0
+            let x1 = 0
+            let y2 = 0
+            let x2 = 0
+            let y3 = 0
+            let x3 = 0
+
+            randomArr.forEach((itemChild) => {
+              const type = Math.round(this.myRandom(1, 4))
+              if (type === 1) {
+                y1 = itemChild + this.myRandom(r1, r2)
+                y2 = itemChild + this.myRandom(r2, r3)
+                y3 = itemChild + this.myRandom(r3, r4)
+                x1 = initX + this.myRandom(-xw, xw)
+                x2 = initX + this.myRandom(-xw, xw)
+                x3 = initX + this.myRandom(-xw, xw)
+              } else if (type === 2) {
+                y1 = itemChild - this.myRandom(r1, r2)
+                y2 = itemChild - this.myRandom(r2, r3)
+                y3 = itemChild - this.myRandom(r3, r4)
+                x1 = initX + this.myRandom(-xw, xw)
+                x2 = initX + this.myRandom(-xw, xw)
+                x3 = initX + this.myRandom(-xw, xw)
+              } else if (type === 3) {
+                y1 = itemChild + this.myRandom(-xw, xw)
+                y2 = itemChild + this.myRandom(-xw, xw)
+                y3 = itemChild + this.myRandom(-xw, xw)
+                x1 = initX + this.myRandom(r1, r2)
+                x2 = initX + this.myRandom(r2, r3)
+                x3 = initX + this.myRandom(r3, r4)
+              } else if (type === 4) {
+                y1 = itemChild + this.myRandom(-xw, xw)
+                y2 = itemChild + this.myRandom(-xw, xw)
+                y3 = itemChild + this.myRandom(-xw, xw)
+                x1 = initX - this.myRandom(r1, r2)
+                x2 = initX - this.myRandom(r2, r3)
+                x3 = initX - this.myRandom(r3, r4)
+              }
+              ctx.beginPath()
+              ctx.lineWidth = 1
+              ctx.strokeStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+              ctx.moveTo(initX, itemChild)
+              ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3)
+              ctx.stroke()
+            })
+            initX += item.width + this.warpDistance
+          }, 0)
+        })
+      } else if (direction === 'bottom') {
+        let initX = 10
+        let initY = this.xutouHeight + this.canvasHeight - 10
+        data.forEach((item, index) => {
+          setTimeout(() => {
+            if (index % 11 !== 0 && index % 19 !== 0 && index % 31 !== 0) {
+              ctx.beginPath()
+              ctx.lineWidth = item.width
+              ctx.strokeStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+              ctx.moveTo(initX, initY)
+              ctx.lineTo(initX, initY + this.xutouHeight)
+              ctx.stroke()
+            }
+            // 绘制须头模拟线的效果
+            const randomArr = []
+            for (let i = initY; i < initY + this.xutouHeight; i += 4) {
+              const randomNum = this.myRandom(0, 2)
+              randomArr.push(i + randomNum)
+            }
+            const r1 = this.myRandom(1, 2)
+            const r2 = this.myRandom(2, 4)
+            const r3 = this.myRandom(4, 7)
+            const r4 = this.myRandom(7, 10)
+            const xw = 4
+            let y1 = 0
+            let x1 = 0
+            let y2 = 0
+            let x2 = 0
+            let y3 = 0
+            let x3 = 0
+
+            randomArr.forEach((itemChild) => {
+              const type = Math.round(this.myRandom(1, 4))
+              if (type === 1) {
+                y1 = itemChild + this.myRandom(r1, r2)
+                y2 = itemChild + this.myRandom(r2, r3)
+                y3 = itemChild + this.myRandom(r3, r4)
+                x1 = initX + this.myRandom(-xw, xw)
+                x2 = initX + this.myRandom(-xw, xw)
+                x3 = initX + this.myRandom(-xw, xw)
+              } else if (type === 2) {
+                y1 = itemChild - this.myRandom(r1, r2)
+                y2 = itemChild - this.myRandom(r2, r3)
+                y3 = itemChild - this.myRandom(r3, r4)
+                x1 = initX + this.myRandom(-xw, xw)
+                x2 = initX + this.myRandom(-xw, xw)
+                x3 = initX + this.myRandom(-xw, xw)
+              } else if (type === 3) {
+                y1 = itemChild + this.myRandom(-xw, xw)
+                y2 = itemChild + this.myRandom(-xw, xw)
+                y3 = itemChild + this.myRandom(-xw, xw)
+                x1 = initX + this.myRandom(r1, r2)
+                x2 = initX + this.myRandom(r2, r3)
+                x3 = initX + this.myRandom(r3, r4)
+              } else if (type === 4) {
+                y1 = itemChild + this.myRandom(-xw, xw)
+                y2 = itemChild + this.myRandom(-xw, xw)
+                y3 = itemChild + this.myRandom(-xw, xw)
+                x1 = initX - this.myRandom(r1, r2)
+                x2 = initX - this.myRandom(r2, r3)
+                x3 = initX - this.myRandom(r3, r4)
+              }
+              ctx.beginPath()
+              ctx.lineWidth = 1
+              ctx.strokeStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+              ctx.moveTo(initX, itemChild)
+              ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3)
+              ctx.stroke()
+            })
+            initX += item.width + this.warpDistance
+          }, 0)
+        })
       }
     },
     // 初始化矩阵
