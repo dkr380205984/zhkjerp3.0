@@ -804,6 +804,41 @@
             </div>
           </div>
         </div>
+        <div class="row"
+          v-if="craftFlag">
+          <div class="col">
+            <div class="label">经向须头：</div>
+            <div style="line-height:36px">
+              <el-switch v-model="craftXutouWarpFlag"
+                active-text="开启"
+                inactive-text="关闭">
+              </el-switch>
+              <el-tooltip class="item"
+                effect="dark"
+                :content="'此开关可开启须头模拟,注意必须输入偶数为一股'"
+                placement="top">
+                <i class="el-icon-question"
+                  style="margin-left:12px"></i>
+              </el-tooltip>
+            </div>
+            <div class="elCtn"
+              v-if="craftXutouWarpFlag"
+              style="margin-left:12px;line-height:36px">
+              <el-switch v-model="craftXutouWarpType"
+                active-text="捻须"
+                inactive-text="散须">
+              </el-switch>
+            </div>
+            <div class="elCtn"
+              v-if="craftXutouWarpFlag && craftXutouWarpType"
+              style="margin-left:12px;margin-top:4px">
+              <el-input placeholder="请输入每几捻为一股"
+                v-model="tasselsWarpNum">
+                <template slot="append">捻/股</template>
+              </el-input>
+            </div>
+          </div>
+        </div>
         <div class="row">
           <div class="col">
             <div class="label">仿真图像：</div>
@@ -847,13 +882,13 @@
               <canvas ref="myCanvas"
                 style="display:none"
                 :width="canvasWidth"
-                :height="canvasHeight + 500"></canvas>
+                :height="canvasHeight"></canvas>
               <img ref="img"
                 @mousedown.prevent="showMagnifier=true"
                 @mousemove="enlargeImg($event)"
                 @mouseup="showMagnifier=false"
                 @mouseleave="showMagnifier=false"
-                :height="canvasHeight/canvasWidth*600 + 500"
+                :height="canvasHeight/canvasWidth*600"
                 :class="{'cursorMagnifier':showMagnifier}"
                 src="" />
               <canvas class="floatRightTop"
@@ -1111,9 +1146,14 @@ export default Vue.extend({
       loading: true,
       craftFlag: true,
       craftDistanceFlag: true,
+      craftXutouWarpFlag: false,
+      craftXutouWarpType: true,
+      craftXutouHeight: 0, // 须头模拟拓展高度
+      craftXutouWidth: 0, // 须头模拟拓展宽度
       craftYarnIndex: 0,
       craftYarnFlag: false,
       craftCuxiFlag: true,
+      xutouHeight: 0,
       craftYarnWarp: {
         id: '',
         image_url: '',
@@ -2340,10 +2380,6 @@ export default Vue.extend({
         this.warpDistance = warpDistance < 0 ? 0 : warpDistance
         this.weftDistance = weftDistance < 0 ? 0 : weftDistance
       }
-
-      this.warpDistance = warpDistance
-      this.weftDistance = weftDistance
-
       // 根据计算出来缝隙大小确定最终canvas的实际宽高像素,注意这个像素大概率和原来围巾的比例不一样，20是留白
       this.canvasHeight =
         20 +
@@ -2378,118 +2414,160 @@ export default Vue.extend({
 
       // console.log(weftRealData, warpRealData)
       // return
+
+      // 绘制须头独立代码
+      if (this.craftXutouWarpFlag) {
+        // 第一步：确认须头长度
+        const tasselsWarpWidth = (Number(this.craftInfo.weft_data.rangwei) / 2 / (this.craftCuxiFlag ? 0.3 : 0.2)) * 10 // 厘米转成毫米
+        const tasselsWeftWidthLeft =
+          (Number(this.craftInfo.warp_data.reed_width_explain[0]) / (this.craftCuxiFlag ? 0.3 : 0.2)) * 10
+        const tasselsWeftWidthRight =
+          (Number(this.craftInfo.warp_data.reed_width_explain[2]) / (this.craftCuxiFlag ? 0.3 : 0.2)) * 10
+        // 第二步：获取经纬向须头数据,用realData+缝隙生成新的数据
+        const tasselsWarp = this.changeLineToTassels(warpRealData)
+        const tasselsWeft = this.changeLineToTassels(weftRealData)
+
+        // 第三步：根据用户输入的捻参数确认须头坐标点阵
+        const tasselsWarpForNum = Math.round(
+          (tasselsWarpWidth /
+            (this.tasselsWarpNum *
+              (this.craftYarnWarp.diameter + this.warpDistance) *
+              (this.craftCuxiFlag ? 0.3 : 0.2))) *
+            Math.SQRT2
+        )
+        this.xutouHeight = ((tasselsWarpForNum * this.tasselsWarpNum) / 2) * (1 + this.craftYarnWarp.diameter)
+
+        if (this.craftXutouWarpType) {
+          const tasselsWarpMatrix = this.getTasselsMatrix(
+            tasselsWarp,
+            [10, this.canvasHeight - 10 + this.xutouHeight],
+            this.warpDistance,
+            this.craftYarnWarp.diameter,
+            tasselsWarpForNum,
+            'warp'
+          )
+          this.drawTassels(this.ctx, true, tasselsWarpMatrix, 'warp')
+        } else {
+          this.drawTasselsEasy(this.ctx, tasselsWarp, 'warp', 'top')
+          this.drawTasselsEasy(this.ctx, tasselsWarp, 'warp', 'bottom')
+        }
+        if (this.craftInfo.warp_data.back_status === 1 || this.craftInfo.weft_data.back_status === 1) {
+          // 画反面的时候经向或者纬向没数据就用正面的
+          if (weftBackRealData.length === 0) {
+            weftBackRealData = weftRealData
+          }
+          if (warpBackRealData.length === 0) {
+            warpBackRealData = warpRealData
+          }
+          const tasselsWarpBack = this.changeLineToTassels(warpBackRealData)
+          const tasselsWeftBack = this.changeLineToTassels(weftBackRealData)
+          if (this.craftXutouWarpType) {
+            const tasselsWarpBackMatrix = this.getTasselsMatrix(
+              tasselsWarpBack,
+              [10, this.canvasHeight - 10 + this.xutouHeight],
+              this.warpDistance,
+              this.craftYarnWarp.diameter,
+              tasselsWarpForNum,
+              'warp'
+            )
+            this.drawTassels(this.ctxBack, true, tasselsWarpBackMatrix, 'warp')
+          } else {
+            this.drawTasselsEasy(this.ctxBack, tasselsWarpBack, 'warp', 'top')
+            this.drawTasselsEasy(this.ctxBack, tasselsWarpBack, 'warp', 'bottom')
+          }
+        }
+
+        this.canvasHeight += this.xutouHeight * 2
+      }
       this.drawMainReal(this.ctx, weftCanvasMainData, 'weft')
       this.drawMainReal(this.ctx, warpCanvasMainData, 'warp')
-      // this.drawTwistShadow(this.ctx, weftCanvasData, 'weft', this.craftYarnWeft.twist_flag)
-      // this.drawTwistShadow(this.ctx, warpCanvasData, 'warp', this.craftYarnWarp.twist_flag)
-      // this.drawLine(
-      //   this.ctx,
-      //   weftCanvasData,
-      //   'weft',
-      //   this.craftYarnWeft.hairiness_density,
-      //   this.craftYarnWeft.hairiness_flag === 2 || this.craftYarnWeft.hairiness_flag === 4,
-      //   this.craftYarnWeft.hairiness_flag === 3 || this.craftYarnWeft.hairiness_flag === 4
-      // )
-      // this.drawLine(
-      //   this.ctx,
-      //   warpCanvasData,
-      //   'warp',
-      //   this.craftYarnWarp.hairiness_density,
-      //   this.craftYarnWarp.hairiness_flag === 2 || this.craftYarnWarp.hairiness_flag === 4,
-      //   this.craftYarnWarp.hairiness_flag === 3 || this.craftYarnWarp.hairiness_flag === 4
-      // )
-      // if (this.craftInfo.warp_data.back_status === 1 || this.craftInfo.weft_data.back_status === 1) {
-      //   // 画反面的时候经向或者纬向没数据就用正面的
-      //   if (weftBackRealData.length === 0) {
-      //     weftBackRealData = weftRealData
-      //   }
-      //   if (warpBackRealData.length === 0) {
-      //     warpBackRealData = warpRealData
-      //   }
-      //   const matrixBackData = this.changeLineToMatrix(weftBackRealData, warpBackRealData)
-      //   const weftBackCanvasData = this.initLineFn(matrixBackData, 'weft', matrixWidth)
-      //   const warpBackCanvasData = this.initLineFn(this.transposeArr(matrixBackData), 'warp', matrixHeight)
-      //   const weftCanvasBackMainData = this.initMainMatrix(weftBackCanvasData, this.warpDistance)
-      //   const warpCanvasBackMainData = this.initMainMatrix(warpBackCanvasData, this.weftDistance)
-      //   this.drawMainReal(this.ctxBack, weftCanvasBackMainData, 'weft')
-      //   this.drawMainReal(this.ctxBack, warpCanvasBackMainData, 'warp')
-      //   this.drawTwistShadow(this.ctxBack, weftBackCanvasData, 'weft', this.craftYarnWeft.twist_flag)
-      //   this.drawTwistShadow(this.ctxBack, warpBackCanvasData, 'warp', this.craftYarnWarp.twist_flag)
-      //   this.drawLine(
-      //     this.ctxBack,
-      //     weftBackCanvasData,
-      //     'weft',
-      //     this.craftYarnWeft.hairiness_density,
-      //     this.craftYarnWeft.hairiness_flag === 2 || this.craftYarnWeft.hairiness_flag === 4,
-      //     this.craftYarnWeft.hairiness_flag === 3 || this.craftYarnWeft.hairiness_flag === 4
-      //   )
-      //   this.drawLine(
-      //     this.ctxBack,
-      //     warpBackCanvasData,
-      //     'warp',
-      //     this.craftYarnWarp.hairiness_density,
-      //     this.craftYarnWarp.hairiness_flag === 2 || this.craftYarnWarp.hairiness_flag === 4,
-      //     this.craftYarnWarp.hairiness_flag === 3 || this.craftYarnWarp.hairiness_flag === 4
-      //   )
-      // }
-
-      // 绘制完围巾本部了，开始绘制须头
-      // 第一步：确认须头长度
-      const tasselsWarpWidth = (Number(this.craftInfo.weft_data.rangwei) / 2 / (this.craftCuxiFlag ? 0.3 : 0.2)) * 10 // 厘米转成毫米
-      const tasselsWeftWidthLeft =
-        (Number(this.craftInfo.warp_data.reed_width_explain[0]) / (this.craftCuxiFlag ? 0.3 : 0.2)) * 10
-      const tasselsWeftWidthRight =
-        (Number(this.craftInfo.warp_data.reed_width_explain[2]) / (this.craftCuxiFlag ? 0.3 : 0.2)) * 10
-      // 第二步：获取经纬向须头数据,用realData+缝隙生成新的数据
-      const tasselsWarp = this.changeLineToTassels(warpRealData)
-      const tasselsWeft = this.changeLineToTassels(weftRealData)
-      console.log(tasselsWarp)
-      // 第三步：根据用户输入的捻参数确认须头坐标点阵
-      const tasselsWarpForNum = Math.round(
-        (tasselsWarpWidth /
-          (this.tasselsWarpNum *
-            (this.craftYarnWarp.diameter + this.warpDistance) *
-            (this.craftCuxiFlag ? 0.3 : 0.2))) *
-          Math.SQRT2
+      this.drawTwistShadow(this.ctx, weftCanvasData, 'weft', this.craftYarnWeft.twist_flag)
+      this.drawTwistShadow(this.ctx, warpCanvasData, 'warp', this.craftYarnWarp.twist_flag)
+      this.drawLine(
+        this.ctx,
+        weftCanvasData,
+        'weft',
+        this.craftYarnWeft.hairiness_density,
+        this.craftYarnWeft.hairiness_flag === 2 || this.craftYarnWeft.hairiness_flag === 4,
+        this.craftYarnWeft.hairiness_flag === 3 || this.craftYarnWeft.hairiness_flag === 4
       )
-      console.log(tasselsWarpForNum)
-      const tasselsWarpMatrix = this.getTasselsMatrix(
-        tasselsWarp,
-        [10, this.canvasHeight - 10],
-        this.warpDistance,
-        this.craftYarnWarp.diameter,
-        tasselsWarpForNum,
-        'warp'
+      this.drawLine(
+        this.ctx,
+        warpCanvasData,
+        'warp',
+        this.craftYarnWarp.hairiness_density,
+        this.craftYarnWarp.hairiness_flag === 2 || this.craftYarnWarp.hairiness_flag === 4,
+        this.craftYarnWarp.hairiness_flag === 3 || this.craftYarnWarp.hairiness_flag === 4
       )
-      this.drawTassels(this.ctx, true, tasselsWarpMatrix, 'warp')
+      if (this.craftInfo.warp_data.back_status === 1 || this.craftInfo.weft_data.back_status === 1) {
+        // 画反面的时候经向或者纬向没数据就用正面的
+        if (weftBackRealData.length === 0) {
+          weftBackRealData = weftRealData
+        }
+        if (warpBackRealData.length === 0) {
+          warpBackRealData = warpRealData
+        }
+        const matrixBackData = this.changeLineToMatrix(weftBackRealData, warpBackRealData)
+        const weftBackCanvasData = this.initLineFn(matrixBackData, 'weft', matrixWidth)
+        const warpBackCanvasData = this.initLineFn(this.transposeArr(matrixBackData), 'warp', matrixHeight)
+        const weftCanvasBackMainData = this.initMainMatrix(weftBackCanvasData, this.warpDistance)
+        const warpCanvasBackMainData = this.initMainMatrix(warpBackCanvasData, this.weftDistance)
+        this.drawMainReal(this.ctxBack, weftCanvasBackMainData, 'weft')
+        this.drawMainReal(this.ctxBack, warpCanvasBackMainData, 'warp')
+        this.drawTwistShadow(this.ctxBack, weftBackCanvasData, 'weft', this.craftYarnWeft.twist_flag)
+        this.drawTwistShadow(this.ctxBack, warpBackCanvasData, 'warp', this.craftYarnWarp.twist_flag)
+        this.drawLine(
+          this.ctxBack,
+          weftBackCanvasData,
+          'weft',
+          this.craftYarnWeft.hairiness_density,
+          this.craftYarnWeft.hairiness_flag === 2 || this.craftYarnWeft.hairiness_flag === 4,
+          this.craftYarnWeft.hairiness_flag === 3 || this.craftYarnWeft.hairiness_flag === 4
+        )
+        this.drawLine(
+          this.ctxBack,
+          warpBackCanvasData,
+          'warp',
+          this.craftYarnWarp.hairiness_density,
+          this.craftYarnWarp.hairiness_flag === 2 || this.craftYarnWarp.hairiness_flag === 4,
+          this.craftYarnWarp.hairiness_flag === 3 || this.craftYarnWarp.hairiness_flag === 4
+        )
+      }
       window.setTimeout(() => {
         this.changeCanvasToImage()
       })
     },
     // 把经纬向线数据转化成须头所需要的线数据，其实就是展开
-    changeLineToTassels(data: LineData[]): Array<{ width: number; color: string }> {
-      const returnData: { width: number; color: string }[] = []
+    changeLineToTassels(data: LineData[]): Array<{ width: number; r: number; g: number; b: number }> {
+      const returnData: { width: number; r: number; g: number; b: number }[] = []
       data.forEach((item) => {
         for (let i = 0; i < item.number; i++) {
           returnData.push({
-            color: 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')',
+            r: item.r,
+            g: item.g,
+            b: item.b,
             width: (item.width || item.height) as number
           })
         }
       })
       return returnData
     },
-    // 把须头坐标矩阵确定下来:coordinate初始坐标，distance缝隙距离
+    // 把须头坐标矩阵确定下来:coordinate初始坐标，distance缝隙距离：捻须函数！！
     getTasselsMatrix(
-      data: Array<{ width: number; color: string }>,
+      data: Array<{ width: number; r: number; g: number; b: number }>,
       coordinate: number[],
       distance: number,
       width: number,
       forNum: number,
       type: 'warp' | 'weft'
     ) {
-      const returnData: { color: string; coordinate: { x: number; y: number }[] | { x: number; y: number }[] }[] = []
-      const realWidth = 2 * (distance + width)
+      const returnData: {
+        r: number
+        g: number
+        b: number
+        coordinate: { x: number; y: number }[] | { x: number; y: number }[]
+      }[] = []
+
       // 假设每12根捻在一起（暂定此数字必为偶数，即一股由均匀的左半股和右半股组成）
       const tasselsNum = type === 'warp' ? this.tasselsWarpNum : this.tasselsWeftNum
 
@@ -2499,11 +2577,14 @@ export default Vue.extend({
         2.确定中点坐标之后再确定每根线的折线点坐标
       */
 
-      const space = tasselsNum * (width + distance)
-      let start = coordinate[0] + space * 0.25 // 初始化起始坐标
-      let end = coordinate[0] + space * 0.75 // 初始化终点坐标
+      const realDistance = 1 // 约定1为捻须的绘制缝隙，防止缝隙过大，如果需要完全去掉缝隙，把这个字段设为0
+      const space = tasselsNum * (width + distance) // 设定两个捻之间的距离
+      const realWidth = (tasselsNum * (width + realDistance)) / 2
+
+      let start = coordinate[0] + space * 0.5 - realWidth / 2 // 初始化起始坐标
+      let end = coordinate[0] + space * 0.5 + realWidth / 2 // 初始化终点坐标
       let initY = coordinate[1]
-      let initIndex = 0
+
       // 把data转化成以捻为一组的二维矩阵，注意这里的捻是半股，也就是左半股+右半股+左半股+右半股+...
       const strandMatrix = []
       for (let i = 0; i < data.length; i += tasselsNum) {
@@ -2512,7 +2593,8 @@ export default Vue.extend({
           strandMatrix.push(data.slice(i + tasselsNum / 2, i + tasselsNum))
         }
       }
-      console.log(strandMatrix)
+
+      // 下面的
       strandMatrix.forEach((item, index) => {
         if (index % 2 === 0) {
           item.forEach((itemChild, indexChild) => {
@@ -2520,69 +2602,145 @@ export default Vue.extend({
             for (let i = 0; i < forNum; i++) {
               if (i % 2 === 0) {
                 coordinate.push({
-                  x: start + indexChild * (distance + width),
+                  x: start + indexChild * (realDistance + width),
                   y: initY
                 })
                 coordinate.push({
                   x: end,
-                  y: initY + space / 2 - indexChild * (distance + width)
+                  y: initY + realWidth - indexChild * (realDistance + width)
                 })
               } else {
                 coordinate.push({
-                  x: end - indexChild * (distance + width),
+                  x: end - indexChild * (realDistance + width),
                   y: initY
                 })
                 coordinate.push({
                   x: start,
-                  y: initY + space / 2 - indexChild * (distance + width)
+                  y: initY + realWidth - indexChild * (realDistance + width)
                 })
               }
-              initY += space / 2
+              initY += realWidth
             }
             returnData.push({
-              color: itemChild.color,
+              r: itemChild.r,
+              g: itemChild.g,
+              b: itemChild.b,
               coordinate: coordinate
             })
-            initY = initY - (forNum * space) / 2
+            initY = initY - forNum * realWidth
           })
-          // start += space / 2
-          // end += space / 2
         } else {
           item.forEach((itemChild, indexChild) => {
             const coordinate = []
             for (let i = 0; i < forNum; i++) {
               if (i % 2 === 0) {
                 coordinate.push({
-                  x: end - indexChild * (distance + width),
+                  x: end - indexChild * (realDistance + width),
                   y: initY
                 })
                 coordinate.push({
                   x: start,
-                  y: initY + space / 2 - indexChild * (distance + width)
+                  y: initY + realWidth - indexChild * (realDistance + width)
                 })
               } else {
                 coordinate.push({
-                  x: start + indexChild * (distance + width),
+                  x: start + indexChild * (realDistance + width),
                   y: initY
                 })
                 coordinate.push({
                   x: end,
-                  y: initY + space / 2 - indexChild * (distance + width)
+                  y: initY + realWidth - indexChild * (realDistance + width)
                 })
               }
-              initY += space / 2
+              initY += realWidth
             }
             returnData.push({
-              color: itemChild.color,
+              r: itemChild.r,
+              g: itemChild.g,
+              b: itemChild.b,
               coordinate: coordinate
             })
-            initY = initY - (forNum * space) / 2
+            initY = initY - forNum * realWidth
           })
           start += space
           end += space
         }
       })
-      console.log(returnData)
+      // 上面的
+      start = coordinate[0] + space * 0.5 - realWidth / 2 // 初始化起始坐标
+      end = coordinate[0] + space * 0.5 + realWidth / 2 // 初始化终点坐标
+      initY = this.xutouHeight + 10
+      strandMatrix.forEach((item, index) => {
+        if (index % 2 === 0) {
+          item.forEach((itemChild, indexChild) => {
+            const coordinate = []
+            for (let i = 0; i < forNum; i++) {
+              if (i % 2 === 0) {
+                coordinate.push({
+                  x: start + indexChild * (realDistance + width),
+                  y: initY
+                })
+                coordinate.push({
+                  x: end,
+                  y: initY - realWidth + indexChild * (realDistance + width)
+                })
+              } else {
+                coordinate.push({
+                  x: end - indexChild * (realDistance + width),
+                  y: initY
+                })
+                coordinate.push({
+                  x: start,
+                  y: initY - realWidth + indexChild * (realDistance + width)
+                })
+              }
+              initY -= realWidth
+            }
+            returnData.push({
+              r: itemChild.r,
+              g: itemChild.g,
+              b: itemChild.b,
+              coordinate: coordinate
+            })
+            initY = initY + forNum * realWidth
+          })
+        } else {
+          item.forEach((itemChild, indexChild) => {
+            const coordinate = []
+            for (let i = 0; i < forNum; i++) {
+              if (i % 2 === 0) {
+                coordinate.push({
+                  x: end - indexChild * (realDistance + width),
+                  y: initY
+                })
+                coordinate.push({
+                  x: start,
+                  y: initY - realWidth + indexChild * (realDistance + width)
+                })
+              } else {
+                coordinate.push({
+                  x: start + indexChild * (realDistance + width),
+                  y: initY
+                })
+                coordinate.push({
+                  x: end,
+                  y: initY - realWidth + indexChild * (realDistance + width)
+                })
+              }
+              initY -= realWidth
+            }
+            returnData.push({
+              r: itemChild.r,
+              g: itemChild.g,
+              b: itemChild.b,
+              coordinate: coordinate
+            })
+            initY = initY + forNum * realWidth
+          })
+          start += space
+          end += space
+        }
+      })
       return returnData
     },
     // 把经纬向线数据转化成点阵
@@ -2969,7 +3127,7 @@ export default Vue.extend({
     // 绘制主体优化过的部分
     drawMainReal(ctx: any, data: any[][], type: 'warp' | 'weft') {
       if (type === 'weft') {
-        let initY = 10
+        let initY = 10 + this.xutouHeight
         data.forEach((item) => {
           let initX = 10
           const timeOut = window.setTimeout(() => {
@@ -2993,7 +3151,7 @@ export default Vue.extend({
       } else {
         let initX = 10
         data.forEach((item) => {
-          let initY = 10
+          let initY = 10 + this.xutouHeight
           const timeOut = window.setTimeout(() => {
             // 优先处理空行，一层
             if (item[0] === 2) {
@@ -3020,7 +3178,7 @@ export default Vue.extend({
         return
       }
       if (type === 'weft') {
-        let initY = 10
+        let initY = 10 + this.xutouHeight
         data.forEach((item, index) => {
           let initX = 10
           const timeOut = window.setTimeout(() => {
@@ -3089,7 +3247,7 @@ export default Vue.extend({
       } else {
         let initX = 10
         data.forEach((item, index) => {
-          let initY = 10
+          let initY = 10 + this.xutouHeight
           const timeOut = window.setTimeout(() => {
             // 优先处理空行，一层
             if (item[0] === 2) {
@@ -3158,7 +3316,7 @@ export default Vue.extend({
     // 绘制边
     drawLine(ctx: any, data: any, type: 'warp' | 'weft', rate: number, sideFlag = true, circleFlag = false) {
       if (type === 'weft') {
-        let initY = 10
+        let initY = 10 + this.xutouHeight
         // 绘制边的时候在最外层保存一下绘制毛羽的长度/圈圈的大小数据,该逻辑只要处理一次后面绘制每条边的时候均可以通用
         this.hairinessLengthArr = [[], [0, 3, 5, 9, 13], [0, 2, 4, 7, 10], [0, 1, 2, 4, 6]][
           this.craftYarnWeft.hairiness_length
@@ -3325,7 +3483,7 @@ export default Vue.extend({
         ]
         this.circleNumberArr = [[], [1, 5], [2, 7], [3, 10]][this.craftYarnWarp.circle_number]
         data.forEach((item: any[], index: number) => {
-          let initY = 10
+          let initY = 10 + this.xutouHeight
           const timeOut = window.setTimeout(() => {
             // 处理空行
             if (item[0] === 2) {
@@ -3417,13 +3575,13 @@ export default Vue.extend({
                   ctx.fillStyle = this.randomRGB(children.r * 0.75, children.g * 0.75, children.b * 0.75, 1)
                   ctx.fillRect(initX, xWidth, 1, 1)
                   this.drawSide(ctx, sideFlag, initX, xWidth, children, 'colRight', 0.75)
-                  this.drawCircle(ctx, circleFlag, initX, xWidth, children, 0.75)
+                  // this.drawCircle(ctx, circleFlag, initX, xWidth, children, 0.75)
                   xWidth++
                 } else if (itemChild === 5) {
                   ctx.fillStyle = this.randomRGB(children.r * 0.75, children.g * 0.75, children.b * 0.75, 1)
                   ctx.fillRect(initX, xWidth, 1, 1)
                   this.drawSide(ctx, sideFlag, initX, xWidth, children, 'colRight', 0.75)
-                  this.drawCircle(ctx, circleFlag, initX, xWidth, children, 0.75)
+                  // this.drawCircle(ctx, circleFlag, initX, xWidth, children, 0.75)
                   xWidth += this.weftDistance
                 }
               })
@@ -3584,36 +3742,404 @@ export default Vue.extend({
         ctx.stroke()
       }
     },
-    // 绘制须头
+    // 绘制捻须
     drawTassels(
       ctx: any,
       flag: boolean,
-      data: Array<{ color: string; coordinate: Array<{ x: number; y: number }> }>,
+      data: Array<{ coordinate: Array<{ x: number; y: number }>; r: number; g: number; b: number }>,
       type: 'warp' | 'weft'
     ) {
       if (!flag) {
         return
       }
-      // console.log(ctx)
-      if (type === 'warp') {
-        ctx.lineWidth = this.craftYarnWarp.diameter
-      } else {
-        ctx.lineWidth = this.craftYarnWeft.diameter
-      }
+      let forNum = type === 'warp' ? this.craftYarnWarp.diameter : this.craftYarnWeft.diameter // 一根线要画出阴影效果要拆成多个像素
       data.forEach((item) => {
         setTimeout(() => {
           ctx.beginPath()
-          ctx.strokeStyle = item.color
+          // 绘制单线段方法
+          // ctx.lineWidth = 2
+          // ctx.strokeStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+          // for (let i = 0; i < item.coordinate.length; i++) {
+          //   if (i === 0) {
+          //     ctx.moveTo(item.coordinate[i].x, item.coordinate[i].y)
+          //   } else {
+          //     ctx.lineTo(item.coordinate[i].x, item.coordinate[i].y)
+          //     ctx.stroke()
+          //   }
+          // }
+          // 绘制多线段方法
+          // ctx.lineWidth = 1
+          // for (let j = 0; j < forNum; j++) {
+          //   if (j === 0 || j === forNum - 1) {
+          //     const r = Math.max(0, item.r - 20)
+          //     const b = Math.max(0, item.b - 20)
+          //     const g = Math.max(0, item.g - 20)
+          //     ctx.strokeStyle = 'rgb(' + r + ',' + g + ',' + b + ')'
+          //   } else if (j === 1 || j === forNum - 2) {
+          //     const r = Math.max(0, item.r - 10)
+          //     const b = Math.max(0, item.b - 10)
+          //     const g = Math.max(0, item.g - 10)
+          //     ctx.strokeStyle = 'rgb(' + r + ',' + g + ',' + b + ')'
+          //   } else {
+          //     ctx.strokeStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+          //   }
+          //   for (let i = 0; i < item.coordinate.length; i++) {
+          //     if (i === 0) {
+          //       ctx.moveTo(item.coordinate[i].x + j, item.coordinate[i].y)
+          //     } else
+          //       ctx.lineTo(item.coordinate[i].x + j, item.coordinate[i].y)
+          //       ctx.stroke()
+          //     }
+          //   }
+          // }
+          // 绘制图形（四边形）方法
           for (let i = 0; i < item.coordinate.length; i++) {
-            if (i === 0) {
+            if (item.coordinate[i + 1] && item.coordinate[i + 1].x < item.coordinate[i].x) {
+              if (i % 2 === 0) {
+                ctx.fillStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+              } else {
+                ctx.fillStyle =
+                  'rgb(' +
+                  Math.min(item.r + 20, 255) +
+                  ',' +
+                  Math.min(item.g + 20, 255) +
+                  ',' +
+                  Math.min(item.b + 20, 255) +
+                  ')'
+              }
+
               ctx.moveTo(item.coordinate[i].x, item.coordinate[i].y)
-            } else {
+              ctx.lineTo(item.coordinate[i].x + forNum - 1, item.coordinate[i].y)
+              ctx.lineTo(item.coordinate[i + 1].x + forNum - 1, item.coordinate[i + 1].y)
+              ctx.lineTo(item.coordinate[i + 1].x, item.coordinate[i + 1].y)
               ctx.lineTo(item.coordinate[i].x, item.coordinate[i].y)
-              ctx.stroke()
+              ctx.fill()
             }
           }
+          // 绘制须头模拟线的效果
+          let randomArr = []
+          for (let i = 10; i < 10 + this.xutouHeight; i += 4) {
+            const randomNum = this.myRandom(0, 3)
+            randomArr.push(i + randomNum)
+          }
+          const r1 = this.myRandom(1, 3)
+          const r2 = this.myRandom(3, 6)
+          const r3 = this.myRandom(6, 10)
+          const r4 = this.myRandom(10, 14)
+          const xw = 4
+          let y1 = 0
+          let x1 = 0
+          let y2 = 0
+          let x2 = 0
+          let y3 = 0
+          let x3 = 0
+
+          randomArr.forEach((itemChild) => {
+            const type = Math.round(this.myRandom(1, 4))
+            if (type === 1) {
+              y1 = itemChild + this.myRandom(r1, r2)
+              y2 = itemChild + this.myRandom(r2, r3)
+              y3 = itemChild + this.myRandom(r3, r4)
+              x1 = item.coordinate[0].x + this.myRandom(-xw, xw)
+              x2 = item.coordinate[0].x + this.myRandom(-xw, xw)
+              x3 = item.coordinate[0].x + this.myRandom(-xw, xw)
+            } else if (type === 2) {
+              y1 = itemChild - this.myRandom(r1, r2)
+              y2 = itemChild - this.myRandom(r2, r3)
+              y3 = itemChild - this.myRandom(r3, r4)
+              x1 = item.coordinate[0].x + this.myRandom(-xw, xw)
+              x2 = item.coordinate[0].x + this.myRandom(-xw, xw)
+              x3 = item.coordinate[0].x + this.myRandom(-xw, xw)
+            } else if (type === 3) {
+              y1 = itemChild + this.myRandom(-xw, xw)
+              y2 = itemChild + this.myRandom(-xw, xw)
+              y3 = itemChild + this.myRandom(-xw, xw)
+              x1 = item.coordinate[0].x + this.myRandom(r1, r2)
+              x2 = item.coordinate[0].x + this.myRandom(r2, r3)
+              x3 = item.coordinate[0].x + this.myRandom(r3, r4)
+            } else if (type === 4) {
+              y1 = itemChild + this.myRandom(-xw, xw)
+              y2 = itemChild + this.myRandom(-xw, xw)
+              y3 = itemChild + this.myRandom(-xw, xw)
+              x1 = item.coordinate[0].x - this.myRandom(r1, r2)
+              x2 = item.coordinate[0].x - this.myRandom(r2, r3)
+              x3 = item.coordinate[0].x - this.myRandom(r3, r4)
+            }
+            ctx.beginPath()
+            ctx.lineWidth = 1
+            ctx.strokeStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+            ctx.moveTo(item.coordinate[0].x, itemChild)
+            ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3)
+            ctx.stroke()
+          })
         }, 0)
       })
+
+      data.forEach((item) => {
+        setTimeout(() => {
+          ctx.beginPath()
+          for (let i = 0; i < item.coordinate.length; i++) {
+            if (item.coordinate[i + 1] && item.coordinate[i + 1].x > item.coordinate[i].x) {
+              // const grd = ctx.createLinearGradient(
+              //   item.coordinate[i].x,
+              //   item.coordinate[i].y,
+              //   item.coordinate[i + 1].x + forNum - 1,
+              //   item.coordinate[i].y
+              // )
+              // grd.addColorStop(0, 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')')
+              // grd.addColorStop(
+              //   1,
+              //   'rgb(' +
+              //     Math.min(item.r + 20, 255) +
+              //     ',' +
+              //     Math.min(item.g + 20, 255) +
+              //     ',' +
+              //     Math.min(item.b + 20, 255) +
+              //     ')'
+              // )
+              // ctx.fillStyle = grd
+              // ctx.shadowOffsetX = -1
+              // ctx.shadowOffsetY = -1
+              // ctx.shadowColor =
+              //   'rgb(' +
+              //   Math.min(item.r + 20, 255) +
+              //   ',' +
+              //   Math.min(item.g + 20, 255) +
+              //   ',' +
+              //   Math.min(item.b + 20, 255) +
+              //   ')'
+              // ctx.shadowBlur = 1
+              if (i % 2 === 0) {
+                ctx.fillStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+              } else {
+                ctx.fillStyle =
+                  'rgb(' +
+                  Math.min(item.r + 20, 255) +
+                  ',' +
+                  Math.min(item.g + 20, 255) +
+                  ',' +
+                  Math.min(item.b + 20, 255) +
+                  ')'
+              }
+              ctx.moveTo(item.coordinate[i].x, item.coordinate[i].y)
+              ctx.lineTo(item.coordinate[i].x + forNum - 1, item.coordinate[i].y)
+              ctx.lineTo(item.coordinate[i + 1].x + forNum - 1, item.coordinate[i + 1].y)
+              ctx.lineTo(item.coordinate[i + 1].x, item.coordinate[i + 1].y)
+              ctx.lineTo(item.coordinate[i].x, item.coordinate[i].y)
+              ctx.fill()
+            }
+          }
+          // 绘制须头模拟线的效果
+          let randomArr = []
+          for (let i = item.coordinate[0].y; i < item.coordinate[item.coordinate.length - 1].y; i += 4) {
+            const randomNum = this.myRandom(0, 3)
+            randomArr.push(i + randomNum)
+          }
+          const r1 = this.myRandom(1, 3)
+          const r2 = this.myRandom(3, 6)
+          const r3 = this.myRandom(6, 10)
+          const r4 = this.myRandom(10, 14)
+          const xw = 4
+          let y1 = 0
+          let x1 = 0
+          let y2 = 0
+          let x2 = 0
+          let y3 = 0
+          let x3 = 0
+
+          randomArr.forEach((itemChild) => {
+            const type = Math.round(this.myRandom(1, 4))
+            if (type === 1) {
+              y1 = itemChild + this.myRandom(r1, r2)
+              y2 = itemChild + this.myRandom(r2, r3)
+              y3 = itemChild + this.myRandom(r3, r4)
+              x1 = item.coordinate[0].x + this.myRandom(-xw, xw)
+              x2 = item.coordinate[0].x + this.myRandom(-xw, xw)
+              x3 = item.coordinate[0].x + this.myRandom(-xw, xw)
+            } else if (type === 2) {
+              y1 = itemChild - this.myRandom(r1, r2)
+              y2 = itemChild - this.myRandom(r2, r3)
+              y3 = itemChild - this.myRandom(r3, r4)
+              x1 = item.coordinate[0].x + this.myRandom(-xw, xw)
+              x2 = item.coordinate[0].x + this.myRandom(-xw, xw)
+              x3 = item.coordinate[0].x + this.myRandom(-xw, xw)
+            } else if (type === 3) {
+              y1 = itemChild + this.myRandom(-xw, xw)
+              y2 = itemChild + this.myRandom(-xw, xw)
+              y3 = itemChild + this.myRandom(-xw, xw)
+              x1 = item.coordinate[0].x + this.myRandom(r1, r2)
+              x2 = item.coordinate[0].x + this.myRandom(r2, r3)
+              x3 = item.coordinate[0].x + this.myRandom(r3, r4)
+            } else if (type === 4) {
+              y1 = itemChild + this.myRandom(-xw, xw)
+              y2 = itemChild + this.myRandom(-xw, xw)
+              y3 = itemChild + this.myRandom(-xw, xw)
+              x1 = item.coordinate[0].x - this.myRandom(r1, r2)
+              x2 = item.coordinate[0].x - this.myRandom(r2, r3)
+              x3 = item.coordinate[0].x - this.myRandom(r3, r4)
+            }
+            ctx.beginPath()
+            ctx.lineWidth = 1
+            ctx.strokeStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+            ctx.moveTo(item.coordinate[0].x, itemChild)
+            ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3)
+            ctx.stroke()
+          })
+        }, 0)
+      })
+    },
+    // 绘制散须
+    drawTasselsEasy(
+      ctx: any,
+      data: Array<{ width: number; r: number; g: number; b: number }>,
+      type: 'warp' | 'weft',
+      direction: 'top' | 'bottom'
+    ) {
+      if (direction === 'top') {
+        let initX = 10
+        let initY = 10 + this.xutouHeight
+        data.forEach((item, index) => {
+          setTimeout(() => {
+            if (index % 7 !== 0 && index % 17 !== 0 && index % 29 !== 0) {
+              ctx.beginPath()
+              ctx.lineWidth = item.width
+              ctx.strokeStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+              ctx.moveTo(initX, initY)
+              ctx.lineTo(initX, 10)
+              ctx.stroke()
+            }
+            // 绘制须头模拟线的效果
+            const randomArr = []
+            for (let i = 10; i < initY; i += 4) {
+              const randomNum = this.myRandom(0, 2)
+              randomArr.push(i + randomNum)
+            }
+            const r1 = this.myRandom(1, 2)
+            const r2 = this.myRandom(2, 4)
+            const r3 = this.myRandom(4, 7)
+            const r4 = this.myRandom(7, 10)
+            const xw = 4
+            let y1 = 0
+            let x1 = 0
+            let y2 = 0
+            let x2 = 0
+            let y3 = 0
+            let x3 = 0
+
+            randomArr.forEach((itemChild) => {
+              const type = Math.round(this.myRandom(1, 4))
+              if (type === 1) {
+                y1 = itemChild + this.myRandom(r1, r2)
+                y2 = itemChild + this.myRandom(r2, r3)
+                y3 = itemChild + this.myRandom(r3, r4)
+                x1 = initX + this.myRandom(-xw, xw)
+                x2 = initX + this.myRandom(-xw, xw)
+                x3 = initX + this.myRandom(-xw, xw)
+              } else if (type === 2) {
+                y1 = itemChild - this.myRandom(r1, r2)
+                y2 = itemChild - this.myRandom(r2, r3)
+                y3 = itemChild - this.myRandom(r3, r4)
+                x1 = initX + this.myRandom(-xw, xw)
+                x2 = initX + this.myRandom(-xw, xw)
+                x3 = initX + this.myRandom(-xw, xw)
+              } else if (type === 3) {
+                y1 = itemChild + this.myRandom(-xw, xw)
+                y2 = itemChild + this.myRandom(-xw, xw)
+                y3 = itemChild + this.myRandom(-xw, xw)
+                x1 = initX + this.myRandom(r1, r2)
+                x2 = initX + this.myRandom(r2, r3)
+                x3 = initX + this.myRandom(r3, r4)
+              } else if (type === 4) {
+                y1 = itemChild + this.myRandom(-xw, xw)
+                y2 = itemChild + this.myRandom(-xw, xw)
+                y3 = itemChild + this.myRandom(-xw, xw)
+                x1 = initX - this.myRandom(r1, r2)
+                x2 = initX - this.myRandom(r2, r3)
+                x3 = initX - this.myRandom(r3, r4)
+              }
+              ctx.beginPath()
+              ctx.lineWidth = 1
+              ctx.strokeStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+              ctx.moveTo(initX, itemChild)
+              ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3)
+              ctx.stroke()
+            })
+            initX += item.width + this.warpDistance
+          }, 0)
+        })
+      } else if (direction === 'bottom') {
+        let initX = 10
+        let initY = this.xutouHeight + this.canvasHeight - 10
+        data.forEach((item, index) => {
+          setTimeout(() => {
+            if (index % 11 !== 0 && index % 19 !== 0 && index % 31 !== 0) {
+              ctx.beginPath()
+              ctx.lineWidth = item.width
+              ctx.strokeStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+              ctx.moveTo(initX, initY)
+              ctx.lineTo(initX, initY + this.xutouHeight)
+              ctx.stroke()
+            }
+            // 绘制须头模拟线的效果
+            const randomArr = []
+            for (let i = initY; i < initY + this.xutouHeight; i += 4) {
+              const randomNum = this.myRandom(0, 2)
+              randomArr.push(i + randomNum)
+            }
+            const r1 = this.myRandom(1, 2)
+            const r2 = this.myRandom(2, 4)
+            const r3 = this.myRandom(4, 7)
+            const r4 = this.myRandom(7, 10)
+            const xw = 4
+            let y1 = 0
+            let x1 = 0
+            let y2 = 0
+            let x2 = 0
+            let y3 = 0
+            let x3 = 0
+
+            randomArr.forEach((itemChild) => {
+              const type = Math.round(this.myRandom(1, 4))
+              if (type === 1) {
+                y1 = itemChild + this.myRandom(r1, r2)
+                y2 = itemChild + this.myRandom(r2, r3)
+                y3 = itemChild + this.myRandom(r3, r4)
+                x1 = initX + this.myRandom(-xw, xw)
+                x2 = initX + this.myRandom(-xw, xw)
+                x3 = initX + this.myRandom(-xw, xw)
+              } else if (type === 2) {
+                y1 = itemChild - this.myRandom(r1, r2)
+                y2 = itemChild - this.myRandom(r2, r3)
+                y3 = itemChild - this.myRandom(r3, r4)
+                x1 = initX + this.myRandom(-xw, xw)
+                x2 = initX + this.myRandom(-xw, xw)
+                x3 = initX + this.myRandom(-xw, xw)
+              } else if (type === 3) {
+                y1 = itemChild + this.myRandom(-xw, xw)
+                y2 = itemChild + this.myRandom(-xw, xw)
+                y3 = itemChild + this.myRandom(-xw, xw)
+                x1 = initX + this.myRandom(r1, r2)
+                x2 = initX + this.myRandom(r2, r3)
+                x3 = initX + this.myRandom(r3, r4)
+              } else if (type === 4) {
+                y1 = itemChild + this.myRandom(-xw, xw)
+                y2 = itemChild + this.myRandom(-xw, xw)
+                y3 = itemChild + this.myRandom(-xw, xw)
+                x1 = initX - this.myRandom(r1, r2)
+                x2 = initX - this.myRandom(r2, r3)
+                x3 = initX - this.myRandom(r3, r4)
+              }
+              ctx.beginPath()
+              ctx.lineWidth = 1
+              ctx.strokeStyle = 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
+              ctx.moveTo(initX, itemChild)
+              ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3)
+              ctx.stroke()
+            })
+            initX += item.width + this.warpDistance
+          }, 0)
+        })
+      }
     },
     // 初始化矩阵
     initRect(width: number, height: number) {
@@ -3897,557 +4423,7 @@ export default Vue.extend({
       })
       .then((res) => {
         if (res.data.status) {
-          this.craftInfo = {
-            id: '1062',
-            size: '36X180+2X15',
-            user_name: '\u674e\u5143\u6e05',
-            user_phone: 13750877341,
-            craft_code: 'KRGY-2200873',
-            weight: '220',
-            title: '\u8d5b\u529b3.7\u652f\u5708\u5708\u6c99\u683c\u5b50\u957f\u5dfe',
-            desc: null,
-            reserve_column: null,
-            other_info: null,
-            is_default: 1,
-            is_share: 0,
-            edit_idea: null,
-            is_draft: 2,
-            product_id: 3951,
-            part_id: null,
-            order_id: 2977,
-            order_time_id: 3036,
-            product_info: {
-              product_code: 'KRCP-2201751-01Y',
-              system_code: 'KRCP-2201751-01Y',
-              desc: null,
-              product_id: 3951,
-              style_code: 'SLKR-2554',
-              category_name: '\u56f4\u5dfe',
-              secondary_category_name: '\u68ad\u7ec7',
-              style_data: [{ id: 102, name: '\u683c\u5b50' }],
-              color_data: [{ id: 6898, name: '\u9ed1\u7c73' }],
-              size_data: [{ id: 4324, name: '\u5747\u7801', size_info: '36*180+16', weight: '200' }],
-              component_data: [{ id: null, name: null, number: 100 }],
-              image_data: ['https://file.zwyknit.com/1670916948000.jpg']
-            },
-            warp_data: {
-              id: 4027,
-              craft_id: 1062,
-              assist_material: [{ material_id: null, apply: [null], number: null }],
-              warp_rank: [
-                [1, 2, 3, 4, 5, 6, 7],
-                [0, 1, 0, 2, 0, 3, 0],
-                ['21', '11', '11', '24', '9', '6', '21'],
-                ['2', null, null, null, null, null, null],
-                [null, null, null, null, null, null, null],
-                [null, null, null, null, null, null, null],
-                [null, null, null, null, null, null, null]
-              ],
-              merge_data_back: [],
-              merge_data: [{ row: 3, col: 0, rowspan: 1, colspan: 6, removed: false }],
-              warp_rank_back: [[], [], [], [], [], [], []],
-              weft: 185,
-              side: '\u5149\u8fb9',
-              width: null,
-              machine: '\u5251\u6746\u673a',
-              reed: 9,
-              reed_method: 2,
-              reed_width_explain: [null, '52', null],
-              reed_width: '52',
-              back_status: 2,
-              sum_up: null,
-              weight_calculate_formula: 1,
-              drafting_method: null,
-              created_at: '2022-12-13T07:50:56.000000Z',
-              updated_at: '2022-12-13T07:50:56.000000Z',
-              rel_material: [
-                {
-                  id: 16332,
-                  craft_id: 1062,
-                  material_id: 250,
-                  apply: [0, 1, 2, 3],
-                  type: 1,
-                  type_material: 1,
-                  created_at: '2022-12-13T07:50:56.000000Z',
-                  updated_at: '2022-12-13T07:50:56.000000Z'
-                },
-                {
-                  id: 16333,
-                  craft_id: 1062,
-                  material_id: null,
-                  apply: [null],
-                  type: 1,
-                  type_material: 1,
-                  created_at: '2022-12-13T07:50:56.000000Z',
-                  updated_at: '2022-12-13T07:50:56.000000Z'
-                }
-              ],
-              rel_color: [
-                {
-                  id: 11202,
-                  craft_id: 1062,
-                  color_id: 6898,
-                  color_scheme: [
-                    {
-                      color: '#F5F4E8',
-                      name: '\u5976\u767d',
-                      number: 103,
-                      material_weight: [
-                        {
-                          material_type: 1,
-                          material_id: 250,
-                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                          weight: 0.06546165
-                        }
-                      ]
-                    },
-                    {
-                      color: '#A97F27',
-                      name: '\u9a7c\u8272',
-                      number: 22,
-                      material_weight: [
-                        {
-                          material_type: 1,
-                          material_id: 250,
-                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                          weight: 0.0139821
-                        }
-                      ]
-                    },
-                    {
-                      color: '#000000',
-                      name: '\u9ed1\u8272',
-                      number: 48,
-                      material_weight: [
-                        {
-                          material_type: 1,
-                          material_id: 250,
-                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                          weight: 0.030506400000000003
-                        }
-                      ]
-                    },
-                    {
-                      color: '#B79A7E',
-                      name: '\u5361\u5176\u7070',
-                      number: 12,
-                      material_weight: [
-                        {
-                          material_type: 1,
-                          material_id: 250,
-                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                          weight: 0.007626600000000001
-                        }
-                      ]
-                    }
-                  ],
-                  weave_number: '10',
-                  type: 1,
-                  created_at: '2022-12-13T07:50:56.000000Z',
-                  updated_at: '2022-12-13T07:50:56.000000Z'
-                }
-              ],
-              material_data: [
-                {
-                  material_id: 250,
-                  material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                  apply: [0, 1, 2, 3],
-                  type_material: 1
-                },
-                { material_id: null, material_name: null, apply: [null], type_material: 1 }
-              ],
-              color_data: [
-                {
-                  color_id: 6898,
-                  color_name: '\u9ed1\u7c73',
-                  color_scheme: [
-                    {
-                      color: '#F5F4E8',
-                      name: '\u5976\u767d',
-                      number: 103,
-                      material_weight: [
-                        {
-                          material_type: 1,
-                          material_id: 250,
-                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                          weight: 0.06546165
-                        }
-                      ]
-                    },
-                    {
-                      color: '#A97F27',
-                      name: '\u9a7c\u8272',
-                      number: 22,
-                      material_weight: [
-                        {
-                          material_type: 1,
-                          material_id: 250,
-                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                          weight: 0.0139821
-                        }
-                      ]
-                    },
-                    {
-                      color: '#000000',
-                      name: '\u9ed1\u8272',
-                      number: 48,
-                      material_weight: [
-                        {
-                          material_type: 1,
-                          material_id: 250,
-                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                          weight: 0.030506400000000003
-                        }
-                      ]
-                    },
-                    {
-                      color: '#B79A7E',
-                      name: '\u5361\u5176\u7070',
-                      number: 12,
-                      material_weight: [
-                        {
-                          material_type: 1,
-                          material_id: 250,
-                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                          weight: 0.007626600000000001
-                        }
-                      ]
-                    }
-                  ],
-                  weave_number: '10'
-                }
-              ]
-            },
-            weft_data: {
-              id: 4023,
-              craft_id: 1062,
-              weft_rank: [
-                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
-                [0, 2, 0, 3, 0, 2, 0, 3, 0, 2, 0, 3, 0, 2, 0, 3, 0, 2, 0],
-                [
-                  '44',
-                  '12',
-                  '71',
-                  '4',
-                  '26',
-                  '18',
-                  '68',
-                  '4',
-                  '26',
-                  '26',
-                  '68',
-                  '4',
-                  '18',
-                  '26',
-                  '71',
-                  '4',
-                  '21',
-                  '21',
-                  '44'
-                ],
-                [
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null
-                ],
-                [
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null
-                ],
-                [
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null
-                ],
-                [
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null
-                ]
-              ],
-              weft_rank_back: [[], [], [], [], [], [], []],
-              merge_data: [],
-              back_status: 2,
-              merge_data_back: [],
-              assist_material: [{ material_id: null, apply: [null], number: null }],
-              organization: null,
-              peifu_explain: null,
-              peifu: '48.00',
-              weimi: '3.200',
-              shangchiya: null,
-              xiachiya: null,
-              neichang: 180,
-              rangwei: '43.00',
-              total: 576,
-              created_at: '2022-12-13T07:50:56.000000Z',
-              updated_at: '2022-12-13T07:50:56.000000Z',
-              rel_material: [
-                {
-                  id: 16334,
-                  craft_id: 1062,
-                  material_id: 250,
-                  apply: [0, 1, 2, 3],
-                  type: 2,
-                  type_material: 1,
-                  created_at: '2022-12-13T07:50:56.000000Z',
-                  updated_at: '2022-12-13T07:50:56.000000Z'
-                },
-                {
-                  id: 16335,
-                  craft_id: 1062,
-                  material_id: null,
-                  apply: [null],
-                  type: 2,
-                  type_material: 1,
-                  created_at: '2022-12-13T07:50:56.000000Z',
-                  updated_at: '2022-12-13T07:50:56.000000Z'
-                }
-              ],
-              rel_color: [
-                {
-                  id: 11203,
-                  craft_id: 1062,
-                  color_id: 6898,
-                  color_scheme: [
-                    {
-                      color: '#F5F4E8',
-                      name: '\u5976\u767d',
-                      number: 457,
-                      material_weight: [
-                        {
-                          material_type: 1,
-                          material_id: 250,
-                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                          weight: 0.06772739999999998
-                        }
-                      ]
-                    },
-                    {
-                      color: '#A97F27',
-                      name: '\u9a7c\u8272',
-                      material_weight: [
-                        {
-                          material_type: 1,
-                          material_id: 250,
-                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                          weight: 0
-                        }
-                      ],
-                      number: 0
-                    },
-                    {
-                      color: '#000000',
-                      name: '\u9ed1\u8272',
-                      number: 103,
-                      material_weight: [
-                        {
-                          material_type: 1,
-                          material_id: 250,
-                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                          weight: 0.015264599999999996
-                        }
-                      ]
-                    },
-                    {
-                      color: '#B79A7E',
-                      name: '\u5361\u5176\u7070',
-                      number: 16,
-                      material_weight: [
-                        {
-                          material_type: 1,
-                          material_id: 250,
-                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                          weight: 0.0023711999999999995
-                        }
-                      ]
-                    }
-                  ],
-                  weave_number: '10',
-                  type: 2,
-                  created_at: '2022-12-13T07:50:56.000000Z',
-                  updated_at: '2022-12-13T07:50:56.000000Z'
-                }
-              ],
-              material_data: [
-                {
-                  material_id: 250,
-                  material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                  apply: [0, 1, 2, 3],
-                  type_material: 1
-                },
-                { material_id: null, material_name: null, apply: [null], type_material: 1 }
-              ],
-              color_data: [
-                {
-                  color_id: 6898,
-                  color_name: '\u9ed1\u7c73',
-                  color_scheme: [
-                    {
-                      color: '#F5F4E8',
-                      name: '\u5976\u767d',
-                      number: 457,
-                      material_weight: [
-                        {
-                          material_type: 1,
-                          material_id: 250,
-                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                          weight: 0.06772739999999998
-                        }
-                      ]
-                    },
-                    {
-                      color: '#A97F27',
-                      name: '\u9a7c\u8272',
-                      material_weight: [
-                        {
-                          material_type: 1,
-                          material_id: 250,
-                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                          weight: 0
-                        }
-                      ],
-                      number: 0
-                    },
-                    {
-                      color: '#000000',
-                      name: '\u9ed1\u8272',
-                      number: 103,
-                      material_weight: [
-                        {
-                          material_type: 1,
-                          material_id: 250,
-                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                          weight: 0.015264599999999996
-                        }
-                      ]
-                    },
-                    {
-                      color: '#B79A7E',
-                      name: '\u5361\u5176\u7070',
-                      number: 16,
-                      material_weight: [
-                        {
-                          material_type: 1,
-                          material_id: 250,
-                          material_name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                          weight: 0.0023711999999999995
-                        }
-                      ]
-                    }
-                  ],
-                  weave_number: '10'
-                }
-              ]
-            },
-            image_data: [],
-            draft_method: {
-              PM: [
-                {
-                  value: '3,4,5,6',
-                  repeat: 1,
-                  number: '185',
-                  total: 0,
-                  children: [{ number: null, children: [{ value: null, repeat: null }] }]
-                }
-              ],
-              PMFlag: 'normal',
-              GL: [
-                [
-                  [
-                    { value: '1,3,5', mark: null },
-                    { value: '2,4,6', mark: null },
-                    { value: null, mark: null }
-                  ]
-                ]
-              ],
-              GLFlag: 'normal',
-              GLRepeat: [[{ start: null, end: null, repeat: null }]],
-              PMDesc: null,
-              GLDesc: null
-            },
-            yarn_color_weight: null,
-            peise_yarn_weight: null,
-            yarn_coefficient: [
-              {
-                id: 250,
-                name: '3.7\u652f\u6da4\u7eb6\u5708\u5708\u7eb1\u8272\u7b52(\u957f\u7ea4)',
-                value: '0.285',
-                chuankou: '2'
-              }
-            ],
-            product_time: '2022-12-20',
-            calc_weight_way: 1,
-            process_data: [
-              { process_id: 287, process_name: '\u62c9\u6bdb' },
-              { process_id: 291, process_name: '\u6413\u987b' }
-            ],
-            create_time: '2022-12-13T07:43:11.000000Z'
-          } as any
+          this.craftInfo = res.data.data
           if (this.craftInfo.is_draft === 1) {
             this.$message('请完善草稿信息')
             this.$router.push('/craft/update?id=' + this.$route.query.id)

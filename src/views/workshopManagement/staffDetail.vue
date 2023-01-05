@@ -1,38 +1,48 @@
 <template>
-  <div id="workshopStaffDetail" class="bodyContainer" style="min-height: 1000px" v-loading="loading">
+  <div id="workshopStaffDetail"
+    class="bodyContainer"
+    style="min-height: 1000px"
+    v-loading="loading">
     <div class="module clearfix">
       <div class="detailCtn">
         <div class="elCtn">
-          <el-select
-            style="width: 95%"
+          <el-select style="width: 95%"
             @change="changeDepartment()"
             v-model="department"
             placeholder="部门筛选"
-            clearable
-          >
-            <el-option
-              v-for="(item, index) in departmentList"
+            clearable>
+            <el-option v-for="(item, index) in departmentList"
               :key="index + item.name"
               :value="item.id"
-              :label="item.name"
-            ></el-option>
+              :label="item.name"></el-option>
           </el-select>
         </div>
         <div class="elCtn">
-          <el-select v-model="order_type" placeholder="订单类型">
-            <el-option value="" label="订单/样单"></el-option>
-            <el-option :value="1" label="仅订单"></el-option>
-            <el-option :value="2" label="仅样单"></el-option>
+          <el-select v-model="order_type"
+            placeholder="订单类型">
+            <el-option value=""
+              label="订单/样单"></el-option>
+            <el-option :value="1"
+              label="仅订单"></el-option>
+            <el-option :value="2"
+              label="仅样单"></el-option>
           </el-select>
         </div>
-        <div class="elCtn" style="margin-left: 20px">
-          <el-cascader placeholder="筛选下单公司" v-model="client_id" :options="clientList" filterable clearable>
+        <div class="elCtn"
+          style="margin-left: 20px">
+          <el-cascader placeholder="筛选下单公司"
+            v-model="client_id"
+            :options="clientList"
+            filterable
+            clearable>
           </el-cascader>
         </div>
-        <div class="elCtn" style="margin-left: 20px">
-          <el-checkbox v-model="outCiPin"
-            >结算工资去除次品数量
-            <el-tooltip class="item" effect="dark" placement="top">
+        <div class="elCtn"
+          style="margin-left: 20px">
+          <el-checkbox v-model="outCiPin">结算工资去除次品数量
+            <el-tooltip class="item"
+              effect="dark"
+              placement="top">
               <div slot="content">
                 勾选前，工资计算公式 = 结算单价 * （完成数量 + 额外数量）<br />勾选后，工资计算公式 = 结算单价 *
                 （完成数量 + 额外数量 - 次品数量）
@@ -40,34 +50,35 @@
               <i class="el-icon-question"></i>
             </el-tooltip>
           </el-checkbox>
-          <el-checkbox v-model="keyBoard" @change="changeKeyBoard">打开页面键盘</el-checkbox>
+          <el-checkbox v-model="keyBoard"
+            @change="changeKeyBoard">打开页面键盘</el-checkbox>
         </div>
       </div>
     </div>
     <div class="module">
       <div class="tableCtn fixedTableCtn">
-        <div class="cover" style="position: relative; z-index: 99">
+        <div class="cover"
+          style="position: relative; z-index: 99">
           <div class="fixedRight tbody">
-            <div class="trow" style="justify-content: start">
-              <div class="tcol bgGray" style="min-width: 200px">操作</div>
+            <div class="trow"
+              style="justify-content: start">
+              <div class="tcol bgGray"
+                style="min-width: 200px">操作</div>
             </div>
-            <div v-for="(settlementLog, settlementLogIndex) in settlementLogList" :key="'process' + settlementLogIndex">
-              <div
-                class="trow"
+            <div v-for="(settlementLog, settlementLogIndex) in settlementLogList"
+              :key="'process' + settlementLogIndex">
+              <div class="trow"
                 style="justify-content: start; border-bottom: 1px solid #e9e9e9"
-                v-if="settlementLog.show"
-              >
-                <div class="tcol noPad" style="width: 0; flex: unset; border-right: unset">
-                  <div
-                    class="trow"
+                v-if="settlementLog.show">
+                <div class="tcol noPad"
+                  style="width: 0; flex: unset; border-right: unset">
+                  <div class="trow"
                     v-for="(itemDetail, indexDetail) in settlementLog.product_info"
-                    :key="indexDetail + 'indexDetail'"
-                  >
+                    :key="indexDetail + 'indexDetail'">
                     <div class="tcol"></div>
                   </div>
                 </div>
-                <div
-                  class="tcol"
+                <div class="tcol"
                   style="
                     flex-direction: row;
                     width: 200px;
@@ -75,38 +86,38 @@
                     justify-content: space-between;
                     height: 46px;
                     align-self: center;
-                  "
-                >
-                  <div class="hoverBlue" v-if="!isCopy" style="cursor: pointer" @click="copyThis(settlementLogIndex)">
+                  ">
+                  <div class="hoverBlue"
+                    v-if="!isCopy"
+                    style="cursor: pointer"
+                    @click="copyThis(settlementLogIndex)">
                     复制<br />该行
                   </div>
-                  <div
-                    class="hoverBlue"
+                  <div class="hoverBlue"
                     v-if="isCopy && copyLine[0] === settlementLogIndex"
                     style="cursor: pointer"
-                    @click="isCopy = false"
-                  >
+                    @click="isCopy = false">
                     取消<br />复制
                   </div>
-                  <div
-                    class="hoverGreen"
+                  <div class="hoverGreen"
                     v-if="isCopy && copyLine[0] !== settlementLogIndex"
                     style="cursor: pointer"
-                    @click="parseThis(settlementLogIndex)"
-                  >
+                    @click="parseThis(settlementLogIndex)">
                     粘贴<br />该行
                   </div>
-                  <div class="hoverBlue" style="cursor: pointer" @click="addSettlementLog(settlementLogIndex, 'order')">
+                  <div class="hoverBlue"
+                    style="cursor: pointer"
+                    @click="addSettlementLog(settlementLogIndex, 'order')">
                     添加<br />订单
                   </div>
-                  <div
-                    class="hoverBlue"
+                  <div class="hoverBlue"
                     style="cursor: pointer"
-                    @click="addSettlementLog(settlementLogIndex, 'process')"
-                  >
+                    @click="addSettlementLog(settlementLogIndex, 'process')">
                     添加<br />工序
                   </div>
-                  <div style="cursor: pointer" class="hoverRed" @click="checkDelete(settlementLogIndex)">
+                  <div style="cursor: pointer"
+                    class="hoverRed"
+                    @click="checkDelete(settlementLogIndex)">
                     删除<br />该行
                   </div>
                 </div>
@@ -114,80 +125,84 @@
             </div>
           </div>
         </div>
-        <div class="tbody" style="overflow: auto" @mousewheel.prevent="listenWheel" ref="listId">
-          <div class="trow" style="justify-content: start">
-            <div class="tcol bgGray" style="min-width: 101px">员工姓名</div>
-            <div class="tcol bgGray" style="min-width: 101px">生产工序</div>
-            <div class="tcol bgGray" style="min-width: 101px">工序说明</div>
-            <div class="tcol bgGray" style="min-width: 101px">结算单价</div>
+        <div class="tbody"
+          style="overflow: auto"
+          @mousewheel.prevent="listenWheel"
+          ref="listId">
+          <div class="trow"
+            style="justify-content: start">
+            <div class="tcol bgGray"
+              style="min-width: 101px">员工姓名</div>
+            <div class="tcol bgGray"
+              style="min-width: 101px">生产工序</div>
+            <div class="tcol bgGray"
+              style="min-width: 101px">工序说明</div>
+            <div class="tcol bgGray"
+              style="min-width: 101px">结算单价</div>
             <div class="tcol bgGray titleFix">订单号</div>
             <div class="tcol bgGray titleFix">产品编号</div>
-            <div class="tcol bgGray" style="min-width: 150px">尺码颜色</div>
+            <div class="tcol bgGray"
+              style="min-width: 150px">尺码颜色</div>
             <div class="tcol bgGray titleFix">完成数量</div>
             <div class="tcol bgGray titleFix">额外数量</div>
             <div class="tcol bgGray titleFix">次品数</div>
             <div class="tcol bgGray titleFix">次品原因</div>
-            <div class="tcol bgGray" style="min-width: 200px">操作</div>
+            <div class="tcol bgGray"
+              style="min-width: 200px">操作</div>
           </div>
-          <div v-for="(settlementLog, settlementLogIndex) in settlementLogList" :key="'process' + settlementLogIndex">
-            <div
-              class="trow"
+          <div v-for="(settlementLog, settlementLogIndex) in settlementLogList"
+            :key="'process' + settlementLogIndex">
+            <div class="trow"
               style="justify-content: start; border-bottom: 1px solid #e9e9e9"
-              v-if="settlementLog.show"
-            >
-              <div class="tcol" style="min-width: 101px; max-width: 101px">
-                <el-cascader
-                  placeholder="员工姓名搜索"
+              v-if="settlementLog.show">
+              <div class="tcol"
+                style="min-width: 101px; max-width: 101px">
+                <el-cascader placeholder="员工姓名搜索"
                   v-model="settlementLog.staffId"
                   :options="processStaffList"
                   filterable
                   :show-all-levels="false"
-                  @change="getStaffIdList(settlementLogIndex)"
-                ></el-cascader>
+                  @change="getStaffIdList(settlementLogIndex)"></el-cascader>
               </div>
-              <div class="tcol noPad" style="overflow: unset">
+              <div class="tcol noPad"
+                style="overflow: unset">
                 <div class="trow">
-                  <div class="tcol" style="min-width: 101px; max-width: 101px">
-                    <el-cascader
-                      v-model="settlementLog.process"
+                  <div class="tcol"
+                    style="min-width: 101px; max-width: 101px">
+                    <el-cascader v-model="settlementLog.process"
                       filterable
                       :options="processList"
                       :show-all-levels="false"
                       clearable
                       placeholder="请选择工序"
-                      @change="getProcessDesc(settlementLog, settlementLogIndex)"
-                    ></el-cascader>
+                      @change="getProcessDesc(settlementLog, settlementLogIndex)"></el-cascader>
                   </div>
-                  <div class="tcol" style="min-width: 101px; max-width: 101px">
-                    <el-select
-                      v-model="settlementLog.process_desc"
+                  <div class="tcol"
+                    style="min-width: 101px; max-width: 101px">
+                    <el-select v-model="settlementLog.process_desc"
                       multiple
                       filterable
                       allow-create
                       default-first-option
                       collapse-tags
                       placeholder="请填写工序说明"
-                      @change="settlementLog.is_check = true"
-                    >
-                      <el-option
-                        v-for="(itemSon, indexSon) in settlementLog.processDesc"
+                      @change="settlementLog.is_check = true">
+                      <el-option v-for="(itemSon, indexSon) in settlementLog.processDesc"
                         :key="itemSon.value + indexSon"
                         :label="itemSon.label"
-                        :value="itemSon.value"
-                      >
+                        :value="itemSon.value">
                       </el-option>
                     </el-select>
                   </div>
-                  <div class="tcol" style="min-width: 101px; max-width: 101px">
+                  <div class="tcol"
+                    style="min-width: 101px; max-width: 101px">
                     <div style="display: flex; align-items: top">
                       <div style="width: 82px; line-height: 38px">
-                        <zh-input
-                          v-model="settlementLog.price"
+                        <zh-input v-model="settlementLog.price"
                           placeholder="结算单价"
                           :keyBoard="keyBoard"
                           type="number"
-                          @change="settlementLog.is_check = true"
-                        ></zh-input>
+                          @change="settlementLog.is_check = true"></zh-input>
                       </div>
                       <div style="width: 3em; font-size: 14px; line-height: 38px">元/件</div>
                     </div>
@@ -195,8 +210,7 @@
                   <div class="tcol noPad">
                     <div class="trow">
                       <div class="tcol titleFix">
-                        <el-select
-                          v-model="settlementLog.order_code"
+                        <el-select v-model="settlementLog.order_code"
                           filterable
                           remote
                           placeholder="请输入订单编号"
@@ -208,19 +222,16 @@
                             }
                           "
                           @change="handleSelect(settlementLog, settlementLogIndex)"
-                          @focus="querySearchAsync(settlementLog.order_code)"
-                        >
+                          @focus="querySearchAsync(settlementLog.order_code)">
                           <div style="display: flex; padding: 0 10px; width: 500px">
                             <div style="flex: 1">订单号</div>
                             <div style="flex: 1">下单公司</div>
                             <div style="flex: 1">下单时间</div>
                           </div>
-                          <el-option
-                            v-for="(item, index) in orderList"
+                          <el-option v-for="(item, index) in orderList"
                             :key="item.value + index + 'order'"
                             :label="item.label"
-                            :value="item.value + ',' + item.id"
-                          >
+                            :value="item.value + ',' + item.id">
                             <div style="display: flex">
                               <span style="flex: 1">{{ item.value }}</span>
                               <span style="flex: 1"> {{ item.client_name }} </span>
@@ -230,14 +241,11 @@
                         </el-select>
                       </div>
                       <div class="tcol noPad">
-                        <div
-                          class="trow"
+                        <div class="trow"
                           v-for="(itemDetail, indexDetail) in settlementLog.product_info"
-                          :key="indexDetail + 'indexDetail'"
-                        >
+                          :key="indexDetail + 'indexDetail'">
                           <div class="tcol titleFix">
-                            <el-select
-                              v-if="!settlementLog.order_code"
+                            <el-select v-if="!settlementLog.order_code"
                               v-model="itemDetail.code"
                               filterable
                               remote
@@ -251,8 +259,7 @@
                               "
                               :ref="'input' + settlementLogIndex + indexDetail"
                               @change="handleSelect(settlementLog, settlementLogIndex, 2, itemDetail.code, itemSon)"
-                              @focus="querySearchAsync1(itemDetail.code)"
-                            >
+                              @focus="querySearchAsync1(itemDetail.code)">
                               <div style="display: flex; padding: 0 10px; width: 800px">
                                 <div style="flex: 1">产品编号</div>
                                 <div style="flex: 1">所属订单号</div>
@@ -260,12 +267,10 @@
                                 <div style="flex: 1">下单公司</div>
                                 <div style="flex: 1">下单时间</div>
                               </div>
-                              <el-option
-                                v-for="(itemSon, i) in orderList"
+                              <el-option v-for="(itemSon, i) in orderList"
                                 :key="itemSon.value + settlementLogIndex + indexDetail + i + 'orderList'"
                                 :label="itemSon.product_name"
-                                :value="itemSon.product_name + ',' + itemSon.value"
-                              >
+                                :value="itemSon.product_name + ',' + itemSon.value">
                                 <div style="display: flex; white-space: normal">
                                   <span style="flex: 1">{{ itemSon.product_name }}</span>
                                   <span style="flex: 1">{{ itemSon.value }}</span>
@@ -278,104 +283,83 @@
                               </el-option>
                             </el-select>
                             <!-- 有订单编号情况 -->
-                            <el-select
-                              v-if="settlementLog.order_code"
+                            <el-select v-if="settlementLog.order_code"
                               v-model="itemDetail.product_id"
                               filterable
                               remote
                               placeholder="请选择产品编号"
-                              @change="changPro(settlementLog, itemDetail.product_id, indexDetail)"
-                            >
-                              <el-option
-                                v-for="(itemSon, i) in settlementLog.product_detail_info"
+                              @change="changPro(settlementLog, itemDetail.product_id, indexDetail)">
+                              <el-option v-for="(itemSon, i) in settlementLog.product_detail_info"
                                 :key="itemSon.value + settlementLogIndex + indexDetail + i + 'orderList'"
                                 :label="itemSon.product_code"
-                                :value="itemSon.product_id"
-                              >
+                                :value="itemSon.product_id">
                               </el-option>
                             </el-select>
                           </div>
-                          <div class="tcol" style="display: block; position: relative; min-width: 150px">
-                            <el-select
-                              v-model="itemDetail.chooseId"
+                          <div class="tcol"
+                            style="display: block; position: relative; min-width: 150px">
+                            <el-select v-model="itemDetail.chooseId"
                               placeholder="请选择尺码颜色"
                               @change="
                                 $forceUpdate()
                                 settlementLog.is_check = true
-                              "
-                            >
-                              <el-option
-                                v-for="(colorItem, colorIndex) in itemDetail.colorList"
+                              ">
+                              <el-option v-for="(colorItem, colorIndex) in itemDetail.colorList"
                                 :key="colorItem.size_id + ',' + colorItem.color_id + colorIndex"
                                 :label="colorItem.name"
-                                :value="colorItem.value"
-                              >
+                                :value="colorItem.value">
                               </el-option>
                             </el-select>
-                            <i
-                              class="el-icon-circle-plus-outline"
+                            <i class="el-icon-circle-plus-outline"
                               style="cursor: pointer; position: absolute; right: 15%; top: 30%"
-                              @click="addSizeColor(settlementLog, itemDetail, indexDetail)"
-                            ></i>
-                            <i
-                              class="el-icon-remove-outline"
+                              @click="addSizeColor(settlementLog, itemDetail, indexDetail)"></i>
+                            <i class="el-icon-remove-outline"
                               style="cursor: pointer; position: absolute; right: 5%; top: 30%"
-                              @click="deleteSizeColor(settlementLog, indexDetail)"
-                            ></i>
+                              @click="deleteSizeColor(settlementLog, indexDetail)"></i>
                           </div>
                           <div class="tcol titleFix">
                             <div style="display: flex; align-items: center">
-                              <zh-input
-                                v-model="itemDetail.number"
+                              <zh-input v-model="itemDetail.number"
                                 placeholder="请输入完成数量"
                                 :keyBoard="keyBoard"
                                 type="number"
-                                @change="settlementLog.is_check = true"
-                              ></zh-input>
+                                @change="settlementLog.is_check = true"></zh-input>
                               <div style="line-height: 38px">件</div>
                             </div>
                           </div>
                           <div class="tcol titleFix">
                             <div style="display: flex; align-items: center">
-                              <zh-input
-                                v-model="itemDetail.extra_number"
+                              <zh-input v-model="itemDetail.extra_number"
                                 placeholder="请输入额外数量"
                                 :keyBoard="keyBoard"
                                 type="number"
-                                @change="settlementLog.is_check = true"
-                              ></zh-input>
+                                @change="settlementLog.is_check = true"></zh-input>
                               <div style="line-height: 38px">件</div>
                             </div>
                           </div>
                           <div class="tcol titleFix">
                             <div style="display: flex; align-items: center">
-                              <zh-input
-                                v-model="itemDetail.shoddy_number"
+                              <zh-input v-model="itemDetail.shoddy_number"
                                 placeholder="请输入次品数量"
                                 :keyBoard="keyBoard"
                                 type="number"
-                                @change="settlementLog.is_check = true"
-                              ></zh-input>
+                                @change="settlementLog.is_check = true"></zh-input>
                               <div style="line-height: 38px">件</div>
                             </div>
                           </div>
                           <div class="tcol titleFix">
-                            <el-select
-                              v-model="itemDetail.shoddy_reason"
+                            <el-select v-model="itemDetail.shoddy_reason"
                               multiple
                               filterable
                               allow-create
                               default-first-option
                               collapse-tags
                               placeholder="请选择次品原因"
-                              @change="settlementLog.is_check = true"
-                            >
-                              <el-option
-                                v-for="item in substandardReason"
+                              @change="settlementLog.is_check = true">
+                              <el-option v-for="item in substandardReason"
                                 :key="item.value + 'ciPinReason'"
                                 :label="item.label"
-                                :value="item.value"
-                              >
+                                :value="item.value">
                               </el-option>
                             </el-select>
                           </div>
@@ -392,56 +376,74 @@
     </div>
     <div style="overflow: hidden; margin-top: 20px; margin-bottom: 20px">
       <div class="elCtn">
-        <el-button
-          size="small"
+        <el-button size="small"
           type="primary"
           @click="openDialog"
-          style="padding-top: 7px; padding-bottom: 7px; font-size: 16px"
-        >
+          style="padding-top: 7px; padding-bottom: 7px; font-size: 16px">
           批量添加员工
         </el-button>
       </div>
-      <div class="elCtn" style="margin-left: 20px">
-        <el-button
-          size="small"
+      <div class="elCtn"
+        style="margin-left: 20px">
+        <el-button size="small"
           type="primary"
           @click="addStaff"
-          style="padding-top: 7px; padding-bottom: 7px; font-size: 16px"
-        >
+          style="padding-top: 7px; padding-bottom: 7px; font-size: 16px">
           添加下个员工
         </el-button>
       </div>
-      <div class="elCtn" style="margin-left: 20px">
+      <div class="elCtn"
+        style="margin-left: 20px">
         <el-checkbox-group v-model="copyOption">
-          <el-dropdown :hide-on-click="false" trigger="click">
-            <el-button size="small" type="primary">
+          <el-dropdown :hide-on-click="false"
+            trigger="click">
+            <el-button size="small"
+              type="primary">
               设置复制项<i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
-            <el-tooltip class="item" effect="dark" placement="right" style="margin-left: 10px">
+            <el-tooltip class="item"
+              effect="dark"
+              placement="right"
+              style="margin-left: 10px">
               <div slot="content">注：订单如未勾选，尺码颜色将无法复制</div>
               <i class="el-icon-question"></i>
             </el-tooltip>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item> <el-checkbox label="process">生产工序</el-checkbox></el-dropdown-item>
-              <el-dropdown-item> <el-checkbox label="proces_desc">工序说明</el-checkbox></el-dropdown-item>
-              <el-dropdown-item> <el-checkbox label="price">结算单价</el-checkbox></el-dropdown-item>
-              <el-dropdown-item> <el-checkbox label="order_code">订单编号</el-checkbox></el-dropdown-item>
-              <el-dropdown-item> <el-checkbox label="size_color">尺码颜色</el-checkbox></el-dropdown-item>
+              <el-dropdown-item>
+                <el-checkbox label="process">生产工序</el-checkbox>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <el-checkbox label="proces_desc">工序说明</el-checkbox>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <el-checkbox label="price">结算单价</el-checkbox>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <el-checkbox label="order_code">订单编号</el-checkbox>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <el-checkbox label="size_color">尺码颜色</el-checkbox>
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-checkbox-group>
       </div>
     </div>
     <!-- 生产进度 -->
-    <div class="popup" v-show="addOrder" v-loading="showPopupLoading" element-loading-target>
+    <div class="popup"
+      v-show="addOrder"
+      v-loading="showPopupLoading"
+      element-loading-target>
       <div class="main">
         <div class="titleCtn">
           <span class="text">添加订单</span>
           <div class="closeCtn">
-            <span class="el-icon-close" @click="closeAddOrder()"></span>
+            <span class="el-icon-close"
+              @click="closeAddOrder()"></span>
           </div>
         </div>
-        <div class="contentCtn" style="padding-top: 15px; max-height: 700px">
+        <div class="contentCtn"
+          style="padding-top: 15px; max-height: 700px">
           <div class="editCtn packOrder">
             <div class="tableCtn">
               <div class="tbody hasTop">
@@ -456,36 +458,36 @@
                   <div class="tcol bgGray">尺寸/克重</div>
                   <div class="tcol bgGray">计划生产数量</div>
                   <div class="tcol bgGray">检验入库数量</div>
-                  <div class="tcol bgGray" style="flex: 0.2">
-                    <el-checkbox v-model="checkAll" @change="checkAllOrder"></el-checkbox>
+                  <div class="tcol bgGray"
+                    style="flex: 0.2">
+                    <el-checkbox v-model="checkAll"
+                      @change="checkAllOrder"></el-checkbox>
                   </div>
                 </div>
-                <div
-                  class="trow"
+                <div class="trow"
                   v-for="(item, index) in productionScheduleUpdate"
-                  :key="index + 'productionScheduleUpdate'"
-                >
+                  :key="index + 'productionScheduleUpdate'">
                   <div class="tcol">{{ item.order_type === 1 ? '订单' : '样单' }}</div>
                   <div class="tcol">{{ item.code }}</div>
-                  <div class="tcol noPad" style="flex: 10.3">
-                    <div class="trow" v-for="(itemPro, indexPro) in item.product_info" :key="indexPro + 'pro'">
+                  <div class="tcol noPad"
+                    style="flex: 10.3">
+                    <div class="trow"
+                      v-for="(itemPro, indexPro) in item.product_info"
+                      :key="indexPro + 'pro'">
                       <div class="tcol">{{ itemPro.product_code }}<br />{{ itemPro.category }}</div>
                       <div class="tcol">{{ itemPro.name }}</div>
                       <div class="tcol">{{ contentHtml(itemPro.desc) }}</div>
                       <div class="tcol">
-                        <el-image
-                          :src="itemPro.img.length > 0 ? itemPro.img[0] : require('@/assets/image/common/noPic.png')"
+                        <el-image :src="itemPro.img.length > 0 ? itemPro.img[0] : require('@/assets/image/common/noPic.png')"
                           :preview-src-list="itemPro.img"
                           fit="cover"
-                          style="width: 45px; height: 45px; padding: 10px 0"
-                        ></el-image>
+                          style="width: 45px; height: 45px; padding: 10px 0"></el-image>
                       </div>
-                      <div class="tcol noPad" style="flex: 5.34">
-                        <div
-                          class="trow"
+                      <div class="tcol noPad"
+                        style="flex: 5.34">
+                        <div class="trow"
                           v-for="(itemSizeColor, indexSizeColor) in itemPro.colorSizeInfo"
-                          :key="itemSizeColor.size_id + 'color' + indexSizeColor"
-                        >
+                          :key="itemSizeColor.size_id + 'color' + indexSizeColor">
                           <div class="tcol">
                             {{ (itemSizeColor.size_name || '无数据') + '/' + (itemSizeColor.color_name || '无数据') }}
                           </div>
@@ -494,7 +496,8 @@
                           </div>
                           <div class="tcol">{{ itemSizeColor.number }}</div>
                           <div class="tcol">{{ itemSizeColor.inspection_number }}</div>
-                          <div class="tcol" style="flex: 0.2">
+                          <div class="tcol"
+                            style="flex: 0.2">
                             <el-checkbox v-model="itemSizeColor.check"></el-checkbox>
                           </div>
                         </div>
@@ -507,53 +510,64 @@
           </div>
         </div>
         <div style="margin-bottom: 5px; margin-top: 5px; display: flex; justify-content: flex-end; padding-right: 25px">
-          <el-pagination
-            background
+          <el-pagination background
             :page-size="limit"
             layout="prev, pager, next"
             :total="total"
             :current-page.sync="page"
-            @current-change="changeParams"
-          >
+            @current-change="changeParams">
           </el-pagination>
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn" @click="closeAddOrder()">取消</span>
-          <span class="btn backHoverBlue" @click="confirmSubmit">确认提交</span>
+          <span class="btn borderBtn"
+            @click="closeAddOrder()">取消</span>
+          <span class="btn backHoverBlue"
+            @click="confirmSubmit">确认提交</span>
         </div>
       </div>
     </div>
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="borderBtn" @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverBlue fr" @click="workSave">确认提交</div>
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
+          <div class="btn backHoverBlue fr"
+            @click="workSave">确认提交</div>
         </div>
       </div>
     </div>
-    <el-dialog title="批量添加员工" width="70%" :visible.sync="showDialog" :before-close="closeDialog">
+    <el-dialog title="批量添加员工"
+      width="70%"
+      :visible.sync="showDialog"
+      :before-close="closeDialog">
       <div class="elCtn">
-        <el-select v-model="lostAddStaffChooseProcess" placeholder="请选择">
-          <el-option v-for="(item, index) in processStaffList" :key="item.value" :label="item.label" :value="index">
+        <el-select v-model="lostAddStaffChooseProcess"
+          placeholder="请选择">
+          <el-option v-for="(item, index) in processStaffList"
+            :key="item.value"
+            :label="item.label"
+            :value="index">
           </el-option>
         </el-select>
       </div>
-      <div class="elCtn" style="margin-left: 20px">
-        <el-button type="primary" size="small" @click="checkAllStaff">全部选中</el-button>
+      <div class="elCtn"
+        style="margin-left: 20px">
+        <el-button type="primary"
+          size="small"
+          @click="checkAllStaff">全部选中</el-button>
       </div>
       <el-checkbox-group v-model="staffIdList">
-        <el-checkbox
-          style="width: calc(100% / 8); margin-top: 10px"
+        <el-checkbox style="width: calc(100% / 8); margin-top: 10px"
           v-for="item in processStaffList[lostAddStaffChooseProcess].children"
           @change="changeMostStaff(item.id)"
           :key="item.id + '添加员工'"
-          :label="item.id"
-          >{{ item.code.slice(item.code.length - 4) + '-' + item.name }}</el-checkbox
-        >
+          :label="item.id">{{ item.code.slice(item.code.length - 4) + '-' + item.name }}</el-checkbox>
       </el-checkbox-group>
-      <span slot="footer" class="dialog-footer">
+      <span slot="footer"
+        class="dialog-footer">
         <el-button @click="closeDialog">取 消</el-button>
-        <el-button type="primary" @click="confirmData">确 定</el-button>
+        <el-button type="primary"
+          @click="confirmData">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -561,7 +575,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { staff, process, workshop, order } from '@/assets/js/api'
+import { staff, process, workshop, order, checkPriceBeyond } from '@/assets/js/api'
 import zhInput from '@/components/zhInput/zhInput.vue'
 import DeliveryVisualization from '../deliveryVisualization.vue'
 export default Vue.extend({
@@ -1418,7 +1432,7 @@ export default Vue.extend({
       }
 
       let error = false
-
+      const checkArr: any[] = [] // 查询单据单价是否超过报价
       this.settlementLogList.forEach((settlementLog: any) => {
         // console.log(settlementLog, 'settlementLog')
         if (settlementLog.process[1] === '' || settlementLog.process.length === 0) {
@@ -1458,20 +1472,65 @@ export default Vue.extend({
               : ((product_info.number || 0) + (product_info.extra_number || 0)) * (settlementLog.price || 0),
             complete_time: this.$GetDateStr(0)
           })
+          checkArr.push({
+            process_name: settlementLog.process[1],
+            product_id: product_info.product_id,
+            size_id: product_info.size_id,
+            color_id: product_info.color_id,
+            price: product_info.price
+          })
         })
       })
 
       if (error) return
-
-      workshop.save(params).then((res) => {
-        if (res.data.status) {
-          this.$message.success('提交成功')
-          this.numberUpdate = false
-          // this.$router.push('/workshopManagement/staffInputDetail?isAll=true')
-          this.$router.push('/workshopManagement/payTimeList?page=1&type=1  ')
+      // 查询单据单价是否超过报价
+      checkPriceBeyond({
+        doc_type: 14,
+        data: checkArr
+      }).then((res) => {
+        if (res.data.data.length === 0) {
+          workshop.save(params).then((res) => {
+            if (res.data.status) {
+              this.$message.success('提交成功')
+              this.numberUpdate = false
+              this.$router.push('/workshopManagement/payTimeList?page=1&type=1  ')
+            }
+          })
+          this.loading = false
+        } else {
+          const createHtml = this.$createElement
+          this.$msgbox({
+            message: createHtml(
+              'p',
+              undefined,
+              res.data.data.map((item: string) => {
+                return createHtml('p', undefined, item)
+              })
+            ),
+            title: '提示',
+            showCancelButton: true,
+            confirmButtonText: '继续提交',
+            cancelButtonText: '取消提交',
+            type: 'warning'
+          })
+            .then(() => {
+              workshop.save(params).then((res) => {
+                if (res.data.status) {
+                  this.$message.success('提交成功')
+                  this.numberUpdate = false
+                  this.$router.push('/workshopManagement/payTimeList?page=1&type=1  ')
+                }
+              })
+              this.loading = false
+            })
+            .catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消提交'
+              })
+            })
         }
       })
-      this.loading = false
     },
     // 粘贴该行
     parseThis(staffIndex: number) {

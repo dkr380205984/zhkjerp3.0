@@ -79,7 +79,19 @@ const chartsApi = {
 // 查询单据数量是否超额
 import { CheckBeyondInfo } from '@/types/otherInfo'
 const checkBeyond = (params: CheckBeyondInfo) => http.post(`${baseUrl}/doc/beyond/check`, params, 'application/json')
-
+// 查询单据单价是否超过报价
+const checkPriceBeyond = (params:
+  {
+    doc_type: number // 单据类型，同上
+    // 生产计划单数据||车间管理查询格式
+    data: Array<{
+      process_name: string
+      product_id: string
+      size_id: string
+      color_id: string
+      price: string
+    }>
+  }) => http.post(`${baseUrl}/doc/beyond/price/check`, params, 'application/json')
 // 首页
 const homePage = {
   searchAll: (params: {
@@ -98,6 +110,7 @@ const tutorialSystem = {
 const todoInfo = {
   list: (params: any) => http.get(`${baseUrl}/todo/lists`, params),
   complete: (params: { id: number[] }) => http.post(`${baseUrl}/todo/complete`, params, 'application/json'),
+  delete: (params: { id: number }) => http.post(`${baseUrl}/todo/delete`, params, 'application/json'),
 }
 
 // 单证管理
@@ -1566,5 +1579,6 @@ export {
   updateSettlePrice,
   updateStorePirce,
   chartsApi,
-  processType
+  processType,
+  checkPriceBeyond
 }

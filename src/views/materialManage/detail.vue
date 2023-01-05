@@ -1,5 +1,7 @@
 <template>
-  <div class="bodyContainer" id="materialManageDetail" v-loading="loading">
+  <div class="bodyContainer"
+    id="materialManageDetail"
+    v-loading="loading">
     <div class="module clearfix">
       <div class="titleCtn">
         <div class="title">计划原料信息</div>
@@ -45,19 +47,23 @@
             </div>
           </div>
         </div>
-        <div class="row" v-if="$route.query.supFlag">
+        <div class="row"
+          v-if="$route.query.supFlag">
           <div class="col">
             <div class="label">补纱原因：</div>
-            <div class="text" :class="{ gray: !materialSupplementInfo.desc }">
+            <div class="text"
+              :class="{ gray: !materialSupplementInfo.desc }">
               {{ materialSupplementInfo.desc || '无' }}
             </div>
           </div>
         </div>
       </div>
-      <div class="tableCtn" style="padding-top: 0">
+      <div class="tableCtn"
+        style="padding-top: 0">
         <div class="thead">
           <div class="trow">
-            <div class="tcol" style="flex: 0.3">
+            <div class="tcol"
+              style="flex: 0.3">
               <el-checkbox v-model="checkAllPlanFlag">全选</el-checkbox>
             </div>
             <div class="tcol">原料名称</div>
@@ -69,23 +75,25 @@
           </div>
         </div>
         <div class="tbody">
-          <div class="trow" v-for="(item, index) in planMaterialList" :key="index">
-            <div class="tcol" style="flex: 0.3">
-              <el-checkbox v-model="item.check" @change="$forceUpdate()"></el-checkbox>
+          <div class="trow"
+            v-for="(item, index) in planMaterialList"
+            :key="index">
+            <div class="tcol"
+              style="flex: 0.3">
+              <el-checkbox v-model="item.check"
+                @change="$forceUpdate()"></el-checkbox>
             </div>
             <div class="tcol">{{ item.material_name }}</div>
             <div class="tcol">{{ item.material_color }}</div>
             <div class="tcol">{{ $toFixed(item.final_number, 3, true) }}{{ item.unit }}</div>
             <div class="tcol">{{ $toFixed(item.total_order_number, 3, true) }}{{ item.unit }}</div>
             <div class="tcol">{{ $toFixed(item.total_transfer_number, 3, true) }}{{ item.unit }}</div>
-            <div
-              class="tcol"
+            <div class="tcol"
               :class="{
                 red: item.total_order_number + item.total_transfer_number > item.final_number,
                 green: item.total_order_number + item.total_transfer_number === item.final_number,
                 orange: item.total_order_number + item.total_transfer_number < item.final_number
-              }"
-            >
+              }">
               {{
                 (item.total_order_number + item.total_transfer_number > item.final_number ? '+' : '') +
                 $toFixed(item.total_order_number + item.total_transfer_number - item.final_number, 3, true)
@@ -95,34 +103,31 @@
         </div>
       </div>
       <div class="buttonList">
-        <div
-          style="margin-right: 12px"
+        <div style="margin-right: 12px"
           class="btn backHoverBlue"
           :class="{ backGray: checkMaterialOrderList().length === 0 }"
-          @click="goOrderMaterial('色纱')"
-        >
-          <svg class="iconFont" aria-hidden="true">
+          @click="goOrderMaterial('色纱')">
+          <svg class="iconFont"
+            aria-hidden="true">
             <use xlink:href="#icon-xiugaidingdan"></use>
           </svg>
           <span class="text">订购成品</span>
         </div>
-        <div
-          style="margin-right: 12px"
+        <div style="margin-right: 12px"
           class="btn backHoverBlue"
           :class="{ backGray: checkMaterialOrderList().length === 0 }"
-          @click="goOrderMaterial('白胚')"
-        >
-          <svg class="iconFont" aria-hidden="true">
+          @click="goOrderMaterial('白胚')">
+          <svg class="iconFont"
+            aria-hidden="true">
             <use xlink:href="#icon-xiugaidingdan"></use>
           </svg>
           <span class="text">订购白胚</span>
         </div>
-        <div
-          class="btn backHoverOrange"
+        <div class="btn backHoverOrange"
           :class="{ backGray: checkMaterialOrderList().length === 0 }"
-          @click="goStockMaterial()"
-        >
-          <svg class="iconFont" aria-hidden="true">
+          @click="goStockMaterial()">
+          <svg class="iconFont"
+            aria-hidden="true">
             <use xlink:href="#icon-xiugaidingdan"></use>
           </svg>
           <span class="text">库存调取</span>
@@ -130,9 +135,13 @@
       </div>
     </div>
     <!-- 订购单列表 -->
-    <div class="module" v-if="materialOrderList.length > 0">
-      <el-tabs type="border-card" v-model="materialOrderIndex">
-        <el-tab-pane v-for="(item, index) in materialOrderList" :key="index" :name="item.id.toString()">
+    <div class="module"
+      v-if="materialOrderList.length > 0">
+      <el-tabs type="border-card"
+        v-model="materialOrderIndex">
+        <el-tab-pane v-for="(item, index) in materialOrderList"
+          :key="index"
+          :name="item.id.toString()">
           <div slot="label">
             <div style="display: flex; flex-direction: column">
               <div style="line-height: 20px; font-size: 14px">订购单{{ index + 1 }}</div>
@@ -143,20 +152,16 @@
             <div class="title">订购信息</div>
           </div>
           <div class="detailCtn">
-            <div
-              class="checkCtn"
+            <div class="checkCtn"
               @click="
                 checkType = 2
                 checkDetailFlag = true
                 is_check = item.is_check
-              "
-            >
-              <el-tooltip
-                class="item"
+              ">
+              <el-tooltip class="item"
                 effect="dark"
                 :content="item.is_check >= 3 ? '点击查看异常处理办法' : '点击查看审核日志'"
-                placement="bottom"
-              >
+                placement="bottom">
                 <img :src="item.is_check | checkFilter" />
               </el-tooltip>
             </div>
@@ -199,13 +204,11 @@
               </div>
               <div class="col flex3">
                 <div class="label">结算状态：</div>
-                <div
-                  class="text"
+                <div class="text"
                   :class="{
                     green: item.has_invoice === 1 || item.has_pay === 1,
                     gray: item.has_invoice !== 1 && item.has_pay !== 1
-                  }"
-                >
+                  }">
                   {{ item.has_invoice === 1 || item.has_pay === 1 ? '已结算' : '待结算' }}
                 </div>
               </div>
@@ -223,10 +226,12 @@
               </div>
             </div>
           </div>
-          <div class="tableCtn" style="padding-top: 0">
+          <div class="tableCtn"
+            style="padding-top: 0">
             <div class="thead">
               <div class="trow">
-                <div class="tcol" style="flex: 0.3">
+                <div class="tcol"
+                  style="flex: 0.3">
                   <el-checkbox v-model="checkAllOrderFlag">全选</el-checkbox>
                 </div>
                 <div class="tcol">原料名称</div>
@@ -239,9 +244,13 @@
               </div>
             </div>
             <div class="tbody">
-              <div class="trow" v-for="(itemChild, indexChild) in item.info_data" :key="indexChild">
-                <div class="tcol" style="flex: 0.3">
-                  <el-checkbox v-model="itemChild.check" @change="$forceUpdate()"></el-checkbox>
+              <div class="trow"
+                v-for="(itemChild, indexChild) in item.info_data"
+                :key="indexChild">
+                <div class="tcol"
+                  style="flex: 0.3">
+                  <el-checkbox v-model="itemChild.check"
+                    @change="$forceUpdate()"></el-checkbox>
                 </div>
                 <div class="tcol">{{ itemChild.material_name }}</div>
                 <div class="tcol">{{ itemChild.material_color }}</div>
@@ -260,62 +269,67 @@
             </div>
             <div class="otherInfoCtn">
               <div class="otherInfo">
-                <div class="btn backHoverBlue" @click="goProcessMaterial('订购加工')">
-                  <svg class="iconFont" aria-hidden="true">
+                <div class="btn backHoverBlue"
+                  @click="goProcessMaterial('订购加工')">
+                  <svg class="iconFont"
+                    aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">物料加工</span>
                 </div>
-                <div
-                  class="btn backHoverOrange"
+                <div class="btn backHoverOrange"
                   @click="
                     Number($getsessionStorage('has_check')) !== 1 && (item.has_invoice === 1 || item.has_pay === 1)
                       ? $message.error('单据已结算，无法修改，可联系管理员操作')
                       : (materialOrderUpdataInfo = $clone(item))
                     materialOrderUpdataFlag = true
-                  "
-                >
-                  <svg class="iconFont" aria-hidden="true">
+                  ">
+                  <svg class="iconFont"
+                    aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">单据修改</span>
                 </div>
-                <div class="btn backHoverGreen" @click="goDeduct(item, 2)">
-                  <svg class="iconFont" aria-hidden="true">
+                <div class="btn backHoverGreen"
+                  @click="goDeduct(item, 2)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">单据扣款</span>
                 </div>
-                <div class="btn backHoverRed" @click="deleteMaterialOrder(item.id)">
-                  <svg class="iconFont" aria-hidden="true">
+                <div class="btn backHoverRed"
+                  @click="deleteMaterialOrder(item.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">删除单据</span>
                 </div>
-                <div class="btn backHoverBlue" @click="$openUrl('/materialManage/orderPrint?id=' + item.id)">
-                  <svg class="iconFont" aria-hidden="true">
+                <div class="btn backHoverBlue"
+                  @click="$openUrl('/materialManage/orderPrint?id=' + item.id)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
                     <use xlink:href="#icon-dayindingdan"></use>
                   </svg>
                   <span class="text">打印订购</span>
                 </div>
-                <div
-                  class="btn"
+                <div class="btn"
                   :class="item.deduct_data && item.deduct_data.length > 0 ? 'backHoverBlue' : 'backGray'"
-                  @click="getDeduct(item.deduct_data)"
-                >
-                  <svg class="iconFont" aria-hidden="true">
+                  @click="getDeduct(item.deduct_data)">
+                  <svg class="iconFont"
+                    aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">扣款记录</span>
                 </div>
-                <div
-                  class="btn backHoverOrange"
+                <div class="btn backHoverOrange"
                   @click="
                     checkType = 2
                     checkFlag = true
-                  "
-                >
-                  <svg class="iconFont" aria-hidden="true">
+                  ">
+                  <svg class="iconFont"
+                    aria-hidden="true">
                     <use xlink:href="#icon-shenhedingdan"></use>
                   </svg>
                   <span class="text">单据审核</span>
@@ -323,7 +337,8 @@
               </div>
             </div>
           </div>
-          <div class="titleCtn" style="margin-top: 32px">
+          <div class="titleCtn"
+            style="margin-top: 32px">
             <div class="title">加工信息</div>
           </div>
           <div class="tableCtn">
@@ -331,49 +346,56 @@
               <div class="trow">
                 <div class="tcol">加工单号</div>
                 <div class="tcol">加工单位</div>
-                <div class="tcol" style="flex: 0.5">工序</div>
-                <div class="tcol noPad" style="flex: 5">
+                <div class="tcol"
+                  style="flex: 0.5">工序</div>
+                <div class="tcol noPad"
+                  style="flex: 5">
                   <div class="trow">
                     <div class="tcol">纱线名称</div>
                     <div class="tcol">加工详情</div>
-                    <div class="tcol" style="flex: 0.5">数量</div>
-                    <div class="tcol" style="flex: 0.5">单价</div>
-                    <div class="tcol" style="flex: 0.5">小计</div>
+                    <div class="tcol"
+                      style="flex: 0.5">数量</div>
+                    <div class="tcol"
+                      style="flex: 0.5">单价</div>
+                    <div class="tcol"
+                      style="flex: 0.5">小计</div>
                   </div>
                 </div>
-                <div class="tcol" style="flex: 0.8">截止日期</div>
+                <div class="tcol"
+                  style="flex: 0.8">截止日期</div>
                 <div class="tcol">备注信息</div>
                 <div class="tcol">额外费用</div>
-                <div class="tcol" style="flex: 1.3">操作</div>
+                <div class="tcol"
+                  style="flex: 1.3">操作</div>
               </div>
             </div>
             <template v-if="item.process_info.length > 0">
-              <div class="tbody" style="font-size: 14px">
-                <div
-                  class="trow"
+              <div class="tbody"
+                style="font-size: 14px">
+                <div class="trow"
                   v-for="itemProcess in item.process_info"
                   :key="itemProcess.id"
-                  :class="{ backMark: itemProcess.id === materialProcessIndex }"
-                >
+                  :class="{ backMark: itemProcess.id === materialProcessIndex }">
                   <div class="tcol">
-                    <span class="overText"
-                      >{{ itemProcess.code }}
-                      <el-tooltip
-                        class="item"
+                    <span class="overText">{{ itemProcess.code }}
+                      <el-tooltip class="item"
                         effect="dark"
                         :content="
                           '创建日期：' + itemProcess.created_at.slice(0, 10) + ';创建人：' + itemProcess.user_name
                         "
-                        placement="top"
-                      >
+                        placement="top">
                         <i class="el-icon-timer hoverBlue"></i>
                       </el-tooltip>
                     </span>
                   </div>
                   <div class="tcol">{{ itemProcess.client_name }}</div>
-                  <div class="tcol" style="flex: 0.5">{{ itemProcess.process }}</div>
-                  <div class="tcol noPad" style="flex: 5">
-                    <div class="trow" v-for="(itemMat, indexMat) in itemProcess.info_data" :key="indexMat">
+                  <div class="tcol"
+                    style="flex: 0.5">{{ itemProcess.process }}</div>
+                  <div class="tcol noPad"
+                    style="flex: 5">
+                    <div class="trow"
+                      v-for="(itemMat, indexMat) in itemProcess.info_data"
+                      :key="indexMat">
                       <div class="tcol">{{ itemMat.material_order_name }}</div>
                       <div class="tcol">
                         <template v-if="itemProcess.process === '染色'">
@@ -400,49 +422,50 @@
                           <span>{{ itemMat.qiege_desc }}</span>
                         </template>
                       </div>
-                      <div class="tcol" style="flex: 0.5">
+                      <div class="tcol"
+                        style="flex: 0.5">
                         {{ $toFixed(itemMat.number, 3, true) }}{{ itemMat.unit }}
                       </div>
-                      <div class="tcol" style="flex: 0.5">{{ itemMat.price }}元</div>
-                      <div class="tcol" style="flex: 0.5">
+                      <div class="tcol"
+                        style="flex: 0.5">{{ itemMat.price }}元</div>
+                      <div class="tcol"
+                        style="flex: 0.5">
                         {{ $toFixed(itemMat.price * itemMat.number, 3, true) }}元
                       </div>
                     </div>
                   </div>
-                  <div class="tcol" style="flex: 0.8">{{ itemProcess.delivery_time }}</div>
+                  <div class="tcol"
+                    style="flex: 0.8">{{ itemProcess.delivery_time }}</div>
                   <div class="tcol">{{ itemProcess.desc || '无备注' }}</div>
                   <div class="tcol">
                     <others-fee-data :data="itemProcess.others_fee_data"></others-fee-data>
                   </div>
-                  <div class="tcol" style="flex: 1.3">
+                  <div class="tcol"
+                    style="flex: 1.3">
                     <div class="oprCtn">
-                      <div
-                        class="opr hoverOrange"
+                      <div class="opr hoverOrange"
                         @click="
                           Number($getsessionStorage('has_check')) !== 1 &&
                           (itemProcess.has_invoice === 1 || itemProcess.has_pay === 1)
                             ? $message.error('单据已结算，无法修改，可联系管理员操作')
                             : goUpdateMaterialProcess(itemProcess)
                           materialProcessUpdataFlag = true
-                        "
-                      >
+                        ">
                         修改
                       </div>
-                      <div
-                        class="opr hoverGreen"
-                        @click="$openUrl('/materialManage/processPrint?id=' + itemProcess.id)"
-                      >
+                      <div class="opr hoverGreen"
+                        @click="$openUrl('/materialManage/processPrint?id=' + itemProcess.id)">
                         打印
                       </div>
-                      <div class="opr hoverRed" @click="deleteMaterialProcess(itemProcess.id)">删除</div>
+                      <div class="opr hoverRed"
+                        @click="deleteMaterialProcess(itemProcess.id)">删除</div>
                     </div>
                     <div class="oprCtn">
-                      <div class="opr hoverGreen" @click="goDeduct(itemProcess, 3)">扣款</div>
-                      <div
-                        class="opr"
+                      <div class="opr hoverGreen"
+                        @click="goDeduct(itemProcess, 3)">扣款</div>
+                      <div class="opr"
                         :class="itemProcess.deduct_data && itemProcess.deduct_data.length > 0 ? 'hoverBlue' : 'gray'"
-                        @click="getDeduct(itemProcess.deduct_data)"
-                      >
+                        @click="getDeduct(itemProcess.deduct_data)">
                         扣款记录
                       </div>
                     </div>
@@ -453,7 +476,8 @@
             <template v-else>
               <div class="tbody">
                 <div class="trow">
-                  <div class="tcol gray" style="text-align: center">
+                  <div class="tcol gray"
+                    style="text-align: center">
                     <span>暂无加工信息</span>
                   </div>
                 </div>
@@ -464,9 +488,13 @@
       </el-tabs>
     </div>
     <!-- 调取单列表 -->
-    <div class="module" v-if="materialStockLog.length > 0">
-      <el-tabs type="border-card" v-model="materialStockIndex">
-        <el-tab-pane v-for="(item, index) in materialStockLog" :key="index" :name="item.id.toString()">
+    <div class="module"
+      v-if="materialStockLog.length > 0">
+      <el-tabs type="border-card"
+        v-model="materialStockIndex">
+        <el-tab-pane v-for="(item, index) in materialStockLog"
+          :key="index"
+          :name="item.id.toString()">
           <div slot="label">
             <div style="display: flex; flex-direction: column">
               <div style="line-height: 20px; font-size: 14px">调取单{{ index + 1 }}</div>
@@ -477,20 +505,16 @@
             <div class="title">调取信息</div>
           </div>
           <div class="detailCtn">
-            <div
-              class="checkCtn"
+            <div class="checkCtn"
               @click="
                 checkType = 6
                 checkDetailFlag = true
                 is_check = item.is_check
-              "
-            >
-              <el-tooltip
-                class="item"
+              ">
+              <el-tooltip class="item"
                 effect="dark"
                 :content="item.is_check >= 3 ? '点击查看异常处理办法' : '点击查看审核日志'"
-                placement="bottom"
-              >
+                placement="bottom">
                 <img :src="item.is_check | checkFilter" />
               </el-tooltip>
             </div>
@@ -541,10 +565,12 @@
               </div>
             </div>
           </div>
-          <div class="tableCtn" style="padding-top: 0">
+          <div class="tableCtn"
+            style="padding-top: 0">
             <div class="thead">
               <div class="trow">
-                <div class="tcol" style="flex: 0.3">
+                <div class="tcol"
+                  style="flex: 0.3">
                   <el-checkbox v-model="checkAllStockFlag">全选</el-checkbox>
                 </div>
                 <div class="tcol">原料名称</div>
@@ -557,9 +583,13 @@
               </div>
             </div>
             <div class="tbody">
-              <div class="trow" v-for="(itemChild, indexChild) in item.info_data" :key="indexChild">
-                <div class="tcol" style="flex: 0.3">
-                  <el-checkbox v-model="itemChild.check" @change="$forceUpdate()"></el-checkbox>
+              <div class="trow"
+                v-for="(itemChild, indexChild) in item.info_data"
+                :key="indexChild">
+                <div class="tcol"
+                  style="flex: 0.3">
+                  <el-checkbox v-model="itemChild.check"
+                    @change="$forceUpdate()"></el-checkbox>
                 </div>
                 <div class="tcol">{{ itemChild.material_name }}</div>
                 <div class="tcol">{{ itemChild.material_color }}</div>
@@ -572,33 +602,38 @@
             </div>
           </div>
           <div class="buttonList">
-            <div class="btn backHoverBlue" style="margin-right: 12px" @click="goProcessMaterial('调取加工')">
-              <svg class="iconFont" aria-hidden="true">
+            <div class="btn backHoverBlue"
+              style="margin-right: 12px"
+              @click="goProcessMaterial('调取加工')">
+              <svg class="iconFont"
+                aria-hidden="true">
                 <use xlink:href="#icon-xiugaidingdan"></use>
               </svg>
               <span class="text">物料加工</span>
             </div>
-            <div
-              class="btn backHoverOrange"
+            <div class="btn backHoverOrange"
               style="margin-right: 12px"
               @click="
                 checkType = 6
                 checkFlag = true
-              "
-            >
-              <svg class="iconFont" aria-hidden="true">
+              ">
+              <svg class="iconFont"
+                aria-hidden="true">
                 <use xlink:href="#icon-xiugaidingdan"></use>
               </svg>
               <span class="text">单据审核</span>
             </div>
-            <div class="btn backHoverRed" @click="deleteMaterialStock(item.id)">
-              <svg class="iconFont" aria-hidden="true">
+            <div class="btn backHoverRed"
+              @click="deleteMaterialStock(item.id)">
+              <svg class="iconFont"
+                aria-hidden="true">
                 <use xlink:href="#icon-xiugaidingdan"></use>
               </svg>
               <span class="text">删除单据</span>
             </div>
           </div>
-          <div class="titleCtn" style="margin-top: 32px">
+          <div class="titleCtn"
+            style="margin-top: 32px">
             <div class="title">加工信息</div>
           </div>
           <div class="tableCtn">
@@ -606,44 +641,55 @@
               <div class="trow">
                 <div class="tcol">加工单号</div>
                 <div class="tcol">加工单位</div>
-                <div class="tcol" style="flex: 0.5">工序</div>
-                <div class="tcol noPad" style="flex: 5">
+                <div class="tcol"
+                  style="flex: 0.5">工序</div>
+                <div class="tcol noPad"
+                  style="flex: 5">
                   <div class="trow">
                     <div class="tcol">纱线名称</div>
                     <div class="tcol">加工详情</div>
-                    <div class="tcol" style="flex: 0.5">数量</div>
-                    <div class="tcol" style="flex: 0.5">单价</div>
-                    <div class="tcol" style="flex: 0.5">小计</div>
+                    <div class="tcol"
+                      style="flex: 0.5">数量</div>
+                    <div class="tcol"
+                      style="flex: 0.5">单价</div>
+                    <div class="tcol"
+                      style="flex: 0.5">小计</div>
                   </div>
                 </div>
-                <div class="tcol" style="flex: 0.8">截止日期</div>
+                <div class="tcol"
+                  style="flex: 0.8">截止日期</div>
                 <div class="tcol">备注信息</div>
                 <div class="tcol">额外费用</div>
-                <div class="tcol" style="flex: 1.3">操作</div>
+                <div class="tcol"
+                  style="flex: 1.3">操作</div>
               </div>
             </div>
             <template v-if="item.process_info.length > 0">
-              <div class="tbody" style="font-size: 14px">
-                <div class="trow" v-for="itemProcess in item.process_info" :key="itemProcess.id">
+              <div class="tbody"
+                style="font-size: 14px">
+                <div class="trow"
+                  v-for="itemProcess in item.process_info"
+                  :key="itemProcess.id">
                   <div class="tcol">
-                    <span class="overText"
-                      >{{ itemProcess.code }}
-                      <el-tooltip
-                        class="item"
+                    <span class="overText">{{ itemProcess.code }}
+                      <el-tooltip class="item"
                         effect="dark"
                         :content="
                           '创建日期：' + itemProcess.created_at.slice(0, 10) + ';创建人：' + itemProcess.user_name
                         "
-                        placement="top"
-                      >
+                        placement="top">
                         <i class="el-icon-timer hoverBlue"></i>
                       </el-tooltip>
                     </span>
                   </div>
                   <div class="tcol">{{ itemProcess.client_name }}</div>
-                  <div class="tcol" style="flex: 0.5">{{ itemProcess.process }}</div>
-                  <div class="tcol noPad" style="flex: 5">
-                    <div class="trow" v-for="(itemMat, indexMat) in itemProcess.info_data" :key="indexMat">
+                  <div class="tcol"
+                    style="flex: 0.5">{{ itemProcess.process }}</div>
+                  <div class="tcol noPad"
+                    style="flex: 5">
+                    <div class="trow"
+                      v-for="(itemMat, indexMat) in itemProcess.info_data"
+                      :key="indexMat">
                       <div class="tcol">{{ itemMat.material_transfer_name }}</div>
                       <div class="tcol">
                         <template v-if="itemProcess.process === '染色'">
@@ -670,49 +716,50 @@
                           <span>{{ itemMat.qiege_desc }}</span>
                         </template>
                       </div>
-                      <div class="tcol" style="flex: 0.5">
+                      <div class="tcol"
+                        style="flex: 0.5">
                         {{ $toFixed(itemMat.number, 3, true) }}{{ itemMat.unit }}
                       </div>
-                      <div class="tcol" style="flex: 0.5">{{ itemMat.price }}元</div>
-                      <div class="tcol" style="flex: 0.5">
+                      <div class="tcol"
+                        style="flex: 0.5">{{ itemMat.price }}元</div>
+                      <div class="tcol"
+                        style="flex: 0.5">
                         {{ $toFixed(itemMat.price * itemMat.number, 3, true) }}元
                       </div>
                     </div>
                   </div>
-                  <div class="tcol" style="flex: 0.8">{{ itemProcess.delivery_time }}</div>
+                  <div class="tcol"
+                    style="flex: 0.8">{{ itemProcess.delivery_time }}</div>
                   <div class="tcol">{{ itemProcess.desc || '无备注' }}</div>
                   <div class="tcol">
                     <others-fee-data :data="itemProcess.others_fee_data"></others-fee-data>
                   </div>
-                  <div class="tcol" style="flex: 1.3">
+                  <div class="tcol"
+                    style="flex: 1.3">
                     <div class="oprCtn">
-                      <div
-                        class="opr hoverOrange"
+                      <div class="opr hoverOrange"
                         @click="
                           Number($getsessionStorage('has_check')) !== 1 &&
                           (itemProcess.has_invoice === 1 || itemProcess.has_pay === 1)
                             ? $message.error('单据已结算，无法修改，可联系管理员操作')
                             : goUpdateMaterialProcess(itemProcess)
                           materialProcessUpdataFlag = true
-                        "
-                      >
+                        ">
                         修改
                       </div>
-                      <div
-                        class="opr hoverGreen"
-                        @click="$openUrl('/materialManage/processPrint?id=' + itemProcess.id)"
-                      >
+                      <div class="opr hoverGreen"
+                        @click="$openUrl('/materialManage/processPrint?id=' + itemProcess.id)">
                         打印
                       </div>
-                      <div class="opr hoverRed" @click="deleteMaterialProcess(itemProcess.id)">删除</div>
+                      <div class="opr hoverRed"
+                        @click="deleteMaterialProcess(itemProcess.id)">删除</div>
                     </div>
                     <div class="oprCtn">
-                      <div class="opr hoverGreen" @click="goDeduct(itemProcess, 3)">扣款</div>
-                      <div
-                        class="opr"
+                      <div class="opr hoverGreen"
+                        @click="goDeduct(itemProcess, 3)">扣款</div>
+                      <div class="opr"
                         :class="itemProcess.deduct_data && itemProcess.deduct_data.length > 0 ? 'hoverBlue' : 'gray'"
-                        @click="getDeduct(itemProcess.deduct_data)"
-                      >
+                        @click="getDeduct(itemProcess.deduct_data)">
                         扣款记录
                       </div>
                     </div>
@@ -723,7 +770,8 @@
             <template v-else>
               <div class="tbody">
                 <div class="trow">
-                  <div class="tcol gray" style="text-align: center">
+                  <div class="tcol gray"
+                    style="text-align: center">
                     <span>暂无加工信息</span>
                   </div>
                 </div>
@@ -734,24 +782,26 @@
       </el-tabs>
     </div>
     <!-- 物料订购 -->
-    <div class="popup" v-if="materialOrderFlag">
+    <div class="popup"
+      v-if="materialOrderFlag">
       <div class="main">
         <div class="titleCtn">
           <span class="text">物料订购</span>
-          <div class="closeCtn" @click="closeOrder">
+          <div class="closeCtn"
+            @click="closeOrder">
             <span class="el-icon-close"></span>
           </div>
         </div>
         <div class="contentCtn">
-          <div class="editCtn" v-for="(item, index) in materialOrderInfo" :key="index">
-            <div
-              class="deleteIcon"
+          <div class="editCtn"
+            v-for="(item, index) in materialOrderInfo"
+            :key="index">
+            <div class="deleteIcon"
               @click="
                 materialOrderInfo.length > 1
                   ? $deleteItem(materialOrderInfo, index)
                   : $message.error('至少有一家订购单位')
-              "
-            >
+              ">
               <i class="el-icon-close"></i>
             </div>
             <div class="row">
@@ -759,9 +809,11 @@
                 <div class="label">
                   <span class="text">订购单位</span>
                   <span class="explanation">(必选)</span>
-                  <el-tooltip class="item" effect="dark" content="设置成功后请点击此按钮刷新数据" placement="top">
-                    <i
-                      class="el-icon-refresh hoverGreen fr"
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="设置成功后请点击此按钮刷新数据"
+                    placement="top">
+                    <i class="el-icon-refresh hoverGreen fr"
                       style="line-height: 38px; font-size: 18px; margin-left: 8px; cursor: pointer"
                       @click="
                         $checkCommonInfo([
@@ -772,25 +824,23 @@
                             forceUpdate: true
                           }
                         ])
-                      "
-                    ></i>
+                      "></i>
                   </el-tooltip>
-                  <el-tooltip class="item" effect="dark" content="添加新单位" placement="top">
-                    <i
-                      class="el-icon-upload hoverOrange fr"
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="添加新单位"
+                    placement="top">
+                    <i class="el-icon-upload hoverOrange fr"
                       style="line-height: 38px; font-size: 18px; cursor: pointer"
-                      @click="$openUrl('/client/create?type=2')"
-                    ></i>
+                      @click="$openUrl('/client/create?type=2')"></i>
                   </el-tooltip>
                 </div>
                 <div class="info elCtn">
-                  <el-cascader
-                    placeholder="请选择订购单位"
+                  <el-cascader placeholder="请选择订购单位"
                     v-model="item.client_id_arr"
                     :options="orderClientList"
                     filterable
-                    @change="getMatAttr($event, item)"
-                  ></el-cascader>
+                    @change="getMatAttr($event, item)"></el-cascader>
                 </div>
               </div>
               <div class="col">
@@ -799,12 +849,10 @@
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-date-picker
-                    style="width: 100%"
+                  <el-date-picker style="width: 100%"
                     placeholder="请选择时间"
                     value-format="yyyy-MM-dd"
-                    v-model="item.order_time"
-                  ></el-date-picker>
+                    v-model="item.order_time"></el-date-picker>
                 </div>
               </div>
               <div class="col">
@@ -813,23 +861,26 @@
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-date-picker
-                    style="width: 100%"
+                  <el-date-picker style="width: 100%"
                     placeholder="请选择交货日期"
                     value-format="yyyy-MM-dd"
-                    v-model="item.delivery_time"
-                  ></el-date-picker>
+                    v-model="item.delivery_time"></el-date-picker>
                 </div>
               </div>
             </div>
-            <div class="row" v-for="(itemMat, indexMat) in item.info_data" :key="'mat' + indexMat">
+            <div class="row"
+              v-for="(itemMat, indexMat) in item.info_data"
+              :key="'mat' + indexMat">
               <div class="col">
-                <div class="label" v-if="indexMat === 0">
+                <div class="label"
+                  v-if="indexMat === 0">
                   <span class="text">物料名称</span>
                   <span class="explanation">(必选)</span>
-                  <el-tooltip class="item" effect="dark" content="设置成功后请点击此按钮刷新数据" placement="top">
-                    <i
-                      class="el-icon-refresh hoverGreen fr"
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="设置成功后请点击此按钮刷新数据"
+                    placement="top">
+                    <i class="el-icon-refresh hoverGreen fr"
                       style="line-height: 38px; font-size: 18px; margin-left: 8px; cursor: pointer"
                       @click="
                         $checkCommonInfo([
@@ -840,39 +891,41 @@
                             forceUpdate: true
                           }
                         ])
-                      "
-                    ></i>
+                      "></i>
                   </el-tooltip>
-                  <el-tooltip class="item" effect="dark" content="添加新原料" placement="top">
-                    <i
-                      class="el-icon-upload hoverOrange fr"
+                  <el-tooltip class="item"
+                    effect="dark"
+                    content="添加新原料"
+                    placement="top">
+                    <i class="el-icon-upload hoverOrange fr"
                       style="line-height: 38px; font-size: 18px; margin-left: 8px; cursor: pointer"
-                      @click="$openUrl('/setting/?pName=物料设置&cName=纱线原料')"
-                    ></i>
+                      @click="$openUrl('/setting/?pName=物料设置&cName=纱线原料')"></i>
                   </el-tooltip>
                 </div>
                 <div class="info elCtn">
-                  <el-select placeholder="请选择物料名称" v-model="itemMat.material_id" disabled>
-                    <el-option
-                      v-for="item in selectMaterialOrderList()"
+                  <el-select placeholder="请选择物料名称"
+                    v-model="itemMat.material_id"
+                    disabled>
+                    <el-option v-for="item in selectMaterialOrderList()"
                       :key="item.material_id"
                       :value="item.material_id"
-                      :label="item.material_name"
-                    ></el-option>
+                      :label="item.material_name"></el-option>
                   </el-select>
                 </div>
               </div>
               <div class="col">
-                <div class="label spaceBetween" v-if="indexMat === 0">
+                <div class="label spaceBetween"
+                  v-if="indexMat === 0">
                   <div class="once">
                     <span class="text">订购属性</span>
                     <span class="explanation">(选填)</span>
-                    <el-tooltip class="item" effect="dark" content="统一属性" placement="top">
-                      <svg
-                        class="iconFont copyIcon hoverBlue"
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="统一属性"
+                      placement="top">
+                      <svg class="iconFont copyIcon hoverBlue"
                         aria-hidden="true"
-                        @click="$copyInfo(item.info_data, ['attribute'])"
-                      >
+                        @click="$copyInfo(item.info_data, ['attribute'])">
                         <use xlink:href="#icon-tongbushuju1"></use>
                       </svg>
                     </el-tooltip>
@@ -883,29 +936,32 @@
                   </div>
                 </div>
                 <div class="info elCtn spaceBetween">
-                  <el-autocomplete
-                    class="once"
+                  <el-autocomplete class="once"
                     @focus="$focusInput($event)"
                     v-model="itemMat.attribute"
                     :fetch-suggestions="searchAttribute"
-                    placeholder="物料属性"
-                  ></el-autocomplete>
+                    placeholder="物料属性"></el-autocomplete>
                   <template>
-                    <el-input class="once" placeholder="白胚" disabled v-model="itemMat.material_color"></el-input>
+                    <el-input class="once"
+                      placeholder="白胚"
+                      disabled
+                      v-model="itemMat.material_color"></el-input>
                   </template>
                 </div>
               </div>
               <div class="col">
-                <div class="label spaceBetween" v-if="indexMat === 0">
+                <div class="label spaceBetween"
+                  v-if="indexMat === 0">
                   <div class="once">
                     <span class="text">订购单价</span>
                     <span class="explanation">(必填)</span>
-                    <el-tooltip class="item" effect="dark" content="统一单价" placement="top">
-                      <svg
-                        class="iconFont copyIcon hoverBlue"
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="统一单价"
+                      placement="top">
+                      <svg class="iconFont copyIcon hoverBlue"
                         aria-hidden="true"
-                        @click="$copyInfo(item.info_data, ['price'])"
-                      >
+                        @click="$copyInfo(item.info_data, ['price'])">
                         <use xlink:href="#icon-tongbushuju1"></use>
                       </svg>
                     </el-tooltip>
@@ -916,65 +972,70 @@
                   </div>
                 </div>
                 <div class="info elCtn spaceBetween">
-                  <el-input
-                    :ref="'price' + '-' + index + '-' + indexMat"
+                  <el-input :ref="'price' + '-' + index + '-' + indexMat"
                     class="once"
                     @keydown.native="
                       $focusByKeydown($event, 'price', [index, indexMat], '', ['materialOrderInfo', 'info_data'])
                     "
                     @focus="$focusInput($event)"
                     placeholder="单价"
-                    v-model="itemMat.price"
-                  >
+                    v-model="itemMat.price">
                     <template slot="append">元</template>
                   </el-input>
-                  <el-input
-                    :ref="'number' + '-' + index + '-' + indexMat"
+                  <el-input :ref="'number' + '-' + index + '-' + indexMat"
                     class="once UnitCtn"
                     @keydown.native="
                       $focusByKeydown($event, 'number', [index, indexMat], '', ['materialOrderInfo', 'info_data'])
                     "
                     @focus="$focusInput($event)"
                     placeholder="数量"
-                    v-model="itemMat.number"
-                  >
+                    v-model="itemMat.number">
                     <template slot="append">
-                      <el-input v-model="itemMat.unit" placeholder="单位"></el-input>
+                      <el-input v-model="itemMat.unit"
+                        placeholder="单位"></el-input>
                     </template>
                   </el-input>
                 </div>
               </div>
-              <div class="opr hoverRed" @click="$deleteItem(item.info_data, indexMat)">删除</div>
+              <div class="opr hoverRed"
+                @click="$deleteItem(item.info_data, indexMat)">删除</div>
             </div>
-            <div class="row" v-for="(itemOther, indexOther) in item.others_fee_data" :key="'other' + indexOther">
+            <div class="row"
+              v-for="(itemOther, indexOther) in item.others_fee_data"
+              :key="'other' + indexOther">
               <div class="col">
-                <div class="label" v-if="indexOther === 0">
+                <div class="label"
+                  v-if="indexOther === 0">
                   <span class="text">额外费用名称</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入额外费用名称" v-model="itemOther.name"></el-input>
+                  <el-input placeholder="请输入额外费用名称"
+                    v-model="itemOther.name"></el-input>
                 </div>
               </div>
               <div class="col">
-                <div class="label" v-if="indexOther === 0">
+                <div class="label"
+                  v-if="indexOther === 0">
                   <span class="text">额外费用金额</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入额外费用金额" v-model="itemOther.price">
+                  <el-input placeholder="请输入额外费用金额"
+                    v-model="itemOther.price">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
               </div>
               <div class="col">
-                <div class="label" v-if="indexOther === 0">
+                <div class="label"
+                  v-if="indexOther === 0">
                   <span class="text">额外费用备注</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入额外费用备注" v-model="itemOther.desc"></el-input>
+                  <el-input placeholder="请输入额外费用备注"
+                    v-model="itemOther.desc"></el-input>
                 </div>
               </div>
-              <div
-                class="opr hoverBlue"
+              <div class="opr hoverBlue"
                 v-if="indexOther === 0"
                 @click="
                   $addItem(item.others_fee_data, {
@@ -982,11 +1043,12 @@
                     name: '',
                     price: ''
                   })
-                "
-              >
+                ">
                 添加
               </div>
-              <div class="opr hoverRed" v-if="indexOther > 0" @click="$deleteItem(item.others_fee_data, indexOther)">
+              <div class="opr hoverRed"
+                v-if="indexOther > 0"
+                @click="$deleteItem(item.others_fee_data, indexOther)">
                 删除
               </div>
             </div>
@@ -996,7 +1058,8 @@
                   <span class="text">订购备注信息</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入订购备注信息" v-model="item.desc"></el-input>
+                  <el-input placeholder="请输入订购备注信息"
+                    v-model="item.desc"></el-input>
                 </div>
               </div>
               <div class="col">
@@ -1004,7 +1067,9 @@
                   <span class="text">订购总价</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="自动计算" v-model="totalOrderPriceList[index]" disabled>
+                  <el-input placeholder="自动计算"
+                    v-model="totalOrderPriceList[index]"
+                    disabled>
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -1014,7 +1079,9 @@
                   <span class="text">订购总数</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="自动计算" v-model="totalOrderNumberList[index]" disabled>
+                  <el-input placeholder="自动计算"
+                    v-model="totalOrderNumberList[index]"
+                    disabled>
                     <template slot="append">
                       {{ item.info_data[0].unit }}
                     </template>
@@ -1055,30 +1122,37 @@
             })">添加订购单位</div> -->
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn" @click="closeOrder">取消</span>
-          <span class="btn backHoverBlue" @click="saveMaterialOrder()">确认</span>
-          <span class="btn backHoverOrange" @click="saveMaterialOrder(true)">确认并打印</span>
+          <span class="btn borderBtn"
+            @click="closeOrder">取消</span>
+          <span class="btn backHoverBlue"
+            @click="saveMaterialOrder()">确认</span>
+          <span class="btn backHoverOrange"
+            @click="saveMaterialOrder(true)">确认并打印</span>
         </div>
       </div>
     </div>
     <!-- 物料调取 -->
-    <div class="popup" v-if="materialStockFlag">
+    <div class="popup"
+      v-if="materialStockFlag">
       <div class="main">
         <div class="titleCtn">
           <span class="text">物料调取</span>
-          <div class="closeCtn" @click="closeStock">
+          <div class="closeCtn"
+            @click="closeStock">
             <span class="el-icon-close"></span>
           </div>
         </div>
         <div class="contentCtn">
           <div class="stepCtn">
-            <div class="step" :class="{ active: step === 1 }">
+            <div class="step"
+              :class="{ active: step === 1 }">
               <div class="circle">
                 <span class="white">1</span>
               </div>
               <div class="name">选择库存</div>
             </div>
-            <div class="step" :class="{ active: step === 2 }">
+            <div class="step"
+              :class="{ active: step === 2 }">
               <div class="circle">
                 <span class="white">2</span>
               </div>
@@ -1089,48 +1163,53 @@
             <div class="selectCtn">
               <div class="label">已选择物料：</div>
               <div class="boxCtn">
-                <div class="box" v-for="item in checkMaterialOrderList()" :key="item.id">
+                <div class="box"
+                  v-for="item in checkMaterialOrderList()"
+                  :key="item.id">
                   {{ item.material_name }}/{{ item.material_color }}
-                  <span
-                    class="el-icon-search closeIcon hoverGreen"
+                  <span class="el-icon-search closeIcon hoverGreen"
                     @click="
                       materialStockFilter.material_name = item.material_name
                       materialStockFilter.material_color = materialStockFilter.color_flag ? '白胚' : item.material_color
                       searchMaterial()
-                    "
-                  ></span>
+                    "></span>
                 </div>
               </div>
             </div>
             <div class="listCtn">
               <div class="filterCtn">
                 <div class="elCtn">
-                  <el-input placeholder="物料名称" v-model="materialStockFilter.material_name"></el-input>
+                  <el-input placeholder="物料名称"
+                    v-model="materialStockFilter.material_name"></el-input>
                 </div>
                 <div class="elCtn">
-                  <el-input placeholder="物料颜色" v-model="materialStockFilter.material_color"></el-input>
+                  <el-input placeholder="物料颜色"
+                    v-model="materialStockFilter.material_color"></el-input>
                 </div>
                 <div class="elCtn">
-                  <el-input placeholder="批号" v-model="materialStockFilter.batch_code"></el-input>
+                  <el-input placeholder="批号"
+                    v-model="materialStockFilter.batch_code"></el-input>
                 </div>
                 <div class="elCtn">
-                  <el-input placeholder="缸号" v-model="materialStockFilter.vat_code"></el-input>
+                  <el-input placeholder="缸号"
+                    v-model="materialStockFilter.vat_code"></el-input>
                 </div>
                 <div class="elCtn">
-                  <el-input placeholder="色号" v-model="materialStockFilter.color_code"></el-input>
+                  <el-input placeholder="色号"
+                    v-model="materialStockFilter.color_code"></el-input>
                 </div>
                 <div class="elCtn">
-                  <el-cascader
-                    placeholder="筛选仓库"
+                  <el-cascader placeholder="筛选仓库"
                     v-model="materialStockFilter.store_id_arr"
                     :options="storeList"
-                    @change="searchMaterial"
-                  ></el-cascader>
+                    @change="searchMaterial"></el-cascader>
                 </div>
                 <el-checkbox v-model="materialStockFilter.color_flag">搜索白胚</el-checkbox>
-                <div class="btn backHoverBlue fr" @click="searchMaterial">搜索</div>
+                <div class="btn backHoverBlue fr"
+                  @click="searchMaterial">搜索</div>
               </div>
-              <div class="list" v-loading="searchLoading">
+              <div class="list"
+                v-loading="searchLoading">
                 <div class="row title">
                   <div class="col">仓库名称</div>
                   <div class="col">物料名称</div>
@@ -1140,7 +1219,9 @@
                   <div class="col">库存数量</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row" v-for="item in materialStockList" :key="item.id">
+                <div class="row"
+                  v-for="item in materialStockList"
+                  :key="item.id">
                   <div class="col">{{ item.store }}/{{ item.secondary_store }}</div>
                   <div class="col">{{ item.material_name }}</div>
                   <div class="col">{{ item.material_color }}</div>
@@ -1148,18 +1229,17 @@
                   <div class="col">{{ item.batch_code }}/{{ item.vat_code }}/{{ item.color_code }}</div>
                   <div class="col">{{ item.number }}kg</div>
                   <div class="col">
-                    <el-checkbox v-model="item.check" @change="checkMaterialStock($event, item)"></el-checkbox>
+                    <el-checkbox v-model="item.check"
+                      @change="checkMaterialStock($event, item)"></el-checkbox>
                   </div>
                 </div>
                 <div class="pageCtn">
-                  <el-pagination
-                    background
+                  <el-pagination background
                     :page-size="5"
                     layout="prev, pager, next"
                     :total="searchTotal"
                     :current-page.sync="searchPage"
-                    @current-change="searchMaterial"
-                  >
+                    @current-change="searchMaterial">
                   </el-pagination>
                 </div>
               </div>
@@ -1167,30 +1247,34 @@
             <div class="selectCtn">
               <div class="label">计划调取物料：</div>
               <div class="boxCtn">
-                <div class="box" v-for="(item, index) in materialStockCheckList" :key="item.id">
+                <div class="box"
+                  v-for="(item, index) in materialStockCheckList"
+                  :key="item.id">
                   {{ item.material_name }}/{{ item.material_color }}/{{ item.attribute }}/{{ item.batch_code }}/{{
                     item.vat_code
                   }}/{{ item.color_code }}
-                  <span
-                    class="el-icon-circle-close closeIcon hoverRed"
-                    @click="$deleteItem(materialStockCheckList, index)"
-                  ></span>
+                  <span class="el-icon-circle-close closeIcon hoverRed"
+                    @click="$deleteItem(materialStockCheckList, index)"></span>
                 </div>
               </div>
             </div>
           </template>
           <template v-if="step === 2">
             <div class="editCtn">
-              <div class="row" v-for="(item, index) in materialStockInfo.info_data" :key="index">
+              <div class="row"
+                v-for="(item, index) in materialStockInfo.info_data"
+                :key="index">
                 <div class="col">
-                  <div class="label" v-if="index === 0">
+                  <div class="label"
+                    v-if="index === 0">
                     <span class="text">库存物料</span>
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select placeholder="请选择库存物料" v-model="item.tree_data" @change="getMatId($event, item)">
-                      <el-option
-                        v-for="item in materialStockCheckList"
+                    <el-select placeholder="请选择库存物料"
+                      v-model="item.tree_data"
+                      @change="getMatId($event, item)">
+                      <el-option v-for="item in materialStockCheckList"
                         :key="item.id"
                         :value="item.id"
                         :label="
@@ -1205,46 +1289,44 @@
                           item.vat_code +
                           '/' +
                           item.color_code
-                        "
-                      ></el-option>
+                        "></el-option>
                     </el-select>
                   </div>
                 </div>
                 <div class="col">
-                  <div class="label" v-if="index === 0">
+                  <div class="label"
+                    v-if="index === 0">
                     <span class="text">单据物料</span>
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select
-                      :class="{ error: mustFlag && !item.rel_doc_info_id }"
+                    <el-select :class="{ error: mustFlag && !item.rel_doc_info_id }"
                       placeholder="请选择单据物料"
-                      v-model="item.rel_doc_info_id"
-                    >
-                      <el-option
-                        v-for="item in checkMaterialOrderList()"
+                      v-model="item.rel_doc_info_id">
+                      <el-option v-for="item in checkMaterialOrderList()"
                         :key="item.id"
                         :value="item.id"
-                        :label="item.material_name + '/' + item.material_color"
-                      ></el-option>
+                        :label="item.material_name + '/' + item.material_color"></el-option>
                     </el-select>
                   </div>
                 </div>
                 <div class="col">
-                  <div class="label spaceBetween" v-if="index === 0">
+                  <div class="label spaceBetween"
+                    v-if="index === 0">
                     <div class="once">
                       <span class="text">调取单价</span>
                       <span class="explanation">(选填)</span>
-                      <el-tooltip class="item" effect="dark" content="统一单价" placement="top">
-                        <svg
-                          class="iconFont copyIcon hoverBlue"
+                      <el-tooltip class="item"
+                        effect="dark"
+                        content="统一单价"
+                        placement="top">
+                        <svg class="iconFont copyIcon hoverBlue"
                           style="width: 16px; height: 16px"
                           aria-hidden="true"
                           @click="
                             $copyInfo(materialStockInfo.info_data, ['price'])
                             $forceUpdate()
-                          "
-                        >
+                          ">
                           <use xlink:href="#icon-tongbushuju1"></use>
                         </svg>
                       </el-tooltip>
@@ -1256,33 +1338,29 @@
                   </div>
                   <div class="info spaceBetween elCtn">
                     <div class="once">
-                      <el-input
-                        :ref="'price' + '-' + index"
+                      <el-input :ref="'price' + '-' + index"
                         :class="{ error: mustFlag && !item.price }"
                         placeholder="调取单价"
                         @keydown.native="$focusByKeydown($event, 'price', [index], materialStockInfo, ['info_data'])"
-                        v-model="item.price"
-                      >
+                        v-model="item.price">
                         <template slot="append">元</template>
                       </el-input>
                     </div>
                     <div class="once UnitCtn">
-                      <el-input
-                        :ref="'number' + '-' + index"
+                      <el-input :ref="'number' + '-' + index"
                         :class="{ error: mustFlag && !item.number }"
                         placeholder="调取数量"
                         @keydown.native="$focusByKeydown($event, 'number', [index], materialStockInfo, ['info_data'])"
-                        v-model="item.number"
-                      >
+                        v-model="item.number">
                         <template slot="append">
-                          <el-input v-model="item.unit" placeholder="单位"></el-input>
+                          <el-input v-model="item.unit"
+                            placeholder="单位"></el-input>
                         </template>
                       </el-input>
                     </div>
                   </div>
                 </div>
-                <div
-                  class="opr hoverBlue"
+                <div class="opr hoverBlue"
                   @click="
                     $addItem(materialStockInfo.info_data, {
                       material_id: '',
@@ -1296,8 +1374,7 @@
                       unit: 'kg',
                       rel_doc_info_id: '' // 采购单调取单加工单子项id
                     })
-                  "
-                >
+                  ">
                   添加
                 </div>
               </div>
@@ -1308,7 +1385,9 @@
                     <span class="explanation">(默认)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input placeholder="调取总价" disabled v-model="totalStockPrice">
+                    <el-input placeholder="调取总价"
+                      disabled
+                      v-model="totalStockPrice">
                       <template slot="append">元</template>
                     </el-input>
                   </div>
@@ -1319,7 +1398,9 @@
                     <span class="explanation">(默认)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input placeholder="调取总数" disabled v-model="totalStockNumber"> </el-input>
+                    <el-input placeholder="调取总数"
+                      disabled
+                      v-model="totalStockNumber"> </el-input>
                   </div>
                 </div>
                 <div class="col">
@@ -1327,7 +1408,8 @@
                     <span class="text">备注信息</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input placeholder="备注信息" v-model="materialStockInfo.desc"> </el-input>
+                    <el-input placeholder="备注信息"
+                      v-model="materialStockInfo.desc"> </el-input>
                   </div>
                 </div>
               </div>
@@ -1335,32 +1417,41 @@
           </template>
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn" @click="closeStock">取消</span>
-          <span class="btn backHoverBlue" @click="goCheckRealStock" v-if="step === 1">填写实际调取值</span>
-          <span class="btn backHoverOrange" @click="step = 1" v-if="step === 2">上一步</span>
-          <span class="btn backHoverBlue" @click="saveMaterialStock" v-if="step === 2">确认调取</span>
+          <span class="btn borderBtn"
+            @click="closeStock">取消</span>
+          <span class="btn backHoverBlue"
+            @click="goCheckRealStock"
+            v-if="step === 1">填写实际调取值</span>
+          <span class="btn backHoverOrange"
+            @click="step = 1"
+            v-if="step === 2">上一步</span>
+          <span class="btn backHoverBlue"
+            @click="saveMaterialStock"
+            v-if="step === 2">确认调取</span>
         </div>
       </div>
     </div>
     <!-- 物料加工 -->
-    <div class="popup" v-if="materialProcessFlag">
+    <div class="popup"
+      v-if="materialProcessFlag">
       <div class="main">
         <div class="titleCtn">
           <span class="text">物料加工</span>
-          <div class="closeCtn" @click="closeProcess">
+          <div class="closeCtn"
+            @click="closeProcess">
             <span class="el-icon-close"></span>
           </div>
         </div>
         <div class="contentCtn">
-          <div class="editCtn" v-for="(item, index) in materialProcessInfo" :key="index">
-            <div
-              class="deleteIcon"
+          <div class="editCtn"
+            v-for="(item, index) in materialProcessInfo"
+            :key="index">
+            <div class="deleteIcon"
               @click="
                 materialProcessInfo.length > 1
                   ? $deleteItem(materialProcessInfo, index)
                   : $message.error('至少有一家加工单位')
-              "
-            >
+              ">
               <i class="el-icon-close"></i>
             </div>
             <div class="row">
@@ -1370,12 +1461,10 @@
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-cascader
-                    :class="{ error: mustFlag && item.client_id_arr.length === 0 }"
+                  <el-cascader :class="{ error: mustFlag && item.client_id_arr.length === 0 }"
                     placeholder="请选择加工单位"
                     v-model="item.client_id_arr"
-                    :options="prcessClientList"
-                  ></el-cascader>
+                    :options="prcessClientList"></el-cascader>
                 </div>
               </div>
               <div class="col">
@@ -1384,18 +1473,14 @@
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-select
-                    :class="{ error: mustFlag && item.process }"
+                  <el-select :class="{ error: mustFlag && item.process }"
                     v-model="item.process"
                     placeholder="选择加工工序"
-                    @change="getProcess($event, item)"
-                  >
-                    <el-option
-                      v-for="item in yarnProcessList"
+                    @change="getProcess($event, item)">
+                    <el-option v-for="item in yarnProcessList"
                       :key="item.value"
                       :label="item.label"
-                      :value="item.value"
-                    ></el-option>
+                      :value="item.value"></el-option>
                   </el-select>
                 </div>
               </div>
@@ -1411,40 +1496,36 @@
                   </div>
                 </div>
                 <div class="info elCtn spaceBetween">
-                  <el-date-picker
-                    style="width: 100%"
+                  <el-date-picker style="width: 100%"
                     class="once"
                     placeholder="下单日期"
                     value-format="yyyy-MM-dd"
-                    v-model="item.order_time"
-                  ></el-date-picker>
-                  <el-date-picker
-                    :class="{ error: mustFlag && item.delivery_time }"
+                    v-model="item.order_time"></el-date-picker>
+                  <el-date-picker :class="{ error: mustFlag && item.delivery_time }"
                     style="width: 100%"
                     class="once"
                     placeholder="交货日期"
                     value-format="yyyy-MM-dd"
-                    v-model="item.delivery_time"
-                  ></el-date-picker>
+                    v-model="item.delivery_time"></el-date-picker>
                 </div>
               </div>
             </div>
-            <div class="row" v-for="(itemMat, indexMat) in item.info_data" :key="'mat' + indexMat">
+            <div class="row"
+              v-for="(itemMat, indexMat) in item.info_data"
+              :key="'mat' + indexMat">
               <div class="col">
-                <div class="label" v-if="indexMat === 0">
+                <div class="label"
+                  v-if="indexMat === 0">
                   <span class="text">物料信息</span>
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-select
-                    v-if="materialProcessFlag === '订购加工'"
+                  <el-select v-if="materialProcessFlag === '订购加工'"
                     placeholder="请选择订购物料"
                     v-model="itemMat.material_order_info_id"
                     @change="getAfterColor($event, itemMat, '订购加工')"
-                    :class="{ error: mustFlag && !itemMat.material_order_info_id }"
-                  >
-                    <el-option
-                      v-for="item in checkMaterialProcessList"
+                    :class="{ error: mustFlag && !itemMat.material_order_info_id }">
+                    <el-option v-for="item in checkMaterialProcessList"
                       :key="item.id"
                       :value="item.id"
                       :label="
@@ -1455,18 +1536,14 @@
                         (item.plan_color || item.sup_color) +
                         ')/' +
                         item.attribute
-                      "
-                    ></el-option>
+                      "></el-option>
                   </el-select>
-                  <el-select
-                    v-if="materialProcessFlag === '调取加工'"
+                  <el-select v-if="materialProcessFlag === '调取加工'"
                     placeholder="请选择调取物料"
                     v-model="itemMat.material_transfer_info_id"
                     @change="getAfterColor($event, itemMat, '调取加工')"
-                    :class="{ error: mustFlag && !itemMat.material_transfer_info_id }"
-                  >
-                    <el-option
-                      v-for="item in checkMaterialStockList"
+                    :class="{ error: mustFlag && !itemMat.material_transfer_info_id }">
+                    <el-option v-for="item in checkMaterialStockList"
                       :key="item.id"
                       :value="item.id"
                       :label="
@@ -1477,13 +1554,13 @@
                         (item.plan_color || item.sup_color) +
                         ')/' +
                         item.attribute
-                      "
-                    ></el-option>
+                      "></el-option>
                   </el-select>
                 </div>
               </div>
               <div class="col">
-                <div class="label spaceBetween" v-if="indexMat === 0">
+                <div class="label spaceBetween"
+                  v-if="indexMat === 0">
                   <template v-if="!item.process">
                     <div class="once">
                       <span class="text">加工详情</span>
@@ -1528,55 +1605,61 @@
                 </div>
                 <div class="info elCtn spaceBetween">
                   <template v-if="!item.process">
-                    <el-input v-model="item.process" disabled placeholder="请先选择加工工序"></el-input>
+                    <el-input v-model="item.process"
+                      disabled
+                      placeholder="请先选择加工工序"></el-input>
                   </template>
                   <template v-if="item.process === '染色'">
-                    <el-input class="once" placeholder="白胚" disabled> </el-input>
-                    <el-autocomplete
-                      class="once"
+                    <el-input class="once"
+                      placeholder="白胚"
+                      disabled> </el-input>
+                    <el-autocomplete class="once"
                       v-model="itemMat.after_color"
                       :fetch-suggestions="searchColor"
                       placeholder="物料颜色"
-                      disabled
-                    ></el-autocomplete>
+                      disabled></el-autocomplete>
                   </template>
                   <template v-if="item.process === '倒纱'">
-                    <el-autocomplete
-                      class="once"
+                    <el-autocomplete class="once"
                       v-model="itemMat.before_attribute"
                       :fetch-suggestions="searchAttribute"
                       placeholder="物料属性"
-                      @select="getProcessAttribute($event, itemMat)"
-                    ></el-autocomplete>
-                    <el-autocomplete
-                      class="once"
+                      @select="getProcessAttribute($event, itemMat)"></el-autocomplete>
+                    <el-autocomplete class="once"
                       v-model="itemMat.after_attribute"
                       :fetch-suggestions="searchAttribute"
-                      placeholder="物料属性"
-                    ></el-autocomplete>
+                      placeholder="物料属性"></el-autocomplete>
                   </template>
                   <template v-if="item.process === '膨纱'">
-                    <el-input class="once" placeholder="请输入膨纱要求" v-model="itemMat.pengsha_desc"> </el-input>
+                    <el-input class="once"
+                      placeholder="请输入膨纱要求"
+                      v-model="itemMat.pengsha_desc"> </el-input>
                   </template>
                   <template v-if="item.process === '并线'">
-                    <el-input class="once" placeholder="请输入并线描述" v-model="itemMat.bingxian_desc"> </el-input>
+                    <el-input class="once"
+                      placeholder="请输入并线描述"
+                      v-model="itemMat.bingxian_desc"> </el-input>
                   </template>
                   <template v-if="item.process === '切割'">
-                    <el-input class="once" placeholder="请输入切割描述" v-model="itemMat.qiege_desc"> </el-input>
+                    <el-input class="once"
+                      placeholder="请输入切割描述"
+                      v-model="itemMat.qiege_desc"> </el-input>
                   </template>
                 </div>
               </div>
               <div class="col">
-                <div class="label spaceBetween" v-if="indexMat === 0">
+                <div class="label spaceBetween"
+                  v-if="indexMat === 0">
                   <div class="once">
                     <span class="text">加工单价</span>
                     <span class="explanation">(必填)</span>
-                    <el-tooltip class="item" effect="dark" content="统一单价" placement="top">
-                      <svg
-                        class="iconFont copyIcon hoverBlue"
+                    <el-tooltip class="item"
+                      effect="dark"
+                      content="统一单价"
+                      placement="top">
+                      <svg class="iconFont copyIcon hoverBlue"
                         aria-hidden="true"
-                        @click="$copyInfo(item.info_data, ['price'])"
-                      >
+                        @click="$copyInfo(item.info_data, ['price'])">
                         <use xlink:href="#icon-tongbushuju1"></use>
                       </svg>
                     </el-tooltip>
@@ -1587,8 +1670,7 @@
                   </div>
                 </div>
                 <div class="info elCtn spaceBetween">
-                  <el-input
-                    :ref="'price' + '-' + index + '-' + indexMat"
+                  <el-input :ref="'price' + '-' + index + '-' + indexMat"
                     :class="{ error: mustFlag && !itemMat.price }"
                     class="once"
                     placeholder="单价"
@@ -1596,12 +1678,10 @@
                     @focus="$focusInput($event)"
                     @keydown.native="
                       $focusByKeydown($event, 'price', [index, indexMat], '', ['materialProcessInfo', 'info_data'])
-                    "
-                  >
+                    ">
                     <template slot="append">元</template>
                   </el-input>
-                  <el-input
-                    :ref="'number' + '-' + index + '-' + indexMat"
+                  <el-input :ref="'number' + '-' + index + '-' + indexMat"
                     :class="{ error: mustFlag && !itemMat.number }"
                     class="once UnitCtn"
                     placeholder="数量"
@@ -1609,16 +1689,15 @@
                     @focus="$focusInput($event)"
                     @keydown.native="
                       $focusByKeydown($event, 'number', [index, indexMat], '', ['materialProcessInfo', 'info_data'])
-                    "
-                  >
+                    ">
                     <template slot="append">
-                      <el-input v-model="itemMat.unit" placeholder="单位"></el-input>
+                      <el-input v-model="itemMat.unit"
+                        placeholder="单位"></el-input>
                     </template>
                   </el-input>
                 </div>
               </div>
-              <div
-                class="opr hoverBlue"
+              <div class="opr hoverBlue"
                 v-if="indexMat === 0"
                 @click="
                   $addItem(item.info_data, {
@@ -1635,41 +1714,49 @@
                     qiege_desc: '', // 切割要求
                     bingxian_desc: '' // 并线要求
                   })
-                "
-              >
+                ">
                 添加
               </div>
-              <div class="opr hoverRed" v-if="indexMat > 0" @click="$deleteItem(item.info_data, indexMat)">删除</div>
+              <div class="opr hoverRed"
+                v-if="indexMat > 0"
+                @click="$deleteItem(item.info_data, indexMat)">删除</div>
             </div>
-            <div class="row" v-for="(itemOther, indexOther) in item.others_fee_data" :key="'other' + indexOther">
+            <div class="row"
+              v-for="(itemOther, indexOther) in item.others_fee_data"
+              :key="'other' + indexOther">
               <div class="col">
-                <div class="label" v-if="indexOther === 0">
+                <div class="label"
+                  v-if="indexOther === 0">
                   <span class="text">额外费用名称</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入额外费用名称" v-model="itemOther.name"></el-input>
+                  <el-input placeholder="请输入额外费用名称"
+                    v-model="itemOther.name"></el-input>
                 </div>
               </div>
               <div class="col">
-                <div class="label" v-if="indexOther === 0">
+                <div class="label"
+                  v-if="indexOther === 0">
                   <span class="text">额外费用金额</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入额外费用金额" v-model="itemOther.price">
+                  <el-input placeholder="请输入额外费用金额"
+                    v-model="itemOther.price">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
               </div>
               <div class="col">
-                <div class="label" v-if="indexOther === 0">
+                <div class="label"
+                  v-if="indexOther === 0">
                   <span class="text">额外费用备注</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入额外费用备注" v-model="itemOther.desc"></el-input>
+                  <el-input placeholder="请输入额外费用备注"
+                    v-model="itemOther.desc"></el-input>
                 </div>
               </div>
-              <div
-                class="opr hoverBlue"
+              <div class="opr hoverBlue"
                 v-if="indexOther === 0"
                 @click="
                   $addItem(item.others_fee_data, {
@@ -1677,11 +1764,12 @@
                     name: '',
                     price: ''
                   })
-                "
-              >
+                ">
                 添加
               </div>
-              <div class="opr hoverRed" v-if="indexOther > 0" @click="$deleteItem(item.others_fee_data, indexOther)">
+              <div class="opr hoverRed"
+                v-if="indexOther > 0"
+                @click="$deleteItem(item.others_fee_data, indexOther)">
                 删除
               </div>
             </div>
@@ -1691,7 +1779,8 @@
                   <span class="text">订购备注信息</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入订购备注信息" v-model="item.desc"></el-input>
+                  <el-input placeholder="请输入订购备注信息"
+                    v-model="item.desc"></el-input>
                 </div>
               </div>
               <div class="col">
@@ -1699,7 +1788,9 @@
                   <span class="text">订购总价</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="自动计算" v-model="totalProcessPriceList[index]" disabled>
+                  <el-input placeholder="自动计算"
+                    v-model="totalProcessPriceList[index]"
+                    disabled>
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -1709,15 +1800,16 @@
                   <span class="text">订购总数</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="自动计算" v-model="totalProcessNumberList[index]" disabled>
+                  <el-input placeholder="自动计算"
+                    v-model="totalProcessNumberList[index]"
+                    disabled>
                     <template slot="append">kg</template>
                   </el-input>
                 </div>
               </div>
             </div>
           </div>
-          <div
-            class="btn backHoverBlue"
+          <div class="btn backHoverBlue"
             style="margin-bottom: 16px"
             @click="
               $addItem(materialProcessInfo, {
@@ -1754,24 +1846,28 @@
                   }
                 ]
               })
-            "
-          >
+            ">
             添加加工单位
           </div>
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn" @click="closeProcess">取消</span>
-          <span class="btn backHoverBlue" @click="saveMaterialProcess()">确认</span>
-          <span class="btn backHoverOrange" @click="saveMaterialProcess(true)">确认并打印</span>
+          <span class="btn borderBtn"
+            @click="closeProcess">取消</span>
+          <span class="btn backHoverBlue"
+            @click="saveMaterialProcess()">确认</span>
+          <span class="btn backHoverOrange"
+            @click="saveMaterialProcess(true)">确认并打印</span>
         </div>
       </div>
     </div>
     <!-- 物料订购单修改 -->
-    <div class="popup" v-if="materialOrderUpdataFlag">
+    <div class="popup"
+      v-if="materialOrderUpdataFlag">
       <div class="main">
         <div class="titleCtn">
           <span class="text">修改物料订购单</span>
-          <div class="closeCtn" @click="materialOrderUpdataFlag = false">
+          <div class="closeCtn"
+            @click="materialOrderUpdataFlag = false">
             <span class="el-icon-close"></span>
           </div>
         </div>
@@ -1785,7 +1881,8 @@
                   <span class="explanation">(默认)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input v-model="materialOrderUpdataInfo.client_name" disabled></el-input>
+                  <el-input v-model="materialOrderUpdataInfo.client_name"
+                    disabled></el-input>
                 </div>
               </div>
               <div class="col">
@@ -1794,12 +1891,10 @@
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-date-picker
-                    style="width: 100%"
+                  <el-date-picker style="width: 100%"
                     placeholder="请选择时间"
                     value-format="yyyy-MM-dd"
-                    v-model="materialOrderUpdataInfo.order_time"
-                  ></el-date-picker>
+                    v-model="materialOrderUpdataInfo.order_time"></el-date-picker>
                 </div>
               </div>
               <div class="col">
@@ -1808,27 +1903,31 @@
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-date-picker
-                    style="width: 100%"
+                  <el-date-picker style="width: 100%"
                     placeholder="请选择交货日期"
                     value-format="yyyy-MM-dd"
-                    v-model="materialOrderUpdataInfo.delivery_time"
-                  ></el-date-picker>
+                    v-model="materialOrderUpdataInfo.delivery_time"></el-date-picker>
                 </div>
               </div>
             </div>
-            <div class="row" v-for="(itemMat, indexMat) in materialOrderUpdataInfo.info_data" :key="'mat' + indexMat">
+            <div class="row"
+              v-for="(itemMat, indexMat) in materialOrderUpdataInfo.info_data"
+              :key="'mat' + indexMat">
               <div class="col">
-                <div class="label" v-if="indexMat === 0">
+                <div class="label"
+                  v-if="indexMat === 0">
                   <span class="text">物料名称</span>
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请选择物料名称" v-model="itemMat.material_name" disabled> </el-input>
+                  <el-input placeholder="请选择物料名称"
+                    v-model="itemMat.material_name"
+                    disabled> </el-input>
                 </div>
               </div>
               <div class="col">
-                <div class="label spaceBetween" v-if="indexMat === 0">
+                <div class="label spaceBetween"
+                  v-if="indexMat === 0">
                   <div class="once">
                     <span class="text">订购属性</span>
                     <span class="explanation">(选填)</span>
@@ -1839,15 +1938,16 @@
                   </div>
                 </div>
                 <div class="info elCtn spaceBetween">
-                  <el-autocomplete
-                    class="once"
+                  <el-autocomplete class="once"
                     v-model="itemMat.attribute"
                     :fetch-suggestions="searchAttribute"
                     disabled
-                    placeholder="物料属性"
-                  ></el-autocomplete>
+                    placeholder="物料属性"></el-autocomplete>
                   <template>
-                    <el-input class="once" v-model="itemMat.material_color" placeholder="颜色" disabled></el-input>
+                    <el-input class="once"
+                      v-model="itemMat.material_color"
+                      placeholder="颜色"
+                      disabled></el-input>
                     <!-- <el-autocomplete v-else
                       class="once"
                       v-model="itemMat.material_color"
@@ -1857,7 +1957,8 @@
                 </div>
               </div>
               <div class="col">
-                <div class="label spaceBetween" v-if="indexMat === 0">
+                <div class="label spaceBetween"
+                  v-if="indexMat === 0">
                   <div class="once">
                     <span class="text">订购单价</span>
                     <span class="explanation">(必填)</span>
@@ -1868,76 +1969,71 @@
                   </div>
                 </div>
                 <div class="info elCtn spaceBetween">
-                  <el-input
-                    :ref="'price' + '-' + indexMat"
+                  <el-input :ref="'price' + '-' + indexMat"
                     class="once"
                     @keydown.native="
                       $focusByKeydown($event, 'price', [indexMat], materialOrderUpdataInfo, ['info_data'])
                     "
                     @focus="$focusInput($event)"
                     placeholder="单价"
-                    v-model="itemMat.price"
-                  >
+                    v-model="itemMat.price">
                     <template slot="append">元</template>
                   </el-input>
-                  <el-input
-                    :ref="'number' + '-' + indexMat"
+                  <el-input :ref="'number' + '-' + indexMat"
                     class="once UnitCtn"
                     @keydown.native="
                       $focusByKeydown($event, 'number', [indexMat], materialOrderUpdataInfo, ['info_data'])
                     "
                     @focus="$focusInput($event)"
                     placeholder="数量"
-                    v-model="itemMat.number"
-                  >
+                    v-model="itemMat.number">
                     <template slot="append">
-                      <el-input v-model="itemMat.unit" placeholder="单位"></el-input>
+                      <el-input v-model="itemMat.unit"
+                        placeholder="单位"></el-input>
                     </template>
                   </el-input>
                 </div>
               </div>
             </div>
-            <div
-              class="row"
+            <div class="row"
               v-for="(itemOther, indexOther) in materialOrderUpdataInfo.others_fee_data"
-              :key="'other' + indexOther"
-            >
+              :key="'other' + indexOther">
               <div class="col">
-                <div class="label" v-if="indexOther === 0">
+                <div class="label"
+                  v-if="indexOther === 0">
                   <span class="text">额外费用名称</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input
-                    placeholder="请输入额外费用名称"
+                  <el-input placeholder="请输入额外费用名称"
                     v-model="itemOther.name"
-                    @focus="$focusInput($event)"
-                  ></el-input>
+                    @focus="$focusInput($event)"></el-input>
                 </div>
               </div>
               <div class="col">
-                <div class="label" v-if="indexOther === 0">
+                <div class="label"
+                  v-if="indexOther === 0">
                   <span class="text">额外费用金额</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="请输入额外费用金额" v-model="itemOther.price" @focus="$focusInput($event)">
+                  <el-input placeholder="请输入额外费用金额"
+                    v-model="itemOther.price"
+                    @focus="$focusInput($event)">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
               </div>
               <div class="col">
-                <div class="label" v-if="indexOther === 0">
+                <div class="label"
+                  v-if="indexOther === 0">
                   <span class="text">额外费用备注</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input
-                    placeholder="请输入额外费用备注"
+                  <el-input placeholder="请输入额外费用备注"
                     v-model="itemOther.desc"
-                    @focus="$focusInput($event)"
-                  ></el-input>
+                    @focus="$focusInput($event)"></el-input>
                 </div>
               </div>
-              <div
-                class="opr hoverBlue"
+              <div class="opr hoverBlue"
                 v-if="indexOther === 0"
                 @click="
                   $addItem(materialOrderUpdataInfo.others_fee_data, {
@@ -1945,15 +2041,12 @@
                     name: '',
                     price: ''
                   })
-                "
-              >
+                ">
                 添加
               </div>
-              <div
-                class="opr hoverRed"
+              <div class="opr hoverRed"
                 v-if="indexOther > 0"
-                @click="$deleteItem(materialOrderUpdataInfo.others_fee_data, indexOther)"
-              >
+                @click="$deleteItem(materialOrderUpdataInfo.others_fee_data, indexOther)">
                 删除
               </div>
             </div>
@@ -1963,11 +2056,9 @@
                   <span class="text">订购备注信息</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input
-                    placeholder="请输入订购备注信息"
+                  <el-input placeholder="请输入订购备注信息"
                     v-model="materialOrderUpdataInfo.desc"
-                    @focus="$focusInput($event)"
-                  ></el-input>
+                    @focus="$focusInput($event)"></el-input>
                 </div>
               </div>
               <div class="col">
@@ -1975,7 +2066,9 @@
                   <span class="text">订购总价</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="自动计算" v-model="totalOrderPrice" disabled>
+                  <el-input placeholder="自动计算"
+                    v-model="totalOrderPrice"
+                    disabled>
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -1985,24 +2078,30 @@
                   <span class="text">订购总数</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="自动计算" v-model="totalOrderNumber" disabled> </el-input>
+                  <el-input placeholder="自动计算"
+                    v-model="totalOrderNumber"
+                    disabled> </el-input>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn" @click="materialOrderUpdataFlag = false">取消</span>
-          <span class="btn backHoverOrange" @click="updateMaterialOrder">确认修改</span>
+          <span class="btn borderBtn"
+            @click="materialOrderUpdataFlag = false">取消</span>
+          <span class="btn backHoverOrange"
+            @click="updateMaterialOrder">确认修改</span>
         </div>
       </div>
     </div>
     <!-- 物料加工单修改 -->
-    <div class="popup" v-show="materialProcessUpdataFlag">
+    <div class="popup"
+      v-show="materialProcessUpdataFlag">
       <div class="main">
         <div class="titleCtn">
           <span class="text">修改物料加工单</span>
-          <div class="closeCtn" @click="materialProcessUpdataFlag = false">
+          <div class="closeCtn"
+            @click="materialProcessUpdataFlag = false">
             <span class="el-icon-close"></span>
           </div>
         </div>
@@ -2015,11 +2114,9 @@
                   <span class="explanation">(默认)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-cascader
-                    placeholder="请选择加工单位"
+                  <el-cascader placeholder="请选择加工单位"
                     v-model="materialProcessUpdataInfo.client_id_arr"
-                    :options="prcessClientList"
-                  ></el-cascader>
+                    :options="prcessClientList"></el-cascader>
                 </div>
               </div>
               <div class="col">
@@ -2028,13 +2125,12 @@
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-select v-model="materialProcessUpdataInfo.process" placeholder="选择加工工序">
-                    <el-option
-                      v-for="item in yarnProcessList"
+                  <el-select v-model="materialProcessUpdataInfo.process"
+                    placeholder="选择加工工序">
+                    <el-option v-for="item in yarnProcessList"
                       :key="item.value"
                       :label="item.label"
-                      :value="item.value"
-                    ></el-option>
+                      :value="item.value"></el-option>
                   </el-select>
                 </div>
               </div>
@@ -2050,43 +2146,44 @@
                   </div>
                 </div>
                 <div class="info elCtn spaceBetween">
-                  <el-date-picker
-                    style="width: 100%"
+                  <el-date-picker style="width: 100%"
                     class="once"
                     placeholder="下单日期"
                     value-format="yyyy-MM-dd"
-                    v-model="materialProcessUpdataInfo.order_time"
-                  ></el-date-picker>
-                  <el-date-picker
-                    style="width: 100%"
+                    v-model="materialProcessUpdataInfo.order_time"></el-date-picker>
+                  <el-date-picker style="width: 100%"
                     class="once"
                     placeholder="交货日期"
                     value-format="yyyy-MM-dd"
-                    v-model="materialProcessUpdataInfo.delivery_time"
-                  ></el-date-picker>
+                    v-model="materialProcessUpdataInfo.delivery_time"></el-date-picker>
                 </div>
               </div>
             </div>
-            <div class="row" v-for="(itemMat, indexMat) in materialProcessUpdataInfo.info_data" :key="'mat' + indexMat">
+            <div class="row"
+              v-for="(itemMat, indexMat) in materialProcessUpdataInfo.info_data"
+              :key="'mat' + indexMat">
               <div class="col">
-                <div class="label" v-if="indexMat === 0">
+                <div class="label"
+                  v-if="indexMat === 0">
                   <span class="text">物料名称</span>
                   <span class="explanation">(默认)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input
-                    v-if="itemMat.material_order_name"
+                  <el-input v-if="itemMat.material_order_name"
                     placeholder="请选择订购物料"
                     v-model="itemMat.material_order_name"
-                    disabled
-                  >
+                    disabled>
                   </el-input>
-                  <el-input v-else placeholder="请选择订购物料" v-model="itemMat.material_transfer_name" disabled>
+                  <el-input v-else
+                    placeholder="请选择订购物料"
+                    v-model="itemMat.material_transfer_name"
+                    disabled>
                   </el-input>
                 </div>
               </div>
               <div class="col">
-                <div class="label spaceBetween" v-if="indexMat === 0">
+                <div class="label spaceBetween"
+                  v-if="indexMat === 0">
                   <template v-if="!materialProcessUpdataInfo.process">
                     <div class="once">
                       <span class="text">加工详情</span>
@@ -2131,69 +2228,58 @@
                 </div>
                 <div class="info elCtn spaceBetween">
                   <template v-if="!materialProcessUpdataInfo.process">
-                    <el-input
-                      v-model="materialProcessUpdataInfo.process"
+                    <el-input v-model="materialProcessUpdataInfo.process"
                       disabled
-                      placeholder="请先选择加工工序"
-                    ></el-input>
+                      placeholder="请先选择加工工序"></el-input>
                   </template>
                   <template v-if="materialProcessUpdataInfo.process === '染色'">
-                    <el-input class="once" placeholder="白胚" disabled> </el-input>
-                    <el-autocomplete
-                      class="once"
+                    <el-input class="once"
+                      placeholder="白胚"
+                      disabled> </el-input>
+                    <el-autocomplete class="once"
                       v-model="itemMat.after_color"
                       :fetch-suggestions="searchColor"
                       placeholder="物料颜色"
-                      disabled
-                    ></el-autocomplete>
+                      disabled></el-autocomplete>
                   </template>
                   <template v-if="materialProcessUpdataInfo.process === '倒纱'">
-                    <el-autocomplete
-                      class="once"
+                    <el-autocomplete class="once"
                       v-model="itemMat.before_attribute"
                       :fetch-suggestions="searchAttribute"
                       placeholder="物料属性"
-                      @focus="$focusInput($event)"
-                    ></el-autocomplete>
-                    <el-autocomplete
-                      class="once"
+                      @focus="$focusInput($event)"></el-autocomplete>
+                    <el-autocomplete class="once"
                       v-model="itemMat.after_attribute"
                       :fetch-suggestions="searchAttribute"
                       placeholder="物料属性"
-                      @focus="$focusInput($event)"
-                    ></el-autocomplete>
+                      @focus="$focusInput($event)"></el-autocomplete>
                   </template>
                   <template v-if="materialProcessUpdataInfo.process === '膨纱'">
-                    <el-input
-                      class="once"
+                    <el-input class="once"
                       placeholder="请输入膨纱要求"
                       v-model="itemMat.pengsha_desc"
-                      @focus="$focusInput($event)"
-                    >
+                      @focus="$focusInput($event)">
                     </el-input>
                   </template>
                   <template v-if="materialProcessUpdataInfo.process === '并线'">
-                    <el-input
-                      class="once"
+                    <el-input class="once"
                       placeholder="请输入并线描述"
                       v-model="itemMat.bingxian_desc"
-                      @focus="$focusInput($event)"
-                    >
+                      @focus="$focusInput($event)">
                     </el-input>
                   </template>
                   <template v-if="materialProcessUpdataInfo.process === '切割'">
-                    <el-input
-                      class="once"
+                    <el-input class="once"
                       placeholder="请输入切割描述"
                       v-model="itemMat.qiege_desc"
-                      @focus="$focusInput($event)"
-                    >
+                      @focus="$focusInput($event)">
                     </el-input>
                   </template>
                 </div>
               </div>
               <div class="col">
-                <div class="label spaceBetween" v-if="indexMat === 0">
+                <div class="label spaceBetween"
+                  v-if="indexMat === 0">
                   <div class="once">
                     <span class="text">加工单价</span>
                     <span class="explanation">(必填)</span>
@@ -2204,56 +2290,60 @@
                   </div>
                 </div>
                 <div class="info elCtn spaceBetween">
-                  <el-input class="once" placeholder="单价" v-model="itemMat.price" @focus="$focusInput($event)">
+                  <el-input class="once"
+                    placeholder="单价"
+                    v-model="itemMat.price"
+                    @focus="$focusInput($event)">
                     <template slot="append">元</template>
                   </el-input>
-                  <el-input class="once" placeholder="数量" v-model="itemMat.number" @focus="$focusInput($event)">
+                  <el-input class="once"
+                    placeholder="数量"
+                    v-model="itemMat.number"
+                    @focus="$focusInput($event)">
                     <template slot="append">{{ itemMat.unit }}</template>
                   </el-input>
                 </div>
               </div>
             </div>
-            <div
-              class="row"
+            <div class="row"
               v-for="(itemOther, indexOther) in materialProcessUpdataInfo.others_fee_data"
-              :key="'other' + indexOther"
-            >
+              :key="'other' + indexOther">
               <div class="col">
-                <div class="label" v-if="indexOther === 0">
+                <div class="label"
+                  v-if="indexOther === 0">
                   <span class="text">额外费用名称</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input
-                    @focus="$focusInput($event)"
+                  <el-input @focus="$focusInput($event)"
                     placeholder="请输入额外费用名称"
-                    v-model="itemOther.name"
-                  ></el-input>
+                    v-model="itemOther.name"></el-input>
                 </div>
               </div>
               <div class="col">
-                <div class="label" v-if="indexOther === 0">
+                <div class="label"
+                  v-if="indexOther === 0">
                   <span class="text">额外费用金额</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input @focus="$focusInput($event)" placeholder="请输入额外费用金额" v-model="itemOther.price">
+                  <el-input @focus="$focusInput($event)"
+                    placeholder="请输入额外费用金额"
+                    v-model="itemOther.price">
                     <template slot="append">元</template>
                   </el-input>
                 </div>
               </div>
               <div class="col">
-                <div class="label" v-if="indexOther === 0">
+                <div class="label"
+                  v-if="indexOther === 0">
                   <span class="text">额外费用备注</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input
-                    @focus="$focusInput($event)"
+                  <el-input @focus="$focusInput($event)"
                     placeholder="请输入额外费用备注"
-                    v-model="itemOther.desc"
-                  ></el-input>
+                    v-model="itemOther.desc"></el-input>
                 </div>
               </div>
-              <div
-                class="opr hoverBlue"
+              <div class="opr hoverBlue"
                 v-if="indexOther === 0"
                 @click="
                   $addItem(materialProcessUpdataInfo.others_fee_data, {
@@ -2261,15 +2351,12 @@
                     name: '',
                     price: ''
                   })
-                "
-              >
+                ">
                 添加
               </div>
-              <div
-                class="opr hoverRed"
+              <div class="opr hoverRed"
                 v-if="indexOther > 0"
-                @click="$deleteItem(materialProcessUpdataInfo.others_fee_data, indexOther)"
-              >
+                @click="$deleteItem(materialProcessUpdataInfo.others_fee_data, indexOther)">
                 删除
               </div>
             </div>
@@ -2279,11 +2366,9 @@
                   <span class="text">订购备注信息</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input
-                    @focus="$focusInput($event)"
+                  <el-input @focus="$focusInput($event)"
                     placeholder="请输入订购备注信息"
-                    v-model="materialProcessUpdataInfo.desc"
-                  ></el-input>
+                    v-model="materialProcessUpdataInfo.desc"></el-input>
                 </div>
               </div>
               <div class="col">
@@ -2291,7 +2376,9 @@
                   <span class="text">订购总价</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="自动计算" v-model="totalProcessPrice" disabled>
+                  <el-input placeholder="自动计算"
+                    v-model="totalProcessPrice"
+                    disabled>
                     <template slot="append">元</template>
                   </el-input>
                 </div>
@@ -2301,7 +2388,9 @@
                   <span class="text">订购总数</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input placeholder="自动计算" v-model="totalProcessNumber" disabled>
+                  <el-input placeholder="自动计算"
+                    v-model="totalProcessNumber"
+                    disabled>
                     <template slot="append">kg</template>
                   </el-input>
                 </div>
@@ -2310,8 +2399,10 @@
           </div>
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn" @click="materialProcessUpdataFlag = false">取消</span>
-          <span class="btn backHoverOrange" @click="updataMaterialProcess">确认修改</span>
+          <span class="btn borderBtn"
+            @click="materialProcessUpdataFlag = false">取消</span>
+          <span class="btn backHoverOrange"
+            @click="updataMaterialProcess">确认修改</span>
         </div>
       </div>
     </div>
@@ -2319,14 +2410,13 @@
       <div class="main">
         <!-- 报价单表格 -->
         <div class="priceCtn fl">
-          <div
-            class="btn"
+          <div class="btn"
             :class="{ backHoverBlue: priceMaterialList.length > 0, backGray: priceMaterialList.length === 0 }"
-            @click="showPrice = !showPrice"
-          >
+            @click="showPrice = !showPrice">
             {{ priceMaterialList.length > 0 ? (showPrice ? '关闭报价' : '查看报价') : '暂无报价' }}
           </div>
-          <div class="priceTable" v-show="showPrice && priceMaterialList.length > 0">
+          <div class="priceTable"
+            v-show="showPrice && priceMaterialList.length > 0">
             <div class="module">
               <div class="titleCtn">
                 <div class="title">报价信息</div>
@@ -2340,7 +2430,9 @@
                     </div>
                   </div>
                   <div class="tbody">
-                    <div class="trow" v-for="(item, index) in priceMaterialList" :key="index">
+                    <div class="trow"
+                      v-for="(item, index) in priceMaterialList"
+                      :key="index">
                       <div class="tcol">{{ item.material_name }}</div>
                       <div class="tcol">{{ item.price }}元/{{ item.unit === 'g' ? 'kg' : item.unit }}</div>
                     </div>
@@ -2350,39 +2442,35 @@
             </div>
           </div>
         </div>
-        <div class="btnCtn" style="float: left">
-          <div class="btn backHoverGreen" @click="showAssociatedPage = true">
+        <div class="btnCtn"
+          style="float: left">
+          <div class="btn backHoverGreen"
+            @click="showAssociatedPage = true">
             <span class="text">关联页面</span>
           </div>
         </div>
         <div class="btnCtn">
-          <div class="borderBtn" @click="$router.go(-1)">返回</div>
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
         </div>
       </div>
     </div>
-    <zh-deduct
-      :show="deductFlag"
+    <zh-deduct :show="deductFlag"
       :deduct_type="1"
       @close="deductFlag = false"
       :type="deductInfo.type"
       :id="deductInfo.doc_id"
       :order_id="$route.query.supFlag ? materialSupplementInfo.top_order_id : materialPlanInfo.top_order_id"
       :client_id="deductInfo.client_id"
-      :client_name="deductInfo.client_name"
-    ></zh-deduct>
-    <zh-deduct-detail
-      :show="deductDetailFlag"
+      :client_name="deductInfo.client_name"></zh-deduct>
+    <zh-deduct-detail :show="deductDetailFlag"
       @close="deductDetailFlag = false"
-      :data="deductDetail"
-    ></zh-deduct-detail>
-    <associated-page
-      :data="associatedPage"
+      :data="deductDetail"></zh-deduct-detail>
+    <associated-page :data="associatedPage"
       :nowPage="true"
       @close="showAssociatedPage = false"
-      :show="showAssociatedPage"
-    ></associated-page>
-    <zh-check
-      @close="checkFlag = false"
+      :show="showAssociatedPage"></associated-page>
+    <zh-check @close="checkFlag = false"
       @afterCheck="
         (ev) => {
           checkType === 2
@@ -2393,10 +2481,8 @@
       :show="checkFlag"
       :pid="checkType === 2 ? materialOrderIndex : materialStockIndex"
       :check_type="checkType"
-      :reason="[]"
-    ></zh-check>
-    <zh-check-detail
-      :pid="checkType === 2 ? materialOrderIndex : materialStockIndex"
+      :reason="[]"></zh-check>
+    <zh-check-detail :pid="checkType === 2 ? materialOrderIndex : materialStockIndex"
       :check_type="checkType"
       :show="checkDetailFlag"
       :is_check="is_check"
@@ -2420,8 +2506,7 @@
               '2. 如果录入的数量为实际调取数量，则无需操作，或点击审核通过即可。'
             ]
       "
-      @close="checkDetailFlag = false"
-    ></zh-check-detail>
+      @close="checkDetailFlag = false"></zh-check-detail>
   </div>
 </template>
 
@@ -2859,7 +2944,12 @@ export default Vue.extend({
               material_color: item.material_color,
               attribute: '',
               price: '',
-              number: item.final_number,
+              number: this.$toFixed(
+                // @ts-ignore
+                item.final_number - (item.total_order_number + item.total_transfer_number),
+                3,
+                true
+              ),
               unit: item.unit
             }
           })
@@ -2893,7 +2983,12 @@ export default Vue.extend({
               material_color: '白胚',
               attribute: '',
               price: '',
-              number: item.final_number,
+              number: this.$toFixed(
+                // @ts-ignore
+                item.final_number - (item.total_order_number + item.total_transfer_number),
+                3,
+                true
+              ),
               unit: item.unit
             }
           })
@@ -2986,6 +3081,10 @@ export default Vue.extend({
             }
           ]) ||
           item.info_data.some((itemChild) => {
+            if (Number(itemChild.number) < 0 || Number(itemChild.number) === 0) {
+              this.$message.error('无法提交订购数量小于0的数据，请删除数量小于0的数据后再提交')
+              return true
+            }
             return this.$formCheck(itemChild, [
               {
                 key: 'material_id',
@@ -3011,7 +3110,7 @@ export default Vue.extend({
           })
         )
       })
-      
+
       if (!formCheck) {
         const checkArr: any[] = []
         this.materialOrderInfo.forEach((item) => {

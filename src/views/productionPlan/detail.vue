@@ -2453,7 +2453,8 @@ import {
   quotedPrice,
   checkBeyond,
   store,
-  productStock
+  productStock,
+  checkPriceBeyond
 } from '@/assets/js/api'
 import { ProductionMaterialPlanInfo, ProductionPlanInfo, ProductionPrintInfo } from '@/types/productionPlan'
 import { MaterialPlanInfo, MaterailPlanData } from '@/types/materialPlan'
@@ -3517,6 +3518,7 @@ export default Vue.extend({
         this.getMaterialInfo()
         this.getCmpData()
         const checkArr: any[] = []
+        const checkPriceArr: any[] = []
         this.productionPlanInfo.forEach((item) => {
           item.product_info_data.forEach((itemChild) => {
             checkArr.push({
@@ -3528,14 +3530,21 @@ export default Vue.extend({
               color_id: itemChild.color_id,
               number: itemChild.number
             })
+            checkPriceArr.push({
+              process_name: item.process_name,
+              product_id: itemChild.product_id,
+              size_id: itemChild.size_id,
+              color_id: itemChild.color_id,
+              price: itemChild.price
+            })
           })
         })
-        checkBeyond({
+        checkPriceBeyond({
           doc_type: 4,
-          data: checkArr
+          data: checkPriceArr
         }).then((res) => {
           if (res.data.data.length === 0) {
-            this.saveProductionPlanFn(ifprint)
+            this.checkBeyondFn(checkArr, ifprint)
           } else {
             const createHtml = this.$createElement
             this.$msgbox({
@@ -3553,8 +3562,7 @@ export default Vue.extend({
               type: 'warning'
             })
               .then(() => {
-                this.productionPlanInfo.forEach((item) => (item.is_check = 4))
-                this.saveProductionPlanFn(ifprint)
+                this.checkBeyondFn(checkArr, ifprint)
               })
               .catch(() => {
                 this.$message({
@@ -3567,6 +3575,42 @@ export default Vue.extend({
       } else {
         this.mustFlag = true
       }
+    },
+    checkBeyondFn(checkArr: any[], ifprint?: boolean) {
+      checkBeyond({
+        doc_type: 4,
+        data: checkArr
+      }).then((res) => {
+        if (res.data.data.length === 0) {
+          this.saveProductionPlanFn(ifprint)
+        } else {
+          const createHtml = this.$createElement
+          this.$msgbox({
+            message: createHtml(
+              'p',
+              undefined,
+              res.data.data.map((item: string) => {
+                return createHtml('p', undefined, item)
+              })
+            ),
+            title: '提示',
+            showCancelButton: true,
+            confirmButtonText: '继续提交',
+            cancelButtonText: '取消提交',
+            type: 'warning'
+          })
+            .then(() => {
+              this.productionPlanInfo.forEach((item) => (item.is_check = 4))
+              this.saveProductionPlanFn(ifprint)
+            })
+            .catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消提交'
+              })
+            })
+        }
+      })
     },
     saveProductionPlanFn(ifprint?: boolean) {
       this.saveLock = true
