@@ -580,9 +580,9 @@
                     <span v-html="item.html"></span>
                   </div>
                   <div class="tcol"
-                    style="max-width:120px">
+                    style="max-width:120px;flex-direction:row;align-items:center">
                     <span class="blue"
-                      style="cursor:pointer"
+                      style="cursor:pointer;margin-right:12px"
                       @click="todoUrl(item)">查看</span>
                     <span class="red"
                       style="cursor:pointer"

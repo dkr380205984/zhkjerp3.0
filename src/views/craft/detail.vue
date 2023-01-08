@@ -2417,6 +2417,8 @@ export default Vue.extend({
 
       // 绘制须头独立代码
       if (this.craftXutouWarpFlag) {
+        this.tasselsWarpNum = Number(this.tasselsWarpNum)
+        this.tasselsWeftNum = Number(this.tasselsWeftNum)
         // 第一步：确认须头长度
         const tasselsWarpWidth = (Number(this.craftInfo.weft_data.rangwei) / 2 / (this.craftCuxiFlag ? 0.3 : 0.2)) * 10 // 厘米转成毫米
         const tasselsWeftWidthLeft =
@@ -2429,10 +2431,10 @@ export default Vue.extend({
 
         // 第三步：根据用户输入的捻参数确认须头坐标点阵
         const tasselsWarpForNum = Math.round(
-          (tasselsWarpWidth /
+          tasselsWarpWidth /
             (this.tasselsWarpNum *
               (this.craftYarnWarp.diameter + this.warpDistance) *
-              (this.craftCuxiFlag ? 0.3 : 0.2))) *
+              (this.craftCuxiFlag ? 0.3 : 0.2)) /
             Math.SQRT2
         )
         this.xutouHeight = ((tasselsWarpForNum * this.tasselsWarpNum) / 2) * (1 + this.craftYarnWarp.diameter)
@@ -2587,8 +2589,8 @@ export default Vue.extend({
 
       // 把data转化成以捻为一组的二维矩阵，注意这里的捻是半股，也就是左半股+右半股+左半股+右半股+...
       const strandMatrix = []
-      for (let i = 0; i < data.length; i += tasselsNum) {
-        if (i + tasselsNum < data.length) {
+      for (let i = 0; i <= data.length; i += tasselsNum) {
+        if (i + tasselsNum / 2 < data.length) {
           strandMatrix.push(data.slice(i, i + tasselsNum / 2))
           strandMatrix.push(data.slice(i + tasselsNum / 2, i + tasselsNum))
         }
