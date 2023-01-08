@@ -1,5 +1,7 @@
 <template>
-  <div id="materialStockDetail" class="bodyContainer" v-loading="loading">
+  <div id="materialStockDetail"
+    class="bodyContainer"
+    v-loading="loading">
     <order-detail :data="orderInfo"></order-detail>
     <div class="module clearfix">
       <div class="titleCtn">
@@ -13,11 +15,13 @@
           <div class="trow">
             <div class="tcol">采购单号</div>
             <div class="tcol">采购单位</div>
-            <div class="tcol noPad" style="flex: 5">
+            <div class="tcol noPad"
+              style="flex: 5">
               <div class="trow">
                 <div class="tcol">纱线名称</div>
                 <div class="tcol">订购属性</div>
-                <div class="tcol noPad" style="flex: 2">
+                <div class="tcol noPad"
+                  style="flex: 2">
                   <div class="trow">
                     <div class="tcol">初始/染色颜色</div>
                     <div class="tcol">采购/已加工数量</div>
@@ -30,28 +34,33 @@
           </div>
         </div>
         <div class="tbody">
-          <div class="trow" v-for="(item, index) in materialShaXianList" :key="index">
+          <div class="trow"
+            v-for="(item, index) in materialShaXianList"
+            :key="index">
             <div class="tcol">
-              <el-checkbox v-model="item.checkAll" @change="getAllCheck($event, item)">{{ item.code }}</el-checkbox>
+              <el-checkbox v-model="item.checkAll"
+                @change="getAllCheck($event, item)">{{ item.code }}</el-checkbox>
             </div>
             <div class="tcol">{{ item.client_name }}</div>
-            <div class="tcol noPad" style="flex: 5">
-              <div class="trow" v-for="(itemChild, indexChild) in item.info_data" :key="indexChild">
+            <div class="tcol noPad"
+              style="flex: 5">
+              <div class="trow"
+                v-for="(itemChild, indexChild) in item.info_data"
+                :key="indexChild">
                 <div class="tcol">
-                  <el-checkbox v-model="itemChild.check" @change="$forceUpdate()">{{
+                  <el-checkbox v-model="itemChild.check"
+                    @change="$forceUpdate()">{{
                     itemChild.material_name
                   }}</el-checkbox>
                 </div>
                 <div class="tcol">{{ itemChild.attribute }}</div>
-                <div class="tcol noPad" style="flex: 2">
-                  <div
-                    class="trow"
-                    v-if="itemChild.process_info.filter((item) => item.process === '染色').length === 0"
-                  >
+                <div class="tcol noPad"
+                  style="flex: 2">
+                  <div class="trow"
+                    v-if="itemChild.process_info.filter((item) => item.process === '染色').length === 0">
                     <div class="tcol">
                       <span style="display: flex; align-items: center">
-                        <div
-                          class="backHoverOrange"
+                        <div class="backHoverOrange"
                           style="
                             display: inline-block;
                             width: 22px;
@@ -62,8 +71,7 @@
                             color: white;
                             font-size: 14px;
                             margin-right: 8px;
-                          "
-                        >
+                          ">
                           初
                         </div>
                         {{ itemChild.material_color }}
@@ -71,16 +79,13 @@
                     </div>
                     <div class="tcol">{{ itemChild.number }}{{ itemChild.unit || 'kg' }}</div>
                   </div>
-                  <div
-                    class="trow"
+                  <div class="trow"
                     v-else
                     v-for="(itemSon, indexSon) in itemChild.process_info.filter((item) => item.process === '染色')"
-                    :key="indexSon"
-                  >
+                    :key="indexSon">
                     <div class="tcol">
                       <span style="display: flex; align-items: center">
-                        <div
-                          class="backHoverGreen"
+                        <div class="backHoverGreen"
                           style="
                             display: inline-block;
                             width: 22px;
@@ -91,8 +96,7 @@
                             color: white;
                             font-size: 14px;
                             margin-right: 8px;
-                          "
-                        >
+                          ">
                           染
                         </div>
                         {{ itemSon.after_color }}
@@ -101,19 +105,16 @@
                     <div class="tcol">{{ itemSon.number }}{{ itemChild.unit || 'kg' }}</div>
                   </div>
                   <!-- 没染完 -->
-                  <div
-                    class="trow"
+                  <div class="trow"
                     v-if="
                       itemChild.process_info.filter((item) => item.process === '染色').length > 0 &&
                       itemChild.process_info
                         .filter((item) => item.process === '染色')
                         .reduce((total, cur) => total + Number(cur.number), 0) < Number(itemChild.number)
-                    "
-                  >
+                    ">
                     <div class="tcol">
                       <span style="display: flex; align-items: center">
-                        <div
-                          class="backHoverOrange"
+                        <div class="backHoverOrange"
                           style="
                             display: inline-block;
                             width: 22px;
@@ -124,8 +125,7 @@
                             color: white;
                             font-size: 14px;
                             margin-right: 8px;
-                          "
-                        >
+                          ">
                           初
                         </div>
                         {{ itemChild.material_color }}
@@ -150,8 +150,10 @@
               </div>
             </div>
           </div>
-          <div class="trow" v-if="materialShaXianList.length === 0">
-            <div class="tcol gray" style="text-align: center">暂无单据</div>
+          <div class="trow"
+            v-if="materialShaXianList.length === 0">
+            <div class="tcol gray"
+              style="text-align: center">暂无单据</div>
           </div>
         </div>
       </div>
@@ -160,11 +162,13 @@
           <div class="trow">
             <div class="tcol">采购单号</div>
             <div class="tcol">采购单位</div>
-            <div class="tcol noPad" style="flex: 5">
+            <div class="tcol noPad"
+              style="flex: 5">
               <div class="trow">
                 <div class="tcol">面料名称</div>
                 <div class="tcol">订购属性</div>
-                <div class="tcol noPad" style="flex: 2">
+                <div class="tcol noPad"
+                  style="flex: 2">
                   <div class="trow">
                     <div class="tcol">初始/染色颜色</div>
                     <div class="tcol">采购/已加工数量</div>
@@ -177,28 +181,33 @@
           </div>
         </div>
         <div class="tbody">
-          <div class="trow" v-for="(item, index) in materialMianLiaoList" :key="index">
+          <div class="trow"
+            v-for="(item, index) in materialMianLiaoList"
+            :key="index">
             <div class="tcol">
-              <el-checkbox v-model="item.checkAll" @change="getAllCheck($event, item)">{{ item.code }}</el-checkbox>
+              <el-checkbox v-model="item.checkAll"
+                @change="getAllCheck($event, item)">{{ item.code }}</el-checkbox>
             </div>
             <div class="tcol">{{ item.client_name }}</div>
-            <div class="tcol noPad" style="flex: 5">
-              <div class="trow" v-for="(itemChild, indexChild) in item.info_data" :key="indexChild">
+            <div class="tcol noPad"
+              style="flex: 5">
+              <div class="trow"
+                v-for="(itemChild, indexChild) in item.info_data"
+                :key="indexChild">
                 <div class="tcol">
-                  <el-checkbox v-model="itemChild.check" @change="$forceUpdate()">{{
+                  <el-checkbox v-model="itemChild.check"
+                    @change="$forceUpdate()">{{
                     itemChild.material_name
                   }}</el-checkbox>
                 </div>
                 <div class="tcol">{{ itemChild.attribute }}</div>
-                <div class="tcol noPad" style="flex: 2">
-                  <div
-                    class="trow"
-                    v-if="itemChild.process_info.filter((item) => item.process === '染色').length === 0"
-                  >
+                <div class="tcol noPad"
+                  style="flex: 2">
+                  <div class="trow"
+                    v-if="itemChild.process_info.filter((item) => item.process === '染色').length === 0">
                     <div class="tcol">
                       <span style="display: flex; align-items: center">
-                        <div
-                          class="backHoverOrange"
+                        <div class="backHoverOrange"
                           style="
                             display: inline-block;
                             width: 22px;
@@ -209,8 +218,7 @@
                             color: white;
                             font-size: 14px;
                             margin-right: 8px;
-                          "
-                        >
+                          ">
                           初
                         </div>
                         {{ itemChild.material_color }}
@@ -218,16 +226,13 @@
                     </div>
                     <div class="tcol">{{ itemChild.number }}{{ itemChild.unit || 'kg' }}</div>
                   </div>
-                  <div
-                    class="trow"
+                  <div class="trow"
                     v-else
                     v-for="(itemSon, indexSon) in itemChild.process_info.filter((item) => item.process === '染色')"
-                    :key="indexSon"
-                  >
+                    :key="indexSon">
                     <div class="tcol">
                       <span style="display: flex; align-items: center">
-                        <div
-                          class="backHoverGreen"
+                        <div class="backHoverGreen"
                           style="
                             display: inline-block;
                             width: 22px;
@@ -238,8 +243,7 @@
                             color: white;
                             font-size: 14px;
                             margin-right: 8px;
-                          "
-                        >
+                          ">
                           染
                         </div>
                         {{ itemSon.after_color }}
@@ -248,19 +252,16 @@
                     <div class="tcol">{{ itemSon.number }}{{ itemChild.unit || 'kg' }}</div>
                   </div>
                   <!-- 没染完 -->
-                  <div
-                    class="trow"
+                  <div class="trow"
                     v-if="
                       itemChild.process_info.filter((item) => item.process === '染色').length > 0 &&
                       itemChild.process_info
                         .filter((item) => item.process === '染色')
                         .reduce((total, cur) => total + Number(cur.number), 0) < Number(itemChild.number)
-                    "
-                  >
+                    ">
                     <div class="tcol">
                       <span style="display: flex; align-items: center">
-                        <div
-                          class="backHoverOrange"
+                        <div class="backHoverOrange"
                           style="
                             display: inline-block;
                             width: 22px;
@@ -271,8 +272,7 @@
                             color: white;
                             font-size: 14px;
                             margin-right: 8px;
-                          "
-                        >
+                          ">
                           初
                         </div>
                         {{ itemChild.material_color }}
@@ -288,47 +288,47 @@
                     </div>
                   </div>
                 </div>
-                <div class="tcol" style="flex-direction: row; align-items: center; justify-content: start">
+                <div class="tcol"
+                  style="flex-direction: row; align-items: center; justify-content: start">
                   {{ itemChild.final_push_number || 0 }}{{ itemChild.unit || 'kg' }}
                 </div>
                 <div class="tcol">
-                  <span
-                    :class="{
+                  <span :class="{
                       green: Number(itemChild.final_push_number) >= Number(itemChild.number),
                       red: Number(itemChild.final_push_number) < Number(itemChild.number)
-                    }"
-                    >{{ Number(itemChild.final_push_number) > Number(itemChild.number) > 0 ? '+' : ''
+                    }">{{ Number(itemChild.final_push_number) > Number(itemChild.number) > 0 ? '+' : ''
                     }}{{ (Number(itemChild.final_push_number) - Number(itemChild.number)).toFixed(2)
-                    }}{{ itemChild.unit || 'kg' }}</span
-                  >
+                    }}{{ itemChild.unit || 'kg' }}</span>
                 </div>
               </div>
             </div>
           </div>
-          <div class="trow" v-if="materialMianLiaoList.length === 0">
-            <div class="tcol gray" style="text-align: center">暂无单据</div>
+          <div class="trow"
+            v-if="materialMianLiaoList.length === 0">
+            <div class="tcol gray"
+              style="text-align: center">暂无单据</div>
           </div>
         </div>
       </div>
       <div class="buttonList">
-        <div
-          class="btn backHoverBlue"
+        <div class="btn backHoverBlue"
           :class="{
             backGray:
               materialOrderList.filter((item) => {
                 return item.info_data.some((itemChild) => itemChild.check)
               }).length === 0
           }"
-          @click="goStock(4)"
-        >
-          <svg class="iconFont" aria-hidden="true">
+          @click="goStock(4)">
+          <svg class="iconFont"
+            aria-hidden="true">
             <use xlink:href="#icon-xiugaidingdan"></use>
           </svg>
           <span class="text">最终入库</span>
         </div>
       </div>
     </div>
-    <div class="module clearfix" v-show="materialJHDQList.length > 0">
+    <div class="module clearfix"
+      v-show="materialJHDQList.length > 0">
       <div class="titleCtn">
         <div class="title">计划调取单入库<el-checkbox v-model="showLessJHDQ"
             @change="init()"
@@ -340,12 +340,14 @@
           <div class="trow">
             <div class="tcol">调取单号</div>
             <div class="tcol">来源仓库</div>
-            <div class="tcol noPad" style="flex: 5">
+            <div class="tcol noPad"
+              style="flex: 5">
               <div class="trow">
                 <div class="tcol">原料名称</div>
                 <div class="tcol">调取属性</div>
                 <div class="tcol">批号/缸号/色号</div>
-                <div class="tcol noPad" style="flex: 2">
+                <div class="tcol noPad"
+                  style="flex: 2">
                   <div class="trow">
                     <div class="tcol">调取/染色颜色</div>
                     <div class="tcol">调取/已加工数量</div>
@@ -357,29 +359,33 @@
           </div>
         </div>
         <div class="tbody">
-          <div class="trow" v-for="item in materialJHDQList" :key="item.id">
+          <div class="trow"
+            v-for="item in materialJHDQList"
+            :key="item.id">
             <div class="tcol">
-              <el-checkbox v-model="item.checkAll" @change="getAllCheck($event, item)">{{ item.code }}</el-checkbox>
+              <el-checkbox v-model="item.checkAll"
+                @change="getAllCheck($event, item)">{{ item.code }}</el-checkbox>
             </div>
             <div class="tcol">{{ item.store }}/{{ item.secondary_store }}</div>
-            <div class="tcol noPad" style="flex: 5">
-              <div class="trow" v-for="(itemChild, indexChild) in item.info_data" :key="indexChild">
+            <div class="tcol noPad"
+              style="flex: 5">
+              <div class="trow"
+                v-for="(itemChild, indexChild) in item.info_data"
+                :key="indexChild">
                 <div class="tcol">
-                  <el-checkbox v-model="itemChild.check" @change="$forceUpdate()"
-                    >{{ itemChild.material_name }}
+                  <el-checkbox v-model="itemChild.check"
+                    @change="$forceUpdate()">{{ itemChild.material_name }}
                   </el-checkbox>
                 </div>
                 <div class="tcol">{{ itemChild.attribute }}</div>
                 <div class="tcol">{{ itemChild.batch_code }}/{{ itemChild.vat_code }}/{{ itemChild.color_code }}</div>
-                <div class="tcol noPad" style="flex: 2">
-                  <div
-                    class="trow"
-                    v-if="itemChild.process_info.filter((item) => item.process === '染色').length === 0"
-                  >
+                <div class="tcol noPad"
+                  style="flex: 2">
+                  <div class="trow"
+                    v-if="itemChild.process_info.filter((item) => item.process === '染色').length === 0">
                     <div class="tcol">
                       <span style="display: flex; align-items: center">
-                        <div
-                          class="backHoverOrange"
+                        <div class="backHoverOrange"
                           style="
                             display: inline-block;
                             width: 22px;
@@ -390,8 +396,7 @@
                             color: white;
                             font-size: 14px;
                             margin-right: 8px;
-                          "
-                        >
+                          ">
                           调
                         </div>
                         {{ itemChild.material_color }}
@@ -399,16 +404,13 @@
                     </div>
                     <div class="tcol">{{ itemChild.number }}{{ itemChild.unit || 'kg' }}</div>
                   </div>
-                  <div
-                    class="trow"
+                  <div class="trow"
                     v-else
                     v-for="(itemSon, indexSon) in itemChild.process_info.filter((item) => item.process === '染色')"
-                    :key="indexSon"
-                  >
+                    :key="indexSon">
                     <div class="tcol">
                       <span style="display: flex; align-items: center">
-                        <div
-                          class="backHoverGreen"
+                        <div class="backHoverGreen"
                           style="
                             display: inline-block;
                             width: 22px;
@@ -419,8 +421,7 @@
                             color: white;
                             font-size: 14px;
                             margin-right: 8px;
-                          "
-                        >
+                          ">
                           染
                         </div>
                         {{ itemSon.after_color }}
@@ -429,19 +430,16 @@
                     <div class="tcol">{{ itemSon.number }}{{ itemChild.unit || 'kg' }}</div>
                   </div>
                   <!-- 没染完 -->
-                  <div
-                    class="trow"
+                  <div class="trow"
                     v-if="
                       itemChild.process_info.filter((item) => item.process === '染色').length > 0 &&
                       itemChild.process_info
                         .filter((item) => item.process === '染色')
                         .reduce((total, cur) => total + cur.number, 0) < itemChild.number
-                    "
-                  >
+                    ">
                     <div class="tcol">
                       <span style="display: flex; align-items: center">
-                        <div
-                          class="backHoverOrange"
+                        <div class="backHoverOrange"
                           style="
                             display: inline-block;
                             width: 22px;
@@ -452,8 +450,7 @@
                             color: white;
                             font-size: 14px;
                             margin-right: 8px;
-                          "
-                        >
+                          ">
                           调
                         </div>
                         {{ itemChild.material_color }}
@@ -479,24 +476,24 @@
         </div>
       </div>
       <div class="buttonList">
-        <div
-          class="btn backHoverBlue"
+        <div class="btn backHoverBlue"
           :class="{
             backGray:
               materialJHDQList.filter((item) => {
                 return item.info_data.some((itemChild) => itemChild.check)
               }).length === 0
           }"
-          @click="goStock(7)"
-        >
-          <svg class="iconFont" aria-hidden="true">
+          @click="goStock(7)">
+          <svg class="iconFont"
+            aria-hidden="true">
             <use xlink:href="#icon-xiugaidingdan"></use>
           </svg>
           <span class="text">调取入库</span>
         </div>
       </div>
     </div>
-    <div class="module clearfix" v-show="materialBSDQList.length > 0">
+    <div class="module clearfix"
+      v-show="materialBSDQList.length > 0">
       <div class="titleCtn">
         <div class="title">补纱调取单入库 <el-checkbox v-model="showLessBSDQ"
             @change="init()"
@@ -508,12 +505,14 @@
           <div class="trow">
             <div class="tcol">调取单号</div>
             <div class="tcol">来源仓库</div>
-            <div class="tcol noPad" style="flex: 5">
+            <div class="tcol noPad"
+              style="flex: 5">
               <div class="trow">
                 <div class="tcol">原料名称</div>
                 <div class="tcol">调取属性</div>
                 <div class="tcol">批号/缸号/色号</div>
-                <div class="tcol noPad" style="flex: 2">
+                <div class="tcol noPad"
+                  style="flex: 2">
                   <div class="trow">
                     <div class="tcol">调取/染色颜色</div>
                     <div class="tcol">调取/已加工数量</div>
@@ -524,29 +523,33 @@
           </div>
         </div>
         <div class="tbody">
-          <div class="trow" v-for="item in materialBSDQList" :key="item.id">
+          <div class="trow"
+            v-for="item in materialBSDQList"
+            :key="item.id">
             <div class="tcol">
-              <el-checkbox v-model="item.checkAll" @change="getAllCheck($event, item)">{{ item.code }}</el-checkbox>
+              <el-checkbox v-model="item.checkAll"
+                @change="getAllCheck($event, item)">{{ item.code }}</el-checkbox>
             </div>
             <div class="tcol">{{ item.store }}/{{ item.secondary_store }}</div>
-            <div class="tcol noPad" style="flex: 5" v-for="(itemChild, indexChild) in item.info_data" :key="indexChild">
+            <div class="tcol noPad"
+              style="flex: 5"
+              v-for="(itemChild, indexChild) in item.info_data"
+              :key="indexChild">
               <div class="trow">
                 <div class="tcol">
-                  <el-checkbox v-model="itemChild.check" @change="$forceUpdate()"
-                    >{{ itemChild.material_name }}
+                  <el-checkbox v-model="itemChild.check"
+                    @change="$forceUpdate()">{{ itemChild.material_name }}
                   </el-checkbox>
                 </div>
                 <div class="tcol">{{ itemChild.attribute }}</div>
                 <div class="tcol">{{ itemChild.batch_code }}/{{ itemChild.vat_code }}/{{ itemChild.color_code }}</div>
-                <div class="tcol noPad" style="flex: 2">
-                  <div
-                    class="trow"
-                    v-if="itemChild.process_info.filter((item) => item.process === '染色').length === 0"
-                  >
+                <div class="tcol noPad"
+                  style="flex: 2">
+                  <div class="trow"
+                    v-if="itemChild.process_info.filter((item) => item.process === '染色').length === 0">
                     <div class="tcol">
                       <span style="display: flex; align-items: center">
-                        <div
-                          class="backHoverOrange"
+                        <div class="backHoverOrange"
                           style="
                             display: inline-block;
                             width: 22px;
@@ -557,8 +560,7 @@
                             color: white;
                             font-size: 14px;
                             margin-right: 8px;
-                          "
-                        >
+                          ">
                           调
                         </div>
                         {{ itemChild.material_color }}
@@ -566,16 +568,13 @@
                     </div>
                     <div class="tcol">{{ itemChild.number }}{{ itemChild.unit || 'kg' }}</div>
                   </div>
-                  <div
-                    class="trow"
+                  <div class="trow"
                     v-else
                     v-for="(itemSon, indexSon) in itemChild.process_info.filter((item) => item.process === '染色')"
-                    :key="indexSon"
-                  >
+                    :key="indexSon">
                     <div class="tcol">
                       <span style="display: flex; align-items: center">
-                        <div
-                          class="backHoverGreen"
+                        <div class="backHoverGreen"
                           style="
                             display: inline-block;
                             width: 22px;
@@ -586,8 +585,7 @@
                             color: white;
                             font-size: 14px;
                             margin-right: 8px;
-                          "
-                        >
+                          ">
                           染
                         </div>
                         {{ itemSon.after_color }}
@@ -596,19 +594,16 @@
                     <div class="tcol">{{ itemSon.number }}{{ itemChild.unit || 'kg' }}</div>
                   </div>
                   <!-- 没染完 -->
-                  <div
-                    class="trow"
+                  <div class="trow"
                     v-if="
                       itemChild.process_info.filter((item) => item.process === '染色').length > 0 &&
                       itemChild.process_info
                         .filter((item) => item.process === '染色')
                         .reduce((total, cur) => total + cur.number, 0) < itemChild.number
-                    "
-                  >
+                    ">
                     <div class="tcol">
                       <span style="display: flex; align-items: center">
-                        <div
-                          class="backHoverOrange"
+                        <div class="backHoverOrange"
                           style="
                             display: inline-block;
                             width: 22px;
@@ -619,8 +614,7 @@
                             color: white;
                             font-size: 14px;
                             margin-right: 8px;
-                          "
-                        >
+                          ">
                           调
                         </div>
                         {{ itemChild.material_color }}
@@ -648,8 +642,10 @@
         </div>
         <div class="otherInfoCtn">
           <div class="otherInfo">
-            <div class="btn backHoverBlue" @click="goStock(8)">
-              <svg class="iconFont" aria-hidden="true">
+            <div class="btn backHoverBlue"
+              @click="goStock(8)">
+              <svg class="iconFont"
+                aria-hidden="true">
                 <use xlink:href="#icon-xiugaidingdan"></use>
               </svg>
               <span class="text">调取入库</span>
@@ -659,7 +655,8 @@
       </div>
     </div>
     <!-- 物料加工单暂时没人管出入库，隐藏 -->
-    <div class="module clearfix" v-show="false">
+    <div class="module clearfix"
+      v-show="false">
       <div class="titleCtn">
         <div class="title">物料加工单</div>
       </div>
@@ -669,7 +666,8 @@
             <div class="tcol">加工单号</div>
             <div class="tcol">加工单位</div>
             <div class="tcol">工序</div>
-            <div class="tcol noPad" style="flex: 4">
+            <div class="tcol noPad"
+              style="flex: 4">
               <div class="trow">
                 <div class="tcol">纱线名称</div>
                 <div class="tcol">加工详情</div>
@@ -680,30 +678,39 @@
           </div>
         </div>
         <div class="tbody">
-          <div class="trow" v-for="itemProcess in materialProcessList" :key="itemProcess.id">
+          <div class="trow"
+            v-for="itemProcess in materialProcessList"
+            :key="itemProcess.id">
             <div class="tcol">
-              <el-checkbox v-model="itemProcess.checkAll" @change="getAllCheck($event, itemProcess)"
-                >{{ itemProcess.code }}
+              <el-checkbox v-model="itemProcess.checkAll"
+                @change="getAllCheck($event, itemProcess)">{{ itemProcess.code }}
               </el-checkbox>
             </div>
             <div class="tcol">{{ itemProcess.client_name }}</div>
             <div class="tcol">{{ itemProcess.process }}</div>
-            <div class="tcol noPad" style="flex: 4">
-              <div class="trow" v-for="(itemMat, indexMat) in itemProcess.info_data" :key="indexMat">
+            <div class="tcol noPad"
+              style="flex: 4">
+              <div class="trow"
+                v-for="(itemMat, indexMat) in itemProcess.info_data"
+                :key="indexMat">
                 <div class="tcol">
-                  <el-checkbox v-model="itemMat.check" @change="$forceUpdate()"
-                    >{{ itemMat.material_order_name }}
+                  <el-checkbox v-model="itemMat.check"
+                    @change="$forceUpdate()">{{ itemMat.material_order_name }}
                   </el-checkbox>
                 </div>
                 <div class="tcol">
-                  <div class="changeTo" v-if="itemProcess.process === '染色'">
+                  <div class="changeTo"
+                    v-if="itemProcess.process === '染色'">
                     <span>白胚</span>
-                    <i class="el-icon-s-unfold blue" style="margin: 0 4px"></i>
+                    <i class="el-icon-s-unfold blue"
+                      style="margin: 0 4px"></i>
                     <span>{{ itemMat.after_color }}</span>
                   </div>
-                  <div class="changeTo" v-if="itemProcess.process === '倒纱'">
+                  <div class="changeTo"
+                    v-if="itemProcess.process === '倒纱'">
                     <span>{{ itemMat.before_attribute }}</span>
-                    <i class="el-icon-s-unfold blue" style="margin: 0 4px"></i>
+                    <i class="el-icon-s-unfold blue"
+                      style="margin: 0 4px"></i>
                     <span>{{ itemMat.after_attribute }}</span>
                   </div>
                 </div>
@@ -712,14 +719,18 @@
             </div>
             <div class="tcol">{{ itemProcess.delivery_time }}</div>
           </div>
-          <div class="trow" v-if="materialProcessList.length === 0">
-            <div class="tcol gray" style="text-align: center">暂无单据</div>
+          <div class="trow"
+            v-if="materialProcessList.length === 0">
+            <div class="tcol gray"
+              style="text-align: center">暂无单据</div>
           </div>
         </div>
       </div>
       <div class="buttonList">
-        <div class="btn backHoverBlue" @click="goStock(3)">
-          <svg class="iconFont" aria-hidden="true">
+        <div class="btn backHoverBlue"
+          @click="goStock(3)">
+          <svg class="iconFont"
+            aria-hidden="true">
             <use xlink:href="#icon-xiugaidingdan"></use>
           </svg>
           <span class="text">中转出库</span>
@@ -735,7 +746,8 @@
           <div class="trow">
             <div class="tcol">加工单号</div>
             <div class="tcol">加工单位</div>
-            <div class="tcol noPad" style="flex: 5">
+            <div class="tcol noPad"
+              style="flex: 5">
               <div class="trow">
                 <div class="tcol">纱线名称</div>
                 <div class="tcol">纱线颜色</div>
@@ -747,29 +759,32 @@
           </div>
         </div>
         <div class="tbody">
-          <div
-            class="trow"
+          <div class="trow"
             v-for="item in productionPlanList"
             :key="item.id"
-            v-show="item.material_info_data.length > 0"
-          >
+            v-show="item.material_info_data.length > 0">
             <div class="tcol">
-              <el-checkbox v-model="item.checkAll" @change="getAllCheck($event, item)">{{ item.code }}</el-checkbox>
+              <el-checkbox v-model="item.checkAll"
+                @change="getAllCheck($event, item)">{{ item.code }}</el-checkbox>
             </div>
             <div class="tcol">
               <span>{{ item.client_name }}</span>
               <span class="green">({{ item.process_name }})</span>
             </div>
-            <div class="tcol noPad" style="flex: 5">
+            <div class="tcol noPad"
+              style="flex: 5">
               <template v-if="item.material_info_data.length === 0">
-                <span class="gray" style="text-align: center">不需要计划物料</span>
+                <span class="gray"
+                  style="text-align: center">不需要计划物料</span>
               </template>
-              <div class="trow" v-for="(itemMat, indexMat) in item.material_info_data" :key="indexMat + 'plan'">
+              <div class="trow"
+                v-for="(itemMat, indexMat) in item.material_info_data"
+                :key="indexMat + 'plan'">
                 <div class="tcol">
-                  <el-checkbox v-model="itemMat.check" @change="$forceUpdate()">
+                  <el-checkbox v-model="itemMat.check"
+                    @change="$forceUpdate()">
                     <span style="display: flex; align-items: center">
-                      <div
-                        class="backHoverOrange"
+                      <div class="backHoverOrange"
                         style="
                           display: inline-block;
                           width: 22px;
@@ -780,8 +795,7 @@
                           color: white;
                           font-size: 14px;
                           margin-right: 8px;
-                        "
-                      >
+                        ">
                         计
                       </div>
                       {{ itemMat.material_name }}
@@ -798,12 +812,14 @@
               </div>
               <!-- 补纱单 -->
               <template v-for="itemMat in item.sup_data">
-                <div v-for="itemChild in itemMat.info_data" :key="itemChild.id" class="trow">
+                <div v-for="itemChild in itemMat.info_data"
+                  :key="itemChild.id"
+                  class="trow">
                   <div class="tcol">
-                    <el-checkbox v-model="itemChild.check" @change="$forceUpdate()">
+                    <el-checkbox v-model="itemChild.check"
+                      @change="$forceUpdate()">
                       <span style="display: flex; align-items: center">
-                        <div
-                          class="backHoverGreen"
+                        <div class="backHoverGreen"
                           style="
                             display: inline-block;
                             width: 22px;
@@ -814,8 +830,7 @@
                             color: white;
                             font-size: 14px;
                             margin-right: 8px;
-                          "
-                        >
+                          ">
                           补
                         </div>
                         {{ itemChild.material_name }}
@@ -830,14 +845,15 @@
               </template>
             </div>
           </div>
-          <div class="trow" v-if="productionPlanList.length === 0">
-            <div class="tcol gray" style="text-align: center">暂无单据</div>
+          <div class="trow"
+            v-if="productionPlanList.length === 0">
+            <div class="tcol gray"
+              style="text-align: center">暂无单据</div>
           </div>
         </div>
       </div>
       <div class="buttonList">
-        <div
-          class="btn backHoverOrange"
+        <div class="btn backHoverOrange"
           :class="{
             backGray:
               productionPlanList.filter((item) => {
@@ -851,15 +867,14 @@
               }).length !== 1
           }"
           @click="goStock(6)"
-          style="margin-right: 12px"
-        >
-          <svg class="iconFont" aria-hidden="true">
+          style="margin-right: 12px">
+          <svg class="iconFont"
+            aria-hidden="true">
             <use xlink:href="#icon-xiugaidingdan"></use>
           </svg>
           <span class="text">结余入库</span>
         </div>
-        <div
-          class="btn backHoverBlue"
+        <div class="btn backHoverBlue"
           :class="{
             backGray:
               productionPlanList.filter((item) => {
@@ -872,9 +887,9 @@
                 )
               }).length !== 1
           }"
-          @click="goStock(5)"
-        >
-          <svg class="iconFont" aria-hidden="true">
+          @click="goStock(5)">
+          <svg class="iconFont"
+            aria-hidden="true">
             <use xlink:href="#icon-xiugaidingdan"></use>
           </svg>
           <span class="text">生产出库</span>
@@ -917,9 +932,11 @@
             <div class="tcol">关联单据</div>
             <div class="tcol">出入库类型</div>
             <div class="tcol">库存转移</div>
-            <div class="tcol noPad" style="flex: 6">
+            <div class="tcol noPad"
+              style="flex: 6">
               <div class="trow">
-                <div class="tcol" style="flex:2">纱线名称</div>
+                <div class="tcol"
+                  style="flex:2">纱线名称</div>
                 <div class="tcol">颜色/属性</div>
                 <div class="tcol">批号/缸号/色号</div>
                 <div class="tcol">数量</div>
@@ -927,7 +944,8 @@
             </div>
             <div class="tcol">审核状态</div>
             <div class="tcol">操作人/日期</div>
-            <div class="tcol" style="min-width: 112px">操作</div>
+            <div class="tcol"
+              style="min-width: 112px">操作</div>
           </div>
         </div>
         <div class="tbody">
@@ -961,11 +979,9 @@
                   <span>{{ item.client_name }}</span>
                 </div>
               </template>
-              <template
-                v-else-if="
+              <template v-else-if="
                   item.action_type === 6 || item.action_type === 9 || item.action_type === 11 || item.action_type === 12
-                "
-              >
+                ">
                 <div class="changeCtn">
                   <span>{{ item.store }}/{{ item.secondary_store }}</span>
                 </div>
@@ -985,66 +1001,68 @@
                 </div>
               </template>
             </div>
-            <div class="tcol noPad" style="flex: 6">
-              <div class="trow" v-for="itemChild in item.info_data" :key="itemChild.id">
-                <div class="tcol" style="flex:2">{{ itemChild.material_name }}</div>
+            <div class="tcol noPad"
+              style="flex: 6">
+              <div class="trow"
+                v-for="itemChild in item.info_data"
+                :key="itemChild.id">
+                <div class="tcol"
+                  style="flex:2">{{ itemChild.material_name }}</div>
                 <div class="tcol">{{ itemChild.material_color }}/{{ itemChild.attribute }}</div>
-                <div
-                  class="tcol"
-                  :class="itemChild.batch_code || itemChild.vat_code || itemChild.color_code ? '' : 'gray'"
-                >
+                <div class="tcol"
+                  :class="itemChild.batch_code || itemChild.vat_code || itemChild.color_code ? '' : 'gray'">
                   {{ itemChild.batch_code || '无' }}/{{ itemChild.vat_code || '无' }}/{{ itemChild.color_code || '无' }}
                 </div>
                 <div class="tcol">{{ itemChild.number }}{{ itemChild.unit || 'kg' }}</div>
               </div>
             </div>
-            <div class="tcol" :class="item.is_check | filterCheckClass">
-              <span
-                >{{ item.is_check | filterCheck }}
-                <el-tooltip
-                  v-if="item.is_check === 4"
+            <div class="tcol"
+              :class="item.is_check | filterCheckClass">
+              <span>{{ item.is_check | filterCheck }}
+                <el-tooltip v-if="item.is_check === 4"
                   class="item"
                   effect="dark"
                   content="由于【分配数量】超过了【计划数量】的10%。该生产计划单已变为异常状态。以下为异常单据处理办法：1. 检查分配数量。如果分配数量录入错误，您可以修改单据，或删除重新创建。2. 如果录入的数量为实际分配数量，则无需操作，或点击审核通过即可。"
-                  placement="top"
-                >
+                  placement="top">
                   <i class="el-icon-warning hoverRed"></i>
                 </el-tooltip>
               </span>
             </div>
-            <div class="tcol">{{ item.user_name }} <br/> {{ item.created_at.slice(0, 10) }}</div>
-            <div class="tcol oprCtn" style="font-size: 12px; min-width: 112px">
-              <div
-                class="opr hoverGreen"
+            <div class="tcol">{{ item.user_name }} <br /> {{ item.created_at.slice(0, 10) }}</div>
+            <div class="tcol oprCtn"
+              style="font-size: 12px; min-width: 112px">
+              <div class="opr hoverGreen"
                 @click="
                   materialStockCheckId = item.id
                   checkFlag = true
-                "
-              >
+                ">
                 审核
               </div>
-              <div class="opr hoverRed" @click="deleteMaterialStockList(item.id)">删除</div>
-              <div
-                class="opr hoverBlue"
-                @click="$openUrl('/store/materialLogPrint?id=' + item.id + '&type=' + item.action_type)"
-              >
+              <div class="opr hoverRed"
+                @click="deleteMaterialStockList(item.id)">删除</div>
+              <div class="opr hoverBlue"
+                @click="$openUrl('/store/materialLogPrint?id=' + item.id + '&type=' + item.action_type)">
                 打印
               </div>
             </div>
           </div>
-          <div class="trow" v-if="materialStockList.length === 0">
-            <div class="tcol gray" style="text-align: center">暂无单据</div>
+          <div class="trow"
+            v-if="materialStockList.length === 0">
+            <div class="tcol gray"
+              style="text-align: center">暂无单据</div>
           </div>
         </div>
       </div>
     </div>
-    <div class="popup" v-if="materialStockFlag">
+    <div class="popup"
+      v-if="materialStockFlag">
       <div class="main">
         <div class="titleCtn">
           <span class="text">{{
             stockTypeList.find((item) => item.value === materialStockInfo.action_type).name
           }}</span>
-          <div class="closeCtn" @click="closeStock">
+          <div class="closeCtn"
+            @click="closeStock">
             <span class="el-icon-close"></span>
           </div>
         </div>
@@ -1057,7 +1075,9 @@
                   <span class="explanation">(默认)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-select v-model="materialStockInfo.stock_id" placeholder="默认主仓库" disabled></el-select>
+                  <el-select v-model="materialStockInfo.stock_id"
+                    placeholder="默认主仓库"
+                    disabled></el-select>
                 </div>
               </div>
               <div class="col">
@@ -1066,7 +1086,9 @@
                   <span class="explanation">(默认)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input v-model="materialStockInfo.rel_doc_code" placeholder="默认" disabled></el-input>
+                  <el-input v-model="materialStockInfo.rel_doc_code"
+                    placeholder="默认"
+                    disabled></el-input>
                 </div>
               </div>
               <div class="col">
@@ -1075,68 +1097,65 @@
                   <span class="explanation">(默认)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-select v-model="materialStockInfo.action_type" placeholder="默认" disabled>
-                    <el-option
-                      v-for="item in stockTypeList"
+                  <el-select v-model="materialStockInfo.action_type"
+                    placeholder="默认"
+                    disabled>
+                    <el-option v-for="item in stockTypeList"
                       :key="item.value"
                       :value="item.value"
-                      :label="item.name"
-                    ></el-option>
+                      :label="item.name"></el-option>
                   </el-select>
                 </div>
               </div>
             </div>
-            <div class="row" v-for="(item, index) in materialStockInfo.info_data" :key="index">
+            <div class="row"
+              v-for="(item, index) in materialStockInfo.info_data"
+              :key="index">
               <!-- 入库操作 -->
               <template v-if="materialStockInfo.action_type !== 3 && materialStockInfo.action_type !== 5">
                 <div class="col">
                   <div class="spaceBetween">
                     <div class="once">
-                      <div class="label" v-if="index === 0">
+                      <div class="label"
+                        v-if="index === 0">
                         <span class="text">单据物料</span>
                         <span class="explanation">(必选)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-select
-                          :class="{ error: mustFlag && !item.rel_doc_info_id }"
+                        <el-select :class="{ error: mustFlag && !item.rel_doc_info_id }"
                           placeholder="单据物料"
                           v-model="item.rel_doc_info_id"
-                          @change="getMatId($event, item)"
-                        >
-                          <el-option
-                            v-for="item in materialStockInfo.selectList"
+                          @change="getMatId($event, item)">
+                          <el-option v-for="item in materialStockInfo.selectList"
                             :key="item.value"
                             :label="item.name"
-                            :value="item.value"
-                          ></el-option>
+                            :value="item.value"></el-option>
                         </el-select>
                       </div>
                     </div>
                     <div class="once">
-                      <div class="label" v-if="index === 0">
+                      <div class="label"
+                        v-if="index === 0">
                         <span class="text">属性</span>
                         <span class="explanation">(必选)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-autocomplete
-                          class="once"
+                        <el-autocomplete class="once"
                           v-model="item.attribute"
                           :fetch-suggestions="searchAttribute"
-                          placeholder="属性"
-                        ></el-autocomplete>
+                          placeholder="属性"></el-autocomplete>
                       </div>
                     </div>
                     <div class="once">
-                      <div class="label" v-if="index === 0">
+                      <div class="label"
+                        v-if="index === 0">
                         <span class="text">颜色</span>
                         <span class="explanation">(必选)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-autocomplete
-                          v-model="item.material_color"
+                        <el-autocomplete v-model="item.material_color"
                           :fetch-suggestions="searchColor"
-                          placeholder="颜色"
-                        ></el-autocomplete>
+                          placeholder="颜色"></el-autocomplete>
                       </div>
                     </div>
                   </div>
@@ -1144,48 +1163,45 @@
                 <div class="col">
                   <div class="spaceBetween">
                     <div class="once">
-                      <div class="label" v-if="index === 0">
+                      <div class="label"
+                        v-if="index === 0">
                         <span class="text">批号</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input
-                          :ref="'batch_code' + '-' + index"
+                        <el-input :ref="'batch_code' + '-' + index"
                           placeholder="批号"
                           v-model="item.batch_code"
                           @keydown.native="
                             $focusByKeydown($event, 'batch_code', [index], materialStockInfo, ['info_data'])
-                          "
-                        ></el-input>
+                          "></el-input>
                       </div>
                     </div>
                     <div class="once">
-                      <div class="label" v-if="index === 0">
+                      <div class="label"
+                        v-if="index === 0">
                         <span class="text">缸号</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input
-                          :ref="'vat_code' + '-' + index"
+                        <el-input :ref="'vat_code' + '-' + index"
                           placeholder="缸号"
                           v-model="item.vat_code"
                           @keydown.native="
                             $focusByKeydown($event, 'vat_code', [index], materialStockInfo, ['info_data'])
-                          "
-                        ></el-input>
+                          "></el-input>
                       </div>
                     </div>
                     <div class="once">
-                      <div class="label" v-if="index === 0">
+                      <div class="label"
+                        v-if="index === 0">
                         <span class="text">色号</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input
-                          :ref="'color_code' + '-' + index"
+                        <el-input :ref="'color_code' + '-' + index"
                           placeholder="色号"
                           v-model="item.color_code"
                           @keydown.native="
                             $focusByKeydown($event, 'color_code', [index], materialStockInfo, ['info_data'])
-                          "
-                        ></el-input>
+                          "></el-input>
                       </div>
                     </div>
                   </div>
@@ -1193,33 +1209,31 @@
                 <div class="col">
                   <div class="spaceBetween">
                     <div class="once">
-                      <div class="label" v-if="index === 0">
+                      <div class="label"
+                        v-if="index === 0">
                         <span class="text">数量</span>
                         <span class="explanation">(必填)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input
-                          :ref="'number' + '-' + index"
+                        <el-input :ref="'number' + '-' + index"
                           :class="{ error: mustFlag && !item.number }"
                           placeholder="数量"
                           v-model="item.number"
-                          @keydown.native="$focusByKeydown($event, 'number', [index], materialStockInfo, ['info_data'])"
-                        >
+                          @keydown.native="$focusByKeydown($event, 'number', [index], materialStockInfo, ['info_data'])">
                           <template slot="append">{{ item.unit }}</template>
                         </el-input>
                       </div>
                     </div>
                     <div class="once">
-                      <div class="label" v-if="index === 0">
+                      <div class="label"
+                        v-if="index === 0">
                         <span class="text">件数</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input
-                          :ref="'item' + '-' + index"
+                        <el-input :ref="'item' + '-' + index"
                           placeholder="数量"
                           v-model="item.item"
-                          @keydown.native="$focusByKeydown($event, 'item', [index], materialStockInfo, ['info_data'])"
-                        >
+                          @keydown.native="$focusByKeydown($event, 'item', [index], materialStockInfo, ['info_data'])">
                           <template slot="append">件</template>
                         </el-input>
                       </div>
@@ -1230,39 +1244,34 @@
               <!-- 出库操作,必须从入库物料里面选 -->
               <template v-else>
                 <div class="col">
-                  <div class="label" v-if="index === 0">
+                  <div class="label"
+                    v-if="index === 0">
                     <span class="text">单据物料</span>
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select
-                      :class="{ error: mustFlag && !item.rel_doc_info_id }"
+                    <el-select :class="{ error: mustFlag && !item.rel_doc_info_id }"
                       placeholder="单据物料"
                       v-model="item.rel_doc_info_id"
-                      @change="getMatId($event, item)"
-                    >
-                      <el-option
-                        v-for="item in materialStockInfo.selectList"
+                      @change="getMatId($event, item)">
+                      <el-option v-for="item in materialStockInfo.selectList"
                         :key="item.value"
                         :label="item.name"
-                        :value="item.value"
-                      ></el-option>
+                        :value="item.value"></el-option>
                     </el-select>
                   </div>
                 </div>
                 <div class="col">
-                  <div class="label" v-if="index === 0">
+                  <div class="label"
+                    v-if="index === 0">
                     <span class="text">出库物料</span>
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-select
-                      v-model="item.out_id"
+                    <el-select v-model="item.out_id"
                       placeholder="请选择已入库物料进行出库"
-                      @change="getStoreOut($event, item)"
-                    >
-                      <el-option
-                        v-for="(item, index) in item.stockInList"
+                      @change="getStoreOut($event, item)">
+                      <el-option v-for="(item, index) in item.stockInList"
                         :key="index"
                         :value="
                           item.material_id +
@@ -1291,47 +1300,43 @@
                           (item.vat_code || '无缸号') +
                           '/' +
                           (item.color_code || '无色号')
-                        "
-                      ></el-option>
+                        "></el-option>
                     </el-select>
                   </div>
                 </div>
                 <div class="col">
                   <div class="spaceBetween">
                     <div class="once">
-                      <div class="label" v-if="index === 0">
+                      <div class="label"
+                        v-if="index === 0">
                         <span class="text">数量</span>
                         <span class="explanation">(必填)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input
-                          :ref="'number' + '-' + index"
+                        <el-input :ref="'number' + '-' + index"
                           :class="{ error: mustFlag && !item.number }"
                           placeholder="数量"
                           v-model="item.number"
-                          @keydown.native="$focusByKeydown($event, 'number', [index], materialStockInfo, ['info_data'])"
-                        ></el-input>
+                          @keydown.native="$focusByKeydown($event, 'number', [index], materialStockInfo, ['info_data'])"></el-input>
                       </div>
                     </div>
                     <div class="once">
-                      <div class="label" v-if="index === 0">
+                      <div class="label"
+                        v-if="index === 0">
                         <span class="text">件数</span>
                         <span class="explanation">(必填)</span>
                       </div>
                       <div class="info elCtn">
-                        <el-input
-                          :ref="'item' + '-' + index"
+                        <el-input :ref="'item' + '-' + index"
                           placeholder="件数"
                           v-model="item.item"
-                          @keydown.native="$focusByKeydown($event, 'item', [index], materialStockInfo, ['info_data'])"
-                        ></el-input>
+                          @keydown.native="$focusByKeydown($event, 'item', [index], materialStockInfo, ['info_data'])"></el-input>
                       </div>
                     </div>
                   </div>
                 </div>
               </template>
-              <div
-                class="opr hoverBlue"
+              <div class="opr hoverBlue"
                 v-if="index === 0"
                 @click="
                   $addItem(materialStockInfo.info_data, {
@@ -1345,28 +1350,28 @@
                     item: '', // 件数
                     rel_doc_info_id: '' // 采购单调取单加工单子项id
                   })
-                "
-              >
+                ">
                 添加
               </div>
-              <div class="opr hoverRed" v-if="index > 0" @click="$deleteItem(materialStockInfo.info_data, index)">
+              <div class="opr hoverRed"
+                v-if="index > 0"
+                @click="$deleteItem(materialStockInfo.info_data, index)">
                 删除
               </div>
             </div>
             <div class="row">
-              <div class="col" style="max-width: 322px">
+              <div class="col"
+                style="max-width: 322px">
                 <div class="label">
                   <span class="text">选择日期</span>
                   <span class="explanation">(必选)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-date-picker
-                    style="width: 100%"
+                  <el-date-picker style="width: 100%"
                     class="once"
                     placeholder="入库日期"
                     value-format="yyyy-MM-dd"
-                    v-model="materialStockInfo.complete_time"
-                  ></el-date-picker>
+                    v-model="materialStockInfo.complete_time"></el-date-picker>
                 </div>
               </div>
               <div class="col">
@@ -1374,31 +1379,35 @@
                   <span class="text">备注信息</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input v-model="materialStockInfo.desc" placeholder="备注信息"></el-input>
+                  <el-input v-model="materialStockInfo.desc"
+                    placeholder="备注信息"></el-input>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn" @click="closeStock">取消</span>
-          <span class="btn backHoverBlue" @click="saveMaterialStock">确认</span>
+          <span class="btn borderBtn"
+            @click="closeStock">取消</span>
+          <span class="btn backHoverBlue"
+            @click="saveMaterialStock">确认</span>
         </div>
       </div>
     </div>
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="btn backHoverOrange" @click="goStock(2)">客供入库</div>
+          <div class="btn backHoverOrange"
+            @click="goStock(2)">客供入库</div>
         </div>
         <div class="btnCtn">
-          <div class="borderBtn" @click="$router.go(-1)">返回</div>
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
         </div>
       </div>
     </div>
     <!-- 审核出入库单,主要是为了审核异常单子 -->
-    <zh-check
-      @close="checkFlag = false"
+    <zh-check @close="checkFlag = false"
       @afterCheck="
         (ev) => {
           materialStockList.find((item) => Number(item.id) === Number(materialStockCheckId)).is_check = ev
@@ -1407,11 +1416,9 @@
       :show="checkFlag"
       :pid="materialStockCheckId"
       :check_type="6"
-      :reason="[]"
-    ></zh-check>
+      :reason="[]"></zh-check>
     <!-- 结余入库 -->
-    <store-surplus
-      @afterSave="
+    <store-surplus @afterSave="
         storeSurplusFlag = false
         init()
       "
@@ -1419,8 +1426,7 @@
       :materialList="storeSurplusInfo.materialList"
       :orderId="storeSurplusInfo.order_id"
       :orderCode="storeSurplusInfo.order_code"
-      :show="storeSurplusFlag"
-    ></store-surplus>
+      :show="storeSurplusFlag"></store-surplus>
   </div>
 </template>
 
@@ -2515,6 +2521,9 @@ export default Vue.extend({
             return !this.stockNameFilter || itemChild.material_name === this.stockNameFilter
           })
           return item
+        })
+        .filter((item) => {
+          return item.info_data.length > 0
         })
     }
   },
