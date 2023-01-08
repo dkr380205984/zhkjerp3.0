@@ -1605,8 +1605,8 @@ export default Vue.extend({
         this.materialMianLiaoList = []
         this.materialProcessList = []
         this.materialOrderList.forEach((item:any) => {
-          let obj = this.$clone(item)
           item.info_data.forEach((itemInfo:any) => {
+            let obj = this.$clone(item)
             obj.info_data = [itemInfo]
             if(itemInfo.yarn_type === 1){
               this.materialShaXianList.push(obj)
