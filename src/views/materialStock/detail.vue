@@ -143,7 +143,9 @@
                 </div>
                 <div class="tcol"
                   style="flex-direction:row;align-items:center;justify-content:start">{{itemChild.final_push_number||0}}{{itemChild.unit||'kg'}}
-                  (<span :class="{'green':Number(itemChild.final_push_number)>=Number(itemChild.number),'red':Number(itemChild.final_push_number)<Number(itemChild.number)}">{{Number(itemChild.final_push_number)>Number(itemChild.number)?'+':''}}{{Number(itemChild.final_push_number)-Number(itemChild.number)}}{{itemChild.unit||'kg'}}</span>)
+                </div>
+                <div class="tcol"
+                  style="flex-direction:row;align-items:center;justify-content:start"><span :class="{'green':Number(itemChild.final_push_number)>=Number(itemChild.number),'red':Number(itemChild.final_push_number)<Number(itemChild.number)}">{{Number(itemChild.final_push_number)>Number(itemChild.number)?'+':''}}{{Number(itemChild.final_push_number)-Number(itemChild.number)}}{{itemChild.unit||'kg'}}</span>
                 </div>
               </div>
             </div>
@@ -1593,7 +1595,21 @@ export default Vue.extend({
             return item.info_data.length > 0
           })
         }
+        this.materialShaXianList = []
+        this.materialMianLiaoList = []
         this.materialProcessList = []
+        this.materialOrderList.forEach((item:any) => {
+          let obj = this.$clone(item)
+          item.info_data.forEach((itemInfo:any) => {
+            obj.info_data = [itemInfo]
+            if(itemInfo.yarn_type === 1){
+              this.materialShaXianList.push(obj)
+            }
+            if(itemInfo.yarn_type === 2){
+              this.materialMianLiaoList.push(obj)
+            }
+          });
+        })
         res[0].data.data.forEach((item: any) => {
           this.materialProcessList = this.materialProcessList.concat(item.process_info)
         })
