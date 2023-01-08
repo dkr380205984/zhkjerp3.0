@@ -147,7 +147,7 @@
             <template v-if="sampleOrderInfo.time_data[$route.query.sampleOrderIndex].batch_data[0].product_data[sampleIndex]
                   .isTable && showSizeTable==='1'">
               <div class="trow">
-                <div class="tcol bgGray headTitle">尺码</div>
+                <div class="tcol bgGray headTitle">尺码/配色</div>
                 <template v-for="itemChildArr,indexChildArr in sampleOrderInfo.time_data[$route.query.sampleOrderIndex].batch_data[0].product_data[
                     sampleIndex
                   ].product_info[0].size_arr">
@@ -159,7 +159,7 @@
                   sampleIndex
                 ].product_info"
                 :key="indexChild">
-                <div class="tcol">{{itemChild.size_name}}</div>
+                <div class="tcol">{{itemChild.size_name}}/{{ itemChild.color_name }}</div>
                 <template v-for="itemChildArr,indexChildArr in itemChild.size_arr">
                   <div class="tcol" :key="'' + indexChild + indexChildArr + '尺码描述2'">{{itemChildArr.value}}</div>
                 </template>
