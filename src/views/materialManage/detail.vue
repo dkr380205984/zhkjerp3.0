@@ -3760,6 +3760,7 @@ export default Vue.extend({
       })
       if (!formCheck) {
         this.materialProcessUpdataInfo.order_id = this.materialPlanInfo.order_id
+        // @ts-ignore
         this.materialProcessUpdataInfo.client_id = this.materialProcessUpdataInfo.client_id_arr[2]
         materialProcess.update(this.materialProcessUpdataInfo).then((res) => {
           if (res.data.status) {
