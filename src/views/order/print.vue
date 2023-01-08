@@ -191,7 +191,7 @@
             <!-- JSON格式 -->
             <template v-if="itemPro.isTable && showSizeTable==='1'">
               <div class="trow">
-                <div class="tcol bgGray headTitle">尺码</div>
+                <div class="tcol bgGray headTitle">尺码/配色</div>
                 <template v-for="itemChildArr,indexChildArr in itemPro.childrenMergeInfo[0].size_arr">
                   <div class="tcol bgGray headTitle" :key="'' + indexChildArr + '尺码描述'">{{itemChildArr.name}}</div>
                 </template>
@@ -199,7 +199,7 @@
               <div class="trow"
                 v-for="itemChild,indexChild in itemPro.childrenMergeInfo"
                 :key="indexChild">
-                <div class="tcol">{{itemChild.size_name}}</div>
+                <div class="tcol">{{itemChild.size_name}}/{{ itemChild.color_name }}</div>
                 <template v-for="itemChildArr,indexChildArr in itemChild.size_arr">
                   <div class="tcol" :key="'' + indexChild + indexChildArr + '尺码描述2'">{{itemChildArr.value}}</div>
                 </template>

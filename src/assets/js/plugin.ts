@@ -687,6 +687,12 @@ function getEveryDayDateByBetweenDate(start_date: string, end_date: string, form
   return dateList;
 }
 
+function getLastYearDate(){
+  const bb = new Date()
+  bb.setFullYear(bb.getFullYear() - 1)
+  return [formatDate(bb),formatDate(new Date())]
+}
+
 // 输入框防抖函数
 function debounce(val: string, timer: any, fn: Function, time: number = 1000) {
   if (val) {
@@ -985,6 +991,7 @@ export default {
     Vue.prototype.$initEditor = initEditor
     Vue.prototype.$formatDate = formatDate
     Vue.prototype.$getEveryDayDateByBetweenDate = getEveryDayDateByBetweenDate
+    Vue.prototype.$getLastYearDate = getLastYearDate
     Vue.prototype.$GetDateStr = GetDateStr
     Vue.prototype.$debounce = debounce
     Vue.prototype.$changeNumToHan = changeNumToHan

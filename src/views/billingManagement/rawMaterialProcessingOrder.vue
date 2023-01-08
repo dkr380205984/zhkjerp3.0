@@ -896,7 +896,7 @@ export default Vue.extend({
       this.type = Number(query.type) || 'null'
       this.user_id = query.user_id || this.$getLocalStorage('create_user') || ''
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
-      this.date = query.date ? (query.date as string).split(',') : []
+      this.date = query.date && query.date !== 'null' ? (query.date as string).split(',') : this.$getLastYearDate()
       this.limit = Number(query.limit) || 10
       this.single_client_id = query.single_client_id || ''
     },
@@ -994,7 +994,7 @@ export default Vue.extend({
           this.group_id = ''
           this.order_type = ''
           this.material_name = []
-          this.date = []
+          this.date = this.$getLastYearDate()
           this.type = 'null'
           this.status = 'null'
           this.contacts_id = ''
