@@ -29,13 +29,16 @@
             <div class="listCtn">
               <div class="filterCtn clearfix">
                 <div class="btn backHoverBlue fr"
-                @click="
+                  @click="
                     showPopup = true
                     categoryInfo.id = ''
                     ">
                   添加新品类
                 </div>
-                <el-checkbox class="fr" style="line-height:32px" v-model="checkCategoryDelete" @change="getCategory">查询已删除</el-checkbox>
+                <el-checkbox class="fr"
+                  style="line-height:32px"
+                  v-model="checkCategoryDelete"
+                  @change="getCategory">查询已删除</el-checkbox>
               </div>
               <div class="list">
                 <div class="row title">
@@ -55,7 +58,8 @@
                   <div class="col">
                     <span class="opr hoverOrange"
                       @click="updateCategory(item)">修改</span>
-                    <span class="opr" :class={hoverRed:!checkCategoryDelete,hoverGreen:checkCategoryDelete}
+                    <span class="opr"
+                      :class={hoverRed:!checkCategoryDelete,hoverGreen:checkCategoryDelete}
                       @click="deleteCategory(item.id)">{{checkCategoryDelete?'恢复':'删除'}}</span>
                   </div>
                 </div>
@@ -2663,6 +2667,64 @@
                     @click="$deleteItem(materialOrderCheckConfig.data.beyond_notice_user, index)">删除</span>
                 </div>
               </template>
+              <div class="smallTitle">价格异常通知</div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否通知(单选)</div>
+                  <div class="info middle">
+                    <el-radio v-model="materialOrderCheckConfig.data.beyond_price_notice_condition"
+                      :label="1">通知</el-radio>
+                    <el-radio v-model="materialOrderCheckConfig.data.beyond_price_notice_condition"
+                      :label="2">不通知</el-radio>
+                  </div>
+                </div>
+              </div>
+              <template v-if="materialOrderCheckConfig.data.beyond_notice_condition !== 2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item, index) in materialOrderCheckConfig.data.beyond_notice_user"
+                  :key="index + 'chaoe'">
+                  <div class="col">
+                    <div class="label"
+                      style="display: flex; height: 32px; line-height: 32px">
+                      {{ index + 1 }}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top: 12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
+                    </div>
+                  </div>
+                  <span class="opr hoverBlue"
+                    style="top: -71px"
+                    v-if="index === 0"
+                    @click="
+                      $addItem(materialOrderCheckConfig.data.beyond_notice_user, {
+                        user_id: '',
+                        notice_for_wechat: '2'
+                      })
+                    ">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px"
+                    v-if="index > 0"
+                    @click="$deleteItem(materialOrderCheckConfig.data.beyond_notice_user, index)">删除</span>
+                </div>
+              </template>
               <div class="btnCtn fr"
                 style="margin-top: 20px">
                 <div class="btn backHoverBlue"
@@ -3368,6 +3430,18 @@
                   </div>
                 </div>
               </div>
+              <div class="smallTitle">价格异常通知</div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否通知(单选)</div>
+                  <div class="info middle">
+                    <el-radio v-model="productionPlanCheckConfig.data.update_notice_condition"
+                      :label="1">通知</el-radio>
+                    <el-radio v-model="productionPlanCheckConfig.data.update_notice_condition"
+                      :label="2">不通知</el-radio>
+                  </div>
+                </div>
+              </div>
               <div class="smallTitle">修改异常通知</div>
               <div class="row">
                 <div class="col">
@@ -3708,6 +3782,18 @@
                       :label="1">是</el-radio>
                     <el-radio v-model="gongziCheckConfig.data.not_allow_settle"
                       :label="2">否</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="smallTitle">价格异常通知</div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否通知(单选)</div>
+                  <div class="info middle">
+                    <el-radio v-model="gongziCheckConfig.data.update_notice_condition"
+                      :label="1">通知</el-radio>
+                    <el-radio v-model="gongziCheckConfig.data.update_notice_condition"
+                      :label="2">不通知</el-radio>
                   </div>
                 </div>
               </div>
@@ -4246,7 +4332,8 @@
                     <span class="text">尺寸</span>
                   </div>
                   <div class="info elCtn">
-                    <el-input :disabled='indexContent === 0' v-model="itemContent.name"
+                    <el-input :disabled='indexContent === 0'
+                      v-model="itemContent.name"
                       placeholder="尺寸名称"></el-input>
                   </div>
                 </div>
@@ -6302,7 +6389,15 @@
 <script lang="ts">
 import Vue from 'vue'
 import { CraftParameter } from '@/types/craft'
-import { IngredientInfo, ColourInfo, SizeSetting, SizeModuleSetting, SizeInfo, StyleInfo, CategoryInfo } from '@/types/productSetting'
+import {
+  IngredientInfo,
+  ColourInfo,
+  SizeSetting,
+  SizeModuleSetting,
+  SizeInfo,
+  StyleInfo,
+  CategoryInfo
+} from '@/types/productSetting'
 import { OrderType } from '@/types/orderSetting'
 import { ProcessInfo } from '@/types/processSetting'
 import { SideInfo, MachineInfo, MethodsInfo, YarnColorInfo } from '@/types/craftSetting'
@@ -6735,6 +6830,7 @@ export default Vue.extend({
       productionPlanCheckConfig: {
         doc_type: 4,
         data: {
+          beyond_price_notice_condition: 1,
           update_notice_condition: 1,
           update_notice_for_wechat: '2',
           check_notice_condition: 2,
@@ -6784,6 +6880,7 @@ export default Vue.extend({
       gongziCheckConfig: {
         doc_type: 14,
         data: {
+          beyond_price_notice_condition: 1,
           check_notice_condition: 2,
           check_notice_user: [
             {
@@ -6884,14 +6981,14 @@ export default Vue.extend({
         name: '',
         content: [
           {
-            name:'整体',
-            value:''
+            name: '整体',
+            value: ''
           },
           {
-            name:'',
-            value:''
+            name: '',
+            value: ''
           }
-        ],
+        ]
       },
       orderTypeInfo: {
         order_type: 1,
@@ -8501,14 +8598,16 @@ export default Vue.extend({
       }
     },
     getCategory() {
-      category.list({
-        only_delete: this.checkCategoryDelete?1:null
-      }).then((res) => {
-        if (res.data.status) {
-          this.categoryList = res.data.data
-          this.categoryTotal = this.categoryList.length
-        }
-      })
+      category
+        .list({
+          only_delete: this.checkCategoryDelete ? 1 : null
+        })
+        .then((res) => {
+          if (res.data.status) {
+            this.categoryList = res.data.data
+            this.categoryTotal = this.categoryList.length
+          }
+        })
     },
     saveCategory() {
       const fromCheck =
@@ -8553,7 +8652,7 @@ export default Vue.extend({
         })
       }
     },
-    resetQuotedPriceProduct(){
+    resetQuotedPriceProduct() {
       this.quotedPriceProduct = {
         category_id: '',
         image_data: [],
@@ -8635,7 +8734,7 @@ export default Vue.extend({
       this.showPopup = true
     },
     deleteCategory(id: number) {
-      this.$confirm('是否' + (this.checkCategoryDelete?'恢复':'删除') + '该品类?', '提示', {
+      this.$confirm('是否' + (this.checkCategoryDelete ? '恢复' : '删除') + '该品类?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -8645,7 +8744,7 @@ export default Vue.extend({
             if (res.data.status) {
               this.$message({
                 type: 'success',
-                message: (this.checkCategoryDelete?'恢复':'删除') + '成功!'
+                message: (this.checkCategoryDelete ? '恢复' : '删除') + '成功!'
               })
               this.getCategory()
             }
@@ -8856,17 +8955,19 @@ export default Vue.extend({
     },
     lookSizeModule(info: QuotedPriceProduct) {
       let formData = this.$clone(info)
-      formData.content = formData.content ? JSON.parse(formData.content) : [
-        {
-          name:'整体',
-          value:''
-        },
-        {
-          name:'',
-          value:''
-        }
-      ],
-      this.updateSizeModule = formData
+      ;(formData.content = formData.content
+        ? JSON.parse(formData.content)
+        : [
+            {
+              name: '整体',
+              value: ''
+            },
+            {
+              name: '',
+              value: ''
+            }
+          ]),
+        (this.updateSizeModule = formData)
       this.sizeModuleUpdate = true
       this.showPopup = true
     },
@@ -8914,19 +9015,19 @@ export default Vue.extend({
         }
       })
     },
-    resetSizeModule(){
+    resetSizeModule() {
       this.updateSizeModule = {
         name: '',
         content: [
           {
-            name:'整体',
-            value:''
+            name: '整体',
+            value: ''
           },
           {
-            name:'',
-            value:''
+            name: '',
+            value: ''
           }
-        ],
+        ]
       }
     },
     getSize() {
@@ -10720,16 +10821,24 @@ export default Vue.extend({
       formData.pack_material_data = JSON.parse(formData.pack_material_data)
       // formData.others_data = JSON.parse(formData.others_data)
       formData.production_data = JSON.parse(formData.production_data)
-      formData.no_production_fee_data = formData.no_production_fee_data ? JSON.parse(formData.no_production_fee_data) : [{
-        name: '',
-        desc: '',
-        total_price: ''
-      }]
-      formData.other_fee_data = formData.others_fee_data ? JSON.parse(formData.others_fee_data) : [{
-        name: '',
-        desc: '',
-        total_price: ''
-      }]
+      formData.no_production_fee_data = formData.no_production_fee_data
+        ? JSON.parse(formData.no_production_fee_data)
+        : [
+            {
+              name: '',
+              desc: '',
+              total_price: ''
+            }
+          ]
+      formData.other_fee_data = formData.others_fee_data
+        ? JSON.parse(formData.others_fee_data)
+        : [
+            {
+              name: '',
+              desc: '',
+              total_price: ''
+            }
+          ]
       // formData.material_data = JSON.parse(formData.material_data)
       // formData.assist_material_data = JSON.parse(formData.assist_material_data)
       this.quotedPriceProduct = formData
