@@ -1605,14 +1605,22 @@ export default Vue.extend({
         this.materialMianLiaoList = []
         this.materialProcessList = []
         this.materialOrderList.forEach((item:any) => {
+          let shaXianObj = this.$clone(item)
+          let maoTiaoObj = this.$clone(item)
+          // console.log(item.id)
+          shaXianObj.info_data = []
+          maoTiaoObj.info_data = []
           item.info_data.forEach((itemInfo:any) => {
-            let obj = this.$clone(item)
-            obj.info_data = [itemInfo]
-            if(itemInfo.yarn_type === 1){
-              this.materialShaXianList.push(obj)
-            }
-            if(itemInfo.yarn_type === 2){
-              this.materialMianLiaoList.push(obj)
+            if(itemInfo.yarn_type === 1 && shaXianObj.info_data[0] !== undefined){
+              shaXianObj.info_data.push(this.$clone(itemInfo))
+            } else if(itemInfo.yarn_type === 1 && shaXianObj.info_data[0] === undefined){
+              shaXianObj.info_data = [itemInfo]
+              this.materialShaXianList.push(shaXianObj)
+            } else if(itemInfo.yarn_type === 2 && maoTiaoObj.info_data[0] !== undefined){
+              maoTiaoObj.info_data.push(this.$clone(itemInfo))
+            } else if(itemInfo.yarn_type === 2 && maoTiaoObj.info_data[0] === undefined){
+              maoTiaoObj.info_data = [itemInfo]
+              this.materialMianLiaoList.push(maoTiaoObj)
             }
           });
         })
