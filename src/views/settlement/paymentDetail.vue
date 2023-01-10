@@ -264,7 +264,7 @@
                       <div class="infoCtn">
                         <span class="title">合计额外费用</span>
                         <span class="number blue"
-                          >{{ $toFixed(clientFinancial.total_others_fee, 3, true) }}
+                          >{{ $toFixed(clientFinancial.total_others_fee / 10000, 3, true) }}
                           <span class="unit">万元</span>
                         </span>
                       </div>
@@ -273,7 +273,7 @@
                       <div class="infoCtn">
                         <span class="title">合计扣款金额</span>
                         <span class="number orange"
-                          >{{ $toFixed(clientFinancial.total_deduct_price, 3, true) }}
+                          >{{ $toFixed(clientFinancial.total_deduct_price / 10000, 3, true) }}
                           <span class="unit">万元</span>
                         </span>
                       </div>
@@ -382,7 +382,7 @@
                       <div class="infoCtn">
                         <span class="title">合计额外费用</span>
                         <span class="number blue"
-                          >{{ $toFixed(clientFinancial.total_others_fee, 3, true) }}
+                          >{{ $toFixed(clientFinancial.total_others_fee / 10000, 3, true) }}
                           <span class="unit">万元</span>
                         </span>
                       </div>
@@ -391,7 +391,7 @@
                       <div class="infoCtn">
                         <span class="title">合计扣款金额</span>
                         <span class="number orange"
-                          >{{ $toFixed(clientFinancial.total_deduct_price, 3, true) }}
+                          >{{ $toFixed(clientFinancial.total_deduct_price / 10000, 3, true) }}
                           <span class="unit">万元</span>
                         </span>
                       </div>
@@ -500,7 +500,7 @@
                       <div class="infoCtn">
                         <span class="title">合计额外费用</span>
                         <span class="number blue"
-                          >{{ $toFixed(clientFinancial.total_others_fee, 3, true) }}
+                          >{{ $toFixed(clientFinancial.total_others_fee / 10000, 3, true) }}
                           <span class="unit">万元</span>
                         </span>
                       </div>
@@ -509,7 +509,7 @@
                       <div class="infoCtn">
                         <span class="title">合计扣款金额</span>
                         <span class="number orange"
-                          >{{ $toFixed(clientFinancial.total_deduct_price, 3, true) }}
+                          >{{ $toFixed(clientFinancial.total_deduct_price / 10000, 3, true) }}
                           <span class="unit">万元</span>
                         </span>
                       </div>
@@ -628,7 +628,7 @@
                       <div class="infoCtn">
                         <span class="title">合计额外费用</span>
                         <span class="number blue"
-                          >{{ $toFixed(clientFinancial.total_others_fee, 3, true) }}
+                          >{{ $toFixed(clientFinancial.total_others_fee / 10000, 3, true) }}
                           <span class="unit">万元</span>
                         </span>
                       </div>
@@ -637,7 +637,7 @@
                       <div class="infoCtn">
                         <span class="title">合计扣款金额</span>
                         <span class="number orange"
-                          >{{ $toFixed(clientFinancial.total_deduct_price, 3, true) }}
+                          >{{ $toFixed(clientFinancial.total_deduct_price / 10000, 3, true) }}
                           <span class="unit">万元</span>
                         </span>
                       </div>
@@ -724,7 +724,7 @@
                       <div class="infoCtn">
                         <span class="title">合计额外费用</span>
                         <span class="number blue"
-                          >{{ $toFixed(clientFinancial.total_others_fee, 3, true) }}
+                          >{{ $toFixed(clientFinancial.total_others_fee / 10000, 3, true) }}
                           <span class="unit">万元</span>
                         </span>
                       </div>
@@ -733,7 +733,7 @@
                       <div class="infoCtn">
                         <span class="title">合计扣款金额</span>
                         <span class="number orange"
-                          >{{ $toFixed(clientFinancial.total_deduct_price, 3, true) }}
+                          >{{ $toFixed(clientFinancial.total_deduct_price / 10000, 3, true) }}
                           <span class="unit">万元</span>
                         </span>
                       </div>
