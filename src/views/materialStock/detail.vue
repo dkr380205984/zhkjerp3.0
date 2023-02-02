@@ -1604,25 +1604,25 @@ export default Vue.extend({
         this.materialShaXianList = []
         this.materialMianLiaoList = []
         this.materialProcessList = []
-        this.materialOrderList.forEach((item:any) => {
+        this.materialOrderList.forEach((item: any) => {
           let shaXianObj = this.$clone(item)
           let maoTiaoObj = this.$clone(item)
           // console.log(item.id)
           shaXianObj.info_data = []
           maoTiaoObj.info_data = []
-          item.info_data.forEach((itemInfo:any) => {
-            if(itemInfo.yarn_type === 1 && shaXianObj.info_data[0] !== undefined){
+          item.info_data.forEach((itemInfo: any) => {
+            if (itemInfo.yarn_type === 1 && shaXianObj.info_data[0] !== undefined) {
               shaXianObj.info_data.push(this.$clone(itemInfo))
-            } else if(itemInfo.yarn_type === 1 && shaXianObj.info_data[0] === undefined){
+            } else if (itemInfo.yarn_type === 1 && shaXianObj.info_data[0] === undefined) {
               shaXianObj.info_data = [itemInfo]
               this.materialShaXianList.push(shaXianObj)
-            } else if(itemInfo.yarn_type === 2 && maoTiaoObj.info_data[0] !== undefined){
+            } else if (itemInfo.yarn_type === 2 && maoTiaoObj.info_data[0] !== undefined) {
               maoTiaoObj.info_data.push(this.$clone(itemInfo))
-            } else if(itemInfo.yarn_type === 2 && maoTiaoObj.info_data[0] === undefined){
+            } else if (itemInfo.yarn_type === 2 && maoTiaoObj.info_data[0] === undefined) {
               maoTiaoObj.info_data = [itemInfo]
               this.materialMianLiaoList.push(maoTiaoObj)
             }
-          });
+          })
         })
         res[0].data.data.forEach((item: any) => {
           this.materialProcessList = this.materialProcessList.concat(item.process_info)
@@ -2483,7 +2483,7 @@ export default Vue.extend({
       this.materialStockFlag = false
     },
     deleteMaterialStockList(id: number) {
-      if (!this.$permissionsFlag('6-4')) {
+      if (!this.$permissionsFlag('5-4')) {
         return
       }
       this.$confirm('是否删除该出入库单据?', '提示', {

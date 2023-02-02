@@ -346,7 +346,8 @@
           v-for="(itemMat,indexMat) in craftInfo.warp_data.assist_material"
           :key="indexMat + 'fuzhu'">
           <div class="col">
-            <div class="label">
+            <div class="label"
+              v-if="indexMat===0">
               <span class="text">辅助原料</span>
             </div>
             <div class="elCtn colourCtn">
@@ -361,15 +362,16 @@
                   :label="item.label"></el-option>
               </el-select>
               <span class="btn hoverBlue"
-                @click="$addItem(craftInfo.warp_data.assist_material,{material_id: '',apply: [],number: ''})">添加原料</span>
-              <span class="btn hoverRed">删除原料</span>
+                @click="$addItem(craftInfo.weft_data.assist_material,{material_id: '',apply: [],number: ''})">添加原料</span>
+              <span class="btn hoverRed"
+                @click="craftInfo.weft_data.assist_material.length>1?$deleteItem(craftInfo.weft_data.assist_material,indexMat):$message.error('至少有一项')">删除原料</span>
               <el-select v-for="(item,index) in itemMat.apply"
                 :key="index"
                 v-model="itemMat.apply[index]"
                 placeholder="夹"
                 class="jia"
                 clearable>
-                <el-option v-for="item in warpJiaList"
+                <el-option v-for="item in weftJiaList"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"></el-option>
@@ -1184,7 +1186,8 @@
           v-for="(itemMat,indexMat) in craftInfo.weft_data.assist_material"
           :key="indexMat + 'fuzhu'">
           <div class="col">
-            <div class="label">
+            <div class="label"
+              v-if="indexMat===0">
               <span class="text">辅助原料</span>
             </div>
             <div class="elCtn colourCtn">
@@ -1200,7 +1203,8 @@
               </el-select>
               <span class="btn hoverBlue"
                 @click="$addItem(craftInfo.weft_data.assist_material,{material_id: '',apply: [],number: ''})">添加原料</span>
-              <span class="btn hoverRed">删除原料</span>
+              <span class="btn hoverRed"
+                @click="craftInfo.weft_data.assist_material.length>1?$deleteItem(craftInfo.weft_data.assist_material,indexMat):$message.error('至少有一项')">删除原料</span>
               <el-select v-for="(item,index) in itemMat.apply"
                 :key="index"
                 v-model="itemMat.apply[index]"
@@ -2924,9 +2928,6 @@ export default Vue.extend({
     },
     // 提交时获取特殊值 表格值，合并项等
     getCmpData() {
-      this.craftInfo.process_data = this.process_data.map((item: any) => item[1])
-      this.craftInfo.part_id = Number(this.$route.query.part_id) || ''
-      this.craftInfo.product_id = Number(this.$route.query.id) || Number(this.productInfo.id)
       this.craftInfo.warp_data.material_data[0].apply = this.warpJiaList
         .filter((item) => {
           return !this.craftInfo.warp_data.material_data.slice(1).some((itemChild) => {
