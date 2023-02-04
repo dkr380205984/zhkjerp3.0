@@ -146,7 +146,7 @@
                 <div class="tcol">{{itemChild.child_style_code}}</div>
                 <div class="tcol">{{itemChild.brcode_number}}</div>
                 <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
-                <div class="tcol">{{itemChild.weight}}g</div>
+                <div class="tcol">{{itemChild.weight}}</div>
                 <div class="tcol">{{itemChild.size_arr[0].name}}：{{itemChild.size_arr[0].value}}</div>
                 <div class="tcol"
                   v-if="showOrderPrice==='1'">{{itemChild.price}}元</div>
@@ -193,7 +193,8 @@
               <div class="trow">
                 <div class="tcol bgGray headTitle">尺码/配色</div>
                 <template v-for="itemChildArr,indexChildArr in itemPro.childrenMergeInfo[0].size_arr">
-                  <div class="tcol bgGray headTitle" :key="'' + indexChildArr + '尺码描述'">{{itemChildArr.name}}</div>
+                  <div class="tcol bgGray headTitle"
+                    :key="'' + indexChildArr + '尺码描述'">{{itemChildArr.name}}</div>
                 </template>
               </div>
               <div class="trow"
@@ -201,7 +202,8 @@
                 :key="indexChild">
                 <div class="tcol">{{itemChild.size_name}}/{{ itemChild.color_name }}</div>
                 <template v-for="itemChildArr,indexChildArr in itemChild.size_arr">
-                  <div class="tcol" :key="'' + indexChild + indexChildArr + '尺码描述2'">{{itemChildArr.value}}</div>
+                  <div class="tcol"
+                    :key="'' + indexChild + indexChildArr + '尺码描述2'">{{itemChildArr.value}}</div>
                 </template>
               </div>
             </template>
@@ -595,7 +597,7 @@ export default Vue.extend({
       const flattenArr: OrderProductFlattenWithBatch[] = [] // 存储return信息
       orderInfo.time_data[this.orderIndex].batch_data.forEach((itemBatch) => {
         itemBatch.product_data.forEach((itemPro) => {
-          itemPro.product_info.forEach((itemChild) =>{
+          itemPro.product_info.forEach((itemChild) => {
             flattenArr.push({
               batch_number: itemBatch.batch_number,
               batch_title: itemBatch.batch_title,
@@ -630,7 +632,7 @@ export default Vue.extend({
               child_style_code: itemChild.child_style_code,
               isTable: this.$isJSON(itemChild.size_info),
               // @ts-ignore
-              size_arr: this.$isJSON(itemChild.size_info)?JSON.parse(itemChild.size_info):[],
+              size_arr: this.$isJSON(itemChild.size_info) ? JSON.parse(itemChild.size_info) : [],
               image_data: itemPro.image_data,
               part_data: itemPro.part_data,
               desc: itemPro.desc,
