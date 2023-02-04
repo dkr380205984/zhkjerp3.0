@@ -1075,6 +1075,7 @@ export default Vue.extend({
               url: item
             }
           })
+          this.productInfo.image_data = quotedPriceProductInfo.image_data
           this.$nextTick(() => {
             this.$initEditor(this.productInfo)
           })

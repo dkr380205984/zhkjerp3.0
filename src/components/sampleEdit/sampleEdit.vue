@@ -934,6 +934,7 @@ export default Vue.extend({
               url: item
             }
           })
+          this.sampleInfo.image_data = quotedPriceProductInfo.image_data
           this.$nextTick(() => {
             this.$initEditor(this.sampleInfo)
           })
@@ -1251,7 +1252,7 @@ export default Vue.extend({
       }
       this.sampleInfo.category_id = this.sampleInfo.type![0]
       this.sampleInfo.secondary_category_id = this.sampleInfo.type![1]
-      console.log(this.sampleInfo)
+      // console.log(this.sampleInfo)
       // 在初始化的时候image_data不进行清空，所以就不需要进行新旧图拼接
       // this.sampleInfo.image_data = this.sampleInfo.image_data.concat(this.sampleInfo.file_list!.map((item) => item.url)) // 新旧图拼接
       // 上传图片组件更改，cv图在上传时已经赋值给image_data过了
