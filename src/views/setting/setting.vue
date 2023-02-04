@@ -7875,10 +7875,6 @@ export default Vue.extend({
     },
     // 用户注册获取验证码
     getSmsCode() {
-      if (Number(this.smsIndex)) {
-        this.$message.warning('请稍后发送')
-        return
-      }
       if (
         !this.$formCheck(this.userInfo, [
           {
@@ -7887,6 +7883,12 @@ export default Vue.extend({
           }
         ])
       ) {
+        if (Number(this.smsIndex)) {
+          this.$message.warning('请稍后发送')
+          return
+        } else {
+          this.smsIndex = 60
+        }
         user.getSms({ phone: this.userInfo.phone }).then((res) => {
           if (res.data.status) {
             this.$message.success('发送成功')
@@ -7895,7 +7897,9 @@ export default Vue.extend({
               if (this.smsIndex === 0) {
                 this.smsIndex = '重新发送'
               } else {
-                this.smsIndex--
+                if (this.smsIndex !== '重新发送') {
+                  this.smsIndex--
+                }
               }
             }, 1000)
           }
