@@ -41,7 +41,7 @@
                         </div>
                         <div class="col">
                           <div class="label">样品款式：</div>
-                          <div class="text">{{sampleInfo.style_data.map((item)=>item.name).join(',')}}</div>
+                          <div class="text">{{sampleInfo.style_data&&sampleInfo.style_data.length?sampleInfo.style_data.map((item)=>item.name).join(','):''}}</div>
                         </div>
                       </div>
                       <div class="row">
@@ -82,43 +82,75 @@
                           </div>
                         </div>
                       </div><template v-if="sampleInfo.isTable">
-                        <div class="row showProTableTypeCtn" style="width:640px;overflow-x:scroll" :ref="0" @mousewheel.prevent="listenWheel">
-                          <div class="listCtn" style="padding: 0;">
+                        <div class="row showProTableTypeCtn"
+                          style="width:640px;overflow-x:scroll"
+                          :ref="0"
+                          @mousewheel.prevent="listenWheel">
+                          <div class="listCtn"
+                            style="padding: 0;">
                             <div class="list">
-                              <div class="row title" style="height:102px;">
-                                <div class="col" style="margin:unset;max-width:165px;min-width:165px">子款号</div>
-                                <div class="col" style="margin:unset;padding:unset;max-width:165px;min-width:165px">条码号码</div>
-                                <div class="col" style="margin:unset;min-width:120px;max-width:120px">尺码</div>
-                                <div class="col" style="margin:unset;min-width:120px;max-width:120px">克重</div>
-                                <div class="col" style="padding: 0;height:unset">
-                                  <div class="row title" style="padding:unset;height: 51px;margin:0">
-                                    <div class="col" style="min-width: 100px;margin:unset;padding:unset" :style="{'padding-left': (indexSize === 0?'0':'12')+'px'}" v-for="itemSize,indexSize in sampleInfo.size_data[0].size_arr" :key="indexSize + '表格模板'">
+                              <div class="row title"
+                                style="height:102px;">
+                                <div class="col"
+                                  style="margin:unset;max-width:165px;min-width:165px">子款号</div>
+                                <div class="col"
+                                  style="margin:unset;padding:unset;max-width:165px;min-width:165px">条码号码</div>
+                                <div class="col"
+                                  style="margin:unset;min-width:120px;max-width:120px">尺码</div>
+                                <div class="col"
+                                  style="margin:unset;min-width:120px;max-width:120px">克重</div>
+                                <div class="col"
+                                  style="padding: 0;height:unset">
+                                  <div class="row title"
+                                    style="padding:unset;height: 51px;margin:0">
+                                    <div class="col"
+                                      style="min-width: 100px;margin:unset;padding:unset"
+                                      :style="{'padding-left': (indexSize === 0?'0':'12')+'px'}"
+                                      v-for="itemSize,indexSize in sampleInfo.size_data[0].size_arr"
+                                      :key="indexSize + '表格模板'">
                                       {{indexSize === 0 ? '尺寸':''}}
                                     </div>
                                   </div>
-                                  <div class="row title" style="height: 53px;margin:0">
-                                    <div class="col" style="min-width: 101px;margin:unset;padding:unset;" :style="{'padding-left': (indexSize === 0?'0':'12')+'px'}" v-for="itemSize,indexSize in sampleInfo.size_data[0].size_arr" :key="indexSize + 'indexSize'">
+                                  <div class="row title"
+                                    style="height: 53px;margin:0">
+                                    <div class="col"
+                                      style="min-width: 101px;margin:unset;padding:unset;"
+                                      :style="{'padding-left': (indexSize === 0?'0':'12')+'px'}"
+                                      v-for="itemSize,indexSize in sampleInfo.size_data[0].size_arr"
+                                      :key="indexSize + 'indexSize'">
                                       {{itemSize.name}}
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                              <div class="row" v-for="item,index in sampleInfo.size_data" :key="index + '大身listBody'">
-                                <div class="col" style="margin:unset;max-width:165px;min-width:165px">
+                              <div class="row"
+                                v-for="item,index in sampleInfo.size_data"
+                                :key="index + '大身listBody'">
+                                <div class="col"
+                                  style="margin:unset;max-width:165px;min-width:165px">
                                   {{item.child_style_code}}
                                 </div>
-                                <div class="col" style="margin:unset;padding:unset;max-width:165px;min-width:165px">
+                                <div class="col"
+                                  style="margin:unset;padding:unset;max-width:165px;min-width:165px">
                                   {{item.brcode_number}}
                                 </div>
-                                <div class="col" style="margin:unset;min-width:120px;max-width:120px">
+                                <div class="col"
+                                  style="margin:unset;min-width:120px;max-width:120px">
                                   {{item.name}}
                                 </div>
-                                <div class="col" style="margin:unset;min-width:120px;max-width:120px">
+                                <div class="col"
+                                  style="margin:unset;min-width:120px;max-width:120px">
                                   {{item.weight}}
                                 </div>
-                                <div class="col" style="min-width: 200px;padding: 0;height:unset">
-                                  <div class="row" style="height: 57px;padding:0">
-                                    <div class="col" style="min-width: 101px;margin:unset;padding:unset;" :style="{'padding-left': (indexSize === 0?'0':'12')+'px'}" v-for="itemSize,indexSize in item.size_arr" :key="indexSize + 'indexSizeListBody'">
+                                <div class="col"
+                                  style="min-width: 200px;padding: 0;height:unset">
+                                  <div class="row"
+                                    style="height: 57px;padding:0">
+                                    <div class="col"
+                                      style="min-width: 101px;margin:unset;padding:unset;"
+                                      :style="{'padding-left': (indexSize === 0?'0':'12')+'px'}"
+                                      v-for="itemSize,indexSize in item.size_arr"
+                                      :key="indexSize + 'indexSizeListBody'">
                                       {{itemSize.value}}
                                     </div>
                                   </div>
@@ -427,16 +459,16 @@ export default Vue.extend({
       // @ts-ignore 对需要滚动的元素进行滚动操作
       this.$refs[0].scrollLeft += step
     },
-    changeSampleInfoData(param:any){
+    changeSampleInfoData(param: any) {
       param = this.$clone(param)
       param.isTable = this.$isJSON(param.size_data[0].size_info) || this.$isJSON(param.size_data[0].size_arr)
-      if(param.isTable){
-        param.size_data.forEach((item:any) => {
+      if (param.isTable) {
+        param.size_data.forEach((item: any) => {
           item.size_arr = JSON.parse(item.size_info)
-        });
+        })
       }
       return param
-    },
+    }
   }
 })
 </script>

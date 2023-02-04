@@ -1671,7 +1671,8 @@
                   <div class="col">{{ item.station }}</div>
                   <div class="col">{{ item.group_name }}</div>
                   <div class="col">{{ item.has_check === 1 ? '管理员' : '普通用户' }}</div>
-                  <div class="col">{{ item.status === 1 ? '启用' : '禁用' }}</div>
+                  <div class="col"
+                    :class="{'red':item.status!==1,'green':item.status===1}">{{ item.status === 1 ? '启用' : '禁用' }}</div>
                   <div class="col"
                     style="flex: 2">
                     <span class="opr"
@@ -2679,15 +2680,15 @@
                   </div>
                 </div>
               </div>
-              <template v-if="materialOrderCheckConfig.data.beyond_notice_condition !== 2">
+              <template v-if="materialOrderCheckConfig.data.beyond_price_notice_condition !== 2">
                 <div class="row">
                   <div class="col">
                     <div class="label">通知对象与通知途径(必填)</div>
                   </div>
                 </div>
                 <div class="row"
-                  v-for="(item, index) in materialOrderCheckConfig.data.beyond_notice_user"
-                  :key="index + 'chaoe'">
+                  v-for="(item, index) in materialOrderCheckConfig.data.beyond_price_notice_user"
+                  :key="index + 'jiage'">
                   <div class="col">
                     <div class="label"
                       style="display: flex; height: 32px; line-height: 32px">
@@ -2714,7 +2715,7 @@
                     style="top: -71px"
                     v-if="index === 0"
                     @click="
-                      $addItem(materialOrderCheckConfig.data.beyond_notice_user, {
+                      $addItem(materialOrderCheckConfig.data.beyond_price_notice_user, {
                         user_id: '',
                         notice_for_wechat: '2'
                       })
@@ -2722,7 +2723,7 @@
                   <span class="opr hoverRed"
                     style="top: -71px"
                     v-if="index > 0"
-                    @click="$deleteItem(materialOrderCheckConfig.data.beyond_notice_user, index)">删除</span>
+                    @click="$deleteItem(materialOrderCheckConfig.data.beyond_price_notice_user, index)">删除</span>
                 </div>
               </template>
               <div class="btnCtn fr"
@@ -3435,13 +3436,59 @@
                 <div class="col">
                   <div class="label">是否通知(单选)</div>
                   <div class="info middle">
-                    <el-radio v-model="productionPlanCheckConfig.data.update_notice_condition"
+                    <el-radio v-model="productionPlanCheckConfig.data.beyond_price_notice_condition"
                       :label="1">通知</el-radio>
-                    <el-radio v-model="productionPlanCheckConfig.data.update_notice_condition"
+                    <el-radio v-model="productionPlanCheckConfig.data.beyond_price_notice_condition"
                       :label="2">不通知</el-radio>
                   </div>
                 </div>
               </div>
+              <template v-if="productionPlanCheckConfig.data.beyond_price_notice_condition !== 2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item, index) in productionPlanCheckConfig.data.beyond_price_notice_user"
+                  :key="index + 'jiage'">
+                  <div class="col">
+                    <div class="label"
+                      style="display: flex; height: 32px; line-height: 32px">
+                      {{ index + 1 }}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top: 12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
+                    </div>
+                  </div>
+                  <span class="opr hoverBlue"
+                    style="top: -71px"
+                    v-if="index === 0"
+                    @click="
+                      $addItem(productionPlanCheckConfig.data.beyond_price_notice_user, {
+                        user_id: '',
+                        notice_for_wechat: '2'
+                      })
+                    ">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px"
+                    v-if="index > 0"
+                    @click="$deleteItem(productionPlanCheckConfig.data.beyond_price_notice_user, index)">删除</span>
+                </div>
+              </template>
               <div class="smallTitle">修改异常通知</div>
               <div class="row">
                 <div class="col">
@@ -3790,13 +3837,59 @@
                 <div class="col">
                   <div class="label">是否通知(单选)</div>
                   <div class="info middle">
-                    <el-radio v-model="gongziCheckConfig.data.update_notice_condition"
+                    <el-radio v-model="gongziCheckConfig.data.beyond_price_notice_condition"
                       :label="1">通知</el-radio>
-                    <el-radio v-model="gongziCheckConfig.data.update_notice_condition"
+                    <el-radio v-model="gongziCheckConfig.data.beyond_price_notice_condition"
                       :label="2">不通知</el-radio>
                   </div>
                 </div>
               </div>
+              <template v-if="gongziCheckConfig.data.beyond_price_notice_condition !== 2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item, index) in gongziCheckConfig.data.beyond_price_notice_user"
+                  :key="index + 'jiage'">
+                  <div class="col">
+                    <div class="label"
+                      style="display: flex; height: 32px; line-height: 32px">
+                      {{ index + 1 }}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top: 12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
+                    </div>
+                  </div>
+                  <span class="opr hoverBlue"
+                    style="top: -71px"
+                    v-if="index === 0"
+                    @click="
+                      $addItem(gongziCheckConfig.data.beyond_price_notice_user, {
+                        user_id: '',
+                        notice_for_wechat: '2'
+                      })
+                    ">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px"
+                    v-if="index > 0"
+                    @click="$deleteItem(gongziCheckConfig.data.beyond_price_notice_user, index)">删除</span>
+                </div>
+              </template>
               <div class="smallTitle">超额异常通知</div>
               <div class="row">
                 <div class="col">
@@ -6831,6 +6924,12 @@ export default Vue.extend({
         doc_type: 4,
         data: {
           beyond_price_notice_condition: 1,
+          beyond_price_notice_user: [
+            {
+              user_id: '',
+              notice_for_wechat: '2'
+            }
+          ],
           update_notice_condition: 1,
           update_notice_for_wechat: '2',
           check_notice_condition: 2,
