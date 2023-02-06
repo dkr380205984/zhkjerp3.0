@@ -2928,6 +2928,9 @@ export default Vue.extend({
     },
     // 提交时获取特殊值 表格值，合并项等
     getCmpData() {
+      this.craftInfo.process_data = this.process_data.map((item: any) => item[1])
+      this.craftInfo.part_id = Number(this.$route.query.part_id) || ''
+      this.craftInfo.product_id = Number(this.$route.query.id) || Number(this.productInfo.id)
       this.craftInfo.warp_data.material_data[0].apply = this.warpJiaList
         .filter((item) => {
           return !this.craftInfo.warp_data.material_data.slice(1).some((itemChild) => {
