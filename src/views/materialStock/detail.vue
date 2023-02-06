@@ -1817,9 +1817,12 @@ export default Vue.extend({
     },
     // 采购单中转入库和最终入库初始化
     getOrderInfo(type: 1 | 4) {
-      const checkLength = this.materialOrderList.filter((item) => {
-        return item.info_data.some((itemChild) => itemChild.check)
+      const checkLength = this.materialShaXianList.filter((item:any) => {
+        return item.info_data.some((itemChild:any) => itemChild.check)
+      }).length + this.materialMianLiaoList.filter((item:any) => {
+        return item.info_data.some((itemChild:any) => itemChild.check)
       }).length
+
       if (checkLength === 0) {
         this.$message.error('请选择采购单进行入库操作')
         return
@@ -1828,27 +1831,58 @@ export default Vue.extend({
         this.$message.error('只能选择一张采购单进行入库操作')
         return
       }
+
       this.materialStockInfo.action_type = type
       this.materialStockInfo.selectList = []
-      this.materialOrderList.forEach((item) => {
-        item.info_data.forEach((itemChild) => {
-          if (itemChild.check) {
-            this.materialStockInfo.rel_doc_code = item.code
-            this.materialStockInfo.rel_doc_id = item.id as number
-            this.materialStockInfo.selectList!.push({
-              value: itemChild.id as number,
-              name:
-                itemChild.material_name + '/' + (itemChild.material_color || '未知颜色') + '/' + itemChild.attribute,
-              material_color: itemChild.material_color,
-              material_id: itemChild.material_id,
-              attribute: itemChild.attribute,
-              yarn_type: itemChild.yarn_type,
-              number: itemChild.number,
-              unit: itemChild.unit
-            })
-          }
+
+      if(this.materialShaXianList.filter((item:any) => {
+        return item.info_data.some((itemChild:any) => itemChild.check)
+      }).length > 0) {
+        this.materialShaXianList.forEach((item:any) => {
+          item.info_data.forEach((itemChild:any) => {
+            if (itemChild.check) {
+              this.materialStockInfo.rel_doc_code = item.code
+              this.materialStockInfo.rel_doc_id = item.id as number
+              this.materialStockInfo.selectList!.push({
+                value: itemChild.id as number,
+                name:
+                  itemChild.material_name + '/' + (itemChild.material_color || '未知颜色') + '/' + itemChild.attribute,
+                material_color: itemChild.material_color,
+                material_id: itemChild.material_id,
+                attribute: itemChild.attribute,
+                yarn_type: itemChild.yarn_type,
+                number: itemChild.number,
+                unit: itemChild.unit
+              })
+            }
+          })
         })
-      })
+      }
+
+      if(this.materialMianLiaoList.filter((item:any) => {
+        return item.info_data.some((itemChild:any) => itemChild.check)
+      }).length > 0) {
+        this.materialMianLiaoList.forEach((item:any) => {
+          item.info_data.forEach((itemChild:any) => {
+            if (itemChild.check) {
+              this.materialStockInfo.rel_doc_code = item.code
+              this.materialStockInfo.rel_doc_id = item.id as number
+              this.materialStockInfo.selectList!.push({
+                value: itemChild.id as number,
+                name:
+                  itemChild.material_name + '/' + (itemChild.material_color || '未知颜色') + '/' + itemChild.attribute,
+                material_color: itemChild.material_color,
+                material_id: itemChild.material_id,
+                attribute: itemChild.attribute,
+                yarn_type: itemChild.yarn_type,
+                number: itemChild.number,
+                unit: itemChild.unit
+              })
+            }
+          })
+        })
+      }
+
       if (type === 1) {
         this.materialStockInfo.info_data = this.materialStockInfo.selectList.map((item) => {
           return {
@@ -1866,35 +1900,57 @@ export default Vue.extend({
         })
       } else {
         this.materialStockInfo.info_data = []
-        this.materialOrderList.forEach((item) => {
-          item.info_data.forEach((itemChild) => {
-            if (itemChild.check) {
-              this.materialStockInfo.rel_doc_code = item.code
-              this.materialStockInfo.rel_doc_id = item.id as number
-              if (itemChild.process_info!.filter((item) => item.process === '染色').length > 0) {
-                itemChild
-                  .process_info!.filter((item) => item.process === '染色')
-                  .forEach((itemProcess) => {
+        if(this.materialShaXianList.filter((item:any) => {
+          return item.info_data.some((itemChild:any) => itemChild.check)
+        }).length > 0) {
+          this.materialShaXianList.forEach((item:any) => {
+            item.info_data.forEach((itemChild:any) => {
+              if (itemChild.check) {
+                this.materialStockInfo.rel_doc_code = item.code
+                this.materialStockInfo.rel_doc_id = item.id as number
+                if (itemChild.process_info!.filter((item:any) => item.process === '染色').length > 0) {
+                  itemChild
+                    .process_info!.filter((item:any) => item.process === '染色')
+                    .forEach((itemProcess:any) => {
+                      this.materialStockInfo.info_data.push({
+                        yarn_type: itemChild.yarn_type,
+                        material_id: itemChild.material_id as number,
+                        material_color: itemProcess.after_color,
+                        color_code: '',
+                        batch_code: '',
+                        vat_code: '',
+                        attribute: itemChild.attribute === '面料' ? '面料' : '筒纱',
+                        number: itemProcess.number,
+                        item: '', // 件数
+                        unit: itemProcess.unit,
+                        rel_doc_info_id: itemChild.id // 采购单调取单加工单子项id
+                      })
+                    })
+                  if (
+                    itemChild.process_info!.filter((item:any) => item.process === '染色').length > 0 &&
+                    itemChild
+                      .process_info!.filter((item:any) => item.process === '染色')
+                      .reduce((total:any, cur:any) => total + Number(cur.number), 0) < Number(itemChild.number)
+                  ) {
                     this.materialStockInfo.info_data.push({
                       yarn_type: itemChild.yarn_type,
                       material_id: itemChild.material_id as number,
-                      material_color: itemProcess.after_color,
+                      material_color: itemChild.material_color as string,
                       color_code: '',
                       batch_code: '',
                       vat_code: '',
                       attribute: itemChild.attribute === '面料' ? '面料' : '筒纱',
-                      number: itemProcess.number,
+                      number:
+                        Number(itemChild.number) -
+                        itemChild
+                          .process_info!.filter((item:any) => item.process === '染色')
+                          .reduce((total:any, cur:any) => total + cur.number, 0),
                       item: '', // 件数
-                      unit: itemProcess.unit,
+                      unit: itemChild.unit,
                       rel_doc_info_id: itemChild.id // 采购单调取单加工单子项id
                     })
-                  })
-                if (
-                  itemChild.process_info!.filter((item) => item.process === '染色').length > 0 &&
-                  itemChild
-                    .process_info!.filter((item) => item.process === '染色')
-                    .reduce((total, cur) => total + Number(cur.number), 0) < Number(itemChild.number)
-                ) {
+                  }
+                } else {
                   this.materialStockInfo.info_data.push({
                     yarn_type: itemChild.yarn_type,
                     material_id: itemChild.material_id as number,
@@ -1903,34 +1959,85 @@ export default Vue.extend({
                     batch_code: '',
                     vat_code: '',
                     attribute: itemChild.attribute === '面料' ? '面料' : '筒纱',
-                    number:
-                      Number(itemChild.number) -
-                      itemChild
-                        .process_info!.filter((item) => item.process === '染色')
-                        .reduce((total, cur) => total + cur.number, 0),
+                    number: itemChild.number as string,
                     item: '', // 件数
                     unit: itemChild.unit,
                     rel_doc_info_id: itemChild.id // 采购单调取单加工单子项id
                   })
                 }
-              } else {
-                this.materialStockInfo.info_data.push({
-                  yarn_type: itemChild.yarn_type,
-                  material_id: itemChild.material_id as number,
-                  material_color: itemChild.material_color as string,
-                  color_code: '',
-                  batch_code: '',
-                  vat_code: '',
-                  attribute: itemChild.attribute === '面料' ? '面料' : '筒纱',
-                  number: itemChild.number as string,
-                  item: '', // 件数
-                  unit: itemChild.unit,
-                  rel_doc_info_id: itemChild.id // 采购单调取单加工单子项id
-                })
               }
-            }
+            })
           })
-        })
+        }
+        if(this.materialMianLiaoList.filter((item:any) => {
+          return item.info_data.some((itemChild:any) => itemChild.check)
+        }).length > 0) {
+          this.materialMianLiaoList.forEach((item:any) => {
+            item.info_data.forEach((itemChild:any) => {
+              if (itemChild.check) {
+                this.materialStockInfo.rel_doc_code = item.code
+                this.materialStockInfo.rel_doc_id = item.id as number
+                if (itemChild.process_info!.filter((item:any) => item.process === '染色').length > 0) {
+                  itemChild
+                    .process_info!.filter((item:any) => item.process === '染色')
+                    .forEach((itemProcess:any) => {
+                      this.materialStockInfo.info_data.push({
+                        yarn_type: itemChild.yarn_type,
+                        material_id: itemChild.material_id as number,
+                        material_color: itemProcess.after_color,
+                        color_code: '',
+                        batch_code: '',
+                        vat_code: '',
+                        attribute: itemChild.attribute === '面料' ? '面料' : '筒纱',
+                        number: itemProcess.number,
+                        item: '', // 件数
+                        unit: itemProcess.unit,
+                        rel_doc_info_id: itemChild.id // 采购单调取单加工单子项id
+                      })
+                    })
+                  if (
+                    itemChild.process_info!.filter((item:any) => item.process === '染色').length > 0 &&
+                    itemChild
+                      .process_info!.filter((item:any) => item.process === '染色')
+                      .reduce((total:any, cur:any) => total + Number(cur.number), 0) < Number(itemChild.number)
+                  ) {
+                    this.materialStockInfo.info_data.push({
+                      yarn_type: itemChild.yarn_type,
+                      material_id: itemChild.material_id as number,
+                      material_color: itemChild.material_color as string,
+                      color_code: '',
+                      batch_code: '',
+                      vat_code: '',
+                      attribute: itemChild.attribute === '面料' ? '面料' : '筒纱',
+                      number:
+                        Number(itemChild.number) -
+                        itemChild
+                          .process_info!.filter((item:any) => item.process === '染色')
+                          .reduce((total:any, cur:any) => total + cur.number, 0),
+                      item: '', // 件数
+                      unit: itemChild.unit,
+                      rel_doc_info_id: itemChild.id // 采购单调取单加工单子项id
+                    })
+                  }
+                } else {
+                  this.materialStockInfo.info_data.push({
+                    yarn_type: itemChild.yarn_type,
+                    material_id: itemChild.material_id as number,
+                    material_color: itemChild.material_color as string,
+                    color_code: '',
+                    batch_code: '',
+                    vat_code: '',
+                    attribute: itemChild.attribute === '面料' ? '面料' : '筒纱',
+                    number: itemChild.number as string,
+                    item: '', // 件数
+                    unit: itemChild.unit,
+                    rel_doc_info_id: itemChild.id // 采购单调取单加工单子项id
+                  })
+                }
+              }
+            })
+          })
+        }
       }
       this.materialStockFlag = true
     },
