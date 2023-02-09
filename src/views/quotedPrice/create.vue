@@ -2342,6 +2342,7 @@ export default Vue.extend({
             this.getContacts(this.quotedPriceInfo.tree_data as number[], true)
             this.quotedPriceInfo.contacts_id = data.contacts_id
             this.quotedPriceInfo.group_id = data.group_id
+            // @ts-ignore
             this.quotedPriceInfo.product_data = (data.time_data as SampleOrderTime[])[
               Number(this.$route.query.sampleOrderIndex)
             ].batch_data[0].product_data
@@ -2365,7 +2366,7 @@ export default Vue.extend({
                       url: itemImage
                     }
                   }),
-                  image_data: [],
+                  image_data: item.image_data,
                   client_target_price: '',
                   start_order_number: '',
                   desc: item.desc,
@@ -2512,7 +2513,7 @@ export default Vue.extend({
                           url: itemImage
                         }
                       }),
-                      image_data: [],
+                      image_data: item.image_data,
                       client_target_price: '',
                       start_order_number: '',
                       desc: item.desc,
