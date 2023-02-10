@@ -623,6 +623,7 @@ const store = {
     keyword?: string
     material_name?: string
     material_color?: string
+    hide_zero?: '1' | '2'
     vat_code?: string
     color_code?: string
     batch_code?: string

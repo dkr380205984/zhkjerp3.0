@@ -220,7 +220,7 @@
                 <div class="text">{{ item.client_name }}</div>
               </div>
               <div class="col">
-                <div class="label">下单日期：</div>
+                <div class="label">开单日期：</div>
                 <div class="text">{{ item.order_time }}</div>
               </div>
             </div>
@@ -240,8 +240,8 @@
             </div>
             <div class="row">
               <div class="col flex3">
-                <div class="label">创建日期：</div>
-                <div class="text">{{ item.created_at.slice(0, 10) }}</div>
+                <div class="label">更新日期：</div>
+                <div class="text">{{ item.updated_at.slice(0, 10) }}</div>
               </div>
               <div class="col flex3">
                 <div class="label">创建人：</div>
@@ -407,7 +407,10 @@
                   </div>
                 </div>
                 <div class="tcol"
-                  style="flex: 0.8">截止日期</div>
+                  style="flex: 0.8">
+                  <span>更新日期</span>
+                  <span>交货日期</span>
+                </div>
                 <div class="tcol">备注信息</div>
                 <div class="tcol">额外费用</div>
                 <div class="tcol"
@@ -426,7 +429,7 @@
                       <el-tooltip class="item"
                         effect="dark"
                         :content="
-                          '创建日期：' + itemProcess.created_at.slice(0, 10) + ';创建人：' + itemProcess.user_name
+                          '开单日期：' + itemProcess.created_at.slice(0, 10) + ';创建人：' + itemProcess.user_name
                         "
                         placement="top">
                         <i class="el-icon-timer hoverBlue"></i>
@@ -480,7 +483,10 @@
                     </div>
                   </div>
                   <div class="tcol"
-                    style="flex: 0.8">{{ itemProcess.delivery_time }}</div>
+                    style="flex: 0.8">
+                    <span> {{ itemProcess.updated_at && itemProcess.updated_at.slice(0,10)}} </span>
+                    <span> {{ itemProcess.delivery_time }}</span>
+                  </div>
                   <div class="tcol">{{ itemProcess.desc || '无备注' }}</div>
                   <div class="tcol">
                     <others-fee-data :data="itemProcess.others_fee_data"></others-fee-data>
@@ -3973,7 +3979,8 @@ export default Vue.extend({
     totalOrderNumberList(): number[] {
       return this.materialOrderInfo.map((item) => {
         return item.info_data.reduce((total, current) => {
-          return total + Number(current.number)
+          // @ts-ignore
+          return total + Number(current.number.replace(/,/g, ''))
         }, 0)
       })
     },
@@ -3981,33 +3988,39 @@ export default Vue.extend({
       return this.materialOrderInfo.map((item) => {
         return (
           item.info_data.reduce((total, current) => {
-            return total + Number(current.number) * Number(current.price)
+            // @ts-ignore
+            return total + Number(current.number.replace(/,/g, '')) * Number(current.price.replace(/,/g, ''))
           }, 0) +
           item.others_fee_data.reduce((total, current) => {
-            return total + Number(current.price)
+            // @ts-ignore
+            return total + Number(current.price.replace(/,/g, ''))
           }, 0)
         ).toFixed(2)
       })
     },
     totalOrderNumber(): number {
       return this.materialOrderUpdataInfo.info_data.reduce((total, current) => {
-        return total + Number(current.number)
+        // @ts-ignore
+        return total + Number(current.number.replace(/,/g, ''))
       }, 0)
     },
     totalOrderPrice(): string {
       return (
         this.materialOrderUpdataInfo.info_data.reduce((total, current) => {
-          return total + Number(current.number) * Number(current.price)
+          // @ts-ignore
+          return total + Number(current.number.replace(/,/g, '')) * Number(current.price.replace(/,/g, ''))
         }, 0) +
         this.materialOrderUpdataInfo.others_fee_data.reduce((total, current) => {
-          return total + Number(current.price)
+          // @ts-ignore
+          return total + Number(current.price.replace(/,/g, ''))
         }, 0)
       ).toFixed(2)
     },
     totalProcessNumberList(): number[] {
       return this.materialProcessInfo.map((item) => {
         return item.info_data.reduce((total, current) => {
-          return total + Number(current.number)
+          // @ts-ignore
+          return total + Number(current.number.replace(/,/g, ''))
         }, 0)
       })
     },
@@ -4015,38 +4028,45 @@ export default Vue.extend({
       return this.materialProcessInfo.map((item) => {
         return (
           item.info_data.reduce((total, current) => {
-            return total + Number(current.number) * Number(current.price)
+            // @ts-ignore
+            return total + Number(current.number.replace(/,/g, '')) * Number(current.price.replace(/,/g, ''))
           }, 0) +
           item.others_fee_data.reduce((total, current) => {
-            return total + Number(current.price)
+            // @ts-ignore
+            return total + Number(current.price.replace(/,/g, ''))
           }, 0)
         ).toFixed(2)
       })
     },
     totalProcessNumber(): number {
       return this.materialProcessUpdataInfo.info_data.reduce((total, current) => {
-        return total + Number(current.number)
+        // @ts-ignore
+        return total + Number(current.number.replace(/,/g, ''))
       }, 0)
     },
     totalProcessPrice(): string {
       return (
         this.materialProcessUpdataInfo.info_data.reduce((total, current) => {
-          return total + Number(current.number) * Number(current.price)
+          // @ts-ignore
+          return total + Number(current.number.replace(/,/g, '')) * Number(current.price.replace(/,/g, ''))
         }, 0) +
         this.materialProcessUpdataInfo.others_fee_data.reduce((total, current) => {
-          return total + Number(current.price)
+          // @ts-ignore
+          return total + Number(current.price.replace(/,/g, ''))
         }, 0)
       ).toFixed(2)
     },
     totalStockNumber(): number {
       return this.materialStockInfo.info_data.reduce((total, current) => {
-        return total + Number(current.number)
+        // @ts-ignore
+        return total + Number(current.number.replace(/,/g, ''))
       }, 0)
     },
     totalStockPrice(): string {
       return this.materialStockInfo.info_data
         .reduce((total, current) => {
-          return total + Number(current.number) * Number(current.price)
+          // @ts-ignore
+          return total + Number(current.number.replace(/,/g, '')) * Number(current.price.replace(/,/g, ''))
         }, 0)
         .toFixed(2)
     }

@@ -41,22 +41,27 @@
               @change="storePage=1;$forceUpdate()"></el-input>
           </div>
           <div class="elCtn"
-            style="width:184px">
+            style="width:124px">
             <el-input placeholder="批号"
               v-model="storeTotalFilter.batch_code"
               @change="storePage=1;$forceUpdate()"></el-input>
           </div>
           <div class="elCtn"
-            style="width:184px">
+            style="width:124px">
             <el-input placeholder="缸号"
               v-model="storeTotalFilter.vat_code"
               @change="storePage=1;$forceUpdate()"></el-input>
           </div>
           <div class="elCtn"
-            style="width:184px">
+            style="width:124px">
             <el-input placeholder="色号"
               v-model="storeTotalFilter.color_code"
               @change="storePage=1;$forceUpdate()"></el-input>
+          </div>
+          <div class="elCtn"
+            style="width:124px">
+            <el-checkbox v-model="storeTotalFilter.has_zero"
+              @change="storePage=1;$forceUpdate()">过滤数量小于0的库存</el-checkbox>
           </div>
           <div class="btn backHoverGreen fr"
             @click="goStock(9)">{{typeName}}入库</div>
@@ -846,7 +851,8 @@ export default Vue.extend({
         material_name: '',
         vat_code: '',
         color_code: '',
-        batch_code: ''
+        batch_code: '',
+        has_zero: true
       }
     }
   },
@@ -887,6 +893,13 @@ export default Vue.extend({
             return true
           }
         })
+        .filter((item: any) => {
+          if (this.storeTotalFilter.has_zero) {
+            return Number(item.number) > 0
+          } else {
+            return true
+          }
+        })
         .slice((this.storePage - 1) * 5, this.storePage * 5)
     },
     storeTotal(): number {
@@ -915,6 +928,13 @@ export default Vue.extend({
         .filter((item: any) => {
           if (this.storeTotalFilter.batch_code && item.batch_code) {
             return item.batch_code.toLowerCase().indexOf(this.storeTotalFilter.batch_code.toLowerCase()) !== -1
+          } else {
+            return true
+          }
+        })
+        .filter((item: any) => {
+          if (this.storeTotalFilter.has_zero) {
+            return Number(item.number) > 0
           } else {
             return true
           }

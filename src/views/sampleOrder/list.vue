@@ -593,7 +593,7 @@ export default Vue.extend({
               .then(() => {
                 sampleOrder
                   .delete({
-                    id: item.id
+                    id: item.order_id
                   })
                   .then((res) => {
                     if (res.data.status) {

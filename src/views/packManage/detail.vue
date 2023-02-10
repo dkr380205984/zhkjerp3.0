@@ -380,7 +380,10 @@
             <div class="col">订购总价</div>
             <div class="col">审核状态</div>
             <div class="col">结算状态</div>
-            <div class="col">订购日期</div>
+            <div class="col">
+              <span>开单日期</span>
+              <span>更新日期</span>
+            </div>
             <div class="col">交货日期</div>
             <div class="col">创建人</div>
             <div class="col">操作</div>
@@ -408,7 +411,10 @@
               </div>
               <div class="col"
                 :class="{'green':item.has_invoice===1||item.has_pay===1,'gray':item.has_invoice!==1&&item.has_pay!==1}">{{item.has_invoice===1||item.has_pay===1?'已结算':'待结算'}}</div>
-              <div class="col">{{item.order_time}}</div>
+              <div class="col">
+                <span>{{item.order_time}}</span>
+                <span>{{item.updated_at.slice(0,10)===item.order_time?'未更新':item.updated_at.slice(0,10)}}</span>
+              </div>
               <div class="col">{{item.delivery_time}}</div>
               <div class="col">{{item.user_name}}</div>
               <div class="col">

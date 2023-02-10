@@ -1857,8 +1857,8 @@ export default Vue.extend({
         if (res.data.status) {
           this.orderProcess.children = res.data.data.map((item: any) => {
             return {
-              value: item,
-              label: item
+              value: item.name,
+              label: item.name
             }
           })
         }

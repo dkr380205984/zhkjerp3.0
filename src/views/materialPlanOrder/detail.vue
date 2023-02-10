@@ -49,7 +49,8 @@
               <div class="tcol">额外费用</div>
               <div class="tcol">日期</div>
               <div class="tcol">备注信息</div>
-              <div class="tcol">操作</div>
+              <div class="tcol"
+                style="min-width:144px">操作</div>
             </div>
           </div>
           <div class="tbody">
@@ -77,7 +78,10 @@
               </div>
               <div class="tcol">{{item.order_time}}</div>
               <div class="tcol">{{item.desc}}</div>
-              <div class="tcol oprCtn">
+              <div class="tcol oprCtn"
+                style="min-width:144px">
+                <div class="opr hoverGreen"
+                  @click="goOrder(item)">继续订购</div>
                 <div class="opr hoverBlue"
                   @click="goStock([item])">入库</div>
                 <div class="opr hoverRed"
@@ -309,7 +313,8 @@
                     <span class="explanation">(必选)</span>
                   </div>
                   <div class="info elCtn">
-                    <el-cascader filterable
+                    <el-cascader v-if="!itemMat.id"
+                      filterable
                       placeholder="物料名称"
                       :show-all-levels="false"
                       v-model="itemMat.tree_data"
@@ -317,6 +322,9 @@
                       @change="(ev)=>{itemMat.material_id=ev[2]}"
                       clearable>
                     </el-cascader>
+                    <el-input placeholder="物料名称"
+                      disabled
+                      v-model="itemMat.material_name"></el-input>
                   </div>
                 </div>
                 <div class="col">
@@ -1110,6 +1118,12 @@ export default Vue.extend({
             message: '已取消删除'
           })
         })
+    },
+    goOrder(info: MaterialOrderInfo) {
+      console.log(info)
+      this.materialPlanOrderInfo.material_type = info.material_type
+      this.materialPlanOrderInfo.info_data = info.info_data
+      this.materialPlanOrderFlag = true
     }
   },
   mounted() {
