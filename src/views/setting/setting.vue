@@ -1966,7 +1966,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row"
+                v-if="sampleOrderCheckConfig.data.dispatch_notice_condition!==3">
                 <div class="col">
                   <div class="label">通知对象(系统默认)</div>
                   <div class="info elCtn">
@@ -1974,7 +1975,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row"
+                v-if="sampleOrderCheckConfig.data.dispatch_notice_condition!==3">
                 <div class="col">
                   <div class="label">通知途径</div>
                   <div class="info elCtn">
@@ -2040,8 +2042,6 @@
                     </div>
                   </div>
                 </div>
-              </template>
-              <template v-if="sampleOrderCheckConfig.data.check_notice_condition !== 2">
                 <div class="row">
                   <div class="col">
                     <div class="label">通知对象与通知途径(必填)</div>
@@ -2130,7 +2130,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row"
+                v-if="orderCheckConfig.data.dispatch_notice_condition!==3">
                 <div class="col">
                   <div class="label">通知对象(系统默认)</div>
                   <div class="info elCtn">
@@ -2138,7 +2139,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row"
+                v-if="orderCheckConfig.data.dispatch_notice_condition!==3">
                 <div class="col">
                   <div class="label">通知途径</div>
                   <div class="info elCtn">
@@ -2204,8 +2206,6 @@
                     </div>
                   </div>
                 </div>
-              </template>
-              <template v-if="orderCheckConfig.data.check_notice_condition !== 2">
                 <div class="row">
                   <div class="col">
                     <div class="label">通知对象与通知途径(必填)</div>
@@ -2354,8 +2354,7 @@
                     </div>
                   </div>
                 </div>
-              </template>
-              <template v-if="materialPlanCheckConfig.data.check_notice_condition !== 2">
+             
                 <div class="row">
                   <div class="col">
                     <div class="label">通知对象与通知途径(必填)</div>
@@ -2421,7 +2420,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row"
+                v-if="materialPlanCheckConfig.data.update_notice_condition === 1">
                 <div class="col">
                   <div class="label">通知对象(系统默认)</div>
                   <div class="info elCtn">
@@ -2429,7 +2429,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row"
+                v-if="materialPlanCheckConfig.data.update_notice_condition === 1">
                 <div class="col">
                   <div class="label">通知途径</div>
                   <div class="info elCtn">
@@ -2513,8 +2514,6 @@
                     </div>
                   </div>
                 </div>
-              </template>
-              <template v-if="materialOrderCheckConfig.data.check_notice_condition !== 2">
                 <div class="row">
                   <div class="col">
                     <div class="label">通知对象与通知途径(必填)</div>
@@ -2591,7 +2590,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row"
+                v-if="materialOrderCheckConfig.data.update_notice_condition===1">
                 <div class="col">
                   <div class="label">通知对象(系统默认)</div>
                   <div class="info elCtn">
@@ -2599,7 +2599,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row"
+                v-if="materialOrderCheckConfig.data.update_notice_condition===1">
                 <div class="col">
                   <div class="label">通知途径</div>
                   <div class="info elCtn">
@@ -2841,8 +2842,6 @@
                     </div>
                   </div>
                 </div>
-              </template>
-              <template v-if="materialProcessCheckConfig.data.check_notice_condition !== 2">
                 <div class="row">
                   <div class="col">
                     <div class="label">通知对象与通知途径(必填)</div>
@@ -2911,7 +2910,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row"
+                v-if="materialProcessCheckConfig.data.update_notice_condition===1">
                 <div class="col">
                   <div class="label">通知对象(系统默认)</div>
                   <div class="info elCtn">
@@ -2919,7 +2919,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row"
+                v-if="materialProcessCheckConfig.data.update_notice_condition===1">
                 <div class="col">
                   <div class="label">通知途径</div>
                   <div class="info elCtn">
@@ -2930,6 +2931,64 @@
                   </div>
                 </div>
               </div>
+              <div class="smallTitle">价格异常通知</div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">是否通知(单选)</div>
+                  <div class="info middle">
+                    <el-radio v-model="materialProcessCheckConfig.data.beyond_price_notice_condition"
+                      :label="1">通知</el-radio>
+                    <el-radio v-model="materialProcessCheckConfig.data.beyond_price_notice_condition"
+                      :label="2">不通知</el-radio>
+                  </div>
+                </div>
+              </div>
+              <template v-if="materialProcessCheckConfig.data.beyond_price_notice_condition !== 2">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知对象与通知途径(必填)</div>
+                  </div>
+                </div>
+                <div class="row"
+                  v-for="(item, index) in materialProcessCheckConfig.data.beyond_price_notice_user"
+                  :key="index + 'jiage'">
+                  <div class="col">
+                    <div class="label"
+                      style="display: flex; height: 32px; line-height: 32px">
+                      {{ index + 1 }}、
+                      <el-select placeholder="请选择通知人"
+                        v-model="item.user_id"
+                        filterable
+                        clearable>
+                        <el-option v-for="item in userListCommon"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="info elCtn"
+                      style="margin-top: 12px">
+                      <el-radio>默认包含系统通知</el-radio>
+                      <el-checkbox :true-label="1"
+                        :false-label="2"
+                        v-model="item.notice_for_wechat">手机端-微信公众号通知</el-checkbox>
+                    </div>
+                  </div>
+                  <span class="opr hoverBlue"
+                    style="top: -71px"
+                    v-if="index === 0"
+                    @click="
+                      $addItem(materialProcessCheckConfig.data.beyond_price_notice_user, {
+                        user_id: '',
+                        notice_for_wechat: '2'
+                      })
+                    ">添加</span>
+                  <span class="opr hoverRed"
+                    style="top: -71px"
+                    v-if="index > 0"
+                    @click="$deleteItem(materialProcessCheckConfig.data.beyond_price_notice_user, index)">删除</span>
+                </div>
+              </template>
               <div class="btnCtn fr"
                 style="margin-top: 20px">
                 <div class="btn backHoverBlue"
@@ -2990,8 +3049,6 @@
                     </div>
                   </div>
                 </div>
-              </template>
-              <template v-if="materialStockCheckConfig.data.check_notice_condition !== 2">
                 <div class="row">
                   <div class="col">
                     <div class="label">通知对象与通知途径(必填)</div>
@@ -3046,7 +3103,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row"
+                v-if="materialStockCheckConfig.data.update_notice_condition===1">
                 <div class="col">
                   <div class="label">通知对象(系统默认)</div>
                   <div class="info elCtn">
@@ -3054,7 +3112,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row"
+                v-if="materialStockCheckConfig.data.update_notice_condition===1">
                 <div class="col">
                   <div class="label">通知途径</div>
                   <div class="info elCtn">
@@ -3183,8 +3242,6 @@
                     </div>
                   </div>
                 </div>
-              </template>
-              <template v-if="accessoriesOrderCheckConfig.data.check_notice_condition !== 2">
                 <div class="row">
                   <div class="col">
                     <div class="label">通知对象与通知途径(必填)</div>
@@ -3253,7 +3310,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row"
+                v-if="accessoriesOrderCheckConfig.data.update_notice_condition === 1">
                 <div class="col">
                   <div class="label">通知对象(系统默认)</div>
                   <div class="info elCtn">
@@ -3261,7 +3319,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row"
+                v-if="accessoriesOrderCheckConfig.data.update_notice_condition === 1">
                 <div class="col">
                   <div class="label">通知途径</div>
                   <div class="info elCtn">
@@ -3373,8 +3432,7 @@
                     </div>
                   </div>
                 </div>
-              </template>
-              <template v-if="productionPlanCheckConfig.data.check_notice_condition !== 2">
+             
                 <div class="row">
                   <div class="col">
                     <div class="label">通知对象与通知途径(必填)</div>
@@ -3501,7 +3559,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row"
+                v-if="productionPlanCheckConfig.data.update_notice_condition === 1">
                 <div class="col">
                   <div class="label">通知对象(系统默认)</div>
                   <div class="info elCtn">
@@ -3509,7 +3568,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row"
+                v-if="productionPlanCheckConfig.data.update_notice_condition === 1">
                 <div class="col">
                   <div class="label">通知途径</div>
                   <div class="info elCtn">
@@ -3651,8 +3711,6 @@
                     </div>
                   </div>
                 </div>
-              </template>
-              <template v-if="packOrderCheckConfig.data.check_notice_condition !== 2">
                 <div class="row">
                   <div class="col">
                     <div class="label">通知对象与通知途径(必填)</div>
@@ -3779,8 +3837,6 @@
                     </div>
                   </div>
                 </div>
-              </template>
-              <template v-if="gongziCheckConfig.data.check_notice_condition !== 2">
                 <div class="row">
                   <div class="col">
                     <div class="label">通知对象与通知途径(必填)</div>
@@ -4018,8 +4074,6 @@
                     </div>
                   </div>
                 </div>
-              </template>
-              <template v-if="packOutCheckConfig.data.check_notice_condition !== 2">
                 <div class="row">
                   <div class="col">
                     <div class="label">通知对象与通知途径(必填)</div>
@@ -5112,7 +5166,7 @@
           </div>
           <div class="oprCtn">
             <div class="btn borderBtn"
-              @click="showPopup = false">取消</div>
+              @click="showPopup = false;resetYarn(1)">取消</div>
             <div class="btn backHoverBlue"
               @click="saveYarn(1)">确定</div>
           </div>
@@ -5205,7 +5259,7 @@
           </div>
           <div class="oprCtn">
             <div class="btn borderBtn"
-              @click="showPopup = false">取消</div>
+              @click="showPopup = false;resetYarn(2)">取消</div>
             <div class="btn backHoverBlue"
               @click="saveYarn(2)">确定</div>
           </div>
@@ -5259,7 +5313,7 @@
           </div>
           <div class="oprCtn">
             <div class="btn borderBtn"
-              @click="showPopup = false">取消</div>
+              @click="showPopup = false;resetYarn(3)">取消</div>
             <div class="btn backHoverBlue"
               @click="saveYarn(3)">确定</div>
           </div>
@@ -5332,7 +5386,7 @@
           </div>
           <div class="oprCtn">
             <div class="btn borderBtn"
-              @click="showPopup = false">取消</div>
+              @click="showPopup = false;resetDecorateMaterial()">取消</div>
             <div class="btn backHoverBlue"
               @click="saveDecorateMaterial">确定</div>
           </div>
@@ -5416,7 +5470,7 @@
           </div>
           <div class="oprCtn">
             <div class="btn borderBtn"
-              @click="showPopup = false">取消</div>
+              @click="showPopup = false;resetPackMaterial()">取消</div>
             <div class="btn backHoverBlue"
               @click="savePackMaterial">确定</div>
           </div>
@@ -6857,6 +6911,13 @@ export default Vue.extend({
       materialProcessCheckConfig: {
         doc_type: 3,
         data: {
+          beyond_price_notice_condition: 1,
+          beyond_price_notice_user: [
+            {
+              user_id: '',
+              notice_for_wechat: '2'
+            }
+          ],
           check_notice_condition: 2,
           check_notice_user: [
             {
@@ -10373,10 +10434,27 @@ export default Vue.extend({
         .then((res) => {
           if (res.data.status) {
             this.$message.success('操作成功')
+            this.resetYarn(type)
             this.getYarn(type)
             this.showPopup = false
           }
         })
+    },
+    resetYarn(type: 1 | 2 | 3) {
+      this['yarnInfo' + type] = {
+        id: null,
+        name: '',
+        type: 1,
+        yarn_rel_type: [],
+        price_info: [
+          {
+            price: '',
+            client_id: '',
+            client_id_arr: [],
+            desc: ''
+          }
+        ]
+      }
     },
     updateYarn(info: any, type: 1 | 2 | 3) {
       this['yarnTypeList' + type].forEach((item: any) => {
@@ -10453,9 +10531,25 @@ export default Vue.extend({
           if (res.data.status) {
             this.$message.success('操作成功')
             this.getDecorateMaterial()
+            this.resetDecorateMaterial()
             this.showPopup = false
           }
         })
+      }
+    },
+    resetDecorateMaterial() {
+      this.decorateMaterialInfo = {
+        id: null,
+        name: '',
+        unit: '',
+        price_info: [
+          {
+            price: '',
+            client_id: '',
+            client_id_arr: [],
+            desc: ''
+          }
+        ]
       }
     },
     deleteDecorateMaterial(id: number) {
@@ -10512,9 +10606,26 @@ export default Vue.extend({
         packMaterial.create(this.packMaterialInfo).then((res) => {
           if (res.data.status) {
             this.$message.success('添加成功')
+            this.resetPackMaterial()
             this.getPackMaterial()
           }
         })
+      }
+    },
+    resetPackMaterial() {
+      this.packMaterialInfo = {
+        id: null,
+        name: '',
+        calc_type: '1',
+        unit: '',
+        price_info: [
+          {
+            price: '',
+            client_id: '',
+            client_id_arr: [],
+            desc: ''
+          }
+        ]
       }
     },
     updatePackMaterial(info: any) {

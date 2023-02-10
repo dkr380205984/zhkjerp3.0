@@ -153,8 +153,8 @@
             style="margin-left: 0">列表设置</div>
           <div class="btn backHoverGreen fl"
             @click="getFilters();getList()">刷新列表</div>
-          <div :class="checked ? 'btn backHoverBlue fl' : 'btn backHoverBlue fl noCheck'"
-            @click="exportExcelClick()">
+          <div class="btn backHoverBlue fl"
+            @click="showExportPopup = true">
             导出Excel
           </div>
         </div>
@@ -184,12 +184,92 @@
       :data.sync="listKey"
       :originalData="originalSetting"></zh-list-setting>
 
-    <!-- 导出Excel -->
-    <zhExportSetting @close="showExport = false"
+    <!-- 导出Excel 这个组件不要了 -->
+    <!-- <zhExportSetting @close="showExport = false"
       @afterSave="exportExcel"
       :show="showExport"
       :data.sync="exportKey"
-      :originalData="originalExport"></zhExportSetting>
+      :originalData="originalExport"></zhExportSetting> -->
+
+    <div class="popup"
+      v-show="showExportPopup">
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">请选择需要导出的时间段<el-tooltip class="item"
+              effect="dark"
+              content="均为创建时间"
+              placement="top">
+              <i class="el-icon-info"></i>
+            </el-tooltip></span>
+          <div class="closeCtn"
+            @click="showExportPopup = false">
+            <span class="el-icon-close"></span>
+          </div>
+        </div>
+        <div class="contentCtn">
+          <div class="row">
+            <div class="label">日期：</div>
+            <div class="info">
+              <el-date-picker v-model="exportExcelParam.date"
+                type="daterange"
+                align="right"
+                unlink-panels
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :picker-options="pickerOptions"
+                value-format="yyyy-MM-dd">
+              </el-date-picker>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label">单位：</div>
+            <div class="info">
+              <el-cascader placeholder="筛选下单公司"
+                v-model="exportExcelParam.client_id"
+                filterable
+                :props="{emitPath:false}"
+                :show-all-levels="false"
+                :options="clientList"
+                clearable>
+              </el-cascader>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label">小组：</div>
+            <div class="info">
+              <el-select v-model="exportExcelParam.group_id"
+                placeholder="筛选负责小组"
+                clearable>
+                <el-option v-for="item in groupList"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.name"></el-option>
+              </el-select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label">创建人：</div>
+            <div class="info">
+              <el-select v-model="exportExcelParam.user_id"
+                placeholder="筛选创建人"
+                clearable>
+                <el-option v-for="item in userList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </div>
+          </div>
+        </div>
+        <div class="oprCtn">
+          <span class="btn borderBtn"
+            @click="showExportPopup = false">取消</span>
+          <span class="btn backHoverBlue"
+            @click="exportExcel">确认</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -209,6 +289,7 @@ export default Vue.extend({
     [porpName: string]: any
   } {
     return {
+      showExportPopup: false,
       timer: '',
       delivery_time: '',
       mainLoading: false,
@@ -227,7 +308,10 @@ export default Vue.extend({
       client_id: [],
       checked: false,
       exportExcelParam: {
-        show_row: [],
+        date: [],
+        client_id: '',
+        group_id: '',
+        user_id: '',
         start_time: '',
         end_time: ''
       },
@@ -330,134 +414,134 @@ export default Vue.extend({
       showSetting: false,
       listSettingId: null,
       listKey: [],
-      originalExport: [
-        {
-          key: 'code',
-          name: '订单号',
-          ifExport: true,
-          index: 0
-        },
-        {
-          key: 'client_name',
-          name: '下单客户',
-          ifExport: true,
-          index: 1
-        },
-        {
-          key: 'contacts',
-          name: '客户联系人',
-          ifExport: true,
-          index: 2
-        },
-        {
-          key: 'group_name',
-          name: '负责小组',
-          ifExport: true,
-          index: 3
-        },
-        {
-          key: 'settle_unit',
-          name: '结算单位',
-          ifExport: true,
-          index: 4
-        },
-        {
-          key: 'settle_exchange',
-          name: '结算货币',
-          ifExport: true,
-          index: 5
-        },
-        {
-          key: 'order_time',
-          name: '下单时间',
-          ifExport: true,
-          index: 6
-        },
-        {
-          key: 'delivery_time',
-          name: '完成时间',
-          ifExport: true,
-          index: 7
-        },
-        {
-          key: 'batch_title',
-          name: '批次标题',
-          ifExport: true,
-          index: 8
-        },
-        {
-          key: 'batch_type',
-          name: '批次类型',
-          ifExport: true,
-          index: 9
-        },
-        {
-          key: 'batch_desc',
-          name: '批次备注',
-          ifExport: true,
-          index: 10
-        },
-        {
-          key: 'product_code',
-          name: '产品编号',
-          ifExport: true,
-          index: 11
-        },
-        {
-          key: 'product_name',
-          name: '产品名称/品类',
-          ifExport: true,
-          index: 12
-        },
-        {
-          key: 'size_color_name',
-          name: '尺码/颜色',
-          ifExport: true,
-          index: 13
-        },
-        {
-          key: 'price',
-          name: '下单单价',
-          ifExport: true,
-          index: 14
-        },
-        {
-          key: 'number',
-          name: '下单数量',
-          ifExport: true,
-          index: 15
-        },
-        {
-          key: 'is_send',
-          name: '是否寄送产前样',
-          ifExport: true,
-          index: 16
-        },
-        {
-          key: 'is_confirm',
-          name: '是否产前确认',
-          ifExport: true,
-          index: 17
-        },
-        {
-          key: 'is_urgent',
-          name: '是否加急',
-          ifExport: true,
-          index: 18
-        },
-        {
-          key: 'user_name',
-          name: '创建人',
-          ifExport: true,
-          index: 19
-        },
-        {
-          key: 'create_time',
-          name: '创建时间',
-          ifExport: true,
-          index: 20
-        }
-      ],
+      // originalExport: [
+      //   {
+      //     key: 'code',
+      //     name: '订单号',
+      //     ifExport: true,
+      //     index: 0
+      //   },
+      //   {
+      //     key: 'client_name',
+      //     name: '下单客户',
+      //     ifExport: true,
+      //     index: 1
+      //   },
+      //   {
+      //     key: 'contacts',
+      //     name: '客户联系人',
+      //     ifExport: true,
+      //     index: 2
+      //   },
+      //   {
+      //     key: 'group_name',
+      //     name: '负责小组',
+      //     ifExport: true,
+      //     index: 3
+      //   },
+      //   {
+      //     key: 'settle_unit',
+      //     name: '结算单位',
+      //     ifExport: true,
+      //     index: 4
+      //   },
+      //   {
+      //     key: 'settle_exchange',
+      //     name: '结算货币',
+      //     ifExport: true,
+      //     index: 5
+      //   },
+      //   {
+      //     key: 'order_time',
+      //     name: '下单时间',
+      //     ifExport: true,
+      //     index: 6
+      //   },
+      //   {
+      //     key: 'delivery_time',
+      //     name: '完成时间',
+      //     ifExport: true,
+      //     index: 7
+      //   },
+      //   {
+      //     key: 'batch_title',
+      //     name: '批次标题',
+      //     ifExport: true,
+      //     index: 8
+      //   },
+      //   {
+      //     key: 'batch_type',
+      //     name: '批次类型',
+      //     ifExport: true,
+      //     index: 9
+      //   },
+      //   {
+      //     key: 'batch_desc',
+      //     name: '批次备注',
+      //     ifExport: true,
+      //     index: 10
+      //   },
+      //   {
+      //     key: 'product_code',
+      //     name: '产品编号',
+      //     ifExport: true,
+      //     index: 11
+      //   },
+      //   {
+      //     key: 'product_name',
+      //     name: '产品名称/品类',
+      //     ifExport: true,
+      //     index: 12
+      //   },
+      //   {
+      //     key: 'size_color_name',
+      //     name: '尺码/颜色',
+      //     ifExport: true,
+      //     index: 13
+      //   },
+      //   {
+      //     key: 'price',
+      //     name: '下单单价',
+      //     ifExport: true,
+      //     index: 14
+      //   },
+      //   {
+      //     key: 'number',
+      //     name: '下单数量',
+      //     ifExport: true,
+      //     index: 15
+      //   },
+      //   {
+      //     key: 'is_send',
+      //     name: '是否寄送产前样',
+      //     ifExport: true,
+      //     index: 16
+      //   },
+      //   {
+      //     key: 'is_confirm',
+      //     name: '是否产前确认',
+      //     ifExport: true,
+      //     index: 17
+      //   },
+      //   {
+      //     key: 'is_urgent',
+      //     name: '是否加急',
+      //     ifExport: true,
+      //     index: 18
+      //   },
+      //   {
+      //     key: 'user_name',
+      //     name: '创建人',
+      //     ifExport: true,
+      //     index: 19
+      //   },
+      //   {
+      //     key: 'create_time',
+      //     name: '创建时间',
+      //     ifExport: true,
+      //     index: 20
+      //   }
+      // ],
       originalSetting: [
         {
           key: 'system_code',
@@ -714,35 +798,46 @@ export default Vue.extend({
       if (!this.checked) return
       this.showExport = true
     },
-    exportExcel(data: any) {
+    exportExcel() {
       this.mainLoading = true
-      data.sort(function (a: any, b: any) {
-        return a.index - b.index
-      })
-      this.exportExcelParam.show_row = []
-      data.forEach((item: any) => {
-        if (item.ifExport) {
-          this.exportExcelParam.show_row.push(item.key)
-        }
-      })
-
-      let idArr: any = []
-
-      this.checkedCount.forEach((item: any) => {
-        idArr.push(item.id)
-      })
-
-      this.exportExcelParam['id'] = idArr
+      this.exportExcelParam.start_time = this.exportExcelParam.date.length > 0 ? this.exportExcelParam.date[0] : ''
+      this.exportExcelParam.end_time = this.exportExcelParam.date.length > 0 ? this.exportExcelParam.date[0] : ''
       exportExcel.orderInfo(this.exportExcelParam).then((res: any) => {
         if (res.data.status) {
           this.mainLoading = false
           window.location.href = res.data.data
         }
       })
-      setTimeout(() => {
-        this.mainLoading = false
-      }, 10000)
     },
+    // exportExcel(data: any) {
+    //   this.mainLoading = true
+    //   data.sort(function (a: any, b: any) {
+    //     return a.index - b.index
+    //   })
+    //   this.exportExcelParam.show_row = []
+    //   data.forEach((item: any) => {
+    //     if (item.ifExport) {
+    //       this.exportExcelParam.show_row.push(item.key)
+    //     }
+    //   })
+
+    //   let idArr: any = []
+
+    //   this.checkedCount.forEach((item: any) => {
+    //     idArr.push(item.id)
+    //   })
+
+    //   this.exportExcelParam['id'] = idArr
+    // exportExcel.orderInfo(this.exportExcelParam).then((res: any) => {
+    //   if (res.data.status) {
+    //     this.mainLoading = false
+    //     window.location.href = res.data.data
+    //   }
+    // })
+    //   setTimeout(() => {
+    //     this.mainLoading = false
+    //   }, 10000)
+    // },
     changeRouter(ev?: any) {
       if (ev !== this.page) {
         this.page = 1

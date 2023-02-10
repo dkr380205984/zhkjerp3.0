@@ -178,7 +178,10 @@
             <div class="col">审核状态</div>
             <div class="col">生产状态</div>
             <div class="col">结算状态</div>
-            <div class="col">加工日期</div>
+            <div class="col">
+              <span>开单日期</span>
+              <span>更新日期</span>
+            </div>
             <div class="col">交货日期</div>
             <div class="col">创建人</div>
             <div class="col">操作</div>
@@ -210,7 +213,10 @@
               </div>
               <div class="col"
                 :class="{'green':item.has_invoice===1||item.has_pay===1,'gray':item.has_invoice!==1&&item.has_pay!==1}">{{item.has_invoice===1||item.has_pay===1?'已结算':'待结算'}}</div>
-              <div class="col">{{item.start_time}}</div>
+              <div class="col">
+                <span>{{item.start_time}}</span>
+                <span>{{item.updated_at.slice(0,10)===item.start_time?'未更新':item.updated_at.slice(0,10)}}</span>
+              </div>
               <div class="col"
                 :class="$diffByDate(item.end_time)>0?'green':'red'">{{item.end_time}}{{$diffByDate(item.end_time)>0?'(还剩'+$diffByDate(item.end_time)+'天)':''}}</div>
               <div class="col">{{item.user_name}}</div>
@@ -4035,8 +4041,8 @@ export default Vue.extend({
         if (res.data.status) {
           this.orderProcess.children = res.data.data.map((item: any) => {
             return {
-              value: item,
-              label: item,
+              value: item.name,
+              label: item.name,
               process_desc: ''
             }
           })

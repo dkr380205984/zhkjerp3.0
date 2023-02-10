@@ -356,20 +356,6 @@
                   </el-image>
                 </div>
               </div>
-              <div class="trow">
-                <div class="tcol imageFather"
-                  v-for="indexImage in 3"
-                  :key="indexImage">
-                  <el-image style="width:100%;height:100%"
-                    :src="itemPro.image_data[indexImage-1]">
-                    <div slot="error"
-                      class="image-slot">
-                      <i class="el-icon-picture-outline"
-                        style="font-size:42px"></i>
-                    </div>
-                  </el-image>
-                </div>
-              </div>
             </div>
           </div>
         </template>

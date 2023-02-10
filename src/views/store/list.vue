@@ -96,6 +96,13 @@
               v-model="color_code"
               @keydown.enter.native="changeRouter"></el-input>
           </div>
+          <div class="elCtn"
+            style="width:124px">
+            <el-checkbox v-model="hide_zero"
+              true-label="1"
+              false-label="2"
+              @change="changeRouter">过滤数量小于0的仓库</el-checkbox>
+          </div>
           <div class="btn backHoverBlue fr"
             @click="openMerge">合并{{typeName}}</div>
           <div class="btn backHoverGreen fr"
@@ -924,6 +931,7 @@ export default Vue.extend({
       mergeStep: 1,
       mergeLoading: false,
       mergeMatFlag: false,
+      hide_zero: '1',
       mergeCheckList: [],
       mergeMatList: [],
       mergeData: {
@@ -1269,7 +1277,9 @@ export default Vue.extend({
           '&color_code=' +
           this.color_code +
           '&batch_code=' +
-          this.batch_code
+          this.batch_code +
+          '&hide_zero=' +
+          this.hide_zero
       )
     },
     getFilters() {
@@ -1286,10 +1296,11 @@ export default Vue.extend({
       this.vat_code = query.vat_code || ''
       this.color_code = query.color_code || ''
       this.batch_code = query.batch_code || ''
+      this.hide_zero = query.hide_zero || '1'
     },
     reset() {
       this.$router.push(
-        '/store/list?page=1&keyword=&store_type=&store_id=&secondary_id=&material_name=&material_color=&attribute=&vat_code=&color_code=&batch_code='
+        '/store/list?page=1&keyword=&store_type=&store_id=&secondary_id=&material_name=&material_color=&attribute=&vat_code=&color_code=&batch_code=&hide_zero='
       )
     },
     getList() {
@@ -1307,6 +1318,7 @@ export default Vue.extend({
           batch_code: this.batch_code,
           page: this.page,
           limit: 10,
+          hide_zero: this.hide_zero,
           store_type: Number(this.$route.query.store_type)
         })
         .then((res) => {
