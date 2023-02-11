@@ -199,7 +199,7 @@ export default Vue.extend({
       client_id: [],
       group_id: '',
       user_id: '',
-      status: '0',
+      status: '',
       date: [],
       total: 1,
       page: 1,
@@ -365,7 +365,7 @@ export default Vue.extend({
         this.getContacts(this.client_id)
       }
       this.keyword = query.keyword || ''
-      this.status = query.status || '0'
+      this.status = query.status || ''
       this.user_id = query.user_id || ''
       this.type = Number(query.type) || 'null'
       this.group_id = Number(query.group_id) || ''
@@ -409,7 +409,7 @@ export default Vue.extend({
           this.user_id = ''
           this.group_id = ''
           this.date = []
-          this.status = '0'
+          this.status = ''
           this.order_type = null
           this.limit = 10
           this.contacts_id = ''

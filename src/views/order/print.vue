@@ -44,7 +44,7 @@
               <div class="tcol bgGray headTitle">下单客户</div>
               <div class="tcol">{{orderInfo.client_name}}</div>
               <div class="tcol bgGray headTitle">下单日期</div>
-              <div class="tcol">{{orderInfo.created_at}}</div>
+              <div class="tcol">{{orderInfo.time_data[0].order_time}}</div>
               <div class="tcol bgGray headTitle"
                 v-if="showOrderPrice==='1'">下单币种</div>
               <div class="tcol"
@@ -356,20 +356,36 @@
                   </el-image>
                 </div>
               </div>
+              <div class="trow"
+                v-else>
+                <div class="tcol imageFather"
+                  v-for="indexImage in 3"
+                  :key="indexImage">
+                  <el-image style="width:100%;height:100%"
+                    :src="itemPro.image_data[indexImage-1]">
+                    <div slot="error"
+                      class="image-slot">
+                      <i class="el-icon-picture-outline"
+                        style="font-size:42px"></i>
+                    </div>
+                  </el-image>
+                </div>
+              </div>
             </div>
           </div>
         </template>
       </div>
       <template v-if="showOrderImage==='2'">
-        <div style="page-break-after: always;">
+        <div style="page-break-before: always;">
           <div class="imageFather"
-            style="display:flex;justify-content: center;position:relative"
+            style="display:block;text-align:center"
             v-for="itemPic,indexPic in itemPro.image_data"
             :key="indexPic">
-            <img style="max-height:1490px;max-width:982px;"
-              :src="itemPic" />
-            <span class="hoverBlue"
-              style=" 
+            <div style="position:relative;display:inline-block;margin:auto">
+              <img style="max-height:1490px;max-width:982px;"
+                :src="itemPic" />
+              <span class="hoverBlue"
+                style=" 
                   position: absolute;
                   left: 0;
                   right:0;
@@ -382,7 +398,9 @@
                   width:4em;
                   z-index: 1;
                   background: #ccc;"
-              @click="deleteImage(itemPro,indexPic)">隐藏图片</span>
+                @click="deleteImage(itemPro,indexPic)">隐藏图片</span>
+            </div>
+
           </div>
         </div>
       </template>
@@ -623,8 +641,8 @@ export default Vue.extend({
               part_data: itemPro.part_data,
               desc: itemPro.desc,
               imageIndex1: 0,
-              imageIndex2: 0,
-              imageIndex3: 0
+              imageIndex2: 1,
+              imageIndex3: 2
             })
           })
         })

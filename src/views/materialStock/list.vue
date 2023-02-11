@@ -157,7 +157,7 @@ export default Vue.extend({
       client_id: [],
       group_id: '',
       user_id: '',
-      status: '0',
+      status: '',
       date: [],
       total: 1,
       page: 1,
@@ -299,7 +299,7 @@ export default Vue.extend({
       this.page = Number(query.page)
       this.client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.keyword = query.keyword || ''
-      this.status = query.status || '0'
+      this.status = query.status || ''
       this.user_id = query.user_id || ''
       this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.order_type = Number(query.order_type) || null
@@ -349,7 +349,7 @@ export default Vue.extend({
           this.user_id = ''
           this.group_id = ''
           this.date = []
-          this.status = '0'
+          this.status = ''
           this.plan_code = ''
           this.order_type = null
           this.limit = 10
