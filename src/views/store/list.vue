@@ -217,7 +217,7 @@
           </div>
           <div class="pageCtn">
             <el-pagination background
-              :page-size="5"
+              :page-size="10"
               layout="prev, pager, next, jumper"
               :total="storeTotal"
               :current-page.sync="storePage"
@@ -1473,8 +1473,8 @@ export default Vue.extend({
       store
         .list({
           store_type: this.store_type,
-          page: 1,
-          limit: 5
+          page: this.storePage,
+          limit: 10
         })
         .then((res) => {
           if (res.data.status) {

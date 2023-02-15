@@ -4012,7 +4012,7 @@ export default Vue.extend({
         }, 0) +
         this.materialOrderUpdataInfo.others_fee_data.reduce((total, current) => {
           // @ts-ignore
-          return total + Number(current.price.replace(/,/g, ''))
+          return total + current.price ? Number(current.price.replace(/,/g, '')) : 0
         }, 0)
       ).toFixed(2)
     },

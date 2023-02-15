@@ -225,7 +225,7 @@ export default Vue.extend({
       this.search_client_id = query.client_id ? (query.client_id as string).split(',').map((item) => Number(item)) : []
       this.material_type = Number(query.material_type) || ''
       this.material_name = query.material_name || ''
-      this.year = query.year || ''
+      this.year = Number(query.year) ? Number(query.year).toString() : ''
     },
     changeRouter(ev?: any) {
       if (ev !== this.page) {

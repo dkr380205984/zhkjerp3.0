@@ -105,7 +105,7 @@
             <div class="col">{{item.file_name}}</div>
             <div class="col">{{item.tag}}</div>
             <div class="col">{{item.order_id?item.order.code:'无'}}</div>
-            <div class="col">{{item.updated_at.slice(0,10)}}</div>
+            <div class="col">{{item.created_at.slice(0,10)}}</div>
             <div class="col">{{item.client.name}}</div>
             <div class="col">{{item.order_id?item.order.group.name:'无'}}</div>
             <div class="col">{{item.user.name}}</div>

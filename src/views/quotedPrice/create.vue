@@ -1573,6 +1573,7 @@ export default Vue.extend({
             if (res.data.status) {
               info.price_info = res.data.data.rel_price
               info.price = Math.min(info.price_info.map((item: any) => item.price))
+              this.cmpTotalPrice(info)
             }
             this.$forceUpdate()
           })

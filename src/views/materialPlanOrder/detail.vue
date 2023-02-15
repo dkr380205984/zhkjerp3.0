@@ -72,7 +72,6 @@
                   <div class="tcol">{{itemChild.final_push_number || 0}}{{itemChild.unit}}</div>
                 </div>
               </div>
-
               <div class="tcol">
                 <others-fee-data :data="item.others_fee_data"></others-fee-data>
               </div>
@@ -107,7 +106,8 @@
               <div class="tcol"></div>
               <div class="tcol"></div>
               <div class="tcol"></div>
-              <div class="tcol"></div>
+              <div class="tcol"
+                style="min-width:144px"></div>
             </div>
           </div>
         </div>
@@ -248,7 +248,6 @@
               <div class="tcol"></div>
               <div class="tcol"></div>
               <div class="tcol green">{{$toFixed(materialStsTotal/1000)}}吨</div>
-              <div class="tcol"></div>
             </div>
           </div>
         </div>
@@ -322,7 +321,8 @@
                       @change="(ev)=>{itemMat.material_id=ev[2]}"
                       clearable>
                     </el-cascader>
-                    <el-input placeholder="物料名称"
+                    <el-input v-else
+                      placeholder="物料名称"
                       disabled
                       v-model="itemMat.material_name"></el-input>
                   </div>
@@ -1142,24 +1142,26 @@ export default Vue.extend({
         }
         this.loading = false
       })
-    store.list().then((res) => {
-      if (res.data.status) {
-        this.storeList = res.data.data
-          .filter((item: any) => item.store_type === this.materialPlanOrderDetail.material_type)
-          .map((item: any) => {
-            return {
-              label: item.name,
-              value: item.id,
-              children: item.secondary_store.map((itemChild: any) => {
+      .then(() => {
+        store.list().then((res) => {
+          if (res.data.status) {
+            this.storeList = res.data.data
+              .filter((item: any) => item.store_type === this.materialPlanOrderDetail.material_type)
+              .map((item: any) => {
                 return {
-                  label: itemChild.name,
-                  value: itemChild.id
+                  label: item.name,
+                  value: item.id,
+                  children: item.secondary_store.map((itemChild: any) => {
+                    return {
+                      label: itemChild.name,
+                      value: itemChild.id
+                    }
+                  })
                 }
               })
-            }
-          })
-      }
-    })
+          }
+        })
+      })
     this.init()
     this.$checkCommonInfo([
       {

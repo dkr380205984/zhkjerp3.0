@@ -1364,6 +1364,7 @@ export default Vue.extend({
           .then((res) => {
             if (res.data.status) {
               info.price_info = res.data.data.rel_price
+              this.cmpTotalPrice(info)
             }
             this.$forceUpdate()
           })
