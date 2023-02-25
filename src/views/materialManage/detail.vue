@@ -91,7 +91,7 @@
             <div class="tcol"
               :class="{
                 red: item.total_order_number + item.total_transfer_number > item.final_number,
-                green: item.total_order_number + item.total_transfer_number === item.final_number,
+                green: item.total_order_number + item.total_transfer_number == item.final_number,
                 orange: item.total_order_number + item.total_transfer_number < item.final_number
               }">
               {{
@@ -136,7 +136,7 @@
             <div class="tcol"
               :class="{
                 red: item.total_order_number + item.total_transfer_number > item.final_number,
-                green: item.total_order_number + item.total_transfer_number === item.final_number,
+                green: item.total_order_number + item.total_transfer_number == item.final_number,
                 orange: item.total_order_number + item.total_transfer_number < item.final_number
               }">
               {{
@@ -4047,6 +4047,7 @@ export default Vue.extend({
     totalProcessPrice(): string {
       return (
         this.materialProcessUpdataInfo.info_data.reduce((total, current) => {
+          current.number += ''
           // @ts-ignore
           return total + Number(current.number.replace(/,/g, '')) * Number(current.price.replace(/,/g, ''))
         }, 0) +

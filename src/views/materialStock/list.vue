@@ -34,7 +34,7 @@
                 :value="item.value"></el-option>
             </el-select>
           </div>
-          <div class="elCtn"
+          <div class="elCtn hasIcon"
             style="width:200px">
             <el-select @change="$setLocalStorage('group_id',group_id,true);changeRouter()"
               v-model="group_id"
@@ -45,6 +45,13 @@
                 :value="item.id"
                 :label="item.name"></el-option>
             </el-select>
+            <el-tooltip class="item"
+              effect="dark"
+              content="保存负责小组筛选"
+              placement="top">
+              <i class="el-icon-upload hoverOrange"
+                @click="$setLocalStorage('group_id', group_id,true)"></i>
+            </el-tooltip>
           </div>
           <div class="elCtn"
             style="width:200px">

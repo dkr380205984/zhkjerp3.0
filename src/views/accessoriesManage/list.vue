@@ -46,7 +46,7 @@
             @click="reset">重置</div>
         </div>
         <div class="filterCtn">
-          <div class="elCtn">
+          <div class="elCtn hasIcon">
             <el-select @change="$setLocalStorage('group_id',group_id,true);changeRouter()"
               v-model="group_id"
               placeholder="筛选负责小组"
@@ -56,6 +56,13 @@
                 :value="item.id"
                 :label="item.name"></el-option>
             </el-select>
+            <el-tooltip class="item"
+              effect="dark"
+              content="保存负责小组筛选"
+              placement="top">
+              <i class="el-icon-upload hoverOrange"
+                @click="$setLocalStorage('group_id', group_id,true)"></i>
+            </el-tooltip>
           </div>
           <div class="elCtn">
             <el-date-picker v-model="date"

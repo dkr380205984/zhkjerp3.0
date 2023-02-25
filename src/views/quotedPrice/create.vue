@@ -369,6 +369,7 @@
               <div class="fr elCtn"
                 style="margin-right:24px">
                 <el-select v-model="searchQuotedPrice"
+                  filterable
                   placeholder="导入报价模板"
                   @change="getModules">
                   <el-option v-for="item in searchQuotedPriceList"
@@ -1497,7 +1498,7 @@ export default Vue.extend({
             this.quotedPriceInfo = res.data.data
             this.quotedPriceInfo.id = ''
             this.quotedPriceInfo.pid = ''
-            this.getUpdateInfo()
+            this.getUpdateInfo('')
             this.loading = false
           }
         })
@@ -1604,6 +1605,9 @@ export default Vue.extend({
         }
       )
       this.quotedPriceInfo.product_data[this.productIndex].pack_material_data = JSON.parse(finded.pack_material_data)
+      this.quotedPriceInfo.product_data[this.productIndex].others_fee_data = JSON.parse(finded.others_fee_data)
+      this.quotedPriceInfo.product_data[this.productIndex].transport_fee = JSON.parse(finded.transport_fee)
+      this.quotedPriceInfo.product_data[this.productIndex].no_production_fee_data = JSON.parse(finded.no_production_fee_data)
       // this.quotedPriceInfo.product_data[this.productIndex].other_fee_data = JSON.parse(finded.other_fee_data)
     },
     addPro() {
@@ -2087,12 +2091,15 @@ export default Vue.extend({
         })
       }
     },
-    getUpdateInfo() {
+    getUpdateInfo(type: string) {
       this.quotedPriceInfo.product_data.forEach((item) => {
-        item.material_data.forEach((item) => {
-          // @ts-ignore
-          this.getYarnPrice(item.tree_data.split(','), item)
-        })
+        // 如果是赋值报价单进来的，就不让他进行修改原料的价格
+        if (type !== 'iscopy'){
+          item.material_data.forEach((item) => {
+            // @ts-ignore
+            this.getYarnPrice(item.tree_data.split(','), item)
+          })
+        }
         item.semi_product_data.forEach((item) => {
           item.process_name_arr = ['全部', item.name]
         })
@@ -2323,7 +2330,7 @@ export default Vue.extend({
             this.quotedPriceInfo.pid = this.$route.query.again
               ? this.quotedPriceInfo.pid || Number(this.$route.query.id)
               : ''
-            this.getUpdateInfo()
+            this.getUpdateInfo('iscopy')
             this.loading = false
           }
         })

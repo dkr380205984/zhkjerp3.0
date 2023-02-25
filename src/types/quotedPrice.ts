@@ -121,6 +121,7 @@ export interface QuotedPriceProduct {
     desc: string
     total_price: number | string
   }>
+  others_fee_data?: any
   no_production_fee_data: Array<{
     id?: number | string
     name: string

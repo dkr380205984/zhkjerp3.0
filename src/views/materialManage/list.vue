@@ -73,6 +73,13 @@
                 :value="item.id"
                 :label="item.name"></el-option>
             </el-select>
+            <el-tooltip class="item"
+              effect="dark"
+              content="保存负责小组筛选"
+              placement="top">
+              <i class="el-icon-upload hoverOrange"
+                @click="$setLocalStorage('group_id', group_id,true)"></i>
+            </el-tooltip>
           </div>
           <div class="elCtn">
             <el-select v-model="filter_way"
@@ -250,7 +257,7 @@ export default Vue.extend({
       this.user_id = query.user_id || ''
       this.filter_way = query.filter_way || ''
       this.is_check = query.is_check || ''
-      this.group_id = Number(query.group_id) || ''
+      this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
     },
     changeRouter(ev?: any) {
       if (ev !== this.page) {

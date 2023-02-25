@@ -65,7 +65,7 @@
                 :label="item.name"></el-option>
             </el-select>
           </div>
-          <div class="elCtn">
+          <div class="elCtn hasIcon">
             <el-select @change="changeRouter"
               v-model="group_id"
               placeholder="筛选负责小组"
@@ -75,6 +75,13 @@
                 :value="item.id"
                 :label="item.name"></el-option>
             </el-select>
+            <el-tooltip class="item"
+              effect="dark"
+              content="保存负责小组筛选"
+              placement="top">
+              <i class="el-icon-upload hoverOrange"
+                @click="$setLocalStorage('group_id', group_id,true)"></i>
+            </el-tooltip>
           </div>
           <div class="btn borderBtn"
             @click="reset">重置</div>
@@ -368,7 +375,7 @@ export default Vue.extend({
       this.status = query.status || ''
       this.user_id = query.user_id || ''
       this.type = Number(query.type) || 'null'
-      this.group_id = Number(query.group_id) || ''
+      this.group_id = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
     },
