@@ -610,8 +610,7 @@
                           v-if="productInfo.part_data.length>1">{{index+1}}</span>配件名称</span>
                       <span class="explanation">(必填)</span>
                       <span class="fr hoverRed"
-                        @click="$deleteItem(productInfo.part_data,index)"
-                        v-if="!item.id">删除此配件</span>
+                        @click="item.id?deletePart(item.id,productInfo.part_data,index):$deleteItem(productInfo.part_data,index)">删除此配件</span>
                     </div>
                     <div class="info elCtn"
                       :class="{'error':mustFlag&&!item.name}">
@@ -1941,6 +1940,31 @@ export default Vue.extend({
               }
             ]
       })
+    },
+    // 删除配件
+    deletePart(id: number, partData: any[], index: number) {
+      this.$confirm('是否删除该配件?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          product.deletePart({ id }).then((res) => {
+            if (res.data.status) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+              this.$deleteItem(partData, index)
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     }
   },
   mounted() {

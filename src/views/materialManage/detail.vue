@@ -3007,8 +3007,7 @@ export default Vue.extend({
               number: this.$toFixed(
                 // @ts-ignore
                 item.final_number - (item.total_order_number + item.total_transfer_number),
-                3,
-                true
+                3
               ),
               unit: item.unit
             }
@@ -3046,8 +3045,7 @@ export default Vue.extend({
               number: this.$toFixed(
                 // @ts-ignore
                 item.final_number - (item.total_order_number + item.total_transfer_number),
-                3,
-                true
+                3
               ),
               unit: item.unit
             }
@@ -3980,7 +3978,7 @@ export default Vue.extend({
       return this.materialOrderInfo.map((item) => {
         return item.info_data.reduce((total, current) => {
           // @ts-ignore
-          return total + Number(current.number.replace(/,/g, ''))
+          return total + Number(current.number)
         }, 0)
       })
     },
@@ -3989,11 +3987,11 @@ export default Vue.extend({
         return (
           item.info_data.reduce((total, current) => {
             // @ts-ignore
-            return total + Number(current.number.replace(/,/g, '')) * Number(current.price.replace(/,/g, ''))
+            return total + Number(current.number) * Number(current.price)
           }, 0) +
           item.others_fee_data.reduce((total, current) => {
             // @ts-ignore
-            return total + Number(current.price.replace(/,/g, ''))
+            return total + Number(current.price)
           }, 0)
         ).toFixed(2)
       })
@@ -4001,18 +3999,18 @@ export default Vue.extend({
     totalOrderNumber(): number {
       return this.materialOrderUpdataInfo.info_data.reduce((total, current) => {
         // @ts-ignore
-        return total + Number(current.number.replace(/,/g, ''))
+        return total + Number(current.number)
       }, 0)
     },
     totalOrderPrice(): string {
       return (
         this.materialOrderUpdataInfo.info_data.reduce((total, current) => {
           // @ts-ignore
-          return total + Number(current.number.replace(/,/g, '')) * Number(current.price.replace(/,/g, ''))
+          return total + Number(current.number) * Number(current.price)
         }, 0) +
         this.materialOrderUpdataInfo.others_fee_data.reduce((total, current) => {
           // @ts-ignore
-          return total + current.price ? Number(current.price.replace(/,/g, '')) : 0
+          return total + current.price ? Number(current.price) : 0
         }, 0)
       ).toFixed(2)
     },
@@ -4020,7 +4018,7 @@ export default Vue.extend({
       return this.materialProcessInfo.map((item) => {
         return item.info_data.reduce((total, current) => {
           // @ts-ignore
-          return total + Number(current.number.replace(/,/g, ''))
+          return total + Number(current.number)
         }, 0)
       })
     },
@@ -4029,11 +4027,11 @@ export default Vue.extend({
         return (
           item.info_data.reduce((total, current) => {
             // @ts-ignore
-            return total + Number(current.number.replace(/,/g, '')) * Number(current.price.replace(/,/g, ''))
+            return total + Number(current.number) * Number(current.price)
           }, 0) +
           item.others_fee_data.reduce((total, current) => {
             // @ts-ignore
-            return total + Number(current.price.replace(/,/g, ''))
+            return total + Number(current.price)
           }, 0)
         ).toFixed(2)
       })
@@ -4041,7 +4039,7 @@ export default Vue.extend({
     totalProcessNumber(): number {
       return this.materialProcessUpdataInfo.info_data.reduce((total, current) => {
         // @ts-ignore
-        return total + Number(current.number.replace(/,/g, ''))
+        return total + Number(current.number)
       }, 0)
     },
     totalProcessPrice(): string {
@@ -4049,25 +4047,25 @@ export default Vue.extend({
         this.materialProcessUpdataInfo.info_data.reduce((total, current) => {
           current.number += ''
           // @ts-ignore
-          return total + Number(current.number.replace(/,/g, '')) * Number(current.price.replace(/,/g, ''))
+          return total + Number(current.number) * Number(current.price)
         }, 0) +
         this.materialProcessUpdataInfo.others_fee_data.reduce((total, current) => {
           // @ts-ignore
-          return total + Number(current.price.replace(/,/g, ''))
+          return total + Number(current.price)
         }, 0)
       ).toFixed(2)
     },
     totalStockNumber(): number {
       return this.materialStockInfo.info_data.reduce((total, current) => {
         // @ts-ignore
-        return total + Number(current.number.replace(/,/g, ''))
+        return total + Number(current.number)
       }, 0)
     },
     totalStockPrice(): string {
       return this.materialStockInfo.info_data
         .reduce((total, current) => {
           // @ts-ignore
-          return total + Number(current.number.replace(/,/g, '')) * Number(current.price.replace(/,/g, ''))
+          return total + Number(current.number) * Number(current.price)
         }, 0)
         .toFixed(2)
     }
