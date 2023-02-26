@@ -1605,7 +1605,7 @@ export default Vue.extend({
         }
       )
       this.quotedPriceInfo.product_data[this.productIndex].pack_material_data = JSON.parse(finded.pack_material_data)
-      this.quotedPriceInfo.product_data[this.productIndex].others_fee_data = JSON.parse(finded.others_fee_data)
+      this.quotedPriceInfo.product_data[this.productIndex].other_fee_data = JSON.parse(finded.others_fee_data)
       this.quotedPriceInfo.product_data[this.productIndex].transport_fee = JSON.parse(finded.transport_fee)
       this.quotedPriceInfo.product_data[this.productIndex].no_production_fee_data = JSON.parse(finded.no_production_fee_data)
       // this.quotedPriceInfo.product_data[this.productIndex].other_fee_data = JSON.parse(finded.other_fee_data)
