@@ -721,15 +721,26 @@
     </div>
     <div class="popup"
       v-show="wxFlag">
-      <div class="main"
-        style="width: 1000px">
+      <div class="main">
         <div style="text-align:right;cursor:pointer;line-height:44px;margin-right:12px"
           class="hoverRed"
           @click="wxFlag=false">关闭教学</div>
         <el-image class="img"
           :src="wxjx"
-          style="height:1024px"
-          :preview-src-list="[require('@/assets/image/common/WXJX1.png'),require('@/assets/image/common/WXJX2.png'),require('@/assets/image/common/WXJX3.png'),require('@/assets/image/common/WXJX4.png')]"></el-image>
+          style="height:800px"
+          :preview-src-list="[require('@/assets/image/common/WXJX1.png'),require('@/assets/image/common/WXJX2.png'),require('@/assets/image/common/WXJX3.png'),require('@/assets/image/common/WXJX4.png')]">
+        </el-image>
+        <span style="position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          text-align: center;
+          margin: auto;
+          line-height: 32px;
+          height: 32px;
+          font-size: 24px;
+          color: #1a95ff;">点击图片放大查看</span>
       </div>
     </div>
   </div>

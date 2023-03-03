@@ -20,8 +20,8 @@
               <div class="info">{{materialStockInfo.user_name}}</div>
             </div>
             <div class="pcol">
-              <div class="label">创建日期：</div>
-              <div class="info">{{materialStockInfo.created_at}}</div>
+              <div class="label">{{[2,4,6,8,9,11,14].indexOf(type)!==-1?'入库':'出库'}}日期：</div>
+              <div class="info">{{materialStockInfo.complete_time}}</div>
             </div>
           </div>
         </div>

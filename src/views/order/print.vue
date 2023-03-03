@@ -65,8 +65,10 @@
             <div class="trow">
               <div class="tcol bgGray headTitle">是否加急</div>
               <div class="tcol">{{orderInfo.time_data[0].is_urgent===1?'【加急订单】':'否'}}</div>
-              <div class="tcol bgGray headTitle">审核状态</div>
-              <div class="tcol">{{orderInfo.time_data[0].is_check|checkFilterSelf}}</div>
+              <!-- <div class="tcol bgGray headTitle">审核状态</div>
+              <div class="tcol">{{orderInfo.time_data[0].is_check|checkFilterSelf}}</div> -->
+              <div class="tcol bgGray headTitle">发货日期</div>
+              <div class="tcol">{{fahuoriqi}}</div>
               <div class="tcol bgGray headTitle">下单总数</div>
               <div class="tcol">{{$toFixed(orderInfo.time_data[0].total_number,0,true)}}</div>
               <div class="tcol bgGray headTitle"
@@ -469,6 +471,7 @@ export default Vue.extend({
       showOrderPeijian: this.$getLocalStorage('showOrderPeijian') || '1',
       showSizeTable: this.$getLocalStorage('showSizeTable') || '1',
       showOrderImage: this.$getLocalStorage('showOrderImage') || '1',
+      fahuoriqi: '',
       orderInfo: {
         created_at: '',
         user_phone: '',
@@ -712,6 +715,21 @@ export default Vue.extend({
       .then((res) => {
         if (res.data.status) {
           this.orderInfo = res.data.data
+          // 算一个最近的发货日期
+          let fahuoriqiArr: any[] = []
+          this.orderInfo.time_data.forEach((item) => {
+            item.batch_data.forEach((itemChild) => {
+              fahuoriqiArr.push(itemChild.delivery_time)
+            })
+          })
+          fahuoriqiArr = fahuoriqiArr.map((item) => {
+            return Date.parse(item)
+          })
+          fahuoriqiArr.sort((a, b) => {
+            return a - b
+          })
+          this.fahuoriqi = this.$getDate(fahuoriqiArr[0])
+
           this.productArr = this.getOrderProduct(this.orderInfo)
           // 生成二维码
           const QRCode = require('qrcode')

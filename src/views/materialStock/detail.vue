@@ -943,7 +943,8 @@
               </div>
             </div>
             <div class="tcol">审核状态</div>
-            <div class="tcol">操作人/日期</div>
+            <div class="tcol"
+              style="flex:1.1">操作人/操作日期/出入库日期</div>
             <div class="tcol"
               style="min-width: 112px">操作</div>
           </div>
@@ -1028,7 +1029,8 @@
                 </el-tooltip>
               </span>
             </div>
-            <div class="tcol">{{ item.user_name }} <br /> {{ item.created_at.slice(0, 10) }}</div>
+            <div class="tcol"
+              style="flex:1.1">{{ item.user_name }} <br /> {{ item.created_at.slice(0, 10) }} <br />{{item.complete_time}}</div>
             <div class="tcol oprCtn"
               style="font-size: 12px; min-width: 112px">
               <div class="opr hoverGreen"
@@ -1817,11 +1819,13 @@ export default Vue.extend({
     },
     // 采购单中转入库和最终入库初始化
     getOrderInfo(type: 1 | 4) {
-      const checkLength = this.materialShaXianList.filter((item:any) => {
-        return item.info_data.some((itemChild:any) => itemChild.check)
-      }).length + this.materialMianLiaoList.filter((item:any) => {
-        return item.info_data.some((itemChild:any) => itemChild.check)
-      }).length
+      const checkLength =
+        this.materialShaXianList.filter((item: any) => {
+          return item.info_data.some((itemChild: any) => itemChild.check)
+        }).length +
+        this.materialMianLiaoList.filter((item: any) => {
+          return item.info_data.some((itemChild: any) => itemChild.check)
+        }).length
 
       if (checkLength === 0) {
         this.$message.error('请选择采购单进行入库操作')
@@ -1835,11 +1839,13 @@ export default Vue.extend({
       this.materialStockInfo.action_type = type
       this.materialStockInfo.selectList = []
 
-      if(this.materialShaXianList.filter((item:any) => {
-        return item.info_data.some((itemChild:any) => itemChild.check)
-      }).length > 0) {
-        this.materialShaXianList.forEach((item:any) => {
-          item.info_data.forEach((itemChild:any) => {
+      if (
+        this.materialShaXianList.filter((item: any) => {
+          return item.info_data.some((itemChild: any) => itemChild.check)
+        }).length > 0
+      ) {
+        this.materialShaXianList.forEach((item: any) => {
+          item.info_data.forEach((itemChild: any) => {
             if (itemChild.check) {
               this.materialStockInfo.rel_doc_code = item.code
               this.materialStockInfo.rel_doc_id = item.id as number
@@ -1859,11 +1865,13 @@ export default Vue.extend({
         })
       }
 
-      if(this.materialMianLiaoList.filter((item:any) => {
-        return item.info_data.some((itemChild:any) => itemChild.check)
-      }).length > 0) {
-        this.materialMianLiaoList.forEach((item:any) => {
-          item.info_data.forEach((itemChild:any) => {
+      if (
+        this.materialMianLiaoList.filter((item: any) => {
+          return item.info_data.some((itemChild: any) => itemChild.check)
+        }).length > 0
+      ) {
+        this.materialMianLiaoList.forEach((item: any) => {
+          item.info_data.forEach((itemChild: any) => {
             if (itemChild.check) {
               this.materialStockInfo.rel_doc_code = item.code
               this.materialStockInfo.rel_doc_id = item.id as number
@@ -1900,18 +1908,20 @@ export default Vue.extend({
         })
       } else {
         this.materialStockInfo.info_data = []
-        if(this.materialShaXianList.filter((item:any) => {
-          return item.info_data.some((itemChild:any) => itemChild.check)
-        }).length > 0) {
-          this.materialShaXianList.forEach((item:any) => {
-            item.info_data.forEach((itemChild:any) => {
+        if (
+          this.materialShaXianList.filter((item: any) => {
+            return item.info_data.some((itemChild: any) => itemChild.check)
+          }).length > 0
+        ) {
+          this.materialShaXianList.forEach((item: any) => {
+            item.info_data.forEach((itemChild: any) => {
               if (itemChild.check) {
                 this.materialStockInfo.rel_doc_code = item.code
                 this.materialStockInfo.rel_doc_id = item.id as number
-                if (itemChild.process_info!.filter((item:any) => item.process === '染色').length > 0) {
+                if (itemChild.process_info!.filter((item: any) => item.process === '染色').length > 0) {
                   itemChild
-                    .process_info!.filter((item:any) => item.process === '染色')
-                    .forEach((itemProcess:any) => {
+                    .process_info!.filter((item: any) => item.process === '染色')
+                    .forEach((itemProcess: any) => {
                       this.materialStockInfo.info_data.push({
                         yarn_type: itemChild.yarn_type,
                         material_id: itemChild.material_id as number,
@@ -1927,10 +1937,10 @@ export default Vue.extend({
                       })
                     })
                   if (
-                    itemChild.process_info!.filter((item:any) => item.process === '染色').length > 0 &&
+                    itemChild.process_info!.filter((item: any) => item.process === '染色').length > 0 &&
                     itemChild
-                      .process_info!.filter((item:any) => item.process === '染色')
-                      .reduce((total:any, cur:any) => total + Number(cur.number), 0) < Number(itemChild.number)
+                      .process_info!.filter((item: any) => item.process === '染色')
+                      .reduce((total: any, cur: any) => total + Number(cur.number), 0) < Number(itemChild.number)
                   ) {
                     this.materialStockInfo.info_data.push({
                       yarn_type: itemChild.yarn_type,
@@ -1943,8 +1953,8 @@ export default Vue.extend({
                       number:
                         Number(itemChild.number) -
                         itemChild
-                          .process_info!.filter((item:any) => item.process === '染色')
-                          .reduce((total:any, cur:any) => total + cur.number, 0),
+                          .process_info!.filter((item: any) => item.process === '染色')
+                          .reduce((total: any, cur: any) => total + cur.number, 0),
                       item: '', // 件数
                       unit: itemChild.unit,
                       rel_doc_info_id: itemChild.id // 采购单调取单加工单子项id
@@ -1969,18 +1979,20 @@ export default Vue.extend({
             })
           })
         }
-        if(this.materialMianLiaoList.filter((item:any) => {
-          return item.info_data.some((itemChild:any) => itemChild.check)
-        }).length > 0) {
-          this.materialMianLiaoList.forEach((item:any) => {
-            item.info_data.forEach((itemChild:any) => {
+        if (
+          this.materialMianLiaoList.filter((item: any) => {
+            return item.info_data.some((itemChild: any) => itemChild.check)
+          }).length > 0
+        ) {
+          this.materialMianLiaoList.forEach((item: any) => {
+            item.info_data.forEach((itemChild: any) => {
               if (itemChild.check) {
                 this.materialStockInfo.rel_doc_code = item.code
                 this.materialStockInfo.rel_doc_id = item.id as number
-                if (itemChild.process_info!.filter((item:any) => item.process === '染色').length > 0) {
+                if (itemChild.process_info!.filter((item: any) => item.process === '染色').length > 0) {
                   itemChild
-                    .process_info!.filter((item:any) => item.process === '染色')
-                    .forEach((itemProcess:any) => {
+                    .process_info!.filter((item: any) => item.process === '染色')
+                    .forEach((itemProcess: any) => {
                       this.materialStockInfo.info_data.push({
                         yarn_type: itemChild.yarn_type,
                         material_id: itemChild.material_id as number,
@@ -1996,10 +2008,10 @@ export default Vue.extend({
                       })
                     })
                   if (
-                    itemChild.process_info!.filter((item:any) => item.process === '染色').length > 0 &&
+                    itemChild.process_info!.filter((item: any) => item.process === '染色').length > 0 &&
                     itemChild
-                      .process_info!.filter((item:any) => item.process === '染色')
-                      .reduce((total:any, cur:any) => total + Number(cur.number), 0) < Number(itemChild.number)
+                      .process_info!.filter((item: any) => item.process === '染色')
+                      .reduce((total: any, cur: any) => total + Number(cur.number), 0) < Number(itemChild.number)
                   ) {
                     this.materialStockInfo.info_data.push({
                       yarn_type: itemChild.yarn_type,
@@ -2012,8 +2024,8 @@ export default Vue.extend({
                       number:
                         Number(itemChild.number) -
                         itemChild
-                          .process_info!.filter((item:any) => item.process === '染色')
-                          .reduce((total:any, cur:any) => total + cur.number, 0),
+                          .process_info!.filter((item: any) => item.process === '染色')
+                          .reduce((total: any, cur: any) => total + cur.number, 0),
                       item: '', // 件数
                       unit: itemChild.unit,
                       rel_doc_info_id: itemChild.id // 采购单调取单加工单子项id

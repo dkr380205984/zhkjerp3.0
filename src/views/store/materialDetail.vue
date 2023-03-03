@@ -211,7 +211,7 @@
                 </div>
               </div>
               <div class="tcol">关联单据</div>
-              <div class="tcol">日期</div>
+              <div class="tcol">操作日期/出入库日期</div>
               <div class="tcol">操作</div>
             </div>
           </div>
@@ -292,7 +292,11 @@
               <div class="tcol">
                 {{item.rel_doc_info.code || '无'}}
               </div>
-              <div class="tcol">{{item.complete_time}}</div>
+              <div class="tcol">
+                {{item.created_at}}
+                <br />
+                {{item.complete_time}}
+              </div>
               <div class="tcol oprCtn">
                 <span class="opr hoverRed"
                   @click="deleteStoreLog(item.id)">删除</span>

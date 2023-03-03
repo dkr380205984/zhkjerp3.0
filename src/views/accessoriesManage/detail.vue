@@ -406,8 +406,8 @@
                 :key="itemChild.id">
                 <div class="tcol">{{itemChild.material_name}}</div>
                 <div class="tcol">{{itemChild.attribute}}</div>
-                <div class="tcol"
-                  :class="itemChild.batch_code||itemChild.vat_code||itemChild.color_code?'':'gray'">{{itemChild.batch_code||'无'}}/{{itemChild.vat_code||'无'}}/{{itemChild.color_code||'无'}}</div>
+                <!-- <div class="tcol"
+                  :class="itemChild.batch_code||itemChild.vat_code||itemChild.color_code?'':'gray'">{{itemChild.batch_code||'无'}}/{{itemChild.vat_code||'无'}}/{{itemChild.color_code||'无'}}</div> -->
                 <div class="tcol">{{itemChild.number}}{{itemChild.unit || 'kg'}}</div>
               </div>
             </div>
@@ -1512,6 +1512,7 @@ export default Vue.extend({
         .then(() => {
           this.materialOrderFlag = false
           this.resetOrderMaterial()
+          this.resetMaterialStock()
         })
         .catch(() => {
           this.$message({
@@ -1714,7 +1715,7 @@ export default Vue.extend({
           if (res.data.status) {
             this.$message.success('添加成功')
             this.step = 1
-            this.resetOrderMaterial()
+            this.resetMaterialStock()
             this.materialOrderFlag = false
             this.init()
             this.mustFlag = false
@@ -1722,6 +1723,35 @@ export default Vue.extend({
         })
       } else {
         this.mustFlag = true
+      }
+    },
+    resetMaterialStock() {
+      this.materialStockInfo = {
+        material_type: 2,
+        action_type: 4, // 采购单最终入库
+        rel_doc_type: '',
+        rel_doc_id: '',
+        rel_doc_code: '',
+        complete_time: this.$getDate(new Date()),
+        client_id: '',
+        desc: '',
+        store_id: '',
+        secondary_store_id: '',
+        tree_data: [], //仓库下拉框
+        selectList: [],
+        info_data: [
+          {
+            material_id: '',
+            material_color: '',
+            color_code: '',
+            batch_code: '',
+            vat_code: '',
+            attribute: '',
+            number: '',
+            item: '', // 件数
+            rel_doc_info_id: '' // 采购单调取单加工单子项id
+          }
+        ]
       }
     },
     deleteMaterialOrder(id: number) {
