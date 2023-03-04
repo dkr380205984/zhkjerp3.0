@@ -35,7 +35,8 @@
           </div>
         </div>
       </div>
-      <div class="pbody">
+      <div class="pbody"
+        style="min-height:1380px">
         <div class="tableCtn">
           <div class="tbody hasTop">
             <div class="trow">
@@ -378,11 +379,11 @@
         </template>
       </div>
       <template v-if="showOrderImage==='2'">
-        <div style="page-break-before: always;">
+        <div style="page-break-before: always;page-break-after:always;width: 982px;min-height:1500px"
+          v-for="itemPic,indexPic in itemPro.image_data"
+          :key="indexPic">
           <div class="imageFather"
-            style="display:block;text-align:center"
-            v-for="itemPic,indexPic in itemPro.image_data"
-            :key="indexPic">
+            style="display:block;text-align:center">
             <div style="position:relative;display:inline-block;margin:auto">
               <img style="max-height:1490px;max-width:982px;"
                 :src="itemPic" />
@@ -406,6 +407,170 @@
           </div>
         </div>
       </template>
+      <template v-if="showOrderImage==='3'">
+        <div style="page-break-before: always;page-break-after:always;width: 982px;height:1500px;display:flex;flex-direction:column">
+          <div style="flex:1;display:flex">
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative"
+              v-for="index in 3"
+              :key="index"
+              class="imageFather">
+              <img :src="itemPro.image_data[index-1]"
+                style="max-width:100%"
+                v-if="itemPro.image_data[index-1]" />
+              <span class="hoverBlue"
+                v-if="itemPro.image_data[index-1]"
+                style=" 
+                  position: absolute;
+                  left: 0;
+                  right:0;
+                  top: 0;
+                  bottom: 0;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  width:4em;
+                  z-index: 1;
+                  background: #ccc;"
+                @click="deleteImage(itemPro,index)">隐藏图片</span>
+            </div>
+          </div>
+          <div style="flex:1;display:flex">
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative"
+              v-for="index in 3"
+              :key="index"
+              class="imageFather">
+              <img :src="itemPro.image_data[index+2]"
+                style="max-width:100%"
+                v-if="itemPro.image_data[index+2]" />
+              <span class="hoverBlue"
+                v-if="itemPro.image_data[index+2]"
+                style=" 
+                  position: absolute;
+                  left: 0;
+                  right:0;
+                  top: 0;
+                  bottom: 0;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  width:4em;
+                  z-index: 1;
+                  background: #ccc;"
+                @click="deleteImage(itemPro,index+2)">隐藏图片</span>
+            </div>
+          </div>
+        </div>
+      </template>
+      <template v-if="showOrderImage==='4'">
+        <div style="page-break-before: always;page-break-after:always;width: 982px;height:1500px;display:flex;flex-direction:column">
+          <div style="flex:1;display:flex">
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative"
+              v-for="index in 3"
+              :key="index"
+              class="imageFather">
+              <img :src="itemPro.image_data[index-1]"
+                style="max-width:100%"
+                v-if="itemPro.image_data[index-1]" />
+              <span class="hoverBlue"
+                v-if="itemPro.image_data[index-1]"
+                style=" 
+                  position: absolute;
+                  left: 0;
+                  right:0;
+                  top: 0;
+                  bottom: 0;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  width:4em;
+                  z-index: 1;
+                  background: #ccc;"
+                @click="deleteImage(itemPro,index)">隐藏图片</span>
+            </div>
+          </div>
+          <div style="flex:1;display:flex">
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative"
+              v-for="index in 3"
+              :key="index"
+              class="imageFather">
+              <img :src="itemPro.image_data[index+2]"
+                style="max-width:100%"
+                v-if="itemPro.image_data[index+2]" />
+              <span class="hoverBlue"
+                v-if="itemPro.image_data[index+2]"
+                style=" 
+                  position: absolute;
+                  left: 0;
+                  right:0;
+                  top: 0;
+                  bottom: 0;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  width:4em;
+                  z-index: 1;
+                  background: #ccc;"
+                @click="deleteImage(itemPro,index+2)">隐藏图片</span>
+            </div>
+          </div>
+          <div style="flex:1;display:flex">
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative"
+              v-for="index in 3"
+              :key="index"
+              class="imageFather">
+              <img :src="itemPro.image_data[index+5]"
+                style="max-width:100%"
+                v-if="itemPro.image_data[index+5]" />
+              <span class="hoverBlue"
+                v-if="itemPro.image_data[index+5]"
+                style=" 
+                  position: absolute;
+                  left: 0;
+                  right:0;
+                  top: 0;
+                  bottom: 0;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  width:4em;
+                  z-index: 1;
+                  background: #ccc;"
+                @click="deleteImage(itemPro,index+5)">隐藏图片</span>
+            </div>
+          </div>
+          <div style="flex:1;display:flex">
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative"
+              v-for="index in 3"
+              :key="index"
+              class="imageFather">
+              <img :src="itemPro.image_data[index+8]"
+                style="max-width:100%"
+                v-if="itemPro.image_data[index+8]" />
+              <span class="hoverBlue"
+                v-if="itemPro.image_data[index+8]"
+                style=" 
+                  position: absolute;
+                  left: 0;
+                  right:0;
+                  top: 0;
+                  bottom: 0;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  width:4em;
+                  z-index: 1;
+                  background: #ccc;"
+                @click="deleteImage(itemPro,index+8)">隐藏图片</span>
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
 
     <div class="setting_sign_style"
@@ -425,7 +590,13 @@
       <div class="setting_item"
         @click="windowMethod(7)">{{showSizeTable==='1'?'隐藏尺码详情':'显示尺码详情'}}</div>
       <div class="setting_item"
-        @click="windowMethod(6)">{{showOrderImage==='1'?'图片单独打印':'图片不单独打印'}}</div>
+        @click="showOrderImage='1'">图片不单独打印-任选3图</div>
+      <div class="setting_item"
+        @click="showOrderImage='2'">图片单独打印-1图</div>
+      <div class="setting_item"
+        @click="showOrderImage='3'">图片单独打印-6图</div>
+      <div class="setting_item"
+        @click="showOrderImage='4'">图片单独打印-12图</div>
     </div>
   </div>
 </template>

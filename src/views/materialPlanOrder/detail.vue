@@ -1120,9 +1120,11 @@ export default Vue.extend({
         })
     },
     goOrder(info: MaterialOrderInfo) {
-      console.log(info)
       this.materialPlanOrderInfo.material_type = info.material_type
       this.materialPlanOrderInfo.info_data = info.info_data
+      info.info_data.forEach((item: any) => {
+        item.id = null
+      })
       this.materialPlanOrderFlag = true
     }
   },
