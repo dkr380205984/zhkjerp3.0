@@ -589,6 +589,8 @@ export default Vue.extend({
         return staff.id === e[1]
       })
 
+      console.log(staffInfo)
+
       // 更新选中列表 以及赋值
       this.selectStaffIdList = []
       this.list.forEach((item: any) => {
