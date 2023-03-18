@@ -1,7 +1,5 @@
 <template>
-  <div id="reimbursementManageCreate"
-    class="bodyContainer"
-    v-loading="loading">
+  <div id="reimbursementManageCreate" class="bodyContainer" v-loading="loading">
     <div class="module">
       <div class="titleCtn">
         <div class="title">添加报销单</div>
@@ -12,15 +10,19 @@
             <div class="label">
               <span class="text">报销人</span>
               <span class="explanation">(必选)</span>
+              <el-tooltip class="item" effect="dark" content="设置成功后请点击此按钮刷新数据" placement="top">
+                <i class="el-icon-refresh hoverGreen fr"
+                  style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer" @click="getStaffList()"></i>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="添加报销人" placement="top">
+                <i class="el-icon-upload hoverOrange fr"
+                  style="line-height:38px;font-size:18px;margin-left:8px;cursor:pointer"
+                  @click="$openUrl('/workerManage/create')"></i>
+              </el-tooltip>
             </div>
             <div class="info elCtn">
-              <el-select v-model="receiptInfo.staff"
-                filterable
-                placeholder="请选择报销人"
-                value-key="id">
-                <el-option v-for="item in staffList"
-                  :key="item.id"
-                  :label="item.code.substr(-4) + ' ' + item.name"
+              <el-select v-model="receiptInfo.staff" filterable placeholder="请选择报销人" value-key="id">
+                <el-option v-for="item in staffList" :key="item.id" :label="item.code.substr(-4) + ' ' + item.name"
                   :value="item"> </el-option>
               </el-select>
             </div>
@@ -30,13 +32,8 @@
               <span class="text">所属小组</span>
             </div>
             <div class="info elCtn">
-              <el-select v-model="receiptInfo.group"
-                placeholder="请选择所属小组"
-                clearable>
-                <el-option v-for="item in groupList"
-                  :key="item.name"
-                  :label="item.name"
-                  :value="item.id">
+              <el-select v-model="receiptInfo.group" placeholder="请选择所属小组" clearable>
+                <el-option v-for="item in groupList" :key="item.name" :label="item.name" :value="item.id">
                 </el-option>
               </el-select>
             </div>
@@ -51,39 +48,29 @@
                   <div class="col">报销金额（元）</div>
                   <div class="col">操作</div>
                 </div>
-                <div class="row"
-                  v-for="(item, index) in receiptInfo.staff_departments"
-                  :key="index">
+                <div class="row" v-for="(item, index) in receiptInfo.staff_departments" :key="index">
                   <div class="col elCtn">
-                    <el-input placeholder="请输入报销内容"
-                      v-model="item.name"></el-input>
+                    <el-input placeholder="请输入报销内容" v-model="item.name"></el-input>
                   </div>
                   <div class="col elCtn">
-                    <el-input placeholder="请输入报销金额"
-                      v-model="item.amount"
-                      type="number"></el-input>
+                    <el-input placeholder="请输入报销金额" v-model="item.amount" type="number"></el-input>
                   </div>
                   <div class="col">
                     <div>
-                      <span class="opr hoverBlue"
-                        style="top: 20%"
-                        @click="
-                          $addItem(receiptInfo.staff_departments, {
-                            name: '',
-                            amount: ''
-                          })
-                        ">添加</span>
-                      <span class="opr hoverRed"
-                        style="top: 20%; left: 20%"
+                      <span class="opr hoverBlue" style="top: 20%" @click="
+                        $addItem(receiptInfo.staff_departments, {
+                          name: '',
+                          amount: ''
+                        })
+                      ">添加</span>
+                      <span class="opr hoverRed" style="top: 20%; left: 20%"
                         @click="deleteReimbursement(receiptInfo.staff_departments, index)">删除</span>
                     </div>
                   </div>
                 </div>
                 <div class="row title">
-                  <div class="col"
-                    style="flex: 1">合计费用</div>
-                  <div class="col"
-                    style="flex: 2">{{ receiptInfo.amount }}</div>
+                  <div class="col" style="flex: 1">合计费用</div>
+                  <div class="col" style="flex: 2">{{ receiptInfo.amount }}</div>
                 </div>
               </div>
             </div>
@@ -92,23 +79,16 @@
         <div class="row">
           <div class="col">
             <div class="label">
-              <span class="text"
-                style="margin-right: 20px">上传报销凭证</span>
-              <el-checkbox v-model="cvFlag"
-                @change="changeCVOpration">{{ cvFlag ? '关闭复制粘贴图片上传功能' : '开启复制粘贴图片上传功能' }}
+              <span class="text" style="margin-right: 20px">上传报销凭证</span>
+              <el-checkbox v-model="cvFlag" @change="changeCVOpration">{{ cvFlag ? '关闭复制粘贴图片上传功能' : '开启复制粘贴图片上传功能' }}
               </el-checkbox>
             </div>
             <div class="info">
-              <div class="cvImageCtn"
-                v-show="cvFlag">
-                <div class="cvImage"
-                  v-for="indexImage of cvImageLength"
-                  :key="indexImage">
+              <div class="cvImageCtn" v-show="cvFlag">
+                <div class="cvImage" v-for="indexImage of cvImageLength" :key="indexImage">
                   <template v-if="cv_list[indexImage - 1] !== null">
-                    <img :id="'cvImg' + indexImage"
-                      :src="require('@/assets/image/common/cv.png')" />
-                    <i class="icon el-icon-close"
-                      @click="deleteCvImage(indexImage - 1)"></i>
+                    <img :id="'cvImg' + indexImage" :src="require('@/assets/image/common/cv.png')" />
+                    <i class="icon el-icon-close" @click="deleteCvImage(indexImage - 1)"></i>
                   </template>
                 </div>
               </div>
@@ -132,29 +112,18 @@
                 </el-upload>
               </div> -->
               <div class="fileCtn">
-                <el-upload class="upload"
-                  action="https://upload.qiniup.com/"
-                  accept="image/jpeg,image/gif,image/png,image/bmp"
-                  :before-upload="beforeAvatarUpload"
-                  :data="postData"
-                  :file-list="file_list"
-                  :on-remove="removeFile"
-                  :on-success="successFile"
-                  :on-preview="handlePictureCardPreview"
-                  ref="uploada"
-                  list-type="picture-card">
+                <el-upload class="upload" action="https://upload.qiniup.com/"
+                  accept="image/jpeg,image/gif,image/png,image/bmp" :before-upload="beforeAvatarUpload" :data="postData"
+                  :file-list="file_list" :on-remove="removeFile" :on-success="successFile"
+                  :on-preview="handlePictureCardPreview" ref="uploada" list-type="picture-card">
                   <div class="uploadBtn">
                     <i class="el-icon-upload"></i>
                     <span>上传图片</span>
                   </div>
-                  <div slot="tip"
-                    class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M(请勿上传带特殊字符的图片)</div>
+                  <div slot="tip" class="el-upload__tip">只能上传jpg/png图片文件，且不超过10M(请勿上传带特殊字符的图片)</div>
                 </el-upload>
-                <el-dialog :visible.sync="dialogVisible"
-                  append-to-body>
-                  <img width="100%"
-                    :src="dialogImageUrl"
-                    alt="">
+                <el-dialog :visible.sync="dialogVisible" append-to-body>
+                  <img width="100%" :src="dialogImageUrl" alt="">
                 </el-dialog>
               </div>
             </div>
@@ -165,10 +134,8 @@
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="borderBtn"
-            @click="$router.go(-1)">返回</div>
-          <div class="btn backHoverBlue"
-            @click="saveReceipt">提交</div>
+          <div class="borderBtn" @click="$router.go(-1)">返回</div>
+          <div class="btn backHoverBlue" @click="saveReceipt">提交</div>
         </div>
       </div>
     </div>
