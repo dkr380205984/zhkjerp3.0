@@ -324,7 +324,7 @@
                           @focus="$focusInput($event)"
                           @input="(ev)=>{
                             itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='kg'||itemChild.unit==='g'?1000:1));
-                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number,1)
+                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)
                           }">
                           <template slot="append">
                             {{itemChild.unit==='kg'?'g':itemChild.unit}}
@@ -340,7 +340,7 @@
                         <el-input v-model="itemChild.loss"
                           placeholder="损耗"
                           @focus="$focusInput($event)"
-                          @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number,1)">
+                          @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number)">
                           <template slot="append">%</template>
                         </el-input>
                       </div>
@@ -507,7 +507,7 @@
                           @focus="$focusInput($event)"
                           @input="(ev)=>{
                             itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='kg'||itemChild.unit==='g'?1000:1));
-                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number,1)
+                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)
                           }">
                           <template slot="append">
                             {{itemChild.unit==='kg'?'g':itemChild.unit}}
@@ -521,7 +521,7 @@
                         <el-input v-model="itemChild.loss"
                           placeholder="损耗"
                           @focus="$focusInput($event)"
-                          @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number,1)">
+                          @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number)">
                           <template slot="append">%</template>
                         </el-input>
                       </div>
@@ -856,6 +856,9 @@ export default Vue.extend({
             }
           })
         })
+        this.materialPlanInfo.material_plan_gather_data.forEach((item) => {
+          item.final_number = this.numberAutoMethod(item.final_number, 1)
+        })
       },
       deep: true
     }
@@ -903,7 +906,7 @@ export default Vue.extend({
     // 统一损耗逻辑
     changeAllLoss(info: any) {
       info.forEach((itemChild: any) => {
-        itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number, 1)
+        itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number)
       })
     },
     // 小数点处理方式
@@ -958,7 +961,7 @@ export default Vue.extend({
     // 数量百分比 = 计划生产数量/下单数量 - 1
     // 物料最终数量 = 物料计划数量*(原料损耗百分比+1)
     getMaterialFinalNum(rate: number, materail: any) {
-      materail.final_number = this.numberAutoMethod(materail.need_number * (rate / 100 + 1), 1)
+      materail.final_number = this.numberAutoMethod(materail.need_number * (rate / 100 + 1))
     },
     // 计算所需物料--按尺码颜色
     getMaterialPlanDetail(partId?: number, number?: number, proInfo?: any) {
@@ -984,7 +987,7 @@ export default Vue.extend({
             (Number(itemChild.production_number) * item.number) /
               (itemChild.unit === 'kg' || itemChild.unit === 'g' ? 1000 : 1)
           )
-          itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number, 1)
+          itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number)
         })
       })
       this.$forceUpdate()

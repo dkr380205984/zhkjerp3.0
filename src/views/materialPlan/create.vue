@@ -394,7 +394,7 @@
                             @keydown.native="$focusByKeydown($event,'production_number',[index,indexChild],materialPlanInfo,['material_plan_data','info_data'])"
                             @input="(ev)=>{
                             itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='g'?1000:1));
-                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number,1)}">
+                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)}">
                             <template slot="append">
                               <el-input v-model="itemChild.unit"
                                 placeholder="单位"></el-input>
@@ -414,7 +414,7 @@
                             v-model="itemChild.loss"
                             placeholder="损耗"
                             @keydown.native="$focusByKeydown($event,'loss',[index,indexChild],materialPlanInfo,['material_plan_data','info_data'])"
-                            @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number,1)">
+                            @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number)">
                             <template slot="append">%</template>
                           </el-input>
                         </div>
@@ -699,7 +699,7 @@
                             placeholder="无计划值"
                             @input="(ev)=>{
                             itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='g'?1000:1));
-                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number,1)
+                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)
                           }">
                             <template slot="append">
                               <el-input v-model="itemChild.unit"
@@ -720,7 +720,7 @@
                             v-model="itemChild.loss"
                             placeholder="损耗"
                             @keydown.native="$focusByKeydown($event,'loss',[index,indexChild],materialPlanInfo,['material_plan_data','info_data'])"
-                            @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number,1)">
+                            @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number)">
                             <template slot="append">%</template>
                           </el-input>
                         </div>
@@ -1133,6 +1133,10 @@ export default Vue.extend({
             }
           })
         })
+        // 最终数量向上取整
+        this.materialPlanInfo.material_plan_gather_data.forEach((item) => {
+          item.final_number = this.numberAutoMethod(item.final_number, 1)
+        })
       },
       deep: true
     }
@@ -1368,7 +1372,7 @@ export default Vue.extend({
             (Number(itemChild.production_number) * item.number) /
               (itemChild.unit === 'kg' || itemChild.unit === 'g' ? 1000 : 1)
           )
-          itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number, 1)
+          itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number)
         })
       })
       this.$forceUpdate()
@@ -1764,7 +1768,7 @@ export default Vue.extend({
     // 统一损耗逻辑
     changeAllLoss(info: any) {
       info.forEach((itemChild: any) => {
-        itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number, 1)
+        itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number)
       })
     },
     // 因为多批次产品合并问题导致后端无法计算plan_number，所需前端根据物料计划单列表累加已计划的数量
