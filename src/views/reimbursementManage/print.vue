@@ -16,7 +16,7 @@
               <div class="info">
                 {{ receiptInfo.created_at ? receiptInfo.created_at.slice(0, 10) : ''
                 }}{{ receiptInfo.user.name ? ' - ' + receiptInfo.user.name : ''
-                }}{{ receiptInfo.user.phone ? ' - ' + receiptInfo.user.phone : '' }}
+}}{{ receiptInfo.user.phone ? ' - ' + receiptInfo.user.phone : '' }}
               </div>
             </div>
           </div>
@@ -64,12 +64,7 @@
         </div>
       </div>
     </div>
-    <div
-      class="setting_sign_style"
-      v-if="showMenu"
-      :style="`left:${X_position || 0}px;top:${Y_position}px`"
-      @click.stop
-    >
+    <div class="setting_sign_style" v-if="showMenu" :style="`left:${X_position || 0}px;top:${Y_position}px`" @click.stop>
       <div class="setting_item" @click="windowMethod(1)">刷新</div>
       <div class="setting_item" @click="windowMethod(2)">打印</div>
     </div>
