@@ -592,7 +592,7 @@
             <div class="tcol">原料颜色</div>
             <div class="tcol">所需数量</div>
             <div class="tcol">原料损耗</div>
-            <div class="tcol">最终数量</div>
+            <div class="tcol">合计最终数量</div>
           </div>
         </div>
         <div class="tbody">
@@ -856,6 +856,9 @@ export default Vue.extend({
             }
           })
         })
+        this.materialPlanInfo.material_plan_gather_data.forEach((item) => {
+          item.final_number = this.numberAutoMethod(item.final_number, 1)
+        })
       },
       deep: true
     }
@@ -907,16 +910,16 @@ export default Vue.extend({
       })
     },
     // 小数点处理方式
-    numberAutoMethod(num: number | string) {
+    numberAutoMethod(num: number | string, settingMethod?: number) {
       const number = Number(num)
       if (number || number === 0) {
-        if (+this.settingMethod === 1) {
+        if (settingMethod === 1) {
           // 向上取整
           return Math.ceil(number)
-        } else if (+this.settingMethod === 2) {
+        } else if (settingMethod === 2) {
           // 四舍五入
           return Math.round(number)
-        } else if (+this.settingMethod === 3) {
+        } else if (settingMethod === 3) {
           // @ts-ignore 向下取整
           return parseInt(number)
         } else {
@@ -933,7 +936,7 @@ export default Vue.extend({
       productInfo.info_data.forEach((item: any) => {
         // 只能确定大身数量，配件数量不计算
         if (item.part_id === 0) {
-          item.number = this.numberAutoMethod(productInfo.order_number * (rate / 100 + 1))
+          item.number = this.numberAutoMethod(productInfo.order_number * (rate / 100 + 1), 1)
           this.getMaterialPlanDetail(0, item.number, productInfo)
         }
       })
@@ -946,7 +949,8 @@ export default Vue.extend({
           itemChild.info_data.forEach((itemPart) => {
             if (itemPart.part_id === 0) {
               itemPart.number = this.numberAutoMethod(
-                Number(itemChild.order_number) * (Number(itemChild.add_percent) / 100 + 1)
+                Number(itemChild.order_number) * (Number(itemChild.add_percent) / 100 + 1),
+                1
               )
               this.getMaterialPlanDetail(0, Number(itemPart.number), itemPart)
             }

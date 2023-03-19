@@ -385,7 +385,7 @@
                     filterable
                     clearable>
                   </el-cascader>
-                  <el-cascader v-if="materialStockInfo.action_type===10"
+                  <el-cascader v-if="materialStockInfo.action_type===13"
                     v-model="materialStockInfo.tree_data"
                     placeholder="请选择单位信息"
                     :options="yarnClientOutList"
