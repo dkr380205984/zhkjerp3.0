@@ -55,7 +55,7 @@
                 <div class="tcol" style="flex: 1.5">{{ receiptInfo.amount }} 元</div>
               </div>
             </div>
-            <span>
+            <span v-if="receiptInfo.certificate">
               <div v-for="(item, index) in receiptInfo.certificate.split(',')" :key="item + index" class="elImageCtn">
                 <el-image style="width: 100px; height: 100px" :src="item" fit="content"></el-image>
               </div>
