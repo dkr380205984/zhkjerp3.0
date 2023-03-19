@@ -324,7 +324,7 @@
                           @focus="$focusInput($event)"
                           @input="(ev)=>{
                             itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='kg'||itemChild.unit==='g'?1000:1));
-                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)
+                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number,1)
                           }">
                           <template slot="append">
                             {{itemChild.unit==='kg'?'g':itemChild.unit}}
@@ -340,7 +340,7 @@
                         <el-input v-model="itemChild.loss"
                           placeholder="损耗"
                           @focus="$focusInput($event)"
-                          @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number)">
+                          @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number,1)">
                           <template slot="append">%</template>
                         </el-input>
                       </div>
@@ -507,7 +507,7 @@
                           @focus="$focusInput($event)"
                           @input="(ev)=>{
                             itemChild.need_number=numberAutoMethod(Number(ev)*item.number/(itemChild.unit==='kg'||itemChild.unit==='g'?1000:1));
-                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number)
+                            itemChild.final_number=numberAutoMethod((Number(itemChild.loss)/100+1)*itemChild.need_number,1)
                           }">
                           <template slot="append">
                             {{itemChild.unit==='kg'?'g':itemChild.unit}}
@@ -521,7 +521,7 @@
                         <el-input v-model="itemChild.loss"
                           placeholder="损耗"
                           @focus="$focusInput($event)"
-                          @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number)">
+                          @input="(ev)=>itemChild.final_number=numberAutoMethod((Number(ev)/100+1)*itemChild.need_number,1)">
                           <template slot="append">%</template>
                         </el-input>
                       </div>
@@ -592,7 +592,7 @@
             <div class="tcol">原料颜色</div>
             <div class="tcol">所需数量</div>
             <div class="tcol">原料损耗</div>
-            <div class="tcol">最终数量</div>
+            <div class="tcol">合计最终数量</div>
           </div>
         </div>
         <div class="tbody">
@@ -903,20 +903,20 @@ export default Vue.extend({
     // 统一损耗逻辑
     changeAllLoss(info: any) {
       info.forEach((itemChild: any) => {
-        itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number)
+        itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number, 1)
       })
     },
     // 小数点处理方式
-    numberAutoMethod(num: number | string) {
+    numberAutoMethod(num: number | string, settingMethod?: number) {
       const number = Number(num)
       if (number || number === 0) {
-        if (+this.settingMethod === 1) {
+        if (settingMethod === 1) {
           // 向上取整
           return Math.ceil(number)
-        } else if (+this.settingMethod === 2) {
+        } else if (settingMethod === 2) {
           // 四舍五入
           return Math.round(number)
-        } else if (+this.settingMethod === 3) {
+        } else if (settingMethod === 3) {
           // @ts-ignore 向下取整
           return parseInt(number)
         } else {
@@ -933,7 +933,7 @@ export default Vue.extend({
       productInfo.info_data.forEach((item: any) => {
         // 只能确定大身数量，配件数量不计算
         if (item.part_id === 0) {
-          item.number = this.numberAutoMethod(productInfo.order_number * (rate / 100 + 1))
+          item.number = this.numberAutoMethod(productInfo.order_number * (rate / 100 + 1), 1)
           this.getMaterialPlanDetail(0, item.number, productInfo)
         }
       })
@@ -946,7 +946,8 @@ export default Vue.extend({
           itemChild.info_data.forEach((itemPart) => {
             if (itemPart.part_id === 0) {
               itemPart.number = this.numberAutoMethod(
-                Number(itemChild.order_number) * (Number(itemChild.add_percent) / 100 + 1)
+                Number(itemChild.order_number) * (Number(itemChild.add_percent) / 100 + 1),
+                1
               )
               this.getMaterialPlanDetail(0, Number(itemPart.number), itemPart)
             }
@@ -957,7 +958,7 @@ export default Vue.extend({
     // 数量百分比 = 计划生产数量/下单数量 - 1
     // 物料最终数量 = 物料计划数量*(原料损耗百分比+1)
     getMaterialFinalNum(rate: number, materail: any) {
-      materail.final_number = this.numberAutoMethod(materail.need_number * (rate / 100 + 1))
+      materail.final_number = this.numberAutoMethod(materail.need_number * (rate / 100 + 1), 1)
     },
     // 计算所需物料--按尺码颜色
     getMaterialPlanDetail(partId?: number, number?: number, proInfo?: any) {
@@ -983,7 +984,7 @@ export default Vue.extend({
             (Number(itemChild.production_number) * item.number) /
               (itemChild.unit === 'kg' || itemChild.unit === 'g' ? 1000 : 1)
           )
-          itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number)
+          itemChild.final_number = this.numberAutoMethod((Number(itemChild.loss) / 100 + 1) * itemChild.need_number, 1)
         })
       })
       this.$forceUpdate()
