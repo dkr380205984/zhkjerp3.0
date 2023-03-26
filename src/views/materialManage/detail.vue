@@ -3900,7 +3900,7 @@ export default Vue.extend({
       return this.$route.query.supFlag
         ? this.materialSupplementInfo.info_data
             .filter((item) => {
-              return item.yarn_type === 1
+              return item.yarn_type === 1 || item.material_name === '金丝' || item.material_name === '银丝'
             })
             .map((item) => {
               return {
@@ -3919,7 +3919,7 @@ export default Vue.extend({
               }
             })
         : this.materialPlanInfo.material_plan_gather_data.filter((item) => {
-            return item.yarn_type === 1
+            return item.yarn_type === 1 || item.material_name === '金丝' || item.material_name === '银丝'
           })
     },
     planMianLiaoList(): MaterialPlanGatherData[] {
