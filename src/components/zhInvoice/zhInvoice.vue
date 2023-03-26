@@ -62,8 +62,10 @@
               </el-select>
             </div>
           </div>
-          <div class="row" style="justify-content: space-around;">
-            <div class="info" style="flex:0.49">
+          <div class="row"
+            style="justify-content: space-around;">
+            <div class="info"
+              style="flex:0.49">
               <el-select v-model="item.type"
                 placeholder="发票类型">
                 <el-option label="专票"
@@ -72,7 +74,8 @@
                   value="普票"> </el-option>
               </el-select>
             </div>
-            <div class="info" style="flex:0.49">
+            <div class="info"
+              style="flex:0.49">
               <el-autocomplete class="inline-input"
                 v-model="item.tax_rate"
                 :fetch-suggestions="querySearch"
@@ -323,22 +326,29 @@ export default Vue.extend({
   methods: {
     // 把数字改成金额
     changeNumToPrice(val: string, index: number) {
-      const realNumStr = val.replace(/[^0-9|.]/gi, '')
+      const realNumStr = val.replace(/[^\d.]/g, '')
+      const numStrArr = realNumStr.split('.')
+      let zhengshu = ''
+      let xiaoshu = ''
+      if (numStrArr.length > 2) {
+        this.invoiceInfo.data[index].hanPrice = '请输入正确数字'
+        return
+      } else if (numStrArr.length === 2) {
+        zhengshu = numStrArr[0]
+        xiaoshu = numStrArr[1]
+      } else {
+        zhengshu = numStrArr[0]
+      }
+      const zhengshuArr = zhengshu.split('')
       this.invoiceInfo.data[index].hanPrice = this.$changeNumToHan(Number(realNumStr))
-      const numArr = realNumStr.split('.')
-      const numStrArr = numArr[0].split('')
-      const length = Number(numStrArr.length)
+      const length = Number(zhengshuArr.length)
       for (let i = length, j = 0; i > 0; i--) {
         j++
         if (j % 3 === 0 && i !== 1) {
-          numStrArr.splice(i - 1, 0, ',')
+          zhengshuArr.splice(i - 1, 0, ',')
         }
       }
-      if (numArr.length === 2) {
-        this.invoiceInfo.data[index].price = numStrArr.join('') + '.' + numArr[1]
-      } else {
-        this.invoiceInfo.data[index].price = numStrArr.join('')
-      }
+      this.invoiceInfo.data[index].price = zhengshuArr.join('') + (numStrArr.length === 2 ? '.' + xiaoshu : '')
     },
     changeType(val: string, index: number) {
       if (val.length === 12) {
@@ -357,9 +367,11 @@ export default Vue.extend({
       // 不含税金额 =  税价合计 - 税额
       // price_no_tax = price - price_tax
       const item = this.invoiceInfo.data[index]
-      item.price_tax = (Number(item.price.replace(/[^0-9|.]/gi, '')) || 0) * (Number(item.tax_rate) / 100 || 0)
+      item.price_tax = this.$toFixed(
+        (Number(item.price.replace(/[^0-9|.]/gi, '')) || 0) * (Number(item.tax_rate) / 100 || 0),
+        2
+      )
       item.price_no_tax = (Number(item.price.replace(/[^0-9|.]/gi, '')) || 0) - (Number(item.price_tax) || 0)
-      console.log(item.price_tax, item.price_no_tax)
     },
     close() {
       this.$emit('close')

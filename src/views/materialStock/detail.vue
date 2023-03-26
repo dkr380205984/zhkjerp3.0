@@ -145,7 +145,7 @@
                   style="flex-direction:row;align-items:center;justify-content:start">{{itemChild.final_push_number||0}}{{itemChild.unit||'kg'}}
                 </div>
                 <div class="tcol"
-                  style="flex-direction:row;align-items:center;justify-content:start"><span :class="{'green':Number(itemChild.final_push_number)>=Number(itemChild.number),'red':Number(itemChild.final_push_number)<Number(itemChild.number)}">{{Number(itemChild.final_push_number)>Number(itemChild.number)?'+':''}}{{Number(itemChild.final_push_number)-Number(itemChild.number)}}{{itemChild.unit||'kg'}}</span>
+                  style="flex-direction:row;align-items:center;justify-content:start"><span :class="{'green':Number(itemChild.final_push_number)>=Number(itemChild.number),'red':Number(itemChild.final_push_number)<Number(itemChild.number)}">{{Number(itemChild.final_push_number)>Number(itemChild.number)?'+':''}}{{$toFixed(Number(itemChild.final_push_number)-Number(itemChild.number))}}{{itemChild.unit||'kg'}}</span>
                 </div>
               </div>
             </div>

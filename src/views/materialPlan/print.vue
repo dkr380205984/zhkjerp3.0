@@ -75,7 +75,7 @@
                   <div class="tcol"
                     v-if="materialPlanType===1">{{item.size_name}}/{{item.color_name}}</div>
                   <div class="tcol">{{item.part_name}}</div>
-                  <div class="tcol">{{$toFixed(item.number,3,true)}}</div>
+                  <div class="tcol">{{numberAutoMethod(item.number,1)}}</div>
                 </div>
               </div>
             </div>
@@ -93,7 +93,7 @@
                   <div class="tcol bgGray label">合计值</div>
                   <div class="tcol"
                     style="flex:2">
-                    {{ $toFixed(item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.final_number),0),3,true)}}{{item.childrenMergeInfo[0].unit}}
+                    {{numberAutoMethod(item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.final_number),0),1)}}{{item.childrenMergeInfo[0].unit}}
                   </div>
                 </div>
                 <div class="trow bgGray">
@@ -126,7 +126,7 @@
                         :style="tableLineHeight"
                         style="flex:0.3">
                         <template v-if="!editFlag">
-                          {{  $toFixed(itemChild.final_number,3,true) }}{{ itemChild.unit }}
+                          {{numberAutoMethod(itemChild.final_number,1) }}{{ itemChild.unit }}
                         </template>
                         <template v-else>
                           <div class="elCtn">
@@ -252,7 +252,7 @@
                   <div class="tcol"
                     v-if="materialPlanType===1">{{item.size_name}}/{{item.color_name}}</div>
                   <div class="tcol">{{item.part_name}}</div>
-                  <div class="tcol">{{ $toFixed(item.number,3,true)}}</div>
+                  <div class="tcol">{{ numberAutoMethod(item.number,1)}}</div>
                 </div>
               </div>
             </div>
@@ -268,7 +268,7 @@
                   <div class="tcol bgGray label">合计值</div>
                   <div class="tcol"
                     style="flex:2">
-                    {{ $toFixed(item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.final_number),0),3,true)}}{{item.childrenMergeInfo[0].unit}}
+                    {{ numberAutoMethod(item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.final_number),0),1)}}{{item.childrenMergeInfo[0].unit}}
                   </div>
                 </div>
                 <div class="trow bgGray">
@@ -301,7 +301,7 @@
                         :style="tableLineHeight"
                         style="flex:0.3">
                         <template v-if="!editFlag">
-                          {{ $toFixed(itemChild.final_number,3,true) }}{{ itemChild.unit }}
+                          {{numberAutoMethod(itemChild.final_number,1) }}{{ itemChild.unit }}
                         </template>
                         <template v-else>
                           <div class="elCtn">
@@ -484,6 +484,28 @@ export default Vue.extend({
           this.showMenu = false
         }
       })
+    },
+    // 小数点处理方式
+    numberAutoMethod(num: number | string, settingMethod?: number) {
+      const number = Number(num)
+      if (number || number === 0) {
+        if (settingMethod === 1) {
+          // 向上取整
+          return Math.ceil(number)
+        } else if (settingMethod === 2) {
+          // 四舍五入
+          return Math.round(number)
+        } else if (settingMethod === 3) {
+          // @ts-ignore 向下取整
+          return parseInt(number)
+        } else {
+          return this.$toFixed(number)
+        }
+      } else if (isNaN(num as number)) {
+        return ''
+      } else {
+        throw new TypeError('“' + num + '”is not a number')
+      }
     },
     saveSetting() {
       const realSave = {

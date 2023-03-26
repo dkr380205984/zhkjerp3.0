@@ -413,14 +413,14 @@
                       <div class="tcol oprCtn"
                         style="justify-content:start">
                         <span class="blue opr"
-                          @click="$openUrl('/productionPlan/detail?id='+order_id+'&supFlag=true')">添加</span>
+                          @click="$openUrl('/productionPlan/detail?id='+order_id+'&sampleOrderIndex=' +order_time_id)">添加</span>
                       </div>
                     </div>
                   </div>
                   <div class="tcol oprCtn width2"
                     v-if="orderLogInfo.weave_plan.length>0">
                     <span class="blue opr"
-                      @click="$openUrl('/productionPlan/detail?id='+order_id+'&supFlag=true')">详情</span>
+                      @click="$openUrl('/productionPlan/detail?id='+order_id+'&sampleOrderIndex=' +order_time_id)">详情</span>
                   </div>
                 </div>
               </div>

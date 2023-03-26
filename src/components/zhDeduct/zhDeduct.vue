@@ -269,9 +269,13 @@ export default Vue.extend({
   methods: {
     // 把数字改成金额
     changeNumToPrice(val: string, index: number) {
-      const realNumStr = val.replace(/[^0-9]/gi, '')
-      const numStrArr = realNumStr.split('')
-      this.deductInfo.data[index].hanPrice = this.$changeNumToHan(Number(realNumStr))
+      const zhengshu = val.split('.')[0].replace(/[^0-9]/gi, '')
+      const xiaoshu = val.split('.')[1]
+
+      const numStrArr = zhengshu.split('')
+      this.deductInfo.data[index].hanPrice = this.$changeNumToHan(
+        Number(zhengshu + +(val.split('.').length === 2 ? '.' + xiaoshu : ''))
+      )
       const length = Number(numStrArr.length)
       for (let i = length, j = 0; i > 0; i--) {
         j++
@@ -279,7 +283,7 @@ export default Vue.extend({
           numStrArr.splice(i - 1, 0, ',')
         }
       }
-      this.deductInfo.data[index].price = numStrArr.join('')
+      this.deductInfo.data[index].price = numStrArr.join('') + (val.split('.').length === 2 ? '.' + xiaoshu : '')
     },
     close() {
       this.$emit('close')
