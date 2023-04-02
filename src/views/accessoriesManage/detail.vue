@@ -365,7 +365,7 @@
                   <span>{{item.store}}/{{item.secondary_store}}</span>
                 </div>
               </template>
-              <template v-else-if="item.action_type===2 || item.action_type===4">
+              <template v-else-if="item.action_type===2 || item.action_type===4 || item.action_type===9">
                 <div class="changeCtn">
                   <span>{{item.client_name}}</span>
                   <span class="el-icon-s-unfold green"></span>
@@ -379,7 +379,7 @@
                   <span>{{item.client_name}}</span>
                 </div>
               </template>
-              <template v-else-if="item.action_type===6 || item.action_type===9 || item.action_type===11 || item.action_type===12">
+              <template v-else-if="item.action_type===6  || item.action_type===11 || item.action_type===12">
                 <div class="changeCtn">
                   <span>{{item.store}}/{{item.secondary_store}}</span>
                 </div>
