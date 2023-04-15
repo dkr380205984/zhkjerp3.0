@@ -1,10 +1,10 @@
 let TARGET
 if (process.env.NODE_ENV === 'production') {
   // 正式环境
-  TARGET = 'https://knit-beta.zwyknit.com'
+  TARGET = 'https://knit.zwyknit.com'
 } else {
   // 测试环境
-  TARGET = 'https://knit-beta.zwyknit.com'
+  TARGET = 'https://knit.zwyknit.com'
 }
 module.exports = {
   devServer: {

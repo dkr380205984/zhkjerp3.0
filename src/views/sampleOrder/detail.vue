@@ -1330,7 +1330,12 @@
                     <div class="trow">
                       <div class="tcol">尺码颜色</div>
                       <div class="tcol">打样单价</div>
-                      <div class="tcol">打样数量</div>
+                      <div class="tcol"
+                        style="flex:0.8">打样数量(必填)</div>
+                      <div class="tcol"
+                        style="flex:0.6">送样数量(选填)</div>
+                      <div class="tcol"
+                        style="flex:0.6">留底数量(选填)</div>
                       <div class="tcol">操作</div>
                     </div>
                   </div>
@@ -1369,10 +1374,36 @@
                           </el-input>
                         </div>
                       </div>
-                      <div class="tcol">
+                      <div class="tcol"
+                        style="flex:0.8">
                         <div class="elCtn">
-                          <el-input v-model="itemChild.number"
-                            placeholder="打样数量">
+                          <el-input :ref="'number'+ '-'+index+'-'+indexChild"
+                            :class="{'error':mustFlag&&!itemChild.number}"
+                            v-model="itemChild.number"
+                            placeholder="打样数量"
+                            @keydown.native="$focusByKeydown($event,'number',[index,indexChild],sampleOrderInfo.time_data.batch_data[0],['product_data','product_info'])">
+                          </el-input>
+                        </div>
+                      </div>
+                      <div class="tcol"
+                        style="flex:0.6">
+                        <div class="elCtn">
+                          <el-input :ref="'sample_number'+ '-'+index+'-'+indexChild"
+                            v-model="itemChild.sample_number"
+                            placeholder="送样数量"
+                            @input="(ev)=>{itemChild.keep_number=Number(itemChild.number)-Number(ev)}"
+                            @keydown.native="$focusByKeydown($event,'sample_number',[index,indexChild],sampleOrderInfo.time_data.batch_data[0],['product_data','product_info'])">
+                          </el-input>
+                        </div>
+                      </div>
+                      <div class="tcol"
+                        style="flex:0.6">
+                        <div class="elCtn">
+                          <el-input :ref="'keep_number'+ '-'+index+'-'+indexChild"
+                            v-model="itemChild.keep_number"
+                            placeholder="留底数量"
+                            @input="(ev)=>{itemChild.sample_number=Number(itemChild.number)-Number(ev)}"
+                            @keydown.native="$focusByKeydown($event,'keep_number',[index,indexChild],sampleOrderInfo.time_data.batch_data[0],['product_data','product_info'])">
                           </el-input>
                         </div>
                       </div>
@@ -1380,6 +1411,8 @@
                         style="justify-content: flex-start;">
                         <div class="opr hoverBlue"
                           @click="$addItem(item.product_info,{
+                            sample_number:'',
+                            keep_number:'',
                             ifNew:true,
                             size_color: '', // 用于下拉框选择尺码颜色
                             size_id: '',
@@ -2150,7 +2183,6 @@ export default Vue.extend({
       this.sampleOrderUpdateFlag = true
     },
     afterSampleUpdate(sample: SampleInfo) {
-      console.log('修改过了')
       this.init()
     },
     saveUpdate() {
@@ -2164,6 +2196,12 @@ export default Vue.extend({
           itemChild.color_id = itemChild.size_color.split('/')[1]
         })
       })
+      // @ts-ignore
+      formData.time_data.total_style = this.totalStyle
+      // @ts-ignore
+      formData.time_data.total_number = this.totalNumber
+      // @ts-ignore
+      formData.time_data.total_price = this.totalPrice
       sampleOrder.create(formData).then((res) => {
         if (res.data.status) {
           this.$message.success('修改样单成功')

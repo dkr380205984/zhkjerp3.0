@@ -248,17 +248,29 @@ export default Vue.extend({
   methods: {
     // 把数字改成金额
     changeNumToPrice(val: string, index: number) {
-      const realNumStr = val.replace(/[^0-9]/gi, '')
-      const numStrArr = realNumStr.split('')
+      const realNumStr = val.replace(/[^\d.]/g, '')
+      const numStrArr = realNumStr.split('.')
+      let zhengshu = ''
+      let xiaoshu = ''
+      if (numStrArr.length > 2) {
+        this.collectionInfo.data[index].hanPrice = '请输入正确数字'
+        return
+      } else if (numStrArr.length === 2) {
+        zhengshu = numStrArr[0]
+        xiaoshu = numStrArr[1]
+      } else {
+        zhengshu = numStrArr[0]
+      }
+      const zhengshuArr = zhengshu.split('')
       this.paymentInfo.data[index].hanPrice = this.$changeNumToHan(Number(realNumStr))
-      const length = Number(numStrArr.length)
+      const length = Number(zhengshuArr.length)
       for (let i = length, j = 0; i > 0; i--) {
         j++
         if (j % 3 === 0 && i !== 1) {
-          numStrArr.splice(i - 1, 0, ',')
+          zhengshuArr.splice(i - 1, 0, ',')
         }
       }
-      this.paymentInfo.data[index].price = numStrArr.join('')
+      this.paymentInfo.data[index].price = zhengshuArr.join('') + (numStrArr.length === 2 ? '.' + xiaoshu : '')
     },
     close() {
       this.$emit('close')

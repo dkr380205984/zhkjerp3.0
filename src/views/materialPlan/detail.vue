@@ -600,11 +600,12 @@ export default Vue.extend({
         type: 'warning'
       })
         .then(() => {
-          const planInfo = this.materialPlanInfo.find((item) => item.id!.toString() === this.materialPlanIndex)
-          let arr = planInfo!.material_plan_data.filter((item) => item.check).map((item) => item.id)
+          let arr = this.materialPlanDetail.material_plan_data
+            .filter((item: any) => item.check)
+            .map((item: any) => item.id)
           // 没选就是全选
           if (arr.length === 0) {
-            arr = planInfo!.material_plan_data.map((item) => item.id)
+            arr = this.materialPlanDetail.material_plan_data.map((item: any) => item.id)
           }
           this.$openUrl('/materialPlan/print?id=' + this.materialPlanIndex + '&proId=' + JSON.stringify(arr))
         })

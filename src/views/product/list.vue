@@ -62,7 +62,8 @@
           <div class="btn borderBtn"
             @click="reset">重置</div>
         </div>
-        <div class="filterCtn">
+        <div class="filterCtn"
+          style="position:relative">
           <div class="elCtn"
             style="width:130px">
             <el-input placeholder="库存数量(最低)"
