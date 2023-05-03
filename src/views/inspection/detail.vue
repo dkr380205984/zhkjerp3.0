@@ -16,11 +16,10 @@
           <div class="tableCtn">
             <div class="thead">
               <div class="trow">
-                <div class="tcol">生产单号</div>
-                <div class="tcol">生产单位</div>
+                <div class="tcol">生产单号/单位</div>
                 <div class="tcol">计划完成</div>
                 <div class="tcol noPad"
-                  style="flex:5">
+                  style="flex:6">
                   <div class="trow">
                     <div class="tcol">产品信息</div>
                     <div class="tcol">尺码颜色</div>
@@ -38,17 +37,18 @@
                 :key="indexChild">
                 <div class="tcol">
                   <el-checkbox v-model="itemChild.checkAll"
-                    @change="(ev)=>{itemChild.product_info_data.forEach((itemPro)=>itemPro.check=ev);$forceUpdate();checkList()}">{{itemChild.code}}</el-checkbox>
-                </div>
-                <div class="tcol">
-                  <span>{{itemChild.client_name}}</span>
-                  <span>{{itemChild.process_name}}</span>
+                    @change="(ev)=>{itemChild.product_info_data.forEach((itemPro)=>itemPro.check=ev);$forceUpdate();checkList()}">
+                    <div>
+                      <div>{{itemChild.code}}</div>
+                      <div>{{itemChild.client_name}}</div>
+                    </div>
+                  </el-checkbox>
                 </div>
                 <div class="tcol">{{itemChild.end_time}}
                   <span :class="$diffByDate(itemChild.end_time)>0?'green':'red'">({{$diffByDate(itemChild.end_time)>0?'还剩'+$diffByDate(itemChild.end_time)+'天':'逾期'+Math.abs($diffByDate(itemChild.end_time))+'天'}})</span>
                 </div>
                 <div class="tcol noPad"
-                  style="flex:5">
+                  style="flex:6">
                   <div class="trow"
                     v-for="(itemPro,indexPro) in itemChild.product_info_data"
                     :key="indexPro">
@@ -68,7 +68,9 @@
                       <span class="blue">{{itemPro.number}}</span>
                     </div>
                     <div class="tcol">{{itemPro.real_number || 0}}</div>
-                    <div class="tcol green">{{itemPro.inspection_number}}</div>
+                    <div class="tcol green">{{itemPro.inspection_number}}
+                      <span :class="{'green':itemPro.inspection_number>=itemPro.number,'red':itemPro.inspection_number<itemPro.number}">[{{itemPro.inspection_number>=itemPro.number?'+':''}}{{itemPro.inspection_number-itemPro.number}}]</span>
+                    </div>
                   </div>
                 </div>
                 <div class="tcol oprCtn">
@@ -251,7 +253,7 @@
             <div class="col">操作</div>
           </div>
           <div class="row fontSmall"
-            v-for="item in inspectionList.filter((item)=>item.type===3)"
+            v-for="item in inspectionList3"
             :key="item.id">
             <div class="col green">成品入库</div>
             <div class="col">{{item.doc_code}}</div>
@@ -570,7 +572,9 @@
                     :key="indexChild">
                     <div class="tcol">{{itemChild.size_name}}/{{itemChild.color_name}}</div>
                     <div class="tcol">{{itemChild.number}}</div>
-                    <div class="tcol">{{itemChild.production_push_number}}</div>
+                    <div class="tcol">{{itemChild.production_push_number}}
+                      <span :class="{'green':itemChild.production_push_number>=itemChild.number,'red':itemChild.production_push_number<itemChild.number}">[{{itemChild.production_push_number>=itemChild.number?'+':''}}{{itemChild.production_push_number-itemChild.number}}]</span>
+                    </div>
                     <div class="tcol">
                       <div class="elCtn">
                         <el-input v-model="itemChild.inNum"

@@ -1563,8 +1563,7 @@
                   <span class="explanation">(默认)</span>
                 </div>
                 <div class="info elCtn">
-                  <el-input disabled
-                    v-model="itemPro.product_code"></el-input>
+                  <div style="background-color: #F5F7FA;border-color: #E4E7ED;color: #C0C4CC;cursor: not-allowed;line-height:32px;padding:0 8px;border-radius:4px;font-size:14px">{{itemPro.product_code}}/{{itemPro.size_name}}/{{itemPro.color_name}}</div>
                 </div>
               </div>
               <div class="col">

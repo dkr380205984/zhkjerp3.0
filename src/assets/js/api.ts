@@ -587,6 +587,7 @@ const quotedPrice = {
   deleteInspection: (params: DeleteParams) => http.post(`${baseUrl}/quote/product/production/delete`, params, 'application/json'), // 删除报价单产品成品加工项
   deletePack: (params: DeleteParams) => http.post(`${baseUrl}/quote/product/pack/material/delete`, params, 'application/json'), // 删除报价单产品包装辅料项
   deleteOther: (params: DeleteParams) => http.post(`${baseUrl}/quote/product/others/fee/delete`, params, 'application/json'), // 额外费用
+  deleteNoProduction: (params: DeleteParams) => http.post(`${baseUrl}/quote/product/no/production/fee/delete`, params, 'application/json'), // 非生产型费用
   oprLog: (params: DetailParams) => http.get(`${baseUrl}/quote/activity/logs`, params), // 操作记录
   descCreate: (params: { name?: string, type: string, desc: string, category_id: string | number }) => http.post(`${baseUrl}/quote/explain/save`, params, 'application/json'),
   descDetail: (params: any) => http.get(`${baseUrl}/quote/explain/detail`, params),

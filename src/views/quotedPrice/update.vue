@@ -915,7 +915,7 @@
                 })">添加</div>
               <div class="opr hoverRed"
                 v-else
-                @click="$deleteItem(item.no_production_fee_data,indexOther)">删除</div>
+                @click="deleteInfo(item.no_production_fee_data,itemNoPro,indexNoPro,'deleteNoProduction')">删除</div>
             </div>
             <div class="row">
               <div class="col flex3">
@@ -1434,7 +1434,9 @@ export default Vue.extend({
           )
           this.quotedPriceInfo.product_data[this.productIndex].other_fee_data = JSON.parse(finded.others_fee_data)
           this.quotedPriceInfo.product_data[this.productIndex].transport_fee = JSON.parse(finded.transport_fee)
-          this.quotedPriceInfo.product_data[this.productIndex].no_production_fee_data = JSON.parse(finded.no_production_fee_data)
+          this.quotedPriceInfo.product_data[this.productIndex].no_production_fee_data = JSON.parse(
+            finded.no_production_fee_data
+          )
           this.$message.success('导入成功')
         })
         .catch((err) => {
@@ -1949,6 +1951,7 @@ export default Vue.extend({
         | 'deleteInspection'
         | 'deletePack'
         | 'deleteOther'
+        | 'deleteNoProduction'
     ) {
       if (!info.id) {
         arr.splice(index, 1)

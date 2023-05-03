@@ -535,6 +535,7 @@
                   <div class="info elCtn">
                     <el-select :class="{'error':mustFlag&&!itemMat.material_id}"
                       placeholder="请选择物料名称"
+                      filterable
                       v-model="itemMat.material_id"
                       @change="getUnit($event,itemMat)">
                       <el-option v-for="item in decorateMaterialList"
@@ -770,7 +771,8 @@
                       <el-select :class="{'error':mustFlag&&!itemMat.material_id}"
                         placeholder="请选择物料名称"
                         v-model="itemMat.material_id"
-                        @change="getUnit($event,itemMat)">
+                        @change="getUnit($event,itemMat)"
+                        filterable>
                         <el-option v-for="item in decorateMaterialList"
                           :key="item.id"
                           :value="item.id"
