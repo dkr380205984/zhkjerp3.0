@@ -2354,7 +2354,6 @@
                     </div>
                   </div>
                 </div>
-             
                 <div class="row">
                   <div class="col">
                     <div class="label">通知对象与通知途径(必填)</div>
@@ -2466,6 +2465,20 @@
                 </div>
               </div>
               <template v-if="materialOrderCheckConfig.data.check_notice_condition === 3">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知单据(必填)</div>
+                    <div class="info elCtn"
+                      style="margin-top: 12px">
+                      <el-checkbox v-model="materialOrderCheckConfig.data.open_order"
+                        :true-label="1"
+                        :false-label="2">通知订单</el-checkbox>
+                      <el-checkbox v-model="materialOrderCheckConfig.data.open_sample_order"
+                        :true-label="1"
+                        :false-label="2">通知样单</el-checkbox>
+                    </div>
+                  </div>
+                </div>
                 <div class="row">
                   <div class="col">
                     <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
@@ -2754,6 +2767,20 @@
               <template v-if="materialProcessCheckConfig.data.check_notice_condition === 3">
                 <div class="row">
                   <div class="col">
+                    <div class="label">通知单据(必填)</div>
+                    <div class="info elCtn"
+                      style="margin-top: 12px">
+                      <el-checkbox v-model="materialProcessCheckConfig.data.open_order"
+                        :true-label="1"
+                        :false-label="2">通知订单</el-checkbox>
+                      <el-checkbox v-model="materialProcessCheckConfig.data.open_sample_order"
+                        :true-label="1"
+                        :false-label="2">通知样单</el-checkbox>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
                     <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
                     <div class="info elCtn">
                       <el-select placeholder="请选择创建人"
@@ -3016,6 +3043,20 @@
               <template v-if="materialStockCheckConfig.data.check_notice_condition === 3">
                 <div class="row">
                   <div class="col">
+                    <div class="label">通知单据(必填)</div>
+                    <div class="info elCtn"
+                      style="margin-top: 12px">
+                      <el-checkbox v-model="materialStockCheckConfig.data.open_order"
+                        :true-label="1"
+                        :false-label="2">通知订单</el-checkbox>
+                      <el-checkbox v-model="materialStockCheckConfig.data.open_sample_order"
+                        :true-label="1"
+                        :false-label="2">通知样单</el-checkbox>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
                     <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
                     <div class="info elCtn">
                       <el-select placeholder="请选择创建人"
@@ -3209,6 +3250,20 @@
               <template v-if="accessoriesOrderCheckConfig.data.check_notice_condition === 3">
                 <div class="row">
                   <div class="col">
+                    <div class="label">通知单据(必填)</div>
+                    <div class="info elCtn"
+                      style="margin-top: 12px">
+                      <el-checkbox v-model="accessoriesOrderCheckConfig.data.open_order"
+                        :true-label="1"
+                        :false-label="2">通知订单</el-checkbox>
+                      <el-checkbox v-model="accessoriesOrderCheckConfig.data.open_sample_order"
+                        :true-label="1"
+                        :false-label="2">通知样单</el-checkbox>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
                     <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
                     <div class="info elCtn">
                       <el-select placeholder="请选择创建人"
@@ -3358,6 +3413,20 @@
               <template v-if="productionPlanCheckConfig.data.check_notice_condition === 3">
                 <div class="row">
                   <div class="col">
+                    <div class="label">通知单据(必填)</div>
+                    <div class="info elCtn"
+                      style="margin-top: 12px">
+                      <el-checkbox v-model="productionPlanCheckConfig.data.open_order"
+                        :true-label="1"
+                        :false-label="2">通知订单</el-checkbox>
+                      <el-checkbox v-model="productionPlanCheckConfig.data.open_sample_order"
+                        :true-label="1"
+                        :false-label="2">通知样单</el-checkbox>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
                     <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
                     <div class="info elCtn">
                       <el-select placeholder="请选择创建人"
@@ -3432,7 +3501,7 @@
                     </div>
                   </div>
                 </div>
-             
+
                 <div class="row">
                   <div class="col">
                     <div class="label">通知对象与通知途径(必填)</div>
@@ -3789,6 +3858,20 @@
                 </div>
               </div>
               <template v-if="gongziCheckConfig.data.check_notice_condition === 3">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">通知单据(必填)</div>
+                    <div class="info elCtn"
+                      style="margin-top: 12px">
+                      <el-checkbox v-model="gongziCheckConfig.data.open_order"
+                        :true-label="1"
+                        :false-label="2">通知订单</el-checkbox>
+                      <el-checkbox v-model="gongziCheckConfig.data.open_sample_order"
+                        :true-label="1"
+                        :false-label="2">通知样单</el-checkbox>
+                    </div>
+                  </div>
+                </div>
                 <div class="row">
                   <div class="col">
                     <div class="label">请选择可以自动审核通过的创建人（可多选）：</div>
@@ -6865,6 +6948,8 @@ export default Vue.extend({
       materialPlanCheckConfig: {
         doc_type: 9,
         data: {
+          open_order: 1,
+          open_sample_order: 1,
           update_notice_condition: 1,
           update_notice_for_wechat: '2',
           check_notice_condition: 2,
@@ -6884,6 +6969,8 @@ export default Vue.extend({
       materialOrderCheckConfig: {
         doc_type: 2,
         data: {
+          open_order: 1,
+          open_sample_order: 1,
           update_notice_condition: 1,
           update_notice_for_wechat: '2',
           check_notice_condition: 2,
@@ -6911,6 +6998,8 @@ export default Vue.extend({
       materialProcessCheckConfig: {
         doc_type: 3,
         data: {
+          open_order: 1,
+          open_sample_order: 1,
           beyond_price_notice_condition: 1,
           beyond_price_notice_user: [
             {
@@ -6942,6 +7031,8 @@ export default Vue.extend({
       materialStockCheckConfig: {
         doc_type: 6,
         data: {
+          open_order: 1,
+          open_sample_order: 1,
           update_notice_condition: 1,
           update_notice_for_wechat: '2',
           check_notice_condition: 2,
@@ -6966,6 +7057,8 @@ export default Vue.extend({
       accessoriesOrderCheckConfig: {
         doc_type: 18,
         data: {
+          open_order: 1,
+          open_sample_order: 1,
           update_notice_condition: 1,
           update_notice_for_wechat: '2',
           check_notice_condition: 2,
@@ -6984,6 +7077,8 @@ export default Vue.extend({
       productionPlanCheckConfig: {
         doc_type: 4,
         data: {
+          open_order: 1,
+          open_sample_order: 1,
           beyond_price_notice_condition: 1,
           beyond_price_notice_user: [
             {
@@ -7040,6 +7135,8 @@ export default Vue.extend({
       gongziCheckConfig: {
         doc_type: 14,
         data: {
+          open_order: 1,
+          open_sample_order: 1,
           beyond_price_notice_condition: 1,
           check_notice_condition: 2,
           check_notice_user: [
