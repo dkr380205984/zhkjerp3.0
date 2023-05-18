@@ -17,11 +17,8 @@
           <el-table-column prop="process_name" label="工序"> </el-table-column>
           <el-table-column prop="staff_name" label="订单号" width="140">
             <template slot-scope="scope">
-              <div
-                class="blue"
-                style="cursor: pointer"
-                @click="$router.push('/workshopManagement/detail?id=' + scope.row.order_id)"
-              >
+              <div class="blue" style="cursor: pointer"
+                @click="$router.push('/workshopManagement/detail?id=' + scope.row.order_id)">
                 {{ scope.row.order_code }}
               </div>
             </template>
@@ -34,44 +31,27 @@
           </el-table-column>
           <el-table-column prop="number" label="完成数量" width="120">
             <template slot-scope="scope">
-              <zh-input
-                v-model="scope.row.number"
-                placeholder="请输入完成数量"
-                :keyBoard="keyBoard"
-                type="number"
-              ></zh-input>
+              <zh-input v-model="scope.row.number" placeholder="请输入完成数量" :keyBoard="keyBoard" type="number"></zh-input>
             </template>
           </el-table-column>
           <el-table-column prop="extra_number" label="额外数量" width="120">
             <template slot-scope="scope">
-              <zh-input
-                v-model="scope.row.extra_number"
-                placeholder="请输额外数量"
-                :keyBoard="keyBoard"
-                type="number"
-              ></zh-input>
+              <zh-input v-model="scope.row.extra_number" placeholder="请输额外数量" :keyBoard="keyBoard"
+                type="number"></zh-input>
             </template>
           </el-table-column>
           <el-table-column prop="shoddy_number" label="次品数量" width="120">
             <template slot-scope="scope">
-              <zh-input
-                v-model="scope.row.shoddy_number"
-                placeholder="请输次品数量"
-                :keyBoard="keyBoard"
-                type="number"
-              ></zh-input>
+              <zh-input v-model="scope.row.shoddy_number" placeholder="请输次品数量" :keyBoard="keyBoard"
+                type="number"></zh-input>
             </template>
           </el-table-column>
           <el-table-column label="工序说明" width="120">
             <template slot-scope="scope">
-              <el-tooltip
-                class="item"
-                effect="dark"
-                :content="scope.row.process_desc || '无工序说明'"
-                placement="top-start"
-              >
+              <div>{{ scope.row.process_desc || '无工序说明' }}</div>
+              <!-- <el-tooltip class="item" effect="dark" :content="scope.row.process_desc || '无工序说明'" placement="top-start">
                 <span class="blue" style="cursor: pointer">查看</span>
-              </el-tooltip>
+              </el-tooltip> -->
             </template>
           </el-table-column>
           <el-table-column label="审核状态" width="120">
@@ -84,27 +64,20 @@
           <el-table-column prop="user_name" label="操作人" width="110"> </el-table-column>
           <el-table-column label="次品原因" width="120">
             <template slot-scope="scope">
-              <el-select
-                style="height: 32px !important"
-                v-model="scope.row.shoddy_reason"
-                multiple
-                filterable
-                allow-create
-                default-first-option
-                collapse-tags
-                placeholder="请选择次品原因"
-              >
-                <el-option
-                  v-for="item in substandardReason"
-                  :key="item.value + 'ciPinReason'"
-                  :label="item.label"
-                  :value="item.value"
-                >
+              <el-select style="height: 32px !important" v-model="scope.row.shoddy_reason" multiple filterable
+                allow-create default-first-option collapse-tags placeholder="请选择次品原因">
+                <el-option v-for="item in substandardReason" :key="item.value + 'ciPinReason'" :label="item.label"
+                  :value="item.value">
                 </el-option>
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column prop="price" label="结算单价(元/件)" fixed="right" width="150"> </el-table-column>
+          <el-table-column prop="price" label="结算单价(元/件)" fixed="right" width="150">
+            <template slot-scope="scope">
+              <zh-input v-model="scope.row.price" placeholder="请输结算单价" :keyBoard="keyBoard"
+                type="number"></zh-input>
+            </template>
+          </el-table-column>
           <el-table-column label="结算总价(元)" fixed="right" width="120">
             <template slot-scope="scope">
               <div>
@@ -127,52 +100,36 @@
           <el-table-column prop="process_name" label="生产工序" width="110" fixed> </el-table-column>
           <el-table-column label="工序说明" width="110" fixed>
             <template slot-scope="scope">
-              <el-tooltip
-                class="item"
-                effect="dark"
-                :content="scope.row.process_desc || '无工序说明'"
-                placement="top-start"
-              >
+              <div>{{ scope.row.process_desc || '无工序说明' }}</div>
+              <!-- <el-tooltip class="item" effect="dark" :content="scope.row.process_desc || '无工序说明'" placement="top-start">
                 <span class="blue" style="cursor: pointer">查看</span>
-              </el-tooltip>
+              </el-tooltip> -->
             </template>
           </el-table-column>
-          <el-table-column prop="price" label="计时方式" width="140">
+          <el-table-column prop="price" label="计价方式" width="140">
             <template slot-scope="scope">
               <el-select v-model="scope.row.time_type" placeholder="请选择" style="height: 32px !important">
-                <el-option label="按小时计时" value="1"> </el-option>
-                <el-option label="按天计时" value="2"> </el-option>
+                <el-option label="按小时计价" value="1"> </el-option>
+                <el-option label="按天计价" value="2"> </el-option>
+                <el-option label="按件计价" value="3"> </el-option>
               </el-select>
             </template>
           </el-table-column>
           <el-table-column prop="price" label="结算单价" width="110">
             <template slot-scope="scope">
-              <zh-input
-                v-model="scope.row.price"
-                placeholder="请输入单价"
-                :keyBoard="keyBoard"
-                type="number"
-              ></zh-input>
+              <zh-input v-model="scope.row.price" placeholder="请输入单价" :keyBoard="keyBoard" type="number"></zh-input>
             </template>
           </el-table-column>
-          <el-table-column label="时长" width="120">
+          <el-table-column label="时长/件数" width="120">
             <template slot-scope="scope">
-              <zh-input
-                v-model="scope.row.time_count"
-                placeholder="请输入时长"
-                :keyBoard="keyBoard"
-                type="number"
-              ></zh-input>
+              <zh-input v-model="scope.row.time_count" placeholder="请输入时长/件数" :keyBoard="keyBoard"
+                type="number"></zh-input>
             </template>
           </el-table-column>
           <el-table-column label="所属小组" width="120">
             <template slot-scope="scope">
               <div class="elCtn">
-                <el-select
-                  v-model="scope.row.group_id"
-                  placeholder="所属小组"
-                  clearable
-                >
+                <el-select v-model="scope.row.group_id" placeholder="所属小组" clearable>
                   <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
                 </el-select>
               </div>
@@ -332,13 +289,13 @@ export default Vue.extend({
       }
       this.$router.push(
         '/workshopManagement/staffInputDetail?page=' +
-          (this.page || 1) +
-          '&month=' +
-          this.month +
-          '&ids=' +
-          this.ids +
-          '&type=' +
-          this.type
+        (this.page || 1) +
+        '&month=' +
+        this.month +
+        '&ids=' +
+        this.ids +
+        '&type=' +
+        this.type
       )
     }
   },

@@ -41,9 +41,9 @@
               <div class="trow">
                 <div class="tcol bgGray titleFix">生产工序</div>
                 <div class="tcol bgGray titleFix">工序说明</div>
-                <div class="tcol bgGray titleFix">计时方式</div>
+                <div class="tcol bgGray titleFix">计价方式</div>
                 <div class="tcol bgGray titleFix">单价</div>
-                <div class="tcol bgGray titleFix">时长</div>
+                <div class="tcol bgGray titleFix">时长/件数</div>
                 <div class="tcol bgGray titleFix">总价(元)</div>
                 <div class="tcol bgGray titleFix">所属小组</div>
                 <div class="tcol bgGray titleFix">备注</div>
@@ -108,8 +108,9 @@
                       process.is_check = true
                     "
                   >
-                    <el-option label="按小时计时" :value="1"> </el-option>
-                    <el-option label="按天计时" :value="2"> </el-option>
+                    <el-option label="按小时计价" :value="1"> </el-option>
+                    <el-option label="按天计价" :value="2"> </el-option>
+                    <el-option label="按件计价" :value="3"> </el-option>
                   </el-select>
                 </div>
                 <div class="tcol">
@@ -129,7 +130,7 @@
                   <zh-input
                     v-model="process.time_count"
                     :ref="'time_count-' + staffIndex + '-' + processIndex"
-                    placeholder="请输入时长"
+                    placeholder="请输入时长/件数"
                     :keyBoard="keyBoard"
                     @keydown.native="
                       focusByKeydown($event, 'time_count', [staffIndex, processIndex], staff, [
@@ -286,7 +287,7 @@
               <el-checkbox label="price">结算单价</el-checkbox>
             </el-dropdown-item>
             <el-dropdown-item>
-              <el-checkbox label="time_count">时长</el-checkbox>
+              <el-checkbox label="time_count">时长/件数</el-checkbox>
             </el-dropdown-item>
             <el-dropdown-item>
               <el-checkbox label="total_price">总价</el-checkbox>
@@ -975,7 +976,7 @@ export default Vue.extend({
           this.list[this.copyLine[0]].processInfo[this.copyLine[1]].price
       }
 
-      // 复制时长
+      // 复制时长/件数
       if (strCopyOption.indexOf('time_count') != -1) {
         this.list[staffIndex].processInfo[processIndex].time_count =
           this.list[this.copyLine[0]].processInfo[this.copyLine[1]].time_count

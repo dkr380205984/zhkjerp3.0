@@ -13,7 +13,7 @@
         <div class="tab" @click="$router.push('/billingManagement/productionPlan')">生产计划单</div>
         <div class="tab" @click="$router.push('/billingManagement/inspectionReceiptDocument')">检验入库单据</div>
         <div class="tab" @click="$router.push('/billingManagement/workshopSettlementLog')">结算日志-计件</div>
-        <div class="tab" @click="$router.push('/billingManagement/workshopPayTimeLog')">结算日志-计时</div>
+        <div class="tab" @click="$router.push('/billingManagement/workshopPayTimeLog')">结算日志-其它</div>
         <div class="tab" @click="$router.push('/billingManagement/auxiliaryMaterialPurchaseOrder')">辅料订购单</div>
         <div class="tab" @click="$router.push('/billingManagement/packingOrder')">包装订购单</div>
         <div class="tab active">运输出库单</div>

@@ -1234,9 +1234,9 @@ const workshop = {
     staff_id?: string | number
     user_id?: string | number
     group_id?: string | number
-    start_time?: string
+    start_time?: any
     time_type?: string | number
-    end_time?: string
+    end_time?: any
     process_name?: string
     process?: string
     limit?: number
