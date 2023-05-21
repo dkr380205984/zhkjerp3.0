@@ -1028,7 +1028,7 @@
                 })">添加</div>
               <div class="opr hoverRed"
                 v-else
-                @click="$deleteItem(item.no_production_fee_data,indexOther)">删除</div>
+                @click="$deleteItem(item.no_production_fee_data,indexNoPro)">删除</div>
             </div>
             <div class="row">
               <div class="col flex3">
@@ -1607,7 +1607,9 @@ export default Vue.extend({
       this.quotedPriceInfo.product_data[this.productIndex].pack_material_data = JSON.parse(finded.pack_material_data)
       this.quotedPriceInfo.product_data[this.productIndex].other_fee_data = JSON.parse(finded.others_fee_data)
       this.quotedPriceInfo.product_data[this.productIndex].transport_fee = JSON.parse(finded.transport_fee)
-      this.quotedPriceInfo.product_data[this.productIndex].no_production_fee_data = JSON.parse(finded.no_production_fee_data)
+      this.quotedPriceInfo.product_data[this.productIndex].no_production_fee_data = JSON.parse(
+        finded.no_production_fee_data
+      )
       // this.quotedPriceInfo.product_data[this.productIndex].other_fee_data = JSON.parse(finded.other_fee_data)
     },
     addPro() {
@@ -2094,7 +2096,7 @@ export default Vue.extend({
     getUpdateInfo(type: string) {
       this.quotedPriceInfo.product_data.forEach((item) => {
         // 如果是赋值报价单进来的，就不让他进行修改原料的价格
-        if (type !== 'iscopy'){
+        if (type !== 'iscopy') {
           item.material_data.forEach((item) => {
             // @ts-ignore
             this.getYarnPrice(item.tree_data.split(','), item)

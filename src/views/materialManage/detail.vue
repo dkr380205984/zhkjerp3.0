@@ -647,7 +647,11 @@
                 <div class="tcol">{{ itemChild.attribute }}</div>
                 <div class="tcol">{{ itemChild.batch_code }}/{{ itemChild.vat_code }}/{{ itemChild.color_code }}</div>
                 <div class="tcol">{{ $toFixed(itemChild.number, 3, true) }}{{ itemChild.unit }}</div>
-                <div class="tcol">{{ itemChild.price || 0 }}元</div>
+                <div class="tcol">{{ itemChild.price || 0 }}元
+                  <span class="orange"
+                    style="cursor:pointer"
+                    @click="updatePrice(itemChild)">修改</span>
+                </div>
                 <div class="tcol">{{ $toFixed(itemChild.price * itemChild.number, 3, true) }}元</div>
               </div>
             </div>
@@ -2574,7 +2578,8 @@ import {
   materialStock,
   materialSupplement,
   quotedPrice,
-  checkBeyond
+  checkBeyond,
+  updateStorePrice
 } from '@/assets/js/api'
 import { CascaderInfo } from '@/types/vuex'
 import { yarnAttributeArr, yarnProcessArr } from '@/assets/js/dictionary'
@@ -2845,6 +2850,34 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 单独修改调取单价
+    updatePrice(data: any) {
+      this.$prompt('请输入要修改的调取单价', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      })
+        .then((val: any) => {
+          updateStorePrice({
+            data: [
+              {
+                id: data.id,
+                price: Number(val.value)
+              }
+            ]
+          }).then((res) => {
+            if (res.data.status) {
+              this.$message.success('修改成功')
+              data.price = val.value
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消修改'
+          })
+        })
+    },
     // 选取物料本来应该在computed里面，因为不触发更新拿到methods里每次获取强致重新计算
     checkMaterialOrderList(): MaterialPlanGatherData[] {
       return this.planShaXianList

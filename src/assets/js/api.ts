@@ -59,9 +59,10 @@ const systemMessage = (params?: { start_time: string, end_time: string }) => htt
 // 修改结算单价
 const updateSettlePrice = (params: any) => http.post(`${baseUrl}/update/settle/price`, params, 'application/json')
 
-// 修改调取单价
+// 批量修改调取单价
 const updateStorePirce = (params: any) => http.post(`${baseUrl}/store/log/update/price`, params, 'application/json')
-
+// 单个修改调取单价
+const updateStorePrice = (params: any) => http.post(`${baseUrl}/update/log/info/price`, params, 'application/json')
 //工厂信息
 const companyInfo = {
   detail: () => http.get(`${baseUrl}/company/info`, {}),
@@ -1616,6 +1617,7 @@ export {
   invoice,
   updateSettlePrice,
   updateStorePirce,
+  updateStorePrice,
   lostEdit,
   chartsApi,
   processType,

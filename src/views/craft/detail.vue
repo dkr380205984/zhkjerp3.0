@@ -856,6 +856,7 @@
           v-show="selectColour!==-1">
           <span class="hoverBlue"
             style="position: absolute;
+              width:9em;
               left: 0px;
               top: -3em;
               cursor: pointer;

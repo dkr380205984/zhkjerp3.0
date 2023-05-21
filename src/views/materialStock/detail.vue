@@ -806,7 +806,7 @@
                 <div class="tcol">{{itemMat.number}}{{itemMat.unit}}</div>
                 <div class="tcol"
                   style="flex-direction:row;align-items:center;justify-content:start">{{itemMat.final_pop_number||0}}{{itemMat.unit||'kg'}}
-                  (<span :class="{'green':Number(itemMat.final_pop_number)>=Number(itemMat.number),'red':Number(itemMat.final_pop_number)<Number(itemMat.number)}">{{Number(itemMat.final_pop_number)>Number(itemMat.number)?'+':''}}{{Number(itemMat.final_pop_number)-Number(itemMat.number)}}{{itemMat.unit||'kg'}}</span>)
+                  (<span :class="{'green':Number(itemMat.final_pop_number)>=Number(itemMat.number),'red':Number(itemMat.final_pop_number)<Number(itemMat.number)}">{{Number(itemMat.final_pop_number)>Number(itemMat.number)?'+':''}}{{$toFixed(Number(itemMat.final_pop_number)-Number(itemMat.number))}}{{itemMat.unit||'kg'}}</span>)
                 </div>
                 <div class="tcol">暂无数据</div>
               </div>
