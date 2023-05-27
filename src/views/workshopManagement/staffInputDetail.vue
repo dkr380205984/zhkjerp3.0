@@ -4,7 +4,7 @@
       <div class="titleCtn">
         <div class="title">结算日志</div>
       </div>
-      <div class="tableCtn" v-if="$route.query.type == 1">
+      <div class="tableCtn" v-if="$route.query.type == '1'">
         <el-table :data="settlementLogList" tooltip-effect="dark" style="width: 100%">
           <el-table-column prop="id" label="序号" width="70" fixed></el-table-column>
           <el-table-column prop="created_at" label="添加时间" width="110" fixed> </el-table-column>
@@ -17,8 +17,11 @@
           <el-table-column prop="process_name" label="工序"> </el-table-column>
           <el-table-column prop="staff_name" label="订单号" width="140">
             <template slot-scope="scope">
-              <div class="blue" style="cursor: pointer"
-                @click="$router.push('/workshopManagement/detail?id=' + scope.row.order_id)">
+              <div
+                class="blue"
+                style="cursor: pointer"
+                @click="$router.push('/workshopManagement/detail?id=' + scope.row.order_id)"
+              >
                 {{ scope.row.order_code }}
               </div>
             </template>
@@ -31,19 +34,39 @@
           </el-table-column>
           <el-table-column prop="number" label="完成数量" width="120">
             <template slot-scope="scope">
-              <zh-input v-model="scope.row.number" placeholder="请输入完成数量" :keyBoard="keyBoard" type="number"></zh-input>
+              <zh-input
+                v-model="scope.row.number"
+                @input="changeAddi"
+                placeholder="请输入完成数量"
+                :keyBoard="keyBoard"
+                type="number"
+              ></zh-input>
             </template>
           </el-table-column>
           <el-table-column prop="extra_number" label="额外数量" width="120">
             <template slot-scope="scope">
-              <zh-input v-model="scope.row.extra_number" placeholder="请输额外数量" :keyBoard="keyBoard"
-                type="number"></zh-input>
+              <zh-input
+                v-model="scope.row.extra_number"
+                @input="changeAddi"
+                placeholder="请输额外数量"
+                :keyBoard="keyBoard"
+                type="number"
+              ></zh-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="total_number" label="总数" width="120">
+            <template slot-scope="scope">
+              <div>{{ scope.row.extra_number + scope.row.number }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="shoddy_number" label="次品数量" width="120">
             <template slot-scope="scope">
-              <zh-input v-model="scope.row.shoddy_number" placeholder="请输次品数量" :keyBoard="keyBoard"
-                type="number"></zh-input>
+              <zh-input
+                v-model="scope.row.shoddy_number"
+                placeholder="请输次品数量"
+                :keyBoard="keyBoard"
+                type="number"
+              ></zh-input>
             </template>
           </el-table-column>
           <el-table-column label="工序说明" width="120">
@@ -64,18 +87,35 @@
           <el-table-column prop="user_name" label="操作人" width="110"> </el-table-column>
           <el-table-column label="次品原因" width="120">
             <template slot-scope="scope">
-              <el-select style="height: 32px !important" v-model="scope.row.shoddy_reason" multiple filterable
-                allow-create default-first-option collapse-tags placeholder="请选择次品原因">
-                <el-option v-for="item in substandardReason" :key="item.value + 'ciPinReason'" :label="item.label"
-                  :value="item.value">
+              <el-select
+                style="height: 32px !important"
+                v-model="scope.row.shoddy_reason"
+                multiple
+                filterable
+                allow-create
+                default-first-option
+                collapse-tags
+                placeholder="请选择次品原因"
+              >
+                <el-option
+                  v-for="item in substandardReason"
+                  :key="item.value + 'ciPinReason'"
+                  :label="item.label"
+                  :value="item.value"
+                >
                 </el-option>
               </el-select>
             </template>
           </el-table-column>
           <el-table-column prop="price" label="结算单价(元/件)" fixed="right" width="150">
             <template slot-scope="scope">
-              <zh-input v-model="scope.row.price" placeholder="请输结算单价" :keyBoard="keyBoard"
-                type="number"></zh-input>
+              <zh-input
+                v-model="scope.row.price"
+                @input="changeAddi"
+                placeholder="请输结算单价"
+                :keyBoard="keyBoard"
+                type="number"
+              ></zh-input>
             </template>
           </el-table-column>
           <el-table-column label="结算总价(元)" fixed="right" width="120">
@@ -86,8 +126,31 @@
             </template>
           </el-table-column>
         </el-table>
+        <div
+          v-if="$route.query.type == '1'"
+          style="width: 55%; display: flex; justify-content: space-between; margin-left: 20px; margin-top: 20px; line-height: 2"
+        >
+          <span>
+            合计完成数量：
+            <span class="green" style="font-weight: bold">
+              {{ (additional.total_number / 10000).toFixed(2) }} 万件
+            </span>
+          </span>
+          <span>
+            合计额外数量：
+            <span class="green" style="font-weight: bold">
+              {{ (additional.total_extra_number / 10000).toFixed(2) }} 万件
+            </span>
+          </span>
+          <span>
+            合计结算金额：
+            <span class="green" style="font-weight: bold">
+              {{ (additional.total_price / 10000).toFixed(2) }} 万元
+            </span>
+          </span>
+        </div>
       </div>
-      <div class="tableCtn" v-if="$route.query.type == 2">
+      <div class="tableCtn" v-if="$route.query.type == '2'">
         <el-table :data="settlementLogList" tooltip-effect="dark" :row-key="rowKey" style="width: 100%">
           <el-table-column prop="id" label="序号" width="70" fixed></el-table-column>
           <el-table-column prop="staff_name" label="员工姓名" width="130" fixed>
@@ -117,13 +180,22 @@
           </el-table-column>
           <el-table-column prop="price" label="结算单价" width="110">
             <template slot-scope="scope">
-              <zh-input v-model="scope.row.price" placeholder="请输入单价" :keyBoard="keyBoard" type="number"></zh-input>
+              <zh-input
+                v-model="scope.row.price"
+                placeholder="请输入单价"
+                :keyBoard="keyBoard"
+                type="number"
+              ></zh-input>
             </template>
           </el-table-column>
           <el-table-column label="时长/件数" width="120">
             <template slot-scope="scope">
-              <zh-input v-model="scope.row.time_count" placeholder="请输入时长/件数" :keyBoard="keyBoard"
-                type="number"></zh-input>
+              <zh-input
+                v-model="scope.row.time_count"
+                placeholder="请输入时长/件数"
+                :keyBoard="keyBoard"
+                type="number"
+              ></zh-input>
             </template>
           </el-table-column>
           <el-table-column label="所属小组" width="120">
@@ -188,6 +260,7 @@ export default Vue.extend({
       loading: false,
       total: 0,
       page: 1,
+      additional: {},
       month: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
       settlementLogList: [],
       keyBoard: false,
@@ -247,10 +320,24 @@ export default Vue.extend({
         type: this.$route.query.type + ''
       }
 
-      workshop.list(params).then((res) => {
+      workshop.list(params).then(res => {
         this.settlementLogList = res.data.data
+        this.changeAddi()
         this.loading = false
       })
+    },
+    changeAddi() {
+      this.additional = {
+        total_price: this.settlementLogList.reduce((a: any, b: any) => {
+          return a + Number(b.number) * Number(b.price)
+        }, 0),
+        total_number: this.settlementLogList.reduce((a: any, b: any) => {
+          return a + Number(b.number)
+        }, 0),
+        total_extra_number: this.settlementLogList.reduce((a: any, b: any) => {
+          return a + Number(b.extra_number)
+        }, 0)
+      }
     },
     workSave() {
       if (this.type == 2) {
@@ -263,7 +350,7 @@ export default Vue.extend({
           item.total_price = (item.price || 0) * (item.number || 0)
         })
       }
-      workshop.save({ type: this.type, data: this.settlementLogList }).then((res) => {
+      workshop.save({ type: this.type, data: this.settlementLogList }).then(res => {
         if (res.data.status) {
           this.$message.success('提交成功')
           this.numberUpdate = false
@@ -289,13 +376,13 @@ export default Vue.extend({
       }
       this.$router.push(
         '/workshopManagement/staffInputDetail?page=' +
-        (this.page || 1) +
-        '&month=' +
-        this.month +
-        '&ids=' +
-        this.ids +
-        '&type=' +
-        this.type
+          (this.page || 1) +
+          '&month=' +
+          this.month +
+          '&ids=' +
+          this.ids +
+          '&type=' +
+          this.type
       )
     }
   },

@@ -217,7 +217,12 @@
                     style="cursor: pointer"
                     @click="
                       $addItem(staff.processInfo, {
-                        process_name: '',
+                        process_name: $getLocalStorage('process')
+                          ? [
+                              Number($getLocalStorage('process').split(',')[0]),
+                              $getLocalStorage('process').split(',')[1]
+                            ]
+                          : [],
                         process_type: '',
                         process_desc: '',
                         processDesc: [],
@@ -339,6 +344,7 @@
 import Vue from 'vue'
 import { workshop, staff, process } from '@/assets/js/api'
 import zhInput from '@/components/zhInput/zhInput.vue'
+import Quote from 'wangeditor/dist/menus/quote'
 export default Vue.extend({
   components: { zhInput },
   data(): {
@@ -364,7 +370,12 @@ export default Vue.extend({
           show: true,
           processInfo: [
             {
-              process_name: '',
+              process_name: this.$getLocalStorage('process')
+                ? [
+                    Number(this.$getLocalStorage('process').split(',')[0]),
+                    this.$getLocalStorage('process').split(',')[1]
+                  ]
+                : [],
               process_type: '',
               process_desc: '',
               group_id: '',
@@ -386,9 +397,14 @@ export default Vue.extend({
           show: true,
           processInfo: [
             {
-              process_name: '',
-              group_id: '',
+              process_name: this.$getLocalStorage('process')
+                ? [
+                    Number(this.$getLocalStorage('process').split(',')[0]),
+                    this.$getLocalStorage('process').split(',')[1]
+                  ]
+                : [],
               process_type: '',
+              group_id: '',
               process_desc: '',
               processDesc: [],
               time_type: 1,
@@ -438,19 +454,19 @@ export default Vue.extend({
         }
       }
 
-      process.list({ type: 2 }).then((res) => {
+      process.list({ type: 2 }).then(res => {
         res.data.data.forEach((item: any) => {
           this.processList[0].children.push({ label: item.name, value: item.name })
         })
       })
 
-      process.list({ type: 3 }).then((res) => {
+      process.list({ type: 3 }).then(res => {
         res.data.data.forEach((item: any) => {
           this.processList[1].children.push({ label: item.name, value: item.name })
         })
       })
 
-      workshop.list(params).then((res) => {
+      workshop.list(params).then(res => {
         this.settlementLogList = res.data.data.items
         this.additional = res.data.data.additional
         this.total = res.data.data.total
@@ -640,6 +656,10 @@ export default Vue.extend({
             return
           }
 
+          let process = this.$getLocalStorage('process') ? this.$getLocalStorage('process').split(',') : []
+          // @ts-ignore
+          process = process.length > 0 ? [Number(process[0]), process[1]] : process
+
           this.list.push({
             staffName: staffInfo.name,
             staffId: ['', staffId],
@@ -647,7 +667,7 @@ export default Vue.extend({
             show: true,
             processInfo: [
               {
-                process_name: '',
+                process_name: process,
                 process_type: '',
                 group_id: '',
                 process_desc: '',
@@ -674,6 +694,9 @@ export default Vue.extend({
           }
         })
       } else {
+        let process = this.$getLocalStorage('process') ? this.$getLocalStorage('process').split(',') : []
+        // @ts-ignore
+        process = process.length > 0 ? [Number(process[0]), process[1]] : process
         this.list = [
           {
             staffName: '',
@@ -682,7 +705,7 @@ export default Vue.extend({
             show: true,
             processInfo: [
               {
-                process_name: '',
+                process_name: process,
                 process_type: '',
                 process_desc: '',
                 group_id: '',
@@ -738,6 +761,9 @@ export default Vue.extend({
       this.showDialog = false
     },
     addStaff() {
+      let process = this.$getLocalStorage('process') ? this.$getLocalStorage('process').split(',') : []
+      // @ts-ignore
+      process = process.length > 0 ? [Number(process[0]), process[1]] : process
       this.list.push({
         staffName: '',
         staffId: '',
@@ -745,7 +771,7 @@ export default Vue.extend({
         show: true,
         processInfo: [
           {
-            process_name: '',
+            process_name: process,
             process_type: '',
             process_desc: '',
             group_id: '',
@@ -769,14 +795,14 @@ export default Vue.extend({
         .departmentDetail({
           id: this.department
         })
-        .then((res) => {
+        .then(res => {
           this.departmentName = res.data.data.name
           staff
             .list({
               status: 1,
               department: res.data.data.name
             })
-            .then((res) => {
+            .then(res => {
               this.staffList = res.data.data
               this.processStaffList = this.$getProcessStaff(this.staffList)
             })
@@ -797,6 +823,10 @@ export default Vue.extend({
         let finder = this.list.find((item: any) => item.staffId[1] === id)
         if (finder === undefined) {
           let staffInfo = this.staffList.find((item: any) => item.id === id)
+          let process = this.$getLocalStorage('process') ? this.$getLocalStorage('process').split(',') : []
+          // @ts-ignore
+          process = process.length > 0 ? [Number(process[0]), process[1]] : process
+
           this.$addItem(this.list, {
             staffName: staffInfo.name,
             staffCode: staffInfo.code,
@@ -805,7 +835,7 @@ export default Vue.extend({
             show: true,
             processInfo: [
               {
-                process_name: '',
+                process_name: process,
                 process_type: '',
                 process_desc: '',
                 group_id: '',
@@ -854,9 +884,10 @@ export default Vue.extend({
         type: 2,
         data: []
       }
+      console.log(this.list)
 
       let emptyStaff = this.list.find((item: any) => {
-        return item.staffId === ''
+        return item.staffId === '' && item.show === true
       })
 
       if (emptyStaff) {
@@ -886,7 +917,7 @@ export default Vue.extend({
         })
       })
 
-      workshop.save(params).then((res) => {
+      workshop.save(params).then(res => {
         if (res.data.status) {
           this.$message.success('提交成功')
           this.numberUpdate = false
@@ -910,7 +941,7 @@ export default Vue.extend({
             if (staff.processInfo.length > 1) {
               this.$deleteItem(staff.processInfo, processIndex)
             } else {
-              let newArrays = this.list.filter(function (item: any) {
+              let newArrays = this.list.filter(function(item: any) {
                 return item.show
               })
               if (newArrays.length > 1) {
@@ -930,7 +961,7 @@ export default Vue.extend({
         if (staff.processInfo.length > 1) {
           this.$deleteItem(staff.processInfo, processIndex)
         } else {
-          let newArrays = this.list.filter(function (item: any) {
+          let newArrays = this.list.filter(function(item: any) {
             return item.show
           })
           if (newArrays.length > 1) {
@@ -948,50 +979,58 @@ export default Vue.extend({
 
       // 复制工序
       if (strCopyOption.indexOf('process') != -1) {
-        this.list[staffIndex].processInfo[processIndex].process_name =
-          this.list[this.copyLine[0]].processInfo[this.copyLine[1]].process_name
+        this.list[staffIndex].processInfo[processIndex].process_name = this.list[this.copyLine[0]].processInfo[
+          this.copyLine[1]
+        ].process_name
       }
-      
+
       // 复制所属员工
       if (strCopyOption.indexOf('group_id') != -1) {
-        this.list[staffIndex].processInfo[processIndex].group_id =
-          this.list[this.copyLine[0]].processInfo[this.copyLine[1]].group_id
+        this.list[staffIndex].processInfo[processIndex].group_id = this.list[this.copyLine[0]].processInfo[
+          this.copyLine[1]
+        ].group_id
       }
 
       // 复制工序说明
       if (strCopyOption.indexOf('proces_desc') != -1) {
-        this.list[staffIndex].processInfo[processIndex].process_desc =
-          this.list[this.copyLine[0]].processInfo[this.copyLine[1]].process_desc
+        this.list[staffIndex].processInfo[processIndex].process_desc = this.list[this.copyLine[0]].processInfo[
+          this.copyLine[1]
+        ].process_desc
       }
 
       // 复制计时方式
       if (strCopyOption.indexOf('time_type') != -1) {
-        this.list[staffIndex].processInfo[processIndex].time_type =
-          this.list[this.copyLine[0]].processInfo[this.copyLine[1]].time_type
+        this.list[staffIndex].processInfo[processIndex].time_type = this.list[this.copyLine[0]].processInfo[
+          this.copyLine[1]
+        ].time_type
       }
 
       // 复制单价
       if (strCopyOption.indexOf('price') != -1) {
-        this.list[staffIndex].processInfo[processIndex].price =
-          this.list[this.copyLine[0]].processInfo[this.copyLine[1]].price
+        this.list[staffIndex].processInfo[processIndex].price = this.list[this.copyLine[0]].processInfo[
+          this.copyLine[1]
+        ].price
       }
 
       // 复制时长/件数
       if (strCopyOption.indexOf('time_count') != -1) {
-        this.list[staffIndex].processInfo[processIndex].time_count =
-          this.list[this.copyLine[0]].processInfo[this.copyLine[1]].time_count
+        this.list[staffIndex].processInfo[processIndex].time_count = this.list[this.copyLine[0]].processInfo[
+          this.copyLine[1]
+        ].time_count
       }
 
       // 复制总价
       if (strCopyOption.indexOf('total_price') != -1) {
-        this.list[staffIndex].processInfo[processIndex].total_price =
-          this.list[this.copyLine[0]].processInfo[this.copyLine[1]].total_price
+        this.list[staffIndex].processInfo[processIndex].total_price = this.list[this.copyLine[0]].processInfo[
+          this.copyLine[1]
+        ].total_price
       }
 
       // 复制备注
       if (strCopyOption.indexOf('desc') != -1) {
-        this.list[staffIndex].processInfo[processIndex].desc =
-          this.list[this.copyLine[0]].processInfo[this.copyLine[1]].desc
+        this.list[staffIndex].processInfo[processIndex].desc = this.list[this.copyLine[0]].processInfo[
+          this.copyLine[1]
+        ].desc
       }
 
       this.isCopy = false
@@ -1003,7 +1042,7 @@ export default Vue.extend({
         .list({
           name: item.process_name[1]
         })
-        .then((res) => {
+        .then(res => {
           if (res.data.status) {
             let str = item.process_name[1]
             item.processDesc = []
@@ -1058,7 +1097,7 @@ export default Vue.extend({
           id: arr,
           is_check: 1
         })
-        .then((res) => {
+        .then(res => {
           if (res.data.status === true) {
             this.$message.success('审核成功')
             this.init()
@@ -1080,7 +1119,7 @@ export default Vue.extend({
         .delete({
           id: arr
         })
-        .then((res) => {
+        .then(res => {
           if (res.data.status === true) {
             this.$message.success('删除成功')
             this.init()
@@ -1112,7 +1151,7 @@ export default Vue.extend({
         keyword: '',
         limit: ''
       })
-      .then((res) => {
+      .then(res => {
         if (res.data.status) {
           this.departmentList = res.data.data
           this.departmentName = res.data.data.find((res: any) => {
@@ -1126,7 +1165,7 @@ export default Vue.extend({
             status: 1,
             department: this.departmentName
           })
-          .then((res) => {
+          .then(res => {
             this.staffList = res.data.data
             this.processStaffList = this.$getProcessStaff(this.staffList)
             // console.log(this.$getProcessStaff(this.staffList))
@@ -1152,6 +1191,7 @@ export default Vue.extend({
 
 <style lang="less">
 @import '~@/assets/css/workshopManagement/payTimeDetail.less';
+
 #payTimeDetail {
   .tcol {
     .el-input input {

@@ -5,6 +5,7 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   // 测试环境
   TARGET = 'https://knit.zwyknit.com'
+  // TARGET = 'https://knit-m-beta.zwyknit.com'
 }
 module.exports = {
   devServer: {

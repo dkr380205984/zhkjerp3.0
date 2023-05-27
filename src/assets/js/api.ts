@@ -1228,6 +1228,7 @@ const workshop = {
     order_id?: string | number
     is_check?: string | number
     code?: string
+    show_price_type?: 1 | 2
     ids?: Array<any>
     type?: string | number
     keyword?: string

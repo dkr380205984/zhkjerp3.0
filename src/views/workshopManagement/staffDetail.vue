@@ -97,7 +97,7 @@
             <div class="tcol bgGray titleFix">次品原因</div>
             <div class="tcol bgGray" style="min-width: 200px">操作</div>
           </div>
-          <div v-for="(settlementLog, settlementLogIndex) in     settlementLogList    "
+          <div v-for="(settlementLog, settlementLogIndex) in             settlementLogList            "
             :key="'process' + settlementLogIndex">
             <div class="trow" style="justify-content: start; border-bottom: 1px solid #e9e9e9" v-if="settlementLog.show">
               <div class="tcol" style="min-width: 101px; max-width: 101px">
@@ -153,7 +153,8 @@
                         </el-select>
                       </div>
                       <div class="tcol noPad">
-                        <div class="trow" v-for="(itemDetail, indexDetail) in     settlementLog.product_info    "
+                        <div class="trow"
+                          v-for="(itemDetail, indexDetail) in             settlementLog.product_info            "
                           :key="indexDetail + 'indexDetail'">
                           <div class="tcol titleFix">
                             <el-select v-if="!settlementLog.order_code" v-model="itemDetail.code" filterable remote
@@ -197,9 +198,10 @@
                           <div class="tcol" style="display: block; position: relative; min-width: 150px">
                             <el-select v-model="itemDetail.chooseId" placeholder="请选择尺码颜色"
                               @change="$forceUpdate()
-                                                                                                                                                                                settlementLog.is_check = true
-                                                                                                                                                                              ">
-                              <el-option v-for="(    colorItem, colorIndex    ) in     itemDetail.colorList    "
+                                                                                                                                                                                                                                                                                                                                                                                                                                settlementLog.is_check = true
+                                                                                                                                                                                                                                                                                                                                                                                                                              ">
+                              <el-option
+                                v-for="(            colorItem, colorIndex            ) in             itemDetail.colorList            "
                                 :key=" colorItem.size_id + ',' + colorItem.color_id + colorIndex "
                                 :label=" colorItem.name " :value=" colorItem.value ">
                               </el-option>
@@ -236,8 +238,8 @@
                             <el-select v-model=" itemDetail.shoddy_reason " multiple filterable allow-create
                               default-first-option collapse-tags placeholder="请选择次品原因"
                               @change=" settlementLog.is_check = true ">
-                              <el-option v-for="    item     in     substandardReason    " :key=" item.value + 'ciPinReason' "
-                                :label=" item.label " :value=" item.value ">
+                              <el-option v-for="            item             in             substandardReason            "
+                                :key=" item.value + 'ciPinReason' " :label=" item.label " :value=" item.value ">
                               </el-option>
                             </el-select>
                           </div>
@@ -324,13 +326,15 @@
                     <el-checkbox v-model=" checkAll " @change=" checkAllOrder "></el-checkbox>
                   </div>
                 </div>
-                <div class="trow" v-for="(    item, index    ) in     productionScheduleUpdate    "
+                <div class="trow"
+                  v-for="(            item, index            ) in             productionScheduleUpdate            "
                   :key=" index + 'productionScheduleUpdate' ">
 
                   <div class="tcol">{{ item.order_type == 1 ? '订单' : '样单' }}</div>
                   <div class="tcol">{{ item.code }}</div>
                   <div class="tcol noPad" style="flex: 10.3">
-                    <div class="trow" v-for="(    itemPro, indexPro    ) in     item.product_info    "
+                    <div class="trow"
+                      v-for="(            itemPro, indexPro            ) in             item.product_info            "
                       :key=" indexPro + 'pro' ">
                       <div class="tcol">{{ itemPro.product_code }}<br />{{ itemPro.category }}</div>
                       <div class="tcol">{{ itemPro.name }}</div>
@@ -342,16 +346,20 @@
                           style="width: 45px; height: 45px; padding: 10px 0"></el-image>
                       </div>
                       <div class="tcol noPad" style="flex: 5.34">
-                        <div class="trow" v-for="(    itemSizeColor, indexSizeColor    ) in     itemPro.colorSizeInfo    "
+                        <div class="trow"
+                          v-for="(            itemSizeColor, indexSizeColor            ) in             itemPro.colorSizeInfo            "
                           :key=" itemSizeColor.size_id + 'color' + indexSizeColor ">
-                          <div class="tcol" @click="itemSizeColor.check = !itemSizeColor.check">
+                          <div class="tcol" @click=" itemSizeColor.check = !itemSizeColor.check ">
                             {{ (itemSizeColor.size_name || '无数据') + '/' + (itemSizeColor.color_name || '无数据') }}
                           </div>
-                          <div class="tcol" @click="itemSizeColor.check = !itemSizeColor.check">
+                          <div class="tcol" @click=" itemSizeColor.check = !itemSizeColor.check ">
                             {{ (itemSizeColor.size_info || '无数据') + '/' + (itemSizeColor.weight || 0) }}
                           </div>
-                          <div class="tcol" @click="itemSizeColor.check = !itemSizeColor.check">{{ itemSizeColor.number }}</div>
-                          <div class="tcol" @click="itemSizeColor.check = !itemSizeColor.check">{{ itemSizeColor.inspection_number }}</div>
+                          <div class="tcol" @click=" itemSizeColor.check = !itemSizeColor.check ">{{ itemSizeColor.number
+                            }}
+                          </div>
+                          <div class="tcol" @click=" itemSizeColor.check = !itemSizeColor.check ">{{
+                            itemSizeColor.inspection_number }}</div>
                           <div class="tcol" style="flex: 0.2">
                             <el-checkbox v-model=" itemSizeColor.check "></el-checkbox>
                           </div>
@@ -386,8 +394,8 @@
     <el-dialog title="批量添加员工" width="70%" :visible.sync=" showDialog " :before-close=" closeDialog ">
       <div class="elCtn">
         <el-select v-model=" lostAddStaffChooseProcess " placeholder="请选择">
-          <el-option v-for="(    item, index    ) in     processStaffList    " :key=" item.value " :label=" item.label "
-            :value=" index ">
+          <el-option v-for="(            item, index            ) in             processStaffList            "
+            :key=" item.value " :label=" item.label " :value=" index ">
           </el-option>
         </el-select>
       </div>
@@ -396,7 +404,7 @@
       </div>
       <el-checkbox-group v-model=" staffIdList ">
         <el-checkbox style="width: calc(100% / 8); margin-top: 10px"
-          v-for="    item     in     processStaffList[lostAddStaffChooseProcess].children    "
+          v-for="            item             in             processStaffList[lostAddStaffChooseProcess].children            "
           @change=" changeMostStaff(item.id) " :key=" item.id + '添加员工' " :label=" item.id ">{{
           item.code.slice(item.code.length - 4) + '-' + item.name
           }}</el-checkbox>
@@ -490,7 +498,7 @@ export default Vue.extend({
         {
           productNameId: '',
           productId: '',
-          process: '',
+          process: this.$getLocalStorage('process') ? [Number(this.$getLocalStorage('process').split(',')[0]), this.$getLocalStorage('process').split(',')[1]] : [],
           process_desc: '',
           unitPrice: 0,
           order_type: 1,
@@ -544,13 +552,16 @@ export default Vue.extend({
     addSettlementLog(index: number, type: string) {
       let isOrder = type === 'order'
       let staffInfo = this.settlementLogList[index]
+      let process = this.$getLocalStorage('process') ? this.$getLocalStorage('process').split(',') : []
+      // @ts-ignore
+      process = process.length > 0 ? [Number(process[0]), process[1]] : process
       this.settlementLogList.splice(index + 1, 0, {
         staffName: staffInfo.name,
         staffCode: staffInfo.code,
         staffId: staffInfo.staffId,
         staff_id: staffInfo.staffId,
         show: true,
-        process: isOrder ? staffInfo.process : '',
+        process: isOrder ? staffInfo.process : process,
         processDesc: isOrder ? staffInfo.processDesc : [],
         process_desc: isOrder ? staffInfo.process_desc : [],
         order_code: '',
@@ -690,7 +701,7 @@ export default Vue.extend({
       })
       this.$forceUpdate()
     },
-    copyThis(staffIndex: any, index: any, orderIndex: any) {
+    copyThis(staffIndex?: any, index?: any, orderIndex?: any) {
       this.copyLine = [staffIndex, index, orderIndex]
       this.isCopy = true
     },
@@ -722,7 +733,7 @@ export default Vue.extend({
       this.selectStaffIdList = a
       this.$deleteItem(settlementLogList, settlementLogIndex)
     },
-    handleSelect(settlementLog: any, settlementLogIndex: number, type = 1, product_code = '') {
+    handleSelect(settlementLog: any, settlementLogIndex: number, type = 1, product_code = '', otherParam?: any) {
       this.loading = true
       if (this.isDone) return
 
@@ -1052,13 +1063,16 @@ export default Vue.extend({
       this.$forceUpdate()
     },
     addStaff() {
+      let process = this.$getLocalStorage('process') ? this.$getLocalStorage('process').split(',') : []
+      // @ts-ignore
+      process = process.length > 0 ? [Number(process[0]), process[1]] : process
       this.settlementLogList.push({
         staffName: '',
         staffCode: '',
         staffId: '',
         staff_id: '',
         show: true,
-        process: '',
+        process: process,
         order_code: '',
         product_info: [
           {
@@ -1148,13 +1162,16 @@ export default Vue.extend({
             return
           }
 
+          let process = this.$getLocalStorage('process') ? this.$getLocalStorage('process').split(',') : []
+          // @ts-ignore
+          process = process.length > 0 ? [Number(process[0]), process[1]] : process
           this.settlementLogList.push({
             staffName: staffInfo.name,
             staffCode: staffInfo.code,
             staffId: ['', staffId],
             staff_id: staffId,
             show: true,
-            process: '',
+            process: process,
             order_code: '',
             product_info: [
               {
@@ -1182,6 +1199,9 @@ export default Vue.extend({
           }
         })
       } else {
+        let process = this.$getLocalStorage('process') ? this.$getLocalStorage('process').split(',') : []
+        // @ts-ignore
+        process = process.length > 0 ? [Number(process[0]), process[1]] : process
         this.settlementLogList = [
           {
             staffName: '',
@@ -1189,7 +1209,7 @@ export default Vue.extend({
             staffId: '',
             staff_id: '',
             show: true,
-            process: '',
+            process: process,
             order_code: '',
             product_info: [
               {
@@ -1438,13 +1458,16 @@ export default Vue.extend({
         let finder = this.settlementLogList.find((item: any) => item.staffId === id)
         if (finder === undefined) {
           let staffInfo = this.staffList.find((item: any) => item.id === id)
+          let process = this.$getLocalStorage('process') ? this.$getLocalStorage('process').split(',') : []
+          // @ts-ignore
+          process = process.length > 0 ? [Number(process[0]), process[1]] : process
           this.$addItem(this.settlementLogList, {
             staffName: staffInfo.name,
             staffCode: staffInfo.code,
             staffId: id,
             staff_id: id,
             show: true,
-            process: '',
+            process: process,
             order_code: '',
             product_info: [
               {
@@ -1547,13 +1570,16 @@ export default Vue.extend({
     let arr1: any = []
 
     if (staffArr.length === 0) {
+      let process = this.$getLocalStorage('process') ? this.$getLocalStorage('process').split(',') : [0, '']
+      // @ts-ignore
+      process = process.length > 0 ? [Number(process[0]), process[1]] : process
       this.settlementLogList.push({
         staffName: '',
         staffCode: '',
         staffId: '',
         staff_id: '',
         show: true,
-        process: [0, ''],
+        process: process,
         order_code: '',
         product_info: [
           {
@@ -1594,13 +1620,16 @@ export default Vue.extend({
             ]
           })
         } else {
+          let process = this.$getLocalStorage('process') ? this.$getLocalStorage('process').split(',') : [0, '']
+          // @ts-ignore
+          process = process.length > 0 ? [Number(process[0]), process[1]] : process
           this.settlementLogList.push({
             staffName: staff.name,
             staffCode: staff.code,
             staffId: +staff.id,
             staff_id: +staff.id,
             show: true,
-            process: [0, ''],
+            process: [0, process],
             order_code: '',
             product_info: [
               {
@@ -1616,13 +1645,16 @@ export default Vue.extend({
           })
         }
       } else {
+        let process = this.$getLocalStorage('process') ? this.$getLocalStorage('process').split(',') : [0, '']
+        // @ts-ignore
+        process = process.length > 0 ? [Number(process[0]), process[1]] : process
         this.settlementLogList.push({
           staffName: staff.name,
           staffCode: staff.code,
           staffId: +staff.id,
           staff_id: +staff.id,
           show: true,
-          process: [0, ''],
+          process: process,
           order_code: '',
           product_info: [
             {
