@@ -635,8 +635,14 @@
         <div class="process">
           <div class="active"
             :style="{'width':(productionProgress.inspection>100?100:productionProgress.inspection)+'%'}"></div>
-          <span class="left">检验入库进度(此进度为本厂检验车间申报数量)</span>
+          <span class="left">半成品入库进度(此进度为本厂检验车间申报数量)</span>
           <span class="right">{{productionProgress.inspection}}%</span>
+        </div>
+        <div class="process">
+          <div class="active"
+            :style="{'width':(productionProgress.production_inspection>100?100:productionProgress.production_inspection)+'%'}"></div>
+          <span class="left">成品入库进度(此进度为本厂收发申报数量)</span>
+          <span class="right">{{productionProgress.production_inspection}}%</span>
         </div>
       </div>
       <zh-drop-down :buttonStyle="'padding:20px'"
@@ -649,7 +655,7 @@
             style="height:auto">
             <div class="trow">
               <div class="tcol center"
-                style="min-width: 491px;">
+                style="min-width: 468px;">
                 <span>下单信息</span>
                 <span>更新日期:{{productionUpdateTime.order?productionUpdateTime.order:'暂无'}}</span>
               </div>
@@ -659,12 +665,12 @@
                 <span>更新日期:{{productionUpdateTime.plan?productionUpdateTime.plan:'暂无'}}</span>
               </div> -->
               <div class="tcol center"
-                style="min-width: 329px;">
+                style="min-width: 331px;">
                 <span>生产分配信息</span>
                 <span>更新日期:{{productionUpdateTime.weave?productionUpdateTime.weave:'暂无'}}</span>
               </div>
               <div class="tcol center"
-                style="max-width: 198px;">
+                style="min-width: 213px;">
                 <span>数量更新信息</span>
                 <span>更新日期:{{productionUpdateTime.complete?productionUpdateTime.complete:'暂无'}}</span>
               </div>
@@ -693,14 +699,21 @@
                             <div class="trow">
                               <div class="tcol">生产工序</div>
                               <div class="tcol">计划数量</div>
-                              <div class="tcol">完成数量</div>
-                              <div class="tcol">检验入库数量</div>
+                              <div class="tcol">
+                                <span>完成数量<el-tooltip effect="dark"
+                                    content="此数量为外协小程序申报数量"
+                                    placement="top">
+                                    <div class="el-icon el-icon-question"></div>
+                                  </el-tooltip></span>
+                              </div>
+                              <div class="tcol">半成品入库数量</div>
                               <div class="tcol">半次/全次数量</div>
-                              <div class="tcol">次品率</div>
+
                             </div>
                           </div>
                         </div>
                       </div>
+                      <div class="tcol">成品入库数量</div>
                     </div>
                   </div>
                 </div>
@@ -737,17 +750,39 @@
                               v-for="(itemChild,indexChild) in itemClient.data"
                               :key="indexChild">
                               <div class="tcol">{{itemChild.process_name}}</div>
-                              <div class="tcol">{{$toFixed(itemChild.data.plan_number,3,true)}}</div>
-                              <div class="tcol">{{$toFixed(itemChild.data.real_number,3,true)}}</div>
-                              <div class="tcol">{{$toFixed(itemChild.data.inspection_number,3,true)}}</div>
+                              <div class="tcol">{{$toFixed(itemChild.data.plan_number,3,true)}} </div>
+                              <div class="tcol">
+                                <span>{{$toFixed(itemChild.data.real_number,3,true)}}
+                                  (<span :class="{
+                                  red: itemChild.data.plan_number > itemChild.data.real_number,
+                                  green: itemChild.data.plan_number === itemChild.data.real_number,
+                                  orange: itemChild.data.plan_number < itemChild.data.real_number
+                                }">{{itemChild.data.real_number < itemChild.data.plan_number?'':'+'}}{{(itemChild.data.real_number - itemChild.data.plan_number)}}</span>)</span>
+                              </div>
+                              <div class="tcol">
+                                <span>{{$toFixed(itemChild.data.inspection_number,3,true)}}
+                                  (<span :class="{
+                                  red: itemChild.data.plan_number > itemChild.data.inspection_number,
+                                  green: itemChild.data.plan_number === itemChild.data.inspection_number,
+                                  orange: itemChild.data.plan_number < itemChild.data.inspection_number
+                                }">{{itemChild.data.inspection_number < itemChild.data.plan_number?'':'+'}}{{(itemChild.data.inspection_number - itemChild.data.plan_number)}}</span>)</span>
+                              </div>
                               <div class="tcol">{{itemChild.data.part_shoddy_number||0}}/{{itemChild.data.shoddy_number}}</div>
-                              <div class="tcol">{{itemChild.data.shoddy_pre}}%</div>
                             </div>
                           </div>
                         </div>
                       </div>
+                      <div class="tcol">
+                        <span>{{$toFixed(itemSize.data.production_inspection_number,3,true)}}
+                          (<span :class="{
+                            red: itemSize.data.order_number >itemSize.data.production_inspection_number,
+                            green:  itemSize.data.order_number === itemSize.data.production_inspection_number,
+                            orange:  itemSize.data.order_number < itemSize.data.production_inspection_number
+                          }">{{itemSize.data.production_inspection_number <  itemSize.data.order_number?'':'+'}}{{(itemSize.data.production_inspection_number - itemSize.data.order_number)}}</span>)</span>
+                      </div>
                     </div>
                   </div>
+
                 </div>
               </div>
             </div>
@@ -2428,7 +2463,8 @@ export default Vue.extend({
       productionDetail: [],
       productionProgress: {
         weave: 0,
-        inspection: 0
+        inspection: 0,
+        production_inspection: 0
       },
       materialProgress: {
         material_pop: 0,
