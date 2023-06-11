@@ -9,6 +9,9 @@
           <div class="elCtn">
             <el-input v-model="keyword" placeholder="编号、姓名搜索" @keydown.enter.native="changeRouter"></el-input>
           </div>
+          <div class="elCtn">
+            <el-input v-model="code" placeholder="订单号、产品编号搜索" @keydown.enter.native="changeRouter"></el-input>
+          </div>
           <div class="elCtn" style="position: relative">
             <el-select
               style="width: 95%"
@@ -43,6 +46,25 @@
               <i class="el-icon-upload hoverOrange" @click="$setLocalStorage('process', process)"></i>
             </el-tooltip>
           </div>
+          <div class="btn borderBtn" @click="reset">重置</div>
+        </div>
+        <div class="filterCtn">
+          <div class="elCtn">
+            <el-select @change="changeRouter" v-model="group_id" placeholder="筛选负责小组" clearable>
+              <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+            </el-select>
+          </div>
+          <div class="elCtn">
+            <el-cascader
+              @change="changeRouter"
+              placeholder="筛选所属客户"
+              v-model="client_id"
+              filterable
+              :options="clientList"
+              clearable
+            >
+            </el-cascader>
+          </div>
           <div class="elCtn">
             <el-date-picker
               v-model="date"
@@ -64,9 +86,6 @@
               placeholder="选择月份">
             </el-date-picker> -->
           </div>
-          <div class="btn borderBtn" @click="reset">重置</div>
-        </div>
-        <div class="filterCtn">
           <div class="elCtn">
             <el-select v-model="limit" placeholder="每页展示条数" @change="changeRouter">
               <el-option label="每页10条" :value="10"> </el-option>
@@ -74,11 +93,8 @@
               <el-option label="每页20条" :value="20"> </el-option>
             </el-select>
           </div>
-          <div class="elCtn">
-            <el-select @change="changeRouter" v-model="group_id" placeholder="筛选负责小组" clearable>
-              <el-option v-for="item in groupList" :key="item.id" :value="item.id" :label="item.name"></el-option>
-            </el-select>
-          </div>
+        </div>
+        <div class="filterCtn">
           <div class="elCtn">
             <el-select @change="changeRouter" v-model="is_check" placeholder="审核状态" clearable>
               <el-option :value="0" label="审核中"></el-option>
@@ -94,6 +110,22 @@
           </div>
         </div>
         <div class="filterCtn clearfix">
+          <div
+            class="btn backHoverOrange"
+            v-if="activeName == 1"
+            @click="showSetting1 = true"
+            style="margin-left: 0;float: left;"
+          >
+            列表设置
+          </div>
+          <div
+            class="btn backHoverOrange"
+            v-if="activeName == 2"
+            @click="showSetting2 = true"
+            style="margin-left: 0;float: left;"
+          >
+            列表设置
+          </div>
           <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(1)">计件更新（按订单）</div>
           <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(2)">计件更新（按员工）</div>
           <div
@@ -105,199 +137,36 @@
           </div>
         </div>
         <div class="tableCtn" style="padding-left: 0; padding-right: 0; padding-top: 0">
-          <el-tabs v-model="activeName" type="card" @tab-click="changeRouter">
+          <el-tabs
+            v-model="activeName"
+            type="card"
+            @tab-click="
+              changeRouter()
+              checkedCount = []
+            "
+          >
             <el-tab-pane label="计件结算表" name="1">
-              <el-table
-                ref="multipleTable"
-                :data="list"
-                tooltip-effect="dark"
-                :row-key="rowKey"
-                style="width: 100%"
-                @selection-change="handleSelectionChange"
-              >
-                <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-                <el-table-column prop="id" label="序号" width="70" fixed></el-table-column>
-                <el-table-column prop="staff_name" label="员工姓名" width="130" fixed>
-                  <template slot-scope="scope">
-                    <div>
-                      {{ scope.row.staff_code.substring(scope.row.staff_code.length - 4) }} - {{ scope.row.staff_name }}
-                    </div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="process_name" label="生产工序" width="110" fixed> </el-table-column>
-                <el-table-column label="工序说明" width="110" fixed>
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.process_desc">
-                      <div v-if="scope.row.process_desc.length <= 10">{{ scope.row.process_desc }}</div>
-                      <el-tooltip
-                        v-else
-                        class="item"
-                        effect="dark"
-                        :content="scope.row.process_desc || '无工序说明'"
-                        placement="top-start"
-                      >
-                        <span class="blue" style="cursor: pointer">查看</span>
-                      </el-tooltip>
-                    </div>
-                    <div v-else>无</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="staff_name" label="订单号" width="150">
-                  <template slot-scope="scope">
-                    <div
-                      class="blue"
-                      style="cursor: pointer"
-                      @click="$router.push('/workshopManagement/detail?id=' + scope.row.order_id)"
-                    >
-                      {{ scope.row.order_code }}
-                    </div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="client_name" label="所属客户" width="150"></el-table-column>
-                <el-table-column prop="product_code" label="产品编号" width="160">
-                  <template slot-scope="scope">
-                    <span
-                      class="blue"
-                      style="cursor: pointer"
-                      @click="
-                        productDetail = scope.row.product_id
-                        productShow = true
-                      "
-                      >{{ scope.row.product_code || scope.row.system_code }}</span
-                    >
-                  </template>
-                </el-table-column>
-                <el-table-column label="尺码颜色" width="120">
-                  <template slot-scope="scope">{{
-                    (scope.row.size_name || '无尺码数据') + '/' + (scope.row.color_name || '无颜色数据')
-                  }}</template>
-                </el-table-column>
-                <el-table-column prop="price" label="结算单价" width="110">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.price }} 元</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="number" label="完成数量" width="120"> </el-table-column>
-                <el-table-column prop="extra_number" label="额外数量" width="120"> </el-table-column>
-                <el-table-column prop="total_number" label="总数" width="120"> </el-table-column>
-                <el-table-column prop="shoddy_number" label="次品数量" width="120"> </el-table-column>
-                <el-table-column label="审核状态" width="120">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.is_check === 0" class="orange">审核中</div>
-                    <div v-if="scope.row.is_check === 1" class="blue">通过</div>
-                    <div v-if="scope.row.is_check === 2" class="red">不通过</div>
-                  </template>
-                </el-table-column>
-                <el-table-column label="次品原因" width="120">
-                  <template slot-scope="scope">
-                    <el-tooltip
-                      class="item"
-                      effect="dark"
-                      v-if="scope.row.shoddy_reason"
-                      :content="scope.row.shoddy_reason"
-                      placement="top-start"
-                    >
-                      <span class="blue" style="cursor: pointer">查看</span>
-                    </el-tooltip>
-                    <div v-else style="color: rgba(0, 0, 0, 0.25)">无</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="total_price" label="结算总价(元)" width="120"> </el-table-column>
-                <el-table-column prop="group_name" label="负责小组" width="120"> </el-table-column>
-                <el-table-column prop="complete_time" label="创建时间" width="110"> </el-table-column>
-                <el-table-column prop="user_name" label="创建人" width="110"> </el-table-column>
-                <el-table-column label="操作" width="160" fixed="right">
-                  <template slot-scope="scope">
-                    <div style="display: flex; justify-content: center">
-                      <div class="hoverOrange opr" @click="lostEdit([scope.row.id])">修改</div>
-                      <div class="hoverBlue opr" @click="changeStatus(scope.row)">审核</div>
-                      <div class="hoverRed opr" @click="lostDelete(scope.row.id)">删除</div>
-                    </div>
-                  </template>
-                </el-table-column>
-              </el-table>
+              <zh-list
+                :list="list"
+                :check="true"
+                :checkedCount="checkedCount"
+                :listKey="listKey1"
+                :loading="loading"
+                :oprList="oprList"
+              ></zh-list>
             </el-tab-pane>
             <el-tab-pane label="其它计价结算表" name="2">
-              <el-table
-                ref="multipleTable2"
-                :data="list"
-                tooltip-effect="dark"
-                :row-key="rowKey"
-                style="width: 100%"
-                @selection-change="handleSelectionChange"
-              >
-                <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-                <el-table-column prop="id" label="序号" width="70" fixed></el-table-column>
-                <el-table-column prop="staff_name" label="员工姓名" width="130" fixed>
-                  <template slot-scope="scope">
-                    <div>
-                      {{ scope.row.staff_code.substring(scope.row.staff_code.length - 4) }} - {{ scope.row.staff_name }}
-                    </div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="process_name" label="生产工序" width="110" fixed> </el-table-column>
-                <el-table-column label="工序说明" width="110" fixed>
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.process_desc">
-                      <div v-if="scope.row.process_desc.length <= 10">{{ scope.row.process_desc }}</div>
-                      <el-tooltip
-                        v-else
-                        class="item"
-                        effect="dark"
-                        :content="scope.row.process_desc || '无工序说明'"
-                        placement="top-start"
-                      >
-                        <span class="blue" style="cursor: pointer">查看</span>
-                      </el-tooltip>
-                    </div>
-                    <div v-else>无</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="price" label="计价方式" width="110">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.time_type == 1">小时</div>
-                    <div v-if="scope.row.time_type == 2">天</div>
-                    <div v-if="scope.row.time_type == 3">件</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="price" label="结算单价" width="110">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.price }} 元</div>
-                  </template>
-                </el-table-column>
-                <el-table-column label="时长/件数" width="120">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.time_type == 1">{{ scope.row.time_count }} 小时</div>
-                    <div v-if="scope.row.time_type == 2">{{ scope.row.time_count }} 天</div>
-                    <div v-if="scope.row.time_type == 3">{{ scope.row.time_count }} 件</div>
-                  </template>
-                </el-table-column>
-                <el-table-column label="审核状态" width="120">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.is_check === 0" class="orange">审核中</div>
-                    <div v-if="scope.row.is_check === 1" class="blue">通过</div>
-                    <div v-if="scope.row.is_check === 2" class="red">不通过</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="total_price" label="结算总价(元)" width="120"> </el-table-column>
-                <el-table-column prop="group_name" label="负责小组" width="120"> </el-table-column>
-                <el-table-column prop="desc" label="备注" width="120"> </el-table-column>
-                <el-table-column prop="created_at" label="创建时间" width="120"> </el-table-column>
-                <el-table-column prop="user_name" label="创建人" width="120"> </el-table-column>
-                <el-table-column label="操作" width="160" fixed="right">
-                  <template slot-scope="scope">
-                    <div style="display: flex; justify-content: center">
-                      <div class="hoverOrange opr" @click="lostEdit([scope.row.id])">修改</div>
-                      <div class="hoverBlue opr" @click="changeStatus(scope.row)">审核</div>
-                      <div class="hoverRed opr" @click="lostDelete(scope.row.id)">删除</div>
-                    </div>
-                  </template>
-                </el-table-column>
-              </el-table>
+              <zh-list
+                :list="list"
+                :check="true"
+                :checkedCount="checkedCount"
+                :listKey="listKey2"
+                :loading="loading"
+                :oprList="oprList"
+              ></zh-list>
             </el-tab-pane>
           </el-tabs>
         </div>
-
         <div
           v-if="activeName == 1"
           style="width: 80%; display: flex; justify-content: space-between; margin-left: 20px; line-height: 2"
@@ -413,6 +282,25 @@
       </div>
     </div>
     <product-detail :id="productDetail" :show="productShow" @close="productShow = false" :noOpr="true"></product-detail>
+    <!-- 列表设置 -->
+    <zh-list-setting
+      @close="showSetting1 = false"
+      @afterSave="getListSetting"
+      :show="showSetting1"
+      :id="listSettingId1"
+      :type="16"
+      :data.sync="listKey1"
+      :originalData="originalSetting1"
+    ></zh-list-setting>
+    <zh-list-setting
+      @close="showSetting2 = false"
+      @afterSave="getListSetting"
+      :show="showSetting2"
+      :id="listSettingId2"
+      :type="15"
+      :data.sync="listKey2"
+      :originalData="originalSetting2"
+    ></zh-list-setting>
   </div>
 </template>
 
@@ -431,6 +319,8 @@ export default Vue.extend({
       checkFlag: false,
       productShow: false,
       list: [],
+      checkedCount: [],
+      code: '',
       limitList: limitArr,
       productDetail: '',
       reviewerParams: {
@@ -459,80 +349,258 @@ export default Vue.extend({
       date: [],
       total: 1,
       page: 1,
-      showSetting: false,
-      listSettingId: null,
-      listKey: [],
-      originalSetting: [
+      showSetting1: false,
+      showSetting2: false,
+      listSettingId1: null,
+      listSettingId2: null,
+      listKey1: [],
+      listKey2: [],
+      originalSetting1: [
         {
-          key: 'code',
-          name: '单据编号',
+          key: 'id',
+          name: '序号',
           ifShow: true,
           ifLock: true,
           index: 0
         },
         {
-          key: 'client_name',
-          name: '下单公司',
+          key: 'staff_code',
+          name: '员工编号',
           ifShow: true,
           ifLock: true,
           index: 1
         },
         {
-          key: 'contacts_name',
-          name: '公司联系人',
+          key: 'staff_name',
+          name: '员工姓名',
           ifShow: true,
           ifLock: false,
           index: 2
         },
         {
-          key: 'has_production_inspection',
-          name: '管理添加状态',
-          filterArr: ['', '已添加', '待添加'],
-          classArr: ['', 'blue', 'orange'],
+          key: 'process_name',
+          name: '生产工序',
           ifShow: true,
           ifLock: false,
-          index: 4,
-          isStatus: true
+          index: 3
+        },
+        {
+          key: 'process_desc',
+          name: '工序说明',
+          ifShow: true,
+          ifLock: false,
+          index: 4
+        },
+        {
+          key: 'order_code',
+          name: '订单号',
+          ifShow: true,
+          ifLock: false,
+          index: 5
+        },
+        {
+          key: 'client_name',
+          name: '所属客户',
+          ifShow: true,
+          ifLock: false,
+          index: 6
         },
         {
           key: 'product_code',
-          otherkey: 'system_code',
           name: '产品编号',
           ifShow: true,
           ifLock: false,
-          index: 5,
-          from: 'product_data',
-          mark: true
+          index: 7
         },
         {
-          key: 'image_data',
-          name: '产品图片',
+          key: 'size_name',
+          name: '尺码',
           ifShow: true,
           ifLock: false,
-          ifImage: true,
-          index: 6,
-          from: 'product_data'
+          index: 8
+        },
+        {
+          key: 'color_name',
+          name: '颜色',
+          ifShow: true,
+          ifLock: false,
+          index: 9
+        },
+        {
+          key: 'price',
+          name: '结算单价（元）',
+          ifShow: true,
+          ifLock: false,
+          index: 10
+        },
+        {
+          key: 'number',
+          name: '完成数量',
+          ifShow: true,
+          ifLock: false,
+          index: 11
+        },
+        {
+          key: 'extra_number',
+          name: '额外数量',
+          ifShow: true,
+          ifLock: false,
+          index: 12
         },
         {
           key: 'total_number',
-          name: '下单总数',
+          name: '总数',
           ifShow: true,
           ifLock: false,
-          index: 7
+          index: 13
+        },
+        {
+          key: 'shoddy_number',
+          name: '次品数量',
+          ifShow: true,
+          ifLock: false,
+          index: 14
+        },
+        {
+          key: 'is_check',
+          name: '审核状态',
+          ifShow: true,
+          ifLock: false,
+          index: 15,
+          filterArr: ['审核中', '通过', '不通过'],
+          classArr: ['orange', 'green', 'red']
+        },
+        {
+          key: 'shoddy_reason',
+          name: '次品原因',
+          ifShow: true,
+          ifLock: false,
+          index: 16
+        },
+        {
+          key: 'total_price',
+          name: '结算总价（元）',
+          ifShow: true,
+          ifLock: false,
+          index: 17
         },
         {
           key: 'group_name',
           name: '负责小组',
           ifShow: true,
           ifLock: false,
-          index: 8
+          index: 18
+        },
+        {
+          key: 'complete_time',
+          name: '创建时间',
+          ifShow: true,
+          ifLock: false,
+          index: 19
         },
         {
           key: 'user_name',
           name: '创建人',
           ifShow: true,
           ifLock: false,
+          index: 20
+        }
+      ],
+      originalSetting2: [
+        {
+          key: 'id',
+          name: '序号',
+          ifShow: true,
+          ifLock: true,
+          index: 0
+        },
+        {
+          key: 'staff_code',
+          name: '员工编号',
+          ifShow: true,
+          ifLock: true,
+          index: 1
+        },
+        {
+          key: 'staff_name',
+          name: '员工姓名',
+          ifShow: true,
+          ifLock: false,
+          index: 2
+        },
+        {
+          key: 'process_name',
+          name: '生产工序',
+          ifShow: true,
+          ifLock: false,
+          index: 3
+        },
+        {
+          key: 'process_desc',
+          name: '工序说明',
+          ifShow: true,
+          ifLock: false,
+          index: 4
+        },
+        {
+          key: 'price',
+          name: '结算单价',
+          ifShow: true,
+          ifLock: false,
+          index: 5
+        },
+        {
+          key: 'time_type',
+          name: '计价方式',
+          filterArr: ['', '小时', '天', '件'],
+          classArr: ['', '', ''],
+          ifShow: true,
+          ifLock: false,
+          index: 6
+        },
+        {
+          key: 'is_check',
+          name: '审核状态',
+          ifShow: true,
+          ifLock: false,
+          index: 7,
+          filterArr: ['审核中', '通过', '不通过'],
+          classArr: ['orange', 'green', 'red']
+        },
+        {
+          key: 'total_price',
+          name: '结算总价（元）',
+          ifShow: true,
+          ifLock: false,
+          index: 8
+        },
+        {
+          key: 'group_name',
+          name: '负责小组',
+          ifShow: true,
+          ifLock: false,
           index: 9
+        },
+        {
+          key: 'desc',
+          name: '备注',
+          ifShow: true,
+          ifLock: false,
+          index: 10
+        },
+        {
+          key: 'complete_time',
+          name: '创建时间',
+          ifShow: true,
+          ifLock: false,
+          index: 11
+        },
+        {
+          key: 'user_name',
+          name: '创建人',
+          ifShow: true,
+          ifLock: false,
+          index: 12
         }
       ],
       pickerOptions: {
@@ -568,10 +636,27 @@ export default Vue.extend({
       },
       oprList: [
         {
-          name: '详情',
+          name: '修改',
+          class: 'hoverOrange',
+          fn: (item: any) => {
+            // @ts-ignore
+            this.lostEdit([item.id])
+          }
+        },
+        {
+          name: '审核',
           class: 'hoverBlue',
           fn: (item: any) => {
-            this.$router.push('/workshopManagement/detail?id=' + item.id)
+            // @ts-ignore
+            this.changeStatus(item)
+          }
+        },
+        {
+          name: '删除',
+          class: 'hoverRed',
+          fn: (item: any) => {
+            // @ts-ignore
+            this.lostDelete(item.id)
           }
         }
       ]
@@ -584,6 +669,9 @@ export default Vue.extend({
       this.client_id = query.client_id ? (query.client_id as string).split(',').map(item => Number(item)) : []
       this.department = Number(query.department) || Number(this.$getLocalStorage('department')) || ''
       this.keyword = query.keyword || ''
+      this.code = query.code || ''
+      // @ts-ignore
+      this.client_id = query.client_id ? query.client_id.split(',').map(item => Number(item)) : ''
       this.activeName = query.type || ''
       this.departmentName = query.departmentName || ''
       this.status = query.status || ''
@@ -639,12 +727,12 @@ export default Vue.extend({
           '/workshopManagement/staffInputDetail?type=' + this.activeName + '&ids=' + encodeURIComponent(ids.toString())
         )
       } else {
-        if (this.multipleSelection.length === 0) {
+        if (this.checkedCount.length === 0) {
           this.$message.error('请选择至少一条日志')
           return
         }
 
-        let arr = this.multipleSelection.map((item: any) => {
+        let arr = this.checkedCount.map((item: any) => {
           return item.id
         })
 
@@ -654,13 +742,13 @@ export default Vue.extend({
       }
     },
     lostAgree() {
-      if (this.multipleSelection.length === 0) {
+      if (this.checkedCount.length === 0) {
         this.$message.error('请选择至少一条日志')
         return
       }
 
       let arr: any = []
-      this.multipleSelection.forEach((item: any) => {
+      this.checkedCount.forEach((item: any) => {
         arr.push(item.id)
       })
 
@@ -681,7 +769,7 @@ export default Vue.extend({
         })
     },
     lostDelete(id: any) {
-      if (this.multipleSelection.length === 0 && !id) {
+      if (this.checkedCount.length === 0 && !id) {
         this.$message.error('请选择至少一条日志')
         return
       }
@@ -689,7 +777,7 @@ export default Vue.extend({
       let arr: any = []
 
       if (!id) {
-        this.multipleSelection.forEach((settlementLog: any) => {
+        this.checkedCount.forEach((settlementLog: any) => {
           arr.push(settlementLog.id)
         })
       } else {
@@ -702,11 +790,13 @@ export default Vue.extend({
         .then(res => {
           if (res.data.status === true) {
             this.$message.success('删除成功')
-            // @ts-ignore
-            this.$refs.multipleTable.clearSelection()
-            // @ts-ignore
-            this.$refs.multipleTable2.clearSelection()
+            this.checkedCount = []
             this.getList()
+
+            // @ts-ignore
+            // this.$refs.multipleTable.clearSelection()
+            // @ts-ignore
+            // this.$refs.multipleTable2.clearSelection()
           }
         })
     },
@@ -730,7 +820,7 @@ export default Vue.extend({
         })
     },
     handleSelectionChange(val: any) {
-      this.multipleSelection = val
+      this.checkedCount = val
     },
     updateNumber(type: 1 | 2) {
       if (type === 1) {
@@ -758,6 +848,10 @@ export default Vue.extend({
           this.keyword +
           '&department=' +
           this.department +
+          '&code=' +
+          this.code +
+          '&client_id=' +
+          this.client_id +
           '&departmentName=' +
           this.departmentName +
           '&process=' +
@@ -844,10 +938,17 @@ export default Vue.extend({
             this.departmentName = this.departmentName?.name || ''
           }
 
+          let client_id = ''
+          if (typeof this.client_id !== 'string' && this.client_id !== null && this.client_id !== undefined) {
+            client_id = this.client_id[2]
+          }
+
           workshop
             .list({
               keyword: this.keyword,
               department: this.departmentName,
+              code: this.code,
+              client_id,
               type: this.activeName,
               page: this.page,
               limit: this.limit,
@@ -898,14 +999,23 @@ export default Vue.extend({
       })
     },
     getListSetting() {
-      this.listKey = []
+      this.listKey1 = []
+      this.listKey2 = []
       listSetting
         .detail({
-          type: 10
+          type: 15
         })
         .then(res => {
-          this.listSettingId = res.data.data ? res.data.data.id : null
-          this.listKey = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting)
+          this.listSettingId2 = res.data.data ? res.data.data.id : null
+          this.listKey2 = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting2)
+        })
+      listSetting
+        .detail({
+          type: 16
+        })
+        .then(res => {
+          this.listSettingId1 = res.data.data ? res.data.data.id : null
+          this.listKey1 = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting1)
         })
     }
   },
