@@ -12,5 +12,6 @@ export interface InspectionInfo {
   part_shoddy_number: string | number
   deduct_price: string | number
   shoddy_reason: string | string[]
+  desc?: string
   client?: string[] | string // 出库单位，存中文，需求如此
 }

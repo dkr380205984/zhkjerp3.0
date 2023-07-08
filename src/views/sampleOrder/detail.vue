@@ -1227,14 +1227,14 @@
                   </svg>
                   <span class="text">打印样单</span>
                 </div>
-                <div class="btn backHoverBlue"
-                  @click="changeToOrder"
-                  v-show="confirmSampleInfo.length>0">
+                <div class="btn"
+                  :class="{'backHoverBlue':confirmSampleInfo.length>0,'backGray':confirmSampleInfo.length===0}"
+                  @click="changeToOrder">
                   <svg class="iconFont"
                     aria-hidden="true">
                     <use xlink:href="#icon-dayindingdan"></use>
                   </svg>
-                  <span class="text">大货生产</span>
+                  <span class="text">转为订单</span>
                 </div>
                 <div class="btn backHoverBlue"
                   @click="$router.push('/quotedPrice/create?sampleOrderId='+$route.query.id+'&sampleOrderIndex='+sampleOrderIndex)">
@@ -2104,6 +2104,10 @@ export default Vue.extend({
     },
     // 转大货生产
     changeToOrder() {
+      if (this.confirmSampleInfo.length === 0) {
+        this.$message.warning('需要客户确认操作为大货生产的样品才能转为订单')
+        return
+      }
       if (
         this.sampleOrderInfo.time_data.some((item) => {
           return item.batch_data[0].product_data.some((itemChild) => itemChild.status === 1)

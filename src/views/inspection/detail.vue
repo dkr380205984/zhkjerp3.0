@@ -250,6 +250,7 @@
             <div class="col">操作时间</div>
             <div class="col">创建人</div>
             <div class="col">状态</div>
+            <div class="col">备注</div>
             <div class="col">操作</div>
           </div>
           <div class="row fontSmall"
@@ -266,6 +267,14 @@
             <div class="col">{{item.user_name}}</div>
             <div class="col"
               :class="item.is_check|filterCheckClass">{{item.is_check|filterCheck}}</div>
+            <div class="col">
+              <el-tooltip class="item"
+                effect="dark"
+                :content="item.desc"
+                placement="top">
+                <div style="white-space:nowrap;overflow:hidden;max-width:96px;text-overflow: ellipsis;">{{item.desc}}</div>
+              </el-tooltip>
+            </div>
             <div class="col">
               <div class="oprCtn">
                 <span class="opr hoverBlue"
@@ -532,12 +541,13 @@
                 <div class="tcol">产品名称</div>
                 <div class="tcol">产品图片</div>
                 <div class="tcol noPad"
-                  style="flex:4">
+                  style="flex:5">
                   <div class="trow">
                     <div class="tcol">尺码颜色</div>
                     <div class="tcol">下单数量</div>
                     <div class="tcol">已入库数量</div>
                     <div class="tcol">本次入库数量</div>
+                    <div class="tcol">入库备注</div>
                   </div>
                 </div>
               </div>
@@ -566,7 +576,7 @@
                   </div>
                 </div>
                 <div class="tcol noPad"
-                  style="flex:4">
+                  style="flex:5">
                   <div class="trow"
                     v-for="(itemChild,indexChild) in item.product_info"
                     :key="indexChild">
@@ -579,6 +589,12 @@
                       <div class="elCtn">
                         <el-input v-model="itemChild.inNum"
                           placeholder="数量"></el-input>
+                      </div>
+                    </div>
+                    <div class="tcol">
+                      <div class="elCtn">
+                        <el-input v-model="itemChild.desc"
+                          placeholder="备注信息"></el-input>
                       </div>
                     </div>
                   </div>
@@ -1150,7 +1166,8 @@ export default Vue.extend({
                 part_shoddy_number: '',
                 deduct_price: '',
                 shoddy_reason: '',
-                client: ''
+                client: '',
+                desc: itemChild.desc
               })
             }
           })

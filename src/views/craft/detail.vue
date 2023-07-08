@@ -677,8 +677,8 @@
             <div class="label">仿真类型：</div>
             <div style="line-height:36px">
               <el-switch v-model="craftFlag"
-                active-text="纱线模拟仿真(试用版)"
-                inactive-text="像素格仿真(普通版)">
+                active-text="纱线模拟仿真（速度慢，效果逼真）"
+                inactive-text=" 像素格仿真（速度快，效果一般）">
               </el-switch>
               <el-tooltip class="item"
                 effect="dark"

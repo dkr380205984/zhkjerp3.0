@@ -201,7 +201,8 @@
               </div>
             </div>
             <div class="tcol"> <span :class="item.status|productStatusClassFilter">{{item.status|productStatusFilter}}</span></div>
-            <div class="tcol">{{item.desc}}</div>
+            <div class="tcol"
+              v-html="item.desc"></div>
             <div class="tcol oprCtn">
               <div class="opr blue"
                 @click="changeToPro(item.product_id)">样品转产品</div>
@@ -1430,7 +1431,7 @@ export default Vue.extend({
       let productInfo = {
         product_id: product.id as number,
         quote_product_id: '',
-        size_color_list: [], // 用于下拉框选择尺码颜色
+        size_color_list: [] as any[], // 用于下拉框选择尺码颜色
         product_info: [
           {
             size_color: '', // 用于下拉框选择尺码颜色
