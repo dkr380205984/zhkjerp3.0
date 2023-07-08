@@ -556,7 +556,7 @@ export default Vue.extend({
           invoice_code: ['发票号码(选填)', ''],
           type: ['发票类型(默认专票)', '专票'],
           order_or_other: ['发票类型（订单开票、其它开票）',1],
-          tax_rate: ['税率(必填)'],
+          tax_rate: ['税率(必填)',13],
           price: ['开票金额(税价合计，必填)'],
           desc: ['备注信息(选填)', '']
         }

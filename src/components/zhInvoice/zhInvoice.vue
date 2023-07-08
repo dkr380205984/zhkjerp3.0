@@ -1,151 +1,135 @@
 <template>
-  <div class="zhInvoice popup"
-    v-show="show">
+  <div class="zhInvoice popup" v-show="show">
     <div class="main">
       <div class="titleCtn">
         <div class="text">{{ type | filterType }}开票{{ update ? '修改' : '' }}</div>
-        <div class="closeCtn"
-          @click="close">
+        <div class="closeCtn" @click="close">
           <i class="el-icon-close"></i>
         </div>
       </div>
       <div class="contentCtn">
         <div class="row">
           <div class="info">
-            <el-input disabled
-              placeholder="开票单位"
-              v-model="client_name">
+            <el-input disabled placeholder="开票单位" v-model="client_name">
               <template slot="prepend">开票单位</template>
             </el-input>
           </div>
         </div>
-        <div v-for="(item, index) in invoiceInfo.data"
-          :key="index">
-          <div class="blue"
-            style="margin-left: 6px">
+        <div v-for="(item, index) in invoiceInfo.data" :key="index">
+          <div class="blue" style="margin-left: 6px">
             开票单据{{ index + 1 }}
-            <i class="el-icon-close hoverRed fr"
+            <i
+              class="el-icon-close hoverRed fr"
               style="font-size: 20px; cursor: pointer"
               @click="
                 invoiceInfo.data.length === 1 ? $message.error('至少有一项') : $deleteItem(invoiceInfo.data, index)
-              "></i>
+              "
+            ></i>
           </div>
           <div class="row">
             <div class="info">
-              <el-input disabled
-                placeholder="无单据开票"
-                v-model="item.doc_code"> </el-input>
+              <el-input disabled placeholder="无单据开票" v-model="item.doc_code"> </el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input placeholder="发票代码"
-                v-model="item.invoice_number"
-                @input="changeType($event, index)">
+              <el-input placeholder="发票代码" v-model="item.invoice_number" @input="changeType($event, index)">
               </el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input placeholder="发票号码"
-                v-model="item.invoice_code"> </el-input>
+              <el-input placeholder="发票号码" v-model="item.invoice_code"> </el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-select v-model="item.order_or_other"
-                placeholder="开票类型">
-                <el-option label="订单开票"
-                  :value="1"> </el-option>
-                <el-option label="其它开票"
-                  :value="2"> </el-option>
+              <el-select v-model="item.order_or_other" placeholder="开票类型">
+                <el-option label="订单开票" :value="1"> </el-option>
+                <el-option label="其它开票" :value="2"> </el-option>
               </el-select>
             </div>
           </div>
-          <div class="row"
-            style="justify-content: space-around;">
-            <div class="info"
-              style="flex:0.49">
-              <el-select v-model="item.type"
-                placeholder="发票类型">
-                <el-option label="专票"
-                  value="专票"> </el-option>
-                <el-option label="普票"
-                  value="普票"> </el-option>
+          <div class="row" style="justify-content: space-around;">
+            <div class="info" style="flex:0.49">
+              <el-select v-model="item.type" placeholder="发票类型">
+                <el-option label="专票" value="专票"> </el-option>
+                <el-option label="普票" value="普票"> </el-option>
               </el-select>
             </div>
-            <div class="info"
-              style="flex:0.49">
-              <el-autocomplete class="inline-input"
+            <div class="info" style="flex:0.49">
+              <el-autocomplete
+                class="inline-input"
                 v-model="item.tax_rate"
                 :fetch-suggestions="querySearch"
                 placeholder="税率（必填）"
-                @input="getAboutTaxPrice(index)">
+                @input="getAboutTaxPrice(index)"
+              >
                 <template slot="append">%</template>
               </el-autocomplete>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input placeholder="开票金额（税价合计，必填）"
+              <el-input
+                placeholder="开票金额（税价合计，必填）"
                 v-model="item.price"
                 @input="
                   changeNumToPrice($event, index)
                   getAboutTaxPrice(index)
-                ">
+                "
+              >
                 <template slot="append">元</template>
               </el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input placeholder="数字金额(默认)"
-                v-model="item.hanPrice"
-                disabled>
-                <template slot="append">元</template>
+              <el-input placeholder="数字金额(默认)" v-model="item.hanPrice" disabled>
+                <template slot="prepend">金额</template><template slot="append">元</template>
               </el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input placeholder="税额"
-                v-model="item.price_tax"
-                disabled><template slot="append">元</template></el-input>
+              <el-input placeholder="税额" v-model="item.price_tax_han" disabled>
+                <template slot="prepend">税额</template><template slot="append">元</template>
+              </el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input placeholder="不含税金额"
-                v-model="item.price_no_tax"
-                disabled><template slot="append">元</template></el-input>
+              <el-input placeholder="不含税金额" v-model="item.price_no_tax_han" disabled>
+                <template slot="prepend">不含税金额</template><template slot="append">元</template>
+              </el-input>
             </div>
           </div>
           <div class="row">
             <div class="info">
-              <el-input placeholder="备注信息"
-                v-model="item.desc"> </el-input>
+              <el-input placeholder="备注信息" v-model="item.desc"> </el-input>
             </div>
           </div>
         </div>
       </div>
       <div class="oprCtn">
-        <span class="btn borderBtn"
-          @click="close">取消</span>
-        <span class="btn backHoverOrange"
+        <span class="btn borderBtn" @click="close">取消</span>
+        <span
+          class="btn backHoverOrange"
           v-if="!update"
           @click="
             $addItem(invoiceInfo.data, {
               order_id: '',
               doc_code: '',
               rel_doc_id: '',
+              // @ts-ignore
               reason: '',
               file_url: '',
               price: ''
             })
-          ">添加</span>
-        <span class="btn"
-          :class="{ backHoverBlue: !update, backHoverOrange: update }"
-          @click="saveInvoice">{{
+          "
+          >添加</span
+        >
+        <span class="btn" :class="{ backHoverBlue: !update, backHoverOrange: update }" @click="saveInvoice">{{
           update ? '修改' : '确认'
         }}</span>
       </div>
@@ -162,6 +146,8 @@ interface invoiceInfo {
   client_id: number | string
   invoice_type: number
   data: Array<{
+    price_tax_han?: string
+    price_no_tax_han?: string
     order_id: number | string
     doc_code: string
     rel_doc_id: number | string
@@ -241,7 +227,7 @@ export default Vue.extend({
             desc: '',
             invoice_code: '',
             invoice_number: '',
-            tax_rate: '',
+            tax_rate: '13',
             type: '专票',
             order_or_other: 1,
             price_tax: '',
@@ -295,7 +281,7 @@ export default Vue.extend({
               desc: this.update ? item.desc : '',
               invoice_code: this.update ? item.invoice_code : '',
               invoice_number: this.update ? item.invoice_number : '',
-              tax_rate: this.update ? item.tax_rate : '',
+              tax_rate: this.update ? item.tax_rate : '13',
               type: this.update ? item.type : 1,
               order_or_other: this.update ? item.order_or_other : 1,
               price_tax: this.update ? item.price_tax : '',
@@ -312,7 +298,7 @@ export default Vue.extend({
               desc: '',
               invoice_code: '',
               invoice_number: '',
-              tax_rate: '',
+              tax_rate: '13',
               type: '专票',
               order_or_other: 1,
               price_tax: '',
@@ -331,6 +317,7 @@ export default Vue.extend({
       let zhengshu = ''
       let xiaoshu = ''
       if (numStrArr.length > 2) {
+        // @ts-ignore
         this.invoiceInfo.data[index].hanPrice = '请输入正确数字'
         return
       } else if (numStrArr.length === 2) {
@@ -340,6 +327,7 @@ export default Vue.extend({
         zhengshu = numStrArr[0]
       }
       const zhengshuArr = zhengshu.split('')
+      // @ts-ignore
       this.invoiceInfo.data[index].hanPrice = this.$changeNumToHan(Number(realNumStr))
       const length = Number(zhengshuArr.length)
       for (let i = length, j = 0; i > 0; i--) {
@@ -362,16 +350,24 @@ export default Vue.extend({
     },
     // 计算不含税金额 和 税额
     getAboutTaxPrice(index: number) {
-      // 税额 = 税价合计 * 税率
-      // price_tax = price * tax_rate
+      // 税额 = 税价合计/（100+税率）% x 税率
+      // price_tax = price / (100 + tax_rate)% * tax_rate
+      // 如13%，则税额 = 税价合计/1.13x0.13
       // 不含税金额 =  税价合计 - 税额
       // price_no_tax = price - price_tax
       const item = this.invoiceInfo.data[index]
-      item.price_tax = this.$toFixed(
-        (Number(item.price.replace(/[^0-9|.]/gi, '')) || 0) * (Number(item.tax_rate) / 100 || 0),
+      let price_tax = this.$toFixed(
+        ((Number(item.price.replace(/[^0-9|.]/gi, '')) || 0) / (1 + Number(item.tax_rate) / 100 || 0)) *
+          (Number(item.tax_rate) / 100),
         2
       )
-      item.price_no_tax = (Number(item.price.replace(/[^0-9|.]/gi, '')) || 0) - (Number(item.price_tax) || 0)
+      let price_no_tax = (Number(item.price.replace(/[^0-9|.]/gi, '')) || 0) - (Number(item.price_tax) || 0)
+      item.price_tax = price_tax
+      item.price_no_tax = price_no_tax
+
+      item.price_tax_han = this.$changeNumToHan(Number(price_tax))
+      item.price_no_tax_han = this.$changeNumToHan(Number(price_no_tax))
+      this.$forceUpdate()
     },
     close() {
       this.$emit('close')
@@ -390,7 +386,7 @@ export default Vue.extend({
             desc: '',
             invoice_code: '',
             invoice_number: '',
-            tax_rate: '',
+            tax_rate: '13',
             type: '专票',
             order_or_other: 1,
             price_tax: '',
@@ -404,7 +400,7 @@ export default Vue.extend({
         this.$message.error('请勿频繁点击')
         return
       }
-      const formCheck = this.invoiceInfo.data.some((item) => {
+      const formCheck = this.invoiceInfo.data.some(item => {
         return this.$formCheck(item, [
           {
             key: 'tax_rate',
@@ -419,10 +415,10 @@ export default Vue.extend({
       if (!formCheck) {
         this.saveLock = true
         this.invoiceInfo.invoice_type = this.invoice_type
-        this.invoiceInfo.data.forEach((item) => {
+        this.invoiceInfo.data.forEach(item => {
           item.price = item.price.replace(/[^0-9|.]/gi, '')
         })
-        invoice.create(this.invoiceInfo).then((res) => {
+        invoice.create(this.invoiceInfo).then(res => {
           if (res.data.status) {
             this.$message.success(this.update ? '修改成功' : '开票成功')
             this.$emit('afterInvoice')
