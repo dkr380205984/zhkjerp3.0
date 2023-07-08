@@ -1,12 +1,16 @@
 <template>
-  <div id="paymentList"
-    class="bodyContainer">
+  <div id="paymentList" class="bodyContainer">
     <div class="topTagCtn">
-      <div class="tag"
-        @click="$router.push('/settlement/collectionList?page=&limit&type=&keyword=&status=&clientType=&tag_id=&only_delete=&year=&settle_unit=')">
+      <div
+        class="tag"
+        @click="
+          $router.push(
+            '/settlement/collectionList?page=&limit&type=&keyword=&status=&clientType=&tag_id=&only_delete=&year=&settle_unit='
+          )
+        "
+      >
         <div class="iconCtn">
-          <svg class="iconFont"
-            aria-hidden="true">
+          <svg class="iconFont" aria-hidden="true">
             <use xlink:href="#icon-kehuguanli"></use>
           </svg>
         </div>
@@ -14,8 +18,7 @@
       </div>
       <div class="tag active">
         <div class="iconCtn">
-          <svg class="iconFont"
-            aria-hidden="true">
+          <svg class="iconFont" aria-hidden="true">
             <use xlink:href="#icon-hezuodanweiguanli"></use>
           </svg>
         </div>
@@ -26,284 +29,381 @@
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input placeholder="搜索公司名称"
-              v-model="keyword"
-              @change="changeRouter"></el-input>
+            <el-input placeholder="搜索公司名称" v-model="keyword" @change="changeRouter"></el-input>
           </div>
           <div class="elCtn">
-            <el-select placeholder="筛选客户状态"
-              v-model="status"
-              @change="changeRouter">
-              <el-option label="全部"
-                :value="null"></el-option>
-              <el-option label="合作中"
-                :value="1"></el-option>
-              <el-option label="暂停合作"
-                :value="0"></el-option>
+            <el-select placeholder="筛选客户状态" v-model="status" @change="changeRouter">
+              <el-option label="全部" :value="null"></el-option>
+              <el-option label="合作中" :value="1"></el-option>
+              <el-option label="暂停合作" :value="0"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-select placeholder="客户类型筛选"
+            <el-select
+              placeholder="客户类型筛选"
               v-model="clientType"
-              @change="tag_id='';getClientTag($event)"
-              clearable>
-              <el-option v-for="item in clientTypeList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"></el-option>
+              @change="
+                tag_id = ''
+                getClientTag($event)
+              "
+              clearable
+            >
+              <el-option v-for="item in clientTypeList" :key="item.id" :value="item.id" :label="item.name"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-date-picker v-model="year"
-              @change="changeRouter"
-              value-format="yyyy"
-              type="year"
-              placeholder="选择年">
+            <el-date-picker v-model="year" @change="changeRouter" value-format="yyyy" type="year" placeholder="选择年">
             </el-date-picker>
           </div>
-          <div class="btn borderBtn"
-            @click="reset">重置</div>
+          <div class="btn borderBtn" @click="reset">重置</div>
         </div>
         <div class="filterCtn">
           <div class="elCtn">
-            <el-select placeholder="客户标签筛选"
-              v-model="tag_id"
-              @change="changeRouter"
-              clearable>
-              <el-option v-for="item in clientTagList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"></el-option>
+            <el-select placeholder="客户标签筛选" v-model="tag_id" @change="changeRouter" clearable>
+              <el-option v-for="item in clientTagList" :key="item.id" :value="item.id" :label="item.name"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-select placeholder="待付款金额计算方式"
-              v-model="methods"
-              @change="changeRouter">
-              <el-option label="计划总额 - 付款总额 - 扣款总额"
-                value="1"></el-option>
-              <el-option label="实际总额 - 付款总额 - 扣款总额"
-                value="2"></el-option>
+            <el-select placeholder="待付款金额计算方式" v-model="methods" @change="changeRouter">
+              <el-option label="计划总额 - 付款总额 - 扣款总额" value="1"></el-option>
+              <el-option label="实际总额 - 付款总额 - 扣款总额" value="2"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-select v-model="limit"
-              placeholder="每页展示条数"
-              @change="changeRouter">
-              <el-option v-for="item in limitList"
-                :key="item.value"
-                :label="item.name"
-                :value="item.value"></el-option>
+            <el-select v-model="limit" placeholder="每页展示条数" @change="changeRouter">
+              <el-option v-for="item in limitList" :key="item.value" :label="item.name" :value="item.value"></el-option>
             </el-select>
           </div>
           <div class="elCtn">
-            <el-checkbox v-model="only_delete"
-              @change="changeRouter"
-              :true-label="1">查询已删除的数据</el-checkbox>
+            <el-checkbox v-model="only_delete" @change="changeRouter" :true-label="1">查询已删除的数据</el-checkbox>
           </div>
         </div>
-        <div class="description">当前统计默认值：下单年份：{{year}}年；下单客户：默认所有；币种：{{settle_unit||'所有'}}；合作状态：{{status===0?'暂停合作':status===1?'合作中':'全部'}}</div>
-        <div class="list"
-          v-loading="loading"
-          style="font-size:14px">
+        <div class="description">
+          当前统计默认值：下单年份：{{ year }}年；下单客户：默认所有；币种：{{ settle_unit || '所有' }}；合作状态：{{
+            status === 0 ? '暂停合作' : status === 1 ? '合作中' : '全部'
+          }}
+        </div>
+        <div class="list" v-loading="loading" style="font-size:14px">
           <div class="row title">
             <div class="col">公司简称</div>
             <div class="col">客户类型</div>
-            <div class="col">计划总额
+            <div class="col">
+              计划总额
               <div class="sortCtn">
-                <div class="el-icon-caret-top"
-                  :class="{'active':sortCol==='total_plan_price'&&sort==='asc'}"
-                  @click="sortCol='total_plan_price';sort='asc';getList()"></div>
-                <div class="el-icon-caret-bottom"
-                  :class="{'active':sortCol==='total_plan_price'&&sort==='desc'}"
-                  @click="sortCol='total_plan_price';sort='desc';getList()"></div>
+                <div
+                  class="el-icon-caret-top"
+                  :class="{ active: sortCol === 'total_plan_price' && sort === 'asc' }"
+                  @click="
+                    sortCol = 'total_plan_price'
+                    sort = 'asc'
+                    getList()
+                  "
+                ></div>
+                <div
+                  class="el-icon-caret-bottom"
+                  :class="{ active: sortCol === 'total_plan_price' && sort === 'desc' }"
+                  @click="
+                    sortCol = 'total_plan_price'
+                    sort = 'desc'
+                    getList()
+                  "
+                ></div>
               </div>
             </div>
-            <div class="col">计划总数
+            <div class="col">
+              计划总数
               <div class="sortCtn">
-                <div class="el-icon-caret-top"
-                  :class="{'active':sortCol==='total_plan_number'&&sort==='asc'}"
-                  @click="sortCol='total_plan_number';sort='asc';getList()"></div>
-                <div class="el-icon-caret-bottom"
-                  :class="{'active':sortCol==='total_plan_number'&&sort==='desc'}"
-                  @click="sortCol='total_plan_number';sort='desc';getList()"></div>
+                <div
+                  class="el-icon-caret-top"
+                  :class="{ active: sortCol === 'total_plan_number' && sort === 'asc' }"
+                  @click="
+                    sortCol = 'total_plan_number'
+                    sort = 'asc'
+                    getList()
+                  "
+                ></div>
+                <div
+                  class="el-icon-caret-bottom"
+                  :class="{ active: sortCol === 'total_plan_number' && sort === 'desc' }"
+                  @click="
+                    sortCol = 'total_plan_number'
+                    sort = 'desc'
+                    getList()
+                  "
+                ></div>
               </div>
             </div>
-            <div class="col">实际总额
+            <div class="col">
+              实际总额
               <div class="sortCtn">
-                <div class="el-icon-caret-top"
-                  :class="{'active':sortCol==='total_real_price'&&sort==='asc'}"
-                  @click="sortCol='total_real_price';sort='asc';getList()"></div>
-                <div class="el-icon-caret-bottom"
-                  :class="{'active':sortCol==='total_real_price'&&sort==='desc'}"
-                  @click="sortCol='total_real_price';sort='desc';getList()"></div>
+                <div
+                  class="el-icon-caret-top"
+                  :class="{ active: sortCol === 'total_real_price' && sort === 'asc' }"
+                  @click="
+                    sortCol = 'total_real_price'
+                    sort = 'asc'
+                    getList()
+                  "
+                ></div>
+                <div
+                  class="el-icon-caret-bottom"
+                  :class="{ active: sortCol === 'total_real_price' && sort === 'desc' }"
+                  @click="
+                    sortCol = 'total_real_price'
+                    sort = 'desc'
+                    getList()
+                  "
+                ></div>
               </div>
             </div>
-            <div class="col">实际总数
+            <div class="col">
+              实际总数
               <div class="sortCtn">
-                <div class="el-icon-caret-top"
-                  :class="{'active':sortCol==='total_real_number'&&sort==='asc'}"
-                  @click="sortCol='total_real_number';sort='asc';getList()"></div>
-                <div class="el-icon-caret-bottom"
-                  :class="{'active':sortCol==='total_real_number'&&sort==='desc'}"
-                  @click="sortCol='total_real_number';sort='desc';getList()"></div>
+                <div
+                  class="el-icon-caret-top"
+                  :class="{ active: sortCol === 'total_real_number' && sort === 'asc' }"
+                  @click="
+                    sortCol = 'total_real_number'
+                    sort = 'asc'
+                    getList()
+                  "
+                ></div>
+                <div
+                  class="el-icon-caret-bottom"
+                  :class="{ active: sortCol === 'total_real_number' && sort === 'desc' }"
+                  @click="
+                    sortCol = 'total_real_number'
+                    sort = 'desc'
+                    getList()
+                  "
+                ></div>
               </div>
             </div>
-            <div class="col">开票总额
+            <div class="col">
+              开票总额
               <div class="sortCtn">
-                <div class="el-icon-caret-top"
-                  :class="{'active':sortCol==='total_invoice_price'&&sort==='asc'}"
-                  @click="sortCol='total_invoice_price';sort='asc';getList()"></div>
-                <div class="el-icon-caret-bottom"
-                  :class="{'active':sortCol==='total_invoice_price'&&sort==='desc'}"
-                  @click="sortCol='total_invoice_price';sort='desc';getList()"></div>
+                <div
+                  class="el-icon-caret-top"
+                  :class="{ active: sortCol === 'total_invoice_price' && sort === 'asc' }"
+                  @click="
+                    sortCol = 'total_invoice_price'
+                    sort = 'asc'
+                    getList()
+                  "
+                ></div>
+                <div
+                  class="el-icon-caret-bottom"
+                  :class="{ active: sortCol === 'total_invoice_price' && sort === 'desc' }"
+                  @click="
+                    sortCol = 'total_invoice_price'
+                    sort = 'desc'
+                    getList()
+                  "
+                ></div>
               </div>
             </div>
-            <div class="col">付款总额
+            <div class="col">
+              付款总额
               <div class="sortCtn">
-                <div class="el-icon-caret-top"
-                  :class="{'active':sortCol==='total_pay_price'&&sort==='asc'}"
-                  @click="sortCol='total_pay_price';sort='asc';getList()"></div>
-                <div class="el-icon-caret-bottom"
-                  :class="{'active':sortCol==='total_pay_price'&&sort==='desc'}"
-                  @click="sortCol='total_pay_price';sort='desc';getList()"></div>
+                <div
+                  class="el-icon-caret-top"
+                  :class="{ active: sortCol === 'total_pay_price' && sort === 'asc' }"
+                  @click="
+                    sortCol = 'total_pay_price'
+                    sort = 'asc'
+                    getList()
+                  "
+                ></div>
+                <div
+                  class="el-icon-caret-bottom"
+                  :class="{ active: sortCol === 'total_pay_price' && sort === 'desc' }"
+                  @click="
+                    sortCol = 'total_pay_price'
+                    sort = 'desc'
+                    getList()
+                  "
+                ></div>
               </div>
             </div>
-            <div class="col">扣款总额
+            <div class="col">
+              扣款总额
               <div class="sortCtn">
-                <div class="el-icon-caret-top"
-                  :class="{'active':sortCol==='total_deduct_price'&&sort==='asc'}"
-                  @click="sortCol='total_deduct_price';sort='asc';getList()"></div>
-                <div class="el-icon-caret-bottom"
-                  :class="{'active':sortCol==='total_deduct_price'&&sort==='desc'}"
-                  @click="sortCol='total_deduct_price';sort='desc';getList()"></div>
+                <div
+                  class="el-icon-caret-top"
+                  :class="{ active: sortCol === 'total_deduct_price' && sort === 'asc' }"
+                  @click="
+                    sortCol = 'total_deduct_price'
+                    sort = 'asc'
+                    getList()
+                  "
+                ></div>
+                <div
+                  class="el-icon-caret-bottom"
+                  :class="{ active: sortCol === 'total_deduct_price' && sort === 'desc' }"
+                  @click="
+                    sortCol = 'total_deduct_price'
+                    sort = 'desc'
+                    getList()
+                  "
+                ></div>
               </div>
             </div>
-            <div class="col">待付款金额
+            <div class="col">
+              待付款金额
               <div class="sortCtn">
-                <div class="el-icon-caret-top"
-                  :class="{'active':sortCol==='total_deduct_price'&&sort==='asc'}"
-                  @click="sortCol='wait_pay_price';sort='asc';getList()"></div>
-                <div class="el-icon-caret-bottom"
-                  :class="{'active':sortCol==='total_deduct_price'&&sort==='desc'}"
-                  @click="sortCol='wait_pay_price';sort='desc';getList()"></div>
+                <div
+                  class="el-icon-caret-top"
+                  :class="{ active: sortCol === 'total_deduct_price' && sort === 'asc' }"
+                  @click="
+                    sortCol = 'wait_pay_price'
+                    sort = 'asc'
+                    getList()
+                  "
+                ></div>
+                <div
+                  class="el-icon-caret-bottom"
+                  :class="{ active: sortCol === 'total_deduct_price' && sort === 'desc' }"
+                  @click="
+                    sortCol = 'wait_pay_price'
+                    sort = 'desc'
+                    getList()
+                  "
+                ></div>
               </div>
             </div>
             <div class="col">操作</div>
           </div>
-          <div class="row"
-            v-for="item in list"
-            :key="item.id">
-            <div class="col">{{item.name}}</div>
-            <div class="col">{{item.client_type_name}}</div>
-            <div class="col">{{$toFixed(item.total_plan_price,3,true)}}万元</div>
+          <div class="row" v-for="item in list" :key="item.id">
+            <div class="col">{{ item.name }}</div>
+            <div class="col">{{ item.client_type_name }}</div>
+            <div class="col">{{ $toFixed(item.total_plan_price, 3, true) }}万元</div>
             <div class="col">
-              <template v-if="item.client_type_name==='纱线原料单位'||item.client_type_name==='原料加工单位'">
-                {{$toFixed(item.total_plan_number/1000,3,true)}}吨
+              <template v-if="item.client_type_name === '纱线原料单位' || item.client_type_name === '原料加工单位'">
+                {{ $toFixed(item.total_plan_number / 1000, 3, true) }}吨
               </template>
-              <template v-else-if="item.client_type_name==='面料原料单位'">
-                {{$toFixed(item.total_plan_number/1000,3,true)}}千米
+              <template v-else-if="item.client_type_name === '面料原料单位'">
+                {{ $toFixed(item.total_plan_number / 1000, 3, true) }}千米
               </template>
-              <template v-else-if="item.client_type_name==='装饰辅料单位'||item.client_type_name==='包装辅料单位'">
-                {{$toFixed(item.total_plan_number/10000,3,true)}}万个
+              <template
+                v-else-if="item.client_type_name === '装饰辅料单位' || item.client_type_name === '包装辅料单位'"
+              >
+                {{ $toFixed(item.total_plan_number / 10000, 3, true) }}万个
               </template>
-              <template v-else-if="item.client_type_name==='生产织造单位' || item.client_type_name==='生产加工单位'">
-                {{$toFixed(item.total_plan_number/10000,3,true)}}万件
+              <template
+                v-else-if="item.client_type_name === '生产织造单位' || item.client_type_name === '生产加工单位'"
+              >
+                {{ $toFixed(item.total_plan_number / 10000, 3, true) }}万件
               </template>
-              <template v-else-if="item.client_type_name==='运输单位'">
-                {{$toFixed(item.total_plan_number,3,true)}}立方
+              <template v-else-if="item.client_type_name === '运输单位'">
+                {{ $toFixed(item.total_plan_number, 3, true) }}立方
               </template>
             </div>
-            <div class="col">{{$toFixed(item.total_real_price)}}万元</div>
+            <div class="col">{{ $toFixed(item.total_real_price) }}万元</div>
             <div class="col">
-              <template v-if="item.client_type_name==='纱线原料单位'||item.client_type_name==='原料加工单位'">
-                {{$toFixed(item.total_real_number/1000,3,true)}}吨
+              <template v-if="item.client_type_name === '纱线原料单位' || item.client_type_name === '原料加工单位'">
+                {{ $toFixed(item.total_real_number / 1000, 3, true) }}吨
               </template>
-              <template v-else-if="item.client_type_name==='面料原料单位'">
-                {{$toFixed(item.total_real_number/1000,3,true)}}千米
+              <template v-else-if="item.client_type_name === '面料原料单位'">
+                {{ $toFixed(item.total_real_number / 1000, 3, true) }}千米
               </template>
-              <template v-else-if="item.client_type_name==='装饰辅料单位'||item.client_type_name==='包装辅料单位'">
-                {{$toFixed(item.total_real_number/10000,3,true)}}万个
+              <template
+                v-else-if="item.client_type_name === '装饰辅料单位' || item.client_type_name === '包装辅料单位'"
+              >
+                {{ $toFixed(item.total_real_number / 10000, 3, true) }}万个
               </template>
-              <template v-else-if="item.client_type_name==='生产织造单位' || item.client_type_name==='生产加工单位'">
-                {{$toFixed(item.total_real_number/10000,3,true)}}万件
+              <template
+                v-else-if="item.client_type_name === '生产织造单位' || item.client_type_name === '生产加工单位'"
+              >
+                {{ $toFixed(item.total_real_number / 10000, 3, true) }}万件
               </template>
-              <template v-else-if="item.client_type_name==='运输单位'">
-                {{$toFixed(item.total_real_number,3,true)}}立方
+              <template v-else-if="item.client_type_name === '运输单位'">
+                {{ $toFixed(item.total_real_number, 3, true) }}立方
               </template>
             </div>
-            <div class="col">{{$toFixed(item.total_invoice_price,3,true)}}万元</div>
-            <div class="col">{{$toFixed(item.total_pay_price,3,true)}}万元</div>
-            <div class="col">{{$toFixed(item.total_deduct_price,3,true)}}万元</div>
-            <div class="col">{{$toFixed(item.wait_pay_price,3,true)}}万元</div>
+            <div class="col">{{ $toFixed(item.total_invoice_price, 3, true) }}万元</div>
+            <div class="col">{{ $toFixed(item.total_pay_price, 3, true) }}万元</div>
+            <div class="col">{{ $toFixed(item.total_deduct_price, 3, true) }}万元</div>
+            <div class="col">{{ $toFixed(item.wait_pay_price, 3, true) }}万元</div>
             <div class="col oprCtn">
-              <span class="opr hoverBlue"
-                @click="$router.push('/settlement/paymentDetail?id='+item.id + '&type=' + item.client_type_name)">详情</span>
+              <span
+                class="opr hoverBlue"
+                @click="$router.push('/settlement/paymentDetail?id=' + item.id + '&type=' + item.client_type_name)"
+                >详情</span
+              >
             </div>
           </div>
           <div class="row">
             <div class="col green">合计：</div>
             <div class="col"></div>
-            <div class="col green bold">{{$toFixed(totalData.total_plan_price/10000,3,true)}}万元</div>
+            <div class="col green bold">{{ $toFixed(totalData.total_plan_price / 10000, 3, true) }}万元</div>
             <div class="col green bold">
               <template v-if="!clientTypeName">-</template>
-              <template v-else-if="clientTypeName==='纱线原料单位'||clientTypeName==='原料加工单位'">
-                {{$toFixed(totalData.total_plan_number/1000,3,true)}}吨
+              <template v-else-if="clientTypeName === '纱线原料单位' || clientTypeName === '原料加工单位'">
+                {{ $toFixed(totalData.total_plan_number / 1000, 3, true) }}吨
               </template>
-              <template v-else-if="clientTypeName==='面料原料单位'">
-                {{$toFixed(totalData.total_plan_number/1000,3,true)}}千米
+              <template v-else-if="clientTypeName === '面料原料单位'">
+                {{ $toFixed(totalData.total_plan_number / 1000, 3, true) }}千米
               </template>
-              <template v-else-if="clientTypeName==='装饰辅料单位'||clientTypeName==='包装辅料单位'">
-                {{$toFixed(totalData.total_plan_number/10000,3,true)}}万个
+              <template v-else-if="clientTypeName === '装饰辅料单位' || clientTypeName === '包装辅料单位'">
+                {{ $toFixed(totalData.total_plan_number / 10000, 3, true) }}万个
               </template>
-              <template v-else-if="clientTypeName==='生产织造单位' || clientTypeName==='生产加工单位'">
-                {{$toFixed(totalData.total_plan_number/10000,3,true)}}万件
+              <template v-else-if="clientTypeName === '生产织造单位' || clientTypeName === '生产加工单位'">
+                {{ $toFixed(totalData.total_plan_number / 10000, 3, true) }}万件
               </template>
-              <template v-else-if="clientTypeName==='运输单位'">
-                {{$toFixed(totalData.total_plan_number,3,true)}}立方
+              <template v-else-if="clientTypeName === '运输单位'">
+                {{ $toFixed(totalData.total_plan_number, 3, true) }}立方
               </template>
             </div>
-            <div class="col green bold">{{$toFixed(totalData.total_real_price/10000,3,true)}}万元</div>
+            <div class="col green bold">{{ $toFixed(totalData.total_real_price / 10000, 3, true) }}万元</div>
             <div class="col green bold">
               <template v-if="!clientTypeName">-</template>
-              <template v-else-if="clientTypeName==='纱线原料单位'||clientTypeName==='原料加工单位'">
-                {{$toFixed(totalData.total_real_number/1000,3,true)}}吨
+              <template v-else-if="clientTypeName === '纱线原料单位' || clientTypeName === '原料加工单位'">
+                {{ $toFixed(totalData.total_real_number / 1000, 3, true) }}吨
               </template>
-              <template v-else-if="clientTypeName==='面料原料单位'">
-                {{$toFixed(totalData.total_real_number/1000,3,true)}}千米
+              <template v-else-if="clientTypeName === '面料原料单位'">
+                {{ $toFixed(totalData.total_real_number / 1000, 3, true) }}千米
               </template>
-              <template v-else-if="clientTypeName==='装饰辅料单位'||clientTypeName==='包装辅料单位'">
-                {{$toFixed(totalData.total_real_number/10000,3,true)}}万个
+              <template v-else-if="clientTypeName === '装饰辅料单位' || clientTypeName === '包装辅料单位'">
+                {{ $toFixed(totalData.total_real_number / 10000, 3, true) }}万个
               </template>
-              <template v-else-if="clientTypeName==='生产织造单位' || clientTypeName==='生产加工单位'">
-                {{$toFixed(totalData.total_real_number/10000,3,true)}}万件
+              <template v-else-if="clientTypeName === '生产织造单位' || clientTypeName === '生产加工单位'">
+                {{ $toFixed(totalData.total_real_number / 10000, 3, true) }}万件
               </template>
-              <template v-else-if="clientTypeName==='运输单位'">
-                {{$toFixed(totalData.total_real_number,3,true)}}立方
+              <template v-else-if="clientTypeName === '运输单位'">
+                {{ $toFixed(totalData.total_real_number, 3, true) }}立方
               </template>
             </div>
-            <div class="col green bold">{{$toFixed(totalData.total_invoice_price,3,true)}}万元</div>
-            <div class="col green bold">{{$toFixed(totalData.total_pay_price,3,true)}}万元</div>
-            <div class="col green bold">{{$toFixed(totalData.total_deduct_price,3,true)}}万元</div>
-            <div class="col green bold">{{$toFixed(((totalData.total_real_price/10000) - totalData.total_pay_price - totalData.total_deduct_price),3,true)}}万元</div>
+            <div class="col green bold">{{ $toFixed(totalData.total_invoice_price, 3, true) }}万元</div>
+            <div class="col green bold">{{ $toFixed(totalData.total_pay_price, 3, true) }}万元</div>
+            <div class="col green bold">{{ $toFixed(totalData.total_deduct_price, 3, true) }}万元</div>
+            <div class="col green bold">
+              {{
+                $toFixed(
+                  totalData.total_real_price / 10000 - totalData.total_pay_price - totalData.total_deduct_price,
+                  3,
+                  true
+                )
+              }}万元
+            </div>
             <div class="col"></div>
           </div>
         </div>
         <div class="pageCtn">
-          <el-pagination background
+          <el-pagination
+            background
             :page-size="limit"
             layout="prev, pager, next, jumper"
             :total="total"
             :current-page.sync="page"
-            @current-change="changeRouter($event,true)">
+            @current-change="changeRouter($event, true)"
+          >
           </el-pagination>
         </div>
       </div>
     </div>
     <div class="bottomFixBar">
       <div class="main">
-        <div class="btnCtn"
-          style="float:left">
+        <div class="btnCtn" style="float:left">
           <div class="buttonList">
             <div class="btn backHoverBlue">
               <i class="el-icon-s-grid"></i>
@@ -311,26 +411,20 @@
             </div>
             <div class="otherInfoCtn">
               <div class="otherInfo">
-                <div class="btn backHoverOrange"
-                  @click="importExcelData('开票单据')">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverOrange" @click="importExcelData('开票单据')">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">开票单据</span>
                 </div>
-                <div class="btn backHoverBlue"
-                  @click="importExcelData('付款单据')">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverBlue" @click="importExcelData('付款单据')">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">付款单据</span>
                 </div>
-                <div class="btn backHoverRed"
-                  @click="importExcelData('我方扣款单据')">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverRed" @click="importExcelData('我方扣款单据')">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">扣款单据</span>
@@ -345,26 +439,20 @@
             </div>
             <div class="otherInfoCtn">
               <div class="otherInfo">
-                <div class="btn backHoverOrange"
-                  @click="downloadExcel('开票单据模板')">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverOrange" @click="downloadExcel('开票单据模板')">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">开票单据</span>
                 </div>
-                <div class="btn backHoverBlue"
-                  @click="downloadExcel('付款单据模板')">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverBlue" @click="downloadExcel('付款单据模板')">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">付款单据</span>
                 </div>
-                <div class="btn backHoverRed"
-                  @click="downloadExcel('扣款单据模板')">
-                  <svg class="iconFont"
-                    aria-hidden="true">
+                <div class="btn backHoverRed" @click="downloadExcel('扣款单据模板')">
+                  <svg class="iconFont" aria-hidden="true">
                     <use xlink:href="#icon-xiugaidingdan"></use>
                   </svg>
                   <span class="text">扣款单据</span>
@@ -373,9 +461,7 @@
             </div>
           </div>
           <span class="btn hoverBlue">
-            <el-tooltip class="item"
-              effect="dark"
-              placement="top">
+            <el-tooltip class="item" effect="dark" placement="top">
               <div slot="content">
                 第一步：下载导入模板。<br />
                 第二步：填写模板信息。注意：请填写客户或单位简称，且填写的简称必须与系统添加的简称保持一致；金额字段必须为数字；日期字段的格式必须为yyyy-mm-dd（2022-01-01）；订单号必须为系统订单编号；关联单据编号必须为系统关联编号；否则会出现无法导入或者导入错误的情况。<br />
@@ -386,53 +472,47 @@
           </span>
         </div>
         <div class="btnCtn">
-          <span class="btn backHoverGreen"
-            @click="excelFlag = true">导出EXCEL</span>
+          <span class="btn backHoverGreen" @click="excelFlag = true">导出EXCEL</span>
         </div>
       </div>
     </div>
-    <div class="popup"
-      v-show="excelFlag">
-      <div class="main"
-        style="width:500px">
+    <div class="popup" v-show="excelFlag">
+      <div class="main" style="width:500px">
         <div class="titleCtn">
           <span class="text">导出EXCEL筛选条件</span>
-          <div class="closeCtn"
-            @click="excelFlag=false">
+          <div class="closeCtn" @click="excelFlag = false">
             <span class="el-icon-close"></span>
           </div>
         </div>
         <div class="contentCtn">
           <div class="row">
-            <div class="label"
-              style="line-height:32px">选择类型：</div>
+            <div class="label" style="line-height:32px">选择类型：</div>
             <div class="elCtn info">
-              <el-select placeholder="客户类型筛选"
-                v-model="clientTypeExcel"
-                clearable>
-                <el-option v-for="item in clientTypeList"
+              <el-select placeholder="客户类型筛选" v-model="clientTypeExcel" clearable>
+                <el-option
+                  v-for="item in clientTypeList"
                   :key="item.id"
                   :value="item.id"
-                  :label="item.name"></el-option>
+                  :label="item.name"
+                ></el-option>
               </el-select>
             </div>
           </div>
           <div class="row">
-            <div class="label"
-              style="line-height:32px">选择年份：</div>
+            <div class="label" style="line-height:32px">选择年份：</div>
             <div class="elCtn info">
-              <el-date-picker type="year"
+              <el-date-picker
+                type="year"
                 v-model="yearExcel"
                 placeholder="选择年份"
-                value-format="yyyy"></el-date-picker>
+                value-format="yyyy"
+              ></el-date-picker>
             </div>
           </div>
         </div>
         <div class="oprCtn">
-          <span class="btn borderBtn"
-            @click="excelFlag=false">取消</span>
-          <span class="btn backHoverBlue"
-            @click="exportExcel">确认导出</span>
+          <span class="btn borderBtn" @click="excelFlag = false">取消</span>
+          <span class="btn backHoverBlue" @click="exportExcel">确认导出</span>
         </div>
       </div>
     </div>
@@ -544,7 +624,7 @@ export default Vue.extend({
       const inputFile = document.createElement('input')
       inputFile.type = 'file'
       inputFile.accept = '.xlsx,.xls'
-      inputFile.addEventListener('change', (e) => {
+      inputFile.addEventListener('change', e => {
         this.getExcelData(e, this.saveImportData, type)
       })
       let click = document.createEvent('MouseEvents')
@@ -556,7 +636,7 @@ export default Vue.extend({
       const XLSX = require('xlsx')
       const files = file.target.files
       const fileReader = new FileReader()
-      fileReader.onload = function (e: any) {
+      fileReader.onload = function(e: any) {
         try {
           const data = e.target.result
           const bytes = new Uint8Array(data) // 无符号整型数组
@@ -591,7 +671,7 @@ export default Vue.extend({
           invoice_code: ['发票号码(选填)', ''],
           type: ['发票类型(默认专票)', '专票'],
           doc_type: ['发票类型(订单开票、其它开票)', '订单开票'],
-          tax_rate: ['税率(必填)'],
+          tax_rate: ['税率(必填)', 13],
           price: ['开票金额(税价合计，必填)'],
           desc: ['备注信息(选填)', '']
         }
@@ -643,7 +723,7 @@ export default Vue.extend({
             invoice_type: 2,
             data: submitData
           })
-          .then((res) => {
+          .then(res => {
             if (res.data.status) {
               this.$message.success('导入成功')
               this.getList()
@@ -651,7 +731,7 @@ export default Vue.extend({
           })
       } else if (type === '付款单据') {
         // excel日期格式转前端日期格式
-        submitData.forEach((item) => {
+        submitData.forEach(item => {
           const time: any = new Date((item.complete_time - 1) * 24 * 3600000 + 1)
           time.setYear(time.getFullYear() - 70)
           const year = time.getFullYear()
@@ -666,7 +746,7 @@ export default Vue.extend({
             client_id: '',
             data: submitData
           })
-          .then((res) => {
+          .then(res => {
             if (res.data.status) {
               this.$message.success('导入成功')
               this.getList()
@@ -681,7 +761,7 @@ export default Vue.extend({
             deduct_type: 1,
             data: submitData
           })
-          .then((res) => {
+          .then(res => {
             if (res.data.status) {
               this.$message.success('导入成功')
               this.getList()
@@ -700,7 +780,7 @@ export default Vue.extend({
           year: this.yearExcel,
           export_excel: 1
         })
-        .then((res) => {
+        .then(res => {
           if (res.data.status) {
             window.location.href = res.data.data
             this.$message.success('导出成功')
@@ -733,7 +813,7 @@ export default Vue.extend({
           client_type_id: this.clientType ? [this.clientType] : this.clientTypeList.map((item: any) => item.id),
           year: this.year
         })
-        .then((res) => {
+        .then(res => {
           if (res.data.status) {
             this.total = res.data.data.items.length
             this.totalList = res.data.data.items
@@ -832,7 +912,7 @@ export default Vue.extend({
   created() {
     this.page = Number(this.$route.query.page) || 1
     // 由于列表需要用到type数据，所以这里不用checkCommonInfo
-    clientType.list().then((res) => {
+    clientType.list().then(res => {
       this.clientTypeList = res.data.data.filter((item: { type: string }) => Number(item.type) === Number(this.type))
       this.getFilters()
       this.getList()
@@ -843,4 +923,3 @@ export default Vue.extend({
 <style lang="less" scoped>
 @import '~@/assets/css/settlement/paymentList.less';
 </style>
-
