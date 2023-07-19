@@ -808,6 +808,13 @@ const routes: Array<RouteConfig> = [
       path: '/workshopManagement/staffInputDetail',
       name: ' 车间管理员工录入详情',
       component: () => import('../views/workshopManagement/staffInputDetail.vue')
+    },{
+      meta: {
+        permissions_id: '19-2',
+      },
+      path: '/workshopManagement/newModule',
+      name: ' 车间管理计件更新',
+      component: () => import('../views/workshopManagement/newModule.vue')
     }, {
       meta: {
         permissions_id: '11-3',

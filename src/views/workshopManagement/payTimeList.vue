@@ -28,7 +28,7 @@
               ></el-option>
             </el-select>
             <el-tooltip class="item" effect="dark" content="保存部门筛选" placement="top">
-              <i class="el-icon-upload hoverOrange" @click="$setLocalStorage('department', department)"></i>
+              <i class="el-icon-upload hoverOrange" @click="$setLocalStorage('department', department);$message.success('保存成功')"></i>
             </el-tooltip>
           </div>
           <div class="elCtn" style="position: relative">
@@ -43,7 +43,7 @@
               clearable
             ></el-cascader>
             <el-tooltip class="item" effect="dark" content="保存工序筛选" placement="top">
-              <i class="el-icon-upload hoverOrange" @click="$setLocalStorage('process', process)"></i>
+              <i class="el-icon-upload hoverOrange" @click="$setLocalStorage('process', process);$message.success('保存成功')"></i>
             </el-tooltip>
           </div>
           <div class="btn borderBtn" @click="reset">重置</div>
@@ -126,6 +126,7 @@
           >
             列表设置
           </div>
+          <!-- <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(3)">计件更新（新模式）</div> -->
           <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(1)">计件更新（按订单）</div>
           <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(2)">计件更新（按员工）</div>
           <div
@@ -822,7 +823,7 @@ export default Vue.extend({
     handleSelectionChange(val: any) {
       this.checkedCount = val
     },
-    updateNumber(type: 1 | 2) {
+    updateNumber(type: 1 | 2 | 3) {
       if (type === 1) {
         this.$router.push('/workshopManagement/list')
       } else if (type === 2) {
@@ -835,6 +836,8 @@ export default Vue.extend({
         //   }
         // })
         this.$router.push('/workshopManagement/staffDetail?staffInfo=' + JSON.stringify([]))
+      } else if(type === 3){
+        this.$router.push('/workshopManagement/newModule?staffInfo=' + JSON.stringify([]))
       }
     },
     changeRouter(ev?: any) {
